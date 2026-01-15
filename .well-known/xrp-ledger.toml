@@ -1,1 +1,8 @@
+[[ACCOUNTS]]
+address = "rPsbRGPCs5TAG95rUpxUtoZGxMPiS8UAdf"
+description = "Solus Protocol Issuer Account"
 
+[[CURRENCIES]]
+code = "SLS"
+issuer = "rPsbRGPCs5TAG95rUpxUtoZGxMPiS8UAdf"
+display_precision = 2
