@@ -9,15 +9,33 @@ Solus is a decentralized protocol designed to provide immutable proof of medical
 - **Total Supply:** 100,000,000 SLS
 - **Network:** XRP Ledger (Mainnet)
 
-##  Official Asset Details
-- **Issuer Address:** rPsbRGPCs5TAG95rUpxUtoZGxMPiS8UAdf
-- **Domain Verification:** Verified at [solusprotocol.com](https://solusprotocol.com)
+# SLS Token (Project Name)
 
-##  Use Cases
-1. **Clinical Validation:** Hospitals use $SLS to timestamp and verify patient data integrity.
-2. **Audit Trails:** Secure, unalterable logs for medical research and pharmaceutical trials.
-3. **Interoperability:** Seamless data exchange between clinics via the XRPL DEX.
+Official SLS Token on the XRP Ledger. 
 
+## 🛡️ Official Wallet Addresses
+
+| Wallet Type | Address | Purpose |
+| :--- | :--- | :--- |
+| **Issuer (Cold)** | `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5` | Token minting & supply anchor |
+| **Operational (Hot)** | `raWL7nYZkuXMUurHcp5ZXkABfVgStdun51` | Daily transactions & liquidity management |
+
+## 🚀 How to Acquire SLS
+
+### 1. Set Trust Line
+To hold SLS, you must first establish a trust line to the official issuer address.
+- **Currency Code:** `SLS`
+- **Issuer:** `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5`
+- [Click here to set trustline via Xaman (Xumm)](https://xumm.community/?issuer=r95GyZac4butvVcsTWUPpxzekmyzaHsTA5&currency=SLS&limit=1000000000)
+
+### 2. Trade via AMM (Recommended)
+We provide instant liquidity via the XRPL Native AMM. 
+- [Trade on XPMarket](https://xpmarket.com/amm/create?asset1=XRP&asset2=SLS.r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
+- [Trade on Magnetic](https://magnetic.org/trade/XRP-SLS.r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
+
+## 📊 Tokenomics
+- **Total Supply:** 1,000,000 SLS
+- **Network:** XRP Ledger (Mainnet)
 ---
 © 2026 Solus Protocol. Built on the XRP Ledger.
 
