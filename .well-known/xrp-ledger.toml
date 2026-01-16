@@ -1,8 +1,18 @@
+[METADATA]
+modified = 2026-01-15T00:00:00Z
+expires = 2027-01-15T00:00:00Z
+
 [[ACCOUNTS]]
 address = "rPsbRGPCs5TAG95rUpxUtoZGxMPiS8UAdf"
-description = "Solus Protocol Issuer Account"
+description = "Solus Protocol Issuing Address"
 
 [[CURRENCIES]]
 code = "SLS"
 issuer = "rPsbRGPCs5TAG95rUpxUtoZGxMPiS8UAdf"
-display_precision = 2
+display_decimal = 2
+symbol = "SLS"
+logo_256x256 = "https://solusprotocol.com/logo.png"
+
+[[PRINCIPALS]]
+name = "Solus Protocol Team"
+email = "support@solusprotocol.com"
