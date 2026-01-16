@@ -34,8 +34,14 @@ We provide instant liquidity via the XRPL Native AMM.
 - [Trade on Magnetic](https://magnetic.org/trade/XRP-SLS.r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
 
 ## 📊 Tokenomics
-- **Total Supply:** 1,000,000 SLS
+- **Total Supply:** 100,000,000 SLS
 - **Network:** XRP Ledger (Mainnet)
+
+- ## 🔗 Official Links
+* **Trade SLS (AMM):** [Swap XRP for SLS on Magnetic](https://magnetic.org/swap/XRP-SLS.r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
+* **Token Explorer:** [View SLS on XRPScan](https://xrpscan.com/token/SLS/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
+* **Xaman Trustline:** [Set SLS Trustline](https://xumm.community/?issuer=r95GyZac4butvVcsTWUPpxzekmyzaHsTA5&currency=SLS&limit=1000000000)
+
 ---
 © 2026 Solus Protocol. Built on the XRP Ledger.
 
