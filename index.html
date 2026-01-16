@@ -2,41 +2,228 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solus Protocol | Medical Data Integrity</title>
-<style>
-  body {
-    background-color: #1a1d21; /* Deep charcoal like the logo */
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 50px;
-  }
-  img.logo {
-    width: 200px; /* Adjust size as needed */
-    margin-bottom: 20px;
-  }
-  .button {
-    background-color: #00d4ff; /* Cyan color from logo */
-    color: #1a1d21;
-    padding: 15px 25px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    display: inline-block;
-    margin: 10px;
-  }
-</style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0a0b0d;
+            --accent-cyan: #14f195; /* Solana-style green/cyan */
+            --accent-blue: #9945FF; /* Solana-style purple */
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background Glow */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(20, 241, 149, 0.05), transparent 40%),
+                        radial-gradient(circle at 80% 20%, rgba(153, 69, 255, 0.05), transparent 40%);
+            z-index: -1;
+            animation: pulse 10s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Navigation */
+        nav {
+            padding: 20px 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        /* Buttons */
+        .btn-container { display: flex; gap: 15px; }
+        .btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            color: black;
+        }
+        .btn-secondary {
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+
+        /* Tabs Section */
+        .tabs-container {
+            max-width: 900px;
+            margin: 100px auto;
+            padding: 40px;
+            background: var(--glass);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tab-menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tab-link {
+            cursor: pointer;
+            padding: 10px 20px;
+            color: #888;
+            border-bottom: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .tab-link.active {
+            color: var(--accent-cyan);
+            border-bottom: 2px solid var(--accent-cyan);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Status Badge */
+        .badge {
+            background: rgba(20, 241, 149, 0.1);
+            color: var(--accent-cyan);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            padding: 50px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #666;
+        }
+    </style>
 </head>
-<body> <img src="logo.png" alt="Solus Protocol Logo" class="logo">
-    <div class="container">
-        <h1>Solus Protocol ($SLS)</h1>
-        <p class="tagline">Decentralized Medical Data Integrity on the XRP Ledger</p>
-        <hr>
-        <p>Providing clinical validation and immutable audit trails for modern healthcare.</p>
-        <p><strong>Status:</strong> Protocol Live on Mainnet</p>
-        <br><br>
-<a href="https://github.com/solusprotocol1/solus-protocol/wiki" class="button">View Documentation</a>
-<a href="https://www.xrptoolkit.com/trade/SLS-rPsbRGPCs5TAG95rUpxUtoZGxMPiS8UAdf/XRP" class="button">Trade SLS</a>
+<body>
+
+<div class="bg-glow"></div>
+
+<nav>
+    <div class="logo-text">SOLUS</div>
+    <div class="btn-container">
+        <a href="https://github.com/solusprotocol1/solus-protocol/wiki" class="btn btn-secondary" style="padding: 8px 20px;">Docs</a>
     </div>
+</nav>
+
+<section class="hero" data-aos="zoom-in">
+    <div class="badge">Mainnet Live</div>
+    <h1>Immutable Trust.</h1>
+    <p class="subtitle">Decentralized medical data integrity powered by the XRP Ledger. Securing clinical records with cryptographic precision.</p>
+    <div class="btn-container">
+        <a href="https://www.xrptoolkit.com/trade/SLS-rPsbRGPCs5TAG95rUpxUtoZGxMPiS8UAdf/XRP" class="btn btn-primary">Trade $SLS</a>
+        <a href="#solutions" class="btn btn-secondary">Solutions</a>
+    </div>
+</section>
+
+<section id="solutions" class="tabs-container" data-aos="fade-up">
+    <div class="tab-menu">
+        <div class="tab-link active" onclick="openTab(event, 'clinics')">For Clinics</div>
+        <div class="tab-link" onclick="openTab(event, 'research')">For Research</div>
+        <div class="tab-link" onclick="openTab(event, 'traders')">For Traders</div>
+    </div>
+
+    <div id="clinics" class="tab-content active">
+        <h3>Secure Clinical Validation</h3>
+        <p>Automate the anchoring of Electronic Health Records (EHR). Prevent data tampering and ensure HIPAA compliance with one-way hashing technology.</p>
+    </div>
+
+    <div id="research" class="tab-content">
+        <h3>Pharma & Trials</h3>
+        <p>Ensure the absolute integrity of clinical trial data. Provide auditors with a transparent, blockchain-verified trail of every data entry event.</p>
+    </div>
+
+    <div id="traders" class="tab-content">
+        <h3>$SLS Ecosystem</h3>
+        <p>The $SLS token powers the validation network. Staking, governance, and protocol fees drive the utility of the native asset on the XRPL.</p>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 Solus Protocol. Built on XRP Ledger.</p>
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 1000, once: true });
+
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
 </body>
 </html>
