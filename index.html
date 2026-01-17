@@ -233,57 +233,58 @@
 <script>
     AOS.init({ duration: 800, once: true });
 
-    // --- ENHANCED PRICE FETCH (XPMARKET + FALLBACKS) ---
+    // --- ENHANCED PRICE FETCH WITH CORS PROXY ---
     async function updateLivePrice() {
         const btn = document.getElementById('live-price-btn');
         const issuer = 'r95GyZac4butvVcsTWUPpxzekmyzaHsTA5';
         const ticker = 'SLS';
-        const hex = '534C530000000000000000000000000000000000';
+        const proxy = "https://api.allorigins.win/get?url=";
 
         function setPriceDisplay(price, change) {
             const val = parseFloat(price);
+            if (isNaN(val)) return;
+
             const formattedPrice = val < 0.1 ? val.toFixed(6) : val.toFixed(4);
             let changeHTML = "";
             
             if (change !== undefined && change !== null) {
                 const changeVal = parseFloat(change);
                 const icon = changeVal >= 0 ? "▲" : "▼";
-                const color = changeVal >= 0 ? "#003300" : "#660000"; // Darker shades for contrast on bright button
-                changeHTML = ` <span style="color: ${color}; opacity: 0.8;">(${icon}${Math.abs(changeVal).toFixed(2)}%)</span>`;
+                // Dark Green for growth, Dark Red for dip for contrast on the green button
+                const color = changeVal >= 0 ? "#006400" : "#8B0000"; 
+                changeHTML = ` <span style="color: ${color}; font-weight: 800; opacity: 0.9;">(${icon}${Math.abs(changeVal).toFixed(2)}%)</span>`;
             }
             
             btn.innerHTML = `TRADE $SLS: $${formattedPrice}${changeHTML}`;
         }
 
-        // Method 1: XPMarket Ticker
+        // Method 1: XPMarket (via Proxy)
         try {
-            const response = await fetch(`https://api.xpmarket.com/v1/token/${issuer}/${ticker}`);
-            const data = await response.json();
+            const targetUrl = encodeURIComponent(`https://api.xpmarket.com/v1/token/${issuer}/${ticker}`);
+            const response = await fetch(`${proxy}${targetUrl}`);
+            const wrapper = await response.json();
+            const data = JSON.parse(wrapper.contents);
+            
             if (data && data.price_usd) {
-                setPriceDisplay(data.price_usd, data.vol_24h_change_percent || data.price_change_24h_percentage);
+                setPriceDisplay(data.price_usd, data.price_change_24h_percentage || data.vol_24h_change_percent);
                 return;
             }
-        } catch (e) { console.warn("Ticker fetch failed..."); }
+        } catch (e) { console.warn("XPMarket fetch failed..."); }
 
-        // Method 2: XPMarket Hex
+        // Method 2: GeckoTerminal (via Proxy)
         try {
-            const response = await fetch(`https://api.xpmarket.com/v1/token/${issuer}/${hex}`);
-            const data = await response.json();
-            if (data && data.price_usd) {
-                setPriceDisplay(data.price_usd, data.vol_24h_change_percent || data.price_change_24h_percentage);
+            const targetUrl = encodeURIComponent(`https://api.geckoterminal.com/api/v2/networks/xrp/tokens/${issuer}`);
+            const response = await fetch(`${proxy}${targetUrl}`);
+            const wrapper = await response.json();
+            const json = JSON.parse(wrapper.contents);
+            
+            if (json && json.data && json.data.attributes) {
+                const attr = json.data.attributes;
+                setPriceDisplay(attr.price_usd, attr.price_change_percentage.h24);
                 return;
-            }
-        } catch (e) { console.warn("Hex fetch failed..."); }
-
-        // Method 3: GeckoTerminal
-        try {
-            const response = await fetch(`https://api.geckoterminal.com/api/v2/networks/xrp/tokens/${issuer}/pools`);
-            const data = await response.json();
-            if (data && data.data && data.data[0]) {
-                const attr = data.data[0].attributes;
-                setPriceDisplay(attr.base_token_price_usd, attr.price_change_percentage.h24);
             }
         } catch (e) {
+            console.error("All price fetches failed.");
             if (!btn.innerHTML.includes('$')) btn.innerText = "TRADE $SLS LIVE";
         }
     }
