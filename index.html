@@ -233,16 +233,18 @@
 <script>
     AOS.init({ duration: 800, once: true });
 
-    // --- ENHANCED PRICE FETCH WITH CORS PROXY ---
     async function updateLivePrice() {
         const btn = document.getElementById('live-price-btn');
         const issuer = 'r95GyZac4butvVcsTWUPpxzekmyzaHsTA5';
         const ticker = 'SLS';
-        const proxy = "https://api.allorigins.win/get?url=";
+        
+        // Two proxies for redundancy
+        const proxy1 = "https://api.allorigins.win/get?url=";
+        const proxy2 = "https://corsproxy.io/?";
 
         function setPriceDisplay(price, change) {
             const val = parseFloat(price);
-            if (isNaN(val)) return;
+            if (isNaN(val) || val <= 0) return false;
 
             const formattedPrice = val < 0.1 ? val.toFixed(6) : val.toFixed(4);
             let changeHTML = "";
@@ -250,48 +252,55 @@
             if (change !== undefined && change !== null) {
                 const changeVal = parseFloat(change);
                 const icon = changeVal >= 0 ? "▲" : "▼";
-                // Dark Green for growth, Dark Red for dip for contrast on the green button
+                // Darker colors to be legible on the light green button
                 const color = changeVal >= 0 ? "#006400" : "#8B0000"; 
                 changeHTML = ` <span style="color: ${color}; font-weight: 800; opacity: 0.9;">(${icon}${Math.abs(changeVal).toFixed(2)}%)</span>`;
             }
             
             btn.innerHTML = `TRADE $SLS: $${formattedPrice}${changeHTML}`;
+            return true;
         }
 
-        // Method 1: XPMarket (via Proxy)
+        // --- PATH 1: XPMarket via CORS Proxy ---
         try {
-            const targetUrl = encodeURIComponent(`https://api.xpmarket.com/v1/token/${issuer}/${ticker}`);
-            const response = await fetch(`${proxy}${targetUrl}`);
-            const wrapper = await response.json();
-            const data = JSON.parse(wrapper.contents);
-            
+            const target = `https://api.xpmarket.com/v1/token/${issuer}/${ticker}`;
+            const response = await fetch(`${proxy2}${encodeURIComponent(target)}`);
+            const data = await response.json();
             if (data && data.price_usd) {
-                setPriceDisplay(data.price_usd, data.price_change_24h_percentage || data.vol_24h_change_percent);
-                return;
+                if (setPriceDisplay(data.price_usd, data.price_change_24h_percentage)) return;
             }
-        } catch (e) { console.warn("XPMarket fetch failed..."); }
+        } catch (e) { console.warn("XPMarket path failed"); }
 
-        // Method 2: GeckoTerminal (via Proxy)
+        // --- PATH 2: Sologenic API (Better native CORS) ---
         try {
-            const targetUrl = encodeURIComponent(`https://api.geckoterminal.com/api/v2/networks/xrp/tokens/${issuer}`);
-            const response = await fetch(`${proxy}${targetUrl}`);
+            const response = await fetch(`https://api.sologenic.org/api/v1/ohlcv/token/${issuer}/${ticker}?period=1d`);
+            const data = await response.json();
+            if (data && data.last) {
+                if (setPriceDisplay(data.last, data.change_24h)) return;
+            }
+        } catch (e) { console.warn("Sologenic path failed"); }
+
+        // --- PATH 3: GeckoTerminal via AllOrigins ---
+        try {
+            const target = `https://api.geckoterminal.com/api/v2/networks/xrp/tokens/${issuer}`;
+            const response = await fetch(`${proxy1}${encodeURIComponent(target)}`);
             const wrapper = await response.json();
             const json = JSON.parse(wrapper.contents);
-            
-            if (json && json.data && json.data.attributes) {
+            if (json?.data?.attributes) {
                 const attr = json.data.attributes;
-                setPriceDisplay(attr.price_usd, attr.price_change_percentage.h24);
-                return;
+                if (setPriceDisplay(attr.price_usd, attr.price_change_percentage.h24)) return;
             }
-        } catch (e) {
-            console.error("All price fetches failed.");
-            if (!btn.innerHTML.includes('$')) btn.innerText = "TRADE $SLS LIVE";
+        } catch (e) { console.warn("GeckoTerminal path failed"); }
+
+        // Default if all fail
+        if (!btn.innerHTML.includes('$')) {
+            btn.innerText = "TRADE $SLS LIVE";
         }
     }
 
-    setInterval(updateLivePrice, 30000);
+    // Update every 60 seconds
+    setInterval(updateLivePrice, 60000);
     updateLivePrice();
-    // ---------------------------------------------------
 
     function showTab(evt, tabName) {
         var i, tabcontent, tablinks;
