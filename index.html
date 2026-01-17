@@ -235,7 +235,7 @@
 <script>
     AOS.init({ duration: 800, once: true });
 
-    // --- REAL-WORLD API PRICE FETCH ---
+    // --- UPDATED REAL-WORLD API PRICE FETCH ---
     let lastPrice = 0;
 
     async function updateLivePrice() {
@@ -243,24 +243,30 @@
         const tokenAddress = 'r95GyZac4butvVcsTWUPpxzekmyzaHsTA5'; // Solus Protocol Issuer Address
         
         try {
-            // Using GeckoTerminal Public API for XRPL Network
-            const response = await fetch(`https://api.geckoterminal.com/api/v2/networks/xrp/tokens/${tokenAddress}`);
+            // Using the GeckoTerminal "Pools for Token" endpoint which is most reliable for XRPL
+            const response = await fetch(`https://api.geckoterminal.com/api/v2/networks/xrp/tokens/${tokenAddress}/pools`, {
+                headers: { 'Accept': 'application/json;version=20230203' }
+            });
             const data = await response.json();
             
-            if (data && data.data && data.data.attributes) {
-                const newPriceUSD = parseFloat(data.data.attributes.price_usd);
+            // Navigate the JSON tree: data -> first pool found -> attributes -> price
+            if (data && data.data && data.data.length > 0) {
+                const poolAttributes = data.data[0].attributes;
+                const newPriceUSD = parseFloat(poolAttributes.base_token_price_usd);
                 
-                // Format price based on value (more decimals for small values)
-                const formattedPrice = newPriceUSD < 1 ? newPriceUSD.toFixed(4) : newPriceUSD.toFixed(2);
+                // Format price: extra decimals for small values
+                const formattedPrice = newPriceUSD < 0.01 ? newPriceUSD.toFixed(6) : newPriceUSD.toFixed(4);
                 
                 btn.innerText = `TRADE $SLS: $${formattedPrice}`;
                 
                 // Visual feedback if price changed
                 if (lastPrice > 0) {
                     if (newPriceUSD > lastPrice) {
-                        btn.style.filter = "hue-rotate(0deg) brightness(1.2)";
+                        btn.style.background = "linear-gradient(135deg, #14f195, #00ffa3)";
+                        btn.style.color = "#000";
                     } else if (newPriceUSD < lastPrice) {
-                        btn.style.filter = "hue-rotate(-45deg) brightness(1.1)";
+                        btn.style.background = "linear-gradient(135deg, #ff4b2b, #ff416c)";
+                        btn.style.color = "#fff";
                     }
                 }
                 
@@ -273,8 +279,8 @@
         }
     }
 
-    // Update every 30 seconds (standard for free public APIs to avoid rate limits)
-    setInterval(updateLivePrice, 30000);
+    // Update every 20 seconds to stay within public rate limits
+    setInterval(updateLivePrice, 20000);
     updateLivePrice();
     // ---------------------------------
 
