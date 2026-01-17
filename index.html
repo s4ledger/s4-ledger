@@ -43,6 +43,37 @@
         }
         .nav-brand { text-decoration: none; color: white; font-weight: 800; font-size: 1.1rem; letter-spacing: 1px; }
 
+        /* --- STICKY TRADE BUTTON --- */
+        .sticky-trade-btn {
+            position: fixed;
+            top: 100px; /* Below the nav */
+            right: 5%;
+            z-index: 2000;
+            background: linear-gradient(135deg, var(--accent), #00ffa3);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 800;
+            text-decoration: none;
+            font-size: 0.9rem;
+            box-shadow: 0 0 20px rgba(20, 241, 149, 0.4);
+            border: none;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pulse-glow 2s infinite;
+        }
+
+        .sticky-trade-btn:hover {
+            transform: scale(1.05) translateX(-5px);
+            box-shadow: 0 0 30px rgba(20, 241, 149, 0.6);
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(20, 241, 149, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(20, 241, 149, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(20, 241, 149, 0); }
+        }
+
         .hero {
             min-height: 80vh; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; text-align: center; padding: 100px 20px 40px;
@@ -66,7 +97,6 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Whitepaper Styling */
         #whitepaper-render { color: #ccc; }
         #whitepaper-render h1, #whitepaper-render h2 { color: var(--accent); margin-top: 30px; }
         #whitepaper-render hr { border: 0; border-top: 1px solid var(--border); margin: 20px 0; }
@@ -81,15 +111,22 @@
         .cta-btn { 
             background: #fff; color: #000; padding: 16px 35px; border-radius: 50px; 
             text-decoration: none; font-weight: 700; display: inline-block; margin-top: 30px; transition: 0.3s;
+            cursor: pointer; border: none;
         }
         .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(20, 241, 149, 0.3); }
 
         footer { padding: 60px; text-align: center; color: #555; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .sticky-trade-btn { top: auto; bottom: 20px; right: 20px; width: calc(100% - 40px); text-align: center; }
+        }
     </style>
 </head>
 <body>
 
 <div class="mesh-bg"></div>
+
+<button class="sticky-trade-btn" onclick="scrollToTrade()">TRADE $SLS LIVE</button>
 
 <nav>
     <a href="/" class="nav-brand">SOLUS PROTOCOL</a>
@@ -106,51 +143,42 @@
         Decentralized infrastructure for medical integrity. Powered by $SLS on the XRP Ledger.
     </p>
     <div style="display: flex; gap: 15px;">
-        <a href="#trade" onclick="showTab(event, 'trade')" class="cta-btn">Access Trading Hub</a>
+        <button onclick="scrollToTrade()" class="cta-btn">Access Trading Hub</button>
         <a href="https://xrpscan.com/account/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" class="cta-btn" style="background: transparent; border: 1px solid var(--border); color: #fff;">View Ledger Data</a>
     </div>
 </section>
 
-<button class="tab-btn" onclick="showTab(event, 'trade')">Trade $SLS</button>
-
-<div id="trade" class="tab-content">
-    <h2>Verified Trading Portals</h2>
-    <p style="color: #888; margin-bottom: 30px;">Access $SLS through verified XRP Ledger decentralized exchanges and AMM interfaces.</p>
-    <div class="grid">
-        <div class="card">
-            <h4 style="color: var(--accent);">Magnetic DEX</h4>
-            <p>Best for instant AMM swaps with low slippage and real-time charts.</p>
-            <a href="https://magnetic.org/swap/XRP-SLS.r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Swap on Magnetic →</a>
-        </div>
-        
-        <div class="card">
-            <h4 style="color: #00e5ff;">Sologenic DEX</h4>
-            <p>Advanced trading interface for setting limit buy and sell orders.</p>
-            <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight: bold;">Trade on Sologenic →</a>
-        </div>
-
-        <div class="card">
-            <h4 style="color: var(--secondary);">XPMarket</h4>
-            <p>Comprehensive token analytics, holder data, and portfolio tracking.</p>
-            <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" style="color: var(--secondary); text-decoration: none; font-weight: bold;">View on XPMarket →</a>
-        </div>
-
-        <div class="card">
-            <h4 style="color: #fff;">XRP Toolkit</h4>
-            <p>Direct interaction with the XRPL for hardware wallet users (Ledger/Trezor).</p>
-            <a href="https://www.xrptoolkit.com/trade?base=SLS.r95GyZac4butvVcsTWUPpxzekmyzaHsTA5&quote=XRP" target="_blank" style="color: #fff; text-decoration: none; font-weight: bold;">Trade on XRP Toolkit →</a>
-        </div>
-    </div>
-</div>
-    
-<section class="section-container" data-aos="fade-up">
+<section class="section-container" id="main-content" data-aos="fade-up">
     <div class="tabs">
-        <button class="tab-btn active" onclick="showTab(event, 'utility')">Utility</button>
-        <button class="tab-btn" onclick="showTab(event, 'whitepaper')">Whitepaper</button>
-        <button class="tab-btn" onclick="showTab(event, 'roadmap')">Roadmap</button>
-        <button class="tab-btn" onclick="showTab(event, 'dev')">Development<span class="badge-soon">Coming Soon</span></button>
-        <button class="tab-btn" onclick="showTab(event, 'partners')">Partners</button>
-        <button class="tab-btn" onclick="showTab(event, 'contact')">Support</button>
+        <button id="btn-utility" class="tab-btn active" onclick="showTab(event, 'utility')">Utility</button>
+        <button id="btn-trade" class="tab-btn" onclick="showTab(event, 'trade')" style="color: var(--accent); border: 1px solid rgba(20, 241, 149, 0.3); border-radius: 8px;">Trade $SLS</button>
+        <button id="btn-whitepaper" class="tab-btn" onclick="showTab(event, 'whitepaper')">Whitepaper</button>
+        <button id="btn-roadmap" class="tab-btn" onclick="showTab(event, 'roadmap')">Roadmap</button>
+        <button id="btn-dev" class="tab-btn" onclick="showTab(event, 'dev')">Development<span class="badge-soon">Soon</span></button>
+        <button id="btn-partners" class="tab-btn" onclick="showTab(event, 'partners')">Partners</button>
+        <button id="btn-contact" class="tab-btn" onclick="showTab(event, 'contact')">Support</button>
+    </div>
+
+    <div id="trade" class="tab-content">
+        <h2>Verified Trading Portals</h2>
+        <p style="color: #888; margin-bottom: 30px;">Direct links to verified XRP Ledger liquidity pools.</p>
+        <div class="grid">
+            <div class="card">
+                <h4 style="color: var(--accent);">Magnetic DEX</h4>
+                <p>Best for instant AMM swaps with low slippage.</p>
+                <a href="https://magnetic.org/swap/XRP-SLS.r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Swap on Magnetic →</a>
+            </div>
+            <div class="card">
+                <h4 style="color: #00e5ff;">Sologenic DEX</h4>
+                <p>Advanced trading interface for limit orders.</p>
+                <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight: bold;">Trade on Sologenic →</a>
+            </div>
+            <div class="card">
+                <h4 style="color: var(--secondary);">XPMarket</h4>
+                <p>Comprehensive token analytics and holder data.</p>
+                <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" style="color: var(--secondary); text-decoration: none; font-weight: bold;">View on XPMarket →</a>
+            </div>
+        </div>
     </div>
 
     <div id="utility" class="tab-content active">
@@ -170,22 +198,13 @@
     <div id="whitepaper" class="tab-content">
         <h2>Official Whitepaper</h2>
         <div id="whitepaper-render">Loading Protocol Documentation...</div>
-        <div style="margin-top: 30px;">
-            <a href="https://github.com/solusprotocol1/solus-protocol/blob/main/WHITEPAPER.md" target="_blank" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">View Raw on GitHub →</a>
-        </div>
     </div>
 
     <div id="roadmap" class="tab-content">
         <h2>Strategic Roadmap</h2>
         <div class="grid">
-            <div class="card">
-                <h4 style="color: var(--accent);">Q1 2026: Foundation</h4>
-                <p>Mainnet launch, $SLS liquidity pools, and technical documentation release.</p>
-            </div>
-            <div class="card">
-                <h4 style="color: #fff;">Q2 2026: Pilot Phase</h4>
-                <p>Onboarding the first clinical partners for the data-integrity sandbox.</p>
-            </div>
+            <div class="card"><h4>Q1 2026</h4><p>Mainnet launch & Liquidity Pools.</p></div>
+            <div class="card"><h4>Q2 2026</h4><p>Clinical Pilot Program Start.</p></div>
         </div>
     </div>
 
@@ -193,28 +212,18 @@
         <h2>Developer Ecosystem</h2>
         <p>Building a robust API for healthcare software integrations.</p>
         <div class="card" style="background: #000; border-color: var(--secondary);">
-            <code style="color: var(--accent);">// Coming Q2 2026<br>const solus = require('@solus/sdk');<br>await solus.verify(patientData);</code>
+            <code style="color: var(--accent);">const solus = require('@solus/sdk');</code>
         </div>
     </div>
 
     <div id="partners" class="tab-content">
-        <h2>Clinical Partnerships</h2>
-        <p>Seeking medical centers and labs looking to lead in data transparency.</p>
+        <h2>Partnerships</h2>
         <a href="mailto:partners@solusprotocol.com" class="cta-btn" style="background: var(--accent); color: #000;">Inquire for Pilot</a>
     </div>
 
     <div id="contact" class="tab-content">
         <h2>Support</h2>
-        <div class="grid">
-            <div class="card">
-                <h4>General Inquiries</h4>
-                <p>support@solusprotocol.com</p>
-            </div>
-            <div class="card">
-                <h4>Technical Support</h4>
-                <p>support@solusprotocol.com</p>
-            </div>
-        </div>
+        <p>Email: support@solusprotocol.com</p>
     </div>
 </section>
 
@@ -229,33 +238,36 @@
     function showTab(evt, tabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].classList.remove("active");
-        }
+        for (i = 0; i < tabcontent.length; i++) { tabcontent[i].classList.remove("active"); }
         tablinks = document.getElementsByClassName("tab-btn");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].classList.remove("active");
-        }
+        for (i = 0; i < tablinks.length; i++) { tablinks[i].classList.remove("active"); }
+        
         document.getElementById(tabName).classList.add("active");
-        evt.currentTarget.classList.add("active");
-
-        // Load whitepaper only when tab is clicked to save resources
-        if(tabName === 'whitepaper') {
-            loadWhitepaper();
+        
+        // Update button active state
+        if (evt) {
+            evt.currentTarget.classList.add("active");
+        } else {
+            document.getElementById('btn-' + tabName).classList.add("active");
         }
+
+        if(tabName === 'whitepaper') { loadWhitepaper(); }
+    }
+
+    function scrollToTrade() {
+        document.getElementById('main-content').scrollIntoView({ behavior: 'smooth' });
+        showTab(null, 'trade');
     }
 
     async function loadWhitepaper() {
         const renderDiv = document.getElementById('whitepaper-render');
         const githubRawUrl = 'https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/WHITEPAPER.md';
-        
         try {
             const response = await fetch(githubRawUrl);
-            if (!response.ok) throw new Error('File not found');
             const markdown = await response.text();
             renderDiv.innerHTML = marked.parse(markdown);
         } catch (error) {
-            renderDiv.innerHTML = "<p style='color: #ff4444;'>Error loading Whitepaper from GitHub. Please ensure WHITEPAPER.md exists in your main repository branch.</p>";
+            renderDiv.innerHTML = "<p>Error loading Whitepaper.</p>";
         }
     }
 </script>
