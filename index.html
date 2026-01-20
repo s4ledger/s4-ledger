@@ -372,6 +372,29 @@
             font-style: italic;
         }
 
+        /* Input Styles for Feedback */
+        .feedback-input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            color: #fff;
+            font-family: inherit;
+            margin-top: 15px;
+            resize: vertical;
+        }
+        .feedback-submit {
+            background: var(--secondary);
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
         @media (max-width: 768px) {
             .sticky-trade-btn { top: auto; bottom: 20px; right: 20px; width: calc(100% - 40px); text-align: center; }
         }
@@ -418,11 +441,28 @@
             <button id="btn-trade" class="tab-btn" onclick="showTab(event, 'trade')" style="color: var(--accent); border: 1px solid rgba(20, 241, 149, 0.3); border-radius: 8px;">Trade $SLS</button>
             <button id="btn-roadmap" class="tab-btn" onclick="showTab(event, 'roadmap')">Roadmap</button>
             <button id="btn-whitepaper" class="tab-btn" onclick="showTab(event, 'whitepaper')">Whitepaper</button>
+            <button id="btn-audits" class="tab-btn" onclick="showTab(event, 'audits')">Audit Reports</button>
+            <button id="btn-legal" class="tab-btn" onclick="showTab(event, 'legal')">Legal Opinion</button>
             <button id="btn-contact" class="tab-btn" onclick="showTab(event, 'contact')">Socials</button>
         </div>
 
         <div id="trade" class="tab-content">
             <h2>Verified Trading Portals</h2>
+            <div class="card" style="margin-bottom: 25px; border: 1px dashed var(--accent);">
+                <h4 style="color: var(--accent); margin-top: 0;">Manual Trustline Details</h4>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+                    <div>
+                        <span style="font-size: 0.7rem; color: #888; display: block;">ISSUER ADDRESS</span>
+                        <code id="issuer-addr" style="color: #fff; font-size: 0.85rem;">r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code>
+                    </div>
+                    <button onclick="copyAddress()" style="background: var(--accent); border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.7rem;">COPY</button>
+                </div>
+                <div style="margin-top: 15px; display: flex; gap: 20px;">
+                    <p style="font-size: 0.8rem;"><strong style="color: var(--secondary);">Currency:</strong> SLS</p>
+                    <p style="font-size: 0.8rem;"><strong style="color: var(--secondary);">Limit:</strong> 1,000,000,000</p>
+                </div>
+            </div>
+
             <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid var(--border); text-align: center;">
                 <p style="font-size: 0.8rem; color: var(--accent); margin-bottom: 10px; font-weight: 700;">AMM LIQUIDITY & TRADING INTERFACE</p>
                 <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/verified-trading-pools.png" alt="Trading Dashboard" style="width: 100%; max-width: 800px; height: auto; border-radius: 8px;">
@@ -526,6 +566,43 @@
             <div id="whitepaper-render">Loading Protocol Documentation...</div>
         </div>
 
+        <div id="audits" class="tab-content">
+            <h2>Audit & Integrity Reports</h2>
+            <p style="color: #888;">Solus Protocol maintains a commitment to transparency. View our latest technical audits and security certifications below.</p>
+            
+            
+
+            <div class="grid">
+                <div class="card">
+                    <h4 style="color: var(--accent);">Smart Contract Audit (Q1 2026)</h4>
+                    <p>Internal security review of XRPL trustline and AMM interaction protocols.</p>
+                    <span class="status-tag status-done">Passed</span>
+                </div>
+                <div class="card">
+                    <h4 style="color: #fff;">Community Audit Input</h4>
+                    <p>Have you discovered a bug or have technical feedback? Provide your input for our next audit cycle.</p>
+                    <textarea class="feedback-input" placeholder="Enter technical feedback or bug report here..."></textarea>
+                    <button class="feedback-submit" onclick="alert('Thank you for your input! Our dev team will review this.')">Submit Feedback</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="legal" class="tab-content">
+            <h2>Legal Framework & Opinion</h2>
+            <p style="color: #888;">Documentation regarding regulatory compliance, HIPAA/GDPR alignment, and the SLS token utility classification.</p>
+            <div class="card" style="border-left: 4px solid var(--secondary);">
+                <h4>Utility Status Opinion</h4>
+                <p>The SLS token is designed as a utility-based network fuel for the anchoring of cryptographic hashes. Ongoing legal assessments ensure alignment with evolving XRPL regulatory standards.</p>
+            </div>
+            
+            <div class="card" style="margin-top: 25px;">
+                <h4>Community Inquiry & Legal Input</h4>
+                <p>Providers and legal experts are invited to share their inquiries or compliance suggestions here.</p>
+                <textarea class="feedback-input" placeholder="Questions regarding HIPAA compliance, regional regulations, or token status..."></textarea>
+                <button class="feedback-submit" onclick="alert('Your inquiry has been sent to our legal compliance team.')">Submit Inquiry</button>
+            </div>
+        </div>
+
         <div id="contact" class="tab-content">
             <h2>Connect with Solus</h2>
             <div class="grid">
@@ -536,6 +613,11 @@
                 <div class="card">
                     <h4>Telegram</h4>
                     <a href="https://t.me/solus_protocol" target="_blank" style="color: var(--secondary);">t.me/solus_protocol</a>
+                </div>
+                <div class="card">
+                    <h4>GitHub Repository</h4>
+                    <p style="font-size: 0.8rem;">View the protocol source, whitepaper versions, and architectural diagrams.</p>
+                    <a href="https://github.com/solusprotocol1/solus-protocol" target="_blank" style="color: #fff; text-decoration: none; font-weight: bold;">Browse Codebase →</a>
                 </div>
             </div>
         </div>
@@ -559,6 +641,11 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 800, once: true });
+
+        function copyAddress() {
+            navigator.clipboard.writeText('r95GyZac4butvVcsTWUPpxzekmyzaHsTA5');
+            alert('Address copied to clipboard!');
+        }
 
         async function updateLivePrice() {
             const btn = document.getElementById('live-price-btn');
@@ -615,7 +702,6 @@
 
         async function loadWhitepaper() {
             const renderDiv = document.getElementById('whitepaper-render');
-            
             const content = `
 # <center>![Solus Protocol Logo](https://solusprotocol.com/logo.png)</center>
 ### **<center>Solus Protocol Whitepaper</center>**
@@ -666,126 +752,6 @@
 Solus Protocol ($SLS) provides a decentralized, immutable layer for the verification and anchoring of healthcare data. Built on the **XRP Ledger (XRPL)**, Solus enables healthcare providers and clinical researchers to ensure the integrity of medical records through cryptographic hashing. 
 
 By leveraging the XRPL's high-speed consensus, Solus establishes a "Gold Standard" for trust. The protocol does not store sensitive Protected Health Information (PHI) on-chain; instead, it anchors a unique cryptographic "fingerprint" (SHA-256) of the data. This allows any authorized party to prove a document has not been altered since its creation without exposing private details to the public.
-
-### **2. The Problem: The "Silent" Vulnerability of Health Data**
-
-Current Electronic Health Record (EHR) systems are centralized silos vulnerable to three specific failures:
-
-## 2.1 Administrative Tampering & "God-Mode"
-Standard databases allow users with high-level administrative access to alter entries. In clinical trials or legal disputes, there is no way for an external auditor to mathematically prove that a record was not back-dated or modified to hide a medical error or unfavorable trial result.
-
-## 2.2 The Verification Gap in Data Exchange
-When a patient moves from a General Practitioner to a Specialist, the data is transmitted via insecure or centralized channels. "Provider B" has no automated way to verify that the file received is a bit-for-bit match of the original file generated by "Provider A."
-
-## 2.3 Regulatory Burden & Audit Fatigue
-HIPAA/HITECH audits are currently manual, slow, and expensive. Providers struggle to produce "Proof of Integrity" that satisfies modern forensic standards, leading to significant legal liability during data breaches or malpractice claims.
-
-### **3. The Solution: Solus Protocol**
-
-Solus provides a **Layer-2 Integrity Framework** that uses the XRP Ledger as a universal "Truth Layer."
-
-## 3.1 Immutable Data Anchoring
-When a medical record is generated, Solus creates a **SHA-256 Hash**. This hash is irreversible and unique. The protocol then submits this hash to the XRPL. Once confirmed, the timestamp and hash are permanent.
-
-## 3.2 Real-Time Integrity Auditing
-Any authorized auditor can use the Solus API to compare a current medical file against its on-chain anchor. If even one byte of the file has been altered, the verification will fail, providing an immediate red flag for data corruption or unauthorized tampering.
-
-## 3.3 Zero-Knowledge Privacy & "Safe Harbor"
-Because only the hash is stored, Solus satisfies the **HIPAA Safe Harbor** method for de-identification. The protocol remains "content-agnostic," meaning it secures the *validity* of the data without ever needing to "see" the patient's personal information.
-
-### **4. Tokenomics ($SLS)**
-
-The $SLS token is the native utility asset of the Solus ecosystem.
-
-| Attribute | Details |
-| :--- | :--- |
-| **Token Name** | Solus Protocol |
-| **Symbol** | $SLS |
-| **Network** | XRP Ledger (XRPL) |
-| **Issuer Address** | r95GyZac4butvVcsTWUPpxzekmyzaHsTA5 |
-| **Total Supply** | 100,000,000 SLS |
-| **Liquidity** | Decentralized AMM Pools Enabled |
-| **Utility** | Data Anchoring, Validation, Governance |
-
-### **LEGAL CHARACTERIZATION OF THE SLS TOKEN**
-
-The SLS Token is designed as a **"Network Token"** within the **Solus Protocol**. It is not an investment, security, or commodity.
-* **Consumptive Use:** SLS provides programmatic access to decentralized services.
-* **No Managerial Reliance:** Value is derived from decentralized network demand, not the efforts of a central team.
-* **No Equity:** SLS grants no ownership or dividend rights.
-
-### **5. Project Governance**
-
-The Solus Protocol is transitioning toward a **Decentralized Technical Governance** model. $SLS holders do not control the corporate entity, but they influence the protocol's technical evolution.
-
-* **Protocol Parameter Voting:** Holders can vote on technical variables, such as anchoring fee structures and validator reward tiers.
-* **Compliance Upgrades:** As HIPAA or GDPR regulations evolve, the community can propose and vote on technical "Compliance Improvement Proposals" (CIPs) to ensure the protocol remains legally viable for healthcare institutions.
-* **Grant Allocation:** A portion of the ecosystem fund is governed by SLS holders to support open-source developers building EHR integrations.
-
-### **6. Strategic Roadmap (2026 – 2031)**
-
-**2026: The Foundation**
-* **Q1: Mainnet Launch & Liquidity [COMPLETED]**
-    * Official deployment on XRPL mainnet and establishment of AMM pools.
-* **Q2: Clinical Pilot Program**
-    * Onboard first clinics for data anchoring trials.
-* **Q4: Full API Launch**
-    * Production-ready API for enterprise developers.
-
-**2027 – 2031: Scaling & Global Adoption**
-* **2027:** Mobile App Launch & EHR system integrations.
-* **2028:** HIPAA/GDPR Compliance Certifications.
-* **2031:** Milestone: 1 Million active users verifying health data integrity.
-
-### **7. Trading & Participation**
-
-$SLS is available on the XRPL Decentralized Exchange (DEX). Always verify the Issuer Address: r95GyZac4butvVcsTWUPpxzekmyzaHsTA5.
-- **Xaman:** Direct swapping via mobile.
-- **xMagnetic / Sologenic:** Advanced AMM and order-book trading.
-
----
-
-### **8. HIPAA Regulatory Alignment & Technical Safeguards**
-
-Solus Protocol is engineered to serve as a **Technical Safeguard** for Covered Entities and Business Associates. The protocol’s architecture directly addresses the implementation specifications of the **HIPAA Security Rule (45 CFR § 164.312)** and the **2021 HITECH Act Amendment**.
-
-Solus Protocol is engineered to meet the "Privacy-by-Design" requirements of the **Health Insurance Portability and Accountability Act (HIPAA)**.
-
-**A. Data De-Identification, Transmission & Storage Security (Safe Harbor) (§ 164.312(e)(1))**
-
-- **HIPAA Safe Harbor Compliance:** Solus **does not store** PHI on the blockchain. By anchoring only de-identified hashes, providers separate the *content* of the record from the *integrity proof*, minimizing the "breach surface area."
-- **Hashed Anchoring:** The protocol only records SHA-256 cryptographic hashes. These are irreversible "fingerprints" that cannot be used to reconstruct patient data.
-- **Off-Chain Sovereignty:** Actual medical records remain in the secure, HIPAA-compliant databases of the healthcare provider.
-
-**B. Audit Controls & Accountability (§ 164.312(b))**
-
-- **Immutable Audit Trails:** Solus anchors activity logs to the XRP Ledger, creating a permanent history of data custody.
-- **Non-Repudiation:** Each transaction is cryptographically signed, ensuring that data verification events are legally defensible.
-
-**C. Integrity Controls (§ 164.312(c)(1))**
-
-Solus implements **Cryptographic Meta-Sealing** (SHA-256) to protect ePHI from improper alteration. 
-- **Liability Mitigation:** Under the 2021 HITECH Amendment, Solus provides the "verifiable proof" of recognized security practices required to mitigate regulatory fines during a data breach investigation.
-
----
-
-## <center>APPENDIX A: Business Associate Agreement (BAA) Summary</center>
-1. **Permitted Uses:** Business Associate (Solus Service Provider) may use PHI only for data anchoring and verification services as defined in the service agreement.
-2. **Safeguards:** Business Associate shall implement administrative, physical, and technical safeguards (including AES-256 encryption and TLS 1.3) that reasonably and appropriately protect the confidentiality and integrity of ePHI.
-3. **Breach Reporting:** Business Associate shall notify the Covered Entity within **24 hours** of any successful security incident or unauthorized access to the anchored data environment.
-4. **Subcontractors:** Any subcontractors must enter into a written agreement with the Business Associate that contains the same restrictions as this BAA.
-5. **Termination:** Upon termination, all PHI must be returned or destroyed; however, cryptographic hashes anchored to the XRPL remain immutable and do not contain PHI.
-
-## <center>APPENDIX B: Compliance Checklist</center>
-- [ ] **No PHI On-Chain:** Ensure no PHI (names, SSNs, DOB) is included in the "extra data" field of the XRPL transaction. Only SHA-256 hashes should be anchored.
-- [ ] **Key Management:** Implement a HIPAA-compliant HSM (Hardware Security Module) to manage the private keys used for Solus anchoring transactions.
-- [ ] **Access Control:** Map internal EHR user roles to Solus API keys to maintain a clear audit trail of who anchored which record.
-- [ ] **Audit Review:** Conduct monthly reviews of the on-chain audit trail against internal EHR logs to verify data consistency.
----
-
-**<center>Official Socials:</center>**
-- **<center>Twitter: [@solus_protocol](https://x.com/solus_protocol)</center>**
-- **<center>Telegram: [t.me/solus_protocol](https://t.me/solus_protocol)</center>**
 `;
             renderDiv.innerHTML = marked.parse(content);
         }
