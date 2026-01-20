@@ -64,9 +64,8 @@
             gap: 12px;
         }
 
-        /* Fixed Logo Styling */
         .nav-logo {
-            height: 40px; /* Increased size for visibility */
+            height: 40px;
             width: auto;
             display: block;
             object-fit: contain;
@@ -489,16 +488,61 @@
             const renderDiv = document.getElementById('whitepaper-render');
             const pdfUrl = 'https://github.com/solusprotocol1/solus-protocol/raw/main/Solus%20Protocol%20Whitepaper%20Version%202.8.pdf';
             
-            // Replaced the partial text render with a full PDF embed for accuracy
-            renderDiv.innerHTML = `
-                <div style="margin-bottom: 25px;">
-                    <a href="${pdfUrl}" class="cta-btn" style="background:var(--accent); color:#000; text-decoration:none;">Download Full PDF Whitepaper</a>
-                </div>
-                <iframe src="${pdfUrl}" width="100%" height="800px" style="border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,0.05);">
-                    <p>Your browser does not support iframes. <a href="${pdfUrl}" target="_blank" style="color:var(--accent)">Click here to view the PDF.</a></p>
-                </iframe>
+            const content = `
+### [📄 Download Full PDF Whitepaper](${pdfUrl})
+
+---
+
+# Solus Protocol Whitepaper v2.8
+**Decentralized Infrastructure for Medical Data Integrity**
+*January 2026*
+
+## 1. Executive Summary
+Solus Protocol ($SLS) provides a decentralized, immutable layer for the verification and anchoring of healthcare data. Built on the XRP Ledger (XRPL), Solus enables healthcare providers, clinical researchers, and patients to ensure the integrity of medical records through cryptographic hashing. By removing the possibility of retroactive data manipulation, Solus establishes a "Gold Standard" for trust in digital health.
+
+## 2. The Problem: Data Fragmentation and Manipulation
+Current Electronic Health Record (EHR) systems suffer from two critical vulnerabilities:
+1.  **Centralization:** Data stored in centralized silos is susceptible to unauthorized alteration.
+2.  **Lack of Auditability:** Retroactive changes to clinical records are difficult to detect, compromising patient safety and regulatory compliance.
+
+## 3. The Solution: Solus Protocol
+Solus leverages the high speed and low cost of the XRPL to create a permanent audit trail.
+- **Data Anchoring:** Instead of storing sensitive patient data on-chain, Solus stores a unique cryptographic hash.
+- **Verification:** Any party with the original document can verify its authenticity by comparing its hash against the one anchored on the Solus Protocol.
+
+## 4. Tokenomics ($SLS)
+The $SLS token is the native utility asset of the Solus ecosystem.
+- **Token Name:** Solus Protocol
+- **Symbol:** $SLS
+- **Network:** XRP Ledger (XRPL)
+- **Issuer Address:** r95GyZac4butvVcsTWUPpxzekmyzaHsTA5
+- **Total Supply:** 100,000,000 SLS
+- **Utility:** Data Anchoring, Validation, Governance
+
+## 5. Strategic Roadmap (2026-2031)
+- **2026:** Mainnet Launch, Clinical Pilot Program, and Full API Launch.
+- **2027:** Mobile App Launch & EHR system integrations.
+- **2028:** HIPAA/GDPR Compliance Certifications.
+- **2031:** Milestone: 1 Million active users verifying health data integrity.
+
+## 6. Disclosures & Risk Factors
+- **No Ownership Interest:** Holders of $SLS do not possess any equity or financial rights to profits.
+- **Utility Function:** Primary function is cryptographic data anchoring.
+- **Market Risk:** Digital assets are subject to extreme volatility. $SLS has not been registered under the U.S. Securities Act of 1933.
+
+## 7. HIPAA Alignment & Data Privacy Standards
+Solus is engineered to meet "Privacy-by-Design" requirements. 
+- **Data De-Identification:** No Protected Health Information (PHI) is stored on the blockchain. 
+- **Hashed Anchoring:** Uses SHA-256 irreversible "fingerprints."
+- **Integrity Controls:** Immutable XRPL nature ensures unforgeable audit trails.
             `;
-            renderDiv.style.textAlign = 'center';
+            
+            try {
+                renderDiv.innerHTML = marked.parse(content);
+                renderDiv.style.textAlign = 'left';
+            } catch (e) { 
+                renderDiv.innerHTML = `<p>Error loading content. <a href="${pdfUrl}" target="_blank" style="color:var(--accent)">Click here to download the PDF.</a></p>`; 
+            }
         }
     </script>
 </body>
