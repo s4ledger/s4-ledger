@@ -2,7 +2,7 @@
 **The Immutable Standard for Medical Data Integrity on the XRP Ledger**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Network: XRPL Mainnet](https://img.shields.io/badge/Network-XRPL%20Mainnet-orange)](https://xrpscan.com/token/SLS/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
+[![Network: XRPL Mainnet](https://img.shields.io/badge/Network-XRPL%20Mainnet-orange)](https://xrpscan.com/token/SLS.r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
 [![Compliance: HIPAA Ready](https://img.shields.io/badge/Compliance-HIPAA%20Ready-green.svg)](WHITEPAPER.md#8-hipaa-regulatory-alignment--technical-safeguards)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
