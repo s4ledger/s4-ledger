@@ -1,4 +1,4 @@
-# [[logo.png] ](https://github.com/solusprotocol1/solus-protocol/commit/82a96bfffcbc8101e7aee4a68a5a8777512b5806)Solus Protocol Whitepaper
+# ![Solus Protocol Logo](https://solusprotocol.com/logo.png) Solus Protocol Whitepaper
 **Decentralized Infrastructure for Medical Data Integrity**
 *Version 2.8 | January 2026*
 
