@@ -183,26 +183,14 @@
             font-size: 1rem;
             color: #ccc;
         }
-        
-        /* Updated styles for separated headings and centered warning */
         #whitepaper-render h1, #whitepaper-render h2, #whitepaper-render h3 {
             color: #fff;
-            margin-top: 3em; /* Increased spacing to separate from body text */
-            margin-bottom: 1.5em; /* Spacing below heading */
-            display: block;
+            margin-top: 2em;
         }
-        
-        .centered-alert {
-            display: block;
-            text-align: center;
-            width: 100%;
-            margin: 10px 0;
-        }
-
         #whitepaper-render hr {
             border: 0;
             border-top: 1px solid var(--border);
-            margin: 3em 0;
+            margin: 2em 0;
         }
         #whitepaper-render table {
             width: 100%;
@@ -629,8 +617,7 @@
             const renderDiv = document.getElementById('whitepaper-render');
             
             const content = `
-# <center>![Solus Protocol Logo](https://solusprotocol.com/logo.png)&nbsp;</center>
-## <center>Solus Protocol Whitepaper</center>
+# <center>![Solus Protocol Logo](https://solusprotocol.com/logo.png)&nbsp; Solus Protocol Whitepaper</center>
 **<center>Decentralized Infrastructure for Medical Data Integrity</center>**
 *<center>Version 2.9 | January 2026</center>*
 
@@ -639,9 +626,9 @@
 ## <center>**LEGAL NOTICE AND RISK DISCLOSURE**</center>
 
 > [!WARNING]
-> <span class="centered-alert">**IMPORTANT:**</span>
-> <span class="centered-alert">**PLEASE READ THE FOLLOWING CAREFULLY.**</span>
-> **THE ACQUISITION OF SLS TOKENS INVOLVES SUBSTANTIAL RISK AND SHOULD ONLY BE UNDERTAKEN BY INDIVIDUALS CAPABLE OF BEARING THE TOTAL LOSS OF THEIR PURCHASE.**
+> **IMPORTANT:**
+> PLEASE READ THE FOLLOWING CAREFULLY.
+> THE ACQUISITION OF SLS TOKENS INVOLVES SUBSTANTIAL RISK AND SHOULD ONLY BE UNDERTAKEN BY INDIVIDUALS CAPABLE OF BEARING THE TOTAL LOSS OF THEIR PURCHASE.
 
 **1. REGULATORY AND SECURITIES LAW RISK**
 The legal status of **SLS** and the **Solus Protocol** is subject to rapid change. While the project is designed as a utility-based network token, there is a material risk that the **SEC**, **CFTC**, or other global authorities may deem SLS a "security" under the *Howey Test* or similar frameworks. 
@@ -695,7 +682,92 @@ When a medical record is generated, Solus creates a **SHA-256 Hash**. This hash 
 Any authorized auditor can use the Solus API to compare a current medical file against its on-chain anchor. If even one byte of the file has been altered, the verification will fail, providing an immediate red flag for data corruption or unauthorized tampering.
 
 ### 3.3 Zero-Knowledge Privacy & "Safe Harbor"
-Because only the hash is stored, Solus satisfies the **HIPAA Safe Harbor** method for de-identification. The protocol remains "content-agnostic," meaning it secures the *validity* of the data without ever seeing the contents.
+Because only the hash is stored, Solus satisfies the **HIPAA Safe Harbor** method for de-identification. The protocol remains "content-agnostic," meaning it secures the *validity* of the data without ever needing to "see" the patient's personal information.
+
+## <center>4. Tokenomics ($SLS)</center>
+The $SLS token is the native utility asset of the Solus ecosystem.
+
+| Attribute | Details |
+| :--- | :--- |
+| **Token Name** | Solus Protocol |
+| **Symbol** | $SLS |
+| **Network** | XRP Ledger (XRPL) |
+| **Issuer Address** | r95GyZac4butvVcsTWUPpxzekmyzaHsTA5 |
+| **Total Supply** | 100,000,000 SLS |
+| **Liquidity** | Decentralized AMM Pools Enabled |
+| **Utility** | Data Anchoring, Validation, Governance |
+
+### <center>**LEGAL CHARACTERIZATION OF THE SLS TOKEN**</center>
+The SLS Token is designed as a **"Network Token"** within the **Solus Protocol**. It is not an investment, security, or commodity.
+* **Consumptive Use:** SLS provides programmatic access to decentralized services.
+* **No Managerial Reliance:** Value is derived from decentralized network demand, not the efforts of a central team.
+* **No Equity:** SLS grants no ownership or dividend rights.
+
+## <center>5. Project Governance</center>
+The Solus Protocol is transitioning toward a **Decentralized Technical Governance** model. $SLS holders do not control the corporate entity, but they influence the protocol's technical evolution.
+
+* **Protocol Parameter Voting:** Holders can vote on technical variables, such as anchoring fee structures and validator reward tiers.
+* **Compliance Upgrades:** As HIPAA or GDPR regulations evolve, the community can propose and vote on technical "Compliance Improvement Proposals" (CIPs) to ensure the protocol remains legally viable for healthcare institutions.
+* **Grant Allocation:** A portion of the ecosystem fund is governed by SLS holders to support open-source developers building EHR integrations.
+
+## <center>6. Strategic Roadmap (2026 – 2031)</center>
+### <center>2026: The Foundation</center>
+* **Q1: Mainnet Launch & Liquidity [COMPLETED]**
+    * Official deployment on XRPL mainnet and establishment of AMM pools.
+* **Q2: Clinical Pilot Program**
+    * Onboard first clinics for data anchoring trials.
+* **Q4: Full API Launch**
+    * Production-ready API for enterprise developers.
+
+### <center>2027 – 2031: Scaling & Global Adoption</center>
+* **2027:** Mobile App Launch & EHR system integrations.
+* **2028:** HIPAA/GDPR Compliance Certifications.
+* **2031:** Milestone: 1 Million active users verifying health data integrity.
+
+## <center>7. Trading & Participation</center>
+$SLS is available on the XRPL Decentralized Exchange (DEX). Always verify the Issuer Address: r95GyZac4butvVcsTWUPpxzekmyzaHsTA5.
+- **Xaman:** Direct swapping via mobile.
+- **xMagnetic / Sologenic:** Advanced AMM and order-book trading.
+
+---
+
+## <center>8. HIPAA Regulatory Alignment & Technical Safeguards</center>
+Solus Protocol is engineered to serve as a **Technical Safeguard** for Covered Entities and Business Associates. The protocol’s architecture directly addresses the implementation specifications of the **HIPAA Security Rule (45 CFR § 164.312)** and the **2021 HITECH Act Amendment**.
+
+Solus Protocol is engineered to meet the "Privacy-by-Design" requirements of the **Health Insurance Portability and Accountability Act (HIPAA)**.
+
+### <center>A. Data De-Identification, Transmission & Storage Security (Safe Harbor) (§ 164.312(e)(1))</center>
+- **HIPAA Safe Harbor Compliance:** Solus **does not store** PHI on the blockchain. By anchoring only de-identified hashes, providers separate the *content* of the record from the *integrity proof*, minimizing the "breach surface area."
+- **Hashed Anchoring:** The protocol only records SHA-256 cryptographic hashes. These are irreversible "fingerprints" that cannot be used to reconstruct patient data.
+- **Off-Chain Sovereignty:** Actual medical records remain in the secure, HIPAA-compliant databases of the healthcare provider.
+
+### <center>B. Audit Controls & Accountability (§ 164.312(b))</center>
+- **Immutable Audit Trails:** Solus anchors activity logs to the XRP Ledger, creating a permanent history of data custody.
+- **Non-Repudiation:** Each transaction is cryptographically signed, ensuring that data verification events are legally defensible.
+
+### <center>C. Integrity Controls (§ 164.312(c)(1))</center>
+Solus implements **Cryptographic Meta-Sealing** (SHA-256) to protect ePHI from improper alteration. 
+- **Liability Mitigation:** Under the 2021 HITECH Amendment, Solus provides the "verifiable proof" of recognized security practices required to mitigate regulatory fines during a data breach investigation.
+
+---
+
+## <center>APPENDIX A: Business Associate Agreement (BAA) Summary</center>
+1. **Permitted Uses:** Business Associate (Solus Service Provider) may use PHI only for data anchoring and verification services as defined in the service agreement.
+2. **Safeguards:** Business Associate shall implement administrative, physical, and technical safeguards (including AES-256 encryption and TLS 1.3) that reasonably and appropriately protect the confidentiality and integrity of ePHI.
+3. **Breach Reporting:** Business Associate shall notify the Covered Entity within **24 hours** of any successful security incident or unauthorized access to the anchored data environment.
+4. **Subcontractors:** Any subcontractors must enter into a written agreement with the Business Associate that contains the same restrictions as this BAA.
+5. **Termination:** Upon termination, all PHI must be returned or destroyed; however, cryptographic hashes anchored to the XRPL remain immutable and do not contain PHI.
+
+## <center>APPENDIX B: Compliance Checklist</center>
+- [ ] **No PHI On-Chain:** Ensure no PHI (names, SSNs, DOB) is included in the "extra data" field of the XRPL transaction. Only SHA-256 hashes should be anchored.
+- [ ] **Key Management:** Implement a HIPAA-compliant HSM (Hardware Security Module) to manage the private keys used for Solus anchoring transactions.
+- [ ] **Access Control:** Map internal EHR user roles to Solus API keys to maintain a clear audit trail of who anchored which record.
+- [ ] **Audit Review:** Conduct monthly reviews of the on-chain audit trail against internal EHR logs to verify data consistency.
+---
+
+**<center>Official Socials:</center>**
+- **<center>Twitter: [@solus_protocol](https://x.com/solus_protocol)</center>**
+- **<center>Telegram: [t.me/solus_protocol](https://t.me/solus_protocol)</center>**
 `;
             renderDiv.innerHTML = marked.parse(content);
         }
