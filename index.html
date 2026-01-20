@@ -58,6 +58,14 @@
             font-weight: 800;
             font-size: 1.1rem;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo {
+            height: 35px;
+            width: auto;
         }
 
         .sticky-trade-btn {
@@ -274,7 +282,10 @@
     <button class="sticky-trade-btn" id="live-price-btn" onclick="scrollToTrade()">TRADE $SLS LIVE</button>
 
     <nav>
-        <a href="/" class="nav-brand">SOLUS PROTOCOL</a>
+        <a href="/" class="nav-brand">
+            <img src="image_0.png" alt="Solus Logo" class="nav-logo">
+            SOLUS PROTOCOL
+        </a>
         <div style="display: flex; gap: 20px;">
             <a href="https://t.me/solus_protocol" target="_blank" style="color: #888; text-decoration: none;">Telegram</a>
             <a href="https://x.com/solus_protocol" target="_blank" style="color: #888; text-decoration: none;">Twitter</a>
@@ -312,12 +323,22 @@
                     <a href="https://xaman.app/" target="_blank" style="color: #fff; text-decoration: none; font-weight: bold;">Open Xaman Wallet →</a>
                 </div>
                 <div class="card">
+                    <h4 style="color: #14f195;">XPMarket</h4>
+                    <p>Comprehensive token analytics, holder data, and direct DEX trading interface.</p>
+                    <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" style="color: #14f195; text-decoration: none; font-weight: bold;">View on XPMarket →</a>
+                </div>
+                <div class="card">
                     <h4 style="color: var(--accent);">Magnetic DEX</h4>
                     <a href="https://xmagnetic.org/tokens/SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5?network=mainnet" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Swap on Magnetic →</a>
                 </div>
                 <div class="card">
                     <h4 style="color: #00e5ff;">Sologenic DEX</h4>
                     <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP&network=mainnet" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight: bold;">Trade on Sologenic →</a>
+                </div>
+                <div class="card">
+                    <h4 style="color: #9945ff;">DEX Trade</h4>
+                    <p>Establish limit orders and view real-time market depth for $SLS pairs.</p>
+                    <a href="https://dex-trade.com/" target="_blank" style="color: #9945ff; text-decoration: none; font-weight: bold;">Trade on DEX Trade →</a>
                 </div>
             </div>
         </div>
