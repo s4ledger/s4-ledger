@@ -14,6 +14,7 @@
             --secondary: #9945ff;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
+            --completed: #14f195;
         }
 
         body {
@@ -76,11 +77,6 @@
             cursor: pointer;
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: pulse-glow 2s infinite;
-        }
-
-        .sticky-trade-btn:hover {
-            transform: scale(1.05) translateX(-5px);
-            box-shadow: 0 0 30px rgba(20, 241, 149, 0.6);
         }
 
         @keyframes pulse-glow {
@@ -160,7 +156,7 @@
         .tab-content {
             display: none;
             background: var(--glass);
-            padding: 50px;
+            padding: 40px;
             border-radius: 24px;
             border: 1px solid var(--border);
             backdrop-filter: blur(10px);
@@ -171,44 +167,89 @@
             animation: fadeIn 0.4s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #whitepaper-render { color: #ccc; }
-        #whitepaper-render h1, #whitepaper-render h2 { color: var(--accent); margin-top: 30px; }
-        #whitepaper-render hr { border: 0; border-top: 1px solid var(--border); margin: 20px 0; }
-        #whitepaper-render code { background: rgba(153, 69, 255, 0.1); color: var(--secondary); padding: 2px 6px; border-radius: 4px; }
-
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            gap: 20px;
         }
 
         .card {
             background: rgba(255,255,255,0.02);
-            padding: 30px;
+            padding: 25px;
             border-radius: 18px;
             border: 1px solid var(--border);
             transition: 0.3s;
         }
 
-        .card:hover {
-            border-color: var(--accent);
-            background: rgba(20, 241, 149, 0.02);
+        .roadmap-year {
+            margin-top: 40px;
+            border-left: 2px solid var(--border);
+            padding-left: 25px;
         }
 
-        .badge-soon {
-            font-size: 0.6rem;
-            background: var(--secondary);
-            color: white;
+        .roadmap-year h3 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .roadmap-item {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 10px;
+            width: 12px;
+            height: 12px;
+            background: var(--border);
+            border-radius: 50%;
+        }
+
+        .roadmap-item.done::before {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .status-tag {
+            font-size: 0.7rem;
             padding: 2px 8px;
             border-radius: 4px;
-            margin-left: 8px;
-            vertical-align: middle;
+            margin-left: 10px;
+            text-transform: uppercase;
         }
+
+        .status-done { background: rgba(20, 241, 149, 0.2); color: var(--accent); }
+        .status-next { background: rgba(153, 69, 255, 0.2); color: var(--secondary); }
+
+        .disclaimer-box {
+            margin-top: 100px;
+            padding: 30px;
+            background: rgba(255, 0, 0, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #777;
+            text-align: justify;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .social-links a:hover { color: var(--accent); }
 
         .cta-btn {
             background: #fff;
@@ -219,44 +260,25 @@
             font-weight: 700;
             display: inline-block;
             margin-top: 30px;
-            transition: 0.3s;
-            cursor: pointer;
             border: none;
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(20, 241, 149, 0.3);
-        }
-
-        footer {
-            padding: 60px;
-            text-align: center;
-            color: #555;
-            font-size: 0.85rem;
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
-            .sticky-trade-btn {
-                top: auto;
-                bottom: 20px;
-                right: 20px;
-                width: calc(100% - 40px);
-                text-align: center;
-            }
+            .sticky-trade-btn { top: auto; bottom: 20px; right: 20px; width: calc(100% - 40px); text-align: center; }
         }
     </style>
 </head>
 <body>
     <div class="mesh-bg"></div>
-
     <button class="sticky-trade-btn" id="live-price-btn" onclick="scrollToTrade()">TRADE $SLS LIVE</button>
 
     <nav>
         <a href="/" class="nav-brand">SOLUS PROTOCOL</a>
         <div style="display: flex; gap: 20px;">
-            <a href="https://github.com/solusprotocol1/solus-protocol/wiki" style="color: #888; text-decoration: none; font-size: 0.9rem;">Wiki</a>
-            <a href="mailto:support@solusprotocol.com" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">Support</a>
+            <a href="https://t.me/solus_protocol" target="_blank" style="color: #888; text-decoration: none;">Telegram</a>
+            <a href="https://x.com/solus_protocol" target="_blank" style="color: #888; text-decoration: none;">Twitter</a>
+            <a href="mailto:support@solusprotocol.com" style="color: var(--accent); text-decoration: none;">Support</a>
         </div>
     </nav>
 
@@ -276,30 +298,26 @@
         <div class="tabs">
             <button id="btn-utility" class="tab-btn active" onclick="showTab(event, 'utility')">Utility</button>
             <button id="btn-trade" class="tab-btn" onclick="showTab(event, 'trade')" style="color: var(--accent); border: 1px solid rgba(20, 241, 149, 0.3); border-radius: 8px;">Trade $SLS</button>
-            <button id="btn-whitepaper" class="tab-btn" onclick="showTab(event, 'whitepaper')">Whitepaper</button>
             <button id="btn-roadmap" class="tab-btn" onclick="showTab(event, 'roadmap')">Roadmap</button>
-            <button id="btn-dev" class="tab-btn" onclick="showTab(event, 'dev')">Development<span class="badge-soon">Soon</span></button>
-            <button id="btn-partners" class="tab-btn" onclick="showTab(event, 'partners')">Partners</button>
-            <button id="btn-contact" class="tab-btn" onclick="showTab(event, 'contact')">Support</button>
+            <button id="btn-whitepaper" class="tab-btn" onclick="showTab(event, 'whitepaper')">Whitepaper</button>
+            <button id="btn-contact" class="tab-btn" onclick="showTab(event, 'contact')">Socials</button>
         </div>
 
         <div id="trade" class="tab-content">
             <h2>Verified Trading Portals</h2>
             <div class="grid">
+                <div class="card" style="border-color: var(--accent); background: rgba(20, 241, 149, 0.05);">
+                    <h4 style="color: var(--accent);">Trade via Xaman (Mobile)</h4>
+                    <p>Open the Xaman app, go to the 'DEX' tab, and search for the SLS trustline or use the swap tool.</p>
+                    <a href="https://xaman.app/" target="_blank" style="color: #fff; text-decoration: none; font-weight: bold;">Open Xaman Wallet →</a>
+                </div>
                 <div class="card">
                     <h4 style="color: var(--accent);">Magnetic DEX</h4>
-                    <p>Best for instant AMM swaps with low slippage.</p>
                     <a href="https://xmagnetic.org/tokens/SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5?network=mainnet" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Swap on Magnetic →</a>
                 </div>
                 <div class="card">
                     <h4 style="color: #00e5ff;">Sologenic DEX</h4>
-                    <p>Advanced trading interface for limit orders.</p>
                     <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP&network=mainnet" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight: bold;">Trade on Sologenic →</a>
-                </div>
-                <div class="card">
-                    <h4 style="color: var(--secondary);">XPMarket</h4>
-                    <p>Comprehensive token analytics and holder data.</p>
-                    <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" style="color: var(--secondary); text-decoration: none; font-weight: bold;">View on XPMarket →</a>
                 </div>
             </div>
         </div>
@@ -309,9 +327,57 @@
             <div class="grid">
                 <div class="card">
                     <h4 style="color: var(--accent);">Data Anchoring</h4>
-                    <p>Clinics utilize $SLS to generate cryptographic hashes of medical records, ensuring they can never be altered or tampered with.</p>
+                    <p>Clinics utilize $SLS to generate cryptographic hashes of medical records, ensuring they can never be altered.</p>
                 </div>
+                <div class="card">
+                    <h4 style="color: var(--secondary);">Integrity Validation</h4>
+                    <p>$SLS acts as the network fuel for decentralized verification of clinical trial data and EHR integrity.</p>
                 </div>
+            </div>
+        </div>
+
+        <div id="roadmap" class="tab-content">
+            <h2>Strategic Roadmap <span style="font-size: 0.9rem; color: #555; margin-left: 10px;">2026 — 2031</span></h2>
+            
+            <div class="roadmap-year">
+                <h3>2026</h3>
+                <div class="roadmap-item done">
+                    <strong>Q1: Mainnet Launch & Liquidity Pools</strong> <span class="status-tag status-done">Completed</span>
+                    <p>Official deployment on XRPL and establishment of $SLS/XRP pairs.</p>
+                </div>
+                <div class="roadmap-item">
+                    <strong>Q2: Clinical Pilot Program Start</strong> <span class="status-tag status-next">In Progress</span>
+                    <p>Onboard first clinics for data anchoring trials using immutable hashing.</p>
+                </div>
+                <div class="roadmap-item">
+                    <strong>Q3: Developer API Beta & Partnerships</strong>
+                    <p>Launch beta SDK; secure partnerships with 5-10 pilot clinics.</p>
+                </div>
+                <div class="roadmap-item">
+                    <strong>Q4: Full API Launch & Infrastructure Activation</strong>
+                    <p>Release production-ready API for enterprise developers and node infrastructure.</p>
+                </div>
+            </div>
+
+            <div class="roadmap-year">
+                <h3>2027</h3>
+                <div class="roadmap-item"><strong>Q1: Mobile App Launch</strong><p>Patient-facing app for data verification.</p></div>
+                <div class="roadmap-item"><strong>Q2: Integration with EHR Systems</strong><p>Hooks into major Electronic Health Records platforms.</p></div>
+                <div class="roadmap-item"><strong>Q4: Community Governance</strong><p>Launch DAO for $SLS holders to vote on protocol proposals.</p></div>
+            </div>
+
+            <div class="roadmap-year">
+                <h3>2028</h3>
+                <div class="roadmap-item"><strong>Q2: Regulatory Certifications</strong><p>Achieve HIPAA/GDPR compliance certifications.</p></div>
+                <div class="roadmap-item"><strong>Q4: Patient Data Sharing</strong><p>Consent-based access controls for medical data sharing.</p></div>
+            </div>
+
+            <div class="roadmap-year">
+                <h3>2029 - 2031</h3>
+                <div class="roadmap-item"><strong>2029: Cross-Chain Integrations</strong><p>Bridge $SLS to Ethereum and Solana for cross-protocol verification.</p></div>
+                <div class="roadmap-item"><strong>2030: Version 2.0 Protocol</strong><p>Major overhaul implementing Zero-Knowledge Proofs for enhanced privacy.</p></div>
+                <div class="roadmap-item"><strong>2031: Global Standard Realization</strong><p>Milestone: 1M active users verifying health data integrity.</p></div>
+            </div>
         </div>
 
         <div id="whitepaper" class="tab-content">
@@ -319,32 +385,26 @@
             <div id="whitepaper-render">Loading Protocol Documentation...</div>
         </div>
 
-        <div id="roadmap" class="tab-content">
-            <h2>Strategic Roadmap</h2>
-            <div class="grid">
-                <div class="card"><h4>Q1 2026</h4><p>Mainnet launch & Liquidity Pools.</p></div>
-                <div class="card"><h4>Q2 2026</h4><p>Clinical Pilot Program Start.</p></div>
-            </div>
-        </div>
-
-        <div id="dev" class="tab-content">
-            <h2>Developer Ecosystem</h2>
-            <p>Building a robust API for healthcare software integrations.</p>
-            <div class="card" style="background: #000; border-color: var(--secondary);">
-                <code style="color: var(--accent);">const solus = require('@solus/sdk');</code>
-            </div>
-        </div>
-
-        <div id="partners" class="tab-content">
-            <h2>Partnerships</h2>
-            <a href="mailto:support@solusprotocol.com" class="cta-btn" style="background: var(--accent); color: #000;">Inquire for Pilot</a>
-        </div>
-
         <div id="contact" class="tab-content">
-            <h2>Support</h2>
-            <p>Email: support@solusprotocol.com</p>
+            <h2>Connect with Solus</h2>
+            <div class="grid">
+                <div class="card">
+                    <h4>Twitter</h4>
+                    <a href="https://x.com/solus_protocol" target="_blank" style="color: var(--accent);">@solus_protocol</a>
+                </div>
+                <div class="card">
+                    <h4>Telegram</h4>
+                    <a href="https://t.me/solus_protocol" target="_blank" style="color: var(--secondary);">Join Discussion</a>
+                </div>
+            </div>
         </div>
 
+        <div class="disclaimer-box">
+            <strong>REGULATORY DISCLOSURE & RISK WARNING:</strong><br>
+            Solus Protocol ($SLS) is a decentralized utility token built on the XRP Ledger. $SLS is intended solely for use within the Solus ecosystem for data anchoring and integrity verification purposes. It does not represent an equity stake, share, or profit-sharing interest in any entity. 
+            <br><br>
+            <strong>For United States Residents:</strong> $SLS has not been registered under the U.S. Securities Act of 1933 or with any state securities commission. Participation in decentralized finance carries significant risk. Solus Protocol does not offer financial services, investment advice, or "staking" programs that constitute an investment contract under the Howey Test. Users are responsible for ensuring compliance with local laws, including tax obligations. The value of digital assets is highly volatile; never risk funds you cannot afford to lose.
+        </div>
     </section>
 
     <footer>
@@ -363,17 +423,14 @@
             function setPriceDisplay(price, change) {
                 const val = parseFloat(price);
                 if (isNaN(val) || val <= 0) return false;
-                
                 const formattedPrice = val < 0.1 ? val.toFixed(6) : val.toFixed(4);
                 let changeHTML = "";
-                
                 if (change !== undefined && change !== null) {
                     const changeVal = parseFloat(change);
                     const icon = changeVal >= 0 ? "▲" : "▼";
-                    const color = changeVal >= 0 ? "#006400" : "#8B0000";
-                    changeHTML = ` <span style="color: ${color}; font-weight: 800; opacity: 0.9;">(${icon}${Math.abs(changeVal).toFixed(2)}%)</span>`;
+                    const color = changeVal >= 0 ? "#14f195" : "#ff4d4d";
+                    changeHTML = ` <span style="color: ${color}; font-weight: 800;">(${icon}${Math.abs(changeVal).toFixed(2)}%)</span>`;
                 }
-                
                 btn.innerHTML = `TRADE $SLS: $${formattedPrice}${changeHTML}`;
                 return true;
             }
@@ -381,58 +438,26 @@
             try {
                 const response = await fetch(`https://api.xrpscan.com/api/v1/token/${currency}.${issuer}`);
                 const data = await response.json();
-                if (data && data.metrics && data.metrics.price) {
-                    if (setPriceDisplay(data.metrics.price, data.metrics.price_change_24h)) return;
-                }
-            } catch (e) { console.warn("XRPSCAN failed"); }
-
-            try {
-                const response = await fetch(`https://api.sologenic.org/api/v1/tickers/${currency}+${issuer}%2FXRP`);
-                const data = await response.json();
-                if (data && data.last_price) {
-                    const xrpRes = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=XRPUSDT');
-                    const xrpData = await xrpRes.json();
-                    const usdPrice = parseFloat(data.last_price) * parseFloat(xrpData.price);
-                    if (setPriceDisplay(usdPrice, data.price_change_percentage_24h)) return;
-                }
-            } catch (e) { console.warn("Sologenic fallback failed"); }
-
-            if (!btn.innerHTML.includes('$')) {
-                btn.innerText = "TRADE $SLS LIVE";
-            }
+                if (data?.metrics?.price) setPriceDisplay(data.metrics.price, data.metrics.price_change_24h);
+            } catch (e) { console.warn("Price fetch failed"); }
         }
 
         setInterval(updateLivePrice, 45000);
         updateLivePrice();
 
         function showTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].classList.remove("active");
-            }
-            tablinks = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
+            let tabcontent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabcontent.length; i++) tabcontent[i].classList.remove("active");
+            let tablinks = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
             document.getElementById(tabName).classList.add("active");
-            
-            if (evt) {
-                evt.currentTarget.classList.add("active");
-            } else {
-                const targetBtn = document.getElementById('btn-' + tabName);
-                if(targetBtn) targetBtn.classList.add("active");
-            }
-            
-            if(tabName === 'whitepaper') { loadWhitepaper(); }
+            if (evt) evt.currentTarget.classList.add("active");
+            if(tabName === 'whitepaper') loadWhitepaper();
         }
 
         function scrollToTrade() {
-            const target = document.getElementById('main-content');
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-                showTab(null, 'trade');
-            }
+            document.getElementById('main-content').scrollIntoView({ behavior: 'smooth' });
+            showTab(null, 'trade');
         }
 
         async function loadWhitepaper() {
@@ -442,9 +467,7 @@
                 const res = await fetch(url);
                 const md = await res.text();
                 renderDiv.innerHTML = marked.parse(md);
-            } catch (e) {
-                renderDiv.innerHTML = "<p>Error loading Whitepaper.</p>";
-            }
+            } catch (e) { renderDiv.innerHTML = "<p>Error loading Whitepaper.</p>"; }
         }
     </script>
 </body>
