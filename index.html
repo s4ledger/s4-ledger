@@ -658,12 +658,12 @@
 
 ---
 
-## <center>1. Executive Summary</center>
+1. Executive Summary
 Solus Protocol ($SLS) provides a decentralized, immutable layer for the verification and anchoring of healthcare data. Built on the **XRP Ledger (XRPL)**, Solus enables healthcare providers and clinical researchers to ensure the integrity of medical records through cryptographic hashing. 
 
 By leveraging the XRPL's high-speed consensus, Solus establishes a "Gold Standard" for trust. The protocol does not store sensitive Protected Health Information (PHI) on-chain; instead, it anchors a unique cryptographic "fingerprint" (SHA-256) of the data. This allows any authorized party to prove a document has not been altered since its creation without exposing private details to the public.
 
-## <center>2. The Problem: The "Silent" Vulnerability of Health Data</center>
+2. The Problem: The "Silent" Vulnerability of Health Data
 Current Electronic Health Record (EHR) systems are centralized silos vulnerable to three specific failures:
 
 ### 2.1 Administrative Tampering & "God-Mode"
@@ -675,7 +675,7 @@ When a patient moves from a General Practitioner to a Specialist, the data is tr
 ### 2.3 Regulatory Burden & Audit Fatigue
 HIPAA/HITECH audits are currently manual, slow, and expensive. Providers struggle to produce "Proof of Integrity" that satisfies modern forensic standards, leading to significant legal liability during data breaches or malpractice claims.
 
-## <center>3. The Solution: Solus Protocol</center>
+3. The Solution: Solus Protocol
 Solus provides a **Layer-2 Integrity Framework** that uses the XRP Ledger as a universal "Truth Layer."
 
 ### 3.1 Immutable Data Anchoring
@@ -687,7 +687,7 @@ Any authorized auditor can use the Solus API to compare a current medical file a
 ### 3.3 Zero-Knowledge Privacy & "Safe Harbor"
 Because only the hash is stored, Solus satisfies the **HIPAA Safe Harbor** method for de-identification. The protocol remains "content-agnostic," meaning it secures the *validity* of the data without ever needing to "see" the patient's personal information.
 
-## <center>4. Tokenomics ($SLS)</center>
+4. Tokenomics ($SLS)
 The $SLS token is the native utility asset of the Solus ecosystem.
 
 | Attribute | Details |
@@ -700,21 +700,21 @@ The $SLS token is the native utility asset of the Solus ecosystem.
 | **Liquidity** | Decentralized AMM Pools Enabled |
 | **Utility** | Data Anchoring, Validation, Governance |
 
-### <center>**LEGAL CHARACTERIZATION OF THE SLS TOKEN**</center>
+LEGAL CHARACTERIZATION OF THE SLS TOKEN
 The SLS Token is designed as a **"Network Token"** within the **Solus Protocol**. It is not an investment, security, or commodity.
 * **Consumptive Use:** SLS provides programmatic access to decentralized services.
 * **No Managerial Reliance:** Value is derived from decentralized network demand, not the efforts of a central team.
 * **No Equity:** SLS grants no ownership or dividend rights.
 
-## <center>5. Project Governance</center>
+5. Project Governance
 The Solus Protocol is transitioning toward a **Decentralized Technical Governance** model. $SLS holders do not control the corporate entity, but they influence the protocol's technical evolution.
 
 * **Protocol Parameter Voting:** Holders can vote on technical variables, such as anchoring fee structures and validator reward tiers.
 * **Compliance Upgrades:** As HIPAA or GDPR regulations evolve, the community can propose and vote on technical "Compliance Improvement Proposals" (CIPs) to ensure the protocol remains legally viable for healthcare institutions.
 * **Grant Allocation:** A portion of the ecosystem fund is governed by SLS holders to support open-source developers building EHR integrations.
 
-## <center>6. Strategic Roadmap (2026 – 2031)</center>
-### <center>2026: The Foundation</center>
+6. Strategic Roadmap (2026 – 2031)
+2026: The Foundation
 * **Q1: Mainnet Launch & Liquidity [COMPLETED]**
     * Official deployment on XRPL mainnet and establishment of AMM pools.
 * **Q2: Clinical Pilot Program**
@@ -722,33 +722,33 @@ The Solus Protocol is transitioning toward a **Decentralized Technical Governanc
 * **Q4: Full API Launch**
     * Production-ready API for enterprise developers.
 
-### <center>2027 – 2031: Scaling & Global Adoption</center>
+2027 – 2031: Scaling & Global Adoption
 * **2027:** Mobile App Launch & EHR system integrations.
 * **2028:** HIPAA/GDPR Compliance Certifications.
 * **2031:** Milestone: 1 Million active users verifying health data integrity.
 
-## <center>7. Trading & Participation</center>
+7. Trading & Participation
 $SLS is available on the XRPL Decentralized Exchange (DEX). Always verify the Issuer Address: r95GyZac4butvVcsTWUPpxzekmyzaHsTA5.
 - **Xaman:** Direct swapping via mobile.
 - **xMagnetic / Sologenic:** Advanced AMM and order-book trading.
 
 ---
 
-## <center>8. HIPAA Regulatory Alignment & Technical Safeguards</center>
+8. HIPAA Regulatory Alignment & Technical Safeguards
 Solus Protocol is engineered to serve as a **Technical Safeguard** for Covered Entities and Business Associates. The protocol’s architecture directly addresses the implementation specifications of the **HIPAA Security Rule (45 CFR § 164.312)** and the **2021 HITECH Act Amendment**.
 
 Solus Protocol is engineered to meet the "Privacy-by-Design" requirements of the **Health Insurance Portability and Accountability Act (HIPAA)**.
 
-### <center>A. Data De-Identification, Transmission & Storage Security (Safe Harbor) (§ 164.312(e)(1))</center>
+A. Data De-Identification, Transmission & Storage Security (Safe Harbor) (§ 164.312(e)(1))
 - **HIPAA Safe Harbor Compliance:** Solus **does not store** PHI on the blockchain. By anchoring only de-identified hashes, providers separate the *content* of the record from the *integrity proof*, minimizing the "breach surface area."
 - **Hashed Anchoring:** The protocol only records SHA-256 cryptographic hashes. These are irreversible "fingerprints" that cannot be used to reconstruct patient data.
 - **Off-Chain Sovereignty:** Actual medical records remain in the secure, HIPAA-compliant databases of the healthcare provider.
 
-### <center>B. Audit Controls & Accountability (§ 164.312(b))</center>
+B. Audit Controls & Accountability (§ 164.312(b))
 - **Immutable Audit Trails:** Solus anchors activity logs to the XRP Ledger, creating a permanent history of data custody.
 - **Non-Repudiation:** Each transaction is cryptographically signed, ensuring that data verification events are legally defensible.
 
-### <center>C. Integrity Controls (§ 164.312(c)(1))</center>
+C. Integrity Controls (§ 164.312(c)(1))
 Solus implements **Cryptographic Meta-Sealing** (SHA-256) to protect ePHI from improper alteration. 
 - **Liability Mitigation:** Under the 2021 HITECH Amendment, Solus provides the "verifiable proof" of recognized security practices required to mitigate regulatory fines during a data breach investigation.
 
