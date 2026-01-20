@@ -46,10 +46,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 5%;
+            padding: 15px 5%;
             box-sizing: border-box;
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
+            background: rgba(5, 6, 8, 0.7);
         }
 
         .nav-brand {
@@ -63,9 +64,12 @@
             gap: 12px;
         }
 
+        /* Fixed Logo Styling */
         .nav-logo {
-            height: 35px;
+            height: 40px; /* Increased size for visibility */
             width: auto;
+            display: block;
+            object-fit: contain;
         }
 
         .sticky-trade-btn {
@@ -283,7 +287,7 @@
 
     <nav>
         <a href="/" class="nav-brand">
-            <img src="logo.png" alt="Solus Logo" class="nav-logo">
+            <img src="logo.png" alt="" class="nav-logo" onerror="this.style.display='none'">
             SOLUS PROTOCOL
         </a>
         <div style="display: flex; gap: 20px;">
