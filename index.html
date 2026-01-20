@@ -487,12 +487,38 @@
 
         async function loadWhitepaper() {
             const renderDiv = document.getElementById('whitepaper-render');
-            const url = 'https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/WHITEPAPER.md';
+            // Provided direct link to your PDF source on GitHub
+            const pdfUrl = 'https://github.com/solusprotocol1/solus-protocol/raw/main/Solus%20Protocol%20Whitepaper%20Version%202.8.pdf';
+            
+            const content = `
+### [📄 Download Full PDF Whitepaper](${pdfUrl})
+
+---
+
+# Solus Protocol Whitepaper v2.8
+**Decentralized Infrastructure for Medical Data Integrity**
+
+## 1. Executive Summary
+Solus Protocol ($SLS) provides a decentralized, immutable layer for the verification and anchoring of healthcare data. Built on the XRP Ledger (XRPL), Solus enables healthcare providers and clinical researchers to ensure the integrity of medical records through cryptographic hashing.
+
+## 2. The Problem
+Current EHR systems suffer from centralization and a lack of auditability, making retroactive data manipulation difficult to detect.
+
+## 3. The Solution
+Solus leverages the XRPL to create a permanent audit trail.
+- **Data Anchoring:** Storing unique cryptographic hashes on-chain.
+- **Verification:** Allowing any party with the original file to verify its authenticity.
+
+## 4. HIPAA Alignment
+Solus is engineered to meet HIPAA "Privacy-by-Design" standards. PHI is never stored on the blockchain; only irreversible SHA-256 hashes are recorded to maintain off-chain sovereignty.
+            `;
+            
             try {
-                const res = await fetch(url);
-                const md = await res.text();
-                renderDiv.innerHTML = marked.parse(md);
-            } catch (e) { renderDiv.innerHTML = "<p>Error loading Whitepaper.</p>"; }
+                renderDiv.innerHTML = marked.parse(content);
+                renderDiv.style.textAlign = 'left';
+            } catch (e) { 
+                renderDiv.innerHTML = `<p>Error loading content. <a href="${pdfUrl}" target="_blank" style="color:var(--accent)">Click here to download the PDF.</a></p>`; 
+            }
         }
     </script>
 </body>
