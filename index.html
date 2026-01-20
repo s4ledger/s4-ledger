@@ -178,6 +178,62 @@
             animation: fadeIn 0.4s ease-out;
         }
 
+        /* --- Whitepaper Styles --- */
+        #whitepaper-render {
+            text-align: left;
+            font-size: 1rem;
+            color: #ccc;
+        }
+        #whitepaper-render h1, #whitepaper-render h2, #whitepaper-render h3 {
+            color: #fff;
+            margin-top: 2em;
+        }
+        #whitepaper-render hr {
+            border: 0;
+            border-top: 1px solid var(--border);
+            margin: 2em 0;
+        }
+        #whitepaper-render table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        #whitepaper-render th, #whitepaper-render td {
+            padding: 15px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        #whitepaper-render th {
+            background: rgba(153, 69, 255, 0.1);
+            color: var(--secondary);
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(20, 241, 149, 0.1), rgba(153, 69, 255, 0.1));
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            max-width: fit-content;
+        }
+        .download-btn:hover {
+            background: var(--accent);
+            color: #000;
+            transform: translateY(-2px);
+        }
+        /* ------------------------ */
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -406,6 +462,10 @@
 
         <div id="whitepaper" class="tab-content">
             <h2>Official Whitepaper</h2>
+            <a href="https://github.com/solusprotocol1/solus-protocol/raw/main/Solus%20Protocol%20Whitepaper%20Version%202.8.pdf" class="download-btn" target="_blank">
+                <span>📄</span> Download Whitepaper PDF
+            </a>
+            
             <div id="whitepaper-render">Loading Protocol Documentation...</div>
         </div>
 
@@ -486,16 +546,13 @@
 
         async function loadWhitepaper() {
             const renderDiv = document.getElementById('whitepaper-render');
-            const pdfUrl = 'https://github.com/solusprotocol1/solus-protocol/raw/main/Solus%20Protocol%20Whitepaper%20Version%202.8.pdf';
             
             const content = `
-### [📄 Download Full PDF Whitepaper](${pdfUrl})
-
----
-
 # Solus Protocol Whitepaper v2.8
 **Decentralized Infrastructure for Medical Data Integrity**
 *January 2026*
+
+---
 
 ## 1. Executive Summary
 Solus Protocol ($SLS) provides a decentralized, immutable layer for the verification and anchoring of healthcare data. Built on the XRP Ledger (XRPL), Solus enables healthcare providers, clinical researchers, and patients to ensure the integrity of medical records through cryptographic hashing. By removing the possibility of retroactive data manipulation, Solus establishes a "Gold Standard" for trust in digital health.
@@ -520,15 +577,19 @@ The $SLS token is the native utility asset of the Solus ecosystem.
 | **Network** | XRP Ledger (XRPL) |
 | **Issuer Address** | r95GyZac4butvVcsTWUPpxzekmyzaHsTA5 |
 | **Total Supply** | 100,000,000 SLS |
+| **Liquidity** | Decentralized AMM Pools Enabled |
 | **Utility** | Data Anchoring, Validation, Governance |
 
 ## 5. Strategic Roadmap (2026-2031)
 ### 2026: The Foundation
-- **Q1:** Mainnet Launch & Liquidity [COMPLETED].
-- **Q2:** Clinical Pilot Program: Onboard first clinics for data anchoring trials.
-- **Q4:** Full API Launch: Production-ready API for enterprise developers.
+- **Q1: Mainnet Launch & Liquidity [COMPLETED]**
+Official deployment on XRPL mainnet and establishment of AMM pools.
+- **Q2: Clinical Pilot Program**
+Onboard first clinics for data anchoring trials.
+- **Q4: Full API Launch**
+Production-ready API for enterprise developers.
 
-### Scaling & Global Adoption
+### 2027–2031: Scaling & Global Adoption
 - **2027:** Mobile App Launch & EHR system integrations.
 - **2028:** HIPAA/GDPR Compliance Certifications.
 - **2031:** Milestone: 1 Million active users verifying health data integrity.
@@ -536,32 +597,48 @@ The $SLS token is the native utility asset of the Solus ecosystem.
 ## 6. Trading & Ecosystem Participation
 $SLS is available on the XRP Ledger Decentralized Exchange (DEX). Always verify the Issuer Address: **r95GyZac4butvVcsTWUPpxzekmyzaHsTA5**.
 
-### Verified Platforms:
-- **Xaman (Mobile):** Use the DEX button or search for SLS using the Issuer Address.
-- **xMagnetic (AMM Optimized):** Execute trades against AMM liquidity pools via xmagnetic.org.
-- **Sologenic (Pro Interface):** Use Market or Limit tabs for trading; provide liquidity in the AMM section to earn trading fees.
-- **XPMarket (Analytics & Swap):** Use the Liquidity dashboard to track "LP tokens" and earned fees in real-time.
+### Trading via Xaman (Mobile)
+1. Open the Xaman app and tap the DEX button.
+2. Search for SLS. If it doesn't appear, paste the Issuer Address.
+3. Select the XRP/SLS pair and enter the amount you wish to swap.
+4. Slide to confirm the transaction.
+
+### Trading via xMagnetic (AMM Optimized)
+1. Visit xmagnetic.org and connect your wallet using the Xaman QR code.
+2. Navigate to the Swap section.
+3. Select XRP in the 'From' field and SLS in the 'To' field.
+4. Execute the trade against the AMM liquidity pools.
+
+### Trading via Sologenic (Pro Interface)
+1. Go to the Sologenic DEX and connect your wallet.
+2. **To Trade:** Search for the SLS/XRP pair. Use the Market tab for instant execution or Limit tab for large entries.
+3. **To Invest (Liquidity Provision):** Navigate to the AMM section. By providing equal parts XRP and SLS, you earn a percentage of all trading fees.
+
+### Trading via XPMarket (Analytics & Swap)
+1. Visit xpmarket.com and connect your wallet.
+2. **To Trade:** Use the Swap tool for price-optimized exchange.
+3. **To Invest:** Use the Liquidity dashboard to deposit $SLS into the AMM and track your "LP tokens" and earned fees in real-time.
 
 ## 7. Disclosures & Risk Factors
-- **No Ownership Interest:** Holders of $SLS do not possess any equity, debt, or proprietary interest in Solus Protocol.
-- **No Financial Rights:** $SLS does not grant rights to dividends or profit-sharing.
-- **Utility Function:** The primary function is to facilitate cryptographic data anchoring and network validation.
-- **Market Risk:** Digital assets are subject to extreme volatility. $SLS has not been registered under the U.S. Securities Act of 1933.
+*In accordance with the SEC Division of Corporation Finance Statement (April 10, 2025).*
+
+- **A. Description of Asset:** $SLS is a digital asset on the XRP Ledger. Holders possess no ownership, equity, or financial rights (dividends/profit-sharing).
+- **B. Technical Specs:** Total supply is fixed at 100,000,000. No further minting is possible. Users are solely responsible for custody; loss of private keys results in permanent loss of assets.
+- **C. Market Risks:** Crypto assets are subject to extreme volatility. There is no guarantee of continuous liquidity.
+- **D. Legal Risks:** $SLS has not been registered under the U.S. Securities Act of 1933. Future regulatory actions may impact the ability to hold or use the token.
 
 ## 8. HIPAA Alignment & Data Privacy Standards
-Solus is engineered to meet the "Privacy-by-Design" requirements of the Health Insurance Portability and Accountability Act (HIPAA).
-
-- **Data De-Identification:** No Protected Health Information (PHI) is stored on the blockchain.
-- **Hashed Anchoring:** The protocol records SHA-256 cryptographic hashes—irreversible "fingerprints" that cannot be used to reconstruct patient data.
-- **Off-Chain Sovereignty:** Actual medical records remain in the secure, HIPAA-compliant databases of the healthcare provider.
-- **Integrity Controls:** The immutable nature of the XRPL ensures that once a hash is anchored, it cannot be retroactively altered.
+- **Data De-Identification:** Solus does not store Protected Health Information (PHI) on the blockchain.
+- **Hashed Anchoring:** The protocol records SHA-256 cryptographic hashes—irreversible "fingerprints" that cannot reconstruct patient data.
+- **Off-Chain Sovereignty:** Actual medical records remain in the secure, HIPAA-compliant databases of the provider.
+- **Auditability:** Every anchoring transaction is time-stamped and signed, providing an unforgeable audit trail.
             `;
             
             try {
                 renderDiv.innerHTML = marked.parse(content);
                 renderDiv.style.textAlign = 'left';
             } catch (e) { 
-                renderDiv.innerHTML = `<p>Error loading content. <a href="${pdfUrl}" target="_blank" style="color:var(--accent)">Click here to download the PDF.</a></p>`; 
+                renderDiv.innerHTML = `<p>Error loading content. <a href="https://github.com/solusprotocol1/solus-protocol/raw/main/Solus%20Protocol%20Whitepaper%20Version%202.8.pdf" target="_blank" style="color:var(--accent)">Click here to download the PDF.</a></p>`; 
             }
         }
     </script>
