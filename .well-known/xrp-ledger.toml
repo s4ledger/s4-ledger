@@ -11,11 +11,12 @@ domain = "solusprotocol.com"
 code = "SLS"
 issuer = "r95GyZac4butvVcsTWUPpxzekmyzaHsTA5"
 display_name = "Solus Protocol"
-display_decimal = 2
-symbol = "SLS"
+display_decimal = 6
+symbol = "$SLS"
 logo_250x250 = "https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png"
 description = "Utility token for medical data integrity on XRPL"
 website = "https://solusprotocol.com"
+twitter = "https://x.com/Solus_Protocol
 
 [[PRINCIPALS]]
 name = "Solus Protocol"
