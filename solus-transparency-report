@@ -1,0 +1,31 @@
+// Solus_Step_4_Transparency_Report.js
+const xrpl = require("xrpl");
+
+async function generateTransparencyReport() {
+    const client = new xrpl.Client("wss://xrplcluster.com");
+    await client.connect();
+
+    const TREASURY_ADDR = "YOUR_TREASURY_WALLET_ADDRESS";
+
+    const response = await client.request({
+        command: "account_tx",
+        account: TREASURY_ADDR,
+        limit: 10
+    });
+
+    console.log(`--- Solus Protocol Treasury Transparency Log ---`);
+    console.log(`| Date | Type | Destination | Amount | Purpose (Memo) |`);
+    
+    response.result.transactions.forEach(tx => {
+        const date = xrpl.rippleTimeToISOTime(tx.tx.date).split('T')[0];
+        const dest = tx.tx.Destination || "N/A";
+        const amt = tx.tx.Amount ? (typeof tx.tx.Amount === 'string' ? xrpl.dropsToXrp(tx.tx.Amount) : tx.tx.Amount.value) : "0";
+        
+        // Output formatted for community updates
+        if (tx.tx.Account === TREASURY_ADDR) {
+            console.log(`| ${date} | ${tx.tx.TransactionType} | ${dest} | ${amt} | [Verify On Ledger] |`);
+        }
+    });
+
+    await client.disconnect();
+}
