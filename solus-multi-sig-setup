@@ -1,0 +1,45 @@
+// Solus_Step_1_MultiSig_Setup.js
+const xrpl = require("xrpl");
+
+async function setupMultiSig() {
+    const client = new xrpl.Client("wss://xrplcluster.com"); // Mainnet
+    await client.connect();
+
+    // 1. Your Treasury Wallet (The account being secured)
+    const treasuryWallet = xrpl.Wallet.fromSeed("YOUR_FOUNDER_SEED");
+
+    // 2. Define your 3 Signers (Addresses from your 3 different devices)
+    const signerListSetTx = {
+        TransactionType: "SignerListSet",
+        Account: treasuryWallet.address,
+        SignerQuorum: 2, // Requires 2 out of 3 total weight to pass
+        SignerEntries: [
+            { SignerEntry: { Account: "rDevice_1_Address", SignerWeight: 1 } },
+            { SignerEntry: { Account: "rDevice_2_Address", SignerWeight: 1 } },
+            { SignerEntry: { Account: "rDevice_3_Address", SignerWeight: 1 } }
+        ]
+    };
+
+    console.log("Submitting Signer List Setup...");
+    const prepared = await client.autofill(signerListSetTx);
+    const signed = treasuryWallet.sign(prepared);
+    const result = await client.submitAndWait(signed.tx_blob);
+    console.log("Multi-Sig Status:", result.result.meta.TransactionResult);
+
+    // 3. DISABLE THE MASTER KEY
+    // This is the 'Nuclear' safety option. Once disabled, the original 
+    // seed phrase of the treasury no longer works. Only the multi-sig can move funds.
+    if (result.result.meta.TransactionResult === "tesSUCCESS") {
+        const disableMasterTx = {
+            TransactionType: "AccountSet",
+            Account: treasuryWallet.address,
+            SetFlag: 4 // asfDisableMaster flag
+        };
+        const prep2 = await client.autofill(disableMasterTx);
+        const signed2 = treasuryWallet.sign(prep2);
+        await client.submitAndWait(signed2.tx_blob);
+        console.log("Master Key Disabled. Solus Treasury is now SECURED.");
+    }
+
+    await client.disconnect();
+}
