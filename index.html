@@ -684,17 +684,10 @@
     <script>
         AOS.init({ duration: 800, once: true });
 
-        // FAQ Toggle Logic
-        function toggleFaq(el) {
-            const parent = el.parentElement;
-            parent.classList.toggle('active');
-            const span = el.querySelector('span');
-            span.innerText = parent.classList.contains('active') ? '-' : '+';
-        }
-
+        // Institutional Form Logic
         async function submitForm(type) {
             const formspreeId = type === 'Audit' ? 'mgoonydp' : 'mpqqyrok';
-            const successMessage = `Submission successful! Our systems have logged your ${type} report. An automated institutional confirmation has been dispatched to your provided email address.`;
+            const successMessage = `Submission successful! Our systems have logged your ${type} report.`;
             
             const emailField = type === 'Audit' ? document.getElementById('audit-email') : document.getElementById('legal-email');
             const textArea = type === 'Audit' ? document.getElementById('audit-text') : document.getElementById('legal-text');
@@ -715,21 +708,14 @@
                 const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        _replyto: email,
-                        category: type,
-                        message: message,
-                        subject: `INSTITUTIONAL: New ${type} Submission from ${email}`
-                    })
+                    body: JSON.stringify({ _replyto: email, category: type, message: message })
                 });
 
                 if (response.ok) {
                     alert(successMessage);
                     textArea.value = '';
                     emailField.value = '';
-                } else {
-                    throw new Error();
-                }
+                } else { throw new Error(); }
             } catch (err) {
                 alert('There was a transmission error. Please contact support@solusprotocol.com directly.');
             } finally {
@@ -738,37 +724,51 @@
             }
         }
 
+        // --- NEW LIVE PRICE LOGIC (DexScreener) ---
         async function updateLivePrice() {
             const btn = document.getElementById('live-price-btn');
             const holderSpan = document.getElementById('live-holders');
-            const issuer = 'r95GyZac4butvVcsTWUPpxzekmyzaHsTA5';
-            const currency = 'SLS';
-
-            function setPriceDisplay(price, change) {
-                const val = parseFloat(price);
-                if (isNaN(val) || val <= 0) return false;
-                const formattedPrice = val < 0.1 ? val.toFixed(6) : val.toFixed(4);
-                let changeHTML = "";
-                if (change !== undefined && change !== null) {
-                    const changeVal = parseFloat(change);
-                    const icon = changeVal >= 0 ? "▲" : "▼";
-                    const color = changeVal >= 0 ? "#14f195" : "#ff4d4d";
-                    changeHTML = ` <span style="color: ${color}; font-weight: 800;">(${icon}${Math.abs(changeVal).toFixed(2)}%)</span>`;
-                }
-                btn.innerHTML = `TRADE $SLS: $${formattedPrice}${changeHTML}`;
-                return true;
-            }
-
+            // We use the Issuer Address to find the token on DexScreener
+            const issuer = 'r95GyZac4butvVcsTWUPpxzekmyzaHsTA5'; 
+            
             try {
-                const response = await fetch(`https://api.xrpscan.com/api/v1/token/${currency}.${issuer}`);
+                // 1. Fetch Price from DexScreener (Faster & Direct USD)
+                // We add '?t=' + Date.now() to force a fresh "Live" price every time
+                const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${issuer}&t=${Date.now()}`);
                 const data = await response.json();
-                if (data?.metrics?.price) setPriceDisplay(data.metrics.price, data.metrics.price_change_24h);
-                if (data?.metrics?.holders) holderSpan.innerText = parseInt(data.metrics.holders).toLocaleString();
-            } catch (e) { console.warn("Price/Holder fetch failed"); }
+                
+                if (data.pairs && data.pairs.length > 0) {
+                    // Use the most liquid pair (first result)
+                    const pair = data.pairs[0];
+                    const priceUsd = parseFloat(pair.priceUsd);
+                    const change24h = parseFloat(pair.priceChange.h24);
+                    
+                    if (!isNaN(priceUsd)) {
+                        const icon = change24h >= 0 ? "▲" : "▼";
+                        const color = change24h >= 0 ? "#14f195" : "#ff4d4d";
+                        // Show 6 decimals if under $0.10, otherwise 4 decimals
+                        const formattedPrice = priceUsd < 0.10 ? priceUsd.toFixed(6) : priceUsd.toFixed(4);
+                        
+                        btn.innerHTML = `TRADE $SLS: $${formattedPrice} <span style="color: ${color};">(${icon}${Math.abs(change24h).toFixed(2)}%)</span>`;
+                    }
+                }
+
+                // 2. Fetch Trustlines/Holders from XRPSCAN (Separate call for stats)
+                const statResponse = await fetch(`https://api.xrpscan.com/api/v1/token/SLS.${issuer}`);
+                const statData = await statResponse.json();
+                if(statData?.metrics?.holders && holderSpan) {
+                    holderSpan.innerText = `Active Trustlines: ${parseInt(statData.metrics.holders).toLocaleString()}`;
+                }
+
+            } catch (e) { 
+                console.warn("Live feed update failed", e); 
+            }
         }
 
-        setInterval(updateLivePrice, 45000);
+        // Updated to refresh every 12 seconds (Real-time feel)
+        setInterval(updateLivePrice, 12000);
         updateLivePrice();
+        // ------------------------------------------
 
         function showTab(evt, tabName) {
             let tabcontent = document.getElementsByClassName("tab-content");
