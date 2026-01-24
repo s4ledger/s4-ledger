@@ -415,18 +415,21 @@
         }
        
         .faq-answer {
-            display: none; /* This hides the answer by default */
-            padding: 10px 0;
-            color: #555;
+            display: none; /* Keeps it hidden until clicked */
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05); /* Optional: slight background for the answer */
+            border-radius: 5px;
+            margin-top: 5px;
         }
 
         .faq-question {
             cursor: pointer;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-weight: bold;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;      
+            padding: 10px;
+            border-bottom: 1px solid #333;      
         }
 
         .faq-item.active .faq-answer {
