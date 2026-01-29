@@ -2,7 +2,7 @@
 # </center>Solus Protocol Whitepaper</center>
 **<center>Decentralized Infrastructure for Medical Data Integrity</center>**
 
-*<center>Version 2.9 | January 2026</center>*
+*<center>Version 3.0 | January 2026</center>*
 
 ---
 
@@ -41,6 +41,8 @@ $SLS tokens do not represent an investment, debt, or proprietary interest in any
 **5. FORWARD-LOOKING STATEMENTS**
 
 This document contains "forward-looking statements" regarding the 2026–2031 Roadmap. These are based on current technical goals and are not guarantees of future performance. Actual results may differ materially due to technological hurdles, shifts in HIPAA/GDPR compliance requirements, or lack of global healthcare adoption.
+
+**Cross-chain interoperability features (e.g., direct token bridging to XRPL EVM via Axelar) are in active development and subject to third-party infrastructure support.**
 
 ---
 
@@ -85,9 +87,15 @@ The $SLS token is the native utility asset of the Solus ecosystem.
 | **Symbol** | $SLS |
 | **Network** | XRP Ledger (XRPL) |
 | **Issuer Address** | `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5` |
-| **Total Supply** | 100,000,000 SLS |
+| **Total Supply** | 100,000,000 SLS (maximum issued; no additional minting without owner action) |
+| **Circulating/Issued Supply** | ~69,999,909 SLS (current on XRPL Mainnet; Base ERC-20 representation aligned via burn) |
 | **Liquidity** | **Decentralized AMM Pools Enabled** |
 | **Utility** | Data Anchoring, Validation, Governance |
+
+**Supply Note:** The protocol initially minted 100,000,000 SLS on Base for the EVM representation. Excess supply was burned to align with the current issued/circulating amount on XRPL Mainnet (~69,999,909 SLS). No further minting is planned without governance or owner action.
+
+### Cross-Chain Interoperability
+Solus Protocol is expanding to EVM-compatible environments, including a verified ERC-20 representation on Base Mainnet and interchain setup on the XRPL EVM Sidechain via Axelar. Direct $SLS token bridging (mainnet IOU and Base ERC-20) is in active development with Axelar and Peersyst teams to enable full custom token support. Value transfer and swaps on Base are available now.
 
 ### <center>**LEGAL CHARACTERIZATION OF THE SLS TOKEN**</center>
 
