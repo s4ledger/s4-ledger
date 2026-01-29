@@ -489,27 +489,28 @@
             <button id="btn-contact" class="tab-btn" onclick="showTab(event, 'contact')">Socials</button>
         </div>
 
-<!-- Bridge Status Section - Add this right after the <div class="tabs"> block -->
+<!-- Bridge Status Section - Updated to reflect current status and hurdles -->
 <div class="bridge-status" style="margin: 40px 0; text-align: center; background: rgba(20, 241, 149, 0.05); border: 1px solid var(--accent); border-radius: 24px; padding: 40px 20px; max-width: 900px; margin-left: auto; margin-right: auto;">
     <h2 style="margin-bottom: 30px; font-size: 2.2rem;">$SLS Cross-Chain Bridges</h2>
     <p style="color: #ccc; margin-bottom: 30px; font-size: 1.1rem; max-width: 700px; margin-left: auto; margin-right: auto;">
-        Seamless access to $SLS on the XRPL EVM Sidechain via Axelar-powered interoperability.
+        Interoperability setup complete via Axelar. Direct $SLS token bridging in development; value transfer available now.
     </p>
     
     <div class="grid" style="margin-top: 20px;">
-        <!-- Live Bridge Card -->
+        <!-- Base Bridge Card - Updated for accuracy -->
         <div class="card" style="border-color: var(--accent); background: rgba(20, 241, 149, 0.1); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: 10px; right: 10px; background: var(--accent); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">LIVE NOW</div>
+            <div style="position: absolute; top: 10px; right: 10px; background: var(--accent); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">SETUP COMPLETE</div>
             <h3 style="color: var(--accent); margin-bottom: 15px;">Base → XRPL EVM Bridge</h3>
-            <p>Transfer your $SLS tokens from Base (ERC-20) to the XRPL EVM Sidechain using Axelar Interchain Token Service.</p>
+            <p>Base ERC-20 $SLS live and verified (contract: <a href="https://basescan.org/address/0xC6FaFD77CBcC7AACdCF36575384CF850687F1B76" target="_blank" style="color: var(--accent);">0xC6FaFD77...1B76</a>).</p>
+            <p>Direct $SLS token bridging in development (awaiting Axelar custom support). Value transfer available via stables/XRP bridge.</p>
             <p style="color: #ccc; font-size: 0.9rem; margin: 15px 0;">
                 Token Contract on XRPL EVM:<br>
                 <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px;">0x65f7B158aE50761b56A9c428B1680881452b4Ed5</code>
             </p>
-            <a href="https://app.squidrouter.com/" target="_blank" style="display: inline-block; background: linear-gradient(135deg, var(--accent), #00ffa3); color: #000; padding: 12px 28px; border-radius: 12px; font-weight: 800; text-decoration: none; margin-top: 15px;">Bridge Now via Squid Router →</a>
+            <a href="https://app.squidrouter.com/" target="_blank" style="display: inline-block; background: linear-gradient(135deg, var(--accent), #00ffa3); color: #000; padding: 12px 28px; border-radius: 12px; font-weight: 800; text-decoration: none; margin-top: 15px;">Bridge Value via Squid Router →</a>
         </div>
         
-        <!-- Coming Soon Card -->
+        <!-- Mainnet Bridge Card - Kept as Coming Soon -->
         <div class="card" style="border-color: var(--secondary); background: rgba(153, 69, 255, 0.08); position: relative; overflow: hidden;">
             <div style="position: absolute; top: 10px; right: 10px; background: var(--secondary); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">COMING SOON</div>
             <h3 style="color: var(--secondary); margin-bottom: 15px;">XRPL Mainnet → XRPL EVM Bridge</h3>
