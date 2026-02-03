@@ -13,113 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Add Bootstrap for tabs and dropdowns -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    </head>
-<body>
-    <!-- Add Navigation Bar with Tabs and Dropdowns -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Solus Protocol</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            About Us
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
-                            <li><a class="dropdown-item" href="#who-we-are">Who We Are</a></li>
-                            <li><a class="dropdown-item" href="#our-mission">Our Mission</a></li>
-                            <li><a class="dropdown-item" href="#our-impact">Our Impact</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#sdk-info">Solus Protocol SDK</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#security-compliance">Security & Compliance</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact-us">Contact Us</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <header>
-        <h1>Solus Protocol</h1>
-        <p>The Standard for Decentralized Medical Data Integrity</p>
-    </header>
-
-    <main>
-        <section id="intro">
-            <p>Solus Protocol is building the immutable standard for medical data integrity on the XRP Ledger (XRPL).</p>
-        </section>
-        <!-- Add more existing sections if any -->
-    </main>
-
-    <!-- New Sections for Tabs Content -->
-    <!-- About Us Section with Subsections -->
-    <section id="about-us">
-        <h2>About Us</h2>
-        <div id="who-we-are">
-            <h3>Who We Are</h3>
-            <p>Solus Protocol is an early-stage blockchain startup based in Mount Pleasant, SC. Founded by a solo entrepreneur with expertise in blockchain and healthcare data challenges, we are building a protocol on the XRP Ledger to revolutionize how medical records are secured and shared.</p>
-        </div>
-        <div id="our-mission">
-            <h3>Our Mission</h3>
-            <p>Our mission is to empower patients with true data sovereignty while enabling providers to access verifiable, tamper-proof records compliantly and efficiently, starting with a South Carolina-first approach.</p>
-        </div>
-        <div id="our-impact">
-            <h3>Our Impact</h3>
-            <p>By addressing data fragmentation and insecurity, we aim to reduce healthcare costs (e.g., $300B annually in the US from mismanagement) and improve outcomes, with initial focus on SC's ecosystem like MUSC serving 2.4M patients.</p>
-        </div>
-    </section>
-
-    <!-- Solus Protocol SDK Section -->
-    <section id="sdk-info">
-        <h2>Solus Protocol SDK - Coming Soon</h2>
-        <p>The Solus SDK is a Python library for providers to integrate secure data hashing and XRPL anchoring into their systems. It handles hashing, encryption, and blockchain interactions seamlessly.</p>
-        <h3>How It Works</h3>
-        <p>The SDK creates hashes of medical records for immutability, encrypts sensitive data off-chain, and stores the hashes on XRPL using $SLS for fees/incentives. PHI stays local for compliance.</p>
-        <h3>Subscriptions</h3>
-        <p>Freemium model: Basic free for pilots; Standard ($5K-20K/year) for unlimited use; Enterprise ($20K-100K/year) for custom integrations. Pay in USD—crypto handled behind the scenes.</p>
-        <h3>What It Does</h3>
-        <p>Enables secure sharing, reduces errors from silos, supports HIPAA via off-chain storage. Providers save on costs (e.g., redundant tests) and earn $SLS rebates for contributions.</p>
-        <p><strong>Coming Soon:</strong> Beta release post-pilots. Sign up for updates below.</p>
-    </section>
-
-    <!-- Security & Compliance Section -->
-    <section id="security-compliance">
-        <h2>Security, Compliance, & Legal Steps</h2>
-        <p>We prioritize HIPAA alignment with off-chain storage and encryption. Current steps: Prototype designed for compliance; seeking grants for full audits. $SLS is utility-only to avoid SEC issues—legal opinions forthcoming.</p>
-    </section>
-
-    <!-- Contact Us Section with Form -->
-    <section id="contact-us">
-        <h2>Contact Us</h2>
-        <p>Reach out or submit a ticket for inquiries, partnerships, or support.</p>
-        <form action="https://formspree.io/f/your-form-id" method="POST"> <!-- Replace with your Formspree or email form endpoint -->
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required><br><br>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br><br>
-            <label for="message">Message/Ticket:</label><br>
-            <textarea id="message" name="message" rows="5" required></textarea><br><br>
-            <input type="submit" value="Submit">
-        </form>
-    </section>
-
-    <footer>
-        <p>© 2026 Solus Protocol</p>
-    </footer>
-</body>
-<html>    
+    
     <style>
         :root {
             --bg: #050608;
@@ -559,8 +453,8 @@
             SOLUS PROTOCOL
         </a>
         <div style="display: flex; gap: 20px;">
-            <a href="https://t.me/solus_protocol" target="_blank" style="color: #888; text-decoration: none;">Telegram</a>
-            <a href="https://x.com/solus_protocol" target="_blank" style="color: #888; text-decoration: none;">Twitter</a>
+            <a href="https://t.me/solus_protocol" target="_blank" style="color: #FFF; text-decoration: none;">Telegram</a>
+            <a href="https://x.com/solus_protocol" target="_blank" style="color: #FFF; text-decoration: none;">Twitter</a>
             <a href="mailto:support@solusprotocol.com" style="color: var(--accent); text-decoration: none;">Support</a>
         </div>
     </nav>
@@ -661,15 +555,15 @@
             <div class="grid">
                 <div class="card">
                     <h4 style="color: var(--accent);">Privacy-by-Design</h4>
-                    <p>Solus remains HIPAA/GDPR compliant by never storing Protected Health Information (PHI) on-chain.</p>
+                    <p style="color: white;">Solus remains HIPAA/GDPR compliant by never storing Protected Health Information (PHI) on-chain.</p>
                 </div>
                 <div class="card">
                     <h4 style="color: var(--secondary);">Cryptographic Fingerprinting</h4>
-                    <p>Uses SHA-256 hashes to create irreversible "fingerprints" of medical records while data stays off-chain.</p>
+                    <p style="color: white;">Uses SHA-256 hashes to create irreversible "fingerprints" of medical records while data stays off-chain.</p>
                 </div>
                 <div class="card">
                     <h4 style="color: var(--accent);">Integrity Controls</h4>
-                    <p>The XRPL ensures that once a hash is anchored, it is immutable and time-stamped for auditability.</p>
+                     <p style="color: white;">The XRPL ensures that once a hash is anchored, it is immutable and time-stamped for auditability.</p>
                 </div>
             </div>
         </div>
@@ -683,12 +577,12 @@
             <div class="grid">
                 <div class="card">
                     <h4 style="color: var(--accent);">Clinical Pilot Program</h4>
-                    <p>Participate in our Q2 2026 onboard trials for healthcare clinics.</p>
+                     <p style="color: white;">Participate in our Q2 2026 onboard trials for healthcare clinics.</p>
                     <a href="mailto:support@solusprotocol.com?subject=Pilot Program Interest" class="cta-btn" style="padding: 10px 20px; margin-top: 10px; font-size: 0.8rem;">Express Interest</a>
                 </div>
                 <div class="card">
                     <h4 style="color: var(--secondary);">Enterprise API</h4>
-                    <p>Developer SDK for seamless EHR integration launching Q4 2026.</p>
+                     <p style="color: white;">Developer SDK for seamless EHR integration launching Q4 2026.</p>
                 </div>
             </div>
         </div>
@@ -792,9 +686,9 @@
         <div class="card" style="border-color: var(--accent); background: rgba(20, 241, 149, 0.1); position: relative; overflow: hidden;">
             <div style="position: absolute; top: 10px; right: 10px; background: var(--accent); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">SETUP COMPLETE</div>
             <h3 style="color: var(--accent); margin-bottom: 15px;">Base → XRPL EVM Bridge</h3>
-            <p>Base ERC-20 $SLS live and verified (contract: <a href="https://basescan.org/address/0xC6FaFD77CBcC7AACdCF36575384CF850687F1B76" target="_blank" style="color: var(--accent);">0xC6FaFD77...1B76</a>).</p>
-            <p>Direct $SLS token bridging in development (awaiting Axelar custom support). Value transfer available via stables/XRP bridge.</p>
-            <p style="color: #ccc; font-size: 0.9rem; margin: 15px 0;">
+             <p style="color: white;">Base ERC-20 $SLS live and verified (contract: <a href="https://basescan.org/address/0xC6FaFD77CBcC7AACdCF36575384CF850687F1B76" target="_blank" style="color: var(--accent);">0xC6FaFD77...1B76</a>).</p>
+             <p style="color: white;">Direct $SLS token bridging in development (awaiting Axelar custom support). Value transfer available via stables/XRP bridge.</p>
+            < <p style="color: white;">; font-size: 0.9rem; margin: 15px 0;">
                 Token Contract on XRPL EVM:<br>
                 <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px;">0x65f7B158aE50761b56A9c428B1680881452b4Ed5</code>
             </p>
@@ -805,11 +699,11 @@
         <div class="card" style="border-color: var(--secondary); background: rgba(153, 69, 255, 0.08); position: relative; overflow: hidden;">
             <div style="position: absolute; top: 10px; right: 10px; background: var(--secondary); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">COMING SOON</div>
             <h3 style="color: var(--secondary); margin-bottom: 15px;">XRPL Mainnet → XRPL EVM Bridge</h3>
-            <p>Native $SLS (IOU on XRPL mainnet via Xaman) will soon be bridgeable to XRPL EVM Sidechain.</p>
-            <p style="color: #ccc; font-size: 0.9rem; margin: 15px 0;">
+            <p style="color: white;">Native $SLS (IOU on XRPL mainnet via Xaman) will soon be bridgeable to XRPL EVM Sidechain.</p>
+            < <p style="color: white;">; font-size: 0.9rem; margin: 15px 0;">
                 We're actively working with Peersyst and Axelar teams to enable full IOU support (trustline whitelisting on gateway).
             </p>
-            <button disabled style="display: inline-block; background: rgba(153, 69, 255, 0.3); color: #aaa; padding: 12px 28px; border-radius: 12px; font-weight: 800; border: none; margin-top: 15px; cursor: not-allowed;">In Progress – Stay Tuned</button>
+            <button disabled style="display: inline-block; background: rgba(153, 69, 255, 0.3); color: #FFF; padding: 12px 28px; border-radius: 12px; font-weight: 800; border: none; margin-top: 15px; cursor: not-allowed;">In Progress – Stay Tuned</button>
         </div>
     </div>
     
