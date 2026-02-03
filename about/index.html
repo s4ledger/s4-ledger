@@ -1,1 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Solus Protocol | Medical Data Integrity</title>
+    <meta name="description" content="Learn about Solus Protocol – a South Carolina-based blockchain startup building decentralized medical data integrity on the XRP Ledger.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050608;
+            --accent: #14f195;
+            --secondary: #9945ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --completed: #14f195;
+        }
 
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(at 0% 0%, rgba(20, 241, 149, 0.12) 0px, transparent 50%), 
+                        radial-gradient(at 100% 100%, rgba(153, 69, 255, 0.12) 0px, transparent 50%);
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        header {
+            padding: 120px 5% 60px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 1.1;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 5%;
+        }
+
+        .card {
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin-top: 40px;
+            color: var(--secondary);
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #ddd;
+            line-height: 1.7;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--accent), #00ffa3);
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3.5rem; }
+            h2 { font-size: 2rem; }
+            h3 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+
+    <header>
+        <h1>About <span class="gradient-text">Solus Protocol</span></h1>
+        <p style="color: #aaa; font-size: 1.3rem; max-width: 700px; margin: 20px auto;">
+            Building the future of secure, patient-controlled medical data integrity on the XRP Ledger.
+        </p>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </header>
+
+    <div class="section-container">
+        <div class="card" id="who-we-are">
+            <h2>Who We Are</h2>
+            <p>Solus Protocol is an early-stage blockchain startup headquartered in Mount Pleasant, South Carolina. Founded by a solo developer with deep expertise in blockchain technology and healthcare data challenges, we are creating a decentralized protocol on the XRP Ledger to set a new standard for secure, patient-controlled medical data integrity.</p>
+            <p>Our focus is real-world utility: immutable hash anchoring for medical records, zero-knowledge privacy (PHI never touches the chain), and seamless integration with existing EHR systems — all built with transparency, compliance, and long-term scalability in mind.</p>
+        </div>
+
+        <div class="card" id="our-mission">
+            <h2>Our Mission</h2>
+            <p>Our mission is to empower patients with true ownership and control over their medical data while enabling healthcare providers to access accurate, verifiable records in a compliant, efficient, and tamper-proof manner — beginning with a focused rollout in South Carolina to create meaningful local economic and health impact before expanding nationally.</p>
+            <p>We believe the future of healthcare depends on trust in data. Solus Protocol exists to make that trust immutable, decentralized, and accessible to everyone.</p>
+        </div>
+
+        <div class="card" id="our-impact">
+            <h2>Our Impact</h2>
+            <p>By solving the problems of fragmented and insecure healthcare data, Solus Protocol aims to significantly reduce the estimated $300 billion annual cost of data mismanagement in the US healthcare system. In South Carolina, we are prioritizing partnerships and pilots with institutions like the Medical University of South Carolina (MUSC), which serves over 2.4 million patients statewide, to drive innovation, improve care coordination, and create lasting economic value in the region.</p>
+            <p>Long-term, our goal is to become the global standard for decentralized medical data integrity, enabling safer, faster, and more equitable healthcare worldwide.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Solus Protocol | Decentralized Medical Integrity<br>Built on the XRP Ledger</p>
+    </footer>
+</body>
+</html>
