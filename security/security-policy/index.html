@@ -1,103 +1,267 @@
-# Solus Protocol Security Policy
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solus Protocol Security Policy</title>
+    <meta name="description" content="Solus Protocol Responsible Disclosure and Security Policy – protecting medical data integrity on the XRP Ledger.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050608;
+            --accent: #14f195;
+            --secondary: #9945ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --completed: #14f195;
+        }
 
-## 1. Introduction and Responsible Disclosure
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-At Solus Protocol, the security of our decentralized infrastructure, built on the XRP Ledger (XRPL), is paramount. We are committed to safeguarding the integrity, confidentiality, and availability of medical data through our protocol, which enables tamper-proof anchoring and patient-controlled access without exposing sensitive Protected Health Information (PHI). We recognize the vital role of the security research community in identifying potential vulnerabilities and appreciate ethical disclosures that help us enhance our system's robustness.
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(at 0% 0%, rgba(20, 241, 149, 0.12) 0px, transparent 50%), 
+                        radial-gradient(at 100% 100%, rgba(153, 69, 255, 0.12) 0px, transparent 50%);
+            z-index: -1;
+            filter: blur(80px);
+        }
 
-This policy outlines our approach to vulnerability reporting, scope, and commitments to researchers. By participating, you agree to follow these guidelines in good faith. Solus Protocol adheres to principles of responsible disclosure, ensuring that reported issues are addressed promptly while minimizing risks to users and stakeholders.
+        header {
+            padding: 120px 5% 60px;
+            text-align: center;
+        }
 
-## 2. Reporting a Vulnerability
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 1.1;
+        }
 
-To maintain the highest standards of security and protect our users, **please do not disclose vulnerabilities publicly (e.g., via GitHub issues, social media, or forums) until we have had sufficient time to investigate and remediate.** Public disclosure before resolution may void safe harbor protections (see Section 5).
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-### Preferred Reporting Channels
+        .section-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 5%;
+        }
 
-Report vulnerabilities privately through one of the following secure methods:
+        .card {
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-**Email:** support@solusprotocol.com (preferred for detailed reports).
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
 
-**PGP Encryption:** Use our PGP key for encrypted communications. [Link to PGP Key or Fingerprint: e.g., Fingerprint: ABCD 1234 5678 9ABC DEF0 1234 5678 9ABC DEF0] (available on our website or Keybase.io/solusprotocol).
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
 
-**Subject Line:** Use "Vulnerability Report: [Brief Non-Sensitive Description]" to ensure priority handling.
+        h3 {
+            font-size: 1.8rem;
+            margin-top: 40px;
+            color: var(--secondary);
+        }
 
-If you require an alternative secure channel (e.g., Signal or encrypted platform), include your contact preferences in the initial email, and we will accommodate.
+        p, li {
+            font-size: 1.1rem;
+            color: #ddd;
+            line-height: 1.7;
+        }
 
-### What to Include in Your Report
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin: 20px 0;
+        }
 
-To facilitate a swift and effective response, please provide as much detail as possible while avoiding the inclusion of sensitive data:
+        li {
+            margin-bottom: 10px;
+        }
 
-* **Description:** A clear, concise explanation of the vulnerability, including its type (e.g., buffer overflow, SQL injection, cryptographic weakness).
-* **Reproduction Steps:** Step-by-step instructions to replicate the issue, including any proof-of-concept (PoC) code, scripts, or screenshots. Specify the environment (e.g., XRPL testnet/mainnet, SDK version, OS/browser).
-* **Impact Assessment:** Potential consequences, such as data exposure, unauthorized access, denial of service, or financial loss. Quantify if possible (e.g., "Could allow tampering of hashed medical records").
-* **Affected Components:** Identify specific parts of the protocol (e.g., hashing logic, XRPL memo fields, SDK encryption module).
-* **Discovery Details:** How and when you found the issue (optional, but helpful for our internal review).
-* **Supporting Files:** Attach non-sensitive files (e.g., PoC scripts) via encrypted zip if needed.
+        .back-btn {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--accent), #00ffa3);
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.3s;
+        }
 
-We encourage reports in English, but we can accommodate other languages with translation assistance.
+        .back-btn:hover {
+            transform: translateY(-3px);
+        }
 
-### Confidentiality During Reporting
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
 
-All reports are treated as confidential. We will not share your identity or report details without your explicit consent, except as required by law or to coordinate with trusted third parties (e.g., XRPL Foundation for ledger-related issues).
+        @media (max-width: 768px) {
+            h1 { font-size: 3.5rem; }
+            h2 { font-size: 2rem; }
+            h3 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
 
-## 3. Scope
+    <header>
+        <h1>Solus Protocol <span class="gradient-text">Security Policy</span></h1>
+        <p style="color: #aaa; font-size: 1.3rem; max-width: 700px; margin: 20px auto;">
+            Responsible disclosure, scope, and our commitment to security researchers.
+        </p>
+        <a href="/security/" class="back-btn">← Back to Security & Compliance</a>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </header>
 
-This policy applies to vulnerabilities in Solus Protocol's owned and operated components. We define "in-scope" and "out-of-scope" to focus efforts on high-impact areas.
+    <div class="section-container">
+        <div class="card">
+            <h2>1. Introduction and Responsible Disclosure</h2>
+            <p>At Solus Protocol, the security of our decentralized infrastructure, built on the XRP Ledger (XRPL), is paramount. We are committed to safeguarding the integrity, confidentiality, and availability of medical data through our protocol, which enables tamper-proof anchoring and patient-controlled access without exposing sensitive Protected Health Information (PHI). We recognize the vital role of the security research community in identifying potential vulnerabilities and appreciate ethical disclosures that help us enhance our system's robustness.</p>
+            <p>This policy outlines our approach to vulnerability reporting, scope, and commitments to researchers. By participating, you agree to follow these guidelines in good faith. Solus Protocol adheres to principles of responsible disclosure, ensuring that reported issues are addressed promptly while minimizing risks to users and stakeholders.</p>
+        </div>
 
-### In-Scope Vulnerabilities
+        <div class="card">
+            <h2>2. Reporting a Vulnerability</h2>
+            <p>To maintain the highest standards of security and protect our users, <strong>please do not disclose vulnerabilities publicly (e.g., via GitHub issues, social media, or forums) until we have had sufficient time to investigate and remediate.</strong> Public disclosure before resolution may void safe harbor protections (see Section 5).</p>
 
-* Solus Core Protocol: Data anchoring logic, hashing mechanisms, and XRPL transaction handling.
-* Solus API and Gateway Services: Endpoints for SDK integrations, including authentication and data verification.
-* Smart Contracts/AMM Pools: Any deployed on XRPL, including $SLS token issuance and treasury management.
-* SDK Prototype: Encryption, hashing, and XRPL interaction modules in this repository.
-* Website and Documentation: Security flaws in solusprotocol.com or associated repos that could lead to data exposure.
+            <h3>Preferred Reporting Channels</h3>
+            <p>Report vulnerabilities privately through one of the following secure methods:</p>
+            <ul>
+                <li><strong>Email:</strong> support@solusprotocol.com (preferred for detailed reports).</li>
+                <li><strong>PGP Encryption:</strong> Use our PGP key for encrypted communications. [Link to PGP Key or Fingerprint: e.g., Fingerprint: ABCD 1234 5678 9ABC DEF0 1234 5678 9ABC DEF0] (available on our website or Keybase.io/solusprotocol).</li>
+                <li><strong>Subject Line:</strong> Use "Vulnerability Report: [Brief Non-Sensitive Description]" to ensure priority handling.</li>
+            </ul>
+            <p>If you require an alternative secure channel (e.g., Signal or encrypted platform), include your contact preferences in the initial email, and we will accommodate.</p>
 
-Vulnerabilities must be novel (not previously known to us) and demonstrable in a controlled environment.
+            <h3>What to Include in Your Report</h3>
+            <p>To facilitate a swift and effective response, please provide as much detail as possible while avoiding the inclusion of sensitive data:</p>
+            <ul>
+                <li><strong>Description:</strong> A clear, concise explanation of the vulnerability, including its type (e.g., buffer overflow, SQL injection, cryptographic weakness).</li>
+                <li><strong>Reproduction Steps:</strong> Step-by-step instructions to replicate the issue, including any proof-of-concept (PoC) code, scripts, or screenshots. Specify the environment (e.g., XRPL testnet/mainnet, SDK version, OS/browser).</li>
+                <li><strong>Impact Assessment:</strong> Potential consequences, such as data exposure, unauthorized access, denial of service, or financial loss. Quantify if possible (e.g., "Could allow tampering of hashed medical records").</li>
+                <li><strong>Affected Components:</strong> Identify specific parts of the protocol (e.g., hashing logic, XRPL memo fields, SDK encryption module).</li>
+                <li><strong>Discovery Details:</strong> How and when you found the issue (optional, but helpful for our internal review).</li>
+                <li><strong>Supporting Files:</strong> Attach non-sensitive files (e.g., PoC scripts) via encrypted zip if needed.</li>
+            </ul>
+            <p>We encourage reports in English, but we can accommodate other languages with translation assistance.</p>
 
-### Out-of-Scope Vulnerabilities
+            <h3>Confidentiality During Reporting</h3>
+            <p>All reports are treated as confidential. We will not share your identity or report details without your explicit consent, except as required by law or to coordinate with trusted third parties (e.g., XRPL Foundation for ledger-related issues).</p>
+        </div>
 
-* Denial of Service (DoS/DDoS) attacks or resource exhaustion (report to XRPL if ledger-wide).
-* Social engineering, phishing, or attacks targeting Solus employees/contractors.
-* Vulnerabilities in third-party dependencies (e.g., underlying XRPL protocol—report to Ripple/XRPL Foundation).
-* Issues in non-official forks or unrelated projects.
-* Theoretical vulnerabilities without a practical exploit PoC.
-* Spam, automated scanner outputs, or low-severity issues (e.g., self-XSS).
-* Attacks requiring physical access to devices or insider privileges.
+        <div class="card">
+            <h2>3. Scope</h2>
+            <p>This policy applies to vulnerabilities in Solus Protocol's owned and operated components. We define "in-scope" and "out-of-scope" to focus efforts on high-impact areas.</p>
 
-If unsure about scope, contact us for clarification before testing.
+            <h3>In-Scope Vulnerabilities</h3>
+            <ul>
+                <li>Solus Core Protocol: Data anchoring logic, hashing mechanisms, and XRPL transaction handling.</li>
+                <li>Solus API and Gateway Services: Endpoints for SDK integrations, including authentication and data verification.</li>
+                <li>Smart Contracts/AMM Pools: Any deployed on XRPL, including $SLS token issuance and treasury management.</li>
+                <li>SDK Prototype: Encryption, hashing, and XRPL interaction modules in this repository.</li>
+                <li>Website and Documentation: Security flaws in solusprotocol.com or associated repos that could lead to data exposure.</li>
+            </ul>
+            <p>Vulnerabilities must be novel (not previously known to us) and demonstrable in a controlled environment.</p>
 
-## 4. Response Process and Timeline
+            <h3>Out-of-Scope Vulnerabilities</h3>
+            <ul>
+                <li>Denial of Service (DoS/DDoS) attacks or resource exhaustion (report to XRPL if ledger-wide).</li>
+                <li>Social engineering, phishing, or attacks targeting Solus employees/contractors.</li>
+                <li>Vulnerabilities in third-party dependencies (e.g., underlying XRPL protocol—report to Ripple/XRPL Foundation).</li>
+                <li>Issues in non-official forks or unrelated projects.</li>
+                <li>Theoretical vulnerabilities without a practical exploit PoC.</li>
+                <li>Spam, automated scanner outputs, or low-severity issues (e.g., self-XSS).</li>
+                <li>Attacks requiring physical access to devices or insider privileges.</li>
+            </ul>
+            <p>If unsure about scope, contact us for clarification before testing.</p>
+        </div>
 
-Upon receiving your report:
+        <div class="card">
+            <h2>4. Response Process and Timeline</h2>
+            <p>Upon receiving your report:</p>
+            <ul>
+                <li><strong>Acknowledgment:</strong> We will confirm receipt within <strong>48 hours</strong> (business days) and assign a unique tracking ID.</li>
+                <li><strong>Triage:</strong> Our security team will evaluate the report within <strong>5 business days</strong>, assessing severity (using CVSS scoring) and reproducibility.</li>
+                <li><strong>Investigation & Remediation:</strong> We aim to provide an initial response on validity within <strong>10 business days</strong>. If confirmed, we'll share a remediation timeline (typically 30-90 days for high-severity issues).</li>
+                <li><strong>Disclosure Coordination:</strong> We support coordinated disclosure. Once fixed, we'll credit you (if desired) in release notes or advisories.</li>
+                <li><strong>Updates:</strong> You'll receive regular status updates. If no response in expected timeframes, follow up via the original channel.</li>
+            </ul>
+            <p><strong>Severity Levels (Guideline):</strong></p>
+            <ul>
+                <li><strong>Critical/High:</strong> Immediate threats to data integrity/privacy—prioritized fix within 30 days.</li>
+                <li><strong>Medium/Low:</strong> Non-exploitable or mitigated issues—fixed in next release cycle.</li>
+            </ul>
+        </div>
 
-* **Acknowledgment:** We will confirm receipt within **48 hours** (business days) and assign a unique tracking ID.
-* **Triage:** Our security team will evaluate the report within **5 business days,** assessing severity (using CVSS scoring) and reproducibility.
-* **Investigation & Remediation:** We aim to provide an initial response on validity within **10 business days.** If confirmed, we'll share a remediation timeline (typically 30-90 days for high-severity issues).
-* **Disclosure Coordination:** We support coordinated disclosure. Once fixed, we'll credit you (if desired) in release notes or advisories.
-* **Updates:** You'll receive regular status updates. If no response in expected timeframes, follow up via the original channel.
+        <div class="card">
+            <h2>5. Our Commitment and Safe Harbor</h2>
+            <p>If you comply with this policy and act in good faith:</p>
+            <ul>
+                <li><strong>Safe Harbor Guarantee:</strong> We will not pursue civil or criminal action against you, nor involve law enforcement, provided you:
+                    <ul>
+                        <li>Do not access, exfiltrate, or destroy actual user data.</li>
+                        <li>Avoid disruptive testing (e.g., no DoS or production impacts).</li>
+                        <li>Give us reasonable time (at least 90 days) to resolve before public disclosure.</li>
+                        <li>Do not exploit for personal gain.</li>
+                    </ul>
+                </li>
+                <li><strong>Public Credit:</strong> With your permission, we'll acknowledge your contribution in our Hall of Fame or security advisories.</li>
+                <li><strong>No Retaliation:</strong> We value ethical researchers and commit to treating all reports professionally.</li>
+            </ul>
+            <p>Violations of this policy (e.g., public disclosure without coordination) may result in disqualification from safe harbor.</p>
+        </div>
 
-Severity Levels (Guideline):
-* **Critical/High:** Immediate threats to data integrity/privacy—prioritized fix within 30 days.
-* **Medium/Low:** Non-exploitable or mitigated issues—fixed in next release cycle.
+        <div class="card">
+            <h2>6. Additional Resources</h2>
+            <ul>
+                <li><strong>Testing Guidelines:</strong> Use testnet environments only (e.g., XRPL testnet for SDK prototypes). Avoid mainnet or real data.</li>
+                <li><strong>Contact for Questions:</strong> For policy clarifications, email support@solusprotocol.com with "Security Policy Inquiry" in the subject.</li>
+                <li><strong>Updates to Policy:</strong> This policy may evolve; check the latest version on GitHub.</li>
+            </ul>
+            <p>We thank the security community for helping make Solus Protocol more secure. Together, we're building a safer future for healthcare data.</p>
+        </div>
+    </div>
 
-## 5. Our Commitment and Safe Harbor
-
-If you comply with this policy and act in good faith:
-
-* **Safe Harbor Guarantee:** We will not pursue civil or criminal action against you, nor involve law enforcement, provided you:Do not access, exfiltrate, or destroy actual user data.
-  *Avoid disruptive testing (e.g., no DoS or production impacts).
-  *Give us reasonable time (at least 90 days) to resolve before public disclosure.
-  *Do not exploit for personal gain.
-
-* **Public Credit:** With your permission, we'll acknowledge your contribution in our Hall of Fame or security advisories.
-* **No Retaliation:** We value ethical researchers and commit to treating all reports professionally.
-
-Violations of this policy (e.g., public disclosure without coordination) may result in disqualification from safe harbor.
-
-## 6. Additional Resources
-
-* **Testing Guidelines:** Use testnet environments only (e.g., XRPL testnet for SDK prototypes). Avoid mainnet or real data.
-* **Contact for Questions:** For policy clarifications, email support@solusprotocol.com with "Security Policy Inquiry" in the subject.
-* **Updates to Policy:** This policy may evolve; check the latest version on GitHub.
-
-We thank the security community for helping make Solus Protocol more secure. Together, we're building a safer future for healthcare data.
-
+    <footer>
+        <p>© 2026 Solus Protocol | Decentralized Medical Integrity<br>Built on the XRP Ledger</p>
+    </footer>
+</body>
+</html>
