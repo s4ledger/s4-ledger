@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solus Protocol | Medical Data Integrity on XRP Ledger</title>
+    <title>Solus Protocol | Decentralized Medical Data Integrity on XRPL</title>
     <meta name="description" content="Solus Protocol ($SLS) provides decentralized, immutable infrastructure for medical data integrity using SHA-256 hash anchoring on the XRP Ledger.">
     <meta name="keywords" content="Solus Protocol, SLS token, XRPL, XRP Ledger, Medical Blockchain, Healthcare Data Integrity, HIPAA Blockchain">
     <meta property="og:title" content="Solus Protocol | Medical Data Integrity">
     <meta property="og:description" content="Immutable trust for healthcare data. Powered by the XRP Ledger.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
     <meta property="og:type" content="website">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Solus Protocol">
+    <meta name="twitter:description" content="Decentralized Medical Data Integrity on XRPL">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
             --bg: #050608;
@@ -21,944 +23,1393 @@
             --secondary: #9945ff;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
-            --completed: #14f195;
+            --error: #ff4757;
         }
-
-        body {
-            background-color: var(--bg);
-            color: #fff;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+        * { box-sizing: border-box; }
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
             margin: 0;
+            padding: 0;
             min-height: 100vh;
-            line-height: 1.6;
             overflow-x: hidden;
         }
-
         .mesh-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(at 0% 0%, rgba(20, 241, 149, 0.12) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(153, 69, 255, 0.12) 0px, transparent 50%);
+            pointer-events: none;
             z-index: -1;
-            filter: blur(80px);
         }
-
-        nav {
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+        }
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--accent);
+            top: -200px;
+            right: -200px;
+        }
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -100px;
+            left: -100px;
+        }
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .navbar { 
+            background: rgba(5, 6, 8, 0.95); 
+            backdrop-filter: blur(20px); 
+            border-bottom: 1px solid var(--border);
+            padding: 10px 0;
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5%;
-            box-sizing: border-box;
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            background: rgba(5, 6, 8, 0.7);
         }
-
-        .nav-brand {
-            text-decoration: none;
-            color: white;
-            font-weight: 800;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .navbar-brand img { height: 35px; }
+        .navbar-brand { font-weight: 700; }
+        .nav-link { color: #fff !important; padding: 8px 12px !important; font-size: 0.9rem !important; }
+        .nav-link:hover { color: var(--accent) !important; }
+        @media (max-width: 991px) {
+            .navbar-collapse { 
+                background: rgba(5, 6, 8, 0.98); 
+                padding: 15px;
+                border-radius: 12px;
+                margin-top: 10px;
+                border: 1px solid var(--border);
+            }
+            .navbar-nav { gap: 5px; }
+            .nav-link { padding: 10px 15px !important; border-radius: 8px; }
+            .nav-link:hover { background: rgba(20, 241, 149, 0.1); }
         }
-
-        .nav-logo {
-            height: 40px;
-            width: auto;
-            display: block;
-            object-fit: contain;  
-        }
-
-        .sticky-trade-btn {
-            position: fixed;
-            top: 100px;
-            right: 5%;
-            z-index: 2000;
-            background: linear-gradient(135deg, var(--accent), #00ffa3);
-            color: #000;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 800;
-            text-decoration: none;
-            font-size: 0.9rem;
-            box-shadow: 0 0 20px rgba(20, 241, 149, 0.4);
-            border: none;
-            cursor: pointer;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: pulse-glow 2s infinite;
-        }
-
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(20, 241, 149, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(20, 241, 149, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(20, 241, 149, 0); }
-        }
-
-        .hero {
+        .hero { 
+            padding: 120px 15px 60px; 
+            text-align: center;
             min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 100px 20px 40px;
         }
-
-        h1 {
-            font-size: clamp(2.5rem, 8vw, 5.5rem);
-            margin: 0;
-            font-weight: 800;
-            letter-spacing: -3px;
-            line-height: 1.1;
+        .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 20px; }
+        @media (max-width: 768px) {
+            .hero { padding: 100px 15px 40px; min-height: auto; }
+            .hero h1 { font-size: 1.8rem; }
         }
-
-        .gradient-text {
-            background: linear-gradient(90deg, #fff, var(--accent), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .gradient-text { 
+            background: linear-gradient(90deg, #fff, var(--accent), var(--secondary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
         }
-
-        .section-container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 20px;
-            position: relative;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            scrollbar-width: none;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: #888;
-            padding: 12px 20px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: 0.3s;
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        .tab-btn.active {
-            color: var(--accent);
-            position: relative;
-        }
-
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -11px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--accent);
-        }
-
-        .tab-content {
-            display: none;
-            background: var(--glass);
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid var(--border);
+        .section { padding: 80px 0; }
+        .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 40px; text-align: center; }
+        .card { 
+            background: var(--glass); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            padding: 25px; 
+            margin-bottom: 20px; 
             backdrop-filter: blur(10px);
+            transition: all 0.3s;
         }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        #whitepaper-render {
-            text-align: left;
-            font-size: 1rem;
-            color: #ccc;
-        }
-        #whitepaper-render h1, #whitepaper-render h2, #whitepaper-render h3 {
-            color: #fff;
-            margin-top: 2em;
-        }
-        #whitepaper-render hr {
-            border: 0;
-            border-top: 1px solid var(--border);
-            margin: 2em 0;
-        }
-        #whitepaper-render table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        #whitepaper-render th, #whitepaper-render td {
-            padding: 15px;
-            border: 1px solid var(--border);
-            text-align: left;
-        }
-        #whitepaper-render th {
-            background: rgba(153, 69, 255, 0.1);
-            color: var(--secondary);
-        }
-
-        .wp-download-container {
-            display: none;
-            margin-bottom: 25px;
-            justify-content: flex-end;
-        }
-        
-        .wp-download-container.visible {
-            display: flex;
-        }
-
-        .green-download-btn {
-            background: linear-gradient(135deg, var(--accent), #00ffa3);
-            color: #000;
-            padding: 12px 28px;
-            border-radius: 12px;
-            font-weight: 800;
-            text-decoration: none;
-            font-size: 0.9rem;
-            border: none;
+        .card:hover { border-color: rgba(20, 241, 149, 0.3); transform: translateY(-2px); }
+        .btn-primary-custom { 
+            background: linear-gradient(135deg, var(--accent), #00ffa3); 
+            color: #000; 
+            border: none; 
+            padding: 14px 28px; 
+            border-radius: 12px; 
+            font-weight: 700; 
             cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(20, 241, 149, 0.2);
-        }
-
-        .green-download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(20, 241, 149, 0.4);
-        }
-
-        .download-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: linear-gradient(135deg, rgba(20, 241, 149, 0.1), rgba(153, 69, 255, 0.1));
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 15px 30px;
-            border-radius: 12px;
             text-decoration: none;
-            font-weight: 700;
-            margin-bottom: 30px;
-            transition: 0.3s;
-            max-width: fit-content;
-        }
-        .download-btn:hover {
-            background: var(--accent);
-            color: #000;
-            transform: translateY(-2px);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: rgba(255,255,255,0.02);
-            padding: 25px;
-            border-radius: 18px;
-            border: 1px solid var(--border);
-            transition: 0.3s;
-        }
-
-        .roadmap-year {
-            margin-top: 40px;
-            border-left: 2px solid var(--border);
-            padding-left: 25px;
-        }
-
-        .roadmap-year h3 {
-            color: var(--secondary);
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
-
-        .roadmap-item {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .roadmap-item::before {
-            content: '';
-            position: absolute;
-            left: -32px;
-            top: 10px;
-            width: 12px;
-            height: 12px;
-            background: var(--border);
-            border-radius: 50%;
-        }
-
-        .roadmap-item.done::before {
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-        }
-
-        .status-tag {
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-left: 10px;
-            text-transform: uppercase;
-        }
-
-        .status-done { background: rgba(20, 241, 149, 0.2); color: var(--accent); }
-        .status-next { background: rgba(153, 69, 255, 0.2); color: var(--secondary); }
-
-        .disclaimer-box {
-            margin-top: 100px;
-            padding: 30px;
-            background: rgba(255, 0, 0, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            font-size: 0.75rem;
-            color: #777;
-            text-align: justify;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .social-links a {
-            color: #888;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-
-        .social-links a:hover { color: var(--accent); }
-
-        .cta-btn {
-            background: #fff;
-            color: #000;
-            padding: 16px 35px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
             display: inline-block;
-            margin-top: 30px;
-            border: none;
-            cursor: pointer;
+            transition: all 0.3s;
         }
-
-        /* Input Styles for Feedback */
-        .feedback-input {
-            width: 100%;
-            background: rgba(0,0,0,0.3);
+        .btn-primary-custom:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(20, 241, 149, 0.3); color: #000; }
+        .btn-secondary-custom {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .btn-secondary-custom:hover { background: var(--accent); color: #000; }
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(20, 241, 149, 0.1);
+            border: 1px solid rgba(20, 241, 149, 0.3);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .live-badge::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .counter { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+        .trust-badge {
+            background: var(--glass);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 15px;
-            color: #fff;
-            font-family: inherit;
-            margin-top: 15px;
-            resize: vertical;
-            box-sizing: border-box;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
         }
-        .email-input {
-            width: 100%;
+        .trust-badge-icon { font-size: 2rem; margin-bottom: 10px; }
+        .partner-logo {
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            color: #fff;
-            margin-top: 10px;
-            box-sizing: border-box;
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
         }
-        .feedback-submit {
-            background: var(--secondary);
-            color: #fff;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            margin-top: 10px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: 0.3s;
+        .partner-logo:hover { background: rgba(20, 241, 149, 0.1); color: var(--accent); border-color: var(--accent); }
+        .flowchart-step {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
         }
-        .feedback-submit:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* FAQ Styles */
-        .faq-item {
-            margin-bottom: 15px;
+        .flowchart-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .flowchart-arrow { color: var(--accent); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; }
+        .comparison-table { width: 100%; border-collapse: collapse; }
+        .comparison-table th, .comparison-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        .comparison-table th { color: var(--accent); }
+        .faq-item { margin-bottom: 15px; }
+        .faq-question {
+            background: var(--glass);
             border: 1px solid var(--border);
             border-radius: 12px;
-            overflow: hidden;
-        }
-       
-        .faq-answer {
-            display: none; /* Keeps it hidden until clicked */
-            padding: 15px;
-            background-color: rgba(255, 255, 255, 0.05); /* Optional: slight background for the answer */
-            border-radius: 5px;
-            margin-top: 5px;
-        }
-
-        .faq-question {
+            padding: 20px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: bold;
-            padding: 10px;
-            border-bottom: 1px solid #333;      
+            transition: all 0.3s;
         }
-
-        .faq-item.active .faq-answer {
-            max-height: 300px;
+        .faq-question:hover { border-color: var(--accent); }
+        .faq-answer {
+            display: none;
             padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 0 0 12px 12px;
+            margin-top: -10px;
+            color: #aaa;
         }
-
-        .no-wrap-subheading {
-        white-space: nowrap;
+        .faq-item.active .faq-answer { display: block; }
+        .faq-item.active .faq-question { border-radius: 12px 12px 0 0; border-color: var(--accent); }
+        .roadmap-phase {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
         }
-
-        /* Allow wrapping on small screens */
-        @media (max-width: 767px) {
-        .no-wrap-subheading {
-        white-space: normal;
-        .sticky-trade-btn { top: auto; bottom: 20px; right: 20px; width: calc(100% - 40px); text-align: center; }
+        .roadmap-phase.completed { border-color: var(--accent); }
+        .roadmap-phase.completed::before {
+            content: "COMPLETED";
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(20, 241, 149, 0.2);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
         }
+        .roadmap-phase.current::before {
+            content: "IN PROGRESS";
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(153, 69, 255, 0.2);
+            color: var(--secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
         }
-        
-            
-        /* Custom Dropdown (hover/click activated) */
-.custom-dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.custom-dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background: rgba(5, 6, 8, 0.95);
-    min-width: 160px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-    z-index: 1;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    backdrop-filter: blur(10px);
-}
-
-.dropdown-content a {
-    color: white;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {
-    background: rgba(20, 241, 149, 0.2);
-    color: var(--accent);
-}
-
-.dropdown-toggle:hover {
-    color: var(--accent) !important;
-}
-
-/* Fix spacing for nav items */
-.navbar-nav, .dropdown-nav {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-}
-        
+        .user-badge {
+            background: rgba(20, 241, 149, 0.2);
+            color: var(--accent);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .user-badge.provider {
+            background: rgba(153, 69, 255, 0.2);
+            color: var(--secondary);
+        }
+        textarea, input[type="text"], input[type="email"], input[type="password"], select { 
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid var(--border); 
+            color: #fff; 
+            padding: 14px; 
+            width: 100%; 
+            border-radius: 12px; 
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+        textarea:focus, input:focus, select:focus { outline: none; border-color: var(--accent); }
+        textarea::placeholder, input::placeholder { color: rgba(255,255,255,0.5); }
+        textarea { min-height: 150px; resize: vertical; }
+        select option { background: #1a1a2e; color: #fff; }
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            color: #666;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            border: none;
+            border-radius: 50%;
+            color: #000;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { transform: translateY(-3px); }
+        .hash-result {
+            background: rgba(20, 241, 149, 0.1);
+            border: 1px solid rgba(20, 241, 149, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            word-break: break-all;
+        }
+        .hash-value { color: var(--accent); font-family: monospace; font-size: 0.9rem; }
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .tab-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: #888;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .tab-btn.active { background: rgba(20, 241, 149, 0.1); border-color: var(--accent); color: var(--accent); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-modal.active { display: flex; }
+        .login-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            float: right;
+        }
+        .close-modal:hover { color: #fff; }
+        .code-block {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            color: #aaa;
+        }
+        .code-block .keyword { color: var(--secondary); }
+        .code-block .string { color: var(--accent); }
+        .code-block .comment { color: #666; }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            padding-bottom: 30px;
+            border-left: 2px solid var(--border);
+        }
+        .timeline-item:last-child { border-left: 2px solid transparent; }
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            background: var(--border);
+            border-radius: 50%;
+        }
+        .timeline-item.completed::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .timeline-date { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+        .roi-calculator {
+            background: linear-gradient(135deg, rgba(20, 241, 149, 0.1), rgba(153, 69, 255, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        .roi-result {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-align: center;
+            margin-top: 20px;
+        }
+        .investor-cta {
+            background: linear-gradient(135deg, rgba(20, 241, 149, 0.15), rgba(153, 69, 255, 0.15));
+            border: 2px solid rgba(20, 241, 149, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .section { padding: 50px 0; }
+            .section-title { font-size: 1.5rem; }
+            .counter { font-size: 1.8rem; }
+            .flowchart-arrow { transform: rotate(90deg); padding: 10px 0; }
+        }
     </style>
 </head>
 <body>
-    
-    <div class="mesh-bg"></div>
-    <button class="sticky-trade-btn" id="live-price-btn" onclick="scrollToTrade()">TRADE $SLS LIVE</button>
-
-<nav>
-    <a href="/" class="nav-brand">
-        <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png" alt="Solus Logo" class="nav-logo">
-        SOLUS PROTOCOL
-    </a>
-
-<!-- Centered Dropdown Navigation -->
-<div style="flex-grow: 1; display: flex; justify-content: center; align-items: center; gap: 40px;">
-    <!-- About Us Dropdown -->
-    <div class="custom-dropdown">
-        <span class="dropdown-toggle" style="color: white; font-weight: 600; cursor: pointer; padding: 8px 12px; transition: color 0.3s;">About Us</span>
-        <div class="dropdown-content">
-            <a href="/about/#who-we-are" style="color: white; padding: 12px 16px; text-decoration: none; display: block;">Who We Are</a>
-            <a href="/about/#our-mission" style="color: white; padding: 12px 16px; text-decoration: none; display: block;">Our Mission</a>
-            <a href="/about/#our-impact" style="color: white; padding: 12px 16px; text-decoration: none; display: block;">Our Impact</a>
-        </div>
+    <div class="mesh-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
     </div>
 
-    <!-- Solus Protocol SDK Dropdown -->
-    <div class="custom-dropdown">
-        <span class="dropdown-toggle" style="color: white; font-weight: 600; cursor: pointer; padding: 8px 12px; transition: color 0.3s;">Solus Protocol SDK</span>
-        <div class="dropdown-content">
-            <a href="/sdk/" style="color: white; padding: 12px 16px; text-decoration: none; display: block;">Overview - Coming Soon</a>
-            <a href="/sdk/#sdk-how-it-works" style="color: white; padding: 12px 16px; text-decoration: none; display: block;">How It Works</a>
-            <a href="/sdk/#sdk-subscriptions" style="color: white; padding: 12px 16px; text-decoration: none; display: block;">Subscriptions</a>
-            <a href="/sdk/#sdk-what-it-does" style="color: white; padding: 12px 16px; text-decoration: none; display: block;">What It Does</a>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png" alt="Solus Logo">
+                Solus Protocol
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#roadmap">Roadmap</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sdk">SDK</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#security">Security</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item" id="loginBtn"><a class="nav-link" href="#" onclick="showLoginModal()">Login</a></li>
+                    <li class="nav-item" id="userInfo" style="display:none;">
+                        <span class="user-badge" id="userBadge"></span>
+                    </li>
+                    <li class="nav-item" id="logoutBtn" style="display:none;">
+                        <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- Security & Compliance Link -->
-    <a href="/security/" style="color: white; text-decoration: none; font-weight: 600; padding: 8px 12px;">Security & Compliance</a>
-
-    <!-- Contact Us Link -->
-    <a href="/contact/" style="color: white; text-decoration: none; font-weight: 600; padding: 8px 12px;">Contact Us</a>
-</div>
-
-    <div style="display: flex; gap: 20px;">
-            <a href="https://t.me/solus_protocol" target="_blank" style="color: #888; text-decoration: none;">Telegram</a>
-            <a href="https://x.com/solus_protocol" target="_blank" style="color: #888; text-decoration: none;">Twitter</a>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <a href="https://xmagnetic.org/tokens/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5+534C5300000000000000000000000000000000000000" target="_blank" class="live-badge">$SLS Token LIVE on XRPL</a>
+        <h1>Patient Dashboard <span class="gradient-text">Demo</span></h1>
+        <p style="color: #888; font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px;">Secure your medical records with Solus Protocol - Decentralized Medical Data Integrity on the XRP Ledger</p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="#dashboard" class="btn-primary-custom">Try Demo Dashboard</a>
+            <a href="https://github.com/solusprotocol1/solus-protocol/blob/dec022ee9ca6c9b1117abc2bc63d36b537318a36/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" target="_blank" class="btn-secondary-custom">Read Whitepaper</a>
         </div>
-    </div>
-</nav>
 
-    <section class="hero" data-aos="fade-up">
-        <div style="background: rgba(20, 241, 149, 0.1); color: var(--accent); padding: 5px 15px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; margin-bottom: 25px; letter-spacing: 1px;">PROTOCOL LIVE ON MAINNET</div>
-        <h1>Immutable <span class="gradient-text">Trust.</span></h1>
-        <p style="color: #888; font-size: 1.25rem; max-width: 650px; margin: 20px 0;">
-    Decentralized infrastructure for medical integrity. Powered by $SLS on the XRP Ledger.
-</p>
-        
-        <div style="display: flex; gap: 15px;">
-            <button onclick="scrollToTrade()" class="cta-btn">Access Trading Hub</button>
-            <a href="https://xrpscan.com/account/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" class="cta-btn" style="background: transparent; border: 1px solid var(--border); color: #fff;">View Ledger Data</a>
+        <div class="container mt-5">
+            <div class="card">
+                <h3 style="margin-bottom: 20px;">How It Works</h3>
+                <p style="color: #888; margin-bottom: 30px;">Secure, verify, and share medical records in 4 simple steps</p>
+                <div class="row align-items-center">
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="flowchart-step">
+                            <div class="flowchart-icon">📋</div>
+                            <h6 style="color: var(--accent);">1. Patient Record</h6>
+                            <small style="color: #888;">Patient enters or uploads medical record</small>
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-12 mb-3 flowchart-arrow">→</div>
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="flowchart-step">
+                            <div class="flowchart-icon">🔐</div>
+                            <h6 style="color: var(--accent);">2. Hash & Encrypt</h6>
+                            <small style="color: #888;">SHA-256 hash generated, PHI stays off-chain</small>
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-12 mb-3 flowchart-arrow">→</div>
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="flowchart-step">
+                            <div class="flowchart-icon">⛓️</div>
+                            <h6 style="color: var(--accent);">3. Anchor on XRPL</h6>
+                            <small style="color: #888;">Hash stored immutably on XRP Ledger</small>
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-12 mb-3 flowchart-arrow">→</div>
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="flowchart-step">
+                            <div class="flowchart-icon">✅</div>
+                            <h6 style="color: var(--accent);">4. Verify & Share</h6>
+                            <small style="color: #888;">Providers verify authenticity instantly</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="trust-badge">
+                        <div class="trust-badge-icon">🛡️</div>
+                        <h6>Zero-Knowledge Privacy</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="trust-badge">
+                        <div class="trust-badge-icon">🏥</div>
+                        <h6>HIPAA-Ready</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="trust-badge">
+                        <div class="trust-badge-icon">🏢</div>
+                        <h6>Enterprise Grade</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="trust-badge">
+                        <div class="trust-badge-icon">⚡</div>
+                        <h6>XRPL Powered</h6>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="section-container" id="main-content" data-aos="fade-up">
-        <div id="wp-dl-bar" class="wp-download-container">
-            <a href="https://github.com/solusprotocol1/solus-protocol/blob/main/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" class="green-download-btn" target="_blank">
-                Download Whitepaper PDF
-            </a>
-        </div>
-
-        <div class="tabs">
-            <button id="btn-utility" class="tab-btn active" onclick="showTab(event, 'utility')">Utility</button>
-            <button id="btn-providers" class="tab-btn" onclick="showTab(event, 'providers')">For Providers</button>
-            <button id="btn-trade" class="tab-btn" onclick="showTab(event, 'trade')" style="color: var(--accent); border: 1px solid rgba(20, 241, 149, 0.3); border-radius: 8px;">Trade $SLS</button>
-            <button id="btn-roadmap" class="tab-btn" onclick="showTab(event, 'roadmap')">Roadmap</button>
-            <button id="btn-whitepaper" class="tab-btn" onclick="showTab(event, 'whitepaper'); downloadWhitepaper();">Whitepaper</button>
-            <button id="btn-faq" class="tab-btn" onclick="showTab(event, 'faq')">FAQ</button>
-            <button id="btn-audits" class="tab-btn" onclick="showTab(event, 'audits')">Audit Reports</button>
-            <button id="btn-legal" class="tab-btn" onclick="showTab(event, 'legal')">Legal Opinion</button>
-            <button id="btn-contact" class="tab-btn" onclick="showTab(event, 'contact')">Socials</button>
-        </div>
-      
-        <div id="trade" class="tab-content">
-            <h2>Verified Trading Portals</h2>
-            <div id="holder-proof" style="background: linear-gradient(90deg, rgba(153, 69, 255, 0.1), rgba(20, 241, 149, 0.1)); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
-                <div>
-                    <span style="color: var(--accent); font-weight: 800; font-size: 1.1rem;" id="live-holders">...</span>
-                    <span style="color: #888; font-size: 0.8rem; margin-left: 10px;">Verified XRPL Trustlines established for $SLS</span>
-                </div>
-                <div style="font-size: 0.7rem; color: #555;">LIVE DATA VIA XRPSCAN</div>
-            </div>
-
-            <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid var(--border); text-align: center;">
-                <p style="font-size: 0.8rem; color: var(--accent); margin-bottom: 10px; font-weight: 700;">AMM LIQUIDITY & TRADING INTERFACE</p>
-                <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/verified-trading-pools.png" alt="Trading Dashboard" style="width: 100%; max-width: 800px; height: auto; border-radius: 8px;">
-            </div>
-            <div class="grid">
-                <div class="card" style="border-color: var(--accent); background: rgba(20, 241, 149, 0.05);">
-                    <h4 style="color: var(--accent);">Trade via Xaman (Mobile)</h4>
-                    <p>Open the Xaman app, go to the 'DEX' tab, and search for the SLS trustline or use the swap tool.</p>
-                    <a href="https://xaman.app/" target="_blank" style="color: #fff; text-decoration: none; font-weight: bold;">Open Xaman Wallet →</a>
-                </div>
-                <div class="card">
-                    <h4 style="color: #14f195;">XPMarket</h4>
-                    <p>Comprehensive token analytics, holder data, and direct DEX trading interface.</p>
-                    <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" style="color: #14f195; text-decoration: none; font-weight: bold;">View on XPMarket →</a>
-                </div>
-                <div class="card">
-                    <h4 style="color: var(--accent);">Magnetic DEX</h4>
-                    <a href="https://xmagnetic.org/tokens/SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5?network=mainnet" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Swap on Magnetic →</a>
-                </div>
-                <div class="card">
-                    <h4 style="color: #00e5ff;">Sologenic DEX</h4>
-                    <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP&network=mainnet" target="_blank" style="color: #00e5ff; text-decoration: none; font-weight: bold;">Trade on Sologenic →</a>
-                </div>
-            </div>
-        </div>
-
-        <div id="faq" class="tab-content">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">Does Solus store my medical records on the blockchain? <span>+</span></div>
-                <div class="faq-answer">No. Solus Protocol is built on a "Privacy-by-Design" principle. We only store a cryptographic SHA-256 hash (a digital fingerprint) on the XRP Ledger. Your actual medical records remain in the secure, HIPAA-compliant databases of your healthcare provider.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">Why was the XRP Ledger (XRPL) chosen? <span>+</span></div>
-                <div class="faq-answer">The XRPL was chosen for its institutional-grade reliability, carbon neutrality, high transaction speeds, and extremely low costs. Its built-in DEX and AMM capabilities also provide immediate liquidity for the $SLS utility token.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">Is $SLS a security? <span>+</span></div>
-                <div class="faq-answer">The SLS token is a utility-based digital asset designed for data anchoring and technical governance within the Solus ecosystem. It represents no ownership or equity in any company. Users should review our Legal Notice regarding global regulatory risks.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">How can developers integrate Solus? <span>+</span></div>
-                <div class="faq-answer">We are launching a production-ready Enterprise API and SDK in Q4 2026. This will allow EHR (Electronic Health Record) developers to integrate automated hash-anchoring into their existing software workflows.</div>
-            </div>
-        </div>
-
-        <div id="utility" class="tab-content active">
-            <h2>Token Utility & Economy</h2>
-            <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid var(--border); text-align: center;">
-                <p style="font-size: 0.8rem; color: var(--accent); margin-bottom: 10px; font-weight: 700;">PROTOCOL ARCHITECTURE: HASH ANCHORING</p>
-                <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/data-integrity-lifecycle.png" alt="Protocol Architecture: Hash Anchoring" style="width: 100%; max-width: 800px; height: auto; border-radius: 8px;">
-            </div>
-            <div class="grid">
-                <div class="card">
-                    <h4 style="color: var(--accent);">Privacy-by-Design</h4>
-                    <p style="color: white;">Solus remains HIPAA/GDPR compliant by never storing Protected Health Information (PHI) on-chain.</p>
-                </div>
-                <div class="card">
-                    <h4 style="color: var(--secondary);">Cryptographic Fingerprinting</h4>
-                    <p style="color: white;">Uses SHA-256 hashes to create irreversible "fingerprints" of medical records while data stays off-chain.</p>
-                </div>
-                <div class="card">
-                    <h4 style="color: var(--accent);">Integrity Controls</h4>
-                     <p style="color: white;">The XRPL ensures that once a hash is anchored, it is immutable and time-stamped for auditability.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="providers" class="tab-content">
-            <h2>Institutional Solutions</h2>
-            <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid var(--border); text-align: center;">
-                <p style="font-size: 0.8rem; color: var(--secondary); margin-bottom: 10px; font-weight: 700;">ENTERPRISE SDK & EHR INTEGRATION MAP</p>
-                <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/enterprise-ecosystem.png" alt="Enterprise SDK & EHR Integration Map" style="width: 100%; max-width: 800px; height: auto; border-radius: 8px;">
-            </div>
-            <div class="grid">
-                <div class="card">
-                    <h4 style="color: var(--accent);">Clinical Pilot Program</h4>
-                     <p style="color: white;">Participate in our Q2 2026 onboard trials for healthcare clinics.</p>
-                    <a href="mailto:support@solusprotocol.com?subject=Pilot Program Interest" class="cta-btn" style="padding: 10px 20px; margin-top: 10px; font-size: 0.8rem;">Express Interest</a>
-                </div>
-                <div class="card">
-                    <h4 style="color: var(--secondary);">Enterprise API</h4>
-                     <p style="color: white;">Developer SDK for seamless EHR integration launching Q4 2026.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="roadmap" class="tab-content">
-            <h2>Strategic Roadmap <span style="font-size: 0.9rem; color: #555; margin-left: 10px;">2026 — 2031</span></h2>
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">About <span class="gradient-text">Solus Protocol</span></h2>
             
-            <div class="roadmap-year">
-                <h3>2026</h3>
-                <div class="roadmap-item done">
-                    <strong>Q1: Mainnet Launch & Liquidity Pools</strong> <span class="status-tag status-done">Completed</span>
-                    <p>Official deployment on XRPL and establishment of $SLS/XRP pairs.</p>
+            <!-- Key Metrics -->
+            <div class="row mb-5">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center">
+                        <div class="counter" data-target="173" data-prefix="$" data-suffix="B">$0B</div>
+                        <p style="color: #888;">Annual US Healthcare Data Mismanagement Cost</p>
+                    </div>
                 </div>
-                <div class="roadmap-item">
-                    <strong>Q2: Clinical Pilot Program Start</strong> <span class="status-tag status-next">In Progress</span>
-                    <p>Onboard first clinics for data anchoring trials using immutable hashing.</p>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center">
+                        <div class="counter" data-target="1" data-suffix="M+">0M+</div>
+                        <p style="color: #888;">MUSC Patients in South Carolina</p>
+                    </div>
                 </div>
-                <div class="roadmap-item">
-                    <strong>Q4: Full API Launch & Infrastructure Activation</strong>
-                    <p>Release production-ready API for enterprise developers.</p>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center">
+                        <div class="counter" data-target="0.001" data-prefix="~$" data-decimals="3">~$0</div>
+                        <p style="color: #888;">XRPL Transaction Cost</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center">
+                        <div class="counter" data-target="3" data-suffix="-5s">0-5s</div>
+                        <p style="color: #888;">XRPL Confirmation Time</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Section -->
+            <div class="card mb-4">
+                <h3 class="text-center mb-4">Our Team</h3>
+                <div class="row justify-content-center">
+                    <div class="col-md-4 text-center mb-4">
+                        <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/headshot.png" alt="Founder" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover;">
+                        <h5 class="mt-3">Bradley Hammond</h5>
+                        <p style="color: var(--accent);">Founder & CEO</p>
+                        <p style="color: #888; font-size: 0.9rem;">Healthcare data management veteran with 10+ years experience</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="roadmap-year">
-                <h3>2027–2031</h3>
-                <div class="roadmap-item"><strong>2027: Mobile App & EHR Integration</strong><p>Launch patient app and link with major EHR systems.</p></div>
-                <div class="roadmap-item"><strong>2028: Compliance Certifications</strong><p>Achieve HIPAA/GDPR certifications for the protocol.</p></div>
-                <div class="roadmap-item"><strong>2031: Global Standard</strong><p>Milestone: 1 Million active users verifying health data integrity.</p></div>
+            <!-- Traction Timeline -->
+            <div class="card mb-4">
+                <h3 class="mb-4">Our Traction</h3>
+                <div class="timeline-item completed">
+                    <div class="timeline-date">Q4 2025</div>
+                    <h5>SDK Prototype Completed</h5>
+                    <p style="color: #888;">Core hashing and verification functionality developed</p>
+                </div>
+                <div class="timeline-item completed">
+                    <div class="timeline-date">Q1 2026</div>
+                    <h5>$SLS Token Launch</h5>
+                    <p style="color: #888;">Live on XRPL mainnet, trading on xMagnetic, Sologenic, xpmarket</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Current</div>
+                    <h5>Pilot Partnership Discussions</h5>
+                    <p style="color: #888;">Engaging with healthcare providers for pilot programs</p>
+                </div>
             </div>
-        </div>
 
-        <div id="whitepaper" class="tab-content">
-    <div style="text-align: center; padding: 40px 20px;">
-        <div style="background: rgba(153, 69, 255, 0.1); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; border: 1px solid var(--secondary);">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-        </div>
-        <h2 style="margin-bottom: 10px;">Official Whitepaper v3.0</h2>
-        <p style="color: #888; max-width: 500px; margin: 0 auto 30px;">Access the complete technical specifications, legal disclosures, and the 2026-2031 strategic roadmap hosted on our official GitHub repository.</p>
-        
-        <a href="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" class="green-download-btn" download="Solus Protocol Whitepaper Version 3.0 (January 2026).pdf">
-        Download Whitepaper PDF
-        </a>
-        
-        <p style="margin-top: 25px; font-size: 0.8rem; color: #555;">SHA-256 Fingerprint: 8f32...a941 (Verified Mainnet)</p>
-    </div>
-</div>
+            <!-- Tokenomics -->
+            <div class="card mb-4">
+                <h3 class="mb-4 text-center">$SLS Token Utility</h3>
+                <div class="row">
+                    <div class="col-md-3 col-6 text-center mb-3">
+                        <div style="font-size: 2rem; color: var(--accent);">💰</div>
+                        <h6>Transaction Fees</h6>
+                        <p style="color: #888; font-size: 0.9rem;">Pay for record hashing on XRPL</p>
+                    </div>
+                    <div class="col-md-3 col-6 text-center mb-3">
+                        <div style="font-size: 2rem; color: var(--accent);">🎁</div>
+                        <h6>Usage Rebates</h6>
+                        <p style="color: #888; font-size: 0.9rem;">Earn back tokens for platform usage</p>
+                    </div>
+                    <div class="col-md-3 col-6 text-center mb-3">
+                        <div style="font-size: 2rem; color: var(--accent);">🔐</div>
+                        <h6>Data Contributions</h6>
+                        <p style="color: #888; font-size: 0.9rem;">Patients earn for anonymized research data</p>
+                    </div>
+                    <div class="col-md-3 col-6 text-center mb-3">
+                        <div style="font-size: 2rem; color: var(--accent);">🏛️</div>
+                        <h6>Governance</h6>
+                        <p style="color: #888; font-size: 0.9rem;">Vote on protocol upgrades and fee structures</p>
+                    </div>
+                </div>
+                <p class="text-center mt-3" style="color: #888;">Trade $SLS on these XRPL platforms:</p>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin: 20px 0;">
+                    <a href="https://xmagnetic.org/tokens/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5+534C5300000000000000000000000000000000000000" target="_blank" class="partner-logo">xMagnetic</a>
+                    <a href="https://sologenic.org" target="_blank" class="partner-logo">Sologenic DEX</a>
+                    <a href="https://xaman.app" target="_blank" class="partner-logo">Xaman Wallet</a>
+                    <a href="https://xpmarket.com" target="_blank" class="partner-logo">xpmarket</a>
+                </div>
+            </div>
 
-        <div id="audits" class="tab-content">
-            <h2>Institutional Audit & Integrity Portal</h2>
-            <div class="grid">
-                <div class="card">
-                    <h4 style="color: var(--accent);">Submit Formal Technical Feedback</h4>
-                    <p style="font-size: 0.9rem; color: #bbb; line-height: 1.5;">
-                        The Solus Protocol maintains a rigorous commitment to technical transparency. This module serves as a formal portal for security researchers, blockchain architects, and clinical auditors to submit documented observations regarding the cryptographic integrity of our hash anchoring mechanisms, XRPL smart contract interfaces, or consensus-level vulnerabilities. Your submission will be processed by our Security Operations Center (SOC).
-                    </p>
-                    <input type="email" id="audit-email" class="email-input" placeholder="Institutional email address" required>
-                    <textarea id="audit-text" class="feedback-input" rows="5" placeholder="Detailed technical observation or audit finding..."></textarea>
-                    <button class="feedback-submit" onclick="submitForm('Audit')">Submit Audit Report</button>
+            <!-- Investor CTA -->
+            <div class="investor-cta">
+                <h3>Why Invest in Solus Protocol?</h3>
+                <p style="color: #888; max-width: 600px; margin: 15px auto;">Join us in revolutionizing healthcare data integrity. $300B+ market opportunity with first-mover advantage on XRPL.</p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+                    <a href="https://github.com/solusprotocol1/solus-protocol/blob/dec022ee9ca6c9b1117abc2bc63d36b537318a36/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" target="_blank" class="btn-primary-custom">Read Whitepaper</a>
+                    <a href="#contact" class="btn-secondary-custom">Schedule Investor Call</a>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div id="legal" class="tab-content">
-            <h2>Global Legal & Compliance Framework</h2>
-            <div class="grid">
-                <div class="card">
-                    <h4 style="color: var(--secondary);">Counsel & Regulatory Inquiry</h4>
-                    <p style="font-size: 0.9rem; color: #bbb; line-height: 1.5;">
-                        Navigating the complex global intersection of decentralized ledger technology and healthcare data regulation requires a continuous, multi-jurisdictional dialogue. This interface is strictly designated for institutional legal counsel, policy makers, and compliance officers to submit formal inquiries or jurisdictional opinions regarding the protocol’s alignment with HIPAA, GDPR, and emerging digital asset frameworks.
-                    </p>
-                    <input type="email" id="legal-email" class="email-input" placeholder="Professional legal email" required>
-                    <textarea id="legal-text" class="feedback-input" rows="5" placeholder="Legal inquiry or jurisdictional compliance opinion..."></textarea>
-                    <button class="feedback-submit" onclick="submitForm('Legal')">Submit Inquiry</button>
+    <!-- Services Section -->
+    <section id="services" class="section" style="background: rgba(0,0,0,0.3);">
+        <div class="container">
+            <h2 class="section-title">Our <span class="gradient-text">Services</span></h2>
+            
+            <div class="row mb-5">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <h4 style="color: var(--accent);">🚨 Emergency Room Access</h4>
+                        <p style="color: #888;">Instant verification of patient records during emergencies. Providers can confirm record authenticity in seconds, not hours.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <h4 style="color: var(--accent);">🏥 Insurance Verification</h4>
+                        <p style="color: #888;">Streamlined claims processing with cryptographically verified treatment records. Reduce fraud and speed up approvals.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <h4 style="color: var(--accent);">🔄 Cross-Provider Records</h4>
+                        <p style="color: #888;">Seamlessly share verified records between healthcare providers while maintaining patient privacy and data integrity.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROI Calculator -->
+            <div class="roi-calculator">
+                <h3 class="text-center mb-4">ROI Calculator</h3>
+                <p class="text-center" style="color: #888;">See how much your organization could save with Solus Protocol</p>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <label style="color: #aaa;">Current Annual Records Processed</label>
+                        <input type="number" id="recordsInput" value="100000" min="1000" step="1000">
+                        <label style="color: #aaa;">Current Cost per Record Verification ($)</label>
+                        <input type="number" id="costInput" value="5" min="1" step="0.5">
+                        <button class="btn-primary-custom w-100" onclick="calculateROI()">Calculate Savings</button>
+                        <div class="roi-result" id="roiResult">$0 Annual Savings</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="card mt-5">
+                <h3 class="mb-4">Solus Protocol vs Traditional Systems</h3>
+                <div class="table-responsive">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Traditional Systems</th>
+                                <th style="color: var(--accent);">Solus Protocol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Verification Time</td>
+                                <td style="color: #888;">Hours to Days</td>
+                                <td style="color: var(--accent);">3-5 Seconds</td>
+                            </tr>
+                            <tr>
+                                <td>Cost per Transaction</td>
+                                <td style="color: #888;">$2-10</td>
+                                <td style="color: var(--accent);">~$0.001</td>
+                            </tr>
+                            <tr>
+                                <td>Data Tampering Risk</td>
+                                <td style="color: #888;">High</td>
+                                <td style="color: var(--accent);">Cryptographically Impossible</td>
+                            </tr>
+                            <tr>
+                                <td>Patient Data Exposure</td>
+                                <td style="color: #888;">Full PHI Shared</td>
+                                <td style="color: var(--accent);">Hash Only (Zero-Knowledge)</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div id="contact" class="tab-content">
-            <h2>Connect with Solus</h2>
-            <div class="grid">
-                <div class="card">
-                    <h4>Twitter</h4>
-                    <a href="https://x.com/solus_protocol" target="_blank" style="color: var(--accent);">@solus_protocol</a>
-                </div>
-                <div class="card">
-                    <h4>Telegram</h4>
-                    <a href="https://t.me/solus_protocol" target="_blank" style="color: var(--secondary);">t.me/solus_protocol</a>
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="section">
+        <div class="container">
+            <h2 class="section-title">Hash <span class="gradient-text">Dashboard</span></h2>
+            <p class="text-center" style="color: #888; margin-bottom: 30px;">Secure patient record hashing with blockchain verification (demo)</p>
+            
+            <div class="tab-buttons justify-content-center">
+                <button class="tab-btn active" onclick="switchDashboardTab('generate')">Generate Hash</button>
+                <button class="tab-btn" onclick="switchDashboardTab('verify')">Verify Record</button>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div id="generateTab" class="tab-content active">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <label>Patient Record Data</label>
+                                <div class="dropdown">
+                                    <button class="btn-secondary-custom" style="padding: 8px 16px; font-size: 0.85rem;" onclick="toggleSampleMenu()">Load Sample</button>
+                                    <div id="sampleMenu" style="display: none; position: absolute; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; right: 0; margin-top: 5px; z-index: 100;">
+                                        <button onclick="loadSample(0)" style="display: block; width: 100%; background: none; border: none; color: #fff; padding: 10px; text-align: left; cursor: pointer; border-radius: 8px;">Patient Visit Record</button>
+                                        <button onclick="loadSample(1)" style="display: block; width: 100%; background: none; border: none; color: #fff; padding: 10px; text-align: left; cursor: pointer; border-radius: 8px;">Lab Results</button>
+                                        <button onclick="loadSample(2)" style="display: block; width: 100%; background: none; border: none; color: #fff; padding: 10px; text-align: left; cursor: pointer; border-radius: 8px;">Prescription Record</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <textarea id="recordText" placeholder="Paste patient record data here..."></textarea>
+                            <label>Hash Algorithm</label>
+                            <select id="algorithm">
+                                <option value="SHA-256">SHA-256</option>
+                                <option value="SHA-512">SHA-512</option>
+                                <option value="SHA-384">SHA-384</option>
+                            </select>
+                            <button class="btn-primary-custom w-100" onclick="generateHash()">Secure Record (Generate Hash)</button>
+                            <div id="hashResult" style="display: none;"></div>
+                        </div>
+
+                        <div id="verifyTab" class="tab-content">
+                            <label>Patient Record Data</label>
+                            <textarea id="verifyRecordText" placeholder="Paste the original patient record here..."></textarea>
+                            <label>Expected Hash</label>
+                            <input type="text" id="expectedHash" placeholder="Paste the hash to verify against...">
+                            <label>Hash Algorithm</label>
+                            <select id="verifyAlgorithm">
+                                <option value="SHA-256">SHA-256</option>
+                                <option value="SHA-512">SHA-512</option>
+                                <option value="SHA-384">SHA-384</option>
+                            </select>
+                            <button class="btn-primary-custom w-100" onclick="verifyHash()">Verify Record Integrity</button>
+                            <div id="verifyResult" style="display: none;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Bridge Status Section - Updated to reflect current status and hurdles -->
-<div class="bridge-status" style="margin: 40px 0; text-align: center; background: rgba(20, 241, 149, 0.05); border: 1px solid var(--accent); border-radius: 24px; padding: 40px 20px; max-width: 900px; margin-left: auto; margin-right: auto;">
-    <h2 style="margin-bottom: 30px; font-size: 2.2rem;">$SLS Cross-Chain Bridges</h2>
-    <p style="color: #ccc; margin-bottom: 30px; font-size: 1.1rem; max-width: 700px; margin-left: auto; margin-right: auto;">
-        Interoperability setup complete via Axelar. Direct $SLS token bridging in development; value transfer available now.
-    </p>
-    
-    <div class="grid" style="margin-top: 20px;">
-        <!-- Base Bridge Card - Updated for accuracy -->
-        <div class="card" style="border-color: var(--accent); background: rgba(20, 241, 149, 0.1); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: 10px; right: 10px; background: var(--accent); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">SETUP COMPLETE</div>
-            <h3 style="color: var(--accent); margin-bottom: 15px;">Base → XRPL EVM Bridge</h3>
-             <p style="color: white;">Base ERC-20 $SLS live and verified (contract: <a href="https://basescan.org/address/0xC6FaFD77CBcC7AACdCF36575384CF850687F1B76" target="_blank" style="color: var(--accent);">0xC6FaFD77...1B76</a>).</p>
-             <p style="color: white;">Direct $SLS token bridging in development (awaiting Axelar custom support). Value transfer available via stables/XRP bridge.</p>
-             <p style="color: white;"; font-size: 0.9rem; margin: 15px 0;">
-                Token Contract on XRPL EVM:<br>
-                <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px;">0x65f7B158aE50761b56A9c428B1680881452b4Ed5</code>
-            </p>
-            <a href="https://app.squidrouter.com/" target="_blank" style="display: inline-block; background: linear-gradient(135deg, var(--accent), #00ffa3); color: #000; padding: 12px 28px; border-radius: 12px; font-weight: 800; text-decoration: none; margin-top: 15px;">Bridge Value via Squid Router →</a>
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="section" style="background: rgba(0,0,0,0.3);">
+        <div class="container">
+            <h2 class="section-title">Development <span class="gradient-text">Roadmap</span></h2>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="roadmap-phase completed">
+                        <h4>Phase 1: Foundation</h4>
+                        <p style="color: var(--accent);">Q4 2025</p>
+                        <ul style="color: #888;">
+                            <li>Core SDK Development</li>
+                            <li>SHA-256 Hash Implementation</li>
+                            <li>XRPL Integration</li>
+                            <li>Basic API Endpoints</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="roadmap-phase completed">
+                        <h4>Phase 2: Token Launch</h4>
+                        <p style="color: var(--accent);">Q1 2026</p>
+                        <ul style="color: #888;">
+                            <li>$SLS Token Deployment on XRPL</li>
+                            <li>DEX Listings (xMagnetic, Sologenic)</li>
+                            <li>Community Building</li>
+                            <li>Demo Dashboard Launch</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="roadmap-phase current">
+                        <h4>Phase 3: Pilot Programs</h4>
+                        <p style="color: var(--secondary);">Q2 2026</p>
+                        <ul style="color: #888;">
+                            <li>Healthcare Provider Partnerships</li>
+                            <li>Enterprise SDK Release</li>
+                            <li>HIPAA Compliance Certification</li>
+                            <li>Insurance Integration Pilots</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="roadmap-phase">
+                        <h4>Phase 4: Global Standard</h4>
+                        <p style="color: #888;">Q3-Q4 2026</p>
+                        <ul style="color: #888;">
+                            <li>Cross-Chain Bridge Development</li>
+                            <li>International Expansion</li>
+                            <li>Governance Token Features</li>
+                            <li>Research Data Marketplace</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4 text-center">
+                <h4>Cross-Chain Bridges</h4>
+                <p style="color: #888;">Coming Soon - Expanding to Ethereum, Polygon, and more</p>
+                <a href="https://solusprotocol.com" target="_blank" class="btn-secondary-custom">Learn More</a>
+            </div>
         </div>
-        
-        <!-- Mainnet Bridge Card - Kept as Coming Soon -->
-        <div class="card" style="border-color: var(--secondary); background: rgba(153, 69, 255, 0.08); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: 10px; right: 10px; background: var(--secondary); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">COMING SOON</div>
-            <h3 style="color: var(--secondary); margin-bottom: 15px;">XRPL Mainnet → XRPL EVM Bridge</h3>
-            <p style="color: white;">Native $SLS (IOU on XRPL mainnet via Xaman) will soon be bridgeable to XRPL EVM Sidechain.</p>
-            <p style="color: white;"; font-size: 0.9rem; margin: 15px 0;">
-                We're actively working with Peersyst and Axelar teams to enable full IOU support (trustline whitelisting on gateway).
-            </p>
-            <button disabled style="display: inline-block; background: rgba(153, 69, 255, 0.3); color: #FFF; padding: 12px 28px; border-radius: 12px; font-weight: 800; border: none; margin-top: 15px; cursor: not-allowed;">In Progress – Stay Tuned</button>
+    </section>
+
+    <!-- SDK Section -->
+    <section id="sdk" class="section">
+        <div class="container">
+            <h2 class="section-title">SDK <span class="gradient-text">Integration</span></h2>
+            
+            <div class="row mb-5">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <h4 style="color: var(--accent);">Verification Endpoint</h4>
+                        <div class="code-block">
+                            <span class="keyword">import</span> solus_sdk<br><br>
+                            <span class="comment"># Initialize client</span><br>
+                            client = solus_sdk.<span class="keyword">Client</span>(<br>
+                            &nbsp;&nbsp;api_key=<span class="string">"your_api_key"</span><br>
+                            )<br><br>
+                            <span class="comment"># Verify record hash</span><br>
+                            result = client.<span class="keyword">verify</span>(<br>
+                            &nbsp;&nbsp;record_hash=<span class="string">"abc123..."</span>,<br>
+                            &nbsp;&nbsp;tx_id=<span class="string">"TX_..."</span><br>
+                            )<br><br>
+                            <span class="keyword">print</span>(result.is_valid)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <h4 style="color: var(--accent);">EHR Integration</h4>
+                        <div class="code-block">
+                            <span class="keyword">const</span> solus = <span class="keyword">require</span>(<span class="string">'solus-sdk'</span>);<br><br>
+                            <span class="comment">// Hash patient record</span><br>
+                            <span class="keyword">const</span> hash = <span class="keyword">await</span> solus.<span class="keyword">hashRecord</span>({<br>
+                            &nbsp;&nbsp;patientId: <span class="string">"P-12345"</span>,<br>
+                            &nbsp;&nbsp;recordData: ehrData,<br>
+                            &nbsp;&nbsp;algorithm: <span class="string">"SHA-256"</span><br>
+                            });<br><br>
+                            <span class="comment">// Anchor to XRPL</span><br>
+                            <span class="keyword">const</span> tx = <span class="keyword">await</span> solus.<span class="keyword">anchor</span>(hash);
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Provider Onboarding Timeline -->
+            <div class="card">
+                <h3 class="mb-4 text-center">Provider Onboarding Timeline</h3>
+                <div class="row text-center">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div style="width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 800; color: #000;">1</div>
+                        <h6>Discovery Call</h6>
+                        <small style="color: #888;">Understand your needs</small>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div style="width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 800; color: #000;">2</div>
+                        <h6>Sandbox Access</h6>
+                        <small style="color: #888;">Test in development environment</small>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div style="width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 800; color: #fff;">3</div>
+                        <h6>Pilot Program</h6>
+                        <small style="color: #888;">Limited production rollout</small>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 800; color: #fff;">4</div>
+                        <h6>Full Integration</h6>
+                        <small style="color: #888;">Enterprise deployment</small>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="#contact" class="btn-primary-custom">Request Pilot Access</a>
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <p style="margin-top: 30px; font-size: 0.9rem; color: #888;">
-        Powered by <a href="https://axelar.network/" target="_blank" style="color: var(--accent);">Axelar</a> • Follow <a href="https://x.com/Solus_Protocol" target="_blank" style="color: var(--accent);">@Solus_Protocol</a> for updates.
-    </p>
-</div>
-        
-        <div class="disclaimer-box">
-            <strong>REGULATORY DISCLOSURE & RISK WARNING:</strong><br>
-            Solus Protocol ($SLS) is a digital asset on the XRP Ledger. Holders possess no ownership, equity, or financial rights (dividends/profit-sharing).
-            <br><br>
-            <strong>Technical Reliance & Custody:</strong> The protocol relies on the XRP Ledger (XRPL); Solus has no control over its consensus mechanism or operational status. Users are solely responsible for private key management; loss of keys results in permanent asset loss.
-            <br><br>
-            <strong>Market Risks:</strong> Crypto assets are subject to extreme price swings and may decrease to zero value. There is no guarantee of a continuous market or liquidity on third-party platforms.
-            <br><br>
-            <strong>Registration Status:</strong> $SLS has not been registered under the U.S. Securities Act of 1933. Future regulatory actions may materially impact the ability to hold or use $SLS.
+    </section>
+
+    <!-- Security Section -->
+    <section id="security" class="section" style="background: rgba(0,0,0,0.3);">
+        <div class="container">
+            <h2 class="section-title">Security & <span class="gradient-text">Compliance</span></h2>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🔐</div>
+                        <h4>Zero-Knowledge Architecture</h4>
+                        <p style="color: #888;">Patient data never leaves your systems. Only cryptographic hashes are stored on-chain, ensuring complete privacy.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🏥</div>
+                        <h4>HIPAA Compliant Design</h4>
+                        <p style="color: #888;">Built from the ground up to meet healthcare regulatory requirements. No PHI exposure risk.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">⛓️</div>
+                        <h4>Immutable Audit Trail</h4>
+                        <p style="color: #888;">Every verification is recorded on the XRP Ledger, creating a tamper-proof history of data integrity checks.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <h4 class="mb-4">Patient Privacy Guarantees</h4>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <h6 style="color: var(--accent);">Data Ownership</h6>
+                        <p style="color: #888;">Patients maintain full control and ownership of their medical records at all times.</p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <h6 style="color: var(--accent);">Access Control</h6>
+                        <p style="color: #888;">Granular permissions allow patients to choose exactly who can verify their records.</p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <h6 style="color: var(--accent);">Earning Opportunities</h6>
+                        <p style="color: #888;">Opt-in to anonymized research data sharing and earn $SLS tokens for contributions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What is Solus Protocol?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">Solus Protocol is a decentralized infrastructure for medical data integrity, using SHA-256 hash anchoring on the XRP Ledger. It allows healthcare providers to verify record authenticity without exposing patient data.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What is the $SLS token?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">$SLS is the native utility token of the Solus Protocol, live on the XRP Ledger mainnet. It's used for transaction fees, usage rebates, data contribution rewards, and governance voting.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Is Solus Protocol HIPAA compliant?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">Solus Protocol is designed with HIPAA compliance in mind. Since no Protected Health Information (PHI) is ever stored on-chain—only cryptographic hashes—the system inherently protects patient privacy.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Why use the XRP Ledger?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">XRPL offers near-instant finality (3-5 seconds), extremely low transaction costs (~$0.001), proven reliability since 2012, and carbon-neutral operation—making it ideal for healthcare applications.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>How is my patient data protected?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">Your actual medical records never leave your healthcare provider's systems. Only a one-way cryptographic hash is generated and stored on XRPL. This hash cannot be reversed to reveal your data.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>How is Solus Protocol funded?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">Solus Protocol is currently self-funded and bootstrapped. We are actively seeking strategic investors and grant funding to accelerate development and pilot partnerships.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What is the total supply of $SLS tokens?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">The total supply and tokenomics details are available in our whitepaper. $SLS is designed with a sustainable economic model to support long-term protocol growth.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What makes Solus different from other healthcare blockchain projects?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">Solus Protocol focuses specifically on data integrity verification rather than data storage. Our zero-knowledge approach, combined with XRPL's speed and cost efficiency, provides a practical solution that can be implemented today.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section" style="background: rgba(0,0,0,0.3);">
+        <div class="container">
+            <h2 class="section-title">Contact <span class="gradient-text">Us</span></h2>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <h4 class="mb-4">Get in Touch</h4>
+                        <label>Your Name</label>
+                        <input type="text" id="contactName" placeholder="Enter your name">
+                        <label>Email Address</label>
+                        <input type="email" id="contactEmail" placeholder="Enter your email">
+                        <label>Subject</label>
+                        <select id="contactSubject">
+                            <option value="general">General Inquiry</option>
+                            <option value="partnership">Partnership Opportunity</option>
+                            <option value="investment">Investment Inquiry</option>
+                            <option value="sdk">SDK Integration</option>
+                            <option value="support">Technical Support</option>
+                        </select>
+                        <label>Message</label>
+                        <textarea id="contactMessage" placeholder="How can we help you?"></textarea>
+                        <button class="btn-primary-custom w-100" onclick="sendContact()">Send Message</button>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card h-100">
+                        <h4 class="mb-4">Contact Information</h4>
+                        <p style="margin-bottom: 20px;">
+                            <strong style="color: var(--accent);">General Inquiries:</strong><br>
+                            <a href="mailto:support@solusprotocol.com" style="color: #888; text-decoration: none;">support@solusprotocol.com</a>
+                        </p>
+                        <p style="margin-bottom: 20px;">
+                            <strong style="color: var(--accent);">Investor Relations:</strong><br>
+                            <a href="mailto:investors@solusprotocol.com" style="color: #888; text-decoration: none;">investors@solusprotocol.com</a>
+                        </p>
+                        <p>
+                            <strong style="color: var(--accent);">Partnership Inquiries:</strong><br>
+                            <a href="mailto:partnerships@solusprotocol.com" style="color: #888; text-decoration: none;">partnerships@solusprotocol.com</a>
+                        </p>
+
+                        <div class="mt-4 pt-4" style="border-top: 1px solid var(--border);">
+                            <h6>Join Our Investor Updates</h6>
+                            <p style="color: #888; font-size: 0.9rem;">Stay informed about funding rounds and milestones</p>
+                            <input type="email" id="investorEmail" placeholder="Your email address">
+                            <button class="btn-secondary-custom w-100" onclick="subscribeInvestor()">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecosystem Partners -->
+    <section class="section">
+        <div class="container text-center">
+            <h3 class="mb-4">Ecosystem Partners</h3>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+                <a href="https://xrpl.org" target="_blank" class="partner-logo">XRPL</a>
+                <a href="https://xmagnetic.org" target="_blank" class="partner-logo">xMagnetic</a>
+                <a href="https://sologenic.org" target="_blank" class="partner-logo">Sologenic</a>
+                <a href="https://xaman.app" target="_blank" class="partner-logo">Xaman</a>
+                <a href="https://xpmarket.com" target="_blank" class="partner-logo">xpmarket</a>
+            </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 Solus Protocol | Decentralized Medical Integrity<br> Built on the XRP Ledger</p>
+        <p>&copy; 2026 Solus Protocol | Decentralized Medical Integrity Built on the XRP Ledger</p>
+        <p style="margin-top: 10px;">
+            <a href="https://github.com/solusprotocol1/solus-protocol" target="_blank" style="color: var(--accent); text-decoration: none;">GitHub</a> |
+            <a href="https://twitter.com/solusprotocol" target="_blank" style="color: var(--accent); text-decoration: none;">Twitter</a>
+        </p>
     </footer>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-box">
+            <button class="close-modal" onclick="hideLoginModal()">&times;</button>
+            <h3 class="mb-4">Demo Login</h3>
+            <label>Username</label>
+            <input type="text" id="loginUsername" placeholder="Enter username">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter password">
+            <button class="btn-primary-custom w-100" onclick="login()">Login</button>
+            <p style="color: #888; font-size: 0.85rem; margin-top: 15px; text-align: center;">
+                Demo credentials:<br>
+                Username: <strong>patient</strong> or <strong>provider</strong><br>
+                Password: <strong>demo123</strong>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        AOS.init({ duration: 800, once: true });
+        const SAMPLE_RECORDS = [
+            {
+                name: 'Patient Visit Record',
+                data: `Patient ID: P-2026-00142
+Name: Jane Doe
+DOB: 1985-03-15
+Visit Date: 2026-02-04
+Chief Complaint: Annual wellness checkup
+Vitals: BP 120/80, HR 72, Temp 98.6F
+Assessment: Patient in good health
+Plan: Continue current medications, follow up in 12 months`
+            },
+            {
+                name: 'Lab Results',
+                data: `Lab Order ID: LAB-2026-8847
+Patient: John Smith (P-2026-00089)
+Test Date: 2026-02-03
+Tests Performed:
+- Complete Blood Count (CBC): Normal
+- Basic Metabolic Panel: Normal
+- Lipid Panel: Total Cholesterol 185 mg/dL
+- HbA1c: 5.4%
+Interpreting Physician: Dr. Sarah Johnson`
+            },
+            {
+                name: 'Prescription Record',
+                data: `Rx ID: RX-2026-55123
+Patient: Robert Williams (P-2026-00201)
+Prescriber: Dr. Michael Chen, MD
+Date: 2026-02-04
+Medication: Lisinopril 10mg
+Directions: Take one tablet by mouth daily
+Quantity: 30 tablets
+Refills: 3
+Pharmacy: HealthFirst Pharmacy #442`
+            }
+        ];
 
-        // Institutional Form Logic
-        async function submitForm(type) {
-            const formspreeId = type === 'Audit' ? 'mgoonydp' : 'mpqqyrok';
-            const successMessage = `Submission successful! Our systems have logged your ${type} report.`;
-            
-            const emailField = type === 'Audit' ? document.getElementById('audit-email') : document.getElementById('legal-email');
-            const textArea = type === 'Audit' ? document.getElementById('audit-text') : document.getElementById('legal-text');
-            
-            const email = emailField.value.trim();
-            const message = textArea.value.trim();
-            const btn = event.target;
+        // Back to top button
+        window.addEventListener('scroll', function() {
+            const btn = document.querySelector('.back-to-top');
+            if (window.scrollY > 300) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
 
-            if (!email || !message) {
-                alert('Please provide both your professional email and a detailed message.');
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = parseFloat(counter.dataset.target);
+                const prefix = counter.dataset.prefix || '';
+                const suffix = counter.dataset.suffix || '';
+                const decimals = parseInt(counter.dataset.decimals) || 0;
+                let current = 0;
+                const increment = target / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = prefix + current.toFixed(decimals) + suffix;
+                }, 30);
+            });
+        }
+
+        // Intersection observer for counters
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    counterObserver.disconnect();
+                }
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+
+        // FAQ toggle
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            item.classList.toggle('active');
+            const icon = element.querySelector('span:last-child');
+            icon.textContent = item.classList.contains('active') ? '−' : '+';
+        }
+
+        // Dashboard tabs
+        function switchDashboardTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        // Sample menu
+        function toggleSampleMenu() {
+            const menu = document.getElementById('sampleMenu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function loadSample(index) {
+            document.getElementById('recordText').value = SAMPLE_RECORDS[index].data;
+            document.getElementById('sampleMenu').style.display = 'none';
+        }
+
+        // Hash generation (client-side SHA-256)
+        async function generateHash() {
+            const text = document.getElementById('recordText').value;
+            if (!text.trim()) {
+                alert('Please enter record data');
                 return;
             }
-
-            btn.disabled = true;
-            btn.innerText = 'Transmitting...';
-
-            try {
-                const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ _replyto: email, category: type, message: message })
-                });
-
-                if (response.ok) {
-                    alert(successMessage);
-                    textArea.value = '';
-                    emailField.value = '';
-                } else { throw new Error(); }
-            } catch (err) {
-                alert('There was a transmission error. Please contact support@solusprotocol.com directly.');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = type === 'Audit' ? 'Submit Audit Report' : 'Submit Inquiry';
-            }
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const txId = 'TX_' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+            
+            document.getElementById('hashResult').style.display = 'block';
+            document.getElementById('hashResult').innerHTML = `
+                <div class="hash-result">
+                    <h5 style="color: var(--accent); margin-bottom: 15px;">Hash Generated Successfully!</h5>
+                    <p><strong>Hash (SHA-256):</strong></p>
+                    <p class="hash-value">${hashHex}</p>
+                    <p style="margin-top: 15px;"><strong>Transaction ID:</strong></p>
+                    <p style="color: var(--secondary); font-family: monospace;">${txId}</p>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 15px;">In full SDK: This would store on XRPL with $SLS utility fee and rebate.</p>
+                </div>
+            `;
         }
 
-        // --- NEW LIVE PRICE LOGIC (DexScreener) ---
-        async function updateLivePrice() {
-            const btn = document.getElementById('live-price-btn');
-            const holderSpan = document.getElementById('live-holders');
-            // We use the Issuer Address to find the token on DexScreener
-            const issuer = 'r95GyZac4butvVcsTWUPpxzekmyzaHsTA5'; 
-            
-            try {
-                // 1. Fetch Price from DexScreener (Faster & Direct USD)
-                // We add '?t=' + Date.now() to force a fresh "Live" price every time
-                const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${issuer}&t=${Date.now()}`);
-                const data = await response.json();
-                
-                if (data.pairs && data.pairs.length > 0) {
-                    // Use the most liquid pair (first result)
-                    const pair = data.pairs[0];
-                    const priceUsd = parseFloat(pair.priceUsd);
-                    const change24h = parseFloat(pair.priceChange.h24);
-                    
-                    if (!isNaN(priceUsd)) {
-                        const icon = change24h >= 0 ? "▲" : "▼";
-                        const color = change24h >= 0 ? "#14f195" : "#ff4d4d";
-                        // Show 6 decimals if under $0.10, otherwise 4 decimals
-                        const formattedPrice = priceUsd < 0.10 ? priceUsd.toFixed(6) : priceUsd.toFixed(4);
-                        
-                        btn.innerHTML = `TRADE $SLS: $${formattedPrice} <span style="color: ${color};">(${icon}${Math.abs(change24h).toFixed(2)}%)</span>`;
-                    }
-                }
-
-                // 2. Fetch Trustlines/Holders from XRPSCAN (Separate call for stats)
-                const statResponse = await fetch(`https://api.xrpscan.com/api/v1/token/SLS.${issuer}`);
-                const statData = await statResponse.json();
-                if(statData?.metrics?.holders && holderSpan) {
-                    holderSpan.innerText = `Active Trustlines: ${parseInt(statData.metrics.trustlines).toLocaleString()}`;
-                const statResponse = await fetch(`https://api.xrpscan.com/api/v1/token/SLS.${issuer}?t=${Date.now()}`);
-                }
-
-            } catch (e) { 
-                console.warn("Live feed update failed", e); 
+        // Hash verification
+        async function verifyHash() {
+            const text = document.getElementById('verifyRecordText').value;
+            const expectedHash = document.getElementById('expectedHash').value.trim().toLowerCase();
+            if (!text.trim() || !expectedHash) {
+                alert('Please enter both record data and expected hash');
+                return;
             }
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const computedHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const isMatch = computedHash === expectedHash;
+            
+            document.getElementById('verifyResult').style.display = 'block';
+            document.getElementById('verifyResult').innerHTML = `
+                <div class="hash-result" style="background: ${isMatch ? 'rgba(20, 241, 149, 0.1)' : 'rgba(255, 71, 87, 0.1)'}; border-color: ${isMatch ? 'rgba(20, 241, 149, 0.3)' : 'rgba(255, 71, 87, 0.3)'};">
+                    <h5 style="color: ${isMatch ? 'var(--accent)' : 'var(--error)'}; margin-bottom: 15px;">${isMatch ? 'Record Verified Successfully!' : 'Hash Mismatch Detected!'}</h5>
+                    <p><strong>Computed Hash:</strong></p>
+                    <p class="hash-value">${computedHash}</p>
+                    <p style="margin-top: 10px;"><strong>Expected Hash:</strong></p>
+                    <p style="color: ${isMatch ? 'var(--accent)' : 'var(--error)'}; font-family: monospace; font-size: 0.9rem;">${expectedHash}</p>
+                </div>
+            `;
         }
 
-        // Updated to refresh every 12 seconds (Real-time feel)
-        setInterval(updateLivePrice, 12000);
-        updateLivePrice();
-        // ------------------------------------------
+        // ROI Calculator
+        function calculateROI() {
+            const records = parseInt(document.getElementById('recordsInput').value) || 0;
+            const cost = parseFloat(document.getElementById('costInput').value) || 0;
+            const currentCost = records * cost;
+            const solusCost = records * 0.001;
+            const savings = currentCost - solusCost;
+            document.getElementById('roiResult').textContent = '$' + savings.toLocaleString() + ' Annual Savings';
+        }
 
-        function showTab(evt, tabName) {
-            let tabcontent = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabcontent.length; i++) tabcontent[i].classList.remove("active");
-            let tablinks = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
-            
-            const dlBar = document.getElementById('wp-dl-bar');
-            if(tabName === 'whitepaper') {
-                dlBar.classList.add('visible');
-                loadWhitepaper();
+        // Login system
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function hideLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            if ((username === 'patient' || username === 'provider') && password === 'demo123') {
+                localStorage.setItem('user', JSON.stringify({ name: username === 'patient' ? 'John Doe' : 'Dr. Smith', role: username }));
+                updateLoginState();
+                hideLoginModal();
             } else {
-                dlBar.classList.remove('visible');
+                alert('Invalid credentials. Try patient/demo123 or provider/demo123');
             }
-
-            document.getElementById(tabName).classList.add("active");
-            if (evt) evt.currentTarget.classList.add("active");
         }
 
-        function scrollToTrade() {
-            document.getElementById('main-content').scrollIntoView({ behavior: 'smooth' });
-            showTab(null, 'trade');
+        function logout() {
+            localStorage.removeItem('user');
+            updateLoginState();
+        }
 
-         function downloadWhitepaper() {
-            const link = document.createElement('a');
-            link.href = 'https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf';
-            link.download = 'Solus Protocol Whitepaper Version 3.0 (January 2026).pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        function updateLoginState() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'block';
+                const badge = document.getElementById('userBadge');
+                badge.textContent = user.name + ' (' + user.role.charAt(0).toUpperCase() + user.role.slice(1) + ')';
+                badge.className = 'user-badge' + (user.role === 'provider' ? ' provider' : '');
+            } else {
+                document.getElementById('loginBtn').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+            }
         }
-            if(tabName === 'whitepaper') {
-            dlBar.classList.add('visible');
+
+        // Contact form
+        function sendContact() {
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+            if (!name || !email || !message) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            window.location.href = `mailto:support@solusprotocol.com?subject=${encodeURIComponent(subject + ' - ' + name)}&body=${encodeURIComponent(message + '\n\nFrom: ' + name + '\nEmail: ' + email)}`;
         }
+
+        function subscribeInvestor() {
+            const email = document.getElementById('investorEmail').value;
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+            window.location.href = `mailto:investors@solusprotocol.com?subject=Investor Updates Subscription&body=Please add me to the investor updates list.\n\nEmail: ${email}`;
         }
-        
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Initialize
+        updateLoginState();
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.getElementById('sampleMenu').style.display = 'none';
+            }
+        });
     </script>
-<script>
-function toggleFaq(element) {
-    // Find the answer div that is a sibling of the question clicked
-    const answer = element.nextElementSibling;
-    const span = element.querySelector('span');
-
-    // Toggle the display between block and none
-    if (answer.style.display === "block") {
-        answer.style.display = "none";
-        span.textContent = "+";
-    } else {
-        answer.style.display = "block";
-        span.textContent = "-";
-    }
-}
-</script>
-    
 </body>
 </html>
