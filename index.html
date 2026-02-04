@@ -438,6 +438,18 @@
             padding: 20px;
         }
 
+        .no-wrap-subheading {
+        white-space: nowrap;
+        }
+
+        /* Allow wrapping on small screens */
+        @media (max-width: 767px) {
+        .no-wrap-subheading {
+        white-space: normal;
+        }
+        }
+    
+
         @media (max-width: 768px) {
             .sticky-trade-btn { top: auto; bottom: 20px; right: 20px; width: calc(100% - 40px); text-align: center; }
         }
