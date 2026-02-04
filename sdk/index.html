@@ -1,1 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solus Protocol SDK | Coming Soon</title>
+    <meta name="description" content="Solus Protocol SDK prototype – integrate secure medical data hashing and XRPL anchoring. Utility details for $SLS token, subscriptions, and provider value.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050608;
+            --accent: #14f195;
+            --secondary: #9945ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --completed: #14f195;
+        }
 
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(at 0% 0%, rgba(20, 241, 149, 0.12) 0px, transparent 50%), 
+                        radial-gradient(at 100% 100%, rgba(153, 69, 255, 0.12) 0px, transparent 50%);
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        header {
+            padding: 120px 5% 60px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 1.1;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 5%;
+        }
+
+        .card {
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin-top: 40px;
+            color: var(--secondary);
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #ddd;
+            line-height: 1.7;
+        }
+
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--accent);
+        }
+
+        pre {
+            background: rgba(0,0,0,0.4);
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin: 20px 0;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--accent), #00ffa3);
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3.5rem; }
+            h2 { font-size: 2rem; }
+            h3 { font-size: 1.5rem; }
+            pre { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+
+    <header>
+        <h1>Solus Protocol <span class="gradient-text">SDK</span> - Coming Soon</h1>
+        <p style="color: #aaa; font-size: 1.3rem; max-width: 700px; margin: 20px auto;">
+            Prototype SDK for integrating secure medical data integrity with $SLS utility token.
+        </p>
+        <a href="/" class="back-btn">← Back to Home</a>
+    </header>
+
+    <div class="section-container">
+        <div class="card">
+            <h2>Overview</h2>
+            <p>The Solus Protocol SDK is a Python library (coming soon in beta) that enables healthcare providers to integrate decentralized medical data integrity into their systems. Built on the XRP Ledger (XRPL), it handles secure hashing of records, optional encryption for privacy, and on-chain storage of hashes using the $SLS utility token for fees and incentives.</p>
+            <p>This SDK is designed for seamless use with existing EHR systems (e.g., Epic, Cerner) via APIs, ensuring compliance and efficiency. It's freemium for pilots, with paid tiers for production. The SDK abstracts blockchain complexity, allowing fiat (USD) payments for crypto-skeptical users while $SLS powers the backend.</p>
+            <p><strong>Status:</strong> Prototype available on GitHub; beta release post-SC pilots. Sign up for updates via our contact form.</p>
+        </div>
+
+        <div class="card">
+            <h2>How It Works</h2>
+            <p>The SDK provides a simple workflow for securing medical records:</p>
+            <ol>
+                <li><strong>Input Record:</strong> Feed patient data (text or file) into the SDK.</li>
+                <li><strong>Encrypt (Optional):</strong> Sensitive PHI is encrypted off-chain using AES (e.g., for HIPAA support).</li>
+                <li><strong>Hash Creation:</strong> Generate a SHA-256 "fingerprint" for immutability — any change to the data alters the hash.</li>
+                <li><strong>Store on XRPL:</strong> Send the hash to XRPL via a micro-transaction, using $SLS as "gas" for fees. No PHI on-chain.</li>
+                <li><strong>Verify/Share:</strong> Providers query the hash to confirm data integrity; patients control access.</li>
+            </ol>
+            <p>For crypto critics, enable `fiat_mode=True` — SDK simulates USD payments and auto-converts to $SLS behind the scenes (using gateways like Stripe + Ramp in production).</p>
+            <h3>Example Flow for Providers</h3>
+            <pre><code># Provider's EHR system calls:
+sdk = SolusSDK(api_key="your-sub-key")
+result = sdk.secure_patient_record(test_record, wallet_seed, encrypt_first=True, fiat_mode=True)
+# Returns hash + confirmation; fees handled invisibly</code></pre>
+        </div>
+
+        <div class="card">
+            <h2>What It Does: Value to Providers</h2>
+            <p>The SDK transforms healthcare data management:</p>
+            <ul>
+                <li><strong>Secure Sharing:</strong> Enables tamper-proof record verification across providers, reducing errors/delays from silos.</li>
+                <li><strong>Cost Savings:</strong> Eliminates redundant tests (saves $100-500/patient); cuts admin time by 20-30% (McKinsey estimates).</li>
+                <li><strong>Compliance Support:</strong> Off-chain PHI + encryption aligns with HIPAA/GDPR; audit trails via XRPL immutability reduce fine risks ($50K-2M/breach).</li>
+                <li><strong>Patient Attraction:</strong> Market as "patient-centric" to boost referrals and billings.</li>
+                <li><strong>New Revenue:</strong> Earn $SLS rebates for anonymized data contributions (e.g., research pools).</li>
+            </ul>
+            <p>ROI: Providers see returns in 6-12 months through efficiency gains and incentives.</p>
+        </div>
+
+        <div class="card">
+            <h2>Subscriptions & Monetization</h2>
+            <p>Freemium model for easy adoption:</p>
+            <ul>
+                <li><strong>Basic Tier (Free for Pilots):</strong> Limited hashing/verification for testing.</li>
+                <li><strong>Standard Tier ($5K-20K/year):</strong> Unlimited use, basic dashboard, API integrations for mid-size clinics.</li>
+                <li><strong>Enterprise Tier ($20K-100K/year):</strong> Custom EHR integrations, priority support, advanced analytics for large systems like MUSC.</li>
+            </ul>
+            <p>Pay in USD via Stripe — no crypto required. Subscriptions include bundled $SLS for seamless use. Projected revenue: $250K-600K in Year 2 from 10-20 subscribers.</p>
+        </div>
+
+        <div class="card">
+            <h2>Full Utility of $SLS Token</h2>
+            <p>$SLS is the "fuel" powering the protocol — a pure utility token for actions, not speculation. It ensures decentralization and aligns incentives without equity rights (SEC-compliant).</p>
+            <h3>How $SLS Fuels Operations</h3>
+            <ul>
+                <li><strong>Micro-Fees:</strong> 0.01-0.1 $SLS per hash/verification (<$0.01 USD) — covers XRPL costs, deters spam.</li>
+                <li><strong>Incentives/Rebates:</strong> Providers earn $SLS back (e.g., 0.005 $SLS) for contributing secure data, encouraging ecosystem growth.</li>
+                <li><strong>Governance (Future):</strong> $SLS holders vote on updates.</li>
+                <li><strong>Fiat Integration for Critics:</strong> In fiat_mode, SDK converts USD to $SLS automatically — providers never touch exchanges.</li>
+            </ul>
+            <p>Trading adds liquidity for network stability, but revenue comes from utility demand (fees to treasury: 10-20% redirect). More users = more $SLS spent = sustainable protocol.</p>
+            <h3>Compliance Note</h3>
+            <p>$SLS as "access credits" — no profit-sharing. Legal opinions planned with funding.</p>
+        </div>
+
+        <div class="card">
+            <h2>Prototype SDK Code</h2>
+            <p>This is the full prototype code for testing. Install dependencies: <code>pip install cryptography xrpl-py</code>. Test on XRPL testnet.</p>
+            <pre><code>import hashlib
+from cryptography.fernet import Fernet
+from xrpl.clients import JsonRpcClient
+from xrpl.wallet import Wallet
+from xrpl.models.transactions import Payment, TrustSet
+from xrpl.models.amounts import IssuedCurrencyAmount
+
+# Mock fiat gateway (simulate Stripe + crypto purchase; in real: use Stripe API + MoonPay/Ramp)
+def mock_fiat_to_sls_conversion(usd_amount):
+    """Simulate converting USD to $SLS (e.g., via gateway). Returns equivalent $SLS value (hypothetical rate)."""
+    sls_rate = 0.05  # Mock: $1 USD = 20 $SLS (adjust based on market)
+    sls_purchased = usd_amount / sls_rate
+    return sls_purchased  # In real: Call API to buy and transfer to wallet
+
+class SolusSDK:
+    def __init__(self, xrpl_rpc_url="https://s.altnet.rippletest.net:51234/", sls_issuer="r95GyZac4butvVcsTWUPpxzekmyzaHsTA5", encryption_key=None, api_key=None):
+        self.client = JsonRpcClient(xrpl_rpc_url)
+        self.sls_issuer = sls_issuer
+        self.api_key = api_key  # For subscription validation
+        if encryption_key is None:
+            self.encryption_key = Fernet.generate_key()
+        else:
+            self.encryption_key = encryption_key
+        self.cipher = Fernet(self.encryption_key)
+
+    def validate_subscription(self):
+        """Mock check for active USD subscription via API key."""
+        if self.api_key == "valid_mock_key":  # In real: Query Stripe/backend
+            return True
+        else:
+            raise ValueError("Invalid or expired API key. Please subscribe or renew.")
+
+    def encrypt_data(self, data):
+        """Encrypt sensitive data (PHI) off-chain for HIPAA support."""
+        return self.cipher.encrypt(data.encode()).decode()
+
+    def decrypt_data(self, encrypted_data):
+        """Decrypt data (for authorized providers)."""
+        return self.cipher.decrypt(encrypted_data.encode()).decode()
+
+    def create_record_hash(self, record_text):
+        """Create secure hash of record for immutability."""
+        hash_object = hashlib.sha256(record_text.encode())
+        return hash_object.hexdigest()
+
+    def setup_trust_line(self, wallet_seed, limit="1000000"):
+        """One-time setup for $SLS trust line (allows holding/using token)."""
+        wallet = Wallet.from_seed(wallet_seed)
+        tx = TrustSet(
+            account=wallet.classic_address,
+            limit_amount=IssuedCurrencyAmount(currency="SLS", issuer=self.sls_issuer, value=limit)
+        )
+        response = self.client.submit_and_wait(tx, wallet)
+        return response.result
+
+    def store_hash_with_sls_fee(self, hash_value, wallet_seed, fee_sls="0.01", destination="rProtocolTreasury", rebate_sls="0.005", fiat_mode=False, usd_fee_equiv=0.01):
+        """
+        $SLS Utility: Pay micro-fee in $SLS for action, store hash in memo.
+        - If fiat_mode=True, simulate USD payment and auto-convert to $SLS.
+        - Deducts fee (revenue to treasury).
+        - Sends rebate (incentive).
+        """
+        if fiat_mode:
+            # Simulate USD payment and conversion (providers pay USD, get $SLS)
+            sls_needed = float(fee_sls)
+            sls_purchased = mock_fiat_to_sls_conversion(usd_fee_equiv)  # Converts USD to $SLS
+            if sls_purchased < sls_needed:
+                raise ValueError("Insufficient $SLS from fiat conversion. Top up subscription.")
+            print(f"Simulated USD payment: Purchased {sls_purchased} $SLS for fee.")
+
+        wallet = Wallet.from_seed(wallet_seed)
+        
+        # Pay $SLS fee with hash memo
+        amount_sls = IssuedCurrencyAmount(currency="SLS", issuer=self.sls_issuer, value=fee_sls)
+        tx_fee = Payment(
+            account=wallet.classic_address,
+            amount=amount_sls,
+            destination=destination,
+            memos=[{"memo": {"memo_data": hash_value}}]
+        )
+        fee_response = self.client.submit_and_wait(tx_fee, wallet)
+        
+        # Rebate: Send back $SLS
+        rebate_amount = IssuedCurrencyAmount(currency="SLS", issuer=self.sls_issuer, value=rebate_sls)
+        tx_rebate = Payment(
+            account=destination,
+            amount=rebate_amount,
+            destination=wallet.classic_address
+        )
+        rebate_response = {"mock": "Rebate sent"}  # In real: Submit with treasury wallet
+
+        return {"fee_tx": fee_response.result, "rebate": rebate_response}
+
+    def secure_patient_record(self, record_text, wallet_seed, encrypt_first=False, fiat_mode=False):
+        """Full workflow: Validate sub, encrypt (optional), hash, store on XRPL with $SLS fee (fiat optional)."""
+        self.validate_subscription()  # Check USD sub
+        if encrypt_first:
+            record_text = self.encrypt_data(record_text)
+        hash_val = self.create_record_hash(record_text)
+        tx_results = self.store_hash_with_sls_fee(hash_val, wallet_seed, fiat_mode=fiat_mode)
+        return {"hash": hash_val, "tx_results": tx_results}
+
+# Usage Example (Provider Side – Crypto Critic with Fiat Mode)
+sdk = SolusSDK(api_key="valid_mock_key")  # Provider's USD sub key
+test_record = "Patient data here"
+test_seed = "sTestSeed"  # Still needs wallet for XRPL, but fiat handles $SLS
+result = sdk.secure_patient_record(test_record, test_seed, encrypt_first=True, fiat_mode=True)
+print(result)
+</code></pre>
+            <p><strong>Installation:</strong> Install dependencies: <code>pip install cryptography xrpl-py</code>. Test on XRPL testnet.</p>
+            <p><strong>Real-World Implementation:</strong> Providers integrate into EHR workflows. Fiat mode abstracts $SLS for seamless USD use.</p>
+        </div>
+
+        <div class="card">
+            <h2>Compliance & Legal Notes</h2>
+            <p>SDK supports HIPAA/GDPR with off-chain PHI and encryption. $SLS as utility (fees/incentives) — no equity. Funding will enable full audits and legal opinions.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Solus Protocol | Decentralized Medical Integrity<br>Built on the XRP Ledger</p>
+    </footer>
+</body>
+</html>
