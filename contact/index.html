@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Solus Protocol</title>
+    <meta name="description" content="Get in touch with Solus Protocol – submit inquiries, partnership requests, or support tickets.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050608;
+            --accent: #14f195;
+            --secondary: #9945ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
 
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(at 0% 0%, rgba(20, 241, 149, 0.12) 0px, transparent 50%), 
+                        radial-gradient(at 100% 100%, rgba(153, 69, 255, 0.12) 0px, transparent 50%);
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        header {
+            padding: 120px 5% 60px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 1.1;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 5%;
+        }
+
+        .card {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        input, textarea {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(20, 241, 149, 0.2);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--accent), #00ffa3);
+            color: #000;
+            padding: 16px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin: 20px 0;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+
+    <header>
+        <h1>Contact <span class="gradient-text">Solus Protocol</span></h1>
+        <p style="color: #aaa; font-size: 1.3rem; max-width: 700px; margin: 20px auto;">
+            Get in touch for partnerships, support, pilot inquiries, or general questions.
+        </p>
+        <a href="/" class="back-link">← Back to Home</a>
+    </header>
+
+    <div class="section-container">
+        <div class="card">
+            <h2>Send Us a Message</h2>
+            <form action="https://formspree.io/f/your-form-id" method="POST">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" rows="8" placeholder="Your message, inquiry, or support ticket..." required></textarea>
+                <button type="submit">Submit Message</button>
+            </form>
+            <p style="margin-top: 30px; color: #aaa;">
+                Or email us directly: <a href="mailto:support@solusprotocol.com" style="color: var(--accent);">support@solusprotocol.com</a>
+            </p>
+        </div>
+
+        <div class="card" style="margin-top: 40px;">
+            <h2>Connect With Us</h2>
+            <p style="margin-bottom: 20px;">Follow for updates, join discussions, or reach out on social channels:</p>
+            <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                <a href="https://x.com/solus_protocol" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">Twitter / X</a>
+                <a href="https://t.me/solus_protocol" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">Telegram</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Solus Protocol | Decentralized Medical Integrity<br>Built on the XRP Ledger</p>
+    </footer>
+</body>
+</html>
