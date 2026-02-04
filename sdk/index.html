@@ -150,6 +150,17 @@
             margin-top: 80px;
         }
 
+        .no-wrap-subheading {
+        white-space: nowrap;
+        }
+
+        /* Allow wrapping on small screens */
+        @media (max-width: 767px) {
+        .no-wrap-subheading {
+        white-space: normal;
+        }
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 3.5rem; }
             h2 { font-size: 2rem; }
