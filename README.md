@@ -269,8 +269,7 @@ We welcome contributions to the Solus Protocol Gateway API and open-source EHR c
 * **Explorer:** [XRPScan Token Profile](https://xrpscan.com/token/SLS/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
 
 ---
-*© 2026 Solus Protocol. All rights reserved. $SLS is a utility token and does not represent equity or an investment contract.*
----
-© 2026 Solus Protocol. Built on the XRP Ledger.
 
-Disclaimer: Solus Protocol is a data integrity tool. It does not provide medical advice or diagnosis. Users are responsible for ensuring compliance with local healthcare regulations (e.g., HIPAA/GDPR).
+© 2026 Solus Protocol. All rights reserved. 
+
+Disclaimer: Solus Protocol is a data integrity tool. It does not provide medical advice or diagnosis. Users are responsible for ensuring compliance with local healthcare regulations (e.g., HIPAA/GDPR).  $SLS is a utility token and does not represent equity or an investment contract.
