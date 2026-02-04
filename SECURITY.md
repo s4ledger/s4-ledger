@@ -14,7 +14,7 @@ To maintain the highest standards of security and protect our users, **please do
 
 Report vulnerabilities privately through one of the following secure methods:
 
-**Email:** support@solusprotocol.com (preferred for detailed reports).
+**Email:** security@solusprotocol.com (preferred for detailed reports).
 
 **Subject Line:** Use "Vulnerability Report: [Brief Non-Sensitive Description]" to ensure priority handling.
 
@@ -94,7 +94,7 @@ Violations of this policy (e.g., public disclosure without coordination) may res
 ## 6. Additional Resources
 
 * **Testing Guidelines:** Use testnet environments only (e.g., XRPL testnet for SDK prototypes). Avoid mainnet or real data.
-* **Contact for Questions:** For policy clarifications, email support@solusprotocol.com with "Security Policy Inquiry" in the subject.
+* **Contact for Questions:** For policy clarifications, email security@solusprotocol.com with "Security Policy Inquiry" in the subject.
 * **Updates to Policy:** This policy may evolve; check the latest version on GitHub.
 
 We thank the security community for helping make Solus Protocol more secure. Together, we're building a safer future for healthcare data.
