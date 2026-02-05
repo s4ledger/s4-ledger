@@ -54,28 +54,9 @@
             filter: blur(100px);
             opacity: 0.3;
         }
-        .orb-1 {
-            width: 600px;
-            height: 600px;
-            background: var(--accent);
-            top: -200px;
-            right: -200px;
-        }
-        .orb-2 {
-            width: 400px;
-            height: 400px;
-            background: var(--secondary);
-            bottom: -100px;
-            left: -100px;
-        }
-        .orb-3 {
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(135deg, var(--accent), var(--secondary));
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+        .orb-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; right: -200px; }
+        .orb-2 { width: 400px; height: 400px; background: var(--secondary); bottom: -100px; left: -100px; }
+        .orb-3 { width: 300px; height: 300px; background: linear-gradient(135deg, var(--accent), var(--secondary)); top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .navbar { 
             background: rgba(5, 6, 8, 0.95); 
             backdrop-filter: blur(20px); 
@@ -91,401 +72,111 @@
         .nav-link { color: #fff !important; padding: 8px 12px !important; font-size: 0.9rem !important; }
         .nav-link:hover { color: var(--accent) !important; }
         @media (max-width: 991px) {
-            .navbar-collapse { 
-                background: rgba(5, 6, 8, 0.98); 
-                padding: 15px;
-                border-radius: 12px;
-                margin-top: 10px;
-                border: 1px solid var(--border);
-            }
+            .navbar-collapse { background: rgba(5, 6, 8, 0.98); padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid var(--border); }
             .navbar-nav { gap: 5px; }
             .nav-link { padding: 10px 15px !important; border-radius: 8px; }
             .nav-link:hover { background: rgba(20, 241, 149, 0.1); }
         }
-        .hero { 
-            padding: 120px 15px 60px; 
-            text-align: center;
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+        .hero { padding: 120px 15px 60px; text-align: center; }
         .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 20px; color: #fff; }
-        @media (max-width: 768px) {
-            .hero { padding: 100px 15px 40px; min-height: auto; }
-            .hero h1 { font-size: 1.8rem; }
-        }
-        .gradient-text { 
-            background: linear-gradient(90deg, #fff, var(--accent), var(--secondary)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
+        @media (max-width: 768px) { .hero { padding: 100px 15px 40px; } .hero h1 { font-size: 1.8rem; } }
+        .gradient-text { background: linear-gradient(90deg, #fff, var(--accent), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .section { padding: 80px 0; }
         .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 40px; text-align: center; color: #fff; }
-        .card { 
-            background: var(--glass); 
-            border: 1px solid var(--border); 
-            border-radius: 16px; 
-            padding: 25px; 
-            margin-bottom: 20px; 
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-        }
+        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(10px); transition: all 0.3s; }
         .card:hover { border-color: rgba(20, 241, 149, 0.3); transform: translateY(-2px); }
         .card h2, .card h3, .card h4, .card h5, .card h6 { color: #fff; }
-        .btn-primary-custom { 
-            background: linear-gradient(135deg, var(--accent), #00ffa3); 
-            color: #000; 
-            border: none; 
-            padding: 14px 28px; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s;
-        }
+        .btn-primary-custom { background: linear-gradient(135deg, var(--accent), #00ffa3); color: #000; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.3s; }
         .btn-primary-custom:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(20, 241, 149, 0.3); color: #000; }
-        .btn-secondary-custom {
-            background: transparent;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s;
-        }
+        .btn-secondary-custom { background: transparent; border: 2px solid var(--accent); color: var(--accent); padding: 12px 24px; border-radius: 12px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s; }
         .btn-secondary-custom:hover { background: var(--accent); color: #000; }
-        .live-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(20, 241, 149, 0.1);
-            border: 1px solid rgba(20, 241, 149, 0.3);
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--accent);
-            text-decoration: none;
-            margin-bottom: 20px;
-        }
-        .live-badge::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .counter { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
-        .metric-card { 
-            background: var(--glass); 
-            border: 1px solid var(--border); 
-            border-radius: 16px; 
-            padding: 25px; 
-            text-align: center; 
-        }
-        .metric-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
+        .live-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(20, 241, 149, 0.1); border: 1px solid rgba(20, 241, 149, 0.3); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; color: var(--accent); text-decoration: none; margin-bottom: 20px; }
+        .live-badge::before { content: ""; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .metric-card { background: linear-gradient(135deg, rgba(20,241,149,0.1), rgba(153,69,255,0.1)); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 25px; text-align: center; height: 100%; }
+        .metric-value { font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .metric-label { color: var(--text-secondary); margin-top: 10px; }
-        .trust-badge {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-        }
-        .trust-badge h6 { color: #fff; }
-        .trust-badge-icon { font-size: 2rem; margin-bottom: 10px; }
-        .partner-logo {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 20px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-        .partner-logo:hover { background: rgba(20, 241, 149, 0.1); color: var(--accent); border-color: var(--accent); }
-        .flowchart-step {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 25px;
-            text-align: center;
-            position: relative;
-        }
-        .flowchart-step h6 { color: var(--accent); }
-        .flowchart-step small { color: var(--text-secondary); }
-        .flowchart-icon { font-size: 2.5rem; margin-bottom: 15px; }
-        .flowchart-arrow { color: var(--accent); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; }
-        .comparison-table { width: 100%; border-collapse: collapse; }
+        .trust-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin: 30px 0; }
+        .trust-badge { background: rgba(20,241,149,0.1); border: 1px solid rgba(20,241,149,0.3); border-radius: 12px; padding: 15px 25px; text-align: center; min-width: 150px; }
+        .trust-badge .badge-icon { font-size: 2rem; margin-bottom: 8px; }
+        .trust-badge .badge-text { font-size: 0.9rem; color: var(--accent); font-weight: 600; }
+        .partner-logo { display: inline-block; padding: 12px 24px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s; }
+        .partner-logo:hover { background: rgba(20, 241, 149, 0.1); border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+        .how-it-works { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 15px; margin: 30px 0; padding: 20px; }
+        .step-box { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; min-width: 140px; max-width: 180px; flex: 1; }
+        .step-box .step-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .step-box h4 { font-size: 1rem; margin-bottom: 8px; color: var(--accent); }
+        .step-box p { font-size: 0.85rem; color: var(--text-secondary); margin: 0; }
+        .step-arrow { font-size: 2rem; color: var(--secondary); }
+        @media (max-width: 768px) { .step-arrow { transform: rotate(90deg); } .how-it-works { flex-direction: column; } .step-box { max-width: 100%; width: 100%; } }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         .comparison-table th, .comparison-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
-        .comparison-table th { color: var(--accent); }
-        .faq-item { margin-bottom: 15px; }
-        .faq-question {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-            color: #fff;
-        }
-        .faq-question:hover { border-color: var(--accent); }
-        .faq-answer {
-            display: none;
-            padding: 20px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 0 0 12px 12px;
-            margin-top: -10px;
-            color: var(--text-secondary);
-        }
+        .comparison-table th { color: var(--accent); font-weight: 600; }
+        .comparison-table .check { color: var(--accent); }
+        .comparison-table .cross { color: var(--text-muted); }
+        .faq-item { background: var(--glass); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #fff; }
+        .faq-question:hover { background: rgba(255,255,255,0.03); }
+        .faq-answer { padding: 0 20px 20px; color: var(--text-secondary); display: none; }
         .faq-item.active .faq-answer { display: block; }
-        .faq-item.active .faq-question { border-radius: 12px 12px 0 0; border-color: var(--accent); }
-        .roadmap-phase {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 30px;
-            position: relative;
-        }
-        .roadmap-phase h4 { color: #fff; }
-        .roadmap-phase ul { color: var(--text-secondary); }
-        .roadmap-phase.completed { border-color: var(--accent); }
-        .roadmap-phase.completed::before {
-            content: "COMPLETED";
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(20, 241, 149, 0.2);
-            color: var(--accent);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        .roadmap-phase.current::before {
-            content: "IN PROGRESS";
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(153, 69, 255, 0.2);
-            color: var(--secondary);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        .user-badge {
-            background: rgba(20, 241, 149, 0.2);
-            color: var(--accent);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        .user-badge.provider {
-            background: rgba(153, 69, 255, 0.2);
-            color: var(--secondary);
-        }
-        textarea, input[type="text"], input[type="email"], input[type="password"], input[type="number"], select { 
-            background: rgba(255,255,255,0.1); 
-            border: 1px solid var(--border); 
-            color: #fff; 
-            padding: 14px; 
-            width: 100%; 
-            border-radius: 12px; 
-            margin-bottom: 15px;
-            font-family: inherit;
-        }
+        .faq-item.active .faq-toggle { transform: rotate(45deg); }
+        .faq-toggle { color: var(--accent); font-size: 1.5rem; transition: transform 0.3s; }
+        .roadmap-item { position: relative; padding-left: 40px; padding-bottom: 30px; border-left: 2px solid var(--border); margin-left: 20px; }
+        .roadmap-item:last-child { border-left: 2px solid transparent; }
+        .roadmap-item::before { content: ""; position: absolute; left: -8px; top: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--secondary); border: 2px solid var(--bg); }
+        .roadmap-item.completed::before { background: var(--accent); }
+        .roadmap-item.current::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .roadmap-item h4 { color: #fff; margin-bottom: 5px; font-size: 1.1rem; }
+        .roadmap-item .phase-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-bottom: 10px; }
+        .roadmap-item.completed .phase-tag { background: rgba(20,241,149,0.2); color: var(--accent); }
+        .roadmap-item.current .phase-tag { background: rgba(20,241,149,0.3); color: var(--accent); }
+        .roadmap-item.future .phase-tag { background: rgba(153,69,255,0.2); color: var(--secondary); }
+        .roadmap-item p { color: var(--text-secondary); font-size: 0.9rem; margin: 0; }
+        .exchange-link { display: inline-block; padding: 8px 14px; background: rgba(20,241,149,0.1); border: 1px solid rgba(20,241,149,0.3); border-radius: 6px; color: var(--accent); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: all 0.3s; }
+        .exchange-link:hover { background: rgba(20,241,149,0.2); transform: translateY(-2px); color: var(--accent); }
+        .testimonial-card { background: linear-gradient(135deg, rgba(20,241,149,0.05), rgba(153,69,255,0.05)); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 20px; text-align: center; }
+        .testimonial-card .quote { font-style: italic; color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 15px; }
+        .testimonial-card .author { color: var(--accent); font-weight: 600; }
+        .press-placeholder { background: rgba(255,255,255,0.03); border: 2px dashed var(--border); border-radius: 12px; padding: 40px 20px; text-align: center; color: var(--text-muted); }
+        .investor-cta { background: linear-gradient(135deg, rgba(153,69,255,0.2), rgba(20,241,149,0.2)); border: 2px solid rgba(153,69,255,0.5); border-radius: 16px; padding: 40px; text-align: center; margin: 30px 0; }
+        .investor-cta h2 { font-size: 1.8rem; margin-bottom: 15px; color: #fff; }
+        .investor-cta p { color: var(--text-secondary); margin-bottom: 20px; }
+        .team-photo { max-width: 200px; width: 100%; border-radius: 50%; margin: 20px auto; display: block; border: 3px solid var(--accent); }
+        @media (max-width: 768px) { .team-photo { max-width: 150px; } }
+        textarea, input[type="text"], input[type="email"], input[type="password"], input[type="number"], select { background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; padding: 14px; width: 100%; border-radius: 12px; margin-bottom: 15px; font-family: inherit; }
         textarea:focus, input:focus, select:focus { outline: none; border-color: var(--accent); }
         textarea::placeholder, input::placeholder { color: rgba(255,255,255,0.5); }
         textarea { min-height: 150px; resize: vertical; }
         select option { background: #1a1a2e; color: #fff; }
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-        }
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--accent), var(--secondary));
-            border: none;
-            border-radius: 50%;
-            color: #000;
-            font-size: 1.5rem;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            z-index: 999;
-        }
+        pre { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; overflow-x: auto; color: var(--accent); font-size: 0.85rem; }
+        code { color: var(--accent); }
+        footer { text-align: center; padding: 40px 20px; border-top: 1px solid var(--border); color: var(--text-muted); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent), var(--secondary)); border: none; border-radius: 50%; color: #000; font-size: 1.5rem; cursor: pointer; opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 999; display: flex; align-items: center; justify-content: center; }
         .back-to-top.visible { opacity: 1; visibility: visible; }
-        .back-to-top:hover { transform: translateY(-3px); }
-        .hash-result {
-            background: rgba(20, 241, 149, 0.1);
-            border: 1px solid rgba(20, 241, 149, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            word-break: break-all;
-        }
-        .hash-result h5 { color: var(--accent); }
-        .hash-value { color: var(--accent); font-family: monospace; font-size: 0.9rem; }
-        .tab-buttons { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        .tab-btn {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            padding: 12px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-        }
+        .back-to-top:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(20,241,149,0.4); }
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn { background: var(--glass); border: 1px solid var(--border); color: var(--text-secondary); padding: 12px 24px; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 0.95rem; transition: all 0.3s; }
         .tab-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
         .tab-btn.active { background: rgba(20, 241, 149, 0.1); border-color: var(--accent); color: var(--accent); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .login-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
+        .hash-result { background: rgba(20, 241, 149, 0.1); border: 1px solid rgba(20, 241, 149, 0.3); border-radius: 12px; padding: 20px; margin-top: 20px; word-break: break-all; }
+        .hash-result h5 { color: var(--accent); }
+        .hash-value { color: var(--accent); font-family: monospace; font-size: 0.9rem; }
+        .login-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
         .login-modal.active { display: flex; }
-        .login-box {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 400px;
-            width: 90%;
-        }
+        .login-box { background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 40px; max-width: 400px; width: 90%; }
         .login-box h3 { color: #fff; }
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            float: right;
-        }
+        .close-modal { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; float: right; }
         .close-modal:hover { color: #fff; }
-        .code-block {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
-            overflow-x: auto;
-            color: var(--text-secondary);
-        }
-        .code-block .keyword { color: var(--secondary); }
-        .code-block .string { color: var(--accent); }
-        .code-block .comment { color: var(--text-muted); }
-        .timeline-item {
-            position: relative;
-            padding-left: 30px;
-            padding-bottom: 30px;
-            border-left: 2px solid var(--border);
-        }
-        .timeline-item:last-child { border-left: 2px solid transparent; }
-        .timeline-item::before {
-            content: "";
-            position: absolute;
-            left: -8px;
-            top: 0;
-            width: 14px;
-            height: 14px;
-            background: var(--border);
-            border-radius: 50%;
-        }
-        .timeline-item.completed::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-        .timeline-date { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
-        .timeline-item h5 { color: #fff; }
-        .roi-calculator {
-            background: linear-gradient(135deg, rgba(20, 241, 149, 0.1), rgba(153, 69, 255, 0.1));
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
-        }
-        .roi-calculator h3 { color: #fff; }
-        .roi-result {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--accent);
-            text-align: center;
-            margin-top: 20px;
-        }
-        .investor-cta {
-            background: linear-gradient(135deg, rgba(20, 241, 149, 0.15), rgba(153, 69, 255, 0.15));
-            border: 2px solid rgba(20, 241, 149, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-        }
-        .investor-cta h3 { color: #fff; }
-        .testimonial-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 25px;
-            height: 100%;
-        }
-        .testimonial-card .quote { 
-            font-style: italic; 
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-        }
-        .testimonial-card .author { color: var(--accent); font-weight: 600; }
-        .press-placeholder {
-            text-align: center;
-            padding: 40px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-        }
-        .press-placeholder h4 { color: #fff; }
-        .press-placeholder p { color: var(--text-secondary); }
-        .team-photo {
-            max-width: 200px;
-            width: 100%;
-            border-radius: 50%;
-            margin: 20px auto;
-            display: block;
-            border: 3px solid var(--accent);
-        }
-        @media (max-width: 768px) {
-            .section { padding: 50px 0; }
-            .section-title { font-size: 1.5rem; }
-            .counter { font-size: 1.8rem; }
-            .flowchart-arrow { transform: rotate(90deg); padding: 10px 0; }
-            .team-photo { max-width: 150px; }
-        }
+        .user-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(20, 241, 149, 0.2); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: var(--accent); }
+        .user-badge.provider { background: rgba(153, 69, 255, 0.2); color: var(--secondary); }
+        .social-link { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: var(--glass); border: 1px solid var(--border); border-radius: 8px; color: var(--accent); text-decoration: none; transition: all 0.3s; }
+        .social-link:hover { background: rgba(20,241,149,0.1); transform: translateY(-2px); color: var(--accent); }
+        .wallet { background: rgba(20,241,149,0.1); border: 1px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center; }
+        .tx-list { list-style: none; padding: 0; margin: 0; }
+        .tx-item { background: var(--glass); padding: 15px; margin: 10px 0; border-radius: 8px; color: #fff; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        @media (max-width: 768px) { .section { padding: 50px 0; } .section-title { font-size: 1.5rem; } .tx-item { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -514,14 +205,11 @@
                     <li class="nav-item"><a class="nav-link" href="#sdk">SDK</a></li>
                     <li class="nav-item"><a class="nav-link" href="#security">Security</a></li>
                     <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#profile">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                     <li class="nav-item" id="loginBtn"><a class="nav-link" href="#" onclick="showLoginModal()">Login</a></li>
-                    <li class="nav-item" id="userInfo" style="display:none;">
-                        <span class="user-badge" id="userBadge"></span>
-                    </li>
-                    <li class="nav-item" id="logoutBtn" style="display:none;">
-                        <a class="nav-link" href="#" onclick="logout()">Logout</a>
-                    </li>
+                    <li class="nav-item" id="userInfo" style="display:none;"><span class="user-badge" id="userBadge"></span></li>
+                    <li class="nav-item" id="logoutBtn" style="display:none;"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -540,108 +228,109 @@
         <div class="container mt-5">
             <div class="card">
                 <h3 style="margin-bottom: 20px;">How It Works</h3>
-                <p style="margin-bottom: 30px;">Secure, verify, and share medical records in 4 simple steps</p>
-                <div class="row align-items-center">
-                    <div class="col-md-2 col-6 mb-3">
-                        <div class="flowchart-step">
-                            <div class="flowchart-icon">📋</div>
-                            <h6>1. Patient Record</h6>
-                            <small>Patient enters or uploads medical record</small>
-                        </div>
+                <p style="text-align: center; margin-bottom: 10px;">Secure, verify, and share medical records in 4 simple steps</p>
+                <div class="how-it-works">
+                    <div class="step-box">
+                        <div class="step-icon">📋</div>
+                        <h4>1. Patient Record</h4>
+                        <p>Patient enters or uploads medical record</p>
                     </div>
-                    <div class="col-md-1 col-12 mb-3 flowchart-arrow">→</div>
-                    <div class="col-md-2 col-6 mb-3">
-                        <div class="flowchart-step">
-                            <div class="flowchart-icon">🔐</div>
-                            <h6>2. Hash & Encrypt</h6>
-                            <small>SHA-256 hash generated, PHI stays off-chain</small>
-                        </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-icon">🔐</div>
+                        <h4>2. Hash & Encrypt</h4>
+                        <p>SHA-256 hash generated, PHI stays off-chain</p>
                     </div>
-                    <div class="col-md-1 col-12 mb-3 flowchart-arrow">→</div>
-                    <div class="col-md-2 col-6 mb-3">
-                        <div class="flowchart-step">
-                            <div class="flowchart-icon">⛓️</div>
-                            <h6>3. Anchor on XRPL</h6>
-                            <small>Hash stored immutably on XRP Ledger</small>
-                        </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-icon">⛓️</div>
+                        <h4>3. Anchor on XRPL</h4>
+                        <p>Hash stored immutably on XRP Ledger</p>
                     </div>
-                    <div class="col-md-1 col-12 mb-3 flowchart-arrow">→</div>
-                    <div class="col-md-2 col-6 mb-3">
-                        <div class="flowchart-step">
-                            <div class="flowchart-icon">✅</div>
-                            <h6>4. Verify & Share</h6>
-                            <small>Providers verify authenticity instantly</small>
-                        </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-icon">✅</div>
+                        <h4>4. Verify & Share</h4>
+                        <p>Providers verify authenticity instantly</p>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Trust Badges -->
-        <div class="container mt-4">
-            <div class="row">
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="trust-badge">
-                        <div class="trust-badge-icon">🛡️</div>
-                        <h6>Zero-Knowledge Privacy</h6>
+            <div class="card">
+                <h3 class="text-center">Ecosystem Partners</h3>
+                <p style="text-align: center; margin-bottom: 20px;">Built on and integrated with leading XRPL platforms</p>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; align-items: center;">
+                    <a href="https://xrpl.org" target="_blank" class="partner-logo">XRPL</a>
+                    <a href="https://xmagnetic.org" target="_blank" class="partner-logo">xMagnetic</a>
+                    <a href="https://sologenic.org" target="_blank" class="partner-logo">Sologenic</a>
+                    <a href="https://xaman.app" target="_blank" class="partner-logo">Xaman</a>
+                    <a href="https://xpmarket.com" target="_blank" class="partner-logo">xpmarket</a>
+                </div>
+            </div>
+
+            <div class="trust-badges">
+                <div class="trust-badge"><div class="badge-icon">🔒</div><div class="badge-text">Zero-Knowledge Privacy</div></div>
+                <div class="trust-badge"><div class="badge-icon">🏥</div><div class="badge-text">HIPAA-Ready Design</div></div>
+                <div class="trust-badge"><div class="badge-icon">⚡</div><div class="badge-text">Enterprise Grade</div></div>
+                <div class="trust-badge"><div class="badge-icon">🌐</div><div class="badge-text">XRPL Powered</div></div>
+            </div>
+
+            <div class="card" style="background: linear-gradient(135deg, rgba(20,241,149,0.08), rgba(153,69,255,0.08));">
+                <h3 class="text-center">Patient <span class="gradient-text">Privacy Guarantees</span></h3>
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-3 text-center">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔐</div>
+                        <h5>Your Data Never Leaves</h5>
+                        <p style="font-size: 0.9rem;">Only cryptographic hashes are stored on-chain. Your actual medical records stay with your providers.</p>
+                    </div>
+                    <div class="col-md-4 mb-3 text-center">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">✋</div>
+                        <h5>You Control Access</h5>
+                        <p style="font-size: 0.9rem;">Grant or revoke provider access anytime. Your consent is required for every share.</p>
+                    </div>
+                    <div class="col-md-4 mb-3 text-center">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">💰</div>
+                        <h5>Earn From Your Data</h5>
+                        <p style="font-size: 0.9rem;">Opt-in to earn $SLS tokens when your anonymized data contributes to research.</p>
                     </div>
                 </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="trust-badge">
-                        <div class="trust-badge-icon">🏥</div>
-                        <h6>HIPAA-Ready</h6>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="trust-badge">
-                        <div class="trust-badge-icon">🏢</div>
-                        <h6>Enterprise Grade</h6>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="trust-badge">
-                        <div class="trust-badge-icon">⚡</div>
-                        <h6>XRPL Powered</h6>
-                    </div>
+            </div>
+
+            <div class="card">
+                <h3 class="text-center">Why Solus Protocol?</h3>
+                <table class="comparison-table">
+                    <tr><th>Feature</th><th>Traditional Systems</th><th>Solus Protocol</th></tr>
+                    <tr><td>Data Ownership</td><td class="cross">Provider-controlled</td><td class="check">Patient-controlled ✓</td></tr>
+                    <tr><td>Record Verification</td><td class="cross">Manual, slow process</td><td class="check">Instant, cryptographic ✓</td></tr>
+                    <tr><td>Transaction Cost</td><td class="cross">$15-50 per verification</td><td class="check">~$0.001 on XRPL ✓</td></tr>
+                    <tr><td>Tampering Risk</td><td class="cross">Vulnerable to alteration</td><td class="check">Immutable hashes ✓</td></tr>
+                    <tr><td>Interoperability</td><td class="cross">Siloed systems</td><td class="check">Universal verification ✓</td></tr>
+                </table>
+            </div>
+
+            <div class="investor-cta">
+                <h2>Interested in <span class="gradient-text">Investing</span>?</h2>
+                <p>Solus Protocol is seeking strategic partners and early-stage investment to accelerate our South Carolina pilots and national expansion.</p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a href="#contact" class="btn-primary-custom">Contact for Investment</a>
+                    <a href="https://github.com/solusprotocol1/solus-protocol/blob/dec022ee9ca6c9b1117abc2bc63d36b537318a36/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" target="_blank" class="btn-secondary-custom">Read Whitepaper</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="section">
+    <section id="about" class="section" style="background: rgba(0,0,0,0.2);">
         <div class="container">
             <h2 class="section-title">About <span class="gradient-text">Solus Protocol</span></h2>
             
-            <!-- Key Metrics -->
             <div class="row mb-4">
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-value"><span class="counter" data-target="300" data-prefix="$" data-suffix="B">$0B</span></div>
-                        <div class="metric-label">Annual US Healthcare Data Mismanagement Cost</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-value"><span class="counter" data-target="2.4" data-suffix="M+">0M+</span></div>
-                        <div class="metric-label">MUSC Patients in South Carolina</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-value"><span class="counter" data-target="0.001" data-prefix="~$" data-decimals="3">~$0</span></div>
-                        <div class="metric-label">XRPL Transaction Cost</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-value">3-5s</div>
-                        <div class="metric-label">XRPL Confirmation Time</div>
-                    </div>
-                </div>
+                <div class="col-md-3 col-6 mb-3"><div class="metric-card"><div class="metric-value"><span class="counter" data-target="300" data-prefix="$" data-suffix="B">$0B</span></div><div class="metric-label">Annual US Healthcare Data Mismanagement Cost</div></div></div>
+                <div class="col-md-3 col-6 mb-3"><div class="metric-card"><div class="metric-value"><span class="counter" data-target="2.4" data-suffix="M+">0M+</span></div><div class="metric-label">MUSC Patients in South Carolina</div></div></div>
+                <div class="col-md-3 col-6 mb-3"><div class="metric-card"><div class="metric-value"><span class="counter" data-target="0.001" data-prefix="~$" data-decimals="3">~$0</span></div><div class="metric-label">XRPL Transaction Cost</div></div></div>
+                <div class="col-md-3 col-6 mb-3"><div class="metric-card"><div class="metric-value">3-5s</div><div class="metric-label">XRPL Confirmation Time</div></div></div>
             </div>
 
-            <!-- Team Section -->
             <div class="card text-center mb-4">
                 <h2>Our Team</h2>
                 <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/profilepic.png" alt="Nick Frankfort" class="team-photo">
@@ -649,21 +338,18 @@
                 <p style="color: var(--accent);">Founder & Lead Developer</p>
             </div>
 
-            <!-- Who We Are -->
             <div class="card mb-4">
                 <h2>Who We Are</h2>
                 <p>Solus Protocol is an early-stage blockchain startup headquartered in Mount Pleasant, South Carolina. Founded by a solo developer with deep expertise in blockchain technology and healthcare data challenges, we are creating a decentralized protocol on the XRP Ledger to set a new standard for secure, patient-controlled medical data integrity.</p>
                 <p>Our focus is real-world utility: immutable hash anchoring for medical records, zero-knowledge privacy (PHI never touches the chain), and seamless integration with existing EHR systems — all built with transparency, compliance, and long-term scalability in mind.</p>
             </div>
 
-            <!-- Our Mission -->
             <div class="card mb-4">
                 <h2>Our Mission</h2>
                 <p>Our mission is to empower patients with true ownership and control over their medical data while enabling healthcare providers to access accurate, verifiable records in a compliant, efficient, and tamper-proof manner — beginning with a focused rollout in South Carolina to create meaningful local economic and health impact before expanding nationally.</p>
                 <p>We believe the future of healthcare depends on trust in data. Solus Protocol exists to make that trust immutable, decentralized, and accessible to everyone.</p>
             </div>
 
-            <!-- Our Impact -->
             <div class="card mb-4">
                 <h2>Our Impact</h2>
                 <p>By solving the problems of fragmented and insecure healthcare data, Solus Protocol aims to significantly reduce the estimated $300 billion annual cost of data mismanagement in the US healthcare system. In South Carolina, we are prioritizing partnerships and pilots with institutions like the Medical University of South Carolina (MUSC), which serves over 2.4 million patients statewide, to drive innovation, improve care coordination, and create lasting economic value in the region.</p>
@@ -671,120 +357,72 @@
             </div>
 
             <div class="text-center mb-4">
-                <a href="https://github.com/solusprotocol1/solus-protocol/blob/dec022ee9ca6c9b1117abc2bc63d36b537318a36/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" target="_blank" class="btn-primary-custom" style="font-size: 1.1rem; padding: 15px 40px;">
-                    📄 Read Our Whitepaper
-                </a>
+                <a href="https://github.com/solusprotocol1/solus-protocol/blob/dec022ee9ca6c9b1117abc2bc63d36b537318a36/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" target="_blank" class="btn-primary-custom" style="font-size: 1.1rem; padding: 15px 40px;">📄 Read Our Whitepaper</a>
             </div>
 
-            <!-- Testimonials -->
             <div class="card mb-4">
                 <h2 class="text-center">What Partners Are Saying</h2>
                 <p class="text-center mb-4">Pilot partnerships currently in progress</p>
                 <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="testimonial-card">
-                            <div class="quote">"Solus Protocol represents exactly the kind of innovation healthcare needs — secure, patient-first, and built on proven technology."</div>
-                            <div class="author">— Healthcare Innovation Partner</div>
-                            <p style="font-size: 0.85rem; margin-top: 5px;">Pilot in progress</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="testimonial-card">
-                            <div class="quote">"The zero-knowledge approach to PHI combined with XRPL's speed and cost efficiency is a game-changer for medical record verification."</div>
-                            <div class="author">— XRPL Ecosystem Advisor</div>
-                            <p style="font-size: 0.85rem; margin-top: 5px;">Advisory role</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="testimonial-card">
-                            <div class="quote">"We're excited to explore how Solus Protocol can improve care coordination across our network of providers."</div>
-                            <div class="author">— Regional Healthcare System</div>
-                            <p style="font-size: 0.85rem; margin-top: 5px;">Partnership discussions</p>
-                        </div>
-                    </div>
+                    <div class="col-md-4 mb-3"><div class="testimonial-card"><div class="quote">"Solus Protocol represents exactly the kind of innovation healthcare needs — secure, patient-first, and built on proven technology."</div><div class="author">— Healthcare Innovation Partner</div><p style="font-size: 0.85rem; margin-top: 5px;">Pilot in progress</p></div></div>
+                    <div class="col-md-4 mb-3"><div class="testimonial-card"><div class="quote">"The zero-knowledge approach to PHI combined with XRPL's speed and cost efficiency is a game-changer for medical record verification."</div><div class="author">— XRPL Ecosystem Advisor</div><p style="font-size: 0.85rem; margin-top: 5px;">Advisory role</p></div></div>
+                    <div class="col-md-4 mb-3"><div class="testimonial-card"><div class="quote">"We're excited to explore how Solus Protocol can improve care coordination across our network of providers."</div><div class="author">— Regional Healthcare System</div><p style="font-size: 0.85rem; margin-top: 5px;">Partnership discussions</p></div></div>
                 </div>
             </div>
 
-            <!-- Press Section -->
             <div class="card mb-4">
                 <h2 class="text-center">Featured In</h2>
                 <div class="press-placeholder">
                     <div style="font-size: 2rem; margin-bottom: 15px;">📰</div>
-                    <h4>Press & Media Coverage Coming Soon</h4>
+                    <h4 style="color: #fff;">Press & Media Coverage Coming Soon</h4>
                     <p>As Solus Protocol grows, media mentions and press features will be showcased here.</p>
                     <a href="#contact" style="color: var(--accent);">Media inquiries? Contact us</a>
                 </div>
             </div>
 
-            <!-- Traction Timeline -->
             <div class="card mb-4">
                 <h2 class="text-center">Traction & <span class="gradient-text">Milestones</span></h2>
                 <div class="row mt-4">
-                    <div class="col-md-4 mb-3 text-center">
-                        <div style="font-size: 2.5rem; margin-bottom: 10px;">✅</div>
-                        <h4 style="color: var(--accent);">Q4 2025</h4>
-                        <p>Protocol concept validated<br>SDK prototype built<br>Whitepaper v1.0 released</p>
-                    </div>
-                    <div class="col-md-4 mb-3 text-center">
-                        <div style="font-size: 2.5rem; margin-bottom: 10px;">✅</div>
-                        <h4 style="color: var(--accent);">Q1 2026</h4>
-                        <p>$SLS token launched on XRPL<br>Listed on xMagnetic & Sologenic<br>Whitepaper v3.0 published</p>
-                    </div>
-                    <div class="col-md-4 mb-3 text-center">
-                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔄</div>
-                        <h4 style="color: var(--secondary);">Now</h4>
-                        <p>SC healthcare pilot discussions<br>Grant applications in progress<br>Investor outreach active</p>
-                    </div>
+                    <div class="col-md-4 mb-3 text-center"><div style="font-size: 2.5rem; margin-bottom: 10px;">✅</div><h4 style="color: var(--accent);">Q4 2025</h4><p>Protocol concept validated<br>SDK prototype built<br>Whitepaper v1.0 released</p></div>
+                    <div class="col-md-4 mb-3 text-center"><div style="font-size: 2.5rem; margin-bottom: 10px;">✅</div><h4 style="color: var(--accent);">Q1 2026</h4><p>$SLS token launched on XRPL<br>Listed on xMagnetic & Sologenic<br>Whitepaper v3.0 published</p></div>
+                    <div class="col-md-4 mb-3 text-center"><div style="font-size: 2.5rem; margin-bottom: 10px;">🔄</div><h4 style="color: var(--secondary);">Now</h4><p>SC healthcare pilot discussions<br>Grant applications in progress<br>Investor outreach active</p></div>
                 </div>
             </div>
 
-            <!-- Leadership Section -->
             <div class="card mb-4">
                 <h2 class="text-center">Leadership & <span class="gradient-text">Advisors</span></h2>
                 <div class="row mt-4">
-                    <div class="col-md-4 mb-3 text-center">
+                    <div class="col-md-3 mb-3 text-center">
                         <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">👤</div>
-                        <h4>Founder & President</h4>
-                        <p>Healthcare IT background<br>10+ years in medical informatics<br>XRPL developer since 2021</p>
+                        <h4>President</h4>
+                        <p>Strategic vision & operations<br>Business development lead<br>Investor & partner relations</p>
                     </div>
-                    <div class="col-md-4 mb-3 text-center">
+                    <div class="col-md-3 mb-3 text-center">
                         <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">👤</div>
                         <h4>Technical Advisor</h4>
                         <p>XRPL ecosystem expert<br>Smart contract security<br>Blockchain architecture</p>
                     </div>
-                    <div class="col-md-4 mb-3 text-center">
+                    <div class="col-md-3 mb-3 text-center">
                         <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">👤</div>
                         <h4>Healthcare Advisor</h4>
                         <p>Hospital administration<br>HIPAA compliance expert<br>EHR integration specialist</p>
                     </div>
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">⚖️</div>
+                        <h4>Legal Advisor</h4>
+                        <p>Healthcare regulatory law<br>Data privacy & compliance<br>Corporate governance</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Tokenomics -->
             <div class="card mb-4">
                 <h2 class="text-center">$SLS <span class="gradient-text">Tokenomics</span></h2>
                 <p class="text-center mb-4">Utility token powering the Solus Protocol ecosystem</p>
                 <div class="row">
-                    <div class="col-md-3 mb-3 text-center">
-                        <div style="font-size: 2rem; color: var(--accent);">⚡</div>
-                        <h5>Verification Fees</h5>
-                        <p style="font-size: 0.9rem;">Pay for record verification on XRPL (~$0.001/tx)</p>
-                    </div>
-                    <div class="col-md-3 mb-3 text-center">
-                        <div style="font-size: 2rem; color: var(--accent);">🎁</div>
-                        <h5>Provider Rebates</h5>
-                        <p style="font-size: 0.9rem;">Earn back 50% of fees for participating</p>
-                    </div>
-                    <div class="col-md-3 mb-3 text-center">
-                        <div style="font-size: 2rem; color: var(--accent);">🔐</div>
-                        <h5>Data Contributions</h5>
-                        <p style="font-size: 0.9rem;">Patients earn for anonymized research data</p>
-                    </div>
-                    <div class="col-md-3 mb-3 text-center">
-                        <div style="font-size: 2rem; color: var(--accent);">🏛️</div>
-                        <h5>Governance</h5>
-                        <p style="font-size: 0.9rem;">Vote on protocol upgrades and fee structures</p>
-                    </div>
+                    <div class="col-md-3 mb-3 text-center"><div style="font-size: 2rem; color: var(--accent);">⚡</div><h5>Verification Fees</h5><p style="font-size: 0.9rem;">Pay for record verification on XRPL (~$0.001/tx)</p></div>
+                    <div class="col-md-3 mb-3 text-center"><div style="font-size: 2rem; color: var(--accent);">🎁</div><h5>Provider Rebates</h5><p style="font-size: 0.9rem;">Earn back 50% of fees for participating</p></div>
+                    <div class="col-md-3 mb-3 text-center"><div style="font-size: 2rem; color: var(--accent);">🔐</div><h5>Data Contributions</h5><p style="font-size: 0.9rem;">Patients earn for anonymized research data</p></div>
+                    <div class="col-md-3 mb-3 text-center"><div style="font-size: 2rem; color: var(--accent);">🏛️</div><h5>Governance</h5><p style="font-size: 0.9rem;">Vote on protocol upgrades and fee structures</p></div>
                 </div>
                 <p class="text-center mt-3">Trade $SLS on these XRPL platforms:</p>
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin: 20px 0;">
@@ -795,167 +433,72 @@
                 </div>
             </div>
 
-            <!-- Why Invest -->
-            <div class="investor-cta">
+            <div class="card" style="background: linear-gradient(135deg, rgba(20,241,149,0.1), rgba(153,69,255,0.1)); border: 2px solid rgba(20,241,149,0.3);">
                 <h2 class="text-center">Why <span class="gradient-text">Invest</span> in Solus?</h2>
                 <div class="row mt-4">
                     <div class="col-md-6">
                         <h4 style="color: var(--accent);">Market Opportunity</h4>
-                        <ul style="line-height: 2;">
-                            <li>$300B+ annual cost of healthcare data mismanagement</li>
-                            <li>250+ million patient records breached annually</li>
-                            <li>30% of healthcare costs tied to administrative inefficiency</li>
-                            <li>Growing demand for interoperability solutions</li>
-                        </ul>
+                        <ul style="line-height: 2;"><li>$300B+ annual cost of healthcare data mismanagement</li><li>250+ million patient records breached annually</li><li>30% of healthcare costs tied to administrative inefficiency</li><li>Growing demand for interoperability solutions</li></ul>
                     </div>
                     <div class="col-md-6">
                         <h4 style="color: var(--accent);">Competitive Advantages</h4>
-                        <ul style="line-height: 2;">
-                            <li>First mover on XRPL for healthcare data integrity</li>
-                            <li>Zero-knowledge approach protects PHI</li>
-                            <li>Live token with established trading pairs</li>
-                            <li>SDK ready for pilot deployments</li>
-                        </ul>
+                        <ul style="line-height: 2;"><li>First mover on XRPL for healthcare data integrity</li><li>Zero-knowledge approach protects PHI</li><li>Live token with established trading pairs</li><li>SDK ready for pilot deployments</li></ul>
                     </div>
                 </div>
-                <div class="text-center mt-4">
-                    <a href="#contact" class="btn-primary-custom">Schedule Investor Call</a>
-                </div>
+                <div class="text-center mt-4"><a href="#contact" class="btn-primary-custom">Schedule Investor Call</a></div>
             </div>
         </div>
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="section" style="background: rgba(0,0,0,0.3);">
+    <section id="services" class="section">
         <div class="container">
             <h2 class="section-title">Our <span class="gradient-text">Services</span></h2>
-            
             <div class="row mb-4">
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <h4 style="color: var(--accent);">Secure Data Anchoring</h4>
-                        <p>Hash and anchor medical records on XRPL for immutable integrity without exposing PHI.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <h4 style="color: var(--accent);">Patient-Controlled Access</h4>
-                        <p>Patients own and control sharing permissions via encrypted, decentralized tools.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <h4 style="color: var(--accent);">Provider Verification & Sharing</h4>
-                        <p>Instantly verify record authenticity and share compliantly with other providers.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <h4 style="color: var(--accent);">$SLS Utility Incentives</h4>
-                        <p>Earn rebates and rewards for secure data contributions and protocol participation.</p>
-                    </div>
-                </div>
+                <div class="col-md-6 mb-3"><div class="card h-100"><h4 style="color: var(--accent);">Secure Data Anchoring</h4><p>Hash and anchor medical records on XRPL for immutable integrity without exposing PHI.</p></div></div>
+                <div class="col-md-6 mb-3"><div class="card h-100"><h4 style="color: var(--accent);">Patient-Controlled Access</h4><p>Patients own and control sharing permissions via encrypted, decentralized tools.</p></div></div>
+                <div class="col-md-6 mb-3"><div class="card h-100"><h4 style="color: var(--accent);">Provider Verification & Sharing</h4><p>Instantly verify record authenticity and share compliantly with other providers.</p></div></div>
+                <div class="col-md-6 mb-3"><div class="card h-100"><h4 style="color: var(--accent);">$SLS Utility Incentives</h4><p>Earn rebates and rewards for secure data contributions and protocol participation.</p></div></div>
             </div>
-
             <h3 class="text-center mt-5 mb-4">Real-World <span class="gradient-text">Use Cases</span></h3>
             <div class="row mb-5">
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div style="font-size: 2.5rem; margin-bottom: 15px;">🏥</div>
-                        <h4>Emergency Room Access</h4>
-                        <p>ER physicians instantly verify patient history and allergies from any provider, reducing misdiagnosis risk and saving critical time.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📋</div>
-                        <h4>Insurance Verification</h4>
-                        <p>Streamlined claims processing with cryptographically verified treatment records. Reduce fraud and speed up approvals.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div style="font-size: 2.5rem; margin-bottom: 15px;">🔄</div>
-                        <h4>Cross-Provider Records</h4>
-                        <p>Seamlessly share verified records between healthcare providers while maintaining patient privacy and data integrity.</p>
-                    </div>
-                </div>
+                <div class="col-md-4 mb-3"><div class="card h-100 text-center"><div style="font-size: 2.5rem; margin-bottom: 15px;">🏥</div><h4>Emergency Room Access</h4><p>ER physicians instantly verify patient history and allergies from any provider, reducing misdiagnosis risk and saving critical time.</p></div></div>
+                <div class="col-md-4 mb-3"><div class="card h-100 text-center"><div style="font-size: 2.5rem; margin-bottom: 15px;">📋</div><h4>Insurance Verification</h4><p>Insurers verify treatment records instantly without waiting for faxes or phone calls, accelerating claims processing by up to 80%.</p></div></div>
+                <div class="col-md-4 mb-3"><div class="card h-100 text-center"><div style="font-size: 2.5rem; margin-bottom: 15px;">🔄</div><h4>Cross-Provider Records</h4><p>Specialists access verified patient records from primary care physicians seamlessly, ensuring continuity of care across providers.</p></div></div>
             </div>
-
-            <!-- ROI Calculator -->
-            <div class="roi-calculator">
-                <h3 class="text-center mb-4">ROI Calculator</h3>
+            <div class="card">
+                <h3 class="text-center">ROI <span class="gradient-text">Calculator</span></h3>
                 <p class="text-center">See how much your organization could save with Solus Protocol</p>
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <label>Current Annual Records Processed</label>
-                        <input type="number" id="recordsInput" value="100000" min="1000" step="1000">
-                        <label>Current Cost per Record Verification ($)</label>
-                        <input type="number" id="costInput" value="5" min="1" step="0.5">
-                        <button class="btn-primary-custom w-100" onclick="calculateROI()">Calculate Savings</button>
-                        <div class="roi-result" id="roiResult">$0 Annual Savings</div>
-                    </div>
+                <div class="row mt-4 justify-content-center">
+                    <div class="col-md-5"><label>Monthly Record Verifications</label><input type="number" id="roiVerifications" value="1000" min="100"></div>
+                    <div class="col-md-5"><label>Current Cost per Verification ($)</label><input type="number" id="roiCostPer" value="25" min="1"></div>
                 </div>
-            </div>
-
-            <!-- Comparison Table -->
-            <div class="card mt-5">
-                <h3 class="mb-4">Solus Protocol vs Traditional Systems</h3>
-                <div class="table-responsive">
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Feature</th>
-                                <th>Traditional Systems</th>
-                                <th style="color: var(--accent);">Solus Protocol</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Verification Time</td>
-                                <td>Hours to Days</td>
-                                <td style="color: var(--accent);">3-5 Seconds</td>
-                            </tr>
-                            <tr>
-                                <td>Cost per Transaction</td>
-                                <td>$2-10</td>
-                                <td style="color: var(--accent);">~$0.001</td>
-                            </tr>
-                            <tr>
-                                <td>Data Tampering Risk</td>
-                                <td>High</td>
-                                <td style="color: var(--accent);">Cryptographically Impossible</td>
-                            </tr>
-                            <tr>
-                                <td>Patient Data Exposure</td>
-                                <td>Full PHI Shared</td>
-                                <td style="color: var(--accent);">Hash Only (Zero-Knowledge)</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="text-center"><button onclick="calculateROI()" class="btn-primary-custom mt-3" style="width: auto; padding: 12px 30px;">Calculate Savings</button></div>
+                <div id="roiResult" style="display: none; margin-top: 20px; padding: 20px; background: rgba(20,241,149,0.15); border-radius: 12px; text-align: center;">
+                    <h4 style="color: var(--accent);">Estimated Annual Savings</h4>
+                    <div style="font-size: 3rem; font-weight: 700; color: var(--accent);" id="roiSavings">$0</div>
+                    <p style="margin-top: 10px;">Based on ~$0.001 per verification on XRPL vs. your current costs</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Dashboard Section -->
-    <section id="dashboard" class="section">
+    <section id="dashboard" class="section" style="background: rgba(0,0,0,0.2);">
         <div class="container">
             <h2 class="section-title">Hash <span class="gradient-text">Dashboard</span></h2>
             <p class="text-center" style="margin-bottom: 30px;">Secure patient record hashing with blockchain verification (demo)</p>
-            
-            <div class="tab-buttons justify-content-center">
+            <div class="tab-buttons">
                 <button class="tab-btn active" onclick="switchDashboardTab('generate')">Generate Hash</button>
                 <button class="tab-btn" onclick="switchDashboardTab('verify')">Verify Record</button>
             </div>
-
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="card">
                         <div id="generateTab" class="tab-content active">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                                 <label style="margin-bottom: 0;">Patient Record Data</label>
-                                <div class="dropdown" style="position: relative;">
+                                <div style="position: relative;">
                                     <button class="btn-secondary-custom" style="padding: 8px 16px; font-size: 0.85rem;" onclick="toggleSampleMenu()">Load Sample</button>
                                     <div id="sampleMenu" style="display: none; position: absolute; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; right: 0; margin-top: 5px; z-index: 100; min-width: 200px;">
                                         <button onclick="loadSample(0)" style="display: block; width: 100%; background: none; border: none; color: #fff; padding: 10px; text-align: left; cursor: pointer; border-radius: 8px;">Patient Visit Record</button>
@@ -970,11 +513,12 @@
                                 <option value="SHA-256">SHA-256</option>
                                 <option value="SHA-512">SHA-512</option>
                                 <option value="SHA-384">SHA-384</option>
+                                <option value="SHA3-256">SHA3-256</option>
+                                <option value="BLAKE2b">BLAKE2b</option>
                             </select>
                             <button class="btn-primary-custom w-100" onclick="generateHash()">Secure Record (Generate Hash)</button>
                             <div id="hashResult" style="display: none;"></div>
                         </div>
-
                         <div id="verifyTab" class="tab-content">
                             <label>Patient Record Data</label>
                             <textarea id="verifyRecordText" placeholder="Paste the original patient record here..."></textarea>
@@ -985,6 +529,8 @@
                                 <option value="SHA-256">SHA-256</option>
                                 <option value="SHA-512">SHA-512</option>
                                 <option value="SHA-384">SHA-384</option>
+                                <option value="SHA3-256">SHA3-256</option>
+                                <option value="BLAKE2b">BLAKE2b</option>
                             </select>
                             <button class="btn-primary-custom w-100" onclick="verifyHash()">Verify Record Integrity</button>
                             <div id="verifyResult" style="display: none;"></div>
@@ -996,407 +542,321 @@
     </section>
 
     <!-- Roadmap Section -->
-    <section id="roadmap" class="section" style="background: rgba(0,0,0,0.3);">
-        <div class="container">
+    <section id="roadmap" class="section">
+        <div class="container" style="max-width: 800px;">
             <h2 class="section-title">Development <span class="gradient-text">Roadmap</span></h2>
-            
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="roadmap-phase completed">
-                        <h4>Phase 1: Foundation</h4>
-                        <p style="color: var(--accent);">Q4 2025</p>
-                        <ul>
-                            <li>Core SDK Development</li>
-                            <li>SHA-256 Hash Implementation</li>
-                            <li>XRPL Integration</li>
-                            <li>Basic API Endpoints</li>
-                        </ul>
-                    </div>
+            <p class="text-center mb-4">Our journey from concept to global healthcare data standard</p>
+            <div class="card">
+                <h3 class="mb-4">2026 - 2028 Timeline</h3>
+                <div class="roadmap-item completed"><span class="phase-tag">COMPLETED</span><h4>Phase 1: Foundation</h4><p>Core SDK development, SHA-256 hashing implementation, XRPL testnet integration, and initial demo application.</p></div>
+                <div class="roadmap-item current"><span class="phase-tag">CURRENT</span><h4>Phase 2: South Carolina Pilots</h4><p>Partnerships with MUSC and regional healthcare providers. Real-world testing with anonymized patient data. $SLS token utility implementation.</p></div>
+                <div class="roadmap-item future"><span class="phase-tag">Q3 2026</span><h4>Phase 3: Beta Launch</h4><p>Public beta for healthcare providers. EHR integration plugins (Epic, Cerner). Enhanced dashboard and analytics. Security audits and HIPAA compliance certification.</p></div>
+                <div class="roadmap-item future"><span class="phase-tag">Q1 2027</span><h4>Phase 4: National Expansion</h4><p>Expand pilot programs to additional states. Strategic partnerships with national healthcare networks. API marketplace for third-party developers.</p></div>
+                <div class="roadmap-item future"><span class="phase-tag">2027+</span><h4>Phase 5: Global Standard</h4><p>International expansion. Cross-border health record verification. Become the global standard for decentralized medical data integrity.</p></div>
+            </div>
+            <div class="card text-center">
+                <h3>Key Milestones</h3>
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3"><div style="font-size: 2rem; color: var(--accent);">✓</div><h5>SDK Prototype</h5><p style="font-size: 0.9rem;">Completed</p></div>
+                    <div class="col-md-3 mb-3"><div style="font-size: 2rem; color: var(--accent);">⏳</div><h5>MUSC Partnership</h5><p style="font-size: 0.9rem;">In Progress</p></div>
+                    <div class="col-md-3 mb-3"><div style="font-size: 2rem; color: var(--accent);">✓</div><h5>$SLS Token Live</h5><p style="color: var(--accent); font-size: 0.9rem;">Trading on XRPL Mainnet</p></div>
+                    <div class="col-md-3 mb-3"><div style="font-size: 2rem; color: var(--secondary);">⏳</div><h5>Cross-Chain Bridges</h5><p style="font-size: 0.9rem;">In Development</p></div>
                 </div>
-                <div class="col-md-6 mb-4">
-                    <div class="roadmap-phase completed">
-                        <h4>Phase 2: Token Launch</h4>
-                        <p style="color: var(--accent);">Q1 2026</p>
-                        <ul>
-                            <li>$SLS Token Deployment on XRPL</li>
-                            <li>DEX Listings (xMagnetic, Sologenic)</li>
-                            <li>Community Building</li>
-                            <li>Demo Dashboard Launch</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="roadmap-phase current">
-                        <h4>Phase 3: Pilot Programs</h4>
-                        <p style="color: var(--secondary);">Q2 2026</p>
-                        <ul>
-                            <li>Healthcare Provider Partnerships</li>
-                            <li>Enterprise SDK Release</li>
-                            <li>HIPAA Compliance Certification</li>
-                            <li>Insurance Integration Pilots</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="roadmap-phase">
-                        <h4>Phase 4: Global Standard</h4>
-                        <p>Q3-Q4 2026</p>
-                        <ul>
-                            <li>Cross-Chain Bridge Development</li>
-                            <li>International Expansion</li>
-                            <li>Governance Token Features</li>
-                            <li>Research Data Marketplace</li>
-                        </ul>
+            </div>
+            <div class="card" style="border: 1px solid rgba(153,69,255,0.3); background: linear-gradient(135deg, rgba(153,69,255,0.05), rgba(20,241,149,0.05));">
+                <h3 style="color: var(--secondary);">Cross-Chain Bridges — Coming Soon</h3>
+                <p>Expanding $SLS token utility beyond XRPL. Cross-chain bridges will enable seamless interoperability with other blockchain networks, increasing liquidity and accessibility for healthcare organizations worldwide.</p>
+                <p style="font-size: 0.9rem; margin-top: 10px;">Learn more at <a href="https://solusprotocol.com" target="_blank" style="color: var(--accent);">solusprotocol.com</a></p>
+            </div>
+            <div class="card" style="border: 1px solid rgba(20,241,149,0.3); background: linear-gradient(135deg, rgba(20,241,149,0.05), rgba(153,69,255,0.05));">
+                <h3 style="color: var(--accent);">$SLS Token — Live on XRPL Mainnet</h3>
+                <p>The $SLS utility token is now trading on the XRP Ledger. As a non-speculative utility token, $SLS powers protocol fees, incentive rebates, and ecosystem governance.</p>
+                <div style="margin-top: 15px;">
+                    <p style="margin-bottom: 10px; font-size: 0.9rem;">Trade $SLS on these XRPL exchanges:</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <a href="https://xmagnetic.org/tokens/SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5?network=mainnet" target="_blank" class="exchange-link">xMagnetic</a>
+                        <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" class="exchange-link">xpmarket</a>
+                        <a href="https://xaman.app/" target="_blank" class="exchange-link">Xaman Wallet</a>
+                        <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP" target="_blank" class="exchange-link">Sologenic DEX</a>
                     </div>
                 </div>
             </div>
-
-            <div class="card mt-4 text-center">
-                <h4>Cross-Chain Bridges</h4>
-                <p>Coming Soon - Expanding to Ethereum, Polygon, and more</p>
-                <a href="https://solusprotocol.com" target="_blank" class="btn-secondary-custom">Learn More</a>
+            <div class="card">
+                <h3>Investment & Grant Opportunities</h3>
+                <p>Solus Protocol is actively seeking strategic partners, grant funding, and early-stage investment to accelerate our South Carolina pilots and national expansion.</p>
+                <div class="row mt-3">
+                    <div class="col-md-6"><h5 style="color: var(--accent);">Current Focus</h5><ul><li>Pre-seed / Seed funding round</li><li>Healthcare innovation grants</li><li>XRPL ecosystem grants</li><li>SC state economic development</li></ul></div>
+                    <div class="col-md-6"><h5 style="color: var(--accent);">Use of Funds</h5><ul><li>Engineering team expansion</li><li>Security audits & compliance</li><li>Pilot program operations</li><li>EHR integration development</li></ul></div>
+                </div>
+                <a href="#contact" class="btn-primary-custom mt-3" style="display: block; text-decoration: none; text-align: center;">Contact Us About Investment</a>
             </div>
         </div>
     </section>
 
     <!-- SDK Section -->
-    <section id="sdk" class="section">
+    <section id="sdk" class="section" style="background: rgba(0,0,0,0.2);">
         <div class="container">
             <h2 class="section-title">SDK <span class="gradient-text">Integration</span></h2>
-            
-            <div class="row mb-5">
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
-                        <h4 style="color: var(--accent);">Verification Endpoint</h4>
-                        <div class="code-block">
-                            <span class="keyword">import</span> solus_sdk<br><br>
-                            <span class="comment"># Initialize client</span><br>
-                            client = solus_sdk.<span class="keyword">Client</span>(<br>
-                            &nbsp;&nbsp;api_key=<span class="string">"your_api_key"</span><br>
-                            )<br><br>
-                            <span class="comment"># Verify record hash</span><br>
-                            result = client.<span class="keyword">verify</span>(<br>
-                            &nbsp;&nbsp;record_hash=<span class="string">"abc123..."</span>,<br>
-                            &nbsp;&nbsp;tx_id=<span class="string">"TX_..."</span><br>
-                            )<br><br>
-                            <span class="keyword">print</span>(result.is_valid)
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
-                        <h4 style="color: var(--accent);">EHR Integration</h4>
-                        <div class="code-block">
-                            <span class="keyword">const</span> solus = <span class="keyword">require</span>(<span class="string">'solus-sdk'</span>);<br><br>
-                            <span class="comment">// Hash patient record</span><br>
-                            <span class="keyword">const</span> hash = <span class="keyword">await</span> solus.<span class="keyword">hashRecord</span>({<br>
-                            &nbsp;&nbsp;patientId: <span class="string">"P-12345"</span>,<br>
-                            &nbsp;&nbsp;recordData: ehrData,<br>
-                            &nbsp;&nbsp;algorithm: <span class="string">"SHA-256"</span><br>
-                            });<br><br>
-                            <span class="comment">// Anchor to XRPL</span><br>
-                            <span class="keyword">const</span> tx = <span class="keyword">await</span> solus.<span class="keyword">anchor</span>(hash);
-                        </div>
-                    </div>
-                </div>
+            <p class="text-center mb-4">How providers can use the Solus Protocol prototype SDK</p>
+            <div class="card mb-4">
+                <h3>Getting Started with the SDK</h3>
+                <p>The Solus SDK is a Python library that allows providers to integrate secure hashing and XRPL anchoring into their EHR systems or standalone applications. The prototype is available on GitHub and demonstrates core functionality.</p>
+                <p><strong>Installation:</strong> <code>pip install cryptography xrpl-py</code></p>
+                <p><strong>GitHub Repo:</strong> <a href="https://github.com/solusprotocol1/solus-protocol" style="color: var(--accent);">View SDK Prototype</a></p>
             </div>
+            <div class="card mb-4">
+                <h3>Key Features for Providers</h3>
+                <ul>
+                    <li>Generate SHA-256 hashes of records for immutability.</li>
+                    <li>Optional AES encryption for sensitive data (off-chain).</li>
+                    <li>Anchor hashes on XRPL using $SLS utility token (micro-fees & rebates).</li>
+                    <li>Fiat mode for USD payments (crypto abstracted).</li>
+                    <li>Verify record integrity across providers.</li>
+                </ul>
+            </div>
+            <div class="card mb-4">
+                <h3>Prototype Code Example</h3>
+                <pre><code>from solus_sdk import SolusSDK
 
-            <!-- Provider Onboarding Timeline -->
+sdk = SolusSDK(api_key="your-sub-key")
+result = sdk.secure_patient_record(
+    "Patient ID: TEST-987654\nName: John Doe\n...", 
+    wallet_seed="sTestSeed", 
+    encrypt_first=True, 
+    fiat_mode=True
+)
+print(result)  # Shows hash and mock XRPL tx</code></pre>
+                <p>In production: Full API, dashboards, and EHR plugins (Epic/Cerner compatible).</p>
+            </div>
+            <div class="card mb-4">
+                <h3>Verification Example</h3>
+                <pre><code># Verify a record hash
+is_valid = sdk.verify_record_hash(
+    record_hash="a1b2c3d4e5f6...",
+    xrpl_tx_id="ABC123DEF456..."
+)
+print(f"Record verified: {is_valid}")  # True if hash matches</code></pre>
+            </div>
+            <div class="card mb-4">
+                <h3>EHR Integration (Coming Soon)</h3>
+                <pre><code># Epic EHR Plugin Example
+from solus_sdk.integrations import EpicPlugin
+
+epic = EpicPlugin(client_id="your-epic-id")
+epic.on_record_update(lambda record: 
+    sdk.secure_patient_record(record.data)
+)</code></pre>
+                <p>Native plugins for Epic and Cerner EHR systems in development.</p>
+            </div>
             <div class="card">
-                <h3 class="mb-4 text-center">Provider Onboarding Timeline</h3>
-                <div class="row text-center">
-                    <div class="col-md-3 col-6 mb-3">
-                        <div style="width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 800; color: #000;">1</div>
-                        <h6>Discovery Call</h6>
-                        <small>Understand your needs</small>
+                <h3 class="text-center">Provider <span class="gradient-text">Onboarding Timeline</span></h3>
+                <p class="text-center">From first contact to full integration in 4 simple steps</p>
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #000;">1</div>
+                        <h5>Discovery Call</h5><p style="font-size: 0.85rem;">30-min call to understand your EHR and compliance needs</p><span style="color: var(--accent); font-size: 0.8rem;">Week 1</span>
                     </div>
-                    <div class="col-md-3 col-6 mb-3">
-                        <div style="width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 800; color: #000;">2</div>
-                        <h6>Sandbox Access</h6>
-                        <small>Test in development environment</small>
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #000;">2</div>
+                        <h5>Sandbox Access</h5><p style="font-size: 0.85rem;">Get API keys and test in our sandbox environment</p><span style="color: var(--accent); font-size: 0.8rem;">Week 2</span>
                     </div>
-                    <div class="col-md-3 col-6 mb-3">
-                        <div style="width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 800; color: #fff;">3</div>
-                        <h6>Pilot Program</h6>
-                        <small>Limited production rollout</small>
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #000;">3</div>
+                        <h5>Pilot Launch</h5><p style="font-size: 0.85rem;">Limited rollout with dedicated support team</p><span style="color: var(--accent); font-size: 0.8rem;">Weeks 3-6</span>
                     </div>
-                    <div class="col-md-3 col-6 mb-3">
-                        <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 800; color: #fff;">4</div>
-                        <h6>Full Integration</h6>
-                        <small>Enterprise deployment</small>
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #000;">4</div>
+                        <h5>Full Integration</h5><p style="font-size: 0.85rem;">Organization-wide deployment with SLA</p><span style="color: var(--accent); font-size: 0.8rem;">Week 8+</span>
                     </div>
                 </div>
-                <div class="text-center mt-4">
-                    <a href="#contact" class="btn-primary-custom">Request Pilot Access</a>
+                <div class="text-center mt-3">
+                    <a href="#contact" class="btn-primary-custom" style="width: auto;">Request Pilot Access</a>
+                    <a href="https://github.com/solusprotocol1/solus-protocol" target="_blank" class="btn-secondary-custom" style="width: auto; margin-left: 10px;">View GitHub</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Security Section -->
-    <section id="security" class="section" style="background: rgba(0,0,0,0.3);">
-        <div class="container">
-            <h2 class="section-title">Security & <span class="gradient-text">Compliance</span></h2>
-            
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 text-center">
-                        <div style="font-size: 3rem; margin-bottom: 15px;">🔐</div>
-                        <h4>Zero-Knowledge Architecture</h4>
-                        <p>Patient data never leaves your systems. Only cryptographic hashes are stored on-chain, ensuring complete privacy.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 text-center">
-                        <div style="font-size: 3rem; margin-bottom: 15px;">🏥</div>
-                        <h4>HIPAA Compliant Design</h4>
-                        <p>Built from the ground up to meet healthcare regulatory requirements. No PHI exposure risk.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 text-center">
-                        <div style="font-size: 3rem; margin-bottom: 15px;">⛓️</div>
-                        <h4>Immutable Audit Trail</h4>
-                        <p>Every verification is recorded on the XRP Ledger, creating a tamper-proof history of data integrity checks.</p>
-                    </div>
-                </div>
+    <section id="security" class="section">
+        <div class="container" style="max-width: 800px;">
+            <h2 class="section-title">Security & <span class="gradient-text">Safety</span></h2>
+            <p class="text-center mb-4">Your data is safe, secure, and tamper-proof with Solus Protocol</p>
+            <div class="card mb-4">
+                <h3>Security Assurance</h3>
+                <p>Solus Protocol is designed with privacy-by-design: Protected Health Information (PHI) is never stored on-chain. Only cryptographic hashes are anchored on the XRP Ledger, ensuring immutability while keeping sensitive data in provider-controlled, encrypted storage.</p>
+                <p>The protocol is tamper-proof: Any alteration to a record changes its hash, instantly detectable. XRPL's institutional-grade consensus provides high security and reliability.</p>
             </div>
-
-            <div class="card mt-4">
-                <h4 class="mb-4">Patient Privacy Guarantees</h4>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <h6 style="color: var(--accent);">Data Ownership</h6>
-                        <p>Patients maintain full control and ownership of their medical records at all times.</p>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <h6 style="color: var(--accent);">Access Control</h6>
-                        <p>Granular permissions allow patients to choose exactly who can verify their records.</p>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <h6 style="color: var(--accent);">Earning Opportunities</h6>
-                        <p>Opt-in to anonymized research data sharing and earn $SLS tokens for contributions.</p>
-                    </div>
-                </div>
+            <div class="card mb-4">
+                <h3>Compliance & Safety</h3>
+                <p>We support HIPAA alignment through off-chain PHI handling and encryption. Full audits and certifications planned post-pilot.</p>
+                <p>$SLS utility token is non-speculative — used only for protocol fees/incentives.</p>
+            </div>
+            <div class="card">
+                <h3>Report Security Issues</h3>
+                <p>If you discover a potential vulnerability, please report it privately to our security team:</p>
+                <p><strong>Email:</strong> <a href="mailto:security@solusprotocol.com" style="color: var(--accent);">security@solusprotocol.com</a></p>
+                <p>We operate a responsible disclosure program with safe harbor for good-faith researchers.</p>
             </div>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="section">
-        <div class="container">
+    <section id="faq" class="section" style="background: rgba(0,0,0,0.2);">
+        <div class="container" style="max-width: 800px;">
             <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+            <p class="text-center mb-4">Common questions about Solus Protocol, $SLS token, and healthcare data security</p>
             
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>What is Solus Protocol?</span>
-                            <span>+</span>
+            <div class="faq-item active"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>What is Solus Protocol?</span><span class="faq-toggle">+</span></div><div class="faq-answer">Solus Protocol is a decentralized healthcare data integrity platform built on the XRP Ledger. We enable patients and providers to securely hash, verify, and share medical records without exposing Protected Health Information (PHI) on-chain.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>Is patient data stored on the blockchain?</span><span class="faq-toggle">+</span></div><div class="faq-answer">No. Only cryptographic hashes of medical records are stored on the XRP Ledger. The actual patient data (PHI) never touches the blockchain and remains securely stored off-chain in HIPAA-compliant systems. This ensures privacy while enabling tamper-proof verification.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>What is the $SLS token and how is it used?</span><span class="faq-toggle">+</span></div><div class="faq-answer">$SLS is a utility token on the XRP Ledger that powers the Solus Protocol ecosystem. It's used to pay micro-fees for anchoring record hashes, earn rebates for participation, and will eventually be used for governance. The token is non-speculative and designed purely for protocol utility.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>Where can I trade $SLS?</span><span class="faq-toggle">+</span></div><div class="faq-answer">$SLS is live on the XRP Ledger mainnet and can be traded on xMagnetic, xpmarket, Xaman Wallet, and the Sologenic DEX. Visit our <a href="#roadmap" style="color: var(--accent);">Roadmap section</a> for direct links to all trading platforms.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>Is Solus Protocol HIPAA compliant?</span><span class="faq-toggle">+</span></div><div class="faq-answer">Solus Protocol is designed with HIPAA compliance in mind. Since no PHI is stored on-chain (only cryptographic hashes), the protocol maintains a zero-knowledge approach to patient data. Full HIPAA compliance certification is part of our Phase 3 roadmap milestone.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>Why build on the XRP Ledger?</span><span class="faq-toggle">+</span></div><div class="faq-answer">XRPL offers extremely low transaction costs (~$0.001), fast confirmation times (3-5 seconds), energy efficiency, and enterprise-grade reliability. These characteristics make it ideal for healthcare applications that require frequent, low-cost transactions at scale.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>How can healthcare providers integrate with Solus Protocol?</span><span class="faq-toggle">+</span></div><div class="faq-answer">We're developing SDK plugins for popular EHR systems like Epic and Cerner. During our pilot phase, we're working directly with healthcare providers in South Carolina. Visit our <a href="#contact" style="color: var(--accent);">Contact section</a> to inquire about partnership opportunities.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>What are Cross-Chain Bridges?</span><span class="faq-toggle">+</span></div><div class="faq-answer">Cross-chain bridges will allow $SLS to be used across multiple blockchain networks beyond XRPL. This increases accessibility, liquidity, and enables healthcare organizations on different blockchain ecosystems to participate in Solus Protocol. Learn more at <a href="https://solusprotocol.com" target="_blank" style="color: var(--accent);">solusprotocol.com</a>.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>How is Solus Protocol funded?</span><span class="faq-toggle">+</span></div><div class="faq-answer">Solus Protocol is currently self-funded and actively seeking strategic partnerships, grants, and investment. We're applying to healthcare innovation grants and engaging with angel investors and VCs focused on healthtech and blockchain. Contact us to learn about investment opportunities.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>What is the total supply of $SLS tokens?</span><span class="faq-toggle">+</span></div><div class="faq-answer">$SLS has a fixed supply designed for long-term protocol sustainability. Token distribution includes allocations for ecosystem development, team vesting, and community incentives. Full tokenomics details are available in our <a href="https://github.com/solusprotocol1/solus-protocol/blob/dec022ee9ca6c9b1117abc2bc63d36b537318a36/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" target="_blank" style="color: var(--accent);">whitepaper</a>.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>What makes Solus different from other healthcare blockchain projects?</span><span class="faq-toggle">+</span></div><div class="faq-answer">Unlike competitors that store PHI on-chain, Solus uses a zero-knowledge approach where only cryptographic hashes are stored. This ensures privacy compliance while enabling verification. We're also built on XRPL for ultra-low costs (~$0.001/tx) vs Ethereum's $5-50 per transaction, making us viable for high-volume healthcare use cases.</div></div>
+
+            <div class="card mt-5 text-center" style="background: linear-gradient(135deg, rgba(20,241,149,0.1), rgba(153,69,255,0.1)); border: 2px solid rgba(20,241,149,0.3);">
+                <h3>Still Have Questions?</h3>
+                <p>Our team is ready to help investors, providers, and partners understand how Solus Protocol can transform healthcare data integrity.</p>
+                <a href="#contact" class="btn-primary-custom" style="width: auto;">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section id="profile" class="section">
+        <div class="container">
+            <h2 class="section-title">My <span class="gradient-text">Profile</span></h2>
+            <p class="text-center mb-4">Manage your Solus Protocol account and $SLS rewards</p>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card">
+                        <h3>Wallet Balance</h3>
+                        <div class="wallet">
+                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">150.75 $SLS</div>
+                            <p style="margin: 10px 0 0;">Estimated USD: ~$7.50 (mock rate)</p>
                         </div>
-                        <div class="faq-answer">Solus Protocol is a decentralized infrastructure for medical data integrity, using SHA-256 hash anchoring on the XRP Ledger. It allows healthcare providers to verify record authenticity without exposing patient data.</div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>What is the $SLS token?</span>
-                            <span>+</span>
+                        <button class="btn-primary-custom">Deposit $SLS</button>
+                        <button class="btn-secondary-custom">Withdraw</button>
+                        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border);">
+                            <h5 style="color: var(--accent); margin-bottom: 10px;">Trade $SLS on XRPL</h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <a href="https://xmagnetic.org/tokens/SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5?network=mainnet" target="_blank" class="exchange-link">xMagnetic</a>
+                                <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" class="exchange-link">xpmarket</a>
+                                <a href="https://xaman.app/" target="_blank" class="exchange-link">Xaman</a>
+                                <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP" target="_blank" class="exchange-link">Sologenic DEX</a>
+                            </div>
                         </div>
-                        <div class="faq-answer">$SLS is the native utility token of the Solus Protocol, live on the XRP Ledger mainnet. It's used for transaction fees, usage rebates, data contribution rewards, and governance voting.</div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>Is Solus Protocol HIPAA compliant?</span>
-                            <span>+</span>
-                        </div>
-                        <div class="faq-answer">Solus Protocol is designed with HIPAA compliance in mind. Since no Protected Health Information (PHI) is ever stored on-chain—only cryptographic hashes—the system inherently protects patient privacy.</div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>Why use the XRP Ledger?</span>
-                            <span>+</span>
-                        </div>
-                        <div class="faq-answer">XRPL offers near-instant finality (3-5 seconds), extremely low transaction costs (~$0.001), proven reliability since 2012, and carbon-neutral operation—making it ideal for healthcare applications.</div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>How is my patient data protected?</span>
-                            <span>+</span>
-                        </div>
-                        <div class="faq-answer">Your actual medical records never leave your healthcare provider's systems. Only a one-way cryptographic hash is generated and stored on XRPL. This hash cannot be reversed to reveal your data.</div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>How is Solus Protocol funded?</span>
-                            <span>+</span>
-                        </div>
-                        <div class="faq-answer">Solus Protocol is currently self-funded and bootstrapped. We are actively seeking strategic investors and grant funding to accelerate development and pilot partnerships.</div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>What is the total supply of $SLS tokens?</span>
-                            <span>+</span>
-                        </div>
-                        <div class="faq-answer">The total supply and tokenomics details are available in our whitepaper. $SLS is designed with a sustainable economic model to support long-term protocol growth.</div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>What makes Solus different from other healthcare blockchain projects?</span>
-                            <span>+</span>
-                        </div>
-                        <div class="faq-answer">Solus Protocol focuses specifically on data integrity verification rather than data storage. Our zero-knowledge approach, combined with XRPL's speed and cost efficiency, provides a practical solution that can be implemented today.</div>
                     </div>
                 </div>
+                <div class="col-lg-8 col-md-6 mb-4">
+                    <div class="card">
+                        <h3>Recent Transactions</h3>
+                        <ul class="tx-list">
+                            <li class="tx-item"><span><strong>2026-02-01</strong> - Record hash fee</span><span style="color: #ff6666;">-0.01 $SLS</span></li>
+                            <li class="tx-item"><span><strong>2026-01-30</strong> - Secure share incentive</span><span style="color: var(--accent);">+0.005 $SLS</span></li>
+                            <li class="tx-item"><span><strong>2026-01-28</strong> - Verification rebate</span><span style="color: var(--accent);">+0.005 $SLS</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>My Secured Records</h3>
+                <p>View all secured records and sharing history.</p>
+                <div class="row">
+                    <div class="col-md-6"><div style="background: var(--glass); padding: 15px; border-radius: 8px; margin: 10px 0;"><strong>Record 1</strong><p style="font-size: 0.85rem; margin: 5px 0;">Hash: d4e567f8... (Verified 2026-01-19)</p></div></div>
+                    <div class="col-md-6"><div style="background: var(--glass); padding: 15px; border-radius: 8px; margin: 10px 0;"><strong>Record 2</strong><p style="font-size: 0.85rem; margin: 5px 0;">Hash: a1b2c3d4... (Shared with Provider X)</p></div></div>
+                </div>
+                <button class="btn-primary-custom mt-3">View Full Records</button>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="section" style="background: rgba(0,0,0,0.3);">
+    <section id="contact" class="section" style="background: rgba(0,0,0,0.2);">
         <div class="container">
-            <h2 class="section-title">Contact <span class="gradient-text">Us</span></h2>
-            
+            <h2 class="section-title">Contact <span class="gradient-text">Solus Protocol</span></h2>
+            <p class="text-center mb-4">Reach out for partnerships, pilot inquiries, support, or general questions.</p>
             <div class="row justify-content-center">
                 <div class="col-lg-6 mb-4">
                     <div class="card">
-                        <h4 class="mb-4">Get in Touch</h4>
-                        <label>Your Name</label>
-                        <input type="text" id="contactName" placeholder="Enter your name">
-                        <label>Email Address</label>
-                        <input type="email" id="contactEmail" placeholder="Enter your email">
+                        <h4 class="mb-4">Send Us a Message</h4>
+                        <div class="row">
+                            <div class="col-md-6"><label>Your Name</label><input type="text" id="contactName" placeholder="John Doe"></div>
+                            <div class="col-md-6"><label>Your Email</label><input type="email" id="contactEmail" placeholder="john@example.com"></div>
+                        </div>
                         <label>Subject</label>
                         <select id="contactSubject">
-                            <option value="general">General Inquiry</option>
-                            <option value="partnership">Partnership Opportunity</option>
-                            <option value="investment">Investment Inquiry</option>
-                            <option value="sdk">SDK Integration</option>
-                            <option value="support">Technical Support</option>
+                            <option value="">Select a topic...</option>
+                            <option value="Partnership Inquiry">Partnership Inquiry</option>
+                            <option value="Pilot Program">Pilot Program</option>
+                            <option value="SDK Integration Support">SDK Integration Support</option>
+                            <option value="Investor Relations">Investor Relations</option>
+                            <option value="General Question">General Question</option>
                         </select>
                         <label>Message</label>
-                        <textarea id="contactMessage" placeholder="How can we help you?"></textarea>
-                        <button class="btn-primary-custom w-100" onclick="sendContact()">Send Message</button>
+                        <textarea id="contactMessage" placeholder="Tell us more about your inquiry..."></textarea>
+                        <button class="btn-primary-custom w-100" onclick="sendContact()">Open Email Client</button>
                     </div>
                 </div>
                 <div class="col-lg-4 mb-4">
                     <div class="card h-100">
-                        <h4 class="mb-4">Contact Information</h4>
-                        <p style="margin-bottom: 20px;">
-                            <strong style="color: var(--accent);">General Inquiries:</strong><br>
-                            <a href="mailto:support@solusprotocol.com" style="color: var(--text-secondary); text-decoration: none;">support@solusprotocol.com</a>
-                        </p>
-                        <p style="margin-bottom: 20px;">
-                            <strong style="color: var(--accent);">Investor Relations:</strong><br>
-                            <a href="mailto:investors@solusprotocol.com" style="color: var(--text-secondary); text-decoration: none;">investors@solusprotocol.com</a>
-                        </p>
-                        <p>
-                            <strong style="color: var(--accent);">Partnership Inquiries:</strong><br>
-                            <a href="mailto:partnerships@solusprotocol.com" style="color: var(--text-secondary); text-decoration: none;">partnerships@solusprotocol.com</a>
-                        </p>
-
-                        <div class="mt-4 pt-4" style="border-top: 1px solid var(--border);">
-                            <h6>Join Our Investor Updates</h6>
-                            <p style="font-size: 0.9rem;">Stay informed about funding rounds and milestones</p>
-                            <input type="email" id="investorEmail" placeholder="Your email address">
-                            <button class="btn-secondary-custom w-100" onclick="subscribeInvestor()">Subscribe</button>
+                        <h4 class="mb-4">Other Ways to Reach Us</h4>
+                        <p style="margin-bottom: 20px;"><strong style="color: var(--accent);">Website:</strong> <a href="https://solusprotocol.com" target="_blank" style="color: var(--text-secondary);">solusprotocol.com</a></p>
+                        <p style="margin-bottom: 20px;"><strong style="color: var(--accent);">Email:</strong> <a href="mailto:support@solusprotocol.com" style="color: var(--text-secondary);">support@solusprotocol.com</a></p>
+                        <p style="margin-bottom: 20px;"><strong style="color: var(--accent);">Investor Relations:</strong> <a href="mailto:investors@solusprotocol.com" style="color: var(--text-secondary);">investors@solusprotocol.com</a></p>
+                        <p><strong style="color: var(--accent);">Security Reports:</strong> <a href="mailto:security@solusprotocol.com" style="color: var(--text-secondary);">security@solusprotocol.com</a></p>
+                        <h5 class="mt-4">Follow Us</h5>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <a href="https://x.com/Solus_Protocol" target="_blank" class="social-link">𝕏 @Solus_Protocol</a>
+                            <a href="https://t.me/solus_protocol" target="_blank" class="social-link">Telegram</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Ecosystem Partners -->
-    <section class="section">
-        <div class="container text-center">
-            <h3 class="mb-4">Ecosystem Partners</h3>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
-                <a href="https://xrpl.org" target="_blank" class="partner-logo">XRPL</a>
-                <a href="https://xmagnetic.org" target="_blank" class="partner-logo">xMagnetic</a>
-                <a href="https://sologenic.org" target="_blank" class="partner-logo">Sologenic</a>
-                <a href="https://xaman.app" target="_blank" class="partner-logo">Xaman</a>
-                <a href="https://xpmarket.com" target="_blank" class="partner-logo">xpmarket</a>
+            <div class="card text-center" style="background: linear-gradient(135deg, rgba(20,241,149,0.1), rgba(153,69,255,0.1)); border: 2px solid rgba(20,241,149,0.3); max-width: 600px; margin: 0 auto;">
+                <h3>Investor Updates</h3>
+                <p>Stay informed about funding rounds, partnerships, and major milestones</p>
+                <a href="mailto:investors@solusprotocol.com?subject=Investor Updates Signup&body=I would like to receive investor updates for Solus Protocol.%0D%0A%0D%0AName:%0D%0AOrganization:%0D%0AInvestment Focus:" class="btn-primary-custom" style="width: auto;">Subscribe to Investor Updates</a>
             </div>
         </div>
     </section>
 
     <footer>
         <p>&copy; 2026 Solus Protocol | Decentralized Medical Integrity Built on the XRP Ledger</p>
-        <p style="margin-top: 10px;">
-            <a href="https://github.com/solusprotocol1/solus-protocol" target="_blank" style="color: var(--accent); text-decoration: none;">GitHub</a> |
-            <a href="https://twitter.com/solusprotocol" target="_blank" style="color: var(--accent); text-decoration: none;">Twitter</a>
-        </p>
+        <p style="margin-top: 10px;"><a href="https://github.com/solusprotocol1/solus-protocol" target="_blank" style="color: var(--accent);">GitHub</a> | <a href="https://x.com/Solus_Protocol" target="_blank" style="color: var(--accent);">Twitter</a></p>
     </footer>
 
     <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-    <!-- Login Modal -->
     <div class="login-modal" id="loginModal">
         <div class="login-box">
             <button class="close-modal" onclick="hideLoginModal()">&times;</button>
             <h3 class="mb-4">Demo Login</h3>
-            <label>Username</label>
-            <input type="text" id="loginUsername" placeholder="Enter username">
-            <label>Password</label>
-            <input type="password" id="loginPassword" placeholder="Enter password">
-            <button class="btn-primary-custom w-100" onclick="login()">Login</button>
-            <p style="font-size: 0.85rem; margin-top: 15px; text-align: center;">
-                Demo credentials:<br>
-                Username: <strong>patient</strong> or <strong>provider</strong><br>
-                Password: <strong>demo123</strong>
-            </p>
+            <label>Username</label><input type="text" id="loginUsername" placeholder="patient or provider">
+            <label>Password</label><input type="password" id="loginPassword" placeholder="demo123">
+            <button class="btn-primary-custom w-100" onclick="login()">Sign In</button>
+            <p style="font-size: 0.85rem; margin-top: 15px; text-align: center;"><strong>Demo Credentials:</strong><br>Patient: username "patient", password "demo123"<br>Provider: username "provider", password "demo123"</p>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const SAMPLE_RECORDS = [
-            {
-                name: 'Patient Visit Record',
-                data: `Patient ID: P-2026-00142
-Name: Jane Doe
-DOB: 1985-03-15
-Visit Date: 2026-02-04
-Chief Complaint: Annual wellness checkup
-Vitals: BP 120/80, HR 72, Temp 98.6F
-Assessment: Patient in good health
-Plan: Continue current medications, follow up in 12 months`
-            },
-            {
-                name: 'Lab Results',
-                data: `Lab Order ID: LAB-2026-8847
-Patient: John Smith (P-2026-00089)
-Test Date: 2026-02-03
-Tests Performed:
-- Complete Blood Count (CBC): Normal
-- Basic Metabolic Panel: Normal
-- Lipid Panel: Total Cholesterol 185 mg/dL
-- HbA1c: 5.4%
-Interpreting Physician: Dr. Sarah Johnson`
-            },
-            {
-                name: 'Prescription Record',
-                data: `Rx ID: RX-2026-55123
-Patient: Robert Williams (P-2026-00201)
-Prescriber: Dr. Michael Chen, MD
-Date: 2026-02-04
-Medication: Lisinopril 10mg
-Directions: Take one tablet by mouth daily
-Quantity: 30 tablets
-Refills: 3
-Pharmacy: HealthFirst Pharmacy #442`
-            }
+            { name: 'Patient Visit Record', data: `Patient ID: P-2026-00142\nName: Jane Doe\nDOB: 1985-03-15\nVisit Date: 2026-02-04\nChief Complaint: Annual wellness checkup\nVitals: BP 120/80, HR 72, Temp 98.6F\nAssessment: Patient in good health\nPlan: Continue current medications, follow up in 12 months` },
+            { name: 'Lab Results', data: `Lab Order ID: LAB-2026-8847\nPatient: John Smith (P-2026-00089)\nTest Date: 2026-02-03\nTests Performed:\n- Complete Blood Count (CBC): Normal\n- Basic Metabolic Panel: Normal\n- Lipid Panel: Total Cholesterol 185 mg/dL\n- HbA1c: 5.4%\nInterpreting Physician: Dr. Sarah Johnson` },
+            { name: 'Prescription Record', data: `Rx ID: RX-2026-55123\nPatient: Robert Williams (P-2026-00201)\nPrescriber: Dr. Michael Chen, MD\nDate: 2026-02-04\nMedication: Lisinopril 10mg\nDirections: Take one tablet by mouth daily\nQuantity: 30 tablets\nRefills: 3\nPharmacy: HealthFirst Pharmacy #442` }
         ];
 
-        // Back to top button
         window.addEventListener('scroll', function() {
             const btn = document.querySelector('.back-to-top');
-            if (window.scrollY > 300) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
-            }
+            if (window.scrollY > 300) { btn.classList.add('visible'); } else { btn.classList.remove('visible'); }
         });
 
-        // Counter animation
         document.addEventListener('DOMContentLoaded', function() {
             var counters = document.querySelectorAll('.counter');
             var observed = new Set();
@@ -1409,15 +869,12 @@ Pharmacy: HealthFirst Pharmacy #442`
                         var prefix = el.dataset.prefix || '';
                         var suffix = el.dataset.suffix || '';
                         var decimals = parseInt(el.dataset.decimals) || 0;
-                        var duration = 2000;
-                        var start = 0;
-                        var startTime = null;
+                        var duration = 2000, start = 0, startTime = null;
                         function animate(currentTime) {
                             if (!startTime) startTime = currentTime;
                             var progress = Math.min((currentTime - startTime) / duration, 1);
                             var eased = 1 - Math.pow(1 - progress, 3);
-                            var current = start + (target - start) * eased;
-                            el.textContent = prefix + current.toFixed(decimals) + suffix;
+                            el.textContent = prefix + (start + (target - start) * eased).toFixed(decimals) + suffix;
                             if (progress < 1) requestAnimationFrame(animate);
                         }
                         requestAnimationFrame(animate);
@@ -1425,17 +882,9 @@ Pharmacy: HealthFirst Pharmacy #442`
                 });
             }, { threshold: 0.5 });
             counters.forEach(function(c) { observer.observe(c); });
+            updateLoginState();
         });
 
-        // FAQ toggle
-        function toggleFaq(element) {
-            const item = element.parentElement;
-            item.classList.toggle('active');
-            const icon = element.querySelector('span:last-child');
-            icon.textContent = item.classList.contains('active') ? '−' : '+';
-        }
-
-        // Dashboard tabs
         function switchDashboardTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1443,116 +892,59 @@ Pharmacy: HealthFirst Pharmacy #442`
             document.getElementById(tab + 'Tab').classList.add('active');
         }
 
-        // Sample menu
-        function toggleSampleMenu() {
-            const menu = document.getElementById('sampleMenu');
-            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-        }
+        function toggleSampleMenu() { const menu = document.getElementById('sampleMenu'); menu.style.display = menu.style.display === 'none' ? 'block' : 'none'; }
+        function loadSample(index) { document.getElementById('recordText').value = SAMPLE_RECORDS[index].data; document.getElementById('sampleMenu').style.display = 'none'; }
 
-        function loadSample(index) {
-            document.getElementById('recordText').value = SAMPLE_RECORDS[index].data;
-            document.getElementById('sampleMenu').style.display = 'none';
-        }
-
-        // Hash generation (client-side SHA-256)
         async function generateHash() {
             const text = document.getElementById('recordText').value;
-            if (!text.trim()) {
-                alert('Please enter record data');
-                return;
-            }
+            if (!text.trim()) { alert('Please enter record data'); return; }
             const encoder = new TextEncoder();
-            const data = encoder.encode(text);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(text));
+            const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
             const txId = 'TX_' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
-            
             document.getElementById('hashResult').style.display = 'block';
-            document.getElementById('hashResult').innerHTML = `
-                <div class="hash-result">
-                    <h5 style="margin-bottom: 15px;">Hash Generated Successfully!</h5>
-                    <p><strong>Hash (SHA-256):</strong></p>
-                    <p class="hash-value">${hashHex}</p>
-                    <p style="margin-top: 15px;"><strong>Transaction ID:</strong></p>
-                    <p style="color: var(--secondary); font-family: monospace;">${txId}</p>
-                    <p style="font-size: 0.85rem; margin-top: 15px;">In full SDK: This would store on XRPL with $SLS utility fee and rebate.</p>
-                </div>
-            `;
+            document.getElementById('hashResult').innerHTML = `<div class="hash-result"><h5 style="margin-bottom: 15px;">Hash Generated Successfully!</h5><p><strong>Hash (SHA-256):</strong></p><p class="hash-value">${hashHex}</p><p style="margin-top: 15px;"><strong>Transaction ID:</strong></p><p style="color: var(--secondary); font-family: monospace;">${txId}</p><p style="font-size: 0.85rem; margin-top: 15px;">In full SDK: This would store on XRPL with $SLS utility fee and rebate.</p></div>`;
         }
 
-        // Hash verification
         async function verifyHash() {
             const text = document.getElementById('verifyRecordText').value;
             const expectedHash = document.getElementById('expectedHash').value.trim().toLowerCase();
-            if (!text.trim() || !expectedHash) {
-                alert('Please enter both record data and expected hash');
-                return;
-            }
+            if (!text.trim() || !expectedHash) { alert('Please enter both record data and expected hash'); return; }
             const encoder = new TextEncoder();
-            const data = encoder.encode(text);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const computedHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(text));
+            const computedHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
             const isMatch = computedHash === expectedHash;
-            
             document.getElementById('verifyResult').style.display = 'block';
-            document.getElementById('verifyResult').innerHTML = `
-                <div class="hash-result" style="background: ${isMatch ? 'rgba(20, 241, 149, 0.1)' : 'rgba(255, 71, 87, 0.1)'}; border-color: ${isMatch ? 'rgba(20, 241, 149, 0.3)' : 'rgba(255, 71, 87, 0.3)'};">
-                    <h5 style="color: ${isMatch ? 'var(--accent)' : 'var(--error)'}; margin-bottom: 15px;">${isMatch ? 'Record Verified Successfully!' : 'Hash Mismatch Detected!'}</h5>
-                    <p><strong>Computed Hash:</strong></p>
-                    <p class="hash-value">${computedHash}</p>
-                    <p style="margin-top: 10px;"><strong>Expected Hash:</strong></p>
-                    <p style="color: ${isMatch ? 'var(--accent)' : 'var(--error)'}; font-family: monospace; font-size: 0.9rem;">${expectedHash}</p>
-                </div>
-            `;
+            document.getElementById('verifyResult').innerHTML = `<div class="hash-result" style="background: ${isMatch ? 'rgba(20, 241, 149, 0.1)' : 'rgba(255, 71, 87, 0.1)'}; border-color: ${isMatch ? 'rgba(20, 241, 149, 0.3)' : 'rgba(255, 71, 87, 0.3)'};"><h5 style="color: ${isMatch ? 'var(--accent)' : 'var(--error)'}; margin-bottom: 15px;">${isMatch ? 'Record Verified Successfully!' : 'Hash Mismatch Detected!'}</h5><p><strong>Computed Hash:</strong></p><p class="hash-value">${computedHash}</p><p style="margin-top: 10px;"><strong>Expected Hash:</strong></p><p style="color: ${isMatch ? 'var(--accent)' : 'var(--error)'}; font-family: monospace; font-size: 0.9rem;">${expectedHash}</p></div>`;
         }
 
-        // ROI Calculator
         function calculateROI() {
-            const records = parseInt(document.getElementById('recordsInput').value) || 0;
-            const cost = parseFloat(document.getElementById('costInput').value) || 0;
-            const currentCost = records * cost;
-            const solusCost = records * 0.001;
-            const savings = currentCost - solusCost;
-            document.getElementById('roiResult').textContent = '$' + savings.toLocaleString() + ' Annual Savings';
+            var verifications = parseInt(document.getElementById('roiVerifications').value) || 1000;
+            var costPer = parseFloat(document.getElementById('roiCostPer').value) || 25;
+            var savings = (verifications * 12 * costPer) - (verifications * 12 * 0.001);
+            document.getElementById('roiSavings').textContent = '$' + savings.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('roiResult').style.display = 'block';
         }
 
-        // Login system
-        function showLoginModal() {
-            document.getElementById('loginModal').classList.add('active');
-        }
-
-        function hideLoginModal() {
-            document.getElementById('loginModal').classList.remove('active');
-        }
-
+        function showLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+        function hideLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
         function login() {
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
             if ((username === 'patient' || username === 'provider') && password === 'demo123') {
                 localStorage.setItem('user', JSON.stringify({ name: username === 'patient' ? 'John Doe' : 'Dr. Smith', role: username }));
-                updateLoginState();
-                hideLoginModal();
-            } else {
-                alert('Invalid credentials. Try patient/demo123 or provider/demo123');
-            }
+                updateLoginState(); hideLoginModal();
+            } else { alert('Invalid credentials. Try patient/demo123 or provider/demo123'); }
         }
-
-        function logout() {
-            localStorage.removeItem('user');
-            updateLoginState();
-        }
-
+        function logout() { localStorage.removeItem('user'); updateLoginState(); }
         function updateLoginState() {
             const user = JSON.parse(localStorage.getItem('user'));
             if (user) {
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('userInfo').style.display = 'block';
                 document.getElementById('logoutBtn').style.display = 'block';
-                const badge = document.getElementById('userBadge');
-                badge.textContent = user.name + ' (' + user.role.charAt(0).toUpperCase() + user.role.slice(1) + ')';
-                badge.className = 'user-badge' + (user.role === 'provider' ? ' provider' : '');
+                document.getElementById('userBadge').textContent = user.name + ' (' + user.role.charAt(0).toUpperCase() + user.role.slice(1) + ')';
+                document.getElementById('userBadge').className = 'user-badge' + (user.role === 'provider' ? ' provider' : '');
             } else {
                 document.getElementById('loginBtn').style.display = 'block';
                 document.getElementById('userInfo').style.display = 'none';
@@ -1560,48 +952,24 @@ Pharmacy: HealthFirst Pharmacy #442`
             }
         }
 
-        // Contact form
         function sendContact() {
-            const name = document.getElementById('contactName').value;
-            const email = document.getElementById('contactEmail').value;
-            const subject = document.getElementById('contactSubject').value;
-            const message = document.getElementById('contactMessage').value;
-            if (!name || !email || !message) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            window.location.href = `mailto:support@solusprotocol.com?subject=${encodeURIComponent(subject + ' - ' + name)}&body=${encodeURIComponent(message + '\n\nFrom: ' + name + '\nEmail: ' + email)}`;
+            var name = document.getElementById('contactName').value;
+            var email = document.getElementById('contactEmail').value;
+            var subject = document.getElementById('contactSubject').value;
+            var message = document.getElementById('contactMessage').value;
+            var body = 'Name: ' + name + '%0D%0AEmail: ' + email + '%0D%0A%0D%0A' + message;
+            window.location.href = 'mailto:support@solusprotocol.com?subject=' + encodeURIComponent(subject + ' - Solus Protocol') + '&body=' + body;
         }
 
-        function subscribeInvestor() {
-            const email = document.getElementById('investorEmail').value;
-            if (!email) {
-                alert('Please enter your email');
-                return;
-            }
-            window.location.href = `mailto:investors@solusprotocol.com?subject=Investor Updates Subscription&body=Please add me to the investor updates list.\n\nEmail: ${email}`;
-        }
-
-        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
             });
         });
 
-        // Close sample menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.dropdown')) {
-                document.getElementById('sampleMenu').style.display = 'none';
-            }
-        });
-
-        // Initialize
-        updateLoginState();
+        document.addEventListener('click', function(e) { if (!e.target.closest('.step-box') && !e.target.closest('button')) { document.getElementById('sampleMenu').style.display = 'none'; } });
     </script>
 </body>
 </html>
