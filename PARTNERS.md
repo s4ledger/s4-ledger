@@ -1,10 +1,7 @@
 # Solus Protocol Partners & Partnership Opportunities
 
 ## Current Partners
-- **MUSC (Medical University of South Carolina)**
-- **SC Community Clinics**
 - **XRPL Community**
-- **Healthcare Blockchain Advisors**
 
 ## Why Partner with Solus Protocol?
 - **Innovation:** Help shape the future of secure, patient-controlled medical data.
