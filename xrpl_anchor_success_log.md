@@ -1,4 +1,3 @@
-
 # XRPL Hash Anchor Success Log
 
 ## Scenario: anchor_test.py (John Doe)
@@ -59,6 +58,39 @@ Consent: Obtained verbally due to emergency; documented post-procedure.
 
 #### Notes
 - The hash above is a SHA-256 of the encrypted surgery drug record (not the record itself).
+- The transaction was recorded on the XRPL testnet using the Solus SDK prototype.
+- The fallback AccountSet method was used to ensure the hash is anchored even if $SLS trust lines are not set up.
+
+---
+
+## Scenario: record_transfer_anchor.py (Michael Johnson)
+### Record Anchored (encrypted before hashing)
+```
+Patient: Michael Johnson
+Patient ID: MJ-123456
+DOB: 1990-11-10
+From Provider: Dr. Elena Vasquez (Nephrologist, Provider B)
+To Provider: Dr. Sarah Patel (Transplant Surgeon, Provider A)
+Records Summary: Kidney function tests and biopsy results
+Test Date: 2026-01-15
+GFR: 15 mL/min (stage 5 CKD)
+Biopsy: Confirmed glomerulonephritis
+Imaging: MRI shows compatible donor match
+Notes: Urgent transplant recommended; no contraindications. Prior treatments: Dialysis since 2025-06.
+Consent for Transfer: Obtained 2026-02-04; patient authorizes release to Dr. Patel for procedure prep.
+```
+### Transaction Details
+- Date: 2026-02-05
+- Patient: Michael Johnson
+- Hash Anchored: 0987b3cccdcff3525aa6b9bca44de6bd6814c4e18df1e55e1266995d75bfff93
+- Transaction Hash: 875F04A270733F6699D52649F17F4871FECD7710E75FDC86F75ED0E559942B0E
+- Ledger Index: 14658181
+- XRPL Account: rEADrNJ4STXGgrsYCfMMZAZy65pnwT2nT4
+- Transaction Type: AccountSet (with memo)
+- Result: tesSUCCESS (validated)
+
+#### Notes
+- The hash above is a SHA-256 of the encrypted transfer record (not the record itself).
 - The transaction was recorded on the XRPL testnet using the Solus SDK prototype.
 - The fallback AccountSet method was used to ensure the hash is anchored even if $SLS trust lines are not set up.
 
