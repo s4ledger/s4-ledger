@@ -13,4 +13,4 @@ Solus Protocol is a data integrity tool and $SLS is a utility token. The protoco
 ## Guidance
 - Consult with legal counsel before any token sale or exchange listing.
 - Monitor SEC and CFTC guidance for updates.
-- For legal inquiries, contact: legal@solusprotocol.com
+- For legal inquiries, contact: support@solusprotocol.com
