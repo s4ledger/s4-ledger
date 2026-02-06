@@ -1,3 +1,14 @@
+# Security Policy
+
+## Reporting a Vulnerability
+
+If you discover a security vulnerability within this project, please send an email to security@example.com. All security vulnerabilities will be promptly addressed.
+
+## Supported Versions
+
+The following versions are currently being supported:
+- Version 1.x
+- Version 2.x
 # Solus Protocol Security Policy
 
 ## 1. Introduction and Responsible Disclosure

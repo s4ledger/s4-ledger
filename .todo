@@ -1,0 +1,5 @@
+ - [x] Get valid XRPL testnet seed from user
+ - [x] Install required Python packages (`cryptography`, `xrpl-py`)
+ - [x] Run `anchor_test.py` against XRPL testnet
+ - [x] Report results and next steps
+ - [x] Re-run `anchor_test.py` for confirmation

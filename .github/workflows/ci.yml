@@ -1,4 +1,31 @@
 name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      - name: Run tests
+        run: pytest --cov=solus_sdk.py --cov=anchor_test.py --cov-report=term-missing
+      - name: Build Docker image
+        run: docker build -t solus-sdk .
+      - name: Run Docker container
+        run: docker run solus-sdk
+name: CI
 on: [push, pull_request]
 jobs:
   test:

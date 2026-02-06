@@ -1,3 +1,37 @@
+---
+
+## Partner Integration
+
+See PARTNER_ONBOARDING.md for step-by-step integration. Sample API endpoints and BAA template provided.
+
+---
+
+## Troubleshooting
+
+- If you see 'Invalid checksum', regenerate your XRPL seed and ensure it's 51 characters.
+- For fiat conversion, ensure gateway_issuer is set and trustlines are established.
+- For compliance, see HIPAA_COMPLIANCE.md, GDPR_COMPLIANCE.md, and SECURITY.md.
+
+---
+
+## Quickstart Flows
+
+### Anchor a Record
+```python
+from solus_sdk import SolusSDK
+sdk = SolusSDK(wallet_seed="sEdYourTestnetSeedHere", testnet=True)
+record = "Patient: John Doe\nDOB: 1985-03-15\nVisit: 2026-01-20\nDiagnosis: Hypertension, mild"
+result = sdk.secure_patient_record(record_text=record, encrypt_first=True, fiat_mode=False)
+print(result)
+```
+
+### Verify a Record Hash
+```python
+hash_val = sdk.create_record_hash(record)
+print("Record hash:", hash_val)
+```
+
+---
 
 # ![Solus Protocol Logo](logo.png)
 

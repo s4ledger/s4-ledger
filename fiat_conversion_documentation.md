@@ -13,7 +13,7 @@ See fiat_conversion_test.py for a test script.
 
 ## Required Parameters
 - gateway_issuer: XRPL address of the USD IOU gateway.
-- sls_issuer: XRPL address of the $SLS token issuer.
+- sls_issuer: XRPL address of the $SLS token issuer (Solus Protocol: r95GyZac4butvVcsTWUPpxzekmyzaHsTA5).
 - wallet_seed: User's XRPL wallet seed.
 - destination: Recipient address (usually protocol treasury).
 
