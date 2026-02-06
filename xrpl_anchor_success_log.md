@@ -151,6 +151,31 @@ Notes: All data verified and anchored for cross-border compliance; consensus ach
 
 ---
 
+## Scenario: AI Post-Op Monitoring (David Ramirez)
+
+**Record:**
+Patient: David Ramirez
+Patient ID: DR-778899
+DOB: 1982-04-30
+Procedure: Hip Replacement Surgery (completed 2026-02-03)
+Monitoring Period: 2026-02-04 to 2026-02-05
+Wearable Device: Fitbit Sense 2 (integrated via API)
+AI Analysis: Detected atrial fibrillation episodes (3x, avg duration 5 min); HR peaks at 140 bpm.
+Raw Data Summary: Steps: 1,200/day; Sleep: 6 hrs (disrupted); ECG anomalies flagged by AI model (accuracy 95%).
+Recommendations: Immediate cardiologist review; prescribe beta-blocker if confirmed.
+Notes: AI output anchored for liability and audit; patient notified via app.
+
+**XRPL Transaction Details:**
+- Hash: 2061083f33a59bbd385ba7bba926f4488e5b66ad61e1c6ebfcee4723b88de6cc
+- Transaction Hash: A1DD23EAB99353D4A7595F051F87A733A9EAFFC9D6171A259F559F251672F1B0
+- Result: tesSUCCESS (validated)
+- Ledger Index: 14658525
+- Memo (hex): 2061083F33A59BBD385BA7BBA926F4488E5B66AD61E1C6EBFCEE4723B88DE6CC
+- Fee: 10 drops (standard XRPL fee)
+- Rebate: mock
+
+---
+
 # Confirmation
 
 Yes, with the current `solus_sdk.py` and these scenarios, medical providers and patients can anchor (store) hashes of medical data on the XRPL using $SLS. The SDK:
