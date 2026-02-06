@@ -150,6 +150,10 @@ Notes: All data verified and anchored for cross-border compliance; consensus ach
 - Fee: 0.19999999999999998 $SLS (simulated USD payment)
 - Rebate: mock
 
+#### Notes
+- The hash above is a SHA-256 of the medical record (not the record itself).
+- The transaction was recorded on the XRPL testnet using the Solus SDK prototype.
+
 ---
 
 ## Scenario: AI Post-Op Monitoring (David Ramirez)
@@ -175,6 +179,10 @@ Notes: AI output anchored for liability and audit; patient notified via app.
 - Memo (hex): 2061083F33A59BBD385BA7BBA926F4488E5B66AD61E1C6EBFCEE4723B88DE6CC
 - Fee: 10 drops (standard XRPL fee)
 - Rebate: mock
+
+#### Notes
+- The hash above is a SHA-256 of the medical record (not the record itself).
+- The transaction was recorded on the XRPL testnet using the Solus SDK prototype.
 
 ---
 
