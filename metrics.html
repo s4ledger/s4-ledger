@@ -49,22 +49,15 @@
         function setView(view) {
             // This can be expanded for monthly/weekly toggles if backend supports
         }
-        async function fetchMetrics() {
-            const res = await fetch('http://localhost:5050/metrics');
-            const data = await res.json();
-            // Hashes by week
-            const weeks = Object.keys(data.hashes_by_week);
-            const hashes = Object.values(data.hashes_by_week);
-            // Records by type
-            const recordTypes = Object.keys(data.records_by_type);
-            const recordCounts = Object.values(data.records_by_type);
-            // SLS fees
-            const feeWeeks = Object.keys(data.sls_fees);
-            const feeData = Object.values(data.sls_fees);
-            // XRPL tx volume
-            const txWeeks = Object.keys(data.tx_volume);
-            const txData = Object.values(data.tx_volume);
-            // Render charts
+        // Demo data for charts
+        const weeks = ["Week 1","Week 2","Week 3","Week 4","Week 5","Week 6","Week 7","Week 8"];
+        const hashes = [5, 12, 18, 25, 40, 60, 80, 120];
+        const recordTypes = ["Vitals","Post-Op","Lab Results","Imaging","Discharge","Mental Health"];
+        const recordCounts = [50, 20, 30, 15, 10, 5];
+        const feeData = [0.05, 0.12, 0.18, 0.25, 0.40, 0.60, 0.80, 1.20];
+        const txData = [10, 22, 35, 50, 70, 90, 110, 150];
+        let hashChart, recordChart, feeChart, txChart;
+        window.onload = function() {
             hashChart = new Chart(document.getElementById('hashChart').getContext('2d'), {
                 type: 'line',
                 data: {
@@ -106,7 +99,7 @@
             feeChart = new Chart(document.getElementById('feeChart').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: feeWeeks,
+                    labels: weeks,
                     datasets: [{
                         label: '$SLS Fee/Rebate Activity',
                         data: feeData,
@@ -127,9 +120,9 @@
             txChart = new Chart(document.getElementById('txChart').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: txWeeks,
+                    labels: weeks,
                     datasets: [{
-                        label: 'XRPL Transaction Volume (Solus)',
+                        label: 'XRPL Transaction Volume ($SLS)',
                         data: txData,
                         borderColor: '#ff4757',
                         backgroundColor: 'rgba(255,71,87,0.2)',
@@ -145,8 +138,7 @@
                     scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
                 }
             });
-        }
-        window.onload = fetchMetrics;
+        };
     </script>
 </body>
 </html>
