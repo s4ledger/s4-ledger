@@ -13,7 +13,7 @@
 ## Key Metrics
 - **Token:** $SLS (utility, not security)
 - **Network:** XRPL (testnet/mainnet)
-- **Partners:** MUSC, SC clinics, and more (see PARTNERS.md)
+- **Partners:** Coming Soon (see PARTNERS.md)
 - **Contact:** support@solusprotocol.com
 
 ## For Grantmakers & VCs
