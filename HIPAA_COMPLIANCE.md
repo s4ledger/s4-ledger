@@ -17,4 +17,4 @@ Solus Protocol is designed to support HIPAA compliance by ensuring that no Prote
 
 ## Policy
 - All contributors and users must follow the [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md).
-- For full HIPAA policy and BAA requests, contact: compliance@solusprotocol.com
+- For full HIPAA policy and BAA requests, contact: support@solusprotocol.com
