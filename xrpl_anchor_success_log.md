@@ -127,6 +127,30 @@ Notes: Suspected TBI; rapid transport to trauma center. Data anchored en route f
 
 ---
 
+## Scenario: Telemedicine Rare Disease Consultation (Emily Chen)
+
+**Record:**
+Patient: Emily Chen
+Patient ID: EC-112233
+DOB: 2010-07-14
+Condition: Suspected Ehlers-Danlos Syndrome (rare genetic disorder)
+Consultation Date: 2026-02-05 10:00 PST (global video call)
+Participants: Dr. Maria Gonzalez (Rural Clinic, USA), Dr. Lars Svensson (Genetics Specialist, Sweden), Dr. Aiko Tanaka (Rheumatologist, Japan)
+Findings: Genetic panel shows COL5A1 mutation; hypermobility confirmed via imaging shared securely.
+Recommendations: Custom brace fitting, physical therapy protocol, follow-up genetic counseling.
+Notes: All data verified and anchored for cross-border compliance; consensus achieved in 45 minutes.
+
+**XRPL Transaction Details:**
+- Hash: 00ef7d88346116bd737a6e30065e2aa9b2fd133f7c959091d07cbd6e3e57a61a
+- Transaction Hash: 565DE893DA0AA262EDAD0F0F2430F540EDEA60F106A500F03ECF0CEC27323C01
+- Result: tesSUCCESS (validated)
+- Ledger Index: 14658498
+- Memo (hex): 00EF7D88346116BD737A6E30065E2AA9B2FD133F7C959091D07CBD6E3E57A61A
+- Fee: 0.19999999999999998 $SLS (simulated USD payment)
+- Rebate: mock
+
+---
+
 # Confirmation
 
 Yes, with the current `solus_sdk.py` and these scenarios, medical providers and patients can anchor (store) hashes of medical data on the XRPL using $SLS. The SDK:
