@@ -20,8 +20,20 @@
 # Confirmation
 
 Yes, with the current `solus_sdk.py` and `anchor_test.py`, medical providers and patients can anchor (store) hashes of medical data on the XRPL using $SLS. The SDK:
-- Hashes the record,
-- Attempts to pay a micro-fee in $SLS (if trust lines are set up),
-- Falls back to recording the hash as a memo on the XRPL (AccountSet) if needed.
 
 This ensures the data hash is immutably recorded on-chain, and the code is ready for real-world prototype use.
+
+## Transaction Details
+- Date: 2026-02-05
+- Patient: Jane Smith
+- Hash Anchored: 51e33890d61fec0ec270d83a99d313eb0374fa3556d79ac91b1c8b53540037b9
+- Transaction Hash: 01A2BF1874C20F0ADB83CA89E1B2DF3A79A2143B7F7D8CB792EF3DBFFA9C7C03
+- Ledger Index: 14657854
+- XRPL Account: rEADrNJ4STXGgrsYCfMMZAZy65pnwT2nT4
+- Transaction Type: AccountSet (with memo)
+- Result: tesSUCCESS (validated)
+
+## Notes
+- The hash above is a SHA-256 of the encrypted surgery drug record (not the record itself).
+- The transaction was recorded on the XRPL testnet using the Solus SDK prototype.
+- The fallback AccountSet method was used to ensure the hash is anchored even if $SLS trust lines are not set up.
