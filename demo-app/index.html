@@ -2,11 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Solus | Healthcare Data Wallet</title>
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="Solus Protocol - Decentralized Healthcare Data Wallet on XRPL">
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://solusprotocol.vercel.app/demo-app/">
+    <meta property="og:title" content="Solus Protocol | Healthcare Data Wallet">
+    <meta property="og:description" content="Decentralized healthcare data wallet powered by XRPL. Anchor, verify, and share medical records with zero-knowledge privacy.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@Solus_Protocol">
+    <meta name="twitter:title" content="Solus Protocol | Healthcare Data Wallet">
+    <meta name="twitter:description" content="Decentralized healthcare data wallet powered by XRPL. Anchor, verify, and share medical records with zero-knowledge privacy.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
+    <title>Solus Protocol | Healthcare Data Wallet</title>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
         :root {
             --primary: #0a0a0f;
@@ -573,8 +595,13 @@
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-around;
-            padding: 12px 0 24px;
+            padding: 12px 0 calc(24px + env(safe-area-inset-bottom, 0px));
             z-index: 1000;
+        }
+
+        /* Ensure screen content doesn't hide behind safe-area nav */
+        .screen {
+            padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
         }
 
         .nav-item {
@@ -708,6 +735,14 @@
 
         .toast.success .toast-icon {
             color: var(--accent);
+        }
+
+        .toast.error {
+            border-color: var(--danger);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
         }
 
         .toast-icon {
@@ -1143,14 +1178,417 @@
         .toggle.active::after {
             transform: translateX(22px);
         }
+
+        /* ===== PARTICLES & MESH BACKGROUND ===== */
+        #app-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+        .app-mesh-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .app-mesh-bg .g-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.25; }
+        .app-mesh-bg .g-orb-1 { width: 300px; height: 300px; background: var(--accent); top: -100px; right: -100px; }
+        .app-mesh-bg .g-orb-2 { width: 200px; height: 200px; background: var(--secondary); bottom: -50px; left: -50px; }
+
+        /* ===== ENHANCED ANIMATIONS ===== */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(20, 241, 149, 0.3), 0 0 20px rgba(20, 241, 149, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(20, 241, 149, 0.5), 0 0 40px rgba(20, 241, 149, 0.2); }
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .fade-in-up { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== ACTION HELP ICONS ===== */
+        .action-help-btn { color: var(--text-muted); font-size: 0.95rem; cursor: pointer; transition: color 0.2s; padding: 4px; }
+        .action-help-btn:hover { color: var(--accent); }
+        .action-help-tooltip {
+            display: none; background: var(--card); border: 1px solid var(--accent); border-radius: 16px;
+            padding: 20px; margin-bottom: 16px; animation: slideUp 0.3s ease; z-index: 10;
+        }
+        .action-help-tooltip.show { display: block; }
+        .action-help-close { float: right; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; line-height: 1; }
+        .action-help-close:hover { color: var(--text); }
+        .help-action-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+        .help-action-item:last-child { border-bottom: none; }
+        .help-action-item i { margin-top: 3px; font-size: 1.1rem; width: 20px; text-align: center; flex-shrink: 0; }
+        .help-action-item strong { display: block; margin-bottom: 2px; font-size: 0.9rem; }
+        .help-action-item p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+
+        /* ===== ABOUT SCREEN ===== */
+        .about-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+        .about-card h3 { font-size: 1.1rem; margin-bottom: 12px; color: var(--accent); }
+        .about-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 12px; }
+        .about-card p:last-child { margin-bottom: 0; }
+        .how-step { display: flex; gap: 16px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .how-step:last-child { border-bottom: none; }
+        .step-num { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--secondary)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #000; flex-shrink: 0; }
+        .how-step h4 { font-size: 0.95rem; margin-bottom: 2px; }
+        .how-step p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+        .feature-item { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .feature-item:last-child { border-bottom: none; }
+        .feature-item i { width: 20px; text-align: center; }
+
+        /* ===== CONTACT SCREEN ===== */
+        .contact-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+        .contact-card h3 { font-size: 1.1rem; margin-bottom: 16px; }
+        .contact-item { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .contact-item:last-child { border-bottom: none; }
+        .contact-item a { color: var(--text); text-decoration: none; font-size: 0.9rem; }
+        .contact-item a:hover { color: var(--accent); }
+        .social-btn { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text); text-decoration: none; font-size: 0.9rem; transition: all 0.3s; }
+        .social-btn:hover { border-color: var(--accent); background: rgba(20, 241, 149, 0.1); color: var(--accent); }
+
+        /* ===== TRADE SCREEN ===== */
+        .trade-balance-card { background: linear-gradient(135deg, rgba(20, 241, 149, 0.15), rgba(153, 69, 255, 0.15)); border: 1px solid var(--accent); border-radius: 20px; padding: 24px; text-align: center; }
+        .trade-balance-amount { font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 4px 0; }
+        .trade-balance-usd { color: var(--text-muted); font-size: 0.9rem; }
+        .trade-convert-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+        .convert-input-group { position: relative; }
+        .convert-currency { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--accent); font-weight: 600; font-size: 0.85rem; }
+        .exchange-card { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 12px; text-decoration: none; color: var(--text); transition: all 0.3s; }
+        .exchange-card:hover { border-color: var(--accent); transform: translateX(4px); color: var(--text); }
+        .exchange-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .exchange-name { font-weight: 600; font-size: 0.95rem; }
+        .exchange-desc { font-size: 0.8rem; color: var(--text-muted); }
+        .trade-tx-list { display: flex; flex-direction: column; gap: 12px; }
+        .trade-tx-item { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+        .trade-tx-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+        .trade-tx-info { flex: 1; }
+        .trade-tx-title { font-weight: 600; font-size: 0.9rem; }
+        .trade-tx-date { font-size: 0.75rem; color: var(--text-muted); }
+        .trade-tx-amount { font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
+        .trade-tx-amount.positive { color: var(--accent); }
+        .trade-tx-amount.negative { color: var(--danger); }
+
+        /* ===== METRICS SCREEN ===== */
+        .metrics-type-list { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+        .metrics-type-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .metrics-type-item:last-child { border-bottom: none; }
+        .metrics-type-label { display: flex; align-items: center; gap: 8px; min-width: 100px; font-size: 0.85rem; }
+        .metrics-type-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .metrics-type-bar-container { flex: 1; height: 8px; background: var(--glass); border-radius: 4px; overflow: hidden; }
+        .metrics-type-bar { height: 100%; border-radius: 4px; transition: width 1s ease; }
+        .metrics-type-pct { font-size: 0.8rem; color: var(--text-muted); min-width: 35px; text-align: right; }
+        .metrics-live-feed { display: flex; flex-direction: column; gap: 8px; }
+        .metrics-live-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; animation: slideIn 0.4s ease backwards; font-size: 0.85rem; }
+        .metrics-live-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; animation: pulse 2s infinite; }
+        .metrics-live-time { font-size: 0.75rem; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+
+        /* ===== MORE SCREEN ===== */
+        .more-item { cursor: pointer; }
+
+        /* ===== DARK/LIGHT MODE ===== */
+        .app-container.light-mode {
+            background: linear-gradient(180deg, #f0f2f5 0%, #e4e6eb 100%);
+        }
+        .light-mode .screen { color: #1a1a2e; }
+        .light-mode .app-header { background: linear-gradient(180deg, rgba(240, 242, 245, 0.98) 0%, transparent 100%); }
+        .light-mode .stat-card,
+        .light-mode .action-card,
+        .light-mode .record-card,
+        .light-mode .api-card,
+        .light-mode .about-card,
+        .light-mode .contact-card,
+        .light-mode .trade-balance-card,
+        .light-mode .trade-convert-card,
+        .light-mode .exchange-card,
+        .light-mode .trade-tx-list,
+        .light-mode .metrics-type-list,
+        .light-mode .metrics-live-item,
+        .light-mode .settings-list,
+        .light-mode .patient-card,
+        .light-mode .faq-item { background: rgba(255, 255, 255, 0.95); border-color: rgba(0, 0, 0, 0.08); }
+        .light-mode .status-bar { background: rgba(255, 255, 255, 0.9); border-color: rgba(0, 0, 0, 0.08); }
+        .light-mode .modal { background: #ffffff; border-color: rgba(0, 0, 0, 0.08); }
+        .light-mode .form-input,
+        .light-mode .form-select { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.1); color: #1a1a2e; }
+        .light-mode .user-greeting h1,
+        .light-mode .section-title,
+        .light-mode h2, .light-mode h3, .light-mode h4,
+        .light-mode .action-title,
+        .light-mode .record-title,
+        .light-mode .patient-name,
+        .light-mode .trade-tx-title,
+        .light-mode .exchange-name,
+        .light-mode .settings-item span { color: #1a1a2e; }
+        .light-mode .user-greeting p,
+        .light-mode .action-desc,
+        .light-mode .record-meta span,
+        .light-mode .stat-label,
+        .light-mode .patient-meta,
+        .light-mode .trade-tx-date,
+        .light-mode .exchange-desc { color: #6b7280; }
+        .light-mode .how-step { background: rgba(0, 0, 0, 0.03); }
+        .light-mode .chart-container { background: rgba(255, 255, 255, 0.95); border-color: rgba(0, 0, 0, 0.08); }
+        .light-mode #loginScreen { background: radial-gradient(ellipse at top, rgba(153, 69, 255, 0.08) 0%, transparent 50%), radial-gradient(ellipse at bottom, rgba(20, 241, 149, 0.06) 0%, transparent 50%), #f0f2f5; }
+        .light-mode .login-subtitle { color: #6b7280; }
+        .light-mode .role-card { background: rgba(255, 255, 255, 0.95); border-color: rgba(0, 0, 0, 0.08); }
+        .light-mode .role-info p { color: #6b7280; }
+        .light-mode .input-group input { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.1); color: #1a1a2e; }
+        .light-mode .input-group label { color: #6b7280; }
+        .light-mode .demo-hint { color: #9ca3af; }
+        .light-mode .bottom-nav { background: rgba(255, 255, 255, 0.95); border-color: rgba(0, 0, 0, 0.08); }
+        .light-mode .nav-label { color: #6b7280; }
+        .light-mode .nav-icon { color: #6b7280; }
+        .light-mode .nav-item.active .nav-icon,
+        .light-mode .nav-item.active .nav-label { color: var(--accent); -webkit-text-fill-color: var(--accent); }
+        .light-mode .toast { background: rgba(255, 255, 255, 0.98); color: #1a1a2e; }
+        .light-mode .record-badge.verified { background: rgba(20, 241, 149, 0.15); color: #059669; }
+        .light-mode .modal-overlay { background: rgba(0, 0, 0, 0.3); }
+        .light-mode .search-bar input { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.1); color: #1a1a2e; }
+        .light-mode .onboarding-overlay { background: rgba(0, 0, 0, 0.7); }
+        .light-mode p { color: #374151; }
+
+        .theme-toggle-btn {
+            width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--border);
+            background: var(--glass); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.2rem; color: var(--text); transition: all 0.3s;
+        }
+        .theme-toggle-btn:hover { border-color: var(--accent); }
+
+        /* ===== BIOMETRIC AUTH ANIMATION ===== */
+        .biometric-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000;
+            background: rgba(10, 10, 15, 0.97); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .biometric-overlay.active { opacity: 1; pointer-events: all; }
+        .biometric-ring-container { position: relative; width: 120px; height: 120px; margin-bottom: 24px; }
+        .biometric-ring {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 3px solid rgba(20, 241, 149, 0.3); border-radius: 50%;
+        }
+        .biometric-ring.scanning { animation: biometricScan 1.5s ease-in-out; }
+        .biometric-ring.ring-2 { width: 85%; height: 85%; top: 7.5%; left: 7.5%; animation-delay: 0.2s; }
+        .biometric-ring.ring-3 { width: 70%; height: 70%; top: 15%; left: 15%; animation-delay: 0.4s; }
+        .biometric-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; color: var(--accent); }
+        @keyframes biometricScan {
+            0% { border-color: rgba(20, 241, 149, 0.3); transform: scale(1); }
+            50% { border-color: rgba(20, 241, 149, 0.8); transform: scale(1.05); }
+            100% { border-color: rgba(20, 241, 149, 1); transform: scale(1); }
+        }
+        @keyframes biometricSuccess {
+            0% { color: var(--accent); transform: translate(-50%, -50%) scale(1); }
+            50% { color: var(--accent); transform: translate(-50%, -50%) scale(1.3); }
+            100% { color: var(--accent); transform: translate(-50%, -50%) scale(1); }
+        }
+        .biometric-text { font-size: 1.1rem; color: var(--text); font-weight: 500; }
+        .biometric-subtext { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
+
+        /* ===== SEARCH BAR (Records) ===== */
+        .search-bar { margin-bottom: 16px; position: relative; }
+        .search-bar input {
+            width: 100%; padding: 14px 16px 14px 44px; background: var(--glass);
+            border: 1px solid var(--border); border-radius: 12px; color: var(--text);
+            font-size: 0.95rem; transition: all 0.3s;
+        }
+        .search-bar input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(20, 241, 149, 0.1); }
+        .search-bar input::placeholder { color: var(--text-muted); }
+        .search-bar .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.95rem; }
+        .record-filter-tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+        .record-filter-tabs::-webkit-scrollbar { display: none; }
+        .filter-tab {
+            padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border);
+            background: var(--glass); color: var(--text-muted); font-size: 0.8rem;
+            cursor: pointer; white-space: nowrap; transition: all 0.3s;
+        }
+        .filter-tab.active { background: rgba(20, 241, 149, 0.15); border-color: var(--accent); color: var(--accent); }
+
+        /* ===== ONBOARDING OVERLAY ===== */
+        .onboarding-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999;
+            background: rgba(10, 10, 15, 0.95); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease; padding: 24px;
+        }
+        .onboarding-overlay.active { opacity: 1; pointer-events: all; }
+        .onboarding-card {
+            max-width: 380px; width: 100%; text-align: center; animation: slideUp 0.5s ease backwards;
+        }
+        .onboarding-step-icon {
+            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 24px;
+            display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+            background: rgba(20, 241, 149, 0.15);
+        }
+        .onboarding-step-icon.purple { background: rgba(153, 69, 255, 0.15); }
+        .onboarding-step-icon.blue { background: rgba(0, 194, 255, 0.15); }
+        .onboarding-step-icon.gold { background: rgba(255, 215, 0, 0.15); }
+        .onboarding-step-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
+        .onboarding-step-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 32px; }
+        .onboarding-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+        .onboarding-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--glass); transition: all 0.3s; }
+        .onboarding-dot.active { background: var(--accent); width: 28px; border-radius: 5px; }
+        .onboarding-nav { display: flex; gap: 12px; width: 100%; }
+        .onboarding-skip { padding: 14px 24px; background: transparent; border: 1px solid var(--border); border-radius: 12px; color: var(--text-muted); font-size: 0.95rem; cursor: pointer; flex: 1; transition: all 0.3s; }
+        .onboarding-skip:hover { border-color: var(--accent); color: var(--text); }
+        .onboarding-next { padding: 14px 24px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 12px; color: var(--primary); font-size: 0.95rem; font-weight: 600; cursor: pointer; flex: 2; transition: all 0.3s; }
+        .onboarding-next:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(20, 241, 149, 0.3); }
+
+        /* ===== FAQ ACCORDION ===== */
+        .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
+        .faq-question {
+            display: flex; align-items: center; justify-content: space-between; padding: 16px;
+            cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.3s;
+        }
+        .faq-question:hover { color: var(--accent); }
+        .faq-question i { transition: transform 0.3s; color: var(--text-muted); font-size: 0.8rem; }
+        .faq-item.open .faq-question i { transform: rotate(180deg); color: var(--accent); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+        .faq-item.open .faq-answer { max-height: 200px; padding: 0 16px 16px; }
+        .faq-answer p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* ===== TRADE EXPORT ===== */
+        .export-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 20px; background: var(--glass); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text); font-size: 0.85rem; cursor: pointer;
+            transition: all 0.3s; width: 100%; margin-top: 12px;
+        }
+        .export-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* ===== METRICS API LOADING ===== */
+        .metrics-loading { text-align: center; padding: 40px 0; color: var(--text-muted); }
+        .metrics-loading .spinner { width: 32px; height: 32px; border: 3px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .metrics-error { text-align: center; padding: 20px; color: var(--danger); font-size: 0.85rem; }
+        .metrics-api-badge {
+            display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+            background: rgba(20, 241, 149, 0.1); border-radius: 20px; font-size: 0.7rem;
+            color: var(--accent); margin-top: 4px;
+        }
+
+        /* ===== SPLASH SCREEN ===== */
+        .splash-screen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999;
+            background: var(--primary); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.5s ease;
+        }
+        .splash-screen.fade-out { opacity: 0; pointer-events: none; }
+        .splash-logo { width: 80px; height: 80px; border-radius: 20px; animation: float 2s ease-in-out infinite; margin-bottom: 20px; }
+        .splash-title {
+            font-size: 1.6rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .splash-sub { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 32px; }
+        .splash-spinner {
+            width: 28px; height: 28px; border: 2px solid var(--border);
+            border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+
+        /* ===== OFFLINE BANNER ===== */
+        .offline-banner {
+            position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-60px);
+            max-width: 430px; width: 100%; z-index: 10001; padding: 12px 20px;
+            background: rgba(255, 71, 87, 0.95); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 0.85rem; font-weight: 500; transition: transform 0.4s ease;
+        }
+        .offline-banner.show { transform: translateX(-50%) translateY(0); }
+        .offline-banner.online { background: rgba(20, 241, 149, 0.9); color: var(--primary); }
+
+        /* ===== PAGE TRANSITIONS ===== */
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .screen.slide-right { animation: slideInRight 0.3s ease; }
+        .screen.slide-left { animation: slideInLeft 0.3s ease; }
+
+        /* ===== COPY HASH BUTTON ===== */
+        .copy-hash-btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+            background: var(--glass); border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text-muted); font-size: 0.75rem; cursor: pointer;
+            transition: all 0.3s; margin-top: 8px;
+        }
+        .copy-hash-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .copy-hash-btn.copied { border-color: var(--accent); color: var(--accent); }
+
+        /* ===== SESSION TIMEOUT MODAL ===== */
+        .timeout-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10002;
+            background: rgba(0, 0, 0, 0.85); display: none; align-items: center; justify-content: center;
+        }
+        .timeout-overlay.active { display: flex; }
+        .timeout-card {
+            background: var(--dark); border: 1px solid var(--border); border-radius: 20px;
+            padding: 32px; text-align: center; max-width: 320px; width: 90%; animation: slideUp 0.3s ease;
+        }
+        .timeout-card h3 { margin-bottom: 8px; font-size: 1.2rem; }
+        .timeout-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; }
+        .timeout-countdown {
+            font-size: 2rem; font-weight: 700; color: var(--warning); margin-bottom: 24px;
+        }
+        .timeout-actions { display: flex; gap: 12px; }
+        .timeout-actions .btn { flex: 1; }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <!-- Particles Background -->
+    <div id="app-particles"></div>
+    <div class="app-mesh-bg">
+        <div class="g-orb g-orb-1"></div>
+        <div class="g-orb g-orb-2"></div>
+    </div>
+
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <img class="splash-logo" src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png" alt="Solus Protocol">
+        <div class="splash-title">Solus Protocol</div>
+        <div class="splash-sub">Healthcare Data Wallet</div>
+        <div class="splash-spinner"></div>
+    </div>
+
+    <!-- Offline Banner -->
+    <div class="offline-banner" id="offlineBanner">
+        <i class="fas fa-wifi-slash" id="offlineIcon"></i>
+        <span id="offlineText">You're offline</span>
+    </div>
+
+    <!-- Session Timeout Modal -->
+    <div class="timeout-overlay" id="timeoutOverlay">
+        <div class="timeout-card">
+            <i class="fas fa-clock" style="font-size: 2.5rem; color: var(--warning); margin-bottom: 16px;"></i>
+            <h3>Session Expiring</h3>
+            <p>You'll be signed out due to inactivity</p>
+            <div class="timeout-countdown" id="timeoutCountdown">30</div>
+            <div class="timeout-actions">
+                <button class="btn btn-secondary" onclick="sessionLogout()">Sign Out</button>
+                <button class="btn btn-primary" onclick="extendSession()">Stay Signed In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biometric Auth Overlay -->
+    <div class="biometric-overlay" id="biometricOverlay">
+        <div class="biometric-ring-container">
+            <div class="biometric-ring ring-1" id="bioRing1"></div>
+            <div class="biometric-ring ring-2" id="bioRing2"></div>
+            <div class="biometric-ring ring-3" id="bioRing3"></div>
+            <i class="fas fa-fingerprint biometric-icon" id="bioIcon"></i>
+        </div>
+        <div class="biometric-text" id="bioText">Authenticating...</div>
+        <div class="biometric-subtext" id="bioSubtext">Verifying biometric identity</div>
+    </div>
+
+    <!-- Onboarding Overlay -->
+    <div class="onboarding-overlay" id="onboardingOverlay">
+        <div class="onboarding-card" id="onboardingCard"></div>
+    </div>
+
+    <div class="app-container" id="appContainer">
         <!-- Login Screen -->
         <div id="loginScreen" class="screen active">
-            <div class="login-logo">◈</div>
-            <h1 class="login-title">SOLUS</h1>
+            <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png" alt="Solus Protocol" style="width: 80px; height: 80px; border-radius: 20px; margin-bottom: 16px; animation: float 3s ease-in-out infinite;">
+            <h1 class="login-title">Solus Protocol</h1>
             <p class="login-subtitle">Your Healthcare Data Wallet</p>
             
             <div class="role-selector">
@@ -1180,9 +1618,9 @@
             <div class="login-form">
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter password" value="demo123">
+                    <input type="password" id="loginPassword" placeholder="Enter password" value="demo123" aria-label="Password">
                 </div>
-                <button class="login-btn" onclick="login()">
+                <button class="login-btn" onclick="login()" aria-label="Sign in to Solus Protocol">
                     <i class="fas fa-fingerprint"></i> Sign In
                 </button>
             </div>
@@ -1238,6 +1676,15 @@
                     <div class="section">
                         <div class="section-header">
                             <span class="section-title">Quick Actions</span>
+                            <span class="action-help-btn" onclick="toggleActionHelp('patientActionsHelp')"><i class="fas fa-question-circle"></i></span>
+                        </div>
+                        <div class="action-help-tooltip" id="patientActionsHelp">
+                            <span class="action-help-close" onclick="this.parentElement.classList.remove('show')">&times;</span>
+                            <h4 style="color: var(--accent); margin-bottom: 12px;">Quick Actions Help</h4>
+                            <div class="help-action-item"><i class="fas fa-qrcode" style="color: var(--accent);"></i><div><strong>Scan QR</strong><p>Point your camera at a provider's QR code to instantly share or receive records.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-share-nodes" style="color: var(--provider);"></i><div><strong>Share Record</strong><p>Grant a provider temporary, secure access to view your medical records.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-plus" style="color: var(--accent2);"></i><div><strong>Add Record</strong><p>Upload a new medical record and anchor its hash to the XRPL blockchain.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-certificate" style="color: var(--ehr);"></i><div><strong>Verify</strong><p>Check if a record has been tampered with by verifying its hash against XRPL.</p></div></div>
                         </div>
                         <div class="action-grid">
                             <div class="action-card" onclick="openModal('scanModal')">
@@ -1299,6 +1746,15 @@
                     <div class="section">
                         <div class="section-header">
                             <span class="section-title">Quick Actions</span>
+                            <span class="action-help-btn" onclick="toggleActionHelp('providerActionsHelp')"><i class="fas fa-question-circle"></i></span>
+                        </div>
+                        <div class="action-help-tooltip" id="providerActionsHelp">
+                            <span class="action-help-close" onclick="this.parentElement.classList.remove('show')">&times;</span>
+                            <h4 style="color: var(--provider); margin-bottom: 12px;">Provider Actions Help</h4>
+                            <div class="help-action-item"><i class="fas fa-search" style="color: var(--accent);"></i><div><strong>Find Patient</strong><p>Search for patients by name, DOB, or ID to look up their shared records.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-key" style="color: var(--provider);"></i><div><strong>Request Access</strong><p>Send a request to a patient to grant you access to their medical records.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-user-check" style="color: var(--accent2);"></i><div><strong>Verify Record</strong><p>Verify the authenticity of a patient record against its XRPL hash anchor.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-qrcode" style="color: var(--ehr);"></i><div><strong>Scan QR</strong><p>Scan a patient's QR code for instant access to their shared records.</p></div></div>
                         </div>
                         <div class="action-grid">
                             <div class="action-card" onclick="openModal('patientLookupModal')">
@@ -1383,6 +1839,15 @@
                     <div class="section">
                         <div class="section-header">
                             <span class="section-title">Quick Actions</span>
+                            <span class="action-help-btn" onclick="toggleActionHelp('ehrActionsHelp')"><i class="fas fa-question-circle"></i></span>
+                        </div>
+                        <div class="action-help-tooltip" id="ehrActionsHelp">
+                            <span class="action-help-close" onclick="this.parentElement.classList.remove('show')">&times;</span>
+                            <h4 style="color: var(--ehr); margin-bottom: 12px;">EHR Actions Help</h4>
+                            <div class="help-action-item"><i class="fas fa-layer-group" style="color: var(--accent);"></i><div><strong>Bulk Anchor</strong><p>Anchor multiple patient records to XRPL in a single batch for efficiency.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-key" style="color: var(--provider);"></i><div><strong>API Keys</strong><p>Manage your integration API keys for production and test environments.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-bolt" style="color: var(--accent2);"></i><div><strong>Webhooks</strong><p>Configure event-driven notifications for anchoring and verification events.</p></div></div>
+                            <div class="help-action-item"><i class="fas fa-clipboard-list" style="color: var(--ehr);"></i><div><strong>Audit Log</strong><p>View HIPAA-compliant audit trail of all anchoring and access operations.</p></div></div>
                         </div>
                         <div class="action-grid">
                             <div class="action-card" onclick="openModal('bulkAnchorModal')">
@@ -1472,6 +1937,18 @@
             </div>
             <div class="content">
                 <div class="section">
+                    <div class="search-bar">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="recordSearchInput" placeholder="Search records..." oninput="filterRecords()">
+                    </div>
+                    <div class="record-filter-tabs" id="recordFilterTabs">
+                        <div class="filter-tab active" onclick="setRecordFilter('all', this)">All</div>
+                        <div class="filter-tab" onclick="setRecordFilter('visit', this)">Visits</div>
+                        <div class="filter-tab" onclick="setRecordFilter('lab', this)">Lab Results</div>
+                        <div class="filter-tab" onclick="setRecordFilter('imaging', this)">Imaging</div>
+                        <div class="filter-tab" onclick="setRecordFilter('rx', this)">Prescriptions</div>
+                        <div class="filter-tab" onclick="setRecordFilter('vitals', this)">Vitals</div>
+                    </div>
                     <div class="records-list" id="allRecordsList">
                         <!-- Populated by JS -->
                     </div>
@@ -1536,6 +2013,13 @@
                         <span class="section-title">Settings</span>
                     </div>
                     <div class="settings-list">
+                        <div class="settings-item" onclick="toggleTheme()">
+                            <div class="settings-left">
+                                <div class="settings-icon"><i class="fas fa-moon" id="themeIcon"></i></div>
+                                <span id="themeLabel">Dark Mode</span>
+                            </div>
+                            <div class="toggle active" id="themeToggle"></div>
+                        </div>
                         <div class="settings-item">
                             <div class="settings-left">
                                 <div class="settings-icon"><i class="fas fa-bell"></i></div>
@@ -1574,30 +2058,451 @@
                 </div>
 
                 <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
-                    <p>Solus Protocol v2.0.1</p>
-                    <p style="margin-top: 4px;">Powered by XRP Ledger</p>
+                    <p>Solus Protocol v2.2.0</p>
+                    <p style="margin-top: 4px;">Build Feb 2026 • Powered by XRP Ledger</p>
+                    <p style="margin-top: 4px; font-size: 0.7rem; opacity: 0.6;">Demo Environment • Testnet</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ABOUT SCREEN ===== -->
+        <div id="aboutScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>About</h1>
+                        <p>Learn about Solus Protocol</p>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="section" style="text-align: center; padding: 10px 0 0;">
+                    <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png" alt="Solus Protocol" style="width: 72px; height: 72px; border-radius: 18px; margin-bottom: 12px; animation: float 3s ease-in-out infinite;">
+                    <h2 style="font-size: 1.4rem; margin-bottom: 4px;">Solus Protocol</h2>
+                    <p style="color: var(--accent); font-size: 0.85rem;">Decentralized Medical Data Integrity on XRPL</p>
+                </div>
+                <div class="section">
+                    <div class="about-card">
+                        <h3>What is Solus Protocol?</h3>
+                        <p>Solus Protocol is a decentralized medical data integrity platform built on the XRP Ledger. We enable patients and providers to securely hash, verify, and share medical records without exposing Protected Health Information (PHI) on-chain.</p>
+                        <p>The Solus app is your personal healthcare data wallet — giving you full control over your medical records, who can access them, and how they're verified.</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="about-card">
+                        <h3>Why "Solus"?</h3>
+                        <p>We chose 'Solus' from the Latin word meaning 'alone' or 'only' because our protocol empowers patients to have sole control over the integrity of their medical data. In a fragmented healthcare system full of intermediaries, Solus creates a single, unbreakable source of truth on the XRPL — unique, independent, and patient-centered. It's not about storing data; it's about making each record's authenticity stand alone, verifiable by anyone, forever.</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="about-card">
+                        <h3>How It Works</h3>
+                        <div class="how-step"><div class="step-num">1</div><div><h4>Patient Record</h4><p>Patient enters or uploads medical record</p></div></div>
+                        <div class="how-step"><div class="step-num">2</div><div><h4>Hash & Encrypt</h4><p>SHA-256 hash generated, PHI stays off-chain</p></div></div>
+                        <div class="how-step"><div class="step-num">3</div><div><h4>Anchor on XRPL</h4><p>Hash stored immutably on XRP Ledger</p></div></div>
+                        <div class="how-step"><div class="step-num">4</div><div><h4>Verify & Share</h4><p>Providers verify authenticity instantly</p></div></div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="about-card">
+                        <h3>Our Mission</h3>
+                        <p>To empower patients with true ownership and control over their medical data while enabling healthcare providers to access accurate, verifiable records in a compliant, efficient, and tamper-proof manner — beginning with a focused rollout in South Carolina before expanding nationally.</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="about-card">
+                        <h3>Key Features</h3>
+                        <div class="feature-item"><i class="fas fa-lock" style="color: var(--accent);"></i><span>Zero-Knowledge Privacy — PHI never touches the blockchain</span></div>
+                        <div class="feature-item"><i class="fas fa-bolt" style="color: var(--accent);"></i><span>~$0.001 per verification on XRPL</span></div>
+                        <div class="feature-item"><i class="fas fa-shield-halved" style="color: var(--accent);"></i><span>HIPAA-aligned architecture</span></div>
+                        <div class="feature-item"><i class="fas fa-link" style="color: var(--accent);"></i><span>Immutable hash anchoring on XRP Ledger</span></div>
+                        <div class="feature-item"><i class="fas fa-coins" style="color: var(--accent);"></i><span>$SLS utility token for fees & rebates</span></div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="about-card" style="text-align: center;">
+                        <h3>Founder</h3>
+                        <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/profilepic.png" alt="Nick Frankfort" style="width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--accent); margin: 12px 0;">
+                        <h4 style="margin-bottom: 4px;">Nick Frankfort</h4>
+                        <p style="color: var(--accent); margin: 0;">Founder & Lead Developer</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-header"><span class="section-title">FAQ</span></div>
+                    <div class="faq-item" onclick="this.classList.toggle('open')">
+                        <div class="faq-question"><span>What is hash anchoring?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-answer"><p>Hash anchoring creates a SHA-256 fingerprint of your medical record and stores that hash on the XRP Ledger blockchain. The actual data never goes on-chain — only a unique proof that the record existed in its exact form at a specific time.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="this.classList.toggle('open')">
+                        <div class="faq-question"><span>Is my health data stored on the blockchain?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-answer"><p>No. Solus Protocol uses zero-knowledge privacy — your Protected Health Information (PHI) never touches the blockchain. Only a cryptographic hash is stored, making it HIPAA-aligned by design.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="this.classList.toggle('open')">
+                        <div class="faq-question"><span>What is $SLS used for?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-answer"><p>$SLS is the utility token on the XRPL that powers anchoring fees (~$0.001 per record), provider verification payments, and patient rebates. It can be traded on exchanges like xMagnetic, Sologenic, and xpmarket.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="this.classList.toggle('open')">
+                        <div class="faq-question"><span>Can I use this without crypto knowledge?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-answer"><p>Yes! The SDK abstracts blockchain complexity entirely. Providers and patients can use fiat (USD) payments through the standard subscription tier, while $SLS powers the backend automatically.</p></div>
+                    </div>
+                    <div class="faq-item" onclick="this.classList.toggle('open')">
+                        <div class="faq-question"><span>How do I verify a record?</span><i class="fas fa-chevron-down"></i></div>
+                        <div class="faq-answer"><p>Go to the Verify action from the home screen, paste a record hash or transaction ID, and the app checks it against the XRPL. If it matches, the record is confirmed authentic and untampered.</p></div>
+                    </div>
+                </div>
+                <div style="text-align: center; padding: 10px 0 20px;">
+                    <a href="https://solusprotocol.com" target="_blank" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">Visit solusprotocol.com →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CONTACT SCREEN ===== -->
+        <div id="contactScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>Contact</h1>
+                        <p>Get in touch with us</p>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <div class="contact-card">
+                        <h3>Send Us a Message</h3>
+                        <div class="form-group">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" class="form-input" id="appContactName" placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Your Email</label>
+                            <input type="email" class="form-input" id="appContactEmail" placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <select class="form-select" id="appContactSubject">
+                                <option value="">Select a topic...</option>
+                                <option value="Partnership Inquiry">Partnership Inquiry</option>
+                                <option value="Pilot Program">Pilot Program</option>
+                                <option value="SDK Integration">SDK Integration Support</option>
+                                <option value="Investor Relations">Investor Relations</option>
+                                <option value="General Question">General Question</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-input" id="appContactMessage" placeholder="Tell us more about your inquiry..."></textarea>
+                        </div>
+                        <button class="btn btn-primary btn-full" onclick="sendAppContact()">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="contact-card">
+                        <h3>Other Ways to Reach Us</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-globe" style="color: var(--accent);"></i>
+                            <a href="https://solusprotocol.com" target="_blank">solusprotocol.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope" style="color: var(--accent);"></i>
+                            <a href="mailto:support@solusprotocol.com">support@solusprotocol.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-briefcase" style="color: var(--accent);"></i>
+                            <a href="mailto:support@solusprotocol.com">Investor Relations</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-shield-halved" style="color: var(--accent);"></i>
+                            <a href="mailto:security@solusprotocol.com">Security Reports</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="contact-card">
+                        <h3>Follow Us</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a href="https://x.com/Solus_Protocol" target="_blank" class="social-btn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                @Solus_Protocol
+                            </a>
+                            <a href="https://t.me/solus_protocol" target="_blank" class="social-btn">
+                                <i class="fab fa-telegram"></i> Telegram
+                            </a>
+                            <a href="https://www.linkedin.com/company/solusprotocol/" target="_blank" class="social-btn">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                            <a href="https://github.com/solusprotocol1/solus-protocol" target="_blank" class="social-btn">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TRADE SCREEN ===== -->
+        <div id="tradeScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>$SLS Wallet</h1>
+                        <p>Buy, sell & manage $SLS</p>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <div class="trade-balance-card">
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 4px;">Total Balance</p>
+                        <div class="trade-balance-amount" id="tradeBalance">150.75 $SLS</div>
+                        <div class="trade-balance-usd" id="tradeBalanceUSD">≈ $7.54 USD</div>
+                        <div style="display: flex; gap: 12px; margin-top: 20px;">
+                            <button class="btn btn-primary" style="flex: 1;" onclick="tradeDeposit()">
+                                <i class="fas fa-arrow-down"></i> Deposit
+                            </button>
+                            <button class="btn btn-secondary" style="flex: 1;" onclick="tradeWithdraw()">
+                                <i class="fas fa-arrow-up"></i> Withdraw
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-header"><span class="section-title">Convert</span></div>
+                    <div class="trade-convert-card">
+                        <div style="margin-bottom: 8px;">
+                            <label class="form-label" style="margin-bottom: 4px;">From</label>
+                            <div class="convert-input-group">
+                                <input type="number" class="form-input" id="convertFromAmount" value="100" oninput="updateConversion()" style="margin-bottom: 0; text-align: right; padding-right: 60px;">
+                                <span class="convert-currency">$SLS</span>
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding: 4px 0;">
+                            <i class="fas fa-exchange-alt" style="color: var(--accent); font-size: 1.1rem; transform: rotate(90deg);"></i>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <label class="form-label" style="margin-bottom: 4px;">To</label>
+                            <div class="convert-input-group">
+                                <input type="number" class="form-input" id="convertToAmount" value="5.00" readonly style="margin-bottom: 0; text-align: right; padding-right: 60px; opacity: 0.7;">
+                                <span class="convert-currency">USD</span>
+                            </div>
+                        </div>
+                        <p style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Rate: 1 $SLS ≈ $0.05 USD (demo)</p>
+                        <button class="btn btn-primary btn-full" onclick="showToast('Conversion simulated — $' + document.getElementById('convertToAmount').value + ' USD', 'success')">
+                            <i class="fas fa-sync-alt"></i> Convert
+                        </button>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-header"><span class="section-title">Buy & Trade $SLS</span></div>
+                    <a href="https://xmagnetic.org/tokens/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5+534C5300000000000000000000000000000000000000" target="_blank" class="exchange-card">
+                        <div class="exchange-icon" style="background: rgba(20, 241, 149, 0.15);"><i class="fas fa-chart-line" style="color: var(--accent);"></i></div>
+                        <div><div class="exchange-name">xMagnetic</div><div class="exchange-desc">XRPL DEX Trading</div></div>
+                        <i class="fas fa-external-link-alt" style="color: var(--text-muted); margin-left: auto;"></i>
+                    </a>
+                    <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP" target="_blank" class="exchange-card">
+                        <div class="exchange-icon" style="background: rgba(153, 69, 255, 0.15);"><i class="fas fa-exchange-alt" style="color: var(--provider);"></i></div>
+                        <div><div class="exchange-name">Sologenic DEX</div><div class="exchange-desc">Trade SLS/XRP</div></div>
+                        <i class="fas fa-external-link-alt" style="color: var(--text-muted); margin-left: auto;"></i>
+                    </a>
+                    <a href="https://xaman.app" target="_blank" class="exchange-card">
+                        <div class="exchange-icon" style="background: rgba(0, 194, 255, 0.15);"><i class="fas fa-wallet" style="color: var(--accent2);"></i></div>
+                        <div><div class="exchange-name">Xaman Wallet</div><div class="exchange-desc">XRPL Wallet</div></div>
+                        <i class="fas fa-external-link-alt" style="color: var(--text-muted); margin-left: auto;"></i>
+                    </a>
+                    <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" class="exchange-card">
+                        <div class="exchange-icon" style="background: rgba(255, 215, 0, 0.15);"><i class="fas fa-coins" style="color: var(--ehr);"></i></div>
+                        <div><div class="exchange-name">xpmarket</div><div class="exchange-desc">Token Marketplace</div></div>
+                        <i class="fas fa-external-link-alt" style="color: var(--text-muted); margin-left: auto;"></i>
+                    </a>
+                </div>
+                <div class="section">
+                    <div class="section-header"><span class="section-title">Recent Transactions</span></div>
+                    <div class="trade-tx-list">
+                        <div class="trade-tx-item">
+                            <div class="trade-tx-icon" style="background: rgba(20, 241, 149, 0.15); color: var(--accent);"><i class="fas fa-arrow-down"></i></div>
+                            <div class="trade-tx-info"><div class="trade-tx-title">Deposit</div><div class="trade-tx-date">Feb 5, 2026</div></div>
+                            <div class="trade-tx-amount positive">+50.00 $SLS</div>
+                        </div>
+                        <div class="trade-tx-item">
+                            <div class="trade-tx-icon" style="background: rgba(255, 71, 87, 0.15); color: var(--danger);"><i class="fas fa-link"></i></div>
+                            <div class="trade-tx-info"><div class="trade-tx-title">Hash Anchoring Fee</div><div class="trade-tx-date">Feb 4, 2026</div></div>
+                            <div class="trade-tx-amount negative">-0.01 $SLS</div>
+                        </div>
+                        <div class="trade-tx-item">
+                            <div class="trade-tx-icon" style="background: rgba(20, 241, 149, 0.15); color: var(--accent);"><i class="fas fa-gift"></i></div>
+                            <div class="trade-tx-info"><div class="trade-tx-title">Verification Rebate</div><div class="trade-tx-date">Feb 3, 2026</div></div>
+                            <div class="trade-tx-amount positive">+0.005 $SLS</div>
+                        </div>
+                        <div class="trade-tx-item">
+                            <div class="trade-tx-icon" style="background: rgba(153, 69, 255, 0.15); color: var(--provider);"><i class="fas fa-arrow-up"></i></div>
+                            <div class="trade-tx-info"><div class="trade-tx-title">Withdrawal to USD</div><div class="trade-tx-date">Feb 1, 2026</div></div>
+                            <div class="trade-tx-amount negative">-20.00 $SLS</div>
+                        </div>
+                    </div>
+                    <button class="export-btn" onclick="exportTradeCSV()">
+                        <i class="fas fa-file-csv"></i> Export Transaction History (CSV)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== METRICS SCREEN (Real API) ===== -->
+        <div id="metricsScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>Network Activity</h1>
+                        <p>Real-time protocol metrics</p>
+                        <div class="metrics-api-badge"><div class="status-dot" style="width: 6px; height: 6px;"></div> Live from XRPL Testnet</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(20, 241, 149, 0.1); border-radius: 20px; font-size: 0.8rem;">
+                        <div class="status-dot"></div>
+                        <span id="metricsStatusText">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <!-- Loading state -->
+                <div class="metrics-loading" id="metricsLoading">
+                    <div class="spinner"></div>
+                    <p>Fetching live data from XRPL...</p>
+                </div>
+                <!-- Error state -->
+                <div class="metrics-error" id="metricsError" style="display: none;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; margin-bottom: 8px;"></i>
+                    <p id="metricsErrorText">Failed to load metrics</p>
+                    <button class="btn btn-secondary" style="margin-top: 12px; padding: 10px 20px;" onclick="loadMetricsAPI()">
+                        <i class="fas fa-refresh"></i> Retry
+                    </button>
+                </div>
+                <!-- Data content (hidden until loaded) -->
+                <div id="metricsContent" style="display: none;">
+                    <div class="section">
+                        <div class="quick-stats" style="grid-template-columns: repeat(2, 1fr);">
+                            <div class="stat-card"><div class="stat-number" id="metricTotalRecords">—</div><div class="stat-label">Records Anchored</div></div>
+                            <div class="stat-card"><div class="stat-number" id="metricRecordTypes">—</div><div class="stat-label">Record Types</div></div>
+                            <div class="stat-card"><div class="stat-number" id="metricTotalFees">—</div><div class="stat-label">Total $SLS Fees</div></div>
+                            <div class="stat-card"><div class="stat-number" id="metricToday">—</div><div class="stat-label">Anchored Today</div></div>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <div class="section-header"><span class="section-title">Record Type Distribution</span></div>
+                        <div class="metrics-type-list" id="metricsTypeList">
+                            <!-- Populated by API -->
+                        </div>
+                    </div>
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Live Activity Feed</span>
+                            <span style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted);"><div class="status-dot"></div>Real-time</span>
+                        </div>
+                        <div class="metrics-live-feed" id="metricsLiveFeed">
+                            <!-- Populated by API -->
+                        </div>
+                    </div>
+                    <div class="section">
+                        <div class="section-header"><span class="section-title">XRPL Network</span></div>
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px;">
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);"><span style="color: var(--text-muted);">Network</span><span style="color: var(--accent); font-weight: 600;">XRPL Testnet</span></div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);"><span style="color: var(--text-muted);">Account</span><span style="font-family: monospace; font-size: 0.75rem;" id="metricAccount">rJPqcx...rqJA</span></div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);"><span style="color: var(--text-muted);">Avg. Fee</span><span style="color: var(--accent); font-weight: 600;">~$0.001</span></div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);"><span style="color: var(--text-muted);">Total $SLS Fees</span><span style="font-weight: 600;" id="metricFeesSummary">—</span></div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0;"><span style="color: var(--text-muted);">Last Hash</span><span style="font-family: monospace; font-size: 0.7rem; max-width: 160px; overflow: hidden; text-overflow: ellipsis;" id="metricLastHash">—</span></div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; padding: 10px 0 20px;">
+                        <a href="https://solusprotocol.com/metrics.html" target="_blank" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;"><i class="fas fa-external-link-alt"></i> Full Metrics Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MORE SCREEN ===== -->
+        <div id="moreScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>More</h1>
+                        <p>Additional features & settings</p>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <div class="settings-list">
+                        <div class="settings-item" onclick="navigateToScreen('aboutScreen')">
+                            <div class="settings-left"><div class="settings-icon"><i class="fas fa-info-circle"></i></div><span>About Solus Protocol</span></div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                        </div>
+                        <div class="settings-item" onclick="navigateToScreen('contactScreen')">
+                            <div class="settings-left"><div class="settings-icon"><i class="fas fa-envelope"></i></div><span>Contact Us</span></div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                        </div>
+                        <div class="settings-item" onclick="navigateToScreen('metricsScreen')">
+                            <div class="settings-left"><div class="settings-icon"><i class="fas fa-chart-bar"></i></div><span>Network Metrics</span></div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                        </div>
+                        <div class="settings-item" onclick="navigateToScreen('profileScreen')">
+                            <div class="settings-left"><div class="settings-icon"><i class="fas fa-user"></i></div><span>Profile & Settings</span></div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-header"><span class="section-title">Links</span></div>
+                    <div class="settings-list">
+                        <a href="https://solusprotocol.com" target="_blank" style="text-decoration: none; color: var(--text);">
+                            <div class="settings-item">
+                                <div class="settings-left"><div class="settings-icon"><i class="fas fa-globe"></i></div><span>Website</span></div>
+                                <i class="fas fa-external-link-alt" style="color: var(--text-muted);"></i>
+                            </div>
+                        </a>
+                        <a href="https://github.com/solusprotocol1/solus-protocol/blob/dec022ee9ca6c9b1117abc2bc63d36b537318a36/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" target="_blank" style="text-decoration: none; color: var(--text);">
+                            <div class="settings-item">
+                                <div class="settings-left"><div class="settings-icon"><i class="fas fa-file-pdf"></i></div><span>Whitepaper</span></div>
+                                <i class="fas fa-external-link-alt" style="color: var(--text-muted);"></i>
+                            </div>
+                        </a>
+                        <a href="https://github.com/solusprotocol1/solus-protocol" target="_blank" style="text-decoration: none; color: var(--text);">
+                            <div class="settings-item">
+                                <div class="settings-left"><div class="settings-icon"><i class="fab fa-github"></i></div><span>GitHub</span></div>
+                                <i class="fas fa-external-link-alt" style="color: var(--text-muted);"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
+                    <p>Solus Protocol v2.2.0</p>
+                    <p style="margin-top: 4px;">Build Feb 2026 • Powered by XRP Ledger</p>
+                    <p style="margin-top: 4px; font-size: 0.7rem; opacity: 0.6;">Demo Environment • Testnet</p>
                 </div>
             </div>
         </div>
 
         <!-- Bottom Navigation -->
-        <nav class="bottom-nav" id="bottomNav" style="display: none;">
-            <div class="nav-item active" onclick="navigateTo('home')">
+        <nav class="bottom-nav" id="bottomNav" style="display: none;" role="navigation" aria-label="Main navigation">
+            <div class="nav-item active" onclick="navigateTo('home', this)" role="tab" aria-label="Home">
                 <i class="nav-icon fas fa-home"></i>
                 <span class="nav-label">Home</span>
             </div>
-            <div class="nav-item" onclick="navigateTo('records')">
+            <div class="nav-item" onclick="navigateTo('records', this)" role="tab" aria-label="Records">
                 <i class="nav-icon fas fa-folder-open"></i>
                 <span class="nav-label">Records</span>
             </div>
-            <div class="nav-item" onclick="navigateTo('activity')" style="position: relative;">
+            <div class="nav-item" onclick="navigateTo('trade', this)" role="tab" aria-label="Trade">
+                <i class="nav-icon fas fa-coins"></i>
+                <span class="nav-label">Trade</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('activity', this)" style="position: relative;" role="tab" aria-label="Activity notifications">
                 <i class="nav-icon fas fa-bell"></i>
                 <span class="nav-label">Activity</span>
-                <div class="notification-badge" id="activityBadge">3</div>
+                <div class="notification-badge" id="activityBadge" aria-live="polite">3</div>
             </div>
-            <div class="nav-item" onclick="navigateTo('profile')">
-                <i class="nav-icon fas fa-user"></i>
-                <span class="nav-label">Profile</span>
+            <div class="nav-item" onclick="navigateTo('more', this)" role="tab" aria-label="More options">
+                <i class="nav-icon fas fa-ellipsis-h"></i>
+                <span class="nav-label">More</span>
             </div>
         </nav>
 
@@ -1914,16 +2819,20 @@
         </div>
 
         <!-- Toast -->
-        <div class="toast" id="toast">
-            <i class="toast-icon fas fa-check-circle"></i>
+        <div class="toast" id="toast" role="alert" aria-live="assertive">
+            <i class="toast-icon fas fa-check-circle" id="toastIcon"></i>
             <span class="toast-message" id="toastMessage">Success!</span>
         </div>
     </div>
 
     <script>
-        // App State
+        // ===== APP STATE =====
         let currentRole = 'patient';
         let currentScreen = 'login';
+        let isDarkMode = true;
+        let metricsAPIData = null;
+        let metricsRefreshInterval = null;
+        const METRICS_API_URL = 'https://solusprotocol.onrender.com/metrics';
 
         // Mock Data
         const mockRecords = [
@@ -1952,14 +2861,19 @@
             { color: 'green', text: 'MRI results verified', time: '2 weeks ago' }
         ];
 
-        // Initialize
+        // ===== INITIALIZE =====
         document.addEventListener('DOMContentLoaded', function() {
             updateGreeting();
             renderRecords();
             renderActivity();
+
+            // Check if first visit — show onboarding
+            if (!localStorage.getItem('solus_onboarded')) {
+                // Will show after login
+            }
         });
 
-        // Role Selection
+        // ===== ROLE SELECTION =====
         function selectRole(role) {
             currentRole = role;
             document.querySelectorAll('.role-card').forEach(card => {
@@ -1968,41 +2882,148 @@
             document.querySelector(`.role-card[data-role="${role}"]`).classList.add('selected');
         }
 
-        // Login
+        // ===== BIOMETRIC AUTH =====
+        function showBiometricAuth(callback) {
+            const overlay = document.getElementById('biometricOverlay');
+            const icon = document.getElementById('bioIcon');
+            const text = document.getElementById('bioText');
+            const subtext = document.getElementById('bioSubtext');
+            overlay.classList.add('active');
+
+            // Start scanning animation
+            document.querySelectorAll('.biometric-ring').forEach(r => r.classList.add('scanning'));
+            text.textContent = 'Authenticating...';
+            subtext.textContent = 'Verifying biometric identity';
+            icon.className = 'fas fa-fingerprint biometric-icon';
+
+            setTimeout(() => {
+                // Success state
+                icon.className = 'fas fa-check-circle biometric-icon';
+                icon.style.animation = 'biometricSuccess 0.6s ease';
+                text.textContent = 'Identity Verified';
+                subtext.textContent = 'Welcome back';
+                document.querySelectorAll('.biometric-ring').forEach(r => {
+                    r.style.borderColor = 'rgba(20, 241, 149, 1)';
+                });
+
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                    icon.style.animation = '';
+                    document.querySelectorAll('.biometric-ring').forEach(r => {
+                        r.classList.remove('scanning');
+                        r.style.borderColor = '';
+                    });
+                    if (callback) callback();
+                }, 800);
+            }, 1500);
+        }
+
+        // ===== LOGIN =====
         function login() {
             const password = document.getElementById('loginPassword').value;
             if (password === 'demo123') {
-                document.getElementById('loginScreen').classList.remove('active');
-                document.getElementById('homeScreen').classList.add('active');
-                document.getElementById('bottomNav').style.display = 'flex';
-                currentScreen = 'home';
-                
-                updateUIForRole();
-                showToast('Welcome to Solus', 'success');
+                showBiometricAuth(() => {
+                    document.getElementById('loginScreen').classList.remove('active');
+                    document.getElementById('homeScreen').classList.add('active');
+                    document.getElementById('bottomNav').style.display = 'flex';
+                    currentScreen = 'home';
+
+                    updateUIForRole();
+                    showToast('Welcome to Solus', 'success');
+
+                    // Animate stat counters on first load
+                    setTimeout(() => animateHomeStats(), 300);
+
+                    // Start session timeout timer
+                    resetSessionTimer();
+
+                    // Show onboarding for first-time users
+                    if (!localStorage.getItem('solus_onboarded')) {
+                        setTimeout(() => showOnboarding(), 500);
+                    }
+
+                    // Increment notification badge on new activity
+                    startNotificationSystem();
+                });
             } else {
                 showToast('Invalid password', 'error');
             }
         }
 
-        // Update UI based on role
-        function updateUIForRole() {
-            const names = {
-                patient: 'Alex Johnson',
-                provider: 'Dr. Sarah Chen',
-                ehr: 'MedTech Systems'
-            };
-            
-            const initials = {
-                patient: 'AJ',
-                provider: 'SC',
-                ehr: 'MT'
-            };
+        // ===== ONBOARDING =====
+        const onboardingSteps = [
+            {
+                icon: 'fa-shield-halved', iconClass: '', color: 'var(--accent)',
+                title: 'Your Data, Your Control',
+                desc: 'Solus Protocol gives you complete ownership of your medical records. Every record is cryptographically hashed and anchored to the XRP Ledger — only you decide who can access it.'
+            },
+            {
+                icon: 'fa-link', iconClass: 'purple', color: 'var(--secondary)',
+                title: 'Blockchain-Verified Records',
+                desc: 'Each record gets a unique SHA-256 hash stored on the XRPL. Your actual health data never goes on-chain — just a tamper-proof fingerprint that proves authenticity forever.'
+            },
+            {
+                icon: 'fa-users', iconClass: 'blue', color: 'var(--accent2)',
+                title: 'Three Roles, One Platform',
+                desc: 'Patients manage and share records. Providers verify and access patient data. EHR Systems integrate with bulk anchoring and API access. Choose your role on the login screen.'
+            },
+            {
+                icon: 'fa-coins', iconClass: 'gold', color: 'var(--ehr)',
+                title: '$SLS Powers Everything',
+                desc: 'The $SLS utility token handles anchoring fees (~$0.001 per record), provider payments, and patient rebates. Trade it on xMagnetic, Sologenic, and more — or use USD through our subscription tier.'
+            }
+        ];
+        let onboardingStep = 0;
 
-            const roles = {
-                patient: 'Patient Account',
-                provider: 'Healthcare Provider',
-                ehr: 'EHR Administrator'
-            };
+        function showOnboarding() {
+            onboardingStep = 0;
+            renderOnboardingStep();
+            document.getElementById('onboardingOverlay').classList.add('active');
+        }
+
+        function renderOnboardingStep() {
+            const step = onboardingSteps[onboardingStep];
+            const isLast = onboardingStep === onboardingSteps.length - 1;
+            const card = document.getElementById('onboardingCard');
+            card.innerHTML = `
+                <div class="onboarding-step-icon ${step.iconClass}">
+                    <i class="fas ${step.icon}" style="color: ${step.color};"></i>
+                </div>
+                <h2 class="onboarding-step-title">${step.title}</h2>
+                <p class="onboarding-step-desc">${step.desc}</p>
+                <div class="onboarding-dots">
+                    ${onboardingSteps.map((_, i) => `<div class="onboarding-dot ${i === onboardingStep ? 'active' : ''}"></div>`).join('')}
+                </div>
+                <div class="onboarding-nav">
+                    <button class="onboarding-skip" onclick="closeOnboarding()">Skip</button>
+                    <button class="onboarding-next" onclick="${isLast ? 'closeOnboarding()' : 'nextOnboardingStep()'}">
+                        ${isLast ? 'Get Started' : 'Next'} <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>
+                    </button>
+                </div>
+            `;
+            // Re-trigger animation
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = '';
+        }
+
+        function nextOnboardingStep() {
+            if (onboardingStep < onboardingSteps.length - 1) {
+                onboardingStep++;
+                renderOnboardingStep();
+            }
+        }
+
+        function closeOnboarding() {
+            document.getElementById('onboardingOverlay').classList.remove('active');
+            localStorage.setItem('solus_onboarded', 'true');
+        }
+
+        // ===== UPDATE UI FOR ROLE =====
+        function updateUIForRole() {
+            const names = { patient: 'Alex Johnson', provider: 'Dr. Sarah Chen', ehr: 'MedTech Systems' };
+            const initials = { patient: 'AJ', provider: 'SC', ehr: 'MT' };
+            const roles = { patient: 'Patient Account', provider: 'Healthcare Provider', ehr: 'EHR Administrator' };
 
             document.getElementById('userName').textContent = names[currentRole];
             document.getElementById('profileName').textContent = names[currentRole];
@@ -2010,12 +3031,10 @@
             document.getElementById('userAvatar').textContent = initials[currentRole];
             document.getElementById('profileAvatar').textContent = initials[currentRole];
 
-            // Show/hide role-specific content
             document.getElementById('patientHomeContent').style.display = currentRole === 'patient' ? 'block' : 'none';
             document.getElementById('providerHomeContent').style.display = currentRole === 'provider' ? 'block' : 'none';
             document.getElementById('ehrHomeContent').style.display = currentRole === 'ehr' ? 'block' : 'none';
 
-            // Update avatar color
             const avatar = document.getElementById('userAvatar');
             const profileAvatar = document.getElementById('profileAvatar');
             avatar.className = 'user-avatar';
@@ -2029,25 +3048,29 @@
             }
         }
 
-        // Logout
+        // ===== LOGOUT =====
         function logout() {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('loginScreen').classList.add('active');
             document.getElementById('bottomNav').style.display = 'none';
             currentScreen = 'login';
+            if (metricsRefreshInterval) clearInterval(metricsRefreshInterval);
+            clearTimeout(sessionTimer);
+            clearInterval(countdownTimer);
             showToast('Signed out successfully', 'success');
         }
 
-        // Navigation
-        function navigateTo(screen) {
+        // ===== NAVIGATION =====
+        function navigateTo(screen, el) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if (el) el.classList.add('active');
 
             const screenMap = {
                 'home': 'homeScreen',
                 'records': 'recordsScreen',
+                'trade': 'tradeScreen',
                 'activity': 'activityScreen',
-                'profile': 'profileScreen'
+                'more': 'moreScreen'
             };
 
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -2056,7 +3079,15 @@
 
             if (screen === 'activity') {
                 document.getElementById('activityBadge').style.display = 'none';
+                notificationCount = 0;
             }
+            if (screen === 'trade') { updateTradeBalance(); }
+        }
+
+        function navigateToScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            if (screenId === 'metricsScreen') loadMetricsAPI();
         }
 
         function showScreen(screenId) {
@@ -2064,7 +3095,7 @@
             document.getElementById(screenId).classList.add('active');
         }
 
-        // Update greeting based on time
+        // ===== GREETING =====
         function updateGreeting() {
             const hour = new Date().getHours();
             let greeting = 'Good evening';
@@ -2073,19 +3104,21 @@
             document.getElementById('greetingText').textContent = greeting;
         }
 
-        // Render records
-        function renderRecords() {
-            const iconMap = {
-                'visit': 'visit',
-                'lab': 'lab',
-                'imaging': 'imaging',
-                'rx': 'rx',
-                'vitals': 'vitals'
-            };
+        // ===== RECORDS RENDERING =====
+        let currentRecordFilter = 'all';
+
+        function renderRecords(filter, searchTerm) {
+            filter = filter || currentRecordFilter;
+            searchTerm = searchTerm || '';
+            let records = mockRecords;
+            if (filter && filter !== 'all') { records = records.filter(r => r.type === filter); }
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                records = records.filter(r => r.title.toLowerCase().includes(term) || r.provider.toLowerCase().includes(term) || r.type.toLowerCase().includes(term) || r.date.toLowerCase().includes(term));
+            }
 
             const recentList = document.getElementById('recentRecordsList');
             const allList = document.getElementById('allRecordsList');
-
             const renderRecord = (record) => `
                 <div class="record-card" onclick="openRecordDetail(${record.id})">
                     <div class="record-icon ${record.type}">
@@ -2102,12 +3135,26 @@
                     <i class="record-arrow fas fa-chevron-right"></i>
                 </div>
             `;
-
-            recentList.innerHTML = mockRecords.slice(0, 4).map(renderRecord).join('');
-            allList.innerHTML = mockRecords.map(renderRecord).join('');
+            if (recentList) recentList.innerHTML = mockRecords.slice(0, 4).map(renderRecord).join('');
+            if (allList) {
+                allList.innerHTML = records.length ? records.map(renderRecord).join('') :
+                    '<div style="text-align: center; padding: 40px 0; color: var(--text-muted);"><i class="fas fa-search" style="font-size: 2rem; opacity: 0.3; margin-bottom: 12px;"></i><p>No records found</p></div>';
+            }
         }
 
-        // Render activity
+        function filterRecords() {
+            const search = document.getElementById('recordSearchInput').value;
+            renderRecords(currentRecordFilter, search);
+        }
+
+        function setRecordFilter(filter, el) {
+            currentRecordFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            filterRecords();
+        }
+
+        // ===== ACTIVITY =====
         function renderActivity() {
             const feed = document.getElementById('activityFeed');
             feed.innerHTML = mockActivity.map(item => `
@@ -2121,10 +3168,39 @@
             `).join('');
         }
 
-        // Open record detail
+        // ===== NOTIFICATION SYSTEM =====
+        let notificationCount = 0;
+        let notificationInterval = null;
+
+        function startNotificationSystem() {
+            if (notificationInterval) clearInterval(notificationInterval);
+            notificationInterval = setInterval(() => {
+                if (currentScreen !== 'activity') {
+                    notificationCount++;
+                    const badge = document.getElementById('activityBadge');
+                    badge.textContent = notificationCount > 9 ? '9+' : notificationCount;
+                    badge.style.display = 'flex';
+
+                    // Add new activity item
+                    const newEvents = [
+                        { color: 'green', text: 'New record anchored to XRPL', time: 'Just now' },
+                        { color: 'purple', text: 'Provider verified a record', time: 'Just now' },
+                        { color: 'blue', text: 'Access request received', time: 'Just now' },
+                        { color: 'green', text: 'Record hash verified on-chain', time: 'Just now' }
+                    ];
+                    const evt = newEvents[Math.floor(Math.random() * newEvents.length)];
+                    mockActivity.unshift(evt);
+                    if (mockActivity.length > 20) mockActivity.pop();
+                    renderActivity();
+                }
+            }, 15000); // Every 15 seconds
+        }
+
+        // ===== RECORD DETAIL =====
         function openRecordDetail(id) {
             const record = mockRecords.find(r => r.id === id);
             if (record) {
+                const fakeHash = '0x7f8a9b2c3d4e5f6a' + record.id.toString(16).padStart(4, '0') + 'k1l2m3n4o5p6q7r8s';
                 document.getElementById('recordDetailTitle').textContent = record.title;
                 document.getElementById('recordDetailContent').innerHTML = `
                     <div style="text-align: center; margin-bottom: 24px;">
@@ -2135,24 +3211,24 @@
                     </div>
                     <div class="api-card">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: var(--text-muted);">Date</span>
-                            <span>${record.date}</span>
+                            <span style="color: var(--text-muted);">Date</span><span>${record.date}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: var(--text-muted);">Provider</span>
-                            <span>${record.provider}</span>
+                            <span style="color: var(--text-muted);">Provider</span><span>${record.provider}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: var(--text-muted);">Type</span>
-                            <span>${record.type.charAt(0).toUpperCase() + record.type.slice(1)}</span>
+                            <span style="color: var(--text-muted);">Type</span><span>${record.type.charAt(0).toUpperCase() + record.type.slice(1)}</span>
                         </div>
                         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
                             <span style="color: var(--text-muted); font-size: 0.85rem;">Blockchain Hash</span>
-                            <div class="api-key" style="margin-top: 8px; font-size: 0.75rem;">0x7f8a9b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s</div>
+                            <div class="api-key" style="margin-top: 8px; font-size: 0.75rem;" id="recordHash_${record.id}">${fakeHash}</div>
+                            <button class="copy-hash-btn" onclick="copyHash('recordHash_${record.id}', this)">
+                                <i class="fas fa-copy"></i> <span>Copy Hash</span>
+                            </button>
                         </div>
                     </div>
                     <div style="display: flex; gap: 12px; margin-top: 20px;">
-                        <button class="btn btn-secondary" style="flex: 1;" onclick="openModal('shareModal'); closeModal('recordDetailModal');">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="shareRecord(${record.id})">
                             <i class="fas fa-share"></i> Share
                         </button>
                         <button class="btn btn-primary" style="flex: 1;" onclick="showToast('Downloading record...', 'success')">
@@ -2164,67 +3240,479 @@
             }
         }
 
-        // Modal functions
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        // Close modal on overlay click
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                }
+        // ===== COPY HASH =====
+        function copyHash(elementId, btn) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.classList.add('copied');
+                btn.querySelector('span').textContent = 'Copied!';
+                btn.querySelector('i').className = 'fas fa-check';
+                showToast('Hash copied to clipboard', 'success');
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.querySelector('span').textContent = 'Copy Hash';
+                    btn.querySelector('i').className = 'fas fa-copy';
+                }, 2000);
+            }).catch(() => {
+                showToast('Copy failed — tap and hold to copy manually', 'error');
             });
+        }
+
+        // ===== WEB SHARE API =====
+        function shareRecord(id) {
+            const record = mockRecords.find(r => r.id === id);
+            if (!record) return;
+            const shareData = {
+                title: record.title + ' — Solus Protocol',
+                text: 'Verified medical record: ' + record.title + ' (' + record.date + ') — anchored on XRPL via Solus Protocol.',
+                url: 'https://solusprotocol.vercel.app/demo-app/'
+            };
+            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                navigator.share(shareData).catch(() => {});
+            } else {
+                // Fallback: open share modal
+                closeModal('recordDetailModal');
+                openModal('shareModal');
+            }
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function openModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+        function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
         });
 
-        // Toast
+        // ===== TOAST =====
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
             toastMessage.textContent = message;
+            toastIcon.className = 'toast-icon fas ' + (type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle');
             toast.className = 'toast ' + type;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Simulated actions
-        function simulateScan() {
-            closeModal('scanModal');
-            setTimeout(() => {
-                showToast('QR Code scanned - Access granted', 'success');
-            }, 500);
-        }
-
-        function simulateShare() {
-            closeModal('shareModal');
-            showToast('Record shared securely', 'success');
-        }
-
+        // ===== SIMULATED ACTIONS =====
+        function simulateScan() { closeModal('scanModal'); setTimeout(() => showToast('QR Code scanned - Access granted', 'success'), 500); }
+        function simulateShare() { closeModal('shareModal'); showToast('Record shared securely', 'success'); }
         function simulateAddRecord() {
             closeModal('addRecordModal');
             showToast('Record anchored to XRPL', 'success');
             document.getElementById('statRecords').textContent = '13';
             document.getElementById('statVerified').textContent = '13';
         }
+        function simulateVerify() { document.getElementById('verifyResult').style.display = 'block'; }
+        function simulateBulkAnchor() { closeModal('bulkAnchorModal'); showToast('Batch anchoring started - 2,847 records', 'success'); }
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) { if (e.key === 'Enter') login(); });
 
-        function simulateVerify() {
-            document.getElementById('verifyResult').style.display = 'block';
+        // ===== ACTION HELP TOGGLE =====
+        function toggleActionHelp(helpId) {
+            const tooltip = document.getElementById(helpId);
+            const isShown = tooltip.classList.contains('show');
+            document.querySelectorAll('.action-help-tooltip').forEach(t => t.classList.remove('show'));
+            if (!isShown) tooltip.classList.add('show');
         }
 
-        function simulateBulkAnchor() {
-            closeModal('bulkAnchorModal');
-            showToast('Batch anchoring started - 2,847 records', 'success');
+        // ===== DARK/LIGHT MODE =====
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const container = document.getElementById('appContainer');
+            const icon = document.getElementById('themeIcon');
+            const label = document.getElementById('themeLabel');
+            const toggle = document.getElementById('themeToggle');
+            const themeMeta = document.querySelector('meta[name="theme-color"]');
+
+            if (isDarkMode) {
+                container.classList.remove('light-mode');
+                icon.className = 'fas fa-moon';
+                label.textContent = 'Dark Mode';
+                toggle.classList.add('active');
+                if (themeMeta) themeMeta.content = '#0a0a0f';
+            } else {
+                container.classList.add('light-mode');
+                icon.className = 'fas fa-sun';
+                label.textContent = 'Light Mode';
+                toggle.classList.remove('active');
+                if (themeMeta) themeMeta.content = '#f0f2f5';
+            }
+            showToast(isDarkMode ? 'Dark mode enabled' : 'Light mode enabled', 'success');
         }
 
-        // Keyboard support for login
-        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') login();
+        // ===== TRADE FUNCTIONS =====
+        let tradeBalanceVal = 150.75;
+        const SLS_RATE = 0.05;
+        const tradeHistory = [
+            { type: 'Deposit', date: 'Feb 5, 2026', amount: 50.00, direction: '+' },
+            { type: 'Hash Anchoring Fee', date: 'Feb 4, 2026', amount: 0.01, direction: '-' },
+            { type: 'Verification Rebate', date: 'Feb 3, 2026', amount: 0.005, direction: '+' },
+            { type: 'Withdrawal to USD', date: 'Feb 1, 2026', amount: 20.00, direction: '-' }
+        ];
+
+        function updateTradeBalance() {
+            const balEl = document.getElementById('tradeBalance');
+            const usdEl = document.getElementById('tradeBalanceUSD');
+            if (balEl) {
+                balEl.textContent = tradeBalanceVal.toFixed(2) + ' $SLS';
+                usdEl.textContent = '≈ $' + (tradeBalanceVal * SLS_RATE).toFixed(2) + ' USD';
+            }
+        }
+
+        function updateConversion() {
+            const from = parseFloat(document.getElementById('convertFromAmount').value) || 0;
+            document.getElementById('convertToAmount').value = (from * SLS_RATE).toFixed(2);
+        }
+
+        function tradeDeposit() {
+            tradeBalanceVal += 50;
+            updateTradeBalance();
+            tradeHistory.unshift({ type: 'Deposit', date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), amount: 50, direction: '+' });
+            showToast('Deposited 50 $SLS (simulated)', 'success');
+        }
+
+        function tradeWithdraw() {
+            if (tradeBalanceVal < 10) { showToast('Insufficient balance for withdrawal', 'error'); return; }
+            tradeBalanceVal -= 10;
+            updateTradeBalance();
+            tradeHistory.unshift({ type: 'Withdrawal', date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), amount: 10, direction: '-' });
+            showToast('Withdrew 10 $SLS → $0.50 USD (simulated)', 'success');
+        }
+
+        function exportTradeCSV() {
+            const headers = ['Date', 'Type', 'Amount ($SLS)', 'USD Value', 'Direction'];
+            const rows = [headers.join(',')];
+            tradeHistory.forEach(tx => {
+                rows.push([
+                    '"' + tx.date + '"',
+                    '"' + tx.type + '"',
+                    tx.amount.toFixed(4),
+                    (tx.amount * SLS_RATE).toFixed(4),
+                    tx.direction === '+' ? 'Credit' : 'Debit'
+                ].join(','));
+            });
+            const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'solus_trade_history_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+            showToast('Transaction history exported', 'success');
+        }
+
+        // ===== METRICS API (Real Data from metrics_api.py) =====
+        const typeColors = {
+            'Vitals': '#14F195', 'Lab Results': '#9945FF', 'Imaging': '#00C2FF',
+            'Surgery': '#ff6b6b', 'Prescription': '#ffa502', 'Immunization': '#2ed573',
+            'Clinical Notes': '#70a1ff', 'Discharge': '#ff4757', 'Emergency': '#ff3f34',
+            'Mental Health': '#a29bfe', 'Referral': '#fd79a8', 'Care Plan': '#55efc4',
+            'Consent': '#ffeaa7', 'EHR Integration': '#dfe6e9', 'Telemedicine': '#74b9ff',
+            'Pediatric': '#fab1a0', 'Post-Op': '#e17055', 'Chronic Care': '#00cec9',
+            'Preventive': '#81ecec', 'Patient Message': '#6c5ce7', 'Other': '#636e72',
+            'Allergies': '#e84393', 'Administrative': '#b2bec3'
+        };
+
+        async function loadMetricsAPI() {
+            const loading = document.getElementById('metricsLoading');
+            const error = document.getElementById('metricsError');
+            const content = document.getElementById('metricsContent');
+            const statusText = document.getElementById('metricsStatusText');
+
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            content.style.display = 'none';
+            statusText.textContent = 'Loading...';
+
+            try {
+                const response = await fetch(METRICS_API_URL);
+                if (!response.ok) throw new Error('API returned ' + response.status);
+                metricsAPIData = await response.json();
+
+                // Populate stats
+                document.getElementById('metricTotalRecords').textContent = (metricsAPIData.total_hashes || 0).toLocaleString();
+                document.getElementById('metricRecordTypes').textContent = Object.keys(metricsAPIData.records_by_type || {}).length;
+                document.getElementById('metricTotalFees').textContent = (metricsAPIData.total_fees || 0).toFixed(2);
+
+                // Today's count
+                const today = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+                const hashesToday = metricsAPIData.hashes_by_day?.[today] || 0;
+                document.getElementById('metricToday').textContent = '+' + hashesToday;
+
+                // XRPL Network details
+                document.getElementById('metricFeesSummary').textContent = (metricsAPIData.total_fees || 0).toFixed(2) + ' $SLS';
+                document.getElementById('metricLastHash').textContent = metricsAPIData.last_hash || '—';
+
+                // Record Type Distribution (sorted by count descending)
+                renderMetricsTypes(metricsAPIData.records_by_type || {});
+
+                // Live Activity Feed (from real individual_records)
+                renderMetricsLiveFeed(metricsAPIData.individual_records || []);
+
+                loading.style.display = 'none';
+                content.style.display = 'block';
+                statusText.textContent = 'Live';
+
+                // Auto-refresh every 60 seconds
+                if (metricsRefreshInterval) clearInterval(metricsRefreshInterval);
+                metricsRefreshInterval = setInterval(loadMetricsAPI, 60000);
+
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                document.getElementById('metricsErrorText').textContent = 'Failed to load metrics: ' + err.message;
+                statusText.textContent = 'Offline';
+                console.error('Metrics API error:', err);
+            }
+        }
+
+        function renderMetricsTypes(recordsByType) {
+            const list = document.getElementById('metricsTypeList');
+            const total = Object.values(recordsByType).reduce((a, b) => a + b, 0);
+            const sorted = Object.entries(recordsByType).sort((a, b) => b[1] - a[1]);
+
+            list.innerHTML = sorted.map(([type, count]) => {
+                const pct = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
+                const color = typeColors[type] || '#636e72';
+                return `
+                    <div class="metrics-type-item">
+                        <div class="metrics-type-label">
+                            <span class="metrics-type-dot" style="background: ${color};"></span>
+                            <span>${type}</span>
+                        </div>
+                        <div class="metrics-type-bar-container">
+                            <div class="metrics-type-bar" style="width: ${pct}%; background: ${color};"></div>
+                        </div>
+                        <span class="metrics-type-pct">${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderMetricsLiveFeed(records) {
+            const feed = document.getElementById('metricsLiveFeed');
+            // Show the most recent records
+            const recent = records.slice(-15).reverse();
+
+            feed.innerHTML = recent.map((r, i) => {
+                const color = typeColors[r.record_type] || '#636e72';
+                const icon = getRecordTypeIcon(r.record_type);
+                return `
+                    <div class="metrics-live-item" style="animation-delay: ${i * 0.05}s;">
+                        <div class="metrics-live-dot" style="background: ${color};"></div>
+                        <i class="fas fa-${icon}" style="color: ${color}; font-size: 0.9rem;"></i>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${r.record_type} anchored</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">${r.hash || '—'}</div>
+                        </div>
+                        <span class="metrics-live-time">${r.timestamp_display || '—'}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getRecordTypeIcon(type) {
+            const icons = {
+                'Vitals': 'heartbeat', 'Lab Results': 'vial', 'Imaging': 'x-ray',
+                'Surgery': 'user-md', 'Prescription': 'pills', 'Immunization': 'syringe',
+                'Clinical Notes': 'file-medical', 'Discharge': 'door-open', 'Emergency': 'ambulance',
+                'Mental Health': 'brain', 'Referral': 'share', 'Care Plan': 'clipboard-list',
+                'Consent': 'file-signature', 'EHR Integration': 'hospital', 'Telemedicine': 'video',
+                'Pediatric': 'baby', 'Post-Op': 'band-aid', 'Chronic Care': 'stethoscope',
+                'Preventive': 'shield-halved', 'Patient Message': 'comment-medical',
+                'Allergies': 'allergies', 'Administrative': 'file-invoice', 'Other': 'file'
+            };
+            return icons[type] || 'file';
+        }
+
+        // ===== CONTACT FORM =====
+        function sendAppContact() {
+            const name = document.getElementById('appContactName').value;
+            const email = document.getElementById('appContactEmail').value;
+            const subject = document.getElementById('appContactSubject').value;
+            const message = document.getElementById('appContactMessage').value;
+            if (!name || !email || !message) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            const body = 'Name: ' + name + '%0D%0AEmail: ' + email + '%0D%0A%0D%0A' + encodeURIComponent(message);
+            window.location.href = 'mailto:support@solusprotocol.com?subject=' + encodeURIComponent((subject || 'General') + ' - Solus App') + '&body=' + body;
+            showToast('Opening email client...', 'success');
+        }
+
+        // ===== PARTICLES.JS INIT =====
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('app-particles', {
+                    particles: {
+                        number: { value: 30, density: { enable: true, value_area: 800 } },
+                        color: { value: ['#14F195', '#9945FF', '#ffffff'] },
+                        shape: { type: 'circle' },
+                        opacity: { value: 0.2, random: true, anim: { enable: true, speed: 0.5, opacity_min: 0.05, sync: false } },
+                        size: { value: 2.5, random: true },
+                        line_linked: { enable: true, distance: 120, color: '#14F195', opacity: 0.08, width: 1 },
+                        move: { enable: true, speed: 0.8, direction: 'none', random: true, straight: false, out_mode: 'out' }
+                    },
+                    interactivity: {
+                        detect_on: 'canvas',
+                        events: { onhover: { enable: false }, onclick: { enable: false }, resize: true }
+                    },
+                    retina_detect: true
+                });
+            }
+
+            // ===== SPLASH SCREEN =====
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if (splash) {
+                    splash.classList.add('fade-out');
+                    setTimeout(() => splash.remove(), 500);
+                }
+            }, 1500);
         });
+
+        // ===== ANIMATED STAT COUNTERS =====
+        function animateCounter(element, target, duration) {
+            if (!element) return;
+            const isString = typeof target === 'string';
+            const numericTarget = isString ? parseFloat(target.replace(/[^0-9.]/g, '')) : target;
+            const suffix = isString ? target.replace(/[0-9.]/g, '') : '';
+            const start = 0;
+            const startTime = performance.now();
+
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(start + (numericTarget - start) * eased);
+
+                if (suffix === 'M') {
+                    element.textContent = (current / 10).toFixed(1) + suffix;
+                } else {
+                    element.textContent = current + suffix;
+                }
+
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function animateHomeStats() {
+            if (currentRole === 'patient') {
+                animateCounter(document.getElementById('statRecords'), 12, 800);
+                animateCounter(document.getElementById('statShared'), 3, 600);
+                animateCounter(document.getElementById('statVerified'), 12, 800);
+            }
+        }
+
+        // ===== OFFLINE DETECTION =====
+        let wasOffline = false;
+        function updateOnlineStatus() {
+            const banner = document.getElementById('offlineBanner');
+            const icon = document.getElementById('offlineIcon');
+            const text = document.getElementById('offlineText');
+
+            if (!navigator.onLine) {
+                icon.className = 'fas fa-wifi';
+                text.textContent = "You're offline";
+                banner.className = 'offline-banner show';
+                wasOffline = true;
+            } else if (wasOffline) {
+                icon.className = 'fas fa-wifi';
+                text.textContent = 'Back online';
+                banner.className = 'offline-banner show online';
+                setTimeout(() => { banner.classList.remove('show'); wasOffline = false; }, 2500);
+            }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // ===== SESSION TIMEOUT =====
+        let sessionTimer = null;
+        let countdownTimer = null;
+        let countdownVal = 30;
+        const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+        function resetSessionTimer() {
+            if (currentScreen === 'login') return;
+            clearTimeout(sessionTimer);
+            clearInterval(countdownTimer);
+            document.getElementById('timeoutOverlay').classList.remove('active');
+            sessionTimer = setTimeout(showTimeoutWarning, SESSION_TIMEOUT);
+        }
+
+        function showTimeoutWarning() {
+            if (currentScreen === 'login') return;
+            countdownVal = 30;
+            document.getElementById('timeoutCountdown').textContent = countdownVal;
+            document.getElementById('timeoutOverlay').classList.add('active');
+            countdownTimer = setInterval(() => {
+                countdownVal--;
+                document.getElementById('timeoutCountdown').textContent = countdownVal;
+                if (countdownVal <= 0) {
+                    clearInterval(countdownTimer);
+                    sessionLogout();
+                }
+            }, 1000);
+        }
+
+        function extendSession() {
+            clearInterval(countdownTimer);
+            document.getElementById('timeoutOverlay').classList.remove('active');
+            resetSessionTimer();
+            showToast('Session extended', 'success');
+        }
+
+        function sessionLogout() {
+            clearTimeout(sessionTimer);
+            clearInterval(countdownTimer);
+            document.getElementById('timeoutOverlay').classList.remove('active');
+            logout();
+        }
+
+        // Listen for user activity to reset timer
+        ['click', 'touchstart', 'keypress', 'scroll'].forEach(evt => {
+            document.addEventListener(evt, () => {
+                if (currentScreen !== 'login') resetSessionTimer();
+            }, { passive: true });
+        });
+
+        // ===== SMOOTH PAGE TRANSITIONS =====
+        const screenOrder = ['home', 'records', 'trade', 'activity', 'more'];
+        let previousScreenIndex = 0;
+
+        const originalNavigateTo = navigateTo;
+        navigateTo = function(screen, el) {
+            const newIndex = screenOrder.indexOf(screen);
+            const direction = newIndex > previousScreenIndex ? 'slide-right' : 'slide-left';
+            previousScreenIndex = newIndex;
+
+            // Call original navigation
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            const screenMap = {
+                'home': 'homeScreen',
+                'records': 'recordsScreen',
+                'trade': 'tradeScreen',
+                'activity': 'activityScreen',
+                'more': 'moreScreen'
+            };
+
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active', 'slide-right', 'slide-left');
+            });
+            const targetScreen = document.getElementById(screenMap[screen]);
+            targetScreen.classList.add('active', direction);
+            currentScreen = screen;
+
+            if (screen === 'activity') {
+                document.getElementById('activityBadge').style.display = 'none';
+                notificationCount = 0;
+            }
+            if (screen === 'trade') { updateTradeBalance(); }
+            if (screen === 'home') { animateHomeStats(); }
+        };
     </script>
 </body>
 </html>

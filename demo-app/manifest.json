@@ -1,0 +1,25 @@
+{
+  "name": "Solus Protocol",
+  "short_name": "Solus",
+  "description": "Decentralized Healthcare Data Wallet on XRPL",
+  "start_url": "/demo-app/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "orientation": "portrait",
+  "categories": ["health", "medical", "finance"],
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
