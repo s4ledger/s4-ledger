@@ -65,13 +65,14 @@ def real_fiat_to_sls_conversion(client, wallet, usd_amount, sls_issuer, gateway_
     Returns response from XRPL transaction.
     """
     from xrpl.models.transactions import Payment
+    from xrpl.transaction import submit_and_wait
     payment_tx = Payment(
         account=wallet.classic_address,
         amount={"currency": "SLS", "value": str(usd_amount), "issuer": sls_issuer},
         destination=destination,
         send_max={"currency": "USD", "value": str(usd_amount), "issuer": gateway_issuer}
     )
-    response = client.submit_and_wait(payment_tx, wallet)
+    response = submit_and_wait(payment_tx, client, wallet)
     return response.result
 
 class SolusSDK:
@@ -209,7 +210,7 @@ class SolusSDK:
 
         return {"fee_tx": fee_response.result, "rebate": rebate_response}
 
-    def secure_patient_record(self, record_text, wallet_seed=None, encrypt_first=False, fiat_mode=False):
+    def secure_patient_record(self, record_text, wallet_seed=None, encrypt_first=False, fiat_mode=False, gateway_issuer=None):
         """Full workflow: Validate sub, encrypt (optional), hash, store on XRPL with $SLS fee (fiat optional)."""
         # Allow SDK-level wallet_seed to be set at initialization
         wallet_seed = wallet_seed or self.wallet_seed
@@ -223,7 +224,7 @@ class SolusSDK:
         if encrypt_first:
             record_text = self.encrypt_data(record_text)
         hash_val = self.create_record_hash(record_text)
-        tx_results = self.store_hash_with_sls_fee(hash_val, wallet_seed, fiat_mode=fiat_mode)
+        tx_results = self.store_hash_with_sls_fee(hash_val, wallet_seed, fiat_mode=fiat_mode, gateway_issuer=gateway_issuer)
         return {"hash": hash_val, "tx_results": tx_results}
 
     def wallet_from_seed(self, seed):
