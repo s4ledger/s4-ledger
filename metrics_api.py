@@ -5,6 +5,18 @@ import datetime
 from flask import Flask, jsonify
 
 app = Flask(__name__)
+@app.route('/')
+def home():
+        return '''
+        <html>
+            <head><title>Solus Protocol Metrics API</title></head>
+            <body>
+                <h1>Solus Protocol Metrics API</h1>
+                <p>This is the backend API for real-time metrics.</p>
+                <p>To view metrics data, visit <a href="/metrics">/metrics</a>.</p>
+            </body>
+        </html>
+        '''
 XRPL_ACCOUNT = "r95GyZac4butvVcsTWUPpxzekmyzaHsTA5"  # Replace with your issuer/account
 
 @app.route('/metrics')
