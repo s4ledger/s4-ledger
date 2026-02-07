@@ -9,7 +9,7 @@
     <meta name="description" content="Solus Protocol - Decentralized Healthcare Data Wallet on XRPL">
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://solusprotocol.vercel.app/demo-app/">
+    <meta property="og:url" content="https://solusprotocol.com/demo-app/">
     <meta property="og:title" content="Solus Protocol | Healthcare Data Wallet">
     <meta property="og:description" content="Decentralized healthcare data wallet powered by XRPL. Anchor, verify, and share medical records with zero-knowledge privacy.">
     <meta property="og:image" content="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
@@ -5459,7 +5459,7 @@
             const shareData = {
                 title: record.title + ' — Solus Protocol',
                 text: 'Verified medical record: ' + record.title + ' (' + record.date + ') — anchored on XRPL via Solus Protocol.',
-                url: 'https://solusprotocol.vercel.app/demo-app/'
+                url: 'https://solusprotocol.com/demo-app/'
             };
             if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
                 navigator.share(shareData).catch(() => {});
