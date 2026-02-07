@@ -3,9 +3,11 @@ import xrpl.clients
 import xrpl.models.requests
 import datetime
 from flask import Flask, jsonify
+from flask_cors import CORS
 from solus_sdk import SolusSDK
 
 app = Flask(__name__)
+CORS(app)
 @app.route('/')
 def home():
         return '''
