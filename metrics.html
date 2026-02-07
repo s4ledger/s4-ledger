@@ -18,33 +18,66 @@
         .stat-box { background: rgba(20,241,149,0.1); border: 1px solid rgba(20,241,149,0.3); border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 20px; }
         .stat-value { font-size: 2.5rem; font-weight: bold; color: #14f195; }
         .stat-label { font-size: 0.9rem; color: #aaa; }
-        .recent-table { width: 100%; margin-top: 20px; }
-        .recent-table th { color: #14f195; padding: 10px; border-bottom: 1px solid rgba(20,241,149,0.3); text-align: left; }
-        .recent-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .stat-delta { font-size: 0.85rem; color: #4CAF50; margin-top: 5px; }
+        .stat-delta.positive::before { content: '+'; }
+        .live-indicator { display: inline-flex; align-items: center; gap: 8px; background: rgba(20,241,149,0.15); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: #14f195; }
+        .live-dot { width: 8px; height: 8px; background: #14f195; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .filter-select { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(20,241,149,0.3); border-radius: 6px; padding: 8px 12px; margin-left: 10px; }
+        .filter-select option { background: #111; color: #fff; }
+        .export-btn { background: rgba(153,69,255,0.2); color: #9945ff; border: 1px solid #9945ff; border-radius: 6px; padding: 8px 16px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+        .export-btn:hover { background: rgba(153,69,255,0.4); }
+        .source-footer { text-align: center; padding: 30px 20px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-size: 0.85rem; }
+        .recent-table { width: 100%; margin-top: 20px; overflow-x: auto; display: block; }
+        .recent-table th { color: #14f195; padding: 10px; border-bottom: 1px solid rgba(20,241,149,0.3); text-align: left; white-space: nowrap; }
+        .recent-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
         .badge-type { background: #9945ff; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; }
         .refresh-info { color: #666; font-size: 0.8rem; margin-top: 10px; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.5rem !important; }
+            .stat-value { font-size: 1.8rem; }
+            .container { padding: 0 10px; }
+            .d-flex.justify-content-between { flex-direction: column; align-items: flex-start !important; }
+            .filter-btn { padding: 5px 8px; font-size: 0.75rem; }
+            .card { padding: 20px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="mb-4">Solus Protocol Metrics & Network Activity</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h1 class="mb-0">Solus Protocol Metrics & Network Activity</h1>
+            <div class="d-flex align-items-center gap-3">
+                <span class="live-indicator"><span class="live-dot"></span> Live updating every 30s</span>
+                <button class="export-btn" onclick="exportCSV()">📥 Export CSV</button>
+            </div>
+        </div>
         <div class="row mb-4">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="stat-box">
                     <div class="stat-value" id="totalHashes">-</div>
                     <div class="stat-label">Total Hashes Anchored</div>
+                    <div class="stat-delta positive" id="hashesToday">+0 today</div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="stat-box">
                     <div class="stat-value" id="totalFees">-</div>
                     <div class="stat-label">Total $SLS Fees</div>
+                    <div class="stat-delta positive" id="feesToday">+$0 today</div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="stat-box">
                     <div class="stat-value" id="recordTypes">-</div>
                     <div class="stat-label">Record Types</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box">
+                    <div class="stat-value" id="thisMonth">-</div>
+                    <div class="stat-label">Records This Month</div>
+                    <div class="stat-delta positive" id="monthGrowth"></div>
                 </div>
             </div>
         </div>
@@ -62,7 +95,11 @@
         </div>
         <div class="card">
             <h2>Records Secured Breakdown</h2>
-            <p style="color:#888;">Distribution of record types anchored to XRPL</p>
+            <p style="color:#888;">Distribution of record types anchored to XRPL
+                <select class="filter-select" id="recordTypeFilter" onchange="filterByRecordType()">
+                    <option value="all">All Record Types</option>
+                </select>
+            </p>
             <canvas id="recordChart" height="100"></canvas>
         </div>
         <div class="card">
@@ -102,11 +139,16 @@
             <a href="transactions.html" class="nav-link">View Full XRPL Transactions</a><br><br>
             <a href="index.html" class="nav-link">Back to Solus Protocol Home</a>
         </div>
+        <div class="source-footer">
+            <p>📡 Data sourced from XRPL public ledger via account <a href="https://testnet.xrpl.org/accounts/rJPqcx8wUBM58ajPUoz1dReKkTT6hqrqJA" target="_blank" style="color:#14f195;font-family:monospace;">rJPqcx8w...qJA</a></p>
+            <p style="margin-top:5px;">All metrics are real-time and verifiable on-chain. <a href="https://xrpl.org" target="_blank" style="color:#9945ff;">Learn about XRPL</a></p>
+        </div>
     </div>
     <script>
         let metricsData = null;
         let hashChart, recordChart, feeChart, txChart;
         let currentHashView = 'minute', currentFeeView = 'minute', currentTxView = 'minute';
+        let selectedRecordType = 'all';
 
         async function loadMetrics() {
             try {
@@ -115,6 +157,31 @@
                 document.getElementById('totalHashes').textContent = metricsData.total_hashes || 0;
                 document.getElementById('totalFees').textContent = (metricsData.total_fees || 0).toFixed(2);
                 document.getElementById('recordTypes').textContent = Object.keys(metricsData.records_by_type || {}).length;
+                
+                // Calculate today's stats
+                const today = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+                const hashesToday = metricsData.hashes_by_day?.[today] || 0;
+                const feesToday = metricsData.fees_by_day?.[today] || 0;
+                document.getElementById('hashesToday').textContent = '+' + hashesToday + ' today';
+                document.getElementById('feesToday').textContent = '+$' + feesToday.toFixed(2) + ' today';
+                
+                // Calculate this month's stats
+                const monthYear = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                const thisMonth = metricsData.hashes_by_month?.[monthYear] || 0;
+                document.getElementById('thisMonth').textContent = thisMonth;
+                
+                // Populate record type filter
+                const filterSelect = document.getElementById('recordTypeFilter');
+                const types = Object.keys(metricsData.records_by_type || {});
+                if (filterSelect.options.length <= 1) {
+                    types.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type;
+                        option.textContent = type;
+                        filterSelect.appendChild(option);
+                    });
+                }
+                
                 renderHashChart(currentHashView);
                 renderRecordChart();
                 renderFeeChart(currentFeeView);
@@ -123,6 +190,36 @@
             } catch (err) {
                 console.error('Failed to load metrics:', err);
             }
+        }
+
+        function filterByRecordType() {
+            selectedRecordType = document.getElementById('recordTypeFilter').value;
+            renderRecentTable();
+        }
+
+        function exportCSV() {
+            if (!metricsData || !metricsData.individual_records) {
+                alert('No data available to export');
+                return;
+            }
+            const records = metricsData.individual_records;
+            const headers = ['Timestamp', 'Record Type', 'Hash', 'Fee ($SLS)', 'TX Hash'];
+            const csvRows = [headers.join(',')];
+            records.forEach(r => {
+                csvRows.push([
+                    '"' + r.timestamp_display + '"',
+                    '"' + r.record_type + '"',
+                    '"' + r.hash + '"',
+                    r.fee,
+                    '"' + (r.tx_hash || '') + '"'
+                ].join(','));
+            });
+            const csvContent = csvRows.join('\\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'solus_protocol_metrics_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
         }
 
         function getDataForView(baseKey, view) {
@@ -183,10 +280,15 @@
         }
 
         function renderRecentTable() {
-            const records = metricsData.individual_records || [];
+            let records = metricsData.individual_records || [];
             const tbody = document.getElementById('recentBody');
             if (records.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No records found</td></tr>'; return; }
+            // Apply record type filter
+            if (selectedRecordType !== 'all') {
+                records = records.filter(r => r.record_type === selectedRecordType);
+            }
             const recentRecords = [...records].reverse().slice(0, 20);
+            if (recentRecords.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No records for selected type</td></tr>'; return; }
             tbody.innerHTML = recentRecords.map(r => '<tr><td style="color:#14f195;">' + r.timestamp_display + '</td><td><span class="badge-type">' + r.record_type + '</span></td><td style="font-family:monospace;font-size:0.85rem;color:#888;">' + r.hash + '</td><td style="color:#9945ff;">$' + r.fee.toFixed(2) + '</td></tr>').join('');
         }
 

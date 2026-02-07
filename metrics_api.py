@@ -169,9 +169,22 @@ def categorize_record(memo_data):
 def get_metrics():
     try:
         client = xrpl.clients.JsonRpcClient(XRPL_TESTNET_URL)
-        req = xrpl.models.requests.AccountTx(account=XRPL_TESTNET_ACCOUNT, limit=200)
-        response = client.request(req)
-        txs = response.result.get("transactions", [])
+        txs = []
+        marker = None
+        # Paginate through all transactions (XRPL uses marker-based pagination)
+        while True:
+            if marker:
+                req = xrpl.models.requests.AccountTx(account=XRPL_TESTNET_ACCOUNT, limit=400, marker=marker)
+            else:
+                req = xrpl.models.requests.AccountTx(account=XRPL_TESTNET_ACCOUNT, limit=400)
+            response = client.request(req)
+            txs.extend(response.result.get("transactions", []))
+            marker = response.result.get("marker")
+            if not marker:
+                break
+            # Safety limit to prevent infinite loops (max 10,000 transactions)
+            if len(txs) >= 10000:
+                break
     except Exception as e:
         return jsonify({"error": f"Failed to fetch XRPL data: {e}"})
 

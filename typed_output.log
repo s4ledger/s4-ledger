@@ -1,0 +1,104 @@
+======================================================================
+SOLUS PROTOCOL - COMPREHENSIVE RECORD TYPE DEMO
+======================================================================
+Total scenarios: 20
+Demonstrates: Providers, Patients, Epic, Oracle Health, Meditech
+Record Types: Surgery, Vitals, Labs, Allergies, Imaging, Immunizations,
+              Patient Messages, EHR, Care Plans, Referrals, Discharge,
+              Mental Health, Emergency, Prescriptions, Preventive, Consent
+Delay: 5 seconds between each anchor
+======================================================================
+
+[1/20] Surgery Record (SURGERY)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[2/20] Vitals Check (VITALS)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[3/20] Lab Results (LAB)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[4/20] Drug Allergy (ALLERGY)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 1
+  ⏳ Waiting 5 seconds...
+
+[5/20] MRI Study (IMAGING)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[6/20] Immunization (IMMUNIZATION)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[7/20] Patient Message 1 (PATIENT_MESSAGE)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[8/20] Patient Question (PATIENT_MESSAGE)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[9/20] Patient Follow-up (MESSAGE)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[10/20] Epic Integration (EPIC)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 1
+  ⏳ Waiting 5 seconds...
+
+[11/20] Oracle Health (ORACLE_HEALTH)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[12/20] Meditech Sync (MEDITECH)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[13/20] Care Plan (CARE_PLAN)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 2
+  ⏳ Waiting 5 seconds...
+
+[14/20] Referral (REFERRAL)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[15/20] Discharge (DISCHARGE)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 1
+  ⏳ Waiting 5 seconds...
+
+[16/20] Mental Health (MENTAL_HEALTH)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[17/20] Emergency Visit (EMERGENCY)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 1
+  ⏳ Waiting 5 seconds...
+
+[18/20] Prescription (PRESCRIPTION)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[19/20] Annual Physical (PREVENTIVE)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 0
+  ⏳ Waiting 5 seconds...
+
+[20/20] Consent Form (CONSENT)
+  ❌ ERROR: Failed to submit fee payment: non-hexadecimal number found in fromhex() arg at position 1
+
+======================================================================
+COMPLETE! 0/20 records anchored successfully
+======================================================================
+
+📊 View metrics: https://solusprotocol.com/metrics.html
+🔗 View transactions: https://solusprotocol.com/transactions.html
+
+Record types demonstrated:
+  ✓ Provider records (Surgery, Labs, Imaging, Vitals, Allergies)
+  ✓ Patient secure messages to providers (via Patient Portal)
+  ✓ EHR integrations (Epic, Oracle Health, Meditech)
+  ✓ Care coordination (Care Plans, Referrals, Discharge)
+  ✓ Specialty care (Mental Health, Emergency, Prescriptions)
+  ✓ Preventive care and Consent documentation
