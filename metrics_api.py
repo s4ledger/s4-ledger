@@ -23,8 +23,8 @@ def categorize_record(memo_data):
     """
     # Check for explicit record_type prefix (new SDK format: RECORD_TYPE:hash)
     if ':' in memo_data and len(memo_data.split(':')[0]) < 30:
-        explicit_type = memo_data.split(':')[0].upper().replace('_', ' ')
-        # Map explicit types to display names
+        explicit_type = memo_data.split(':')[0].upper()
+        # Map explicit types to display names (keep underscores for matching)
         type_map = {
             'SURGERY': 'Surgery',
             'VITALS': 'Vitals',
@@ -40,6 +40,7 @@ def categorize_record(memo_data):
             'PATIENT_MESSAGE': 'Patient Message',
             'MESSAGE': 'Patient Message',
             'CLINICAL_NOTE': 'Clinical Notes',
+            'CLINICAL NOTES': 'Clinical Notes',
             'NOTES': 'Clinical Notes',
             'DISCHARGE': 'Discharge',
             'EMERGENCY': 'Emergency',
