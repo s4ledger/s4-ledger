@@ -84,7 +84,7 @@ class SolusSDK:
         """Decrypt data using the SDK's encryption key."""
         return self.decrypt_data(encrypted_data)
 
-    def __init__(self, xrpl_rpc_url=None, sls_issuer="r95GyZac4butvVcsTWUPpxzekmyzaHsTA5", encryption_key=None, api_key=None, wallet_seed=None, testnet=False):
+    def __init__(self, xrpl_rpc_url=None, sls_issuer="r95GyZac4butvVcsTWUPpxzekmyzaHsTA5", encryption_key=None, api_key=None, wallet_seed=None, testnet=False, treasury_account="rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ"):
         """
         Initialize the SDK.
         - xrpl_rpc_url: XRPL testnet/mainnet URL.
@@ -97,6 +97,7 @@ class SolusSDK:
             xrpl_rpc_url = "https://s.altnet.rippletest.net:51234/" if testnet else "https://s1.ripple.com:51234/"
         self.client = JsonRpcClient(xrpl_rpc_url)
         self.sls_issuer = sls_issuer
+        self.treasury_account = treasury_account
         self.api_key = api_key  # For subscription validation
         self.wallet_seed = wallet_seed
         if Fernet is None:
@@ -169,7 +170,7 @@ class SolusSDK:
 
         wallet = self.wallet_from_seed(wallet_seed)
         if destination is None:
-            destination = self.sls_issuer
+            destination = self.treasury_account
 
         # Pay $SLS fee with hash memo
         amount_sls = IssuedCurrencyAmount(currency="SLS", issuer=self.sls_issuer, value=fee_sls)
