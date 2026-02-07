@@ -128,12 +128,14 @@
         </div>
         <div class="card">
             <h2>Recent Anchored Records</h2>
-            <p style="color:#888;">Individual records with exact timestamps</p>
-            <table class="recent-table">
-                <thead><tr><th>Timestamp</th><th>Record Type</th><th>Hash (truncated)</th><th>Fee</th></tr></thead>
-                <tbody id="recentBody"><tr><td colspan="4" style="text-align:center;color:#666;">Loading...</td></tr></tbody>
-            </table>
-            <p class="refresh-info">Auto-refreshes every 30 seconds</p>
+            <p style="color:#888;">Individual records with exact timestamps (scroll to view more)</p>
+            <div style="max-height: 400px; overflow-y: auto; border: 1px solid rgba(20,241,149,0.2); border-radius: 8px;">
+                <table class="recent-table" style="display: table; width: 100%;">
+                    <thead style="position: sticky; top: 0; background: #0a0b0d; z-index: 1;"><tr><th>Timestamp</th><th>Record Type</th><th>Hash (truncated)</th><th>Fee</th></tr></thead>
+                    <tbody id="recentBody"><tr><td colspan="4" style="text-align:center;color:#666;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+            <p class="refresh-info">Auto-refreshes every 30 seconds | Showing last 30 minutes of activity</p>
         </div>
         <div class="text-center mt-5">
             <a href="transactions.html" class="nav-link">View Full XRPL Transactions</a><br><br>
@@ -194,6 +196,7 @@
 
         function filterByRecordType() {
             selectedRecordType = document.getElementById('recordTypeFilter').value;
+            renderRecordChart();
             renderRecentTable();
         }
 
@@ -240,10 +243,15 @@
         }
 
         function renderRecordChart() {
-            const data = metricsData.records_by_type || {};
+            let data = metricsData.records_by_type || {};
+            // Apply filter if a specific type is selected
+            if (selectedRecordType !== 'all') {
+                const filteredValue = data[selectedRecordType] || 0;
+                data = { [selectedRecordType]: filteredValue };
+            }
             const labels = Object.keys(data);
             const values = Object.values(data);
-            const colors = ['#14f195', '#9945ff', '#ff4757', '#ffa502', '#3742fa', '#2ed573', '#ff6b81', '#70a1ff', '#eccc68', '#a29bfe', '#fd79a8', '#00cec9'];
+            const colors = ['#14f195', '#9945ff', '#ff4757', '#ffa502', '#3742fa', '#2ed573', '#ff6b81', '#70a1ff', '#eccc68', '#a29bfe', '#fd79a8', '#00cec9', '#55efc4', '#74b9ff', '#fab1a0', '#dfe6e9', '#ffeaa7', '#81ecec'];
             const ctx = document.getElementById('recordChart').getContext('2d');
             if (recordChart) recordChart.destroy();
             recordChart = new Chart(ctx, {
@@ -287,7 +295,7 @@
             if (selectedRecordType !== 'all') {
                 records = records.filter(r => r.record_type === selectedRecordType);
             }
-            const recentRecords = [...records].reverse().slice(0, 20);
+            const recentRecords = [...records].reverse().slice(0, 50);
             if (recentRecords.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No records for selected type</td></tr>'; return; }
             tbody.innerHTML = recentRecords.map(r => '<tr><td style="color:#14f195;">' + r.timestamp_display + '</td><td><span class="badge-type">' + r.record_type + '</span></td><td style="font-family:monospace;font-size:0.85rem;color:#888;">' + r.hash + '</td><td style="color:#9945ff;">$' + r.fee.toFixed(2) + '</td></tr>').join('');
         }

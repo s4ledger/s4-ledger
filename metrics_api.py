@@ -284,9 +284,21 @@ def get_metrics():
 def get_transactions():
     try:
         client = xrpl.clients.JsonRpcClient(XRPL_TESTNET_URL)
-        req = xrpl.models.requests.AccountTx(account=XRPL_TESTNET_ACCOUNT, limit=50)
-        response = client.request(req)
-        txs = response.result.get("transactions", [])
+        txs = []
+        marker = None
+        # Paginate through all transactions (same as /metrics)
+        while True:
+            if marker:
+                req = xrpl.models.requests.AccountTx(account=XRPL_TESTNET_ACCOUNT, limit=400, marker=marker)
+            else:
+                req = xrpl.models.requests.AccountTx(account=XRPL_TESTNET_ACCOUNT, limit=400)
+            response = client.request(req)
+            txs.extend(response.result.get("transactions", []))
+            marker = response.result.get("marker")
+            if not marker:
+                break
+            if len(txs) >= 10000:
+                break
     except Exception as e:
         return jsonify({"error": f"Failed to fetch XRPL data: {e}"})
 

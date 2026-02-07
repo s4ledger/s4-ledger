@@ -426,9 +426,9 @@
                             <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px; padding: 15px;">
                                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                                     <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">S</div>
-                                    <div><div style="font-weight: 600;">Solus Protocol</div><div style="font-size: 0.8rem; color: #888;">@Solus_Protocol</div></div>
+                                    <div><div style="font-weight: 600; color: #fff;">Solus Protocol</div><div style="font-size: 0.8rem; color: #aaa;">@Solus_Protocol</div></div>
                                 </div>
-                                <p style="font-size: 0.95rem; margin-bottom: 10px;">🚀 Building the future of healthcare data integrity on @Ripple's XRPL. Real-time hash anchoring for medical records. #HealthTech #Blockchain</p>
+                                <p style="font-size: 0.95rem; margin-bottom: 10px; color: #e0e0e0;">🚀 Building the future of healthcare data integrity on @Ripple's XRPL. Real-time hash anchoring for medical records. #HealthTech #Blockchain</p>
                                 <a href="https://x.com/Solus_Protocol" target="_blank" style="color: var(--accent); font-size: 0.85rem;">View on X →</a>
                             </div>
                         </div>
@@ -436,9 +436,9 @@
                             <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px; padding: 15px;">
                                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                                     <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">S</div>
-                                    <div><div style="font-weight: 600;">Solus Protocol</div><div style="font-size: 0.8rem; color: #888;">@Solus_Protocol</div></div>
+                                    <div><div style="font-weight: 600; color: #fff;">Solus Protocol</div><div style="font-size: 0.8rem; color: #aaa;">@Solus_Protocol</div></div>
                                 </div>
-                                <p style="font-size: 0.95rem; margin-bottom: 10px;">📊 SC Healthcare pilot discussions underway. Real-world validation of our SHA-256 hash anchoring for patient records. $SLS #XRPL</p>
+                                <p style="font-size: 0.95rem; margin-bottom: 10px; color: #e0e0e0;">📊 SC Healthcare pilot discussions underway. Real-world validation of our SHA-256 hash anchoring for patient records. $SLS #XRPL</p>
                                 <a href="https://x.com/Solus_Protocol" target="_blank" style="color: var(--accent); font-size: 0.85rem;">View on X →</a>
                             </div>
                         </div>
@@ -731,35 +731,43 @@
                 <h3>Prototype Code Example</h3>
                 <pre><code>from solus_sdk import SolusSDK
 
-sdk = SolusSDK(api_key="your-sub-key")
+# Initialize SDK with testnet
+sdk = SolusSDK(api_key="your-api-key", testnet=True)
+
+# Secure a patient record with explicit type
 result = sdk.secure_patient_record(
-    "Patient ID: TEST-987654\nName: John Doe\n...", 
-    wallet_seed="sTestSeed", 
-    encrypt_first=True, 
-    fiat_mode=True
+    "Patient vitals: BP 120/80, HR 72",
+    wallet_seed="sYourWalletSeed",
+    record_type="VITALS"  # Categorizes for metrics
 )
-print(result)  # Shows hash and mock XRPL tx</code></pre>
-                <p>In production: Full API, dashboards, and EHR plugins (Epic/Cerner compatible).</p>
+print(result)  # Returns hash + XRPL tx confirmation</code></pre>
+                <p>Real transactions anchored to XRPL testnet. View live data on our <a href="metrics.html" style="color: var(--accent);">Metrics Dashboard</a>.</p>
             </div>
             <div class="card mb-4">
                 <h3>Verification Example</h3>
-                <pre><code># Verify a record hash
-is_valid = sdk.verify_record_hash(
-    record_hash="a1b2c3d4e5f6...",
-    xrpl_tx_id="ABC123DEF456..."
-)
-print(f"Record verified: {is_valid}")  # True if hash matches</code></pre>
+                <pre><code># Verify a record by comparing hashes
+original_record = "Patient vitals: BP 120/80, HR 72"
+stored_hash = result['hash']  # From secure_patient_record()
+
+# Recompute hash to verify integrity
+import hashlib
+computed = hashlib.sha256(original_record.encode()).hexdigest()
+print(f"Verified: {computed == stored_hash}")  # True</code></pre>
             </div>
             <div class="card mb-4">
                 <h3>EHR Integration (Coming Soon)</h3>
-                <pre><code># Epic EHR Plugin Example
-from solus_sdk.integrations import EpicPlugin
+                <pre><code># Record types supported for EHR integration:
+RECORD_TYPES = [
+    "SURGERY", "VITALS", "LAB", "IMAGING",
+    "PRESCRIPTION", "DISCHARGE", "EPIC",
+    "ORACLE_HEALTH", "MEDITECH", "CARE_PLAN"
+]
 
-epic = EpicPlugin(client_id="your-epic-id")
-epic.on_record_update(lambda record: 
-    sdk.secure_patient_record(record.data)
+# Auto-anchor on EHR updates (planned)
+sdk.on_ehr_event(lambda record: 
+    sdk.secure_patient_record(record, record_type=record.type)
 )</code></pre>
-                <p>Native plugins for Epic and Cerner EHR systems in development.</p>
+                <p>Native plugins for Epic, Oracle Health, and Meditech in development.</p>
             </div>
             <div class="card">
                 <h3 class="text-center">Provider <span class="gradient-text">Onboarding Timeline</span></h3>
@@ -845,6 +853,35 @@ epic.on_record_update(lambda record:
         <div class="container">
             <h2 class="section-title">My <span class="gradient-text">Profile</span></h2>
             <p class="text-center mb-4">Manage your Solus Protocol account and $SLS rewards</p>
+            
+            <!-- Profile Stats Row -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, rgba(20,241,149,0.15), rgba(20,241,149,0.05));">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">12</div>
+                        <div style="color: #aaa; font-size: 0.9rem;">Records Secured</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, rgba(153,69,255,0.15), rgba(153,69,255,0.05));">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary);">3</div>
+                        <div style="color: #aaa; font-size: 0.9rem;">Active Shares</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, rgba(20,241,149,0.15), rgba(20,241,149,0.05));">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">8/10</div>
+                        <div style="color: #aaa; font-size: 0.9rem;">Trust Score</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, rgba(153,69,255,0.15), rgba(153,69,255,0.05));">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary);">45</div>
+                        <div style="color: #aaa; font-size: 0.9rem;">Days Active</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card">
@@ -881,10 +918,89 @@ epic.on_record_update(lambda record:
                 <h3>My Secured Records</h3>
                 <p>View all secured records and sharing history.</p>
                 <div class="row">
-                    <div class="col-md-6"><div style="background: var(--glass); padding: 15px; border-radius: 8px; margin: 10px 0;"><strong>Record 1</strong><p style="font-size: 0.85rem; margin: 5px 0;">Hash: d4e567f8... (Verified 2026-01-19)</p></div></div>
-                    <div class="col-md-6"><div style="background: var(--glass); padding: 15px; border-radius: 8px; margin: 10px 0;"><strong>Record 2</strong><p style="font-size: 0.85rem; margin: 5px 0;">Hash: a1b2c3d4... (Shared with Provider X)</p></div></div>
+                    <div class="col-md-6"><div style="background: var(--glass); padding: 15px; border-radius: 8px; margin: 10px 0;"><strong style="color: #fff;">Record 1</strong><p style="font-size: 0.85rem; margin: 5px 0; color: #ccc;">Hash: d4e567f8... (Verified 2026-01-19)</p></div></div>
+                    <div class="col-md-6"><div style="background: var(--glass); padding: 15px; border-radius: 8px; margin: 10px 0;"><strong style="color: #fff;">Record 2</strong><p style="font-size: 0.85rem; margin: 5px 0; color: #ccc;">Hash: a1b2c3d4... (Shared with Provider X)</p></div></div>
                 </div>
                 <button class="btn-primary-custom mt-3">View Full Records</button>
+            </div>
+            
+            <!-- Rewards Progress -->
+            <div class="card mb-4">
+                <h3>🎯 Rewards Progress</h3>
+                <p style="color: #aaa;">Complete actions to earn bonus $SLS tokens</p>
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #ccc;">Secure 10 Records</span>
+                        <span style="color: var(--accent);">12/10 ✓</span>
+                    </div>
+                    <div style="background: var(--glass); border-radius: 10px; height: 8px; overflow: hidden;">
+                        <div style="background: var(--accent); height: 100%; width: 100%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #ccc;">Share with 5 Providers</span>
+                        <span style="color: var(--secondary);">3/5</span>
+                    </div>
+                    <div style="background: var(--glass); border-radius: 10px; height: 8px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent), var(--secondary)); height: 100%; width: 60%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #ccc;">Verify 20 Records</span>
+                        <span style="color: #888;">8/20</span>
+                    </div>
+                    <div style="background: var(--glass); border-radius: 10px; height: 8px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent), var(--secondary)); height: 100%; width: 40%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(20,241,149,0.1); border-radius: 8px; border: 1px solid rgba(20,241,149,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #fff;">Pending Rewards</strong>
+                            <p style="margin: 0; color: #aaa; font-size: 0.85rem;">Complete "Share with 5 Providers" for bonus</p>
+                        </div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent);">+2.5 $SLS</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card">
+                <h3>⚡ Quick Actions</h3>
+                <div class="row mt-3">
+                    <div class="col-md-4 col-6 mb-3">
+                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>🔒</span> Secure New Record
+                        </button>
+                    </div>
+                    <div class="col-md-4 col-6 mb-3">
+                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>🔗</span> Share Access
+                        </button>
+                    </div>
+                    <div class="col-md-4 col-6 mb-3">
+                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>✅</span> Verify Record
+                        </button>
+                    </div>
+                    <div class="col-md-4 col-6 mb-3">
+                        <a href="metrics.html" class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+                            <span>📊</span> View Metrics
+                        </a>
+                    </div>
+                    <div class="col-md-4 col-6 mb-3">
+                        <a href="transactions.html" class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+                            <span>📜</span> TX History
+                        </a>
+                    </div>
+                    <div class="col-md-4 col-6 mb-3">
+                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>⚙️</span> Settings
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
