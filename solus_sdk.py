@@ -174,7 +174,9 @@ class SolusSDK:
             destination = self.treasury_account
 
         # Build memo data: optionally include record_type for categorization
-        memo_data = f"{record_type}:{hash_value}" if record_type else hash_value
+        # Must be hex-encoded for XRPL
+        memo_text = f"{record_type}:{hash_value}" if record_type else hash_value
+        memo_data = memo_text.encode('utf-8').hex()
 
         # Pay $SLS fee with hash memo
         amount_sls = IssuedCurrencyAmount(currency="SLS", issuer=self.sls_issuer, value=fee_sls)
