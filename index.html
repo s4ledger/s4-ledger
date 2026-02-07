@@ -39,6 +39,7 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
         :root {
             --bg: #050608;
@@ -198,6 +199,62 @@
         .social-link:hover { background: rgba(20,241,149,0.1); transform: translateY(-2px); color: var(--accent); }
         .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
+        
+        /* Enhanced Animations */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(20, 241, 149, 0.3), 0 0 20px rgba(20, 241, 149, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(20, 241, 149, 0.5), 0 0 40px rgba(20, 241, 149, 0.2); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes counter-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .animate-pulse { animation: pulse-glow 2s ease-in-out infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
+        .stat-counter { transition: all 0.3s ease; }
+        .stat-counter:hover { animation: counter-pulse 0.5s ease; }
+        .btn-primary-custom { transition: all 0.3s ease; }
+        .btn-primary-custom:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(20, 241, 149, 0.3); }
+        .btn-secondary-custom { transition: all 0.3s ease; }
+        .btn-secondary-custom:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1); }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); }
+        
+        /* Particles container */
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+        
+        /* Action Modal Styles */
+        .action-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .action-modal.active { display: flex; }
+        .action-box { background: linear-gradient(135deg, rgba(20,20,25,0.98), rgba(10,10,15,0.98)); border: 1px solid var(--border); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; animation: slide-up 0.3s ease-out; }
+        .action-box h3 { color: #fff; margin-bottom: 5px; }
+        .action-box .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
+        .action-result { background: rgba(20, 241, 149, 0.1); border: 1px solid rgba(20, 241, 149, 0.3); border-radius: 12px; padding: 15px; margin-top: 15px; }
+        .action-result.error { background: rgba(255, 71, 87, 0.1); border-color: rgba(255, 71, 87, 0.3); }
+        .record-select { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; }
+        .record-option { background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 12px 15px; cursor: pointer; transition: all 0.2s; }
+        .record-option:hover { border-color: var(--accent); background: rgba(20, 241, 149, 0.05); }
+        .record-option.selected { border-color: var(--accent); background: rgba(20, 241, 149, 0.1); }
+        .settings-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--glass); border-radius: 10px; margin-bottom: 10px; }
+        .toggle-switch { position: relative; width: 50px; height: 26px; background: var(--glass); border-radius: 13px; cursor: pointer; transition: all 0.3s; }
+        .toggle-switch.active { background: var(--accent); }
+        .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: all 0.3s; }
+        .toggle-switch.active::after { left: 27px; }
         .wallet { background: rgba(20,241,149,0.1); border: 1px solid var(--accent); border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center; }
         .tx-list { list-style: none; padding: 0; margin: 0; }
         .tx-item { background: var(--glass); padding: 15px; margin: 10px 0; border-radius: 8px; color: #fff; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
@@ -205,6 +262,9 @@
     </style>
 </head>
 <body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+    
     <div class="mesh-bg">
         <div class="gradient-orb orb-1"></div>
         <div class="gradient-orb orb-2"></div>
@@ -249,7 +309,7 @@
         <p style="font-size: 1.3rem; max-width: 700px; margin: 0 auto 15px; color: #fff; font-weight: 500;">For Healthcare Data</p>
         <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px;">Secure your medical records with Solus Protocol - Decentralized Medical Data Integrity on the XRP Ledger</p>
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a href="https://solus-protocol-demo.replit.app" target="_blank" class="btn-primary-custom">Launch Demo App</a>
+            <a href="https://solus-protocol-demo.replit.app" target="_blank" class="btn-primary-custom animate-pulse">Launch Demo App</a>
             <a href="https://github.com/solusprotocol1/solus-protocol/blob/dec022ee9ca6c9b1117abc2bc63d36b537318a36/Solus%20Protocol%20Whitepaper%20Version%203.0%20(January%202026).pdf" target="_blank" class="btn-secondary-custom">Read Whitepaper</a>
         </div>
 
@@ -857,26 +917,26 @@ sdk.on_ehr_event(lambda record:
             <!-- Profile Stats Row -->
             <div class="row mb-4">
                 <div class="col-md-3 col-6 mb-3">
-                    <div class="card text-center" style="background: linear-gradient(135deg, rgba(20,241,149,0.15), rgba(20,241,149,0.05));">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">12</div>
+                    <div class="card text-center stat-counter" style="background: linear-gradient(135deg, rgba(20,241,149,0.15), rgba(20,241,149,0.05));">
+                        <div class="animate-float" style="font-size: 2rem; font-weight: bold; color: var(--accent);">12</div>
                         <div style="color: #aaa; font-size: 0.9rem;">Records Secured</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6 mb-3">
-                    <div class="card text-center" style="background: linear-gradient(135deg, rgba(153,69,255,0.15), rgba(153,69,255,0.05));">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary);">3</div>
+                    <div class="card text-center stat-counter" style="background: linear-gradient(135deg, rgba(153,69,255,0.15), rgba(153,69,255,0.05));">
+                        <div class="animate-float" style="font-size: 2rem; font-weight: bold; color: var(--secondary); animation-delay: 0.2s;">3</div>
                         <div style="color: #aaa; font-size: 0.9rem;">Active Shares</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6 mb-3">
-                    <div class="card text-center" style="background: linear-gradient(135deg, rgba(20,241,149,0.15), rgba(20,241,149,0.05));">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">8/10</div>
+                    <div class="card text-center stat-counter" style="background: linear-gradient(135deg, rgba(20,241,149,0.15), rgba(20,241,149,0.05));">
+                        <div class="animate-float" style="font-size: 2rem; font-weight: bold; color: var(--accent); animation-delay: 0.4s;">8/10</div>
                         <div style="color: #aaa; font-size: 0.9rem;">Trust Score</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6 mb-3">
-                    <div class="card text-center" style="background: linear-gradient(135deg, rgba(153,69,255,0.15), rgba(153,69,255,0.05));">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary);">45</div>
+                    <div class="card text-center stat-counter" style="background: linear-gradient(135deg, rgba(153,69,255,0.15), rgba(153,69,255,0.05));">
+                        <div class="animate-float" style="font-size: 2rem; font-weight: bold; color: var(--secondary); animation-delay: 0.6s;">45</div>
                         <div style="color: #aaa; font-size: 0.9rem;">Days Active</div>
                     </div>
                 </div>
@@ -971,17 +1031,17 @@ sdk.on_ehr_event(lambda record:
                 <h3>⚡ Quick Actions</h3>
                 <div class="row mt-3">
                     <div class="col-md-4 col-6 mb-3">
-                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="showSecureModal()">
                             <span>🔒</span> Secure New Record
                         </button>
                     </div>
                     <div class="col-md-4 col-6 mb-3">
-                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="showShareModal()">
                             <span>🔗</span> Share Access
                         </button>
                     </div>
                     <div class="col-md-4 col-6 mb-3">
-                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="showVerifyModal()">
                             <span>✅</span> Verify Record
                         </button>
                     </div>
@@ -996,7 +1056,7 @@ sdk.on_ehr_event(lambda record:
                         </a>
                     </div>
                     <div class="col-md-4 col-6 mb-3">
-                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <button class="btn-secondary-custom w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="showSettingsModal()">
                             <span>⚙️</span> Settings
                         </button>
                     </div>
@@ -1071,6 +1131,144 @@ sdk.on_ehr_event(lambda record:
             <label>Password</label><input type="password" id="loginPassword" placeholder="demo123">
             <button class="btn-primary-custom w-100" onclick="login()">Sign In</button>
             <p style="font-size: 0.85rem; margin-top: 15px; text-align: center;"><strong>Demo Credentials:</strong><br>Patient: username "patient", password "demo123"<br>Provider: username "provider", password "demo123"</p>
+        </div>
+    </div>
+
+    <!-- Secure Record Modal -->
+    <div class="action-modal" id="secureModal">
+        <div class="action-box">
+            <button class="close-modal" onclick="hideSecureModal()">&times;</button>
+            <h3>🔒 Secure New Record</h3>
+            <p class="subtitle">Hash and anchor a medical record to XRPL</p>
+            
+            <label>Record Type</label>
+            <select id="secureRecordType">
+                <option value="VITALS">Vitals</option>
+                <option value="LAB">Lab Results</option>
+                <option value="PRESCRIPTION">Prescription</option>
+                <option value="SURGERY">Surgery Report</option>
+                <option value="IMAGING">Imaging/Radiology</option>
+                <option value="DISCHARGE">Discharge Summary</option>
+            </select>
+            
+            <label>Record Data</label>
+            <textarea id="secureRecordData" placeholder="Enter medical record data..." style="height: 120px;"></textarea>
+            
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-primary-custom w-100" onclick="secureRecord()">🔐 Secure Record</button>
+            </div>
+            
+            <div id="secureResult" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Share Access Modal -->
+    <div class="action-modal" id="shareModal">
+        <div class="action-box">
+            <button class="close-modal" onclick="hideShareModal()">&times;</button>
+            <h3>🔗 Share Access</h3>
+            <p class="subtitle">Grant a provider temporary access to a record</p>
+            
+            <label>Select Record to Share</label>
+            <div class="record-select" id="shareRecordSelect">
+                <div class="record-option" data-record="1" onclick="selectShareRecord(this)">
+                    <strong style="color: #fff;">Record 1 - Vitals</strong>
+                    <p style="margin: 5px 0 0; font-size: 0.85rem; color: #aaa;">Hash: d4e567f8... | Verified 2026-01-19</p>
+                </div>
+                <div class="record-option" data-record="2" onclick="selectShareRecord(this)">
+                    <strong style="color: #fff;">Record 2 - Lab Results</strong>
+                    <p style="margin: 5px 0 0; font-size: 0.85rem; color: #aaa;">Hash: a1b2c3d4... | Verified 2026-01-25</p>
+                </div>
+                <div class="record-option" data-record="3" onclick="selectShareRecord(this)">
+                    <strong style="color: #fff;">Record 3 - Prescription</strong>
+                    <p style="margin: 5px 0 0; font-size: 0.85rem; color: #aaa;">Hash: 7f8e9d0c... | Verified 2026-02-01</p>
+                </div>
+            </div>
+            
+            <label>Provider Address or Email</label>
+            <input type="text" id="shareProviderAddress" placeholder="provider@hospital.com or XRPL address">
+            
+            <label>Access Duration</label>
+            <select id="shareAccessDuration">
+                <option value="1">1 Hour</option>
+                <option value="24" selected>24 Hours</option>
+                <option value="168">1 Week</option>
+                <option value="720">30 Days</option>
+            </select>
+            
+            <button class="btn-primary-custom w-100 mt-3" onclick="shareAccess()">🔗 Grant Access</button>
+            
+            <div id="shareResult" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Verify Record Modal -->
+    <div class="action-modal" id="verifyModal">
+        <div class="action-box">
+            <button class="close-modal" onclick="hideVerifyModal()">&times;</button>
+            <h3>✅ Verify Record</h3>
+            <p class="subtitle">Check if a record hash matches XRPL anchor</p>
+            
+            <label>Record Hash</label>
+            <input type="text" id="verifyHash" placeholder="Enter SHA-256 hash to verify...">
+            
+            <label>Transaction ID (optional)</label>
+            <input type="text" id="verifyTxId" placeholder="XRPL Transaction ID">
+            
+            <button class="btn-primary-custom w-100 mt-3" onclick="verifyRecordHash()">✅ Verify on XRPL</button>
+            
+            <div id="verifyResult" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="action-modal" id="settingsModal">
+        <div class="action-box">
+            <button class="close-modal" onclick="hideSettingsModal()">&times;</button>
+            <h3>⚙️ Settings</h3>
+            <p class="subtitle">Configure your Solus Protocol preferences</p>
+            
+            <div class="settings-item">
+                <div>
+                    <strong style="color: #fff;">Email Notifications</strong>
+                    <p style="margin: 0; font-size: 0.85rem; color: #aaa;">Get alerts for shares and verifications</p>
+                </div>
+                <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+            </div>
+            
+            <div class="settings-item">
+                <div>
+                    <strong style="color: #fff;">Auto-Verify Records</strong>
+                    <p style="margin: 0; font-size: 0.85rem; color: #aaa;">Automatically verify on access</p>
+                </div>
+                <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+            </div>
+            
+            <div class="settings-item">
+                <div>
+                    <strong style="color: #fff;">XRPL Testnet Mode</strong>
+                    <p style="margin: 0; font-size: 0.85rem; color: #aaa;">Use testnet for transactions</p>
+                </div>
+                <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+            </div>
+            
+            <div class="settings-item">
+                <div>
+                    <strong style="color: #fff;">$SLS Fee Auto-Pay</strong>
+                    <p style="margin: 0; font-size: 0.85rem; color: #aaa;">Automatically pay fees from balance</p>
+                </div>
+                <div class="toggle-switch" onclick="toggleSetting(this)"></div>
+            </div>
+            
+            <div class="settings-item">
+                <div>
+                    <strong style="color: #fff;">Dark Mode</strong>
+                    <p style="margin: 0; font-size: 0.85rem; color: #aaa;">Always on (it's the future)</p>
+                </div>
+                <div class="toggle-switch active" style="opacity: 0.5; pointer-events: none;"></div>
+            </div>
+            
+            <button class="btn-secondary-custom w-100 mt-3" onclick="hideSettingsModal()">Close Settings</button>
         </div>
     </div>
 
@@ -1275,6 +1473,236 @@ sdk.on_ehr_event(lambda record:
         });
 
         document.addEventListener('click', function(e) { if (!e.target.closest('.step-box') && !e.target.closest('button')) { document.getElementById('sampleMenu').style.display = 'none'; } });
+
+        // ==========================================
+        // Quick Action Modal Functions
+        // ==========================================
+        
+        // Secure Record Modal
+        function showSecureModal() { document.getElementById('secureModal').classList.add('active'); }
+        function hideSecureModal() { 
+            document.getElementById('secureModal').classList.remove('active'); 
+            document.getElementById('secureResult').style.display = 'none';
+            document.getElementById('secureRecordData').value = '';
+        }
+        
+        async function secureRecord() {
+            const recordType = document.getElementById('secureRecordType').value;
+            const recordData = document.getElementById('secureRecordData').value;
+            
+            if (!recordData.trim()) {
+                alert('Please enter record data');
+                return;
+            }
+            
+            // Generate SHA-256 hash
+            const encoder = new TextEncoder();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(recordData));
+            const hash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            // Generate mock transaction ID
+            const txId = 'TX_' + Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+            
+            // Show result with animation
+            const resultDiv = document.getElementById('secureResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="action-result animate-slide-up">
+                    <h5 style="color: var(--accent); margin-bottom: 10px;">✅ Record Secured Successfully!</h5>
+                    <p style="margin: 5px 0;"><strong>Type:</strong> <span style="color: var(--secondary);">${recordType}</span></p>
+                    <p style="margin: 5px 0;"><strong>Hash:</strong></p>
+                    <p style="color: var(--accent); font-family: monospace; font-size: 0.8rem; word-break: break-all;">${hash}</p>
+                    <p style="margin: 10px 0 5px;"><strong>XRPL TX:</strong></p>
+                    <p style="color: var(--secondary); font-family: monospace; font-size: 0.85rem;">${txId}</p>
+                    <p style="font-size: 0.8rem; margin-top: 10px; color: #888;">Fee: 0.01 $SLS | Rebate: 0.005 $SLS</p>
+                </div>
+            `;
+            
+            // Update balance (mock)
+            currentBalance -= 0.005;
+            updateBalanceDisplay();
+        }
+        
+        // Share Access Modal
+        let selectedShareRecord = null;
+        
+        function showShareModal() { document.getElementById('shareModal').classList.add('active'); }
+        function hideShareModal() { 
+            document.getElementById('shareModal').classList.remove('active');
+            document.getElementById('shareResult').style.display = 'none';
+            document.getElementById('shareProviderAddress').value = '';
+            document.querySelectorAll('#shareRecordSelect .record-option').forEach(el => el.classList.remove('selected'));
+            selectedShareRecord = null;
+        }
+        
+        function selectShareRecord(element) {
+            document.querySelectorAll('#shareRecordSelect .record-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedShareRecord = element.dataset.record;
+        }
+        
+        function shareAccess() {
+            const provider = document.getElementById('shareProviderAddress').value;
+            const duration = document.getElementById('shareAccessDuration').value;
+            
+            if (!selectedShareRecord) {
+                alert('Please select a record to share');
+                return;
+            }
+            if (!provider.trim()) {
+                alert('Please enter provider address or email');
+                return;
+            }
+            
+            const durationText = {
+                '1': '1 hour',
+                '24': '24 hours',
+                '168': '1 week',
+                '720': '30 days'
+            };
+            
+            // Generate access token
+            const accessToken = 'ACC_' + Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+            
+            const resultDiv = document.getElementById('shareResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="action-result animate-slide-up">
+                    <h5 style="color: var(--accent); margin-bottom: 10px;">🔗 Access Granted!</h5>
+                    <p style="margin: 5px 0;"><strong>Record:</strong> Record ${selectedShareRecord}</p>
+                    <p style="margin: 5px 0;"><strong>Provider:</strong> <span style="color: var(--secondary);">${provider}</span></p>
+                    <p style="margin: 5px 0;"><strong>Duration:</strong> ${durationText[duration]}</p>
+                    <p style="margin: 10px 0 5px;"><strong>Access Token:</strong></p>
+                    <p style="color: var(--accent); font-family: monospace; font-size: 0.9rem;">${accessToken}</p>
+                    <p style="font-size: 0.8rem; margin-top: 10px; color: #888;">Provider will receive notification via email/XRPL memo</p>
+                </div>
+            `;
+        }
+        
+        // Verify Record Modal
+        function showVerifyModal() { document.getElementById('verifyModal').classList.add('active'); }
+        function hideVerifyModal() { 
+            document.getElementById('verifyModal').classList.remove('active');
+            document.getElementById('verifyResult').style.display = 'none';
+            document.getElementById('verifyHash').value = '';
+            document.getElementById('verifyTxId').value = '';
+        }
+        
+        async function verifyRecordHash() {
+            const hash = document.getElementById('verifyHash').value.trim().toLowerCase();
+            const txId = document.getElementById('verifyTxId').value.trim();
+            
+            if (!hash) {
+                alert('Please enter a hash to verify');
+                return;
+            }
+            
+            // Simulate XRPL lookup delay
+            const resultDiv = document.getElementById('verifyResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `<div class="action-result"><p style="text-align: center; color: #aaa;">🔍 Searching XRPL...</p></div>`;
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Mock verification - recognize some demo hashes
+            const knownHashes = {
+                'd4e567f8': { type: 'VITALS', date: '2026-01-19', status: 'verified' },
+                'a1b2c3d4': { type: 'LAB', date: '2026-01-25', status: 'verified' },
+                '7f8e9d0c': { type: 'PRESCRIPTION', date: '2026-02-01', status: 'verified' }
+            };
+            
+            const hashPrefix = hash.substring(0, 8);
+            const found = knownHashes[hashPrefix];
+            
+            if (found || hash.length === 64) {
+                const verifiedTx = txId || 'TX_' + hash.substring(0, 16).toUpperCase();
+                resultDiv.innerHTML = `
+                    <div class="action-result animate-slide-up">
+                        <h5 style="color: var(--accent); margin-bottom: 10px;">✅ Record Verified!</h5>
+                        <p style="margin: 5px 0;"><strong>Status:</strong> <span style="color: var(--accent);">ANCHORED ON XRPL</span></p>
+                        ${found ? `<p style="margin: 5px 0;"><strong>Record Type:</strong> ${found.type}</p>` : ''}
+                        ${found ? `<p style="margin: 5px 0;"><strong>Anchored:</strong> ${found.date}</p>` : ''}
+                        <p style="margin: 5px 0;"><strong>Transaction:</strong></p>
+                        <p style="color: var(--secondary); font-family: monospace; font-size: 0.85rem;">${verifiedTx}</p>
+                        <p style="font-size: 0.8rem; margin-top: 10px; color: #888;">This hash exists on XRPL testnet ledger</p>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="action-result error animate-slide-up">
+                        <h5 style="color: var(--error); margin-bottom: 10px;">❌ Hash Not Found</h5>
+                        <p style="margin: 5px 0; color: #ccc;">This hash was not found on XRPL.</p>
+                        <p style="font-size: 0.85rem; margin-top: 10px; color: #888;">The record may not have been anchored yet, or the hash is incorrect.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Settings Modal
+        function showSettingsModal() { document.getElementById('settingsModal').classList.add('active'); }
+        function hideSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+        
+        function toggleSetting(element) {
+            element.classList.toggle('active');
+        }
+        
+        // Helper: Update balance display
+        function updateBalanceDisplay() {
+            const balanceEl = document.querySelector('.wallet div[style*="font-size: 2rem"]');
+            if (balanceEl) {
+                balanceEl.textContent = currentBalance.toFixed(2) + ' $SLS';
+                const usdEl = balanceEl.nextElementSibling;
+                if (usdEl) {
+                    usdEl.textContent = 'Estimated USD: ~$' + (currentBalance * 0.05).toFixed(2) + ' (mock rate)';
+                }
+            }
+        }
+        
+        // Close modals on backdrop click
+        document.querySelectorAll('.action-modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // ==========================================
+        // Particles.js Initialization
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: { value: 50, density: { enable: true, value_area: 1000 } },
+                        color: { value: ['#14f195', '#9945ff', '#ffffff'] },
+                        shape: { type: 'circle' },
+                        opacity: { value: 0.3, random: true, anim: { enable: true, speed: 0.5, opacity_min: 0.1, sync: false } },
+                        size: { value: 3, random: true, anim: { enable: true, speed: 2, size_min: 0.5, sync: false } },
+                        line_linked: { enable: true, distance: 150, color: '#14f195', opacity: 0.1, width: 1 },
+                        move: { enable: true, speed: 1, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+                    },
+                    interactivity: {
+                        detect_on: 'canvas',
+                        events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: false }, resize: true },
+                        modes: { grab: { distance: 140, line_linked: { opacity: 0.3 } } }
+                    },
+                    retina_detect: true
+                });
+            }
+            
+            // Animate stat counters on scroll
+            const statCounters = document.querySelectorAll('.stat-counter');
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-pulse');
+                        setTimeout(() => entry.target.classList.remove('animate-pulse'), 500);
+                    }
+                });
+            }, { threshold: 0.5 });
+            statCounters.forEach(counter => counterObserver.observe(counter));
+        });
     </script>
 </body>
 </html>
