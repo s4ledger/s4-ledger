@@ -6958,7 +6958,7 @@
         }
 
         /* Success celebration animation */
-        function showAnchorCelebration(txHash) {
+        function showAnchorCelebration(txHash, batchCount) {
             let overlay = document.getElementById('anchorCelebration');
             if (!overlay) {
                 overlay = document.createElement('div');
@@ -6968,14 +6968,26 @@
                     <div class="celebration-particles" id="celebrationParticles"></div>
                     <div class="celebration-content">
                         <div class="celebration-check"><i class="fas fa-check"></i></div>
-                        <div class="celebration-title">Record Anchored!</div>
-                        <div class="celebration-subtitle">Immutably recorded on the XRP Ledger</div>
+                        <div class="celebration-title" id="celebrationTitle">Record Anchored!</div>
+                        <div class="celebration-subtitle" id="celebrationSubtitle">Immutably recorded on the XRP Ledger</div>
                         <div class="celebration-tx" id="celebrationTxHash"></div>
                     </div>
                 `;
                 overlay.onclick = function() { dismissCelebration(); };
                 document.body.appendChild(overlay);
             }
+
+            /* Update title/subtitle for batch vs single */
+            const titleEl = document.getElementById('celebrationTitle');
+            const subtitleEl = document.getElementById('celebrationSubtitle');
+            if (batchCount && batchCount > 1) {
+                titleEl.textContent = batchCount + ' Records Anchored!';
+                subtitleEl.textContent = 'All records immutably recorded on the XRP Ledger';
+            } else {
+                titleEl.textContent = 'Record Anchored!';
+                subtitleEl.textContent = 'Immutably recorded on the XRP Ledger';
+            }
+
             const txEl = document.getElementById('celebrationTxHash');
             if (txEl) txEl.textContent = txHash ? (txHash.substring(0, 24) + '...' + txHash.substring(txHash.length - 8)) : 'Confirmed';
 
@@ -7231,14 +7243,22 @@
         async function anchorBatchQueue() {
             if (batchAnchoring || batchQueue.length === 0) return;
             batchAnchoring = true;
+            let batchSuccess = false;
+            let batchCount = batchQueue.length;
+            let lastTxHash = '';
+            let lastHash = '';
+            let lastRecordType = '';
+            let lastLedgerIndex = '—';
             const anchorBtn = document.getElementById('pgAnchorBtn');
             const progressBar = document.getElementById('batchProgressBar');
             const progressFill = document.getElementById('batchProgressFill');
+            const resultCard = document.getElementById('pgResult');
             anchorBtn.disabled = true;
             progressBar.style.display = 'block';
 
+            let client = null;
             try {
-                const client = await connectXrplWithFallback(msg => {
+                client = await connectXrplWithFallback(msg => {
                     anchorBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + msg;
                 });
                 updateWsStatus('connected');
@@ -7268,6 +7288,10 @@
                     const txHash = extractTxHash(result) || 'batch_' + i;
 
                     item.status = 'done';
+                    lastTxHash = txHash;
+                    lastHash = hash;
+                    lastRecordType = item.recordType;
+                    lastLedgerIndex = extractLedgerIndex(result);
                     progressFill.style.width = ((i + 1) / batchQueue.length * 100) + '%';
 
                     pgSessionHistory.unshift({
@@ -7285,11 +7309,33 @@
                     if (histSection) histSection.style.display = 'block';
                 }
 
-                await client.disconnect();
+                /* Mark batch as successful BEFORE disconnect */
+                batchSuccess = true;
+                batchCount = batchQueue.length;
+
+                try { await client.disconnect(); } catch(dc) {}
                 updateWsStatus('offline');
-                anchorBtn.innerHTML = '<i class="fas fa-check-circle"></i> All ' + batchQueue.length + ' Records Anchored!';
+
+                /* Show result card with last record details */
+                if (resultCard) {
+                    document.getElementById('pgResultHash').textContent = lastHash;
+                    const txDisplay = lastTxHash.length > 28 ? (lastTxHash.substring(0, 20) + '...' + lastTxHash.substring(lastTxHash.length - 8)) : lastTxHash;
+                    document.getElementById('pgResultTxHash').textContent = txDisplay;
+                    document.getElementById('pgResultTxHash').title = lastTxHash;
+                    document.getElementById('pgResultLedger').textContent = lastLedgerIndex;
+                    document.getElementById('pgResultType').textContent = lastRecordType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) + ' (Batch: ' + batchCount + ' records)';
+                    const explorerBtn = document.getElementById('pgExplorerBtn');
+                    if (explorerBtn) explorerBtn.onclick = function() { window.open('https://testnet.xrpl.org/transactions/' + lastTxHash, '_blank'); };
+                    resultCard.style.display = 'block';
+                }
+                pgLastTxHash = lastTxHash;
+
+                /* Show celebration animation */
+                showAnchorCelebration(lastTxHash, batchCount);
+
+                anchorBtn.innerHTML = '<i class="fas fa-check-circle"></i> All ' + batchCount + ' Records Anchored!';
                 anchorBtn.style.background = 'linear-gradient(135deg, #00c853, #00e676)';
-                showNotification('Batch complete! ' + batchQueue.length + ' records anchored.', 'success');
+
                 setTimeout(() => {
                     anchorBtn.innerHTML = '<i class="fas fa-layer-group"></i> Anchor All Queued Records';
                     anchorBtn.style.background = '';
@@ -7300,17 +7346,36 @@
                     progressFill.style.width = '0%';
                 }, 4000);
             } catch(err) {
-                console.error('Batch anchor error:', err);
+                /* If batch actually succeeded but post-processing/disconnect threw, don't show error */
+                if (batchSuccess) {
+                    console.warn('Post-batch processing error (all records anchored successfully):', err);
+                    anchorBtn.innerHTML = '<i class="fas fa-check-circle"></i> All ' + batchCount + ' Records Anchored!';
+                    anchorBtn.style.background = 'linear-gradient(135deg, #00c853, #00e676)';
+                    showAnchorCelebration(lastTxHash || 'confirmed', batchCount);
+                    setTimeout(() => {
+                        anchorBtn.innerHTML = '<i class="fas fa-layer-group"></i> Anchor All Queued Records';
+                        anchorBtn.style.background = '';
+                        anchorBtn.disabled = false;
+                        batchQueue = [];
+                        renderBatchQueue();
+                        progressBar.style.display = 'none';
+                        progressFill.style.width = '0%';
+                    }, 4000);
+                } else {
+                    console.error('Batch anchor error:', err);
+                    updateWsStatus('offline');
+                    anchorBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Batch Error — Tap to Retry';
+                    anchorBtn.style.background = 'linear-gradient(135deg, #ff1744, #ff5252)';
+                    showNotification('Batch error: ' + (err.message || 'Connection error'), 'error');
+                    setTimeout(() => {
+                        anchorBtn.innerHTML = '<i class="fas fa-layer-group"></i> Anchor All Queued Records';
+                        anchorBtn.style.background = '';
+                        anchorBtn.disabled = false;
+                        progressBar.style.display = 'none';
+                    }, 4000);
+                }
+                try { if (client && client.isConnected()) await client.disconnect(); } catch(dc) {}
                 updateWsStatus('offline');
-                anchorBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Batch Error';
-                anchorBtn.style.background = 'linear-gradient(135deg, #ff1744, #ff5252)';
-                showNotification('Batch error: ' + (err.message || 'Connection error'), 'error');
-                setTimeout(() => {
-                    anchorBtn.innerHTML = '<i class="fas fa-layer-group"></i> Anchor All Queued Records';
-                    anchorBtn.style.background = '';
-                    anchorBtn.disabled = false;
-                    progressBar.style.display = 'none';
-                }, 3000);
             }
             batchAnchoring = false;
         }
