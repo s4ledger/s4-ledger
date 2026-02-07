@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Solus | Healthcare Data Wallet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a0a0f;
+            --secondary: #9945FF;
+            --accent: #14F195;
+            --accent2: #00C2FF;
+            --dark: #12121a;
+            --card: rgba(20, 20, 35, 0.95);
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-muted: #8892b0;
+            --success: #14F195;
+            --warning: #ffd700;
+            --danger: #ff4757;
+            --provider: #9945FF;
+            --ehr: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        /* App Container */
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(180deg, var(--primary) 0%, #0d0d15 100%);
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 90px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(20, 241, 149, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(20, 241, 149, 0.5); }
+        }
+
+        /* Login Screen */
+        #loginScreen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 24px;
+            background: radial-gradient(ellipse at top, rgba(153, 69, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(20, 241, 149, 0.1) 0%, transparent 50%),
+                        var(--primary);
+        }
+
+        .login-logo {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 40px;
+        }
+
+        .role-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 32px;
+        }
+
+        .role-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .role-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .role-card.selected {
+            border-color: var(--accent);
+            background: rgba(20, 241, 149, 0.1);
+        }
+
+        .role-card.provider.selected {
+            border-color: var(--provider);
+            background: rgba(153, 69, 255, 0.1);
+        }
+
+        .role-card.ehr.selected {
+            border-color: var(--ehr);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .role-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .role-icon.patient { background: rgba(20, 241, 149, 0.2); color: var(--accent); }
+        .role-icon.provider { background: rgba(153, 69, 255, 0.2); color: var(--provider); }
+        .role-icon.ehr { background: rgba(255, 215, 0, 0.2); color: var(--ehr); }
+
+        .role-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .role-info p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(20, 241, 149, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 12px;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(20, 241, 149, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .demo-hint {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        /* Header */
+        .app-header {
+            padding: 20px 20px 16px;
+            background: linear-gradient(180deg, rgba(10, 10, 15, 0.98) 0%, transparent 100%);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .user-greeting h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-greeting p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .user-avatar.provider {
+            background: linear-gradient(135deg, var(--provider), #c77dff);
+        }
+
+        .user-avatar.ehr {
+            background: linear-gradient(135deg, var(--ehr), #ffaa00);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.warning { background: var(--warning); }
+
+        /* Content */
+        .content {
+            padding: 0 20px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 28px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .section-action {
+            color: var(--accent);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .section-action:hover {
+            opacity: 0.8;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Action Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .action-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-card:active {
+            transform: scale(0.98);
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 12px;
+            transition: transform 0.3s;
+        }
+
+        .action-card:hover .action-icon {
+            transform: scale(1.1);
+        }
+
+        .action-icon.green { background: rgba(20, 241, 149, 0.15); color: var(--accent); }
+        .action-icon.purple { background: rgba(153, 69, 255, 0.15); color: var(--provider); }
+        .action-icon.blue { background: rgba(0, 194, 255, 0.15); color: var(--accent2); }
+        .action-icon.gold { background: rgba(255, 215, 0, 0.15); color: var(--ehr); }
+
+        .action-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .action-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Records List */
+        .records-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .record-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            animation: slideIn 0.3s ease backwards;
+        }
+
+        .record-card:nth-child(1) { animation-delay: 0.05s; }
+        .record-card:nth-child(2) { animation-delay: 0.1s; }
+        .record-card:nth-child(3) { animation-delay: 0.15s; }
+        .record-card:nth-child(4) { animation-delay: 0.2s; }
+
+        .record-card:hover {
+            transform: translateX(4px);
+            border-color: var(--accent);
+        }
+
+        .record-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .record-icon.vitals { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
+        .record-icon.lab { background: rgba(78, 205, 196, 0.15); color: #4ecdc4; }
+        .record-icon.imaging { background: rgba(69, 170, 242, 0.15); color: #45aaf2; }
+        .record-icon.rx { background: rgba(255, 165, 2, 0.15); color: #ffa502; }
+        .record-icon.visit { background: rgba(165, 94, 234, 0.15); color: #a55eea; }
+
+        .record-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .record-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .record-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .record-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .record-badge.verified {
+            background: rgba(20, 241, 149, 0.15);
+            color: var(--accent);
+        }
+
+        .record-badge.pending {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--warning);
+        }
+
+        .record-arrow {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 24px;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s;
+            padding: 8px 16px;
+            border-radius: 12px;
+        }
+
+        .nav-item:hover {
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-item.active .nav-icon {
+            transform: scale(1.1);
+        }
+
+        .nav-icon {
+            font-size: 1.3rem;
+            transition: transform 0.3s;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal {
+            background: var(--dark);
+            width: 100%;
+            max-width: 430px;
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: none;
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: var(--border);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 3000;
+            transition: transform 0.3s ease;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            border-color: var(--accent);
+        }
+
+        .toast.success .toast-icon {
+            color: var(--accent);
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .activity-dot.green { background: var(--accent); }
+        .activity-dot.purple { background: var(--provider); }
+        .activity-dot.blue { background: var(--accent2); }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Charts placeholder */
+        .chart-container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-bars {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 8px;
+            padding-top: 20px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--accent), rgba(20, 241, 149, 0.3));
+            border-radius: 4px 4px 0 0;
+            min-height: 20px;
+            transition: all 0.5s ease;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        textarea.form-input {
+            min-height: 100px;
+            resize: none;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238892b0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(20, 241, 149, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Provider specific */
+        .patient-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .patient-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .patient-card:hover {
+            border-color: var(--provider);
+        }
+
+        .patient-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .patient-info {
+            flex: 1;
+        }
+
+        .patient-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .patient-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* EHR Dashboard */
+        .api-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .api-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .api-title {
+            font-weight: 600;
+        }
+
+        .api-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .api-status.active {
+            background: rgba(20, 241, 149, 0.15);
+            color: var(--accent);
+        }
+
+        .api-key {
+            font-family: monospace;
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Scan animation */
+        .scan-animation {
+            width: 200px;
+            height: 200px;
+            margin: 40px auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scan-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            animation: scanPulse 2s ease-out infinite;
+        }
+
+        .scan-ring:nth-child(2) { animation-delay: 0.4s; }
+        .scan-ring:nth-child(3) { animation-delay: 0.8s; }
+
+        @keyframes scanPulse {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .scan-icon {
+            font-size: 3rem;
+            color: var(--accent);
+            z-index: 1;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            height: 8px;
+            background: var(--glass);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: var(--danger);
+            border-radius: 50%;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Settings list */
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .settings-item:hover {
+            opacity: 0.8;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .settings-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .settings-icon.danger {
+            color: var(--danger);
+        }
+
+        .toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--glass);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--accent);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s;
+        }
+
+        .toggle.active::after {
+            transform: translateX(22px);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen active">
+            <div class="login-logo">◈</div>
+            <h1 class="login-title">SOLUS</h1>
+            <p class="login-subtitle">Your Healthcare Data Wallet</p>
+            
+            <div class="role-selector">
+                <div class="role-card selected" data-role="patient" onclick="selectRole('patient')">
+                    <div class="role-icon patient"><i class="fas fa-user"></i></div>
+                    <div class="role-info">
+                        <h3>Patient</h3>
+                        <p>Manage your health records</p>
+                    </div>
+                </div>
+                <div class="role-card provider" data-role="provider" onclick="selectRole('provider')">
+                    <div class="role-icon provider"><i class="fas fa-stethoscope"></i></div>
+                    <div class="role-info">
+                        <h3>Provider</h3>
+                        <p>Access patient records</p>
+                    </div>
+                </div>
+                <div class="role-card ehr" data-role="ehr" onclick="selectRole('ehr')">
+                    <div class="role-icon ehr"><i class="fas fa-hospital"></i></div>
+                    <div class="role-info">
+                        <h3>EHR System</h3>
+                        <p>Enterprise integration</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-form">
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" value="demo123">
+                </div>
+                <button class="login-btn" onclick="login()">
+                    <i class="fas fa-fingerprint"></i> Sign In
+                </button>
+            </div>
+            
+            <p class="demo-hint">Demo password: demo123</p>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="homeScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1 id="greetingText">Good morning</h1>
+                        <p id="userName">Alex Johnson</p>
+                    </div>
+                    <div class="user-avatar" id="userAvatar" onclick="showScreen('profileScreen')">AJ</div>
+                </div>
+                <div class="status-bar">
+                    <div class="status-item">
+                        <div class="status-dot"></div>
+                        <span>Blockchain Synced</span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fas fa-shield-halved" style="color: var(--accent);"></i>
+                        <span>HIPAA Secured</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Patient View -->
+                <div id="patientHomeContent">
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Health Overview</span>
+                        </div>
+                        <div class="quick-stats">
+                            <div class="stat-card">
+                                <div class="stat-number" id="statRecords">12</div>
+                                <div class="stat-label">Records</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="statShared">3</div>
+                                <div class="stat-label">Shared</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="statVerified">12</div>
+                                <div class="stat-label">Verified</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Quick Actions</span>
+                        </div>
+                        <div class="action-grid">
+                            <div class="action-card" onclick="openModal('scanModal')">
+                                <div class="action-icon green"><i class="fas fa-qrcode"></i></div>
+                                <div class="action-title">Scan QR</div>
+                                <div class="action-desc">Quick share access</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('shareModal')">
+                                <div class="action-icon purple"><i class="fas fa-share-nodes"></i></div>
+                                <div class="action-title">Share Record</div>
+                                <div class="action-desc">With provider</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('addRecordModal')">
+                                <div class="action-icon blue"><i class="fas fa-plus"></i></div>
+                                <div class="action-title">Add Record</div>
+                                <div class="action-desc">Upload new</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('verifyModal')">
+                                <div class="action-icon gold"><i class="fas fa-certificate"></i></div>
+                                <div class="action-title">Verify</div>
+                                <div class="action-desc">Check integrity</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Recent Records</span>
+                            <span class="section-action" onclick="showScreen('recordsScreen')">See All</span>
+                        </div>
+                        <div class="records-list" id="recentRecordsList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Provider View -->
+                <div id="providerHomeContent" style="display: none;">
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Today's Overview</span>
+                        </div>
+                        <div class="quick-stats">
+                            <div class="stat-card">
+                                <div class="stat-number">8</div>
+                                <div class="stat-label">Patients</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">24</div>
+                                <div class="stat-label">Records</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">3</div>
+                                <div class="stat-label">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Quick Actions</span>
+                        </div>
+                        <div class="action-grid">
+                            <div class="action-card" onclick="openModal('patientLookupModal')">
+                                <div class="action-icon green"><i class="fas fa-search"></i></div>
+                                <div class="action-title">Find Patient</div>
+                                <div class="action-desc">Look up records</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('requestAccessModal')">
+                                <div class="action-icon purple"><i class="fas fa-key"></i></div>
+                                <div class="action-title">Request Access</div>
+                                <div class="action-desc">Get authorization</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('verifyPatientModal')">
+                                <div class="action-icon blue"><i class="fas fa-user-check"></i></div>
+                                <div class="action-title">Verify Record</div>
+                                <div class="action-desc">Check authenticity</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('scanModal')">
+                                <div class="action-icon gold"><i class="fas fa-qrcode"></i></div>
+                                <div class="action-title">Scan QR</div>
+                                <div class="action-desc">Quick access</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Recent Patients</span>
+                            <span class="section-action">See All</span>
+                        </div>
+                        <div class="patient-list">
+                            <div class="patient-card" onclick="openModal('patientDetailModal')">
+                                <div class="patient-avatar">SJ</div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Sarah Johnson</div>
+                                    <div class="patient-meta">Last visit: Today • 5 records shared</div>
+                                </div>
+                                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                            </div>
+                            <div class="patient-card">
+                                <div class="patient-avatar" style="background: linear-gradient(135deg, var(--provider), #c77dff);">MR</div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Michael Roberts</div>
+                                    <div class="patient-meta">Last visit: Yesterday • 3 records shared</div>
+                                </div>
+                                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                            </div>
+                            <div class="patient-card">
+                                <div class="patient-avatar" style="background: linear-gradient(135deg, var(--ehr), #ffaa00);">EW</div>
+                                <div class="patient-info">
+                                    <div class="patient-name">Emily Watson</div>
+                                    <div class="patient-meta">Last visit: 2 days ago • 8 records shared</div>
+                                </div>
+                                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EHR View -->
+                <div id="ehrHomeContent" style="display: none;">
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">System Overview</span>
+                        </div>
+                        <div class="quick-stats">
+                            <div class="stat-card">
+                                <div class="stat-number">2.4M</div>
+                                <div class="stat-label">Anchored</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">99.9%</div>
+                                <div class="stat-label">Uptime</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">47</div>
+                                <div class="stat-label">Integrations</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Quick Actions</span>
+                        </div>
+                        <div class="action-grid">
+                            <div class="action-card" onclick="openModal('bulkAnchorModal')">
+                                <div class="action-icon green"><i class="fas fa-layer-group"></i></div>
+                                <div class="action-title">Bulk Anchor</div>
+                                <div class="action-desc">Batch records</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('apiKeysModal')">
+                                <div class="action-icon purple"><i class="fas fa-key"></i></div>
+                                <div class="action-title">API Keys</div>
+                                <div class="action-desc">Manage access</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('webhooksModal')">
+                                <div class="action-icon blue"><i class="fas fa-bolt"></i></div>
+                                <div class="action-title">Webhooks</div>
+                                <div class="action-desc">Configure events</div>
+                            </div>
+                            <div class="action-card" onclick="openModal('auditModal')">
+                                <div class="action-icon gold"><i class="fas fa-clipboard-list"></i></div>
+                                <div class="action-title">Audit Log</div>
+                                <div class="action-desc">View activity</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">API Performance</span>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-bars">
+                                <div class="chart-bar" style="height: 60%;"></div>
+                                <div class="chart-bar" style="height: 80%;"></div>
+                                <div class="chart-bar" style="height: 45%;"></div>
+                                <div class="chart-bar" style="height: 90%;"></div>
+                                <div class="chart-bar" style="height: 70%;"></div>
+                                <div class="chart-bar" style="height: 85%;"></div>
+                                <div class="chart-bar" style="height: 75%;"></div>
+                            </div>
+                            <div class="chart-labels">
+                                <span>Mon</span>
+                                <span>Tue</span>
+                                <span>Wed</span>
+                                <span>Thu</span>
+                                <span>Fri</span>
+                                <span>Sat</span>
+                                <span>Sun</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Active API Keys</span>
+                        </div>
+                        <div class="api-card">
+                            <div class="api-header">
+                                <span class="api-title">Production Key</span>
+                                <span class="api-status active">Active</span>
+                            </div>
+                            <div class="api-key">solus_live_•••••••••••••••3f7a</div>
+                        </div>
+                        <div class="api-card">
+                            <div class="api-header">
+                                <span class="api-title">Test Key</span>
+                                <span class="api-status active">Active</span>
+                            </div>
+                            <div class="api-key">solus_test_•••••••••••••••9b2c</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Records Screen -->
+        <div id="recordsScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>My Records</h1>
+                        <p id="recordsCount">12 records on blockchain</p>
+                    </div>
+                    <button class="modal-close" onclick="openModal('addRecordModal')">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <div class="records-list" id="allRecordsList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Screen -->
+        <div id="activityScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>Activity</h1>
+                        <p>Recent blockchain transactions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="section">
+                    <div class="activity-feed" id="activityFeed">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profileScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>Profile</h1>
+                        <p>Account settings</p>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div style="text-align: center; padding: 20px 0 30px;">
+                    <div class="user-avatar" id="profileAvatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 16px;">AJ</div>
+                    <h2 id="profileName">Alex Johnson</h2>
+                    <p style="color: var(--text-muted);" id="profileRole">Patient Account</p>
+                    <p style="color: var(--accent); font-size: 0.85rem; margin-top: 8px;">
+                        <i class="fas fa-check-circle"></i> Verified Identity
+                    </p>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <span class="section-title">Wallet</span>
+                    </div>
+                    <div class="api-card">
+                        <div class="api-header">
+                            <span class="api-title">XRP Address</span>
+                            <span class="api-status active">Connected</span>
+                        </div>
+                        <div class="api-key">rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <span class="section-title">Settings</span>
+                    </div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-left">
+                                <div class="settings-icon"><i class="fas fa-bell"></i></div>
+                                <span>Notifications</span>
+                            </div>
+                            <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-left">
+                                <div class="settings-icon"><i class="fas fa-fingerprint"></i></div>
+                                <span>Biometric Login</span>
+                            </div>
+                            <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-left">
+                                <div class="settings-icon"><i class="fas fa-shield-halved"></i></div>
+                                <span>Two-Factor Auth</span>
+                            </div>
+                            <div class="toggle" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="settings-item" onclick="openModal('exportModal')">
+                            <div class="settings-left">
+                                <div class="settings-icon"><i class="fas fa-download"></i></div>
+                                <span>Export Data</span>
+                            </div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                        </div>
+                        <div class="settings-item" onclick="logout()">
+                            <div class="settings-left">
+                                <div class="settings-icon danger"><i class="fas fa-sign-out-alt"></i></div>
+                                <span style="color: var(--danger);">Sign Out</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
+                    <p>Solus Protocol v2.0.1</p>
+                    <p style="margin-top: 4px;">Powered by XRP Ledger</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav" id="bottomNav" style="display: none;">
+            <div class="nav-item active" onclick="navigateTo('home')">
+                <i class="nav-icon fas fa-home"></i>
+                <span class="nav-label">Home</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('records')">
+                <i class="nav-icon fas fa-folder-open"></i>
+                <span class="nav-label">Records</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('activity')" style="position: relative;">
+                <i class="nav-icon fas fa-bell"></i>
+                <span class="nav-label">Activity</span>
+                <div class="notification-badge" id="activityBadge">3</div>
+            </div>
+            <div class="nav-item" onclick="navigateTo('profile')">
+                <i class="nav-icon fas fa-user"></i>
+                <span class="nav-label">Profile</span>
+            </div>
+        </nav>
+
+        <!-- Modals -->
+        <!-- Scan Modal -->
+        <div class="modal-overlay" id="scanModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">Scan QR Code</h2>
+                    <button class="modal-close" onclick="closeModal('scanModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="scan-animation">
+                    <div class="scan-ring"></div>
+                    <div class="scan-ring"></div>
+                    <div class="scan-ring"></div>
+                    <i class="scan-icon fas fa-qrcode"></i>
+                </div>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 24px;">
+                    Point your camera at a Solus QR code to quickly share or receive records
+                </p>
+                <button class="btn btn-primary btn-full" onclick="simulateScan()">
+                    <i class="fas fa-camera"></i> Open Camera
+                </button>
+            </div>
+        </div>
+
+        <!-- Share Modal -->
+        <div class="modal-overlay" id="shareModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">Share Record</h2>
+                    <button class="modal-close" onclick="closeModal('shareModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Record</label>
+                    <select class="form-select">
+                        <option>Annual Physical - Jan 2026</option>
+                        <option>Blood Work Results - Dec 2025</option>
+                        <option>Vaccination Record - Nov 2025</option>
+                        <option>Chest X-Ray - Oct 2025</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Provider Address or Email</label>
+                    <input type="text" class="form-input" placeholder="Enter wallet address or email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Access Duration</label>
+                    <select class="form-select">
+                        <option>24 hours</option>
+                        <option>7 days</option>
+                        <option>30 days</option>
+                        <option>Until revoked</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="simulateShare()">
+                    <i class="fas fa-share"></i> Share Securely
+                </button>
+            </div>
+        </div>
+
+        <!-- Add Record Modal -->
+        <div class="modal-overlay" id="addRecordModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">Add New Record</h2>
+                    <button class="modal-close" onclick="closeModal('addRecordModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Record Type</label>
+                    <select class="form-select">
+                        <option>Lab Results</option>
+                        <option>Imaging</option>
+                        <option>Prescription</option>
+                        <option>Visit Summary</option>
+                        <option>Vaccination</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" placeholder="e.g., Annual Blood Work">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" placeholder="Add notes about this record..."></textarea>
+                </div>
+                <div style="background: var(--glass); border: 2px dashed var(--border); border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 20px; cursor: pointer;" onclick="showToast('File upload simulated', 'success')">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--accent); margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-muted);">Tap to upload document or image</p>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="simulateAddRecord()">
+                    <i class="fas fa-link"></i> Anchor to Blockchain
+                </button>
+            </div>
+        </div>
+
+        <!-- Verify Modal -->
+        <div class="modal-overlay" id="verifyModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">Verify Record</h2>
+                    <button class="modal-close" onclick="closeModal('verifyModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Record Hash or Transaction ID</label>
+                    <input type="text" class="form-input" placeholder="Enter hash to verify..." id="verifyHashInput">
+                </div>
+                <button class="btn btn-primary btn-full" onclick="simulateVerify()" style="margin-bottom: 24px;">
+                    <i class="fas fa-search"></i> Verify on XRPL
+                </button>
+                <div id="verifyResult" style="display: none;">
+                    <div style="background: rgba(20, 241, 149, 0.1); border: 1px solid var(--accent); border-radius: 12px; padding: 20px; text-align: center;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--accent); margin-bottom: 12px;"></i>
+                        <h3 style="color: var(--accent); margin-bottom: 8px;">Record Verified</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">This record exists on the XRP Ledger and has not been tampered with.</p>
+                        <div style="margin-top: 16px; padding: 12px; background: var(--glass); border-radius: 8px;">
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Anchored on</p>
+                            <p style="font-weight: 600;">Feb 7, 2026 at 2:34 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Lookup Modal (Provider) -->
+        <div class="modal-overlay" id="patientLookupModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">Find Patient</h2>
+                    <button class="modal-close" onclick="closeModal('patientLookupModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Search by Name, DOB, or ID</label>
+                    <input type="text" class="form-input" placeholder="Enter patient info...">
+                </div>
+                <button class="btn btn-primary btn-full" style="margin-bottom: 24px;">
+                    <i class="fas fa-search"></i> Search Patients
+                </button>
+                <div class="patient-list">
+                    <div class="patient-card" onclick="closeModal('patientLookupModal'); showToast('Patient selected', 'success')">
+                        <div class="patient-avatar">SJ</div>
+                        <div class="patient-info">
+                            <div class="patient-name">Sarah Johnson</div>
+                            <div class="patient-meta">DOB: 05/12/1985 • ID: P-4821</div>
+                        </div>
+                    </div>
+                    <div class="patient-card">
+                        <div class="patient-avatar" style="background: linear-gradient(135deg, #ff6b6b, #ffa502);">SJ</div>
+                        <div class="patient-info">
+                            <div class="patient-name">Samuel Jackson</div>
+                            <div class="patient-meta">DOB: 08/22/1990 • ID: P-7392</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Access Modal (Provider) -->
+        <div class="modal-overlay" id="requestAccessModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">Request Access</h2>
+                    <button class="modal-close" onclick="closeModal('requestAccessModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Patient Wallet or Email</label>
+                    <input type="text" class="form-input" placeholder="Enter patient identifier...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Records Needed</label>
+                    <select class="form-select">
+                        <option>All Medical Records</option>
+                        <option>Lab Results Only</option>
+                        <option>Imaging Only</option>
+                        <option>Prescriptions Only</option>
+                        <option>Specific Record</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reason for Request</label>
+                    <textarea class="form-input" placeholder="Explain why you need access..."></textarea>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="closeModal('requestAccessModal'); showToast('Access request sent to patient', 'success')">
+                    <i class="fas fa-paper-plane"></i> Send Request
+                </button>
+            </div>
+        </div>
+
+        <!-- Bulk Anchor Modal (EHR) -->
+        <div class="modal-overlay" id="bulkAnchorModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">Bulk Anchor</h2>
+                    <button class="modal-close" onclick="closeModal('bulkAnchorModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div style="background: var(--glass); border: 2px dashed var(--border); border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 20px;">
+                    <i class="fas fa-file-csv" style="font-size: 2rem; color: var(--accent); margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-muted);">Drop CSV or JSON file with records</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Max 10,000 records per batch</p>
+                </div>
+                <div style="background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span>Records to process</span>
+                        <span style="color: var(--accent); font-weight: 600;">2,847</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span>Estimated cost</span>
+                        <span style="color: var(--accent); font-weight: 600;">$0.71 USD</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Estimated time</span>
+                        <span style="color: var(--accent); font-weight: 600;">~4 minutes</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="simulateBulkAnchor()">
+                    <i class="fas fa-rocket"></i> Start Batch Anchor
+                </button>
+            </div>
+        </div>
+
+        <!-- API Keys Modal (EHR) -->
+        <div class="modal-overlay" id="apiKeysModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">API Keys</h2>
+                    <button class="modal-close" onclick="closeModal('apiKeysModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="api-card">
+                    <div class="api-header">
+                        <span class="api-title">Production Key</span>
+                        <span class="api-status active">Active</span>
+                    </div>
+                    <div class="api-key">solus_live_7f8a9b2c3d4e5f6g7h8i9j0k</div>
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                        <button class="btn btn-secondary" style="flex: 1; padding: 10px;" onclick="showToast('Key copied to clipboard', 'success')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button class="btn btn-secondary" style="flex: 1; padding: 10px;">
+                            <i class="fas fa-refresh"></i> Rotate
+                        </button>
+                    </div>
+                </div>
+                <div class="api-card">
+                    <div class="api-header">
+                        <span class="api-title">Test Key</span>
+                        <span class="api-status active">Active</span>
+                    </div>
+                    <div class="api-key">solus_test_1a2b3c4d5e6f7g8h9i0j1k2l</div>
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                        <button class="btn btn-secondary" style="flex: 1; padding: 10px;" onclick="showToast('Key copied to clipboard', 'success')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button class="btn btn-secondary" style="flex: 1; padding: 10px;">
+                            <i class="fas fa-refresh"></i> Rotate
+                        </button>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-full" style="margin-top: 16px;">
+                    <i class="fas fa-plus"></i> Generate New Key
+                </button>
+            </div>
+        </div>
+
+        <!-- Export Modal -->
+        <div class="modal-overlay" id="exportModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title">Export Data</h2>
+                    <button class="modal-close" onclick="closeModal('exportModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Download all your health records in a portable format.</p>
+                <div class="form-group">
+                    <label class="form-label">Export Format</label>
+                    <select class="form-select">
+                        <option>FHIR R4 (JSON)</option>
+                        <option>PDF Bundle</option>
+                        <option>CSV</option>
+                        <option>HL7 v2</option>
+                    </select>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.1); border: 1px solid var(--warning); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <p style="color: var(--warning); font-size: 0.9rem;">
+                        <i class="fas fa-lock"></i> Your export will be encrypted with your wallet key
+                    </p>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="closeModal('exportModal'); showToast('Export started - check your downloads', 'success')">
+                    <i class="fas fa-download"></i> Download All Records
+                </button>
+            </div>
+        </div>
+
+        <!-- Record Detail Modal -->
+        <div class="modal-overlay" id="recordDetailModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="modal-header">
+                    <h2 class="modal-title" id="recordDetailTitle">Record Details</h2>
+                    <button class="modal-close" onclick="closeModal('recordDetailModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <div id="recordDetailContent">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <i class="toast-icon fas fa-check-circle"></i>
+            <span class="toast-message" id="toastMessage">Success!</span>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentRole = 'patient';
+        let currentScreen = 'login';
+
+        // Mock Data
+        const mockRecords = [
+            { id: 1, type: 'visit', icon: 'stethoscope', title: 'Annual Physical Exam', date: 'Feb 7, 2026', provider: 'Dr. Smith', status: 'verified' },
+            { id: 2, type: 'lab', icon: 'vial', title: 'Complete Blood Count', date: 'Feb 5, 2026', provider: 'Quest Diagnostics', status: 'verified' },
+            { id: 3, type: 'imaging', icon: 'x-ray', title: 'Chest X-Ray', date: 'Jan 28, 2026', provider: 'City Hospital', status: 'verified' },
+            { id: 4, type: 'rx', icon: 'pills', title: 'Lisinopril 10mg', date: 'Jan 15, 2026', provider: 'Dr. Johnson', status: 'verified' },
+            { id: 5, type: 'vitals', icon: 'heartbeat', title: 'Blood Pressure Check', date: 'Jan 10, 2026', provider: 'CVS MinuteClinic', status: 'verified' },
+            { id: 6, type: 'lab', icon: 'vial', title: 'Lipid Panel', date: 'Dec 20, 2025', provider: 'LabCorp', status: 'verified' },
+            { id: 7, type: 'visit', icon: 'stethoscope', title: 'Follow-up Visit', date: 'Dec 15, 2025', provider: 'Dr. Smith', status: 'verified' },
+            { id: 8, type: 'imaging', icon: 'x-ray', title: 'MRI - Lower Back', date: 'Nov 30, 2025', provider: 'Radiology Partners', status: 'verified' },
+            { id: 9, type: 'rx', icon: 'pills', title: 'Metformin 500mg', date: 'Nov 20, 2025', provider: 'Dr. Johnson', status: 'verified' },
+            { id: 10, type: 'vitals', icon: 'heartbeat', title: 'Glucose Monitoring', date: 'Nov 15, 2025', provider: 'Home Test', status: 'verified' },
+            { id: 11, type: 'lab', icon: 'vial', title: 'A1C Test', date: 'Nov 10, 2025', provider: 'Quest Diagnostics', status: 'verified' },
+            { id: 12, type: 'visit', icon: 'stethoscope', title: 'Diabetes Consult', date: 'Oct 25, 2025', provider: 'Dr. Williams', status: 'verified' }
+        ];
+
+        const mockActivity = [
+            { color: 'green', text: 'Blood work results anchored to XRPL', time: '2 hours ago' },
+            { color: 'purple', text: 'Dr. Smith accessed your records', time: '5 hours ago' },
+            { color: 'blue', text: 'New prescription added', time: 'Yesterday' },
+            { color: 'green', text: 'Record verified by City Hospital', time: '2 days ago' },
+            { color: 'purple', text: 'Access request from Dr. Johnson', time: '3 days ago' },
+            { color: 'green', text: 'Annual physical anchored', time: '1 week ago' },
+            { color: 'blue', text: 'Shared records with LabCorp', time: '1 week ago' },
+            { color: 'green', text: 'MRI results verified', time: '2 weeks ago' }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateGreeting();
+            renderRecords();
+            renderActivity();
+        });
+
+        // Role Selection
+        function selectRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`.role-card[data-role="${role}"]`).classList.add('selected');
+        }
+
+        // Login
+        function login() {
+            const password = document.getElementById('loginPassword').value;
+            if (password === 'demo123') {
+                document.getElementById('loginScreen').classList.remove('active');
+                document.getElementById('homeScreen').classList.add('active');
+                document.getElementById('bottomNav').style.display = 'flex';
+                currentScreen = 'home';
+                
+                updateUIForRole();
+                showToast('Welcome to Solus', 'success');
+            } else {
+                showToast('Invalid password', 'error');
+            }
+        }
+
+        // Update UI based on role
+        function updateUIForRole() {
+            const names = {
+                patient: 'Alex Johnson',
+                provider: 'Dr. Sarah Chen',
+                ehr: 'MedTech Systems'
+            };
+            
+            const initials = {
+                patient: 'AJ',
+                provider: 'SC',
+                ehr: 'MT'
+            };
+
+            const roles = {
+                patient: 'Patient Account',
+                provider: 'Healthcare Provider',
+                ehr: 'EHR Administrator'
+            };
+
+            document.getElementById('userName').textContent = names[currentRole];
+            document.getElementById('profileName').textContent = names[currentRole];
+            document.getElementById('profileRole').textContent = roles[currentRole];
+            document.getElementById('userAvatar').textContent = initials[currentRole];
+            document.getElementById('profileAvatar').textContent = initials[currentRole];
+
+            // Show/hide role-specific content
+            document.getElementById('patientHomeContent').style.display = currentRole === 'patient' ? 'block' : 'none';
+            document.getElementById('providerHomeContent').style.display = currentRole === 'provider' ? 'block' : 'none';
+            document.getElementById('ehrHomeContent').style.display = currentRole === 'ehr' ? 'block' : 'none';
+
+            // Update avatar color
+            const avatar = document.getElementById('userAvatar');
+            const profileAvatar = document.getElementById('profileAvatar');
+            avatar.className = 'user-avatar';
+            profileAvatar.className = 'user-avatar';
+            if (currentRole === 'provider') {
+                avatar.classList.add('provider');
+                profileAvatar.classList.add('provider');
+            } else if (currentRole === 'ehr') {
+                avatar.classList.add('ehr');
+                profileAvatar.classList.add('ehr');
+            }
+        }
+
+        // Logout
+        function logout() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('loginScreen').classList.add('active');
+            document.getElementById('bottomNav').style.display = 'none';
+            currentScreen = 'login';
+            showToast('Signed out successfully', 'success');
+        }
+
+        // Navigation
+        function navigateTo(screen) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const screenMap = {
+                'home': 'homeScreen',
+                'records': 'recordsScreen',
+                'activity': 'activityScreen',
+                'profile': 'profileScreen'
+            };
+
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenMap[screen]).classList.add('active');
+            currentScreen = screen;
+
+            if (screen === 'activity') {
+                document.getElementById('activityBadge').style.display = 'none';
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Update greeting based on time
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greeting = 'Good evening';
+            if (hour < 12) greeting = 'Good morning';
+            else if (hour < 17) greeting = 'Good afternoon';
+            document.getElementById('greetingText').textContent = greeting;
+        }
+
+        // Render records
+        function renderRecords() {
+            const iconMap = {
+                'visit': 'visit',
+                'lab': 'lab',
+                'imaging': 'imaging',
+                'rx': 'rx',
+                'vitals': 'vitals'
+            };
+
+            const recentList = document.getElementById('recentRecordsList');
+            const allList = document.getElementById('allRecordsList');
+
+            const renderRecord = (record) => `
+                <div class="record-card" onclick="openRecordDetail(${record.id})">
+                    <div class="record-icon ${record.type}">
+                        <i class="fas fa-${record.icon}"></i>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">${record.title}</div>
+                        <div class="record-meta">
+                            <span>${record.date}</span>
+                            <span>${record.provider}</span>
+                        </div>
+                    </div>
+                    <span class="record-badge ${record.status}">${record.status}</span>
+                    <i class="record-arrow fas fa-chevron-right"></i>
+                </div>
+            `;
+
+            recentList.innerHTML = mockRecords.slice(0, 4).map(renderRecord).join('');
+            allList.innerHTML = mockRecords.map(renderRecord).join('');
+        }
+
+        // Render activity
+        function renderActivity() {
+            const feed = document.getElementById('activityFeed');
+            feed.innerHTML = mockActivity.map(item => `
+                <div class="activity-item">
+                    <div class="activity-dot ${item.color}"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">${item.text}</div>
+                        <div class="activity-time">${item.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open record detail
+        function openRecordDetail(id) {
+            const record = mockRecords.find(r => r.id === id);
+            if (record) {
+                document.getElementById('recordDetailTitle').textContent = record.title;
+                document.getElementById('recordDetailContent').innerHTML = `
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <div class="record-icon ${record.type}" style="width: 80px; height: 80px; margin: 0 auto 16px; font-size: 2rem;">
+                            <i class="fas fa-${record.icon}"></i>
+                        </div>
+                        <span class="record-badge ${record.status}" style="font-size: 0.85rem; padding: 6px 16px;">${record.status}</span>
+                    </div>
+                    <div class="api-card">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: var(--text-muted);">Date</span>
+                            <span>${record.date}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: var(--text-muted);">Provider</span>
+                            <span>${record.provider}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: var(--text-muted);">Type</span>
+                            <span>${record.type.charAt(0).toUpperCase() + record.type.slice(1)}</span>
+                        </div>
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">Blockchain Hash</span>
+                            <div class="api-key" style="margin-top: 8px; font-size: 0.75rem;">0x7f8a9b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="openModal('shareModal'); closeModal('recordDetailModal');">
+                            <i class="fas fa-share"></i> Share
+                        </button>
+                        <button class="btn btn-primary" style="flex: 1;" onclick="showToast('Downloading record...', 'success')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                `;
+                openModal('recordDetailModal');
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Simulated actions
+        function simulateScan() {
+            closeModal('scanModal');
+            setTimeout(() => {
+                showToast('QR Code scanned - Access granted', 'success');
+            }, 500);
+        }
+
+        function simulateShare() {
+            closeModal('shareModal');
+            showToast('Record shared securely', 'success');
+        }
+
+        function simulateAddRecord() {
+            closeModal('addRecordModal');
+            showToast('Record anchored to XRPL', 'success');
+            document.getElementById('statRecords').textContent = '13';
+            document.getElementById('statVerified').textContent = '13';
+        }
+
+        function simulateVerify() {
+            document.getElementById('verifyResult').style.display = 'block';
+        }
+
+        function simulateBulkAnchor() {
+            closeModal('bulkAnchorModal');
+            showToast('Batch anchoring started - 2,847 records', 'success');
+        }
+
+        // Keyboard support for login
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') login();
+        });
+    </script>
+</body>
+</html>
