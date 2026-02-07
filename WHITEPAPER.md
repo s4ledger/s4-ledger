@@ -371,6 +371,7 @@ Each record type is prefixed in the XRPL memo data (e.g., `SURGERY:sha256hash`) 
 | **v2.4.0** | Feb 2026 | Matched main site particles.js (50 particles, grab hover), 3rd gradient orb with drift animation, gyroscope/mouse parallax, card stagger entrance, FAB, swipe-dismiss modals, gradient text headers |
 | **v2.5.0** | Feb 2026 | Background transparency fix (particles visible through app), scroll-to-top button, long-press context menu, real-time header clock, skeleton shimmer CSS |
 | **v2.6.0** | Feb 2026 | Mid-session role switching (swap Patient/Provider/EHR without logout), AI Health Insights engine (drug interaction detection, vitals trend analysis, anomaly flagging), AI record summarization per record, interactive tooltip system for non-technical users, Data Health Score ring, onboarding text improvements |
+| **v2.7.0** | Feb 2026 | Full "Solus Protocol" branding normalization across all UI text, Solus Protocol AI Engine for all three roles (Patient, Provider, EHR) with role-specific insights, Provider Practice Health Score (88 — patient verification, documentation compliance), EHR System Health Score (97 — uptime, HIPAA compliance, anchoring volume), Provider AI: cross-patient drug alerts, missed follow-up detection, cohort vitals trends, EHR AI: HIPAA compliance audit, latency monitoring, API key rotation alerts, record distribution analysis |
 
 ---
 

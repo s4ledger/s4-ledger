@@ -1856,7 +1856,7 @@
         /* ===== DATA HEALTH SCORE ===== */
         .health-score-ring {
             width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 12px;
-            background: conic-gradient(var(--accent) 0deg, var(--accent) calc(var(--score) * 3.6deg), var(--glass) calc(var(--score) * 3.6deg));
+            background: conic-gradient(var(--score-color, var(--accent)) 0deg, var(--score-color, var(--accent)) calc(var(--score) * 3.6deg), var(--glass) calc(var(--score) * 3.6deg));
             display: flex; align-items: center; justify-content: center;
             position: relative;
         }
@@ -2119,11 +2119,11 @@
                     <!-- AI Insights Section -->
                     <div class="section">
                         <div class="section-header">
-                            <span class="section-title">AI Health Insights</span>
+                            <span class="section-title">Solus Protocol AI Engine</span>
                             <span class="section-action" onclick="runAIScan()"><i class="fas fa-wand-magic-sparkles"></i> Scan</span>
                         </div>
                         <div class="ai-insights-card" id="aiInsightsCard">
-                            <div class="ai-badge"><i class="fas fa-brain"></i> Solus AI Engine</div>
+                            <div class="ai-badge"><i class="fas fa-brain"></i> Solus Protocol AI Engine — Patient</div>
                             <div id="aiInsightsContent">
                                 <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 16px 0;">
                                     <i class="fas fa-wand-magic-sparkles" style="font-size: 1.5rem; opacity: 0.3; display: block; margin-bottom: 8px;"></i>
@@ -2256,6 +2256,54 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Provider AI Insights -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Solus Protocol AI Engine</span>
+                            <span class="section-action" onclick="runProviderAIScan()"><i class="fas fa-wand-magic-sparkles"></i> Scan</span>
+                        </div>
+                        <div class="ai-insights-card" style="border-color: rgba(153, 69, 255, 0.2); background: linear-gradient(135deg, rgba(153, 69, 255, 0.08), rgba(0, 194, 255, 0.08));">
+                            <div class="ai-badge" style="background: linear-gradient(135deg, var(--secondary), var(--accent2));"><i class="fas fa-brain"></i> Solus Protocol AI Engine — Provider</div>
+                            <div id="providerAIContent">
+                                <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 16px 0;">
+                                    <i class="fas fa-user-md" style="font-size: 1.5rem; opacity: 0.3; display: block; margin-bottom: 8px;"></i>
+                                    Tap <strong>"Scan"</strong> to analyze patient records for cross-patient trends, missed follow-ups, and clinical decision support.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Provider Data Health Score -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Practice Health Score</span>
+                            <span class="term-tooltip" onclick="showTermTooltip(event, 'providerHealthScore')">
+                                <i class="fas fa-info-circle tooltip-icon"></i>
+                            </span>
+                        </div>
+                        <div class="ai-summary-box" style="text-align: center;">
+                            <div class="health-score-ring" style="--score: 88; --score-color: #9945FF; margin: 0 auto 12px;">
+                                <span class="health-score-value" style="color: var(--secondary);">88</span>
+                            </div>
+                            <h4 style="color: var(--secondary); margin-bottom: 4px;">Very Good</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Practice-wide data integrity assessment</p>
+                            <div style="display: flex; gap: 12px; margin-top: 16px; text-align: left;">
+                                <div style="flex: 1; font-size: 0.78rem;">
+                                    <div style="color: var(--accent); font-weight: 600;"><i class="fas fa-user-check"></i> 8/8</div>
+                                    <div style="color: var(--text-muted);">Patients Verified</div>
+                                </div>
+                                <div style="flex: 1; font-size: 0.78rem;">
+                                    <div style="color: var(--secondary); font-weight: 600;"><i class="fas fa-file-medical"></i> 24</div>
+                                    <div style="color: var(--text-muted);">Records Today</div>
+                                </div>
+                                <div style="flex: 1; font-size: 0.78rem;">
+                                    <div style="color: var(--warning); font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> 3</div>
+                                    <div style="color: var(--text-muted);">Pending Reviews</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- EHR View -->
@@ -2360,6 +2408,54 @@
                                 <span class="api-status active">Active</span>
                             </div>
                             <div class="api-key">solus_test_•••••••••••••••9b2c</div>
+                        </div>
+                    </div>
+
+                    <!-- EHR AI Insights -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Solus Protocol AI Engine</span>
+                            <span class="section-action" onclick="runEHRAIScan()"><i class="fas fa-wand-magic-sparkles"></i> Scan</span>
+                        </div>
+                        <div class="ai-insights-card" style="border-color: rgba(255, 215, 0, 0.2); background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(0, 194, 255, 0.08));">
+                            <div class="ai-badge" style="background: linear-gradient(135deg, var(--ehr), #ff8c00);"><i class="fas fa-brain"></i> Solus Protocol AI Engine — EHR</div>
+                            <div id="ehrAIContent">
+                                <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 16px 0;">
+                                    <i class="fas fa-hospital" style="font-size: 1.5rem; opacity: 0.3; display: block; margin-bottom: 8px;"></i>
+                                    Tap <strong>"Scan"</strong> to run system-wide data integrity audits, detect anchoring failures, and identify HIPAA compliance gaps.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EHR System Health Score -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">System Health Score</span>
+                            <span class="term-tooltip" onclick="showTermTooltip(event, 'ehrHealthScore')">
+                                <i class="fas fa-info-circle tooltip-icon"></i>
+                            </span>
+                        </div>
+                        <div class="ai-summary-box" style="text-align: center;">
+                            <div class="health-score-ring" style="--score: 97; --score-color: #ffd700; margin: 0 auto 12px;">
+                                <span class="health-score-value" style="color: var(--ehr);">97</span>
+                            </div>
+                            <h4 style="color: var(--ehr); margin-bottom: 4px;">Excellent</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Enterprise-wide anchoring infrastructure health</p>
+                            <div style="display: flex; gap: 12px; margin-top: 16px; text-align: left;">
+                                <div style="flex: 1; font-size: 0.78rem;">
+                                    <div style="color: var(--accent); font-weight: 600;"><i class="fas fa-check-circle"></i> 99.9%</div>
+                                    <div style="color: var(--text-muted);">Uptime</div>
+                                </div>
+                                <div style="flex: 1; font-size: 0.78rem;">
+                                    <div style="color: var(--ehr); font-weight: 600;"><i class="fas fa-layer-group"></i> 2.4M</div>
+                                    <div style="color: var(--text-muted);">Anchored</div>
+                                </div>
+                                <div style="flex: 1; font-size: 0.78rem;">
+                                    <div style="color: var(--accent); font-weight: 600;"><i class="fas fa-shield-halved"></i> 0</div>
+                                    <div style="color: var(--text-muted);">HIPAA Violations</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2514,7 +2610,7 @@
                 </div>
 
                 <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
-                    <p>Solus Protocol v2.6.0</p>
+                    <p>Solus Protocol v2.7.0</p>
                     <p style="margin-top: 4px;">Build Feb 2026 • Powered by XRP Ledger</p>
                     <p style="margin-top: 4px; font-size: 0.7rem; opacity: 0.6;">Demo Environment • Testnet</p>
                 </div>
@@ -2541,13 +2637,13 @@
                     <div class="about-card">
                         <h3>What is Solus Protocol?</h3>
                         <p>Solus Protocol is a decentralized medical data integrity platform built on the XRP Ledger. We enable patients and providers to securely hash, verify, and share medical records without exposing Protected Health Information (PHI) on-chain.</p>
-                        <p>The Solus app is your personal healthcare data wallet — giving you full control over your medical records, who can access them, and how they're verified.</p>
+                        <p>The Solus Protocol app is your personal healthcare data wallet — giving you full control over your medical records, who can access them, and how they're verified.</p>
                     </div>
                 </div>
                 <div class="section">
                     <div class="about-card">
                         <h3>Why "Solus"?</h3>
-                        <p>We chose 'Solus' from the Latin word meaning 'alone' or 'only' because our protocol empowers patients to have sole control over the integrity of their medical data. In a fragmented healthcare system full of intermediaries, Solus creates a single, unbreakable source of truth on the XRPL — unique, independent, and patient-centered. It's not about storing data; it's about making each record's authenticity stand alone, verifiable by anyone, forever.</p>
+                        <p>We chose 'Solus' from the Latin word meaning 'alone' or 'only' because our protocol empowers patients to have sole control over the integrity of their medical data. In a fragmented healthcare system full of intermediaries, Solus Protocol creates a single, unbreakable source of truth on the XRPL — unique, independent, and patient-centered. It's not about storing data; it's about making each record's authenticity stand alone, verifiable by anyone, forever.</p>
                     </div>
                 </div>
                 <div class="section">
@@ -2930,7 +3026,7 @@
                     </div>
                 </div>
                 <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
-                    <p>Solus Protocol v2.6.0</p>
+                    <p>Solus Protocol v2.7.0</p>
                     <p style="margin-top: 4px;">Build Feb 2026 • Powered by XRP Ledger</p>
                     <p style="margin-top: 4px; font-size: 0.7rem; opacity: 0.6;">Demo Environment • Testnet</p>
                 </div>
@@ -2978,7 +3074,7 @@
                     <i class="scan-icon fas fa-qrcode"></i>
                 </div>
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 24px;">
-                    Point your camera at a Solus QR code to quickly share or receive records
+                    Point your camera at a Solus Protocol QR code to quickly share or receive records
                 </p>
                 <button class="btn btn-primary btn-full" onclick="simulateScan()">
                     <i class="fas fa-camera"></i> Open Camera
@@ -3391,7 +3487,7 @@
                     currentScreen = 'home';
 
                     updateUIForRole();
-                    showToast('Welcome to Solus', 'success');
+                    showToast('Welcome to Solus Protocol', 'success');
 
                     // Animate stat counters on first load
                     setTimeout(() => animateHomeStats(), 300);
@@ -3713,7 +3809,7 @@
                         </button>
                     </div>
                     <button class="btn" id="aiSummaryBtn" style="width: 100%; margin-top: 12px; background: linear-gradient(135deg, rgba(0,194,255,0.15), rgba(153,69,255,0.15)); border: 1px solid rgba(0,194,255,0.3); color: var(--accent2);" onclick="generateAISummary(${record.id})">
-                        <i class="fas fa-brain"></i> AI Summary
+                        <i class="fas fa-brain"></i> Solus Protocol AI Summary
                     </button>
                     <div id="aiSummaryContainer"></div>
                 `;
@@ -4116,7 +4212,7 @@
                 return;
             }
             const body = 'Name: ' + name + '%0D%0AEmail: ' + email + '%0D%0A%0D%0A' + encodeURIComponent(message);
-            window.location.href = 'mailto:support@solusprotocol.com?subject=' + encodeURIComponent((subject || 'General') + ' - Solus App') + '&body=' + body;
+            window.location.href = 'mailto:support@solusprotocol.com?subject=' + encodeURIComponent((subject || 'General') + ' - Solus Protocol App') + '&body=' + body;
             showToast('Opening email client...', 'success');
         }
 
@@ -4612,7 +4708,7 @@
             },
             hipaa: {
                 title: 'HIPAA Secured',
-                text: 'HIPAA (Health Insurance Portability and Accountability Act) is the U.S. federal law protecting sensitive patient health information. Solus complies by never storing actual health data on-chain — only irreversible SHA-256 hashes.'
+                text: 'HIPAA (Health Insurance Portability and Accountability Act) is the U.S. federal law protecting sensitive patient health information. Solus Protocol complies by never storing actual health data on-chain — only irreversible SHA-256 hashes.'
             },
             sha256: {
                 title: 'SHA-256 Hash',
@@ -4624,11 +4720,19 @@
             },
             xrpl: {
                 title: 'XRP Ledger (XRPL)',
-                text: 'A decentralized, open-source blockchain designed for fast, low-cost transactions. Solus uses XRPL to permanently anchor medical record hashes, providing an immutable audit trail without storing sensitive data.'
+                text: 'A decentralized, open-source blockchain designed for fast, low-cost transactions. Solus Protocol uses XRPL to permanently anchor medical record hashes, providing an immutable audit trail without storing sensitive data.'
             },
             anchoring: {
                 title: 'Data Anchoring',
                 text: 'The process of recording a cryptographic hash of your medical record onto the blockchain. Once anchored, the hash is permanent and can be used to prove the record hasn\'t been altered since that moment.'
+            },
+            providerHealthScore: {
+                title: 'Practice Health Score',
+                text: 'A composite score measuring data integrity across your entire patient panel. Factors include: percentage of records verified, follow-up compliance rate, documentation completeness, and average anchoring latency.'
+            },
+            ehrHealthScore: {
+                title: 'System Health Score',
+                text: 'An enterprise-wide infrastructure health metric. Measures uptime, anchoring success rate, HIPAA compliance status, API key freshness, and the percentage of records passing integrity verification.'
             }
         };
 
@@ -4679,7 +4783,7 @@
             content.innerHTML = `
                 <div class="ai-scan-animation">
                     <div class="ai-spinner"></div>
-                    <span>Analyzing 12 records with Solus AI...</span>
+                    <span>Solus Protocol AI Engine analyzing 12 patient records...</span>
                 </div>
                 <div class="ai-scan-progress">
                     <div class="ai-scan-progress-bar" id="aiProgressBar"></div>
@@ -4736,7 +4840,7 @@
                             </div>
                         </div>
                     `;
-                    showToast('AI analysis complete — 4 insights found', 'success');
+                    showToast('Solus Protocol AI Engine — 4 insights found', 'success');
                 }, 400);
             }, 2500);
         }
@@ -4753,7 +4857,7 @@
             container.innerHTML = `
                 <div class="ai-scan-animation" style="justify-content: center;">
                     <div class="ai-spinner"></div>
-                    <span>Generating AI summary...</span>
+                    <span>Solus Protocol AI Engine summarizing...</span>
                 </div>
             `;
 
@@ -4785,19 +4889,151 @@
                 const data = summaries[record.type] || summaries.visit;
                 container.innerHTML = `
                     <div class="ai-summary-box">
-                        <div class="ai-badge" style="margin-bottom: 8px;"><i class="fas fa-brain"></i> AI Summary</div>
+                        <div class="ai-badge" style="margin-bottom: 8px;"><i class="fas fa-brain"></i> Solus Protocol AI Summary</div>
                         <p>${data.summary}</p>
                         <h4 style="margin-top: 12px; font-size: 0.82rem; color: var(--text);">Key Findings</h4>
                         <ul>
                             ${data.keyPoints.map(p => '<li><i class="fas fa-chevron-right"></i> ' + p + '</li>').join('')}
                         </ul>
                         <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 12px; font-style: italic;">
-                            <i class="fas fa-info-circle"></i> AI-generated summary for informational purposes only. Always consult your healthcare provider for medical decisions.
+                            <i class="fas fa-info-circle"></i> Solus Protocol AI Engine — generated summary for informational purposes only. Always consult your healthcare provider for medical decisions.
                         </p>
                     </div>
                 `;
                 if (summaryBtn) summaryBtn.disabled = false;
             }, 1800);
+        }
+
+        // ===== PROVIDER AI SCAN =====
+        function runProviderAIScan() {
+            haptic();
+            const content = document.getElementById('providerAIContent');
+            content.innerHTML = `
+                <div class="ai-scan-animation">
+                    <div class="ai-spinner"></div>
+                    <span>Solus Protocol AI Engine analyzing patient cohort...</span>
+                </div>
+                <div class="ai-scan-progress">
+                    <div class="ai-scan-progress-bar" id="providerAIProgress"></div>
+                </div>
+            `;
+
+            let progress = 0;
+            const bar = document.getElementById('providerAIProgress');
+            const interval = setInterval(() => {
+                progress += Math.random() * 18;
+                if (progress > 95) progress = 95;
+                bar.style.width = progress + '%';
+            }, 200);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                bar.style.width = '100%';
+                setTimeout(() => {
+                    haptic([10, 30, 10, 30, 10]);
+                    content.innerHTML = `
+                        <div class="ai-finding">
+                            <div class="ai-finding-icon alert"><i class="fas fa-pills"></i></div>
+                            <div class="ai-finding-text">
+                                <h4>Cross-Patient Drug Alert</h4>
+                                <p>3 patients in your panel are on both ACE inhibitors and potassium-sparing diuretics. Risk of hyperkalemia — recommend serum potassium monitoring within 7 days.</p>
+                                <span class="ai-tag high">High Priority</span>
+                            </div>
+                        </div>
+                        <div class="ai-finding">
+                            <div class="ai-finding-icon warning"><i class="fas fa-calendar-xmark"></i></div>
+                            <div class="ai-finding-text">
+                                <h4>Missed Follow-Up Detection</h4>
+                                <p>Sarah Johnson's post-surgical follow-up was scheduled for Jan 30 (8 days overdue). Michael Roberts' A1C recheck is due Feb 10. Recommend automated patient outreach.</p>
+                                <span class="ai-tag medium">Medium Priority</span>
+                            </div>
+                        </div>
+                        <div class="ai-finding">
+                            <div class="ai-finding-icon info"><i class="fas fa-chart-line"></i></div>
+                            <div class="ai-finding-text">
+                                <h4>Cohort Vitals Trend</h4>
+                                <p>Average systolic BP across your 8 active patients is trending upward by 4.2% compared to 90 days ago. 2 patients now exceed Stage 1 hypertension threshold.</p>
+                                <span class="ai-tag medium">Clinical Trend</span>
+                            </div>
+                        </div>
+                        <div class="ai-finding">
+                            <div class="ai-finding-icon ok"><i class="fas fa-clipboard-check"></i></div>
+                            <div class="ai-finding-text">
+                                <h4>Documentation Compliance</h4>
+                                <p>24/24 records from today are properly anchored and hash-verified on XRPL. All clinical notes have matching blockchain timestamps. No documentation gaps detected.</p>
+                                <span class="ai-tag low">All Clear</span>
+                            </div>
+                        </div>
+                    `;
+                    showToast('Solus Protocol AI Engine — 4 provider insights found', 'success');
+                }, 400);
+            }, 2800);
+        }
+
+        // ===== EHR AI SCAN =====
+        function runEHRAIScan() {
+            haptic();
+            const content = document.getElementById('ehrAIContent');
+            content.innerHTML = `
+                <div class="ai-scan-animation">
+                    <div class="ai-spinner"></div>
+                    <span>Solus Protocol AI Engine running system audit...</span>
+                </div>
+                <div class="ai-scan-progress">
+                    <div class="ai-scan-progress-bar" id="ehrAIProgress"></div>
+                </div>
+            `;
+
+            let progress = 0;
+            const bar = document.getElementById('ehrAIProgress');
+            const interval = setInterval(() => {
+                progress += Math.random() * 12;
+                if (progress > 95) progress = 95;
+                bar.style.width = progress + '%';
+            }, 250);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                bar.style.width = '100%';
+                setTimeout(() => {
+                    haptic([10, 30, 10, 30, 10]);
+                    content.innerHTML = `
+                        <div class="ai-finding">
+                            <div class="ai-finding-icon ok"><i class="fas fa-shield-halved"></i></div>
+                            <div class="ai-finding-text">
+                                <h4>HIPAA Compliance Status</h4>
+                                <p>All 2.4M anchored records passed integrity verification. Zero unauthorized access events in the last 30 days. PHI de-identification is 100% compliant with Safe Harbor method.</p>
+                                <span class="ai-tag low">Compliant</span>
+                            </div>
+                        </div>
+                        <div class="ai-finding">
+                            <div class="ai-finding-icon warning"><i class="fas fa-server"></i></div>
+                            <div class="ai-finding-text">
+                                <h4>Anchoring Latency Spike</h4>
+                                <p>Average hash anchoring time increased from 2.1s to 3.8s between 2:00–3:00 PM today. Correlated with XRPL Testnet validator rotation. Recommend monitoring for persistence.</p>
+                                <span class="ai-tag medium">Performance</span>
+                            </div>
+                        </div>
+                        <div class="ai-finding">
+                            <div class="ai-finding-icon alert"><i class="fas fa-key"></i></div>
+                            <div class="ai-finding-text">
+                                <h4>API Key Rotation Overdue</h4>
+                                <p>Production API key <code>solus_live_...3f7a</code> has not been rotated in 87 days. Security best practice recommends 90-day rotation. Schedule rotation before Feb 14.</p>
+                                <span class="ai-tag high">Security</span>
+                            </div>
+                        </div>
+                        <div class="ai-finding">
+                            <div class="ai-finding-icon info"><i class="fas fa-chart-pie"></i></div>
+                            <div class="ai-finding-text">
+                                <h4>Record Distribution Analysis</h4>
+                                <p>Top 3 record types: Vitals (34%), Lab Results (22%), Imaging (15%). Immunization records are 12% below expected volume for Q1 — may indicate missed flu season anchoring.</p>
+                                <span class="ai-tag low">Analytics</span>
+                            </div>
+                        </div>
+                    `;
+                    showToast('Solus Protocol AI Engine — 4 system insights found', 'success');
+                }, 400);
+            }, 3200);
         }
     </script>
 </body>
