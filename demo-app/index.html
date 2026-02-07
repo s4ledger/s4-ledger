@@ -3721,7 +3721,7 @@
                             <span style="color: var(--text-muted); font-size: 0.78rem;"> records anchored this session</span>
                         </div>
                         <div style="margin-left: auto; display: flex; gap: 6px; align-items: center;">
-                            <div class="ws-status offline" id="pgWsStatus"><div class="ws-dot"></div><span>Offline</span></div>
+                            <div class="ws-status" id="pgWsStatus" style="color: var(--accent2); background: rgba(0,194,255,0.1);"><div class="ws-dot" style="background: var(--accent2);"></div><span>Ready</span></div>
                             <span class="pg-testnet-badge"><i class="fas fa-flask"></i> Testnet</span>
                         </div>
                     </div>
@@ -5895,6 +5895,8 @@
         }
         window.addEventListener('online', updateOnlineStatus);
         window.addEventListener('offline', updateOnlineStatus);
+        // Check network status on load
+        if (navigator.onLine) { /* online — no banner needed */ } else { updateOnlineStatus(); }
 
         // ===== SESSION TIMEOUT =====
         let sessionTimer = null;
@@ -7248,8 +7250,10 @@
             const el = document.getElementById('pgWsStatus');
             if (!el) return;
             el.className = 'ws-status ' + state;
-            const labels = { offline: 'Offline', connecting: 'Connecting...', connected: 'Connected' };
-            el.querySelector('span').textContent = labels[state] || 'Offline';
+            const labels = { offline: 'Ready', connecting: 'Connecting...', connected: 'Connected' };
+            el.querySelector('span').textContent = labels[state] || 'Ready';
+            if (state === 'offline') { el.style.color = 'var(--accent2)'; el.style.background = 'rgba(0,194,255,0.1)'; el.querySelector('.ws-dot').style.background = 'var(--accent2)'; }
+            else { el.style.color = ''; el.style.background = ''; el.querySelector('.ws-dot').style.background = ''; }
         }
 
         // ===== QR PROOF CARD =====
