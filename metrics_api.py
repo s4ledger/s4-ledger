@@ -58,8 +58,9 @@ def get_metrics():
     last_hash = None
 
     for tx in txs:
-        tx_obj = tx.get("tx", {})
-        tx_hash = tx_obj.get("hash", "")
+        # Handle both old (tx) and new (tx_json) xrpl-py response formats
+        tx_obj = tx.get("tx_json", tx.get("tx", {}))
+        tx_hash = tx.get("hash", tx_obj.get("hash", ""))
         tx_date = tx_obj.get("date")
         
         if tx_date and tx_date > 0:
@@ -155,8 +156,9 @@ def get_transactions():
 
     transactions = []
     for tx in txs:
-        tx_obj = tx.get("tx", {})
-        tx_hash = tx_obj.get("hash", "")
+        # Handle both old (tx) and new (tx_json) xrpl-py response formats
+        tx_obj = tx.get("tx_json", tx.get("tx", {}))
+        tx_hash = tx.get("hash", tx_obj.get("hash", ""))
         tx_date = tx_obj.get("date")
         
         if tx_date and tx_date > 0:
