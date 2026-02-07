@@ -44,95 +44,107 @@
         </div>
     </div>
     <script>
-        // Demo data for charts
-        const weeks = ["Week 1","Week 2","Week 3","Week 4","Week 5","Week 6","Week 7","Week 8"];
-        const hashes = [5, 12, 18, 25, 40, 60, 80, 120];
-        const recordTypes = ["Vitals","Post-Op","Lab Results","Imaging","Discharge","Mental Health"];
-        const recordCounts = [50, 20, 30, 15, 10, 5];
-        const feeData = [0.05, 0.12, 0.18, 0.25, 0.40, 0.60, 0.80, 1.20];
-        const txData = [10, 22, 35, 50, 70, 90, 110, 150];
-        window.addEventListener('DOMContentLoaded', function() {
-            hashChart = new Chart(document.getElementById('hashChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: weeks,
-                    datasets: [{
-                        label: 'Cumulative Hashes Anchored',
-                        data: hashes,
-                        borderColor: '#14f195',
-                        backgroundColor: 'rgba(20,241,149,0.2)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#14f195'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
-                }
-            });
-            recordChart = new Chart(document.getElementById('recordChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: recordTypes,
-                    datasets: [{
-                        label: 'Records Secured',
-                        data: recordCounts,
-                        backgroundColor: '#9945ff',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
-                }
-            });
-            feeChart = new Chart(document.getElementById('feeChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: weeks,
-                    datasets: [{
-                        label: '$SLS Fee/Rebate Activity',
-                        data: feeData,
-                        borderColor: '#9945ff',
-                        backgroundColor: 'rgba(153,69,255,0.2)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#9945ff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
-                }
-            });
-            txChart = new Chart(document.getElementById('txChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: weeks,
-                    datasets: [{
-                        label: 'XRPL Transaction Volume ($SLS)',
-                        data: txData,
-                        borderColor: '#ff4757',
-                        backgroundColor: 'rgba(255,71,87,0.2)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#ff4757'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
-                }
-            });
-        });
+        // Fetch live demo metrics from API
+        async function loadMetrics() {
+            let apiUrl = 'https://solusprotocol.onrender.com/metrics';
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                // Parse API data
+                const weeks = Object.keys(data.hashes_by_week);
+                const hashes = Object.values(data.hashes_by_week);
+                const recordTypes = Object.keys(data.records_by_type);
+                const recordCounts = Object.values(data.records_by_type);
+                const feeWeeks = Object.keys(data.sls_fees);
+                const feeData = Object.values(data.sls_fees);
+                const txWeeks = Object.keys(data.tx_volume);
+                const txData = Object.values(data.tx_volume);
+                // Render charts
+                hashChart = new Chart(document.getElementById('hashChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: weeks,
+                        datasets: [{
+                            label: 'Cumulative Hashes Anchored',
+                            data: hashes,
+                            borderColor: '#14f195',
+                            backgroundColor: 'rgba(20,241,149,0.2)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#14f195'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
+                    }
+                });
+                recordChart = new Chart(document.getElementById('recordChart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: recordTypes,
+                        datasets: [{
+                            label: 'Records Secured',
+                            data: recordCounts,
+                            backgroundColor: '#9945ff',
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
+                    }
+                });
+                feeChart = new Chart(document.getElementById('feeChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: feeWeeks,
+                        datasets: [{
+                            label: '$SLS Fee/Rebate Activity',
+                            data: feeData,
+                            borderColor: '#9945ff',
+                            backgroundColor: 'rgba(153,69,255,0.2)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#9945ff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
+                    }
+                });
+                txChart = new Chart(document.getElementById('txChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: txWeeks,
+                        datasets: [{
+                            label: 'XRPL Transaction Volume ($SLS)',
+                            data: txData,
+                            borderColor: '#ff4757',
+                            backgroundColor: 'rgba(255,71,87,0.2)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#ff4757'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' } } }
+                    }
+                });
+            } catch (err) {
+                document.querySelector('.container').insertAdjacentHTML('afterbegin', '<div class="alert alert-danger">Failed to load metrics from API.</div>');
+            }
+        }
+        window.addEventListener('DOMContentLoaded', loadMetrics);
     </script>
 </body>
 </html>
