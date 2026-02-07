@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://unpkg.com/xrpl@4.1.0/build/xrpl-latest-min.js"></script>
+    <script src="https://unpkg.com/xrpl@4.5.0/build/xrpl-latest-min.js"></script>
     <style>
         :root {
             --primary: #0a0a0f;
@@ -6191,6 +6191,40 @@
             return Array.from(new TextEncoder().encode(str)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
+        /* ===== XRPL WALLET AUTO-FUNDING ===== */
+        let pgSessionWallet = null;
+        let pgSessionWalletAddress = null;
+
+        async function getPlaygroundWallet(client, statusCallback) {
+            if (pgSessionWallet) return pgSessionWallet;
+
+            /* Try hardcoded wallet first */
+            try {
+                const wallet = xrpl.Wallet.fromSeed("sEd75GpyfXbSLGUShjwvViXoo6xaGuZ");
+                await client.request({ command: 'account_info', account: wallet.classicAddress });
+                pgSessionWallet = wallet;
+                pgSessionWalletAddress = wallet.classicAddress;
+                return wallet;
+            } catch(e) {
+                /* Account not found or unfunded — auto-fund via testnet faucet */
+                if (statusCallback) statusCallback('Funding testnet wallet...');
+                try {
+                    const wallet = xrpl.Wallet.fromSeed("sEd75GpyfXbSLGUShjwvViXoo6xaGuZ");
+                    await client.fundWallet(wallet);
+                    pgSessionWallet = wallet;
+                    pgSessionWalletAddress = wallet.classicAddress;
+                    return wallet;
+                } catch(e2) {
+                    /* Seed-based funding failed — generate fresh funded wallet */
+                    if (statusCallback) statusCallback('Generating fresh testnet wallet...');
+                    const fundResult = await client.fundWallet();
+                    pgSessionWallet = fundResult.wallet;
+                    pgSessionWalletAddress = fundResult.wallet.classicAddress;
+                    return fundResult.wallet;
+                }
+            }
+        }
+
         async function anchorFromPlayground() {
             if (pgIsAnchoring || !pgCurrentHash) return;
             pgIsAnchoring = true;
@@ -6210,8 +6244,10 @@
                 await client.connect();
                 updateWsStatus('connected');
 
-                anchorBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing transaction...';
-                const wallet = xrpl.Wallet.fromSeed("sEd75GpyfXbSLGUShjwvViXoo6xaGuZ");
+                anchorBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing wallet...';
+                const wallet = await getPlaygroundWallet(client, msg => {
+                    anchorBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + msg;
+                });
 
                 const memoData = 'solus:' + recordType + ':' + pgCurrentHash;
                 const tx = {
@@ -6230,7 +6266,7 @@
                 await client.disconnect();
                 updateWsStatus('offline');
 
-                const txHash = result.result.hash;
+                const txHash = result.result.hash || result.result.tx_json?.hash;
                 pgLastTxHash = txHash;
                 const explorerUrl = 'https://testnet.xrpl.org/transactions/' + txHash;
 
@@ -6404,7 +6440,10 @@
                 updateWsStatus('connecting');
                 await client.connect();
                 updateWsStatus('connected');
-                const wallet = xrpl.Wallet.fromSeed("sEd75GpyfXbSLGUShjwvViXoo6xaGuZ");
+                anchorBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing wallet...';
+                const wallet = await getPlaygroundWallet(client, msg => {
+                    anchorBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + msg;
+                });
 
                 for (let i = 0; i < batchQueue.length; i++) {
                     const item = batchQueue[i];
@@ -6424,7 +6463,7 @@
                         Memos: [{ Memo: { MemoType: strToHex("solus/anchor"), MemoData: strToHex(memoData) } }]
                     };
                     const result = await client.submitAndWait(tx, { wallet });
-                    const txHash = result.result.hash;
+                    const txHash = result.result.hash || result.result.tx_json?.hash;
 
                     item.status = 'done';
                     progressFill.style.width = ((i + 1) / batchQueue.length * 100) + '%';
@@ -6611,33 +6650,40 @@
             try {
                 const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
                 await client.connect();
-                const account = 'rJPqcx8wUBM58ajPUoz1dReKkTT6hqrqJA';
-                const response = await client.request({
-                    command: 'account_tx',
-                    account: account,
-                    limit: 200
-                });
-                await client.disconnect();
-
-                const txs = response.result.transactions || [];
-                let found = null;
-
-                for (const tx of txs) {
-                    const memos = tx.tx_json?.Memos || tx.tx?.Memos || [];
-                    for (const m of memos) {
-                        const memoData = m.Memo?.MemoData;
-                        if (memoData) {
-                            try {
-                                const decoded = new TextDecoder().decode(new Uint8Array(memoData.match(/.{2}/g).map(b => parseInt(b, 16))));
-                                if (decoded.includes(searchHash)) {
-                                    found = { tx: tx.tx_json || tx.tx, decoded };
-                                    break;
-                                }
-                            } catch(e) {}
-                        }
-                    }
-                    if (found) break;
+                const accounts = ['rJPqcx8wUBM58ajPUoz1dReKkTT6hqrqJA'];
+                if (pgSessionWalletAddress && !accounts.includes(pgSessionWalletAddress)) {
+                    accounts.push(pgSessionWalletAddress);
                 }
+
+                let found = null;
+                for (const account of accounts) {
+                    if (found) break;
+                    try {
+                        const response = await client.request({
+                            command: 'account_tx',
+                            account: account,
+                            limit: 200
+                        });
+                        const txs = response.result.transactions || [];
+                        for (const tx of txs) {
+                            const memos = tx.tx_json?.Memos || tx.tx?.Memos || [];
+                            for (const m of memos) {
+                                const memoData = m.Memo?.MemoData;
+                                if (memoData) {
+                                    try {
+                                        const decoded = new TextDecoder().decode(new Uint8Array(memoData.match(/.{2}/g).map(b => parseInt(b, 16))));
+                                        if (decoded.includes(searchHash)) {
+                                            found = { tx: tx.tx_json || tx.tx, decoded };
+                                            break;
+                                        }
+                                    } catch(e) {}
+                                }
+                            }
+                            if (found) break;
+                        }
+                    } catch(e) { /* account might not exist */ }
+                }
+                await client.disconnect();
 
                 if (found) {
                     const txHash = found.tx.hash;
