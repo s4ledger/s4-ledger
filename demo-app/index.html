@@ -1868,6 +1868,135 @@
             position: relative; z-index: 1; font-size: 1.5rem;
             font-weight: 800; color: var(--accent);
         }
+
+        /* ===== v2.8.0 — Emergency ICE Card ===== */
+        .ice-card {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.15), rgba(255, 71, 87, 0.05));
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+        }
+        .ice-card::before {
+            content: ''; position: absolute; top: -30px; right: -30px;
+            width: 100px; height: 100px; border-radius: 50%;
+            background: rgba(255, 71, 87, 0.1); pointer-events: none;
+        }
+        .ice-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .ice-badge {
+            background: linear-gradient(135deg, #ff4757, #ff6b81); color: #fff;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;
+            font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .ice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .ice-item { font-size: 0.82rem; }
+        .ice-item-label { color: var(--text-muted); font-size: 0.72rem; margin-bottom: 2px; }
+        .ice-item-value { font-weight: 600; color: var(--text); }
+        .ice-item-value.danger { color: var(--danger); }
+        .ice-actions { display: flex; gap: 8px; margin-top: 16px; }
+        .ice-btn {
+            flex: 1; padding: 10px; border: none; border-radius: 10px;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .ice-btn-share { background: rgba(255, 71, 87, 0.2); color: var(--danger); }
+        .ice-btn-qr { background: rgba(20, 241, 149, 0.15); color: var(--accent); }
+
+        /* ===== Consent & Access Manager ===== */
+        .access-list { display: flex; flex-direction: column; gap: 10px; }
+        .access-item {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 12px; padding: 12px 14px;
+        }
+        .access-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .access-info { flex: 1; min-width: 0; }
+        .access-name { font-weight: 600; font-size: 0.88rem; }
+        .access-meta { font-size: 0.72rem; color: var(--text-muted); }
+        .access-revoke {
+            background: rgba(255, 71, 87, 0.15); border: 1px solid rgba(255, 71, 87, 0.3);
+            color: var(--danger); padding: 6px 12px; border-radius: 8px;
+            font-size: 0.72rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .access-revoke:hover { background: rgba(255, 71, 87, 0.3); }
+        .access-revoke.revoked {
+            background: var(--glass); color: var(--text-muted);
+            border-color: var(--border); pointer-events: none;
+        }
+
+        /* ===== Record Favorites ===== */
+        .record-fav {
+            position: absolute; top: 12px; right: 12px;
+            background: none; border: none; cursor: pointer;
+            color: var(--text-muted); font-size: 1rem;
+            transition: all 0.2s; z-index: 2;
+        }
+        .record-fav.active { color: var(--warning); text-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
+        .record-fav:active { transform: scale(1.3); }
+        .fav-section-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(255, 215, 0, 0.12); color: var(--warning);
+            padding: 2px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 600;
+        }
+
+        /* ===== Activity Heatmap ===== */
+        .heatmap-container { padding: 4px 0; }
+        .heatmap-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr);
+            gap: 4px; margin-bottom: 8px;
+        }
+        .heatmap-cell {
+            aspect-ratio: 1; border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s; position: relative;
+        }
+        .heatmap-cell.level-1 { background: rgba(20, 241, 149, 0.15); }
+        .heatmap-cell.level-2 { background: rgba(20, 241, 149, 0.3); }
+        .heatmap-cell.level-3 { background: rgba(20, 241, 149, 0.5); }
+        .heatmap-cell.level-4 { background: rgba(20, 241, 149, 0.75); }
+        .heatmap-labels {
+            display: flex; justify-content: space-between;
+            font-size: 0.65rem; color: var(--text-muted);
+        }
+        .heatmap-legend {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 0.65rem; color: var(--text-muted);
+            margin-top: 8px; justify-content: flex-end;
+        }
+        .heatmap-legend-cell {
+            width: 12px; height: 12px; border-radius: 3px;
+        }
+
+        /* ===== Keyboard Shortcuts ===== */
+        .shortcuts-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            z-index: 9999; display: none; align-items: center;
+            justify-content: center; animation: fadeIn 0.2s ease;
+        }
+        .shortcuts-overlay.active { display: flex; }
+        .shortcuts-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 20px; padding: 24px; width: 90%;
+            max-width: 380px; max-height: 80vh; overflow-y: auto;
+        }
+        .shortcut-row {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .shortcut-row:last-child { border-bottom: none; }
+        .shortcut-label { font-size: 0.85rem; color: var(--text-muted); }
+        .shortcut-keys { display: flex; gap: 4px; }
+        .kbd {
+            background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+            border-radius: 6px; padding: 3px 8px; font-size: 0.75rem;
+            font-family: 'SF Mono', monospace; font-weight: 600;
+            color: var(--text); min-width: 24px; text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -1877,6 +2006,26 @@
         <div class="g-orb g-orb-1" id="orb1"></div>
         <div class="g-orb g-orb-2" id="orb2"></div>
         <div class="g-orb g-orb-3" id="orb3"></div>
+    </div>
+
+    <!-- Keyboard Shortcuts Overlay -->
+    <div class="shortcuts-overlay" id="shortcutsOverlay" onclick="if(event.target===this)this.classList.remove('active')">
+        <div class="shortcuts-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1rem;"><i class="fas fa-keyboard" style="color: var(--accent); margin-right: 6px;"></i> Keyboard Shortcuts</h3>
+                <button style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem;" onclick="document.getElementById('shortcutsOverlay').classList.remove('active')">&times;</button>
+            </div>
+            <div class="shortcut-row"><span class="shortcut-label">Show shortcuts</span><div class="shortcut-keys"><span class="kbd">?</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Home</span><div class="shortcut-keys"><span class="kbd">H</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Records</span><div class="shortcut-keys"><span class="kbd">R</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Trade / Wallet</span><div class="shortcut-keys"><span class="kbd">T</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Activity</span><div class="shortcut-keys"><span class="kbd">A</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Metrics</span><div class="shortcut-keys"><span class="kbd">M</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">New Record</span><div class="shortcut-keys"><span class="kbd">N</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Toggle Theme</span><div class="shortcut-keys"><span class="kbd">D</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Search Records</span><div class="shortcut-keys"><span class="kbd">/</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Sign Out</span><div class="shortcut-keys"><span class="kbd">Esc</span></div></div>
+        </div>
     </div>
 
     <!-- Scroll To Top -->
@@ -2160,6 +2309,116 @@
                                     <div style="color: var(--warning); font-weight: 600;"><i class="fas fa-clock"></i> 28d</div>
                                     <div style="color: var(--text-muted);">Since Last Visit</div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency ICE Card -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Emergency ICE Card</span>
+                            <span class="ice-badge"><i class="fas fa-heart-pulse"></i> ICE</span>
+                        </div>
+                        <div class="ice-card">
+                            <div class="ice-header">
+                                <i class="fas fa-kit-medical" style="color: var(--danger); font-size: 1.2rem;"></i>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 0.95rem;">Alex Johnson</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">DOB: Mar 15, 1988 • 37 years old</div>
+                                </div>
+                            </div>
+                            <div class="ice-grid">
+                                <div class="ice-item">
+                                    <div class="ice-item-label">Blood Type</div>
+                                    <div class="ice-item-value">O+</div>
+                                </div>
+                                <div class="ice-item">
+                                    <div class="ice-item-label">Emergency Contact</div>
+                                    <div class="ice-item-value">Maria Johnson</div>
+                                </div>
+                                <div class="ice-item">
+                                    <div class="ice-item-label">Allergies</div>
+                                    <div class="ice-item-value danger">Penicillin, Sulfa</div>
+                                </div>
+                                <div class="ice-item">
+                                    <div class="ice-item-label">Contact Phone</div>
+                                    <div class="ice-item-value">(555) 867-5309</div>
+                                </div>
+                                <div class="ice-item" style="grid-column: span 2;">
+                                    <div class="ice-item-label">Active Medications</div>
+                                    <div class="ice-item-value">Lisinopril 10mg, Metformin 500mg</div>
+                                </div>
+                                <div class="ice-item" style="grid-column: span 2;">
+                                    <div class="ice-item-label">Conditions</div>
+                                    <div class="ice-item-value">Type 2 Diabetes, Stage 1 Hypertension</div>
+                                </div>
+                            </div>
+                            <div class="ice-actions">
+                                <button class="ice-btn ice-btn-share" onclick="shareICECard()">
+                                    <i class="fas fa-share-nodes"></i> Share
+                                </button>
+                                <button class="ice-btn ice-btn-qr" onclick="showICEQR()">
+                                    <i class="fas fa-qrcode"></i> QR Code
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consent & Access Manager -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Who Has Access</span>
+                            <span class="section-action" onclick="openModal('consentModal')">Manage</span>
+                        </div>
+                        <div class="access-list" id="accessList">
+                            <div class="access-item">
+                                <div class="access-avatar" style="background: linear-gradient(135deg, var(--accent), var(--accent2));">DS</div>
+                                <div class="access-info">
+                                    <div class="access-name">Dr. Smith</div>
+                                    <div class="access-meta">Full access • Since Jan 2026</div>
+                                </div>
+                                <button class="access-revoke" onclick="revokeAccess(this, 'Dr. Smith')">Revoke</button>
+                            </div>
+                            <div class="access-item">
+                                <div class="access-avatar" style="background: linear-gradient(135deg, var(--secondary), #c77dff);">QD</div>
+                                <div class="access-info">
+                                    <div class="access-name">Quest Diagnostics</div>
+                                    <div class="access-meta">Lab results only • Since Dec 2025</div>
+                                </div>
+                                <button class="access-revoke" onclick="revokeAccess(this, 'Quest Diagnostics')">Revoke</button>
+                            </div>
+                            <div class="access-item">
+                                <div class="access-avatar" style="background: linear-gradient(135deg, var(--ehr), #ffaa00);">CH</div>
+                                <div class="access-info">
+                                    <div class="access-name">City Hospital</div>
+                                    <div class="access-meta">Imaging only • Since Nov 2025</div>
+                                </div>
+                                <button class="access-revoke" onclick="revokeAccess(this, 'City Hospital')">Revoke</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Anchoring Activity Heatmap -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Anchoring Activity</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Last 4 weeks</span>
+                        </div>
+                        <div class="heatmap-container">
+                            <div class="heatmap-grid" id="heatmapGrid">
+                                <!-- Populated by JS -->
+                            </div>
+                            <div class="heatmap-labels">
+                                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                            </div>
+                            <div class="heatmap-legend">
+                                <span>Less</span>
+                                <div class="heatmap-legend-cell" style="background: rgba(255,255,255,0.05);"></div>
+                                <div class="heatmap-legend-cell" style="background: rgba(20,241,149,0.15);"></div>
+                                <div class="heatmap-legend-cell" style="background: rgba(20,241,149,0.3);"></div>
+                                <div class="heatmap-legend-cell" style="background: rgba(20,241,149,0.5);"></div>
+                                <div class="heatmap-legend-cell" style="background: rgba(20,241,149,0.75);"></div>
+                                <span>More</span>
                             </div>
                         </div>
                     </div>
@@ -3674,20 +3933,13 @@
         // ===== RECORDS RENDERING =====
         let currentRecordFilter = 'all';
 
-        function renderRecords(filter, searchTerm) {
-            filter = filter || currentRecordFilter;
-            searchTerm = searchTerm || '';
-            let records = mockRecords;
-            if (filter && filter !== 'all') { records = records.filter(r => r.type === filter); }
-            if (searchTerm) {
-                const term = searchTerm.toLowerCase();
-                records = records.filter(r => r.title.toLowerCase().includes(term) || r.provider.toLowerCase().includes(term) || r.type.toLowerCase().includes(term) || r.date.toLowerCase().includes(term));
-            }
-
-            const recentList = document.getElementById('recentRecordsList');
-            const allList = document.getElementById('allRecordsList');
-            const renderRecord = (record) => `
-                <div class="record-card" onclick="openRecordDetail(${record.id})">
+        function buildRecordCardInline(record) {
+            const isFav = (typeof favoriteRecords !== 'undefined') && favoriteRecords.includes(record.id);
+            return `
+                <div class="record-card" style="position: relative;" onclick="openRecordDetail(${record.id})" data-record-id="${record.id}">
+                    <button class="record-fav ${isFav ? 'active' : ''}" onclick="toggleFavorite(${record.id}, event)" aria-label="Toggle favorite">
+                        <i class="fas fa-star"></i>
+                    </button>
                     <div class="record-icon ${record.type}">
                         <i class="fas fa-${record.icon}"></i>
                     </div>
@@ -3702,10 +3954,41 @@
                     <i class="record-arrow fas fa-chevron-right"></i>
                 </div>
             `;
-            if (recentList) recentList.innerHTML = mockRecords.slice(0, 4).map(renderRecord).join('');
+        }
+
+        function renderRecords(filter, searchTerm) {
+            filter = filter || currentRecordFilter;
+            searchTerm = searchTerm || '';
+            let records = mockRecords;
+            if (filter && filter !== 'all') { records = records.filter(r => r.type === filter); }
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                records = records.filter(r => r.title.toLowerCase().includes(term) || r.provider.toLowerCase().includes(term) || r.type.toLowerCase().includes(term) || r.date.toLowerCase().includes(term));
+            }
+
+            const recentList = document.getElementById('recentRecordsList');
+            const allList = document.getElementById('allRecordsList');
+
+            // Favorites pinning
+            const favs = (typeof favoriteRecords !== 'undefined') ? records.filter(r => favoriteRecords.includes(r.id)) : [];
+            const rest = (typeof favoriteRecords !== 'undefined') ? records.filter(r => !favoriteRecords.includes(r.id)) : records;
+
+            if (recentList) recentList.innerHTML = mockRecords.slice(0, 4).map(buildRecordCardInline).join('');
             if (allList) {
-                allList.innerHTML = records.length ? records.map(renderRecord).join('') :
-                    '<div style="text-align: center; padding: 40px 0; color: var(--text-muted);"><i class="fas fa-search" style="font-size: 2rem; opacity: 0.3; margin-bottom: 12px;"></i><p>No records found</p></div>';
+                if (records.length === 0) {
+                    allList.innerHTML = '<div style="text-align: center; padding: 40px 0; color: var(--text-muted);"><i class="fas fa-search" style="font-size: 2rem; opacity: 0.3; margin-bottom: 12px;"></i><p>No records found</p></div>';
+                } else {
+                    let html = '';
+                    if (favs.length > 0 && !searchTerm && filter === 'all') {
+                        html += '<div style="margin-bottom: 8px;"><span class="fav-section-badge"><i class="fas fa-star"></i> Pinned</span></div>';
+                        html += favs.map(buildRecordCardInline).join('');
+                        html += '<div style="height: 1px; background: var(--border); margin: 12px 0;"></div>';
+                        html += rest.map(buildRecordCardInline).join('');
+                    } else {
+                        html = records.map(buildRecordCardInline).join('');
+                    }
+                    allList.innerHTML = html;
+                }
             }
         }
 
@@ -5035,6 +5318,96 @@
                 }, 400);
             }, 3200);
         }
+
+        // ===== v2.8.0 — EMERGENCY ICE CARD =====
+        function shareICECard() {
+            haptic();
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Emergency ICE Card — Alex Johnson',
+                    text: 'Blood Type: O+ | Allergies: Penicillin, Sulfa | Meds: Lisinopril 10mg, Metformin 500mg | Emergency Contact: Maria Johnson (555) 867-5309',
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText('ICE Card — Alex Johnson\nBlood Type: O+\nAllergies: Penicillin, Sulfa\nMedications: Lisinopril 10mg, Metformin 500mg\nEmergency Contact: Maria Johnson (555) 867-5309');
+                showToast('ICE Card copied to clipboard', 'success');
+            }
+        }
+
+        function showICEQR() {
+            haptic();
+            showToast('ICE QR code generated — show to first responders', 'success');
+        }
+
+        // ===== CONSENT & ACCESS MANAGER =====
+        function revokeAccess(btn, name) {
+            haptic([10, 30, 10]);
+            btn.textContent = 'Revoked';
+            btn.classList.add('revoked');
+            btn.disabled = true;
+            showToast('Access revoked for ' + name, 'success');
+        }
+
+        // ===== RECORD FAVORITES =====
+        let favoriteRecords = JSON.parse(localStorage.getItem('solus_favorites') || '[]');
+
+        function toggleFavorite(recordId, event) {
+            event.stopPropagation();
+            haptic();
+            const idx = favoriteRecords.indexOf(recordId);
+            if (idx > -1) {
+                favoriteRecords.splice(idx, 1);
+                showToast('Removed from favorites', 'success');
+            } else {
+                favoriteRecords.push(recordId);
+                showToast('Added to favorites', 'success');
+            }
+            localStorage.setItem('solus_favorites', JSON.stringify(favoriteRecords));
+            renderRecords();
+        }
+
+        // ===== ANCHORING ACTIVITY HEATMAP =====
+        function renderHeatmap() {
+            const grid = document.getElementById('heatmapGrid');
+            if (!grid) return;
+            // Generate 28 cells (4 weeks × 7 days) with simulated data
+            const levels = [0, 0, 1, 0, 2, 1, 0, 3, 1, 0, 0, 2, 4, 1, 0, 1, 3, 2, 0, 0, 1, 2, 0, 3, 1, 4, 2, 1];
+            grid.innerHTML = levels.map((lvl, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() - (27 - i));
+                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const count = lvl === 0 ? 0 : lvl === 1 ? 1 : lvl === 2 ? 3 : lvl === 3 ? 5 : 8;
+                return '<div class="heatmap-cell level-' + lvl + '" title="' + dateStr + ': ' + count + ' records anchored"></div>';
+            }).join('');
+        }
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', function(e) {
+            // Don't fire if user is typing in an input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+            if (currentScreen === 'login') return;
+
+            const key = e.key.toLowerCase();
+            if (key === '?') {
+                e.preventDefault();
+                document.getElementById('shortcutsOverlay').classList.toggle('active');
+            } else if (key === 'h') { navigateTo('home', document.querySelector('.nav-item')); }
+            else if (key === 'r') { navigateTo('records', document.querySelectorAll('.nav-item')[1]); }
+            else if (key === 't') { navigateTo('trade', document.querySelectorAll('.nav-item')[2]); }
+            else if (key === 'a') { navigateTo('activity', document.querySelectorAll('.nav-item')[3]); }
+            else if (key === 'm') { navigateToScreen('metricsScreen'); }
+            else if (key === 'n') { openModal('addRecordModal'); }
+            else if (key === 'd') { toggleTheme(); }
+            else if (key === '/') { e.preventDefault(); navigateTo('records'); setTimeout(() => document.getElementById('recordSearchInput')?.focus(), 100); }
+            else if (key === 'escape') {
+                const shortcuts = document.getElementById('shortcutsOverlay');
+                if (shortcuts.classList.contains('active')) { shortcuts.classList.remove('active'); }
+                else { logout(); }
+            }
+        });
+
+        // Initialize heatmap on load
+        setTimeout(renderHeatmap, 100);
     </script>
 </body>
 </html>

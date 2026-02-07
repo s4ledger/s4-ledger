@@ -205,6 +205,72 @@ The Metrics screen in the mobile wallet fetches live data from the Solus Metrics
 - XRPL Network detail card with account address and testnet URL
 - Auto-refresh every 60 seconds with loading spinner and error retry states
 
+### 5.6 Solus Protocol AI Engine
+
+The **Solus Protocol AI Engine** is a privacy-preserving, on-device intelligence layer embedded directly in the mobile wallet. It provides real-time clinical decision support, anomaly detection, and operational insights — all without transmitting Protected Health Information (PHI) to any external server or third-party AI service.
+
+#### 5.6.1 Design Principles
+- **Zero-PHI Exposure:** All AI analysis occurs client-side using structured record metadata (types, timestamps, categories). No patient data leaves the device.
+- **Role-Specific Intelligence:** Each user role (Patient, Provider, EHR Administrator) receives a uniquely tailored AI engine with insights relevant to their responsibilities.
+- **Non-Diagnostic Disclaimer:** All outputs are labeled as informational and explicitly state they do not constitute medical advice, maintaining regulatory compliance.
+
+#### 5.6.2 Patient AI Engine — AI Health Insights
+The Patient AI Engine analyzes a user's personal health record portfolio and surfaces actionable insights:
+
+| Insight | Description |
+|:---|:---|
+| **Drug Interaction Detection** | Cross-references active prescriptions (e.g., Lisinopril + Metformin) against known interaction databases and flags potential risks with severity levels |
+| **Vitals Trend Anomaly Detection** | Identifies abnormal trends in blood pressure, heart rate, or other vitals across multiple records and flags for physician review |
+| **Lab Result Improvement Tracking** | Tracks longitudinal lab values (e.g., A1C levels) and highlights positive or negative trends over time |
+| **Follow-Up Compliance Monitoring** | Detects overdue follow-up appointments based on record timestamps and clinical guidelines |
+
+**Data Health Score:** A composite score (0–100) displayed as an animated radial ring, calculated from record completeness, anchoring frequency, verification coverage, and follow-up compliance. This gives patients a single, intuitive metric for their health data integrity.
+
+#### 5.6.3 Provider AI Engine — Practice Intelligence
+The Provider AI Engine delivers cross-patient clinical intelligence to help physicians manage their practice:
+
+| Insight | Description |
+|:---|:---|
+| **Cross-Patient Drug Alerts** | Scans the provider's full patient panel for recurring high-risk prescriptions and flags systemic prescribing patterns that may indicate risk |
+| **Missed Follow-Up Detection** | Identifies patients who have not returned for scheduled follow-ups, enabling proactive outreach |
+| **Cohort Vitals Trend Analysis** | Aggregates vitals data across the patient panel to surface population-level trends (e.g., rising average blood pressure in a demographic cohort) |
+| **Documentation Compliance Scoring** | Evaluates the completeness and timeliness of clinical documentation against best-practice benchmarks |
+
+**Practice Health Score:** A composite score (0–100) displayed as a purple radial ring, reflecting patient verification rates, documentation compliance, follow-up adherence, and prescribing safety across the provider's practice.
+
+#### 5.6.4 EHR Administrator AI Engine — System Operations Intelligence
+The EHR AI Engine provides infrastructure and compliance monitoring for system administrators:
+
+| Insight | Description |
+|:---|:---|
+| **HIPAA Compliance Audit** | Continuously evaluates the system's HIPAA posture across access controls, encryption, audit logging, and breach response readiness |
+| **Anchoring Latency Monitoring** | Tracks XRPL transaction confirmation times and alerts administrators to latency spikes that may indicate network congestion or configuration issues |
+| **API Key Rotation Alerts** | Monitors API key age and flags keys approaching or exceeding rotation policy thresholds |
+| **Record Distribution Analysis** | Analyzes the distribution of anchored records by type, identifying gaps in data coverage (e.g., underrepresented immunization or mental health records) |
+
+**System Health Score:** A composite score (0–100) displayed as a gold radial ring, calculated from system uptime, HIPAA compliance percentage, anchoring throughput, and API health.
+
+#### 5.6.5 AI Record Summarization
+Every individual medical record in the wallet can be summarized on-demand by the AI Engine. The summarization extracts:
+- **Key clinical facts** from the record type and metadata
+- **Temporal context** (when the record was created and last verified)
+- **Blockchain integrity status** (anchored, verified, or pending)
+- **Actionable next steps** relevant to the record type (e.g., "Schedule 6-month follow-up" for a surgical record)
+
+#### 5.6.6 Interactive Tooltip System
+To ensure accessibility for non-technical users, the mobile wallet includes an **interactive tooltip system** that provides plain-language definitions for specialized terminology:
+
+| Term | Definition |
+|:---|:---|
+| **Zero-Knowledge** | Your data stays private — only a mathematical proof is shared, never the actual information |
+| **Blockchain** | A digital ledger shared across many computers that no single person can alter |
+| **HIPAA** | U.S. federal law protecting patient health data privacy |
+| **SHA-256** | A one-way mathematical function that creates a unique "fingerprint" of your data |
+| **Data Anchoring** | Recording a permanent proof of your data's existence on the blockchain |
+| **Health Score** | A composite metric measuring the completeness and integrity of your health data portfolio |
+
+Tooltips appear as tappable info icons (ℹ️) next to technical terms throughout the interface and display as animated overlays with a frosted-glass backdrop.
+
 ## <center>6. Tokenomics ($SLS)</center>
 
 The $SLS token is the native utility asset of the Solus ecosystem.
@@ -372,6 +438,7 @@ Each record type is prefixed in the XRPL memo data (e.g., `SURGERY:sha256hash`) 
 | **v2.5.0** | Feb 2026 | Background transparency fix (particles visible through app), scroll-to-top button, long-press context menu, real-time header clock, skeleton shimmer CSS |
 | **v2.6.0** | Feb 2026 | Mid-session role switching (swap Patient/Provider/EHR without logout), AI Health Insights engine (drug interaction detection, vitals trend analysis, anomaly flagging), AI record summarization per record, interactive tooltip system for non-technical users, Data Health Score ring, onboarding text improvements |
 | **v2.7.0** | Feb 2026 | Full "Solus Protocol" branding normalization across all UI text, Solus Protocol AI Engine for all three roles (Patient, Provider, EHR) with role-specific insights, Provider Practice Health Score (88 — patient verification, documentation compliance), EHR System Health Score (97 — uptime, HIPAA compliance, anchoring volume), Provider AI: cross-patient drug alerts, missed follow-up detection, cohort vitals trends, EHR AI: HIPAA compliance audit, latency monitoring, API key rotation alerts, record distribution analysis |
+| **v2.8.0** | Feb 2026 | Emergency ICE Card (blood type, allergies, medications, emergency contact with share/QR), Consent & Access Manager (view/revoke provider access per record type), Record Favorites with pinned section and localStorage persistence, Anchoring Activity Heatmap (4-week GitHub-style grid), Keyboard Shortcuts panel (? to toggle, H/R/T/A/M/N/D navigation), Whitepaper Section 5.6: Solus Protocol AI Engine documentation |
 
 ---
 
