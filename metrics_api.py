@@ -35,80 +35,157 @@ def categorize_record(memo_data):
                 explicit_type = parts[1].upper()
         # Map explicit types to display names (keep underscores for matching)
         type_map = {
+            # ── Core Medical Records ──
             'SURGERY': 'Surgery',
+            'SURGERY_REPORT': 'Surgery',
             'VITALS': 'Vitals',
+            'VITALS_CHECK': 'Vitals',
             'LAB': 'Lab Results',
             'LAB_RESULTS': 'Lab Results',
+            'LAB_RESULT': 'Lab Results',
             'IMAGING': 'Imaging',
             'ALLERGY': 'Allergies',
             'ALLERGIES': 'Allergies',
+            'ALLERGY_UPDATE': 'Allergies',
             'PRESCRIPTION': 'Prescription',
+            'PRESCRIPTIONS': 'Prescription',
             'RX': 'Prescription',
             'IMMUNIZATION': 'Immunization',
+            'IMMUNIZATIONS': 'Immunization',
             'VACCINE': 'Immunization',
             'PATIENT_MESSAGE': 'Patient Message',
             'MESSAGE': 'Patient Message',
             'SECURE_MESSAGE': 'Secure Message',
             'URGENT_MESSAGE': 'Secure Message',
             'CLINICAL_NOTE': 'Clinical Notes',
+            'CLINICAL_NOTES': 'Clinical Notes',
             'CLINICAL NOTES': 'Clinical Notes',
             'NOTES': 'Clinical Notes',
+            'PROGRESS_NOTE': 'Clinical Notes',
             'DISCHARGE': 'Discharge',
             'EMERGENCY': 'Emergency',
             'ER': 'Emergency',
             'MENTAL_HEALTH': 'Mental Health',
-            'THERAPY': 'Mental Health',
+            'PSYCH_EVAL': 'Mental Health',
             'REFERRAL': 'Referral',
             'CONSULT': 'Referral',
             'CARE_PLAN': 'Care Plan',
             'CONSENT': 'Consent',
             'CONSENT_GRANT': 'Consent',
             'CONSENT_REVOKE': 'Consent',
+            'POST_OP': 'Post-Op',
+            'POSTOP': 'Post-Op',
+            'CHRONIC': 'Chronic Care',
+            'CHRONIC_CARE': 'Chronic Care',
+            'PREVENTIVE': 'Preventive',
+            'PREVENTIVE_CARE': 'Preventive',
+            'WELLNESS': 'Preventive',
+            'ADMINISTRATIVE': 'Administrative',
+            'ADMIN': 'Administrative',
+            'PEDIATRIC': 'Pediatric',
+            'MATERNAL': 'Maternal & OB/GYN',
+            'MATERNITY': 'Maternal & OB/GYN',
+            'OBSTETRIC': 'Maternal & OB/GYN',
+
+            # ── Medical Specialties ──
+            'DENTAL': 'Dental',
+            'PHYSICAL_THERAPY': 'Physical Therapy',
+            'THERAPY': 'Physical Therapy',
+            'RADIOLOGY': 'Radiology',
+            'RADIOLOGY_ORDER': 'Radiology',
+            'ANESTHESIA': 'Anesthesia',
+            'CARDIOLOGY': 'Cardiology',
+            'DERMATOLOGY': 'Dermatology',
+            'VISION': 'Vision & Ophthalmology',
+            'OPHTHALMOLOGY': 'Vision & Ophthalmology',
+            'NUTRITION': 'Nutrition & Dietetics',
+            'DIETETICS': 'Nutrition & Dietetics',
+            'PATHOLOGY': 'Pathology',
+            'WOUND_CARE': 'Wound Care',
+            'REHABILITATION': 'Rehabilitation',
+            'REHAB': 'Rehabilitation',
+            'SLEEP_STUDY': 'Sleep Medicine',
+            'GENETICS': 'Genetics & Genomics',
+            'GENOMICS': 'Genetics & Genomics',
+            'ONCOLOGY': 'Oncology',
+            'ENDOCRINOLOGY': 'Endocrinology',
+            'NEPHROLOGY': 'Nephrology',
+            'NEUROLOGY': 'Neurology',
+            'PULMONOLOGY': 'Pulmonology',
+            'ORTHOPEDIC': 'Orthopedics',
+            'ORTHOPEDICS': 'Orthopedics',
+            'GASTROENTEROLOGY': 'Gastroenterology',
+            'UROLOGY': 'Urology',
+            'RHEUMATOLOGY': 'Rheumatology',
+            'ENT': 'ENT / Otolaryngology',
+            'OTOLARYNGOLOGY': 'ENT / Otolaryngology',
+
+            # ── Clinical Documentation ──
+            'HISTORY_PHYSICAL': 'History & Physical',
+            'H_AND_P': 'History & Physical',
+            'ORDER_SET': 'Order Set',
+            'CONSULTATION': 'Consultation',
+            'PROCEDURE_NOTE': 'Procedure Note',
+            'DEATH_SUMMARY': 'Death Report',
+            'NURSING_NOTE': 'Nursing',
+            'MED_RECONCILIATION': 'Medication Reconciliation',
+
+            # ── Telemedicine & Virtual Care ──
+            'TELEMEDICINE': 'Telemedicine',
+            'TELEHEALTH': 'Telemedicine',
+            'REMOTE_MONITORING': 'Remote Monitoring',
+
+            # ── SVCN Care Network ──
+            'CARE_HANDOFF': 'Care Handoff',
+            'HANDOFF': 'Care Handoff',
+            'CARE_TRANSFER': 'Care Handoff',
+            'WEARABLE_ANOMALY': 'Wearable Anomaly',
+            'ANOMALY': 'Wearable Anomaly',
+            'FEDERATED_BATCH': 'Batch Processing',
+            'BATCH': 'Batch Processing',
+            'BULK_ANCHOR': 'Batch Processing',
+            'BACKUP_EXPORT': 'Backup & Recovery',
+            'BACKUP_VERIFY': 'Backup & Recovery',
+            'BACKUP': 'Backup & Recovery',
+            'BACKUP_LOG': 'Backup & Recovery',
+
+            # ── EHR System & Integration ──
             'EPIC': 'EHR Integration',
             'ORACLE_HEALTH': 'EHR Integration',
             'CERNER': 'EHR Integration',
             'MEDITECH': 'EHR Integration',
             'EHR': 'EHR Integration',
             'EHR_EVENT': 'EHR Integration',
-            'TELEMEDICINE': 'Telemedicine',
-            'TELEHEALTH': 'Telemedicine',
-            'PEDIATRIC': 'Pediatric',
-            'MATERNAL': 'Pediatric',
-            'POST_OP': 'Post-Op',
-            'POSTOP': 'Post-Op',
-            'CHRONIC': 'Chronic Care',
-            'CHRONIC_CARE': 'Chronic Care',
-            'PREVENTIVE': 'Preventive',
-            'WELLNESS': 'Preventive',
-            'ADMIN': 'Administrative',
-            # SVCN Care Network record types
-            'CARE_HANDOFF': 'Care Handoff',
-            'HANDOFF': 'Care Handoff',
-            'WEARABLE_ANOMALY': 'Wearable Anomaly',
-            'ANOMALY': 'Wearable Anomaly',
-            'FEDERATED_BATCH': 'Federated Batch',
-            'BATCH': 'Federated Batch',
-            'BACKUP_EXPORT': 'Backup & Recovery',
-            'BACKUP_VERIFY': 'Backup & Recovery',
-            'BACKUP': 'Backup & Recovery',
-            # Solus Protocol EHR record types
+            'EHR_INTEGRATION': 'EHR Integration',
             'EHR_RECORD': 'EHR Record',
             'EHR_UPDATE': 'EHR Update',
             'EHR_QUERY': 'EHR Query',
             'EHR_TRANSFER': 'EHR Transfer',
             'EHR_IMPORT': 'EHR Import',
             'FHIR_IMPORT': 'EHR Import',
+            'FHIR_EXPORT': 'FHIR Export',
+            'HL7_MESSAGE': 'HL7 Integration',
+
+            # ── Scheduling & Billing ──
             'SCHEDULING': 'Scheduling',
             'BILLING': 'Billing',
-            # EHR scenario types (v2.9.8)
-            'CHRONIC_CARE': 'Chronic Care',
-            'CHRONIC': 'Chronic Care',
             'ENCOUNTER': 'Encounter',
             'MEDICATION': 'Prescription',
-            'PROGRESS_NOTE': 'Clinical Notes',
-            'CLINICAL_NOTE': 'Clinical Notes',
-            'CLINICAL NOTES': 'Clinical Notes',
-            'NOTES': 'Clinical Notes',
+
+            # ── Compliance, Audit & Operations ──
+            'COMPLIANCE_REPORT': 'Compliance & Audit',
+            'AUDIT_ENTRY': 'Compliance & Audit',
+            'COMPLIANCE': 'Compliance & Audit',
+            'INTEGRATION_LOG': 'Integration Log',
+            'API_METRICS': 'API Metrics',
+            'DATA_MIGRATION': 'Data Migration',
+            'USER_ACCESS': 'Access Log',
+            'INCIDENT_REPORT': 'Incident Report',
+            'CDS_ALERT': 'Clinical Decision Support',
+            'CERTIFICATION': 'Certification',
+            'UPTIME_REPORT': 'System Operations',
+            'PATCH_NOTES': 'System Operations',
+            'INTERFACE_MAP': 'System Operations',
         }
         if explicit_type in type_map:
             return type_map[explicit_type]
@@ -207,6 +284,30 @@ def categorize_record(memo_data):
     # Pediatric & Maternal
     elif any(kw in memo_lower for kw in ["pediatric", "child", "infant", "newborn", "prenatal", "maternal", "pregnancy", "obstetric", "neonatal", "well-child"]):
         return "Pediatric"
+    
+    # Dental
+    elif any(kw in memo_lower for kw in ["dental", "dentist", "oral health", "tooth", "teeth", "periodontal", "orthodontic"]):
+        return "Dental"
+    
+    # Physical Therapy & Rehabilitation
+    elif any(kw in memo_lower for kw in ["physical therapy", "physiotherapy", "occupational therapy", "rehabilitation", "rehab", "pt session"]):
+        return "Physical Therapy"
+    
+    # Radiology (separate from general Imaging for specialty tracking)
+    elif any(kw in memo_lower for kw in ["radiology report", "radiology order", "radiologist"]):
+        return "Radiology"
+    
+    # Cardiology
+    elif any(kw in memo_lower for kw in ["cardiology", "cardiologist", "heart catheterization", "stress test", "holter"]):
+        return "Cardiology"
+    
+    # Compliance & Audit
+    elif any(kw in memo_lower for kw in ["compliance", "audit", "regulatory", "certification"]):
+        return "Compliance & Audit"
+    
+    # Integration & System Logs
+    elif any(kw in memo_lower for kw in ["integration log", "api metric", "interface map"]):
+        return "Integration Log"
     
     # Chronic Conditions & Disease Management
     elif any(kw in memo_lower for kw in ["diabetes", "hypertension", "asthma", "copd", "heart failure", "chronic", "ongoing condition"]):
