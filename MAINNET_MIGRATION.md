@@ -1,4 +1,4 @@
-# Solus Protocol — XRPL Mainnet Migration Guide
+# SLS Protocol — XRPL Mainnet Migration Guide
 
 > **Status:** Pre-production. This document outlines the step-by-step process for migrating from XRPL Testnet to XRPL Mainnet. A pre-built backend endpoint is included but **has not been deployed to production**.
 
@@ -18,7 +18,7 @@
 10. [Cost Estimation](#10-cost-estimation)
 11. [XRPL Amendment Resilience](#11-xrpl-amendment-resilience)
 12. [SVCN Care Network Migration](#12-svcn-care-network-migration)
-13. [Solus Protocol EHR Migration](#13-solus-protocol-ehr-migration)
+13. [SLS Protocol EHR Migration](#13-sls-protocol-ehr-migration)
 14. [Metrics API Migration](#14-metrics-api-migration)
 15. [Visual Calendar & Scheduling](#15-visual-calendar--scheduling-v2100)
 16. [ICD-10/CPT Billing & Claim Lifecycle](#16-icd-10cpt-billing--claim-lifecycle-v2100)
@@ -32,6 +32,11 @@
 24. [In-App Feedback System](#24-in-app-feedback-system-v2100)
 25. [ONC/CEHRT Compliance Roadmap](#25-onccehrt-compliance-roadmap)
 26. [Freemium Pricing Model](#26-freemium-pricing-model)
+27. [PWA Push Notifications (v2.10.1)](#27-pwa-push-notifications-v2101)
+28. [Cohort Analytics & Population Health (v2.10.1)](#28-cohort-analytics--population-health-v2101)
+29. [Stress Testing & Scalability Benchmarks (v2.10.1)](#29-stress-testing--scalability-benchmarks-v2101)
+30. [AI Predictions & Insights Engine (v2.10.4)](#30-ai-predictions--insights-engine-v2104)
+31. [Enhanced Scheduling System (v2.10.4)](#31-enhanced-scheduling-system-v2104)
 
 ---
 
@@ -668,7 +673,7 @@ If issues arise after mainnet launch:
 
 ## 11. XRPL Amendment Resilience
 
-The XRPL periodically activates protocol amendments (e.g., new transaction types, fee changes). Solus Protocol v2.9.3+ is designed to auto-adapt:
+The XRPL periodically activates protocol amendments (e.g., new transaction types, fee changes). SLS Protocol v2.9.3+ is designed to auto-adapt:
 
 ### Fallback WebSocket Nodes
 
@@ -828,10 +833,10 @@ No structural changes needed — just change `testnet=True` to `testnet=False` a
 
 ---
 
-## 13. Solus Protocol EHR Migration
+## 13. SLS Protocol EHR Migration
 
 ### Current State (Testnet — v2.10.0)
-The Solus Protocol EHR system (`solus_ehr.py` + `demo-app/index.html`) anchors all healthcare data operations to XRPL:
+The SLS Protocol EHR system (`solus_ehr.py` + `demo-app/index.html`) anchors all healthcare data operations to XRPL:
 
 | EHR Operation | XRPL Record Type | FHIR Mapping | Added In |
 |---------------|------------------|-------------|----------|
@@ -1310,7 +1315,7 @@ def run_integrity_scan():
             record.save()
 ```
 
-This is the core value proposition of Solus Protocol — **every record has an on-chain hash that can be independently verified at any time.** If a database is compromised, the XRPL hashes reveal which records were altered.
+This is the core value proposition of SLS Protocol — **every record has an on-chain hash that can be independently verified at any time.** If a database is compromised, the XRPL hashes reveal which records were altered.
 
 ---
 
@@ -1401,7 +1406,7 @@ self.addEventListener('sync', event => {
 ## 25. ONC/CEHRT Compliance Roadmap
 
 ### Current Classification
-Solus Protocol is a **medical data integrity layer** — not a standalone certified EHR system. It does not currently hold ONC CEHRT (Certified EHR Technology) designation.
+SLS Protocol is a **medical data integrity layer** — not a standalone certified EHR system. It does not currently hold ONC CEHRT (Certified EHR Technology) designation.
 
 ### What CEHRT Requires (and Our Status)
 
@@ -1430,7 +1435,7 @@ Solus Protocol is a **medical data integrity layer** — not a standalone certif
 4. **Phase 4 (Q1 2027):** ONC Health IT Certification Program application + testing
 5. **Dependencies:** Requires funding, dedicated compliance officer, testing partner (Drummond Group or ICSA Labs)
 
-### Where Solus Protocol Already Exceeds CEHRT
+### Where SLS Protocol Already Exceeds CEHRT
 - **Blockchain-backed audit logging** — no certified EHR system provides immutable on-chain proof of every action
 - **Hash integrity verification** — real-time tamper detection across all records
 - **Patient-controlled consent NFTs** — no certified EHR offers XLS-20 NFT-based consent management
@@ -1594,11 +1599,150 @@ Merkle Root:      [H12345678]
 
 ---
 
-## Migration Checklist (v2.10.1 — Comprehensive)
+## 30. AI Predictions & Insights Engine (v2.10.4)
+
+### Current (Testnet Demo)
+The AI Predictions Engine provides intelligent health insights across all three user roles (Patient, Provider, EHR Admin). Predictions are generated client-side using pattern analysis of patient records, appointment history, and health metrics.
+
+### AI Components
+
+| Component | Function | Demo Implementation | Mainnet Implementation |
+|-----------|----------|---------------------|------------------------|
+| **aiDrugWarning()** | Drug interaction analysis | FDA API lookup + local severity scoring | FDA API + ML interaction classifier |
+| **aiCostEstimate()** | Pre-visit cost prediction | CPT-based cost averaging | ML model trained on claims data |
+| **aiSchedulingSuggestions()** | Smart appointment recommendations | Rule-based gap detection | ML scheduling optimizer |
+| **aiReadinessScore()** | Pre-appointment preparation score | Weighted checklist completion | NLP analysis of patient messages |
+| **aiLabAnalysis()** | Lab result trend analysis | Statistical trend detection | Time-series forecasting models |
+| **getAIPredictions()** | Consolidated prediction array | Pattern-based static predictions | Real-time ML inference pipeline |
+
+### AI Insight Cards (Role-Specific)
+
+**Patient Dashboard:**
+```javascript
+// Example AI insights for patients
+[
+  { type: 'risk', message: 'Based on recent readings, blood pressure trending 12% higher' },
+  { type: 'savings', message: 'Switching to generic Metoprolol could save $47/month' },
+  { type: 'prevention', message: '3 overdue preventive screenings detected' },
+  { type: 'scheduling', message: 'Optimal appointment time: Tuesday 10am (lowest wait)' }
+]
+```
+
+**Provider Dashboard:**
+```javascript
+// Example AI insights for providers
+[
+  { type: 'critical', message: '3 patients with HbA1c > 9.0 need urgent follow-up' },
+  { type: 'compliance', message: 'Care gap alert: 12 patients overdue for mammogram' },
+  { type: 'efficiency', message: 'Double-booking detected on 3/15 at 2pm slot' },
+  { type: 'billing', message: '8 claims approaching filing deadline (< 30 days)' }
+]
+```
+
+**EHR Admin Dashboard:**
+```javascript
+// Example AI insights for EHR administrators
+[
+  { type: 'integrity', message: '2 records flagged for hash mismatch review' },
+  { type: 'usage', message: 'API usage up 34% — consider rate limit adjustment' },
+  { type: 'cost', message: 'Projected $SLS token usage: 12,400 anchors this month' },
+  { type: 'compliance', message: 'HIPAA audit log export due in 12 days' }
+]
+```
+
+### Mainnet Migration Steps
+1. **ML Model Training** — Train prediction models on de-identified claims data (diabetes risk, readmission risk, cost prediction)
+2. **Inference API** — Deploy FastAPI + TensorFlow Serving for sub-100ms inference
+3. **Vector Embeddings** — Use OpenAI embeddings or local BERT model for patient condition/medication similarity scoring
+4. **Real-Time Alerts** — Wire AI engine to push notification service for critical predictions
+5. **Audit Trail** — All AI predictions logged with model version, confidence score, and input features (de-identified)
+6. **Explainability** — SHAP values or LIME explanations for regulatory compliance (FDA SaMD guidance)
+7. **A/B Testing** — Track prediction accuracy and clinician acceptance rates
+
+### HIPAA & AI Governance
+- AI models trained only on de-identified data meeting Safe Harbor or Expert Determination standards
+- No direct PHI used in model training; only aggregate statistical features
+- All AI predictions include confidence intervals and "AI-generated" labeling
+- Human-in-the-loop for any clinical decision support (no autonomous treatment recommendations)
+
+---
+
+## 31. Enhanced Scheduling System (v2.10.4)
+
+### Current (Testnet Demo)
+The enhanced scheduling system provides visual calendar management with drag-and-drop appointment editing, conflict detection, and AI-powered scheduling suggestions across all user roles.
+
+### Scheduling Features
+
+| Feature | Description | Demo | Mainnet |
+|---------|-------------|------|---------|
+| **Visual Calendar** | Interactive month/week/day views with appointment cards | FullCalendar.js client-side | FullCalendar + server-side persistence |
+| **Conflict Detection** | Real-time overlap and double-booking alerts | Client-side time comparison | PostgreSQL constraint + triggers |
+| **AI Suggestions** | Smart slot recommendations based on patterns | Rule-based suggestions | ML scheduling optimizer |
+| **Recurring Appointments** | Series scheduling with exception handling | localStorage series storage | iCal RRULE server-side |
+| **Waitlist Management** | Automatic slot offers on cancellations | In-memory waitlist | Redis-backed priority queue |
+| **Multi-Provider** | Cross-provider availability view | Single-provider demo | Provider availability matrix |
+
+### Calendar Data Model
+
+```javascript
+// Appointment schema
+{
+  id: "apt_12345",
+  patientId: "pat_67890",
+  providerId: "prov_11111",
+  type: "followup|initial|procedure|telehealth",
+  start: "2026-03-15T10:00:00Z",
+  end: "2026-03-15T10:30:00Z",
+  status: "scheduled|confirmed|cancelled|completed|no-show",
+  location: "Room 204|Telehealth",
+  notes: "Follow-up for diabetes management",
+  recurRule: "RRULE:FREQ=WEEKLY;COUNT=4",    // Optional recurring
+  anchorHash: "sha256:abc123...",             // XRPL anchor reference
+  anchorTxHash: "1A2B3C..."                   // XRPL transaction hash
+}
+```
+
+### Scheduling Actions (XRPL-Anchored)
+
+| Action | XRPL Memo Type | $SLS Fee |
+|--------|---------------|----------|
+| Create Appointment | `sls:scheduling:create` | 0.01 $SLS |
+| Modify Appointment | `sls:scheduling:modify` | 0.01 $SLS |
+| Cancel Appointment | `sls:scheduling:cancel` | 0.005 $SLS |
+| Confirm Appointment | `sls:scheduling:confirm` | 0.005 $SLS |
+| No-Show Record | `sls:scheduling:noshow` | 0.01 $SLS |
+
+### Mainnet Migration Steps
+1. **PostgreSQL Schema** — Deploy appointments table with provider/patient foreign keys and XRPL anchor references
+2. **Conflict Constraints** — Add database-level check constraints for overlapping appointments per provider
+3. **iCal Integration** — Export appointments as ICS files for patient calendar sync (Google, Apple, Outlook)
+4. **SMS/Email Reminders** — Integrate Twilio (SMS) and SendGrid (email) for automated reminders at T-48h, T-24h, T-1h
+5. **Telehealth Integration** — Generate Zoom/Teams links for telehealth appointments with automatic embedding
+6. **Waitlist Service** — Deploy Redis-backed waitlist with automatic slot matching on cancellations
+7. **FHIR Scheduling** — Implement FHIR R4 Appointment and Schedule resources for EHR interoperability
+
+### AI Scheduling Optimization
+```python
+# Example scheduling ML features
+features = {
+  'day_of_week': appointment.start.weekday(),
+  'hour_of_day': appointment.start.hour,
+  'provider_avg_delay_mins': get_provider_delay(provider_id),
+  'patient_noshow_probability': predict_noshow(patient_id),
+  'appointment_type_duration_variance': get_type_variance(type),
+  'weather_impact_score': get_weather_score(date, location)
+}
+# Predict: optimal slot, expected wait time, no-show risk
+```
+
+---
+
+## Migration Checklist (v2.10.5 — Comprehensive)
 
 ```
 ╔══════════════════════════════════════════════════════════════════╗
-║         MAINNET MIGRATION CHECKLIST — v2.10.1                   ║
+║         MAINNET MIGRATION CHECKLIST — v2.10.5                   ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║                                                                  ║
 ║  INFRASTRUCTURE                                                  ║
@@ -1686,10 +1830,28 @@ Merkle Root:      [H12345678]
 ║  □ Begin ONC CEHRT readiness evaluation                          ║
 ║  □ Engage Drummond Group or ICSA Labs for certification testing  ║
 ║                                                                  ║
+║  AI PREDICTIONS (v2.10.4)                                        ║
+║  □ Train ML models on de-identified claims data                  ║
+║  □ Deploy FastAPI + TensorFlow Serving inference endpoints       ║
+║  □ Implement SHAP/LIME explainability for AI predictions         ║
+║  □ Wire AI alerts to push notification service                   ║
+║  □ Add confidence scores and AI-generated labeling               ║
+║  □ Smoke test: AI drug warning accuracy                          ║
+║  □ Smoke test: AI scheduling suggestions                         ║
+║                                                                  ║
+║  ENHANCED SCHEDULING (v2.10.4)                                   ║
+║  □ Deploy PostgreSQL appointments table with constraints         ║
+║  □ Implement iCal export (ICS) for patient calendar sync         ║
+║  □ Integrate Twilio/SendGrid for appointment reminders           ║
+║  □ Deploy Redis-backed waitlist service                          ║
+║  □ Implement FHIR R4 Appointment/Schedule resources              ║
+║  □ Smoke test: appointment CRUD + XRPL anchoring                 ║
+║  □ Smoke test: conflict detection on double-booking              ║
+║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
 ```
 
 ---
 
-*Last updated: v2.10.1 — February 2026*
+*Last updated: v2.10.5 — February 2026*
 *See also: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) | [SECURITY.md](SECURITY.md) | [HIPAA_COMPLIANCE.md](HIPAA_COMPLIANCE.md) | [WHITEPAPER.md](WHITEPAPER.md)*
