@@ -1,5 +1,5 @@
 """
-solus_comms.py — Solus Verified Care Network (SVCN) Communications Module
+solus_comms.py — Solus Protocol Verified Care Network (SVCN) Communications Module
 
 Provides:
   • SolusMessenger     — Encrypted, anchored messaging between patients/providers
@@ -142,7 +142,7 @@ def _mock_fhir_query(resource_type, patient_id):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 1. SOLUS MESSENGER — Encrypted, Anchored Care Communication
+# 1. SOLUS PROTOCOL MESSENGER — Encrypted, Anchored Care Communication
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class SolusMessenger:
@@ -293,7 +293,7 @@ class SolusMessenger:
         if recipient_device_token:
             _mock_push_notification(
                 recipient_device_token,
-                title=f"Solus: New {update_type.replace('_', ' ').title()}",
+                title=f"Solus Protocol: New {update_type.replace('_', ' ').title()}",
                 body=f"You have a new verified update from your care team.",
                 data={"thread_id": thread_id, "tx_hash": tx_hash}
             )
@@ -883,7 +883,7 @@ class EHRPlugin:
 
 if __name__ == "__main__":
     print("=" * 70)
-    print(" SOLUS VERIFIED CARE NETWORK (SVCN) — Prototype Demo")
+    print(" SOLUS PROTOCOL VERIFIED CARE NETWORK (SVCN) — Prototype Demo")
     print("=" * 70)
 
     # Initialize SDK

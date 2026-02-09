@@ -726,7 +726,7 @@ class AnomalyEngine:
 
 if __name__ == "__main__":
     print("=" * 70)
-    print(" SOLUS ANOMALY DETECTION ENGINE — Prototype Demo")
+    print(" SOLUS PROTOCOL ANOMALY DETECTION ENGINE — Prototype Demo")
     print("=" * 70)
 
     # Initialize
@@ -794,5 +794,5 @@ if __name__ == "__main__":
     print(" Connected providers: Fitbit, Apple Health, Dexcom, Withings")
     print(" All using mock OAuth2 — swap MOCK_* constants for production")
     print(" McKinsey est: $40-50B/yr in post-discharge complication costs")
-    print(" Solus catches anomalies in hours, not days")
+    print(" Solus Protocol catches anomalies in hours, not days")
     print("=" * 70)

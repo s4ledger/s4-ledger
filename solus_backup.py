@@ -55,7 +55,7 @@ def _hash(data: str) -> str:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# SOLUS BACKUP — Encrypted Export/Import
+# SOLUS PROTOCOL BACKUP — Encrypted Export/Import
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class SolusBackup:
@@ -349,7 +349,7 @@ class SolusBackup:
         Upload encrypted backup to cloud storage (patient-controlled).
 
         In production, uses pre-signed S3 URLs or GCS signed URLs so the
-        backup goes directly to the patient's controlled bucket — Solus
+        backup goes directly to the patient's controlled bucket — Solus Protocol
         never has access to the plaintext.
         """
         if not os.path.exists(backup_path):
@@ -382,7 +382,7 @@ class SolusBackup:
 
 if __name__ == "__main__":
     print("=" * 70)
-    print(" SOLUS BACKUP & RECOVERY — Prototype Demo")
+    print(" SOLUS PROTOCOL BACKUP & RECOVERY — Prototype Demo")
     print("=" * 70)
 
     # Initialize
