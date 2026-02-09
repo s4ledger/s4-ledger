@@ -2453,6 +2453,7 @@
             <div class="shortcut-row"><span class="shortcut-label">New Record</span><div class="shortcut-keys"><span class="kbd">N</span></div></div>
             <div class="shortcut-row"><span class="shortcut-label">Toggle Theme</span><div class="shortcut-keys"><span class="kbd">D</span></div></div>
             <div class="shortcut-row"><span class="shortcut-label">Search Records</span><div class="shortcut-keys"><span class="kbd">/</span></div></div>
+            <div class="shortcut-row"><span class="shortcut-label">Care Network</span><div class="shortcut-keys"><span class="kbd">C</span></div></div>
             <div class="shortcut-row"><span class="shortcut-label">Sign Out</span><div class="shortcut-keys"><span class="kbd">Esc</span></div></div>
         </div>
     </div>
@@ -4252,6 +4253,255 @@
             </div>
         </div>
 
+        <!-- ===== SVCN — SOLUS VERIFIED CARE NETWORK ===== -->
+        <div id="svcnScreen" class="screen">
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1><i class="fas fa-project-diagram" style="color: var(--accent); margin-right: 6px;"></i> Care Network</h1>
+                        <p>Solus Verified Care Network (SVCN)</p>
+                    </div>
+                    <button style="background: var(--glass); border: 1px solid var(--border); color: var(--text-muted); width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-size: 0.85rem;" onclick="navigateTo('home', document.querySelector('.nav-item'))" aria-label="Back"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="content">
+                <!-- SVCN Hero -->
+                <div class="section">
+                    <div style="background: linear-gradient(135deg, rgba(20,241,149,0.12), rgba(153,69,255,0.12), rgba(0,194,255,0.08)); border: 1px solid rgba(20,241,149,0.2); border-radius: 14px; padding: 16px; text-align: center;">
+                        <div style="font-size: 1.6rem; margin-bottom: 4px;">🌐</div>
+                        <div style="font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 4px;">Universal Health Passport</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.5;">Every provider sees the same verified record chain. Sub-second finality. <$0.001 per anchored update. Patient-controlled consent.</div>
+                        <div style="display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap;">
+                            <span class="playground-badge" style="font-size: 0.58rem;"><i class="fas fa-bolt"></i> XRPL Anchored</span>
+                            <span class="playground-badge" style="font-size: 0.58rem; background: rgba(153,69,255,0.15); color: var(--secondary);"><i class="fas fa-shield-alt"></i> HIPAA Aligned</span>
+                            <span class="playground-badge" style="font-size: 0.58rem; background: rgba(0,194,255,0.15); color: var(--accent2);"><i class="fas fa-lock"></i> Zero PHI On-Chain</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Modules -->
+                <div class="section">
+                    <div class="pg-section-title"><i class="fas fa-cubes" style="color: var(--accent);"></i> SVCN Modules</div>
+                    <div id="svcnModules">
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(20,241,149,0.15); display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 0.9rem;"><i class="fas fa-comment-medical"></i></div>
+                                <div><div style="font-size: 0.82rem; font-weight: 600; color: var(--text);">Secure Messenger</div><div style="font-size: 0.62rem; color: var(--text-muted);">Encrypted, anchored care communication</div></div>
+                                <span class="playground-badge" style="font-size: 0.55rem; margin-left: auto;"><i class="fas fa-check"></i> Built</span>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.5; padding-left: 44px;">AES-128 encrypted messages → SHA-256 hashed → XRPL memo anchor → ACK receipts → webhook + push notifications. Thread-based conversations with immutable audit trail.</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(153,69,255,0.15); display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 0.9rem;"><i class="fas fa-key"></i></div>
+                                <div><div style="font-size: 0.82rem; font-weight: 600; color: var(--text);">Consent Manager</div><div style="font-size: 0.62rem; color: var(--text-muted);">Patient-controlled data access tokens</div></div>
+                                <span class="playground-badge" style="font-size: 0.55rem; margin-left: auto;"><i class="fas fa-check"></i> Built</span>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.5; padding-left: 44px;">Create time-limited consent tokens for specific data categories. Grant/revoke access instantly. Every consent event anchored to XRPL for immutable audit.</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(0,194,255,0.15); display: flex; align-items: center; justify-content: center; color: var(--accent2); font-size: 0.9rem;"><i class="fas fa-link"></i></div>
+                                <div><div style="font-size: 0.82rem; font-weight: 600; color: var(--text);">Care Chain Tracker</div><div style="font-size: 0.62rem; color: var(--text-muted);">Verifiable chain-of-custody handoffs</div></div>
+                                <span class="playground-badge" style="font-size: 0.55rem; margin-left: auto;"><i class="fas fa-check"></i> Built</span>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.5; padding-left: 44px;">Patient → PCP → Specialist → ER → Insurance. Each handoff anchored with previous TX reference, creating a linked on-chain custody trail. Never done before at scale.</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(255,215,0,0.15); display: flex; align-items: center; justify-content: center; color: var(--warning); font-size: 0.9rem;"><i class="fas fa-heartbeat"></i></div>
+                                <div><div style="font-size: 0.82rem; font-weight: 600; color: var(--text);">Anomaly Engine</div><div style="font-size: 0.62rem; color: var(--text-muted);">Real-time wearable monitoring + auto-anchor</div></div>
+                                <span class="playground-badge" style="font-size: 0.55rem; margin-left: auto;"><i class="fas fa-check"></i> Built</span>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.5; padding-left: 44px;">Fitbit, Apple Health, Dexcom, Withings, Google Fit. 52 threshold rules + ONNX ML model. Auto-anchors anomalies. Catches post-op complications in hours, not days.</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(255,82,82,0.15); display: flex; align-items: center; justify-content: center; color: #ff5252; font-size: 0.9rem;"><i class="fas fa-hospital"></i></div>
+                                <div><div style="font-size: 0.82rem; font-weight: 600; color: var(--text);">EHR Plugins</div><div style="font-size: 0.62rem; color: var(--text-muted);">Epic, Cerner, athenahealth auto-anchor</div></div>
+                                <span class="playground-badge" style="font-size: 0.55rem; margin-left: auto;"><i class="fas fa-check"></i> Built</span>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.5; padding-left: 44px;">SMART on FHIR R4 plugins for major EHR vendors. Automatically anchor clinically significant events. OAuth2 authentication. Zero workflow disruption for clinicians.</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(20,241,149,0.1); display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 0.9rem;"><i class="fas fa-layer-group"></i></div>
+                                <div><div style="font-size: 0.82rem; font-weight: 600; color: var(--text);">Federated Batch</div><div style="font-size: 0.62rem; color: var(--text-muted);">Multi-institution Merkle anchoring</div></div>
+                                <span class="playground-badge" style="font-size: 0.55rem; margin-left: auto;"><i class="fas fa-check"></i> Built</span>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.5; padding-left: 44px;">Multiple hospitals contribute records to a shared batch. Merkle root of all hashes anchored in a single TX. Shared trust lines for $SLS fee settlement.</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(0,194,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--accent2); font-size: 0.9rem;"><i class="fas fa-cloud-download-alt"></i></div>
+                                <div><div style="font-size: 0.82rem; font-weight: 600; color: var(--text);">Backup & Recovery</div><div style="font-size: 0.62rem; color: var(--text-muted);">Encrypted .solusbackup + XRPL recovery</div></div>
+                                <span class="playground-badge" style="font-size: 0.55rem; margin-left: auto;"><i class="fas fa-check"></i> Built</span>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.5; padding-left: 44px;">Export encrypted backup files. QR seed backup. Cloud sync (patient-controlled). Full XRPL re-verification on restore. Lost phone? Data integrity guaranteed.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Care Chain Visualization -->
+                <div class="section">
+                    <div class="pg-section-title"><i class="fas fa-link" style="color: var(--accent2);"></i> Care Chain Demo</div>
+                    <div id="svcnCareChain" style="position: relative; padding-left: 20px;">
+                        <div style="position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--secondary), var(--accent2), var(--warning));"></div>
+                        <div style="position: relative; margin-bottom: 16px; padding: 10px 12px; background: var(--glass); border: 1px solid rgba(20,241,149,0.3); border-radius: 10px;">
+                            <div style="position: absolute; left: -16px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg);"></div>
+                            <div style="font-size: 0.75rem; font-weight: 600; color: var(--accent);"><i class="fas fa-user"></i> Patient → PCP</div>
+                            <div style="font-size: 0.63rem; color: var(--text-muted); margin-top: 3px;">Initial intake — full H&P anchored</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted); margin-top: 3px; font-family: monospace;">TX: prev=GENESIS | type=initial_intake</div>
+                        </div>
+                        <div style="position: relative; margin-bottom: 16px; padding: 10px 12px; background: var(--glass); border: 1px solid rgba(153,69,255,0.3); border-radius: 10px;">
+                            <div style="position: absolute; left: -16px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: var(--secondary); border: 2px solid var(--bg);"></div>
+                            <div style="font-size: 0.75rem; font-weight: 600; color: var(--secondary);"><i class="fas fa-user-md"></i> PCP → Cardiologist</div>
+                            <div style="font-size: 0.63rem; color: var(--text-muted); margin-top: 3px;">Referral for palpitations + abnormal ECG</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted); margin-top: 3px; font-family: monospace;">TX: prev=0xA1B2...C3D4 | type=referral_out</div>
+                        </div>
+                        <div style="position: relative; margin-bottom: 16px; padding: 10px 12px; background: var(--glass); border: 1px solid rgba(0,194,255,0.3); border-radius: 10px;">
+                            <div style="position: absolute; left: -16px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent2); border: 2px solid var(--bg);"></div>
+                            <div style="font-size: 0.75rem; font-weight: 600; color: var(--accent2);"><i class="fas fa-heartbeat"></i> Cardiologist → ER</div>
+                            <div style="font-size: 0.63rem; color: var(--text-muted); margin-top: 3px;">Emergency handoff — acute chest pain during stress test</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted); margin-top: 3px; font-family: monospace;">TX: prev=0xD4E5...F6A1 | type=emergency_handoff</div>
+                        </div>
+                        <div style="position: relative; padding: 10px 12px; background: var(--glass); border: 1px solid rgba(255,215,0,0.3); border-radius: 10px;">
+                            <div style="position: absolute; left: -16px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: var(--warning); border: 2px solid var(--bg);"></div>
+                            <div style="font-size: 0.75rem; font-weight: 600; color: var(--warning);"><i class="fas fa-file-invoice"></i> ER → Insurance</div>
+                            <div style="font-size: 0.63rem; color: var(--text-muted); margin-top: 3px;">Claim submitted — verified against full care chain</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted); margin-top: 3px; font-family: monospace;">TX: prev=0xF6A1...B2C3 | type=insurance_claim</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <span style="font-size: 0.62rem; color: var(--accent); font-weight: 600;"><i class="fas fa-check-circle"></i> Chain Integrity: VALID — 4 handoffs verified on-ledger</span>
+                    </div>
+                </div>
+
+                <!-- Wearable Integrations -->
+                <div class="section">
+                    <div class="pg-section-title"><i class="fas fa-heartbeat" style="color: var(--warning);"></i> Wearable Integrations</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
+                            <div style="font-size: 1.1rem; margin-bottom: 4px;">⌚</div>
+                            <div style="font-size: 0.68rem; font-weight: 600; color: var(--text);">Fitbit</div>
+                            <div style="font-size: 0.55rem; color: var(--accent); margin-top: 2px;">HR • SpO2 • ECG</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
+                            <div style="font-size: 1.1rem; margin-bottom: 4px;">🍎</div>
+                            <div style="font-size: 0.68rem; font-weight: 600; color: var(--text);">Apple Health</div>
+                            <div style="font-size: 0.55rem; color: var(--accent); margin-top: 2px;">HR • O₂ • Temp</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
+                            <div style="font-size: 1.1rem; margin-bottom: 4px;">📊</div>
+                            <div style="font-size: 0.68rem; font-weight: 600; color: var(--text);">Dexcom</div>
+                            <div style="font-size: 0.55rem; color: var(--accent); margin-top: 2px;">CGM • Glucose</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
+                            <div style="font-size: 1.1rem; margin-bottom: 4px;">🩺</div>
+                            <div style="font-size: 0.68rem; font-weight: 600; color: var(--text);">Withings</div>
+                            <div style="font-size: 0.55rem; color: var(--accent); margin-top: 2px;">BP • Weight • Sleep</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center;">
+                            <div style="font-size: 1.1rem; margin-bottom: 4px;">🏃</div>
+                            <div style="font-size: 0.68rem; font-weight: 600; color: var(--text);">Google Fit</div>
+                            <div style="font-size: 0.55rem; color: var(--accent); margin-top: 2px;">HR • Steps • Stress</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid rgba(153,69,255,0.2); border-radius: 10px; padding: 10px; text-align: center;">
+                            <div style="font-size: 1.1rem; margin-bottom: 4px;">🧬</div>
+                            <div style="font-size: 0.68rem; font-weight: 600; color: var(--text);">ONNX ML</div>
+                            <div style="font-size: 0.55rem; color: var(--secondary); margin-top: 2px;">LSTM Anomaly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EHR Plugins -->
+                <div class="section">
+                    <div class="pg-section-title"><i class="fas fa-hospital" style="color: #ff5252;"></i> EHR Plugin Status</div>
+                    <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                        <div style="display: flex; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border);">
+                            <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(20,241,149,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--accent); margin-right: 10px;"><i class="fas fa-hospital"></i></div>
+                            <div style="flex: 1;"><div style="font-size: 0.78rem; font-weight: 600; color: var(--text);">Epic Systems</div><div style="font-size: 0.6rem; color: var(--text-muted);">SMART on FHIR R4 • Auto-anchor</div></div>
+                            <span class="playground-badge" style="font-size: 0.52rem; background: rgba(20,241,149,0.15);"><i class="fas fa-code"></i> Ready</span>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border);">
+                            <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(153,69,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--secondary); margin-right: 10px;"><i class="fas fa-hospital"></i></div>
+                            <div style="flex: 1;"><div style="font-size: 0.78rem; font-weight: 600; color: var(--text);">Oracle Cerner</div><div style="font-size: 0.6rem; color: var(--text-muted);">SMART on FHIR R4 • Auto-anchor</div></div>
+                            <span class="playground-badge" style="font-size: 0.52rem; background: rgba(153,69,255,0.15); color: var(--secondary);"><i class="fas fa-code"></i> Ready</span>
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 10px 12px;">
+                            <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(0,194,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--accent2); margin-right: 10px;"><i class="fas fa-hospital"></i></div>
+                            <div style="flex: 1;"><div style="font-size: 0.78rem; font-weight: 600; color: var(--text);">athenahealth</div><div style="font-size: 0.6rem; color: var(--text-muted);">SMART on FHIR R4 • Auto-anchor</div></div>
+                            <span class="playground-badge" style="font-size: 0.52rem; background: rgba(0,194,255,0.15); color: var(--accent2);"><i class="fas fa-code"></i> Ready</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Model -->
+                <div class="section">
+                    <div class="pg-section-title"><i class="fas fa-coins" style="color: var(--warning);"></i> $SLS Utility Flow</div>
+                    <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 0.75rem; color: var(--text);"><i class="fas fa-anchor" style="color: var(--accent); margin-right: 4px;"></i> Per Anchor</span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent);">0.000012 XRP</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 0.75rem; color: var(--text);"><i class="fas fa-envelope" style="color: var(--accent2); margin-right: 4px;"></i> Per Message</span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent2);">0.00005 $SLS</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 0.75rem; color: var(--text);"><i class="fas fa-key" style="color: var(--secondary); margin-right: 4px;"></i> Per Consent Token</span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--secondary);">0.0001 $SLS</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 0.75rem; color: var(--text);"><i class="fas fa-link" style="color: var(--warning); margin-right: 4px;"></i> Per Handoff</span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--warning);">0.0001 $SLS</span>
+                        </div>
+                        <div style="border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.75rem; color: var(--text);"><i class="fas fa-gift" style="color: var(--accent); margin-right: 4px;"></i> Patient Data Bounty</span>
+                                <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent);">Earn $SLS</span>
+                            </div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">Patients earn micro-$SLS for every verified data point shared with consented parties.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impact Stats -->
+                <div class="section">
+                    <div class="pg-section-title"><i class="fas fa-chart-line" style="color: var(--accent);"></i> Market Impact</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 800; color: var(--accent);">$40–50B</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted);">Annual U.S. post-discharge complication costs</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 800; color: var(--secondary);">5–10%</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted);">Reduction target via earlier detection</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 800; color: var(--accent2);"><1s</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted);">XRPL finality per anchor</div>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 800; color: var(--warning);">$0.001</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted);">Max cost per anchored update</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SDK Files -->
+                <div class="section">
+                    <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-size: 0.7rem; color: var(--text-muted); line-height: 1.6;">
+                        <div style="font-weight: 600; color: var(--text); margin-bottom: 6px;"><i class="fas fa-file-code" style="color: var(--accent);"></i> SDK Files</div>
+                        <div><span style="color: var(--accent); font-family: monospace;">solus_comms.py</span> — Messenger, Consent, Care Chain, Federated Batch, EHR Plugins (590 LOC)</div>
+                        <div><span style="color: var(--accent2); font-family: monospace;">solus_backup.py</span> — Encrypted backup/restore, XRPL verification, QR seed, cloud sync (310 LOC)</div>
+                        <div><span style="color: var(--secondary); font-family: monospace;">solus_anomaly.py</span> — Wearable APIs, anomaly engine, ONNX ML, auto-anchor (520 LOC)</div>
+                        <div style="margin-top: 6px;"><i class="fas fa-info-circle" style="color: var(--accent2);"></i> All modules use mock OAuth2/API keys in prototype. Swap <span style="font-family: monospace;">MOCK_*</span> constants for production.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ===== PARTNERS SCREEN ===== -->
         <div id="partnersScreen" class="screen">
             <div class="app-header">
@@ -4583,6 +4833,10 @@
                         <div class="settings-item" onclick="navigateToScreen('analyticsScreen'); loadAnalytics();">
                             <div class="settings-left"><div class="settings-icon" style="color: var(--accent);"><i class="fas fa-chart-line"></i></div><span>Investor Analytics</span></div>
                             <span class="playground-badge" style="font-size: 0.6rem; padding: 2px 6px; background: rgba(153,69,255,0.15); color: var(--secondary);"><i class="fas fa-chart-pie"></i> New</span>
+                        </div>
+                        <div class="settings-item" onclick="navigateToScreen('svcnScreen')">
+                            <div class="settings-left"><div class="settings-icon" style="background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><i class="fas fa-project-diagram"></i></div><span>Care Network (SVCN)</span></div>
+                            <span class="playground-badge" style="font-size: 0.6rem; padding: 2px 6px; background: linear-gradient(135deg, rgba(20,241,149,0.15), rgba(0,194,255,0.15)); color: var(--accent);"><i class="fas fa-star"></i> New</span>
                         </div>
                         <div class="settings-item" onclick="navigateToScreen('partnersScreen')">
                             <div class="settings-left"><div class="settings-icon" style="color: var(--warning);"><i class="fas fa-handshake"></i></div><span>Partners</span></div>
@@ -7885,6 +8139,7 @@
             else if (key === 'p') { navigateToScreen('sdkPlaygroundScreen'); initPlaygroundTemplates(); }
             else if (key === 'v') { navigateToScreen('verifyRecordScreen'); }
             else if (key === 'i') { navigateToScreen('analyticsScreen'); loadAnalytics(); }
+            else if (key === 'c') { navigateToScreen('svcnScreen'); }
             else if (key === 'n') { openModal('addRecordModal'); }
             else if (key === 'd') { toggleTheme(); }
             else if (key === '/') { e.preventDefault(); navigateTo('records'); setTimeout(() => document.getElementById('recordSearchInput')?.focus(), 100); }
