@@ -3495,7 +3495,7 @@
                 </div>
 
                 <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
-                    <p>Solus Protocol v2.9.8</p>
+                    <p>Solus Protocol v2.10.0</p>
                     <p style="margin-top: 4px;">Build Feb 2026 • Powered by XRP Ledger</p>
                     <p style="margin-top: 4px; font-size: 0.7rem; opacity: 0.6;">Demo Environment • Testnet</p>
                 </div>
@@ -3554,6 +3554,31 @@
                         <div class="feature-item"><i class="fas fa-shield-halved" style="color: var(--accent);"></i><span>HIPAA-aligned architecture</span></div>
                         <div class="feature-item"><i class="fas fa-link" style="color: var(--accent);"></i><span>Immutable hash anchoring on XRP Ledger</span></div>
                         <div class="feature-item"><i class="fas fa-coins" style="color: var(--accent);"></i><span>$SLS utility token for fees & rebates</span></div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="about-card">
+                        <h3><i class="fas fa-clipboard-check" style="color: #00c896; margin-right: 6px;"></i>ONC/CEHRT Compliance Roadmap</h3>
+                        <p style="font-size: 0.82rem; line-height: 1.6;">Solus Protocol currently operates as a <strong>medical data integrity layer</strong> — not a standalone clinical EHR. For full clinical replacement, ONC Certified EHR Technology (CEHRT) designation is required, including clinical decision support (CDS), Meaningful Use attestation, and HIPAA BAA infrastructure.</p>
+                        <p style="font-size: 0.82rem; line-height: 1.6; margin-top: 8px;">Our roadmap targets ONC certification upon securing grants and funding. Current capabilities include scheduling, billing (ICD-10/CPT), interoperability (FHIR R4 / HL7 v2), audit logging, and XLS-20 NFT consent tokens — all anchored to the XRPL.</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="about-card">
+                        <h3><i class="fas fa-gift" style="color: var(--secondary); margin-right: 6px;"></i>Pricing & Free Tier</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
+                            <div style="background: rgba(20,241,149,0.08); border: 1px solid rgba(20,241,149,0.2); border-radius: 10px; padding: 12px; text-align: center;">
+                                <div style="font-size: 1.1rem; font-weight: 800; color: var(--accent);">Free</div>
+                                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">100 anchors/month</div>
+                                <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">Perfect for pilots & testing</div>
+                            </div>
+                            <div style="background: rgba(153,69,255,0.08); border: 1px solid rgba(153,69,255,0.2); border-radius: 10px; padding: 12px; text-align: center;">
+                                <div style="font-size: 1.1rem; font-weight: 800; color: var(--secondary);">$499<span style="font-size: 0.65rem; font-weight: 400;">/mo</span></div>
+                                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Unlimited anchors</div>
+                                <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">Priority support + BAA</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; text-align: center;">All tiers include XRPL anchoring, FHIR/HL7 export, audit logging, and API access.</p>
                     </div>
                 </div>
                 <div class="section">
@@ -3662,7 +3687,7 @@
                 </div>
                 <div style="text-align: center; padding: 0 0 24px; border-top: 1px solid var(--border); margin-top: 4px; padding-top: 16px;">
                     <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Solus Protocol Demo App</div>
-                    <div style="font-size: 0.82rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 4px 0;">v2.9.8</div>
+                    <div style="font-size: 0.82rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 4px 0;">v2.10.0</div>
                     <div style="font-size: 0.62rem; color: var(--text-muted); line-height: 1.5;">&copy; 2026 Solus Protocol | Decentralized Medical Integrity<br>Built on the XRP Ledger</div>
                 </div>
             </div>
@@ -4867,6 +4892,54 @@
                             </div>
                         </div>
                     </div>
+                    <!-- XLS-20 Consent NFT Management -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title"><i class="fas fa-certificate" style="color: #9945ff;"></i> Consent NFT (XLS-20)</span>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(153,69,255,0.08), rgba(0,194,255,0.06)); border: 1px solid rgba(153,69,255,0.25); border-radius: 14px; padding: 16px;">
+                            <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 12px;">Mint an XLS-20 NFT as a tamper-proof consent token. Grants time-limited access to a specific provider, anchored immutably on XRPL.</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                                <select id="ehrConsentPatient" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                    <option value="">Select Patient...</option>
+                                </select>
+                                <input type="text" id="ehrConsentGrantee" placeholder="Grantee (provider)" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                                <select id="ehrConsentLevel" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                    <option value="read">Read Only</option>
+                                    <option value="read-write">Read + Write</option>
+                                    <option value="full">Full Access</option>
+                                    <option value="emergency">Emergency Only</option>
+                                </select>
+                                <select id="ehrConsentExpiry" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                    <option value="24">Expires in 24h</option>
+                                    <option value="72">Expires in 72h</option>
+                                    <option value="168">Expires in 7 days</option>
+                                    <option value="720">Expires in 30 days</option>
+                                    <option value="8760">Expires in 1 year</option>
+                                </select>
+                            </div>
+                            <button onclick="ehrMintConsentNFTFromUI()" style="width: 100%; background: linear-gradient(135deg, #9945ff, #00c2ff); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                <i class="fas fa-certificate"></i> Mint Consent NFT & Anchor
+                            </button>
+                            <div id="ehrConsentNFTList" style="margin-top: 12px; display: flex; flex-direction: column; gap: 6px;"></div>
+                        </div>
+                    </div>
+                    <!-- Drug Interaction Checker -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title"><i class="fas fa-pills" style="color: #ff6464;"></i> Drug Interaction Checker</span>
+                        </div>
+                        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 14px; padding: 16px;">
+                            <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px;">Enter medications (comma-separated) to check for known interactions.</p>
+                            <input type="text" id="ehrDrugInput" placeholder="e.g. warfarin, aspirin, lisinopril" style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 10px;">
+                            <button onclick="ehrCheckDrugInteractionsUI()" style="width: 100%; background: linear-gradient(135deg, #ff6464, #ff8c00); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                <i class="fas fa-exclamation-triangle"></i> Check Interactions
+                            </button>
+                            <div id="ehrDrugResults" style="margin-top: 12px;"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ===== INTEROP TAB ===== -->
@@ -4951,11 +5024,36 @@
                                 <input type="datetime-local" id="ehrAptDateTime" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
                                 <input type="text" id="ehrAptLocation" placeholder="Location / Room" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
                             </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                                <input type="number" id="ehrAptDuration" placeholder="Duration (min)" value="30" min="5" max="240" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                <select id="ehrAptRecurring" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                    <option value="none">One-time</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="biweekly">Bi-weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                </select>
+                            </div>
+                            <textarea id="ehrAptNotes" placeholder="Appointment notes (reason for visit, prep instructions...)" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font-size:0.82rem;min-height:44px;resize:vertical;margin-bottom:10px;box-sizing:border-box;"></textarea>
                             <button onclick="ehrCreateAppointment()" style="width: 100%; background: linear-gradient(135deg, #9945ff, #00c2ff); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
                                 <i class="fas fa-calendar-plus"></i> Schedule & Anchor
                             </button>
                         </div>
                     </div>
+
+                    <!-- Visual Calendar -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title">Calendar View</span>
+                            <div style="display: flex; gap: 6px;">
+                                <button onclick="ehrCalendarNav(-1)" style="background:var(--glass);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;cursor:pointer;font-size:0.7rem;"><i class="fas fa-chevron-left"></i></button>
+                                <span id="ehrCalendarMonth" style="font-size:0.75rem;color:var(--text);font-weight:600;min-width:100px;text-align:center;padding:4px 0;"></span>
+                                <button onclick="ehrCalendarNav(1)" style="background:var(--glass);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;cursor:pointer;font-size:0.7rem;"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <div id="ehrCalendar" style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px;"></div>
+                    </div>
+
                     <div class="section">
                         <div class="section-header">
                             <span class="section-title">Upcoming Appointments</span>
@@ -4982,12 +5080,42 @@
                             </select>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                                 <input type="text" id="ehrClaimProvider" placeholder="Provider Name" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
-                                <input type="text" id="ehrClaimDiagnosis" placeholder="ICD-10 Code(s)" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                <div style="position:relative;">
+                                    <input type="text" id="ehrClaimDiagnosis" placeholder="ICD-10 Code(s)" oninput="ehrICD10Suggest(this.value)" autocomplete="off" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;width:100%;box-sizing:border-box;">
+                                    <div id="ehrICD10Dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:0 0 10px 10px;max-height:160px;overflow-y:auto;z-index:50;"></div>
+                                </div>
                             </div>
                             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 10px;">
-                                <input type="text" id="ehrClaimService" placeholder="Service (CPT code + desc)" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                <div style="position:relative;">
+                                    <input type="text" id="ehrClaimService" placeholder="CPT Code + Description" oninput="ehrCPTSuggest(this.value)" autocomplete="off" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;width:100%;box-sizing:border-box;">
+                                    <div id="ehrCPTDropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:0 0 10px 10px;max-height:160px;overflow-y:auto;z-index:50;"></div>
+                                </div>
                                 <input type="number" id="ehrClaimAmount" placeholder="$ Amount" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
                             </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                                <select id="ehrClaimPayer" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                    <option value="medicare">Medicare</option>
+                                    <option value="medicaid">Medicaid</option>
+                                    <option value="bcbs">Blue Cross Blue Shield</option>
+                                    <option value="united">UnitedHealthcare</option>
+                                    <option value="aetna">Aetna</option>
+                                    <option value="cigna">Cigna</option>
+                                    <option value="humana">Humana</option>
+                                    <option value="selfpay">Self-Pay</option>
+                                </select>
+                                <select id="ehrClaimPOS" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;">
+                                    <option value="11">Office (11)</option>
+                                    <option value="21">Inpatient Hospital (21)</option>
+                                    <option value="22">Outpatient Hospital (22)</option>
+                                    <option value="23">Emergency Room (23)</option>
+                                    <option value="02">Telehealth (02)</option>
+                                    <option value="81">Independent Lab (81)</option>
+                                </select>
+                            </div>
+                            <button onclick="ehrCheckEligibility()" style="width: 100%; background: rgba(0,200,150,0.12); border: 1px solid rgba(0,200,150,0.3); color: #00c896; padding: 10px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; cursor: pointer; margin-bottom: 10px;">
+                                <i class="fas fa-user-check"></i> Check Insurance Eligibility
+                            </button>
+                            <div id="ehrEligibilityResult" style="display:none;padding:10px;background:rgba(0,200,150,0.06);border:1px solid rgba(0,200,150,0.2);border-radius:10px;margin-bottom:10px;font-size:0.78rem;"></div>
                             <button onclick="ehrSubmitClaim()" style="width: 100%; background: linear-gradient(135deg, #ff6464, #9945ff); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
                                 <i class="fas fa-file-invoice-dollar"></i> Submit Claim & Anchor
                             </button>
@@ -4996,7 +5124,10 @@
                     <div class="section">
                         <div class="section-header">
                             <span class="section-title">Claims</span>
-                            <span class="section-action" id="ehrClaimCount">0 claims</span>
+                            <div style="display:flex;gap:6px;">
+                                <span class="section-action" id="ehrClaimCount">0 claims</span>
+                                <button onclick="ehrExportClaimsCSV()" style="background:rgba(153,69,255,0.12);border:1px solid rgba(153,69,255,0.3);color:#9945ff;padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;" title="Export claims as CSV"><i class="fas fa-download" style="margin-right:3px;"></i>CSV</button>
+                            </div>
                         </div>
                         <div id="ehrClaimList" style="display: flex; flex-direction: column; gap: 8px;">
                             <div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem;">
@@ -5238,6 +5369,21 @@
                                 <div style="font-size: 0.82rem; font-weight: 600;">On-Chain Verify</div>
                                 <div style="font-size: 0.72rem; color: var(--text-muted);">XRPL proof lookup</div>
                             </button>
+                            <button onclick="ehrSimulateIntegrityFailure()" style="background: var(--glass); border: 1px solid rgba(255, 50, 50, 0.3); color: var(--text); padding: 14px; border-radius: 12px; cursor: pointer; text-align: center;">
+                                <i class="fas fa-bug" style="color: #ff3232; font-size: 1.2rem; display: block; margin-bottom: 6px;"></i>
+                                <div style="font-size: 0.82rem; font-weight: 600;">Hash Mismatch</div>
+                                <div style="font-size: 0.72rem; color: var(--text-muted);">Integrity test</div>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Guardian Level & Badges -->
+                    <div class="section">
+                        <div class="section-header">
+                            <span class="section-title"><i class="fas fa-trophy" style="color: #ffd700;"></i> Guardian Level & Badges</span>
+                        </div>
+                        <div id="ehrGuardianDisplay" style="background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(153,69,255,0.06)); border: 1px solid rgba(255,215,0,0.25); border-radius: 14px; padding: 16px;">
+                            <div id="ehrGuardianLevel" style="text-align: center; margin-bottom: 14px;"></div>
+                            <div id="ehrBadgeGrid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;"></div>
                         </div>
                     </div>
                     <div class="section">
@@ -5645,6 +5791,10 @@
                             <div class="settings-left"><div class="settings-icon"><i class="fas fa-user"></i></div><span>Profile & Settings</span></div>
                             <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
                         </div>
+                        <div class="settings-item" onclick="showFeedbackSurvey()">
+                            <div class="settings-left"><div class="settings-icon" style="color: #ffd700;"><i class="fas fa-comment-dots"></i></div><span>Send Feedback</span></div>
+                            <span class="playground-badge" style="font-size: 0.6rem; padding: 2px 6px; background: rgba(255,215,0,0.15); color: #ffd700;"><i class="fas fa-star"></i> New</span>
+                        </div>
                     </div>
                 </div>
                 <div class="section">
@@ -5671,7 +5821,7 @@
                     </div>
                 </div>
                 <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.8rem;">
-                    <p>Solus Protocol v2.9.8</p>
+                    <p>Solus Protocol v2.10.0</p>
                     <p style="margin-top: 4px;">Build Feb 2026 • Powered by XRP Ledger</p>
                     <p style="margin-top: 4px; font-size: 0.7rem; opacity: 0.6;">Demo Environment • Testnet</p>
                 </div>
@@ -6104,6 +6254,7 @@
             updateGreeting();
             renderRecords();
             renderActivity();
+            loadSettings();
 
             // Check if first visit — show onboarding
             if (!localStorage.getItem('solus_onboarded')) {
@@ -6160,6 +6311,16 @@
         function login() {
             const password = document.getElementById('loginPassword').value;
             if (password === 'demo123') {
+                const twoFAToggle = document.querySelector('#profileScreen .toggle:nth-child(1)');
+                const is2FAEnabled = document.getElementById('themeToggle') && document.querySelector('[onclick*="Two-Factor"]');
+                // Check if 2FA toggle is enabled in settings
+                const twoFAEl = document.querySelectorAll('.settings-item .toggle');
+                let mfaEnabled = false;
+                twoFAEl.forEach(t => {
+                    const label = t.closest('.settings-item')?.querySelector('span');
+                    if (label && label.textContent.includes('Two-Factor') && t.classList.contains('active')) mfaEnabled = true;
+                });
+                const proceedLogin = () => {
                 showBiometricAuth(() => {
                     document.getElementById('loginScreen').classList.remove('active');
                     document.getElementById('homeScreen').classList.add('active');
@@ -6182,7 +6343,16 @@
 
                     // Increment notification badge on new activity
                     startNotificationSystem();
+
+                    // Render badge display
+                    setTimeout(() => ehrRenderBadgeDisplay(), 600);
                 });
+                };
+                if (mfaEnabled) {
+                    showMFAChallenge(proceedLogin);
+                } else {
+                    proceedLogin();
+                }
             } else {
                 showToast('Invalid password', 'error');
             }
@@ -10837,10 +11007,14 @@
                 `<option value="${p.patient_id}">${p.full_name} (${p.patient_id})</option>`
             ).join('');
             const defaultOpt = '<option value="">Select Patient...</option>';
-            ['ehrRecPatient', 'ehrAccessPatient', 'ehrAptPatient', 'ehrClaimPatient'].forEach(id => {
+            ['ehrRecPatient', 'ehrAccessPatient', 'ehrAptPatient', 'ehrClaimPatient', 'ehrConsentPatient'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = defaultOpt + options;
             });
+        }
+
+        function ehrUpdateConsentDropdown() {
+            ehrUpdatePatientDropdowns(); // consent dropdown is already included in the list
         }
 
         async function ehrRegisterPatient() {
@@ -11192,6 +11366,8 @@
 
             ehrAudit('Appointment Scheduled', `${type} with ${provider} for ${ehrStore.patients[patientId]?.full_name || patientId}`);
             ehrRenderAppointmentList();
+            ehrRenderCalendar();
+            ehrCheckBadges();
             showToast('Appointment scheduled & anchored', 'success');
 
             document.getElementById('ehrAptProvider').value = '';
@@ -11247,7 +11423,11 @@
             ehrAudit('Claim Submitted', `$${amount.toFixed(2)} for ${ehrStore.patients[patientId]?.full_name || patientId} — ${claimId}`);
             ehrUpdateStats();
             ehrRenderClaimList();
+            ehrCheckBadges();
             showToast(`Claim $${amount.toFixed(2)} submitted & anchored`, 'success');
+
+            // Auto-adjudication simulation (payer processes claim)
+            ehrAutoAdjudicateClaim(claimId);
 
             document.getElementById('ehrClaimProvider').value = '';
             document.getElementById('ehrClaimDiagnosis').value = '';
@@ -11262,18 +11442,37 @@
             if (claims.length === 0) return;
             list.innerHTML = claims.map(c => {
                 const patient = ehrStore.patients[c.patient_id];
-                const statusColor = { submitted: '#ffb432', approved: '#00c896', denied: '#ff3232', partial: '#ff8c00' }[c.status] || '#888';
+                const statusColors = { submitted: '#ffb432', processing: '#00c2ff', approved: '#00c896', denied: '#ff3232', partial: '#ff8c00' };
+                const statusColor = statusColors[c.status] || '#888';
+                const statusIcons = { submitted: 'fa-clock', processing: 'fa-spinner fa-spin', approved: 'fa-check-circle', denied: 'fa-times-circle', partial: 'fa-exclamation-circle' };
                 return `
                 <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-weight: 600; font-size: 0.85rem;">${c.claim_id}</span>
-                        <span style="background: ${statusColor}22; color: ${statusColor}; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600;">${c.status.toUpperCase()}</span>
+                        <span style="background: ${statusColor}22; color: ${statusColor}; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600;"><i class="fas ${statusIcons[c.status] || 'fa-clock'}" style="margin-right:3px;"></i>${c.status.toUpperCase()}</span>
                     </div>
                     <div style="font-size: 0.82rem;">${patient ? patient.full_name : c.patient_id} — ${c.provider}</div>
                     <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">$${c.total_amount.toFixed(2)} • ${c.diagnosis_codes.join(', ') || 'No diagnosis'} • ${new Date(c.submitted_at).toLocaleDateString()}</div>
+                    ${c.paid_amount !== undefined ? `<div style="font-size:0.72rem;margin-top:4px;color:${statusColor};">Paid: $${c.paid_amount.toFixed(2)} of $${c.total_amount.toFixed(2)}${c.denial_reason ? ' — ' + c.denial_reason : ''}</div>` : ''}
+                    ${c.status === 'denied' ? `<button onclick="ehrResubmitClaim('${c.claim_id}')" style="margin-top:6px;background:rgba(153,69,255,0.12);border:1px solid rgba(153,69,255,0.3);color:#9945ff;padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;cursor:pointer;"><i class="fas fa-redo"></i> Resubmit with Corrections</button>` : ''}
                 </div>
                 `;
             }).join('');
+        }
+
+        async function ehrResubmitClaim(claimId) {
+            const claim = ehrStore.claims[claimId];
+            if (!claim) return;
+            claim.status = 'submitted';
+            claim.resubmitted_at = new Date().toISOString();
+            claim.denial_reason = null;
+            claim.paid_amount = undefined;
+            const hash = await computeSHA256(JSON.stringify(claim));
+            await ehrAnchorToXRPL(hash, 'BILLING');
+            ehrAudit('Claim Resubmitted', `${claimId}: $${claim.total_amount.toFixed(2)} — resubmitted with corrections`);
+            ehrRenderClaimList();
+            ehrAutoAdjudicateClaim(claimId);
+            showToast(`Claim ${claimId} resubmitted`, 'success');
         }
 
         async function ehrRunIntegrityCheck() {
@@ -11355,6 +11554,11 @@
             ehrRenderAuditLog();
             ehrUpdatePatientDropdowns();
             ehrRenderScenarios();
+            ehrRenderCalendar();
+            ehrRenderBadgeDisplay();
+            ehrRenderConsentNFTList();
+            // Populate consent patient dropdown
+            ehrUpdateConsentDropdown();
             // Show tutorial on first visit
             if (!localStorage.getItem('solus_ehr_tutorial_seen')) {
                 setTimeout(() => {
@@ -11362,6 +11566,529 @@
                     localStorage.setItem('solus_ehr_tutorial_seen', '1');
                 }, 600);
             }
+        }
+
+        // ===== VISUAL CALENDAR =====
+        let ehrCalendarDate = new Date();
+
+        function ehrCalendarNav(dir) {
+            ehrCalendarDate.setMonth(ehrCalendarDate.getMonth() + dir);
+            ehrRenderCalendar();
+        }
+
+        function ehrRenderCalendar() {
+            const cal = document.getElementById('ehrCalendar');
+            const monthLabel = document.getElementById('ehrCalendarMonth');
+            if (!cal) return;
+            const year = ehrCalendarDate.getFullYear();
+            const month = ehrCalendarDate.getMonth();
+            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            monthLabel.textContent = `${months[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            // Get appointment dates for this month
+            const aptDates = {};
+            Object.values(ehrStore.appointments).forEach(a => {
+                const d = new Date(a.start_time);
+                if (d.getFullYear() === year && d.getMonth() === month) {
+                    const day = d.getDate();
+                    if (!aptDates[day]) aptDates[day] = [];
+                    aptDates[day].push(a);
+                }
+            });
+
+            let html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;">';
+            ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+                html += `<div style="font-size:0.65rem;color:var(--text-muted);padding:4px;font-weight:600;">${d}</div>`;
+            });
+            for (let i = 0; i < firstDay; i++) html += '<div></div>';
+            for (let d = 1; d <= daysInMonth; d++) {
+                const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+                const hasApt = aptDates[d];
+                const bg = isToday ? 'background:linear-gradient(135deg,#9945ff,#00c2ff);color:white;font-weight:700;' : hasApt ? 'background:rgba(0,200,150,0.15);color:#00c896;font-weight:600;' : 'color:var(--text);';
+                const dot = hasApt ? `<div style="width:4px;height:4px;border-radius:50%;background:#00c896;margin:2px auto 0;"></div>` : '';
+                const title = hasApt ? hasApt.map(a => `${a.type} - ${a.provider}`).join('\\n') : '';
+                html += `<div style="padding:6px 2px;border-radius:8px;font-size:0.75rem;cursor:pointer;${bg}" title="${title}">${d}${dot}</div>`;
+            }
+            html += '</div>';
+            cal.innerHTML = html;
+        }
+
+        // ===== ICD-10 / CPT CODE LOOKUP =====
+        const ICD10_CODES = [
+            {code:'E11.65',desc:'Type 2 diabetes with hyperglycemia'},{code:'E11.9',desc:'Type 2 diabetes without complications'},
+            {code:'I10',desc:'Essential hypertension'},{code:'I25.10',desc:'Atherosclerotic heart disease'},
+            {code:'J06.9',desc:'Acute upper respiratory infection'},{code:'J18.9',desc:'Pneumonia, unspecified'},
+            {code:'K21.0',desc:'GERD with esophagitis'},{code:'M54.5',desc:'Low back pain'},
+            {code:'R10.9',desc:'Unspecified abdominal pain'},{code:'R50.9',desc:'Fever, unspecified'},
+            {code:'Z00.00',desc:'General adult medical exam'},{code:'Z23',desc:'Encounter for immunization'},
+            {code:'F41.1',desc:'Generalized anxiety disorder'},{code:'F32.9',desc:'Major depressive disorder'},
+            {code:'N39.0',desc:'Urinary tract infection'},{code:'J45.20',desc:'Mild intermittent asthma'},
+            {code:'G43.909',desc:'Migraine, unspecified'},{code:'L30.9',desc:'Dermatitis, unspecified'},
+            {code:'K35.80',desc:'Unspecified acute appendicitis'},{code:'S72.001A',desc:'Fracture of femoral neck'},
+            {code:'I63.9',desc:'Cerebral infarction, unspecified'},{code:'I21.9',desc:'Acute myocardial infarction'},
+            {code:'C50.919',desc:'Malignant neoplasm of breast'},{code:'D64.9',desc:'Anemia, unspecified'}
+        ];
+
+        const CPT_CODES = [
+            {code:'99213',desc:'Office visit, established (low complexity)',fee:150},{code:'99214',desc:'Office visit, established (moderate)',fee:220},
+            {code:'99215',desc:'Office visit, established (high complexity)',fee:320},{code:'99203',desc:'Office visit, new patient (low)',fee:175},
+            {code:'99204',desc:'Office visit, new patient (moderate)',fee:275},{code:'99205',desc:'Office visit, new patient (high)',fee:400},
+            {code:'99385',desc:'Preventive visit, new, 18-39',fee:275},{code:'99386',desc:'Preventive visit, new, 40-64',fee:310},
+            {code:'99395',desc:'Preventive visit, est, 18-39',fee:250},{code:'99396',desc:'Preventive visit, est, 40-64',fee:275},
+            {code:'99281',desc:'ED visit, minimal',fee:150},{code:'99285',desc:'ED visit, high complexity',fee:750},
+            {code:'71046',desc:'Chest X-ray, 2 views',fee:125},{code:'74177',desc:'CT abdomen/pelvis w/ contrast',fee:950},
+            {code:'85025',desc:'CBC with differential',fee:35},{code:'80053',desc:'Comprehensive metabolic panel',fee:55},
+            {code:'36415',desc:'Venipuncture',fee:15},{code:'90471',desc:'Immunization administration',fee:25},
+            {code:'99490',desc:'Chronic care management (20+ min)',fee:64},{code:'99458',desc:'Remote patient monitoring',fee:48}
+        ];
+
+        function ehrICD10Suggest(val) {
+            const dd = document.getElementById('ehrICD10Dropdown');
+            if (!val || val.length < 2) { dd.style.display = 'none'; return; }
+            const q = val.toLowerCase();
+            const matches = ICD10_CODES.filter(c => c.code.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q)).slice(0, 6);
+            if (matches.length === 0) { dd.style.display = 'none'; return; }
+            dd.style.display = 'block';
+            dd.innerHTML = matches.map(c => `<div onclick="document.getElementById('ehrClaimDiagnosis').value='${c.code}';document.getElementById('ehrICD10Dropdown').style.display='none';" style="padding:8px 12px;cursor:pointer;font-size:0.78rem;border-bottom:1px solid var(--border);" onmouseover="this.style.background='var(--glass)'" onmouseout="this.style.background='none'"><strong style="color:#ff6464;">${c.code}</strong> <span style="color:var(--text-muted);">— ${c.desc}</span></div>`).join('');
+        }
+
+        function ehrCPTSuggest(val) {
+            const dd = document.getElementById('ehrCPTDropdown');
+            if (!val || val.length < 2) { dd.style.display = 'none'; return; }
+            const q = val.toLowerCase();
+            const matches = CPT_CODES.filter(c => c.code.includes(q) || c.desc.toLowerCase().includes(q)).slice(0, 6);
+            if (matches.length === 0) { dd.style.display = 'none'; return; }
+            dd.style.display = 'block';
+            dd.innerHTML = matches.map(c => `<div onclick="document.getElementById('ehrClaimService').value='${c.code} ${c.desc}';document.getElementById('ehrClaimAmount').value='${c.fee}';document.getElementById('ehrCPTDropdown').style.display='none';" style="padding:8px 12px;cursor:pointer;font-size:0.78rem;border-bottom:1px solid var(--border);" onmouseover="this.style.background='var(--glass)'" onmouseout="this.style.background='none'"><strong style="color:#9945ff;">${c.code}</strong> <span style="color:var(--text-muted);">— ${c.desc}</span> <span style="color:#00c896;float:right;">$${c.fee}</span></div>`).join('');
+        }
+
+        // Close dropdowns on click outside
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#ehrClaimDiagnosis') && !e.target.closest('#ehrICD10Dropdown')) {
+                const dd = document.getElementById('ehrICD10Dropdown'); if (dd) dd.style.display = 'none';
+            }
+            if (!e.target.closest('#ehrClaimService') && !e.target.closest('#ehrCPTDropdown')) {
+                const dd = document.getElementById('ehrCPTDropdown'); if (dd) dd.style.display = 'none';
+            }
+        });
+
+        // ===== INSURANCE ELIGIBILITY CHECK =====
+        function ehrCheckEligibility() {
+            const patientId = document.getElementById('ehrClaimPatient').value;
+            const payer = document.getElementById('ehrClaimPayer').value;
+            if (!patientId) { showToast('Select a patient first'); return; }
+            const patient = ehrStore.patients[patientId];
+            const result = document.getElementById('ehrEligibilityResult');
+            result.style.display = 'block';
+            const payerNames = {medicare:'Medicare',medicaid:'Medicaid',bcbs:'Blue Cross Blue Shield',united:'UnitedHealthcare',aetna:'Aetna',cigna:'Cigna',humana:'Humana',selfpay:'Self-Pay'};
+            // Simulated eligibility response
+            result.innerHTML = `
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <i class="fas fa-check-circle" style="color:#00c896;font-size:1.1rem;"></i>
+                    <strong style="color:#00c896;">Eligible — Active Coverage</strong>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.72rem;">
+                    <div><span style="color:var(--text-muted);">Patient:</span> ${patient?.full_name || patientId}</div>
+                    <div><span style="color:var(--text-muted);">Payer:</span> ${payerNames[payer]}</div>
+                    <div><span style="color:var(--text-muted);">Group #:</span> GRP-${Math.random().toString(36).substr(2,6).toUpperCase()}</div>
+                    <div><span style="color:var(--text-muted);">Copay:</span> $${payer === 'medicare' ? '0' : payer === 'selfpay' ? 'N/A' : [20,25,30,35,40][Math.floor(Math.random()*5)]}</div>
+                    <div><span style="color:var(--text-muted);">Deductible:</span> $${payer === 'medicare' ? '226' : payer === 'selfpay' ? 'N/A' : [500,1000,1500,2000,2500][Math.floor(Math.random()*5)]}</div>
+                    <div><span style="color:var(--text-muted);">Deductible Met:</span> <span style="color:#00c896;">${Math.random() > 0.4 ? 'Yes' : 'No — $' + Math.floor(Math.random()*1500) + ' remaining'}</span></div>
+                </div>
+            `;
+            ehrAudit('Eligibility Check', `${patient?.full_name || patientId} — ${payerNames[payer]}: Eligible`);
+            showToast('Insurance eligibility verified', 'success');
+        }
+
+        // Claim CSV export
+        function ehrExportClaimsCSV() {
+            const claims = Object.values(ehrStore.claims);
+            if (claims.length === 0) { showToast('No claims to export'); return; }
+            const header = 'Claim ID,Patient,Provider,ICD-10,CPT,Amount,Status,Submitted\n';
+            const rows = claims.map(c => `"${c.claim_id}","${ehrStore.patients[c.patient_id]?.full_name || c.patient_id}","${c.provider}","${c.diagnosis_codes.join(';')}","${c.services[0]?.code || ''}","${c.total_amount}","${c.status}","${c.submitted_at}"`).join('\n');
+            downloadFile(header + rows, `solus_claims_${new Date().toISOString().slice(0,10)}.csv`, 'text/csv');
+            showToast('Claims exported as CSV', 'success');
+        }
+
+        // ===== CLAIM LIFECYCLE (auto-adjudication simulation) =====
+        function ehrAutoAdjudicateClaim(claimId) {
+            const claim = ehrStore.claims[claimId];
+            if (!claim || claim.status !== 'submitted') return;
+            // Simulate processing delay, then random outcome
+            setTimeout(() => {
+                claim.status = 'processing';
+                ehrRenderClaimList();
+                setTimeout(async () => {
+                    const rand = Math.random();
+                    if (rand < 0.7) { claim.status = 'approved'; claim.paid_amount = claim.total_amount; }
+                    else if (rand < 0.85) { claim.status = 'partial'; claim.paid_amount = Math.round(claim.total_amount * (0.5 + Math.random() * 0.3) * 100) / 100; claim.denial_reason = 'Partial denial: non-covered service component'; }
+                    else { claim.status = 'denied'; claim.paid_amount = 0; claim.denial_reason = ['Prior authorization required','Service not covered under plan','Timely filing exceeded','Duplicate claim detected'][Math.floor(Math.random()*4)]; }
+                    claim.adjudicated_at = new Date().toISOString();
+
+                    const hash = await computeSHA256(JSON.stringify(claim));
+                    await ehrAnchorToXRPL(hash, 'BILLING');
+                    ehrAudit('Claim ' + claim.status.toUpperCase(), `${claimId}: $${claim.total_amount} → ${claim.status}${claim.paid_amount !== undefined ? ' ($' + claim.paid_amount.toFixed(2) + ' paid)' : ''}${claim.denial_reason ? ' — ' + claim.denial_reason : ''}`);
+                    ehrRenderClaimList();
+                    showToast(`Claim ${claimId} ${claim.status}${claim.denial_reason ? ': ' + claim.denial_reason : ''}`, claim.status === 'approved' ? 'success' : claim.status === 'denied' ? 'error' : 'warning');
+                }, 2000 + Math.random() * 3000);
+            }, 1500);
+        }
+
+        // ===== DRUG INTERACTION CHECKER =====
+        const DRUG_INTERACTIONS = [
+            {drugs:['warfarin','aspirin'],severity:'high',desc:'Increased bleeding risk. Monitor INR closely. Consider alternative antiplatelet.'},
+            {drugs:['warfarin','ibuprofen'],severity:'high',desc:'NSAIDs increase bleeding risk with anticoagulants. Use acetaminophen instead.'},
+            {drugs:['lisinopril','potassium'],severity:'moderate',desc:'ACE inhibitors increase potassium retention. Monitor serum potassium levels.'},
+            {drugs:['metformin','contrast'],severity:'high',desc:'Hold metformin 48h before/after iodinated contrast — risk of lactic acidosis.'},
+            {drugs:['simvastatin','amlodipine'],severity:'moderate',desc:'Limit simvastatin to 20mg/day with amlodipine. Risk of rhabdomyolysis.'},
+            {drugs:['ssri','tramadol'],severity:'high',desc:'Serotonin syndrome risk. Avoid combination or monitor closely.'},
+            {drugs:['ciprofloxacin','antacid'],severity:'moderate',desc:'Antacids reduce fluoroquinolone absorption. Separate by 2+ hours.'},
+            {drugs:['methotrexate','nsaid'],severity:'high',desc:'NSAIDs reduce methotrexate clearance. Risk of severe toxicity.'},
+            {drugs:['digoxin','amiodarone'],severity:'high',desc:'Amiodarone increases digoxin levels. Reduce digoxin dose by 50%.'},
+            {drugs:['clopidogrel','omeprazole'],severity:'moderate',desc:'PPIs reduce clopidogrel activation. Use pantoprazole instead.'}
+        ];
+
+        function ehrCheckDrugInteractions(medList) {
+            if (!medList || medList.length < 2) return [];
+            const meds = medList.map(m => m.toLowerCase());
+            const found = [];
+            DRUG_INTERACTIONS.forEach(ix => {
+                const match = ix.drugs.every(d => meds.some(m => m.includes(d)));
+                if (match) found.push(ix);
+            });
+            return found;
+        }
+
+        // ===== GAMIFICATION / BADGES =====
+        const BADGES = [
+            {id:'first_anchor',label:'First Anchor',icon:'⚓',color:'#00c896',desc:'Anchored your first record to XRPL',threshold:1,metric:'anchored'},
+            {id:'guardian_10',label:'Data Guardian',icon:'🔰',color:'#00c2ff',desc:'Secured 10+ records on-chain',threshold:10,metric:'anchored'},
+            {id:'guardian_50',label:'Silver Guardian',icon:'🛡️',color:'#c0c0c0',desc:'Secured 50+ records on-chain',threshold:50,metric:'anchored'},
+            {id:'guardian_100',label:'Gold Guardian',icon:'👑',color:'#ffd700',desc:'Secured 100+ records on-chain',threshold:100,metric:'anchored'},
+            {id:'record_keeper',label:'Record Keeper',icon:'📁',color:'#9945ff',desc:'Created 5+ medical records',threshold:5,metric:'records'},
+            {id:'claim_master',label:'Claim Master',icon:'💰',color:'#ff6464',desc:'Submitted 3+ billing claims',threshold:3,metric:'claims'},
+            {id:'scheduler',label:'Scheduler',icon:'📅',color:'#00c2ff',desc:'Scheduled 3+ appointments',threshold:3,metric:'appointments'},
+            {id:'hipaa_hero',label:'HIPAA Hero',icon:'🔒',color:'#14f195',desc:'Generated a HIPAA compliance report',threshold:1,metric:'hipaaReport'},
+            {id:'interop_pro',label:'Interop Pro',icon:'🔄',color:'#ffb432',desc:'Exported FHIR or HL7 data',threshold:1,metric:'interopExport'},
+            {id:'scenario_runner',label:'Scenario Runner',icon:'▶️',color:'#ff8c00',desc:'Completed 3+ EHR scenarios',threshold:3,metric:'scenariosRun'}
+        ];
+
+        function ehrCheckBadges() {
+            if (!ehrStore.badges) ehrStore.badges = {};
+            if (!ehrStore.badgeMetrics) ehrStore.badgeMetrics = {};
+            const m = ehrStore.badgeMetrics;
+            const newBadges = [];
+            BADGES.forEach(b => {
+                if (ehrStore.badges[b.id]) return;
+                let val = 0;
+                if (b.metric === 'anchored') val = ehrStore.stats.anchored || 0;
+                else if (b.metric === 'records') val = Object.keys(ehrStore.records).length;
+                else if (b.metric === 'claims') val = Object.keys(ehrStore.claims).length;
+                else if (b.metric === 'appointments') val = Object.keys(ehrStore.appointments).length;
+                else val = m[b.metric] || 0;
+                if (val >= b.threshold) {
+                    ehrStore.badges[b.id] = { earned: new Date().toISOString() };
+                    newBadges.push(b);
+                }
+            });
+            // Save earned badges to localStorage
+            const earned = Object.keys(ehrStore.badges);
+            localStorage.setItem('solus_badges', JSON.stringify(earned));
+            localStorage.setItem('solus_total_anchors', String(ehrStore.stats.anchored || 0));
+            newBadges.forEach(b => {
+                showToast(`🏆 Badge Earned: ${b.label}!`, 'success');
+            });
+            ehrRenderBadgeDisplay();
+            return newBadges;
+        }
+
+        function ehrGetGuardianLevel() {
+            const a = ehrStore.stats.anchored || 0;
+            if (a >= 100) return {name:'Gold Guardian',color:'#ffd700',icon:'👑',next:null};
+            if (a >= 50) return {name:'Silver Guardian',color:'#c0c0c0',icon:'🛡️',next:100};
+            if (a >= 10) return {name:'Data Guardian',color:'#00c2ff',icon:'🔰',next:50};
+            if (a >= 1) return {name:'Novice Anchor',color:'#00c896',icon:'⚓',next:10};
+            return {name:'New User',color:'var(--text-muted)',icon:'👤',next:1};
+        }
+
+        // ===== XLS-20 NFT CONSENT TOKENS =====
+        async function ehrMintConsentNFT(patientId, granteeProvider, accessLevel, expiresHours) {
+            const patient = ehrStore.patients[patientId];
+            if (!patient) { showToast('Patient not found'); return null; }
+
+            const consentToken = {
+                token_type: 'XLS-20_CONSENT_NFT',
+                token_id: 'NFT-' + Math.random().toString(36).substr(2,12).toUpperCase(),
+                patient_id: patientId,
+                patient_name: patient.full_name,
+                grantee: granteeProvider,
+                access_level: accessLevel,
+                issued_at: new Date().toISOString(),
+                expires_at: new Date(Date.now() + (expiresHours || 24) * 60 * 60 * 1000).toISOString(),
+                revocable: true,
+                status: 'active',
+                nft_metadata: {
+                    standard: 'XLS-20',
+                    issuer: 'rJPqcx8wUBM58ajPUoz1dReKkTT6hqrqJA',
+                    flags: 9, // tfTransferable + tfBurnable
+                    uri: `ipfs://consent/${patientId}/${Date.now()}`
+                }
+            };
+
+            const hash = await computeSHA256(JSON.stringify(consentToken));
+            const result = await ehrAnchorToXRPL(hash, 'CONSENT');
+
+            if (!ehrStore.consentNFTs) ehrStore.consentNFTs = [];
+            consentToken.hash = hash;
+            consentToken.txHash = result?.txHash || null;
+            ehrStore.consentNFTs.push(consentToken);
+
+            ehrAudit('NFT Consent Minted', `XLS-20 consent NFT ${consentToken.token_id} for ${patient.full_name} → ${granteeProvider} (${accessLevel}, ${expiresHours}h)`);
+            showToast(`Consent NFT minted & anchored: ${consentToken.token_id}`, 'success');
+            return consentToken;
+        }
+
+        async function ehrRevokeConsentNFT(tokenId) {
+            if (!ehrStore.consentNFTs) return;
+            const token = ehrStore.consentNFTs.find(t => t.token_id === tokenId);
+            if (!token) { showToast('Token not found'); return; }
+            token.status = 'revoked';
+            token.revoked_at = new Date().toISOString();
+
+            const hash = await computeSHA256(JSON.stringify({ action: 'revoke', token_id: tokenId, ts: token.revoked_at }));
+            await ehrAnchorToXRPL(hash, 'CONSENT');
+            ehrAudit('NFT Consent Revoked', `Token ${tokenId} for ${token.patient_name} — access to ${token.grantee} terminated`);
+            showToast(`Consent NFT ${tokenId} revoked & anchored`, 'warning');
+            ehrRenderConsentNFTList();
+        }
+
+        // ===== UI BRIDGE FUNCTIONS =====
+        async function ehrMintConsentNFTFromUI() {
+            const pid = document.getElementById('ehrConsentPatient').value;
+            const grantee = document.getElementById('ehrConsentGrantee').value;
+            const level = document.getElementById('ehrConsentLevel').value;
+            const hours = parseInt(document.getElementById('ehrConsentExpiry').value);
+            if (!pid) { showToast('Select a patient'); return; }
+            if (!grantee) { showToast('Enter grantee name'); return; }
+            await ehrMintConsentNFT(pid, grantee, level, hours);
+            ehrRenderConsentNFTList();
+            ehrCheckBadges();
+        }
+
+        function ehrRenderConsentNFTList() {
+            const list = document.getElementById('ehrConsentNFTList');
+            if (!list || !ehrStore.consentNFTs || ehrStore.consentNFTs.length === 0) { if(list) list.innerHTML = ''; return; }
+            list.innerHTML = ehrStore.consentNFTs.map(t => {
+                const active = t.status === 'active';
+                const expired = new Date(t.expires_at) < new Date();
+                const statusColor = expired ? '#888' : (active ? '#00c896' : '#ff3232');
+                const statusLabel = expired ? 'EXPIRED' : t.status.toUpperCase();
+                return `<div style="background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;align-items:center;gap:10px;">
+                    <i class="fas fa-certificate" style="color:${statusColor};font-size:1.1rem;flex-shrink:0;"></i>
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:0.78rem;font-weight:600;">${t.token_id}</div>
+                        <div style="font-size:0.68rem;color:var(--text-muted);">${t.patient_name} → ${t.grantee} • ${t.access_level} • <span style="color:${statusColor};">${statusLabel}</span></div>
+                    </div>
+                    ${active && !expired ? `<button onclick="ehrRevokeConsentNFT('${t.token_id}');ehrRenderConsentNFTList();" style="background:rgba(255,50,50,0.12);border:1px solid rgba(255,50,50,0.3);color:#ff3232;padding:4px 8px;border-radius:6px;font-size:0.62rem;cursor:pointer;white-space:nowrap;"><i class="fas fa-ban"></i> Revoke</button>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function ehrCheckDrugInteractionsUI() {
+            const input = document.getElementById('ehrDrugInput').value;
+            if (!input.trim()) { showToast('Enter medications'); return; }
+            const meds = input.split(',').map(m => m.trim().toLowerCase()).filter(m => m);
+            const interactions = ehrCheckDrugInteractions(meds);
+            const container = document.getElementById('ehrDrugResults');
+            if (interactions.length === 0) {
+                container.innerHTML = '<div style="background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.3);border-radius:10px;padding:12px;text-align:center;"><i class="fas fa-check-circle" style="color:#00c896;margin-right:6px;"></i><span style="font-size:0.82rem;font-weight:600;color:#00c896;">No known interactions found</span></div>';
+                return;
+            }
+            container.innerHTML = interactions.map(i => {
+                const sevColors = { high: '#ff3232', moderate: '#ff8c00', low: '#ffb432' };
+                const sevColor = sevColors[i.severity] || '#888';
+                return `<div style="background:${sevColor}11;border:1px solid ${sevColor}33;border-radius:10px;padding:12px;margin-bottom:6px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><i class="fas fa-exclamation-triangle" style="color:${sevColor};"></i><span style="font-size:0.82rem;font-weight:700;color:${sevColor};">${i.severity.toUpperCase()}</span></div>
+                    <div style="font-size:0.78rem;font-weight:600;">${i.drug1} + ${i.drug2}</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">${i.warning}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function ehrRenderBadgeDisplay() {
+            const levelDiv = document.getElementById('ehrGuardianLevel');
+            const gridDiv = document.getElementById('ehrBadgeGrid');
+            if (!levelDiv || !gridDiv) return;
+
+            const level = ehrGetGuardianLevel();
+            const earned = JSON.parse(localStorage.getItem('solus_badges') || '[]');
+            const totalAnchors = parseInt(localStorage.getItem('solus_total_anchors') || '0');
+
+            levelDiv.innerHTML = `
+                <div style="font-size:1.6rem;">${level.icon}</div>
+                <div style="font-size:0.92rem;font-weight:800;color:${level.color};margin-top:4px;">${level.name}</div>
+                <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;">${totalAnchors} total anchors${level.next ? ` • ${level.next - totalAnchors} until next level` : ' • MAX LEVEL'}</div>
+                <div style="background:var(--border);border-radius:4px;height:6px;margin-top:8px;overflow:hidden;">
+                    <div style="background:${level.color};height:100%;border-radius:4px;width:${level.next ? Math.min((totalAnchors / level.next) * 100, 100) : 100}%;transition:width 0.5s;"></div>
+                </div>
+            `;
+
+            gridDiv.innerHTML = BADGES.map(b => {
+                const has = earned.includes(b.id);
+                return `<div style="text-align:center;opacity:${has ? 1 : 0.3};padding:6px;" title="${b.label}${has ? ' ✓' : ' (locked)'}">
+                    <div style="font-size:1.3rem;">${b.icon}</div>
+                    <div style="font-size:0.55rem;margin-top:2px;font-weight:${has ? 600 : 400};color:${has ? 'var(--text)' : 'var(--text-muted)'};">${b.label.split(' ').slice(0,2).join(' ')}</div>
+                </div>`;
+            }).join('');
+        }
+
+        // ===== HASH MISMATCH / ERROR HANDLING =====
+        async function ehrSimulateIntegrityFailure() {
+            const records = Object.values(ehrStore.records);
+            if (records.length === 0) { showToast('No records to test'); return; }
+            const record = records[Math.floor(Math.random() * records.length)];
+
+            // Simulate tampering by altering data
+            const tampered = { ...record, data: { ...record.data, tampered: true, tamper_time: new Date().toISOString() } };
+            const tamperedHash = await computeSHA256(JSON.stringify(tampered));
+
+            ehrAudit('⚠️ INTEGRITY FAILURE', `Record ${record.id}: Original hash ${record.hash?.substring(0,16)}... ≠ Recomputed ${tamperedHash.substring(0,16)}... — TAMPER DETECTED`);
+
+            const alertHtml = `
+                <div style="background:rgba(255,50,50,0.12);border:2px solid rgba(255,50,50,0.4);border-radius:14px;padding:16px;margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                        <i class="fas fa-exclamation-triangle" style="color:#ff3232;font-size:1.4rem;"></i>
+                        <div>
+                            <div style="font-weight:700;color:#ff3232;font-size:0.92rem;">⚠️ Hash Mismatch Detected</div>
+                            <div style="font-size:0.75rem;color:var(--text-muted);">Record integrity check failed — possible tampering</div>
+                        </div>
+                    </div>
+                    <div style="font-size:0.75rem;font-family:monospace;background:var(--bg);padding:10px;border-radius:8px;margin-bottom:8px;">
+                        <div style="color:var(--text-muted);margin-bottom:4px;">Record: <strong style="color:var(--text);">${record.id}</strong></div>
+                        <div style="color:var(--text-muted);">Original: <span style="color:#00c896;">${record.hash?.substring(0,32) || 'N/A'}...</span></div>
+                        <div style="color:var(--text-muted);">Recomputed: <span style="color:#ff3232;">${tamperedHash.substring(0,32)}...</span></div>
+                        <div style="color:#ff3232;font-weight:700;margin-top:6px;">STATUS: MISMATCH — INVESTIGATION REQUIRED</div>
+                    </div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);">This event has been anchored to the XRPL for immutable audit proof. In production, this would trigger an automatic incident response workflow.</div>
+                </div>
+            `;
+            const interop = document.getElementById('ehrInteropOutput');
+            if (interop) interop.innerHTML = alertHtml;
+            ehrSwitchTab('interop');
+            showToast('⚠️ Hash mismatch detected — tamper alert!', 'error');
+
+            // Anchor the mismatch event
+            const event = { type: 'INTEGRITY_FAILURE', record_id: record.id, original_hash: record.hash, recomputed_hash: tamperedHash, detected_at: new Date().toISOString() };
+            const eventHash = await computeSHA256(JSON.stringify(event));
+            await ehrAnchorToXRPL(eventHash, 'AUDIT_ENTRY');
+        }
+
+        // ===== MFA SIMULATION =====
+        function showMFAChallenge(callback) {
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            const overlay = document.createElement('div');
+            overlay.id = 'mfaOverlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:10000;';
+            overlay.innerHTML = `
+                <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;max-width:340px;width:90%;text-align:center;">
+                    <i class="fas fa-shield-alt" style="font-size:2.2rem;color:#00c896;margin-bottom:12px;"></i>
+                    <h3 style="color:var(--text);font-size:1rem;margin-bottom:6px;">Two-Factor Authentication</h3>
+                    <p style="color:var(--text-muted);font-size:0.78rem;margin-bottom:16px;">Enter the 6-digit code from your authenticator app</p>
+                    <div style="font-size:0.72rem;color:#00c896;margin-bottom:12px;padding:8px;background:rgba(0,200,150,0.08);border-radius:8px;">Demo code: <strong>${code}</strong></div>
+                    <input type="text" id="mfaInput" maxlength="6" placeholder="000000" style="width:100%;text-align:center;font-size:1.4rem;letter-spacing:8px;font-weight:700;background:var(--bg);border:2px solid var(--border);color:var(--text);padding:14px;border-radius:12px;margin-bottom:12px;box-sizing:border-box;" autofocus>
+                    <button onclick="verifyMFA('${code}')" style="width:100%;background:linear-gradient(135deg,#00c896,#00c2ff);color:white;border:none;padding:12px;border-radius:10px;font-size:0.88rem;font-weight:600;cursor:pointer;">Verify</button>
+                    <button onclick="document.getElementById('mfaOverlay').remove()" style="width:100%;background:none;border:none;color:var(--text-muted);padding:10px;font-size:0.78rem;cursor:pointer;margin-top:6px;">Cancel</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            overlay._callback = callback;
+            setTimeout(() => document.getElementById('mfaInput')?.focus(), 100);
+        }
+
+        function verifyMFA(expectedCode) {
+            const input = document.getElementById('mfaInput');
+            if (!input) return;
+            if (input.value === expectedCode) {
+                const overlay = document.getElementById('mfaOverlay');
+                const cb = overlay?._callback;
+                overlay?.remove();
+                showToast('2FA verified successfully', 'success');
+                if (cb) cb();
+            } else {
+                input.style.borderColor = '#ff3232';
+                showToast('Invalid code — try again', 'error');
+            }
+        }
+
+        // ===== SETTINGS PERSISTENCE =====
+        function saveSettings() {
+            const settings = { darkMode: isDarkMode, role: currentRole };
+            localStorage.setItem('solus_settings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            try {
+                const s = JSON.parse(localStorage.getItem('solus_settings'));
+                if (s) {
+                    if (s.darkMode === false && isDarkMode) toggleTheme();
+                }
+            } catch(e) {}
+        }
+
+        // ===== IN-APP FEEDBACK =====
+        function showFeedbackSurvey() {
+            const overlay = document.createElement('div');
+            overlay.id = 'feedbackOverlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:10000;';
+            overlay.innerHTML = `
+                <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;max-width:380px;width:90%;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <h3 style="color:var(--text);font-size:1rem;margin:0;"><i class="fas fa-comment-dots" style="color:#00c896;margin-right:6px;"></i>Send Feedback</h3>
+                        <button onclick="document.getElementById('feedbackOverlay').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <label style="font-size:0.75rem;color:var(--text-muted);display:block;margin-bottom:6px;">How would you rate this demo?</label>
+                        <div id="feedbackStars" style="display:flex;gap:8px;font-size:1.5rem;cursor:pointer;">
+                            ${[1,2,3,4,5].map(i => `<i class="far fa-star" data-rating="${i}" onclick="setFeedbackRating(${i})" style="color:#ffd700;"></i>`).join('')}
+                        </div>
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <label style="font-size:0.75rem;color:var(--text-muted);display:block;margin-bottom:6px;">What feature would you most like to see?</label>
+                        <select id="feedbackFeature" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:10px;font-size:0.82rem;">
+                            <option>Mobile App (iOS/Android)</option>
+                            <option>AI Diagnostic Assistance</option>
+                            <option>Patient Portal</option>
+                            <option>Insurance Integration</option>
+                            <option>Wearable Device Sync</option>
+                            <option>Telemedicine Video Calls</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <textarea id="feedbackText" placeholder="Tell us what you think..." style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:10px;font-size:0.82rem;min-height:80px;resize:vertical;margin-bottom:12px;box-sizing:border-box;"></textarea>
+                    <button onclick="submitFeedback()" style="width:100%;background:linear-gradient(135deg,#00c896,#00c2ff);color:white;border:none;padding:12px;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer;"><i class="fas fa-paper-plane"></i> Submit Feedback</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        let feedbackRating = 0;
+        function setFeedbackRating(n) {
+            feedbackRating = n;
+            document.querySelectorAll('#feedbackStars i').forEach((star, i) => {
+                star.className = i < n ? 'fas fa-star' : 'far fa-star';
+            });
+        }
+
+        function submitFeedback() {
+            const text = document.getElementById('feedbackText')?.value || '';
+            const feature = document.getElementById('feedbackFeature')?.value || '';
+            showToast(`Thank you for your feedback! (${feedbackRating}/5 stars)`, 'success');
+            document.getElementById('feedbackOverlay')?.remove();
+            feedbackRating = 0;
         }
 
         // ===== KEYBOARD SHORTCUTS =====
@@ -11397,6 +12124,13 @@
 
         // Initialize heatmap on load
         setTimeout(renderHeatmap, 100);
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('SW registered:', reg.scope))
+                .catch(err => console.log('SW registration failed:', err));
+        }
     </script>
 </body>
 </html>
