@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap & Token | SLS Protocol - $SLS on XRPL</title>
+    <meta name="description" content="SLS Protocol 2026-2031 roadmap, $SLS token economics, and investment opportunities for blockchain-powered healthcare.">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050608;
+            --accent: #14f195;
+            --secondary: #9945ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+        }
+        * { box-sizing: border-box; }
+        body { 
+            background: var(--bg); 
+            color: var(--text-primary); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        p, li { color: var(--text-secondary); }
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(at 0% 0%, rgba(20, 241, 149, 0.12) 0px, transparent 50%), 
+                        radial-gradient(at 100% 100%, rgba(153, 69, 255, 0.12) 0px, transparent 50%);
+            z-index: -1;
+            filter: blur(80px);
+        }
+        .navbar { 
+            background: rgba(5, 6, 8, 0.95); 
+            backdrop-filter: blur(20px); 
+            border-bottom: 1px solid var(--border);
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar-brand img { height: 35px; }
+        .navbar-brand { font-weight: 700; color: #fff !important; }
+        .nav-link { color: #fff !important; padding: 8px 12px !important; font-size: 0.9rem !important; }
+        .nav-link:hover { color: var(--accent) !important; }
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section { padding: 80px 20px; }
+        .section-title { font-size: 2.5rem; text-align: center; margin-bottom: 30px; }
+        .card {
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+        .phase-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--accent), #00ffa3);
+            color: #000;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(20, 241, 149, 0.3);
+            color: #000;
+        }
+        .exchange-link {
+            background: var(--glass);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .exchange-link:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+            border-top: 1px solid var(--border);
+        }
+        @media (max-width: 768px) {
+            .section-title { font-size: 1.8rem; }
+            .section { padding: 60px 15px; }
+            .card { padding: 20px; }
+            .row { flex-direction: column; }
+            .col-md-6, .col-md-4, .col-md-3 { width: 100%; max-width: 100%; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png" alt="SLS Logo">
+                SLS Protocol
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/products/">Products</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/roadmap/">Roadmap</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/sdk/">SDK</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/security/">Security</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/partners/">Partners</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section" style="padding-top: 120px;">
+        <div class="container" style="max-width: 900px;">
+            <h1 class="section-title">Strategic <span class="gradient-text">Roadmap</span> <span style="font-size:1.1rem;color:var(--accent);font-weight:600;">2026–2031</span></h1>
+            <p class="text-center mb-5">From mainnet launch to global healthcare data standard</p>
+
+            <div class="card">
+                <h3 class="mb-4">2026: The Foundation <span class="phase-tag" style="background:rgba(20,241,149,0.2);color:var(--accent);margin-left:10px;">COMPLETED</span></h3>
+                <ul style="margin-bottom:0;line-height:2;">
+                    <li><b>Mainnet Launch & Liquidity:</b> XRPL mainnet deployment, AMM pools, $SLS token live</li>
+                    <li><b>Developer Tooling:</b> Python SDK, CLI, Metrics API, test suites, scenario runners</li>
+                    <li><b>Mobile Wallet PWA:</b> Multi-role auth, live anchoring, metrics dashboard, $SLS wallet, 25+ record types, dark/light mode, SDK Playground, batch anchoring, AI Health Insights, ROI calculator, partners & analytics dashboards, amendment resilience</li>
+                    <li><b>EHR System & Care Network:</b> Full clinical platform (20+ record types, patient management, record transfer, scheduling, billing/claims, drug checker, NFT consent tokens, gamification, MFA, tamper detection, break-glass, 12 clinical scenarios, ONC/CEHRT roadmap, SVCN, cohort analytics, stress testing, push notifications, freemium pricing)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 class="mb-4">2026: Q2–Q4 <span class="phase-tag" style="background:rgba(153,69,255,0.2);color:var(--secondary);margin-left:10px;">IN PROGRESS</span></h3>
+                <ul style="margin-bottom:0;line-height:2;">
+                    <li><b>Clinical Pilot Program:</b> Onboard first clinics for data anchoring trials</li>
+                    <li><b>Partner Integrations:</b> EHR system webhooks, partner onboarding, API key management, partner dashboard</li>
+                    <li><b>Full API Launch:</b> Production API for enterprise developers (rate limiting, auth, usage analytics)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 class="mb-4">2027–2031: Scaling & Global Adoption <span class="phase-tag" style="background:rgba(153,69,255,0.2);color:var(--secondary);margin-left:10px;">FUTURE</span></h3>
+                <ul style="margin-bottom:0;line-height:2;">
+                    <li><b>2027:</b> Native mobile app (iOS/Android), biometric auth, push notifications, EHR integrations</li>
+                    <li><b>2028:</b> HIPAA/GDPR compliance certifications, third-party audit attestation</li>
+                    <li><b>2029:</b> Multi-language support, global healthcare network expansion</li>
+                    <li><b>2030:</b> Cross-chain anchoring (Ethereum, Solana) for multi-ledger redundancy</li>
+                    <li><b>2031:</b> 1M+ active users verifying health data integrity</li>
+                </ul>
+            </div>
+
+            <div class="card" style="border: 1px solid rgba(153,69,255,0.3); background: linear-gradient(135deg, rgba(153,69,255,0.05), rgba(20,241,149,0.05));">
+                <h3 style="color: var(--secondary);">Cross-Chain Bridges — Coming Soon</h3>
+                <p>Expanding $SLS token utility beyond XRPL. Cross-chain bridges will enable seamless interoperability with other blockchain networks, increasing liquidity and accessibility for healthcare organizations worldwide.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Token Section -->
+    <section class="section" style="background: rgba(0,0,0,0.2);">
+        <div class="container" style="max-width: 900px;">
+            <h2 class="section-title">$SLS <span class="gradient-text">Token</span></h2>
+            <p class="text-center mb-5">Utility token powering the SLS Protocol ecosystem — live on XRPL Mainnet</p>
+
+            <div class="card" style="border: 1px solid rgba(20,241,149,0.3); background: linear-gradient(135deg, rgba(20,241,149,0.05), rgba(153,69,255,0.05));">
+                <h3 style="color: var(--accent);">$SLS Token — Live on XRPL Mainnet</h3>
+                <p>The $SLS utility token is now trading on the XRP Ledger. As a non-speculative utility token, $SLS powers protocol fees, incentive rebates, and ecosystem governance.</p>
+                <div style="margin-top: 20px;">
+                    <p style="margin-bottom: 10px; font-size: 0.9rem;">Trade $SLS on these XRPL exchanges:</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <a href="https://xmagnetic.org/tokens/SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5?network=mainnet" target="_blank" class="exchange-link">xMagnetic</a>
+                        <a href="https://xpmarket.com/token/SLS-r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" class="exchange-link">xpmarket</a>
+                        <a href="https://xaman.app/" target="_blank" class="exchange-link">Xaman Wallet</a>
+                        <a href="https://sologenic.org/trade?market=SLS%2Br95GyZac4butvVcsTWUPpxzekmyzaHsTA5%2FXRP" target="_blank" class="exchange-link">Sologenic DEX</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="text-center">$SLS <span class="gradient-text">Tokenomics</span></h3>
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="font-size: 2rem; color: var(--accent);">⚡</div>
+                        <h5>Verification Fees</h5>
+                        <p style="font-size: 0.9rem;">Pay for record verification on XRPL (~$0.001/tx)</p>
+                    </div>
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="font-size: 2rem; color: var(--accent);">🎁</div>
+                        <h5>Provider Rebates</h5>
+                        <p style="font-size: 0.9rem;">Earn back 50% of fees for participating</p>
+                    </div>
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="font-size: 2rem; color: var(--accent);">🔐</div>
+                        <h5>Data Contributions</h5>
+                        <p style="font-size: 0.9rem;">Patients earn for anonymized research data</p>
+                    </div>
+                    <div class="col-md-3 mb-3 text-center">
+                        <div style="font-size: 2rem; color: var(--accent);">🏛️</div>
+                        <h5>Governance</h5>
+                        <p style="font-size: 0.9rem;">Vote on protocol upgrades and fee structures</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Section -->
+    <section class="section">
+        <div class="container" style="max-width: 900px;">
+            <h2 class="section-title">Investment <span class="gradient-text">Opportunity</span></h2>
+
+            <div class="card mb-4">
+                <h3 class="text-center">Traction & <span class="gradient-text">Milestones</span></h3>
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-3 text-center">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">✅</div>
+                        <h4 style="color: var(--accent);">Q4 2025</h4>
+                        <p>Protocol concept validated<br>SDK prototype built<br>Whitepaper v1.0 released</p>
+                    </div>
+                    <div class="col-md-4 mb-3 text-center">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">✅</div>
+                        <h4 style="color: var(--accent);">Q1 2026</h4>
+                        <p>$SLS token launched on XRPL<br>Listed on xMagnetic & Sologenic<br>Whitepaper v4.0 published</p>
+                    </div>
+                    <div class="col-md-4 mb-3 text-center">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔄</div>
+                        <h4 style="color: var(--secondary);">Now</h4>
+                        <p>SC healthcare pilot discussions<br>Grant applications in progress<br>Investor outreach active</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="background: linear-gradient(135deg, rgba(20,241,149,0.1), rgba(153,69,255,0.1)); border: 2px solid rgba(20,241,149,0.3);">
+                <h3 class="text-center">Why <span class="gradient-text">Invest</span> in SLS?</h3>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h4 style="color: var(--accent);">Market Opportunity</h4>
+                        <ul style="line-height: 2;">
+                            <li>$300B+ annual cost of healthcare data mismanagement</li>
+                            <li>250+ million patient records breached annually</li>
+                            <li>30% of healthcare costs tied to administrative inefficiency</li>
+                            <li>Growing demand for interoperability solutions</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="color: var(--accent);">Competitive Advantages</h4>
+                        <ul style="line-height: 2;">
+                            <li>First mover on XRPL for healthcare data integrity</li>
+                            <li>Zero-knowledge approach protects PHI</li>
+                            <li>Live token with established trading pairs</li>
+                            <li>SDK ready for pilot deployments</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="/contact/" class="btn-primary-custom">Schedule Investor Call</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Investment & Grant Opportunities</h3>
+                <p>SLS Protocol is actively seeking strategic partners, grant funding, and early-stage investment to accelerate our South Carolina pilots and national expansion.</p>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h5 style="color: var(--accent);">Current Focus</h5>
+                        <ul>
+                            <li>Pre-seed / Seed funding round</li>
+                            <li>Healthcare innovation grants</li>
+                            <li>XRPL ecosystem grants</li>
+                            <li>SC state economic development</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 style="color: var(--accent);">Use of Funds</h5>
+                        <ul>
+                            <li>Engineering team expansion</li>
+                            <li>Security audits & compliance</li>
+                            <li>Pilot program operations</li>
+                            <li>EHR integration development</li>
+                        </ul>
+                    </div>
+                </div>
+                <a href="/contact/" class="btn-primary-custom mt-3" style="display: block; text-decoration: none; text-align: center;">Contact Us About Investment</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 SLS Protocol | Decentralized Medical Integrity<br>Built on the XRP Ledger</p>
+        <div style="margin-top: 15px;">
+            <a href="/" style="color: var(--accent); margin: 0 10px;">Home</a>
+            <a href="/about/" style="color: var(--accent); margin: 0 10px;">About</a>
+            <a href="/products/" style="color: var(--accent); margin: 0 10px;">Products</a>
+            <a href="/roadmap/" style="color: var(--accent); margin: 0 10px;">Roadmap</a>
+            <a href="/contact/" style="color: var(--accent); margin: 0 10px;">Contact</a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
