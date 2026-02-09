@@ -22,8 +22,17 @@ def categorize_record(memo_data):
     then falls back to keyword matching for legacy records.
     """
     # Check for explicit record_type prefix (new SDK format: RECORD_TYPE:hash)
+    # Also handles SVCN format: solus:TYPE:HASH and solus:TYPE:SUBTYPE:HASH
     if ':' in memo_data and len(memo_data.split(':')[0]) < 30:
-        explicit_type = memo_data.split(':')[0].upper()
+        parts = memo_data.split(':')
+        explicit_type = parts[0].upper()
+        # If prefix is SOLUS (protocol marker), use the second/third segments as the type
+        if explicit_type == 'SOLUS' and len(parts) >= 3:
+            # Handle multi-segment types: solus:consent:grant:HASH → CONSENT_GRANT
+            if len(parts) >= 4 and len(parts[2]) < 30:
+                explicit_type = (parts[1] + '_' + parts[2]).upper()
+            else:
+                explicit_type = parts[1].upper()
         # Map explicit types to display names (keep underscores for matching)
         type_map = {
             'SURGERY': 'Surgery',
@@ -39,6 +48,8 @@ def categorize_record(memo_data):
             'VACCINE': 'Immunization',
             'PATIENT_MESSAGE': 'Patient Message',
             'MESSAGE': 'Patient Message',
+            'SECURE_MESSAGE': 'Secure Message',
+            'URGENT_MESSAGE': 'Secure Message',
             'CLINICAL_NOTE': 'Clinical Notes',
             'CLINICAL NOTES': 'Clinical Notes',
             'NOTES': 'Clinical Notes',
@@ -51,11 +62,14 @@ def categorize_record(memo_data):
             'CONSULT': 'Referral',
             'CARE_PLAN': 'Care Plan',
             'CONSENT': 'Consent',
+            'CONSENT_GRANT': 'Consent',
+            'CONSENT_REVOKE': 'Consent',
             'EPIC': 'EHR Integration',
             'ORACLE_HEALTH': 'EHR Integration',
             'CERNER': 'EHR Integration',
             'MEDITECH': 'EHR Integration',
             'EHR': 'EHR Integration',
+            'EHR_EVENT': 'EHR Integration',
             'TELEMEDICINE': 'Telemedicine',
             'TELEHEALTH': 'Telemedicine',
             'PEDIATRIC': 'Pediatric',
@@ -67,6 +81,25 @@ def categorize_record(memo_data):
             'PREVENTIVE': 'Preventive',
             'WELLNESS': 'Preventive',
             'ADMIN': 'Administrative',
+            # SVCN Care Network record types
+            'CARE_HANDOFF': 'Care Handoff',
+            'HANDOFF': 'Care Handoff',
+            'WEARABLE_ANOMALY': 'Wearable Anomaly',
+            'ANOMALY': 'Wearable Anomaly',
+            'FEDERATED_BATCH': 'Federated Batch',
+            'BATCH': 'Federated Batch',
+            'BACKUP_EXPORT': 'Backup & Recovery',
+            'BACKUP_VERIFY': 'Backup & Recovery',
+            'BACKUP': 'Backup & Recovery',
+            # Solus Protocol EHR record types
+            'EHR_RECORD': 'EHR Record',
+            'EHR_UPDATE': 'EHR Update',
+            'EHR_QUERY': 'EHR Query',
+            'EHR_TRANSFER': 'EHR Transfer',
+            'EHR_IMPORT': 'EHR Import',
+            'FHIR_IMPORT': 'EHR Import',
+            'SCHEDULING': 'Scheduling',
+            'BILLING': 'Billing',
         }
         if explicit_type in type_map:
             return type_map[explicit_type]
@@ -137,6 +170,22 @@ def categorize_record(memo_data):
     # Consent & Authorization
     elif any(kw in memo_lower for kw in ["consent", "authorization", "hipaa", "release of information", "patient consent", "informed consent", "roi"]):
         return "Consent"
+    
+    # SVCN Care Network - Care Handoffs
+    elif any(kw in memo_lower for kw in ["handoff", "hand-off", "care transfer", "care transition", "transfer of care", "shift change"]):
+        return "Care Handoff"
+    
+    # SVCN Care Network - Wearable & IoT Anomalies
+    elif any(kw in memo_lower for kw in ["anomaly", "wearable", "iot", "device alert", "sensor", "threshold"]):
+        return "Wearable Anomaly"
+    
+    # SVCN Care Network - Federated Batch Processing
+    elif any(kw in memo_lower for kw in ["batch", "federated", "bulk anchor", "multi-record"]):
+        return "Federated Batch"
+    
+    # SVCN Care Network - Backup & Recovery
+    elif any(kw in memo_lower for kw in ["backup", "recovery", "export", "archive", "disaster recovery", "data recovery"]):
+        return "Backup & Recovery"
     
     # EHR System Integrations
     elif any(kw in memo_lower for kw in ["epic", "oracle health", "cerner", "meditech", "athenahealth", "allscripts", "eclinicalworks", "nextgen", "ehr", "emr"]):

@@ -17,6 +17,9 @@
 9. [Rollback Plan](#9-rollback-plan)
 10. [Cost Estimation](#10-cost-estimation)
 11. [XRPL Amendment Resilience](#11-xrpl-amendment-resilience)
+12. [SVCN Care Network Migration](#12-svcn-care-network-migration)
+13. [Solus Protocol EHR Migration](#13-solus-protocol-ehr-migration)
+14. [Metrics API Migration](#14-metrics-api-migration)
 
 ---
 
@@ -735,5 +738,250 @@ except Exception:
 
 ---
 
-*Last updated: v2.9.3 — This document is part of the Solus Protocol project.*
+## 12. SVCN Care Network Migration
+
+### Current State (Testnet)
+The SVCN Care Network (`demo-app/index.html`) performs **real XRPL anchoring** for all care scenarios and sandbox modules:
+
+| Module | Memo Format | Record Types |
+|--------|-------------|-------------|
+| Secure Messenger | `solus:message:HASH` | `secure_message`, `urgent_message` |
+| Consent Manager | `solus:consent:grant:HASH` | `consent_grant`, `consent_revoke` |
+| Care Handoff | `solus:handoff:TYPE:HASH` | `care_handoff` |
+| Wearable Monitor | `solus:wearable_anomaly:HASH` | `wearable_anomaly` |
+| EHR Simulator | `solus:ehr_event:HASH` | `ehr_event` |
+| Federated Batch | `solus:federated_batch:HASH` | `federated_batch` |
+| Backup & Recovery | `solus:backup_export:HASH` | `backup_export`, `backup_verify` |
+
+### Migration Steps
+
+#### Step 1: Replace Client-Side Signing with Backend API
+Currently, `svcnAnchorToXRPL()` connects directly to XRPL WebSocket nodes from the browser:
+
+```javascript
+// TESTNET (current) — client-side
+const client = new xrpl.Client('wss://s.altnet.rippletest.net:51233');
+const wallet = xrpl.Wallet.fromSeed(walletSeed, { algorithm: 'ed25519' });
+```
+
+**Mainnet migration:** Replace with `fetch()` to the server-side `/api/anchor` endpoint:
+
+```javascript
+// MAINNET — server-side signing
+async function svcnAnchorToXRPL(dataHash, memoType, recordType) {
+    const memoData = `solus:${memoType}:${dataHash}`;
+    const response = await fetch('https://solusprotocol.onrender.com/api/anchor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': SOLUS_API_KEY },
+        body: JSON.stringify({ hash: dataHash, memo_data: memoData, record_type: recordType })
+    });
+    const result = await response.json();
+    return { txHash: result.tx_hash, explorerUrl: `https://livenet.xrpl.org/transactions/${result.tx_hash}` };
+}
+```
+
+#### Step 2: Update Scenario Engine
+The `svcnRunScenario()` function calls `svcnAnchorToXRPL()` at each `xrpl-type` step. After migration:
+- No code changes needed in the scenario engine (it calls the same function)
+- The backend handles server-side signing and fee management
+- Explorer URLs auto-switch to `livenet.xrpl.org`
+
+#### Step 3: Update Explorer URLs
+```javascript
+// Before (testnet)
+'https://testnet.xrpl.org/transactions/' + txHash
+
+// After (mainnet)
+'https://livenet.xrpl.org/transactions/' + txHash
+```
+
+#### Step 4: SVCN Python Modules
+The Python SVCN modules (`solus_comms.py`, `solus_backup.py`, `solus_anomaly.py`) already use the `SolusSDK` class which supports both testnet and mainnet:
+
+```python
+# Testnet (current)
+sdk = SolusSDK(testnet=True, wallet_seed="sEd...")
+
+# Mainnet (production)
+sdk = SolusSDK(testnet=False, wallet_seed=os.environ['XRPL_MAINNET_SEED'])
+```
+
+No structural changes needed — just change `testnet=True` to `testnet=False` and use environment variables for secrets.
+
+### SVCN Compliance Considerations
+- All SVCN anchor transactions use **memo fields only** (no XRP transfer needed on mainnet if using AccountSet transactions)
+- The Audit & Proof tab's compliance evidence generator works identically on mainnet
+- Break-glass events, consent anchors, and care handoffs retain full immutability on mainnet
+- On-chain re-verification works by reading memo data from mainnet ledger
+
+---
+
+## 13. Solus Protocol EHR Migration
+
+### Current State (Testnet)
+The Solus Protocol EHR system (`solus_ehr.py` + `demo-app/index.html`) anchors all healthcare data operations to XRPL:
+
+| EHR Operation | XRPL Record Type | FHIR Mapping |
+|---------------|------------------|-------------|
+| Patient Registration | `EHR_RECORD` | Patient |
+| Record Create | `{type}.upper()` | Varies by type |
+| Record Update | `EHR_UPDATE` | — |
+| Access Grant | `CONSENT_GRANT` | Consent |
+| Access Revoke | `CONSENT_REVOKE` | Consent |
+| FHIR Export | `EHR_TRANSFER` | Bundle |
+| HL7 Generation | `EHR_TRANSFER` | — |
+| Appointment | `SCHEDULING` | Appointment |
+| Billing Claim | `BILLING` | Claim |
+| Break-Glass | `EMERGENCY` | — |
+| Compliance Report | `EHR_RECORD` | — |
+| Legacy Import | `EHR_IMPORT` | — |
+
+### Migration Steps
+
+#### Step 1: Python SDK Migration
+The `SolusEHR` class uses `SolusSDK` internally. Migration:
+
+```python
+# Testnet (current)
+ehr = SolusEHR(wallet_seed="sEd...", testnet=True, anchor_enabled=True)
+
+# Mainnet (production)
+ehr = SolusEHR(
+    wallet_seed=os.environ['XRPL_MAINNET_SEED'],
+    testnet=False,
+    anchor_enabled=True,
+    xrpl_rpc_url="https://xrplcluster.com/"
+)
+```
+
+#### Step 2: Demo App EHR Screen Migration
+The `ehrAnchorToXRPL()` function in the demo app mirrors `svcnAnchorToXRPL()`:
+
+```javascript
+// Replace client-side signing with backend API call
+async function ehrAnchorToXRPL(dataHash, recordType) {
+    const memoData = `solus:ehr_${recordType.toLowerCase()}:${dataHash}`;
+    const response = await fetch('https://solusprotocol.onrender.com/api/anchor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': SOLUS_API_KEY },
+        body: JSON.stringify({ hash: dataHash, memo_data: memoData, record_type: recordType })
+    });
+    return await response.json();
+}
+```
+
+#### Step 3: EHR-Specific Security
+- **PHI Protection:** All patient data remains encrypted off-chain. Only SHA-256 hashes are written to XRPL memos.
+- **Encryption Keys:** Must use production-grade key management (AWS KMS, Azure Key Vault, or HashiCorp Vault) instead of Fernet auto-generated keys.
+- **Access Control:** RBAC grants are anchored immutably — on mainnet, these become permanent compliance evidence.
+- **Break-Glass:** Emergency access events on mainnet create permanent, auditable records that satisfy HIPAA § 164.312(b) audit requirements.
+
+#### Step 4: FHIR & HL7 Interop
+- FHIR R4 Bundles include `meta.tag` with `system: "https://solusprotocol.com/hash"` pointing to the record's on-chain hash. On mainnet, these become verifiable against the live XRPL.
+- HL7 v2 messages include `ZSP` custom Z-segments with `SOLUS_HASH|{hash}|XRPL_ANCHORED`. The hash can be verified against mainnet.
+- Replace `"XRPL_ANCHORED"` with `"XRPL_MAINNET_ANCHORED"` in production HL7 messages.
+
+#### Step 5: Billing & Claims
+- Billing claims anchored to mainnet provide SOX-compliant audit trails
+- Each claim's hash is immutable — adjudication updates create new hashes (version chain)
+- Insurance verification can cross-reference on-chain hashes for fraud detection
+
+### EHR Data Flow (Mainnet)
+```
+Patient Data → AES-256 Encrypt → Off-Chain Storage
+                    ↓
+            SHA-256 Hash
+                    ↓
+    POST /api/anchor (server-side XRPL signing)
+                    ↓
+        XRPL Mainnet → Immutable Proof
+                    ↓
+    Metrics API reads & categorizes record type
+```
+
+---
+
+## 14. Metrics API Migration
+
+### Current State
+The Metrics API (`metrics_api.py`) reads transactions from the XRPL Testnet account and categorizes them using `categorize_record()`. It parses memo data in two formats:
+
+1. **SDK Playground:** `RECORD_TYPE:hash` (e.g., `SURGERY:abc123...`)
+2. **SVCN/EHR:** `solus:TYPE:hash` (e.g., `solus:message:abc123...`, `solus:ehr_record:abc123...`)
+
+### Migration Steps
+
+#### Step 1: Update XRPL Account & URL
+```python
+# Testnet (current)
+XRPL_TESTNET_URL = "https://s.altnet.rippletest.net:51234/"
+XRPL_TESTNET_ACCOUNT = "rJPqcx8wUBM58ajPUoz1dReKkTT6hqrqJA"
+
+# Mainnet (production)
+XRPL_MAINNET_URL = os.environ.get("XRPL_MAINNET_URL", "https://xrplcluster.com/")
+XRPL_MAINNET_ACCOUNT = os.environ.get("XRPL_MAINNET_ACCOUNT", "rMainnetAddress...")
+```
+
+#### Step 2: Record Type Categorization
+The `categorize_record()` function already handles all SVCN and EHR record types (v2.9.7). The `solus:TYPE:hash` format parser checks:
+1. First segment → if `SOLUS`, look at second segment
+2. Multi-segment types (e.g., `solus:consent:grant:hash` → `CONSENT_GRANT`)
+3. Explicit type_map with 50+ categories including SVCN and EHR types
+4. Keyword-based fallback matching
+
+No code changes needed — the categorization works identically on mainnet.
+
+#### Step 3: Historical Data
+On mainnet, the Metrics API will start with zero transactions. Consider:
+- Keeping testnet metrics as a separate archive endpoint
+- Building a migration script that maps testnet TX hashes to their record types for reference
+- Displaying a "Since Mainnet Launch" date on the metrics dashboard
+
+### Migration Checklist (Updated for v2.9.7)
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  MAINNET MIGRATION CHECKLIST — v2.9.7                       ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  INFRASTRUCTURE                                              ║
+║  □ Set XRPL_MAINNET_SEED env var on Render                  ║
+║  □ Set XRPL_MAINNET_ACCOUNT env var on Render               ║
+║  □ Set SOLUS_API_KEY env var on Render                      ║
+║  □ Deploy backend with /api/anchor endpoint                  ║
+║  □ Configure production encryption key management            ║
+║                                                              ║
+║  SDK & CORE                                                  ║
+║  □ Update SolusSDK: testnet=False                           ║
+║  □ Update SolusEHR: testnet=False + production keys          ║
+║  □ Test with XRPL_NETWORK=testnet first                     ║
+║                                                              ║
+║  DEMO APP / FRONTEND                                         ║
+║  □ Update anchorFromPlayground() → fetch() API call          ║
+║  □ Update svcnAnchorToXRPL() → fetch() API call             ║
+║  □ Update ehrAnchorToXRPL() → fetch() API call              ║
+║  □ Update all explorer URLs to livenet.xrpl.org              ║
+║  □ Remove embedded wallet seed from frontend                 ║
+║  □ Deploy frontend to Vercel                                 ║
+║                                                              ║
+║  METRICS API                                                 ║
+║  □ Update XRPL_URL to mainnet RPC                           ║
+║  □ Update XRPL_ACCOUNT to mainnet address                   ║
+║  □ Deploy metrics API to Render                              ║
+║                                                              ║
+║  VERIFICATION                                                ║
+║  □ Smoke test: anchor + verify one record (SDK Playground)   ║
+║  □ Smoke test: run SVCN scenario with XRPL anchoring        ║
+║  □ Smoke test: EHR register patient + create record          ║
+║  □ Verify Metrics API categorizes all record types           ║
+║  □ Set up balance monitoring alerts                          ║
+║  □ Configure fallback WebSocket nodes                        ║
+║  □ Test amendment resilience on Testnet                      ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+---
+
+*Last updated: v2.9.7 — This document is part of the Solus Protocol project.*
 *See also: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) | [SECURITY.md](SECURITY.md) | [HIPAA_COMPLIANCE.md](HIPAA_COMPLIANCE.md)*
