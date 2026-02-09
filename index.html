@@ -339,6 +339,11 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:10px;">
+            <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,194,255,0.12);border:1.5px solid #00c2ff;padding:7px 18px;border-radius:30px;font-size:1rem;font-weight:700;color:#00c2ff;box-shadow:0 2px 12px rgba(0,194,255,0.08);">
+                <img src="https://xrpl.org/assets/img/xrpl-logo.svg" alt="XRPL Logo" style="height:22px;width:22px;vertical-align:middle;margin-right:6px;filter:drop-shadow(0 0 2px #00c2ff);">Built on XRPL
+            </span>
+        </div>
         <a href="https://xmagnetic.org/tokens/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5+534C5300000000000000000000000000000000000000" target="_blank" class="live-badge">$SLS Token LIVE on XRPL</a>
         <h1>Immutable <span class="gradient-text">Trust</span></h1>
         <p style="font-size: 1.3rem; max-width: 700px; margin: 0 auto 15px; color: #fff; font-weight: 500;">For Healthcare Data</p>
@@ -347,6 +352,36 @@
             <a href="https://solusprotocol.com/demo-app/" target="_blank" class="btn-primary-custom animate-pulse">Launch Demo App</a>
             <a href="https://github.com/solusprotocol1/solus-protocol/blob/main/WHITEPAPER.md" target="_blank" class="btn-secondary-custom">Read Whitepaper</a>
         </div>
+
+        <!-- Live Stats Banner -->
+        <div class="container mt-3 mb-4">
+            <div id="liveStatsBanner" class="card" style="background:linear-gradient(90deg,rgba(20,241,149,0.12),rgba(153,69,255,0.10));border:2px solid rgba(20,241,149,0.25);max-width:700px;margin:0 auto 0 auto;padding:18px 0;display:flex;justify-content:center;align-items:center;gap:32px;flex-wrap:wrap;">
+                <div style="text-align:center;">
+                    <div style="font-size:1.3rem;font-weight:700;color:var(--accent);" id="statTotalAnchors">—</div>
+                    <div style="font-size:0.9rem;color:var(--text-secondary);">Records Anchored</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:1.3rem;font-weight:700;color:var(--secondary);" id="statTotalFees">—</div>
+                    <div style="font-size:0.9rem;color:var(--text-secondary);">$SLS Fees Expended</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:1.3rem;font-weight:700;color:#00c2ff;" id="statUptime">—</div>
+                    <div style="font-size:0.9rem;color:var(--text-secondary);">XRPL Uptime</div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Fetch live stats from Metrics API
+        fetch('https://solusprotocol.onrender.com/metrics')
+          .then(r => r.json())
+          .then(data => {
+            document.getElementById('statTotalAnchors').textContent = data.total_anchors?.toLocaleString() || '—';
+            document.getElementById('statTotalFees').textContent = data.total_fees ? `${data.total_fees} $SLS` : '—';
+            document.getElementById('statUptime').textContent = data.xrpl_uptime ? `${data.xrpl_uptime}%` : '—';
+          })
+          .catch(()=>{});
+        </script>
 
         <div class="container mt-4">
             <div class="card" style="background: linear-gradient(135deg, rgba(20,241,149,0.15), rgba(153,69,255,0.15)); border: 2px solid rgba(20,241,149,0.4); max-width: 700px; margin: 0 auto;">
@@ -507,6 +542,24 @@
                     <div class="col-md-4 mb-3"><div class="testimonial-card"><div class="quote">"Solus Protocol represents exactly the kind of innovation healthcare needs — secure, patient-first, and built on proven technology."</div><div class="author">— Healthcare Innovation Partner</div><p style="font-size: 0.85rem; margin-top: 5px;">Pilot in progress</p></div></div>
                     <div class="col-md-4 mb-3"><div class="testimonial-card"><div class="quote">"The zero-knowledge approach to PHI combined with XRPL's speed and cost efficiency is a game-changer for medical record verification."</div><div class="author">— XRPL Ecosystem Advisor</div><p style="font-size: 0.85rem; margin-top: 5px;">Advisory role</p></div></div>
                     <div class="col-md-4 mb-3"><div class="testimonial-card"><div class="quote">"We're excited to explore how Solus Protocol can improve care coordination across our network of providers."</div><div class="author">— Regional Healthcare System</div><p style="font-size: 0.85rem; margin-top: 5px;">Partnership discussions</p></div></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6 mb-3"><div class="testimonial-card"><div class="quote">"Solus Protocol's 1,917× cost advantage over legacy systems and real XRPL integration makes it a compelling choice for our pilot program."</div><div class="author">— SC EMS Association</div><p style="font-size: 0.85rem; margin-top: 5px;">Pilot planning</p></div></div>
+                    <div class="col-md-6 mb-3"><div class="testimonial-card"><div class="quote">"The EHR System is incredibly well-designed — scheduling, billing, drug interactions, and claims are all anchored to the blockchain for audit-proof records."</div><div class="author">— Telehealth Administrator</div><p style="font-size: 0.85rem; margin-top: 5px;">Product evaluation</p></div></div>
+                </div>
+            </div>
+
+            <!-- Trusted by Healthcare Leaders -->
+            <div class="card mb-4" style="background: linear-gradient(135deg, rgba(20,241,149,0.06), rgba(153,69,255,0.06)); border: 1px solid rgba(20,241,149,0.18);">
+                <h3 class="text-center mb-3">Trusted by <span class="gradient-text">Healthcare Leaders</span></h3>
+                <p class="text-center" style="color:var(--text-muted);font-size:0.95rem;margin-bottom:18px;">Pilot partnerships & discussions across South Carolina and the XRPL ecosystem</p>
+                <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:18px;align-items:center;opacity:0.92;">
+                    <span class="partner-logo">MUSC Health</span>
+                    <span class="partner-logo">Prisma Health</span>
+                    <span class="partner-logo">SC EMS Association</span>
+                    <span class="partner-logo">XRPL Foundation</span>
+                    <span class="partner-logo">HIPAA Cloud Partners</span>
+                    <span class="partner-logo">SC Legal Health Advisory</span>
                 </div>
             </div>
 
@@ -694,6 +747,19 @@
     </section>
 
     <!-- Products Section -->
+    <!-- Video Demo Embed -->
+    <div class="container mb-5" style="max-width: 800px;">
+        <div class="card" style="padding:0;overflow:hidden;background:linear-gradient(135deg,rgba(20,241,149,0.10),rgba(153,69,255,0.10));border:2px solid rgba(153,69,255,0.18);">
+            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+                <iframe src="https://www.youtube.com/embed/0QJQnQOe5pA" title="Solus Protocol Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;"></iframe>
+            </div>
+            <div style="padding:18px 24px 10px 24px;text-align:center;">
+                <h3 style="margin-bottom:8px;">🎥 Solus Protocol Demo</h3>
+                <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:0;">Watch a walkthrough of the live EHR, Care Network, and blockchain anchoring features.</p>
+            </div>
+        </div>
+    </div>
+
     <section id="products" class="section" style="background: rgba(0,0,0,0.2);">
         <div class="container">
             <h2 class="section-title">Our <span class="gradient-text">Products</span></h2>
@@ -935,25 +1001,35 @@
 
     <!-- Roadmap Section -->
     <section id="roadmap" class="section">
-        <div class="container" style="max-width: 800px;">
-            <h2 class="section-title">Development <span class="gradient-text">Roadmap</span></h2>
-            <p class="text-center mb-4">Our journey from concept to global healthcare data standard</p>
+        <div class="container" style="max-width: 900px;">
+            <h2 class="section-title">Strategic <span class="gradient-text">Roadmap</span> <span style="font-size:1.1rem;color:var(--accent);font-weight:600;">2026–2031</span></h2>
+            <p class="text-center mb-4">From mainnet launch to global healthcare data standard</p>
             <div class="card">
-                <h3 class="mb-4">2026 - 2028 Timeline</h3>
-                <div class="roadmap-item completed"><span class="phase-tag">COMPLETED</span><h4>Phase 1: Foundation</h4><p>Core SDK development, SHA-256 hashing implementation, XRPL testnet integration, and initial demo application.</p></div>
-                <div class="roadmap-item current"><span class="phase-tag">CURRENT</span><h4>Phase 2: South Carolina Pilots</h4><p>Partnerships with MUSC and regional healthcare providers. Real-world testing with anonymized patient data. $SLS token utility implementation.</p></div>
-                <div class="roadmap-item future"><span class="phase-tag">Q3 2026</span><h4>Phase 3: Beta Launch</h4><p>Public beta for healthcare providers. EHR integration plugins (Epic, Cerner). Enhanced dashboard and analytics. Security audits and HIPAA compliance certification.</p></div>
-                <div class="roadmap-item future"><span class="phase-tag">Q1 2027</span><h4>Phase 4: National Expansion</h4><p>Expand pilot programs to additional states. Strategic partnerships with national healthcare networks. API marketplace for third-party developers.</p></div>
-                <div class="roadmap-item future"><span class="phase-tag">2027+</span><h4>Phase 5: Global Standard</h4><p>International expansion. Cross-border health record verification. Become the global standard for decentralized medical data integrity.</p></div>
+                <h3 class="mb-4">2026: The Foundation <span class="phase-tag" style="background:rgba(20,241,149,0.2);color:var(--accent);margin-left:10px;">COMPLETED</span></h3>
+                <ul style="margin-bottom:0;line-height:2;">
+                    <li><b>Mainnet Launch & Liquidity:</b> XRPL mainnet deployment, AMM pools, $SLS token live</li>
+                    <li><b>Developer Tooling:</b> Python SDK, CLI, Metrics API, test suites, scenario runners</li>
+                    <li><b>Mobile Wallet PWA:</b> Multi-role auth, live anchoring, metrics dashboard, $SLS wallet, 25+ record types, dark/light mode, SDK Playground, batch anchoring, AI Health Insights, ROI calculator, partners & analytics dashboards, amendment resilience</li>
+                    <li><b>EHR System & Care Network:</b> Full clinical platform (20+ record types, patient management, record transfer, scheduling, billing/claims, drug checker, NFT consent tokens, gamification, MFA, tamper detection, break-glass, 12 clinical scenarios, ONC/CEHRT roadmap, SVCN, cohort analytics, stress testing, push notifications, freemium pricing)</li>
+                </ul>
             </div>
-            <div class="card text-center">
-                <h3>Key Milestones</h3>
-                <div class="row mt-4">
-                    <div class="col-md-3 mb-3"><div style="font-size: 2rem; color: var(--accent);">✓</div><h5>SDK Prototype</h5><p style="font-size: 0.9rem;">Completed</p></div>
-                    <div class="col-md-3 mb-3"><div style="font-size: 2rem; color: var(--accent);">⏳</div><h5>MUSC Partnership</h5><p style="font-size: 0.9rem;">In Progress</p></div>
-                    <div class="col-md-3 mb-3"><div style="font-size: 2rem; color: var(--accent);">✓</div><h5>$SLS Token Live</h5><p style="color: var(--accent); font-size: 0.9rem;">Trading on XRPL Mainnet</p></div>
-                    <div class="col-md-3 mb-3"><div style="font-size: 2rem; color: var(--secondary);">⏳</div><h5>Cross-Chain Bridges</h5><p style="font-size: 0.9rem;">In Development</p></div>
-                </div>
+            <div class="card">
+                <h3 class="mb-4">2026: Q2–Q4 <span class="phase-tag" style="background:rgba(153,69,255,0.2);color:var(--secondary);margin-left:10px;">IN PROGRESS</span></h3>
+                <ul style="margin-bottom:0;line-height:2;">
+                    <li><b>Clinical Pilot Program:</b> Onboard first clinics for data anchoring trials</li>
+                    <li><b>Partner Integrations:</b> EHR system webhooks, partner onboarding, API key management, partner dashboard</li>
+                    <li><b>Full API Launch:</b> Production API for enterprise developers (rate limiting, auth, usage analytics)</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 class="mb-4">2027–2031: Scaling & Global Adoption <span class="phase-tag" style="background:rgba(153,69,255,0.2);color:var(--secondary);margin-left:10px;">FUTURE</span></h3>
+                <ul style="margin-bottom:0;line-height:2;">
+                    <li><b>2027:</b> Native mobile app (iOS/Android), biometric auth, push notifications, EHR integrations</li>
+                    <li><b>2028:</b> HIPAA/GDPR compliance certifications, third-party audit attestation</li>
+                    <li><b>2029:</b> Multi-language support, global healthcare network expansion</li>
+                    <li><b>2030:</b> Cross-chain anchoring (Ethereum, Solana) for multi-ledger redundancy</li>
+                    <li><b>2031:</b> 1M+ active users verifying health data integrity</li>
+                </ul>
             </div>
             <div class="card" style="border: 1px solid rgba(153,69,255,0.3); background: linear-gradient(135deg, rgba(153,69,255,0.05), rgba(20,241,149,0.05));">
                 <h3 style="color: var(--secondary);">Cross-Chain Bridges — Coming Soon</h3>
