@@ -382,14 +382,14 @@
         .hash-cell {
             font-family: 'Monaco', 'Menlo', monospace;
             font-size: 0.8rem;
-            color: #888;
+            color: #ccc;
             background: rgba(0, 0, 0, 0.3);
             padding: 6px 10px;
             border-radius: 6px;
         }
         
         .refresh-info {
-            color: #666;
+            color: #aaa;
             font-size: 0.85rem;
             margin-top: 15px;
             text-align: center;
@@ -401,7 +401,7 @@
             padding: 40px 20px;
             margin-top: 50px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #666;
+            color: #aaa;
             font-size: 0.9rem;
         }
         .source-footer a {
@@ -505,7 +505,7 @@
         </div>
         <div class="card">
             <h2>⚡ Hash Anchoring Over Time</h2>
-            <p style="color:#888;">Each bar represents hashes anchored during that time period</p>
+            <p style="color:#ccc;">Each bar represents hashes anchored during that time period</p>
             <div class="mb-3" id="hashBtns">
                 <button class="filter-btn active" data-view="minute">Per Minute</button>
                 <button class="filter-btn" data-view="hour">Per Hour</button>
@@ -517,7 +517,7 @@
         </div>
         <div class="card">
             <h2>🔐 Records Secured Breakdown</h2>
-            <p style="color:#888;">Distribution of record types anchored to XRPL
+            <p style="color:#ccc;">Distribution of record types anchored to XRPL
                 <select class="filter-select" id="recordTypeFilter" onchange="filterByRecordType()">
                     <option value="all">All Record Types</option>
                 </select>
@@ -526,7 +526,7 @@
         </div>
         <div class="card">
             <h2>💎 $SLS Fee Activity</h2>
-            <p style="color:#888;">Fees collected per time period (0.01 $SLS per anchor)</p>
+            <p style="color:#ccc;">Fees collected per time period (0.01 $SLS per anchor)</p>
             <div class="mb-3" id="feeBtns">
                 <button class="filter-btn active" data-view="minute">Per Minute</button>
                 <button class="filter-btn" data-view="hour">Per Hour</button>
@@ -538,7 +538,7 @@
         </div>
         <div class="card">
             <h2>📈 XRPL Transaction Volume</h2>
-            <p style="color:#888;">Number of transactions per time period</p>
+            <p style="color:#ccc;">Number of transactions per time period</p>
             <div class="mb-3" id="txBtns">
                 <button class="filter-btn active" data-view="minute">Per Minute</button>
                 <button class="filter-btn" data-view="hour">Per Hour</button>
@@ -550,11 +550,11 @@
         </div>
         <div class="card">
             <h2>📋 Recent Anchored Records</h2>
-            <p style="color:#888;">Individual records with exact timestamps (scroll to view more)</p>
+            <p style="color:#ccc;">Individual records with exact timestamps (scroll to view more)</p>
             <div style="max-height: 400px; overflow-y: auto; border: 1px solid rgba(20,241,149,0.2); border-radius: 8px;">
                 <table class="recent-table" style="display: table; width: 100%;">
                     <thead style="position: sticky; top: 0; background: #0a0b0d; z-index: 1;"><tr><th>Timestamp</th><th>Record Type</th><th>Hash (truncated)</th><th>Fee</th></tr></thead>
-                    <tbody id="recentBody"><tr><td colspan="4" style="text-align:center;color:#666;">Loading...</td></tr></tbody>
+                    <tbody id="recentBody"><tr><td colspan="4" style="text-align:center;color:#aaa;">Loading...</td></tr></tbody>
                 </table>
             </div>
             <p class="refresh-info">Auto-refreshes every 30 seconds | Showing last 30 minutes of activity</p>
@@ -712,14 +712,14 @@
         function renderRecentTable() {
             let records = metricsData.individual_records || [];
             const tbody = document.getElementById('recentBody');
-            if (records.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No records found</td></tr>'; return; }
+            if (records.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;">No records found</td></tr>'; return; }
             // Apply record type filter
             if (selectedRecordType !== 'all') {
                 records = records.filter(r => r.record_type === selectedRecordType);
             }
             const recentRecords = [...records].reverse().slice(0, 50);
-            if (recentRecords.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">No records for selected type</td></tr>'; return; }
-            tbody.innerHTML = recentRecords.map(r => '<tr><td style="color:#14f195;">' + r.timestamp_display + '</td><td><span class="badge-type">' + r.record_type + '</span></td><td style="font-family:monospace;font-size:0.85rem;color:#888;">' + r.hash + '</td><td style="color:#9945ff;">$' + r.fee.toFixed(2) + '</td></tr>').join('');
+            if (recentRecords.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;">No records for selected type</td></tr>'; return; }
+            tbody.innerHTML = recentRecords.map(r => '<tr><td style="color:#14f195;">' + r.timestamp_display + '</td><td><span class="badge-type">' + r.record_type + '</span></td><td style="font-family:monospace;font-size:0.85rem;color:#ccc;">' + r.hash + '</td><td style="color:#9945ff;">$' + r.fee.toFixed(2) + '</td></tr>').join('');
         }
 
         document.getElementById('hashBtns').addEventListener('click', e => { if (e.target.dataset.view) { currentHashView = e.target.dataset.view; document.querySelectorAll('#hashBtns .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.view === currentHashView)); renderHashChart(currentHashView); } });
