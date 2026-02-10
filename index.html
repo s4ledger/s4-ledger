@@ -210,7 +210,7 @@
         .hash-result { background: rgba(20, 241, 149, 0.1); border: 1px solid rgba(20, 241, 149, 0.3); border-radius: 12px; padding: 20px; margin-top: 20px; word-break: break-all; }
         .hash-result h5 { color: var(--accent); }
         .hash-value { color: var(--accent); font-family: monospace; font-size: 0.9rem; }
-        .login-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
+        .login-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
         .login-modal.active { display: flex; }
         .login-box { background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 40px; max-width: 400px; width: 90%; }
         .login-box h3 { color: #fff; }
@@ -4049,8 +4049,6 @@ Case ID: ***567`
             const savedLang = localStorage.getItem('solusLang');
             if (savedLang && langCodes[savedLang]) {
                 document.getElementById('currentLang').textContent = langCodes[savedLang].name;
-            }
-        });
             }
         });
         
