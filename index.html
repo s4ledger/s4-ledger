@@ -4068,7 +4068,27 @@ Case ID: ***567`
             document.getElementById('currentLang').textContent = langData.name;
             localStorage.setItem('solusLang', lang);
             
-            // Show loading toast
+            if (lang === 'en') {
+                // To reset to English, we need to clear Google Translate cookies and reload
+                // Clear all googtrans cookies
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + window.location.hostname;
+                
+                // Show toast and reload
+                const loadingToast = document.createElement('div');
+                loadingToast.style.cssText = 'position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #14f195, #00ffa3); color: #000; padding: 12px 24px; border-radius: 30px; font-weight: 600; z-index: 9999; box-shadow: 0 5px 20px rgba(20,241,149,0.4);';
+                loadingToast.innerHTML = `<span style="margin-right: 8px;">🔄</span> Restoring to English...`;
+                document.body.appendChild(loadingToast);
+                
+                // Small delay before reload for visual feedback
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+                return;
+            }
+            
+            // Show loading toast for other languages
             const loadingToast = document.createElement('div');
             loadingToast.id = 'langLoadingToast';
             loadingToast.style.cssText = 'position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #14f195, #00ffa3); color: #000; padding: 12px 24px; border-radius: 30px; font-weight: 600; z-index: 9999; box-shadow: 0 5px 20px rgba(20,241,149,0.4);';
@@ -4081,23 +4101,13 @@ Case ID: ***567`
                 if (gtCombo) {
                     clearInterval(waitForGT);
                     
-                    if (lang === 'en') {
-                        // Reset to original
-                        gtCombo.value = '';
-                        gtCombo.dispatchEvent(new Event('change'));
-                        setTimeout(() => {
-                            loadingToast.innerHTML = `<span style="margin-right: 8px;">✓</span> Restored to English`;
-                            setTimeout(() => loadingToast.remove(), 2000);
-                        }, 500);
-                    } else {
-                        // Set to selected language
-                        gtCombo.value = langData.gtCode;
-                        gtCombo.dispatchEvent(new Event('change'));
-                        setTimeout(() => {
-                            loadingToast.innerHTML = `<span style="margin-right: 8px;">✓</span> Translated to ${langData.fullName}`;
-                            setTimeout(() => loadingToast.remove(), 2000);
-                        }, 1000);
-                    }
+                    // Set to selected language
+                    gtCombo.value = langData.gtCode;
+                    gtCombo.dispatchEvent(new Event('change'));
+                    setTimeout(() => {
+                        loadingToast.innerHTML = `<span style="margin-right: 8px;">✓</span> Translated to ${langData.fullName}`;
+                        setTimeout(() => loadingToast.remove(), 2000);
+                    }, 1000);
                 }
             }, 100);
             
