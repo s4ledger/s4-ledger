@@ -132,8 +132,34 @@
             width: 100%;
             z-index: 1000;
         }
-        .navbar-brand img { height: 35px; }
-        .navbar-brand { font-weight: 700; color: #fff !important; }
+        .navbar-brand img { 
+            height: 35px; 
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .navbar-brand { 
+            font-weight: 700; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar-brand .brand-text {
+            background: linear-gradient(135deg, #14F195, #00C2FF, #9945FF, #14F195);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: brandGradient 4s ease infinite;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+        @keyframes brandGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
         .nav-link { color: #fff !important; padding: 8px 12px !important; font-size: 0.9rem !important; }
         .nav-link:hover { color: var(--accent) !important; }
         @media (max-width: 991px) {
@@ -990,7 +1016,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
                 <img src="https://raw.githubusercontent.com/solusprotocol1/solus-protocol/main/logo.png" alt="SLS Logo">
-                Solus Protocol
+                <span class="brand-text">Solus Protocol</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
