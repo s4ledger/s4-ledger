@@ -42,6 +42,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://unpkg.com/xrpl@4.5.0/build/xrpl-latest-min.js"></script>
+    <!-- Google Translate -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,es,fr,de,zh-CN,ja,ko,pt',
+                autoDisplay: false,
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <style>
+        /* Hide Google Translate banner and branding */
+        .goog-te-banner-frame, .goog-te-balloon-frame { display: none !important; }
+        .goog-te-gadget { color: transparent !important; }
+        .goog-te-gadget .goog-te-combo { display: none !important; }
+        #google_translate_element { display: none !important; }
+        body { top: 0 !important; }
+        .skiptranslate { display: none !important; }
+    </style>
     <style>
         :root {
             --bg: #050608;
@@ -872,6 +893,9 @@
     </style>
 </head>
 <body>
+    <!-- Hidden Google Translate Element -->
+    <div id="google_translate_element"></div>
+    
     <!-- Scroll Progress Indicator -->
     <div class="scroll-progress" id="scrollProgress"></div>
     
@@ -3870,23 +3894,6 @@ Case ID: ***567`
                 });
             });
             
-            // Card Tilt Effect on Hover
-            document.querySelectorAll('.card, .metric-card').forEach(card => {
-                card.addEventListener('mousemove', function(e) {
-                    const rect = this.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = (y - centerY) / 20;
-                    const rotateY = (centerX - x) / 20;
-                    this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
-                });
-            });
-            
             // ========== END TOP-TIER ENHANCEMENTS JS ==========
         });
         
@@ -3974,40 +3981,76 @@ Case ID: ***567`
             }
         });
         
-        // ========== LANGUAGE SELECTOR ==========
-        const translations = {
-            en: { name: 'EN', greeting: 'Welcome' },
-            es: { name: 'ES', greeting: 'Bienvenido' },
-            fr: { name: 'FR', greeting: 'Bienvenue' },
-            de: { name: 'DE', greeting: 'Willkommen' },
-            zh: { name: '中文', greeting: '欢迎' },
-            ja: { name: '日本語', greeting: 'ようこそ' },
-            ko: { name: '한국어', greeting: '환영합니다' },
-            pt: { name: 'PT', greeting: 'Bem-vindo' }
+        // ========== LANGUAGE SELECTOR WITH GOOGLE TRANSLATE ==========
+        const langCodes = {
+            en: { name: 'EN', fullName: 'English', gtCode: 'en' },
+            es: { name: 'ES', fullName: 'Español', gtCode: 'es' },
+            fr: { name: 'FR', fullName: 'Français', gtCode: 'fr' },
+            de: { name: 'DE', fullName: 'Deutsch', gtCode: 'de' },
+            zh: { name: '中文', fullName: '中文', gtCode: 'zh-CN' },
+            ja: { name: '日本語', fullName: '日本語', gtCode: 'ja' },
+            ko: { name: '한국어', fullName: '한국어', gtCode: 'ko' },
+            pt: { name: 'PT', fullName: 'Português', gtCode: 'pt' }
         };
         
         function setLanguage(lang) {
-            const langData = translations[lang] || translations.en;
+            const langData = langCodes[lang] || langCodes.en;
             document.getElementById('currentLang').textContent = langData.name;
             localStorage.setItem('solusLang', lang);
             
-            // In a full implementation, this would translate the entire page
-            // For now, show a toast indicating the language was changed
-            const langNames = { en: 'English', es: 'Español', fr: 'Français', de: 'Deutsch', zh: '中文', ja: '日本語', ko: '한국어', pt: 'Português' };
+            // Show loading toast
+            const loadingToast = document.createElement('div');
+            loadingToast.id = 'langLoadingToast';
+            loadingToast.style.cssText = 'position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #14f195, #00ffa3); color: #000; padding: 12px 24px; border-radius: 30px; font-weight: 600; z-index: 9999; box-shadow: 0 5px 20px rgba(20,241,149,0.4);';
+            loadingToast.innerHTML = `<span style="margin-right: 8px;">⏳</span> Translating to ${langData.fullName}...`;
+            document.body.appendChild(loadingToast);
             
-            // Create a toast notification
-            const toast = document.createElement('div');
-            toast.style.cssText = 'position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #14f195, #00ffa3); color: #000; padding: 12px 24px; border-radius: 30px; font-weight: 600; z-index: 9999; box-shadow: 0 5px 20px rgba(20,241,149,0.4);';
-            toast.innerHTML = `<span style="margin-right: 8px;">✓</span> Language set to ${langNames[lang]}`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            // Trigger Google Translate
+            if (lang === 'en') {
+                // Reset to English
+                const frame = document.querySelector('.goog-te-banner-frame');
+                if (frame) {
+                    const innerDoc = frame.contentDocument || frame.contentWindow.document;
+                    const restoreBtn = innerDoc.querySelector('.goog-te-button button');
+                    if (restoreBtn) restoreBtn.click();
+                }
+                // Remove any existing translations
+                const translateCookies = document.cookie.split(';');
+                for (let c of translateCookies) {
+                    if (c.trim().startsWith('googtrans')) {
+                        document.cookie = c.split('=')[0] + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    }
+                }
+                // Reload to show original
+                setTimeout(() => {
+                    loadingToast.innerHTML = `<span style="margin-right: 8px;">✓</span> Restored to English`;
+                    setTimeout(() => {
+                        loadingToast.remove();
+                        location.reload();
+                    }, 1000);
+                }, 500);
+            } else {
+                // Set translation cookie and reload
+                document.cookie = `googtrans=/en/${langData.gtCode}; path=/`;
+                document.cookie = `googtrans=/en/${langData.gtCode}; path=/; domain=.${location.hostname}`;
+                
+                setTimeout(() => {
+                    loadingToast.innerHTML = `<span style="margin-right: 8px;">✓</span> Translated to ${langData.fullName}`;
+                    setTimeout(() => {
+                        loadingToast.remove();
+                        location.reload();
+                    }, 1000);
+                }, 500);
+            }
         }
         
-        // Load saved language preference
+        // Load saved language preference on page load
         document.addEventListener('DOMContentLoaded', function() {
             const savedLang = localStorage.getItem('solusLang');
-            if (savedLang && translations[savedLang]) {
-                document.getElementById('currentLang').textContent = translations[savedLang].name;
+            if (savedLang && langCodes[savedLang]) {
+                document.getElementById('currentLang').textContent = langCodes[savedLang].name;
+            }
+        });
             }
         });
         
