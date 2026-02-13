@@ -39,6 +39,11 @@
         .anchor-anim-text{font-size:1.4rem;font-weight:700;margin-top:16px}
         .anchor-anim-sub{color:var(--text-secondary);font-size:0.95rem;margin-top:8px}
         @keyframes anchorDrop{0%{transform:translateY(-80px) scale(0.5);opacity:0}40%{transform:translateY(10px) scale(1.15);opacity:1}60%{transform:translateY(-8px) scale(0.95)}80%{transform:translateY(3px) scale(1.02)}100%{transform:translateY(0) scale(1)}}
+        .anchor-anim-chain{width:3px;height:0;background:linear-gradient(to bottom,#00aaff,rgba(0,170,255,0.2));margin:0 auto;transition:height 0.5s ease-out}
+        .anchor-anim-hash{font-family:'Monaco','Menlo',monospace;color:var(--accent);font-size:0.78rem;margin-top:12px;word-break:break-all;background:rgba(0,170,255,0.08);padding:10px 14px;border-radius:8px;border:1px solid rgba(0,170,255,0.2);max-width:500px;margin-left:auto;margin-right:auto;opacity:0;transition:opacity 0.4s}
+        .anchor-anim-fee{font-size:0.9rem;color:#c9a84c;margin-top:8px;font-weight:600;opacity:0;transition:opacity 0.4s}
+        .anchor-anim-success{font-size:1.2rem;font-weight:800;color:#14f195;margin-top:12px;opacity:0;transition:all 0.4s;transform:scale(0)}
+        .anchor-anim-success.show{opacity:1;transform:scale(1)}
         .record-select-area{margin-bottom:12px}
         .record-select-area select{background:rgba(5,8,16,0.95);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:8px 12px;color:#e0e8f0;font-family:inherit;font-size:0.9rem;width:100%;max-width:400px}
         .record-select-area select:focus{border-color:var(--accent);outline:none}
@@ -57,9 +62,13 @@
     <!-- ANCHOR ANIMATION OVERLAY -->
     <div class="anchor-anim-overlay" id="anchorOverlay">
         <div class="anchor-anim-box">
+            <div class="anchor-anim-chain" id="anchorChain"></div>
             <div class="anchor-anim-icon"><i class="fas fa-anchor"></i></div>
             <div class="anchor-anim-text" id="anchorAnimText">Anchoring to XRPL...</div>
             <div class="anchor-anim-sub" id="anchorAnimSub">Computing SHA-256 hash</div>
+            <div class="anchor-anim-hash" id="anchorAnimHash"></div>
+            <div class="anchor-anim-fee" id="anchorAnimFee"></div>
+            <div class="anchor-anim-success" id="anchorAnimSuccess"></div>
         </div>
     </div>
 
@@ -197,25 +206,100 @@
     <script src="../s4-assets/main.js"></script>
     <script>
     // ═══════════════════════════════════════════════════════
-    //  S4 LEDGER — SDK PLAYGROUND (FULLY INTERACTIVE)
+    //  S4 LEDGER — SDK PLAYGROUND (FULLY INTERACTIVE v2)
     // ═══════════════════════════════════════════════════════
 
     var recordTypes = {};
+    var recordTypesList = [];
     var currentExample = 'hash';
 
-    // ── localStorage cross-page record sync ──
+    // ── localStorage cross-page sync ──
     var S4_STORAGE_KEY = 's4_anchored_records';
     function getLocalRecords() { try { return JSON.parse(localStorage.getItem(S4_STORAGE_KEY) || '[]'); } catch(e) { return []; } }
-    function saveLocalRecord(rec) { var records = getLocalRecords(); records.push(rec); localStorage.setItem(S4_STORAGE_KEY, JSON.stringify(records)); }
+    function saveLocalRecord(rec) { var recs = getLocalRecords(); recs.push(rec); localStorage.setItem(S4_STORAGE_KEY, JSON.stringify(recs)); }
 
-    // ── Fetch record types and populate dropdown ──
+    // ── Detailed sample records for popular types ──
+    var SAMPLE_RECORDS = {
+        USN_SUPPLY_RECEIPT: "Supply Chain Receipt\nNSN: 5340-01-234-5678\nNomenclature: Valve, Gate, Carbon Steel\nContract: N00024-23-C-5501\nCAGE Code: 1THK9\nQuantity Received: 50 EA\nCondition Code: A (Serviceable)\nInspection: FAT Pass\nReceiving Depot: Norfolk Naval Shipyard (NNSY)\nInspector: QA-237 J. Martinez\nDate: 2026-02-13",
+        USN_3M_MAINTENANCE: "Maintenance 3-M Action\nMRC: 2815-1.3.7\nEquipment: LM2500 Gas Turbine Engine\nHull Number: DDG-118\nAction: Oil sample analysis\nResults: Normal wear Fe:12ppm Cu:3ppm\nTechnician: MM2(SW) Garcia\nVerified By: MMCS(SW) Thompson\nNext Due: 2026-08-10\nSKED Status: Current",
+        USN_CASREP: "CASUALTY REPORT (CASREP)\nUnit: USS Porter (DDG-78)\nEquipment: AN/SPY-1D(V) Radar Transmitter\nSerial: SPY-TM-2019-04472\nCasualty Category: C4\nImpact: Degraded radar coverage sector 090-180\nETA Parts: 72 hours\nReported By: LCDR Pham, CSO\nDate: 2026-02-13",
+        USN_ORDNANCE: "Ordnance Lot Tracking\nDODIC: A059 (5.56mm Ball M855)\nLot Number: WCC-2025-1147-A\nNSN: 1305-01-299-5564\nManufacturer: Winchester (CAGE: 97173)\nQuantity: 250,000 rounds\nProof Test: PASS (MIL-C-63989D)\nStorage: Weapons Station Earle, Mag 14\nCustodian: GMC(SW) Rodriguez\nDate: 2026-02-13",
+        USN_CUSTODY: "Chain of Custody Transfer\nEquipment: AN/SPY-1D(V) Transmitter Module\nSerial: SPY-TM-2019-04472\nNSN: 5841-01-522-3401\nFrom: ET1(SW) Cooper, DDG-78\nTo: NAVSEA Det Norfolk, IMA\nSeal: Tamper-evident #TS-2026-0887\nDate: 2026-02-13",
+        USN_CDRL: "CDRL Delivery Record\nCDRL: A003\nTitle: Technical Manual Update Rev 4.2\nContract: N00024-23-C-5501\nContractor: Huntington Ingalls Industries\nDelivery Date: 2026-02-12\nStatus: Accepted by SUPSHIP\nVerified By: ACO Chief, DCMA Norfolk",
+        USN_CALIBRATION: "TMDE Calibration Record\nTMDE ID: CAL-8829-A\nEquipment: Fluke 87V Digital Multimeter\nSerial: FLK-2023-44127\nCalibration Standard: MIL-STD-45662A\nResult: PASS all parameters within spec\nCalibrated By: IC2(SW) Park, METCAL Det Norfolk\nNext Due: 2026-08-13\nDate: 2026-02-13",
+        USN_CONFIG: "Configuration Baseline Record\nSystem: Aegis Combat System (AN/SPY-1D)\nHull: DDG-118 USS Daniel Inouye\nBaseline: ACB-20.2 Rev C\nApproved Changes: ECP-2025-0114, ECP-2025-0122\nStatus: Verified current\nConfig Manager: CAPT Yee, PMS 400\nDate: 2026-02-13",
+        USN_DEPOT_REPAIR: "Depot Repair Record\nFacility: NAVSEA FRC Mid-Atlantic\nEquipment: LM2500 Gas Turbine Module 3\nSerial: LM25-MOD3-2018-0892\nWork Order: WO-2026-0341\nRepair: Hot section inspection + blade replacement\nResult: RFI - Ready for Issue\nHours: 847\nDate: 2026-02-13",
+        USA_HAND_RECEIPT: "DA Form 2062 Hand Receipt\nUnit: 3rd BCT, 101st Airborne\nProperty Book Officer: CPT Rivera\nItem: AN/PVS-14 Night Vision Device\nNSN: 5855-01-432-0524\nSerial: NVD-2024-08871\nQuantity: 24 EA\nCondition: Serviceable\nSub-hand receipt to: 1LT Nakamura, B Co\nDate: 2026-02-13",
+        USA_ARMS_ROOM: "Arms Room Inventory\nUnit: B Co, 2-506 IN, 101st ABN\nWeapon: M4A1 Carbine\nSerial: W367842\nNSN: 1005-01-231-0973\nRack Position: B-14\nOptics: M68 CCO SN: CCO-2023-14472\nLast Maintenance: 2026-02-01\nArms Room NCOIC: SSG Williams\nDate: 2026-02-13",
+        USA_VEHICLE: "Vehicle Dispatch Log\nUnit: HHC, 3rd BCT, 101st ABN\nVehicle: M1151A1 HMMWV\nBumper: 3BCT-HHC-12\nTripod #: 2026-0213-004\nDriver: SPC Collins, B License\nOdometer Start: 47,231\nFuel Level: 3/4\nPMCS Status: Green\nDate: 2026-02-13",
+        USAF_781_FLIGHT: "AFTO Form 781 Flight Record\nAircraft: F-16C Block 50\nTail: 91-0412\nUnit: 480th FS, Spangdahlem AB\nMission: Air-to-ground training sortie\nSorties: 1\nFlight Hours: 1.8\nPilot: Capt Williams\nDiscrepancies: None\nDate: 2026-02-13",
+        USAF_ENGINE: "Engine Management Record\nAircraft: F-16C Tail 91-0412\nEngine: F110-GE-129 IPE\nSerial: GE-129-2019-00447\nTSN: 2,847.3 hours\nTSO: 1,221.8 hours\nOil Consumption: 0.12 qt/hr (within limits)\nNext Inspection: 3,000 hrs HSI\nCEMS Entry By: TSgt Rivera\nDate: 2026-02-13",
+        USAF_MUNITIONS: "Munitions Inspection Record\nUnit: 52nd MXS, Spangdahlem AB\nMunition: AIM-120D AMRAAM\nSerial: AM-2024-01147\nLot: Raytheon Lot RA-2024-C\nInspection: Biannual serviceability\nResult: PASS - serviceable\nInspector: MSgt Tang, 2W1X1\nDate: 2026-02-13",
+        USMC_GROUND_MAINT: "Ground Equipment Maintenance\nUnit: 1st Maint Bn, Camp Pendleton\nEquipment: HMMWV M1151A1\nBumper: 1MaintBn-HQ-07\nWork Order: PM services, 6-month interval\nTechnician: Sgt Dominguez\nHours: 4.5\nParts Used: Oil filter NSN 2940-01-318-2345\nStatus: Operational\nDate: 2026-02-13",
+        USMC_WEAPONS: "Weapons Maintenance Record\nUnit: Wpns Co, 1/5 Marines\nWeapon System: M240B Machine Gun\nSerial: MG-240B-2021-08823\nNSN: 1005-01-412-4162\nAction: Headspace & timing check, barrel replacement\nRounds Since Last Service: 4,200\nArmorer: Cpl Quinn\nDate: 2026-02-13",
+        USCG_CUTTER_MAINT: "Cutter Maintenance Record\nVessel: USCGC Hamilton (WMSL-753)\nSystem: Main Diesel Engine #2\nAction: 500-hour inspection and filter change\nTechnician: MK1 Petersen\nParts: Fuel filter NSN 2910-01-456-7890\nCondition: Satisfactory\nNext PM: 2026-05-10\nDate: 2026-02-13",
+        USCG_SMALL_BOAT: "Small Boat Inspection\nUnit: Station Cape May\nBoat: 47-ft Motor Lifeboat (MLB)\nHull: 47312\nInspection Type: Quarterly hull survey\nResult: Hull integrity satisfactory\nEngines: Twin Detroit Diesel 6V92 - operational\nInspector: BM1 O'Connor\nDate: 2026-02-13",
+        DLA_DISTRIBUTION: "DLA Distribution Receipt\nFacility: DLA Distribution Norfolk\nNSN: 5340-01-234-5678\nQuantity: 200 EA\nContract: SPE4AX-24-D-0012\nShipment: TCN W81K5N-4052-2026\nCondition Code: A\nIntended Customer: USS Bataan (LHD-5)\nInspector: DLA QAR Henderson\nDate: 2026-02-13",
+        DLA_HAZMAT: "Hazmat Certification Record\nFacility: DLA Disposition Services, Norfolk\nMaterial: JP-5 Aviation Fuel Samples\nUN Number: UN1863\nHazard Class: 3 (Flammable Liquid)\nQuantity: 12 containers, 5 gal each\nSDS Reference: MSDS-JP5-2025-Rev3\nCertified By: HAZMAT Tech Rodriguez\nDate: 2026-02-13",
+        JOINT_F35: "F-35 JSF Logistics Record\nAircraft: F-35B Lightning II\nTail: 169654\nUnit: VMFA-121, MCAS Iwakuni\nSystem: ALIS/ODIN Component Track\nPart: APG-81 AESA Radar LRU-3\nNSN: 5841-01-599-8823\nAction: Scheduled replacement at 2000 FH\nNext Due: 2026-09-15\nDate: 2026-02-13",
+        JOINT_NATO: "NATO STANAG Verification\nDocument: STANAG 4280 Ed 3\nSubject: Navigation Data Quality\nNation: USA\nImplementation Status: Full\nAssessed By: J6 Interoperability Branch\nResult: Compliant\nNext Review: 2027-02-13\nDate: 2026-02-13",
+        SOCOM_WEAPONS: "SOF Weapons Maintenance\nUnit: 5th SFG(A), Fort Campbell\nWeapon: M110A1 CSASS (MRAD)\nSerial: MRAD-2024-01147\nAction: 2000-round barrel inspection\nResult: Within spec, 3800/5000 barrel life\nArmorer: SFC Williams\nNext Inspection: 4000 rounds\nDate: 2026-02-13",
+        SOCOM_COMMS: "SOF Communications Equipment\nUnit: 3rd SFG(A), Fort Bragg\nEquipment: AN/PRC-163 MBITR2\nSerial: PRC163-2024-07832\nFirmware: v4.2.1 (current)\nCrypto Load: Valid thru 2026-03-01\nBattery Status: 2x BB-2590 charged\nPMCS: Complete, all checks pass\nDate: 2026-02-13"
+    };
+
+    // Generate sample for any type key
+    function generateSample(typeKey) {
+        if (SAMPLE_RECORDS[typeKey]) return SAMPLE_RECORDS[typeKey];
+        var info = null;
+        for (var i = 0; i < recordTypesList.length; i++) {
+            if (recordTypesList[i].key === typeKey) { info = recordTypesList[i]; break; }
+        }
+        if (!info) return "Record Type: " + typeKey + "\nDate: 2026-02-13\nStatus: Complete\nDetails: Enter record content here";
+        var ref = "REF-2026-" + String(Math.floor(Math.random() * 9000 + 1000));
+        return info.label + "\nBranch: " + (info.branch || "JOINT") + "\nSystem: " + (info.system || "N/A") + "\nReference: " + ref + "\nDate: 2026-02-13\nStatus: Inspected / Complete\nAuthorized By: [Name/Rank]\nFacility: [Location]\nNotes: Enter detailed record content here";
+    }
+
+    // Build editor content based on current example + dropdown selection
+    function buildEditorContent() {
+        if (currentExample === 'metrics') return "# Fetch live S4 Ledger network metrics\nledger.get_metrics()";
+        var select = document.getElementById('recordTypeSelect');
+        var typeKey = (select && select.value) ? select.value : 'USN_SUPPLY_RECEIPT';
+        if (typeKey === 'CUSTOM') {
+            var funcMap = { hash:'hash_record', anchor:'anchor_record', verify:'verify_record', batch:'batch_anchor' };
+            return (funcMap[currentExample] || 'hash_record') + "(\n# Type or paste your custom record content here\n)";
+        }
+        var sample = generateSample(typeKey);
+        if (currentExample === 'batch') {
+            var title = sample.split('\n')[0] || typeKey;
+            return 'batch_anchor([\n  "' + title + ' | Batch item 1 | Ref-A",\n  "' + title + ' | Batch item 2 | Ref-B",\n  "' + title + ' | Batch item 3 | Ref-C",\n  "' + title + ' | Batch item 4 | Ref-D"\n])';
+        }
+        var funcMap = { hash:'hash_record', anchor:'anchor_record', verify:'verify_record' };
+        return (funcMap[currentExample] || 'hash_record') + '(' + sample + ')';
+    }
+
+    // Dropdown onchange — regenerate editor content
+    function onRecordTypeChange() {
+        document.getElementById('codeEditor').value = buildEditorContent();
+    }
+
+    // Fetch record types + populate dropdown with Custom option
     async function loadRecordTypes() {
         try {
             var res = await fetch('/api/record-types');
             var data = await res.json();
             recordTypes = data.categories || {};
+            recordTypesList = [];
             var select = document.getElementById('recordTypeSelect');
             select.innerHTML = '';
+            // Custom option
+            var co = document.createElement('option');
+            co.value = 'CUSTOM';
+            co.textContent = '\u270f\ufe0f Custom Record (free-form)';
+            select.appendChild(co);
+            var sep = document.createElement('option');
+            sep.disabled = true;
+            sep.textContent = '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500';
+            select.appendChild(sep);
             var grouped = data.grouped || {};
             for (var branchKey of Object.keys(grouped)) {
                 var branchData = grouped[branchKey];
@@ -226,251 +310,183 @@
                     var opt = document.createElement('option');
                     opt.value = t.key;
                     opt.textContent = t.icon + ' ' + t.label;
-                    select.appendChild(opt);
                     optgroup.appendChild(opt);
+                    recordTypesList.push({ key: t.key, label: t.label, icon: t.icon, branch: branchKey, system: t.system || '' });
                 });
                 select.appendChild(optgroup);
             }
+            // Default to first real type
+            if (select.options.length > 2) select.selectedIndex = 2;
+            select.onchange = onRecordTypeChange;
         } catch(e) { console.error('Failed to load record types:', e); }
     }
 
-    // ── Anchor animation ──
+    // ── Enhanced multi-stage anchor animation ──
     function showAnchorAnimation(text, sub) {
-        var overlay = document.getElementById('anchorOverlay');
+        var ov = document.getElementById('anchorOverlay');
+        var chain = document.getElementById('anchorChain');
+        var animHash = document.getElementById('anchorAnimHash');
+        var animFee = document.getElementById('anchorAnimFee');
+        var animSuccess = document.getElementById('anchorAnimSuccess');
         document.getElementById('anchorAnimText').textContent = text || 'Anchoring to XRPL...';
+        document.getElementById('anchorAnimText').style.color = '';
         document.getElementById('anchorAnimSub').textContent = sub || 'Computing SHA-256 hash';
-        overlay.classList.add('show');
-        var icon = overlay.querySelector('.anchor-anim-icon');
-        icon.style.animation = 'none';
-        icon.offsetHeight;
-        icon.style.animation = '';
+        if (chain) chain.style.height = '0';
+        if (animHash) { animHash.textContent = ''; animHash.style.opacity = '0'; }
+        if (animFee) { animFee.textContent = ''; animFee.style.opacity = '0'; }
+        if (animSuccess) { animSuccess.textContent = ''; animSuccess.className = 'anchor-anim-success'; }
+        ov.classList.add('show');
+        if (chain) setTimeout(function() { chain.style.height = '40px'; }, 100);
+        var icon = ov.querySelector('.anchor-anim-icon');
+        if (icon) { icon.style.animation = 'none'; icon.offsetHeight; icon.style.animation = ''; }
+    }
+    function updateAnchorAnimation(hash, successText) {
+        var animText = document.getElementById('anchorAnimText');
+        var animHash = document.getElementById('anchorAnimHash');
+        var animFee = document.getElementById('anchorAnimFee');
+        var animSuccess = document.getElementById('anchorAnimSuccess');
+        if (hash && animHash) { animHash.textContent = hash; animHash.style.opacity = '1'; }
+        if (animFee) { animFee.textContent = '0.01 $SLS \u2192 Treasury'; animFee.style.opacity = '1'; }
+        if (successText && animText) { animText.textContent = '\u2705 ' + successText; animText.style.color = '#14f195'; }
+        if (successText && animSuccess) { animSuccess.textContent = '\u2713 Record secured on XRPL'; animSuccess.className = 'anchor-anim-success show'; }
     }
     function hideAnchorAnimation() {
         document.getElementById('anchorOverlay').classList.remove('show');
     }
 
-    // ══════════════════════════════════════════════════════
-    //  SMART CONTENT EXTRACTION — reads whatever is in
-    //  the editor and pulls out the record text
-    // ══════════════════════════════════════════════════════
+    // ── Smart content extraction from editor ──
     function extractRecordContent() {
         var code = document.getElementById('codeEditor').value;
-
-        // 1) Triple-quoted Python strings: """...""" or '''...'''
         var m = code.match(/"{3}([\s\S]*?)"{3}/) || code.match(/'{3}([\s\S]*?)'{3}/);
         if (m && m[1].trim().length > 3) return m[1].trim();
-
-        // 2) Variable assignment: record = "..." or content = "..."
         m = code.match(/(?:record|original|content)\s*=\s*"((?:[^"\\]|\\.)*)"/);
         if (m && m[1].trim().length > 3) return m[1].replace(/\\n/g, '\n').trim();
-
-        // 3) Function call: hash_record(...) / anchor_record(...) / verify_record(...)
-        //    Handles raw text inside parens (no quotes needed)
         m = code.match(/(?:hash_record|anchor_record|verify_record)\s*\(([\s\S]+)\)/);
         if (m) {
             var inner = m[1].trim();
-            // Strip keyword arg prefix like record= or content=
             inner = inner.replace(/^(?:record|content|original)\s*=\s*/i, '');
-            // Strip surrounding quotes if present
-            inner = inner.replace(/^["']{1,3}/, '').replace(/["']{1,3}\s*$/,'');
-            // Strip trailing kwargs like , record_type="...", encrypt=True
+            inner = inner.replace(/^["']{1,3}/, '').replace(/["']{1,3}\s*$/, '');
             inner = inner.replace(/,\s*(?:record_type|type|encrypt)\s*=[\s\S]*$/i, '');
             if (inner.trim().length > 3) return inner.trim();
         }
-
-        // 4) Strip Python boilerplate lines and use the rest as raw content
         var lines = code.split('\n').filter(function(l) {
             var t = l.trim();
-            return t && t !== ')' && t !== '...' &&
-                   !t.startsWith('#') && !t.startsWith('from ') &&
+            return t && t !== ')' && t !== '...' && !t.startsWith('#') && !t.startsWith('from ') &&
                    !t.startsWith('import ') && !t.startsWith('print(') &&
                    !t.match(/^(ledger|result|expected|sdk|metrics)\s*=/) &&
-                   !t.match(/^result\s*=\s*ledger/) &&
-                   !t.match(/^expected\s*=\s*ledger/) &&
+                   !t.match(/^result\s*=\s*ledger/) && !t.match(/^expected\s*=\s*ledger/) &&
                    !t.match(/^for\s/);
         });
         if (lines.length > 0) return lines.join('\n').trim();
-
-        // 5) Last resort — entire editor content
         return code.trim();
     }
 
-    // ── Example templates (displayed in editor) ──
-    var TEMPLATES = {
-        hash: { showRecordType: false, code: 'hash_record(Supply Chain Receipt\nNSN: 5340-01-234-5678\nNomenclature: Valve, Gate, Carbon Steel\nContract: N00024-23-C-5501\nCAGE Code: 1THK9\nQuantity Received: 50 EA\nCondition Code: A (Serviceable)\nInspection: FAT Pass\nReceiving Depot: Norfolk Naval Shipyard (NNSY)\nInspector: QA-237 J. Martinez\nDate: 2026-02-10)' },
-
-        anchor: { showRecordType: true, code: 'anchor_record(Maintenance 3-M Action\nMRC: 2815-1.3.7\nEquipment: LM2500 Gas Turbine\nHull: DDG-118\nAction: Oil sample analysis\nResult: Normal wear, SAE 15W-40 within spec\nTechnician: MM2(SW) Garcia\nDate: 2026-02-10)' },
-
-        verify: { showRecordType: false, code: 'verify_record(CDRL Delivery Record\nCDRL: A003\nTitle: Technical Manual Update Rev 4.2\nContract: N00024-23-C-5501\nContractor: Huntington Ingalls Industries\nDelivery Date: 2026-02-09\nStatus: Accepted by SUPSHIP)' },
-
-        batch: { showRecordType: true, code: 'batch_anchor([\n  "Supply receipt NSN 5340-01-234-5678 | Qty 50 EA | Norfolk NNSY",\n  "Ordnance lot WCC-2025-1147-A inspected | 5.56mm Ball M855",\n  "CASREP DDG-78 radar transmitter module | C4 mission-degrading",\n  "Calibration cert TMDE #8829-A thermal imaging | Due 2026-08"\n])' },
-
-        metrics: { showRecordType: false, code: '# Fetch live S4 Ledger network metrics\nledger.get_metrics()' }
-    };
+    function getSelectedRecordType() {
+        var s = document.getElementById('recordTypeSelect');
+        return (s && s.value && s.value !== 'CUSTOM') ? s.value : '';
+    }
 
     // ══════════════════════════════════════════════════════
-    //  API RUNNERS — one per operation, each reads from
-    //  the editor via extractRecordContent()
+    //  API RUNNERS — each reads from editor content
     // ══════════════════════════════════════════════════════
 
     async function runHash() {
         var record = extractRecordContent();
+        showAnchorAnimation('Computing SHA-256...', 'Hashing record content');
         var res = await fetch('/api/hash', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST', headers: {'Content-Type':'application/json'},
             body: JSON.stringify({ record: record })
         });
         var data = await res.json();
-        var preview = record.length > 120 ? record.substring(0, 120) + '...' : record;
-        return '>>> ledger.hash_record(record)\n\n' +
-               'POST /api/hash  \u2192  200 OK\n\n' +
-               '{\n' +
-               '  "hash":      "' + data.hash + '",\n' +
-               '  "algorithm": "' + data.algorithm + '"\n' +
-               '}\n\n' +
-               '\u2713 Hash computed server-side via /api/hash\n' +
-               '\u2713 Input:\n' + preview;
+        await new Promise(function(r){setTimeout(r,600)});
+        updateAnchorAnimation(data.hash, 'Hash Computed!');
+        await new Promise(function(r){setTimeout(r,1200)});
+        hideAnchorAnimation();
+        var typeKey = getSelectedRecordType();
+        var typeLabel = typeKey && recordTypes[typeKey] ? recordTypes[typeKey].label : 'Custom Record';
+        var preview = record.length > 140 ? record.substring(0,140)+'...' : record;
+        return '>>> ledger.hash_record(record)\n\nPOST /api/hash  \u2192  200 OK\n\n{\n  "hash":        "' + data.hash + '",\n  "algorithm":   "SHA-256",\n  "record_type": "' + typeLabel + '"\n}\n\n\u2713 Hash computed server-side via /api/hash\n\u2713 No record data is stored \u2014 only this hash is used for anchoring.\n\nInput:\n' + preview;
     }
 
     async function runAnchor() {
-        var recordType = document.getElementById('recordTypeSelect').value || 'USN_3M_MAINTENANCE';
+        var typeKey = getSelectedRecordType() || 'USN_SUPPLY_RECEIPT';
         var content = extractRecordContent();
-        var typeLabel = recordTypes[recordType] ? recordTypes[recordType].label : recordType;
-
+        var typeLabel = recordTypes[typeKey] ? recordTypes[typeKey].label : typeKey;
         showAnchorAnimation('Anchoring to XRPL...', 'Hashing & submitting ' + typeLabel);
-
-        var hashRes = await fetch('/api/hash', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ record: content })
-        });
+        var hashRes = await fetch('/api/hash', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({record:content}) });
         var hashData = await hashRes.json();
-        await new Promise(function(r) { setTimeout(r, 800); });
-
-        var anchorRes = await fetch('/api/anchor', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                record_type: recordType,
-                hash: hashData.hash,
-                content_preview: content.substring(0, 80)
-            })
-        });
+        await new Promise(function(r){setTimeout(r,600)});
+        updateAnchorAnimation(hashData.hash, null);
+        var anchorRes = await fetch('/api/anchor', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({record_type:typeKey,hash:hashData.hash,content_preview:content.substring(0,80)}) });
         var anchorData = await anchorRes.json();
         var rec = anchorData.record || {};
         if (rec.hash) saveLocalRecord(rec);
-        await new Promise(function(r) { setTimeout(r, 600); });
+        await new Promise(function(r){setTimeout(r,600)});
+        updateAnchorAnimation(hashData.hash, (rec.record_label || typeLabel) + ' Anchored!');
+        await new Promise(function(r){setTimeout(r,1400)});
         hideAnchorAnimation();
-
-        return '>>> ledger.anchor_record(content, record_type="' + recordType + '")\n\n' +
-               'POST /api/hash    \u2192  200 OK\n' +
-               'POST /api/anchor  \u2192  200 OK\n\n' +
-               '{\n' +
-               '  "status":       "' + anchorData.status + '",\n' +
-               '  "hash":         "' + rec.hash + '",\n' +
-               '  "tx_hash":      "' + rec.tx_hash + '",\n' +
-               '  "record_type":  "' + rec.record_type + '",\n' +
-               '  "record_label": "' + rec.record_label + '",\n' +
-               '  "branch":       "' + rec.branch + '",\n' +
-               '  "system":       "' + rec.system + '",\n' +
-               '  "fee":          ' + rec.fee + ' $SLS,\n' +
-               '  "timestamp":    "' + rec.timestamp_display + '"\n' +
-               '}\n\n' +
-               '\u2713 Record anchored to XRPL \u2014 0.01 $SLS fee.\n' +
-               '\u2713 Now visible on Metrics & Transactions pages!';
+        return '>>> ledger.anchor_record(content, record_type="' + typeKey + '")\n\nPOST /api/hash    \u2192  200 OK\nPOST /api/anchor  \u2192  200 OK\n\n{\n  "status":       "' + anchorData.status + '",\n  "hash":         "' + rec.hash + '",\n  "tx_hash":      "' + rec.tx_hash + '",\n  "record_type":  "' + rec.record_type + '",\n  "record_label": "' + rec.record_label + '",\n  "branch":       "' + rec.branch + '",\n  "system":       "' + rec.system + '",\n  "fee":          ' + (rec.fee || 0.01) + ' $SLS,\n  "timestamp":    "' + rec.timestamp_display + '"\n}\n\n\u2713 Record anchored to XRPL \u2014 0.01 $SLS fee.\n\u2713 Now visible on Metrics & Transactions pages!';
     }
 
     async function runVerify() {
         var content = extractRecordContent();
         showAnchorAnimation('Verifying Record...', 'Computing hash & comparing');
-
-        var hashRes = await fetch('/api/hash', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ record: content })
-        });
+        var hashRes = await fetch('/api/hash', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({record:content}) });
         var hashData = await hashRes.json();
-        await new Promise(function(r) { setTimeout(r, 800); });
+        await new Promise(function(r){setTimeout(r,600)});
+        updateAnchorAnimation(hashData.hash, 'Record Verified!');
+        await new Promise(function(r){setTimeout(r,1200)});
         hideAnchorAnimation();
-
-        return '>>> ledger.verify_record(content, expected_hash)\n\n' +
-               'POST /api/hash  \u2192  200 OK\n\n' +
-               '{\n' +
-               '  "verified":      true,\n' +
-               '  "computed_hash": "' + hashData.hash + '",\n' +
-               '  "expected_hash": "' + hashData.hash + '",\n' +
-               '  "match":         true,\n' +
-               '  "algorithm":     "SHA-256",\n' +
-               '  "message":       "Record integrity confirmed \u2014 hash matches."\n' +
-               '}\n\n' +
-               '\u2713 VERIFIED \u2014 Record has not been altered since anchoring.';
+        return '>>> ledger.verify_record(content, expected_hash)\n\nPOST /api/hash  \u2192  200 OK\n\n{\n  "verified":      true,\n  "computed_hash": "' + hashData.hash + '",\n  "expected_hash": "' + hashData.hash + '",\n  "match":         true,\n  "algorithm":     "SHA-256",\n  "message":       "Record integrity confirmed \u2014 hash matches."\n}\n\n\u2713 VERIFIED \u2014 Record has not been altered since anchoring.';
     }
 
     async function runBatch() {
-        // Parse lines from editor — each quoted or bare line is a record
         var code = document.getElementById('codeEditor').value;
         var items = [];
         var lineMatches = code.match(/"([^"]+)"/g);
         if (lineMatches && lineMatches.length > 0) {
             lineMatches.forEach(function(s) { items.push(s.replace(/^"|"$/g, '')); });
         } else {
-            // Fall back: split by newlines, skip boilerplate
             items = code.split('\n').filter(function(l) {
                 var t = l.trim();
                 return t && t.length > 10 && !t.startsWith('#') && !t.startsWith('batch') && !t.startsWith('[') && !t.startsWith(']') && !t.startsWith('from ') && !t.startsWith('import ');
             });
         }
         if (items.length === 0) items = ['Supply receipt NSN 5340-01-234-5678', 'Ordnance lot WCC-2025-1147-A', 'CASREP DDG-78 radar module', 'Calibration cert TMDE #8829-A'];
-
-        var recordType = document.getElementById('recordTypeSelect').value || 'USN_SUPPLY_RECEIPT';
+        var typeKey = getSelectedRecordType() || 'USN_SUPPLY_RECEIPT';
         showAnchorAnimation('Batch Anchoring...', 'Anchoring ' + items.length + ' records to XRPL');
-
         var output = '>>> ledger.batch_anchor(records)\n\n';
         var totalFees = 0;
-
         for (var i = 0; i < items.length; i++) {
             var content = items[i].trim();
-            var hashRes = await fetch('/api/hash', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ record: content })
-            });
+            var hashRes = await fetch('/api/hash', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({record:content}) });
             var hashData = await hashRes.json();
-            var anchorRes = await fetch('/api/anchor', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ record_type: recordType, hash: hashData.hash, content_preview: content.substring(0, 60) })
-            });
+            var anchorRes = await fetch('/api/anchor', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({record_type:typeKey,hash:hashData.hash,content_preview:content.substring(0,60)}) });
             var anchorData = await anchorRes.json();
             if (anchorData.record && anchorData.record.hash) saveLocalRecord(anchorData.record);
-            var label = (anchorData.record && anchorData.record.record_label) ? anchorData.record.record_label : recordType;
-            output += 'POST /api/anchor  ' + label.padEnd(28) + ' \u2192 ' + hashData.hash.substring(0, 16) + '... \u2713\n';
+            var label = (anchorData.record && anchorData.record.record_label) ? anchorData.record.record_label : typeKey;
+            output += 'POST /api/anchor  ' + label.padEnd(28) + ' \u2192 ' + hashData.hash.substring(0,16) + '... \u2713\n';
             totalFees += 0.01;
         }
-
-        await new Promise(function(r) { setTimeout(r, 400); });
+        await new Promise(function(r){setTimeout(r,400)});
+        updateAnchorAnimation(null, 'Batch Complete!');
+        await new Promise(function(r){setTimeout(r,1000)});
         hideAnchorAnimation();
-
-        output += '\n' + '\u2500'.repeat(60) + '\n';
-        output += 'Batch complete: ' + items.length + ' records anchored\n';
-        output += 'Total $SLS fee: ' + totalFees.toFixed(2) + '\n\n';
-        output += '\u2713 All records anchored. Check Metrics & Transactions pages!';
+        output += '\n' + '\u2500'.repeat(60) + '\nBatch complete: ' + items.length + ' records anchored\nTotal $SLS fee: ' + totalFees.toFixed(2) + '\n\n\u2713 All records anchored. Check Metrics & Transactions pages!';
         return output;
     }
 
     async function runMetrics() {
         var res = await fetch('/api/metrics');
         var data = await res.json();
-
         var output = '>>> ledger.get_metrics()\n\nGET /api/metrics  \u2192  200 OK\n\n';
         output += 'Total Hashes:   ' + data.total_hashes + '\n';
         output += 'Total Fees:     $' + data.total_fees + ' SLS\n';
         output += 'Record Types:   ' + data.total_record_types + '\n';
         output += 'Hashes Today:   ' + data.hashes_today + '\n';
         output += 'This Month:     ' + data.this_month + '\n\n';
-
         output += 'Top record types:\n';
-        var types = Object.entries(data.records_by_type || {}).slice(0, 10);
+        var types = Object.entries(data.records_by_type || {}).slice(0,10);
         for (var i = 0; i < types.length; i++) {
             output += '  ' + types[i][0].padEnd(38) + String(types[i][1]).padStart(5) + '\n';
         }
@@ -485,28 +501,26 @@
         return output;
     }
 
-    // Map example key -> runner
-    var RUNNERS = {
-        hash: runHash,
-        anchor: runAnchor,
-        verify: runVerify,
-        batch: runBatch,
-        metrics: runMetrics
+    var RUNNERS = { hash:runHash, anchor:runAnchor, verify:runVerify, batch:runBatch, metrics:runMetrics };
+    var TEMPLATES = {
+        hash: { showRecordType: true },
+        anchor: { showRecordType: true },
+        verify: { showRecordType: true },
+        batch: { showRecordType: true },
+        metrics: { showRecordType: false }
     };
 
-    // ── Load example ──
     function loadExample(key, el) {
         currentExample = key;
         var tmpl = TEMPLATES[key];
-        document.getElementById('codeEditor').value = tmpl.code;
+        document.getElementById('codeEditor').value = buildEditorContent();
         document.getElementById('outputPanel').textContent = 'Click "Run" to execute the code above...';
         document.getElementById('statusDot').className = 'status-dot';
-        document.querySelectorAll('.example-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.example-btn').forEach(function(b){b.classList.remove('active')});
         if (el) el.classList.add('active');
         document.getElementById('recordTypeArea').style.display = tmpl.showRecordType ? 'block' : 'none';
     }
 
-    // ── Run code (calls live API with editor content) ──
     async function runCode() {
         var btn = document.getElementById('runBtn');
         var output = document.getElementById('outputPanel');
@@ -515,7 +529,6 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
         output.textContent = '>>> Connecting to /api...\n';
         dot.className = 'status-dot';
-
         try {
             var runner = RUNNERS[currentExample];
             if (!runner) throw new Error('Unknown command: ' + currentExample);
@@ -528,14 +541,14 @@
             dot.className = 'status-dot error';
             console.error('SDK Playground error:', err);
         }
-
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-play"></i> Run';
     }
 
-    // ── Init ──
     document.addEventListener('DOMContentLoaded', function() {
-        loadRecordTypes();
+        loadRecordTypes().then(function() {
+            document.getElementById('codeEditor').value = buildEditorContent();
+        });
         loadExample('hash', document.querySelector('.example-btn'));
     });
     </script>

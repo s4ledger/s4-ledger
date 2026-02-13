@@ -94,25 +94,32 @@
         .branch-count{font-size:0.8rem;color:var(--muted);margin-bottom:6px}
         ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
         @media(max-width:768px){.hero h1{font-size:1.6rem}.record-type-grid{grid-template-columns:repeat(2,1fr)}.branch-tabs{gap:4px}.branch-tab{font-size:0.75rem;padding:5px 10px}}
+
+        @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+        @keyframes brandGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+        .scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,#00aaff,#c9a84c);z-index:10000;transition:width 0.1s linear;box-shadow:0 0 10px #00aaff}
+        .reveal-demo{opacity:0;transform:translateY(25px);transition:all 0.5s ease-out}
+        .reveal-demo.visible{opacity:1;transform:translateY(0)}
     </style>
 </head>
 <body>
+<div class="scroll-progress" id="scrollProgress"></div>
 <div class="mesh-overlay"><div class="g-orb g-orb-1"></div><div class="g-orb g-orb-2"></div><div class="g-orb g-orb-3"></div></div>
 <div id="particles-js"></div>
 
 <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="https://s4ledger.com"><i class="fas fa-shield-halved" style="margin-right:6px"></i>S4 <span>Ledger</span></a>
+        <a class="navbar-brand" href="../" style="font-weight:700;display:flex;align-items:center;gap:10px;text-decoration:none;"><img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:32px;width:32px;animation:logoFloat 3s ease-in-out infinite;"><span style="background:linear-gradient(135deg,#00aaff,#ffffff,#c9a84c);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:brandGradient 4s ease infinite;font-size:1.2rem;letter-spacing:0.5px;">S4 Ledger</span></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color:var(--border)"><span class="navbar-toggler-icon" style="filter:invert(0.8)"></span></button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="https://s4ledger.com">Home</a></li>
-                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Company</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="https://s4ledger.com/s4-about/" style="color:#fff">About Us</a></li><li><a class="dropdown-item" href="https://s4ledger.com/s4-investors/" style="color:#fff">Investors</a></li><li><a class="dropdown-item" href="https://s4ledger.com/s4-partners/" style="color:#fff">Partners</a></li></ul></li>
-                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Products</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="#" style="color:#fff;font-weight:600"><i class="fas fa-play-circle" style="width:18px;margin-right:6px;color:#00aaff"></i>Demo App</a></li><li><a class="dropdown-item" href="https://s4ledger.com/sdk-playground/" style="color:#fff"><i class="fas fa-code" style="width:18px;margin-right:6px;color:#c9a84c"></i>SDK Playground</a></li><li><a class="dropdown-item" href="https://s4ledger.com/metrics.html" style="color:#fff"><i class="fas fa-chart-bar" style="width:18px;margin-right:6px;color:#00aaff"></i>Live Metrics</a></li><li><a class="dropdown-item" href="https://s4ledger.com/transactions.html" style="color:#fff"><i class="fas fa-list" style="width:18px;margin-right:6px;color:#c9a84c"></i>Transactions</a></li><li><a class="dropdown-item" href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:#fff"><i class="fab fa-github" style="width:18px;margin-right:6px"></i>SDK & Docs</a></li></ul></li>
-                <li class="nav-item"><a class="nav-link" href="https://s4ledger.com/s4-use-cases/">Use Cases</a></li>
-                <li class="nav-item"><a class="nav-link" href="https://s4ledger.com/s4-pricing/">Pricing</a></li>
-                <li class="nav-item"><a class="nav-link" href="https://s4ledger.com/s4-faq/">FAQ</a></li>
-                <li class="nav-item"><a class="nav-link" href="https://s4ledger.com/s4-contact/">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="../">Home</a></li>
+                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Company</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="../s4-about/" style="color:#fff">About Us</a></li><li><a class="dropdown-item" href="../s4-investors/" style="color:#fff">Investors</a></li><li><a class="dropdown-item" href="../s4-partners/" style="color:#fff">Partners</a></li></ul></li>
+                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Products</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="#" style="color:#fff;font-weight:600"><i class="fas fa-play-circle" style="width:18px;margin-right:6px;color:#00aaff"></i>Demo App</a></li><li><a class="dropdown-item" href="../sdk-playground/" style="color:#fff"><i class="fas fa-code" style="width:18px;margin-right:6px;color:#c9a84c"></i>SDK Playground</a></li><li><a class="dropdown-item" href="../metrics.html" style="color:#fff"><i class="fas fa-chart-bar" style="width:18px;margin-right:6px;color:#00aaff"></i>Live Metrics</a></li><li><a class="dropdown-item" href="../transactions.html" style="color:#fff"><i class="fas fa-list" style="width:18px;margin-right:6px;color:#c9a84c"></i>Transactions</a></li><li><a class="dropdown-item" href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:#fff"><i class="fab fa-github" style="width:18px;margin-right:6px"></i>SDK & Docs</a></li></ul></li>
+                <li class="nav-item"><a class="nav-link" href="../s4-use-cases/">Use Cases</a></li>
+                <li class="nav-item"><a class="nav-link" href="../s4-pricing/">Pricing</a></li>
+                <li class="nav-item"><a class="nav-link" href="../s4-faq/">FAQ</a></li>
+                <li class="nav-item"><a class="nav-link" href="../s4-contact/">Contact</a></li>
             </ul>
         </div>
     </div>
@@ -126,9 +133,9 @@
     </div>
 </section>
 
-<section class="tab-section">
+<section class="tab-section reveal-demo">
     <div class="container">
-        <div class="row mb-4" id="statsRow">
+        <div class="row mb-4 reveal-demo" id="statsRow">
             <div class="col-6 col-md-3 mb-3"><div class="stat-card"><div class="stat-value" id="statAnchored">0</div><div class="stat-label">Records Anchored</div></div></div>
             <div class="col-6 col-md-3 mb-3"><div class="stat-card"><div class="stat-value" id="statVerified">0</div><div class="stat-label">Records Verified</div></div></div>
             <div class="col-6 col-md-3 mb-3"><div class="stat-card"><div class="stat-value" id="statTypes">0</div><div class="stat-label">Record Types Used</div></div></div>
@@ -312,9 +319,10 @@
 
 <footer>
     <div class="container">
-        <p><strong>S4 Ledger</strong> &mdash; Immutable Logistics Verification for the Defense Industry</p>
-        <p style="margin-top:0.5rem"><a href="https://s4ledger.com">s4ledger.com</a> &nbsp;|&nbsp; <a href="https://github.com/s4ledger/s4-ledger" target="_blank">GitHub</a> &nbsp;|&nbsp; <a href="https://x.com/S4_Ledger" target="_blank">X/Twitter</a></p>
-        <p style="margin-top:0.5rem;font-size:0.8rem">&copy; 2026 S4 Systems, LLC. Demo uses XRPL Testnet.</p>
+        <div style="margin-bottom:12px;"><img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:28px;width:28px;margin-right:8px;vertical-align:middle;animation:logoFloat 4s ease-in-out infinite;"><span style="font-weight:700;font-size:1.1rem;">S4 Ledger</span><span style="color:var(--muted);margin-left:5px;">&mdash; Secure Logistics Standard</span></div>
+        <p style="font-size:0.82rem;margin-bottom:10px;">Immutable logistics verification for the defense industry. Built on the XRP Ledger.</p>
+        <div style="margin-bottom:10px;"><a href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:var(--muted);margin:0 10px;text-decoration:none;"><i class="fab fa-github fa-lg"></i></a><a href="https://x.com/S4_Ledger" target="_blank" style="color:var(--muted);margin:0 10px;text-decoration:none;"><i class="fab fa-x-twitter fa-lg"></i></a><a href="https://linkedin.com" target="_blank" style="color:var(--muted);margin:0 10px;text-decoration:none;"><i class="fab fa-linkedin fa-lg"></i></a></div>
+        <p style="font-size:0.75rem;color:var(--muted);">$SLS is a utility token &mdash; not equity or an investment contract. &copy; 2026 S4 Ledger. Demo uses XRPL Testnet.</p>
     </div>
 </footer>
 
@@ -484,14 +492,14 @@ let stats = {anchored:0,verified:0,types:new Set(),slsFees:0};
 // ── localStorage cross-page record sync ──
 const S4_STORAGE_KEY = 's4_anchored_records';
 const S4_STATS_KEY = 's4_demo_stats';
-function getLocalRecords() { try { return JSON.parse(localStorage.getItem(S4_STORAGE_KEY) || '[]'); } catch { return []; } }
+function getLocalRecords() { try { return JSON.parse(localStorage.getItem(S4_STORAGE_KEY) || '[]'); } catch(e) { return []; } }
 function saveLocalRecord(rec) { const records = getLocalRecords(); records.push(rec); localStorage.setItem(S4_STORAGE_KEY, JSON.stringify(records)); }
 function saveStats() { localStorage.setItem(S4_STATS_KEY, JSON.stringify({anchored:stats.anchored,verified:stats.verified,types:[...stats.types],slsFees:stats.slsFees})); }
 function loadStats() {
     try {
         const saved = JSON.parse(localStorage.getItem(S4_STATS_KEY) || 'null');
         if (saved) { stats.anchored = saved.anchored || 0; stats.verified = saved.verified || 0; stats.types = new Set(saved.types || []); stats.slsFees = saved.slsFees || 0; }
-    } catch {}
+    } catch(e) {}
     // Also restore session records from localStorage
     const localRecs = getLocalRecords();
     sessionRecords = localRecs.map(r => ({
@@ -683,6 +691,24 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <script>
 if(typeof particlesJS!=='undefined'&&document.getElementById('particles-js')){particlesJS('particles-js',{particles:{number:{value:35},color:{value:'#00aaff'},opacity:{value:0.12},size:{value:2},line_linked:{enable:true,distance:150,color:'#00aaff',opacity:0.06,width:1},move:{enable:true,speed:0.7}},interactivity:{events:{onhover:{enable:true,mode:'grab'}},modes:{grab:{distance:130,line_linked:{opacity:0.15}}}}});}
+</script>
+
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;right:30px;width:45px;height:45px;background:linear-gradient(135deg,#00aaff,#c9a84c);border:none;border-radius:50%;color:#fff;font-size:1.3rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;z-index:999;display:flex;align-items:center;justify-content:center;">&uarr;</button>
+<script>
+// Scroll progress bar
+window.addEventListener('scroll', function() {
+    var scroll = window.scrollY;
+    var height = document.documentElement.scrollHeight - window.innerHeight;
+    var bar = document.getElementById('scrollProgress');
+    if (bar) bar.style.width = (height > 0 ? (scroll / height * 100) : 0) + '%';
+    var btn = document.getElementById('backToTop');
+    if (btn) { if (scroll > 400) { btn.style.opacity='1'; btn.style.visibility='visible'; } else { btn.style.opacity='0'; btn.style.visibility='hidden'; } }
+});
+// Reveal on scroll
+var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal-demo').forEach(function(el) { revealObserver.observe(el); });
 </script>
 </body>
 </html>
