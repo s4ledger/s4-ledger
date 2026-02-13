@@ -405,6 +405,11 @@ class handler(BaseHTTPRequestHandler):
         route = self._route(parsed.path)
 
         if route == "health":
+            root_files = []
+            try:
+                root_files = sorted(os.listdir(PROJECT_ROOT))[:25]
+            except Exception as e:
+                root_files = [str(e)]
             self._send_json({
                 "status": "operational",
                 "service": "S4 Ledger Defense Metrics API",
@@ -412,6 +417,9 @@ class handler(BaseHTTPRequestHandler):
                 "record_types": len(RECORD_CATEGORIES),
                 "branches": len(BRANCHES),
                 "total_records": len(_get_all_records()),
+                "_debug_root": PROJECT_ROOT,
+                "_debug_file": os.path.abspath(__file__),
+                "_debug_root_files": root_files,
             })
         elif route == "metrics":
             records = _get_all_records()
@@ -456,44 +464,47 @@ class handler(BaseHTTPRequestHandler):
 
     def _serve_static(self, path):
         """Serve static files - fallback when Vercel routes everything through Python."""
-        # Normalize path
-        if path == '' or path == '/':
-            path = '/index.html'
-        elif path.endswith('/') and not path.endswith('.html'):
-            path = path + 'index.html'
-        elif '.' not in os.path.basename(path):
-            path = path.rstrip('/') + '/index.html'
+        try:
+            # Normalize path
+            if not path or path == '/':
+                path = '/index.html'
+            elif path.endswith('/'):
+                path = path + 'index.html'
+            elif '.' not in os.path.basename(path):
+                path = path.rstrip('/') + '/index.html'
 
-        # Security: prevent directory traversal
-        safe_path = os.path.normpath(path.lstrip('/'))
-        if safe_path.startswith('..'):
-            self._send_json({"error": "Forbidden"}, 403)
-            return
+            # Security: prevent directory traversal
+            safe_path = os.path.normpath(path.lstrip('/'))
+            if safe_path.startswith('..'):
+                self._send_json({"error": "Forbidden"}, 403)
+                return
 
-        file_path = os.path.join(PROJECT_ROOT, safe_path)
+            file_path = os.path.join(PROJECT_ROOT, safe_path)
 
-        if os.path.isfile(file_path):
-            ext = os.path.splitext(file_path)[1].lower()
-            content_type = MIME_TYPES.get(ext, 'application/octet-stream')
-            try:
-                mode = 'r' if content_type.startswith(('text/', 'application/json', 'application/javascript', 'application/xml', 'application/manifest', 'image/svg')) else 'rb'
-                with open(file_path, mode) as f:
+            if os.path.isfile(file_path):
+                ext = os.path.splitext(file_path)[1].lower()
+                content_type = MIME_TYPES.get(ext, 'application/octet-stream')
+                with open(file_path, 'rb') as f:
                     body = f.read()
-                if isinstance(body, str):
-                    body = body.encode('utf-8')
                 self.send_response(200)
                 self.send_header('Content-Type', content_type)
                 self.send_header('Content-Length', str(len(body)))
                 self.send_header('Cache-Control', 'public, max-age=60')
                 self.end_headers()
                 self.wfile.write(body)
-            except Exception:
-                self._send_json({"error": "Internal server error"}, 500)
-        else:
-            # Return friendly 404 page
-            body = b'<!DOCTYPE html><html><head><meta charset="utf-8"><title>404 - S4 Ledger</title></head><body style="font-family:sans-serif;text-align:center;padding:80px;"><h1>404</h1><p>Page not found</p><a href="/">Go to S4 Ledger Home</a></body></html>'
-            self.send_response(404)
-            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            else:
+                # Return friendly 404 page
+                body = b'<!DOCTYPE html><html><head><meta charset="utf-8"><title>404 - S4 Ledger</title></head><body style="font-family:sans-serif;text-align:center;padding:80px;"><h1>404</h1><p>Page not found</p><p style="color:#999;font-size:0.8em;">Path: ' + safe_path.encode() + b' | Root: ' + PROJECT_ROOT.encode() + b'</p><a href="/">Go to S4 Ledger Home</a></body></html>'
+                self.send_response(404)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+        except Exception as e:
+            # Emergency fallback — never crash
+            body = json.dumps({"error": str(e), "path": path, "project_root": PROJECT_ROOT}).encode()
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
             self.send_header('Content-Length', str(len(body)))
             self.end_headers()
             self.wfile.write(body)
