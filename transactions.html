@@ -4,461 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S4 Ledger | Live XRPL Transactions</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="description" content="Real-time anchored defense logistics record hashes on the XRP Ledger.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="s4-assets/style.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
-        :root {
-            --bg: #050608;
-            --accent: #14f195;
-            --secondary: #9945ff;
-            --tertiary: #00c2ff;
-            --warning: #ffa502;
-            --danger: #ff4757;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-        }
-        * { box-sizing: border-box; }
-        body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            margin: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        /* Animated mesh background */
-        .mesh-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(ellipse at 0% 0%, rgba(153, 69, 255, 0.15) 0px, transparent 50%),
-                radial-gradient(ellipse at 100% 0%, rgba(20, 241, 149, 0.12) 0px, transparent 50%),
-                radial-gradient(ellipse at 100% 100%, rgba(0, 194, 255, 0.1) 0px, transparent 50%),
-                radial-gradient(ellipse at 0% 100%, rgba(255, 71, 87, 0.08) 0px, transparent 50%);
-            z-index: -1;
-            filter: blur(80px);
-            animation: meshMove 20s ease-in-out infinite;
-        }
-        @keyframes meshMove {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(2%, 2%) scale(1.02); }
-            50% { transform: translate(-1%, 1%) scale(1); }
-            75% { transform: translate(1%, -2%) scale(1.01); }
-        }
-        
-        /* Floating particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--secondary);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 15s infinite;
-        }
-        .particle:nth-child(2) { left: 15%; animation-delay: -2s; background: var(--accent); }
-        .particle:nth-child(3) { left: 35%; animation-delay: -4s; background: var(--tertiary); }
-        .particle:nth-child(4) { left: 55%; animation-delay: -6s; background: var(--secondary); }
-        .particle:nth-child(5) { left: 75%; animation-delay: -8s; background: var(--accent); }
-        .particle:nth-child(6) { left: 25%; animation-delay: -10s; background: var(--tertiary); }
-        .particle:nth-child(7) { left: 65%; animation-delay: -12s; background: var(--secondary); }
-        .particle:nth-child(8) { left: 85%; animation-delay: -14s; background: var(--accent); }
-        @keyframes float {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.4; }
-            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
-        }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
-        
-        /* Gradient text */
-        .gradient-text {
-            background: linear-gradient(135deg, var(--secondary), var(--tertiary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 200% 200%;
-            animation: gradientShift 5s ease infinite;
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        /* Enhanced header */
-        .page-header {
-            text-align: center;
-            margin-bottom: 50px;
-            animation: fadeInDown 0.8s ease-out;
-        }
-        .page-header h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
-        .page-header p {
-            color: #ccc;
-            font-size: 1.1rem;
-        }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Glowing card */
-        .card {
-            background: linear-gradient(135deg, rgba(153, 69, 255, 0.03), rgba(20, 241, 149, 0.03));
-            border: 1px solid rgba(153, 69, 255, 0.15);
-            border-radius: 20px;
-            padding: 35px;
-            margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 0.6s ease-out backwards;
-        }
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(153, 69, 255, 0.05), transparent);
-            transition: left 0.6s ease;
-        }
-        .card:hover::before {
-            left: 100%;
-        }
-        .card:hover {
-            border-color: rgba(153, 69, 255, 0.4);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(153, 69, 255, 0.15), 0 0 30px rgba(153, 69, 255, 0.1);
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        h2 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        h2::before {
-            content: '';
-            width: 4px;
-            height: 24px;
-            background: linear-gradient(180deg, var(--secondary), var(--accent));
-            border-radius: 2px;
-        }
-        
-        /* Live indicator */
-        .live-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, rgba(153, 69, 255, 0.15), rgba(0, 194, 255, 0.1));
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--secondary);
-            border: 1px solid rgba(153, 69, 255, 0.3);
-            animation: glow 2s ease-in-out infinite;
-        }
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(153, 69, 255, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(153, 69, 255, 0.5); }
-        }
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--secondary);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-            box-shadow: 0 0 10px var(--secondary);
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.7; }
-        }
-        
-        /* Refresh button */
-        .refresh-btn {
-            background: linear-gradient(135deg, var(--accent), #00ffa3);
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 24px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .refresh-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(20, 241, 149, 0.3);
-        }
-        
-        /* Total count */
-        .total-count {
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            padding: 15px 25px;
-            background: linear-gradient(135deg, rgba(153, 69, 255, 0.1), rgba(0, 194, 255, 0.05));
-            border: 1px solid rgba(153, 69, 255, 0.2);
-            border-radius: 12px;
-            display: inline-block;
-            color: #fff;
-        }
-        .total-count strong {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--secondary), var(--tertiary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Table styles */
-        .tx-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .tx-table th {
-            color: var(--secondary);
-            padding: 15px 12px;
-            border-bottom: 2px solid rgba(153, 69, 255, 0.2);
-            text-align: left;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .tx-table td {
-            padding: 14px 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #ddd;
-            transition: background 0.2s;
-        }
-        .tx-table tr:hover td {
-            background: rgba(153, 69, 255, 0.03);
-        }
-        .tx-hash {
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.85rem;
-            color: var(--tertiary);
-            background: rgba(0, 194, 255, 0.1);
-            padding: 6px 10px;
-            border-radius: 6px;
-        }
-        .tx-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .tx-link:hover {
-            color: #fff;
-            text-shadow: 0 0 10px var(--accent);
-        }
-        .memo-text {
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.8rem;
-            color: #bbb;
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 6px 10px;
-            border-radius: 6px;
-        }
-        .badge-anchor {
-            background: linear-gradient(135deg, var(--accent), #00ffa3);
-            color: #000;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        
-        .loading {
-            color: var(--secondary);
-            font-size: 1.1rem;
-            text-align: center;
-            padding: 40px;
-        }
-        
-        /* Navigation links */
-        .nav-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 50px;
-            flex-wrap: wrap;
-        }
-        .nav-links a {
-            padding: 14px 28px;
-            background: rgba(153, 69, 255, 0.1);
-            border: 1px solid rgba(153, 69, 255, 0.3);
-            border-radius: 12px;
-            color: var(--secondary);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .nav-links a:hover {
-            background: linear-gradient(135deg, var(--secondary), #c77dff);
-            color: #fff;
-            border-color: transparent;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(153, 69, 255, 0.3);
-        }
-        
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .page-header h1 { font-size: 1.8rem !important; }
-            .container { padding: 20px 15px; }
-            .card { padding: 25px 20px; }
-            h2 { font-size: 1.3rem; }
-            .tx-table { font-size: 0.85rem; }
-            .tx-table th, .tx-table td { padding: 10px 8px; }
-            .d-flex.justify-content-between { flex-direction: column; gap: 15px; }
-        }
-    </style>
-</head>
-<body>
-    <!-- Animated background -->
-    <div class="mesh-bg"></div>
-    <div class="particles">
-        <div class="particle" style="left: 5%;"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-    
-    <div class="container">
-        <!-- Enhanced Header -->
-        <div class="page-header">
-            <h1><span class="gradient-text">Live XRPL</span> Transactions</h1>
-            <p>Real-time anchored defense logistics record hashes on the XRP Ledger (Testnet)</p>
-        </div>
-        
-        <div class="card">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                <h2>📡 Recent Anchored Records</h2>
-                <div class="d-flex align-items-center gap-3">
-                    <span class="live-indicator"><span class="live-dot"></span> Auto-refreshing</span>
-                    <button class="refresh-btn" onclick="loadTransactions()">↻ Refresh Now</button>
-                </div>
-            </div>
-            <div id="totalCount" class="total-count"></div>
-            <div id="transactionsContainer">
-                <p class="loading">⏳ Loading transactions from XRPL...</p>
-            </div>
-        </div>
-        
-        <div class="nav-links">
-            <a href="metrics.html">📊 View Metrics</a>
-            <a href="index.html">🏠 Back to Home</a>
-        </div>
-    </div>
-    
-    <script>
-        async function loadTransactions() {
-            const container = document.getElementById('transactionsContainer');
-            const countDiv = document.getElementById('totalCount');
-            container.innerHTML = '<p class="loading">⏳ Loading transactions from XRPL...</p>';
-            
-            try {
-                const response = await fetch('https://s4ledger.onrender.com/transactions');
-                const data = await response.json();
-                
-                if (data.error) {
-                    container.innerHTML = `<p style="color: #ff6b6b; text-align: center; padding: 30px;">⚠️ Error: ${data.error}</p>`;
-                    return;
-                }
-                
-                countDiv.innerHTML = `📊 Total Anchored Records: <strong>${data.count}</strong>`;
-                
-                if (data.transactions.length === 0) {
-                    container.innerHTML = '<p style="color: #ccc; text-align: center; padding: 40px;">No anchored transactions found yet. Run anchor tests to see data here.</p>';
-                    return;
-                }
-                
-                let html = `
-                    <div style="overflow-x: auto;">
-                    <table class="tx-table">
-                        <thead>
-                            <tr>
-                                <th>Date (UTC)</th>
-                                <th>Transaction Hash</th>
-                                <th>Anchored Hash (Memo)</th>
-                                <th>Type</th>
-                                <th>Explorer</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
-                for (const tx of data.transactions) {
-                    html += `
-                        <tr>
-                            <td style="color: #fff;">${tx.date}</td>
-                            <td><span class="tx-hash">${tx.hash.substring(0, 16)}...</span></td>
-                            <td><span class="memo-text" title="${tx.memo}">${tx.memo}</span></td>
-                            <td><span class="badge-anchor">${tx.type}</span></td>
-                            <td><a href="${tx.explorer_url}" target="_blank" class="tx-link">View on XRPL ↗</a></td>
-                        </tr>
-                    `;
-                }
-                
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
-                
-            } catch (err) {
-                container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 30px;">⚠️ Failed to load transactions from API. Please try again.</p>';
-            }
-        }
-        
-        // Load on page load
-        window.addEventListener('DOMContentLoaded', loadTransactions);
-        
-        // Auto-refresh every 30 seconds
+        .live-indicator{display:inline-flex;align-items:center;gap:10px;background:rgba(0,170,255,0.1);padding:10px <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"d <html lang="en,0<head>
+    <metnd    <rG    <meta name="viewport"te    <title>S4 Ledger | Live XRPL Transactions</title>
+    <meta name="des,2    <meta name="description" content="Real-time anch}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">--    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&disde    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" nt    <link rel="stylesheet" href="s4-assets/style.css">
+    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jsdelivr.net/particles.j:1    <style>
+        .live-indicator{display:inline-flex;align-items:center;gap:10px;bacol        .l17<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"d <html lang="en,0<head>
+    <metnd    <rG    <meta na-g<head>
+    <met#0    <,#    <meta name="viewport"d-    <metnd    <rG    <meta name="viewportrent;back    <meta name="des,2    <meta name="description" content="Real-time anch}
+    <link rel="styleslo    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/f0.    <link rel="stylesheet" nt    <link rel="stylesheet" href="s4-assets/style.css">
+    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jsdelivr.net/particles.j:1    <style>
+        .live-indicator{display:inline-flex;align-items:center;gap:10px;bacol        .l17<html lang="en">
+<head>
+    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:        .live-indicator{display:inline-flex;align-items:center;gap:10px;bacol        .l17<html lang="en">
+<head>
+    we<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"d <html lang="en,0<head>
+    <metnd    <rG   r:    <te    <meta name="viewport"go    <metnd    <rG    <meta na-g<head>
+    <met#0nl    <met#0    <,#    <meta name="vieva    <link rel="styleslo    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/f0.    <link rel="stylesheet" nt    <link rel="stylesheet" href="s4-assead    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jsdelivr.net/particles.j:1    <style>
+        .live-indicator{display:inline-flex;align-items:cente:0        .live-indicator{display:inline-flex;align-items:center;gap:10px;bacol        .l17<html lang="en">
+<head>
+    76<head>
+    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:   ee    <x-<head>
+    we<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"d <html lang="en,0<head>
+    <metnd    <rG   r:    <te    <meta name="viewport"go    <metnd    <rG    <meta na-g<head>
+    <met-    wrb    <meta cdi    <meta name="viewport"-3    <metnd    <rG   r:    <te    <meta name="vie
+
+    <met#0nl    <met#0    <,#    <meta name="vieva    <link rel="styleslo    <link rel="styl>
+        .live-indicator{display:inline-flex;align-items:cente:0        .live-indicator{display:inline-flex;align-items:center;gap:10px;bacol        .l17<html lang="en">
+<head>
+    76<head>
+    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:   ee    <x-<head>
+    we<head>
+    <meta charset="UT  <head>
+    76<head>
+    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:   ee    <x-<head>
+    we<head>
+    <meta charset="UT h    7./    <metnt /l    we<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"d <html lang="en,0<head>
+    <metnd    <rG   re=    <meta cCo    <meta name="viewport"ow    <metnd    <rG   r:    <te    <meta name="vieer    <met-    wrb    <meta cdi    <meta name="viewport"-3    <metnd    <rG   r:    <te    <mer:
+    <met#0nl    <met#0    <,#    <meta name="vieva    <link rel="styleslo    <link rel="styl>
+        </a        .live-indicator{display:inline-flex;align-items:cente:0        .live-indicator{displ</<head>
+    76<head>
+    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:   ee    <x-<head>
+    we<head>
+    <meta charset="UTn-    7 s    <metnt ro    we<head>
+    <meta charset="UT  <head>
+    76<head>
+    <metnt    <script src="https://cdn.jsdelivr.net/paryl    <meta cff    76<head>
+    <metnt    <cl    <metnt id    we<head>
+    <meta charset="UT h    7./    <metnt /l    we<head>
+    <meta charset="UTF-8">
+    <meta name=/"    <meta cor    <meta charset="UTF-8">
+    <meta name="viewport"d n-    <meta name="viewport"><    <metnd    <rG   re=    <meta cCo    <meta na-i    <met#0nl    <met#0    <,#    <meta name="vieva    <link rel="styleslo    <link rel="styl>
+        </a        .live-indicator{display:inline-flex;align-items:cente:0        .live-indicator{displ</<head>
+le        </a        .live-indicator{display:inline-flex;align-items:cente:0        .live-indior    76<head>
+    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:   ta    <metnt k"    we<head>
+    <meta charset="UTn-    7 s    <metnt ro    we<head>
+    <meta charset="UT  <head>
+    76<head></    <meta        <meta charset="UT  <head>
+    76<head>
+    <metnt ef    76<head>
+    <metnt    <a>    <metnt       <metnt    <cl    <metnt id    we<head>
+    <meta charset="UT h    7./    <met/a    <meta charset="UT h    7./    <metnt -i    <meta charset="UTF-8">
+    <meta name=/"   dmap</a><    <meta name=/"    <met<l    <meta name="viewport"d n-    <meta name="viewport">AQ        </a        .live-indicator{display:inline-flex;align-items:cente:0        .live-indicator{displ</<head>
+le        </a        .live-indicator{display:inline-flex;align-items:cente:0        .ldile        </a        .live-indicator{display:inline-flex;align-items:cente:0        .live-indior    76<head>
+ ">    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:   ta    <metgi    <meta charset="UTn-    7 s    <metnt ro    we<head>
+    <meta charset="UT  <head>
+    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    <meta     -w    76<head>
+    <metnt ef    76<head>
+    <metnt    clas    <metntlis    <metnt    <a>    <mece    <meta charset="UT h    7./    <met/a    <meta charset="UT h    7./       <meta name=/"   dmap</a><    <meta name=/"    <met<l    <meta name="viewport"d n-    <meta name="viewporlile        </a        .live-indicator{display:inline-flex;align-items:cente:0        .ldile        </a        .live-indicator{display:inline-flex;align-items:cente:0        .live-indior    76<head>
+ ">    <metnt    <script siv ">    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:   ta    <metgi    <meta charset="UTn-    7 s    <metnt ro    we<head>
+    <meta charset="UT  <L...<    <meta charset="UT  <head>
+    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    <meta     -w    76<headrc    76<head></    <meta    ng"    76<head></    <meta n     76<head></    <meta     -w    76<headon    <metnt ef    76<head>
+    <metnt    clas    <metntlis    <metnt);    <metnt    clas    <m;  ">    <metnt    <script siv ">    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd:   ta    <metgi    <meta charset="UTn-    7 s    <metnt ro    we<head>
+    <meta charset="UT  <L...<    <meta charset="UT  <head>
+    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    <meta     -w    76<headrc    76<head></    <meta    ng"    76<head>r"    <meta charset="UT  <L...<    <meta charset="UT  <head>
+    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    <meta     -w    76<heaex    76<head></    <meta        <meta ">    <meta charset=ab    76<head></    <meta n     76<head></    <meta     -w    76<head0.    <metnt    clas    <metntlis    <metnt);    <metnt    clas    <m;  ">    <metnt    <script siv ">    <metnt    <script src="https://cdn.jsdelivr.net/particle0p    <script src="https://cdn.jd=    <meta charset="UT  <L...<    <meta charset="UT  <head>
+    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    <meta     -w    76<headrc    76<head></    <meta    ng"    76<head>r"    <m       async funct    76<head></    <meta        <meta ">    <meta charset=cu    76<head></    <meta n     76<head></    <meta     -w    76<headnt    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    <meta     -w    76<heaex    76<head></    <meta        <m.<    76<head></    <meta n     76<head></    <meta     -w    76<heaeh(    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    <meta     -w    76<headrc    76<head></    <meta    ng"    76<head>r"    <m       async funct    76<head></    <meta        <meta ">    <meta charset=cu    76<head></    <meta n     76<head></    <meta     -w    76<headnt    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    '     76<head></    <meta n     76<head></    <meta     -w    76<headen    76<head></    <meta n     76<head></    <meta     -w    76<heaex    76<head></    <meta        <m.<    76<head></    <meta n     76<head></    <meta     -w    76<heaeh(    76<head></    <meta        <meta ">    <meta charset="UT  <head>
+    76<head></    <meta n     76<head></    <meta     -w    76<headrc    76<head></    <metth    76<head></    <meta n     76<head></    <meta     -w    76<headrc    76<head></    <meta    ng"    76<head>r"    <m       async funct    76<head></    <meta        <meta ">    <meta charset=cu    76<head></    <meta n     76<head></    t    76<head></    <meta n     76<head></    '     76<head></    <meta n     76<head></    <meta     -w    76<headen    76<head></    <meta n     76<head></    <meta     -w    76<heaex    76<head></    <meta        <m.<    76<head></    <meta n     76<head></    <meta     -w    76<heaeh(    76<head></    <meta        <meta ">    <m</    76<head></    <meta n     76<head></    <meta     -w    76<headrc    76<head></    <metth    76<head></    <meta n     76<head></    <meta     -w    76<headrc    76<head></    <meta    ng"    76<head>r"    <m       async funct    76<head></    <meta        <meta ">    <meta charset=cu    76<head></    <meta n     76<head></    t    76<head></    <m    window.addEventListener('DOMContentLoaded', loadTransactions);
         setInterval(loadTransactions, 30000);
     </script>
 </body>
