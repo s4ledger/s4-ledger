@@ -135,6 +135,7 @@
                     <div class="output-header">
                         <span class="status-dot" id="statusDot"></span>
                         <span>Output</span>
+                        <button onclick="copyOutput()" id="copyOutputBtn" style="margin-left:auto;background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid rgba(201,168,76,0.3);border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit;transition:all 0.2s;"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <div class="output-panel" id="outputPanel">Click "Run" to execute the code above...</div>
                 </div>
@@ -519,6 +520,15 @@
         document.querySelectorAll('.example-btn').forEach(function(b){b.classList.remove('active')});
         if (el) el.classList.add('active');
         document.getElementById('recordTypeArea').style.display = tmpl.showRecordType ? 'block' : 'none';
+    }
+
+    function copyOutput() {
+        var output = document.getElementById('outputPanel');
+        navigator.clipboard.writeText(output.textContent).then(function() {
+            var btn = document.getElementById('copyOutputBtn');
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(function() { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 2000);
+        });
     }
 
     async function runCode() {
