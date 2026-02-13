@@ -32,7 +32,7 @@ This document tracks every requirement for taking S4 Ledger from its current tes
 | Privacy Policy | ✅ Published | **Critical** | Live at s4ledger.com/s4-privacy |
 | End User License Agreement (EULA) | ⬜ Pending | **High** | For SDK distribution |
 | Data Processing Agreement (DPA) | ⬜ Pending | **High** | Required by enterprise customers |
-| Business Associate Agreement (BAA) | ⬜ Template Ready | Medium | For HIPAA-adjacent workflows |
+| Business Associate Agreement (BAA) | ⬜ Template Ready | Medium | For healthcare-adjacent supply chain workflows |
 | Service Level Agreement (SLA) template | ⬜ Pending | **High** | 99.9% uptime target for Enterprise tier |
 | Non-Disclosure Agreement (NDA) template | ⬜ Pending | Medium | For partner/investor discussions |
 | $SLS Token legal opinion | ⬜ Pending | **Critical** | Utility token classification from counsel |
