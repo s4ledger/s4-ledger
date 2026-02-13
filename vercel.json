@@ -1,6 +1,31 @@
 {
-    "cleanUrls": true,
-    "rewrites": [
-        { "source": "/api/:path*", "destination": "/api/index.py" }
+    "builds": [
+        { "src": "api/index.py", "use": "@vercel/python" },
+        { "src": "index.html", "use": "@vercel/static" },
+        { "src": "metrics.html", "use": "@vercel/static" },
+        { "src": "transactions.html", "use": "@vercel/static" },
+        { "src": "demo-app/**", "use": "@vercel/static" },
+        { "src": "sdk-playground/**", "use": "@vercel/static" },
+        { "src": "s4-assets/**", "use": "@vercel/static" },
+        { "src": "about/**", "use": "@vercel/static" },
+        { "src": "contact/**", "use": "@vercel/static" },
+        { "src": "products/**", "use": "@vercel/static" },
+        { "src": "security/**", "use": "@vercel/static" },
+        { "src": "security-policy/**", "use": "@vercel/static" },
+        { "src": "sdk/**", "use": "@vercel/static" },
+        { "src": "roadmap/**", "use": "@vercel/static" },
+        { "src": "partners/**", "use": "@vercel/static" },
+        { "src": "s4-about/**", "use": "@vercel/static" },
+        { "src": "s4-contact/**", "use": "@vercel/static" },
+        { "src": "s4-faq/**", "use": "@vercel/static" },
+        { "src": "s4-investors/**", "use": "@vercel/static" },
+        { "src": "s4-partners/**", "use": "@vercel/static" },
+        { "src": "s4-pricing/**", "use": "@vercel/static" },
+        { "src": "s4-roadmap/**", "use": "@vercel/static" },
+        { "src": "s4-use-cases/**", "use": "@vercel/static" }
+    ],
+    "routes": [
+        { "src": "/api/(.*)", "dest": "/api/index.py" },
+        { "src": "/(.*)", "dest": "/$1" }
     ]
 }
