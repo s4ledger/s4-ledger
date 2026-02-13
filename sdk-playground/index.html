@@ -48,6 +48,18 @@
         .record-select-area select{background:rgba(5,8,16,0.95);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:8px 12px;color:#e0e8f0;font-family:inherit;font-size:0.9rem;width:100%;max-width:400px}
         .record-select-area select:focus{border-color:var(--accent);outline:none}
         .record-select-area option{background:#050810}
+        .sdk-clf-banner{display:none;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;margin-top:10px;font-size:0.85rem;font-weight:600;animation:fadeIn 0.25s ease-out}
+        .sdk-clf-banner.show{display:inline-flex}
+        .sdk-clf-badge{padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:800;letter-spacing:0.5px;text-transform:uppercase}
+        .sdk-clf-U .sdk-clf-badge{background:rgba(0,170,0,0.15);color:#00cc66;border:1px solid rgba(0,170,0,0.3)}
+        .sdk-clf-CUI .sdk-clf-badge{background:rgba(201,168,76,0.15);color:#c9a84c;border:1px solid rgba(201,168,76,0.3)}
+        .sdk-clf-SECRET .sdk-clf-badge{background:rgba(255,50,50,0.15);color:#ff5555;border:1px solid rgba(255,50,50,0.3)}
+        .sdk-clf-TS .sdk-clf-badge{background:rgba(255,165,0,0.15);color:#ffa500;border:1px solid rgba(255,165,0,0.35)}
+        .sdk-clf-U{background:rgba(0,170,0,0.04);border:1px solid rgba(0,170,0,0.15)}
+        .sdk-clf-CUI{background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15)}
+        .sdk-clf-SECRET{background:rgba(255,50,50,0.04);border:1px solid rgba(255,50,50,0.15)}
+        .sdk-clf-TS{background:rgba(255,165,0,0.04);border:1px solid rgba(255,165,0,0.15)}
+        .sdk-clf-text{font-size:0.78rem;color:var(--text-secondary);font-weight:400}
         .record-select-area optgroup{color:var(--accent);font-weight:700}
         .api-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(20,241,149,0.1);border:1px solid rgba(20,241,149,0.3);color:#14f195;padding:3px 10px;border-radius:12px;font-size:0.75rem;font-weight:600}
         .api-badge::before{content:'';width:6px;height:6px;background:#14f195;border-radius:50%;animation:pulse 2s infinite}
@@ -116,6 +128,7 @@
                 <div class="record-select-area card reveal" id="recordTypeArea" style="display:none;">
                     <h3 style="margin:0 0 8px;font-size:0.95rem;"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:8px;"></i> Select Record Type</h3>
                     <select id="recordTypeSelect"></select>
+                    <div class="sdk-clf-banner" id="sdkClfBanner"><span class="sdk-clf-badge" id="sdkClfBadge"></span><span class="sdk-clf-text" id="sdkClfText"></span></div>
                 </div>
 
                 <!-- Code Editor -->
@@ -216,6 +229,66 @@
     var recordTypesList = [];
     var currentExample = 'hash';
 
+    // Classification mapping
+    var SDK_CLASSIFICATION = {
+        USN_SUPPLY_RECEIPT:'CUI', USN_3M_MAINTENANCE:'CUI', USN_CASREP:'SECRET', USN_CDRL:'CUI',
+        USN_ORDNANCE:'SECRET', USN_DEPOT_REPAIR:'CUI', USN_INSURV:'CUI', USN_CALIBRATION:'U',
+        USN_CONFIG:'CUI', USN_CUSTODY:'CUI', USN_TDP:'CUI', USN_COC:'U', USN_SHIPALT:'CUI',
+        USN_PMS:'U', USN_HME:'CUI', USN_COMBAT_SYS:'SECRET', USN_PROPULSION:'CUI',
+        USN_AVIATION:'CUI', USN_FLIGHT_OPS:'CUI', USN_SUBSAFE:'SECRET', USN_DIVE_EQUIP:'U',
+        USN_MEDICAL:'CUI', USN_QDR:'U', USN_FIELDING:'CUI', USN_REACTOR:'SECRET',
+        USN_DRL:'CUI', USN_DI:'CUI', USN_VRS:'CUI', USN_BUYLIST:'CUI',
+        USN_J1_ILS:'CUI', USN_J2_SE:'CUI', USN_J3_SUPPLY:'CUI', USN_J4_TECHDATA:'CUI',
+        USN_J5_TRAINING:'U', USN_J6_MANPOWER:'CUI', USN_J7_FACILITIES:'U', USN_J8_PHST:'CUI',
+        USN_J9_SOFTWARE:'CUI', USN_J10_DESIGN:'CUI', USN_J11_RAM:'CUI', USN_J12_ACQLOG:'CUI',
+        USN_J13_CM:'CUI', USN_J14_DISPOSAL:'U', USN_BAM:'CUI', USN_TRANSFER_BOOK:'CUI',
+        USN_COTS_MANUAL:'U', USN_TM_INDEX:'U', USN_PO_INDEX:'CUI', USN_PID:'CUI',
+        USN_CONTRACT_MOD:'CUI', USN_CONFIG_MGMT:'CUI', USN_OUTFITTING:'CUI', USN_PURCHASE_REQ:'CUI',
+        USA_HAND_RECEIPT:'CUI', USA_TM_UPDATE:'CUI', USA_ARMS_ROOM:'CUI', USA_FLIPL:'CUI',
+        USA_VEHICLE:'U', USA_CLASS_III:'U', USA_CLASS_V:'SECRET', USA_EQUIP_MAINT:'U',
+        USA_AMMO_STORAGE:'SECRET', USA_RANGE_QUAL:'U', USA_CALIBRATION:'U', USA_PROPERTY_BOOK:'CUI',
+        USA_COMPONENT_HR:'CUI', USA_DENSITY_LIST:'CUI', USA_GCSS_TRANS:'CUI', USA_AVIATION:'CUI',
+        USA_MEDICAL:'CUI', USA_CBRN:'SECRET', USA_ENGINEER:'U', USA_SIGNAL:'CUI',
+        USAF_781_FLIGHT:'CUI', USAF_MUNITIONS:'SECRET', USAF_ENGINE:'CUI', USAF_WEAPONS_LOAD:'SECRET',
+        USAF_STRUCT_INTEG:'CUI', USAF_AVIONICS:'CUI', USAF_NUCLEAR:'TS', USAF_MISSILE:'SECRET',
+        USAF_SPACE:'SECRET', USAF_RADAR:'CUI', USAF_RUNWAY:'U', USAF_BDR:'SECRET',
+        USAF_SUPPLY:'U', USAF_AGE:'U', USAF_FUEL:'U', USAF_DEPOT:'CUI',
+        USAF_PMEL:'U', USAF_REFUEL:'CUI',
+        USMC_GROUND_MAINT:'U', USMC_AVIATION:'CUI', USMC_WEAPONS:'CUI', USMC_COMMS:'CUI',
+        USMC_ENGINEER:'U', USMC_MOTOR_T:'U', USMC_SUPPLY:'CUI', USMC_ORDNANCE:'SECRET',
+        USMC_COMBAT_ENG:'CUI', USMC_AAV:'CUI', USMC_MEDICAL:'CUI', USMC_NBC:'SECRET',
+        USMC_EXPEDITIONARY:'CUI', USMC_LAV:'CUI',
+        USCG_CUTTER_MAINT:'U', USCG_SMALL_BOAT:'U', USCG_NAV_AID:'U', USCG_POLLUTION:'U',
+        USCG_SAR:'CUI', USCG_MARITIME_SEC:'CUI', USCG_AVIATION:'CUI', USCG_PORT_SEC:'CUI',
+        USCG_ELECTRONICS:'CUI', USCG_WEAPONS:'CUI', USCG_ICE_OPS:'U', USCG_BUOY_TENDER:'U',
+        DLA_DISTRIBUTION:'CUI', DLA_FMS:'SECRET', DLA_DRMO:'U', DLA_HAZMAT:'CUI',
+        DLA_BULK_FUEL:'CUI', DLA_TROOP_SUPPORT:'U', DLA_STRATEGIC:'SECRET', DLA_MEDICAL:'CUI',
+        DLA_DPAS:'CUI', DLA_COMMISSARY:'U', DLA_DISPOSITION:'U', DLA_LAND_EQUIP:'U',
+        JOINT_NATO:'CUI', JOINT_F35:'SECRET', JOINT_MISSILE_DEF:'TS', JOINT_CYBER:'SECRET',
+        JOINT_INTEL:'TS', JOINT_SPACE:'SECRET', JOINT_TRANSPORT:'CUI', JOINT_CONTRACT:'CUI',
+        JOINT_READINESS:'SECRET', JOINT_DISPOSAL:'U',
+        SOCOM_WEAPONS:'SECRET', SOCOM_COMMS:'SECRET', SOCOM_AVIATION:'SECRET', SOCOM_MARITIME:'SECRET',
+        SOCOM_VEHICLE:'CUI', SOCOM_INTEL:'TS', SOCOM_MEDICAL:'CUI', SOCOM_DEMO:'SECRET',
+        USSF_SAT_OPS:'SECRET', USSF_SPACE_VEH:'SECRET', USSF_SDA:'TS', USSF_GPS_CONST:'SECRET',
+        USSF_LAUNCH_VEH:'SECRET', USSF_RADAR_TRACK:'SECRET', USSF_GROUND_SYS:'SECRET',
+        USSF_COMM_SAT:'SECRET', USSF_EARLY_WARN:'TS', USSF_SPACE_CTRL:'SECRET'
+    };
+    var SDK_CLF_META = {
+        U:    {label:'UNCLASSIFIED', icon:'\uD83D\uDFE2', color:'#00cc66', desc:'No special handling required'},
+        CUI:  {label:'CUI',          icon:'\uD83D\uDFE1', color:'#c9a84c', desc:'Controlled Unclassified — NIST 800-171'},
+        SECRET:{label:'SECRET',      icon:'\uD83D\uDD34', color:'#ff5555', desc:'SIPRNet or equivalent classified network'},
+        TS:   {label:'TOP SECRET',   icon:'\uD83D\uDFE0', color:'#ffa500', desc:'JWICS or equivalent TS/SCI network'}
+    };
+    function showSdkClassification(typeKey) {
+        var banner = document.getElementById('sdkClfBanner');
+        if (!banner) return;
+        var clf = SDK_CLASSIFICATION[typeKey] || 'CUI';
+        var meta = SDK_CLF_META[clf];
+        banner.className = 'sdk-clf-banner show sdk-clf-' + clf;
+        document.getElementById('sdkClfBadge').textContent = meta.icon + ' ' + meta.label;
+        document.getElementById('sdkClfText').textContent = meta.desc;
+    }
+
     // ── localStorage cross-page sync ──
     var S4_STORAGE_KEY = 's4_anchored_records';
     function getLocalRecords() { try { return JSON.parse(localStorage.getItem(S4_STORAGE_KEY) || '[]'); } catch(e) { return []; } }
@@ -284,6 +357,13 @@
     // Dropdown onchange — regenerate editor content
     function onRecordTypeChange() {
         document.getElementById('codeEditor').value = buildEditorContent();
+        var select = document.getElementById('recordTypeSelect');
+        if (select && select.value && select.value !== 'CUSTOM') {
+            showSdkClassification(select.value);
+        } else {
+            var banner = document.getElementById('sdkClfBanner');
+            if (banner) banner.className = 'sdk-clf-banner';
+        }
     }
 
     // Fetch record types + populate dropdown with Custom option
@@ -594,6 +674,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         loadRecordTypes().then(function() {
             document.getElementById('codeEditor').value = buildEditorContent();
+            var sel = document.getElementById('recordTypeSelect');
+            if (sel && sel.value && sel.value !== 'CUSTOM') showSdkClassification(sel.value);
         });
         loadExample('hash', document.querySelector('.example-btn'));
     });
