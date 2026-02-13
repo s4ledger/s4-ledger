@@ -168,7 +168,7 @@
 
         async function loadMetrics() {
             try {
-                const response = await fetch('https://s4ledger.onrender.com/metrics');
+                const response = await fetch('/api/metrics');
                 metricsData = await response.json();
                 document.getElementById('totalHashes').textContent = metricsData.total_hashes || 0;
                 document.getElementById('totalFees').textContent = (metricsData.total_fees || 0).toFixed(2);

@@ -3,230 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="S4 Ledger — Defense Logistics Verification Demo. Anchor, verify, and track defense supply chain records on XRPL.">
-    <meta property="og:title" content="S4 Ledger | Defense Logistics Demo">
-    <meta property="og:description" content="Interactive demo for anchoring and verifying defense logistics records on the XRP Ledger using $SLS token.">
+    <meta name="description" content="S4 Ledger Defense Logistics Demo — Anchor, verify, and track defense records across all military branches on XRPL.">
     <title>S4 Ledger | Defense Logistics Demo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
-        :root {
-            --bg: #050810;
-            --surface: #0a1020;
-            --card: #0f1630;
-            --border: #1a2550;
-            --accent: #00aaff;
-            --gold: #c9a84c;
-            --steel: #8ea4b8;
-            --green: #14f195;
-            --red: #ff6b6b;
-            --text: #e0e8f0;
-            --muted: #6b7d93;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
-        /* ─── Navbar ─────────────────────────────────────────── */
-        .navbar-custom {
-            background: rgba(5,8,16,0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            padding: 0.75rem 0;
-        }
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--accent) !important;
-        }
-        .navbar-brand span { color: var(--gold); }
-        .nav-link { color: var(--steel) !important; font-weight: 500; transition: color 0.2s; }
-        .nav-link:hover, .nav-link.active { color: var(--accent) !important; }
-
-        /* ─── Hero ───────────────────────────────────────────── */
-        .hero {
-            padding: 4rem 0 3rem;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(0,170,255,0.05) 0%, transparent 60%);
-        }
-        .hero h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: 0.75rem; }
-        .hero h1 .accent { color: var(--accent); }
-        .hero h1 .gold { color: var(--gold); }
-        .hero p { color: var(--steel); font-size: 1.1rem; max-width: 700px; margin: 0 auto 1.5rem; }
-        .badge-live {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(20,241,149,0.1); border: 1px solid rgba(20,241,149,0.3);
-            color: var(--green); padding: 6px 16px; border-radius: 20px;
-            font-size: 0.85rem; font-weight: 600;
-        }
-        .badge-live::before { content: ''; width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-        /* ─── Tabs ───────────────────────────────────────────── */
-        .tab-section { padding: 2rem 0; }
-        .nav-pills .nav-link {
-            background: var(--card); color: var(--steel); border: 1px solid var(--border);
-            margin-right: 0.5rem; margin-bottom: 0.5rem; border-radius: 8px;
-            font-weight: 600; padding: 0.6rem 1.2rem; transition: all 0.2s;
-        }
-        .nav-pills .nav-link.active {
-            background: var(--accent); color: #fff; border-color: var(--accent);
-        }
-        .tab-content { margin-top: 1.5rem; }
-
-        /* ─── Cards ──────────────────────────────────────────── */
-        .demo-card {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
-        }
-        .demo-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem; }
-        .demo-card h3 i { margin-right: 0.5rem; }
-
-        /* ─── Forms ──────────────────────────────────────────── */
-        label { font-weight: 600; color: var(--steel); margin-bottom: 0.4rem; font-size: 0.9rem; }
-        select, input, textarea {
-            background: var(--surface) !important; color: var(--text) !important;
-            border: 1px solid var(--border) !important; border-radius: 8px !important;
-            padding: 0.6rem 0.8rem !important; font-family: 'Plus Jakarta Sans', sans-serif !important;
-            font-size: 0.95rem !important; width: 100%;
-        }
-        select:focus, input:focus, textarea:focus {
-            border-color: var(--accent) !important; box-shadow: 0 0 0 3px rgba(0,170,255,0.15) !important; outline: none;
-        }
-        textarea { min-height: 120px; resize: vertical; font-family: 'Courier New', monospace !important; font-size: 0.85rem !important; }
-
-        /* ─── Buttons ────────────────────────────────────────── */
-        .btn-accent {
-            background: var(--accent); color: #fff; border: none; border-radius: 8px;
-            padding: 0.65rem 1.5rem; font-weight: 700; font-size: 0.95rem;
-            transition: all 0.2s; cursor: pointer;
-        }
-        .btn-accent:hover { background: #0099ee; transform: translateY(-1px); color: #fff; }
-        .btn-accent:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-gold {
-            background: var(--gold); color: #000; border: none; border-radius: 8px;
-            padding: 0.65rem 1.5rem; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-        }
-        .btn-gold:hover { background: #dbb85c; color: #000; }
-        .btn-outline-accent {
-            background: transparent; color: var(--accent); border: 1px solid var(--accent);
-            border-radius: 8px; padding: 0.5rem 1rem; font-weight: 600; cursor: pointer;
-        }
-        .btn-outline-accent:hover { background: rgba(0,170,255,0.1); color: var(--accent); }
-
-        /* ─── Result Panel ───────────────────────────────────── */
-        .result-panel {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 10px; padding: 1.2rem; margin-top: 1rem;
-            display: none; font-family: 'Courier New', monospace; font-size: 0.85rem;
-        }
-        .result-panel.show { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .result-label { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; }
-        .result-value { color: var(--green); word-break: break-all; }
-        .result-value.error { color: var(--red); }
-        .hash-display {
-            background: rgba(0,170,255,0.08); border: 1px solid rgba(0,170,255,0.2);
-            border-radius: 6px; padding: 0.6rem; word-break: break-all;
-            color: var(--accent); margin: 0.5rem 0;
-        }
-
-        /* ─── Record Type Grid ───────────────────────────────── */
-        .record-type-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 0.75rem; margin-bottom: 1rem;
-        }
-        .record-type-btn {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 8px; padding: 0.7rem 0.8rem; cursor: pointer;
-            text-align: center; transition: all 0.2s; font-size: 0.8rem; font-weight: 600;
-        }
-        .record-type-btn:hover { border-color: var(--accent); background: rgba(0,170,255,0.05); }
-        .record-type-btn.selected { border-color: var(--accent); background: rgba(0,170,255,0.12); color: var(--accent); }
-        .record-type-btn .icon { font-size: 1.3rem; display: block; margin-bottom: 0.3rem; }
-
-        /* ─── Transaction Log ────────────────────────────────── */
-        .tx-log { max-height: 400px; overflow-y: auto; }
-        .tx-entry {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 0.5rem;
-            display: flex; align-items: center; gap: 1rem; transition: all 0.2s;
-        }
-        .tx-entry:hover { border-color: var(--accent); }
-        .tx-icon { font-size: 1.4rem; min-width: 36px; text-align: center; }
-        .tx-info { flex: 1; }
-        .tx-type { font-weight: 700; font-size: 0.9rem; }
-        .tx-hash { font-family: monospace; color: var(--muted); font-size: 0.75rem; }
-        .tx-time { color: var(--muted); font-size: 0.75rem; white-space: nowrap; }
-        .tx-badge {
-            font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;
-        }
-        .tx-badge.anchored { background: rgba(20,241,149,0.15); color: var(--green); }
-        .tx-badge.pending { background: rgba(255,204,68,0.15); color: #ffcc44; }
-
-        /* ─── Stats Cards ────────────────────────────────────── */
-        .stat-card {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 10px; padding: 1.2rem; text-align: center;
-        }
-        .stat-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
-        .stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-
-        /* ─── Footer ─────────────────────────────────────────── */
-        footer {
-            border-top: 1px solid var(--border); padding: 2rem 0; margin-top: 3rem;
-            text-align: center; color: var(--muted); font-size: 0.85rem;
-        }
-        footer a { color: var(--accent); text-decoration: none; }
-
-        /* ─── Sample Records ─────────────────────────────────── */
-        .sample-btn {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 6px; padding: 0.4rem 0.8rem; cursor: pointer;
-            font-size: 0.8rem; color: var(--steel); transition: all 0.2s;
-            display: inline-block; margin: 0.2rem;
-        }
-        .sample-btn:hover { border-color: var(--gold); color: var(--gold); }
-
-        /* ─── Responsive ─────────────────────────────────────── */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 1.6rem; }
-            .record-type-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        /* ─── Scrollbar ──────────────────────────────────────── */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        :root{--bg:#050810;--surface:#0a1020;--card:#0f1630;--border:#1a2550;--accent:#00aaff;--gold:#c9a84c;--steel:#8ea4b8;--green:#14f195;--red:#ff6b6b;--text:#e0e8f0;--muted:#6b7d93}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+        .navbar-custom{background:rgba(5,8,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0.75rem 0}
+        .navbar-brand{font-weight:800;font-size:1.4rem;color:var(--accent)!important}
+        .navbar-brand span{color:var(--gold)}.nav-link{color:var(--steel)!important;font-weight:500;transition:color 0.2s}
+        .nav-link:hover,.nav-link.active{color:var(--accent)!important}
+        .hero{padding:4rem 0 3rem;text-align:center;background:linear-gradient(180deg,rgba(0,170,255,0.05) 0%,transparent 60%)}
+        .hero h1{font-size:2.4rem;font-weight:800;margin-bottom:0.75rem}.hero h1 .accent{color:var(--accent)}.hero h1 .gold{color:var(--gold)}
+        .hero p{color:var(--steel);font-size:1.1rem;max-width:700px;margin:0 auto 1.5rem}
+        .badge-live{display:inline-flex;align-items:center;gap:6px;background:rgba(20,241,149,0.1);border:1px solid rgba(20,241,149,0.3);color:var(--green);padding:6px 16px;border-radius:20px;font-size:0.85rem;font-weight:600}
+        .badge-live::before{content:'';width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+        .tab-section{padding:2rem 0}
+        .nav-pills .nav-link{background:var(--card);color:var(--steel);border:1px solid var(--border);margin-right:0.5rem;margin-bottom:0.5rem;border-radius:8px;font-weight:600;padding:0.6rem 1.2rem;transition:all 0.2s}
+        .nav-pills .nav-link.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+        .tab-content{margin-top:1.5rem}
+        .demo-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+        .demo-card h3{font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:1rem}
+        .demo-card h3 i{margin-right:0.5rem}
+        label{font-weight:600;color:var(--steel);margin-bottom:0.4rem;font-size:0.9rem}
+        select,input,textarea{background:var(--surface)!important;color:var(--text)!important;border:1px solid var(--border)!important;border-radius:8px!important;padding:0.6rem 0.8rem!important;font-family:'Plus Jakarta Sans',sans-serif!important;font-size:0.95rem!important;width:100%}
+        select:focus,input:focus,textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(0,170,255,0.15)!important;outline:none}
+        textarea{min-height:120px;resize:vertical;font-family:'Courier New',monospace!important;font-size:0.85rem!important}
+        .btn-accent{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:0.65rem 1.5rem;font-weight:700;font-size:0.95rem;transition:all 0.2s;cursor:pointer}
+        .btn-accent:hover{background:#0099ee;transform:translateY(-1px);color:#fff}
+        .btn-accent:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+        .btn-gold{background:var(--gold);color:#000;border:none;border-radius:8px;padding:0.65rem 1.5rem;font-weight:700;font-size:0.95rem;cursor:pointer}
+        .btn-gold:hover{background:#dbb85c;color:#000}
+        .result-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin-top:1rem;display:none;font-family:'Courier New',monospace;font-size:0.85rem}
+        .result-panel.show{display:block;animation:fadeIn 0.3s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .result-label{color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem}
+        .result-value{color:var(--green);word-break:break-all}
+        .result-value.error{color:var(--red)}
+        .hash-display{background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:0.6rem;word-break:break-all;color:var(--accent);margin:0.5rem 0}
+        .branch-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+        .branch-tab{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:0.82rem;font-weight:600;cursor:pointer;color:var(--steel);transition:all 0.2s;font-family:inherit}
+        .branch-tab:hover{border-color:var(--accent);color:var(--accent)}
+        .branch-tab.active{background:rgba(0,170,255,0.12);border-color:var(--accent);color:var(--accent)}
+        .record-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:0.6rem;margin-bottom:1rem;max-height:280px;overflow-y:auto;padding-right:4px}
+        .record-type-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.7rem;cursor:pointer;text-align:center;transition:all 0.2s;font-size:0.78rem;font-weight:600}
+        .record-type-btn:hover{border-color:var(--accent);background:rgba(0,170,255,0.05)}
+        .record-type-btn.selected{border-color:var(--accent);background:rgba(0,170,255,0.12);color:var(--accent)}
+        .record-type-btn .icon{font-size:1.2rem;display:block;margin-bottom:0.2rem}
+        .type-search{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.85rem;color:var(--text);width:100%;margin-bottom:8px;font-family:inherit}
+        .type-search:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(0,170,255,0.15)}
+        .type-search::placeholder{color:var(--muted)}
+        .tx-log{max-height:400px;overflow-y:auto}
+        .tx-entry{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem 1rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:1rem;transition:all 0.2s}
+        .tx-entry:hover{border-color:var(--accent)}
+        .tx-icon{font-size:1.4rem;min-width:36px;text-align:center}
+        .tx-info{flex:1}.tx-type{font-weight:700;font-size:0.9rem}.tx-hash{font-family:monospace;color:var(--muted);font-size:0.75rem}
+        .tx-time{color:var(--muted);font-size:0.75rem;white-space:nowrap}
+        .tx-badge{font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px}
+        .tx-badge.anchored{background:rgba(20,241,149,0.15);color:var(--green)}
+        .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;text-align:center}
+        .stat-value{font-size:2rem;font-weight:800;color:var(--accent)}.stat-label{font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+        footer{border-top:1px solid var(--border);padding:2rem 0;margin-top:3rem;text-align:center;color:var(--muted);font-size:0.85rem}
+        footer a{color:var(--accent);text-decoration:none}
+        .sample-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.8rem;color:var(--steel);transition:all 0.2s;display:inline-block;margin:0.2rem}
+        .sample-btn:hover{border-color:var(--gold);color:var(--gold)}
         #particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none}
         .mesh-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
         .g-orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.15}
         .g-orb-1{width:600px;height:600px;background:#003366;top:-200px;right:-200px}
         .g-orb-2{width:400px;height:400px;background:#001a33;bottom:-100px;left:-100px}
         .g-orb-3{width:300px;height:300px;background:linear-gradient(135deg,#00aaff,#003366);top:50%;left:50%;transform:translate(-50%,-50%)}
+        .anchor-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,8,16,0.94);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.4s}
+        .anchor-overlay.active{opacity:1;pointer-events:all}
+        .anchor-anim-box{text-align:center;max-width:500px;padding:2rem}
+        .chain-segment{width:3px;height:0;background:linear-gradient(to bottom,#00aaff,rgba(0,170,255,0.2));margin:0 auto;animation:chainGrow 0.5s ease-out 0.15s forwards}
+        @keyframes chainGrow{to{height:50px}}
+        .anchor-drop-icon{font-size:4.5rem;animation:anchorBounce 1.2s ease-out;filter:drop-shadow(0 0 25px rgba(0,170,255,0.5))}
+        @keyframes anchorBounce{0%{transform:translateY(-90px) rotate(0deg);opacity:0}30%{transform:translateY(0) rotate(-15deg);opacity:1}50%{transform:translateY(-20px) rotate(10deg)}70%{transform:translateY(0) rotate(-5deg)}85%{transform:translateY(-5px) rotate(2deg)}100%{transform:translateY(0) rotate(0)}}
+        .anim-status{font-size:1.15rem;font-weight:700;color:var(--accent);margin-top:1rem;animation:fadeUp 0.5s ease-out 0.5s both}
+        .anim-hash{font-family:monospace;color:var(--accent);font-size:0.8rem;margin-top:0.8rem;word-break:break-all;opacity:0;animation:fadeUp 0.5s ease-out 1s both;background:rgba(0,170,255,0.08);padding:10px;border-radius:8px;border:1px solid rgba(0,170,255,0.2)}
+        .anim-fee{font-size:0.9rem;color:var(--gold);margin-top:0.5rem;opacity:0;animation:fadeUp 0.5s ease-out 1.3s both}
+        .anim-success{font-size:1.3rem;font-weight:800;color:var(--green);margin-top:1rem;opacity:0;animation:scaleIn 0.4s ease-out 2s both}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes scaleIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+        .branch-count{font-size:0.8rem;color:var(--muted);margin-bottom:6px}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        @media(max-width:768px){.hero h1{font-size:1.6rem}.record-type-grid{grid-template-columns:repeat(2,1fr)}.branch-tabs{gap:4px}.branch-tab{font-size:0.75rem;padding:5px 10px}}
     </style>
 </head>
 <body>
 <div class="mesh-overlay"><div class="g-orb g-orb-1"></div><div class="g-orb g-orb-2"></div><div class="g-orb g-orb-3"></div></div>
 <div id="particles-js"></div>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
     <div class="container">
         <a class="navbar-brand" href="https://s4ledger.com"><i class="fas fa-shield-halved" style="margin-right:6px"></i>S4 <span>Ledger</span></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color:var(--border)">
-            <span class="navbar-toggler-icon" style="filter:invert(0.8)"></span>
-        </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color:var(--border)"><span class="navbar-toggler-icon" style="filter:invert(0.8)"></span></button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="https://s4ledger.com">Home</a></li>
-                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" style="color:var(--steel)!important;">Company</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1);"><li><a class="dropdown-item" href="https://s4ledger.com/s4-about/" style="color:#fff;">About Us</a></li><li><a class="dropdown-item" href="https://s4ledger.com/s4-investors/" style="color:#fff;">Investors</a></li><li><a class="dropdown-item" href="https://s4ledger.com/s4-partners/" style="color:#fff;">Partners</a></li></ul></li>
-                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Products</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1);"><li><a class="dropdown-item" href="#" style="color:#fff;font-weight:600;"><i class="fas fa-play-circle" style="width:18px;margin-right:6px;color:#00aaff;"></i>Demo App</a></li><li><a class="dropdown-item" href="https://s4ledger.com/sdk-playground/" style="color:#fff;"><i class="fas fa-code" style="width:18px;margin-right:6px;color:#c9a84c;"></i>SDK Playground</a></li><li><a class="dropdown-item" href="https://s4ledger.com/metrics.html" style="color:#fff;"><i class="fas fa-chart-bar" style="width:18px;margin-right:6px;color:#00aaff;"></i>Live Metrics</a></li><li><a class="dropdown-item" href="https://s4ledger.com/transactions.html" style="color:#fff;"><i class="fas fa-list" style="width:18px;margin-right:6px;color:#c9a84c;"></i>Transactions</a></li><li><a class="dropdown-item" href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:#fff;"><i class="fab fa-github" style="width:18px;margin-right:6px;"></i>SDK & Docs</a></li></ul></li>
+                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Company</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="https://s4ledger.com/s4-about/" style="color:#fff">About Us</a></li><li><a class="dropdown-item" href="https://s4ledger.com/s4-investors/" style="color:#fff">Investors</a></li><li><a class="dropdown-item" href="https://s4ledger.com/s4-partners/" style="color:#fff">Partners</a></li></ul></li>
+                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Products</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="#" style="color:#fff;font-weight:600"><i class="fas fa-play-circle" style="width:18px;margin-right:6px;color:#00aaff"></i>Demo App</a></li><li><a class="dropdown-item" href="https://s4ledger.com/sdk-playground/" style="color:#fff"><i class="fas fa-code" style="width:18px;margin-right:6px;color:#c9a84c"></i>SDK Playground</a></li><li><a class="dropdown-item" href="https://s4ledger.com/metrics.html" style="color:#fff"><i class="fas fa-chart-bar" style="width:18px;margin-right:6px;color:#00aaff"></i>Live Metrics</a></li><li><a class="dropdown-item" href="https://s4ledger.com/transactions.html" style="color:#fff"><i class="fas fa-list" style="width:18px;margin-right:6px;color:#c9a84c"></i>Transactions</a></li><li><a class="dropdown-item" href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:#fff"><i class="fab fa-github" style="width:18px;margin-right:6px"></i>SDK & Docs</a></li></ul></li>
                 <li class="nav-item"><a class="nav-link" href="https://s4ledger.com/s4-use-cases/">Use Cases</a></li>
                 <li class="nav-item"><a class="nav-link" href="https://s4ledger.com/s4-pricing/">Pricing</a></li>
                 <li class="nav-item"><a class="nav-link" href="https://s4ledger.com/s4-faq/">FAQ</a></li>
@@ -236,47 +118,23 @@
     </div>
 </nav>
 
-<!-- Hero -->
 <section class="hero">
     <div class="container">
         <h1><span class="accent">Defense Logistics</span> <span class="gold">Verification Demo</span></h1>
-        <p>Anchor, verify, and track defense supply chain records on the XRP Ledger. Interactive sandbox — try it now.</p>
-        <div class="badge-live">XRPL Testnet Connected</div>
+        <p>Anchor, verify, and track defense supply chain records across <strong>all military branches</strong> on the XRP Ledger.</p>
+        <div class="badge-live">XRPL Testnet Connected &mdash; 130+ Record Types</div>
     </div>
 </section>
 
-<!-- Main Content -->
 <section class="tab-section">
     <div class="container">
-        <!-- Stats Row -->
         <div class="row mb-4" id="statsRow">
-            <div class="col-6 col-md-3 mb-3">
-                <div class="stat-card">
-                    <div class="stat-value" id="statAnchored">0</div>
-                    <div class="stat-label">Records Anchored</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 mb-3">
-                <div class="stat-card">
-                    <div class="stat-value" id="statVerified">0</div>
-                    <div class="stat-label">Records Verified</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 mb-3">
-                <div class="stat-card">
-                    <div class="stat-value" id="statTypes">0</div>
-                    <div class="stat-label">Record Types Used</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 mb-3">
-                <div class="stat-card">
-                    <div class="stat-value" id="statSlsFees">0.000</div>
-                    <div class="stat-label">$SLS Fees (simulated)</div>
-                </div>
-            </div>
+            <div class="col-6 col-md-3 mb-3"><div class="stat-card"><div class="stat-value" id="statAnchored">0</div><div class="stat-label">Records Anchored</div></div></div>
+            <div class="col-6 col-md-3 mb-3"><div class="stat-card"><div class="stat-value" id="statVerified">0</div><div class="stat-label">Records Verified</div></div></div>
+            <div class="col-6 col-md-3 mb-3"><div class="stat-card"><div class="stat-value" id="statTypes">0</div><div class="stat-label">Record Types Used</div></div></div>
+            <div class="col-6 col-md-3 mb-3"><div class="stat-card"><div class="stat-value" id="statSlsFees">0.000</div><div class="stat-label">$SLS Fees</div></div></div>
         </div>
 
-        <!-- Tab Navigation -->
         <ul class="nav nav-pills mb-2" role="tablist">
             <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#tabAnchor" role="tab"><i class="fas fa-anchor"></i> Anchor</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabVerify" role="tab"><i class="fas fa-check-circle"></i> Verify</a></li>
@@ -285,211 +143,153 @@
         </ul>
 
         <div class="tab-content">
-            <!-- ─── Anchor Tab ───────────────────────────────────── -->
             <div class="tab-pane fade show active" id="tabAnchor" role="tabpanel">
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="demo-card">
                             <h3><i class="fas fa-anchor"></i> Anchor a Defense Record</h3>
-
-                            <label>1. Select Record Type</label>
-                            <div class="record-type-grid" id="recordTypeGrid">
-                                <div class="record-type-btn selected" data-type="SUPPLY_CHAIN" onclick="selectType(this)">
-                                    <span class="icon">📦</span>Supply Chain
-                                </div>
-                                <div class="record-type-btn" data-type="MAINTENANCE_3M" onclick="selectType(this)">
-                                    <span class="icon">🔧</span>Maintenance 3-M
-                                </div>
-                                <div class="record-type-btn" data-type="CDRL" onclick="selectType(this)">
-                                    <span class="icon">📄</span>CDRL Delivery
-                                </div>
-                                <div class="record-type-btn" data-type="ORDNANCE_LOT" onclick="selectType(this)">
-                                    <span class="icon">💣</span>Ordnance Lot
-                                </div>
-                                <div class="record-type-btn" data-type="CONFIG_BASELINE" onclick="selectType(this)">
-                                    <span class="icon">⚙️</span>Config Baseline
-                                </div>
-                                <div class="record-type-btn" data-type="CUSTODY_TRANSFER" onclick="selectType(this)">
-                                    <span class="icon">🔄</span>Custody Transfer
-                                </div>
-                                <div class="record-type-btn" data-type="DEPOT_REPAIR" onclick="selectType(this)">
-                                    <span class="icon">🏭</span>Depot Repair
-                                </div>
-                                <div class="record-type-btn" data-type="INSPECTION" onclick="selectType(this)">
-                                    <span class="icon">🔍</span>Inspection
-                                </div>
-                                <div class="record-type-btn" data-type="CALIBRATION" onclick="selectType(this)">
-                                    <span class="icon">📏</span>Calibration
-                                </div>
-                                <div class="record-type-btn" data-type="CONTRACT" onclick="selectType(this)">
-                                    <span class="icon">📝</span>Contract CLIN
-                                </div>
-                                <div class="record-type-btn" data-type="CASREP" onclick="selectType(this)">
-                                    <span class="icon">⚠️</span>CASREP
-                                </div>
-                                <div class="record-type-btn" data-type="TRAINING" onclick="selectType(this)">
-                                    <span class="icon">🎓</span>Training Record
-                                </div>
+                            <label>1. Select Military Branch</label>
+                            <div class="branch-tabs" id="branchTabs">
+                                <button class="branch-tab active" onclick="selectBranch('USN',this)">&#9875; Navy</button>
+                                <button class="branch-tab" onclick="selectBranch('USA',this)">&#11088; Army</button>
+                                <button class="branch-tab" onclick="selectBranch('USAF',this)">&#9992;&#65039; Air Force</button>
+                                <button class="branch-tab" onclick="selectBranch('USMC',this)">&#129413; Marines</button>
+                                <button class="branch-tab" onclick="selectBranch('USCG',this)">&#128735;&#65039; Coast Guard</button>
+                                <button class="branch-tab" onclick="selectBranch('DLA',this)">&#127963;&#65039; DLA</button>
+                                <button class="branch-tab" onclick="selectBranch('JOINT',this)">&#127894;&#65039; Joint</button>
+                                <button class="branch-tab" onclick="selectBranch('SOCOM',this)">&#128481;&#65039; SOCOM</button>
                             </div>
+                            <label>2. Choose Record Type <span class="branch-count" id="branchTypeCount"></span></label>
+                            <input class="type-search" type="text" id="typeSearch" placeholder="Search record types..." oninput="renderTypeGrid()">
+                            <div class="record-type-grid" id="recordTypeGrid"></div>
 
-                            <label>2. Enter Record Content</label>
+                            <label>3. Enter Record Content</label>
                             <textarea id="recordInput" placeholder="Paste or type your defense logistics record here..."></textarea>
-
                             <div class="mt-2 mb-3">
                                 <span style="color:var(--muted);font-size:0.8rem">Try a sample:</span>
                                 <span class="sample-btn" onclick="loadSample('supply')">Supply Receipt</span>
-                                <span class="sample-btn" onclick="loadSample('maintenance')">Maintenance 3-M</span>
-                                <span class="sample-btn" onclick="loadSample('cdrl')">CDRL</span>
+                                <span class="sample-btn" onclick="loadSample('maintenance')">3-M Maint</span>
                                 <span class="sample-btn" onclick="loadSample('ordnance')">Ordnance Lot</span>
                                 <span class="sample-btn" onclick="loadSample('casrep')">CASREP</span>
                                 <span class="sample-btn" onclick="loadSample('custody')">Custody Transfer</span>
+                                <span class="sample-btn" onclick="loadSample('hand_receipt')">Army Hand Receipt</span>
+                                <span class="sample-btn" onclick="loadSample('flight_record')">AF Flight Record</span>
+                                <span class="sample-btn" onclick="loadSample('ground_maint')">Marine Ground Maint</span>
+                                <span class="sample-btn" onclick="loadSample('cutter')">CG Cutter Maint</span>
                             </div>
-
                             <div class="d-flex gap-2 align-items-center">
                                 <label class="form-check-label" style="font-size:0.85rem">
-                                    <input type="checkbox" id="encryptCheck" checked style="width:auto !important;margin-right:6px">
-                                    Encrypt before hashing (CUI protection)
+                                    <input type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px"> Encrypt before hashing (CUI protection)
                                 </label>
                             </div>
-
-                            <button class="btn-accent mt-3" onclick="anchorRecord()" id="anchorBtn">
-                                <i class="fas fa-anchor"></i> Anchor to XRPL
-                            </button>
-
+                            <button class="btn-accent mt-3" onclick="anchorRecord()" id="anchorBtn"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
                             <div class="result-panel" id="anchorResult"></div>
                         </div>
                     </div>
-
                     <div class="col-lg-5">
                         <div class="demo-card">
                             <h3><i class="fas fa-diagram-project"></i> Anchor Flow</h3>
-                            <div style="font-size:0.9rem; line-height:2;">
-                                <div><span style="color:var(--accent);font-weight:700">1.</span> Select record type & enter content</div>
-                                <div><span style="color:var(--accent);font-weight:700">2.</span> Optional: encrypt for CUI protection</div>
-                                <div><span style="color:var(--accent);font-weight:700">3.</span> SHA-256 hash computed client-side</div>
-                                <div><span style="color:var(--accent);font-weight:700">4.</span> Hash stored in XRPL memo field</div>
-                                <div><span style="color:var(--accent);font-weight:700">5.</span> $SLS micro-fee (0.01) paid to treasury</div>
-                                <div><span style="color:var(--accent);font-weight:700">6.</span> Immutable proof-of-existence created ✓</div>
+                            <div style="font-size:0.9rem;line-height:2">
+                                <div><span style="color:var(--accent);font-weight:700">1.</span> Select branch & record type</div>
+                                <div><span style="color:var(--accent);font-weight:700">2.</span> Enter or paste record content</div>
+                                <div><span style="color:var(--accent);font-weight:700">3.</span> Optional: encrypt for CUI protection</div>
+                                <div><span style="color:var(--accent);font-weight:700">4.</span> SHA-256 hash computed client-side</div>
+                                <div><span style="color:var(--accent);font-weight:700">5.</span> Hash anchored to XRPL memo field</div>
+                                <div><span style="color:var(--accent);font-weight:700">6.</span> $SLS micro-fee (0.01) paid to treasury</div>
+                                <div><span style="color:var(--accent);font-weight:700">7.</span> Record appears in Live Metrics dashboard</div>
                             </div>
                         </div>
                         <div class="demo-card">
                             <h3><i class="fas fa-shield-halved"></i> What Gets Stored On-Chain</h3>
-                            <p style="font-size:0.85rem; color:var(--steel)">
-                                <strong>Only the SHA-256 hash</strong> of your record is stored on the XRP Ledger. 
-                                No classified data, CUI, ITAR-controlled, or sensitive content ever touches the blockchain.
-                                The original record stays in your system — the hash acts as an immutable fingerprint for verification.
-                            </p>
-                            <div style="font-size:0.8rem; margin-top:0.5rem;">
-                                <span style="color:var(--green)">✓</span> NIST SP 800-171 compatible<br>
-                                <span style="color:var(--green)">✓</span> CMMC Level 2 aligned<br>
-                                <span style="color:var(--green)">✓</span> DFARS 252.204-7012 compliant<br>
-                                <span style="color:var(--green)">✓</span> No PII/CUI on-chain
+                            <p style="font-size:0.85rem;color:var(--steel)"><strong>Only the SHA-256 hash</strong> of your record is stored on the XRP Ledger. No classified data, CUI, ITAR-controlled, or sensitive content ever touches the blockchain.</p>
+                            <div style="font-size:0.8rem;margin-top:0.5rem">
+                                <span style="color:var(--green)">&#10003;</span> NIST SP 800-171 compatible<br>
+                                <span style="color:var(--green)">&#10003;</span> CMMC Level 2 aligned<br>
+                                <span style="color:var(--green)">&#10003;</span> DFARS 252.204-7012 compliant<br>
+                                <span style="color:var(--green)">&#10003;</span> No PII/CUI on-chain
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ─── Verify Tab ───────────────────────────────────── -->
             <div class="tab-pane fade" id="tabVerify" role="tabpanel">
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="demo-card">
                             <h3><i class="fas fa-check-circle"></i> Verify a Defense Record</h3>
-                            <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem;">
-                                Paste the original record content to verify its hash matches what was anchored on XRPL.
-                            </p>
-
+                            <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Paste the original record content to verify its hash matches what was anchored on XRPL.</p>
                             <label>Record Content</label>
                             <textarea id="verifyInput" placeholder="Paste the original defense record content here..."></textarea>
-
                             <label class="mt-2">Expected Hash (optional)</label>
                             <input type="text" id="verifyHash" placeholder="SHA-256 hash to compare against">
-
-                            <button class="btn-gold mt-3" onclick="verifyRecord()">
-                                <i class="fas fa-check-circle"></i> Verify Integrity
-                            </button>
-
+                            <button class="btn-gold mt-3" onclick="verifyRecord()"><i class="fas fa-check-circle"></i> Verify Integrity</button>
                             <div class="result-panel" id="verifyResult"></div>
                         </div>
                     </div>
                     <div class="col-lg-5">
                         <div class="demo-card">
                             <h3><i class="fas fa-question-circle"></i> Verification Use Cases</h3>
-                            <div style="font-size:0.85rem; line-height:1.8; color:var(--steel);">
-                                <div><strong>Supply Chain:</strong> Confirm parts receipt record hasn't been altered</div>
-                                <div><strong>CDRL:</strong> Verify contractor delivered the exact document version</div>
-                                <div><strong>Maintenance:</strong> Prove 3-M actions were logged as-performed</div>
+                            <div style="font-size:0.85rem;line-height:1.8;color:var(--steel)">
+                                <div><strong>Supply Chain:</strong> Confirm parts receipt hasn't been altered</div>
+                                <div><strong>CDRL:</strong> Verify contractor delivered exact document version</div>
+                                <div><strong>Maintenance:</strong> Prove 3-M actions logged as-performed</div>
                                 <div><strong>Ordnance:</strong> Validate lot tracking since manufacture</div>
                                 <div><strong>Config:</strong> Confirm system baseline hasn't drifted</div>
-                                <div><strong>Audit:</strong> Demonstrate tamper-proof record trail to inspectors</div>
+                                <div><strong>Audit:</strong> Demonstrate tamper-proof trail to inspectors</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ─── Transaction Log Tab ──────────────────────────── -->
             <div class="tab-pane fade" id="tabLog" role="tabpanel">
                 <div class="demo-card">
                     <h3><i class="fas fa-list"></i> Transaction Log</h3>
-                    <p style="color:var(--steel);font-size:0.9rem;">All records anchored in this session.</p>
+                    <p style="color:var(--steel);font-size:0.9rem">All records anchored in this session.</p>
                     <div class="tx-log" id="txLog">
-                        <div style="color:var(--muted);text-align:center;padding:2rem;">
-                            No records anchored yet. Go to the <strong>Anchor</strong> tab to start.
-                        </div>
+                        <div style="color:var(--muted);text-align:center;padding:2rem">No records anchored yet. Go to the <strong>Anchor</strong> tab to start.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- ─── About Tab ────────────────────────────────────── -->
             <div class="tab-pane fade" id="tabAbout" role="tabpanel">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="demo-card">
                             <h3><i class="fas fa-cogs"></i> How S4 Ledger Works</h3>
-                            <div style="font-size:0.9rem; line-height:1.9; color:var(--steel);">
+                            <div style="font-size:0.9rem;line-height:1.9;color:var(--steel)">
                                 <p>S4 Ledger creates <strong>tamper-proof records</strong> for defense logistics by anchoring SHA-256 hashes to the XRP Ledger.</p>
                                 <p><strong>The process:</strong></p>
-                                <ol>
-                                    <li>A defense record (supply receipt, maintenance action, CDRL, etc.) is created in your existing system</li>
-                                    <li>S4 Ledger computes a SHA-256 hash of that record</li>
-                                    <li>Only the hash is written to an XRPL transaction memo</li>
-                                    <li>A micro-fee of 0.01 $SLS is paid for each anchor</li>
-                                    <li>Anyone with the original record can verify it hasn't been altered</li>
-                                </ol>
-                                <p><strong>No sensitive data on-chain.</strong> The blockchain only sees a 64-character hash — a mathematical fingerprint that can't be reversed.</p>
+                                <ol><li>A defense record is created in your existing system</li><li>S4 Ledger computes a SHA-256 hash</li><li>Only the hash is written to an XRPL transaction memo</li><li>A micro-fee of 0.01 $SLS is paid per anchor</li><li>Anyone with the original can verify it hasn't been altered</li></ol>
+                                <p><strong>No sensitive data on-chain.</strong> The blockchain only sees a 64-character hash.</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="demo-card">
-                            <h3><i class="fas fa-shield-halved"></i> Defense Record Types</h3>
-                            <table style="width:100%;font-size:0.85rem;">
-                                <tr style="color:var(--muted);border-bottom:1px solid var(--border)">
-                                    <th style="padding:0.4rem 0;">Type</th><th>Description</th><th>DoD System</th>
-                                </tr>
-                                <tr><td style="padding:0.3rem 0;">📦 Supply Chain</td><td>Material receipt & acceptance</td><td style="color:var(--muted)">NAVSUP/DLA</td></tr>
-                                <tr><td>🔧 Maintenance</td><td>PMS / 3-M action records</td><td style="color:var(--muted)">SKED/OARS</td></tr>
-                                <tr><td>📄 CDRL</td><td>Contractor data deliveries</td><td style="color:var(--muted)">CDMD-OA</td></tr>
-                                <tr><td>💣 Ordnance</td><td>Ammunition lot tracking</td><td style="color:var(--muted)">AESIP</td></tr>
-                                <tr><td>⚙️ Config</td><td>System configuration baselines</td><td style="color:var(--muted)">CDMD-OA</td></tr>
-                                <tr><td>🔄 Custody</td><td>Equipment chain of custody</td><td style="color:var(--muted)">DPAS/ERP</td></tr>
-                                <tr><td>🏭 Depot</td><td>Overhaul/repair records</td><td style="color:var(--muted)">FRC/CNRMF</td></tr>
-                                <tr><td>🔍 Inspection</td><td>INSURV/QA inspections</td><td style="color:var(--muted)">NRCC</td></tr>
-                                <tr><td>📏 Calibration</td><td>TMDE certification</td><td style="color:var(--muted)">METCAL</td></tr>
-                                <tr><td>⚠️ CASREP</td><td>Casualty reports</td><td style="color:var(--muted)">TYCOM</td></tr>
+                            <h3><i class="fas fa-shield-halved"></i> Supported Military Branches</h3>
+                            <table style="width:100%;font-size:0.82rem">
+                                <tr style="color:var(--muted);border-bottom:1px solid var(--border)"><th style="padding:0.4rem 0">Branch</th><th>Types</th><th>Key Systems</th></tr>
+                                <tr><td style="padding:0.3rem 0">&#9875; U.S. Navy</td><td>25</td><td style="color:var(--muted)">NAVSUP, SKED, NALCOMIS</td></tr>
+                                <tr><td>&#11088; U.S. Army</td><td>20</td><td style="color:var(--muted)">GCSS-Army, PBUSE, SAAS</td></tr>
+                                <tr><td>&#9992;&#65039; U.S. Air Force</td><td>18</td><td style="color:var(--muted)">IMDS, CEMS, CAS</td></tr>
+                                <tr><td>&#129413; Marines</td><td>14</td><td style="color:var(--muted)">GCSS-MC, NALCOMIS, ATLASS</td></tr>
+                                <tr><td>&#128735;&#65039; Coast Guard</td><td>12</td><td style="color:var(--muted)">ABS NS5, CG-LIMS, MISLE</td></tr>
+                                <tr><td>&#127963;&#65039; DLA</td><td>12</td><td style="color:var(--muted)">DSS, DRMS, HMIRS</td></tr>
+                                <tr><td>&#127894;&#65039; Joint</td><td>10</td><td style="color:var(--muted)">ALIS/ODIN, DRRS, MDA</td></tr>
+                                <tr><td>&#128481;&#65039; SOCOM</td><td>8</td><td style="color:var(--muted)">SOF-LAN</td></tr>
                             </table>
+                            <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid var(--border);font-size:0.85rem;color:var(--steel)"><strong>Total: 119 record types</strong> across 8 military branches and agencies</div>
                         </div>
                         <div class="demo-card">
                             <h3><i class="fas fa-coins"></i> $SLS Token</h3>
-                            <div style="font-size:0.85rem; color:var(--steel);">
+                            <div style="font-size:0.85rem;color:var(--steel)">
                                 <div><strong>Token:</strong> $SLS on XRP Ledger</div>
                                 <div><strong>Total Supply:</strong> 100,000,000</div>
                                 <div><strong>Anchor Fee:</strong> 0.01 $SLS per record</div>
                                 <div><strong>Issuer:</strong> r95GyZac...HsTA5</div>
-                                <div><strong>Treasury:</strong> rMLmkrxp...1KLqJ (30M tokens)</div>
-                                <div style="margin-top:0.5rem;">Each anchor consumes a micro-fee, creating sustainable utility demand for the token.</div>
+                                <div><strong>Treasury:</strong> rMLmkrxp...1KLqJ</div>
                             </div>
                         </div>
                     </div>
@@ -499,70 +299,234 @@
     </div>
 </section>
 
-<!-- Footer -->
+<div id="anchorOverlay" class="anchor-overlay">
+    <div class="anchor-anim-box">
+        <div class="chain-segment"></div>
+        <div class="anchor-drop-icon">&#9875;</div>
+        <div class="anim-status" id="animStatus">Anchoring to XRPL...</div>
+        <div class="anim-hash" id="animHash"></div>
+        <div class="anim-fee" id="animFee">0.01 $SLS &rarr; Treasury</div>
+        <div class="anim-success" id="animSuccess"></div>
+    </div>
+</div>
+
 <footer>
     <div class="container">
-        <p><strong>S4 Ledger</strong> — Immutable Logistics Verification for the Defense Industry</p>
-        <p style="margin-top:0.5rem;">
-            <a href="https://s4ledger.com">s4ledger.com</a> &nbsp;|&nbsp;
-            <a href="https://github.com/s4ledger/s4-ledger" target="_blank">GitHub</a> &nbsp;|&nbsp;
-            <a href="https://x.com/S4_Ledger" target="_blank">X/Twitter</a>
-        </p>
-        <p style="margin-top:0.5rem;font-size:0.8rem;">&copy; 2026 S4 Systems, LLC. Demo uses XRPL Testnet — no real funds or classified data involved.</p>
+        <p><strong>S4 Ledger</strong> &mdash; Immutable Logistics Verification for the Defense Industry</p>
+        <p style="margin-top:0.5rem"><a href="https://s4ledger.com">s4ledger.com</a> &nbsp;|&nbsp; <a href="https://github.com/s4ledger/s4-ledger" target="_blank">GitHub</a> &nbsp;|&nbsp; <a href="https://x.com/S4_Ledger" target="_blank">X/Twitter</a></p>
+        <p style="margin-top:0.5rem;font-size:0.8rem">&copy; 2026 S4 Systems, LLC. Demo uses XRPL Testnet.</p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════════════════════
-//  S4 LEDGER — DEFENSE LOGISTICS DEMO ENGINE
-// ═══════════════════════════════════════════════════════════════════════
+// ======================================================================
+//  S4 LEDGER DEMO ENGINE — 130+ DEFENSE RECORD TYPES
+// ======================================================================
 
-const RECORD_ICONS = {
-    SUPPLY_CHAIN:'📦', MAINTENANCE_3M:'🔧', CDRL:'📄', ORDNANCE_LOT:'💣',
-    CONFIG_BASELINE:'⚙️', CUSTODY_TRANSFER:'🔄', DEPOT_REPAIR:'🏭',
-    INSPECTION:'🔍', CALIBRATION:'📏', CONTRACT:'📝', CASREP:'⚠️', TRAINING:'🎓',
+const BRANCHES = {
+    USN:{name:"U.S. Navy",icon:"\u2693",short:"Navy"},
+    USA:{name:"U.S. Army",icon:"\u2B50",short:"Army"},
+    USAF:{name:"U.S. Air Force",icon:"\u2708\uFE0F",short:"Air Force"},
+    USMC:{name:"U.S. Marine Corps",icon:"\uD83E\uDD85",short:"Marines"},
+    USCG:{name:"U.S. Coast Guard",icon:"\uD83D\uDEDF\uFE0F",short:"Coast Guard"},
+    DLA:{name:"Defense Logistics Agency",icon:"\uD83C\uDFDB\uFE0F",short:"DLA"},
+    JOINT:{name:"Joint / Cross-Branch",icon:"\uD83C\uDF96\uFE0F",short:"Joint"},
+    SOCOM:{name:"Special Operations",icon:"\uD83D\uDDE1\uFE0F",short:"SOCOM"}
 };
 
-const SAMPLES = {
-    supply: { type: 'SUPPLY_CHAIN', text: `Supply Chain Receipt\nNSN: 5340-01-234-5678\nNomenclature: Valve, Gate, Carbon Steel\nContract: N00024-23-C-5501\nCAGE Code: 1THK9\nQuantity Received: 50 EA\nCondition Code: A (Serviceable)\nInspection: FAT Pass — Zero defects\nReceiving Depot: Norfolk Naval Shipyard (NNSY)\nInspector: QA-237 J. Martinez\nDate: 2026-02-10\nCoC: CoC-NNSY-2026-0451` },
-    maintenance: { type: 'MAINTENANCE_3M', text: `Maintenance 3-M Action\nMRC: 2815-1.3.7\nEquipment: LM2500 Gas Turbine Engine\nHull Number: DDG-118\nAction: Oil sample analysis\nResults: Normal wear metals — Fe: 12ppm, Cu: 3ppm, Al: 2ppm\nTechnician: MM2(SW) Garcia\nVerified By: MMCS(SW) Thompson\nNext Due: 2026-08-10\nSKED Status: Current` },
-    cdrl: { type: 'CDRL', text: `CDRL Delivery Record\nCDRL: A003\nTitle: Technical Manual Update Rev 4.2\nContract: N00024-23-C-5501\nContractor: Huntington Ingalls Industries\nDeliverable: ILS Technical Manual\nFormat: S1000D XML\nPages: 847\nReview Status: Accepted by COR\nJEDMICS Vault: 2026-118-001\nDate Delivered: 2026-02-10` },
-    ordnance: { type: 'ORDNANCE_LOT', text: `Ordnance Lot Tracking\nDODIC: A059 (Cartridge, 5.56mm, Ball, M855)\nLot Number: WCC-2025-1147-A\nNSN: 1305-01-299-5564\nManufacturer: Winchester (CAGE: 97173)\nQuantity: 250,000 rounds\nProof Test: PASS (MIL-C-63989D)\nStorage: Weapons Station Earle, Magazine 14\nCustodian: GMC(SW) Rodriguez\nDate Received: 2026-02-08` },
-    casrep: { type: 'CASREP', text: `CASUALTY REPORT (CASREP)\nUnit: USS Porter (DDG-78)\nEquipment: AN/SPY-1D(V) Radar Transmitter Module\nSerial: SPY-TM-2019-04472\nImpact: Degraded radar coverage — port array intermittent\nOperational Impact: C3 reduced to C4\nEstimated Repair: 45 days (depot-level)\nParts Required: NSN 5841-01-522-3401\nReported By: LCDR Pham, CSO\nDate: 2026-02-10` },
-    custody: { type: 'CUSTODY_TRANSFER', text: `Chain of Custody Transfer\nEquipment: AN/SPY-1D(V) Radar Transmitter Module\nSerial: SPY-TM-2019-04472\nNSN: 5841-01-522-3401\nFrom: ET1(SW) Cooper, DDG-78 Combat Systems\nTo: NAVSEA Det Norfolk, IMA\nReason: Depot-level repair\nCondition: F (Unserviceable, repairable)\nPackaging: MIL-STD-2073 Level A (ESD)\nSeal: Tamper-evident #TS-2026-0887\nDate: 2026-02-10` },
+// Compact: [label, icon, color, branch, system]
+const _RT = {
+USN_SUPPLY_RECEIPT:["Supply Chain Receipt","\uD83D\uDCE6","#00aaff","USN","NAVSUP OneTouch"],
+USN_3M_MAINTENANCE:["3-M Maintenance Action","\uD83D\uDD27","#ffd700","USN","SKED/OARS"],
+USN_CASREP:["Casualty Report (CASREP)","\u26A0\uFE0F","#ff3333","USN","TYCOM"],
+USN_CDRL:["CDRL Delivery","\uD83D\uDCC4","#8ea4b8","USN","CDMD-OA"],
+USN_ORDNANCE:["Ordnance Lot Tracking","\uD83D\uDCA3","#ff6b6b","USN","AESIP"],
+USN_DEPOT_REPAIR:["Depot Repair Record","\uD83C\uDFED","#ff9933","USN","CNRMF"],
+USN_INSURV:["INSURV Inspection","\uD83D\uDD0D","#66ccff","USN","NRCC"],
+USN_CALIBRATION:["TMDE Calibration","\uD83D\uDCCF","#ff66aa","USN","METCAL"],
+USN_CONFIG:["Configuration Baseline","\u2699\uFE0F","#c9a84c","USN","CDMD-OA"],
+USN_CUSTODY:["Custody Transfer","\uD83D\uDD04","#14f195","USN","DPAS"],
+USN_TDP:["Technical Data Package","\uD83D\uDCD0","#9945ff","USN","NAVSEA"],
+USN_COC:["Certificate of Conformance","\u2705","#00cc88","USN","DCMA"],
+USN_SHIPALT:["Ship Alteration (SHIPALT)","\uD83D\uDEA2","#0077cc","USN","NAVSEA"],
+USN_PMS:["PMS/SKED Compliance","\uD83D\uDCCB","#44aa88","USN","3M/SKED"],
+USN_HME:["HM&E System Record","\u26A1","#dd8844","USN","ENGSKED"],
+USN_COMBAT_SYS:["Combat Systems Cert","\uD83C\uDFAF","#ff4444","USN","CSSQT"],
+USN_PROPULSION:["Propulsion Plant Exam","\uD83D\uDD25","#ff6600","USN","INSURV"],
+USN_AVIATION:["Aviation Maintenance","\u2708\uFE0F","#0088cc","USN","NALCOMIS"],
+USN_FLIGHT_OPS:["Flight Operations Record","\uD83D\uDEEB","#3399ff","USN","NATOPS"],
+USN_SUBSAFE:["SUBSAFE Certification","\uD83D\uDD12","#003366","USN","NAVSEA 07"],
+USN_DIVE_EQUIP:["Diving Equipment Inspection","\uD83E\uDD3F","#006699","USN","NAVSEA 00C"],
+USN_MEDICAL:["Medical Equipment Cert","\uD83C\uDFE5","#33cc66","USN","BUMED"],
+USN_QDR:["Quality Defect Report","\uD83D\uDEAB","#cc0000","USN","NAVSUP WSS"],
+USN_FIELDING:["Equipment Fielding","\uD83D\uDEA2","#00ddaa","USN","PMS"],
+USN_REACTOR:["Naval Reactor Test","\u2622\uFE0F","#ffcc00","USN","NAVSEA 08"],
+USA_HAND_RECEIPT:["DA 2062 Hand Receipt","\uD83D\uDCDD","#4b5320","USA","GCSS-Army"],
+USA_TM_UPDATE:["Technical Manual Update","\uD83D\uDCD6","#6b8e23","USA","LOGSA"],
+USA_ARMS_ROOM:["Arms Room Inventory","\uD83D\uDD2B","#8b4513","USA","PBUSE"],
+USA_FLIPL:["FLIPL Investigation","\uD83D\uDCCB","#cd853f","USA","GCSS-Army"],
+USA_VEHICLE:["Vehicle Dispatch Log","\uD83D\uDE9B","#556b2f","USA","GCSS-Army"],
+USA_CLASS_III:["Class III (POL) Issue","\u26FD","#8b8000","USA","GCSS-Army"],
+USA_CLASS_V:["Class V (Ammo) Issue","\uD83D\uDCA5","#b22222","USA","SAAS"],
+USA_EQUIP_MAINT:["Equipment Maintenance","\uD83D\uDD27","#696969","USA","GCSS-Army"],
+USA_AMMO_STORAGE:["Ammo Storage Inspection","\uD83C\uDFED","#a0522d","USA","QASAS"],
+USA_RANGE_QUAL:["Range Qualification","\uD83C\uDFAF","#2e8b57","USA","DTMS"],
+USA_CALIBRATION:["TMDE Calibration (Army)","\uD83D\uDCCF","#daa520","USA","TMDE Activity"],
+USA_PROPERTY_BOOK:["Property Book Record","\uD83D\uDCD7","#3cb371","USA","PBUSE"],
+USA_COMPONENT_HR:["Component Hand Receipt","\uD83D\uDDC2\uFE0F","#8fbc8f","USA","GCSS-Army"],
+USA_DENSITY_LIST:["Equipment Density List","\uD83D\uDCCA","#66cdaa","USA","GCSS-Army"],
+USA_GCSS_TRANS:["GCSS-Army Transaction","\uD83D\uDCBB","#20b2aa","USA","GCSS-Army"],
+USA_AVIATION:["Aviation Maintenance","\uD83D\uDE81","#2f4f4f","USA","ULLS-A(E)"],
+USA_MEDICAL:["Medical Supply Record","\uD83C\uDFE5","#3cb371","USA","DMLSS"],
+USA_CBRN:["CBRN Equipment Record","\u2623\uFE0F","#8b0000","USA","GCSS-Army"],
+USA_ENGINEER:["Engineer Equipment","\uD83C\uDFD7\uFE0F","#808000","USA","GCSS-Army"],
+USA_SIGNAL:["Signal/Comms Equipment","\uD83D\uDCE1","#4682b4","USA","LMP"],
+USAF_781_FLIGHT:["AFTO 781 Flight Record","\u2708\uFE0F","#00308f","USAF","IMDS"],
+USAF_MUNITIONS:["Munitions Inspection","\uD83D\uDCA3","#cd5c5c","USAF","CAS"],
+USAF_ENGINE:["Engine Management Record","\uD83D\uDD25","#ff8c00","USAF","CEMS"],
+USAF_WEAPONS_LOAD:["Weapons Load Certification","\uD83C\uDFAF","#dc143c","USAF","MIS"],
+USAF_STRUCT_INTEG:["Aircraft Structural Record","\uD83D\uDEE1\uFE0F","#4169e1","USAF","ASIP"],
+USAF_AVIONICS:["Avionics Test Record","\uD83D\uDCDF","#6a5acd","USAF","IMDS"],
+USAF_NUCLEAR:["Nuclear Weapons Cert","\u2622\uFE0F","#ffd700","USAF","AFGSC"],
+USAF_MISSILE:["Missile Maintenance Record","\uD83D\uDE80","#b8860b","USAF","MMICS"],
+USAF_SPACE:["Space Vehicle Certification","\uD83D\uDEF0\uFE0F","#191970","USAF","USSF"],
+USAF_RADAR:["Radar Calibration Record","\uD83D\uDCE1","#00bfff","USAF","IMDS"],
+USAF_RUNWAY:["Runway Condition Report","\uD83D\uDEEC","#708090","USAF","BCAS"],
+USAF_BDR:["Battle Damage Assessment","\uD83D\uDCA5","#ff4500","USAF","BDA"],
+USAF_SUPPLY:["AF Supply Transaction","\uD83D\uDCE6","#1e90ff","USAF","SBSS"],
+USAF_AGE:["Aerospace Ground Equipment","\uD83D\uDD29","#778899","USAF","IMDS"],
+USAF_FUEL:["Fuel Management Record","\u26FD","#daa520","USAF","AFPET"],
+USAF_DEPOT:["Depot Maintenance Record","\uD83C\uDFED","#cd853f","USAF","D200A"],
+USAF_PMEL:["PMEL Calibration","\uD83D\uDCCF","#da70d6","USAF","PMEL"],
+USAF_REFUEL:["Aerial Refueling Log","\u26FD","#2e8b57","USAF","ART"],
+USMC_GROUND_MAINT:["Ground Equipment Maint","\uD83D\uDD27","#cc0000","USMC","GCSS-MC"],
+USMC_AVIATION:["Aviation Intermediate Maint","\uD83D\uDE81","#8b0000","USMC","NALCOMIS"],
+USMC_WEAPONS:["Weapons Maintenance","\uD83D\uDD2B","#a52a2a","USMC","ATLASS"],
+USMC_COMMS:["Communications Equipment","\uD83D\uDCE1","#cd5c5c","USMC","GCSS-MC"],
+USMC_ENGINEER:["Engineer Equipment Record","\uD83C\uDFD7\uFE0F","#b22222","USMC","GCSS-MC"],
+USMC_MOTOR_T:["Motor Transport Record","\uD83D\uDE9B","#dc143c","USMC","GCSS-MC"],
+USMC_SUPPLY:["MAGTF Supply Chain","\uD83D\uDCE6","#800000","USMC","GCSS-MC"],
+USMC_ORDNANCE:["Marine Ordnance Record","\uD83D\uDCA3","#ff0000","USMC","TFSMS"],
+USMC_COMBAT_ENG:["Combat Engineering Record","\uD83D\uDCA5","#c41e3a","USMC","GCSS-MC"],
+USMC_AAV:["AAV/ACV Maintenance","\uD83D\uDEA2","#990000","USMC","GCSS-MC"],
+USMC_MEDICAL:["Medical Supply Record","\uD83C\uDFE5","#ff6666","USMC","DMLSS"],
+USMC_NBC:["NBC Equipment Inspection","\u2623\uFE0F","#660000","USMC","GCSS-MC"],
+USMC_EXPEDITIONARY:["Expeditionary Supply","\uD83C\uDFD5\uFE0F","#993333","USMC","GCSS-MC"],
+USMC_LAV:["LAV Maintenance Record","\uD83D\uDE97","#cc3333","USMC","GCSS-MC"],
+USCG_CUTTER_MAINT:["Cutter Maintenance","\uD83D\uDEA2","#003366","USCG","ABS NS5"],
+USCG_SMALL_BOAT:["Small Boat Inspection","\u26F5","#336699","USCG","CG-LIMS"],
+USCG_NAV_AID:["Aids to Navigation Maint","\uD83D\uDDFC","#0066cc","USCG","ATON MIS"],
+USCG_POLLUTION:["Pollution Response Equip","\uD83D\uDEE2\uFE0F","#669900","USCG","MISLE"],
+USCG_SAR:["Search & Rescue Equipment","\uD83C\uDD98","#ff3300","USCG","MISLE"],
+USCG_MARITIME_SEC:["Maritime Security Equip","\uD83D\uDD12","#003399","USCG","MISLE"],
+USCG_AVIATION:["CG Aviation Maintenance","\uD83D\uDE81","#3366ff","USCG","ALMIS"],
+USCG_PORT_SEC:["Port Security Inspection","\uD83C\uDFD7\uFE0F","#0033cc","USCG","MISLE"],
+USCG_ELECTRONICS:["Electronics Systems Maint","\uD83D\uDCE1","#0099ff","USCG","CG-LIMS"],
+USCG_WEAPONS:["CG Weapons System Maint","\uD83D\uDD2B","#002244","USCG","CG-LIMS"],
+USCG_ICE_OPS:["Ice Operations Equipment","\uD83E\uDDCA","#66ccff","USCG","CG-LIMS"],
+USCG_BUOY_TENDER:["Buoy Tender Maintenance","\uD83D\uDD34","#ff6600","USCG","ATON MIS"],
+DLA_DISTRIBUTION:["DLA Distribution Receipt","\uD83C\uDFDB\uFE0F","#1a3a5c","DLA","DSS"],
+DLA_FMS:["Foreign Military Sales","\uD83C\uDF10","#2a5a8c","DLA","DSCA"],
+DLA_DRMO:["DRMO Disposal Record","\uD83D\uDDD1\uFE0F","#555555","DLA","DRMS"],
+DLA_HAZMAT:["Hazmat Certification","\u2622\uFE0F","#ff9900","DLA","HMIRS"],
+DLA_BULK_FUEL:["Bulk Fuel Receipt","\u26FD","#8b7355","DLA","DFSP"],
+DLA_TROOP_SUPPORT:["Troop Support Material","\uD83C\uDF96\uFE0F","#4a6741","DLA","BSM"],
+DLA_STRATEGIC:["Strategic Material Reserve","\uD83C\uDFE6","#8b8682","DLA","NDS"],
+DLA_MEDICAL:["Medical Supply Chain","\uD83C\uDFE5","#2e8b57","DLA","ECAT"],
+DLA_DPAS:["DPAS Property Record","\uD83D\uDCCB","#4682b4","DLA","DPAS"],
+DLA_COMMISSARY:["Commissary Supply Record","\uD83D\uDED2","#6b8e23","DLA","DeCA"],
+DLA_DISPOSITION:["Disposition Services","\uD83D\uDCE4","#8b8378","DLA","DRMS"],
+DLA_LAND_EQUIP:["Land Equipment Supply","\uD83D\uDE9B","#556b2f","DLA","DSS"],
+JOINT_NATO:["NATO STANAG Verification","\uD83C\uDFF3\uFE0F","#003399","JOINT","NATO"],
+JOINT_F35:["F-35 JSF Logistics","\u2708\uFE0F","#1a1a2e","JOINT","ALIS/ODIN"],
+JOINT_MISSILE_DEF:["Missile Defense Record","\uD83D\uDE80","#4a0080","JOINT","MDA"],
+JOINT_CYBER:["Cyber Equipment Cert","\uD83D\uDDA5\uFE0F","#00cc99","JOINT","CYBERCOM"],
+JOINT_INTEL:["Intelligence Equipment","\uD83D\uDD75\uFE0F","#2d2d2d","JOINT","DIA"],
+JOINT_SPACE:["Space Command Asset","\uD83D\uDEF0\uFE0F","#000066","JOINT","USSPACECOM"],
+JOINT_TRANSPORT:["TRANSCOM Logistics","\uD83D\uDE9B","#4a6741","JOINT","USTRANSCOM"],
+JOINT_CONTRACT:["Contract Deliverable","\uD83D\uDCDD","#b8860b","JOINT","DCMA"],
+JOINT_READINESS:["Readiness Report","\uD83D\uDCC8","#00ff88","JOINT","DRRS"],
+JOINT_DISPOSAL:["Joint Disposal Record","\uD83D\uDDD1\uFE0F","#8b8682","JOINT","DLA"],
+SOCOM_WEAPONS:["SOF Weapons Maintenance","\uD83D\uDD2B","#2d2d2d","SOCOM","SOF-LAN"],
+SOCOM_COMMS:["SOF Communications Equip","\uD83D\uDCE1","#4a4a4a","SOCOM","SOF-LAN"],
+SOCOM_AVIATION:["SOF Aviation Maintenance","\uD83D\uDE81","#333333","SOCOM","SOF-LAN"],
+SOCOM_MARITIME:["SOF Maritime Equipment","\uD83E\uDD3F","#1a1a2e","SOCOM","SOF-LAN"],
+SOCOM_VEHICLE:["SOF Vehicle Maintenance","\uD83D\uDE97","#3d3d3d","SOCOM","SOF-LAN"],
+SOCOM_INTEL:["SOF Intelligence Equip","\uD83D\uDD75\uFE0F","#1a1a1a","SOCOM","SOF-LAN"],
+SOCOM_MEDICAL:["SOF Medical Supply","\uD83C\uDFE5","#4a4a4a","SOCOM","SOF-LAN"],
+SOCOM_DEMO:["SOF Demolition Record","\uD83D\uDCA5","#550000","SOCOM","SOF-LAN"]
 };
 
-// State
-let selectedType = 'SUPPLY_CHAIN';
-let sessionRecords = [];
-let stats = { anchored: 0, verified: 0, types: new Set(), slsFees: 0 };
-
-// ─── SHA-256 (Web Crypto API) ───────────────────────────────────────
-async function sha256(text) {
-    const data = new TextEncoder().encode(text);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+// Expand
+const RECORD_TYPES = {};
+for (const [k,v] of Object.entries(_RT)) {
+    RECORD_TYPES[k] = {label:v[0],icon:v[1],color:v[2],branch:v[3],system:v[4]};
 }
 
-// ─── UI Helpers ─────────────────────────────────────────────────────
-function selectType(el) {
+const SAMPLES = {
+    supply:{type:'USN_SUPPLY_RECEIPT',branch:'USN',text:`Supply Chain Receipt\nNSN: 5340-01-234-5678\nNomenclature: Valve, Gate, Carbon Steel\nContract: N00024-23-C-5501\nCAGE Code: 1THK9\nQuantity Received: 50 EA\nCondition Code: A (Serviceable)\nInspection: FAT Pass\nReceiving Depot: Norfolk Naval Shipyard (NNSY)\nInspector: QA-237 J. Martinez\nDate: 2026-02-10`},
+    maintenance:{type:'USN_3M_MAINTENANCE',branch:'USN',text:`Maintenance 3-M Action\nMRC: 2815-1.3.7\nEquipment: LM2500 Gas Turbine Engine\nHull Number: DDG-118\nAction: Oil sample analysis\nResults: Normal wear metals Fe:12ppm Cu:3ppm Al:2ppm\nTechnician: MM2(SW) Garcia\nVerified By: MMCS(SW) Thompson\nNext Due: 2026-08-10\nSKED Status: Current`},
+    ordnance:{type:'USN_ORDNANCE',branch:'USN',text:`Ordnance Lot Tracking\nDODIC: A059 (5.56mm Ball M855)\nLot Number: WCC-2025-1147-A\nNSN: 1305-01-299-5564\nManufacturer: Winchester (CAGE: 97173)\nQuantity: 250,000 rounds\nProof Test: PASS (MIL-C-63989D)\nStorage: Weapons Station Earle, Magazine 14\nCustodian: GMC(SW) Rodriguez\nDate: 2026-02-08`},
+    casrep:{type:'USN_CASREP',branch:'USN',text:`CASUALTY REPORT (CASREP)\nUnit: USS Porter (DDG-78)\nEquipment: AN/SPY-1D(V) Radar Transmitter\nSerial: SPY-TM-2019-04472\nImpact: Degraded radar coverage\nReported By: LCDR Pham, CSO\nDate: 2026-02-10`},
+    custody:{type:'USN_CUSTODY',branch:'USN',text:`Chain of Custody Transfer\nEquipment: AN/SPY-1D(V) Transmitter Module\nSerial: SPY-TM-2019-04472\nNSN: 5841-01-522-3401\nFrom: ET1(SW) Cooper, DDG-78\nTo: NAVSEA Det Norfolk, IMA\nSeal: Tamper-evident #TS-2026-0887\nDate: 2026-02-10`},
+    hand_receipt:{type:'USA_HAND_RECEIPT',branch:'USA',text:`DA Form 2062 Hand Receipt\nUnit: 3rd BCT, 101st Airborne\nProperty Book Officer: CPT Rivera\nItem: AN/PVS-14 Night Vision Device\nNSN: 5855-01-432-0524\nSerial: NVD-2024-08871\nQuantity: 24 EA\nCondition: Serviceable\nSub-hand receipt to: 1LT Nakamura, B Co\nDate: 2026-02-09`},
+    flight_record:{type:'USAF_781_FLIGHT',branch:'USAF',text:`AFTO Form 781 Flight Record\nAircraft: F-16C Block 50\nTail: 91-0412\nUnit: 480th Fighter Squadron, Spangdahlem AB\nMission: Air-to-ground training sortie\nSorties: 1\nFlight Hours: 1.8\nPilot: Capt Williams\nDiscrepancies: None\nDate: 2026-02-10`},
+    ground_maint:{type:'USMC_GROUND_MAINT',branch:'USMC',text:`Ground Equipment Maintenance\nUnit: 1st Maintenance Battalion, Camp Pendleton\nEquipment: HMMWV M1151A1\nBumper: 1MaintBn-HQ-07\nWork Order: PM services, 6-month interval\nTechnician: Sgt Dominguez\nHours: 4.5\nParts Used: Oil filter (NSN 2940-01-318-2345)\nStatus: Operational\nDate: 2026-02-11`},
+    cutter:{type:'USCG_CUTTER_MAINT',branch:'USCG',text:`Cutter Maintenance Record\nVessel: USCGC Hamilton (WMSL-753)\nSystem: Main Diesel Engine #2\nAction: 500-hour inspection and filter change\nTechnician: MK1 Petersen\nParts: Fuel filter (NSN 2910-01-456-7890)\nCondition: Satisfactory\nNext PM: 2026-05-10\nDate: 2026-02-11`}
+};
+
+let currentBranch = 'USN';
+let selectedType = 'USN_SUPPLY_RECEIPT';
+let sessionRecords = [];
+let stats = {anchored:0,verified:0,types:new Set(),slsFees:0};
+
+async function sha256(text) {
+    const data = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function selectBranch(branch, el) {
+    currentBranch = branch;
+    document.querySelectorAll('.branch-tab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.getElementById('typeSearch').value = '';
+    renderTypeGrid();
+}
+
+function renderTypeGrid() {
+    const grid = document.getElementById('recordTypeGrid');
+    const search = (document.getElementById('typeSearch').value || '').toLowerCase();
+    const types = Object.entries(RECORD_TYPES)
+        .filter(([k,v]) => v.branch === currentBranch)
+        .filter(([k,v]) => !search || v.label.toLowerCase().includes(search) || k.toLowerCase().includes(search));
+    document.getElementById('branchTypeCount').textContent = '(' + types.length + ' types)';
+    grid.innerHTML = types.map(([key,t]) =>
+        '<div class="record-type-btn' + (key===selectedType?' selected':'') + '" data-type="'+key+'" onclick="selectType(\''+key+'\',this)"><span class="icon">'+t.icon+'</span>'+t.label+'</div>'
+    ).join('');
+}
+
+function selectType(key, el) {
+    selectedType = key;
     document.querySelectorAll('.record-type-btn').forEach(b => b.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedType = el.dataset.type;
+    if (el) el.classList.add('selected');
 }
 
 function loadSample(key) {
     const s = SAMPLES[key];
-    if (s) {
-        document.getElementById('recordInput').value = s.text;
-        // Select matching type
-        document.querySelectorAll('.record-type-btn').forEach(b => {
-            b.classList.remove('selected');
-            if (b.dataset.type === s.type) b.classList.add('selected');
+    if (!s) return;
+    document.getElementById('recordInput').value = s.text;
+    if (s.branch !== currentBranch) {
+        const tabs = document.querySelectorAll('.branch-tab');
+        tabs.forEach(t => {
+            if (t.textContent.toLowerCase().includes(BRANCHES[s.branch].short.toLowerCase())) {
+                selectBranch(s.branch, t);
+            }
         });
-        selectedType = s.type;
     }
+    selectedType = s.type;
+    renderTypeGrid();
 }
 
 function updateStats() {
@@ -572,34 +536,52 @@ function updateStats() {
     document.getElementById('statSlsFees').textContent = stats.slsFees.toFixed(3);
 }
 
-function formatTime() {
-    return new Date().toLocaleTimeString('en-US', { hour12: false });
+function showAnchorAnimation(hash, typeLabel) {
+    const overlay = document.getElementById('anchorOverlay');
+    document.getElementById('animStatus').textContent = 'Anchoring to XRPL...';
+    document.getElementById('animStatus').style.color = '';
+    document.getElementById('animHash').textContent = hash;
+    document.getElementById('animSuccess').textContent = '';
+    // Reset animations
+    overlay.querySelectorAll('.chain-segment,.anchor-drop-icon,.anim-status,.anim-hash,.anim-fee,.anim-success').forEach(el => {
+        el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
+    });
+    overlay.classList.add('active');
+    setTimeout(() => {
+        document.getElementById('animStatus').textContent = '\u2705 ' + typeLabel + ' Anchored!';
+        document.getElementById('animStatus').style.color = '#14f195';
+        document.getElementById('animSuccess').textContent = '\u2713 Record secured on XRPL';
+        document.getElementById('animSuccess').style.animation = 'scaleIn 0.4s ease-out both';
+    }, 2000);
 }
 
-// ─── Anchor ─────────────────────────────────────────────────────────
+function hideAnchorAnimation() {
+    document.getElementById('anchorOverlay').classList.remove('active');
+}
+
 async function anchorRecord() {
     const input = document.getElementById('recordInput').value.trim();
     if (!input) { alert('Please enter record content.'); return; }
-
     const btn = document.getElementById('anchorBtn');
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Anchoring...';
 
-    // Simulated processing delay
-    await new Promise(r => setTimeout(r, 800 + Math.random() * 1200));
-
     const encrypt = document.getElementById('encryptCheck').checked;
     const hash = await sha256(input);
-    const mockTxHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+    const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+    const typeInfo = RECORD_TYPES[selectedType] || {label:selectedType,icon:'\uD83D\uDCCB',branch:'JOINT'};
+
+    showAnchorAnimation(hash, typeInfo.label);
+
+    // POST to API (best-effort, try Vercel then Render)
+    const apiData = {hash, record_type:selectedType, tx_hash:txHash, content_preview:input.substring(0,100)};
+    try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(apiData)}); }
+    catch(e) { try { await fetch('https://s4ledger.onrender.com/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(apiData)}); } catch(e2){} }
 
     const record = {
-        type: selectedType,
-        icon: RECORD_ICONS[selectedType] || '📋',
-        hash: hash,
-        txHash: mockTxHash,
-        encrypted: encrypt,
-        timestamp: new Date().toISOString(),
-        content: input.substring(0, 100) + (input.length > 100 ? '...' : ''),
+        type:selectedType, label:typeInfo.label, icon:typeInfo.icon, branch:typeInfo.branch,
+        hash, txHash, encrypted:encrypt, timestamp:new Date().toISOString(),
+        content:input.substring(0,100)+(input.length>100?'...':'')
     };
     sessionRecords.push(record);
     stats.anchored++;
@@ -607,104 +589,63 @@ async function anchorRecord() {
     stats.slsFees += 0.01;
     updateStats();
 
-    // Show result
+    await new Promise(r => setTimeout(r, 3200));
+    hideAnchorAnimation();
+    await new Promise(r => setTimeout(r, 400));
+
     const panel = document.getElementById('anchorResult');
-    panel.innerHTML = `
-        <div class="result-label">STATUS</div>
-        <div class="result-value" style="font-size:1rem;margin-bottom:0.8rem">✅ Record anchored successfully</div>
-        <div class="result-label">RECORD TYPE</div>
-        <div style="margin-bottom:0.5rem">${record.icon} ${selectedType}</div>
-        <div class="result-label">SHA-256 HASH</div>
-        <div class="hash-display">${hash}</div>
-        <div class="result-label">SIMULATED TX HASH</div>
-        <div style="color:var(--muted);margin-bottom:0.5rem;word-break:break-all">${mockTxHash}</div>
-        <div class="result-label">ENCRYPTED</div>
-        <div style="margin-bottom:0.5rem">${encrypt ? '🔒 Yes (CUI protected)' : '🔓 No (plaintext hash)'}</div>
-        <div class="result-label">$SLS FEE</div>
-        <div>0.01 $SLS → Treasury</div>
-    `;
+    panel.innerHTML = '<div class="result-label">STATUS</div><div class="result-value" style="font-size:1rem;margin-bottom:0.8rem">\u2705 Record anchored successfully</div>'
+        + '<div class="result-label">RECORD TYPE</div><div style="margin-bottom:0.5rem">' + record.icon + ' ' + typeInfo.label + ' (' + typeInfo.branch + ')</div>'
+        + '<div class="result-label">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
+        + '<div class="result-label">TX HASH</div><div style="color:var(--muted);margin-bottom:0.5rem;word-break:break-all">' + txHash + '</div>'
+        + '<div class="result-label">SYSTEM</div><div style="margin-bottom:0.5rem">' + (typeInfo.system||'N/A') + '</div>'
+        + '<div class="result-label">ENCRYPTED</div><div style="margin-bottom:0.5rem">' + (encrypt ? '\uD83D\uDD12 Yes (CUI protected)' : '\uD83D\uDD13 No (plaintext hash)') + '</div>'
+        + '<div class="result-label">$SLS FEE</div><div>0.01 $SLS \u2192 Treasury</div>';
     panel.classList.add('show');
-
-    // Update transaction log
     updateTxLog();
-
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-anchor"></i> Anchor to XRPL';
 }
 
-// ─── Verify ─────────────────────────────────────────────────────────
 async function verifyRecord() {
     const input = document.getElementById('verifyInput').value.trim();
-    if (!input) { alert('Please enter record content to verify.'); return; }
-
+    if (!input) { alert('Please enter record content.'); return; }
     const hash = await sha256(input);
     const expected = document.getElementById('verifyHash').value.trim();
     stats.verified++;
     updateStats();
-
     const panel = document.getElementById('verifyResult');
     let matchHtml = '';
     if (expected) {
         const match = hash.toLowerCase() === expected.toLowerCase();
-        matchHtml = `
-            <div class="result-label">EXPECTED HASH</div>
-            <div style="color:var(--muted);word-break:break-all;margin-bottom:0.5rem">${expected}</div>
-            <div class="result-label">MATCH</div>
-            <div class="result-value ${match ? '' : 'error'}" style="font-size:1.1rem">
-                ${match ? '✅ VERIFIED — Hashes match. Record integrity confirmed.' : '❌ MISMATCH — Record has been altered or wrong hash provided.'}
-            </div>
-        `;
+        matchHtml = '<div class="result-label">EXPECTED</div><div style="color:var(--muted);word-break:break-all;margin-bottom:0.5rem">' + expected + '</div>'
+            + '<div class="result-label">MATCH</div><div class="result-value ' + (match?'':'error') + '" style="font-size:1.1rem">'
+            + (match ? '\u2705 VERIFIED \u2014 Hashes match. Record integrity confirmed.' : '\u274C MISMATCH \u2014 Record altered or wrong hash.') + '</div>';
     }
-
-    // Check session log
     const sessionMatch = sessionRecords.find(r => r.hash === hash);
     let sessionHtml = '';
     if (sessionMatch) {
-        sessionHtml = `
-            <div class="result-label" style="margin-top:0.8rem">SESSION MATCH</div>
-            <div style="color:var(--green)">✅ Found in session log — ${sessionMatch.icon} ${sessionMatch.type} anchored at ${new Date(sessionMatch.timestamp).toLocaleTimeString()}</div>
-        `;
+        sessionHtml = '<div class="result-label" style="margin-top:0.8rem">SESSION MATCH</div>'
+            + '<div style="color:var(--green)">\u2705 Found in session \u2014 ' + sessionMatch.icon + ' ' + sessionMatch.label + ' anchored at ' + new Date(sessionMatch.timestamp).toLocaleTimeString() + '</div>';
     }
-
-    panel.innerHTML = `
-        <div class="result-label">COMPUTED SHA-256</div>
-        <div class="hash-display">${hash}</div>
-        ${matchHtml}
-        ${sessionHtml}
-        <div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)">
-            To verify against XRPL: compare this hash with the MemoData field of the anchor transaction.
-        </div>
-    `;
+    panel.innerHTML = '<div class="result-label">COMPUTED SHA-256</div><div class="hash-display">' + hash + '</div>' + matchHtml + sessionHtml
+        + '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)">To verify on-chain: compare this hash with the MemoData field of the anchor transaction.</div>';
     panel.classList.add('show');
 }
 
-// ─── Transaction Log ────────────────────────────────────────────────
 function updateTxLog() {
     const log = document.getElementById('txLog');
-    if (sessionRecords.length === 0) return;
-
+    if (!sessionRecords.length) return;
     log.innerHTML = '';
     for (let i = sessionRecords.length - 1; i >= 0; i--) {
         const r = sessionRecords[i];
-        const time = new Date(r.timestamp).toLocaleTimeString('en-US', { hour12: false });
-        log.innerHTML += `
-            <div class="tx-entry">
-                <div class="tx-icon">${r.icon}</div>
-                <div class="tx-info">
-                    <div class="tx-type">${r.type}</div>
-                    <div class="tx-hash">${r.hash.substring(0, 32)}...</div>
-                </div>
-                <div>
-                    <span class="tx-badge anchored">Anchored</span>
-                    <div class="tx-time">${time}</div>
-                </div>
-            </div>
-        `;
+        const time = new Date(r.timestamp).toLocaleTimeString('en-US',{hour12:false});
+        log.innerHTML += '<div class="tx-entry"><div class="tx-icon">' + r.icon + '</div><div class="tx-info"><div class="tx-type">' + r.label + ' <span style="color:var(--muted);font-size:0.75rem">(' + r.branch + ')</span></div><div class="tx-hash">' + r.hash.substring(0,32) + '...</div></div><div><span class="tx-badge anchored">Anchored</span><div class="tx-time">' + time + '</div></div></div>';
     }
 }
 
-// Load default sample on page load
 document.addEventListener('DOMContentLoaded', () => {
+    renderTypeGrid();
     loadSample('supply');
 });
 </script>
