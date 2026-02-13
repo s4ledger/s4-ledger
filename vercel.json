@@ -1,6 +1,4 @@
 {
-    "framework": null,
-    "installCommand": "pip install flask flask-cors",
     "rewrites": [
         { "source": "/api/(.*)", "destination": "/api/index.py" }
     ]
