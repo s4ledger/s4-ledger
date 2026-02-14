@@ -179,6 +179,54 @@
         .modal-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:480px;width:90%;animation:fadeIn 0.3s ease}
         .modal-box h4{color:var(--accent);margin-bottom:1rem}
         .modal-box .modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
+        /* ═══ TOAST NOTIFICATION SYSTEM ═══ */
+        #s4ToastContainer{position:fixed;top:80px;right:20px;z-index:9997;display:flex;flex-direction:column;gap:10px;max-width:420px;pointer-events:none}
+        .s4-toast{pointer-events:all;display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:toastSlideIn 0.4s ease-out;position:relative;overflow:hidden;min-width:340px}
+        .s4-toast::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+        .s4-toast.info::before{background:var(--accent)}.s4-toast.warning::before{background:#ffa500}.s4-toast.danger::before{background:#ff3333}.s4-toast.success::before{background:#14f195}
+        .s4-toast-icon{font-size:1.3rem;min-width:28px;text-align:center;padding-top:2px}
+        .s4-toast-body{flex:1}
+        .s4-toast-title{font-weight:700;font-size:0.9rem;color:#fff;margin-bottom:2px}
+        .s4-toast-msg{font-size:0.82rem;color:var(--steel);line-height:1.4}
+        .s4-toast-close{background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:0 0 0 8px;line-height:1}
+        .s4-toast-close:hover{color:#fff}
+        .s4-toast-actions{display:flex;gap:6px;margin-top:8px}
+        .s4-toast-action{background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.2s}
+        .s4-toast-action:hover{background:rgba(0,170,255,0.2)}
+        .s4-toast-progress{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);border-radius:0 0 0 4px;animation:toastProgress 8s linear forwards}
+        .s4-toast.warning .s4-toast-progress{background:#ffa500}.s4-toast.danger .s4-toast-progress{background:#ff3333}.s4-toast.success .s4-toast-progress{background:#14f195}
+        @keyframes toastSlideIn{from{opacity:0;transform:translateX(100px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes toastSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(100px)}}
+        @keyframes toastProgress{from{width:100%}to{width:0%}}
+        .s4-toast.dismissing{animation:toastSlideOut 0.3s ease-in forwards}
+        /* ═══ NOTIFICATION BELL ═══ */
+        .notif-bell{position:relative;background:none;border:none;color:var(--steel);font-size:1.1rem;cursor:pointer;padding:8px 12px;transition:color 0.2s}
+        .notif-bell:hover{color:var(--accent)}
+        .notif-badge{position:absolute;top:4px;right:4px;background:#ff3333;color:#fff;font-size:0.6rem;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pulse 2s infinite}
+        .notif-badge:empty{display:none}
+        /* ═══ ACTION ITEMS PANEL ═══ */
+        .action-tracker{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1rem}
+        .action-tracker h5{color:var(--accent);font-weight:700;margin-bottom:12px}
+        .action-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;font-size:0.83rem;transition:all 0.2s}
+        .action-item:hover{border-color:var(--accent)}
+        .action-item .ai-check{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all 0.2s}
+        .action-item .ai-check:hover{border-color:var(--accent)}
+        .action-item .ai-check.done{background:var(--green);border-color:var(--green)}
+        .action-item .ai-check.done::after{content:'✓';color:#000;font-size:0.7rem;font-weight:800}
+        .action-item.completed{opacity:0.5}
+        .action-item.completed .ai-body .ai-title{text-decoration:line-through}
+        .ai-body{flex:1}
+        .ai-title{font-weight:600;color:#fff;margin-bottom:2px}
+        .ai-meta{font-size:0.75rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+        .ai-tag{padding:1px 6px;border-radius:4px;font-size:0.7rem;font-weight:600}
+        .ai-tag.critical{background:rgba(255,51,51,0.15);color:#ff3333}
+        .ai-tag.warning{background:rgba(255,165,0,0.15);color:#ffa500}
+        .ai-tag.info{background:rgba(0,170,255,0.15);color:#00aaff}
+        .ai-tag.success{background:rgba(20,241,149,0.15);color:#14f195}
+        .ai-priority{display:inline-flex;align-items:center;gap:4px}
+        .stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+        .stat-mini-val{font-size:1.3rem;font-weight:800;color:var(--accent)}
+        .stat-mini-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
     </style>
 </head>
 <body>
@@ -203,9 +251,11 @@
                 <li class="nav-item"><a class="nav-link" href="../s4-contact/">Contact</a></li>
                 <li class="nav-item"><a class="nav-link" href="../s4-login/" style="color:#00aaff !important;font-weight:700"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             </ul>
+            <button class="notif-bell" onclick="toggleNotifPanel()" title="Alerts & Notifications"><i class="fas fa-bell"></i><span class="notif-badge" id="notifBadge"></span></button>
         </div>
     </div>
 </nav>
+<div id="s4ToastContainer"></div>
 
 <section class="hero">
     <div class="container">
@@ -228,7 +278,7 @@
             <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#tabAnchor" role="tab"><i class="fas fa-anchor"></i> Anchor</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabVerify" role="tab"><i class="fas fa-check-circle"></i> Verify</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabLog" role="tab"><i class="fas fa-list"></i> Transaction Log</a></li>
-            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabAbout" role="tab"><i class="fas fa-info-circle"></i> How It Works</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabActions" role="tab"><i class="fas fa-tasks"></i> Action Items <span class="ai-tag info" id="actionTabCount" style="margin-left:4px">0</span></a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabILS" role="tab"><i class="fas fa-brain"></i> ILS Intelligence</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabDMSMS" role="tab"><i class="fas fa-exclamation-triangle"></i> DMSMS</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabReadiness" role="tab"><i class="fas fa-chart-line"></i> Readiness</a></li>
@@ -356,46 +406,28 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="tabAbout" role="tabpanel">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="demo-card">
-                            <h3><i class="fas fa-cogs"></i> How S4 Ledger Works</h3>
-                            <div style="font-size:0.9rem;line-height:1.9;color:var(--steel)">
-                                <p>S4 Ledger creates <strong>tamper-proof records</strong> for defense logistics by anchoring SHA-256 hashes to the XRP Ledger.</p>
-                                <p><strong>The process:</strong></p>
-                                <ol><li>A defense record is created in your existing system</li><li>S4 Ledger computes a SHA-256 hash</li><li>Only the hash is written to an XRPL transaction memo</li><li>A micro-fee of 0.01 $SLS is paid per anchor</li><li>Anyone with the original can verify it hasn't been altered</li></ol>
-                                <p><strong>No sensitive data on-chain.</strong> The blockchain only sees a 64-character hash.</p>
-                            </div>
-                        </div>
+            <div class="tab-pane fade" id="tabActions" role="tabpanel">
+                <div class="demo-card">
+                    <h3><i class="fas fa-tasks" style="color:#00aaff"></i> Unified Action Items & Alerts</h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">All actionable tasks, recommendations, and alerts generated across every S4 Ledger tool — consolidated in one place. Track progress, assign owners, set due dates, and communicate actions to your team.</p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">
+                        <button class="ai-quick-btn" onclick="filterActionItems('all')" style="background:rgba(0,170,255,0.15);border-color:var(--accent)">All</button>
+                        <button class="ai-quick-btn" onclick="filterActionItems('critical')"><span style="color:#ff3333">●</span> Critical</button>
+                        <button class="ai-quick-btn" onclick="filterActionItems('warning')"><span style="color:#ffa500">●</span> Warning</button>
+                        <button class="ai-quick-btn" onclick="filterActionItems('info')"><span style="color:#00aaff">●</span> Info</button>
+                        <button class="ai-quick-btn" onclick="filterActionItems('completed')"><span style="color:#14f195">●</span> Completed</button>
+                        <span style="flex:1"></span>
+                        <button class="ai-quick-btn" onclick="exportActionItems()"><i class="fas fa-download"></i> Export</button>
+                        <button class="ai-quick-btn" onclick="clearCompletedActions()"><i class="fas fa-broom"></i> Clear Done</button>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="demo-card">
-                            <h3><i class="fas fa-shield-halved"></i> Supported Military Branches</h3>
-                            <table style="width:100%;font-size:0.82rem">
-                                <tr style="color:var(--muted);border-bottom:1px solid var(--border)"><th style="padding:0.4rem 0">Branch</th><th>Types</th><th>Key Systems</th></tr>
-                                <tr><td style="padding:0.3rem 0">&#9875; U.S. Navy</td><td>54</td><td style="color:var(--muted)">NAVSUP, NAVSEA, CDMD-OA</td></tr>
-                                <tr><td>&#11088; U.S. Army</td><td>20</td><td style="color:var(--muted)">GCSS-Army, PBUSE, SAAS</td></tr>
-                                <tr><td>&#9992;&#65039; U.S. Air Force</td><td>18</td><td style="color:var(--muted)">IMDS, CEMS, CAS</td></tr>
-                                <tr><td>&#129413; Marines</td><td>14</td><td style="color:var(--muted)">GCSS-MC, NALCOMIS, ATLASS</td></tr>
-                                <tr><td>&#128735;&#65039; Coast Guard</td><td>12</td><td style="color:var(--muted)">ABS NS5, CG-LIMS, MISLE</td></tr>
-                                <tr><td>&#127963;&#65039; DLA</td><td>12</td><td style="color:var(--muted)">DSS, DRMS, HMIRS</td></tr>
-                                <tr><td>&#127894;&#65039; Joint</td><td>10</td><td style="color:var(--muted)">ALIS/ODIN, DRRS, MDA</td></tr>
-                                <tr><td>&#128481;&#65039; SOCOM</td><td>8</td><td style="color:var(--muted)">SOF-LAN</td></tr>
-                                <tr><td>&#128640; Space Force</td><td>11</td><td style="color:var(--muted)">18 SDS, SMC, SBIRS</td></tr>
-                            </table>
-                            <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid var(--border);font-size:0.85rem;color:var(--steel)"><strong>Total: 159 record types</strong> across 9 military branches and agencies</div>
-                        </div>
-                        <div class="demo-card">
-                            <h3><i class="fas fa-coins"></i> $SLS Token</h3>
-                            <div style="font-size:0.85rem;color:var(--steel)">
-                                <div><strong>Token:</strong> $SLS on XRP Ledger</div>
-                                <div><strong>Total Supply:</strong> 100,000,000</div>
-                                <div><strong>Anchor Fee:</strong> 0.01 $SLS per record</div>
-                                <div><strong>Issuer:</strong> r95GyZac...HsTA5</div>
-                                <div><strong>Treasury:</strong> rMLmkrxp...1KLqJ</div>
-                            </div>
-                        </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="aiTotal" style="color:#00aaff">0</div><div class="stat-mini-label">Total Actions</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="aiCritical" style="color:#ff3333">0</div><div class="stat-mini-label">Critical</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="aiOpen" style="color:#ffa500">0</div><div class="stat-mini-label">Open</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="aiDone" style="color:#14f195">0</div><div class="stat-mini-label">Completed</div></div></div>
+                    </div>
+                    <div id="actionItemsList" style="max-height:600px;overflow-y:auto">
+                        <div style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem"><i class="fas fa-clipboard-list" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>No action items yet. Use the DMSMS, Readiness, Parts, Warranty, ROI, or Lifecycle tools to generate actionable tasks and recommendations.</div>
                     </div>
                 </div>
             </div>
@@ -405,6 +437,14 @@
                     <div class="col-lg-7">
                         <div class="demo-card">
                             <h3><i class="fas fa-brain"></i> ILS Intelligence Analyzer</h3>
+                            <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
+                                <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How S4 Ledger Works — Platform Overview</summary>
+                                <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                                    <p>S4 Ledger creates <strong>tamper-proof records</strong> for defense logistics by anchoring SHA-256 hashes to the XRP Ledger. The process: (1) A defense record is created in your existing system, (2) S4 Ledger computes a SHA-256 hash, (3) Only the hash is written to an XRPL transaction memo, (4) A micro-fee of 0.01 $SLS is paid per anchor, (5) Anyone with the original can verify it hasn't been altered. <strong>No sensitive data on-chain.</strong></p>
+                                    <p><strong style="color:#fff;">Supported: 160+ record types across 9 branches</strong> — Navy (54), Army (20), Air Force (18), Marines (14), Coast Guard (12), DLA (12), Joint (10), SOCOM (8), Space Force (11).</p>
+                                    <p><strong style="color:#c9a84c;">$SLS Token:</strong> Live on XRPL Mainnet | Total Supply: 100M | Circulating: ~15M | Anchor Fee: 0.01 $SLS | AMM pools and trustlines active.</p>
+                                </div>
+                            </details>
                             <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload your DRLs, spreadsheets, checklists, and documents. The analyzer will parse them, cross-reference against program requirements, and identify gaps, missing deliverables, and actionable items.</p>
 
                             <label>1. Select Program / Platform Type</label>
@@ -3910,6 +3950,8 @@ function loadDMSMSData() {
     });
     html += '</table></div>';
     document.getElementById('dmsmsResults').innerHTML = html;
+    // Generate action items & notifications
+    generateDMSMSActions(progKey, data);
 }
 
 function exportDMSMS() {
@@ -4012,6 +4054,8 @@ function calcReadiness() {
     html += '</div></div>';
 
     document.getElementById('readinessOutput').innerHTML = html;
+    // Generate readiness action items
+    generateReadinessActions(progKey, sysName, ao, mtbf, mttr, mldt);
 }
 
 function exportReadiness() {
@@ -4228,6 +4272,8 @@ function calcROI() {
     html += '<strong style="color:#14f195;">Key Benefits:</strong> ' + Math.round(ftes * 0.65 * 10) / 10 + ' FTE-equivalents freed • ' + Math.round(records * programs * 12 * 0.65).toLocaleString() + ' records automated/year • ' + Math.round(incidents * 0.9) + ' errors prevented • XRPL-anchored audit trail</div>';
     html += '</div>';
     document.getElementById('roiOutput').innerHTML = html;
+    // Generate ROI action items
+    generateROIActions(netSavings, roiPct, paybackMonths);
 }
 
 function exportROI() {
@@ -4284,6 +4330,8 @@ function calcLifecycle() {
     html += 'Blockchain-anchored ILS records reduce audit overhead by ~70%. Fleet of ' + fleetSize + ' units × ' + serviceLife + ' years = ' + (opHours * serviceLife * fleetSize).toLocaleString() + ' total operating hours.</div>';
     html += '</div>';
     document.getElementById('lifecycleOutput').innerHTML = html;
+    // Generate lifecycle action items
+    generateLifecycleActions(progKey, totalCost, dmsmsCost, totalSust);
 }
 
 function exportLifecycle() {
@@ -4361,6 +4409,8 @@ function loadWarrantyData() {
     }
     html += '</div>';
     document.getElementById('warrantyResults').innerHTML = html;
+    // Generate warranty action items & alerts
+    generateWarrantyActions(progKey, items);
 }
 
 function exportWarranty() {
@@ -4420,11 +4470,210 @@ function initILSEngine() {
     if (document.getElementById('warrantyProgram')) loadWarrantyData();
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  S4 NOTIFICATION + ACTION ITEMS SYSTEM (v3.4.0)
+// ═══════════════════════════════════════════════════════════════
+
+// ── Toast Notifications ──
+let s4ToastQueue = [];
+function s4Notify(title, msg, type, actions, duration) {
+    type = type || 'info'; duration = duration || 8000;
+    const container = document.getElementById('s4ToastContainer');
+    if (!container) return;
+    const icons = {info:'<i class="fas fa-info-circle" style="color:#00aaff"></i>', warning:'<i class="fas fa-exclamation-triangle" style="color:#ffa500"></i>', danger:'<i class="fas fa-times-circle" style="color:#ff3333"></i>', success:'<i class="fas fa-check-circle" style="color:#14f195"></i>'};
+    const toast = document.createElement('div');
+    toast.className = 's4-toast ' + type;
+    let actionsHtml = '';
+    if (actions && actions.length) {
+        actionsHtml = '<div class="s4-toast-actions">';
+        actions.forEach(a => { actionsHtml += '<button class="s4-toast-action" onclick="' + (a.onclick||'') + '">' + a.label + '</button>'; });
+        actionsHtml += '</div>';
+    }
+    toast.innerHTML = '<div class="s4-toast-icon">' + (icons[type]||icons.info) + '</div><div class="s4-toast-body"><div class="s4-toast-title">' + title + '</div><div class="s4-toast-msg">' + msg + '</div>' + actionsHtml + '</div><button class="s4-toast-close" onclick="dismissToast(this)">&times;</button><div class="s4-toast-progress" style="animation-duration:' + duration + 'ms"></div>';
+    container.appendChild(toast);
+    setTimeout(() => { dismissToast(toast.querySelector('.s4-toast-close')); }, duration);
+    updateNotifBadge();
+}
+function dismissToast(btn) {
+    const toast = btn.closest ? btn.closest('.s4-toast') : btn.parentElement;
+    if (!toast || toast.classList.contains('dismissing')) return;
+    toast.classList.add('dismissing');
+    setTimeout(() => toast.remove(), 300);
+}
+function updateNotifBadge() {
+    const badge = document.getElementById('notifBadge');
+    const items = s4ActionItems.filter(a => !a.done);
+    if (badge) badge.textContent = items.length > 0 ? items.length : '';
+    const tabCount = document.getElementById('actionTabCount');
+    if (tabCount) tabCount.textContent = items.length;
+}
+function toggleNotifPanel() {
+    // Navigate to action items tab
+    const tab = document.querySelector('a[href="#tabActions"]');
+    if (tab) { tab.click(); window.scrollTo({top: 280, behavior:'smooth'}); }
+}
+
+// ── Unified Action Items Store (localStorage-backed) ──
+let s4ActionItems = JSON.parse(localStorage.getItem('s4ActionItems') || '[]');
+function saveActionItems() {
+    localStorage.setItem('s4ActionItems', JSON.stringify(s4ActionItems));
+    updateNotifBadge();
+    renderActionItemsPanel();
+}
+function addActionItem(item) {
+    // item = {id, title, detail, severity, source, owner, due, cost, schedule}
+    // Avoid duplicates by id
+    if (s4ActionItems.find(a => a.id === item.id)) return;
+    item.done = false;
+    item.created = new Date().toISOString();
+    s4ActionItems.push(item);
+    saveActionItems();
+}
+function toggleActionDone(id) {
+    const item = s4ActionItems.find(a => a.id === id);
+    if (item) { item.done = !item.done; item.completedAt = item.done ? new Date().toISOString() : null; saveActionItems(); }
+}
+function clearCompletedActions() {
+    s4ActionItems = s4ActionItems.filter(a => !a.done);
+    saveActionItems();
+}
+function filterActionItems(filter) {
+    renderActionItemsPanel(filter);
+}
+function renderActionItemsPanel(filter) {
+    filter = filter || 'all';
+    const container = document.getElementById('actionItemsList');
+    if (!container) return;
+    let items = [...s4ActionItems];
+    if (filter === 'critical') items = items.filter(a => a.severity === 'critical' && !a.done);
+    else if (filter === 'warning') items = items.filter(a => a.severity === 'warning' && !a.done);
+    else if (filter === 'info') items = items.filter(a => a.severity === 'info' && !a.done);
+    else if (filter === 'completed') items = items.filter(a => a.done);
+    else if (filter === 'all') { /* show all */ }
+    // Sort: critical first, then warning, then info, done last
+    items.sort((a,b) => {
+        if (a.done !== b.done) return a.done ? 1 : -1;
+        const sev = {critical:0, warning:1, info:2};
+        return (sev[a.severity]||3) - (sev[b.severity]||3);
+    });
+    // Stats
+    const total = s4ActionItems.length;
+    const critical = s4ActionItems.filter(a => a.severity === 'critical' && !a.done).length;
+    const open = s4ActionItems.filter(a => !a.done).length;
+    const done = s4ActionItems.filter(a => a.done).length;
+    document.getElementById('aiTotal').textContent = total;
+    document.getElementById('aiCritical').textContent = critical;
+    document.getElementById('aiOpen').textContent = open;
+    document.getElementById('aiDone').textContent = done;
+
+    if (items.length === 0) {
+        container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem"><i class="fas fa-clipboard-list" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>' + (filter==='all'?'No action items yet. Use the tools to generate tasks.':'No items match this filter.') + '</div>';
+        return;
+    }
+    let html = '';
+    const sourceIcons = {dmsms:'<i class="fas fa-exclamation-triangle" style="color:#ff9900"></i>', readiness:'<i class="fas fa-chart-line" style="color:#14f195"></i>', parts:'<i class="fas fa-cogs" style="color:#c9a84c"></i>', warranty:'<i class="fas fa-file-contract" style="color:#c9a84c"></i>', roi:'<i class="fas fa-dollar-sign" style="color:#14f195"></i>', lifecycle:'<i class="fas fa-clock" style="color:#00aaff"></i>', ils:'<i class="fas fa-brain" style="color:#00aaff"></i>'};
+    items.forEach(item => {
+        html += '<div class="action-item' + (item.done ? ' completed' : '') + '">';
+        html += '<div class="ai-check' + (item.done ? ' done' : '') + '" onclick="toggleActionDone(\'' + item.id + '\')"></div>';
+        html += '<div class="ai-body">';
+        html += '<div class="ai-title">' + (sourceIcons[item.source]||'') + ' ' + item.title + '</div>';
+        html += '<div class="ai-meta">';
+        html += '<span class="ai-tag ' + (item.severity||'info') + '">' + (item.severity||'info').toUpperCase() + '</span>';
+        html += '<span>' + (item.source||'').toUpperCase() + '</span>';
+        if (item.owner) html += '<span><i class="fas fa-user" style="margin-right:3px"></i>' + item.owner + '</span>';
+        if (item.cost) html += '<span style="color:#ffa500">$' + item.cost + 'K</span>';
+        if (item.schedule) html += '<span><i class="fas fa-calendar" style="margin-right:3px"></i>' + item.schedule + '</span>';
+        html += '</div>';
+        if (item.detail) html += '<div style="color:var(--steel);font-size:0.78rem;margin-top:4px">' + item.detail + '</div>';
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+}
+function exportActionItems() {
+    const items = s4ActionItems;
+    if (!items.length) { s4Notify('No Data', 'No action items to export.', 'info'); return; }
+    let csv = 'ID,Title,Severity,Source,Owner,Cost ($K),Schedule,Status,Created\n';
+    items.forEach(a => {
+        csv += [a.id, '"'+a.title+'"', a.severity, a.source, a.owner||'', a.cost||'', a.schedule||'', a.done?'Completed':'Open', a.created||''].join(',') + '\n';
+    });
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'S4_Action_Items_' + new Date().toISOString().split('T')[0] + '.csv'; a.click();
+    URL.revokeObjectURL(url);
+    s4Notify('Export Complete', 'Action items exported to CSV.', 'success');
+}
+
+// ── Tool-specific action item generators ──
+function generateDMSMSActions(progKey, data) {
+    const platName = (window.S4_PLATFORMS && S4_PLATFORMS[progKey]) ? S4_PLATFORMS[progKey].n : progKey;
+    const obsolete = data.filter(d => d.status === 'Obsolete' || d.status === 'End of Life');
+    const atRisk = data.filter(d => d.status === 'At Risk' || d.status === 'Watch');
+    obsolete.forEach(d => {
+        addActionItem({id:'DMSMS-OBS-'+progKey+'-'+d.system.replace(/\s/g,''), title:'Resolve obsolete part: ' + d.system, detail:'Status: ' + d.status + ' | Manufacturer: ' + d.manufacturer + ' | Lead time: ' + d.leadTime + ' wks. Initiate bridge buy or alternate source per GIDEP.', severity:'critical', source:'dmsms', owner:platName + ' PM', cost:d.cost, schedule:'2-4 months'});
+    });
+    atRisk.forEach(d => {
+        addActionItem({id:'DMSMS-RISK-'+progKey+'-'+d.system.replace(/\s/g,''), title:'Monitor at-risk part: ' + d.system, detail:'Status: ' + d.status + ' | ' + d.endOfSupport + '. Submit GIDEP alert if end-of-life confirmed. Begin alternate qualification.', severity:'warning', source:'dmsms', owner:platName + ' LSA', cost:Math.round(d.cost*0.5), schedule:'3-6 months'});
+    });
+    if (obsolete.length > 0) s4Notify('DMSMS Alert', obsolete.length + ' obsolete/EOL part(s) detected on ' + platName + '. Action required.', 'danger', [{label:'View Actions', onclick:'toggleNotifPanel()'}]);
+    if (atRisk.length > 0) s4Notify('DMSMS Watch', atRisk.length + ' part(s) at risk on ' + platName + '. Monitoring recommended.', 'warning');
+}
+function generateReadinessActions(progKey, sysName, ao, mtbf, mttr, mldt) {
+    const platName = (window.S4_PLATFORMS && S4_PLATFORMS[progKey]) ? S4_PLATFORMS[progKey].n : progKey;
+    if (ao < 0.70) {
+        addActionItem({id:'RDY-CRIT-'+progKey+'-'+sysName.replace(/\s/g,''), title:'Critical readiness failure: ' + sysName + ' Ao=' + (ao*100).toFixed(1) + '%', detail:'Ao below 70% on ' + platName + '. Immediate corrective action: DMSMS review, redesign consideration, enhanced depot support. MTTR=' + mttr.toFixed(1) + 'h, MLDT=' + mldt.toFixed(1) + 'h.', severity:'critical', source:'readiness', owner:platName + ' ISEA', schedule:'Immediate'});
+        s4Notify('Readiness Critical', sysName + ' on ' + platName + ' — Ao ' + (ao*100).toFixed(1) + '% (below 70%)', 'danger', [{label:'View', onclick:'toggleNotifPanel()'}]);
+    } else if (ao < 0.80) {
+        addActionItem({id:'RDY-LOW-'+progKey+'-'+sysName.replace(/\s/g,''), title:'Below-threshold readiness: ' + sysName + ' Ao=' + (ao*100).toFixed(1) + '%', detail:'Recommend spares stocking analysis and MTTR reduction plan for ' + platName + '. MLDT of ' + mldt.toFixed(1) + 'h may indicate supply chain gaps.', severity:'warning', source:'readiness', owner:platName + ' LSA', schedule:'1-3 months'});
+        s4Notify('Readiness Warning', sysName + ' Ao=' + (ao*100).toFixed(1) + '% — below 80% threshold', 'warning');
+    } else if (ao < 0.90) {
+        addActionItem({id:'RDY-MARG-'+progKey+'-'+sysName.replace(/\s/g,''), title:'Marginal readiness: ' + sysName + ' Ao=' + (ao*100).toFixed(1) + '%', detail:'Monitor MLDT for improvement opportunities on ' + platName + '. Consider pre-positioned spares to reduce logistics delay.', severity:'info', source:'readiness', owner:platName + ' PM', schedule:'Review quarterly'});
+    }
+}
+function generateWarrantyActions(progKey, items) {
+    const platName = (window.S4_PLATFORMS && S4_PLATFORMS[progKey]) ? S4_PLATFORMS[progKey].n : progKey;
+    const expiring = items.filter(i => i.status === 'Expiring Soon');
+    const expired = items.filter(i => i.status === 'Expired');
+    expiring.forEach(w => {
+        addActionItem({id:'WAR-EXP-'+progKey+'-'+w.system.replace(/\s/g,''), title:'Warranty expiring: ' + w.system + ' (' + w.daysLeft + ' days)', detail:'OEM: ' + w.mfg + ' | Type: ' + w.type + ' | ' + w.clin + ' | Value: $' + w.value.toLocaleString() + '. Initiate renewal or re-compete per FAR 46.7 / DFARS 246.7 before ' + w.end + '.', severity:'warning', source:'warranty', owner:platName + ' Contracts', cost:Math.round(w.value/1000), schedule:'Within ' + w.daysLeft + ' days'});
+    });
+    expired.forEach(w => {
+        addActionItem({id:'WAR-LAPSE-'+progKey+'-'+w.system.replace(/\s/g,''), title:'Coverage gap: ' + w.system + ' warranty EXPIRED', detail:'OEM: ' + w.mfg + ' | Expired ' + w.end + '. Government now liable for repair costs. Recommend immediate OEM engagement or bridge contract.', severity:'critical', source:'warranty', owner:platName + ' PM', cost:Math.round(w.value/1000*1.5), schedule:'Immediate'});
+    });
+    if (expiring.length > 0) s4Notify('Warranty Alert', expiring.length + ' warranty/contract item(s) on ' + platName + ' expiring within 90 days.', 'warning', [{label:'Review', onclick:'toggleNotifPanel()'}], 12000);
+    if (expired.length > 0) s4Notify('Coverage Gap', expired.length + ' expired warranty item(s) on ' + platName + '. Government liable for repairs.', 'danger', [{label:'Action Required', onclick:'toggleNotifPanel()'}], 15000);
+}
+function generatePartsActions(results) {
+    const lowStock = results.filter(p => p.qtyOnHand !== undefined && p.qtyOnHand < 5);
+    const longLead = results.filter(p => p.leadWeeks !== undefined && p.leadWeeks > 26);
+    lowStock.slice(0,5).forEach(p => {
+        addActionItem({id:'PARTS-LOW-'+p.nsn, title:'Low stock: ' + p.nomenclature + ' (qty: ' + p.qtyOnHand + ')', detail:'NSN: ' + p.nsn + ' | CAGE: ' + p.cage + ' | Reorder recommended to avoid operational impact.', severity:'warning', source:'parts', owner:'Supply Officer', schedule:'Order within 30 days'});
+    });
+    longLead.slice(0,3).forEach(p => {
+        addActionItem({id:'PARTS-LEAD-'+p.nsn, title:'Long lead-time: ' + p.nomenclature + ' (' + p.leadWeeks + ' wks)', detail:'NSN: ' + p.nsn + ' | Consider alternate sourcing or bridge buy. Lead time exceeds 6 months.', severity:'info', source:'parts', owner:'Procurement', schedule:'Review sourcing'});
+    });
+}
+function generateROIActions(netSavings, roiPct, paybackMonths) {
+    if (netSavings > 0) {
+        addActionItem({id:'ROI-BIZ-CASE', title:'Positive ROI: $' + Math.round(netSavings).toLocaleString() + '/yr savings (' + Math.round(roiPct) + '% ROI)', detail:'S4 Ledger pays for itself in ' + paybackMonths + ' months. Use this analysis in program briefings and budget justifications.', severity:'info', source:'roi', owner:'Program Manager', schedule:'Include in next budget cycle'});
+    }
+}
+function generateLifecycleActions(progKey, totalCost, dmsmsCost, sustCost) {
+    const platName = (window.S4_PLATFORMS && S4_PLATFORMS[progKey]) ? S4_PLATFORMS[progKey].n : progKey;
+    const dmsmsSavings = dmsmsCost * 0.20;
+    addActionItem({id:'LC-DMSMS-'+progKey, title:'Lifecycle DMSMS opportunity: ' + platName, detail:'Estimated DMSMS cost: $' + dmsmsCost.toFixed(1) + 'B. Automated tracking can save ~$' + dmsmsSavings.toFixed(1) + 'B (20%) over service life. Recommend S4 Ledger integration for obsolescence management.', severity:'info', source:'lifecycle', owner:platName + ' APML', schedule:'Plan tech refresh cycle'});
+    if (sustCost > totalCost * 0.5) {
+        addActionItem({id:'LC-SUST-'+progKey, title:'High sustainment ratio: ' + platName, detail:'Sustainment exceeds 50% of total ownership cost. Focus on MTTR reduction, pre-positioned spares, and PBL contracts.', severity:'warning', source:'lifecycle', owner:platName + ' PM', schedule:'Annual review'});
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     renderTypeGrid();
     loadSample('supply');
     initILSEngine();
+    // Restore action items from localStorage
+    renderActionItemsPanel();
+    updateNotifBadge();
 });
 
 </script>

@@ -19,12 +19,31 @@ S4 Ledger is building the integrity layer for defense logistics — immutable ve
 - 3-5 second confirmation, ~$0.001 per anchor
 - Python SDK integrates in 10 lines of code
 
+## How It Actually Works (Plain English)
+
+**The tools are the interface. The audit trail is the product.**
+
+Think of S4 Ledger like a notary for defense records. When an ILS manager completes a maintenance action, receives a part, or delivers a CDRL — S4 Ledger takes a digital fingerprint (SHA-256 hash) of that record and stamps it onto the XRP Ledger. That stamp is permanent, public, and verifiable by anyone — without revealing the actual data.
+
+**What's real today:**
+- The $SLS token is live and tradable on XRPL Mainnet
+- 462 real defense platforms (DDG-51, F-35, CVN-78, etc.) with real program data
+- Tools that calculate readiness, track obsolescence, monitor warranties, estimate lifecycle costs, and generate action items — all using real MIL-STD formulas
+- Every tool generates actionable alerts: warranty expirations 90 days out, DMSMS obsolescence flags, readiness threshold violations
+- A unified Action Items tracker that consolidates tasks across all tools with severity sorting, filtering, and CSV export
+
+**What this means for a program manager:** Instead of juggling spreadsheets across 5 different systems, one interface shows you what's expiring, what's obsolete, what needs attention, and what it costs — with every record anchored to an immutable audit trail that proves when it was created and that it hasn't been changed.
+
 ## Traction
 
-- $SLS token live on XRPL mainnet (issuer: r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
-- 30M SLS in multi-sig treasury
-- Working SDK with defense use case library
-- 9-page website at s4ledger.com
+- **$SLS token LIVE on XRPL Mainnet** — tradable, AMM pools active, trustlines established
+  - Issuer: `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5`
+  - 100M total supply | ~15M circulating | 30M in multi-sig treasury
+- **11 interactive defense tools** live at s4ledger.com/demo-app — not mockups, real working interfaces
+- **462 real defense platforms** across 9 military branches (Navy, Army, Air Force, Marines, Coast Guard, Space Force, SOF, Joint, Civilian)
+- **160+ ILS record categories** mapped to real-world logistics workflows
+- Working Python SDK + CLI with defense use case library
+- 14+ page website at s4ledger.com
 - Open-source and auditable
 
 ## Market
@@ -39,7 +58,7 @@ S4 Ledger is building the integrity layer for defense logistics — immutable ve
 | Phase | Timeline | Focus |
 |---|---|---|
 | Foundation | Q4 2025 – Q1 2026 ✅ | SDK, $SLS token, website |
-| Defense Platform | Q1 – Q2 2026 🔄 | Use case library, compliance docs, partnerships |
+| Defense Platform | Q1 – Q2 2026 ✅ | 462 platforms, 11 tools, toast alerts, action tracking, ROI/Lifecycle/Warranty calculators |
 | MVP & Pilot | Q3 – Q4 2026 | Internal pilot on real contract data |
 | Partner & SaaS | Q1 – Q2 2027 | REST API, SaaS dashboard, DIU/NavalX |
 | Scale & Certify | Q3 2027+ | NIST, FedRAMP, production deployments |

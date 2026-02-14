@@ -5,6 +5,32 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2026-02-14
+
+### Added
+- **Toast Notification System** — Real-time alert toasts for warranty expirations (90-day), DMSMS obsolescence detections, readiness threshold violations, and low-stock parts. Animated slide-in/out with severity levels (info/warning/danger/success), action buttons, auto-dismiss with progress bars.
+- **Unified Action Items & Alerts Tab** — New consolidated tab replacing the standalone "How It Works" tab. Tracks actionable tasks from all 6 tools with severity-based sorting, filtering, localStorage persistence, and CSV export.
+- **Tool Action Item Generators** — Every tool now generates specific actionable recommendations:
+  - DMSMS: Bridge buy/alternate source actions for obsolete parts
+  - Readiness: MTTR reduction plans for below-threshold systems
+  - Warranty: Renewal/re-compete actions for expiring contracts (90-day alerts)
+  - Parts: Reorder alerts for low-stock items, long lead-time warnings
+  - Lifecycle: DMSMS savings opportunities, high sustainment ratio alerts
+  - ROI: Business case documentation actions
+- **Notification Bell** — Navbar bell icon with badge counter showing open action items
+- **ILS Intelligence "How It Works"** — Collapsible details box with platform overview, 9-branch coverage, $SLS Mainnet token status
+- **Landing page tools** — ROI Calculator, Lifecycle Cost Estimator, and Warranty & Contract Tracker added to Explore section (15 total cards)
+
+### Changed
+- **$SLS Token: LIVE on XRPL Mainnet** — Total Supply: 100,000,000 | Circulating: ~15,000,000 | AMM pools active | Trustlines established | Tradable on XRPL DEX
+- Removed standalone "How It Works" tab (#tabAbout) — content merged into ILS Intelligence
+- Updated PRODUCTION_READINESS.md: readiness score 67% -> 78%, XRPL integration 60% -> 85%
+- Updated all documentation to reflect $SLS Mainnet status (not just Testnet)
+- Action Items tab replaces How It Works in navigation (10 functional tabs)
+
+### Fixed
+- Differentiated total supply (100M $SLS) from circulating supply (~15M $SLS) across all docs
+
 ## [3.3.0] - 2026-02-14
 
 ### Added

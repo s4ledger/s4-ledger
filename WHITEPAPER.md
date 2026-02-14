@@ -1,7 +1,7 @@
 # S4 Ledger Whitepaper
 
 **Immutable Logistics Verification for the Defense Industry**  
-Version 3.3 — February 2026  
+Version 3.4 — February 2026  
 
 ---
 
@@ -92,7 +92,8 @@ S4 Ledger uses a **hash-only** architecture:
 | **Issuer** | `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5` |
 | **Total Supply** | 100,000,000 SLS |
 | **Treasury** | 30,000,000 SLS (multi-sig) |
-| **Status** | Live on XRPL Mainnet |
+| **Status** | **LIVE on XRPL Mainnet** — tradable, AMM pools active |
+| **Circulating Supply** | ~15,000,000 SLS |
 
 ### 3.2 Token Utility
 
@@ -218,12 +219,12 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | Phase | Timeline | Milestones |
 |---|---|---|
 | **Phase 1 — Foundation** | Q4 2025 – Q1 2026 ✅ | SDK, hash anchoring, $SLS token, website |
-| **Phase 2 — Defense Platform** | Q1 – Q2 2026 ✅ | 462 real platforms, 9 interactive tools, 160+ record types, ROI/Lifecycle/Warranty calculators |
+| **Phase 2 — Defense Platform** | Q1 – Q2 2026 ✅ | 462 real platforms, 11 interactive tools, 160+ record types, toast alerts, unified action tracking |
 | **Phase 3 — MVP & Pilot** | Q3 – Q4 2026 | Internal pilot on real contract data, SBIR/STTR applications |
 | **Phase 4 — Partner & SaaS** | Q1 – Q2 2027 | REST API, SaaS dashboard, DIU / NavalX engagement |
 | **Phase 5 — Scale & Certify** | Q3 2027+ | NIST/CMMC, FedRAMP, production deployments |
 
-### Current Toolset (v3.3.0)
+### Current Toolset (v3.4.0)
 
 | Tool | Description |
 |---|---|
@@ -236,6 +237,8 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | Warranty & Contract Tracker | OEM warranty and CLIN deliverable tracking per FAR 46.7 |
 | Record Anchoring | SHA-256 hash anchoring to XRPL ($0.01 SLS per transaction) |
 | Conversational AI | Natural language ILS question answering |
+| Toast Alert System | Real-time severity-coded notifications for expirations, obsolescence, and threshold violations |
+| Action Items & Task Tracker | Unified cross-tool action tracking with localStorage persistence and CSV export |
 
 ---
 

@@ -38,6 +38,12 @@ Current state:
 | **Python API** | 7 endpoints, zero external dependencies | ✅ Live |
 | **Demo App** | Interactive — 8 military branches, 119 record types | ✅ Live |
 | **SDK Playground** | Browser-based SDK sandbox with live API | ✅ Live |
+| **$SLS Token** | LIVE on XRPL Mainnet — 100M supply, ~15M circulating, AMM pools active | ✅ Live |
+| **Toast Alert System** | Real-time notifications for warranty expirations, DMSMS, readiness | ✅ Live |
+| **Action Items Tracker** | Unified cross-tool task management with severity sorting, CSV export | ✅ Live |
+| **ROI Calculator** | Annual savings estimates, payback period, 5-year projections | ✅ Live |
+| **Lifecycle Cost Estimator** | Total ownership cost per DoD 5000.73 | ✅ Live |
+| **Warranty Tracker** | OEM warranty and CLIN deliverable tracking per FAR 46.7 | ✅ Live |
 | **Live Metrics Dashboard** | Real-time network stats with Chart.js | ✅ Live |
 | **Transaction Browser** | Filters, pagination, CSV export | ✅ Live |
 | **Investor Portal** | Market opportunity, tokenomics, revenue model | ✅ Live |

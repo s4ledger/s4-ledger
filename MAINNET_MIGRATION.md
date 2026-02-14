@@ -1,6 +1,6 @@
 # S4 Ledger — XRPL Mainnet Migration Guide
 
-> **Status:** Pre-production. This document outlines the step-by-step process for migrating from XRPL Testnet to XRPL Mainnet. A pre-built backend endpoint is included but **has not been deployed to production**.
+> **Status:** **$SLS Token: LIVE on XRPL Mainnet.** Token issuance, trustlines, and AMM pools are operational. Demo anchoring still uses Testnet. Full mainnet anchoring migration pending server-side signing deployment (see Section 2).
 
 ---
 
