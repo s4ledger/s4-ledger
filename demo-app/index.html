@@ -181,6 +181,7 @@
     </style>
 </head>
 <body>
+<div style="background:#1a0a0a;border-bottom:1px solid rgba(255,0,0,0.2);padding:4px 0;text-align:center;font-size:0.72rem;color:#ff6666;"><i class="fas fa-exclamation-triangle" style="margin-right:4px;"></i> NOTICE: Do not submit ITAR-controlled, classified, or export-controlled data to this platform. This system processes UNCLASSIFIED and CUI data only. <a href="/security/" style="color:#ff9999;text-decoration:underline;">Security Policy</a></div>
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="mesh-overlay"><div class="g-orb g-orb-1"></div><div class="g-orb g-orb-2"></div><div class="g-orb g-orb-3"></div></div>
 <div id="particles-js"></div>
@@ -228,6 +229,9 @@
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabLog" role="tab"><i class="fas fa-list"></i> Transaction Log</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabAbout" role="tab"><i class="fas fa-info-circle"></i> How It Works</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabILS" role="tab"><i class="fas fa-brain"></i> ILS Intelligence</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabDMSMS" role="tab"><i class="fas fa-exclamation-triangle"></i> DMSMS Tracker</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabReadiness" role="tab"><i class="fas fa-chart-line"></i> Readiness Calc</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabParts" role="tab"><i class="fas fa-cogs"></i> Parts X-Ref</a></li>
         </ul>
 
         <div class="tab-content">
@@ -399,7 +403,7 @@
                             <h3><i class="fas fa-brain"></i> ILS Intelligence Analyzer</h3>
                             <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload your DRLs, spreadsheets, checklists, and documents. The analyzer will parse them, cross-reference against program requirements, and identify gaps, missing deliverables, and actionable items.</p>
 
-                            <label>1. Select Program / Vessel Type</label>
+                            <label>1. Select Program / Platform Type</label>
                             <div class="row mb-3">
                                 <div class="col-7">
                                     <select id="ilsProgram" onchange="onILSProgramChange()">
@@ -613,6 +617,141 @@
                     </div>
                 </div>
             </div>
+            <!-- ═══ DMSMS / OBSOLESCENCE TRACKER ═══ -->
+            <div class="tab-pane fade" id="tabDMSMS" role="tabpanel">
+                <div class="demo-card">
+                    <h3><i class="fas fa-exclamation-triangle" style="color:#ff9900"></i> DMSMS / Obsolescence Tracker</h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Track Diminishing Manufacturing Sources and Material Shortages (DMSMS). Identify parts at risk of obsolescence, find alternates, and estimate resolution costs. Per DoWI 4245.14.</p>
+                    
+                    <label>Select Program</label>
+                    <select id="dmsmsProgram" class="form-select mb-3" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadDMSMSData()">
+                        <option value="ddg51">DDG-51 Flight III (PMS 400D)</option>
+                        <option value="lcs">LCS Freedom (PMS 501)</option>
+                        <option value="cvn78">CVN-78 Ford-class (PMS 378)</option>
+                        <option value="ffg62">FFG-62 Constellation (PMS 515)</option>
+                        <option value="f35">F-35C Lightning II (PMA-265)</option>
+                        <option value="ch53k">CH-53K King Stallion (PMA-261)</option>
+                        <option value="m1">M1A2 SEPv3 Abrams (PEO GCS)</option>
+                        <option value="ah64">AH-64E Apache (PEO Aviation)</option>
+                        <option value="himars">M142 HIMARS (PEO M&S)</option>
+                        <option value="kc46">KC-46A Pegasus (USAF)</option>
+                    </select>
+
+                    <div id="dmsmsResults" style="margin-top:1rem"></div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="dmsmsTotalParts">0</div><div class="stat-mini-label">Parts Tracked</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="dmsmsAtRisk" style="color:#ff3333">0</div><div class="stat-mini-label">At Risk</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="dmsmsResolved" style="color:#14f195">0</div><div class="stat-mini-label">Resolved</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="dmsmsCost" style="color:#ffa500">$0</div><div class="stat-mini-label">Est. Resolution Cost</div></div></div>
+                    </div>
+                    
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
+                        <button onclick="exportDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export DMSMS Report</button>
+                        <button onclick="anchorDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to XRPL ($0.01 SLS)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ READINESS CALCULATOR ═══ -->
+            <div class="tab-pane fade" id="tabReadiness" role="tabpanel">
+                <div class="demo-card">
+                    <h3><i class="fas fa-chart-line" style="color:#14f195"></i> Operational Readiness Calculator</h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Calculate Operational Availability (Ao), Mean Time Between Failures (MTBF), Mean Time To Repair (MTTR), and Mean Logistics Delay Time (MLDT). Per MIL-STD-1390D and DoWI 5000.02.</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Select Program</label>
+                            <select id="readinessProgram" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadReadinessData()">
+                                <option value="ddg51">DDG-51 Flight III</option>
+                                <option value="lcs">LCS Freedom-class</option>
+                                <option value="cvn78">CVN-78 Ford-class</option>
+                                <option value="ffg62">FFG-62 Constellation</option>
+                                <option value="f35">F-35C Lightning II</option>
+                                <option value="m1">M1A2 SEPv3 Abrams</option>
+                                <option value="ah64">AH-64E Apache</option>
+                                <option value="himars">M142 HIMARS</option>
+                                <option value="kc46">KC-46A Pegasus</option>
+                            </select>
+                            <label>Select System / Subsystem</label>
+                            <select id="readinessSystem" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="calcReadiness()">
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>MTBF (hours) — Mean Time Between Failures</label>
+                            <input type="number" id="inputMTBF" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 2400" oninput="calcReadiness()">
+                            <label>MTTR (hours) — Mean Time To Repair</label>
+                            <input type="number" id="inputMTTR" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 4.5" oninput="calcReadiness()">
+                            <label>MLDT (hours) — Mean Logistics Delay Time</label>
+                            <input type="number" id="inputMLDT" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 24" oninput="calcReadiness()">
+                        </div>
+                    </div>
+
+                    <div id="readinessOutput" style="margin-top:1rem"></div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statAo" style="color:#14f195">—</div><div class="stat-mini-label">Ao (Operational Avail.)</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statAi">—</div><div class="stat-mini-label">Ai (Inherent Avail.)</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statFailRate">—</div><div class="stat-mini-label">Failure Rate (λ)</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statMissReady">—</div><div class="stat-mini-label">Mission Readiness</div></div></div>
+                    </div>
+
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
+                        <button onclick="exportReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export RAM Report</button>
+                        <button onclick="anchorReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to XRPL ($0.01 SLS)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ NSN / PARTS CROSS-REFERENCE ═══ -->
+            <div class="tab-pane fade" id="tabParts" role="tabpanel">
+                <div class="demo-card">
+                    <h3><i class="fas fa-cogs" style="color:#c9a84c"></i> NSN / Parts Cross-Reference</h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Look up National Stock Numbers (NSNs), CAGE codes, and find alternate/substitute parts across the Federal Supply System. Cross-reference manufacturers and check part availability across programs.</p>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Search by NSN</label>
+                            <input type="text" id="nsnSearch" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 5340-01-234-5678" oninput="searchNSN()">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Search by CAGE Code</label>
+                            <input type="text" id="cageSearch" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 1THK9" oninput="searchCAGE()">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Search by Part Name</label>
+                            <input type="text" id="partNameSearch" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., valve, pump, filter" oninput="searchPartName()">
+                        </div>
+                    </div>
+
+                    <label>Filter by Program</label>
+                    <select id="partsProgram" class="form-select mb-3" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="filterParts()">
+                        <option value="all">All Programs</option>
+                        <option value="ddg51">DDG-51 Flight III</option>
+                        <option value="lcs">LCS Freedom-class</option>
+                        <option value="cvn78">CVN-78 Ford-class</option>
+                        <option value="ffg62">FFG-62 Constellation</option>
+                        <option value="f35">F-35C Lightning II</option>
+                        <option value="m1">M1A2 SEPv3 Abrams</option>
+                        <option value="ah64">AH-64E Apache</option>
+                    </select>
+
+                    <div id="partsResults" style="margin-top:1rem"></div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="partsTotal">0</div><div class="stat-mini-label">Parts in Database</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="partsAlternates" style="color:#14f195">0</div><div class="stat-mini-label">Alternates Found</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="partsCAGE" style="color:#00aaff">0</div><div class="stat-mini-label">CAGE Codes</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="partsPrograms" style="color:#c9a84c">0</div><div class="stat-mini-label">Programs</div></div></div>
+                    </div>
+
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
+                        <button onclick="exportParts()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export Parts List</button>
+                        <button onclick="anchorParts()" class="btn btn-sm" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to XRPL ($0.01 SLS)</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
@@ -2061,6 +2200,35 @@ const PROGS = {
     ]}
 };
 
+// ── Program-Specific Components for Realistic Sample Documents ──
+const PROG_COMPONENTS = {
+    yrbm: {systems:['Diesel Generator Set','HVAC System','Potable Water Maker','Sewage Treatment Plant','Anchor Windlass','Crane (5-Ton)','Fire Main System','Electrical Distribution Panel','Steering Gear (if applicable)','Galley Equipment'],nsns:['6115-01-445-3210','4120-01-389-7654','4610-01-567-8901','4610-01-234-5678','3950-01-789-0123','3950-01-456-7890','4210-01-123-4567','6110-01-890-1234','2010-01-345-6789','7310-01-678-9012'],mfgs:['Caterpillar','Carrier','HEM Inc','Evoqua Water','Rolls-Royce','Liebherr','Hale Products','Eaton','Jastram','Hobart']},
+    apl: {systems:['Diesel Generator','HVAC Unit','Potable Water System','Sewage Plant','Shore Power Panel','Fire Pump','Lighting System','Ventilation Fan','Life Raft','Emergency Generator'],nsns:['6115-01-445-3211','4120-01-389-7655','4610-01-567-8902','4610-01-234-5679','6110-01-890-1235','4210-01-123-4568','6210-01-556-7890','4140-01-222-3333','4220-01-444-5555','6115-01-666-7777'],mfgs:['Caterpillar','Trane','Parker Hannifin','Evoqua Water','Schneider Electric','Hale Products','GE Lighting','Twin City Fan','Viking Life-Saving','Cummins']},
+    afdm: {systems:['Ballast Pump','Wing Wall Winch','Keel Block System','Dock Crane','Generator Set','Capstan','Dewatering Pump','Shore Power System','Fire Main','Safety Net System'],nsns:['4320-01-567-8903','3950-01-234-5670','3990-01-111-2222','3950-01-333-4444','6115-01-555-6666','3950-01-777-8888','4320-01-999-0000','6110-01-111-3333','4210-01-222-4444','4220-01-333-5555'],mfgs:['Flowserve','Rolls-Royce','Todd Pacific','Liebherr','Caterpillar','Towimor','Godwin Pumps','ABB','Hale Products','Spanish Netting']},
+    ddg51: {systems:['AN/SPY-6(V)1 AMDR Radar','Mk 41 Vertical Launch System','LM2500 Gas Turbine Engine','AN/SQQ-89A(V)15 ASW Suite','Aegis Baseline 10 Combat System','CIWS Phalanx Block 1B','AN/SLQ-32(V)6 SEWIP EW','5-inch Mk 45 Mod 4 Gun','Ship Service Diesel Generator','Hybrid Electric Drive'],nsns:['5841-01-622-3401','1440-01-567-8901','2835-01-456-7890','5845-01-234-5678','5895-01-890-1234','1440-01-345-6789','5865-01-678-9012','1005-01-901-2345','6115-01-234-5670','6110-01-789-0123'],mfgs:['Raytheon','Lockheed Martin','GE Aviation','Raytheon','Lockheed Martin','Raytheon','Northrop Grumman','BAE Systems','Fairbanks Morse','GE Aviation']},
+    lcs: {systems:['Mission Module (MCM/ASW/SUW)','COMBATSS-21 Combat System','MT30 Gas Turbine','Waterjet Propulsion','Rolling Airframe Missile (RAM)','MH-60S Helicopter Interface','57mm Mk 110 Gun','Ship Service Diesel Generator','RHIB Launch/Recovery','Variable Depth Sonar'],nsns:['2040-01-567-8904','5895-01-234-5679','2835-01-890-1235','2040-01-345-6790','1440-01-678-9013','1680-01-901-2346','1005-01-234-5671','6115-01-567-8905','1940-01-890-1236','5845-01-123-4569'],mfgs:['Various (Module)','Raytheon','Rolls-Royce','Rolls-Royce','Raytheon','Sikorsky','BAE Systems','Fairbanks Morse','SAFE Boats','Thales']},
+    cvn78: {systems:['Electromagnetic Aircraft Launch System (EMALS)','Advanced Arresting Gear (AAG)','A1B Nuclear Reactor Plant','AN/SPY-6(V)3 Enterprise Air Surveillance','Dual Band Radar','Advanced Weapons Elevator','Ship Self-Defense System','Aircraft Launch & Recovery Equipment','4160V Electrical Distribution','HVAC Zonal System'],nsns:['1680-01-890-1237','1680-01-234-5672','9310-01-567-8906','5841-01-890-1238','5841-01-234-5673','3540-01-567-8907','1440-01-890-1239','1680-01-234-5674','6110-01-567-8908','4120-01-890-1240'],mfgs:['GA-EMS','GA-EMS','Bechtel Marine','Raytheon','Raytheon','AMSEC','Raytheon','NAVAIR','GE','Carrier']},
+    ffg62: {systems:['AN/SPY-6(V)3 Radar','Mk 41 VLS (32-cell)','CODLOG Propulsion System','NSM Anti-Ship Missile','Mk 110 57mm Gun','AN/SQQ-89(V) ASW Suite','COMBATSS-21 CMS','Ship Service Diesel Generator','SeaRAM Block 2','RHIB/Boat Handling'],nsns:['5841-01-622-3402','1440-01-567-8910','2835-01-456-7891','1410-01-234-5680','1005-01-234-5681','5845-01-234-5682','5895-01-234-5683','6115-01-234-5684','1440-01-345-6791','1940-01-890-1241'],mfgs:['Raytheon','Lockheed Martin','CODLOG (MAN/GE)','Kongsberg/Raytheon','BAE Systems','Raytheon','Raytheon','Fairbanks Morse','Raytheon','SAFE Boats']},
+    f35: {systems:['F135-PW-600 Engine','AN/APG-81 AESA Radar','Distributed Aperture System (DAS)','Electro-Optical Targeting System (EOTS)','AN/ASQ-239 EW Suite','Mission Systems Software Block 4','Helmet-Mounted Display Gen III','25mm GAU-22/A Gun','ODIN Logistics System','Ejection Seat Mk US16E'],nsns:['2840-01-567-8911','5841-01-890-1242','5841-01-234-5685','5860-01-567-8912','5865-01-890-1243','7050-01-234-5686','1240-01-567-8913','1005-01-890-1244','7050-01-234-5687','1680-01-567-8914'],mfgs:['Pratt & Whitney','Northrop Grumman','Northrop Grumman','Lockheed Martin','BAE Systems','Lockheed Martin','Collins Aerospace','General Dynamics OTS','Lockheed Martin','Martin-Baker']},
+    f35b: {systems:['F135-PW-600 STOVL Engine','LiftFan System','3-Bearing Swivel Module','AN/APG-81 AESA Radar','DAS/EOTS Sensor Suite','Mission Software Block 4','AN/ASQ-239 EW Suite','Helmet-Mounted Display Gen III','STOVL Ship Interface','ODIN Logistics System'],nsns:['2840-01-567-8915','2840-01-890-1245','2840-01-234-5688','5841-01-890-1246','5860-01-567-8916','7050-01-234-5689','5865-01-890-1247','1240-01-567-8917','1680-01-234-5690','7050-01-234-5691'],mfgs:['Pratt & Whitney','Rolls-Royce','Rolls-Royce','Northrop Grumman','Northrop Grumman','Lockheed Martin','BAE Systems','Collins Aerospace','BAE Systems','Lockheed Martin']},
+    ch53k: {systems:['T408-GE-400 Engine (3x)','Main Rotor Head (7-blade)','Fly-By-Wire Flight Controls','External Cargo Hook (36,000 lb)','AN/AAQ-29A(V) FLIR','Glass Cockpit/MFDs','Landing Gear System','Fuel System (Internal/External)','Rescue Hoist','APU (T62T-GE-1)'],nsns:['2840-01-567-8918','1615-01-890-1248','1680-01-234-5692','1680-01-567-8919','5860-01-890-1249','6610-01-234-5693','1620-01-567-8920','2915-01-890-1250','1680-01-234-5694','2835-01-567-8921'],mfgs:['GE Aviation','Sikorsky','Sikorsky/Collins','Sikorsky','Raytheon','L3Harris','Heroux-Devtek','Robertson Fuel','Breeze-Eastern','Honeywell']},
+    m1: {systems:['AGT1500 Gas Turbine Engine','120mm M256A1 Smoothbore Gun','AN/VVS-2(V)2 Commander Thermal Viewer','M153 CROWS II (RWS)','Trophy Active Protection System','FBCB2-JCR (Blue Force Tracker)','NBC Collective Protection','Track & Suspension System','Auxiliary Power Unit (APU)','Hull/Turret Armor Package'],nsns:['2835-01-456-7892','1005-01-567-8922','5855-01-890-1251','1005-01-234-5695','1440-01-567-8923','5895-01-890-1252','4240-01-234-5696','2530-01-567-8924','2835-01-890-1253','1240-01-234-5697'],mfgs:['Honeywell','Rheinmetall/GDLS','DRS Technologies','Kongsberg','Rafael/DRS','General Dynamics C4','GDLS','GDLS','Honeywell','Composite Armor']},
+    stryker: {systems:['Caterpillar C7 Diesel Engine','30mm XM813 Bushmaster II (ICVVA1)','AN/VAS-5 DVE (Driver Vision)','FBCB2-JCR Blue Force Tracker','CROWS-J Remote Weapon Station','Central Tire Inflation System','NBC Protection System','Vehicle Intercom System','Driveline/Transfer Case','Armor Kit (Level II/III)'],nsns:['2815-01-567-8925','1005-01-890-1254','5855-01-234-5698','5895-01-567-8926','1005-01-890-1255','4910-01-234-5699','4240-01-567-8927','5831-01-890-1256','2520-01-234-5700','1240-01-567-8928'],mfgs:['Caterpillar','Northrop Grumman','BAE Systems','General Dynamics','Kongsberg','GDLS','GDLS','Bose Military','GDLS','GDLS']},
+    ah64: {systems:['T700-GE-701D Engine (2x)','M230E1 30mm Chain Gun','AGM-114 Hellfire Launcher','AN/APG-78 Longbow Fire Control Radar','Modernized Target Acquisition Designation Sight (M-TADS)','AN/APR-48B Radar Frequency Interferometer','Integrated Helmet & Display Sighting System (IHADSS)','Main Rotor Assembly','Tail Rotor & Stabilator','Link 16 Tactical Data Link'],nsns:['2840-01-567-8929','1005-01-890-1257','1440-01-234-5701','5841-01-567-8930','5860-01-890-1258','5841-01-234-5702','1240-01-567-8931','1615-01-890-1259','1615-01-234-5703','5895-01-567-8932'],mfgs:['GE Aviation','Northrop Grumman','Lockheed Martin','Northrop Grumman','Lockheed Martin','Northrop Grumman','Elbit Systems','Boeing','Boeing','L3Harris']},
+    himars: {systems:['M142 Launcher Loader Module','GMLRS Rocket Pod (6-pack)','ATACMS Missile Interface','Fire Control System','FMTV 5-ton Truck Chassis (LMTV Family)','Navigation/Positioning System','Communication Suite (SINCGARS/BFT)','Hydraulic Launcher Elevation System','Cab Protection Kit','Power Distribution Unit'],nsns:['1440-01-567-8933','1440-01-890-1260','1440-01-234-5704','1430-01-567-8934','2320-01-890-1261','6605-01-234-5705','5820-01-567-8935','3040-01-890-1262','1240-01-234-5706','6110-01-567-8936'],mfgs:['Lockheed Martin','Lockheed Martin','Lockheed Martin','Lockheed Martin','BAE Systems/Oshkosh','Northrop Grumman','Harris Corp','Moog','BAE Systems','Lockheed Martin']},
+    f35a: {systems:['F135-PW-100 Engine','AN/APG-81 AESA Radar','Distributed Aperture System (DAS)','AN/AAQ-40 EOTS','AN/ASQ-239 EW Suite','Mission Systems Software Block 4','25mm GAU-22/A Internal Gun','HMDS Gen III Helmet','ALIS/ODIN Logistics System','Ejection Seat Mk US16E'],nsns:['2840-01-567-8937','5841-01-890-1263','5841-01-234-5707','5860-01-567-8938','5865-01-890-1264','7050-01-234-5708','1005-01-567-8939','1240-01-890-1265','7050-01-234-5709','1680-01-567-8940'],mfgs:['Pratt & Whitney','Northrop Grumman','Northrop Grumman','Lockheed Martin','BAE Systems','Lockheed Martin','General Dynamics OTS','Collins Aerospace','Lockheed Martin','Martin-Baker']},
+    kc46: {systems:['Pratt & Whitney PW4062 Engine (2x)','Remote Vision System (RVS)','Wing Aerial Refueling Pod (WARP)','Fly-By-Wire Refueling Boom','Centerline Drogue System','Fuel System (212,000 lbs capacity)','KC-46A Mission Computer','Defensive Systems','Cargo Handling System','Cockpit Avionics Suite'],nsns:['2840-01-567-8941','5860-01-890-1266','4920-01-234-5710','4920-01-567-8942','4920-01-890-1267','2915-01-234-5711','7050-01-567-8943','5865-01-890-1268','1730-01-234-5712','6610-01-567-8944'],mfgs:['Pratt & Whitney','Rockwell Collins','Cobham','Boeing','Cobham','Boeing','Boeing','Northrop Grumman','Telair International','Collins Aerospace']},
+    b21: {systems:['Next-Gen Stealth Engine (Classified)','Active Electronically Scanned Array (AESA)','Low-Observable (LO) Coating System','Mission Computer / Sensor Fusion','Electronic Warfare Suite','Weapons Bay Door Actuator','Stealth Exhaust System','Navigation/GPS Anti-Jam','Defensive Management System','Environmental Control System'],nsns:['2840-01-XXX-XXXX','5841-01-XXX-XXXX','5340-01-XXX-XXXX','7050-01-XXX-XXXX','5865-01-XXX-XXXX','3040-01-XXX-XXXX','2835-01-XXX-XXXX','5826-01-XXX-XXXX','5865-01-XXX-XXXY','4120-01-XXX-XXXX'],mfgs:['(Classified)','Northrop Grumman','Northrop Grumman','Northrop Grumman','(Classified)','Moog','(Classified)','L3Harris','(Classified)','Hamilton Sundstrand']},
+    c17: {systems:['F117-PW-100 Engine (4x)','Externally Blown Flap (EBF) System','Cargo Handling System (463L)','Aerial Delivery System','Glass Cockpit/HUD','Defensive Systems (AN/AAR-47)','APU (GTCP331-200)','Landing Gear (Multi-Wheel)','Electronic Flight Control System','Cargo Winch (25,000 lb)'],nsns:['2840-01-567-8945','1560-01-890-1269','1730-01-234-5713','1670-01-567-8946','6610-01-890-1270','5865-01-234-5714','2835-01-567-8947','1620-01-890-1271','6610-01-234-5715','3950-01-567-8948'],mfgs:['Pratt & Whitney','Boeing','Boeing','Airborne Systems','Collins Aerospace','BAE Systems','Honeywell','Boeing','Honeywell','AMSEC']},
+    gps3: {systems:['GPS III Payload (L1C/A, L2C, L5, M-Code)','Rubidium Atomic Clock Assembly','Navigation Signal Generator','Solar Array Wing (Deployable)','Reaction Wheel Assembly','Star Tracker','S-Band Transponder','L-Band Antenna Assembly','Thermal Control Subsystem','Spacecraft Bus (Structure)'],nsns:['5841-01-567-8949','6645-01-890-1272','5841-01-234-5716','6130-01-567-8950','1680-01-890-1273','6650-01-234-5717','5841-01-567-8951','5985-01-890-1274','4120-01-234-5718','1680-01-567-8952'],mfgs:['Lockheed Martin','Microsemi/Excelitas','L3Harris','Lockheed Martin','Honeywell','Ball Aerospace','General Dynamics','Lockheed Martin','Lockheed Martin','Lockheed Martin']},
+    sbirs: {systems:['Scanning Sensor Payload','Staring Sensor (HEO)','Ground Processing System','Satellite Control Network Interface','Solar Array (Triple-Junction)','Attitude Control System','Thermal Management','Communications Subsystem','Mission Data Processor','Power Distribution Unit'],nsns:['5860-01-567-8953','5860-01-890-1275','7050-01-234-5719','5895-01-567-8954','6130-01-890-1276','1680-01-234-5720','4120-01-567-8955','5820-01-890-1277','7050-01-234-5721','6110-01-567-8956'],mfgs:['Northrop Grumman','Northrop Grumman','Lockheed Martin','USAF SMC','Spectrolab','Northrop Grumman','Northrop Grumman','Harris Corp','BAE Systems','Raytheon']},
+    nsc: {systems:['LM2500 Gas Turbine','Mk 110 57mm Gun','20mm Phalanx CIWS','Mk 53 Nulka Decoy System','AN/SPS-73(V)18 Radar','RHIB/Stern Launch','Diesel Generator (SSDG)','Damage Control System','Bridge Electronics System','Fuel/Ballast System'],nsns:['2835-01-456-7893','1005-01-234-5722','1005-01-567-8957','1440-01-890-1278','5841-01-234-5723','1940-01-567-8958','6115-01-890-1279','4210-01-234-5724','6610-01-567-8959','2910-01-890-1280'],mfgs:['GE Aviation','BAE Systems','Raytheon','Chemring','Raytheon','SAFE Boats','Caterpillar','Navship','Sperry Marine','Boiler & Tank']},
+    opc: {systems:['Diesel Engine (MAN 28/33D)','Mk 110 57mm Gun','25mm Mk 38 Mod 2','Bridge System','Diesel Generator','RHIB/Boat Handling','Damage Control Equipment','Navigation Radar','Communications Suite','Anchor/Mooring System'],nsns:['2815-01-567-8960','1005-01-234-5725','1005-01-890-1281','6610-01-234-5726','6115-01-567-8961','1940-01-890-1282','4210-01-234-5727','5841-01-567-8962','5820-01-890-1283','3950-01-234-5728'],mfgs:['MAN Energy','BAE Systems','BAE Systems','OSI Maritime','Caterpillar','SAFE Boats','Tyco Fire','Furuno','Harris Corp','Towimor']},
+    frc: {systems:['MTU 20V4000 M93L Diesel (2x)','Mk 38 Mod 2 25mm Gun','Waterjets (Hamilton HM811)','Bridge Management System','Remote Operated Weapon','Communications Suite','Navigation System','Damage Control','Ship Service Generators','Anchor Windlass'],nsns:['2815-01-567-8963','1005-01-234-5729','2040-01-890-1284','6610-01-234-5730','1005-01-567-8964','5820-01-890-1285','6605-01-234-5731','4210-01-567-8965','6115-01-890-1286','3950-01-234-5732'],mfgs:['MTU','BAE Systems','Hamilton Jet','OSI Maritime','BAE Systems','Harris Corp','Sperry Marine','Tyco Fire','Caterpillar','Towimor']},
+    acv: {systems:['Caterpillar C18 Diesel Engine','Turret/Weapon Station (30mm or RWS)','Swim Drive / Water Propulsion','Suspension System (8x8)','FBCB2-JCR / C4I System','NBC Protection','Mine Blast Protection Kit','Driver Vision Enhancement','Amphibious Hull/Door System','Power Distribution System'],nsns:['2815-01-567-8966','1005-01-890-1287','2040-01-234-5733','2530-01-567-8967','5895-01-890-1288','4240-01-234-5734','1240-01-567-8968','5855-01-890-1289','1940-01-234-5735','6110-01-567-8969'],mfgs:['Caterpillar','Kongsberg','BAE Systems','IVECO','General Dynamics','GDLS','GDLS','BAE Systems','BAE Systems','GDLS']},
+    custom: {systems:['Primary Power Plant','Secondary Power','Main Operating System','Safety System','Navigation/Control','Communications','Environmental Control','Structural System','Auxiliary Equipment','Test/Measurement Equipment'],nsns:['0000-00-000-0001','0000-00-000-0002','0000-00-000-0003','0000-00-000-0004','0000-00-000-0005','0000-00-000-0006','0000-00-000-0007','0000-00-000-0008','0000-00-000-0009','0000-00-000-0010'],mfgs:['OEM-1','OEM-2','OEM-3','OEM-4','OEM-5','OEM-6','OEM-7','OEM-8','OEM-9','OEM-10']}
+};
+
 // ── Sample DRL Generator (Enhanced with realistic DI numbers) ──
 // Extended DI catalog per program type for realistic samples
 const EXTENDED_DI = {
@@ -2220,7 +2388,8 @@ function loadSelectedSampleDoc(docType) {
             content = generatePOIndex(progKey, prog); filename = 'PO_Index_'+progKey.toUpperCase()+'.csv'; break;
         case 'gfm': {
             let csv = 'GFM Item,NSN,Description,Qty,Unit Cost,Total Cost,Lead Time,Status,Delivery Date\n';
-            const gfmItems = ['Navigation System','Comm Suite','CIWS Mount','Anchor Windlass','Fire Pump','Radar Array','Helm Console','Generator Set','HVAC Unit','Crane Assembly'];
+            const comp = PROG_COMPONENTS[progKey] || PROG_COMPONENTS.custom;
+            const gfmItems = comp.systems.slice(0, 8);
             gfmItems.forEach((item,i) => {
                 csv += 'GFM-'+String(i+1).padStart(3,'0')+','+Math.floor(Math.random()*9e12).toString().padStart(13,'0')+',"'+item+'",'+Math.ceil(Math.random()*4)+',$'+Math.floor(50+Math.random()*500)+'K,$'+Math.floor(100+Math.random()*2000)+'K,'+Math.ceil(3+Math.random()*12)+' months,'+statuses[i%statuses.length]+','+dates[i%dates.length]+'\n';
             });
@@ -2236,7 +2405,8 @@ function loadSelectedSampleDoc(docType) {
             content = generateLCSP(progKey, prog); filename = 'LCSP_'+progKey.toUpperCase()+'_2026.txt'; mime = 'text/plain'; break;
         case 'mrc': {
             let csv = 'MRC Number,System,Periodicity,Man-Hours,Rate,Description,Tools Required,Parts Required,Safety Precautions\n';
-            const systems = ['Main Diesel Engine','Fire Main System','Steering Gear','HVAC System','Potable Water','Sewage Treatment','Electrical Distribution','Anchor Windlass','Crane','Bilge System'];
+            const comp = PROG_COMPONENTS[progKey] || PROG_COMPONENTS.custom;
+            const systems = comp.systems.slice(0, 10);
             const periods = ['D-1','W-2','M-4','Q-1','S-1','A-1'];
             systems.forEach((s,i) => {
                 csv += 'MRC-'+periods[i%periods.length]+'-'+String(i+1).padStart(3,'0')+',"'+s+'",'+periods[i%periods.length]+','+String(0.5+Math.random()*4).substring(0,3)+',MMA,"Inspect and service '+s.toLowerCase()+'","Standard Tool Kit","Per APL",Safety tag-out required\n';
@@ -2246,8 +2416,9 @@ function loadSelectedSampleDoc(docType) {
         case 'mel':
             if (typeof generateMEL === 'function') { content = generateMEL(progKey, prog); }
             else { let csv = 'MEL Item,Equipment,Manufacturer,Model,Location,Weight (lbs),Power (kW),Status\n';
-                const equip = ['Main Diesel Generator','Emergency Generator','Fire Pump','HVAC Compressor','Anchor Windlass','Steering System','Potable Water Maker','Sewage Plant','Crane (5T)','Air Compressor'];
-                equip.forEach((e,i) => { csv += 'MEL-'+String(i+1).padStart(4,'0')+',"'+e+'",Caterpillar,Model-'+String(100+i)+',ER-'+(i+1)+','+Math.floor(500+Math.random()*5000)+','+Math.floor(5+Math.random()*200)+',Installed\n'; });
+                const comp = PROG_COMPONENTS[progKey] || PROG_COMPONENTS.custom;
+                const equip = comp.systems;
+                equip.forEach((e,i) => { csv += 'MEL-'+String(i+1).padStart(4,'0')+',"'+e+'",'+comp.mfgs[i]+',Model-'+String(100+i)+','+(progKey.includes('f35')||progKey.includes('ah64')?'Station':'Comp')+'-'+(i+1)+','+Math.floor(500+Math.random()*5000)+','+Math.floor(5+Math.random()*200)+',Installed\n'; });
                 content = csv;
             }
             filename = 'MEL_'+progKey.toUpperCase()+'.csv'; break;
@@ -2261,7 +2432,8 @@ function loadSelectedSampleDoc(docType) {
             content = generateIUID(progKey, prog); filename = 'IUID_Register_'+progKey.toUpperCase()+'.csv'; break;
         case 'config_baseline': {
             let csv = 'Config Item,Baseline Version,ECN Number,Status,Approval Date,Description,Impact\n';
-            const items = ['Hull Structure','Propulsion System','Electrical System','Combat System','Navigation Suite','Communications','Habitability','Auxiliary Systems','Safety Systems','Deck Machinery'];
+            const comp = PROG_COMPONENTS[progKey] || PROG_COMPONENTS.custom;
+            const items = comp.systems.slice(0, 10);
             items.forEach((item,i) => { csv += 'CI-'+String(i+1).padStart(3,'0')+',Rev '+String.fromCharCode(65+i%3)+',ECN-2026-'+String(i+1).padStart(3,'0')+','+['Approved','Pending','Approved','In Review','Approved'][i%5]+','+dates[i%dates.length]+',"'+item+' baseline configuration",'+['None','Minor','None','Moderate','None'][i%5]+'\n'; });
             content = csv; filename = 'Config_Baseline_'+progKey.toUpperCase()+'.csv'; break;
         }
@@ -2274,7 +2446,8 @@ function loadSelectedSampleDoc(docType) {
         case 'ela': {
             let csv = 'Load ID,Equipment,Condition,Connected Load (kW),Demand Factor,Operating Load (kW),Voltage,Phase\n';
             const conds = ['Normal Cruising','Battle/Emergency','In Port','Anchor'];
-            const loads = ['Lighting','HVAC','Navigation','Communications','Weapons','Aux Machinery','Galley','Laundry','Crane','Fire Pump'];
+            const comp = PROG_COMPONENTS[progKey] || PROG_COMPONENTS.custom;
+            const loads = comp.systems.slice(0, 10);
             loads.forEach((l,i) => { csv += 'EL-'+String(i+1).padStart(3,'0')+',"'+l+'",'+conds[i%conds.length]+','+Math.floor(10+Math.random()*200)+',0.'+Math.floor(60+Math.random()*35)+','+Math.floor(8+Math.random()*150)+',440,3\n'; });
             content = csv; filename = 'ELA_'+progKey.toUpperCase()+'.csv'; break;
         }
@@ -3217,15 +3390,24 @@ function saveILSReport() {
 }
 
 // ═══ S4 ILS AI AGENT ═══
+
+// ── AI Agent Conversation Memory ──
+let aiConversationHistory = [];
+const AI_MAX_HISTORY = 20;
+
 function aiSend() {
     const input = document.getElementById('aiChatInput');
     const msg = input.value.trim();
     if (!msg) return;
     input.value = '';
     addAiMessage(msg, 'user');
+    aiConversationHistory.push({role:'user', text:msg, time:Date.now()});
+    if (aiConversationHistory.length > AI_MAX_HISTORY) aiConversationHistory.shift();
     setTimeout(() => {
         const response = generateAiResponse(msg);
         addAiMessage(response, 'bot');
+        aiConversationHistory.push({role:'bot', text:response, time:Date.now()});
+        if (aiConversationHistory.length > AI_MAX_HISTORY) aiConversationHistory.shift();
     }, 400 + Math.random() * 600);
 }
 
@@ -3441,20 +3623,127 @@ function generateAiResponse(query) {
         return '🎯 Happy to help! Remember you can:<br>• Upload additional documents anytime to re-run analysis<br>• Ask me about any DI number, ILS term, or defense acronym<br>• Request drafts of memos, emails, or CARs<br>• Get schedule/cost analysis at any time';
     }
 
-    // Intelligent fallback — try to give a useful response for any question
-    return '<strong>Custom Query Response</strong><br><br>I\'ll do my best to help with: "<em>' + query + '</em>"<br><br>' +
-        (r ? 'Based on your current analysis of <strong>' + r.prog.name + '</strong> (' + r.pct + '% readiness, ' + r.critGaps + ' critical gaps, ' + formatCost(r.totalCost) + ' risk):<br><br>' : '') +
-        'Here\'s what I can do:<br>' +
-        '• 📋 <strong>"Summarize gaps"</strong> — full analysis overview<br>' +
-        '• 🔍 <strong>"Explain [term]"</strong> — ILS terms, DI numbers, acronyms<br>' +
-        '• 📝 <strong>"Draft a memo"</strong> or <strong>"Draft an email"</strong><br>' +
-        '• 📊 <strong>"Compare readiness"</strong> — benchmark your program<br>' +
-        '• ⏰ <strong>"Schedule risk"</strong> — timeline assessment<br>' +
-        '• 📄 <strong>"Checklist status"</strong> — element-by-element breakdown<br>' +
-        '• ✍️ <strong>"Draft a CAR"</strong> — Corrective Action Request<br>' +
-        '• 💰 <strong>"Cost breakdown"</strong> — risk cost by element<br>' +
-        '• 🎯 <strong>"Next steps"</strong> — recommended actions<br>' +
-        '• 📖 <strong>"What is DI-009?"</strong> — any DI number explained';
+    // ── Intelligent Conversational Handler ──
+    // Build context from conversation history and analysis state
+    const recentHistory = aiConversationHistory.slice(-6).filter(h => h.role === 'user').map(h => h.text.toLowerCase());
+    const prog = r ? r.prog : (PROGS[document.getElementById('ilsProgram')?.value] || null);
+    const progName = prog ? prog.name : 'your program';
+    const comp = PROG_COMPONENTS ? PROG_COMPONENTS[document.getElementById('ilsProgram')?.value] : null;
+
+    // Detect if this is a follow-up to a previous topic
+    const lastBotMsg = aiConversationHistory.filter(h => h.role === 'bot').slice(-1)[0];
+    const isFollowUp = recentHistory.length > 1;
+
+    // Topic detection for freeform questions
+    if (/how\s*(do|can|should|would|to)\b/.test(q)) {
+        // "How do I..." questions — provide actionable guidance
+        if (/submit|deliver|send|upload/.test(q)) return 'To submit deliverables for <strong>' + progName + '</strong>:<br><br>1. Ensure your document meets the DI format requirements specified in your contract DRL<br>2. Include the CDRL sequence number and DI number on the cover page<br>3. Submit through the designated portal (eCDRL for NAVSEA contracts, or per your contract\'s Section H)<br>4. Track status using the DRL tracker — upload it here for gap analysis<br><br>' + (r ? 'Your current analysis shows ' + r.drlFound + '/' + r.drlTotal + ' items submitted.' : 'Run an analysis to see your current submission status.');
+        if (/fix|correct|resolve|address/.test(q)) return r && r.critGaps > 0 ? 'To address your <strong>' + r.critGaps + ' critical gaps</strong> in ' + progName + ':<br><br>' + r.actions.filter(a=>a.severity==='critical').slice(0,4).map((a,i) => '<strong>' + (i+1) + '.</strong> ' + a.title + '<br>&nbsp;&nbsp;&nbsp;→ ' + a.action + ' (Owner: ' + a.owner + ')<br>').join('') + '<br>Start with the highest-cost items first — early intervention typically saves 30-50%.' : 'Run an analysis first to identify gaps, then I can walk you through how to resolve each one.';
+        if (/improve|increase|boost|raise/.test(q)) return 'To improve your ILS readiness score' + (r ? ' (currently <strong>' + r.pct + '%</strong>)' : '') + ':<br><br>1. <strong>Complete missing checklist items</strong> — each critical item significantly impacts your score<br>2. <strong>Submit outstanding CDRLs</strong> — DRL coverage is 40% of your overall score<br>3. <strong>Prioritize critical items first</strong> — they have 2x weight in scoring<br>4. <strong>Upload documents</strong> to auto-detect completed items<br>5. <strong>Re-run analysis</strong> after each update to track progress<br><br>' + (r ? 'Focus area: ' + (r.clPct < r.drlPct ? 'Your checklist score (' + r.clPct + '%) is lower than DRL coverage (' + r.drlPct + '%). Complete checklist items first.' : 'Your DRL coverage (' + r.drlPct + '%) needs attention. Submit missing deliverables.') : '');
+        if (/track|monitor|status/.test(q)) return 'For tracking ILS status on <strong>' + progName + '</strong>:<br><br>• <strong>This tool:</strong> Upload documents anytime and re-run analysis — your readiness score updates in real-time<br>• <strong>Export Action Tracker:</strong> Click the "Update Action Tracker" button after analysis to get a CSV you can share with your team<br>• <strong>Anchor Reports:</strong> Click "Anchor Report Hash" to create an immutable XRPL timestamp — useful for proving when assessments were completed<br>• <strong>Schedule Reviews:</strong> Use "Schedule Meeting" to set up ILS Review Board meetings with your team';
+        return 'Great question! Here\'s what I\'d recommend for <strong>' + progName + '</strong>:<br><br>' + (r ? 'Based on your current <strong>' + r.pct + '%</strong> readiness with ' + r.critGaps + ' critical gaps and ' + formatCost(r.totalCost) + ' at risk, I\'d suggest:<br><br>1. Address critical gaps immediately (owner assignments are in the Action Items panel)<br>2. Schedule an ILS Review Board within 2 weeks<br>3. Update your program risk register with the identified impacts<br>4. Re-run this analysis after corrective actions are taken<br><br>Want me to draft a memo, email, or CAR for any specific item?' : 'Upload your documents and run an analysis first — then I can give you specific, data-driven recommendations.');
+    }
+
+    // "What about..." / "Tell me about..." / freeform queries
+    if (/what about|tell me|can you|elaborate|more (about|on|info)|detail/.test(q) || isFollowUp) {
+        // Try to connect to previous context
+        if (lastBotMsg && /critical|gap|missing|action/.test(lastBotMsg.text)) {
+            if (r && r.actions.length) {
+                const nextAction = r.actions[Math.min(r.actions.length-1, recentHistory.length)];
+                return 'Continuing from our discussion — here\'s more detail on <strong>' + nextAction.id + '</strong>:<br><br>' +
+                    '<strong>Item:</strong> ' + nextAction.title + '<br>' +
+                    '<strong>Required Action:</strong> ' + nextAction.action + '<br>' +
+                    '<strong>Owner:</strong> ' + nextAction.owner + (nextAction.secondary ? ' (Coord: ' + nextAction.secondary + ')' : '') + '<br>' +
+                    '<strong>Est. Cost:</strong> ' + formatCost(nextAction.cost) + '<br>' +
+                    '<strong>Timeline:</strong> ' + nextAction.schedule + '<br><br>' +
+                    'Would you like me to draft a CAR for this item, or move to the next action item?';
+            }
+        }
+    }
+
+    // Catch-all: actually try to respond intelligently based on keywords in the query
+    if (/why|reason|cause|because/.test(q)) {
+        return r ? 'Based on the analysis of <strong>' + progName + '</strong>:<br><br>' +
+            'Readiness is at <strong>' + r.pct + '%</strong> primarily because:<br>' +
+            (r.critGaps > 0 ? '• <strong>' + r.critGaps + ' critical ILS elements</strong> are missing from your data package<br>' : '') +
+            (r.drlPct < 80 ? '• <strong>DRL coverage is only ' + r.drlPct + '%</strong> — ' + (r.drlTotal - r.drlFound) + ' deliverables haven\'t been submitted or detected<br>' : '') +
+            (r.clPct < 80 ? '• <strong>Checklist completion is ' + r.clPct + '%</strong> — key logistics elements need verification<br>' : '') +
+            '<br>The biggest cost driver is typically late-stage gap discovery. Addressing issues now versus during T&E saves an average of 40% in remediation costs.' :
+            'I\'d need analysis results to explain specifics. Run an analysis and I can explain exactly what\'s driving your readiness score.';
+    }
+
+    if (/who|responsible|owner|point of contact|poc/.test(q)) {
+        if (r && r.actions.length) {
+            const ownerMap = {};
+            r.actions.forEach(a => { ownerMap[a.owner] = (ownerMap[a.owner] || 0) + 1; });
+            let resp = '<strong>Responsibility Breakdown for ' + progName + ':</strong><br><br>';
+            Object.entries(ownerMap).sort((a,b) => b[1]-a[1]).forEach(([owner, count]) => {
+                resp += '• <strong>' + owner + '</strong>: ' + count + ' action item' + (count>1?'s':'') + '<br>';
+            });
+            resp += '<br>The primary coordinating office is <strong>' + (r.prog.ofc || 'the Program Office') + '</strong>.';
+            return resp;
+        }
+        return 'Run an analysis to see the ownership breakdown for each action item. Each gap is assigned to a responsible party based on the ILS element it falls under.';
+    }
+
+    if (/when|deadline|due|timeline|milestone/.test(q) && !(/schedule/.test(q))) {
+        const phase = document.getElementById('ilsPhase')?.selectedOptions[0]?.text || 'current phase';
+        return 'For <strong>' + progName + '</strong> in <strong>' + phase + '</strong>:<br><br>' +
+            '<strong>Key ILS Milestones:</strong><br>' +
+            '• Pre-Award: ILS Plan, preliminary provisioning data<br>' +
+            '• Preliminary Design Review (PDR): LORA, FMECA, initial support concept<br>' +
+            '• Critical Design Review (CDR): Complete LSAR, draft tech manuals, training plan<br>' +
+            '• Production: VRS/buylist, COSAL/APL data, MRC validation<br>' +
+            '• Test & Evaluation: TEMP execution, T&E support, crew familiarization<br>' +
+            '• Delivery: Complete tech manuals, transfer book, final provisioning<br><br>' +
+            (r ? 'Your current readiness of <strong>' + r.pct + '%</strong> ' + (r.pct >= 70 ? 'is tracking well for this phase.' : 'suggests some deliverables may be behind schedule. Review the Action Items for specific due dates.') : 'Upload documents and run analysis to see where you stand against milestone requirements.');
+    }
+
+    // If the user typed something conversational that doesn't match patterns
+    if (q.length < 15 && /^(yes|no|ok|sure|go|please|yeah|yep|nope|thanks|ty|thx|k|cool|nice)/.test(q)) {
+        if (/yes|sure|go|please|yeah|yep/.test(q)) {
+            // Affirmative — continue from last topic
+            if (lastBotMsg && /draft.*car|corrective/i.test(lastBotMsg.text) && r && r.actions.length) {
+                const g = r.actions.filter(a=>a.severity==='critical')[0] || r.actions[0];
+                return '<strong>CAR Generated:</strong><br><br>' +
+                    '<strong>CAR-' + (r.progKey||'PROG').toUpperCase() + '-' + new Date().getFullYear() + '-001</strong><br>' +
+                    'Deficiency: ' + g.title + '<br>' +
+                    'Action Required: ' + g.action + '<br>' +
+                    'Response Due: 14 calendar days<br>' +
+                    'Impact: ' + formatCost(g.cost) + ' cost risk<br>' +
+                    'Owner: ' + g.owner;
+            }
+            return 'Got it! What would you like me to help with next? I can draft documents, explain terms, analyze gaps, or provide recommendations for <strong>' + progName + '</strong>.';
+        }
+        if (/no|nope/.test(q)) return 'No problem. Feel free to ask me anything else about your ILS data package, or try one of the quick buttons below.';
+        if (/thanks|ty|thx/.test(q)) return 'Happy to help! Let me know if you need anything else. Remember you can upload additional documents anytime and re-run analysis to track progress.';
+        return 'Sure thing — what else can I help you with?';
+    }
+
+    // True freeform fallback — actually address the user's question contextually
+    let response = '';
+    if (r) {
+        response = 'Regarding "<em>' + query + '</em>" — here\'s what I can tell you about <strong>' + progName + '</strong>:<br><br>';
+        response += '📊 Current readiness: <strong>' + r.pct + '%</strong> | Critical gaps: <strong>' + r.critGaps + '</strong> | Risk: <strong>' + formatCost(r.totalCost) + '</strong><br><br>';
+        if (r.critGaps > 0) {
+            response += 'Your top priority should be addressing the <strong>' + r.critGaps + ' critical items</strong>. The most urgent is <strong>' + r.actions[0].title + '</strong> (Owner: ' + r.actions[0].owner + ').<br><br>';
+        }
+        response += 'I can help you with this question in several ways — try being more specific:<br>';
+        response += '• Ask about a specific <strong>DI number</strong> or <strong>ILS element</strong><br>';
+        response += '• Say <strong>"draft a memo about [topic]"</strong> and I\'ll write one<br>';
+        response += '• Ask <strong>"who is responsible for [item]?"</strong><br>';
+        response += '• Ask <strong>"how do I fix [specific gap]?"</strong><br>';
+        response += '• Ask <strong>"why is my score [low/high]?"</strong>';
+    } else {
+        response = 'I\'d be happy to help with "<em>' + query + '</em>"!<br><br>';
+        response += 'To give you the best answer, I need some context. Here\'s how to get started:<br><br>';
+        response += '1. <strong>Select a program</strong> from the dropdown above<br>';
+        response += '2. <strong>Upload your documents</strong> (DRLs, spreadsheets, checklists)<br>';
+        response += '3. <strong>Run Full Analysis</strong> to generate results<br><br>';
+        response += 'Then ask me anything — I\'ll give you specific, data-driven answers about gaps, costs, schedules, and next steps.<br><br>';
+        response += 'In the meantime, I can explain any <strong>ILS term</strong>, <strong>DI number</strong>, or <strong>defense acronym</strong> — just ask!';
+    }
+    return response;
 }
 
 function explainDINumber(q) {
@@ -3487,11 +3776,349 @@ function explainDINumber(q) {
     return 'DI-' + String(num).padStart(3,'0') + ' — I don\'t have detailed information on that specific DI number. Common PMS 300 DI numbers range from DI-001 (CDRL) through DI-044 (Spares Buylist). Ask about one of those!';
 }
 
+// ═══ DMSMS / OBSOLESCENCE TRACKER ═══
+const DMSMS_DATA = {};
+function generateDMSMSData(progKey) {
+    const comp = PROG_COMPONENTS[progKey] || PROG_COMPONENTS.custom;
+    const statuses = ['Active','Active','Active','At Risk','At Risk','Obsolete','End of Life','Active','Watch','Active'];
+    const severities = ['None','None','None','High','Medium','Critical','High','None','Low','None'];
+    const resolutions = ['N/A','N/A','N/A','Seeking alternate source','Life-of-type buy planned','Bridge buy + redesign required','Last-time buy submitted','N/A','Monitoring vendor status','N/A'];
+    const leadTimes = [12,8,16,26,18,52,36,10,14,6];
+    const costs = [0,0,0,245,85,890,320,0,45,0];
+    const alternates = ['—','—','—','2 qualified alternates identified','1 partial alternate','No direct alternate — redesign needed','OEM end-of-life, 1 aftermarket','—','1 alternate under qualification','—'];
+    const endDates = ['—','—','—','2027-Q3','2028-Q1','2026-Q4 (CRITICAL)','2027-Q1','—','2029+','—'];
+    return comp.systems.map((sys, i) => ({
+        system: sys,
+        nsn: comp.nsns[i],
+        manufacturer: comp.mfgs[i],
+        status: statuses[i % statuses.length],
+        severity: severities[i % severities.length],
+        resolution: resolutions[i % resolutions.length],
+        leadTime: leadTimes[i % leadTimes.length],
+        cost: costs[i % costs.length],
+        alternate: alternates[i % alternates.length],
+        endOfSupport: endDates[i % endDates.length]
+    }));
+}
+
+function loadDMSMSData() {
+    const progKey = document.getElementById('dmsmsProgram').value;
+    const data = generateDMSMSData(progKey);
+    const atRisk = data.filter(d => d.status !== 'Active').length;
+    const resolved = data.filter(d => d.status === 'Active').length;
+    const totalCost = data.reduce((s,d) => s + d.cost, 0);
+    
+    document.getElementById('dmsmsTotalParts').textContent = data.length;
+    document.getElementById('dmsmsAtRisk').textContent = atRisk;
+    document.getElementById('dmsmsResolved').textContent = resolved;
+    document.getElementById('dmsmsCost').textContent = totalCost >= 1000 ? '$' + (totalCost/1000).toFixed(1) + 'M' : '$' + totalCost + 'K';
+
+    const statusColors = {Active:'#14f195','At Risk':'#ffa500',Obsolete:'#ff3333','End of Life':'#ff6666',Watch:'#ffcc00'};
+    let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:var(--steel);"><th style="padding:8px;text-align:left;">System</th><th>NSN</th><th>Manufacturer</th><th>Status</th><th>Severity</th><th>Lead Time</th><th>Est. Cost</th><th>Alternate</th><th>End of Support</th></tr>';
+    data.forEach(d => {
+        const color = statusColors[d.status] || '#fff';
+        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">';
+        html += '<td style="padding:8px;color:#fff;font-weight:600;">' + d.system + '</td>';
+        html += '<td style="padding:8px;color:var(--steel);font-family:monospace;font-size:0.78rem;">' + d.nsn + '</td>';
+        html += '<td style="padding:8px;color:var(--steel);">' + d.manufacturer + '</td>';
+        html += '<td style="padding:8px;"><span style="color:' + color + ';font-weight:600;">' + d.status + '</span></td>';
+        html += '<td style="padding:8px;color:' + (d.severity==='Critical'?'#ff3333':d.severity==='High'?'#ff9900':d.severity==='Medium'?'#ffcc00':d.severity==='Low'?'#66ccff':'var(--steel)') + ';">' + d.severity + '</td>';
+        html += '<td style="padding:8px;color:var(--steel);">' + d.leadTime + ' wks</td>';
+        html += '<td style="padding:8px;color:' + (d.cost > 0 ? '#ffa500' : 'var(--steel)') + ';">' + (d.cost > 0 ? '$' + d.cost + 'K' : '—') + '</td>';
+        html += '<td style="padding:8px;color:var(--steel);font-size:0.78rem;">' + d.alternate + '</td>';
+        html += '<td style="padding:8px;color:' + (d.endOfSupport.includes('CRITICAL') ? '#ff3333' : 'var(--steel)') + ';">' + d.endOfSupport + '</td>';
+        html += '</tr>';
+    });
+    html += '</table></div>';
+    document.getElementById('dmsmsResults').innerHTML = html;
+}
+
+function exportDMSMS() {
+    const progKey = document.getElementById('dmsmsProgram').value;
+    const data = generateDMSMSData(progKey);
+    let csv = 'System,NSN,Manufacturer,Status,Severity,Lead Time (wks),Est Cost ($K),Alternate,End of Support\n';
+    data.forEach(d => { csv += '"' + d.system + '",' + d.nsn + ',"' + d.manufacturer + '",' + d.status + ',' + d.severity + ',' + d.leadTime + ',' + d.cost + ',"' + d.alternate + '",' + d.endOfSupport + '\n'; });
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'DMSMS_Report_' + progKey.toUpperCase() + '.csv'; a.click();
+}
+
+async function anchorDMSMS() {
+    const progKey = document.getElementById('dmsmsProgram').value;
+    const data = generateDMSMSData(progKey);
+    const text = 'DMSMS Report | Program: ' + progKey + ' | Parts: ' + data.length + ' | At Risk: ' + data.filter(d=>d.status!=='Active').length + ' | Date: ' + new Date().toISOString();
+    const hash = await sha256(text);
+    showAnchorAnimation(hash, 'DMSMS Report', 'CUI');
+    stats.anchored++; stats.types.add('DMSMS_REPORT'); stats.slsFees += 0.01; updateStats(); saveStats();
+    const rec = {hash, type:'DMSMS_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'DMSMS Obsolescence Report'};
+    sessionRecords.push(rec); saveLocalRecord(rec); updateTxLog();
+    setTimeout(() => { document.getElementById('animStatus').textContent = '✅ DMSMS report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+}
+
+// ═══ OPERATIONAL READINESS CALCULATOR ═══
+const READINESS_DEFAULTS = {
+    ddg51: [{sys:'AN/SPY-6(V)1 AMDR Radar',mtbf:1800,mttr:6,mldt:48},{sys:'Mk 41 VLS',mtbf:4500,mttr:3,mldt:24},{sys:'LM2500 Gas Turbine',mtbf:3200,mttr:8,mldt:72},{sys:'AN/SQQ-89A ASW Suite',mtbf:1200,mttr:5,mldt:36},{sys:'Aegis Combat System',mtbf:900,mttr:4,mldt:24},{sys:'5-inch Mk 45 Gun',mtbf:2800,mttr:4,mldt:48},{sys:'CIWS Phalanx',mtbf:3500,mttr:2.5,mldt:24},{sys:'Ship Service Diesel Gen',mtbf:5000,mttr:6,mldt:36},{sys:'SEWIP EW Suite',mtbf:1500,mttr:5,mldt:48},{sys:'Hybrid Electric Drive',mtbf:4000,mttr:8,mldt:72}],
+    lcs: [{sys:'Mission Module (MCM)',mtbf:800,mttr:4,mldt:48},{sys:'COMBATSS-21 CMS',mtbf:1100,mttr:3,mldt:24},{sys:'MT30 Gas Turbine',mtbf:2800,mttr:10,mldt:96},{sys:'Waterjet Propulsion',mtbf:3500,mttr:6,mldt:72},{sys:'RAM Launcher',mtbf:4000,mttr:2,mldt:24},{sys:'57mm Mk 110 Gun',mtbf:2200,mttr:3,mldt:36},{sys:'MH-60S Interface',mtbf:1600,mttr:4,mldt:48},{sys:'RHIB Launch/Recovery',mtbf:5000,mttr:2,mldt:12}],
+    cvn78: [{sys:'EMALS Catapult',mtbf:400,mttr:12,mldt:72},{sys:'Advanced Arresting Gear',mtbf:600,mttr:8,mldt:48},{sys:'A1B Nuclear Reactor',mtbf:8000,mttr:24,mldt:168},{sys:'AN/SPY-6(V)3 Radar',mtbf:1500,mttr:6,mldt:48},{sys:'Advanced Weapons Elevator',mtbf:500,mttr:10,mldt:96},{sys:'SSDS Combat System',mtbf:900,mttr:4,mldt:24}],
+    ffg62: [{sys:'AN/SPY-6(V)3 Radar',mtbf:1800,mttr:6,mldt:48},{sys:'Mk 41 VLS (32-cell)',mtbf:4200,mttr:3,mldt:24},{sys:'CODLOG Propulsion',mtbf:2600,mttr:8,mldt:72},{sys:'NSM Anti-Ship Missile',mtbf:5000,mttr:2,mldt:36},{sys:'AN/SQQ-89 ASW',mtbf:1200,mttr:5,mldt:48},{sys:'COMBATSS-21 CMS',mtbf:1100,mttr:3,mldt:24}],
+    f35: [{sys:'F135 Engine',mtbf:300,mttr:6,mldt:120},{sys:'AN/APG-81 Radar',mtbf:600,mttr:4,mldt:72},{sys:'DAS Sensors',mtbf:800,mttr:3,mldt:48},{sys:'EOTS',mtbf:1000,mttr:2,mldt:36},{sys:'EW Suite',mtbf:700,mttr:3,mldt:48},{sys:'Mission Computer',mtbf:1500,mttr:2,mldt:24}],
+    m1: [{sys:'AGT1500 Gas Turbine',mtbf:500,mttr:12,mldt:96},{sys:'120mm M256A1 Gun',mtbf:3000,mttr:4,mldt:48},{sys:'Trophy APS',mtbf:2000,mttr:3,mldt:72},{sys:'FBCB2-JCR',mtbf:1800,mttr:2,mldt:24},{sys:'CROWS II RWS',mtbf:2500,mttr:2,mldt:24},{sys:'NBC Protection',mtbf:4000,mttr:3,mldt:36}],
+    ah64: [{sys:'T700-GE-701D Engine',mtbf:400,mttr:8,mldt:120},{sys:'M230 30mm Chain Gun',mtbf:2000,mttr:3,mldt:48},{sys:'Longbow FCR',mtbf:800,mttr:4,mldt:72},{sys:'M-TADS/PNVS',mtbf:600,mttr:3,mldt:48},{sys:'Hellfire Launcher',mtbf:3000,mttr:2,mldt:36},{sys:'Main Rotor Assembly',mtbf:1200,mttr:12,mldt:96}],
+    himars: [{sys:'Launcher Loader Module',mtbf:1500,mttr:6,mldt:72},{sys:'Fire Control System',mtbf:2000,mttr:3,mldt:48},{sys:'FMTV Chassis',mtbf:3000,mttr:8,mldt:48},{sys:'GMLRS Interface',mtbf:4000,mttr:2,mldt:24},{sys:'Navigation System',mtbf:3500,mttr:2,mldt:24},{sys:'Hydraulic Elevation Sys',mtbf:2500,mttr:4,mldt:36}],
+    kc46: [{sys:'PW4062 Engine',mtbf:3000,mttr:12,mldt:168},{sys:'Remote Vision System',mtbf:500,mttr:4,mldt:72},{sys:'Refueling Boom',mtbf:1200,mttr:6,mldt:96},{sys:'Centerline Drogue',mtbf:2000,mttr:4,mldt:48},{sys:'Mission Computer',mtbf:1800,mttr:2,mldt:24},{sys:'Cargo Handling',mtbf:4000,mttr:3,mldt:36}]
+};
+
+function loadReadinessData() {
+    const progKey = document.getElementById('readinessProgram').value;
+    const systems = READINESS_DEFAULTS[progKey] || READINESS_DEFAULTS.ddg51;
+    const sel = document.getElementById('readinessSystem');
+    sel.innerHTML = systems.map((s,i) => '<option value="' + i + '">' + s.sys + '</option>').join('');
+    // Load first system defaults
+    const first = systems[0];
+    document.getElementById('inputMTBF').value = first.mtbf;
+    document.getElementById('inputMTTR').value = first.mttr;
+    document.getElementById('inputMLDT').value = first.mldt;
+    calcReadiness();
+}
+
+function calcReadiness() {
+    const mtbf = parseFloat(document.getElementById('inputMTBF').value) || 0;
+    const mttr = parseFloat(document.getElementById('inputMTTR').value) || 0;
+    const mldt = parseFloat(document.getElementById('inputMLDT').value) || 0;
+    
+    if (mtbf <= 0) {
+        document.getElementById('readinessOutput').innerHTML = '<div style="color:var(--steel);font-style:italic;">Enter MTBF value to calculate readiness metrics.</div>';
+        return;
+    }
+
+    const ao = mtbf / (mtbf + mttr + mldt);
+    const ai = mtbf / (mtbf + mttr);
+    const lambda = 1 / mtbf;
+    const missionHours = 720; // 30-day mission
+    const missionReliability = Math.exp(-lambda * missionHours);
+    const annualFailures = 8760 / mtbf;
+    const annualDowntime = annualFailures * (mttr + mldt);
+    const annualUptime = 8760 - annualDowntime;
+
+    document.getElementById('statAo').textContent = (ao * 100).toFixed(1) + '%';
+    document.getElementById('statAo').style.color = ao >= 0.9 ? '#14f195' : ao >= 0.75 ? '#ffa500' : '#ff3333';
+    document.getElementById('statAi').textContent = (ai * 100).toFixed(1) + '%';
+    document.getElementById('statFailRate').textContent = lambda.toFixed(6) + '/hr';
+    document.getElementById('statMissReady').textContent = (missionReliability * 100).toFixed(1) + '%';
+
+    const progKey = document.getElementById('readinessProgram').value;
+    const sysIdx = parseInt(document.getElementById('readinessSystem').value) || 0;
+    const systems = READINESS_DEFAULTS[progKey] || READINESS_DEFAULTS.ddg51;
+    const sysName = systems[sysIdx] ? systems[sysIdx].sys : 'System';
+
+    let html = '<div style="background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.2);border-radius:12px;padding:16px;font-size:0.85rem;">';
+    html += '<div style="font-weight:700;color:#00aaff;margin-bottom:10px;font-size:1rem;">📊 RAM Analysis: ' + sysName + '</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+    html += '<div><strong>Operational Availability (Ao):</strong></div><div style="color:' + (ao>=0.9?'#14f195':ao>=0.75?'#ffa500':'#ff3333') + ';font-weight:700;">' + (ao*100).toFixed(2) + '%</div>';
+    html += '<div><strong>Inherent Availability (Ai):</strong></div><div style="color:#fff;">' + (ai*100).toFixed(2) + '%</div>';
+    html += '<div><strong>Failure Rate (λ):</strong></div><div style="color:#fff;">' + lambda.toFixed(6) + ' failures/hr</div>';
+    html += '<div><strong>30-Day Mission Reliability:</strong></div><div style="color:' + (missionReliability>=0.8?'#14f195':'#ffa500') + ';">' + (missionReliability*100).toFixed(1) + '%</div>';
+    html += '<div><strong>Est. Annual Failures:</strong></div><div style="color:#fff;">' + annualFailures.toFixed(1) + '</div>';
+    html += '<div><strong>Est. Annual Downtime:</strong></div><div style="color:' + (annualDowntime<500?'#14f195':'#ff9900') + ';">' + annualDowntime.toFixed(0) + ' hrs (' + (annualDowntime/24).toFixed(1) + ' days)</div>';
+    html += '<div><strong>Est. Annual Uptime:</strong></div><div style="color:#14f195;">' + annualUptime.toFixed(0) + ' hrs</div>';
+    html += '</div>';
+
+    // Assessment
+    html += '<div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">';
+    if (ao >= 0.95) html += '<span style="color:#14f195;font-weight:700;">✅ EXCELLENT</span> — System exceeds readiness requirements. Ao > 95% meets most high-priority program thresholds.';
+    else if (ao >= 0.90) html += '<span style="color:#14f195;font-weight:700;">✅ MEETS REQUIREMENTS</span> — Ao > 90% is acceptable for most defense programs. Monitor MLDT for improvement opportunities.';
+    else if (ao >= 0.80) html += '<span style="color:#ffa500;font-weight:700;">⚠️ MARGINAL</span> — Ao between 80-90%. Consider reducing MLDT through pre-positioned spares or improving MTTR via better training/tools.';
+    else if (ao >= 0.70) html += '<span style="color:#ff9900;font-weight:700;">⚠️ BELOW THRESHOLD</span> — Ao below 80%. Recommend: (1) LSA review of failure modes, (2) spares stocking analysis, (3) MTTR reduction plan.';
+    else html += '<span style="color:#ff3333;font-weight:700;">🔴 CRITICAL</span> — Ao below 70% indicates significant readiness risk. Immediate corrective action required: DMSMS review, redesign consideration, enhanced depot support.';
+    html += '</div>';
+
+    // Formula reference
+    html += '<div style="margin-top:10px;font-size:0.78rem;color:var(--steel);">';
+    html += '<strong>Formulas:</strong> Ao = MTBF/(MTBF+MTTR+MLDT) | Ai = MTBF/(MTBF+MTTR) | λ = 1/MTBF | R(t) = e<sup>−λt</sup>';
+    html += '</div></div>';
+
+    document.getElementById('readinessOutput').innerHTML = html;
+}
+
+function exportReadiness() {
+    const mtbf = parseFloat(document.getElementById('inputMTBF').value) || 0;
+    const mttr = parseFloat(document.getElementById('inputMTTR').value) || 0;
+    const mldt = parseFloat(document.getElementById('inputMLDT').value) || 0;
+    const ao = mtbf / (mtbf + mttr + mldt);
+    const ai = mtbf / (mtbf + mttr);
+    const progKey = document.getElementById('readinessProgram').value;
+    let csv = 'Metric,Value\nProgram,' + progKey + '\nMTBF (hrs),' + mtbf + '\nMTTR (hrs),' + mttr + '\nMLDT (hrs),' + mldt + '\nAo (%),' + (ao*100).toFixed(2) + '\nAi (%),' + (ai*100).toFixed(2) + '\nFailure Rate,' + (1/mtbf).toFixed(6) + '\n';
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'RAM_Report_' + progKey.toUpperCase() + '.csv'; a.click();
+}
+
+async function anchorReadiness() {
+    const mtbf = parseFloat(document.getElementById('inputMTBF').value) || 0;
+    const mttr = parseFloat(document.getElementById('inputMTTR').value) || 0;
+    const mldt = parseFloat(document.getElementById('inputMLDT').value) || 0;
+    const ao = mtbf / (mtbf + mttr + mldt);
+    const progKey = document.getElementById('readinessProgram').value;
+    const text = 'RAM Report | Program: ' + progKey + ' | Ao: ' + (ao*100).toFixed(2) + '% | MTBF: ' + mtbf + ' | Date: ' + new Date().toISOString();
+    const hash = await sha256(text);
+    showAnchorAnimation(hash, 'RAM Readiness Report', 'CUI');
+    stats.anchored++; stats.types.add('RAM_REPORT'); stats.slsFees += 0.01; updateStats(); saveStats();
+    const rec = {hash, type:'RAM_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'RAM Readiness Report'};
+    sessionRecords.push(rec); saveLocalRecord(rec); updateTxLog();
+    setTimeout(() => { document.getElementById('animStatus').textContent = '✅ RAM report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+}
+
+// ═══ NSN / PARTS CROSS-REFERENCE ═══
+function buildPartsDatabase() {
+    const parts = [];
+    const fscGroups = {1005:'Guns',1240:'Optical Sighting',1270:'Aircraft Armament',1410:'Guided Missiles',1440:'Launchers',1560:'Airframe Structural',1615:'Helicopter Rotor',1620:'Landing Gear',1680:'Aircraft Components',2010:'Ship/Marine Propulsion',2040:'Marine Hardware',2520:'Vehicular Transmission',2530:'Brake/Steering/Axle',2815:'Diesel Engines',2835:'Gas Turbine/Jet Engines',2840:'Gas Turbine/Jet Components',2910:'Fuel System Components',2915:'Fuel Tanks',3040:'Hydraulic Cylinders',3950:'Winches/Hoists',4120:'HVAC',4140:'Fans/Blowers',4210:'Fire Fighting',4240:'Safety/Rescue',4320:'Pumps',4610:'Water Treatment',4910:'Maintenance Equipment',4920:'Aircraft Maintenance',5340:'Misc Hardware',5820:'Radio/TV Comm',5826:'Crypto Equipment',5831:'Intercommunication',5841:'Radar Equipment',5845:'Underwater Sound',5855:'Night Vision',5860:'Stimulated Coherent Radiation',5865:'Electronic Countermeasures',5895:'Intercept/Direction Finding',5985:'Antennas',6110:'Electrical Control',6115:'Generators',6130:'Converters',6210:'Lighting',6605:'Navigation',6610:'Flight Instruments',6645:'Time Measuring',6650:'Optical Instruments',7050:'ADP Components',7310:'Food Prep Equipment',9310:'Nuclear Reactors'};
+    
+    Object.entries(PROG_COMPONENTS).forEach(([progKey, comp]) => {
+        if (progKey === 'custom') return;
+        comp.systems.forEach((sys, i) => {
+            const nsn = comp.nsns[i];
+            const fsc = nsn.split('-')[0];
+            parts.push({
+                nsn: nsn,
+                nomenclature: sys,
+                cage: generateCAGE(comp.mfgs[i]),
+                manufacturer: comp.mfgs[i],
+                program: progKey,
+                fsc: fsc,
+                fscGroup: fscGroups[parseInt(fsc)] || 'General',
+                unitPrice: Math.floor(5000 + Math.random() * 500000),
+                qtyOnHand: Math.floor(Math.random() * 20),
+                leadTime: Math.floor(4 + Math.random() * 48) + ' weeks',
+                alternates: Math.random() > 0.6 ? generateAlternates(sys) : [],
+                status: Math.random() > 0.85 ? 'Backordered' : Math.random() > 0.7 ? 'Low Stock' : 'Available'
+            });
+        });
+    });
+    return parts;
+}
+
+function generateCAGE(mfg) {
+    const cageMap = {'Raytheon':'07458','Lockheed Martin':'64928','GE Aviation':'77445','Northrop Grumman':'57991','BAE Systems':'K1813','Boeing':'81205','Caterpillar':'60548','Pratt & Whitney':'52661','Rolls-Royce':'K2965','Honeywell':'55939','L3Harris':'1EP72','Collins Aerospace':'70210','General Dynamics':'19139','Kongsberg':'Z7613','Sikorsky':'78286'};
+    return cageMap[mfg] || String(Math.floor(10000 + Math.random() * 89999));
+}
+
+function generateAlternates(sysName) {
+    const alts = [];
+    const count = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < count; i++) {
+        alts.push({
+            nsn: Math.floor(1000+Math.random()*9000) + '-01-' + String(Math.floor(100+Math.random()*900)) + '-' + String(Math.floor(1000+Math.random()*9000)),
+            name: sysName + ' (Alt ' + (i+1) + ')',
+            cage: String(Math.floor(10000 + Math.random() * 89999)),
+            interchangeability: Math.random() > 0.5 ? 'Direct' : 'Partial'
+        });
+    }
+    return alts;
+}
+
+let _partsDB = null;
+function getPartsDB() {
+    if (!_partsDB) _partsDB = buildPartsDatabase();
+    return _partsDB;
+}
+
+function searchNSN() {
+    const q = (document.getElementById('nsnSearch').value || '').trim();
+    if (q.length < 3) { renderPartsResults(getPartsDB().slice(0, 15)); return; }
+    const results = getPartsDB().filter(p => p.nsn.includes(q));
+    renderPartsResults(results);
+}
+
+function searchCAGE() {
+    const q = (document.getElementById('cageSearch').value || '').toUpperCase().trim();
+    if (q.length < 3) { renderPartsResults(getPartsDB().slice(0, 15)); return; }
+    const results = getPartsDB().filter(p => p.cage.includes(q));
+    renderPartsResults(results);
+}
+
+function searchPartName() {
+    const q = (document.getElementById('partNameSearch').value || '').toLowerCase().trim();
+    if (q.length < 2) { renderPartsResults(getPartsDB().slice(0, 15)); return; }
+    const results = getPartsDB().filter(p => p.nomenclature.toLowerCase().includes(q) || p.fscGroup.toLowerCase().includes(q));
+    renderPartsResults(results);
+}
+
+function filterParts() {
+    const prog = document.getElementById('partsProgram').value;
+    const db = getPartsDB();
+    const results = prog === 'all' ? db : db.filter(p => p.program === prog);
+    renderPartsResults(results);
+}
+
+function renderPartsResults(parts) {
+    const totalAlts = parts.reduce((s,p) => s + p.alternates.length, 0);
+    const cages = new Set(parts.map(p => p.cage));
+    const progs = new Set(parts.map(p => p.program));
+    document.getElementById('partsTotal').textContent = parts.length;
+    document.getElementById('partsAlternates').textContent = totalAlts;
+    document.getElementById('partsCAGE').textContent = cages.size;
+    document.getElementById('partsPrograms').textContent = progs.size;
+
+    const statusColors = {Available:'#14f195','Low Stock':'#ffa500',Backordered:'#ff3333'};
+    let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:var(--steel);"><th style="padding:8px;text-align:left;">NSN</th><th>Nomenclature</th><th>CAGE</th><th>Manufacturer</th><th>Program</th><th>Unit Price</th><th>Status</th><th>Lead Time</th><th>Alternates</th></tr>';
+    parts.slice(0, 25).forEach(p => {
+        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">';
+        html += '<td style="padding:8px;color:#00aaff;font-family:monospace;font-size:0.78rem;">' + p.nsn + '</td>';
+        html += '<td style="padding:8px;color:#fff;font-weight:600;">' + p.nomenclature + '</td>';
+        html += '<td style="padding:8px;color:var(--steel);font-family:monospace;">' + p.cage + '</td>';
+        html += '<td style="padding:8px;color:var(--steel);">' + p.manufacturer + '</td>';
+        html += '<td style="padding:8px;color:#c9a84c;">' + p.program.toUpperCase() + '</td>';
+        html += '<td style="padding:8px;color:var(--steel);">$' + p.unitPrice.toLocaleString() + '</td>';
+        html += '<td style="padding:8px;"><span style="color:' + (statusColors[p.status]||'#fff') + ';font-weight:600;">' + p.status + '</span></td>';
+        html += '<td style="padding:8px;color:var(--steel);">' + p.leadTime + '</td>';
+        html += '<td style="padding:8px;color:' + (p.alternates.length > 0 ? '#14f195' : 'var(--steel)') + ';">' + (p.alternates.length > 0 ? p.alternates.length + ' found' : 'None') + '</td>';
+        html += '</tr>';
+        // Show alternates if any
+        p.alternates.forEach(alt => {
+            html += '<tr style="background:rgba(0,170,255,0.03);border-bottom:1px solid rgba(255,255,255,0.03);">';
+            html += '<td style="padding:6px 8px 6px 24px;color:#66ccff;font-family:monospace;font-size:0.75rem;">↳ ' + alt.nsn + '</td>';
+            html += '<td style="padding:6px 8px;color:var(--steel);font-size:0.78rem;" colspan="2">' + alt.name + '</td>';
+            html += '<td style="padding:6px 8px;color:var(--steel);font-size:0.78rem;">' + alt.cage + '</td>';
+            html += '<td colspan="5" style="padding:6px 8px;color:' + (alt.interchangeability==='Direct'?'#14f195':'#ffa500') + ';font-size:0.78rem;">' + alt.interchangeability + ' interchange</td>';
+            html += '</tr>';
+        });
+    });
+    html += '</table></div>';
+    if (parts.length > 25) html += '<div style="margin-top:8px;color:var(--steel);font-size:0.82rem;">Showing 25 of ' + parts.length + ' results. Use search filters to narrow down.</div>';
+    document.getElementById('partsResults').innerHTML = html;
+}
+
+function exportParts() {
+    const prog = document.getElementById('partsProgram').value;
+    const db = getPartsDB();
+    const parts = prog === 'all' ? db : db.filter(p => p.program === prog);
+    let csv = 'NSN,Nomenclature,CAGE,Manufacturer,Program,Unit Price,QOH,Lead Time,Status,Alternates\n';
+    parts.forEach(p => { csv += p.nsn + ',"' + p.nomenclature + '",' + p.cage + ',"' + p.manufacturer + '",' + p.program + ',' + p.unitPrice + ',' + p.qtyOnHand + ',' + p.leadTime + ',' + p.status + ',' + p.alternates.length + '\n'; });
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Parts_XRef_' + prog.toUpperCase() + '.csv'; a.click();
+}
+
+async function anchorParts() {
+    const prog = document.getElementById('partsProgram').value;
+    const parts = prog === 'all' ? getPartsDB() : getPartsDB().filter(p => p.program === prog);
+    const text = 'Parts X-Ref | Program: ' + prog + ' | Parts: ' + parts.length + ' | Date: ' + new Date().toISOString();
+    const hash = await sha256(text);
+    showAnchorAnimation(hash, 'Parts Cross-Reference', 'CUI');
+    stats.anchored++; stats.types.add('PARTS_XREF'); stats.slsFees += 0.01; updateStats(); saveStats();
+    const rec = {hash, type:'PARTS_XREF', branch:'JOINT', timestamp:new Date().toISOString(), label:'Parts Cross-Reference'};
+    sessionRecords.push(rec); saveLocalRecord(rec); updateTxLog();
+    setTimeout(() => { document.getElementById('animStatus').textContent = '✅ Parts data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+}
+
 // ── Initialization ──
 function initILSEngine() {
     initILSChecklist(document.getElementById('ilsProgram').value);
     setupILSDropzone();
     onILSProgramChange();
+    // Initialize new tools
+    if (document.getElementById('dmsmsProgram')) loadDMSMSData();
+    if (document.getElementById('readinessProgram')) loadReadinessData();
+    if (document.getElementById('partsResults')) renderPartsResults(getPartsDB().slice(0,15));
 }
 
 document.addEventListener('DOMContentLoaded', () => {

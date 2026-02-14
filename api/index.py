@@ -467,6 +467,11 @@ class handler(BaseHTTPRequestHandler):
             "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization, X-API-Key",
             "Content-Type": "application/json",
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "X-XSS-Protection": "1; mode=block",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
         }
 
     def _send_json(self, data, status=200):
@@ -517,6 +522,12 @@ class handler(BaseHTTPRequestHandler):
             return "db_get_analyses"
         if path == "/api/infrastructure":
             return "infrastructure"
+        if path == "/api/dmsms":
+            return "dmsms"
+        if path == "/api/readiness":
+            return "readiness"
+        if path == "/api/parts":
+            return "parts"
         return None
 
     def _check_rate_limit(self):
@@ -566,14 +577,15 @@ class handler(BaseHTTPRequestHandler):
                 "uptime_seconds": round(uptime, 1),
                 "requests_served": len(_request_log),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
-                "version": "3.1.0",
+                "version": "3.2.0",
+                "tools": ["anchor", "verify", "ils-intelligence", "dmsms-tracker", "readiness-calculator", "parts-xref"],
             })
         elif route == "status":
             self._log_request("status")
             self._send_json({
                 "status": "operational",
                 "service": "S4 Ledger Defense Metrics API",
-                "version": "3.1.0",
+                "version": "3.2.0",
                 "record_types": len(RECORD_CATEGORIES),
                 "branches": len(BRANCHES),
                 "total_records": len(_get_all_records()),
@@ -615,7 +627,7 @@ class handler(BaseHTTPRequestHandler):
         elif route == "infrastructure":
             self._send_json({
                 "infrastructure": {
-                    "api": {"status": "operational", "version": "3.0.0", "framework": "BaseHTTPRequestHandler"},
+                    "api": {"status": "operational", "version": "3.2.0", "framework": "BaseHTTPRequestHandler", "tools": 6},
                     "xrpl": {"available": XRPL_AVAILABLE, "network": "testnet", "endpoint": XRPL_TESTNET_URL},
                     "database": {"provider": "Supabase" if SUPABASE_AVAILABLE else "In-Memory", "connected": SUPABASE_AVAILABLE, "url": SUPABASE_URL[:30] + "..." if SUPABASE_URL else None},
                     "auth": {"enabled": True, "methods": ["API Key", "Bearer Token"], "master_key_set": bool(os.environ.get("S4_API_MASTER_KEY"))},
@@ -644,6 +656,31 @@ class handler(BaseHTTPRequestHandler):
             api_key = self.headers.get("X-API-Key", "")
             valid = api_key == API_MASTER_KEY or api_key in API_KEYS_STORE
             self._send_json({"valid": valid, "tier": "enterprise" if valid else None})
+        elif route == "dmsms":
+            self._log_request("dmsms")
+            program = parse_qs(parsed.query).get("program", ["ddg51"])[0]
+            parts = []
+            statuses = ["Active","Active","Active","At Risk","At Risk","Obsolete","End of Life","Active","Watch","Active"]
+            for i in range(10):
+                parts.append({"index": i, "status": statuses[i], "severity": "Critical" if statuses[i]=="Obsolete" else "High" if statuses[i]=="At Risk" else "None"})
+            self._send_json({"program": program, "total_parts": len(parts), "at_risk": sum(1 for p in parts if p["status"]!="Active"), "parts": parts})
+        elif route == "readiness":
+            self._log_request("readiness")
+            qs = parse_qs(parsed.query)
+            mtbf = float(qs.get("mtbf", ["1000"])[0])
+            mttr = float(qs.get("mttr", ["4"])[0])
+            mldt = float(qs.get("mldt", ["24"])[0])
+            ao = mtbf / (mtbf + mttr + mldt) if (mtbf + mttr + mldt) > 0 else 0
+            ai = mtbf / (mtbf + mttr) if (mtbf + mttr) > 0 else 0
+            self._send_json({"ao": round(ao, 4), "ai": round(ai, 4), "mtbf": mtbf, "mttr": mttr, "mldt": mldt, "failure_rate": round(1/mtbf, 8) if mtbf > 0 else 0, "assessment": "Meets requirements" if ao >= 0.9 else "Marginal" if ao >= 0.8 else "Below threshold"})
+        elif route == "parts":
+            self._log_request("parts")
+            qs = parse_qs(parsed.query)
+            search = qs.get("q", [""])[0].lower()
+            sample_parts = [{"nsn":"5340-01-234-5678","name":"Valve, Gate","cage":"1THK9","mfg":"Parker Hannifin","status":"Available"},{"nsn":"2835-01-456-7890","name":"Gas Turbine Engine","cage":"77445","mfg":"GE Aviation","status":"Available"},{"nsn":"5841-01-622-3401","name":"Radar Array","cage":"07458","mfg":"Raytheon","status":"Low Stock"},{"nsn":"1440-01-567-8901","name":"Vertical Launch System","cage":"64928","mfg":"Lockheed Martin","status":"Available"},{"nsn":"4320-01-567-8903","name":"Ballast Pump","cage":"60548","mfg":"Flowserve","status":"Available"}]
+            if search:
+                sample_parts = [p for p in sample_parts if search in p["nsn"].lower() or search in p["name"].lower() or search in p["cage"].lower()]
+            self._send_json({"query": search, "results": sample_parts, "total": len(sample_parts)})
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)
 

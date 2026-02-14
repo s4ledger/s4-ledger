@@ -243,6 +243,52 @@ class S4SDK:
         tx_results = self.store_hash_with_sls_fee(hash_val, wallet_seed, fiat_mode=fiat_mode, gateway_issuer=gateway_issuer, record_type=record_type)
         return {"hash": hash_val, "tx_results": tx_results, "record_type": record_type}
 
+    def calculate_readiness(self, mtbf, mttr, mldt=0):
+        """Calculate Operational Availability (Ao) and related RAM metrics.
+        Ao = MTBF / (MTBF + MTTR + MLDT)
+        Per MIL-STD-1390D."""
+        ao = mtbf / (mtbf + mttr + mldt) if (mtbf + mttr + mldt) > 0 else 0
+        ai = mtbf / (mtbf + mttr) if (mtbf + mttr) > 0 else 0
+        failure_rate = 1 / mtbf if mtbf > 0 else 0
+        return {
+            "ao": round(ao, 4),
+            "ai": round(ai, 4),
+            "failure_rate": round(failure_rate, 8),
+            "mtbf": mtbf, "mttr": mttr, "mldt": mldt,
+            "annual_failures": round(8760 / mtbf, 1) if mtbf > 0 else 0,
+            "assessment": "Exceeds" if ao >= 0.95 else "Meets" if ao >= 0.9 else "Marginal" if ao >= 0.8 else "Below threshold",
+        }
+
+    def check_dmsms(self, nsn_list):
+        """Check a list of NSNs for DMSMS (Diminishing Manufacturing Sources) risk.
+        Returns risk assessment per part. Per DoWI 4245.14."""
+        results = []
+        for nsn in nsn_list:
+            # Simulated risk assessment based on NSN pattern
+            risk_seed = sum(ord(c) for c in nsn) % 100
+            status = "Active" if risk_seed < 60 else "At Risk" if risk_seed < 80 else "Obsolete" if risk_seed < 95 else "End of Life"
+            results.append({
+                "nsn": nsn,
+                "status": status,
+                "severity": "None" if status == "Active" else "Medium" if status == "At Risk" else "Critical",
+                "recommendation": "No action" if status == "Active" else "Seek alternate" if status == "At Risk" else "Bridge buy + redesign",
+            })
+        return {"total": len(results), "at_risk": sum(1 for r in results if r["status"] != "Active"), "parts": results}
+
+    def lookup_nsn(self, nsn):
+        """Look up a National Stock Number (NSN) and return part details.
+        Simulated for demo — in production, queries FedLog/FLIS."""
+        hash_val = hashlib.sha256(nsn.encode()).hexdigest()
+        fsc = nsn.split("-")[0] if "-" in nsn else "0000"
+        return {
+            "nsn": nsn,
+            "fsc": fsc,
+            "niin": nsn.split("-", 1)[1] if "-" in nsn else nsn,
+            "hash": hash_val[:16],
+            "status": "Active",
+            "source": "FedLog Simulated",
+        }
+
     def wallet_from_seed(self, seed):
         """Create an XRPL Wallet from a given seed, handling ED25519 seeds (sEd...)."""
         if seed is None:
@@ -271,7 +317,7 @@ def main_cli():
         prog="s4-anchor",
         description="S4 Ledger — Anchor defense logistics records to the XRP Ledger",
     )
-    parser.add_argument("command", choices=["anchor", "hash", "verify", "status"], help="Command to execute")
+    parser.add_argument("command", choices=["anchor", "hash", "verify", "status", "readiness", "dmsms"], help="Command to execute")
     parser.add_argument("--record", "-r", help="Record content to anchor or hash")
     parser.add_argument("--seed", "-s", help="XRPL wallet seed")
     parser.add_argument("--api-key", "-k", default="s4-demo-key-2026", help="S4 API key")
@@ -310,8 +356,26 @@ def main_cli():
         print("Compare this hash with the on-chain MemoData to verify integrity.")
 
     elif args.command == "status":
-        print(f"S4 Ledger SDK v3.0.0")
+        print(f"S4 Ledger SDK v3.2.0")
         print(f"XRPL Available: {XRPL_AVAILABLE}")
         print(f"Encryption Available: {Fernet is not None}")
         print(f"API Key: {args.api_key[:8]}...")
         print(f"Network: {'Testnet' if args.testnet else 'Mainnet'}")
+        print(f"Tools: anchor, verify, hash, readiness, dmsms, parts-lookup")
+
+    elif args.command == "readiness":
+        mtbf = float(input("MTBF (hours): ") if not args.record else args.record.split(",")[0])
+        mttr = float(input("MTTR (hours): ") if not args.record else args.record.split(",")[1])
+        mldt = float(input("MLDT (hours): ") if not args.record else args.record.split(",")[2]) if args.record and len(args.record.split(",")) > 2 else 0
+        result = sdk.calculate_readiness(mtbf, mttr, mldt)
+        print(f"Ao: {result['ao']*100:.1f}% | Ai: {result['ai']*100:.1f}% | Assessment: {result['assessment']}")
+
+    elif args.command == "dmsms":
+        if not args.record:
+            print("Error: --record required (comma-separated NSNs)")
+            sys.exit(1)
+        nsns = [n.strip() for n in args.record.split(",")]
+        result = sdk.check_dmsms(nsns)
+        print(f"DMSMS Check: {result['total']} parts, {result['at_risk']} at risk")
+        for p in result['parts']:
+            print(f"  {p['nsn']}: {p['status']} ({p['severity']}) — {p['recommendation']}")

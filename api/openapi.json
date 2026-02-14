@@ -1,0 +1,788 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "S4 Ledger API",
+    "version": "3.2.0",
+    "description": "S4 Ledger — Defense-grade blockchain-anchored logistics and supply chain integrity platform. Provides cryptographic anchoring, ILS intelligence, DMSMS monitoring, parts tracking, and XRPL-based immutable record verification for defense and government supply chains.",
+    "contact": {
+      "name": "Solus Protocol",
+      "url": "https://s4ledger.com",
+      "email": "support@s4ledger.com"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://s4ledger.com/s4-terms/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://s4ledger.com",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/api/status": {
+      "get": {
+        "summary": "System status",
+        "description": "Returns the current operational status of the S4 Ledger platform including version, uptime, and service health.",
+        "operationId": "getStatus",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "System status response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "operational" },
+                    "version": { "type": "string", "example": "3.2.0" },
+                    "uptime": { "type": "number", "description": "Uptime in seconds" },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Lightweight health check endpoint for load balancers and monitoring systems.",
+        "operationId": "getHealth",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "Healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "healthy": { "type": "boolean", "example": true },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unhealthy"
+          }
+        }
+      }
+    },
+    "/api/metrics": {
+      "get": {
+        "summary": "Platform metrics",
+        "description": "Returns aggregate platform metrics including total anchored records, transaction counts, and throughput statistics.",
+        "operationId": "getMetrics",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "Platform metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_records": { "type": "integer", "example": 127500 },
+                    "total_transactions": { "type": "integer", "example": 89200 },
+                    "active_agencies": { "type": "integer", "example": 47 },
+                    "uptime_percent": { "type": "number", "example": 99.97 },
+                    "avg_anchor_time_ms": { "type": "number", "example": 1.2 },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "summary": "List transactions",
+        "description": "Returns a paginated list of recent XRPL-anchored transactions with hash, timestamp, and record type.",
+        "operationId": "getTransactions",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of transactions to return",
+            "schema": { "type": "integer", "default": 25, "maximum": 100 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset for pagination",
+            "schema": { "type": "integer", "default": 0 }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filter by record type",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "hash": { "type": "string" },
+                          "timestamp": { "type": "string", "format": "date-time" },
+                          "type": { "type": "string" },
+                          "status": { "type": "string" },
+                          "xrpl_tx": { "type": "string" }
+                        }
+                      }
+                    },
+                    "total": { "type": "integer" },
+                    "limit": { "type": "integer" },
+                    "offset": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/record-types": {
+      "get": {
+        "summary": "List supported record types",
+        "description": "Returns all supported record types for anchoring, including supply chain receipts, custody transfers, maintenance logs, ordnance lots, and more.",
+        "operationId": "getRecordTypes",
+        "tags": ["Records"],
+        "responses": {
+          "200": {
+            "description": "List of record types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "record_types": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "name": { "type": "string" },
+                          "description": { "type": "string" },
+                          "fields": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/anchor": {
+      "post": {
+        "summary": "Anchor a record",
+        "description": "Anchors a data record to the XRPL blockchain. Computes a SHA-256 hash of the payload, creates a memo transaction, and returns the immutable transaction reference.",
+        "operationId": "anchorRecord",
+        "tags": ["Anchoring"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["record_type", "payload"],
+                "properties": {
+                  "record_type": { "type": "string", "example": "supply_chain_receipt" },
+                  "payload": {
+                    "type": "object",
+                    "description": "Arbitrary JSON payload to anchor"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "properties": {
+                      "source": { "type": "string" },
+                      "classification": { "type": "string", "enum": ["UNCLASSIFIED", "CUI"] }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record anchored successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "hash": { "type": "string", "description": "SHA-256 hash of the payload" },
+                    "xrpl_tx": { "type": "string", "description": "XRPL transaction hash" },
+                    "timestamp": { "type": "string", "format": "date-time" },
+                    "record_type": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request payload" },
+          "401": { "description": "Unauthorized — missing or invalid API key" },
+          "429": { "description": "Rate limit exceeded" }
+        },
+        "security": [{ "ApiKeyAuth": [] }]
+      }
+    },
+    "/api/hash": {
+      "post": {
+        "summary": "Compute hash",
+        "description": "Computes a SHA-256 hash of the provided data without anchoring to the blockchain. Useful for pre-validation and integrity checks.",
+        "operationId": "computeHash",
+        "tags": ["Anchoring"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["data"],
+                "properties": {
+                  "data": { "type": "string", "description": "Raw data string or JSON to hash" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hash computed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "hash": { "type": "string", "description": "SHA-256 hash" },
+                    "algorithm": { "type": "string", "example": "SHA-256" },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/api/categorize": {
+      "post": {
+        "summary": "Categorize a record",
+        "description": "Categorizes a logistics or supply chain record using the ILS Intelligence engine. Returns category, confidence score, and suggested record type.",
+        "operationId": "categorizeRecord",
+        "tags": ["ILS Intelligence"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "description": "Free-text description of the logistics record" },
+                  "context": { "type": "string", "description": "Additional context for categorization" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Categorization result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "category": { "type": "string" },
+                    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+                    "suggested_record_type": { "type": "string" },
+                    "tags": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": [{ "ApiKeyAuth": [] }]
+      }
+    },
+    "/api/xrpl-status": {
+      "get": {
+        "summary": "XRPL network status",
+        "description": "Returns the current status of the XRPL network connection, including ledger index, network fee, and connectivity health.",
+        "operationId": "getXrplStatus",
+        "tags": ["XRPL"],
+        "responses": {
+          "200": {
+            "description": "XRPL network status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "connected": { "type": "boolean" },
+                    "network": { "type": "string", "example": "mainnet" },
+                    "ledger_index": { "type": "integer" },
+                    "fee_base": { "type": "integer" },
+                    "server_state": { "type": "string" },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "503": { "description": "XRPL network unavailable" }
+        }
+      }
+    },
+    "/api/auth/api-key": {
+      "post": {
+        "summary": "Generate API key",
+        "description": "Generates a new API key for programmatic access. Requires valid authentication credentials.",
+        "operationId": "generateApiKey",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "name": { "type": "string", "description": "Descriptive name for the API key" },
+                  "scopes": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Permission scopes for the key"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "API key created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "api_key": { "type": "string", "description": "The generated API key (shown once)" },
+                    "key_id": { "type": "string" },
+                    "created_at": { "type": "string", "format": "date-time" },
+                    "scopes": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/auth/validate": {
+      "get": {
+        "summary": "Validate API key",
+        "description": "Validates the provided API key and returns its associated permissions and expiration status.",
+        "operationId": "validateApiKey",
+        "tags": ["Authentication"],
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "API key to validate"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API key is valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "valid": { "type": "boolean", "example": true },
+                    "key_id": { "type": "string" },
+                    "scopes": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "expires_at": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid or expired API key" }
+        }
+      }
+    },
+    "/api/db/save-analysis": {
+      "post": {
+        "summary": "Save analysis result",
+        "description": "Persists an ILS analysis result to the database for future retrieval and audit trail purposes.",
+        "operationId": "saveAnalysis",
+        "tags": ["Database"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["analysis_type", "data"],
+                "properties": {
+                  "analysis_type": { "type": "string", "example": "dmsms_risk" },
+                  "data": { "type": "object", "description": "Analysis result payload" },
+                  "record_id": { "type": "string", "description": "Optional associated record ID" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Analysis saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "analysis_id": { "type": "string" },
+                    "saved_at": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid analysis data" },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": [{ "ApiKeyAuth": [] }]
+      }
+    },
+    "/api/db/get-analyses": {
+      "get": {
+        "summary": "Retrieve analyses",
+        "description": "Retrieves previously saved analysis results, with optional filtering by type and date range.",
+        "operationId": "getAnalyses",
+        "tags": ["Database"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filter by analysis type",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum results to return",
+            "schema": { "type": "integer", "default": 25 }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "description": "Return analyses created after this ISO 8601 timestamp",
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of analyses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "analyses": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "analysis_id": { "type": "string" },
+                          "analysis_type": { "type": "string" },
+                          "data": { "type": "object" },
+                          "created_at": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    },
+                    "total": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": [{ "ApiKeyAuth": [] }]
+      }
+    },
+    "/api/infrastructure": {
+      "get": {
+        "summary": "Infrastructure status",
+        "description": "Returns detailed infrastructure status including deployment region, database health, XRPL node connectivity, and resource utilization.",
+        "operationId": "getInfrastructure",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "Infrastructure status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "region": { "type": "string", "example": "us-east-1" },
+                    "database": {
+                      "type": "object",
+                      "properties": {
+                        "status": { "type": "string" },
+                        "latency_ms": { "type": "number" }
+                      }
+                    },
+                    "xrpl_node": {
+                      "type": "object",
+                      "properties": {
+                        "status": { "type": "string" },
+                        "network": { "type": "string" }
+                      }
+                    },
+                    "cpu_percent": { "type": "number" },
+                    "memory_percent": { "type": "number" },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": [{ "ApiKeyAuth": [] }]
+      }
+    },
+    "/api/dmsms": {
+      "get": {
+        "summary": "DMSMS monitoring",
+        "description": "Retrieves Diminishing Manufacturing Sources and Material Shortages (DMSMS) risk data for tracked parts and components.",
+        "operationId": "getDmsms",
+        "tags": ["ILS Intelligence"],
+        "parameters": [
+          {
+            "name": "nsn",
+            "in": "query",
+            "description": "Filter by National Stock Number",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "risk_level",
+            "in": "query",
+            "description": "Filter by risk level",
+            "schema": { "type": "string", "enum": ["low", "medium", "high", "critical"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "DMSMS risk data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "nsn": { "type": "string" },
+                          "part_name": { "type": "string" },
+                          "risk_level": { "type": "string" },
+                          "risk_score": { "type": "number" },
+                          "last_assessed": { "type": "string", "format": "date-time" },
+                          "alternative_sources": { "type": "integer" }
+                        }
+                      }
+                    },
+                    "total": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": [{ "ApiKeyAuth": [] }]
+      }
+    },
+    "/api/readiness": {
+      "get": {
+        "summary": "Readiness assessment",
+        "description": "Returns system and operational readiness scores, including logistics readiness levels, compliance status, and deployment readiness indicators.",
+        "operationId": "getReadiness",
+        "tags": ["ILS Intelligence"],
+        "responses": {
+          "200": {
+            "description": "Readiness assessment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "overall_readiness": { "type": "number", "example": 94.5 },
+                    "logistics_readiness": { "type": "number" },
+                    "compliance_status": { "type": "string", "enum": ["compliant", "partial", "non-compliant"] },
+                    "assessed_systems": { "type": "integer" },
+                    "last_assessment": { "type": "string", "format": "date-time" },
+                    "recommendations": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": [{ "ApiKeyAuth": [] }]
+      }
+    },
+    "/api/parts": {
+      "get": {
+        "summary": "Parts catalog",
+        "description": "Returns a catalog of tracked parts with NSN, CAGE codes, lifecycle status, and supply chain metadata.",
+        "operationId": "getParts",
+        "tags": ["ILS Intelligence"],
+        "parameters": [
+          {
+            "name": "nsn",
+            "in": "query",
+            "description": "Filter by National Stock Number",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "cage",
+            "in": "query",
+            "description": "Filter by CAGE code",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by lifecycle status",
+            "schema": { "type": "string", "enum": ["active", "obsolete", "at-risk", "discontinued"] }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 25 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parts catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "parts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "nsn": { "type": "string" },
+                          "part_number": { "type": "string" },
+                          "description": { "type": "string" },
+                          "cage_code": { "type": "string" },
+                          "status": { "type": "string" },
+                          "unit_cost": { "type": "number" },
+                          "lead_time_days": { "type": "integer" },
+                          "last_updated": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    },
+                    "total": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": [{ "ApiKeyAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authenticated endpoints. Generate via POST /api/auth/api-key."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" },
+          "status_code": { "type": "integer" }
+        }
+      }
+    }
+  },
+  "tags": [
+    { "name": "System", "description": "Platform status, health, metrics, and infrastructure" },
+    { "name": "Anchoring", "description": "Blockchain anchoring and hashing operations" },
+    { "name": "Transactions", "description": "XRPL transaction history and lookup" },
+    { "name": "Records", "description": "Record type definitions and management" },
+    { "name": "ILS Intelligence", "description": "Integrated Logistics Support intelligence — DMSMS, readiness, parts catalog, and categorization" },
+    { "name": "XRPL", "description": "XRP Ledger network status and connectivity" },
+    { "name": "Authentication", "description": "API key generation and validation" },
+    { "name": "Database", "description": "Analysis storage and retrieval" }
+  ]
+}

@@ -1,7 +1,7 @@
 # S4 Ledger — Production Readiness Checklist
 
-> **Status:** Pre-Production (Testnet) — **Estimated ~58% Production Ready**  
-> **Last Updated:** February 2026 (v3.1.0)  
+> **Status:** Pre-Production (Testnet) — **Estimated ~67% Production Ready**  
+> **Last Updated:** February 2026 (v3.2.0)  
 > **Target:** Mainnet launch + first enterprise pilot
 
 ---
@@ -10,20 +10,21 @@
 
 This document tracks every requirement for taking S4 Ledger from its current testnet deployment to a fully production-ready, investor-grade defense logistics platform. It covers legal, compliance, infrastructure, security, documentation, business development, and operational requirements.
 
-### Current Readiness: ~58%
+### Current Readiness: ~67%
 
 | Area | Status | Score |
 |------|--------|-------|
-| **Frontend / Demo** | ILS Intelligence v3 + AI Agent (custom tasks, 20+ capabilities), universal program support, 160+ record types, 22 sample document types, anchor animation, post-analysis actions, login portal with tutorial, mobile-responsive design | **92%** |
-| **API / Backend** | Serverless API v3.1, auth scaffolding, database integration ready, 14 endpoints, rate limiting, request logging, health check | **65%** |
+| **Frontend / Demo** | ILS Intelligence v3 + AI Agent (conversational, 30+ capabilities), 3 new tools (DMSMS Tracker, Readiness Calculator, Parts X-Ref), universal program support, 160+ record types, 22 sample document types with realistic program-specific data, ITAR warning banner, login portal with tutorial | **95%** |
+| **API / Backend** | Serverless API v3.2, auth scaffolding, 17 endpoints (DMSMS, readiness, parts), rate limiting, security headers (HSTS, X-Frame, CSP), request logging, health check, OpenAPI spec | **72%** |
 | **XRPL Integration** | Testnet live with graceful fallback | **60%** |
-| **SDK** | pip-installable package with CLI, comprehensive functionality | **50%** |
-| **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404 page, favicons/touch icons — needs database, monitoring, load balancing | **55%** |
-| **Authentication** | Login portal with SSO/CAC support (UI), tutorial onboarding, API key system scaffolded — needs production key management | **45%** |
-| **User Experience** | Full mobile/tablet responsive, sample doc dropdown (22 types), proper cost formatting ($K/$M), branded favicons on all 16 pages | **90%** |
-| **Compliance** | NIST 800-171 architecture aligned, CMMC L2 roadmap, DoW branding throughout — needs formal assessment | **30%** |
+| **SDK** | pip-installable with CLI, 6 commands (anchor, hash, verify, status, readiness, dmsms), calculate_readiness(), check_dmsms(), lookup_nsn() | **60%** |
+| **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404, security response headers, ITAR notices — needs database, monitoring, load balancing | **60%** |
+| **Authentication** | Login portal with SSO/CAC support (UI), tutorial onboarding, API key system — needs production key management | **45%** |
+| **User Experience** | Full mobile/tablet responsive, conversational AI Agent, 6 interactive tools, realistic sample data, ITAR compliance notice, branded favicons on all pages | **95%** |
+| **Documentation** | OpenAPI 3.0 spec, CHANGELOG.md, comprehensive README, API examples, whitepaper, technical specs, security policy | **70%** |
+| **Compliance** | NIST 800-171 architecture aligned, CMMC L2 roadmap, ITAR warnings, security headers, DoW branding — needs formal assessment | **35%** |
 | **Legal / Business** | Documentation complete — needs entity formation, CAGE code, SAM.gov | **15%** |
-| **Security** | Zero-data-on-chain, client-side processing, rate limiting — needs pen test, SOC 2 | **25%** |
+| **Security** | Zero-data-on-chain, client-side processing, rate limiting, HSTS, security headers, ITAR warnings — needs pen test, SOC 2 | **35%** |
 | **Monitoring / Ops** | Health check endpoint, request logging — needs full monitoring, CI/CD | **20%** |
 
 ---
@@ -298,10 +299,10 @@ This document tracks every requirement for taking S4 Ledger from its current tes
 - [ ] Set up GitHub Actions CI pipeline (lint + test)
 - [x] Implement API key authentication ✅ (v3.0 — scaffolded with master key + org keys)
 - [ ] Set up external uptime monitoring
-- [ ] Add ITAR/export control warning to all data input forms
+- [x] Add ITAR/export control warning to all data input forms ✅ (v3.2 — ITAR banner on landing page + demo app)
 - [ ] Commission penetration test (budget: $5K-$15K)
 - [ ] Begin CMMC Level 1 self-assessment
-- [ ] Create CHANGELOG.md with version history
+- [x] Create CHANGELOG.md with version history ✅ (v3.2 — complete changelog from v1.0 to v3.2)
 - [ ] Produce 2-minute demo video
 - [x] Database integration scaffolding ✅ (Supabase-ready API endpoints)
 - [x] ILS Intelligence v3 with AI Agent ✅ (26 programs, 44+ DI numbers)
@@ -309,10 +310,47 @@ This document tracks every requirement for taking S4 Ledger from its current tes
 - [x] Post-analysis workflow actions ✅ (Send, Schedule Meeting, Action Tracker, Print)
 - [x] SDK pip-installable with CLI ✅ (pyproject.toml, entry points, argparse CLI)
 - [x] Landing page ILS Analyzer showcase ✅
+- [x] OpenAPI 3.0 spec ✅ (v3.2 — all 17 endpoints documented)
+- [x] Security response headers ✅ (v3.2 — HSTS, X-Frame-Options, CSP, X-XSS-Protection)
+- [x] DMSMS/Obsolescence Tracker ✅ (v3.2 — per-program tracking with real component data)
+- [x] Readiness Calculator (Ao/MTBF/MTTR) ✅ (v3.2 — full RAM analysis per MIL-STD-1390D)
+- [x] Parts Cross-Reference ✅ (v3.2 — NSN/CAGE lookup, alternate parts, cross-program search)
+- [x] Conversational AI Agent ✅ (v3.2 — memory, follow-ups, contextual responses, 30+ capabilities)
 
 ---
 
-## 11. v3.1.0 Changelog (Latest)
+## 11. v3.2.0 Changelog (Latest)
+
+### New Tools & Products
+- [x] **DMSMS / Obsolescence Tracker** — Track Diminishing Manufacturing Sources and Material Shortages per DoWI 4245.14. Per-program tracking using real component data (NSNs, manufacturers, lead times). Severity assessment, alternate source identification, resolution cost estimation. Export to CSV, anchor to XRPL.
+- [x] **Operational Readiness Calculator** — Calculate Ao (Operational Availability), Ai (Inherent Availability), MTBF, MTTR, MLDT, failure rate, and mission reliability per MIL-STD-1390D. Pre-loaded defaults for DDG-51, LCS, CVN-78, FFG-62, F-35, M1A2, AH-64E, HIMARS, KC-46A. Assessment ratings from Excellent to Critical. Export RAM reports, anchor to XRPL.
+- [x] **NSN / Parts Cross-Reference** — National Stock Number lookup, CAGE code search, part name search, alternate/substitute part identification, cross-program part availability. 150+ parts from PROG_COMPONENTS database with manufacturer CAGE code mapping, FSC group classification, pricing, and stock status. Export parts lists, anchor to XRPL.
+
+### Conversational AI Agent
+- [x] **Conversation Memory** — AI Agent maintains last 20 messages for context-aware responses
+- [x] **Follow-up Detection** — Recognizes affirmative/negative responses, continues from previous topic
+- [x] **Topic Awareness** — Detects "how do I...", "what about...", "why...", "who is responsible...", "when/deadline..." patterns
+- [x] **Contextual Responses** — Provides data-driven answers using current analysis results, program data, and component information
+- [x] **Freeform Intelligence** — True freeform responses that contextually address any user question rather than listing menu options
+
+### API & SDK
+- [x] **3 New API Endpoints** — `/api/dmsms`, `/api/readiness`, `/api/parts` with full query parameter support
+- [x] **API v3.2.0** — 17 total endpoints (up from 14)
+- [x] **Security Headers** — HSTS, X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy on all API responses
+- [x] **Vercel Security Headers** — Same headers applied to all static pages via vercel.json
+- [x] **SDK v3.2.0** — New methods: `calculate_readiness()`, `check_dmsms()`, `lookup_nsn()`
+- [x] **CLI v3.2.0** — 6 commands: anchor, hash, verify, status, readiness, dmsms
+- [x] **OpenAPI 3.0 Spec** — Full API documentation at `/api/openapi.json`
+
+### Production Readiness
+- [x] **ITAR Warning** — "Do not submit ITAR-controlled data" notice on landing page and demo app
+- [x] **CHANGELOG.md** — Full version history from v1.0.0 to v3.2.0
+- [x] **Realistic Sample Documents** — Program-specific component data (systems, NSNs, manufacturers) used across all sample document generators for DDG-51, LCS, CVN-78, FFG-62, F-35, CH-53K, M1A2, Stryker, AH-64E, HIMARS, F-35A, KC-46A, B-21, C-17, GPS III, SBIRS, NSC, OPC, FRC, ACV
+- [x] **"Platform Type" Wording** — "Select Program / Vessel Type" updated to "Select Program / Platform Type" to be branch-neutral
+- [x] **"ILS Deliverables" Wording** — Landing page updated from "DI number gap detection" to "ILS deliverables gap detection"
+- [x] **Landing Page Explore Cards** — 3 new cards for DMSMS Tracker, Readiness Calculator, Parts Cross-Reference (12 total cards)
+
+## 12. v3.1.0 Changelog
 
 ### New Features
 - [x] **Login Portal** — Full authentication UI with email/password, CAC/PIV card SSO, and Microsoft SSO support

@@ -1,6 +1,18 @@
 {
     "framework": null,
     "cleanUrls": true,
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                { "key": "X-Content-Type-Options", "value": "nosniff" },
+                { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+                { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
+                { "key": "X-XSS-Protection", "value": "1; mode=block" },
+                { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+            ]
+        }
+    ],
     "rewrites": [
         { "source": "/api/status", "destination": "/api" },
         { "source": "/api/health", "destination": "/api" },
@@ -15,6 +27,9 @@
         { "source": "/api/auth/validate", "destination": "/api" },
         { "source": "/api/db/save-analysis", "destination": "/api" },
         { "source": "/api/db/get-analyses", "destination": "/api" },
-        { "source": "/api/infrastructure", "destination": "/api" }
+        { "source": "/api/infrastructure", "destination": "/api" },
+        { "source": "/api/dmsms", "destination": "/api" },
+        { "source": "/api/readiness", "destination": "/api" },
+        { "source": "/api/parts", "destination": "/api" }
     ]
 }
