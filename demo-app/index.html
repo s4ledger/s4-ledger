@@ -375,16 +375,43 @@
                                             <option value="ydt">YDT — Large Harbor Tug</option>
                                             <option value="yon">YON — Fuel Oil Barge</option>
                                         </optgroup>
-                                        <optgroup label="Major Programs">
+                                        <optgroup label="Navy — Major Surface Combatants">
                                             <option value="ddg51">DDG-51 Flight III (Arleigh Burke)</option>
                                             <option value="lcs">LCS Freedom-class</option>
                                             <option value="cvn78">CVN-78 Ford-class</option>
                                             <option value="ffg62">FFG-62 Constellation-class</option>
                                             <option value="lpd17">LPD-17 San Antonio-class</option>
                                         </optgroup>
-                                        <optgroup label="Other Branches">
-                                            <option value="f35">F-35C Lightning II (Navy/USMC)</option>
-                                            <option value="ch53k">CH-53K King Stallion (USMC)</option>
+                                        <optgroup label="Navy / USMC — Aviation">
+                                            <option value="f35">F-35C Lightning II (Navy)</option>
+                                            <option value="f35b">F-35B Lightning II (USMC STOVL)</option>
+                                            <option value="ch53k">CH-53K King Stallion</option>
+                                        </optgroup>
+                                        <optgroup label="U.S. Army — Ground & Aviation">
+                                            <option value="m1">M1A2 Abrams SEPv3</option>
+                                            <option value="stryker">Stryker ICV-VA1</option>
+                                            <option value="ah64">AH-64E Apache Guardian</option>
+                                            <option value="himars">M142 HIMARS</option>
+                                        </optgroup>
+                                        <optgroup label="U.S. Air Force">
+                                            <option value="f35a">F-35A Lightning II (CTOL)</option>
+                                            <option value="kc46">KC-46A Pegasus</option>
+                                            <option value="b21">B-21 Raider</option>
+                                            <option value="c17">C-17 Globemaster III</option>
+                                        </optgroup>
+                                        <optgroup label="U.S. Space Force">
+                                            <option value="gps3">GPS III / IIIF Satellite</option>
+                                            <option value="sbirs">SBIRS / Next-Gen OPIR</option>
+                                        </optgroup>
+                                        <optgroup label="U.S. Coast Guard">
+                                            <option value="nsc">NSC (Legend-class)</option>
+                                            <option value="opc">OPC (Heritage-class)</option>
+                                            <option value="frc">FRC (Sentinel-class)</option>
+                                        </optgroup>
+                                        <optgroup label="U.S. Marine Corps — Ground">
+                                            <option value="acv">ACV 1.1 Amphibious Combat Vehicle</option>
+                                        </optgroup>
+                                        <optgroup label="Custom">
                                             <option value="custom">Custom Program (define your own)</option>
                                         </optgroup>
                                     </select>
@@ -418,9 +445,13 @@
                                 <div style="font-size:0.82rem;color:var(--muted)">Accepts .csv, .xlsx, .xls, .txt — all processing done locally in your browser</div>
                             </div>
                             <input type="file" id="ilsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv" style="display:none" onchange="handleILSFiles(this.files)">
+                            <div style="margin:8px 0">
+                                <button style="background:linear-gradient(135deg,rgba(0,170,255,0.12),rgba(201,168,76,0.12));border:1px solid rgba(0,170,255,0.25);color:var(--accent);border-radius:6px;padding:6px 14px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600;transition:all 0.2s" onmouseover="this.style.background='rgba(0,170,255,0.2)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(0,170,255,0.12),rgba(201,168,76,0.12))'" onclick="event.stopPropagation();loadSampleDRL()"><i class="fas fa-flask"></i> Load Sample DRL</button>
+                                <span style="font-size:0.78rem;color:var(--muted);margin-left:6px">Generate a realistic sample spreadsheet for the selected program</span>
+                            </div>
                             <div class="ils-file-list" id="ilsFileList"></div>
 
-                            <label>3. ILS Elements Checklist <span style="color:var(--muted);font-weight:400">(auto-populated from uploads, or check manually)</span></label>
+                            <label>3. Program ILS Checklist <span style="color:var(--muted);font-weight:400">(changes per program — auto-populated from uploads, or check manually)</span></label>
                             <div id="ilsChecklist" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1rem;font-size:0.85rem;"></div>
 
                             <div class="d-flex gap-2 flex-wrap">
@@ -1032,25 +1063,434 @@ function updateTxLog() {
     }
 }
 
-// ═══ ILS Intelligence Engine v2 — Document-Driven Gap Analysis ═══
+// ═══ ILS Intelligence Engine v3 — Program-Specific Checklists & Document Analysis ═══
 let ilsFiles = [];
 let ilsResults = null;
 
-const ILS_EL = [
-    {id:'ilsmgmt',label:'ILS Management / ILSP',crit:true},
-    {id:'maint',label:'Maintenance Planning',crit:true},
-    {id:'supply',label:'Supply Support',crit:true},
-    {id:'se',label:'Support Equipment',crit:false},
-    {id:'techdata',label:'Technical Data',crit:true},
-    {id:'training',label:'Training & Training Support',crit:false},
-    {id:'manpower',label:'Manpower & Personnel',crit:false},
-    {id:'compres',label:'Computer Resources',crit:false},
-    {id:'facilities',label:'Facilities',crit:false},
-    {id:'phst',label:'PHS&T',crit:false},
-    {id:'design',label:'Design Interface',crit:false},
-    {id:'ram',label:'RAM Analysis',crit:true},
-    {id:'config',label:'Configuration Management',crit:true}
+// ── Per-Program ILS Checklists ──
+// Each program has its own real-world checklist. Items: [id, label, critical(1/0), keyword_regex_string]
+// PMS 300 — Service Craft (user-specified 17-item checklist used across YRBM, APL, AFDM, YDT, YON)
+const _CL_PMS300 = [
+    ['vrs_buylist','Vendor Recommended Spares and Buylist Development',1,'spare|buylist|vrs|vendor.*rec|provisioning|allowance'],
+    ['crew_fam','Crew Familiarization',1,'crew.*fam|familiarization|crew.*train'],
+    ['iuid','IUID Submissions',1,'iuid|unique.*ident|item.*unique'],
+    ['transfer_book','Craft Transfer Book Development/Review',1,'transfer.*book|craft.*transfer|custody.*transfer'],
+    ['lcsp','Life Cycle Sustainment Plan (LCSP)',1,'lcsp|life.*cycle.*sust|sustainment.*plan'],
+    ['config_inv','On-Site Parts/Material Inventory (Configuration Management)',1,'config.*mgmt|config.*manage|material.*inventory|parts.*inventory|on.?site.*inv'],
+    ['ilsmt','ILSMT/Design or Production Meeting',1,'ilsmt|ils.*meet|design.*meet|production.*meet|logistics.*meet'],
+    ['bam','Baseline Assessment Memorandum',1,'baseline.*assess|bam\\b|assessment.*memo'],
+    ['outfit_wpn','Outfitting Navy Weapon Systems (If Applicable)',0,'outfitting.*weapon|weapon.*system.*outf|navy.*weapon'],
+    ['ecp_waiver','Engineering Change Packages/Request for Waivers',1,'ecp|engineering.*change|waiver|request.*waiver|change.*package'],
+    ['drl_review','DRL Reviews',1,'drl.*review|data.*require.*list|cdrl.*review|deliverable.*review'],
+    ['cots_manuals','COTS Manuals Review/Submissions (Hard/Electronic Copy)',1,'cots.*manual|commercial.*manual|vendor.*manual|oem.*manual'],
+    ['tm_status','Technical Manual Status/Submissions',1,'technical.*manual|tech.*manual|tm.*status|tm.*submit'],
+    ['po_status','Purchase Order Status',1,'purchase.*order|po.*status|procurement.*order'],
+    ['mat_sched','Material Ordering Schedule Completion',1,'material.*order|ordering.*sched|material.*sched|mat.*order'],
+    ['mel','Master Equipment List Submittal',1,'master.*equip|mel\\b|equipment.*list'],
+    ['outfit_stats','Outfitting Statistics (GFE, Materials, etc.)',0,'outfitting.*stat|gfe|government.*furnish|outfit.*stat']
 ];
+
+// DDG-51 Flight III (PMS 400D) — Major Surface Combatant
+const _CL_DDG51 = [
+    ['ilsp','Integrated Logistics Support Plan (ILSP)',1,'ilsp|integrated.*logistics.*support.*plan'],
+    ['lcsp','Life Cycle Sustainment Plan (LCSP)',1,'lcsp|life.*cycle.*sust'],
+    ['lora','Level of Repair Analysis (LORA)',1,'lora|level.*repair'],
+    ['pms_dev','PMS/MRC Development & Validation',1,'pms.*dev|mrc|maintenance.*requirement.*card|planned.*maint'],
+    ['supply','Supply Support / Provisioning Plan',1,'supply.*support|provisioning|allowance|cosal'],
+    ['vrs','Vendor Recommended Spares / Initial Outfitting',1,'vendor.*spare|vrs|initial.*outfit'],
+    ['cosal','COSAL / APL Development',1,'cosal|allowance.*part.*list|apl\\b'],
+    ['se','Support Equipment Requirements',1,'support.*equip|se.*req|test.*equip'],
+    ['tm','Technical Manual Development (NAVSEA Format)',1,'technical.*manual|navsea.*format|tech.*manual'],
+    ['ietm','Interactive Electronic Technical Manuals (IETM)',1,'ietm|interactive.*electronic|electronic.*tech.*manual'],
+    ['training','Training Plan / Fleet Introduction Team (FIT)',1,'training.*plan|fleet.*intro|fit\\b.*team'],
+    ['manpower','Manpower & Personnel Integration',0,'manpower|personnel.*integ'],
+    ['compres','Computer Resources Life Cycle Mgmt Plan',0,'computer.*resour|lcmp|software.*support'],
+    ['facilities','Facilities Requirements',0,'facilit.*req'],
+    ['phst','PHS&T Analysis & Plan',0,'phs.?t|packaging|handling|storage|transport'],
+    ['design','Design Interface / Supportability Analysis',1,'design.*interface|supportability'],
+    ['ram','RAM Analysis / Operational Availability',1,'ram\\b|reliab|availab|maintainab|fmeca'],
+    ['config','Configuration Status Accounting',1,'config.*status|config.*account|configuration'],
+    ['ecp','Engineering Change Proposals / Waivers',1,'ecp|engineering.*change|waiver'],
+    ['interim','Interim Support / Contractor Logistics Support (CLS)',0,'interim.*support|cls\\b|contractor.*logist'],
+    ['src','Source/Repair Coding',1,'source.*repair|src\\b|repair.*cod'],
+    ['dmsms','Diminishing Manufacturing Sources (DMSMS)',0,'dmsms|diminishing|obsolescen'],
+    ['drl','DRL/CDRL Tracking & Reviews',1,'drl|cdrl|deliverable.*review']
+];
+
+// LCS (PMS 501) — Littoral Combat Ship (unique: mission modules, crew rotation)
+const _CL_LCS = [
+    ['ilsp','Integrated Logistics Support Plan (ILSP)',1,'ilsp|integrated.*logistics'],
+    ['lcsp','Life Cycle Sustainment Plan (LCSP)',1,'lcsp|life.*cycle.*sust'],
+    ['mm_ils','Mission Module ILS Integration',1,'mission.*module|mm\\b.*ils|module.*logist'],
+    ['pms_dev','PMS/MRC Development',1,'pms.*dev|mrc|planned.*maint'],
+    ['supply','Supply Support / Provisioning',1,'supply.*support|provisioning'],
+    ['vrs','Vendor Recommended Spares',1,'vendor.*spare|vrs'],
+    ['se','Support Equipment (Ship + Modules)',1,'support.*equip'],
+    ['tm','Technical Manual Development',1,'technical.*manual|tech.*manual'],
+    ['training','Training Plan / Crew Rotation Model',1,'training|crew.*rotat'],
+    ['ram','RAM Analysis / Mission Capability',1,'ram\\b|reliab|mission.*capab'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['ecp','Engineering Changes / Waivers',1,'ecp|engineering.*change|waiver'],
+    ['cls','Contractor Logistics Support (CLS) Plan',1,'cls\\b|contractor.*logist'],
+    ['drl','DRL/CDRL Reviews',1,'drl|cdrl|deliverable.*review'],
+    ['phst','PHS&T Plan',0,'phs.?t|packaging'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen'],
+    ['src','Source/Repair Coding',0,'source.*repair|repair.*cod']
+];
+
+// CVN-78 (PMS 378) — Aircraft Carrier (nuclear propulsion, EMALS, massive logistics)
+const _CL_CVN78 = [
+    ['ilsp','Integrated Logistics Support Plan (ILSP)',1,'ilsp|integrated.*logistics'],
+    ['lcsp','Life Cycle Sustainment Plan (LCSP)',1,'lcsp|life.*cycle.*sust'],
+    ['lora','Level of Repair Analysis (LORA)',1,'lora|level.*repair'],
+    ['pms_dev','PMS/MRC Development & Validation',1,'pms.*dev|mrc|planned.*maint'],
+    ['supply','Supply Support / Provisioning',1,'supply.*support|provisioning'],
+    ['vrs','Vendor Recommended Spares / Initial Outfitting',1,'vendor.*spare|vrs|initial.*outf'],
+    ['cosal','COSAL Development',1,'cosal|allowance.*part'],
+    ['se','Support Equipment Requirements',1,'support.*equip'],
+    ['tm','Technical Manual Suite (NAVSEA Format)',1,'technical.*manual|tech.*manual'],
+    ['ietm','IETM Development',1,'ietm|interactive.*electronic'],
+    ['training','Training Plan / Fleet Introduction',1,'training.*plan|fleet.*intro'],
+    ['manpower','Manpower & Personnel Integration',1,'manpower|personnel'],
+    ['compres','Computer Resources Life Cycle Mgmt',1,'computer.*resour|lcmp'],
+    ['facilities','Facilities / Shore Infrastructure',1,'facilit|shore.*infra'],
+    ['phst','PHS&T Analysis',1,'phs.?t|packaging|handling'],
+    ['design','Design Interface / Supportability',1,'design.*interface|supportability'],
+    ['ram','RAM / Operational Availability',1,'ram\\b|reliab|operational.*avail'],
+    ['config','Configuration Status Accounting',1,'config.*status|configuration'],
+    ['ecp','Engineering Change Proposals',1,'ecp|engineering.*change'],
+    ['nuc_cert','Nuclear Propulsion Logistics Certification',1,'nuclear|nuc.*cert|propulsion.*cert'],
+    ['emals','EMALS/AAG System Logistics',1,'emals|aag|launch.*system|recovery.*system'],
+    ['interim','Interim Support / CLS',0,'interim.*support|cls\\b'],
+    ['src','Source/Repair Coding',1,'source.*repair|repair.*cod'],
+    ['dmsms','DMSMS Management',1,'dmsms|diminishing|obsolescen'],
+    ['drl','DRL/CDRL Tracking & Reviews',1,'drl|cdrl|deliverable']
+];
+
+// FFG-62 (PMS 515) — Constellation-class Frigate (parent design adaptation is unique)
+const _CL_FFG62 = [
+    ['ilsp','Integrated Logistics Support Plan (ILSP)',1,'ilsp|integrated.*logistics'],
+    ['lcsp','Life Cycle Sustainment Plan (LCSP)',1,'lcsp|life.*cycle.*sust'],
+    ['lora','Level of Repair Analysis (LORA)',1,'lora|level.*repair'],
+    ['parent_design','Parent Design ILS Data Adaptation (FREMM)',1,'parent.*design|fremm|adaptation|foreign.*design'],
+    ['pms_dev','PMS/MRC Development',1,'pms.*dev|mrc|planned.*maint'],
+    ['supply','Supply Support / Provisioning',1,'supply.*support|provisioning'],
+    ['vrs','Vendor Recommended Spares',1,'vendor.*spare|vrs'],
+    ['se','Support Equipment Requirements',1,'support.*equip'],
+    ['tm','Technical Manual Development',1,'technical.*manual|tech.*manual'],
+    ['training','Training Plan / Fleet Introduction',1,'training.*plan|fleet.*intro'],
+    ['ram','RAM Analysis',1,'ram\\b|reliab|maintainab'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['ecp','Engineering Change Proposals',1,'ecp|engineering.*change|waiver'],
+    ['drl','DRL/CDRL Reviews',1,'drl|cdrl|deliverable'],
+    ['manpower','Manpower & Personnel',0,'manpower|personnel'],
+    ['compres','Computer Resources',0,'computer.*resour|lcmp'],
+    ['phst','PHS&T Plan',0,'phs.?t|packaging'],
+    ['src','Source/Repair Coding',1,'source.*repair|repair.*cod'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen']
+];
+
+// LPD-17 (PMS 317) — San Antonio-class Amphibious Transport Dock (well deck, aviation)
+const _CL_LPD17 = [
+    ['ilsp','Integrated Logistics Support Plan (ILSP)',1,'ilsp|integrated.*logistics'],
+    ['lcsp','Life Cycle Sustainment Plan (LCSP)',1,'lcsp|life.*cycle.*sust'],
+    ['lora','Level of Repair Analysis (LORA)',1,'lora|level.*repair'],
+    ['pms_dev','PMS/MRC Development',1,'pms.*dev|mrc|planned.*maint'],
+    ['supply','Supply Support / Provisioning',1,'supply.*support|provisioning'],
+    ['vrs','Vendor Recommended Spares',1,'vendor.*spare|vrs'],
+    ['cosal','COSAL Development',1,'cosal|allowance.*part'],
+    ['se','Support Equipment',1,'support.*equip'],
+    ['tm','Technical Manual Development',1,'technical.*manual|tech.*manual'],
+    ['training','Training Plan / Fleet Introduction',1,'training.*plan|fleet.*intro'],
+    ['well_deck','Well Deck / Craft Interface Logistics',1,'well.*deck|craft.*interface|lcac|lcu'],
+    ['aviation','Aviation Facility Logistics',1,'aviation.*facility|flight.*deck|helo'],
+    ['ram','RAM Analysis',1,'ram\\b|reliab'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['ecp','Engineering Changes / Waivers',1,'ecp|engineering.*change|waiver'],
+    ['drl','DRL/CDRL Reviews',1,'drl|cdrl|deliverable'],
+    ['manpower','Manpower & Personnel',0,'manpower|personnel'],
+    ['phst','PHS&T Plan',0,'phs.?t|packaging'],
+    ['src','Source/Repair Coding',1,'source.*repair|repair.*cod'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen']
+];
+
+// F-35C/B (PMA-265 / JSF PO) — Naval/USMC Tactical Aircraft (ODIN/ALIS unique)
+const _CL_F35NAVY = [
+    ['ilsp','Integrated Logistics Support Plan',1,'ilsp|integrated.*logistics'],
+    ['odin','Autonomic Logistics (ODIN/ALIS) Sustainment',1,'odin|alis|autonomic.*logist'],
+    ['supply','Supply Chain Management / Global Spares Pool',1,'supply.*chain|global.*spare|spares.*pool'],
+    ['depot','Depot Activation / MRO&U Planning',1,'depot.*activ|mro|overhaul.*plan'],
+    ['tm','Technical Data (IETM) via ODIN',1,'technical.*data|ietm|odin.*pub'],
+    ['training','Pilot & Maintainer Training Courseware',1,'pilot.*train|maintainer.*train|training.*course'],
+    ['phm','Prognostic Health Management (PHM)',1,'prognostic|phm|health.*manage|condition.*based'],
+    ['ram','RAM / Mission Capable Rate Analysis',1,'ram\\b|mission.*capable|mc.*rate|reliab'],
+    ['config','Configuration Mgmt / Software Baseline',1,'config.*manage|software.*baseline|configuration'],
+    ['se','Support Equipment / Aerospace Ground Equipment',1,'support.*equip|age\\b|aerospace.*ground'],
+    ['facilities','Facilities / Hangar Requirements',1,'facilit|hangar.*req'],
+    ['manpower','Manpower Estimate Report',0,'manpower|personnel'],
+    ['phst','PHS&T / Transportability',0,'phs.?t|transport'],
+    ['drl','DRL/CDRL Reviews',1,'drl|cdrl|deliverable'],
+    ['pbl','Performance-Based Logistics (PBL) / CLS',1,'pbl|performance.*based|cls\\b|contractor.*logist'],
+    ['dmsms','DMSMS / Obsolescence Management',1,'dmsms|diminishing|obsolescen'],
+    ['lo','Low-Observable Maintenance (F-35B/C specific)',0,'low.*observ|stealth|lo\\b.*maint|signature']
+];
+
+// CH-53K (PMA-261) — Heavy-Lift Helicopter
+const _CL_CH53K = [
+    ['ilsp','Integrated Logistics Support Plan',1,'ilsp|integrated.*logistics'],
+    ['lcsp','Life Cycle Sustainment Plan',1,'lcsp|life.*cycle.*sust'],
+    ['pms','Maintenance Plan / PMS Development',1,'maint.*plan|pms.*dev|planned.*maint'],
+    ['supply','Supply Support / Provisioning',1,'supply.*support|provisioning'],
+    ['vrs','Vendor Recommended Spares',1,'vendor.*spare|vrs'],
+    ['se','Support Equipment / Ground Support',1,'support.*equip|ground.*support|gse'],
+    ['tm','Technical Manuals (IETM)',1,'technical.*manual|ietm'],
+    ['training','Training Systems / Simulators',1,'training.*system|simulator|crew.*train'],
+    ['ram','RAM Analysis / Mission Capable Rate',1,'ram\\b|mission.*capable|reliab'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['ecp','Engineering Change Proposals',1,'ecp|engineering.*change'],
+    ['drl','DRL/CDRL Reviews',1,'drl|cdrl|deliverable'],
+    ['facilities','Facility Requirements / Hangar Modifications',0,'facilit|hangar'],
+    ['phst','PHS&T Plan',0,'phs.?t|packaging'],
+    ['cls','Contractor Logistics Support Transition',0,'cls\\b|contractor.*logist|transition'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen']
+];
+
+// M1A2 Abrams SEPv3 (PEO GCS) — Main Battle Tank (Army LSA-based)
+const _CL_M1 = [
+    ['lsa','Logistics Support Analysis (LSA)',1,'lsa\\b|logistics.*support.*analy'],
+    ['mac','Maintenance Allocation Chart (MAC)',1,'mac\\b|maintenance.*alloc'],
+    ['rpstl','Repair Parts & Special Tools List (RPSTL)',1,'rpstl|repair.*parts|special.*tools'],
+    ['tm','Technical Manuals (TM 9-series)',1,'technical.*manual|tm.*9|army.*tm'],
+    ['net','New Equipment Training (NET) Plan',1,'new.*equip.*train|net\\b.*plan|net\\b.*team'],
+    ['provisioning','Provisioning Plan / ASL Development',1,'provisioning|asl\\b.*dev|authorized.*stockage'],
+    ['tmde','Test, Measurement & Diagnostic Equipment (TMDE)',1,'tmde|test.*measure|diagnostic.*equip'],
+    ['manprint','MANPRINT Assessment',1,'manprint|human.*factor|human.*system'],
+    ['ram','RAM Analysis / Ao Requirements',1,'ram\\b|reliab|operational.*avail'],
+    ['config','Configuration Management / ECP Tracking',1,'config.*manage|ecp|engineering.*change'],
+    ['transport','Transportability Assessment (Rail/Air/Sea)',1,'transportab|rail.*load|air.*transport|sea.*transport'],
+    ['depot','Depot Maintenance Work Requirements (DMWR)',1,'depot.*maint|dmwr|organic.*maint'],
+    ['pbl','Performance-Based Logistics (PBL) Metrics',0,'pbl|performance.*based'],
+    ['hazmat','HAZMAT / Environmental Compliance',0,'hazmat|environment|hazardous.*material'],
+    ['dmsms','DMSMS / Obsolescence Management',0,'dmsms|diminishing|obsolescen'],
+    ['warranty','Warranty Tracking & Administration',0,'warranty|tracking.*admin']
+];
+
+// Stryker ICV-VA1 (PM Stryker) — Infantry Combat Vehicle
+const _CL_STRYKER = [
+    ['lsa','Logistics Support Analysis (LSA)',1,'lsa\\b|logistics.*support.*analy'],
+    ['mac','Maintenance Allocation Chart (MAC)',1,'mac\\b|maintenance.*alloc'],
+    ['rpstl','Repair Parts & Special Tools List (RPSTL)',1,'rpstl|repair.*parts|special.*tools'],
+    ['tm','Technical Manuals (TM 9-series)',1,'technical.*manual|tm.*9'],
+    ['net','New Equipment Training (NET)',1,'new.*equip.*train|net\\b.*plan'],
+    ['provisioning','Provisioning / ASL',1,'provisioning|asl\\b|authorized.*stockage'],
+    ['tmde','TMDE / Special Tools',1,'tmde|special.*tool|test.*equip'],
+    ['manprint','MANPRINT Assessment',0,'manprint|human.*factor'],
+    ['ram','RAM / Operational Readiness',1,'ram\\b|reliab|operational.*read'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['transport','Transportability (C-17/C-130 Compatibility)',1,'transportab|c.?17|c.?130|airlift'],
+    ['depot','Depot Maintenance Planning',1,'depot.*maint|organic.*maint'],
+    ['pbl','Performance-Based Logistics',0,'pbl|performance.*based'],
+    ['fielding','Fielding Plan / BOIP',1,'fielding|boip|basis.*issue'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen']
+];
+
+// AH-64E Apache Guardian (PEO Aviation) — Attack Helicopter
+const _CL_AH64 = [
+    ['lsa','Logistics Support Analysis',1,'lsa\\b|logistics.*support.*analy'],
+    ['mac','Maintenance Allocation Chart (MAC)',1,'mac\\b|maintenance.*alloc'],
+    ['rpstl','Repair Parts & Special Tools List',1,'rpstl|repair.*parts|special.*tools'],
+    ['tm','Technical Manuals (Aviation TMs)',1,'technical.*manual|aviation.*tm'],
+    ['phase','Aircraft Maintenance / Phase Inspections',1,'phase.*inspect|aircraft.*maint|periodic.*inspect'],
+    ['net','Pilot/Crew Training (NET)',1,'pilot.*train|crew.*train|net\\b.*plan'],
+    ['simulator','Training Devices / Simulator Support',1,'simulator|training.*device|synthetic.*train'],
+    ['provisioning','Provisioning / ASL',1,'provisioning|asl\\b|authorized.*stockage'],
+    ['gse','Ground Support Equipment (GSE)',1,'ground.*support|gse|support.*equip'],
+    ['ram','RAM / Mission Capable Rate',1,'ram\\b|mission.*capable|reliab'],
+    ['config','Configuration Management / MOD Programs',1,'config.*manage|modification.*program|mod\\b.*program'],
+    ['depot','Depot / AVIM / AVUM Planning',1,'depot|avim|avum|aviation.*maint'],
+    ['phst','PHS&T / Transportability',0,'phs.?t|transportab'],
+    ['dmsms','DMSMS / Obsolescence',0,'dmsms|diminishing|obsolescen'],
+    ['pbl','Performance-Based Logistics (PBL)',0,'pbl|performance.*based']
+];
+
+// M142 HIMARS (PEO Missiles & Space) — Rocket Artillery
+const _CL_HIMARS = [
+    ['lsa','Logistics Support Analysis',1,'lsa\\b|logistics.*support.*analy'],
+    ['mac','Maintenance Allocation Chart',1,'mac\\b|maintenance.*alloc'],
+    ['rpstl','Repair Parts & Special Tools List',1,'rpstl|repair.*parts|special.*tools'],
+    ['tm','Technical Manuals (TM 9-series)',1,'technical.*manual|tm.*9'],
+    ['ammo','Ammunition Logistics / QASAS Coordination',1,'ammo|ammunit|qasas|munition|rocket.*pod'],
+    ['net','New Equipment Training (NET)',1,'new.*equip.*train|net\\b'],
+    ['provisioning','Provisioning Plan',1,'provisioning|asl\\b'],
+    ['tmde','TMDE / Support Equipment',1,'tmde|support.*equip|test.*equip'],
+    ['ram','RAM / System Readiness',1,'ram\\b|reliab|system.*read'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['transport','Transportability (C-130 / LMSR)',1,'transportab|c.?130|lmsr|airlift'],
+    ['depot','Depot Maintenance Work Requirements',0,'depot.*maint|dmwr'],
+    ['fms','Foreign Military Sales (FMS) Support',0,'fms|foreign.*military|security.*cooperat'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen']
+];
+
+// F-35A Lightning II (USAF) — Conventional Takeoff Fighter
+const _CL_F35A = [
+    ['ilsp','Integrated Logistics Support Plan',1,'ilsp|integrated.*logistics'],
+    ['odin','ODIN / Autonomic Logistics Information System',1,'odin|alis|autonomic.*logist'],
+    ['tos','Technical Orders (TO) Development',1,'technical.*order|to\\b.*develop|tech.*order'],
+    ['supply','Supply Chain / Global Spares Pool',1,'supply.*chain|global.*spare|spares.*pool'],
+    ['depot','Depot Activation / Organic Capability',1,'depot.*activ|organic.*capab|depot.*standup'],
+    ['age','Aerospace Ground Equipment (AGE)',1,'aerospace.*ground|age\\b|ground.*equip'],
+    ['training','Aircrew & Maintainer Training',1,'aircrew.*train|maintainer.*train|training'],
+    ['facilities','Facilities / Hangar Requirements',1,'facilit|hangar'],
+    ['phm','Prognostic Health Management',1,'prognostic|phm|health.*manage|condition.*based'],
+    ['ram','RAM / Mission Capable Rate',1,'ram\\b|mission.*capable|mc.*rate|reliab'],
+    ['config','Configuration / Software Baseline Mgmt',1,'config.*manage|software.*baseline|configuration'],
+    ['pbl','Performance-Based Logistics (PBL)',1,'pbl|performance.*based'],
+    ['drl','CDRL / Deliverable Reviews',1,'cdrl|drl|deliverable'],
+    ['manpower','Manpower Estimate / LCOM',0,'manpower|lcom|logistics.*composite'],
+    ['phst','PHS&T / Transportability',0,'phs.?t|transportab'],
+    ['dmsms','DMSMS / Obsolescence',0,'dmsms|diminishing|obsolescen']
+];
+
+// KC-46A Pegasus (USAF) — Aerial Refueling Tanker
+const _CL_KC46 = [
+    ['ilsp','Integrated Logistics Support Plan',1,'ilsp|integrated.*logistics'],
+    ['rcm','Reliability Centered Maintenance (RCM)',1,'rcm|reliability.*centered|maint.*steering'],
+    ['tos','Technical Orders Development',1,'technical.*order|to\\b.*develop|tech.*order'],
+    ['supply','Supply Chain Management',1,'supply.*chain|provisioning'],
+    ['depot','Depot-Level Maintenance / PDM',1,'depot.*maint|pdm|programmed.*depot'],
+    ['age','Aerospace Ground Equipment',1,'aerospace.*ground|age\\b|ground.*equip'],
+    ['training','Aircrew & Maintainer Training',1,'aircrew.*train|maintainer.*train|training'],
+    ['boom','Boom Operator / Refueling System Logistics',1,'boom.*oper|refueling.*system|aerial.*refuel'],
+    ['ram','RAM / Availability Analysis',1,'ram\\b|reliab|availab'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['drl','CDRL Reviews',1,'cdrl|drl|deliverable'],
+    ['pbl','Performance-Based Logistics',0,'pbl|performance.*based'],
+    ['facilities','Facilities Assessment',0,'facilit'],
+    ['phst','PHS&T',0,'phs.?t|transport'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen']
+];
+
+// B-21 Raider (USAF) — Long-Range Strike Bomber (stealth, classified elements)
+const _CL_B21 = [
+    ['ilsp','Integrated Logistics Support Plan',1,'ilsp|integrated.*logistics'],
+    ['lcsp','Life Cycle Sustainment Plan',1,'lcsp|life.*cycle.*sust'],
+    ['lsa','Logistics Supportability Analysis',1,'lsa\\b|logistics.*supportab'],
+    ['tos','Technical Orders / IETM Development',1,'technical.*order|ietm|tech.*order'],
+    ['supply','Supply Chain / Provisioning',1,'supply.*chain|provisioning'],
+    ['depot','Depot Activation / Organic Maintenance',1,'depot.*activ|organic.*maint'],
+    ['age','Aerospace Ground Equipment',1,'aerospace.*ground|age\\b|ground.*equip'],
+    ['training','Training Systems / Simulators',1,'training.*system|simulator'],
+    ['ram','RAM / Stealth Sustainment Metrics',1,'ram\\b|reliab|stealth.*sust|lre'],
+    ['config','Configuration Management / SCN',1,'config.*manage|scn|software.*change'],
+    ['lo_maint','Low-Observable (LO) Maintenance & Materials',1,'low.*observ|lo\\b.*maint|stealth.*maint|signature'],
+    ['facilities','Secure Facilities Requirements',1,'secure.*facilit|scif|classified.*facilit'],
+    ['cyber','Cybersecurity / Mission Systems Logistics',1,'cyber|mission.*system.*logist|information.*assur'],
+    ['drl','CDRL Reviews',1,'cdrl|drl|deliverable'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen'],
+    ['phst','PHS&T',0,'phs.?t|transport']
+];
+
+// C-17 Globemaster III (USAF) — Strategic Airlift
+const _CL_C17 = [
+    ['ilsp','Integrated Logistics Support Plan',1,'ilsp|integrated.*logistics'],
+    ['rcm','Reliability Centered Maintenance (RCM)',1,'rcm|reliability.*centered'],
+    ['tos','Technical Orders',1,'technical.*order|tech.*order'],
+    ['supply','Supply Chain / DLA Coordination',1,'supply.*chain|dla\\b|provisioning'],
+    ['pdm','Programmed Depot Maintenance (PDM)',1,'pdm|programmed.*depot|depot.*maint'],
+    ['age','Aerospace Ground Equipment',1,'aerospace.*ground|age\\b'],
+    ['training','Aircrew & Maintainer Training',1,'aircrew.*train|maintainer.*train|training'],
+    ['ram','RAM / Mission Capable Rate',1,'ram\\b|mission.*capable|reliab'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['drl','CDRL / Sustainment Reviews',1,'cdrl|drl|deliverable'],
+    ['asip','Structural Life / ASIP Compliance',1,'asip|structural.*life|aircraft.*structural|fatigue'],
+    ['dmsms','DMSMS / Aging Aircraft Sustainment',1,'dmsms|diminishing|aging.*aircraft|obsolescen'],
+    ['pbl','Performance-Based Logistics',0,'pbl|performance.*based'],
+    ['facilities','Facilities',0,'facilit'],
+    ['phst','PHS&T',0,'phs.?t|transport']
+];
+
+// GPS III/IIIF (Space Systems Command) — Navigation Satellite
+const _CL_USSF = [
+    ['ilsp','Integrated Logistics Support Plan',1,'ilsp|integrated.*logistics'],
+    ['lcsp','Life Cycle Sustainment Plan',1,'lcsp|life.*cycle.*sust'],
+    ['ground_se','Ground Segment Support Equipment',1,'ground.*segment|ground.*equip|ops.*center'],
+    ['sat_ops','Satellite Operations Sustainment',1,'satellite.*ops|on.?orbit|spacecraft.*ops'],
+    ['supply','Supply Chain / Unique Space Parts',1,'supply.*chain|space.*parts|unique.*component'],
+    ['training','Operator & Maintainer Training',1,'operator.*train|maintainer.*train|training'],
+    ['cyber','Cybersecurity / Space Resilience Logistics',1,'cyber|space.*resilien|information.*assur'],
+    ['ram','RAM / On-Orbit Reliability',1,'ram\\b|on.?orbit.*reliab|reliab'],
+    ['config','Configuration / Firmware Version Control',1,'config.*manage|firmware|version.*control'],
+    ['launch','Launch Operations Logistics',1,'launch.*ops|launch.*logist|launch.*integrat'],
+    ['drl','CDRL / Deliverable Reviews',1,'cdrl|drl|deliverable'],
+    ['facilities','Ground Station Facilities',0,'ground.*station|facilit'],
+    ['dmsms','DMSMS / Component Availability',0,'dmsms|diminishing|component.*avail'],
+    ['disposal','End-of-Life / Deorbit Planning',0,'end.*life|deorbit|disposal']
+];
+
+// USCG Cutters (CG-9325) — NSC, OPC, FRC
+const _CL_USCG = [
+    ['ilsp','Integrated Logistics Support Plan',1,'ilsp|integrated.*logistics'],
+    ['lcsp','Life Cycle Sustainment Plan',1,'lcsp|life.*cycle.*sust'],
+    ['pms','PMS / Maintenance Plan Development',1,'pms\\b|maint.*plan|planned.*maint'],
+    ['supply','Supply Support / Provisioning',1,'supply.*support|provisioning'],
+    ['vrs','Vendor Recommended Spares',1,'vendor.*spare|vrs'],
+    ['se','Support Equipment',1,'support.*equip'],
+    ['tm','Technical Manuals (CG Format)',1,'technical.*manual|tech.*manual|cg.*manual'],
+    ['training','Training Plan / Crew Familiarization',1,'training.*plan|crew.*familiar'],
+    ['ram','RAM Analysis',1,'ram\\b|reliab'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['ecp','Engineering Changes / Waivers',1,'ecp|engineering.*change|waiver'],
+    ['drl','DRL / CDRL Reviews',1,'drl|cdrl|deliverable'],
+    ['c4isr','C4ISR / Mission Systems Logistics',1,'c4isr|mission.*system|command.*control'],
+    ['phst','PHS&T',0,'phs.?t|packaging'],
+    ['facilities','Homeport Facilities',0,'homeport|facilit']
+];
+
+// ACV 1.1 (PEO Land Systems, USMC) — Amphibious Combat Vehicle
+const _CL_ACV = [
+    ['lsa','Logistics Support Analysis',1,'lsa\\b|logistics.*support.*analy'],
+    ['mac','Maintenance Allocation Chart',1,'mac\\b|maintenance.*alloc'],
+    ['rpstl','Repair Parts & Special Tools List',1,'rpstl|repair.*parts|special.*tools'],
+    ['tm','Technical Manuals',1,'technical.*manual|tech.*manual'],
+    ['amphib','Amphibious Ship Interface Logistics',1,'amphibi|ship.*interface|well.*deck|l-class'],
+    ['net','New Equipment Training / MOS Training',1,'new.*equip.*train|mos\\b|net\\b.*plan'],
+    ['provisioning','Provisioning / Block Requirements',1,'provisioning|block.*req'],
+    ['se','Support Equipment / Combat Service Support',1,'support.*equip|combat.*service'],
+    ['ram','RAM / Operational Readiness',1,'ram\\b|reliab|operational.*read'],
+    ['config','Configuration Management',1,'config.*manage|configuration'],
+    ['waterborne','Waterborne / Swim Operations Logistics',1,'waterborne|swim.*ops|water.*ops|surf.*zone'],
+    ['ecp','Engineering Changes',1,'ecp|engineering.*change'],
+    ['drl','CDRL Reviews',1,'cdrl|drl|deliverable'],
+    ['phst','PHS&T / Embarkation',0,'phs.?t|embark'],
+    ['dmsms','DMSMS Management',0,'dmsms|diminishing|obsolescen']
+];
+
+// Custom / Generic — minimal baseline
+const _CL_CUSTOM = [
+    ['ilsp','Logistics Support Plan',1,'ilsp|logistics.*support.*plan'],
+    ['maint','Maintenance Planning',1,'maint.*plan|maintenance'],
+    ['supply','Supply Support',1,'supply|provisioning|spare'],
+    ['tm','Technical Data / Manuals',1,'technical.*manual|tech.*data|publication'],
+    ['training','Training',0,'training|instruction'],
+    ['ram','RAM Analysis',0,'ram\\b|reliab|maintainab'],
+    ['config','Configuration Management',0,'config.*manage|configuration'],
+    ['drl','Deliverable Tracking',0,'drl|cdrl|deliverable']
+];
+
+// Map every program to its checklist
+const _CL_MAP = {
+    yrbm:_CL_PMS300, apl:_CL_PMS300, afdm:_CL_PMS300, ydt:_CL_PMS300, yon:_CL_PMS300,
+    ddg51:_CL_DDG51, lcs:_CL_LCS, cvn78:_CL_CVN78, ffg62:_CL_FFG62, lpd17:_CL_LPD17,
+    f35:_CL_F35NAVY, f35b:_CL_F35NAVY, ch53k:_CL_CH53K,
+    m1:_CL_M1, stryker:_CL_STRYKER, ah64:_CL_AH64, himars:_CL_HIMARS,
+    f35a:_CL_F35A, kc46:_CL_KC46, b21:_CL_B21, c17:_CL_C17,
+    gps3:_CL_USSF, sbirs:_CL_USSF,
+    nsc:_CL_USCG, opc:_CL_USCG, frc:_CL_USCG,
+    acv:_CL_ACV,
+    custom:_CL_CUSTOM
+};
+
+function getCL(key) { return (_CL_MAP[key]||_CL_CUSTOM).map(a=>({id:a[0],l:a[1],c:a[2],kw:new RegExp(a[3],'i')})); }
 
 const DI_MAP = {
     'DI-ILSS-81490':'ilsmgmt','DI-ILSS-81494':'maint','DI-ILSS-81492':'maint',
@@ -1059,29 +1499,25 @@ const DI_MAP = {
     'DI-TRAN-81476':'training','DI-HFAC-80743':'manpower','DI-MCCR-80030':'compres',
     'DI-FACI-80931':'facilities','DI-PACK-80886':'phst','DI-MISC-80711':'design',
     'DI-RELI-80255':'ram','DI-RELI-81372':'ram','DI-CMAN-81250':'config','DI-CMAN-80858':'config',
-    'DI-MGMT-81466':'ilsmgmt'
+    'DI-MGMT-81466':'ilsmgmt','DI-ALSS-81530':'lsa','DI-ALSS-81529':'lsa',
+    'DI-TMSS-80897':'techdata','DI-TMSS-81114':'techdata'
 };
 
 const OWNERS = {
-    ilsmgmt:{p:'PMS / Program Office',s:'Contractor'},
-    maint:{p:'Contractor (ILS)',s:'NAVSEA / SUPSHIP'},
-    supply:{p:'Contractor (Provisioning)',s:'NAVSUP / DLA'},
-    se:{p:'Contractor',s:'NAVSEA'},
-    techdata:{p:'Contractor (Tech Pubs)',s:'NSWCCD / PMS'},
-    training:{p:'NETC / Contractor',s:'PMS'},
-    manpower:{p:'OPNAV N1 / PMS',s:'Contractor'},
-    compres:{p:'Contractor',s:'NAVWAR / PMS'},
-    facilities:{p:'NAVFAC',s:'PMS'},
-    phst:{p:'Contractor',s:'NAVSEA / PMS'},
-    design:{p:'Contractor (Engineering)',s:'NAVSEA'},
-    ram:{p:'Contractor',s:'NAVSEA / PMS'},
-    config:{p:'Contractor (CM)',s:'PMS / NAVSEA'}
+    ilsmgmt:{p:'PMS / Program Office',s:'Contractor'},maint:{p:'Contractor (ILS)',s:'NAVSEA / SUPSHIP'},
+    supply:{p:'Contractor (Provisioning)',s:'NAVSUP / DLA'},se:{p:'Contractor',s:'NAVSEA'},
+    techdata:{p:'Contractor (Tech Pubs)',s:'NSWCCD / PMS'},training:{p:'NETC / Contractor',s:'PMS'},
+    manpower:{p:'OPNAV N1 / PMS',s:'Contractor'},compres:{p:'Contractor',s:'NAVWAR / PMS'},
+    facilities:{p:'NAVFAC',s:'PMS'},phst:{p:'Contractor',s:'NAVSEA / PMS'},
+    design:{p:'Contractor (Engineering)',s:'NAVSEA'},ram:{p:'Contractor',s:'NAVSEA / PMS'},
+    config:{p:'Contractor (CM)',s:'PMS / NAVSEA'},lsa:{p:'Contractor (LSA)',s:'PM / PEO'},
+    depot:{p:'Organic Depot / DLA',s:'PM'},cyber:{p:'Contractor (Cyber)',s:'NAVWAR / DISA'}
 };
 
-const COST_K = {ilsmgmt:45,maint:120,supply:250,se:80,techdata:150,training:60,manpower:35,compres:25,facilities:40,phst:30,design:55,ram:95,config:110};
+const COST_K = {ilsmgmt:45,maint:120,supply:250,se:80,techdata:150,training:60,manpower:35,
+    compres:25,facilities:40,phst:30,design:55,ram:95,config:110,lsa:80,depot:200,cyber:65};
 
 // ── Program DRL Templates ──
-// s=sequence, di=DI number, t=title, el=ILS element, c=critical(1/0)
 const PROGS = {
     yrbm:{name:'YRBM \u2014 Yard Repair, Berthing & Messing',ofc:'PMS 300',type:'Service Craft (Non-Self-Propelled)',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
@@ -1099,7 +1535,7 @@ const PROGS = {
         {s:'A013',di:'DI-PACK-80886',t:'PHS&T Plan',el:'phst',c:0},
         {s:'A014',di:'DI-MISC-80711',t:'Design Interface Document',el:'design',c:0},
         {s:'A015',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata','config','ram']},
+    ]},
     apl:{name:'APL \u2014 Auxiliary Personnel Lighter',ofc:'PMS 300',type:'Service Craft (Non-Self-Propelled)',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
@@ -1112,7 +1548,7 @@ const PROGS = {
         {s:'A009',di:'DI-RELI-80255',t:'RAM Report',el:'ram',c:1},
         {s:'A010',di:'DI-PACK-80886',t:'PHS&T Plan',el:'phst',c:0},
         {s:'A011',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata','config','ram']},
+    ]},
     afdm:{name:'AFDM \u2014 Auxiliary Floating Drydock Medium',ofc:'PMS 300',type:'Floating Drydock',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
@@ -1135,7 +1571,7 @@ const PROGS = {
         {s:'A019',di:'DI-MISC-80711',t:'Design Interface Document',el:'design',c:1},
         {s:'A020',di:'DI-MCCR-80030',t:'Computer Resources LCMP',el:'compres',c:0},
         {s:'A021',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','se','techdata','training','ram','config','phst','design']},
+    ]},
     ydt:{name:'YDT \u2014 Large Harbor Tug',ofc:'PMS 300',type:'Service Craft (Self-Propelled)',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
@@ -1149,7 +1585,7 @@ const PROGS = {
         {s:'A010',di:'DI-PACK-80886',t:'PHS&T Plan',el:'phst',c:0},
         {s:'A011',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0},
         {s:'A012',di:'DI-MISC-80711',t:'Design Interface Document',el:'design',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata','config','training','ram']},
+    ]},
     yon:{name:'YON \u2014 Fuel Oil Barge',ofc:'PMS 300',type:'Fuel Barge (Non-Self-Propelled)',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
@@ -1161,7 +1597,7 @@ const PROGS = {
         {s:'A008',di:'DI-PACK-80886',t:'PHS&T Plan (Fuel Handling)',el:'phst',c:1},
         {s:'A009',di:'DI-RELI-80255',t:'RAM Report',el:'ram',c:1},
         {s:'A010',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata','config','training','ram','phst']},
+    ]},
     ddg51:{name:'DDG-51 Flight III (Arleigh Burke)',ofc:'PMS 400D',type:'Guided Missile Destroyer',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
@@ -1182,7 +1618,7 @@ const PROGS = {
         {s:'A017',di:'DI-PACK-80886',t:'PHS&T Plan',el:'phst',c:1},
         {s:'A018',di:'DI-MISC-80711',t:'Design Interface',el:'design',c:1},
         {s:'A019',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','se','techdata','training','manpower','compres','phst','design','ram','config']},
+    ]},
     lcs:{name:'LCS Freedom-class',ofc:'PMS 501',type:'Littoral Combat Ship',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
@@ -1194,7 +1630,7 @@ const PROGS = {
         {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1},
         {s:'A009',di:'DI-SESS-81519',t:'Support Equipment',el:'se',c:0},
         {s:'A010',di:'DI-MGMT-81466',t:'Program Mgmt Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata','config','training','ram']},
+    ]},
     cvn78:{name:'CVN-78 Ford-class',ofc:'PMS 378',type:'Aircraft Carrier',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
@@ -1217,7 +1653,7 @@ const PROGS = {
         {s:'A019',di:'DI-PACK-80886',t:'PHS&T Plan',el:'phst',c:1},
         {s:'A020',di:'DI-MISC-80711',t:'Design Interface',el:'design',c:1},
         {s:'A021',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','se','techdata','training','manpower','compres','facilities','phst','design','ram','config']},
+    ]},
     ffg62:{name:'FFG-62 Constellation-class',ofc:'PMS 515',type:'Guided Missile Frigate',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
@@ -1230,7 +1666,7 @@ const PROGS = {
         {s:'A009',di:'DI-SESS-81519',t:'Support Equipment',el:'se',c:1},
         {s:'A010',di:'DI-HFAC-80743',t:'Manpower Report',el:'manpower',c:0},
         {s:'A011',di:'DI-MGMT-81466',t:'Program Mgmt Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','se','techdata','training','ram','config']},
+    ]},
     lpd17:{name:'LPD-17 San Antonio-class',ofc:'PMS 317',type:'Amphibious Transport Dock',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
@@ -1242,7 +1678,7 @@ const PROGS = {
         {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1},
         {s:'A009',di:'DI-SESS-81519',t:'Support Equipment',el:'se',c:0},
         {s:'A010',di:'DI-MGMT-81466',t:'Program Mgmt Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata','training','ram','config']},
+    ]},
     f35:{name:'F-35C Lightning II',ofc:'PMA-265 / JSF PO',type:'Carrier-Based Strike Fighter',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan / ALIS Requirements',el:'maint',c:1},
@@ -1254,7 +1690,19 @@ const PROGS = {
         {s:'A008',di:'DI-RELI-80255',t:'RAM / PHM Analysis',el:'ram',c:1},
         {s:'A009',di:'DI-MCCR-80030',t:'ALIS / ODIN LCMP',el:'compres',c:1},
         {s:'A010',di:'DI-MGMT-81466',t:'Program Mgmt Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata','config','training','ram','compres']},
+    ]},
+    f35b:{name:'F-35B Lightning II (STOVL)',ofc:'PMA-265 / JSF PO',type:'STOVL Strike Fighter',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Documentation',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals (IETM)',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Config Status Accounting',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM / PHM Analysis',el:'ram',c:1},
+        {s:'A009',di:'DI-MCCR-80030',t:'ODIN LCMP',el:'compres',c:1},
+        {s:'A010',di:'DI-MGMT-81466',t:'Program Mgmt Plan',el:'ilsmgmt',c:0}
+    ]},
     ch53k:{name:'CH-53K King Stallion',ofc:'PMA-261',type:'Heavy-Lift Helicopter',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
@@ -1265,9 +1713,167 @@ const PROGS = {
         {s:'A007',di:'DI-TRAN-81476',t:'Training Plan',el:'training',c:1},
         {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1},
         {s:'A009',di:'DI-MGMT-81466',t:'Program Mgmt Plan',el:'ilsmgmt',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata','config','training','ram']},
+    ]},
+    m1:{name:'M1A2 Abrams SEPv3',ofc:'PEO GCS',type:'Main Battle Tank',drls:[
+        {s:'A001',di:'DI-ALSS-81530',t:'Logistics Support Analysis (LSA)',el:'lsa',c:1},
+        {s:'A002',di:'DI-ALSS-81529',t:'LSAR Data / MAC Development',el:'lsa',c:1},
+        {s:'A003',di:'DI-TMSS-80897',t:'Technical Manuals (TM 9-2350)',el:'techdata',c:1},
+        {s:'A004',di:'DI-ILSS-81493',t:'Provisioning Plan / ASL',el:'supply',c:1},
+        {s:'A005',di:'DI-ILSS-81495',t:'Repair Parts & Special Tools List',el:'supply',c:1},
+        {s:'A006',di:'DI-TRAN-81476',t:'New Equipment Training (NET) Plan',el:'training',c:1},
+        {s:'A007',di:'DI-SESS-81519',t:'TMDE Requirements',el:'se',c:1},
+        {s:'A008',di:'DI-HFAC-80743',t:'MANPRINT Assessment',el:'manpower',c:1},
+        {s:'A009',di:'DI-RELI-80255',t:'RAM / Ao Analysis',el:'ram',c:1},
+        {s:'A010',di:'DI-CMAN-81250',t:'Configuration Management / ECPs',el:'config',c:1},
+        {s:'A011',di:'DI-PACK-80886',t:'Transportability Assessment',el:'phst',c:1},
+        {s:'A012',di:'DI-MGMT-81466',t:'Depot Maintenance Work Requirements',el:'ilsmgmt',c:1}
+    ]},
+    stryker:{name:'Stryker ICV-VA1',ofc:'PM Stryker',type:'Infantry Combat Vehicle',drls:[
+        {s:'A001',di:'DI-ALSS-81530',t:'Logistics Support Analysis',el:'lsa',c:1},
+        {s:'A002',di:'DI-ALSS-81529',t:'MAC Development',el:'lsa',c:1},
+        {s:'A003',di:'DI-TMSS-80897',t:'Technical Manuals (TM 9-series)',el:'techdata',c:1},
+        {s:'A004',di:'DI-ILSS-81493',t:'Provisioning / ASL',el:'supply',c:1},
+        {s:'A005',di:'DI-ILSS-81495',t:'RPSTL',el:'supply',c:1},
+        {s:'A006',di:'DI-TRAN-81476',t:'New Equipment Training',el:'training',c:1},
+        {s:'A007',di:'DI-SESS-81519',t:'TMDE / Special Tools',el:'se',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1},
+        {s:'A009',di:'DI-CMAN-81250',t:'Configuration Management',el:'config',c:1},
+        {s:'A010',di:'DI-PACK-80886',t:'Transportability (C-17/C-130)',el:'phst',c:1}
+    ]},
+    ah64:{name:'AH-64E Apache Guardian',ofc:'PEO Aviation',type:'Attack Helicopter',drls:[
+        {s:'A001',di:'DI-ALSS-81530',t:'Logistics Support Analysis',el:'lsa',c:1},
+        {s:'A002',di:'DI-ALSS-81529',t:'MAC Development',el:'lsa',c:1},
+        {s:'A003',di:'DI-TMSS-80897',t:'Aviation Technical Manuals',el:'techdata',c:1},
+        {s:'A004',di:'DI-ILSS-81493',t:'Provisioning / ASL',el:'supply',c:1},
+        {s:'A005',di:'DI-ILSS-81495',t:'RPSTL',el:'supply',c:1},
+        {s:'A006',di:'DI-TRAN-81476',t:'Pilot/Crew Training (NET)',el:'training',c:1},
+        {s:'A007',di:'DI-SESS-81519',t:'Ground Support Equipment (GSE)',el:'se',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM / Mission Capable Rate',el:'ram',c:1},
+        {s:'A009',di:'DI-CMAN-81250',t:'Configuration / MOD Programs',el:'config',c:1},
+        {s:'A010',di:'DI-MGMT-81466',t:'Depot / AVIM / AVUM Planning',el:'ilsmgmt',c:1}
+    ]},
+    himars:{name:'M142 HIMARS',ofc:'PEO Missiles & Space',type:'Rocket Artillery',drls:[
+        {s:'A001',di:'DI-ALSS-81530',t:'Logistics Support Analysis',el:'lsa',c:1},
+        {s:'A002',di:'DI-TMSS-80897',t:'Technical Manuals (TM 9-series)',el:'techdata',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Plan',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'RPSTL',el:'supply',c:1},
+        {s:'A005',di:'DI-TRAN-81476',t:'New Equipment Training',el:'training',c:1},
+        {s:'A006',di:'DI-SESS-81519',t:'TMDE / Support Equipment',el:'se',c:1},
+        {s:'A007',di:'DI-RELI-80255',t:'RAM / System Readiness',el:'ram',c:1},
+        {s:'A008',di:'DI-CMAN-81250',t:'Configuration Management',el:'config',c:1},
+        {s:'A009',di:'DI-PACK-80886',t:'Transportability (C-130)',el:'phst',c:1}
+    ]},
+    f35a:{name:'F-35A Lightning II (USAF)',ofc:'JSF PO / ACC',type:'Conventional Takeoff Fighter',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan / ODIN',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning / Global Spares',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81114',t:'Technical Orders (TOs)',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Config / Software Baseline',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Aircrew & Maintainer Training',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM / MC Rate Analysis',el:'ram',c:1},
+        {s:'A009',di:'DI-MCCR-80030',t:'ODIN LCMP',el:'compres',c:1},
+        {s:'A010',di:'DI-SESS-81519',t:'Aerospace Ground Equipment',el:'se',c:1}
+    ]},
+    kc46:{name:'KC-46A Pegasus',ofc:'AFLCMC',type:'Aerial Refueling Tanker',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Reliability Centered Maintenance Plan',el:'maint',c:1},
+        {s:'A003',di:'DI-TMSS-81114',t:'Technical Orders',el:'techdata',c:1},
+        {s:'A004',di:'DI-ILSS-81493',t:'Supply Chain Management',el:'supply',c:1},
+        {s:'A005',di:'DI-ILSS-81495',t:'Vendor Spares',el:'supply',c:1},
+        {s:'A006',di:'DI-TRAN-81476',t:'Aircrew Training',el:'training',c:1},
+        {s:'A007',di:'DI-RELI-80255',t:'RAM / Availability',el:'ram',c:1},
+        {s:'A008',di:'DI-CMAN-81250',t:'Configuration Management',el:'config',c:1},
+        {s:'A009',di:'DI-SESS-81519',t:'AGE Requirements',el:'se',c:1}
+    ]},
+    b21:{name:'B-21 Raider',ofc:'AFLCMC / LRSO PO',type:'Long-Range Strike Bomber',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
+        {s:'A003',di:'DI-TMSS-81114',t:'Technical Orders / IETM',el:'techdata',c:1},
+        {s:'A004',di:'DI-ILSS-81493',t:'Supply / Provisioning',el:'supply',c:1},
+        {s:'A005',di:'DI-ILSS-81495',t:'Vendor Spares',el:'supply',c:1},
+        {s:'A006',di:'DI-TRAN-81476',t:'Training Systems / Simulators',el:'training',c:1},
+        {s:'A007',di:'DI-RELI-80255',t:'RAM / Stealth Sustainment',el:'ram',c:1},
+        {s:'A008',di:'DI-CMAN-81250',t:'Config / SCN Management',el:'config',c:1},
+        {s:'A009',di:'DI-FACI-80931',t:'Secure Facility Requirements',el:'facilities',c:1},
+        {s:'A010',di:'DI-MCCR-80030',t:'Cybersecurity / Mission Systems',el:'compres',c:1}
+    ]},
+    c17:{name:'C-17 Globemaster III',ofc:'AFLCMC',type:'Strategic Airlift',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'RCM / Maintenance Plan',el:'maint',c:1},
+        {s:'A003',di:'DI-TMSS-81114',t:'Technical Orders',el:'techdata',c:1},
+        {s:'A004',di:'DI-ILSS-81493',t:'Supply Chain / DLA Coordination',el:'supply',c:1},
+        {s:'A005',di:'DI-ILSS-81495',t:'Vendor Spares',el:'supply',c:1},
+        {s:'A006',di:'DI-TRAN-81476',t:'Aircrew & Maintainer Training',el:'training',c:1},
+        {s:'A007',di:'DI-RELI-80255',t:'RAM / Mission Capable Rate',el:'ram',c:1},
+        {s:'A008',di:'DI-CMAN-81250',t:'Configuration Management',el:'config',c:1},
+        {s:'A009',di:'DI-SESS-81519',t:'AGE Requirements',el:'se',c:1}
+    ]},
+    gps3:{name:'GPS III / IIIF',ofc:'Space Systems Command',type:'Navigation Satellite',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Ground Segment Maintenance Plan',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Supply / Unique Space Parts',el:'supply',c:1},
+        {s:'A004',di:'DI-TRAN-81476',t:'Operator Training',el:'training',c:1},
+        {s:'A005',di:'DI-RELI-80255',t:'On-Orbit Reliability Analysis',el:'ram',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Config / Firmware Control',el:'config',c:1},
+        {s:'A007',di:'DI-MCCR-80030',t:'Cybersecurity / Space Resilience',el:'compres',c:1},
+        {s:'A008',di:'DI-FACI-80931',t:'Ground Station Facilities',el:'facilities',c:0}
+    ]},
+    sbirs:{name:'SBIRS / Next-Gen OPIR',ofc:'Space Systems Command',type:'Missile Warning Satellite',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Ground Segment Maintenance',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Supply / Classified Components',el:'supply',c:1},
+        {s:'A004',di:'DI-TRAN-81476',t:'Mission Crew Training',el:'training',c:1},
+        {s:'A005',di:'DI-RELI-80255',t:'Constellation Availability Analysis',el:'ram',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Configuration Management',el:'config',c:1},
+        {s:'A007',di:'DI-MCCR-80030',t:'Cybersecurity / STIG Compliance',el:'compres',c:1},
+        {s:'A008',di:'DI-FACI-80931',t:'SCIF / Ground Station Requirements',el:'facilities',c:1}
+    ]},
+    nsc:{name:'NSC (Legend-class)',ofc:'CG-9325',type:'National Security Cutter',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan (PMS)',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Technical Documentation',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Recommended Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals (CG Format)',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Configuration Status Accounting',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1},
+        {s:'A009',di:'DI-SESS-81519',t:'Support Equipment',el:'se',c:1},
+        {s:'A010',di:'DI-MGMT-81466',t:'C4ISR Logistics',el:'ilsmgmt',c:1}
+    ]},
+    opc:{name:'OPC (Heritage-class)',ofc:'CG-9325',type:'Offshore Patrol Cutter',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Documentation',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Configuration Management',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1}
+    ]},
+    frc:{name:'FRC (Sentinel-class)',ofc:'CG-9325',type:'Fast Response Cutter',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Documentation',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Configuration Management',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1}
+    ]},
+    acv:{name:'ACV 1.1 Amphibious Combat Vehicle',ofc:'PEO Land Systems (USMC)',type:'Amphibious Combat Vehicle',drls:[
+        {s:'A001',di:'DI-ALSS-81530',t:'Logistics Support Analysis',el:'lsa',c:1},
+        {s:'A002',di:'DI-ALSS-81529',t:'MAC Development',el:'lsa',c:1},
+        {s:'A003',di:'DI-TMSS-80897',t:'Technical Manuals',el:'techdata',c:1},
+        {s:'A004',di:'DI-ILSS-81493',t:'Provisioning / Block Requirements',el:'supply',c:1},
+        {s:'A005',di:'DI-ILSS-81495',t:'RPSTL',el:'supply',c:1},
+        {s:'A006',di:'DI-TRAN-81476',t:'MOS Training Plan',el:'training',c:1},
+        {s:'A007',di:'DI-SESS-81519',t:'CSS Equipment',el:'se',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM / Operational Readiness',el:'ram',c:1},
+        {s:'A009',di:'DI-CMAN-81250',t:'Configuration Management',el:'config',c:1}
+    ]},
     custom:{name:'Custom Program',ofc:'\u2014',type:'User-Defined',drls:[
-        {s:'C001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'C001',di:'DI-ILSS-81490',t:'Logistics Support Plan',el:'ilsmgmt',c:1},
         {s:'C002',di:'DI-ILSS-81494',t:'Maintenance Plan',el:'maint',c:1},
         {s:'C003',di:'DI-ILSS-81493',t:'Provisioning Documentation',el:'supply',c:1},
         {s:'C004',di:'DI-ILSS-81495',t:'Vendor Spares',el:'supply',c:0},
@@ -1275,8 +1881,33 @@ const PROGS = {
         {s:'C006',di:'DI-CMAN-81250',t:'Configuration Accounting',el:'config',c:0},
         {s:'C007',di:'DI-TRAN-81476',t:'Training Plan',el:'training',c:0},
         {s:'C008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:0}
-    ],req:['ilsmgmt','maint','supply','techdata']}
+    ]}
 };
+
+// ── Sample DRL Generator ──
+function loadSampleDRL() {
+    const progKey = document.getElementById('ilsProgram').value;
+    const prog = PROGS[progKey];
+    if (!prog) return;
+    const statuses = ['Approved','Approved','Submitted','In Review','Overdue','Rejected','Approved','Approved'];
+    const dates = ['2025-10-15','2025-12-01','2026-01-15','2026-02-01','2026-03-15','2026-04-01','2025-11-20','2026-05-01'];
+    let csv = 'CDRL Seq,DI Number,Title,Status,Due Date\n';
+    prog.drls.forEach((d,i) => {
+        if (Math.random() < 0.18) return; // ~18% missing
+        const si = (i + Math.floor(Math.random()*3)) % statuses.length;
+        csv += d.s + ',' + d.di + ',"' + d.t + '",' + statuses[si] + ',' + dates[si] + '\n';
+    });
+    // Also add some realistic records that match checklist keywords
+    const cl = getCL(progKey);
+    cl.forEach(item => {
+        if (Math.random() < 0.5) {
+            csv += ','+ ',"' + item.l + ' \u2014 Status Report",Review Complete,2026-01-30\n';
+        }
+    });
+    const blob = new Blob([csv], {type:'text/csv'});
+    const file = new File([blob], 'Sample_DRL_' + progKey.toUpperCase() + '.csv', {type:'text/csv'});
+    handleILSFiles([file]);
+}
 
 // ── File Upload Handling ──
 function setupILSDropzone() {
@@ -1431,15 +2062,16 @@ function guessElement(t) {
     if (/maintenance|pms\b|mrc\b|mip\b|planned\s*maint/.test(t)) return 'maint';
     if (/supply|spare|provisioning|buylist|allowance|apl\b|cosal/.test(t)) return 'supply';
     if (/support\s*equip|se\b|tools|test\s*equip/.test(t)) return 'se';
-    if (/technical\s*(manual|data|pub)|tm\b|ietm|tech\s*data/.test(t)) return 'techdata';
-    if (/training|trainer|course|curriculum|school/.test(t)) return 'training';
-    if (/manpower|personnel|manning|billet/.test(t)) return 'manpower';
+    if (/technical\s*(manual|data|pub|order)|tm\b|ietm|tech\s*data/.test(t)) return 'techdata';
+    if (/training|trainer|course|curriculum|school|net\b.*plan/.test(t)) return 'training';
+    if (/manpower|personnel|manning|billet|manprint/.test(t)) return 'manpower';
     if (/computer|software|cyber|alis|odin/.test(t)) return 'compres';
     if (/facilit|shore\s*infra/.test(t)) return 'facilities';
     if (/phs.?t|packaging|handling|storage|transport|hazmat/.test(t)) return 'phst';
     if (/design\s*interface|interface\s*doc/.test(t)) return 'design';
     if (/ram\b|reliab|avail|maintain|fmeca|fracas|failure/.test(t)) return 'ram';
     if (/config|baseline|ecp|engineering\s*change/.test(t)) return 'config';
+    if (/lsa\b|logistics\s*support\s*analy|mac\b|rpstl/.test(t)) return 'lsa';
     return '';
 }
 
@@ -1451,10 +2083,27 @@ function fuzzyMatch(a, b) {
 }
 
 // ── Checklist & Program Handlers ──
+function initILSChecklist(progKey) {
+    const container = document.getElementById('ilsChecklist');
+    if (!container) return;
+    const cl = getCL(progKey || document.getElementById('ilsProgram').value);
+    container.innerHTML = cl.map(el =>
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:background 0.2s;'+(el.c?'font-weight:600':'')+'" onmouseover="this.style.background=\'rgba(0,170,255,0.05)\'" onmouseout="this.style.background=\'transparent\'">'
+        + '<input type="checkbox" id="ils_'+el.id+'" style="width:auto!important;accent-color:var(--accent)">'
+        + '<span>' + el.l + (el.c?' <span style="color:var(--red);font-size:0.7rem">CRITICAL</span>':'') + '</span></label>'
+    ).join('');
+}
+
 function updateChecklistFromUploads() {
-    const found = new Set();
-    ilsFiles.forEach(f => f.records.forEach(r => { if (r.element) found.add(r.element); }));
-    ILS_EL.forEach(el => { const cb = document.getElementById('ils_' + el.id); if (cb && found.has(el.id)) cb.checked = true; });
+    const progKey = document.getElementById('ilsProgram').value;
+    const cl = getCL(progKey);
+    const allText = [];
+    ilsFiles.forEach(f => f.records.forEach(r => { if (r.title) allText.push(r.title); if (r.di) allText.push(r.di); }));
+    const joined = allText.join(' ');
+    cl.forEach(item => {
+        const cb = document.getElementById('ils_' + item.id);
+        if (cb && item.kw.test(joined)) cb.checked = true;
+    });
 }
 
 function onILSProgramChange() {
@@ -1463,8 +2112,20 @@ function onILSProgramChange() {
     if (!prog) return;
     const ofc = document.getElementById('ilsOffice');
     if (ofc) ofc.value = prog.ofc;
-    ILS_EL.forEach(el => { const cb = document.getElementById('ils_' + el.id); if (cb) cb.checked = prog.req.includes(el.id); });
+    // Rebuild checklist for this program
+    initILSChecklist(key);
+    // Re-apply auto-detection from any uploaded files
     updateChecklistFromUploads();
+    // Reset results since program changed
+    ilsResults = null;
+    document.getElementById('ilsScore').textContent = '--';
+    document.getElementById('ilsScore').style.color = 'var(--muted)';
+    document.getElementById('ilsScoreLabel').textContent = 'Upload documents & run analysis';
+    document.getElementById('ilsGaugeFill').style.width = '0%';
+    document.getElementById('ilsCoverage').innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">Upload files to see checklist coverage.</div>';
+    document.getElementById('ilsActions').innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem;font-size:0.85rem">Run analysis to generate action items.</div>';
+    document.getElementById('ilsCostSchedule').innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">Analysis required to estimate impact.</div>';
+    const r = document.getElementById('ilsResult'); r.innerHTML=''; r.classList.remove('show');
 }
 
 // ── Analysis Engine ──
@@ -1474,69 +2135,90 @@ function runFullILSAnalysis() {
     if (!prog) { alert('Please select a program.'); return; }
     const hull = document.getElementById('ilsHull')?.value || '';
     const phase = document.getElementById('ilsPhase')?.value || 'design';
+    const cl = getCL(progKey);
 
+    // 1. Checklist scoring
+    const clItems = cl.map(item => {
+        const cb = document.getElementById('ils_' + item.id);
+        return { ...item, checked: cb ? cb.checked : false };
+    });
+    const clChecked = clItems.filter(i => i.checked);
+    const clUnchecked = clItems.filter(i => !i.checked);
+    const clCritMissing = clUnchecked.filter(i => i.c);
+    const clMax = clItems.reduce((s,i) => s + (i.c ? 2 : 1), 0);
+    const clScore = clChecked.reduce((s,i) => s + (i.c ? 2 : 1), 0);
+    const clPct = clMax > 0 ? Math.round((clScore / clMax) * 100) : 0;
+
+    // 2. DRL gap analysis
     const allRecs = [];
     ilsFiles.forEach(f => allRecs.push(...f.records));
-    const manualChecked = new Set();
-    ILS_EL.forEach(el => { const cb = document.getElementById('ils_' + el.id); if (cb && cb.checked) manualChecked.add(el.id); });
-
-    const coverage = {};
-    ILS_EL.forEach(el => {
-        const reqDrls = prog.drls.filter(d => d.el === el.id);
-        const foundDrls = reqDrls.map(d => {
-            const match = allRecs.find(r =>
-                (r.di && r.di === d.di) ||
-                (r.seq && r.seq === d.s) ||
-                (r.title && fuzzyMatch(r.title, d.t))
-            );
-            return { ...d, found: !!match, status: match ? (match.status || 'detected') : 'missing', due: match?.due || '' };
-        });
-        const isReq = prog.req.includes(el.id);
-        const present = foundDrls.filter(d => d.found).length;
-        const total = foundDrls.length;
-        const hasManual = manualChecked.has(el.id);
-        const pct = total > 0 ? Math.round((present / total) * 100) : (hasManual ? 50 : 0);
-        coverage[el.id] = { required: isReq, total, present, pct, drls: foundDrls, manual: hasManual };
+    const drlResults = prog.drls.map(d => {
+        const match = allRecs.find(r =>
+            (r.di && r.di === d.di) ||
+            (r.seq && r.seq === d.s) ||
+            (r.title && fuzzyMatch(r.title, d.t))
+        );
+        return { ...d, found: !!match, status: match ? (match.status || 'detected') : 'missing', due: match?.due || '' };
     });
+    const drlFound = drlResults.filter(d => d.found).length;
+    const drlTotal = drlResults.length;
+    const drlPct = drlTotal > 0 ? Math.round((drlFound / drlTotal) * 100) : 0;
 
+    // 3. Combined score (weighted: 60% checklist, 40% DRL)
+    const hasDrls = ilsFiles.length > 0;
+    const pct = hasDrls ? Math.round(clPct * 0.6 + drlPct * 0.4) : clPct;
+
+    // 4. Action items
     const actions = [];
     let gapN = 1;
-    Object.entries(coverage).forEach(([elId, cov]) => {
-        cov.drls.forEach(d => {
-            if (!d.found) {
-                actions.push({
-                    id: 'GAP-' + String(gapN++).padStart(3,'0'), el: elId,
-                    elLabel: ILS_EL.find(e=>e.id===elId)?.label, title: d.t, di: d.di, seq: d.s,
-                    severity: d.c ? 'critical' : 'warning',
-                    owner: OWNERS[elId]?.p||'TBD', secondary: OWNERS[elId]?.s||'',
-                    action: 'Request submission of ' + d.di + ' \u2014 ' + d.t,
-                    cost: COST_K[elId]||0, schedule: d.c ? '2-4 months' : '1-2 months'
-                });
-            } else if (/overdue|late|reject|disapprov/.test(d.status)) {
-                actions.push({
-                    id: 'ACT-' + String(gapN++).padStart(3,'0'), el: elId,
-                    elLabel: ILS_EL.find(e=>e.id===elId)?.label, title: d.t + ' \u2014 ' + d.status.toUpperCase(),
-                    di: d.di, seq: d.s, severity: d.c ? 'critical' : 'warning',
-                    owner: OWNERS[elId]?.p||'TBD', secondary: OWNERS[elId]?.s||'',
-                    action: /reject|disapprov/.test(d.status) ? 'Review comments & resubmit '+d.di : 'Issue CAR for late delivery of '+d.di,
-                    cost: Math.round((COST_K[elId]||0)*0.5), schedule: d.c ? '1-3 months' : '2-4 weeks'
-                });
-            }
+    // From checklist gaps
+    clCritMissing.forEach(item => {
+        actions.push({
+            id: 'CL-' + String(gapN++).padStart(3,'0'), severity: 'critical', source: 'checklist',
+            title: item.l, action: 'Complete and verify: ' + item.l,
+            owner: prog.ofc + ' / Contractor', secondary: '',
+            cost: 40, schedule: '1-3 months'
+        });
+    });
+    // From DRL gaps
+    drlResults.filter(d => !d.found && d.c).forEach(d => {
+        const ow = OWNERS[d.el] || {p:'TBD',s:''};
+        actions.push({
+            id: 'DRL-' + String(gapN++).padStart(3,'0'), severity: 'critical', source: 'drl',
+            title: d.di + ' \u2014 ' + d.t, action: 'Request submission of ' + d.di,
+            owner: ow.p, secondary: ow.s,
+            cost: COST_K[d.el] || 50, schedule: '2-4 months'
+        });
+    });
+    drlResults.filter(d => d.found && /overdue|late|reject|disapprov/.test(d.status)).forEach(d => {
+        const ow = OWNERS[d.el] || {p:'TBD',s:''};
+        actions.push({
+            id: 'ACT-' + String(gapN++).padStart(3,'0'), severity: 'warning', source: 'drl',
+            title: d.di + ' \u2014 ' + d.t + ' (' + d.status.toUpperCase() + ')',
+            action: /reject|disapprov/.test(d.status) ? 'Review comments & resubmit' : 'Issue CAR for late delivery',
+            owner: ow.p, secondary: ow.s,
+            cost: Math.round((COST_K[d.el]||50)*0.4), schedule: '1-2 months'
+        });
+    });
+    // Non-critical DRL gaps as warnings
+    drlResults.filter(d => !d.found && !d.c).forEach(d => {
+        const ow = OWNERS[d.el] || {p:'TBD',s:''};
+        actions.push({
+            id: 'DRL-' + String(gapN++).padStart(3,'0'), severity: 'warning', source: 'drl',
+            title: d.di + ' \u2014 ' + d.t, action: 'Request submission of ' + d.di,
+            owner: ow.p, secondary: ow.s,
+            cost: Math.round((COST_K[d.el]||30)*0.5), schedule: '1-2 months'
         });
     });
     actions.sort((a,b) => (a.severity==='critical'?0:1)-(b.severity==='critical'?0:1));
 
-    const reqEls = ILS_EL.filter(e => coverage[e.id]?.required);
-    const totalReq = reqEls.reduce((s,e) => s + coverage[e.id].total, 0);
-    const foundReq = reqEls.reduce((s,e) => s + coverage[e.id].present, 0);
-    const pct = totalReq > 0 ? Math.round((foundReq/totalReq)*100) : 0;
     const critGaps = actions.filter(a => a.severity==='critical').length;
     const totalCost = actions.reduce((s,a) => s + a.cost, 0);
 
-    ilsResults = { coverage, actions, pct, totalReq, foundReq, critGaps, totalCost, prog, hull, phase, progKey };
+    ilsResults = { clItems, clPct, drlResults, drlPct, drlFound, drlTotal, pct, actions, critGaps, totalCost, prog, hull, phase, progKey, cl };
 
     renderILSScore(pct, critGaps);
-    renderILSCoverage(coverage);
+    renderILSCoverage(clItems, drlResults);
     renderILSActions(actions);
     renderILSCost(actions, totalCost, critGaps);
     renderILSResult();
@@ -1552,20 +2234,25 @@ function renderILSScore(pct, critGaps) {
     f.style.width = pct + '%';
 }
 
-function renderILSCoverage(coverage) {
+function renderILSCoverage(clItems, drlResults) {
     const el = document.getElementById('ilsCoverage');
     if (!el) return;
-    el.innerHTML = ILS_EL.map(e => {
-        const c = coverage[e.id];
-        if (!c || (!c.required && !c.total)) return '';
-        const color = c.pct >= 80 ? '#14f195' : c.pct >= 40 ? '#ffa500' : '#ff3333';
-        const icon = c.pct >= 80 ? 'fa-check-circle' : c.pct >= 40 ? 'fa-exclamation-circle' : 'fa-times-circle';
-        return '<div class="ils-coverage-row">'
-            + '<div style="display:flex;justify-content:space-between;margin-bottom:3px">'
-            + '<span><i class="fas '+icon+'" style="color:'+color+';margin-right:4px;font-size:0.8rem"></i>'+(e.crit?'<strong>':'')+e.label+(e.crit?'</strong>':'')+'</span>'
-            + '<span style="color:var(--muted)">'+c.present+'/'+c.total+'</span></div>'
-            + '<div class="ils-coverage-bar"><div class="ils-coverage-fill" style="width:'+c.pct+'%;background:'+color+'"></div></div></div>';
-    }).filter(Boolean).join('');
+    let html = '<div style="font-weight:700;color:var(--accent);margin-bottom:8px;font-size:0.82rem">PROGRAM CHECKLIST</div>';
+    clItems.forEach(item => {
+        const icon = item.checked ? 'fa-check-circle' : 'fa-times-circle';
+        const color = item.checked ? '#14f195' : (item.c ? '#ff3333' : 'var(--muted)');
+        html += '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.03)">'
+            + '<i class="fas '+icon+'" style="color:'+color+';font-size:0.75rem;min-width:14px"></i>'
+            + '<span style="color:'+(item.checked?'var(--steel)':'var(--muted)')+'">'+item.l+'</span>'
+            + (item.c&&!item.checked?'<span style="color:#ff3333;font-size:0.65rem;font-weight:700;margin-left:auto">GAP</span>':'')
+            + '</div>';
+    });
+    if (drlResults && drlResults.length) {
+        const found = drlResults.filter(d=>d.found).length;
+        html += '<div style="font-weight:700;color:var(--gold);margin:12px 0 6px;font-size:0.82rem">DRL COVERAGE: '+found+'/'+drlResults.length+'</div>';
+        html += '<div class="ils-coverage-bar" style="margin-bottom:4px"><div class="ils-coverage-fill" style="width:'+Math.round(found/drlResults.length*100)+'%;background:'+(found/drlResults.length>=0.8?'#14f195':found/drlResults.length>=0.5?'#ffa500':'#ff3333')+'"></div></div>';
+    }
+    el.innerHTML = html;
 }
 
 function renderILSActions(actions) {
@@ -1579,11 +2266,11 @@ function renderILSActions(actions) {
     let html = '';
     if (crit.length) {
         html += '<div style="color:var(--red);font-weight:700;margin-bottom:6px;font-size:0.82rem"><i class="fas fa-skull-crossbones"></i> CRITICAL (' + crit.length + ')</div>';
-        html += crit.map(renderActionItem).join('');
+        crit.forEach(a => { html += renderActionItem(a); });
     }
     if (warn.length) {
         html += '<div style="color:#ffa500;font-weight:700;margin:8px 0 6px;font-size:0.82rem"><i class="fas fa-exclamation-triangle"></i> WARNING (' + warn.length + ')</div>';
-        html += warn.map(renderActionItem).join('');
+        warn.forEach(a => { html += renderActionItem(a); });
     }
     el.innerHTML = html;
 }
@@ -1591,8 +2278,8 @@ function renderILSActions(actions) {
 function renderActionItem(a) {
     return '<div class="ils-action-item '+(a.severity==='critical'?'critical':'warning')+'">'
         + '<div class="action-header"><span class="action-title">'+a.id+': '+a.title+'</span><span class="action-owner">'+a.owner+'</span></div>'
-        + '<div class="action-detail"><strong>DI:</strong> '+a.di+' &middot; <strong>Action:</strong> '+a.action+'</div>'
-        + '<div class="action-detail"><strong>Est. Cost Impact:</strong> $'+a.cost+'K &middot; <strong>Schedule Risk:</strong> '+a.schedule
+        + '<div class="action-detail"><strong>Action:</strong> '+a.action+'</div>'
+        + '<div class="action-detail"><strong>Est. Cost:</strong> $'+a.cost+'K &middot; <strong>Schedule Risk:</strong> '+a.schedule
         + (a.secondary ? ' &middot; <strong>Coord:</strong> '+a.secondary : '') + '</div></div>';
 }
 
@@ -1617,14 +2304,17 @@ function renderILSResult() {
     const panel = document.getElementById('ilsResult');
     const progStr = r.prog.name + (r.hull ? ' \u2014 ' + r.hull : '');
     const phaseStr = document.getElementById('ilsPhase')?.selectedOptions[0]?.text || '';
+    const clComplete = r.clItems.filter(i=>i.checked).length;
     panel.innerHTML = '<div class="result-label">ILS ANALYSIS \u2014 ' + progStr.toUpperCase() + '</div>'
-        + '<div style="margin:0.5rem 0;font-size:0.85rem;color:var(--muted)">Office: '+r.prog.ofc+' \u00b7 Phase: '+phaseStr+' \u00b7 Files Analyzed: '+ilsFiles.length+'</div>'
-        + '<div style="margin:0.8rem 0"><span style="font-size:1.3rem;font-weight:800;color:'+(r.pct>=80?'var(--green)':r.pct>=50?'#ffa500':'var(--red)')+'">'+r.pct+'% DRL Coverage</span>'
-        + '<span style="margin-left:12px;color:var(--muted)">'+r.foundReq+'/'+r.totalReq+' required items verified</span></div>'
+        + '<div style="margin:0.5rem 0;font-size:0.85rem;color:var(--muted)">Office: '+r.prog.ofc+' \u00b7 Phase: '+phaseStr+' \u00b7 Files: '+ilsFiles.length+'</div>'
+        + '<div style="margin:0.8rem 0"><span style="font-size:1.3rem;font-weight:800;color:'+(r.pct>=80?'var(--green)':r.pct>=50?'#ffa500':'var(--red)')+'">'+r.pct+'% Overall Readiness</span></div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0.8rem 0">'
+        + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--accent)">'+clComplete+'/'+r.clItems.length+'</div><div style="font-size:0.72rem;color:var(--muted)">Checklist Items</div></div>'
+        + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--gold)">'+r.drlFound+'/'+r.drlTotal+'</div><div style="font-size:0.72rem;color:var(--muted)">DRL Items Verified</div></div></div>'
         + (r.critGaps > 0
-            ? '<div style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:8px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-exclamation-triangle" style="color:#ff3333"></i> <strong style="color:#ff3333">'+r.critGaps+' critical gap'+(r.critGaps>1?'s':'')+' found</strong> \u2014 Estimated risk cost: <strong>$'+r.totalCost+'K</strong>. See Action Items panel for details and responsible parties.</div>'
-            : '<div style="background:rgba(20,241,149,0.08);border:1px solid rgba(20,241,149,0.2);border-radius:8px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-check-circle" style="color:var(--green)"></i> <strong style="color:var(--green)">All required DRL items accounted for.</strong> Package appears ready for review.</div>')
-        + '<div style="margin-top:1rem;font-size:0.78rem;color:var(--muted)">Analysis based on DoD 5000 series ILS requirements per program type. Always verify against your specific contract DRL.</div>';
+            ? '<div style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:8px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-exclamation-triangle" style="color:#ff3333"></i> <strong style="color:#ff3333">'+r.critGaps+' critical gap'+(r.critGaps>1?'s':'')+' found</strong> \u2014 Est. risk: <strong>$'+r.totalCost+'K</strong>. See Action Items.</div>'
+            : '<div style="background:rgba(20,241,149,0.08);border:1px solid rgba(20,241,149,0.2);border-radius:8px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-check-circle" style="color:var(--green)"></i> <strong style="color:var(--green)">All critical items accounted for.</strong> Package appears ready for review.</div>')
+        + '<div style="margin-top:1rem;font-size:0.78rem;color:var(--muted)">Analysis based on DoD 5000 series ILS requirements per program type. Always verify against your contract-specific DRL.</div>';
     panel.classList.add('show');
 }
 
@@ -1641,14 +2331,15 @@ function generateILSReport() {
     rpt += '\u2550'.repeat(65) + '\n\n';
     rpt += 'Program:        ' + prog.name + (r.hull ? ' (' + r.hull + ')' : '') + '\n';
     rpt += 'Program Office: ' + prog.ofc + '\n';
-    rpt += 'Vessel Type:    ' + prog.type + '\n';
+    rpt += 'Platform Type:  ' + prog.type + '\n';
     rpt += 'Phase:          ' + phaseStr + '\n';
     rpt += 'Report Date:    ' + now.toISOString().split('T')[0] + '\n';
-    rpt += 'Analyst Tool:   S4 Ledger ILS Intelligence v2.0\n';
+    rpt += 'Analyst Tool:   S4 Ledger ILS Intelligence v3.0\n';
     rpt += 'Classification: UNCLASSIFIED\n\n';
     rpt += '\u2500'.repeat(65) + '\n';
-    rpt += '  OVERALL DRL COVERAGE:  ' + r.pct + '%\n';
-    rpt += '  Required Items Found:  ' + r.foundReq + ' / ' + r.totalReq + '\n';
+    rpt += '  OVERALL READINESS:     ' + r.pct + '%\n';
+    rpt += '  Checklist Score:       ' + r.clPct + '% (' + r.clItems.filter(i=>i.checked).length + '/' + r.clItems.length + ' items)\n';
+    rpt += '  DRL Coverage:          ' + r.drlPct + '% (' + r.drlFound + '/' + r.drlTotal + ' items)\n';
     rpt += '  Critical Gaps:         ' + r.critGaps + '\n';
     rpt += '  Total Action Items:    ' + r.actions.length + '\n';
     rpt += '  Est. Risk Cost:        $' + r.totalCost + 'K\n';
@@ -1656,29 +2347,32 @@ function generateILSReport() {
 
     rpt += 'DOCUMENTS ANALYZED (' + ilsFiles.length + '):\n';
     if (ilsFiles.length) ilsFiles.forEach(f => { rpt += '  \u2022 ' + f.name + ' \u2014 ' + f.records.length + ' items detected\n'; });
-    else rpt += '  (No files uploaded \u2014 analysis based on manual checklist only)\n';
+    else rpt += '  (No files uploaded \u2014 analysis based on checklist only)\n';
 
-    rpt += '\n\nILS ELEMENT COVERAGE:\n' + '\u2500'.repeat(65) + '\n';
-    ILS_EL.forEach(e => {
-        const c = r.coverage[e.id]; if (!c) return;
-        const bar = '\u2588'.repeat(Math.round(c.pct/5)) + '\u2591'.repeat(20-Math.round(c.pct/5));
-        rpt += '  [' + (c.required?'REQ':'OPT') + '] ' + e.label.padEnd(36) + bar + ' ' + String(c.pct).padStart(3) + '% (' + c.present + '/' + c.total + ')\n';
+    rpt += '\n\nPROGRAM-SPECIFIC ILS CHECKLIST:\n' + '\u2500'.repeat(65) + '\n';
+    r.clItems.forEach(item => {
+        rpt += '  [' + (item.checked ? '\u2713' : '\u2717') + '] ' + item.l + (item.c ? ' (CRITICAL)' : '') + (item.checked ? '' : ' *** GAP ***') + '\n';
+    });
+
+    rpt += '\n\nDRL/CDRL COVERAGE:\n' + '\u2500'.repeat(65) + '\n';
+    r.drlResults.forEach(d => {
+        rpt += '  [' + (d.found ? '\u2713' : '\u2717') + '] ' + d.s + ' ' + d.di + ' \u2014 ' + d.t;
+        if (d.found) rpt += ' (' + d.status + ')';
+        else rpt += ' *** MISSING ***';
+        if (d.c) rpt += ' [CRITICAL]';
+        rpt += '\n';
     });
 
     if (r.actions.length) {
         rpt += '\n\nACTION ITEMS:\n' + '\u2550'.repeat(65) + '\n';
         r.actions.forEach(a => {
             rpt += '\n  ' + a.id + ' [' + a.severity.toUpperCase() + ']\n';
-            rpt += '  Element:     ' + (a.elLabel||'') + '\n';
-            rpt += '  DI Number:   ' + a.di + '\n';
             rpt += '  Item:        ' + a.title + '\n';
             rpt += '  Action:      ' + a.action + '\n';
             rpt += '  Responsible: ' + a.owner + (a.secondary ? ' (Coord: ' + a.secondary + ')' : '') + '\n';
             rpt += '  Cost Impact: $' + a.cost + 'K   Schedule Risk: ' + a.schedule + '\n';
             rpt += '  ' + '\u2500'.repeat(50) + '\n';
         });
-    } else {
-        rpt += '\n\n  \u2713 No action items. All required DRL items accounted for.\n';
     }
 
     rpt += '\n\n' + '\u2500'.repeat(65) + '\n  RECOMMENDATIONS:\n';
@@ -1695,7 +2389,6 @@ function generateILSReport() {
     rpt += '\n' + '\u2500'.repeat(65) + '\n  Generated by S4 Ledger | s4ledger.com\n';
     rpt += '  Hash-verified logistics for the defense industry\n' + '\u2550'.repeat(65) + '\n';
 
-    // Download as file
     const blob = new Blob([rpt], {type:'text/plain'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url;
@@ -1722,29 +2415,24 @@ async function anchorILSReport() {
     panel.innerHTML = '<div class="result-label">ILS REPORT HASH ANCHORED</div>'
         + '<div style="color:var(--green);font-weight:700;margin:0.5rem 0"><i class="fas fa-check-circle"></i> Report hash computed & ready for XRPL anchor</div>'
         + '<div class="result-label" style="margin-top:0.8rem">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
-        + '<div style="margin-top:0.8rem;font-size:0.82rem;color:var(--muted)">This hash verifies the state of your ILS analysis at this point in time. Anchor it to XRPL using the Anchor tab for immutable proof.</div>';
+        + '<div style="margin-top:0.8rem;font-size:0.82rem;color:var(--muted)">This hash verifies the state of your ILS analysis. Anchor it to XRPL using the Anchor tab for immutable proof.</div>';
     panel.classList.add('show');
 }
 
 // ── Initialization ──
-function initILSChecklist() {
-    const container = document.getElementById('ilsChecklist');
-    if (!container) return;
-    container.innerHTML = ILS_EL.map(el =>
-        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:background 0.2s;'+(el.crit?'font-weight:600':'')+'" onmouseover="this.style.background=\'rgba(0,170,255,0.05)\'" onmouseout="this.style.background=\'transparent\'">'
-        + '<input type="checkbox" id="ils_'+el.id+'" style="width:auto!important;accent-color:var(--accent)">'
-        + '<span>' + el.label + (el.crit?' <span style="color:var(--red);font-size:0.7rem">CRITICAL</span>':'') + '</span></label>'
-    ).join('');
+function initILSEngine() {
+    initILSChecklist(document.getElementById('ilsProgram').value);
+    setupILSDropzone();
+    onILSProgramChange();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     renderTypeGrid();
     loadSample('supply');
-    initILSChecklist();
-    setupILSDropzone();
-    onILSProgramChange();
+    initILSEngine();
 });
+
 </script>
 <script>
 if(typeof particlesJS!=='undefined'&&document.getElementById('particles-js')){particlesJS('particles-js',{particles:{number:{value:35},color:{value:'#00aaff'},opacity:{value:0.12},size:{value:2},line_linked:{enable:true,distance:150,color:'#00aaff',opacity:0.06,width:1},move:{enable:true,speed:0.7}},interactivity:{events:{onhover:{enable:true,mode:'grab'}},modes:{grab:{distance:130,line_linked:{opacity:0.15}}}}});}
