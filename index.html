@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="/s4-assets/icon-192.png">
     <title>S4 Ledger | Immutable Logistics Verification on XRPL</title>
     <meta name="description" content="S4 Ledger — tamper-proof audit trails for defense supply chains, technical data, maintenance records, and contract deliverables on the XRP Ledger.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -10,6 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="s4-assets/style.css">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>@media(max-width:768px){.ils-check-grid{grid-template-columns:1fr !important}}</style>
 </head>
 <body>
     <div class="scroll-progress" id="scrollProgress"></div>
@@ -31,6 +36,7 @@
                     <li class="nav-item"><a class="nav-link" href="s4-roadmap/">Roadmap</a></li>
                     <li class="nav-item"><a class="nav-link" href="s4-faq/">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link" href="s4-contact/">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="s4-login/" style="color:#00aaff !important;font-weight:700"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                 </ul>
                 <button class="nav-link" onclick="openSearch()" style="background:none;border:none;cursor:pointer;padding:8px 12px !important;"><i class="fas fa-search" style="color:#fff;font-size:0.95rem;"></i></button>
             </div>
@@ -151,11 +157,11 @@
                         </div>
                     </div>
                     <p style="color:var(--text-secondary);font-size:0.92rem;line-height:1.7;margin-bottom:15px;">
-                        The ILS Intelligence Analyzer is the first tool purpose-built for defense ILS program managers. Upload your DRLs, CDRLs, spreadsheets, and logistics documents — the engine cross-references them against <strong>program-specific checklists</strong> for 26 weapons systems across all 9 DoD branches, identifies gaps, scores readiness, and generates actionable reports.
+                        The ILS Intelligence Analyzer is the first tool purpose-built for defense ILS program managers. Upload your DRLs, CDRLs, spreadsheets, and logistics documents — the engine cross-references them against <strong>program-specific checklists</strong> compatible with any defense program across all Department of War branches, identifies gaps, scores readiness, and generates actionable reports.
                     </p>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-                        <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--text-secondary);"><span style="color:#14f195;font-weight:700;">✓</span> 26 program-specific checklists</div>
-                        <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--text-secondary);"><span style="color:#14f195;font-weight:700;">✓</span> 44+ DI number tracking per program</div>
+                    <div class="ils-check-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                        <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--text-secondary);"><span style="color:#14f195;font-weight:700;">✓</span> Compatible with any program-specific ILS checklist</div>
+                        <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--text-secondary);"><span style="color:#14f195;font-weight:700;">✓</span> Automated DI number gap detection & tracking</div>
                         <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--text-secondary);"><span style="color:#14f195;font-weight:700;">✓</span> AI Agent for real-time guidance</div>
                         <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--text-secondary);"><span style="color:#14f195;font-weight:700;">✓</span> Cost & schedule risk estimation</div>
                         <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:var(--text-secondary);"><span style="color:#14f195;font-weight:700;">✓</span> XRPL hash-verified audit trail</div>
@@ -208,8 +214,8 @@
         <div class="row">
             <div class="col-md-4 mb-3 reveal"><a href="s4-use-cases/" class="explore-card"><div class="explore-icon">🔗</div><h4>12 ILS Use Cases</h4><p>Supply chain, CDRLs, maintenance, configuration, and more</p><span class="explore-link">View Use Cases →</span></a></div>
             <div class="col-md-4 mb-3 reveal"><a href="s4-pricing/" class="explore-card"><div class="explore-icon">💰</div><h4>Pricing & $SLS Token</h4><p>Subscription tiers and per-anchor XRPL transaction costs</p><span class="explore-link">View Pricing →</span></a></div>
-            <div class="col-md-4 mb-3 reveal"><a href="s4-roadmap/" class="explore-card"><div class="explore-icon">🗺️</div><h4>Roadmap</h4><p>From foundation to cross-service DoD deployment</p><span class="explore-link">View Roadmap →</span></a></div>
-            <div class="col-md-4 mb-3 reveal"><a href="demo-app/" class="explore-card"><div class="explore-icon">🖥️</div><h4>Demo App</h4><p>160+ record types across 9 branches — anchor, verify, & explore ILS Intelligence</p><span class="explore-link">Launch Demo →</span></a></div>
+            <div class="col-md-4 mb-3 reveal"><a href="s4-roadmap/" class="explore-card"><div class="explore-icon">🗺️</div><h4>Roadmap</h4><p>From foundation to cross-service DoW deployment</p><span class="explore-link">View Roadmap →</span></a></div>
+            <div class="col-md-4 mb-3 reveal"><a href="demo-app/" class="explore-card"><div class="explore-icon">🖥️</div><h4>Demo App</h4><p>160+ record types across all branches — anchor, verify, & explore ILS Intelligence</p><span class="explore-link">Launch Demo →</span></a></div>
             <div class="col-md-4 mb-3 reveal"><a href="demo-app/#tabILS" class="explore-card"><div class="explore-icon">🧠</div><h4>ILS Intelligence</h4><p>Gap analysis, readiness scoring, and report generation for ILS program managers</p><span class="explore-link">Open ILS Analyzer →</span></a></div>
             <div class="col-md-4 mb-3 reveal"><a href="sdk-playground/" class="explore-card"><div class="explore-icon">💻</div><h4>SDK Playground</h4><p>Try the S4 Ledger Python SDK interactively in your browser</p><span class="explore-link">Open Playground →</span></a></div>
             <div class="col-md-4 mb-3 reveal"><a href="metrics.html" class="explore-card"><div class="explore-icon">📊</div><h4>Live Metrics</h4><p>Real-time network stats, anchor volume, and uptime</p><span class="explore-link">View Metrics →</span></a></div>

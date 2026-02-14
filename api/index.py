@@ -4,6 +4,7 @@ Real XRPL Testnet integration with graceful fallback.
 160+ defense record types across 9 branches, 600 pre-seeded records.
 Supabase integration for persistence (optional, graceful fallback).
 API key authentication support.
+Rate limiting, CORS, and request logging.
 """
 
 from http.server import BaseHTTPRequestHandler
@@ -15,6 +16,7 @@ import json
 import os
 import re
 import hmac
+import time
 
 # XRPL Testnet integration (graceful fallback if unavailable)
 try:
@@ -34,6 +36,15 @@ SUPABASE_AVAILABLE = bool(SUPABASE_URL and SUPABASE_KEY)
 # API Key auth
 API_MASTER_KEY = os.environ.get("S4_API_MASTER_KEY", "s4-demo-key-2026")
 API_KEYS_STORE = {}  # In production, stored in Supabase
+
+# Rate limiting (in-memory; resets per cold start)
+_rate_limit_store = {}  # ip -> [timestamps]
+RATE_LIMIT_WINDOW = 60  # seconds
+RATE_LIMIT_MAX = 120    # requests per window
+
+# Request logging
+_request_log = []
+API_START_TIME = time.time()
 
 # ═══════════════════════════════════════════════════════════════════════
 #  MILITARY BRANCH DEFINITIONS
@@ -480,6 +491,8 @@ class handler(BaseHTTPRequestHandler):
         path = path.rstrip("/")
         if path in ("/api", "/api/status"):
             return "status"
+        if path == "/api/health":
+            return "health"
         if path == "/api/metrics":
             return "metrics"
         if path == "/api/transactions":
@@ -506,6 +519,30 @@ class handler(BaseHTTPRequestHandler):
             return "infrastructure"
         return None
 
+    def _check_rate_limit(self):
+        """Returns True if request is allowed, False if rate limited."""
+        ip = self.headers.get("X-Forwarded-For", self.headers.get("X-Real-IP", "unknown"))
+        now = time.time()
+        if ip not in _rate_limit_store:
+            _rate_limit_store[ip] = []
+        # Clean old entries
+        _rate_limit_store[ip] = [t for t in _rate_limit_store[ip] if now - t < RATE_LIMIT_WINDOW]
+        if len(_rate_limit_store[ip]) >= RATE_LIMIT_MAX:
+            return False
+        _rate_limit_store[ip].append(now)
+        return True
+
+    def _log_request(self, route, status=200):
+        _request_log.append({
+            "time": datetime.now(timezone.utc).isoformat(),
+            "route": route,
+            "status": status,
+            "method": self.command,
+        })
+        # Keep last 1000 entries
+        if len(_request_log) > 1000:
+            _request_log.pop(0)
+
     def do_OPTIONS(self):
         self.send_response(204)
         for k, v in self._cors_headers().items():
@@ -516,11 +553,27 @@ class handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         route = self._route(parsed.path)
 
-        if route == "status":
+        # Rate limiting
+        if not self._check_rate_limit():
+            self._send_json({"error": "Rate limit exceeded", "retry_after": RATE_LIMIT_WINDOW}, 429)
+            return
+
+        if route == "health":
+            self._log_request("health")
+            uptime = time.time() - API_START_TIME
+            self._send_json({
+                "status": "healthy",
+                "uptime_seconds": round(uptime, 1),
+                "requests_served": len(_request_log),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "version": "3.1.0",
+            })
+        elif route == "status":
+            self._log_request("status")
             self._send_json({
                 "status": "operational",
                 "service": "S4 Ledger Defense Metrics API",
-                "version": "3.0.0",
+                "version": "3.1.0",
                 "record_types": len(RECORD_CATEGORIES),
                 "branches": len(BRANCHES),
                 "total_records": len(_get_all_records()),

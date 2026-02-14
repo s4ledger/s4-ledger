@@ -6,7 +6,7 @@ S4 Ledger is building the integrity layer for defense logistics — immutable ve
 
 ## Problem & Opportunity
 
-- Counterfeit parts in DoD supply chains cost billions and endanger warfighters
+- Counterfeit parts in DoW supply chains cost billions and endanger warfighters
 - Gundecked maintenance records undermine readiness across all service branches
 - CDRL delivery disputes consume months of contract resolution time
 - No common integrity layer exists across GCSS, DPAS, 3-M, and contractor ERPs
@@ -29,7 +29,7 @@ S4 Ledger is building the integrity layer for defense logistics — immutable ve
 
 ## Market
 
-- $800B+ annual DoD budget
+- $800B+ annual DoW budget
 - 12 ILS elements (MIL-STD-1388) — each an addressable market
 - No competitor combines hash-only architecture + public ledger + defense focus
 - Adjacent markets: NATO allies, defense contractors, shipbuilding, aviation MRO

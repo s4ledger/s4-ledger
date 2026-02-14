@@ -18,7 +18,7 @@
 |---|---|
 | **Defense Contractors** | Supply chain integrity, CDRL verification, audit readiness |
 | **Shipbuilders** | Configuration management, maintenance record anchoring |
-| **DoD Program Offices** | Immutable audit trails, cross-system verification |
+| **DoW Program Offices** | Immutable audit trails, cross-system verification |
 | **System Integrators** | GCSS, DPAS, 3-M integration consulting |
 | **Blockchain / XRPL** | Ecosystem development, validator operations |
 

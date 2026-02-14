@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="description" content="S4 Ledger — Secure Login Portal for authorized defense logistics users.">
+    <title>S4 Ledger | Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../s4-assets/style.css">
+    <style>
+        .login-container{max-width:460px;margin:0 auto;padding-top:8rem}
+        .login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem;position:relative;overflow:hidden}
+        .login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#00aaff,#c9a84c)}
+        .login-logo{text-align:center;margin-bottom:2rem}
+        .login-logo img{height:60px;width:60px;margin-bottom:12px;animation:logoFloat 3s ease-in-out infinite}
+        .login-logo h2{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#00aaff,#ffffff,#c9a84c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .login-logo p{color:var(--muted);font-size:0.85rem;margin-top:4px}
+        @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+        .form-group{margin-bottom:1.2rem}
+        .form-group label{display:block;font-weight:600;color:var(--steel);margin-bottom:6px;font-size:0.88rem}
+        .form-input{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;transition:all 0.2s}
+        .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,170,255,0.15);outline:none}
+        .form-input::placeholder{color:var(--muted)}
+        .input-icon-wrap{position:relative}
+        .input-icon-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.9rem}
+        .input-icon-wrap .form-input{padding-left:40px}
+        .toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);cursor:pointer;font-size:0.9rem;background:none;border:none}
+        .toggle-pw:hover{color:var(--accent)}
+        .remember-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;font-size:0.85rem}
+        .remember-row label{color:var(--steel);cursor:pointer;display:flex;align-items:center;gap:6px}
+        .remember-row a{color:var(--accent);text-decoration:none;font-weight:600}
+        .remember-row a:hover{text-decoration:underline}
+        .btn-login{width:100%;background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:10px;padding:13px;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.2s;font-family:'Plus Jakarta Sans',sans-serif}
+        .btn-login:hover{background:linear-gradient(135deg,#0099ee,#0077bb);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,170,255,0.3)}
+        .btn-login:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+        .divider{display:flex;align-items:center;gap:12px;margin:1.5rem 0;color:var(--muted);font-size:0.82rem}
+        .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+        .sso-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+        .btn-sso{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;color:var(--steel);transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+        .btn-sso:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,170,255,0.05)}
+        .security-info{text-align:center;margin-top:1.5rem;padding:12px;background:rgba(20,241,149,0.04);border:1px solid rgba(20,241,149,0.15);border-radius:10px}
+        .security-info i{color:#14f195;margin-right:6px}
+        .security-info span{color:var(--steel);font-size:0.78rem}
+        .signup-link{text-align:center;margin-top:1.2rem;font-size:0.88rem;color:var(--muted)}
+        .signup-link a{color:var(--accent);font-weight:600;text-decoration:none}
+        .signup-link a:hover{text-decoration:underline}
+
+        /* Tutorial Overlay */
+        .tutorial-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,8,16,0.96);z-index:9999;display:none;align-items:center;justify-content:center;padding:1rem}
+        .tutorial-overlay.active{display:flex}
+        .tutorial-card{background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:600px;width:100%;padding:2.5rem;position:relative;overflow:hidden;animation:fadeIn 0.3s ease}
+        .tutorial-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#00aaff,#c9a84c)}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .tutorial-step{display:none}
+        .tutorial-step.active{display:block}
+        .tutorial-step h3{color:#00aaff;font-size:1.2rem;margin-bottom:12px}
+        .tutorial-step p{color:var(--steel);font-size:0.9rem;line-height:1.7}
+        .tutorial-feature{display:flex;align-items:flex-start;gap:12px;margin:12px 0;padding:10px;background:rgba(0,170,255,0.04);border-radius:8px;border:1px solid rgba(0,170,255,0.1)}
+        .tutorial-feature i{color:var(--accent);font-size:1.1rem;margin-top:3px;min-width:20px}
+        .tutorial-feature div{font-size:0.85rem;color:var(--steel)}
+        .tutorial-feature strong{color:#fff}
+        .tutorial-dots{display:flex;justify-content:center;gap:8px;margin:1.5rem 0}
+        .tutorial-dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.2s}
+        .tutorial-dot.active{background:var(--accent);transform:scale(1.2)}
+        .tutorial-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1rem}
+        .btn-tut{background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:8px;padding:8px 20px;font-weight:600;font-size:0.88rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s}
+        .btn-tut:hover{background:rgba(0,170,255,0.2);border-color:var(--accent)}
+        .btn-tut.primary{background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border-color:transparent}
+        .btn-tut.primary:hover{background:linear-gradient(135deg,#0099ee,#0077bb)}
+        .btn-skip{background:none;border:none;color:var(--muted);font-size:0.82rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;position:absolute;top:15px;right:20px}
+        .btn-skip:hover{color:var(--accent)}
+
+        /* Dashboard Preview (post-login) */
+        .dashboard-preview{display:none;padding-top:6rem}
+        .dashboard-preview.active{display:block}
+        .dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:12px}
+        .dash-welcome h2{font-size:1.5rem;font-weight:800;margin-bottom:4px}
+        .dash-welcome p{color:var(--muted);font-size:0.88rem}
+        .dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:2rem}
+        .dash-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all 0.2s;cursor:pointer;text-decoration:none;color:inherit}
+        .dash-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,170,255,0.12)}
+        .dash-card-icon{font-size:2rem;margin-bottom:10px}
+        .dash-card h4{font-size:1rem;font-weight:700;color:#fff;margin-bottom:6px}
+        .dash-card p{font-size:0.82rem;color:var(--steel);margin:0}
+        .dash-card .dash-badge{display:inline-block;font-size:0.7rem;padding:2px 8px;border-radius:4px;font-weight:700;margin-top:8px}
+        .dash-badge.live{background:rgba(20,241,149,0.15);color:#14f195}
+        .dash-badge.beta{background:rgba(0,170,255,0.15);color:#00aaff}
+        .dash-badge.soon{background:rgba(201,168,76,0.15);color:#c9a84c}
+        .activity-log{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+        .activity-log h4{font-size:1rem;font-weight:700;margin-bottom:12px}
+        .activity-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.82rem}
+        .activity-item:last-child{border:none}
+        .activity-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem}
+        .activity-time{color:var(--muted);font-size:0.75rem;margin-left:auto;white-space:nowrap}
+        @media(max-width:768px){.login-container{padding-top:5rem}.login-card{padding:1.5rem}.sso-buttons{grid-template-columns:1fr}.dash-grid{grid-template-columns:1fr}.tutorial-card{padding:1.5rem}}
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="../"><img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" class="nav-logo"><span class="brand-text">S4 Ledger</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><i class="fas fa-bars" style="color:#fff"></i></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../demo-app/">Demo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../s4-pricing/">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../s4-contact/">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="./" style="color:#00aaff !important"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOGIN FORM -->
+    <div id="loginView" class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger">
+                <h2>Welcome Back</h2>
+                <p>Sign in to your S4 Ledger account</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail"><i class="fas fa-envelope" style="margin-right:6px;color:var(--accent)"></i>Email Address</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" class="form-input" id="loginEmail" placeholder="you@organization.mil" required autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword"><i class="fas fa-lock" style="margin-right:6px;color:var(--accent)"></i>Password</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-input" id="loginPassword" placeholder="••••••••••" required autocomplete="current-password">
+                        <button type="button" class="toggle-pw" onclick="togglePassword()"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+
+                <div class="remember-row">
+                    <label><input type="checkbox" id="rememberMe" checked> Remember me</label>
+                    <a href="#" onclick="showForgotPassword(event)">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+
+                <div id="loginError" style="display:none;margin-top:12px;padding:10px;background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:8px;font-size:0.85rem;color:#ff6b6b;text-align:center"></div>
+            </form>
+
+            <div class="divider">or continue with</div>
+
+            <div class="sso-buttons">
+                <button class="btn-sso" onclick="ssoLogin('cac')"><i class="fas fa-id-card" style="color:#14f195"></i> CAC / PIV Card</button>
+                <button class="btn-sso" onclick="ssoLogin('microsoft')"><i class="fab fa-microsoft" style="color:#00aaff"></i> Microsoft SSO</button>
+            </div>
+
+            <div class="security-info">
+                <i class="fas fa-shield-alt"></i>
+                <span>256-bit TLS encryption • FIPS 140-2 compliant • NIST 800-171 aligned</span>
+            </div>
+
+            <div class="signup-link">
+                Don't have an account? <a href="#" onclick="showContactSales(event)">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- TUTORIAL OVERLAY -->
+    <div class="tutorial-overlay" id="tutorialOverlay">
+        <div class="tutorial-card">
+            <button class="btn-skip" onclick="closeTutorial()">Skip Tutorial ×</button>
+
+            <div class="tutorial-step active" data-step="1">
+                <div style="text-align:center;font-size:3rem;margin-bottom:12px">🚀</div>
+                <h3>Welcome to S4 Ledger</h3>
+                <p>Your hash-verified defense logistics platform. Let's take a quick tour of what you can do.</p>
+                <div class="tutorial-feature">
+                    <i class="fas fa-lock"></i>
+                    <div><strong>Zero-Knowledge Security</strong><br>All document processing happens locally in your browser. We never see your data — only SHA-256 hashes are stored.</div>
+                </div>
+                <div class="tutorial-feature">
+                    <i class="fas fa-anchor"></i>
+                    <div><strong>XRPL Anchoring</strong><br>Every record gets an immutable hash on the XRP Ledger. Permanent, tamper-proof, and verifiable by anyone.</div>
+                </div>
+            </div>
+
+            <div class="tutorial-step" data-step="2">
+                <div style="text-align:center;font-size:3rem;margin-bottom:12px">🧠</div>
+                <h3>ILS Intelligence Analyzer</h3>
+                <p>The flagship tool. Upload your ILS documents and instantly get:</p>
+                <div class="tutorial-feature">
+                    <i class="fas fa-chart-line"></i>
+                    <div><strong>Gap Analysis & Readiness Scoring</strong><br>Cross-references your documents against program-specific checklists compatible with any DoW program.</div>
+                </div>
+                <div class="tutorial-feature">
+                    <i class="fas fa-robot"></i>
+                    <div><strong>AI Agent</strong><br>Ask questions, draft CARs, get cost estimates, and generate reports — all in real-time.</div>
+                </div>
+                <div class="tutorial-feature">
+                    <i class="fas fa-paper-plane"></i>
+                    <div><strong>Post-Analysis Actions</strong><br>Send results via email, schedule review meetings, export action trackers, and print reports.</div>
+                </div>
+            </div>
+
+            <div class="tutorial-step" data-step="3">
+                <div style="text-align:center;font-size:3rem;margin-bottom:12px">⚡</div>
+                <h3>Anchor & Verify Records</h3>
+                <p>Choose from 160+ defense record types across all military branches:</p>
+                <div class="tutorial-feature">
+                    <i class="fas fa-file-alt"></i>
+                    <div><strong>Record Types</strong><br>Supply chain, maintenance, contracts, configuration, safety, cybersecurity, and more — organized by branch.</div>
+                </div>
+                <div class="tutorial-feature">
+                    <i class="fas fa-check-double"></i>
+                    <div><strong>Verification</strong><br>Enter any hash to verify it against the XRPL. Instant proof of record integrity for audits, disputes, and compliance.</div>
+                </div>
+            </div>
+
+            <div class="tutorial-step" data-step="4">
+                <div style="text-align:center;font-size:3rem;margin-bottom:12px">📊</div>
+                <h3>Dashboard & Reporting</h3>
+                <p>Your command center for all S4 Ledger activity:</p>
+                <div class="tutorial-feature">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <div><strong>Live Dashboard</strong><br>Real-time metrics, recent activity, and anchor history — all in one view.</div>
+                </div>
+                <div class="tutorial-feature">
+                    <i class="fas fa-cogs"></i>
+                    <div><strong>API & SDK Access</strong><br>Integrate S4 Ledger into your existing workflows with our REST API and Python SDK.</div>
+                </div>
+                <div style="text-align:center;margin-top:1rem;padding:12px;background:rgba(20,241,149,0.06);border-radius:10px;border:1px solid rgba(20,241,149,0.15)">
+                    <span style="color:#14f195;font-weight:700;font-size:0.95rem">You're all set! 🎯</span><br>
+                    <span style="color:var(--steel);font-size:0.82rem">Start exploring from your dashboard below.</span>
+                </div>
+            </div>
+
+            <div class="tutorial-dots">
+                <span class="tutorial-dot active" onclick="goToStep(1)"></span>
+                <span class="tutorial-dot" onclick="goToStep(2)"></span>
+                <span class="tutorial-dot" onclick="goToStep(3)"></span>
+                <span class="tutorial-dot" onclick="goToStep(4)"></span>
+            </div>
+            <div class="tutorial-nav">
+                <button class="btn-tut" id="tutPrev" onclick="prevStep()" style="visibility:hidden">← Back</button>
+                <button class="btn-tut primary" id="tutNext" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD (post-login) -->
+    <div id="dashboardView" class="dashboard-preview container">
+        <div class="dash-header">
+            <div class="dash-welcome">
+                <h2>Welcome, <span id="dashUserName" style="color:var(--accent)">Commander</span></h2>
+                <p>S4 Ledger Command Center — <span id="dashDate"></span></p>
+            </div>
+            <button class="btn-tut" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        </div>
+
+        <div class="dash-grid">
+            <a href="../demo-app/#tabILS" class="dash-card">
+                <div class="dash-card-icon">🧠</div>
+                <h4>ILS Intelligence Analyzer</h4>
+                <p>Upload documents, run gap analysis, and generate ILS readiness reports with AI assistance.</p>
+                <span class="dash-badge live">LIVE</span>
+            </a>
+            <a href="../demo-app/#tabAnchor" class="dash-card">
+                <div class="dash-card-icon">⚓</div>
+                <h4>Anchor Records</h4>
+                <p>Hash-anchor defense records to the XRPL across 160+ record types and all military branches.</p>
+                <span class="dash-badge live">LIVE</span>
+            </a>
+            <a href="../demo-app/#tabVerify" class="dash-card">
+                <div class="dash-card-icon">🔍</div>
+                <h4>Verify Records</h4>
+                <p>Enter a SHA-256 hash to verify any previously anchored record on the XRP Ledger.</p>
+                <span class="dash-badge live">LIVE</span>
+            </a>
+            <a href="../sdk-playground/" class="dash-card">
+                <div class="dash-card-icon">🔧</div>
+                <h4>SDK Playground</h4>
+                <p>Test API calls interactively. Anchor, verify, and query records via the REST API.</p>
+                <span class="dash-badge live">LIVE</span>
+            </a>
+            <a href="../metrics.html" class="dash-card">
+                <div class="dash-card-icon">📊</div>
+                <h4>Live Metrics</h4>
+                <p>Real-time platform statistics including anchor counts, active programs, and system health.</p>
+                <span class="dash-badge live">LIVE</span>
+            </a>
+            <a href="#" class="dash-card" onclick="event.preventDefault()">
+                <div class="dash-card-icon">🔑</div>
+                <h4>API Keys</h4>
+                <p>Manage your API access keys, rate limits, and integration credentials.</p>
+                <span class="dash-badge beta">BETA</span>
+            </a>
+            <a href="#" class="dash-card" onclick="event.preventDefault()">
+                <div class="dash-card-icon">👥</div>
+                <h4>Team Management</h4>
+                <p>Invite team members, manage roles, and control access permissions.</p>
+                <span class="dash-badge soon">COMING SOON</span>
+            </a>
+            <a href="#" class="dash-card" onclick="event.preventDefault()">
+                <div class="dash-card-icon">📋</div>
+                <h4>Audit Trail</h4>
+                <p>Complete history of all anchored records with XRPL transaction verification links.</p>
+                <span class="dash-badge soon">COMING SOON</span>
+            </a>
+        </div>
+
+        <div class="activity-log">
+            <h4><i class="fas fa-clock" style="color:var(--accent);margin-right:8px"></i>Recent Activity</h4>
+            <div id="activityFeed">
+                <div class="activity-item">
+                    <div class="activity-icon" style="background:rgba(20,241,149,0.1);color:#14f195"><i class="fas fa-check"></i></div>
+                    <div>
+                        <div style="color:#fff;font-weight:600">ILS Analysis Completed</div>
+                        <div style="color:var(--muted)">YRBM — PMS 300 | 78% readiness</div>
+                    </div>
+                    <span class="activity-time">2 hours ago</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background:rgba(0,170,255,0.1);color:#00aaff"><i class="fas fa-anchor"></i></div>
+                    <div>
+                        <div style="color:#fff;font-weight:600">Record Anchored to XRPL</div>
+                        <div style="color:var(--muted)">Supply Chain Receipt | SHA-256 verified</div>
+                    </div>
+                    <span class="activity-time">5 hours ago</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background:rgba(201,168,76,0.1);color:#c9a84c"><i class="fas fa-file-export"></i></div>
+                    <div>
+                        <div style="color:#fff;font-weight:600">Report Generated</div>
+                        <div style="color:var(--muted)">Gap Analysis — DDG-51 Flight III</div>
+                    </div>
+                    <span class="activity-time">Yesterday</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background:rgba(20,241,149,0.1);color:#14f195"><i class="fas fa-user-plus"></i></div>
+                    <div>
+                        <div style="color:#fff;font-weight:600">Account Created</div>
+                        <div style="color:var(--muted)">Welcome to S4 Ledger</div>
+                    </div>
+                    <span class="activity-time">3 days ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" class="footer-logo">
+            <a href="../">S4 Ledger</a> — Hash-Verified Logistics for the Defense Industry<br>
+            <span style="font-size:0.8rem;">© 2025 S4 Ledger. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+    // Particles
+    if(typeof particlesJS!=='undefined'&&document.getElementById('particles-js')){particlesJS('particles-js',{particles:{number:{value:25},color:{value:'#00aaff'},opacity:{value:0.1},size:{value:2},line_linked:{enable:true,distance:150,color:'#00aaff',opacity:0.05,width:1},move:{enable:true,speed:0.5}},interactivity:{events:{onhover:{enable:true,mode:'grab'}},modes:{grab:{distance:130,line_linked:{opacity:0.12}}}}});}
+
+    // ── Login Logic ──
+    let currentStep = 1;
+    const TOTAL_STEPS = 4;
+
+    function togglePassword() {
+        const pw = document.getElementById('loginPassword');
+        const icon = document.querySelector('.toggle-pw i');
+        if (pw.type === 'password') { pw.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+        else { pw.type = 'password'; icon.className = 'fas fa-eye'; }
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const pw = document.getElementById('loginPassword').value;
+        const errorEl = document.getElementById('loginError');
+
+        if (!email || !pw) { showError('Please enter both email and password.'); return; }
+        if (pw.length < 6) { showError('Invalid credentials. Please try again.'); return; }
+
+        // Simulate authentication
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+        errorEl.style.display = 'none';
+
+        setTimeout(() => {
+            // Demo: accept any valid-looking credentials
+            const userName = email.split('@')[0].replace(/[^a-zA-Z]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            sessionStorage.setItem('s4_user', JSON.stringify({ email, name: userName, loginTime: Date.now() }));
+
+            // Check if first login — show tutorial
+            if (!localStorage.getItem('s4_tutorial_done')) {
+                showTutorial(userName);
+            } else {
+                showDashboard(userName);
+            }
+        }, 1200);
+    }
+
+    function showError(msg) {
+        const el = document.getElementById('loginError');
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    function ssoLogin(type) {
+        const btn = event.target.closest('.btn-sso');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+        setTimeout(() => {
+            const userName = type === 'cac' ? 'CAC User' : 'SSO User';
+            sessionStorage.setItem('s4_user', JSON.stringify({ email: userName.toLowerCase().replace(' ','') + '@mil.gov', name: userName, loginTime: Date.now() }));
+            if (!localStorage.getItem('s4_tutorial_done')) { showTutorial(userName); }
+            else { showDashboard(userName); }
+        }, 1500);
+    }
+
+    function showTutorial(name) {
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('tutorialOverlay').classList.add('active');
+        currentStep = 1;
+        updateStepUI();
+    }
+
+    function showDashboard(name) {
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('tutorialOverlay').classList.remove('active');
+        document.getElementById('dashboardView').classList.add('active');
+        document.getElementById('dashUserName').textContent = name;
+        document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function closeTutorial() {
+        localStorage.setItem('s4_tutorial_done', '1');
+        const user = JSON.parse(sessionStorage.getItem('s4_user') || '{}');
+        showDashboard(user.name || 'User');
+    }
+
+    function nextStep() {
+        if (currentStep >= TOTAL_STEPS) { closeTutorial(); return; }
+        currentStep++;
+        updateStepUI();
+    }
+
+    function prevStep() {
+        if (currentStep <= 1) return;
+        currentStep--;
+        updateStepUI();
+    }
+
+    function goToStep(n) {
+        currentStep = n;
+        updateStepUI();
+    }
+
+    function updateStepUI() {
+        document.querySelectorAll('.tutorial-step').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tutorial-dot').forEach(d => d.classList.remove('active'));
+        document.querySelector('.tutorial-step[data-step="'+currentStep+'"]').classList.add('active');
+        document.querySelectorAll('.tutorial-dot')[currentStep-1].classList.add('active');
+        document.getElementById('tutPrev').style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+        document.getElementById('tutNext').textContent = currentStep >= TOTAL_STEPS ? 'Get Started →' : 'Next →';
+    }
+
+    function handleLogout() {
+        sessionStorage.removeItem('s4_user');
+        document.getElementById('dashboardView').classList.remove('active');
+        document.getElementById('loginView').style.display = 'block';
+        document.getElementById('loginBtn').disabled = false;
+        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+        document.getElementById('loginForm').reset();
+    }
+
+    function showForgotPassword(e) {
+        e.preventDefault();
+        alert('Password reset functionality will be available in the next release. Please contact your administrator.');
+    }
+
+    function showContactSales(e) {
+        e.preventDefault();
+        window.location.href = '../s4-contact/';
+    }
+
+    // Auto-login if session exists
+    document.addEventListener('DOMContentLoaded', () => {
+        const user = JSON.parse(sessionStorage.getItem('s4_user') || 'null');
+        if (user && Date.now() - user.loginTime < 3600000) { // 1 hour session
+            showDashboard(user.name);
+        }
+    });
+    </script>
+</body>
+</html>

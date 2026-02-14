@@ -105,7 +105,7 @@ S4 Ledger is designed for **unclassified** defense logistics data only. This ser
 
 - Classified information at any level (CONFIDENTIAL, SECRET, TOP SECRET, SCI)
 - Classified system configurations or architectures
-- Any data requiring protection under DoD 5200.01
+- Any data requiring protection under DoW 5200.01
 
 ### 6.2 Customer Obligation
 

@@ -9,7 +9,7 @@ S4 Ledger: Immutable logistics verification for the defense industry, anchored o
 
 ## Problem
 - Counterfeit parts, falsified maintenance records, unverifiable supply chains
-- No common integrity layer across DoD logistics systems
+- No common integrity layer across DoW logistics systems
 - Siloed data, audit failures, delivery disputes
 
 ---
@@ -30,7 +30,7 @@ S4 Ledger: Immutable logistics verification for the defense industry, anchored o
 ---
 
 ## Market
-- $800B+ annual DoD budget
+- $800B+ annual DoW budget
 - 12 ILS elements = 12 addressable verticals
 - No competitor combines hash-only + public ledger + defense focus
 
@@ -53,7 +53,7 @@ S4 Ledger: Immutable logistics verification for the defense industry, anchored o
 
 ## Team
 - Built by ILS professionals
-- Years of hands-on Navy and DoD program experience
+- Years of hands-on Navy and DoW program experience
 - Charleston, SC
 
 ---

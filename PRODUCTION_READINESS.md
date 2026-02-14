@@ -1,7 +1,7 @@
 # S4 Ledger — Production Readiness Checklist
 
-> **Status:** Pre-Production (Testnet) — **Estimated ~42% Production Ready**  
-> **Last Updated:** February 2026 (v3.0.0)  
+> **Status:** Pre-Production (Testnet) — **Estimated ~58% Production Ready**  
+> **Last Updated:** February 2026 (v3.1.0)  
 > **Target:** Mainnet launch + first enterprise pilot
 
 ---
@@ -10,20 +10,21 @@
 
 This document tracks every requirement for taking S4 Ledger from its current testnet deployment to a fully production-ready, investor-grade defense logistics platform. It covers legal, compliance, infrastructure, security, documentation, business development, and operational requirements.
 
-### Current Readiness: ~42%
+### Current Readiness: ~58%
 
 | Area | Status | Score |
 |------|--------|-------|
-| **Frontend / Demo** | ILS Intelligence v3 + AI Agent, 26 programs, 160+ record types, anchor animation, post-analysis actions | **85%** |
-| **API / Backend** | Serverless API v3.0, auth scaffolding, database integration ready, 13 endpoints | **55%** |
+| **Frontend / Demo** | ILS Intelligence v3 + AI Agent (custom tasks, 20+ capabilities), universal program support, 160+ record types, 22 sample document types, anchor animation, post-analysis actions, login portal with tutorial, mobile-responsive design | **92%** |
+| **API / Backend** | Serverless API v3.1, auth scaffolding, database integration ready, 14 endpoints, rate limiting, request logging, health check | **65%** |
 | **XRPL Integration** | Testnet live with graceful fallback | **60%** |
 | **SDK** | pip-installable package with CLI, comprehensive functionality | **50%** |
-| **Infrastructure** | Vercel deployment, SSL, CDN — needs database, monitoring, load balancing | **40%** |
-| **Authentication** | API key system scaffolded — needs production key management | **30%** |
-| **Compliance** | NIST 800-171 architecture aligned, CMMC L2 roadmap — needs formal assessment | **25%** |
+| **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404 page, favicons/touch icons — needs database, monitoring, load balancing | **55%** |
+| **Authentication** | Login portal with SSO/CAC support (UI), tutorial onboarding, API key system scaffolded — needs production key management | **45%** |
+| **User Experience** | Full mobile/tablet responsive, sample doc dropdown (22 types), proper cost formatting ($K/$M), branded favicons on all 16 pages | **90%** |
+| **Compliance** | NIST 800-171 architecture aligned, CMMC L2 roadmap, DoW branding throughout — needs formal assessment | **30%** |
 | **Legal / Business** | Documentation complete — needs entity formation, CAGE code, SAM.gov | **15%** |
-| **Security** | Zero-data-on-chain, client-side processing — needs pen test, SOC 2 | **20%** |
-| **Monitoring / Ops** | Uptime monitoring needed, CI/CD needed | **10%** |
+| **Security** | Zero-data-on-chain, client-side processing, rate limiting — needs pen test, SOC 2 | **25%** |
+| **Monitoring / Ops** | Health check endpoint, request logging — needs full monitoring, CI/CD | **20%** |
 
 ---
 
@@ -35,7 +36,7 @@ This document tracks every requirement for taking S4 Ledger from its current tes
 | Business entity formation (LLC/C-Corp) | ⬜ Pending | **Critical** | Delaware C-Corp recommended for investor compatibility |
 | EIN / Tax ID | ⬜ Pending | **Critical** | Required before any B2B contracts |
 | D-U-N-S Number | ⬜ Pending | **Critical** | Required for government contracting (SAM.gov) |
-| CAGE Code | ⬜ Pending | **Critical** | Required for DoD vendor registration |
+| CAGE Code | ⬜ Pending | **Critical** | Required for DoW vendor registration |
 | SAM.gov Registration | ⬜ Pending | **Critical** | System for Award Management — required for fed contracts |
 | NAICS Code Registration | ⬜ Pending | **High** | 511210 (Software Publishers) / 518210 (Data Processing) |
 | GSA Schedule / SEWP eligibility | ⬜ Pending | Medium | Government procurement vehicle |
@@ -308,6 +309,32 @@ This document tracks every requirement for taking S4 Ledger from its current tes
 - [x] Post-analysis workflow actions ✅ (Send, Schedule Meeting, Action Tracker, Print)
 - [x] SDK pip-installable with CLI ✅ (pyproject.toml, entry points, argparse CLI)
 - [x] Landing page ILS Analyzer showcase ✅
+
+---
+
+## 11. v3.1.0 Changelog (Latest)
+
+### New Features
+- [x] **Login Portal** — Full authentication UI with email/password, CAC/PIV card SSO, and Microsoft SSO support
+- [x] **Onboarding Tutorial** — 4-step interactive walkthrough for new users covering platform capabilities
+- [x] **Dashboard** — Post-login command center with quick access to all tools, activity feed, and role badges
+- [x] **Sample Document Dropdown** — 22 categorized sample document types (DRL, CDRL Matrix, VRS, Buylist, LCSP, MRC, MEL, IUID, TEMP, ICD, IMS, Risk Register, SOW Matrix, Manpower Estimate, Training Plan, and more)
+- [x] **AI Agent Custom Tasks** — 20+ response patterns: draft memos, emails, CARs; explain ILS terms, DI numbers, milestones, COSAL; schedule risk; checklist status; benchmarking; freeform queries
+- [x] **Health Check API** — `/api/health` endpoint with uptime, request count, and version info
+
+### Improvements
+- [x] **DoW Rebrand** — 44 replacements across 20 files: "DoD" → "DoW", "Department of Defense" → "Department of War" (DODIC identifiers preserved)
+- [x] **Cost Formatting** — Smart `formatCost()` function converts raw K values to `$485K` or `$2.2M` across all displays (12 locations updated)
+- [x] **ILS Showcase Text** — Universal language: "compatible with any defense program" instead of specific numbers
+- [x] **Mobile Responsive** — Full mobile/tablet support with breakpoints at 768px, 576px, and 480px; stacking ILS grids, AI chat, post-actions, and dropdowns
+- [x] **Favicons** — Branded S4 Ledger icons on all 16 HTML pages (favicon.ico, apple-touch-icon, 192px, 512px)
+- [x] **PWA Manifest** — `manifest.json` with icons for installable web app support
+- [x] **404 Page** — Custom branded error page with navigation links
+- [x] **API Rate Limiting** — 120 requests/minute per IP with 429 response
+- [x] **Request Logging** — In-memory request log (1000 entries) for debugging
+- [x] **API v3.1.0** — Version bump with health endpoint, rate limiting, and CORS improvements
+- [x] **Login in Navbar** — Login button added to main page and demo app navigation bars
+- [x] **AI Quick Buttons** — 12 quick-action buttons (up from 6): Draft Memo, Draft Email, Schedule Risk, Checklist, Benchmark, Explain ILS
 
 ---
 

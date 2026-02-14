@@ -15,9 +15,9 @@ S4 Ledger provides tamper-proof audit trails for defense supply chains, technica
 
 ### 1.1 Defense Logistics Is Broken
 
-The U.S. Department of Defense manages supply chains spanning thousands of vendors, millions of parts, and decades of lifecycle support. The consequences of record integrity failures are severe:
+The U.S. Department of War manages supply chains spanning thousands of vendors, millions of parts, and decades of lifecycle support. The consequences of record integrity failures are severe:
 
-- **$1.2 billion+** in counterfeit electronic parts detected in DoD supply chains (SASC Report, 2012)
+- **$1.2 billion+** in counterfeit electronic parts detected in DoW supply chains (SASC Report, 2012)
 - **Gundecking** — falsification of maintenance records — undermines readiness and puts lives at risk
 - **CDRL delivery disputes** costing months of contract resolution
 - **Configuration management failures** causing interoperability breakdowns during deployment
@@ -203,7 +203,7 @@ SHA-256 is not directly vulnerable to Grover's algorithm. Grover's algorithm red
 
 | Solution | Approach | Cost | Data Exposure | Defense Focus |
 |---|---|---|---|---|
-| **S4 Ledger** | Hash anchoring on XRPL | ~$0.001/anchor | Zero | Built for DoD ILS |
+| **S4 Ledger** | Hash anchoring on XRPL | ~$0.001/anchor | Zero | Built for DoW ILS |
 | IBM/Maersk TradeLens | Enterprise blockchain | High | On-chain data | Commercial shipping |
 | VeChain | IoT + blockchain | Moderate | On-chain data | Consumer supply chain |
 | Hyperledger Fabric | Private blockchain | High (infra) | Private chain data | Enterprise, finance |
@@ -227,7 +227,7 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 
 ## 8. Team
 
-S4 Ledger is built by ILS professionals with years of hands-on experience across Navy and DoD programs. We've lived the problems this technology solves — from supply chain breakdowns to audit fire drills.
+S4 Ledger is built by ILS professionals with years of hands-on experience across Navy and DoW programs. We've lived the problems this technology solves — from supply chain breakdowns to audit fire drills.
 
 Based in Charleston, SC.
 

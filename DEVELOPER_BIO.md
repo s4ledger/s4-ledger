@@ -6,7 +6,7 @@ Nick Frankfort is the founder of S4 Ledger, a defense logistics verification pla
 
 ### Background
 
-- Years of experience in Integrated Logistics Support (ILS) across Navy and DoD programs
+- Years of experience in Integrated Logistics Support (ILS) across Navy and DoW programs
 - Expertise in Python, cryptography, and distributed systems
 - Deep understanding of defense supply chain challenges, maintenance record integrity, and configuration management
 

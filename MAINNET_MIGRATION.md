@@ -1130,15 +1130,15 @@ def check_eligibility_real(record, payer_id, service_type):
 ### Real-World Migration
 | Component | Demo State | Production State |
 |-----------|-----------|-----------------|
-| Incompatibility Database | 10 hardcoded pairs | DoD HMIRS database (HAZMAT items) + DLA MSDS repository |
+| Incompatibility Database | 10 hardcoded pairs | DoW HMIRS database (HAZMAT items) + DLA MSDS repository |
 | Lookup Method | String matching on HAZMAT class | NSN normalization → HMIRS compatibility endpoint |
-| Severity Data | Static high/moderate/low | DoD HAZMAT incident severity scoring |
+| Severity Data | Static high/moderate/low | DoW HAZMAT incident severity scoring |
 | Alert System | Toast notification | Rules engine integration for real-time logistics decision support |
 | XRPL Anchoring | Not anchored | Optional: anchor compatibility check result for logistics compliance proof |
 
 ### Production Integration
 ```python
-# DoD HMIRS Compatibility API
+# DoW HMIRS Compatibility API
 def check_hazmat_compatibility(hazmat_items):
     nsns = []
     for item in hazmat_items:
@@ -1456,7 +1456,7 @@ S4 Ledger is a **defense logistics data integrity layer** — not a standalone c
 ### Revenue Model
 - **$SLS utility token** powers all on-chain transactions (~$0.001 per anchor)
 - **Pro subscriptions** provide recurring revenue for support and infrastructure
-- **Enterprise contracts** fund custom integrations for DoD logistics systems
+- **Enterprise contracts** fund custom integrations for DoW logistics systems
 - **Free tier** enables pilots, testing, and developer adoption (100 anchors/month = plenty for evaluation)
 
 ### $SLS Token Economics on Mainnet
@@ -1608,7 +1608,7 @@ The AI Predictions Engine provides intelligent health insights across all three 
 
 | Component | Function | Demo Implementation | Mainnet Implementation |
 |-----------|----------|---------------------|------------------------|
-| **aiHazmatWarning()** | HAZMAT compatibility analysis | DoD HMIRS lookup + local severity scoring | HMIRS API + ML compatibility classifier |
+| **aiHazmatWarning()** | HAZMAT compatibility analysis | DoW HMIRS lookup + local severity scoring | HMIRS API + ML compatibility classifier |
 | **aiCostEstimate()** | Pre-contract cost prediction | CLIN-based cost averaging | ML model trained on contracts data |
 | **aiSchedulingSuggestions()** | Smart appointment recommendations | Rule-based gap detection | ML scheduling optimizer |
 | **aiReadinessScore()** | Pre-appointment preparation score | Weighted checklist completion | NLP analysis of record messages |

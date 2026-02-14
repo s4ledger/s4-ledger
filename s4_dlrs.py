@@ -36,7 +36,7 @@ RECORD_TYPES = {
     "mod_kit_install":        "Engineering change / modification installation",
 }
 
-# ─── DoD System Mappings ──────────────────────────────────────────────────────
+# ─── DoW System Mappings ──────────────────────────────────────────────────────
 DOD_SYSTEM_MAP = {
     "supply_chain_receipt":     "NAVSUP / DLA / GCSS",
     "cdrl_delivery":            "CDMD-OA / eDRMS",

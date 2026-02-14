@@ -3,6 +3,7 @@
     "cleanUrls": true,
     "rewrites": [
         { "source": "/api/status", "destination": "/api" },
+        { "source": "/api/health", "destination": "/api" },
         { "source": "/api/metrics", "destination": "/api" },
         { "source": "/api/transactions", "destination": "/api" },
         { "source": "/api/record-types", "destination": "/api" },

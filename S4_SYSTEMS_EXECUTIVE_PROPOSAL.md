@@ -17,14 +17,14 @@ I have independently developed a working prototype of **S4 Ledger** — an immut
 
 ## The Problem We Solve
 
-Every day, the U.S. Department of Defense processes millions of logistics records — supply chain receipts, maintenance actions, ordnance lot tracking, custody transfers, configuration baselines, and contract deliverables. **None of these records have tamper-proof verification.** 
+Every day, the U.S. Department of War processes millions of logistics records — supply chain receipts, maintenance actions, ordnance lot tracking, custody transfers, configuration baselines, and contract deliverables. **None of these records have tamper-proof verification.** 
 
 Current state:
 - Records can be altered after the fact with no detection
 - Audit trails rely on trust in database administrators
 - No independent, third-party proof that a record hasn't changed
 - CMMC and NIST SP 800-171 require integrity controls that most contractors struggle to prove
-- Supply chain fraud costs DoD **billions** annually
+- Supply chain fraud costs DoW **billions** annually
 
 **S4 Ledger fixes this** by computing a SHA-256 hash of each record and anchoring that hash to the XRP Ledger — a public, immutable, decentralized blockchain. No sensitive data goes on-chain. Only a 64-character fingerprint. Anyone with the original record can verify it hasn't been altered.
 
@@ -60,7 +60,7 @@ Current state:
 S4 Systems works in defense logistics. We understand the domain, the customer, the procurement process, and the compliance landscape. Most blockchain startups trying to enter defense have none of this.
 
 ### 2. Existing Relationships
-We have existing relationships with DoD entities, prime contractors, and the defense supply chain. S4 Ledger doesn't need a cold start — it can be piloted with our current customers and partners.
+We have existing relationships with DoW entities, prime contractors, and the defense supply chain. S4 Ledger doesn't need a cold start — it can be piloted with our current customers and partners.
 
 ### 3. CAGE Code, SAM.gov, DUNS
 S4 Systems likely already has the government registrations (CAGE Code, SAM.gov, D-U-N-S) that a startup would spend months obtaining. We can move immediately.
@@ -76,7 +76,7 @@ If S4 Systems is already pursuing or has CMMC certification, S4 Ledger inherits 
 ## Revenue Model
 
 ### Per-Transaction Micro-Fees
-Every record anchored to XRPL costs **0.01 $SLS** (~$0.001-$0.01). With DoD processing millions of records daily, even modest adoption creates significant volume.
+Every record anchored to XRPL costs **0.01 $SLS** (~$0.001-$0.01). With DoW processing millions of records daily, even modest adoption creates significant volume.
 
 ### Subscription Tiers
 
@@ -158,10 +158,10 @@ The Small Business Innovation Research (SBIR) program is designed for exactly th
 - **Phase II:** $500K-$1.5M to develop the product
 - **Phase III:** Full-scale production — no further competition required
 
-Relevant DoD topics appear regularly in:
+Relevant DoW topics appear regularly in:
 - **Navy SBIR** (NAVSEA, NAVAIR, NAVSUP)
 - **AFWERX** (Air Force innovation)
-- **DIU** (Defense Innovation Unit — commercial solutions for DoD)
+- **DIU** (Defense Innovation Unit — commercial solutions for DoW)
 
 S4 Ledger's prototype is essentially a **completed Phase I deliverable**. We could apply directly for Phase II in many cases.
 
@@ -214,7 +214,7 @@ The specific terms should be discussed between me and leadership. The key princi
 | Risk | Likelihood | Mitigation |
 |------|-----------|------------|
 | SEC classifies $SLS as security | Low | Get legal opinion; $SLS is purely functional utility |
-| DoD slow to adopt blockchain | Medium | Start with non-classified records; use SBIR funding to de-risk |
+| DoW slow to adopt blockchain | Medium | Start with non-classified records; use SBIR funding to de-risk |
 | XRPL network disruption | Very Low | XRPL has 99.99%+ uptime since 2012 |
 | Competitor enters market | Medium | First-mover advantage; defense relationships are our moat |
 | CMMC requirements change | Low | Hash-only architecture is compliance-agnostic by design |

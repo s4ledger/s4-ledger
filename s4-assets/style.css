@@ -285,3 +285,55 @@ footer { text-align: center; padding: 30px 20px; border-top: 1px solid var(--bor
     .btn-primary-custom, .btn-secondary-custom { width: 100%; text-align: center; display: block; }
     .comparison-table { display: block; overflow-x: auto; }
 }
+
+/* ===== Enhanced Mobile (Demo App & ILS) ===== */
+@media (max-width: 768px) {
+    /* ILS showcase grid — stack on mobile */
+    .ils-showcase-grid { grid-template-columns: 1fr !important; }
+    /* Post-analysis actions responsive */
+    .post-actions { flex-direction: column; }
+    .post-action-btn { width: 100%; justify-content: center; }
+    /* AI chat panel mobile */
+    .ai-chat-container { height: 350px; }
+    .ai-quick-btns { gap: 3px; }
+    .ai-quick-btn { font-size: 0.68rem; padding: 3px 8px; }
+    /* Dropzone mobile */
+    .ils-dropzone { padding: 1.2rem; }
+    .ils-dropzone i { font-size: 1.5rem; }
+    /* Result panels */
+    .result-panel { padding: 0.8rem; font-size: 0.78rem; }
+    /* Modals mobile */
+    .modal-content, .send-modal-content, .meeting-modal-content { width: 95% !important; margin: 10px !important; padding: 1.2rem !important; }
+    /* Stat cards */
+    .stat-card { padding: 0.8rem; }
+    .stat-value { font-size: 1.5rem; }
+    /* Tab pills */
+    .nav-pills .nav-link { padding: 0.5rem 0.8rem; font-size: 0.82rem; }
+    /* Select dropdowns */
+    select { font-size: 0.85rem !important; }
+    /* ILS checklist grid */
+    #ilsChecklist { grid-template-columns: 1fr !important; }
+    /* Cost/schedule panel */
+    #ilsCostSchedule > div { grid-template-columns: 1fr !important; }
+    /* Action items */
+    .ils-action-item { padding: 8px; font-size: 0.8rem; }
+    .ils-action-item .action-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+    /* Footer */
+    footer { padding: 1.5rem 0; font-size: 0.78rem; }
+}
+
+@media (max-width: 480px) {
+    .hero h1 { font-size: 1.2rem; }
+    .hero p { font-size: 0.88rem; }
+    .navbar-brand .brand-text { font-size: 1rem; }
+    .nav-logo { height: 26px; width: 26px; }
+    /* Sample doc dropdown full width */
+    #sampleDocSelect { min-width: 100% !important; width: 100% !important; }
+    .branch-tabs { justify-content: center; }
+    .branch-tab { font-size: 0.7rem; padding: 4px 8px; }
+    .record-type-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+    .record-type-btn { padding: 0.4rem 0.5rem; font-size: 0.72rem; }
+    /* Full-width buttons on smallest screens */
+    .btn-accent, .btn-gold { width: 100%; margin-bottom: 6px; }
+    .d-flex.gap-2.flex-wrap { flex-direction: column; }
+}
