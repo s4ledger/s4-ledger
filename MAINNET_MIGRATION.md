@@ -37,6 +37,7 @@
 29. [Stress Testing & Scalability Benchmarks (v2.10.1)](#29-stress-testing--scalability-benchmarks-v2101)
 30. [AI Predictions & Insights Engine (v2.10.4)](#30-ai-predictions--insights-engine-v2104)
 31. [Enhanced Scheduling System (v2.10.4)](#31-enhanced-scheduling-system-v2104)
+32. [Platform Database & New Tools (v3.3.0)](#32-platform-database--new-tools-v330)
 
 ---
 
@@ -1853,5 +1854,45 @@ features = {
 
 ---
 
-*Last updated: v2.10.5 — February 2026*
+## 32. Platform Database & New Tools (v3.3.0)
+
+### 32.1 Master Platform Database (462 Platforms)
+
+All interactive tools now draw from a unified platform database (`s4-assets/platforms.js`) covering 8 branches:
+
+| Branch | Count | Examples |
+|---|---|---|
+| U.S. Navy | ~150 | DDG-51 Flight III, CVN-78, SSN-774, FFG-62, service craft (PMS 300) |
+| U.S. Army | ~83 | M1A2 SEPv3, M2A4 Bradley, AH-64E, M142 HIMARS, Stryker ICVVA1 |
+| U.S. Air Force | ~60 | F-35A, F-22A, B-21 Raider, KC-46A, E-7A Wedgetail |
+| U.S. Marine Corps | ~32 | F-35B, ACV 1.1, AH-1Z Viper, CH-53K King Stallion |
+| U.S. Space Force | ~26 | GPS III, SBIRS/NGO, AEHF, Space Fence, SDA constellations |
+| U.S. Coast Guard | ~30 | NSC Legend-class, OPC Heritage-class, FRC Sentinel-class |
+| SOCOM | ~15 | MH-47G, MH-60M, SOC-R, CV-22B |
+| Joint/Missiles | ~30 | Tomahawk, SM-6, LRASM, JASSM-ER, Javelin, Patriot PAC-3 |
+
+Each platform includes category-based system templates with realistic NSNs, manufacturers, and MTBF/MTTR/MLDT data. Key platforms (DDG-51, CVN-78, F-35 variants, M1A2, etc.) have explicit component overrides.
+
+### 32.2 New Interactive Tools
+
+| Tool | API Endpoint | SDK Method | Mainnet Consideration |
+|---|---|---|---|
+| ROI Calculator | `/api/roi` | `calculate_roi()` | Anchor ROI reports to XRPL for auditable projections |
+| Lifecycle Cost Estimator | `/api/lifecycle` | `estimate_lifecycle_cost()` | Per-program TOC anchoring for budget validation |
+| Warranty & Contract Tracker | `/api/warranty` | `track_warranty()` | Anchor warranty milestones for compliance proof |
+
+### 32.3 Migration Checklist for v3.3.0
+
+- [ ] Verify `s4-assets/platforms.js` loads correctly in production
+- [ ] Test all 7 dropdowns populate with 462 platforms
+- [ ] Validate ROI Calculator with real program data
+- [ ] Validate Lifecycle Cost Estimator projections
+- [ ] Validate Warranty Tracker contract dates
+- [ ] Test anchor auto-dismiss (5 second timeout)
+- [ ] Verify 3 new API endpoints return correct data
+- [ ] Update OpenAPI spec with new endpoints
+
+---
+
+*Last updated: v3.3.0 — February 2026*
 *See also: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) | [SECURITY.md](SECURITY.md) | [NIST_COMPLIANCE.md](NIST_COMPLIANCE.md) | [WHITEPAPER.md](WHITEPAPER.md)*

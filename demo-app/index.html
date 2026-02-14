@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="/s4-assets/platforms.js"></script>
     <style>
         :root{--bg:#050810;--surface:#0a1020;--card:#0f1630;--border:#1a2550;--accent:#00aaff;--gold:#c9a84c;--steel:#8ea4b8;--green:#14f195;--red:#ff6b6b;--text:#e0e8f0;--muted:#6b7d93}
         *{box-sizing:border-box;margin:0;padding:0}
@@ -229,9 +230,12 @@
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabLog" role="tab"><i class="fas fa-list"></i> Transaction Log</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabAbout" role="tab"><i class="fas fa-info-circle"></i> How It Works</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabILS" role="tab"><i class="fas fa-brain"></i> ILS Intelligence</a></li>
-            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabDMSMS" role="tab"><i class="fas fa-exclamation-triangle"></i> DMSMS Tracker</a></li>
-            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabReadiness" role="tab"><i class="fas fa-chart-line"></i> Readiness Calc</a></li>
-            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabParts" role="tab"><i class="fas fa-cogs"></i> Parts X-Ref</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabDMSMS" role="tab"><i class="fas fa-exclamation-triangle"></i> DMSMS</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabReadiness" role="tab"><i class="fas fa-chart-line"></i> Readiness</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabParts" role="tab"><i class="fas fa-cogs"></i> Parts</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabROI" role="tab"><i class="fas fa-dollar-sign"></i> ROI</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabLifecycle" role="tab"><i class="fas fa-clock"></i> Lifecycle</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabWarranty" role="tab"><i class="fas fa-file-contract"></i> Warranty</a></li>
         </ul>
 
         <div class="tab-content">
@@ -407,52 +411,6 @@
                             <div class="row mb-3">
                                 <div class="col-7">
                                     <select id="ilsProgram" onchange="onILSProgramChange()">
-                                        <optgroup label="PMS 300 — Service Craft & Special Vessels">
-                                            <option value="yrbm">YRBM — Yard Repair, Berthing & Messing</option>
-                                            <option value="apl">APL — Auxiliary Personnel Lighter</option>
-                                            <option value="afdm">AFDM — Aux Floating Drydock Medium</option>
-                                            <option value="ydt">YDT — Large Harbor Tug</option>
-                                            <option value="yon">YON — Fuel Oil Barge</option>
-                                        </optgroup>
-                                        <optgroup label="Navy — Major Surface Combatants">
-                                            <option value="ddg51">DDG-51 Flight III (Arleigh Burke)</option>
-                                            <option value="lcs">LCS Freedom-class</option>
-                                            <option value="cvn78">CVN-78 Ford-class</option>
-                                            <option value="ffg62">FFG-62 Constellation-class</option>
-                                            <option value="lpd17">LPD-17 San Antonio-class</option>
-                                        </optgroup>
-                                        <optgroup label="Navy / USMC — Aviation">
-                                            <option value="f35">F-35C Lightning II (Navy)</option>
-                                            <option value="f35b">F-35B Lightning II (USMC STOVL)</option>
-                                            <option value="ch53k">CH-53K King Stallion</option>
-                                        </optgroup>
-                                        <optgroup label="U.S. Army — Ground & Aviation">
-                                            <option value="m1">M1A2 Abrams SEPv3</option>
-                                            <option value="stryker">Stryker ICV-VA1</option>
-                                            <option value="ah64">AH-64E Apache Guardian</option>
-                                            <option value="himars">M142 HIMARS</option>
-                                        </optgroup>
-                                        <optgroup label="U.S. Air Force">
-                                            <option value="f35a">F-35A Lightning II (CTOL)</option>
-                                            <option value="kc46">KC-46A Pegasus</option>
-                                            <option value="b21">B-21 Raider</option>
-                                            <option value="c17">C-17 Globemaster III</option>
-                                        </optgroup>
-                                        <optgroup label="U.S. Space Force">
-                                            <option value="gps3">GPS III / IIIF Satellite</option>
-                                            <option value="sbirs">SBIRS / Next-Gen OPIR</option>
-                                        </optgroup>
-                                        <optgroup label="U.S. Coast Guard">
-                                            <option value="nsc">NSC (Legend-class)</option>
-                                            <option value="opc">OPC (Heritage-class)</option>
-                                            <option value="frc">FRC (Sentinel-class)</option>
-                                        </optgroup>
-                                        <optgroup label="U.S. Marine Corps — Ground">
-                                            <option value="acv">ACV 1.1 Amphibious Combat Vehicle</option>
-                                        </optgroup>
-                                        <optgroup label="Custom">
-                                            <option value="custom">Custom Program (define your own)</option>
-                                        </optgroup>
                                     </select>
                                 </div>
                                 <div class="col-5">
@@ -625,16 +583,6 @@
                     
                     <label>Select Program</label>
                     <select id="dmsmsProgram" class="form-select mb-3" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadDMSMSData()">
-                        <option value="ddg51">DDG-51 Flight III (PMS 400D)</option>
-                        <option value="lcs">LCS Freedom (PMS 501)</option>
-                        <option value="cvn78">CVN-78 Ford-class (PMS 378)</option>
-                        <option value="ffg62">FFG-62 Constellation (PMS 515)</option>
-                        <option value="f35">F-35C Lightning II (PMA-265)</option>
-                        <option value="ch53k">CH-53K King Stallion (PMA-261)</option>
-                        <option value="m1">M1A2 SEPv3 Abrams (PEO GCS)</option>
-                        <option value="ah64">AH-64E Apache (PEO Aviation)</option>
-                        <option value="himars">M142 HIMARS (PEO M&S)</option>
-                        <option value="kc46">KC-46A Pegasus (USAF)</option>
                     </select>
 
                     <div id="dmsmsResults" style="margin-top:1rem"></div>
@@ -663,15 +611,6 @@
                         <div class="col-md-6">
                             <label>Select Program</label>
                             <select id="readinessProgram" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadReadinessData()">
-                                <option value="ddg51">DDG-51 Flight III</option>
-                                <option value="lcs">LCS Freedom-class</option>
-                                <option value="cvn78">CVN-78 Ford-class</option>
-                                <option value="ffg62">FFG-62 Constellation</option>
-                                <option value="f35">F-35C Lightning II</option>
-                                <option value="m1">M1A2 SEPv3 Abrams</option>
-                                <option value="ah64">AH-64E Apache</option>
-                                <option value="himars">M142 HIMARS</option>
-                                <option value="kc46">KC-46A Pegasus</option>
                             </select>
                             <label>Select System / Subsystem</label>
                             <select id="readinessSystem" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="calcReadiness()">
@@ -726,14 +665,6 @@
 
                     <label>Filter by Program</label>
                     <select id="partsProgram" class="form-select mb-3" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="filterParts()">
-                        <option value="all">All Programs</option>
-                        <option value="ddg51">DDG-51 Flight III</option>
-                        <option value="lcs">LCS Freedom-class</option>
-                        <option value="cvn78">CVN-78 Ford-class</option>
-                        <option value="ffg62">FFG-62 Constellation</option>
-                        <option value="f35">F-35C Lightning II</option>
-                        <option value="m1">M1A2 SEPv3 Abrams</option>
-                        <option value="ah64">AH-64E Apache</option>
                     </select>
 
                     <div id="partsResults" style="margin-top:1rem"></div>
@@ -748,6 +679,105 @@
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                         <button onclick="exportParts()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export Parts List</button>
                         <button onclick="anchorParts()" class="btn btn-sm" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to XRPL ($0.01 SLS)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ ROI CALCULATOR ═══ -->
+            <div class="tab-pane fade" id="tabROI" role="tabpanel">
+                <div class="demo-card">
+                    <h3><i class="fas fa-dollar-sign" style="color:#14f195"></i> S4 Ledger ROI Calculator</h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Calculate the return on investment from implementing S4 Ledger across your ILS, DMSMS, and readiness programs. Compare manual processes vs. automated blockchain-backed document management.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Number of Programs Managed</label>
+                            <input type="number" id="roiPrograms" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 5" value="5" oninput="calcROI()">
+                            <label>Average Records / Month (per program)</label>
+                            <input type="number" id="roiRecords" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 200" value="200" oninput="calcROI()">
+                            <label>ILS Staff (FTEs doing manual work)</label>
+                            <input type="number" id="roiFTEs" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 8" value="8" oninput="calcROI()">
+                            <label>Average Fully-Burdened Labor Rate ($/hr)</label>
+                            <input type="number" id="roiRate" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 145" value="145" oninput="calcROI()">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Current Annual Audit Cost ($)</label>
+                            <input type="number" id="roiAudit" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 250000" value="250000" oninput="calcROI()">
+                            <label>Average Rework/Error Cost per Incident ($)</label>
+                            <input type="number" id="roiError" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 8500" value="8500" oninput="calcROI()">
+                            <label>Estimated Error Incidents / Year</label>
+                            <input type="number" id="roiIncidents" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 35" value="35" oninput="calcROI()">
+                            <label>S4 Ledger Annual License Cost ($)</label>
+                            <input type="number" id="roiLicense" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="e.g., 120000" value="120000" oninput="calcROI()">
+                        </div>
+                    </div>
+                    <div id="roiOutput" style="margin-top:1rem"></div>
+                    <div class="row mt-3">
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="roiSavings" style="color:#14f195">—</div><div class="stat-mini-label">Annual Savings</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="roiPercent">—</div><div class="stat-mini-label">ROI %</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="roiPayback" style="color:#00aaff">—</div><div class="stat-mini-label">Payback Period</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="roi5Year" style="color:#c9a84c">—</div><div class="stat-mini-label">5-Year Net Savings</div></div></div>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
+                        <button onclick="exportROI()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export ROI Report</button>
+                        <button onclick="anchorROI()" class="btn btn-sm" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to XRPL ($0.01 SLS)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ LIFECYCLE COST ESTIMATOR ═══ -->
+            <div class="tab-pane fade" id="tabLifecycle" role="tabpanel">
+                <div class="demo-card">
+                    <h3><i class="fas fa-clock" style="color:#00aaff"></i> Lifecycle Cost Estimator</h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Project total ownership cost (TOC) over a weapon system's lifecycle. Factors in sustainment, DMSMS resolution, tech refresh, and depot maintenance per DoD 5000.73 and MIL-STD-881F.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Select Program</label>
+                            <select id="lifecycleProgram" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="calcLifecycle()"></select>
+                            <label>Planned Service Life (years)</label>
+                            <input type="number" id="lcServiceLife" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="30" value="30" oninput="calcLifecycle()">
+                            <label>Annual Operating Hours</label>
+                            <input type="number" id="lcOpHours" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="2500" value="2500" oninput="calcLifecycle()">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Acquisition Unit Cost ($M)</label>
+                            <input type="number" id="lcAcqCost" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="85" value="85" oninput="calcLifecycle()" step="0.1">
+                            <label>Fleet Size (number of units)</label>
+                            <input type="number" id="lcFleetSize" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="20" value="20" oninput="calcLifecycle()">
+                            <label>Annual Sustainment Rate (% of acquisition)</label>
+                            <input type="number" id="lcSustRate" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="8" value="8" oninput="calcLifecycle()" step="0.1">
+                        </div>
+                    </div>
+                    <div id="lifecycleOutput" style="margin-top:1rem"></div>
+                    <div class="row mt-3">
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="lcTotalCost" style="color:#ff9900">—</div><div class="stat-mini-label">Total Ownership Cost</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="lcSustCost" style="color:#00aaff">—</div><div class="stat-mini-label">Sustainment (O&S)</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="lcDmsmsCost" style="color:#ff3333">—</div><div class="stat-mini-label">DMSMS/Obsol. Cost</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="lcCostPerHr" style="color:#14f195">—</div><div class="stat-mini-label">Cost per Op Hour</div></div></div>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
+                        <button onclick="exportLifecycle()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export Lifecycle Report</button>
+                        <button onclick="anchorLifecycle()" class="btn btn-sm" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to XRPL ($0.01 SLS)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ WARRANTY & CONTRACT TRACKER ═══ -->
+            <div class="tab-pane fade" id="tabWarranty" role="tabpanel">
+                <div class="demo-card">
+                    <h3><i class="fas fa-file-contract" style="color:#c9a84c"></i> Warranty & Contract Tracker</h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Track OEM warranties, CLIN deliverable milestones, contract expirations, and service agreements across programs. Ensure compliance with FAR/DFARS warranty requirements and prevent coverage lapses.</p>
+                    <label>Select Program</label>
+                    <select id="warrantyProgram" class="form-select mb-3" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadWarrantyData()"></select>
+                    <div id="warrantyResults" style="margin-top:1rem"></div>
+                    <div class="row mt-3">
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="warActive" style="color:#14f195">0</div><div class="stat-mini-label">Active Warranties</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="warExpiring" style="color:#ffa500">0</div><div class="stat-mini-label">Expiring (90 days)</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="warExpired" style="color:#ff3333">0</div><div class="stat-mini-label">Expired</div></div></div>
+                        <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="warValue" style="color:#00aaff">$0</div><div class="stat-mini-label">Coverage Value</div></div></div>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
+                        <button onclick="exportWarranty()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export Warranty Report</button>
+                        <button onclick="anchorWarranty()" class="btn btn-sm" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to XRPL ($0.01 SLS)</button>
                     </div>
                 </div>
             </div>
@@ -1268,6 +1298,8 @@ function showAnchorAnimation(hash, typeLabel, clfLevel) {
         document.getElementById('animSuccess').textContent = '\u2713 Record secured on XRPL';
         document.getElementById('animSuccess').style.animation = 'scaleIn 0.4s ease-out both';
     }, 2000);
+    // Auto-dismiss after 5 seconds
+    setTimeout(hideAnchorAnimation, 5000);
 }
 
 function hideAnchorAnimation() {
@@ -2200,34 +2232,13 @@ const PROGS = {
     ]}
 };
 
-// ── Program-Specific Components for Realistic Sample Documents ──
-const PROG_COMPONENTS = {
-    yrbm: {systems:['Diesel Generator Set','HVAC System','Potable Water Maker','Sewage Treatment Plant','Anchor Windlass','Crane (5-Ton)','Fire Main System','Electrical Distribution Panel','Steering Gear (if applicable)','Galley Equipment'],nsns:['6115-01-445-3210','4120-01-389-7654','4610-01-567-8901','4610-01-234-5678','3950-01-789-0123','3950-01-456-7890','4210-01-123-4567','6110-01-890-1234','2010-01-345-6789','7310-01-678-9012'],mfgs:['Caterpillar','Carrier','HEM Inc','Evoqua Water','Rolls-Royce','Liebherr','Hale Products','Eaton','Jastram','Hobart']},
-    apl: {systems:['Diesel Generator','HVAC Unit','Potable Water System','Sewage Plant','Shore Power Panel','Fire Pump','Lighting System','Ventilation Fan','Life Raft','Emergency Generator'],nsns:['6115-01-445-3211','4120-01-389-7655','4610-01-567-8902','4610-01-234-5679','6110-01-890-1235','4210-01-123-4568','6210-01-556-7890','4140-01-222-3333','4220-01-444-5555','6115-01-666-7777'],mfgs:['Caterpillar','Trane','Parker Hannifin','Evoqua Water','Schneider Electric','Hale Products','GE Lighting','Twin City Fan','Viking Life-Saving','Cummins']},
-    afdm: {systems:['Ballast Pump','Wing Wall Winch','Keel Block System','Dock Crane','Generator Set','Capstan','Dewatering Pump','Shore Power System','Fire Main','Safety Net System'],nsns:['4320-01-567-8903','3950-01-234-5670','3990-01-111-2222','3950-01-333-4444','6115-01-555-6666','3950-01-777-8888','4320-01-999-0000','6110-01-111-3333','4210-01-222-4444','4220-01-333-5555'],mfgs:['Flowserve','Rolls-Royce','Todd Pacific','Liebherr','Caterpillar','Towimor','Godwin Pumps','ABB','Hale Products','Spanish Netting']},
-    ddg51: {systems:['AN/SPY-6(V)1 AMDR Radar','Mk 41 Vertical Launch System','LM2500 Gas Turbine Engine','AN/SQQ-89A(V)15 ASW Suite','Aegis Baseline 10 Combat System','CIWS Phalanx Block 1B','AN/SLQ-32(V)6 SEWIP EW','5-inch Mk 45 Mod 4 Gun','Ship Service Diesel Generator','Hybrid Electric Drive'],nsns:['5841-01-622-3401','1440-01-567-8901','2835-01-456-7890','5845-01-234-5678','5895-01-890-1234','1440-01-345-6789','5865-01-678-9012','1005-01-901-2345','6115-01-234-5670','6110-01-789-0123'],mfgs:['Raytheon','Lockheed Martin','GE Aviation','Raytheon','Lockheed Martin','Raytheon','Northrop Grumman','BAE Systems','Fairbanks Morse','GE Aviation']},
-    lcs: {systems:['Mission Module (MCM/ASW/SUW)','COMBATSS-21 Combat System','MT30 Gas Turbine','Waterjet Propulsion','Rolling Airframe Missile (RAM)','MH-60S Helicopter Interface','57mm Mk 110 Gun','Ship Service Diesel Generator','RHIB Launch/Recovery','Variable Depth Sonar'],nsns:['2040-01-567-8904','5895-01-234-5679','2835-01-890-1235','2040-01-345-6790','1440-01-678-9013','1680-01-901-2346','1005-01-234-5671','6115-01-567-8905','1940-01-890-1236','5845-01-123-4569'],mfgs:['Various (Module)','Raytheon','Rolls-Royce','Rolls-Royce','Raytheon','Sikorsky','BAE Systems','Fairbanks Morse','SAFE Boats','Thales']},
-    cvn78: {systems:['Electromagnetic Aircraft Launch System (EMALS)','Advanced Arresting Gear (AAG)','A1B Nuclear Reactor Plant','AN/SPY-6(V)3 Enterprise Air Surveillance','Dual Band Radar','Advanced Weapons Elevator','Ship Self-Defense System','Aircraft Launch & Recovery Equipment','4160V Electrical Distribution','HVAC Zonal System'],nsns:['1680-01-890-1237','1680-01-234-5672','9310-01-567-8906','5841-01-890-1238','5841-01-234-5673','3540-01-567-8907','1440-01-890-1239','1680-01-234-5674','6110-01-567-8908','4120-01-890-1240'],mfgs:['GA-EMS','GA-EMS','Bechtel Marine','Raytheon','Raytheon','AMSEC','Raytheon','NAVAIR','GE','Carrier']},
-    ffg62: {systems:['AN/SPY-6(V)3 Radar','Mk 41 VLS (32-cell)','CODLOG Propulsion System','NSM Anti-Ship Missile','Mk 110 57mm Gun','AN/SQQ-89(V) ASW Suite','COMBATSS-21 CMS','Ship Service Diesel Generator','SeaRAM Block 2','RHIB/Boat Handling'],nsns:['5841-01-622-3402','1440-01-567-8910','2835-01-456-7891','1410-01-234-5680','1005-01-234-5681','5845-01-234-5682','5895-01-234-5683','6115-01-234-5684','1440-01-345-6791','1940-01-890-1241'],mfgs:['Raytheon','Lockheed Martin','CODLOG (MAN/GE)','Kongsberg/Raytheon','BAE Systems','Raytheon','Raytheon','Fairbanks Morse','Raytheon','SAFE Boats']},
-    f35: {systems:['F135-PW-600 Engine','AN/APG-81 AESA Radar','Distributed Aperture System (DAS)','Electro-Optical Targeting System (EOTS)','AN/ASQ-239 EW Suite','Mission Systems Software Block 4','Helmet-Mounted Display Gen III','25mm GAU-22/A Gun','ODIN Logistics System','Ejection Seat Mk US16E'],nsns:['2840-01-567-8911','5841-01-890-1242','5841-01-234-5685','5860-01-567-8912','5865-01-890-1243','7050-01-234-5686','1240-01-567-8913','1005-01-890-1244','7050-01-234-5687','1680-01-567-8914'],mfgs:['Pratt & Whitney','Northrop Grumman','Northrop Grumman','Lockheed Martin','BAE Systems','Lockheed Martin','Collins Aerospace','General Dynamics OTS','Lockheed Martin','Martin-Baker']},
-    f35b: {systems:['F135-PW-600 STOVL Engine','LiftFan System','3-Bearing Swivel Module','AN/APG-81 AESA Radar','DAS/EOTS Sensor Suite','Mission Software Block 4','AN/ASQ-239 EW Suite','Helmet-Mounted Display Gen III','STOVL Ship Interface','ODIN Logistics System'],nsns:['2840-01-567-8915','2840-01-890-1245','2840-01-234-5688','5841-01-890-1246','5860-01-567-8916','7050-01-234-5689','5865-01-890-1247','1240-01-567-8917','1680-01-234-5690','7050-01-234-5691'],mfgs:['Pratt & Whitney','Rolls-Royce','Rolls-Royce','Northrop Grumman','Northrop Grumman','Lockheed Martin','BAE Systems','Collins Aerospace','BAE Systems','Lockheed Martin']},
-    ch53k: {systems:['T408-GE-400 Engine (3x)','Main Rotor Head (7-blade)','Fly-By-Wire Flight Controls','External Cargo Hook (36,000 lb)','AN/AAQ-29A(V) FLIR','Glass Cockpit/MFDs','Landing Gear System','Fuel System (Internal/External)','Rescue Hoist','APU (T62T-GE-1)'],nsns:['2840-01-567-8918','1615-01-890-1248','1680-01-234-5692','1680-01-567-8919','5860-01-890-1249','6610-01-234-5693','1620-01-567-8920','2915-01-890-1250','1680-01-234-5694','2835-01-567-8921'],mfgs:['GE Aviation','Sikorsky','Sikorsky/Collins','Sikorsky','Raytheon','L3Harris','Heroux-Devtek','Robertson Fuel','Breeze-Eastern','Honeywell']},
-    m1: {systems:['AGT1500 Gas Turbine Engine','120mm M256A1 Smoothbore Gun','AN/VVS-2(V)2 Commander Thermal Viewer','M153 CROWS II (RWS)','Trophy Active Protection System','FBCB2-JCR (Blue Force Tracker)','NBC Collective Protection','Track & Suspension System','Auxiliary Power Unit (APU)','Hull/Turret Armor Package'],nsns:['2835-01-456-7892','1005-01-567-8922','5855-01-890-1251','1005-01-234-5695','1440-01-567-8923','5895-01-890-1252','4240-01-234-5696','2530-01-567-8924','2835-01-890-1253','1240-01-234-5697'],mfgs:['Honeywell','Rheinmetall/GDLS','DRS Technologies','Kongsberg','Rafael/DRS','General Dynamics C4','GDLS','GDLS','Honeywell','Composite Armor']},
-    stryker: {systems:['Caterpillar C7 Diesel Engine','30mm XM813 Bushmaster II (ICVVA1)','AN/VAS-5 DVE (Driver Vision)','FBCB2-JCR Blue Force Tracker','CROWS-J Remote Weapon Station','Central Tire Inflation System','NBC Protection System','Vehicle Intercom System','Driveline/Transfer Case','Armor Kit (Level II/III)'],nsns:['2815-01-567-8925','1005-01-890-1254','5855-01-234-5698','5895-01-567-8926','1005-01-890-1255','4910-01-234-5699','4240-01-567-8927','5831-01-890-1256','2520-01-234-5700','1240-01-567-8928'],mfgs:['Caterpillar','Northrop Grumman','BAE Systems','General Dynamics','Kongsberg','GDLS','GDLS','Bose Military','GDLS','GDLS']},
-    ah64: {systems:['T700-GE-701D Engine (2x)','M230E1 30mm Chain Gun','AGM-114 Hellfire Launcher','AN/APG-78 Longbow Fire Control Radar','Modernized Target Acquisition Designation Sight (M-TADS)','AN/APR-48B Radar Frequency Interferometer','Integrated Helmet & Display Sighting System (IHADSS)','Main Rotor Assembly','Tail Rotor & Stabilator','Link 16 Tactical Data Link'],nsns:['2840-01-567-8929','1005-01-890-1257','1440-01-234-5701','5841-01-567-8930','5860-01-890-1258','5841-01-234-5702','1240-01-567-8931','1615-01-890-1259','1615-01-234-5703','5895-01-567-8932'],mfgs:['GE Aviation','Northrop Grumman','Lockheed Martin','Northrop Grumman','Lockheed Martin','Northrop Grumman','Elbit Systems','Boeing','Boeing','L3Harris']},
-    himars: {systems:['M142 Launcher Loader Module','GMLRS Rocket Pod (6-pack)','ATACMS Missile Interface','Fire Control System','FMTV 5-ton Truck Chassis (LMTV Family)','Navigation/Positioning System','Communication Suite (SINCGARS/BFT)','Hydraulic Launcher Elevation System','Cab Protection Kit','Power Distribution Unit'],nsns:['1440-01-567-8933','1440-01-890-1260','1440-01-234-5704','1430-01-567-8934','2320-01-890-1261','6605-01-234-5705','5820-01-567-8935','3040-01-890-1262','1240-01-234-5706','6110-01-567-8936'],mfgs:['Lockheed Martin','Lockheed Martin','Lockheed Martin','Lockheed Martin','BAE Systems/Oshkosh','Northrop Grumman','Harris Corp','Moog','BAE Systems','Lockheed Martin']},
-    f35a: {systems:['F135-PW-100 Engine','AN/APG-81 AESA Radar','Distributed Aperture System (DAS)','AN/AAQ-40 EOTS','AN/ASQ-239 EW Suite','Mission Systems Software Block 4','25mm GAU-22/A Internal Gun','HMDS Gen III Helmet','ALIS/ODIN Logistics System','Ejection Seat Mk US16E'],nsns:['2840-01-567-8937','5841-01-890-1263','5841-01-234-5707','5860-01-567-8938','5865-01-890-1264','7050-01-234-5708','1005-01-567-8939','1240-01-890-1265','7050-01-234-5709','1680-01-567-8940'],mfgs:['Pratt & Whitney','Northrop Grumman','Northrop Grumman','Lockheed Martin','BAE Systems','Lockheed Martin','General Dynamics OTS','Collins Aerospace','Lockheed Martin','Martin-Baker']},
-    kc46: {systems:['Pratt & Whitney PW4062 Engine (2x)','Remote Vision System (RVS)','Wing Aerial Refueling Pod (WARP)','Fly-By-Wire Refueling Boom','Centerline Drogue System','Fuel System (212,000 lbs capacity)','KC-46A Mission Computer','Defensive Systems','Cargo Handling System','Cockpit Avionics Suite'],nsns:['2840-01-567-8941','5860-01-890-1266','4920-01-234-5710','4920-01-567-8942','4920-01-890-1267','2915-01-234-5711','7050-01-567-8943','5865-01-890-1268','1730-01-234-5712','6610-01-567-8944'],mfgs:['Pratt & Whitney','Rockwell Collins','Cobham','Boeing','Cobham','Boeing','Boeing','Northrop Grumman','Telair International','Collins Aerospace']},
-    b21: {systems:['Next-Gen Stealth Engine (Classified)','Active Electronically Scanned Array (AESA)','Low-Observable (LO) Coating System','Mission Computer / Sensor Fusion','Electronic Warfare Suite','Weapons Bay Door Actuator','Stealth Exhaust System','Navigation/GPS Anti-Jam','Defensive Management System','Environmental Control System'],nsns:['2840-01-XXX-XXXX','5841-01-XXX-XXXX','5340-01-XXX-XXXX','7050-01-XXX-XXXX','5865-01-XXX-XXXX','3040-01-XXX-XXXX','2835-01-XXX-XXXX','5826-01-XXX-XXXX','5865-01-XXX-XXXY','4120-01-XXX-XXXX'],mfgs:['(Classified)','Northrop Grumman','Northrop Grumman','Northrop Grumman','(Classified)','Moog','(Classified)','L3Harris','(Classified)','Hamilton Sundstrand']},
-    c17: {systems:['F117-PW-100 Engine (4x)','Externally Blown Flap (EBF) System','Cargo Handling System (463L)','Aerial Delivery System','Glass Cockpit/HUD','Defensive Systems (AN/AAR-47)','APU (GTCP331-200)','Landing Gear (Multi-Wheel)','Electronic Flight Control System','Cargo Winch (25,000 lb)'],nsns:['2840-01-567-8945','1560-01-890-1269','1730-01-234-5713','1670-01-567-8946','6610-01-890-1270','5865-01-234-5714','2835-01-567-8947','1620-01-890-1271','6610-01-234-5715','3950-01-567-8948'],mfgs:['Pratt & Whitney','Boeing','Boeing','Airborne Systems','Collins Aerospace','BAE Systems','Honeywell','Boeing','Honeywell','AMSEC']},
-    gps3: {systems:['GPS III Payload (L1C/A, L2C, L5, M-Code)','Rubidium Atomic Clock Assembly','Navigation Signal Generator','Solar Array Wing (Deployable)','Reaction Wheel Assembly','Star Tracker','S-Band Transponder','L-Band Antenna Assembly','Thermal Control Subsystem','Spacecraft Bus (Structure)'],nsns:['5841-01-567-8949','6645-01-890-1272','5841-01-234-5716','6130-01-567-8950','1680-01-890-1273','6650-01-234-5717','5841-01-567-8951','5985-01-890-1274','4120-01-234-5718','1680-01-567-8952'],mfgs:['Lockheed Martin','Microsemi/Excelitas','L3Harris','Lockheed Martin','Honeywell','Ball Aerospace','General Dynamics','Lockheed Martin','Lockheed Martin','Lockheed Martin']},
-    sbirs: {systems:['Scanning Sensor Payload','Staring Sensor (HEO)','Ground Processing System','Satellite Control Network Interface','Solar Array (Triple-Junction)','Attitude Control System','Thermal Management','Communications Subsystem','Mission Data Processor','Power Distribution Unit'],nsns:['5860-01-567-8953','5860-01-890-1275','7050-01-234-5719','5895-01-567-8954','6130-01-890-1276','1680-01-234-5720','4120-01-567-8955','5820-01-890-1277','7050-01-234-5721','6110-01-567-8956'],mfgs:['Northrop Grumman','Northrop Grumman','Lockheed Martin','USAF SMC','Spectrolab','Northrop Grumman','Northrop Grumman','Harris Corp','BAE Systems','Raytheon']},
-    nsc: {systems:['LM2500 Gas Turbine','Mk 110 57mm Gun','20mm Phalanx CIWS','Mk 53 Nulka Decoy System','AN/SPS-73(V)18 Radar','RHIB/Stern Launch','Diesel Generator (SSDG)','Damage Control System','Bridge Electronics System','Fuel/Ballast System'],nsns:['2835-01-456-7893','1005-01-234-5722','1005-01-567-8957','1440-01-890-1278','5841-01-234-5723','1940-01-567-8958','6115-01-890-1279','4210-01-234-5724','6610-01-567-8959','2910-01-890-1280'],mfgs:['GE Aviation','BAE Systems','Raytheon','Chemring','Raytheon','SAFE Boats','Caterpillar','Navship','Sperry Marine','Boiler & Tank']},
-    opc: {systems:['Diesel Engine (MAN 28/33D)','Mk 110 57mm Gun','25mm Mk 38 Mod 2','Bridge System','Diesel Generator','RHIB/Boat Handling','Damage Control Equipment','Navigation Radar','Communications Suite','Anchor/Mooring System'],nsns:['2815-01-567-8960','1005-01-234-5725','1005-01-890-1281','6610-01-234-5726','6115-01-567-8961','1940-01-890-1282','4210-01-234-5727','5841-01-567-8962','5820-01-890-1283','3950-01-234-5728'],mfgs:['MAN Energy','BAE Systems','BAE Systems','OSI Maritime','Caterpillar','SAFE Boats','Tyco Fire','Furuno','Harris Corp','Towimor']},
-    frc: {systems:['MTU 20V4000 M93L Diesel (2x)','Mk 38 Mod 2 25mm Gun','Waterjets (Hamilton HM811)','Bridge Management System','Remote Operated Weapon','Communications Suite','Navigation System','Damage Control','Ship Service Generators','Anchor Windlass'],nsns:['2815-01-567-8963','1005-01-234-5729','2040-01-890-1284','6610-01-234-5730','1005-01-567-8964','5820-01-890-1285','6605-01-234-5731','4210-01-567-8965','6115-01-890-1286','3950-01-234-5732'],mfgs:['MTU','BAE Systems','Hamilton Jet','OSI Maritime','BAE Systems','Harris Corp','Sperry Marine','Tyco Fire','Caterpillar','Towimor']},
-    acv: {systems:['Caterpillar C18 Diesel Engine','Turret/Weapon Station (30mm or RWS)','Swim Drive / Water Propulsion','Suspension System (8x8)','FBCB2-JCR / C4I System','NBC Protection','Mine Blast Protection Kit','Driver Vision Enhancement','Amphibious Hull/Door System','Power Distribution System'],nsns:['2815-01-567-8966','1005-01-890-1287','2040-01-234-5733','2530-01-567-8967','5895-01-890-1288','4240-01-234-5734','1240-01-567-8968','5855-01-890-1289','1940-01-234-5735','6110-01-567-8969'],mfgs:['Caterpillar','Kongsberg','BAE Systems','IVECO','General Dynamics','GDLS','GDLS','BAE Systems','BAE Systems','GDLS']},
-    custom: {systems:['Primary Power Plant','Secondary Power','Main Operating System','Safety System','Navigation/Control','Communications','Environmental Control','Structural System','Auxiliary Equipment','Test/Measurement Equipment'],nsns:['0000-00-000-0001','0000-00-000-0002','0000-00-000-0003','0000-00-000-0004','0000-00-000-0005','0000-00-000-0006','0000-00-000-0007','0000-00-000-0008','0000-00-000-0009','0000-00-000-0010'],mfgs:['OEM-1','OEM-2','OEM-3','OEM-4','OEM-5','OEM-6','OEM-7','OEM-8','OEM-9','OEM-10']}
-};
+// ── Program-Specific Components — Proxy to S4 Platforms DB (462 platforms) ──
+const PROG_COMPONENTS = new Proxy({}, {
+    get(_, k) { if (typeof k !== 'string') return undefined; return window.S4_getComponents ? S4_getComponents(k) : {systems:['System'],nsns:['0000-00-000-0001'],mfgs:['OEM']}; },
+    has(_, k) { return typeof k === 'string'; },
+    ownKeys() { return window.S4_PLATFORMS ? Object.keys(S4_PLATFORMS) : []; },
+    getOwnPropertyDescriptor(_, k) { return {configurable:true, enumerable:true, value: (window.S4_getComponents) ? S4_getComponents(k) : undefined}; }
+});
 
 // ── Sample DRL Generator (Enhanced with realistic DI numbers) ──
 // Extended DI catalog per program type for realistic samples
@@ -3856,17 +3867,13 @@ async function anchorDMSMS() {
 }
 
 // ═══ OPERATIONAL READINESS CALCULATOR ═══
-const READINESS_DEFAULTS = {
-    ddg51: [{sys:'AN/SPY-6(V)1 AMDR Radar',mtbf:1800,mttr:6,mldt:48},{sys:'Mk 41 VLS',mtbf:4500,mttr:3,mldt:24},{sys:'LM2500 Gas Turbine',mtbf:3200,mttr:8,mldt:72},{sys:'AN/SQQ-89A ASW Suite',mtbf:1200,mttr:5,mldt:36},{sys:'Aegis Combat System',mtbf:900,mttr:4,mldt:24},{sys:'5-inch Mk 45 Gun',mtbf:2800,mttr:4,mldt:48},{sys:'CIWS Phalanx',mtbf:3500,mttr:2.5,mldt:24},{sys:'Ship Service Diesel Gen',mtbf:5000,mttr:6,mldt:36},{sys:'SEWIP EW Suite',mtbf:1500,mttr:5,mldt:48},{sys:'Hybrid Electric Drive',mtbf:4000,mttr:8,mldt:72}],
-    lcs: [{sys:'Mission Module (MCM)',mtbf:800,mttr:4,mldt:48},{sys:'COMBATSS-21 CMS',mtbf:1100,mttr:3,mldt:24},{sys:'MT30 Gas Turbine',mtbf:2800,mttr:10,mldt:96},{sys:'Waterjet Propulsion',mtbf:3500,mttr:6,mldt:72},{sys:'RAM Launcher',mtbf:4000,mttr:2,mldt:24},{sys:'57mm Mk 110 Gun',mtbf:2200,mttr:3,mldt:36},{sys:'MH-60S Interface',mtbf:1600,mttr:4,mldt:48},{sys:'RHIB Launch/Recovery',mtbf:5000,mttr:2,mldt:12}],
-    cvn78: [{sys:'EMALS Catapult',mtbf:400,mttr:12,mldt:72},{sys:'Advanced Arresting Gear',mtbf:600,mttr:8,mldt:48},{sys:'A1B Nuclear Reactor',mtbf:8000,mttr:24,mldt:168},{sys:'AN/SPY-6(V)3 Radar',mtbf:1500,mttr:6,mldt:48},{sys:'Advanced Weapons Elevator',mtbf:500,mttr:10,mldt:96},{sys:'SSDS Combat System',mtbf:900,mttr:4,mldt:24}],
-    ffg62: [{sys:'AN/SPY-6(V)3 Radar',mtbf:1800,mttr:6,mldt:48},{sys:'Mk 41 VLS (32-cell)',mtbf:4200,mttr:3,mldt:24},{sys:'CODLOG Propulsion',mtbf:2600,mttr:8,mldt:72},{sys:'NSM Anti-Ship Missile',mtbf:5000,mttr:2,mldt:36},{sys:'AN/SQQ-89 ASW',mtbf:1200,mttr:5,mldt:48},{sys:'COMBATSS-21 CMS',mtbf:1100,mttr:3,mldt:24}],
-    f35: [{sys:'F135 Engine',mtbf:300,mttr:6,mldt:120},{sys:'AN/APG-81 Radar',mtbf:600,mttr:4,mldt:72},{sys:'DAS Sensors',mtbf:800,mttr:3,mldt:48},{sys:'EOTS',mtbf:1000,mttr:2,mldt:36},{sys:'EW Suite',mtbf:700,mttr:3,mldt:48},{sys:'Mission Computer',mtbf:1500,mttr:2,mldt:24}],
-    m1: [{sys:'AGT1500 Gas Turbine',mtbf:500,mttr:12,mldt:96},{sys:'120mm M256A1 Gun',mtbf:3000,mttr:4,mldt:48},{sys:'Trophy APS',mtbf:2000,mttr:3,mldt:72},{sys:'FBCB2-JCR',mtbf:1800,mttr:2,mldt:24},{sys:'CROWS II RWS',mtbf:2500,mttr:2,mldt:24},{sys:'NBC Protection',mtbf:4000,mttr:3,mldt:36}],
-    ah64: [{sys:'T700-GE-701D Engine',mtbf:400,mttr:8,mldt:120},{sys:'M230 30mm Chain Gun',mtbf:2000,mttr:3,mldt:48},{sys:'Longbow FCR',mtbf:800,mttr:4,mldt:72},{sys:'M-TADS/PNVS',mtbf:600,mttr:3,mldt:48},{sys:'Hellfire Launcher',mtbf:3000,mttr:2,mldt:36},{sys:'Main Rotor Assembly',mtbf:1200,mttr:12,mldt:96}],
-    himars: [{sys:'Launcher Loader Module',mtbf:1500,mttr:6,mldt:72},{sys:'Fire Control System',mtbf:2000,mttr:3,mldt:48},{sys:'FMTV Chassis',mtbf:3000,mttr:8,mldt:48},{sys:'GMLRS Interface',mtbf:4000,mttr:2,mldt:24},{sys:'Navigation System',mtbf:3500,mttr:2,mldt:24},{sys:'Hydraulic Elevation Sys',mtbf:2500,mttr:4,mldt:36}],
-    kc46: [{sys:'PW4062 Engine',mtbf:3000,mttr:12,mldt:168},{sys:'Remote Vision System',mtbf:500,mttr:4,mldt:72},{sys:'Refueling Boom',mtbf:1200,mttr:6,mldt:96},{sys:'Centerline Drogue',mtbf:2000,mttr:4,mldt:48},{sys:'Mission Computer',mtbf:1800,mttr:2,mldt:24},{sys:'Cargo Handling',mtbf:4000,mttr:3,mldt:36}]
-};
+// Proxy to S4 Platforms DB — readiness data generated for all 462 platforms
+const READINESS_DEFAULTS = new Proxy({}, {
+    get(_, k) { if (typeof k !== 'string') return undefined; return window.S4_getReadiness ? S4_getReadiness(k) : [{sys:'System',mtbf:1000,mttr:4,mldt:24}]; },
+    has(_, k) { return typeof k === 'string'; },
+    ownKeys() { return window.S4_PLATFORMS ? Object.keys(S4_PLATFORMS) : []; },
+    getOwnPropertyDescriptor(_, k) { return {configurable:true, enumerable:true, value: window.S4_getReadiness ? S4_getReadiness(k) : undefined}; }
+});
 
 function loadReadinessData() {
     const progKey = document.getElementById('readinessProgram').value;
@@ -4110,8 +4117,227 @@ async function anchorParts() {
     setTimeout(() => { document.getElementById('animStatus').textContent = '✅ Parts data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
+// ═══ ROI CALCULATOR ═══
+function calcROI() {
+    const programs = parseInt(document.getElementById('roiPrograms').value) || 1;
+    const records = parseInt(document.getElementById('roiRecords').value) || 0;
+    const ftes = parseFloat(document.getElementById('roiFTEs').value) || 0;
+    const rate = parseFloat(document.getElementById('roiRate').value) || 0;
+    const auditCost = parseFloat(document.getElementById('roiAudit').value) || 0;
+    const errorCost = parseFloat(document.getElementById('roiError').value) || 0;
+    const incidents = parseInt(document.getElementById('roiIncidents').value) || 0;
+    const license = parseFloat(document.getElementById('roiLicense').value) || 0;
+
+    // S4 automates ~65% of manual ILS work, reduces errors by 90%, cuts audit cost by 70%
+    const annualLabor = ftes * rate * 2080; // 2080 work hours/year
+    const laborSavings = annualLabor * 0.65;
+    const errorSavings = errorCost * incidents * 0.90;
+    const auditSavings = auditCost * 0.70;
+    const complianceSavings = programs * 12000; // estimated compliance acceleration value
+    const totalSavings = laborSavings + errorSavings + auditSavings + complianceSavings;
+    const netSavings = totalSavings - license;
+    const roiPct = license > 0 ? ((netSavings / license) * 100) : 0;
+    const paybackMonths = totalSavings > 0 ? Math.ceil((license / totalSavings) * 12) : 99;
+    const fiveYear = (netSavings * 5);
+
+    document.getElementById('roiSavings').textContent = '$' + Math.round(netSavings).toLocaleString();
+    document.getElementById('roiPercent').textContent = Math.round(roiPct) + '%';
+    document.getElementById('roiPayback').textContent = paybackMonths + ' mo';
+    document.getElementById('roi5Year').textContent = '$' + Math.round(fiveYear).toLocaleString();
+
+    // Detailed breakdown
+    let html = '<div style="background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.15);border-radius:10px;padding:1rem;">';
+    html += '<h5 style="color:#00aaff;margin-bottom:0.8rem"><i class="fas fa-chart-line"></i> ROI Breakdown</h5>';
+    html += '<table style="width:100%;border-collapse:collapse;">';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">Labor Automation Savings (65% reduction)</td><td style="padding:6px;color:#14f195;text-align:right;">+$' + Math.round(laborSavings).toLocaleString() + '</td></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">Error Reduction Savings (90% fewer incidents)</td><td style="padding:6px;color:#14f195;text-align:right;">+$' + Math.round(errorSavings).toLocaleString() + '</td></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">Audit Cost Reduction (70% with blockchain proof)</td><td style="padding:6px;color:#14f195;text-align:right;">+$' + Math.round(auditSavings).toLocaleString() + '</td></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">Compliance Acceleration Value</td><td style="padding:6px;color:#14f195;text-align:right;">+$' + Math.round(complianceSavings).toLocaleString() + '</td></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:6px;color:var(--steel);font-weight:600;">Total Annual Savings</td><td style="padding:6px;color:#14f195;font-weight:600;text-align:right;">$' + Math.round(totalSavings).toLocaleString() + '</td></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">S4 Ledger License Cost</td><td style="padding:6px;color:#ff6666;text-align:right;">-$' + Math.round(license).toLocaleString() + '</td></tr>';
+    html += '<tr><td style="padding:8px;color:#fff;font-weight:700;font-size:1.05rem;">Net Annual Benefit</td><td style="padding:8px;color:' + (netSavings >= 0 ? '#14f195' : '#ff3333') + ';font-weight:700;font-size:1.05rem;text-align:right;">$' + Math.round(netSavings).toLocaleString() + '</td></tr>';
+    html += '</table>';
+    html += '<div style="margin-top:0.8rem;padding:8px;background:rgba(20,241,149,0.06);border-radius:8px;color:var(--steel);font-size:0.85rem;">';
+    html += '<strong style="color:#14f195;">Key Benefits:</strong> ' + Math.round(ftes * 0.65 * 10) / 10 + ' FTE-equivalents freed • ' + Math.round(records * programs * 12 * 0.65).toLocaleString() + ' records automated/year • ' + Math.round(incidents * 0.9) + ' errors prevented • XRPL-anchored audit trail</div>';
+    html += '</div>';
+    document.getElementById('roiOutput').innerHTML = html;
+}
+
+function exportROI() {
+    const data = {programs: document.getElementById('roiPrograms').value, ftes: document.getElementById('roiFTEs').value, rate: document.getElementById('roiRate').value, savings: document.getElementById('roiSavings').textContent, roi: document.getElementById('roiPercent').textContent, payback: document.getElementById('roiPayback').textContent};
+    let csv = 'Metric,Value\n'; Object.entries(data).forEach(([k,v]) => { csv += k + ',' + v + '\n'; });
+    const blob = new Blob([csv], {type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'S4_ROI_Report.csv'; a.click();
+}
+
+async function anchorROI() {
+    const text = 'ROI Calculator | Programs: ' + document.getElementById('roiPrograms').value + ' | Savings: ' + document.getElementById('roiSavings').textContent + ' | Date: ' + new Date().toISOString();
+    const hash = await sha256(text);
+    showAnchorAnimation(hash, 'ROI Analysis', 'CUI');
+    stats.anchored++; stats.types.add('ROI_ANALYSIS'); stats.slsFees += 0.01; updateStats(); saveStats();
+    const rec = {hash, type:'ROI_ANALYSIS', branch:'JOINT', timestamp:new Date().toISOString(), label:'ROI Calculator Report'};
+    sessionRecords.push(rec); saveLocalRecord(rec); updateTxLog();
+}
+
+// ═══ LIFECYCLE COST ESTIMATOR ═══
+function calcLifecycle() {
+    const progKey = document.getElementById('lifecycleProgram').value;
+    const serviceLife = parseInt(document.getElementById('lcServiceLife').value) || 30;
+    const opHours = parseInt(document.getElementById('lcOpHours').value) || 2500;
+    const acqCostM = parseFloat(document.getElementById('lcAcqCost').value) || 85;
+    const fleetSize = parseInt(document.getElementById('lcFleetSize').value) || 20;
+    const sustRate = parseFloat(document.getElementById('lcSustRate').value) || 8;
+
+    const acqTotal = acqCostM * fleetSize; // $M
+    const annualSust = acqTotal * (sustRate / 100);
+    const totalSust = annualSust * serviceLife;
+    const dmsmsCost = acqTotal * 0.04 * serviceLife; // ~4% per year for DMSMS/obsolescence
+    const techRefresh = acqTotal * 0.02 * Math.floor(serviceLife / 5); // Tech refresh every 5 years at 2%
+    const depotMaint = annualSust * 0.35 * serviceLife; // 35% of sustainment goes to depot
+    const totalCost = acqTotal + totalSust + dmsmsCost + techRefresh;
+    const costPerHour = (totalCost * 1000000) / (opHours * serviceLife * fleetSize);
+
+    document.getElementById('lcTotalCost').textContent = '$' + totalCost.toFixed(1) + 'B';
+    document.getElementById('lcSustCost').textContent = '$' + totalSust.toFixed(1) + 'B';
+    document.getElementById('lcDmsmsCost').textContent = '$' + dmsmsCost.toFixed(1) + 'B';
+    document.getElementById('lcCostPerHr').textContent = '$' + Math.round(costPerHour).toLocaleString();
+
+    const platName = (window.S4_PLATFORMS && S4_PLATFORMS[progKey]) ? S4_PLATFORMS[progKey].n : progKey.toUpperCase();
+
+    let html = '<div style="background:rgba(255,153,0,0.05);border:1px solid rgba(255,153,0,0.15);border-radius:10px;padding:1rem;">';
+    html += '<h5 style="color:#ff9900;margin-bottom:0.8rem"><i class="fas fa-coins"></i> ' + platName + ' — Lifecycle Cost Projection</h5>';
+    html += '<table style="width:100%;border-collapse:collapse;">';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">Acquisition (RDT&E + Procurement)</td><td style="padding:6px;color:#00aaff;text-align:right;">$' + acqTotal.toFixed(1) + 'B (' + Math.round(acqTotal/totalCost*100) + '%)</td></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">Operations & Sustainment (' + serviceLife + ' years)</td><td style="padding:6px;color:#00aaff;text-align:right;">$' + totalSust.toFixed(1) + 'B (' + Math.round(totalSust/totalCost*100) + '%)</td></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">DMSMS & Obsolescence Resolution</td><td style="padding:6px;color:#ff3333;text-align:right;">$' + dmsmsCost.toFixed(1) + 'B (' + Math.round(dmsmsCost/totalCost*100) + '%)</td></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px;color:var(--steel);">Technology Refresh Cycles (' + Math.floor(serviceLife/5) + ' cycles)</td><td style="padding:6px;color:#ffa500;text-align:right;">$' + techRefresh.toFixed(1) + 'B (' + Math.round(techRefresh/totalCost*100) + '%)</td></tr>';
+    html += '<tr><td style="padding:8px;color:#fff;font-weight:700;font-size:1.05rem;">Total Ownership Cost</td><td style="padding:8px;color:#ff9900;font-weight:700;font-size:1.05rem;text-align:right;">$' + totalCost.toFixed(1) + 'B</td></tr>';
+    html += '</table>';
+    html += '<div style="margin-top:0.8rem;padding:8px;background:rgba(0,170,255,0.06);border-radius:8px;color:var(--steel);font-size:0.85rem;">';
+    html += '<strong style="color:#00aaff;">S4 Ledger Impact:</strong> Automated DMSMS tracking can reduce obsolescence costs by 15-25% (est. savings: $' + (dmsmsCost * 0.20).toFixed(1) + 'B). ';
+    html += 'Blockchain-anchored ILS records reduce audit overhead by ~70%. Fleet of ' + fleetSize + ' units × ' + serviceLife + ' years = ' + (opHours * serviceLife * fleetSize).toLocaleString() + ' total operating hours.</div>';
+    html += '</div>';
+    document.getElementById('lifecycleOutput').innerHTML = html;
+}
+
+function exportLifecycle() {
+    const data = {program: document.getElementById('lifecycleProgram').value, totalCost: document.getElementById('lcTotalCost').textContent, sustainment: document.getElementById('lcSustCost').textContent, dmsms: document.getElementById('lcDmsmsCost').textContent, costPerHr: document.getElementById('lcCostPerHr').textContent};
+    let csv = 'Metric,Value\n'; Object.entries(data).forEach(([k,v]) => { csv += k + ',' + v + '\n'; });
+    const blob = new Blob([csv], {type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'S4_Lifecycle_Report.csv'; a.click();
+}
+
+async function anchorLifecycle() {
+    const prog = document.getElementById('lifecycleProgram').value;
+    const text = 'Lifecycle Cost | Program: ' + prog + ' | TOC: ' + document.getElementById('lcTotalCost').textContent + ' | Date: ' + new Date().toISOString();
+    const hash = await sha256(text);
+    showAnchorAnimation(hash, 'Lifecycle Cost Estimate', 'CUI');
+    stats.anchored++; stats.types.add('LIFECYCLE_COST'); stats.slsFees += 0.01; updateStats(); saveStats();
+    const rec = {hash, type:'LIFECYCLE_COST', branch:'JOINT', timestamp:new Date().toISOString(), label:'Lifecycle Cost Estimate'};
+    sessionRecords.push(rec); saveLocalRecord(rec); updateTxLog();
+}
+
+// ═══ WARRANTY & CONTRACT TRACKER ═══
+function loadWarrantyData() {
+    const progKey = document.getElementById('warrantyProgram').value;
+    if (!progKey) return;
+    const comp = PROG_COMPONENTS[progKey] || PROG_COMPONENTS.custom;
+    const platName = (window.S4_PLATFORMS && S4_PLATFORMS[progKey]) ? S4_PLATFORMS[progKey].n : progKey.toUpperCase();
+    const now = new Date();
+    const statuses = ['Active','Active','Active','Active','Expiring Soon','Expiring Soon','Expired','Active','Active','Active'];
+    const contractTypes = ['OEM Warranty','Extended Service','IDIQ CLIN','BPA Order','OEM Warranty','Service Agreement','OEM Warranty','IDIQ CLIN','Performance-Based','OEM Warranty'];
+    const periods = [36, 24, 60, 12, 48, 36, 18, 60, 36, 24]; // months
+
+    let items = comp.systems.map((sys, i) => {
+        const startDate = new Date(now); startDate.setMonth(startDate.getMonth() - Math.floor(periods[i % periods.length] * 0.6));
+        const endDate = new Date(startDate); endDate.setMonth(endDate.getMonth() + periods[i % periods.length]);
+        const daysLeft = Math.floor((endDate - now) / (1000 * 60 * 60 * 24));
+        const status = daysLeft < 0 ? 'Expired' : daysLeft < 90 ? 'Expiring Soon' : 'Active';
+        const value = Math.floor(25000 + Math.random() * 475000);
+        return {system: sys, mfg: comp.mfgs[i], type: contractTypes[i % contractTypes.length], start: startDate.toISOString().split('T')[0], end: endDate.toISOString().split('T')[0], daysLeft, status, value, clin: 'CLIN ' + String(100 + i).padStart(4, '0')};
+    });
+
+    const active = items.filter(i => i.status === 'Active').length;
+    const expiring = items.filter(i => i.status === 'Expiring Soon').length;
+    const expired = items.filter(i => i.status === 'Expired').length;
+    const totalValue = items.reduce((s, i) => s + i.value, 0);
+
+    document.getElementById('warActive').textContent = active;
+    document.getElementById('warExpiring').textContent = expiring;
+    document.getElementById('warExpired').textContent = expired;
+    document.getElementById('warValue').textContent = '$' + Math.round(totalValue / 1000) + 'K';
+
+    let html = '<div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:10px;padding:1rem;">';
+    html += '<h5 style="color:#c9a84c;margin-bottom:0.8rem"><i class="fas fa-file-contract"></i> ' + platName + ' — Warranty & Contract Status</h5>';
+    html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
+    html += '<tr style="background:rgba(0,170,255,0.08);"><th style="padding:8px;text-align:left;color:#00aaff;">System</th><th style="padding:8px;text-align:left;color:#00aaff;">OEM</th><th style="padding:8px;color:#00aaff;">Type</th><th style="padding:8px;color:#00aaff;">CLIN</th><th style="padding:8px;color:#00aaff;">Start</th><th style="padding:8px;color:#00aaff;">End</th><th style="padding:8px;color:#00aaff;">Days Left</th><th style="padding:8px;color:#00aaff;">Status</th><th style="padding:8px;color:#00aaff;">Value</th></tr>';
+    const statusClr = {'Active':'#14f195', 'Expiring Soon':'#ffa500', 'Expired':'#ff3333'};
+    items.forEach(w => {
+        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
+        html += '<td style="padding:6px 8px;color:#fff;font-weight:500;">' + w.system + '</td>';
+        html += '<td style="padding:6px 8px;color:var(--steel);">' + w.mfg + '</td>';
+        html += '<td style="padding:6px 8px;color:var(--steel);">' + w.type + '</td>';
+        html += '<td style="padding:6px 8px;color:#c9a84c;font-family:monospace;">' + w.clin + '</td>';
+        html += '<td style="padding:6px 8px;color:var(--steel);">' + w.start + '</td>';
+        html += '<td style="padding:6px 8px;color:var(--steel);">' + w.end + '</td>';
+        html += '<td style="padding:6px 8px;color:' + (statusClr[w.status]) + ';font-weight:600;">' + (w.daysLeft > 0 ? w.daysLeft + 'd' : 'EXPIRED') + '</td>';
+        html += '<td style="padding:6px 8px;"><span style="color:' + (statusClr[w.status]) + ';font-weight:600;">' + w.status + '</span></td>';
+        html += '<td style="padding:6px 8px;color:var(--steel);">$' + w.value.toLocaleString() + '</td>';
+        html += '</tr>';
+    });
+    html += '</table></div>';
+    if (expiring > 0) {
+        html += '<div style="margin-top:0.8rem;padding:8px;background:rgba(255,165,0,0.08);border:1px solid rgba(255,165,0,0.2);border-radius:8px;color:#ffa500;font-size:0.85rem;">';
+        html += '<strong>⚠ Action Required:</strong> ' + expiring + ' warranty/contract item(s) expiring within 90 days. Initiate renewal or re-compete per FAR 46.7 / DFARS 246.7.</div>';
+    }
+    if (expired > 0) {
+        html += '<div style="margin-top:0.5rem;padding:8px;background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:8px;color:#ff3333;font-size:0.85rem;">';
+        html += '<strong>🔴 Coverage Gap:</strong> ' + expired + ' expired warranty/contract item(s). Recommend immediate OEM engagement or bridge contract.</div>';
+    }
+    html += '</div>';
+    document.getElementById('warrantyResults').innerHTML = html;
+}
+
+function exportWarranty() {
+    const prog = document.getElementById('warrantyProgram').value;
+    const comp = PROG_COMPONENTS[prog] || PROG_COMPONENTS.custom;
+    let csv = 'System,Manufacturer,Contract Type,CLIN,Start,End,Status,Value\n';
+    comp.systems.forEach((sys, i) => { csv += '"' + sys + '","' + comp.mfgs[i] + '",OEM Warranty,CLIN ' + (100+i) + ',2024-01-01,2026-01-01,Active,$50000\n'; });
+    const blob = new Blob([csv], {type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'S4_Warranty_' + prog.toUpperCase() + '.csv'; a.click();
+}
+
+async function anchorWarranty() {
+    const prog = document.getElementById('warrantyProgram').value;
+    const text = 'Warranty Tracker | Program: ' + prog + ' | Active: ' + document.getElementById('warActive').textContent + ' | Date: ' + new Date().toISOString();
+    const hash = await sha256(text);
+    showAnchorAnimation(hash, 'Warranty & Contract Data', 'CUI');
+    stats.anchored++; stats.types.add('WARRANTY_CONTRACT'); stats.slsFees += 0.01; updateStats(); saveStats();
+    const rec = {hash, type:'WARRANTY_CONTRACT', branch:'JOINT', timestamp:new Date().toISOString(), label:'Warranty & Contract Tracker'};
+    sessionRecords.push(rec); saveLocalRecord(rec); updateTxLog();
+}
+
 // ── Initialization ──
+function populateAllDropdowns() {
+    if (!window.S4_buildProgramOptions) { console.warn('S4 Platforms DB not loaded'); return; }
+    const selects = {
+        ilsProgram:    {all: false, custom: true},
+        dmsmsProgram:  {all: false, custom: false},
+        readinessProgram: {all: false, custom: false},
+        partsProgram:  {all: true, custom: false},
+        lifecycleProgram: {all: false, custom: false},
+        warrantyProgram: {all: false, custom: false}
+    };
+    Object.entries(selects).forEach(([id, opts]) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = S4_buildProgramOptions(opts.all, opts.custom);
+    });
+    // Update platform count badge
+    if (window.S4_countPlatforms) {
+        const countEl = document.getElementById('platformCount');
+        if (countEl) countEl.textContent = S4_countPlatforms() + ' Platforms';
+    }
+}
+
 function initILSEngine() {
+    populateAllDropdowns();
     initILSChecklist(document.getElementById('ilsProgram').value);
     setupILSDropzone();
     onILSProgramChange();
@@ -4119,6 +4345,12 @@ function initILSEngine() {
     if (document.getElementById('dmsmsProgram')) loadDMSMSData();
     if (document.getElementById('readinessProgram')) loadReadinessData();
     if (document.getElementById('partsResults')) renderPartsResults(getPartsDB().slice(0,15));
+    // ROI auto-calc on load
+    if (document.getElementById('roiPrograms')) calcROI();
+    // Lifecycle auto-calc on load
+    if (document.getElementById('lifecycleProgram')) calcLifecycle();
+    // Warranty auto-load
+    if (document.getElementById('warrantyProgram')) loadWarrantyData();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

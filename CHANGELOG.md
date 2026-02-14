@@ -5,6 +5,28 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2026-02-14
+
+### Added
+- **462 real defense platforms** across all 8 U.S. military branches (Navy, Army, Air Force, Space Force, Coast Guard, Marines, SOCOM, Joint)
+- Master platform database (`s4-assets/platforms.js`) with category templates, component data, and deterministic NSN generation
+- **ROI Calculator** — calculates annual savings, ROI %, payback period, and 5-year net benefit from S4 Ledger implementation
+- **Lifecycle Cost Estimator** — projects total ownership cost (TOC) per DoD 5000.73 / MIL-STD-881F (acquisition, O&S, DMSMS, tech refresh)
+- **Warranty & Contract Tracker** — tracks OEM warranties, CLIN deliverables, and contract expirations per FAR 46.7 / DFARS 246.7
+- All existing tool dropdowns (ILS Intelligence, DMSMS, Readiness, Parts X-Ref) now dynamically populated from the 462-platform database
+- 3 new API endpoints: `/api/roi`, `/api/lifecycle`, `/api/warranty`
+- 3 new SDK methods: `calculate_roi()`, `estimate_lifecycle_cost()`, `track_warranty()`
+- 3 new CLI commands: `s4-anchor roi`, `s4-anchor lifecycle`, `s4-anchor warranty`
+- Anchor animation auto-dismiss after 5 seconds
+
+### Changed
+- API version bumped to 3.3.0 (9 tools, 20 endpoints)
+- PROG_COMPONENTS and READINESS_DEFAULTS now proxy to the platform database (backwards compatible)
+- Tab navigation shortened (DMSMS, Readiness, Parts) to fit 11 total tabs
+- SDK version bumped to 3.3.0 with expanded tool listing
+
+---
+
 ## [3.2.0] - 2026-02-13
 
 ### Added

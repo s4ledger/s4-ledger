@@ -528,6 +528,12 @@ class handler(BaseHTTPRequestHandler):
             return "readiness"
         if path == "/api/parts":
             return "parts"
+        if path == "/api/roi":
+            return "roi"
+        if path == "/api/lifecycle":
+            return "lifecycle"
+        if path == "/api/warranty":
+            return "warranty"
         return None
 
     def _check_rate_limit(self):
@@ -577,15 +583,15 @@ class handler(BaseHTTPRequestHandler):
                 "uptime_seconds": round(uptime, 1),
                 "requests_served": len(_request_log),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
-                "version": "3.2.0",
-                "tools": ["anchor", "verify", "ils-intelligence", "dmsms-tracker", "readiness-calculator", "parts-xref"],
+                "version": "3.3.0",
+                "tools": ["anchor", "verify", "ils-intelligence", "dmsms-tracker", "readiness-calculator", "parts-xref", "roi-calculator", "lifecycle-cost", "warranty-tracker"],
             })
         elif route == "status":
             self._log_request("status")
             self._send_json({
                 "status": "operational",
                 "service": "S4 Ledger Defense Metrics API",
-                "version": "3.2.0",
+                "version": "3.3.0",
                 "record_types": len(RECORD_CATEGORIES),
                 "branches": len(BRANCHES),
                 "total_records": len(_get_all_records()),
@@ -627,7 +633,7 @@ class handler(BaseHTTPRequestHandler):
         elif route == "infrastructure":
             self._send_json({
                 "infrastructure": {
-                    "api": {"status": "operational", "version": "3.2.0", "framework": "BaseHTTPRequestHandler", "tools": 6},
+                    "api": {"status": "operational", "version": "3.3.0", "framework": "BaseHTTPRequestHandler", "tools": 9, "platforms": 462},
                     "xrpl": {"available": XRPL_AVAILABLE, "network": "testnet", "endpoint": XRPL_TESTNET_URL},
                     "database": {"provider": "Supabase" if SUPABASE_AVAILABLE else "In-Memory", "connected": SUPABASE_AVAILABLE, "url": SUPABASE_URL[:30] + "..." if SUPABASE_URL else None},
                     "auth": {"enabled": True, "methods": ["API Key", "Bearer Token"], "master_key_set": bool(os.environ.get("S4_API_MASTER_KEY"))},
@@ -681,6 +687,34 @@ class handler(BaseHTTPRequestHandler):
             if search:
                 sample_parts = [p for p in sample_parts if search in p["nsn"].lower() or search in p["name"].lower() or search in p["cage"].lower()]
             self._send_json({"query": search, "results": sample_parts, "total": len(sample_parts)})
+        elif route == "roi":
+            self._log_request("roi")
+            qs = parse_qs(parsed.query)
+            programs = int(qs.get("programs", ["5"])[0])
+            ftes = float(qs.get("ftes", ["8"])[0])
+            rate = float(qs.get("rate", ["145"])[0])
+            license_cost = float(qs.get("license", ["120000"])[0])
+            labor = ftes * rate * 2080
+            savings = labor * 0.65 + programs * 12000
+            roi_pct = ((savings - license_cost) / license_cost * 100) if license_cost > 0 else 0
+            self._send_json({"programs": programs, "ftes": ftes, "annual_savings": round(savings), "license_cost": license_cost, "net_benefit": round(savings - license_cost), "roi_percent": round(roi_pct, 1), "payback_months": round(license_cost / savings * 12, 1) if savings > 0 else 99})
+        elif route == "lifecycle":
+            self._log_request("lifecycle")
+            qs = parse_qs(parsed.query)
+            acq = float(qs.get("acquisition", ["85"])[0])
+            fleet = int(qs.get("fleet", ["20"])[0])
+            life = int(qs.get("life", ["30"])[0])
+            sust_rate = float(qs.get("sustrate", ["8"])[0]) / 100
+            total_acq = acq * fleet
+            total_sust = total_acq * sust_rate * life
+            dmsms = total_acq * 0.04 * life
+            total = total_acq + total_sust + dmsms
+            self._send_json({"acquisition_m": round(total_acq, 1), "sustainment_m": round(total_sust, 1), "dmsms_m": round(dmsms, 1), "total_ownership_m": round(total, 1), "service_life_years": life, "fleet_size": fleet})
+        elif route == "warranty":
+            self._log_request("warranty")
+            program = parse_qs(parsed.query).get("program", ["ddg51"])[0]
+            items = [{"system": f"System {i+1}", "status": "Active" if i < 6 else "Expiring" if i < 8 else "Expired", "days_left": max(0, 365 - i * 60), "contract_type": "OEM Warranty", "value": 50000 + i * 25000} for i in range(10)]
+            self._send_json({"program": program, "items": items, "active": sum(1 for i in items if i["status"] == "Active"), "expiring": sum(1 for i in items if i["status"] == "Expiring"), "total_value": sum(i["value"] for i in items)})
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)
 

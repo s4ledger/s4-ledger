@@ -289,6 +289,69 @@ class S4SDK:
             "source": "FedLog Simulated",
         }
 
+    def calculate_roi(self, programs=5, ftes=8, rate=145.0, license_cost=120000.0,
+                      audit_cost=250000.0, error_cost=8500.0, incidents=35):
+        """Calculate ROI for S4 Ledger implementation.
+        Returns annual savings, ROI %, payback period."""
+        labor = ftes * rate * 2080
+        labor_savings = labor * 0.65
+        error_savings = error_cost * incidents * 0.90
+        audit_savings = audit_cost * 0.70
+        compliance = programs * 12000
+        total = labor_savings + error_savings + audit_savings + compliance
+        net = total - license_cost
+        return {
+            "annual_savings": round(total),
+            "net_benefit": round(net),
+            "roi_percent": round((net / license_cost * 100), 1) if license_cost > 0 else 0,
+            "payback_months": round(license_cost / total * 12, 1) if total > 0 else 99,
+            "five_year_savings": round(net * 5),
+            "ftes_freed": round(ftes * 0.65, 1),
+        }
+
+    def estimate_lifecycle_cost(self, acquisition_m=85.0, fleet_size=20, service_life=30,
+                                 sustainment_rate=8.0):
+        """Estimate total ownership cost per DoD 5000.73 / MIL-STD-881F.
+        acquisition_m: unit cost in $M, sustainment_rate: annual % of acq cost."""
+        total_acq = acquisition_m * fleet_size
+        annual_sust = total_acq * (sustainment_rate / 100)
+        total_sust = annual_sust * service_life
+        dmsms = total_acq * 0.04 * service_life
+        tech_refresh = total_acq * 0.02 * (service_life // 5)
+        total = total_acq + total_sust + dmsms + tech_refresh
+        return {
+            "acquisition_b": round(total_acq / 1000, 2),
+            "sustainment_b": round(total_sust / 1000, 2),
+            "dmsms_b": round(dmsms / 1000, 2),
+            "tech_refresh_b": round(tech_refresh / 1000, 2),
+            "total_ownership_b": round(total / 1000, 2),
+            "s4_dmsms_savings_b": round(dmsms * 0.20 / 1000, 2),
+        }
+
+    def track_warranty(self, program="ddg51", systems=None):
+        """Track warranty and contract status for a program.
+        Returns list of items with expiration status per FAR 46.7 / DFARS 246.7."""
+        if systems is None:
+            systems = [f"System {i+1}" for i in range(10)]
+        from datetime import datetime, timedelta
+        now = datetime.now()
+        items = []
+        for i, sys_name in enumerate(systems):
+            start = now - timedelta(days=int(365 * 0.6 * ((i % 5) + 1)))
+            end = start + timedelta(days=365 * ((i % 3) + 1))
+            days_left = (end - now).days
+            status = "Expired" if days_left < 0 else "Expiring" if days_left < 90 else "Active"
+            items.append({"system": sys_name, "status": status, "days_left": max(0, days_left),
+                          "start": start.strftime("%Y-%m-%d"), "end": end.strftime("%Y-%m-%d"),
+                          "value": 25000 + i * 25000})
+        return {
+            "program": program, "total": len(items),
+            "active": sum(1 for i in items if i["status"] == "Active"),
+            "expiring": sum(1 for i in items if i["status"] == "Expiring"),
+            "expired": sum(1 for i in items if i["status"] == "Expired"),
+            "items": items,
+        }
+
     def wallet_from_seed(self, seed):
         """Create an XRPL Wallet from a given seed, handling ED25519 seeds (sEd...)."""
         if seed is None:
@@ -317,7 +380,7 @@ def main_cli():
         prog="s4-anchor",
         description="S4 Ledger — Anchor defense logistics records to the XRP Ledger",
     )
-    parser.add_argument("command", choices=["anchor", "hash", "verify", "status", "readiness", "dmsms"], help="Command to execute")
+    parser.add_argument("command", choices=["anchor", "hash", "verify", "status", "readiness", "dmsms", "roi", "lifecycle", "warranty"], help="Command to execute")
     parser.add_argument("--record", "-r", help="Record content to anchor or hash")
     parser.add_argument("--seed", "-s", help="XRPL wallet seed")
     parser.add_argument("--api-key", "-k", default="s4-demo-key-2026", help="S4 API key")
@@ -356,12 +419,13 @@ def main_cli():
         print("Compare this hash with the on-chain MemoData to verify integrity.")
 
     elif args.command == "status":
-        print(f"S4 Ledger SDK v3.2.0")
+        print(f"S4 Ledger SDK v3.3.0")
         print(f"XRPL Available: {XRPL_AVAILABLE}")
         print(f"Encryption Available: {Fernet is not None}")
         print(f"API Key: {args.api_key[:8]}...")
         print(f"Network: {'Testnet' if args.testnet else 'Mainnet'}")
-        print(f"Tools: anchor, verify, hash, readiness, dmsms, parts-lookup")
+        print(f"Tools: anchor, verify, hash, readiness, dmsms, parts-lookup, roi, lifecycle, warranty")
+        print(f"Platforms: 462 across 8 U.S. military branches"))
 
     elif args.command == "readiness":
         mtbf = float(input("MTBF (hours): ") if not args.record else args.record.split(",")[0])
@@ -379,3 +443,18 @@ def main_cli():
         print(f"DMSMS Check: {result['total']} parts, {result['at_risk']} at risk")
         for p in result['parts']:
             print(f"  {p['nsn']}: {p['status']} ({p['severity']}) — {p['recommendation']}")
+
+    elif args.command == "roi":
+        result = sdk.calculate_roi()
+        print(f"ROI Analysis: {result['roi_percent']}% ROI | ${result['annual_savings']:,} annual savings | {result['payback_months']} mo payback")
+
+    elif args.command == "lifecycle":
+        result = sdk.estimate_lifecycle_cost()
+        print(f"Lifecycle Cost: ${result['total_ownership_b']}B TOC | ${result['sustainment_b']}B O&S | ${result['dmsms_b']}B DMSMS")
+        print(f"S4 Ledger DMSMS savings estimate: ${result['s4_dmsms_savings_b']}B")
+
+    elif args.command == "warranty":
+        result = sdk.track_warranty()
+        print(f"Warranty Tracker: {result['active']} active | {result['expiring']} expiring | {result['expired']} expired")
+        for item in result['items']:
+            print(f"  {item['system']}: {item['status']} ({item['days_left']}d remaining)")

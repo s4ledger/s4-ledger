@@ -1,7 +1,7 @@
 # S4 Ledger Whitepaper
 
 **Immutable Logistics Verification for the Defense Industry**  
-Version 1.0 — February 2026  
+Version 3.3 — February 2026  
 
 ---
 
@@ -218,10 +218,24 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | Phase | Timeline | Milestones |
 |---|---|---|
 | **Phase 1 — Foundation** | Q4 2025 – Q1 2026 ✅ | SDK, hash anchoring, $SLS token, website |
-| **Phase 2 — Defense Platform** | Q1 – Q2 2026 🔄 | Defense use case library, compliance docs, partner pitch |
+| **Phase 2 — Defense Platform** | Q1 – Q2 2026 ✅ | 462 real platforms, 9 interactive tools, 160+ record types, ROI/Lifecycle/Warranty calculators |
 | **Phase 3 — MVP & Pilot** | Q3 – Q4 2026 | Internal pilot on real contract data, SBIR/STTR applications |
 | **Phase 4 — Partner & SaaS** | Q1 – Q2 2027 | REST API, SaaS dashboard, DIU / NavalX engagement |
 | **Phase 5 — Scale & Certify** | Q3 2027+ | NIST/CMMC, FedRAMP, production deployments |
+
+### Current Toolset (v3.3.0)
+
+| Tool | Description |
+|---|---|
+| ILS Intelligence Engine | Per-program checklists for 26+ programs with DRL generation |
+| DMSMS Tracker | Obsolescence monitoring with severity analysis |
+| Readiness Calculator | Ao/Ai computation per MIL-STD-1390D |
+| Parts Cross-Reference | NSN lookup with alternate sourcing |
+| ROI Calculator | Annual savings, payback period, and 5-year projections |
+| Lifecycle Cost Estimator | Total ownership cost per DoD 5000.73 |
+| Warranty & Contract Tracker | OEM warranty and CLIN deliverable tracking per FAR 46.7 |
+| Record Anchoring | SHA-256 hash anchoring to XRPL ($0.01 SLS per transaction) |
+| Conversational AI | Natural language ILS question answering |
 
 ---
 

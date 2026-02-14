@@ -30,6 +30,9 @@
         { "source": "/api/infrastructure", "destination": "/api" },
         { "source": "/api/dmsms", "destination": "/api" },
         { "source": "/api/readiness", "destination": "/api" },
-        { "source": "/api/parts", "destination": "/api" }
+        { "source": "/api/parts", "destination": "/api" },
+        { "source": "/api/roi", "destination": "/api" },
+        { "source": "/api/lifecycle", "destination": "/api" },
+        { "source": "/api/warranty", "destination": "/api" }
     ]
 }
