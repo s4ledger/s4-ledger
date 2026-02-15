@@ -5,6 +5,17 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.7] - 2026-02-15
+
+### Added
+- **Site-Wide Blockchain Anchor Animation** — Enhanced `s4-background.js` v2 now loads on all 19 HTML pages (was only on demo-app). Features: floating anchor icons with glow rings, blockchain network nodes with mesh connections, rotating blockchain blocks with `#` symbols, flowing hex data streams, circuit trace lines with traveling pulse dots, hexagonal grid overlay, blockchain sync scanning line, and nautical wave lines. Auto-creates canvas if missing. Mobile-optimized with reduced particle counts on small screens. Zero external dependencies.
+- **SDK Playground — 5 New Tool Functions** — Added Supply Chain Risk (`analyze_supply_chain_risk()`), Audit Reports (`generate_audit_report()`), Contract Lifecycle (`manage_contracts()`), Digital Thread (`get_digital_thread()`), and Predictive Maintenance (`predict_maintenance()`) to SDK Playground. Each includes interactive function box, Python code template, mock runner output, SDK Quick Reference entry, and API endpoint entry. Total SDK functions: 21 (was 16).
+
+### Changed
+- **particles.js CDN Removed** — All pages previously loaded particles.js from CDN. Now replaced by shared `s4-assets/s4-background.js` with zero external dependencies.
+- **demo-app Inline Animation Replaced** — The 115-line inline canvas animation in demo-app/index.html replaced with shared `s4-background.js` reference (same enhanced animation as all other pages).
+- **SDK Playground Function Count** — Updated from "16 SDK functions" to "21 SDK functions"
+
 ## [3.8.6] - 2026-02-15
 
 ### Added

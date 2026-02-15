@@ -16,23 +16,7 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// Particles
-if (typeof particlesJS !== 'undefined' && document.getElementById('particles-js')) {
-    particlesJS('particles-js', {
-        particles: {
-            number: { value: 35 },
-            color: { value: '#00aaff' },
-            opacity: { value: 0.12 },
-            size: { value: 2 },
-            line_linked: { enable: true, distance: 150, color: '#00aaff', opacity: 0.06, width: 1 },
-            move: { enable: true, speed: 0.7 }
-        },
-        interactivity: {
-            events: { onhover: { enable: true, mode: 'grab' } },
-            modes: { grab: { distance: 130, line_linked: { opacity: 0.15 } } }
-        }
-    });
-}
+// Background animation loaded from s4-assets/s4-background.js (blockchain anchor canvas)
 
 // ── Persistent Auth State (cross-page login awareness) ──
 document.addEventListener('DOMContentLoaded', () => {
