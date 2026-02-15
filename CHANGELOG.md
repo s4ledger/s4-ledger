@@ -5,6 +5,21 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.2] - 2026-02-16
+
+### Added
+- **Provisioning Demo Data** — 40 hypothetical defense parts pre-loaded into Provisioning & PTD Manager (valves, pumps, radar components, turbine blades, generators, FLIR sensors, missile canisters, crypto modules, etc.) with realistic NSNs, CAGE codes, FSC groups, quantities, costs, and manufacturers
+- **Custom Provisioning Entry** — Full data entry form in Provisioning panel: Part Name, NSN, CAGE Code, Qty, FSC Group (dropdown with 10 common groups), PTD Status, Unit Cost, Manufacturer, Notes. Entries persist to localStorage
+- **Parts Inventory Table** — Interactive parts table with search bar, status filter dropdown, per-item "Anchor" buttons, value totals, and hover effects
+- **Per-Item & Batch Anchoring** — Individual anchor buttons per part row with animation + "Anchor All to XRPL" batch button that processes all items with progress feedback. Both call `/api/anchor`, `saveLocalRecord()`, and update metrics automatically
+- **SDK Playground Function Boxes** — Replaced 12 small buttons with 16 card-style function boxes in a responsive grid. Each box shows icon, title, description, and SDK method name. Clicking any box loads code and immediately executes it
+- **SDK Playground New Functions** — Added List Records, Record Types, and Provisioning runners with full output formatting. Added corresponding Python code templates
+- **Always-Visible Record Type Selector** — Record type dropdown (160+ types, 9 branches) now appears at the top of the SDK Playground instead of being hidden for some functions
+
+### Changed
+- **Provisioning panel JS** — Complete rewrite with state management (`provItems`, `provCustomItems`, `provView`), localStorage persistence, CSV export with headers, APL grouping, NSN cataloging display
+- **SDK Playground layout** — Function boxes replace button row; record type selector always visible; reference tables updated with provisioning endpoints; How It Works text updated
+
 ## [3.8.1] - 2026-02-16
 
 ### Changed

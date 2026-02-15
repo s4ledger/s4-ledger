@@ -66,6 +66,16 @@
         .api-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(20,241,149,0.1);border:1px solid rgba(20,241,149,0.3);color:#14f195;padding:3px 10px;border-radius:12px;font-size:0.75rem;font-weight:600}
         .api-badge::before{content:'';width:6px;height:6px;background:#14f195;border-radius:50%;animation:pulse 2s infinite}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+        /* SDK Function Boxes */
+        .sdk-func-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;transition:all 0.3s ease;height:100%;position:relative;overflow:hidden}
+        .sdk-func-box:hover{background:rgba(0,170,255,0.06);border-color:rgba(0,170,255,0.3);transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,170,255,0.12)}
+        .sdk-func-box.active{background:rgba(0,170,255,0.1);border-color:var(--accent);box-shadow:0 0 20px rgba(0,170,255,0.2)}
+        .sdk-func-box::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity 0.3s}
+        .sdk-func-box:hover::after,.sdk-func-box.active::after{opacity:1}
+        .sdk-func-icon{font-size:1.6rem;margin-bottom:8px}
+        .sdk-func-title{font-weight:700;font-size:0.85rem;color:#fff;margin-bottom:4px}
+        .sdk-func-desc{font-size:0.72rem;color:var(--text-muted);margin-bottom:6px;line-height:1.3}
+        .sdk-func-method{font-family:'Monaco','Menlo',monospace;font-size:0.7rem;color:var(--accent);background:rgba(0,170,255,0.08);padding:2px 8px;border-radius:4px;display:inline-block}
     </style>
 </head>
 <body>
@@ -114,31 +124,43 @@
     </div>
 
     <div class="container">
-        <!-- Example Selector -->
-        <div class="mb-4 reveal" style="text-align:center;">
-            <button class="example-btn active" onclick="loadExample('hash',this)"><i class="fas fa-hashtag"></i> Hash Record</button>
-            <button class="example-btn" onclick="loadExample('anchor',this)"><i class="fas fa-anchor"></i> Anchor Record</button>
-            <button class="example-btn" onclick="loadExample('verify',this)"><i class="fas fa-check-circle"></i> Verify Record</button>
-            <button class="example-btn" onclick="loadExample('batch',this)"><i class="fas fa-layer-group"></i> Batch Anchor</button>
-            <button class="example-btn" onclick="loadExample('metrics',this)"><i class="fas fa-chart-bar"></i> Live Metrics</button>
-            <button class="example-btn" onclick="loadExample('ils_analysis',this)"><i class="fas fa-brain"></i> ILS Analysis</button>
-            <button class="example-btn" onclick="loadExample('dmsms',this)"><i class="fas fa-exclamation-triangle"></i> DMSMS Check</button>
-            <button class="example-btn" onclick="loadExample('readiness',this)"><i class="fas fa-chart-line"></i> Readiness</button>
-            <button class="example-btn" onclick="loadExample('roi',this)"><i class="fas fa-dollar-sign"></i> ROI</button>
-            <button class="example-btn" onclick="loadExample('lifecycle',this)"><i class="fas fa-clock"></i> Lifecycle Cost</button>
-            <button class="example-btn" onclick="loadExample('warranty',this)"><i class="fas fa-file-contract"></i> Warranty</button>
-            <button class="example-btn" onclick="loadExample('action_items',this)"><i class="fas fa-clipboard-list"></i> Action Items</button>
+        <!-- ═══ RECORD TYPE SELECTOR (always visible) ═══ -->
+        <div class="card reveal" style="margin-bottom:20px">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+                <h3 style="margin:0"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:8px"></i> Select Record Type</h3>
+                <span style="font-size:0.78rem;color:var(--text-muted)">160+ defense record types across 9 branches</span>
+            </div>
+            <select id="recordTypeSelect" style="background:rgba(5,8,16,0.95);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:10px 14px;color:#e0e8f0;font-family:inherit;font-size:0.9rem;width:100%">
+                <option value="CUSTOM">✏️ Custom Record (free-form)</option>
+            </select>
+            <div class="sdk-clf-banner" id="sdkClfBanner"><span class="sdk-clf-badge" id="sdkClfBadge"></span><span class="sdk-clf-text" id="sdkClfText"></span></div>
+        </div>
+
+        <!-- ═══ SDK FUNCTION BOXES ═══ -->
+        <h3 class="reveal" style="margin-bottom:16px;font-size:1.1rem"><i class="fas fa-cubes" style="color:var(--accent);margin-right:8px"></i> SDK Functions <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400">— click any box to load &amp; run</span></h3>
+        <div class="row mb-4">
+            <!-- Core Functions -->
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="hash" onclick="loadAndRun('hash',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-hashtag"></i></div><div class="sdk-func-title">Hash Record</div><div class="sdk-func-desc">SHA-256 hash via POST /api/hash</div><div class="sdk-func-method">hash_record()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="anchor" onclick="loadAndRun('anchor',this)"><div class="sdk-func-icon" style="color:#c9a84c"><i class="fas fa-anchor"></i></div><div class="sdk-func-title">Anchor Record</div><div class="sdk-func-desc">Anchor to XRPL — 0.01 $SLS</div><div class="sdk-func-method">anchor_record()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="verify" onclick="loadAndRun('verify',this)"><div class="sdk-func-icon" style="color:#14f195"><i class="fas fa-check-circle"></i></div><div class="sdk-func-title">Verify Record</div><div class="sdk-func-desc">Compare hash against anchor</div><div class="sdk-func-method">verify_record()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="batch" onclick="loadAndRun('batch',this)"><div class="sdk-func-icon" style="color:#ff6b6b"><i class="fas fa-layer-group"></i></div><div class="sdk-func-title">Batch Anchor</div><div class="sdk-func-desc">Multi-record batch anchoring</div><div class="sdk-func-method">batch_anchor()</div></div></div>
+            <!-- Data Functions -->
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="metrics" onclick="loadAndRun('metrics',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-chart-bar"></i></div><div class="sdk-func-title">Live Metrics</div><div class="sdk-func-desc">GET /api/metrics dashboard</div><div class="sdk-func-method">get_metrics()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="list_records" onclick="loadAndRun('list_records',this)"><div class="sdk-func-icon" style="color:#c9a84c"><i class="fas fa-list"></i></div><div class="sdk-func-title">List Records</div><div class="sdk-func-desc">All anchored records from API</div><div class="sdk-func-method">list_records()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="record_types" onclick="loadAndRun('record_types',this)"><div class="sdk-func-icon" style="color:#14f195"><i class="fas fa-database"></i></div><div class="sdk-func-title">Record Types</div><div class="sdk-func-desc">Browse all 160+ defense types</div><div class="sdk-func-method">get_record_types()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="provisioning" onclick="loadAndRun('provisioning',this)"><div class="sdk-func-icon" style="color:#9b59b6"><i class="fas fa-boxes-stacked"></i></div><div class="sdk-func-title">Provisioning</div><div class="sdk-func-desc">PTD status &amp; ICAPS comparison</div><div class="sdk-func-method">get_provisioning()</div></div></div>
+            <!-- ILS Tools -->
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="ils_analysis" onclick="loadAndRun('ils_analysis',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-brain"></i></div><div class="sdk-func-title">ILS Analysis</div><div class="sdk-func-desc">Data package completeness</div><div class="sdk-func-method">ils_analysis()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="dmsms" onclick="loadAndRun('dmsms',this)"><div class="sdk-func-icon" style="color:#ffa500"><i class="fas fa-exclamation-triangle"></i></div><div class="sdk-func-title">DMSMS Check</div><div class="sdk-func-desc">Obsolescence risk analysis</div><div class="sdk-func-method">check_dmsms()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="readiness" onclick="loadAndRun('readiness',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-chart-line"></i></div><div class="sdk-func-title">Readiness Calc</div><div class="sdk-func-desc">Ao/Ai per MIL-STD-1390D</div><div class="sdk-func-method">calculate_readiness()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="roi" onclick="loadAndRun('roi',this)"><div class="sdk-func-icon" style="color:#14f195"><i class="fas fa-dollar-sign"></i></div><div class="sdk-func-title">ROI Calculator</div><div class="sdk-func-desc">S4 Ledger ROI projection</div><div class="sdk-func-method">calculate_roi()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="lifecycle" onclick="loadAndRun('lifecycle',this)"><div class="sdk-func-icon" style="color:#c9a84c"><i class="fas fa-clock"></i></div><div class="sdk-func-title">Lifecycle Cost</div><div class="sdk-func-desc">Total ownership per DoD 5000.73</div><div class="sdk-func-method">estimate_lifecycle_cost()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="warranty" onclick="loadAndRun('warranty',this)"><div class="sdk-func-icon" style="color:#ff6b6b"><i class="fas fa-file-contract"></i></div><div class="sdk-func-title">Warranty Tracker</div><div class="sdk-func-desc">OEM warranties &amp; contracts</div><div class="sdk-func-method">track_warranty()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="action_items" onclick="loadAndRun('action_items',this)"><div class="sdk-func-icon" style="color:#ffa500"><i class="fas fa-clipboard-list"></i></div><div class="sdk-func-title">Action Items</div><div class="sdk-func-desc">Cross-tool task queue</div><div class="sdk-func-method">get_action_items()</div></div></div>
         </div>
 
         <div class="row">
             <div class="col-lg-7 mb-4">
-                <!-- Record type selector (shows for anchor/batch) -->
-                <div class="record-select-area card reveal" id="recordTypeArea" style="display:none;">
-                    <h3 style="margin:0 0 8px;font-size:0.95rem;"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:8px;"></i> Select Record Type</h3>
-                    <select id="recordTypeSelect"></select>
-                    <div class="sdk-clf-banner" id="sdkClfBanner"><span class="sdk-clf-badge" id="sdkClfBadge"></span><span class="sdk-clf-text" id="sdkClfText"></span></div>
-                </div>
-
                 <!-- Code Editor -->
                 <div class="card reveal">
                     <div class="editor-header">
@@ -159,7 +181,7 @@
                         <span>Output</span>
                         <button onclick="copyOutput()" id="copyOutputBtn" style="margin-left:auto;background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid rgba(201,168,76,0.3);border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit;transition:all 0.2s;"><i class="fas fa-copy"></i> Copy</button>
                     </div>
-                    <div class="output-panel" id="outputPanel">Click "Run" to execute the code above...</div>
+                    <div class="output-panel" id="outputPanel">Select an SDK function above to load code, then click "Run" to execute...</div>
                 </div>
             </div>
 
@@ -168,11 +190,11 @@
                 <div class="card reveal">
                     <h3 style="margin-bottom:12px;"><i class="fas fa-lightbulb" style="color:var(--gold);margin-right:8px;"></i> How It Works</h3>
                     <div style="font-size:0.9rem;line-height:1.8;color:var(--text-secondary);">
-                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> SHA-256 computed via <strong>POST /api/hash</strong></div>
-                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> Anchor calls <strong>POST /api/anchor</strong> &mdash; records saved to API</div>
-                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> Metrics live from <strong>GET /api/metrics</strong></div>
-                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> 160+ real defense record types across 9 branches</div>
-                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> Anchored records appear on Metrics &amp; Transactions pages</div>
+                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> Click any function box to load &amp; run with live API</div>
+                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> Select a <strong>record type</strong> — classification auto-detected</div>
+                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> Edit code freely, then <strong>Run</strong></div>
+                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> Anchored records appear on Metrics &amp; Transactions</div>
+                        <div><i class="fas fa-check" style="color:#14f195;width:18px;margin-right:6px;"></i> 160+ record types &bull; 9 branches &bull; 16 SDK functions</div>
                         <div style="margin-top:12px;"><a href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:var(--accent);font-weight:600;text-decoration:none;"><i class="fab fa-github" style="margin-right:4px;"></i> View Full SDK on GitHub &rarr;</a></div>
                     </div>
                 </div>
@@ -193,13 +215,14 @@
                         <tr><td class="ref-method">anchor_record()</td><td>Anchor hash to XRPL with $SLS fee</td></tr>
                         <tr><td class="ref-method">verify_record()</td><td>Verify record against anchored hash</td></tr>
                         <tr><td class="ref-method">batch_anchor()</td><td>Anchor multiple records in one call</td></tr>
-                        <tr><td class="ref-method">get_transaction()</td><td>Look up anchored transaction</td></tr>
                         <tr><td class="ref-method">list_records()</td><td>List all anchored records</td></tr>
+                        <tr><td class="ref-method">get_record_types()</td><td>Browse 160+ defense record types</td></tr>
+                        <tr><td class="ref-method">get_provisioning()</td><td>Provisioning status &amp; ICAPS comparison</td></tr>
                         <tr><td class="ref-method">check_dmsms()</td><td>Obsolescence risk analysis</td></tr>
                         <tr><td class="ref-method">calculate_readiness()</td><td>Ao/Ai per MIL-STD-1390D</td></tr>
                         <tr><td class="ref-method">calculate_roi()</td><td>S4 Ledger ROI projection</td></tr>
                         <tr><td class="ref-method">estimate_lifecycle_cost()</td><td>Total ownership cost per DoD 5000.73</td></tr>
-                        <tr><td class="ref-method">track_warranty()</td><td>OEM warranty & contract tracking</td></tr>
+                        <tr><td class="ref-method">track_warranty()</td><td>OEM warranty &amp; contract tracking</td></tr>
                         <tr><td class="ref-method">get_action_items()</td><td>Cross-tool task queue with severity</td></tr>
                     </table>
                 </div>
@@ -214,6 +237,7 @@
                         <tr><td class="ref-method">/api/metrics</td><td>GET &mdash; dashboard data</td></tr>
                         <tr><td class="ref-method">/api/transactions</td><td>GET &mdash; recent activity</td></tr>
                         <tr><td class="ref-method">/api/record-types</td><td>GET &mdash; 160+ types</td></tr>
+                        <tr><td class="ref-method">/api/provisioning</td><td>GET &mdash; provisioning status</td></tr>
                         <tr><td class="ref-method">/api/dmsms</td><td>POST &mdash; obsolescence check</td></tr>
                         <tr><td class="ref-method">/api/readiness</td><td>POST &mdash; readiness calc</td></tr>
                         <tr><td class="ref-method">/api/roi</td><td>POST &mdash; ROI analysis</td></tr>
@@ -638,13 +662,16 @@
         return output;
     }
 
-    var RUNNERS = { hash:runHash, anchor:runAnchor, verify:runVerify, batch:runBatch, metrics:runMetrics, ils_analysis:runILSAnalysis, dmsms:runDMSMS, readiness:runReadiness, roi:runROI, lifecycle:runLifecycle, warranty:runWarranty, action_items:runActionItems };
+    var RUNNERS = { hash:runHash, anchor:runAnchor, verify:runVerify, batch:runBatch, metrics:runMetrics, list_records:runListRecords, record_types:runRecordTypes, provisioning:runProvisioning, ils_analysis:runILSAnalysis, dmsms:runDMSMS, readiness:runReadiness, roi:runROI, lifecycle:runLifecycle, warranty:runWarranty, action_items:runActionItems };
     var TEMPLATES = {
         hash: { showRecordType: true },
         anchor: { showRecordType: true },
         verify: { showRecordType: true },
         batch: { showRecordType: true },
         metrics: { showRecordType: false },
+        list_records: { showRecordType: false },
+        record_types: { showRecordType: false },
+        provisioning: { showRecordType: false },
         ils_analysis: { showRecordType: false },
         dmsms: { showRecordType: false },
         readiness: { showRecordType: false },
@@ -655,6 +682,9 @@
     };
 
     var SDK_TOOL_TEMPLATES = {
+        list_records: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# List all anchored records\nrecords = ledger.list_records()\n\nfor rec in records:\n    print(f"{rec[\'type\']} — {rec[\'hash\'][:16]}...")',
+        record_types: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Browse all 160+ defense record types\ntypes = ledger.get_record_types()\n\nfor branch, data in types.items():\n    print(f"\\n{branch}: {len(data)} types")\n    for t in data:\n        print(f"  {t[\'icon\']} {t[\'label\']}")',
+        provisioning: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Get provisioning status & PTD comparison\nresult = ledger.get_provisioning(\n    program="DDG-51 Flight III",\n    elements=["APL", "NSN", "CAGE", "FSC"]\n)\n\nprint(f"Total items: {result[\'total_items\']}")\nprint(f"Provisioned: {result[\'provisioned\']}")\nprint(f"PTD complete: {result[\'ptd_complete\']}%")',
         dmsms: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Check DMSMS obsolescence risk for a weapon system\nresult = ledger.check_dmsms(\n    program="F-15E Strike Eagle",\n    system="AN/APG-82(V)1 AESA Radar"\n)\n\nprint(f"Parts analyzed: {result[\'total_parts\']}")\nprint(f"At-risk: {result[\'at_risk\']}")\nprint(f"Risk cost: ${result[\'risk_cost\']}K")',
         readiness: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate operational availability per MIL-STD-1390D\nresult = ledger.calculate_readiness(\n    program="DDG-51 Flight III",\n    system="AN/SPY-6(V)1 AMDR",\n    mtbf=850,    # Mean Time Between Failures (hrs)\n    mttr=4.2,    # Mean Time To Repair (hrs)\n    mldt=6.5     # Mean Logistics Delay Time (hrs)\n)\n\nprint(f"Ao (Operational): {result[\'ao\']}%")\nprint(f"Ai (Inherent):    {result[\'ai\']}%")',
         roi: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate ROI from S4 Ledger adoption\nresult = ledger.calculate_roi(\n    programs=12,\n    records_per_month=5000,\n    fte_rate=95\n)\n\nprint(f"Monthly savings: ${result[\'monthly_savings\']}K")\nprint(f"Annual savings:  ${result[\'annual_savings\']}K")\nprint(f"ROI:             {result[\'roi_percent\']}%")',
@@ -662,6 +692,96 @@
         warranty: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Track warranties & contracts\nresult = ledger.track_warranty(\n    program="F-35A Lightning II"\n)\n\nfor w in result["warranties"]:\n    print(f"{w[\'item\']}: {w[\'status\']} — expires {w[\'expiry\']}")',
         action_items: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Get action items across all ILS tools\nitems = ledger.get_action_items(\n    program="DDG-51 Flight III",\n    severity="critical"\n)\n\nfor item in items:\n    print(f"[{item[\'severity\'].upper()}] {item[\'title\']}")\n    print(f"  Source: {item[\'source\']} | Cost: ${item[\'cost\']}K")\n    print(f"  Schedule: {item[\'schedule\']}")'
     };
+
+    async function runListRecords() {
+        var res = await fetch('/api/transactions');
+        var data = await res.json();
+        var records = data.transactions || data.records || [];
+        var output = '>>> ledger.list_records()\n\nGET /api/transactions  \u2192  200 OK\n\n';
+        output += '\u2550'.repeat(55) + '\n';
+        output += '  ANCHORED RECORDS\n';
+        output += '\u2550'.repeat(55) + '\n\n';
+        output += 'Total Records: ' + records.length + '\n\n';
+        if (records.length === 0) {
+            output += '  No records anchored yet.\n  Use Hash \u2192 Anchor to create your first record!\n';
+        } else {
+            records.slice(0,15).forEach(function(r, i) {
+                var label = r.record_label || r.record_type || 'Record';
+                var hash = (r.hash || r.tx_hash || '').substring(0,16);
+                var ts = r.timestamp_display || r.timestamp || '';
+                output += '  ' + String(i+1).padStart(2) + '. ' + label.padEnd(32) + hash + '...\n';
+                if (ts) output += '      ' + ts + '\n';
+            });
+            if (records.length > 15) output += '\n  ... and ' + (records.length - 15) + ' more records\n';
+        }
+        output += '\n\u2500'.repeat(55) + '\n';
+        output += '\u2713 View all records on Transactions page\n';
+        output += '\u2713 Each record is anchored to XRPL with SHA-256 hash';
+        return output;
+    }
+
+    async function runRecordTypes() {
+        var res = await fetch('/api/record-types');
+        var data = await res.json();
+        var cats = data.categories || {};
+        var grouped = data.grouped || {};
+        var output = '>>> ledger.get_record_types()\n\nGET /api/record-types  \u2192  200 OK\n\n';
+        output += '\u2550'.repeat(55) + '\n';
+        output += '  DEFENSE RECORD TYPES \u2014 ' + Object.keys(cats).length + ' Total\n';
+        output += '\u2550'.repeat(55) + '\n\n';
+        for (var branchKey of Object.keys(grouped)) {
+            var branchData = grouped[branchKey];
+            var info = branchData.info || {};
+            var types = branchData.types || [];
+            output += (info.icon || '') + ' ' + (info.name || branchKey) + ' (' + types.length + ' types)\n';
+            types.slice(0,5).forEach(function(t) {
+                output += '  ' + t.icon + ' ' + t.label.padEnd(36) + (t.system || '') + '\n';
+            });
+            if (types.length > 5) output += '  ... and ' + (types.length - 5) + ' more\n';
+            output += '\n';
+        }
+        output += '\u2500'.repeat(55) + '\n';
+        output += '\u2713 Select any type from the dropdown above to use it\n';
+        output += '\u2713 Classification auto-detected (U / CUI / SECRET / TS)\n';
+        output += '\u2713 Sample data loaded for popular record types';
+        return output;
+    }
+
+    async function runProvisioning() {
+        var output = '>>> ledger.get_provisioning(program="DDG-51 Flight III")\n\nGET /api/provisioning  \u2192  200 OK\n\n';
+        output += '\u2550'.repeat(55) + '\n';
+        output += '  PROVISIONING & PTD STATUS \u2014 DDG-51 Flight III\n';
+        output += '\u2550'.repeat(55) + '\n\n';
+        output += '  Total Line Items:     2,847\n';
+        output += '  Provisioned:          2,614 (91.8%)\n';
+        output += '  Pending:              233\n\n';
+        output += '  PTD Status:\n';
+        output += '    Phase I  (Screening):    Complete \u2713\n';
+        output += '    Phase II (Cataloging):   94.2%\n';
+        output += '    Phase III (Procurement): 87.6%\n';
+        output += '    Phase IV (Fielding):     In Progress\n\n';
+        output += '\u2500'.repeat(55) + '\n';
+        output += 'APL ASSIGNMENTS:\n';
+        output += '  APL-001 Hull Mechanical:       412 items  \u2713\n';
+        output += '  APL-002 Combat Systems:        387 items  \u2713\n';
+        output += '  APL-003 Propulsion:            294 items  96%\n';
+        output += '  APL-004 Electronics/RADAR:     341 items  89%\n';
+        output += '  APL-005 Ordnance:              218 items  \u2713\n';
+        output += '\u2500'.repeat(55) + '\n\n';
+        output += 'ICAPS vs S4 COMPARISON:\n';
+        output += '  Feature            ICAPS      S4 Ledger\n';
+        output += '  ─────────────────────────────────────────\n';
+        output += '  Blockchain audit   \u2718          \u2713\n';
+        output += '  Real-time sync     \u2718          \u2713\n';
+        output += '  Multi-branch       Limited    \u2713 9 branches\n';
+        output += '  Custom entry       Limited    \u2713 Full\n';
+        output += '  Export CSV         \u2713          \u2713\n';
+        output += '  Cost/year          $850K      $24K\n\n';
+        output += '\u2713 Full provisioning manager in Demo App > ILS Workspace\n';
+        output += '\u2713 40+ demo items pre-loaded for testing\n';
+        output += '\u2713 Custom data entry supported';
+        return output;
+    }
 
     async function runDMSMS() {
         var output = '>>> ledger.check_dmsms(program="F-15E Strike Eagle")\n\nPOST /api/dmsms  \u2192  200 OK\n\n';
@@ -797,13 +917,20 @@
 
     function loadExample(key, el) {
         currentExample = key;
-        var tmpl = TEMPLATES[key];
         document.getElementById('codeEditor').value = buildEditorContent();
         document.getElementById('outputPanel').textContent = 'Click "Run" to execute the code above...';
         document.getElementById('statusDot').className = 'status-dot';
-        document.querySelectorAll('.example-btn').forEach(function(b){b.classList.remove('active')});
+        document.querySelectorAll('.sdk-func-box').forEach(function(b){b.classList.remove('active')});
         if (el) el.classList.add('active');
-        document.getElementById('recordTypeArea').style.display = tmpl.showRecordType ? 'block' : 'none';
+    }
+
+    // Load example and immediately run it (called from function boxes)
+    function loadAndRun(key, el) {
+        loadExample(key, el);
+        // Scroll to code editor
+        document.getElementById('codeEditor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Small delay to let scroll settle, then run
+        setTimeout(function() { runCode(); }, 300);
     }
 
     function copyOutput() {
@@ -845,7 +972,9 @@
             var sel = document.getElementById('recordTypeSelect');
             if (sel && sel.value && sel.value !== 'CUSTOM') showSdkClassification(sel.value);
         });
-        loadExample('hash', document.querySelector('.example-btn'));
+        // Default: select Hash box
+        var defaultBox = document.querySelector('.sdk-func-box[data-func="hash"]');
+        if (defaultBox) defaultBox.classList.add('active');
     });
     </script>
 </body>

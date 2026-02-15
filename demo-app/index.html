@@ -1255,8 +1255,57 @@
                         <select id="provProgram" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;margin-top:4px" onchange="loadProvisioningData()"></select>
                     </div>
 
+                    <!-- View Toggle -->
+                    <div style="display:flex;gap:8px;margin-bottom:14px">
+                        <button class="btn btn-sm" id="provViewDemo" onclick="provSetView('demo')" style="background:linear-gradient(135deg,#9b59b6,#7d3c98);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.8rem;font-weight:600"><i class="fas fa-database"></i> Sample Data (40 Items)</button>
+                        <button class="btn btn-sm" id="provViewCustom" onclick="provSetView('custom')" style="background:rgba(155,89,182,0.1);color:#9b59b6;border:1px solid rgba(155,89,182,0.3);border-radius:8px;padding:6px 14px;font-size:0.8rem;font-weight:600"><i class="fas fa-plus-circle"></i> Custom Entry</button>
+                    </div>
+
+                    <!-- Custom Entry Form (hidden by default) -->
+                    <div id="provCustomForm" style="display:none;background:var(--surface);border:1px solid rgba(155,89,182,0.2);border-radius:10px;padding:16px;margin-bottom:14px">
+                        <h5 style="font-size:0.9rem;margin-bottom:12px;color:#9b59b6"><i class="fas fa-plus-circle" style="margin-right:6px"></i> Add Custom Provisioning Item</h5>
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-4"><label style="font-size:0.75rem;color:var(--muted)">Part Name *</label><input type="text" id="provCustomName" class="form-control form-control-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px" placeholder="e.g. Valve, Gate, Carbon Steel"></div>
+                            <div class="col-md-3"><label style="font-size:0.75rem;color:var(--muted)">NSN</label><input type="text" id="provCustomNSN" class="form-control form-control-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px" placeholder="e.g. 5340-01-234-5678"></div>
+                            <div class="col-md-3"><label style="font-size:0.75rem;color:var(--muted)">CAGE Code</label><input type="text" id="provCustomCAGE" class="form-control form-control-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px" placeholder="e.g. 1THK9"></div>
+                            <div class="col-md-2"><label style="font-size:0.75rem;color:var(--muted)">Qty</label><input type="number" id="provCustomQty" class="form-control form-control-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px" value="1" min="1"></div>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-3"><label style="font-size:0.75rem;color:var(--muted)">FSC Group</label><select id="provCustomFSC" class="form-select form-select-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px"><option value="5340">5340 — Fasteners</option><option value="2815">2815 — Diesel Engines</option><option value="5895">5895 — Radar Components</option><option value="5962">5962 — Semiconductors</option><option value="1005">1005 — Guns</option><option value="4710">4710 — Pipe & Tube</option><option value="6625">6625 — Test Equipment</option><option value="2840">2840 — Gas Turbines</option><option value="5820">5820 — Radio Equipment</option><option value="1560">1560 — Airframe Components</option></select></div>
+                            <div class="col-md-3"><label style="font-size:0.75rem;color:var(--muted)">PTD Status</label><select id="provCustomStatus" class="form-select form-select-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px"><option value="submitted">Submitted</option><option value="validated">Validated</option><option value="pending">Pending Review</option><option value="rejected">Rejected</option></select></div>
+                            <div class="col-md-3"><label style="font-size:0.75rem;color:var(--muted)">Unit Cost ($)</label><input type="number" id="provCustomCost" class="form-control form-control-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px" placeholder="0.00" step="0.01"></div>
+                            <div class="col-md-3"><label style="font-size:0.75rem;color:var(--muted)">Manufacturer</label><input type="text" id="provCustomMfg" class="form-control form-control-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px" placeholder="e.g. Raytheon"></div>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-12"><label style="font-size:0.75rem;color:var(--muted)">Notes / Description</label><textarea id="provCustomNotes" class="form-control form-control-sm" rows="2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px" placeholder="Optional notes..."></textarea></div>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:8px">
+                            <button onclick="addCustomProvItem()" class="btn btn-sm" style="background:linear-gradient(135deg,#9b59b6,#7d3c98);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-weight:600"><i class="fas fa-plus"></i> Add Item</button>
+                            <button onclick="clearCustomProvItems()" class="btn btn-sm" style="background:rgba(255,51,51,0.1);color:#ff3333;border:1px solid rgba(255,51,51,0.2);border-radius:8px;padding:6px 16px;font-weight:600"><i class="fas fa-trash"></i> Clear All Custom</button>
+                            <span style="font-size:0.75rem;color:var(--muted);align-self:center;margin-left:auto" id="provCustomCount">0 custom items</span>
+                        </div>
+                    </div>
+
                     <!-- Provisioning Sections -->
                     <div class="provisioning-sections">
+                        <!-- Parts Inventory Table -->
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                                <h5 style="font-size:0.9rem;margin:0;color:#fff"><i class="fas fa-table" style="margin-right:6px;color:#9b59b6"></i> Provisioning Parts Inventory</h5>
+                                <div style="display:flex;gap:6px;align-items:center">
+                                    <input type="text" id="provSearchInput" placeholder="Search parts..." oninput="filterProvTable()" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-size:0.78rem;width:160px">
+                                    <select id="provFilterStatus" onchange="filterProvTable()" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;font-size:0.78rem"><option value="all">All Status</option><option value="validated">Validated</option><option value="submitted">Submitted</option><option value="pending">Pending</option><option value="rejected">Rejected</option></select>
+                                </div>
+                            </div>
+                            <div id="provPartsTable" style="max-height:350px;overflow-y:auto;font-size:0.8rem">
+                                <div style="text-align:center;padding:30px;color:var(--muted)"><i class="fas fa-database" style="font-size:1.5rem;opacity:0.3;margin-bottom:8px;display:block"></i>Click "Load Sample Data" or add custom items to populate the inventory.</div>
+                            </div>
+                            <div id="provTableFooter" style="display:none;padding:8px 0 0;border-top:1px solid var(--border);margin-top:8px;font-size:0.75rem;color:var(--muted);display:flex;justify-content:space-between">
+                                <span id="provTableCount"></span>
+                                <span id="provTableValue"></span>
+                            </div>
+                        </div>
+
                         <!-- PTD Status -->
                         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">
                             <h5 style="font-size:0.9rem;margin-bottom:10px;color:#9b59b6"><i class="fas fa-file-lines" style="margin-right:6px"></i> Provisioning Technical Documentation (PTD)</h5>
@@ -1312,10 +1361,10 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                        <button onclick="generateAPLs()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#9b59b6,#7d3c98);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-clipboard-list"></i> Generate APLs</button>
-                        <button onclick="loadProvisioningData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-sync"></i> Load PTD Data</button>
-                        <button onclick="exportProvisioning()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#14f195,#0bc77a);color:#0a0e1a;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Report</button>
-                        <button onclick="anchorProvisioning()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to XRPL ($0.01 SLS)</button>
+                        <button onclick="loadProvisioningData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#9b59b6,#7d3c98);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-database"></i> Load Sample Data</button>
+                        <button onclick="generateAPLs()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-clipboard-list"></i> Generate APLs</button>
+                        <button onclick="exportProvisioning()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#14f195,#0bc77a);color:#0a0e1a;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export CSV</button>
+                        <button onclick="anchorAllProvisioning()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor All to XRPL</button>
                     </div>
                 </div>
             </div>
@@ -5697,109 +5746,311 @@ async function anchorCompliance() {
 }
 
 // ── Provisioning & PTD Manager ──
-function loadProvisioningData() {
-    const progKey = document.getElementById('provProgram')?.value;
-    if (!progKey || !PROGS[progKey]) return;
-    const prog = PROGS[progKey];
-    const comps = PROG_COMPONENTS[progKey] || [];
-    
-    // Generate demo provisioning data based on selected program
-    const totalParts = comps.length * Math.floor(Math.random()*8 + 12);
-    const submitted = Math.floor(totalParts * (0.55 + Math.random()*0.35));
-    const validated = Math.floor(submitted * (0.6 + Math.random()*0.3));
-    const rejected = Math.floor(submitted * (0.02 + Math.random()*0.08));
-    const pending = submitted - validated - rejected;
-    const aplCount = Math.floor(comps.length * (0.4 + Math.random()*0.5));
-    const nsnCount = Math.floor(totalParts * (0.3 + Math.random()*0.4));
-    const pctComplete = Math.round((validated / Math.max(totalParts, 1)) * 100);
+let provItems = JSON.parse(localStorage.getItem('s4_prov_items') || '[]');
+let provCustomItems = JSON.parse(localStorage.getItem('s4_prov_custom') || '[]');
+let provView = 'demo';
 
-    document.getElementById('provParts').textContent = totalParts;
-    document.getElementById('provAPLs').textContent = aplCount;
-    document.getElementById('provNSNs').textContent = nsnCount;
-    document.getElementById('provSchedule').textContent = pctComplete >= 80 ? 'On Track' : pctComplete >= 50 ? 'At Risk' : 'Behind';
-    document.getElementById('provSchedule').style.color = pctComplete >= 80 ? '#14f195' : pctComplete >= 50 ? '#ffa500' : '#ff3333';
+// ── 40 Hypothetical Demo Provisioning Items ──
+const PROV_DEMO_DATA = [
+    {name:'Valve, Gate, Carbon Steel 3"',nsn:'5340-01-234-5678',cage:'1THK9',fsc:'5340',qty:50,status:'validated',cost:187.50,mfg:'Crane Co.',apl:'APL-1001',notes:'MIL-V-24509 compliant'},
+    {name:'Filter Element, Hydraulic',nsn:'4330-01-456-7890',cage:'3A5K2',fsc:'4330',qty:120,status:'validated',cost:42.75,mfg:'Parker Hannifin',apl:'APL-1001',notes:'Lube oil system primary'},
+    {name:'Gasket Set, Diesel Engine',nsn:'5330-01-789-0123',cage:'80063',fsc:'5330',qty:30,status:'validated',cost:312.00,mfg:'Caterpillar',apl:'APL-1002',notes:'SSDG overhaul kit'},
+    {name:'Pump, Centrifugal, Seawater',nsn:'4320-01-345-6789',cage:'53279',fsc:'4320',qty:4,status:'submitted',cost:8750.00,mfg:'Flowserve',apl:'APL-1001',notes:'Firemain service pump'},
+    {name:'Circuit Breaker, 400A',nsn:'5925-01-567-8901',cage:'28480',fsc:'5925',qty:12,status:'validated',cost:2340.00,mfg:'Eaton',apl:'APL-1003',notes:'SWBD 1A/1B main feeder'},
+    {name:'Bearing, Ball, Sealed',nsn:'3110-01-234-5670',cage:'57982',fsc:'3110',qty:200,status:'validated',cost:18.90,mfg:'SKF',apl:'APL-1002',notes:'Aux machinery rotating equip'},
+    {name:'Cable Assembly, Power',nsn:'6150-01-678-9012',cage:'81349',fsc:'6150',qty:85,status:'pending',cost:96.50,mfg:'General Cable',apl:'APL-1003',notes:'2/0 AWG LSDSGU per MIL-C-24643'},
+    {name:'Transmitter, Pressure',nsn:'6685-01-890-1234',cage:'27014',fsc:'6685',qty:16,status:'validated',cost:1875.00,mfg:'Rosemount (Emerson)',apl:'APL-1004',notes:'HP air system 3000 PSI'},
+    {name:'Motor, Electric, 100HP',nsn:'6105-01-012-3456',cage:'81349',fsc:'6105',qty:3,status:'submitted',cost:14500.00,mfg:'WEG Electric',apl:'APL-1002',notes:'Fire pump drive motor'},
+    {name:'Connector, Electrical, MIL-SPEC',nsn:'5935-01-345-6780',cage:'06324',fsc:'5935',qty:500,status:'validated',cost:8.25,mfg:'Amphenol',apl:'APL-1003',notes:'MIL-DTL-38999 Series III'},
+    {name:'Radar Antenna Feed Horn',nsn:'5841-01-567-8900',cage:'13499',fsc:'5841',qty:2,status:'pending',cost:45000.00,mfg:'Raytheon',apl:'APL-1005',notes:'AN/SPY-1D(V) feed assembly'},
+    {name:'Turbine Blade, HP Stage 1',nsn:'2840-01-789-0120',cage:'77445',fsc:'2840',qty:48,status:'submitted',cost:3200.00,mfg:'GE Aviation',apl:'APL-1002',notes:'LM2500 hot section'},
+    {name:'Gyroscope, Ring Laser',nsn:'6615-01-890-1230',cage:'73030',fsc:'6615',qty:3,status:'validated',cost:67000.00,mfg:'Honeywell',apl:'APL-1004',notes:'Navigation system MK 39 MOD 3'},
+    {name:'Heat Exchanger, Plate Type',nsn:'4420-01-012-3450',cage:'0BVD7',fsc:'4420',qty:6,status:'validated',cost:4500.00,mfg:'Alfa Laval',apl:'APL-1001',notes:'Lube oil cooler'},
+    {name:'Hose Assembly, Hydraulic, High Pressure',nsn:'4720-01-234-5671',cage:'71984',fsc:'4720',qty:40,status:'validated',cost:145.00,mfg:'Eaton Aeroquip',apl:'APL-1001',notes:'Steering gear 3000 PSI'},
+    {name:'Switch, Limit, Watertight',nsn:'5930-01-456-7891',cage:'77884',fsc:'5930',qty:25,status:'rejected',cost:89.00,mfg:'Micro Switch (Honeywell)',apl:'APL-1003',notes:'Failed moisture ingress test — resubmit'},
+    {name:'Relay, Solid State, 50A',nsn:'5945-01-678-9013',cage:'80058',fsc:'5945',qty:60,status:'validated',cost:125.00,mfg:'Crydom',apl:'APL-1003',notes:'Power distribution panel'},
+    {name:'Solenoid Valve, 2-Way',nsn:'4810-01-890-1235',cage:'99760',fsc:'4810',qty:18,status:'submitted',cost:675.00,mfg:'ASCO (Emerson)',apl:'APL-1004',notes:'Ballast system control'},
+    {name:'O-Ring Kit, Buna-N',nsn:'5331-01-012-3457',cage:'81348',fsc:'5331',qty:500,status:'validated',cost:2.50,mfg:'Parker',apl:'APL-1001',notes:'Standard sizes per MIL-PRF-28776'},
+    {name:'Fan, Axial, Ventilation',nsn:'4140-01-234-5679',cage:'30591',fsc:'4140',qty:8,status:'pending',cost:3200.00,mfg:'Joy Manufacturing',apl:'APL-1001',notes:'Supply ventilation zone 3'},
+    {name:'Transformer, Power, Dry',nsn:'6120-01-456-7892',cage:'80058',fsc:'6120',qty:4,status:'validated',cost:18700.00,mfg:'Hammond Mfg',apl:'APL-1003',notes:'450V/120V ship service'},
+    {name:'Compressor, Air, Reciprocating',nsn:'4310-01-678-9014',cage:'0BVP3',fsc:'4310',qty:2,status:'submitted',cost:42000.00,mfg:'Ingersoll Rand',apl:'APL-1002',notes:'HP air 3000 PSI'},
+    {name:'FLIR Sensor Module',nsn:'5855-01-890-1236',cage:'13499',fsc:'5855',qty:2,status:'pending',cost:125000.00,mfg:'Raytheon',apl:'APL-1005',notes:'EO/IR turret replacement LRU'},
+    {name:'Winch, Anchor, Electric',nsn:'3950-01-012-3458',cage:'00000',fsc:'3950',qty:1,status:'validated',cost:89000.00,mfg:'Rolls-Royce Marine',apl:'APL-1002',notes:'Fwd anchor windlass'},
+    {name:'Pipe, Carbon Steel, Sch 80',nsn:'4710-01-234-5680',cage:'81349',fsc:'4710',qty:2000,status:'validated',cost:12.75,mfg:'Wheatland Tube',apl:'APL-1001',notes:'2" NPS per MIL-P-21305'},
+    {name:'Radar Display Unit',nsn:'5895-01-456-7893',cage:'13499',fsc:'5895',qty:4,status:'validated',cost:38000.00,mfg:'Raytheon',apl:'APL-1005',notes:'CIC operator console'},
+    {name:'Generator, Diesel, 1000KW',nsn:'6115-01-678-9015',cage:'31828',fsc:'6115',qty:3,status:'submitted',cost:475000.00,mfg:'Caterpillar Marine',apl:'APL-1002',notes:'SSDG set'},
+    {name:'Chiller, Water, Centrifugal',nsn:'4130-01-890-1237',cage:'30591',fsc:'4130',qty:2,status:'validated',cost:185000.00,mfg:'York (JCI)',apl:'APL-1001',notes:'HVAC chilled water plant'},
+    {name:'Missile Canister, VLS',nsn:'1440-01-012-3459',cage:'30003',fsc:'1440',qty:8,status:'pending',cost:95000.00,mfg:'Lockheed Martin',apl:'APL-1005',notes:'MK 41 VLS cell liner'},
+    {name:'Degaussing Cable Assembly',nsn:'5945-01-234-5681',cage:'53279',fsc:'5945',qty:12,status:'validated',cost:4500.00,mfg:'Ultra Electronics',apl:'APL-1004',notes:'M-coil degaussing system'},
+    {name:'Helm Control Unit',nsn:'2090-01-456-7894',cage:'53279',fsc:'2090',qty:2,status:'validated',cost:52000.00,mfg:'Rolls-Royce Marine',apl:'APL-1004',notes:'Steering control console'},
+    {name:'Fire Suppression Agent, AFFF',nsn:'4210-01-678-9016',cage:'64879',fsc:'4210',qty:500,status:'validated',cost:28.50,mfg:'National Foam',apl:'APL-1001',notes:'6% AFFF per MIL-F-24385'},
+    {name:'Antenna, UHF/SHF SATCOM',nsn:'5985-01-890-1238',cage:'13499',fsc:'5985',qty:2,status:'submitted',cost:78000.00,mfg:'Raytheon',apl:'APL-1005',notes:'AN/WSC-6(V)9 SATCOM'},
+    {name:'Actuator, Linear, Electro-Hydraulic',nsn:'1680-01-012-3460',cage:'73030',fsc:'1680',qty:6,status:'rejected',cost:14200.00,mfg:'Moog Inc.',apl:'APL-1004',notes:'Rejected — missing source approval, resubmit w/ CAGE verification'},
+    {name:'Reduction Gear Assembly',nsn:'3010-01-234-5682',cage:'00000',fsc:'3010',qty:1,status:'submitted',cost:2100000.00,mfg:'Philadelphia Gear',apl:'APL-1002',notes:'Main reduction gear, double helical'},
+    {name:'Weapon Elevator Motor',nsn:'3540-01-456-7895',cage:'30003',fsc:'3540',qty:4,status:'pending',cost:35000.00,mfg:'Lockheed Martin',apl:'APL-1005',notes:'MK 41 VLS weapon handling'},
+    {name:'CIWS Barrel Assembly',nsn:'1005-01-678-9017',cage:'13499',fsc:'1005',qty:3,status:'validated',cost:42000.00,mfg:'Raytheon',apl:'APL-1005',notes:'MK 15 Phalanx 20mm'},
+    {name:'Hull Valve, Sea Chest',nsn:'4820-01-890-1239',cage:'53279',fsc:'4820',qty:6,status:'validated',cost:7800.00,mfg:'Tyco Marine',apl:'APL-1001',notes:'12" butterfly, seawater service'},
+    {name:'Crypto Module, KGV-135',nsn:'5810-01-012-3461',cage:'97868',fsc:'5810',qty:8,status:'submitted',cost:28000.00,mfg:'L3 Harris',apl:'APL-1004',notes:'TACLANE network encryptor'},
+    {name:'Navigation Radar Scanner',nsn:'5841-01-234-5683',cage:'23435',fsc:'5841',qty:2,status:'validated',cost:56000.00,mfg:'Furuno',apl:'APL-1004',notes:'Surface search/navigation'}
+];
 
-    document.getElementById('ptdSubmitted').textContent = submitted;
+function saveProvItems() { localStorage.setItem('s4_prov_items', JSON.stringify(provItems)); }
+function saveProvCustom() { localStorage.setItem('s4_prov_custom', JSON.stringify(provCustomItems)); }
+
+function provSetView(view) {
+    provView = view;
+    document.getElementById('provViewDemo').style.background = view==='demo' ? 'linear-gradient(135deg,#9b59b6,#7d3c98)' : 'rgba(155,89,182,0.1)';
+    document.getElementById('provViewDemo').style.color = view==='demo' ? '#fff' : '#9b59b6';
+    document.getElementById('provViewDemo').style.border = view==='demo' ? 'none' : '1px solid rgba(155,89,182,0.3)';
+    document.getElementById('provViewCustom').style.background = view==='custom' ? 'linear-gradient(135deg,#9b59b6,#7d3c98)' : 'rgba(155,89,182,0.1)';
+    document.getElementById('provViewCustom').style.color = view==='custom' ? '#fff' : '#9b59b6';
+    document.getElementById('provViewCustom').style.border = view==='custom' ? 'none' : '1px solid rgba(155,89,182,0.3)';
+    document.getElementById('provCustomForm').style.display = view==='custom' ? 'block' : 'none';
+    renderProvTable();
+}
+
+function getActiveProvItems() {
+    return provView === 'custom' ? provCustomItems : provItems;
+}
+
+function addCustomProvItem() {
+    const name = document.getElementById('provCustomName')?.value?.trim();
+    if (!name) { showWorkspaceNotification('Part name is required', 'warning'); return; }
+    const nsn = document.getElementById('provCustomNSN')?.value?.trim() || generateNSN();
+    const cage = document.getElementById('provCustomCAGE')?.value?.trim() || '00000';
+    const fsc = document.getElementById('provCustomFSC')?.value || '5340';
+    const qty = parseInt(document.getElementById('provCustomQty')?.value) || 1;
+    const status = document.getElementById('provCustomStatus')?.value || 'submitted';
+    const cost = parseFloat(document.getElementById('provCustomCost')?.value) || 0;
+    const mfg = document.getElementById('provCustomMfg')?.value?.trim() || 'TBD';
+    const notes = document.getElementById('provCustomNotes')?.value?.trim() || '';
+    const item = { name, nsn, cage, fsc, qty, status, cost, mfg, apl:'CUSTOM-' + (provCustomItems.length+1), notes, custom:true, added: new Date().toISOString() };
+    provCustomItems.push(item);
+    saveProvCustom();
+    // Clear form
+    ['provCustomName','provCustomNSN','provCustomCAGE','provCustomNotes','provCustomMfg'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('provCustomQty').value = '1';
+    document.getElementById('provCustomCost').value = '';
+    provSetView('custom');
+    renderProvTable();
+    updateProvStats();
+    showWorkspaceNotification('Custom item added: ' + name);
+}
+
+function clearCustomProvItems() {
+    if (!confirm('Clear all custom provisioning items?')) return;
+    provCustomItems = [];
+    saveProvCustom();
+    renderProvTable();
+    updateProvStats();
+    showWorkspaceNotification('Custom items cleared');
+}
+
+function generateNSN() {
+    const fscGroups = ['1005','2815','2840','3110','4320','4710','4820','5330','5340','5820','5841','5895','5925','5935','5945','5962','6105','6115','6150','6625','6685'];
+    const fsc = fscGroups[Math.floor(Math.random()*fscGroups.length)];
+    return fsc + '-' + String(Math.floor(Math.random()*90+10)) + '-' + String(Math.floor(Math.random()*900+100)) + '-' + String(Math.floor(Math.random()*9000+1000));
+}
+
+function renderProvTable() {
+    const items = getActiveProvItems();
+    const container = document.getElementById('provPartsTable');
+    const footer = document.getElementById('provTableFooter');
+    if (!items || items.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><i class="fas fa-database" style="font-size:1.5rem;opacity:0.3;margin-bottom:8px;display:block"></i>' + (provView==='custom' ? 'No custom items yet. Use the form above to add parts.' : 'Click "Load Sample Data" to populate with 40 demo items.') + '</div>';
+        if (footer) footer.style.display = 'none';
+        return;
+    }
+    const search = (document.getElementById('provSearchInput')?.value || '').toLowerCase();
+    const statusFilter = document.getElementById('provFilterStatus')?.value || 'all';
+    const filtered = items.filter(it => {
+        if (statusFilter !== 'all' && it.status !== statusFilter) return false;
+        if (search && !it.name.toLowerCase().includes(search) && !it.nsn.toLowerCase().includes(search) && !(it.mfg||'').toLowerCase().includes(search)) return false;
+        return true;
+    });
+    const statusColors = {validated:'#14f195', submitted:'#00aaff', pending:'#ffa500', rejected:'#ff3333'};
+    let html = '<table style="width:100%;border-collapse:collapse"><thead><tr style="border-bottom:2px solid rgba(155,89,182,0.3);font-size:0.72rem;text-transform:uppercase;color:var(--muted)">';
+    html += '<th style="padding:6px 8px;text-align:left">Part Name</th><th style="padding:6px 8px">NSN</th><th style="padding:6px 8px">CAGE</th><th style="padding:6px 8px;text-align:right">Qty</th><th style="padding:6px 8px;text-align:right">Unit $</th><th style="padding:6px 8px;text-align:center">Status</th><th style="padding:6px 8px">Mfg</th><th style="padding:6px 8px;text-align:center">Action</th></tr></thead><tbody>';
+    filtered.forEach((it, i) => {
+        const sc = statusColors[it.status] || '#fff';
+        const totalVal = (it.qty * it.cost).toLocaleString('en-US',{style:'currency',currency:'USD'});
+        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.03);transition:background 0.2s" onmouseenter="this.style.background=\'rgba(155,89,182,0.06)\'" onmouseleave="this.style.background=\'transparent\'">';
+        html += '<td style="padding:6px 8px;color:#fff;font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+it.name+(it.notes?' — '+it.notes:'')+'">'+it.name+'</td>';
+        html += '<td style="padding:6px 8px;font-family:monospace;color:#c9a84c;font-size:0.75rem">'+it.nsn+'</td>';
+        html += '<td style="padding:6px 8px;font-family:monospace;font-size:0.75rem">'+it.cage+'</td>';
+        html += '<td style="padding:6px 8px;text-align:right">'+it.qty+'</td>';
+        html += '<td style="padding:6px 8px;text-align:right;color:#14f195">$'+it.cost.toLocaleString()+'</td>';
+        html += '<td style="padding:6px 8px;text-align:center"><span style="color:'+sc+';font-weight:600;font-size:0.72rem;padding:2px 8px;border-radius:4px;background:'+sc+'15;border:1px solid '+sc+'30">'+it.status.toUpperCase()+'</span></td>';
+        html += '<td style="padding:6px 8px;font-size:0.75rem;color:var(--steel)">'+it.mfg+'</td>';
+        html += '<td style="padding:6px 8px;text-align:center"><button onclick="anchorProvItem('+i+')" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:6px;padding:2px 8px;font-size:0.7rem;cursor:pointer;font-family:inherit" title="Anchor this item to XRPL"><i class="fas fa-anchor"></i></button></td>';
+        html += '</tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    if (footer) {
+        footer.style.display = 'flex';
+        const totalValue = filtered.reduce((s,it) => s + it.qty * it.cost, 0);
+        document.getElementById('provTableCount').textContent = filtered.length + ' of ' + items.length + ' items' + (provView==='custom'?' (custom)':' (demo)');
+        document.getElementById('provTableValue').textContent = 'Total value: ' + totalValue.toLocaleString('en-US',{style:'currency',currency:'USD'});
+    }
+    document.getElementById('provCustomCount').textContent = provCustomItems.length + ' custom items';
+}
+
+function filterProvTable() { renderProvTable(); }
+
+function updateProvStats() {
+    const items = getActiveProvItems();
+    const total = items.length;
+    const validated = items.filter(it => it.status==='validated').length;
+    const submitted = items.filter(it => it.status==='submitted').length;
+    const rejected = items.filter(it => it.status==='rejected').length;
+    const pending = items.filter(it => it.status==='pending').length;
+    const pct = total > 0 ? Math.round((validated/total)*100) : 0;
+    const apls = [...new Set(items.map(it => it.apl))].length;
+
+    document.getElementById('provParts').textContent = total;
+    document.getElementById('provAPLs').textContent = apls;
+    document.getElementById('provNSNs').textContent = validated;
+    document.getElementById('provSchedule').textContent = pct >= 80 ? 'On Track' : pct >= 50 ? 'At Risk' : 'Behind';
+    document.getElementById('provSchedule').style.color = pct >= 80 ? '#14f195' : pct >= 50 ? '#ffa500' : '#ff3333';
+
+    document.getElementById('ptdSubmitted').textContent = submitted + validated + rejected + pending;
     document.getElementById('ptdValidated').textContent = validated;
     document.getElementById('ptdRejected').textContent = rejected;
     document.getElementById('ptdPending').textContent = pending;
-    document.getElementById('ptdProgressBar').style.width = pctComplete + '%';
-    document.getElementById('ptdPctLabel').textContent = pctComplete + '% Validated';
+    document.getElementById('ptdProgressBar').style.width = pct + '%';
+    document.getElementById('ptdPctLabel').textContent = pct + '% Validated';
+}
 
-    // Generate APL list
-    const aplContainer = document.getElementById('provAPLList');
-    let aplHTML = '';
-    comps.slice(0, Math.min(comps.length, 8)).forEach((comp, i) => {
-        const status = i < aplCount ? 'Generated' : 'Pending';
-        const statusColor = status === 'Generated' ? '#14f195' : '#ffa500';
-        const partCount = Math.floor(Math.random()*30 + 10);
-        aplHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border);font-size:0.82rem">';
-        aplHTML += '<div><strong style="color:#fff">' + comp.name + '</strong><br><span style="color:var(--muted)">APL-' + (1000+i) + ' | ' + partCount + ' line items</span></div>';
-        aplHTML += '<span style="color:' + statusColor + ';font-weight:600;font-size:0.78rem">' + status + '</span>';
-        aplHTML += '</div>';
-    });
-    aplContainer.innerHTML = aplHTML || '<div style="text-align:center;padding:15px;color:var(--muted)">No APL data available for this program.</div>';
+function loadProvisioningData() {
+    const progKey = document.getElementById('provProgram')?.value;
+    if (!progKey || !PROGS[progKey]) return;
+    provItems = PROV_DEMO_DATA.map(it => ({...it}));
+    saveProvItems();
+    provSetView('demo');
+    renderProvTable();
+    updateProvStats();
+    renderProvAPLList();
+    renderProvNSNList();
+    showWorkspaceNotification('40 sample provisioning items loaded for ' + PROGS[progKey].name);
+}
 
-    // Generate NSN cataloging list
-    const nsnContainer = document.getElementById('provNSNList');
-    const fscGroups = ['1005','1010','1015','1025','1220','1240','1270','1280','1290','1370','1430','2010','2040','2530','2815','2990','3010','3110','4010','4020','4030','4210','4240','4720','4730','4820','5305','5310','5330','5340','5365','5820','5895','5905','5910','5935','5961','5962','5963','5985','5999','6105','6110','6115','6125','6130','6135','6140','6145','6150','6210','6220','6230','6340','6605','6625','6640','6685','6695','7930','8010','8040','8305','8415','9150','9320','9390','9905'];
-    let nsnHTML = '';
-    for (let i = 0; i < Math.min(nsnCount, 8); i++) {
-        const fsc = fscGroups[Math.floor(Math.random()*fscGroups.length)];
-        const niin = String(Math.floor(Math.random()*900+100)) + '-' + String(Math.floor(Math.random()*9000+1000));
-        const nsn = fsc + '-' + String(Math.floor(Math.random()*90+10)) + '-' + niin;
-        const catStatus = Math.random() > 0.3 ? 'Cataloged' : 'Pending';
-        nsnHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.8rem">';
-        nsnHTML += '<span style="font-family:monospace;color:#c9a84c">' + nsn + '</span>';
-        nsnHTML += '<span style="color:' + (catStatus==='Cataloged'?'#14f195':'#ffa500') + ';font-size:0.75rem;font-weight:600">' + catStatus + '</span>';
-        nsnHTML += '</div>';
+function renderProvAPLList() {
+    const items = getActiveProvItems();
+    const aplGroups = {};
+    items.forEach(it => { if (!aplGroups[it.apl]) aplGroups[it.apl] = []; aplGroups[it.apl].push(it); });
+    const container = document.getElementById('provAPLList');
+    if (Object.keys(aplGroups).length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)"><i class="fas fa-clipboard-list" style="font-size:1.5rem;opacity:0.3;margin-bottom:8px;display:block"></i>Load data to generate APLs.</div>';
+        return;
     }
-    nsnContainer.innerHTML = nsnHTML || '<div style="text-align:center;padding:15px;color:var(--muted)">No NSN data available.</div>';
+    let html = '';
+    Object.entries(aplGroups).forEach(([apl, parts]) => {
+        const allValidated = parts.every(p => p.status==='validated');
+        const statusColor = allValidated ? '#14f195' : '#ffa500';
+        const statusText = allValidated ? 'Complete' : 'In Progress';
+        const totalVal = parts.reduce((s,p) => s + p.qty*p.cost, 0);
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border)">';
+        html += '<div><strong style="color:#fff">' + apl + '</strong><br><span style="color:var(--muted);font-size:0.75rem">' + parts.length + ' line items | ' + totalVal.toLocaleString('en-US',{style:'currency',currency:'USD'}) + '</span></div>';
+        html += '<span style="color:'+statusColor+';font-weight:600;font-size:0.78rem">' + statusText + '</span>';
+        html += '</div>';
+    });
+    container.innerHTML = html;
+}
 
-    showWorkspaceNotification('Provisioning data loaded for ' + prog.name);
+function renderProvNSNList() {
+    const items = getActiveProvItems();
+    const container = document.getElementById('provNSNList');
+    if (items.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)"><i class="fas fa-barcode" style="font-size:1.5rem;opacity:0.3;margin-bottom:8px;display:block"></i>NSN cataloging status will appear when data is loaded.</div>';
+        return;
+    }
+    let html = '';
+    items.slice(0, 15).forEach(it => {
+        const catStatus = it.status === 'validated' ? 'Cataloged' : it.status === 'rejected' ? 'Rejected' : 'Pending';
+        const catColor = catStatus==='Cataloged' ? '#14f195' : catStatus==='Rejected' ? '#ff3333' : '#ffa500';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.03)">';
+        html += '<span style="font-family:monospace;color:#c9a84c;font-size:0.78rem">' + it.nsn + '</span>';
+        html += '<span style="color:'+catColor+';font-size:0.75rem;font-weight:600">' + catStatus + '</span>';
+        html += '</div>';
+    });
+    if (items.length > 15) html += '<div style="text-align:center;padding:6px;color:var(--muted);font-size:0.75rem">... and ' + (items.length-15) + ' more NSNs</div>';
+    container.innerHTML = html;
+}
+
+async function anchorProvItem(index) {
+    const items = getActiveProvItems();
+    const it = items[index];
+    if (!it) return;
+    const content = 'Provisioning Item | ' + it.name + ' | NSN: ' + it.nsn + ' | CAGE: ' + it.cage + ' | Qty: ' + it.qty + ' | Status: ' + it.status + ' | Cost: $' + it.cost + ' | Mfg: ' + it.mfg + ' | ' + new Date().toISOString();
+    const hash = await sha256(content);
+    const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+    showAnchorAnimation(hash, 'Provisioning: ' + it.name, 'CUI');
+    try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'provisioning_item', tx_hash:txHash, content_preview: it.name + ' NSN:' + it.nsn})}); } catch(e) {}
+    addToVault({hash, txHash, type:'provisioning_item', label:'Provisioning: ' + it.name, branch:'JOINT', icon:'📦', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
+    stats.anchored++; stats.slsFees += 0.01; stats.types.add('provisioning_item'); updateStats(); saveStats();
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_item', record_label:'Provisioning: '+it.name, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+    await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
+    showWorkspaceNotification('Anchored: ' + it.name + ' — 0.01 $SLS');
+}
+
+async function anchorAllProvisioning() {
+    const items = getActiveProvItems();
+    if (items.length === 0) { showWorkspaceNotification('No items to anchor. Load data first.', 'warning'); return; }
+    if (!confirm('Anchor all ' + items.length + ' provisioning items to XRPL? (' + (items.length * 0.01).toFixed(2) + ' $SLS)')) return;
+    let count = 0;
+    for (const it of items) {
+        const content = 'Provisioning Item | ' + it.name + ' | NSN: ' + it.nsn + ' | CAGE: ' + it.cage + ' | Qty: ' + it.qty + ' | Status: ' + it.status + ' | Cost: $' + it.cost + ' | Mfg: ' + it.mfg + ' | Batch | ' + new Date().toISOString();
+        const hash = await sha256(content);
+        const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+        try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'provisioning_item', tx_hash:txHash, content_preview: it.name})}); } catch(e) {}
+        addToVault({hash, txHash, type:'provisioning_item', label:'Prov: ' + it.name, branch:'JOINT', icon:'📦', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
+        saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_item', record_label:'Prov: '+it.name, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+        stats.anchored++; stats.slsFees += 0.01;
+        count++;
+    }
+    stats.types.add('provisioning_item'); updateStats(); saveStats();
+    showWorkspaceNotification('Batch anchored ' + count + ' items — ' + (count * 0.01).toFixed(2) + ' $SLS total');
 }
 
 function generateAPLs() {
-    const progKey = document.getElementById('provProgram')?.value;
-    if (!progKey) { showWorkspaceNotification('Select a program first', 'warning'); return; }
-    loadProvisioningData();
-    showWorkspaceNotification('APLs generated for ' + (PROGS[progKey]?.name || progKey));
+    const items = getActiveProvItems();
+    if (items.length === 0) { loadProvisioningData(); return; }
+    renderProvAPLList();
+    showWorkspaceNotification('APLs generated from ' + items.length + ' provisioning items');
 }
 
 function exportProvisioning() {
+    const items = getActiveProvItems();
+    if (items.length === 0) { showWorkspaceNotification('No items to export. Load data first.', 'warning'); return; }
     const progKey = document.getElementById('provProgram')?.value;
-    if (!progKey) { showWorkspaceNotification('Select a program first', 'warning'); return; }
-    const prog = PROGS[progKey];
-    let report = 'S4 LEDGER — PROVISIONING REPORT\n';
-    report += '================================\n';
-    report += 'Program: ' + prog.name + '\n';
-    report += 'Date: ' + new Date().toISOString() + '\n';
-    report += 'Parts Provisioned: ' + (document.getElementById('provParts')?.textContent || '0') + '\n';
-    report += 'APLs Generated: ' + (document.getElementById('provAPLs')?.textContent || '0') + '\n';
-    report += 'NSNs Cataloged: ' + (document.getElementById('provNSNs')?.textContent || '0') + '\n';
-    report += 'PTD Submitted: ' + (document.getElementById('ptdSubmitted')?.textContent || '0') + '\n';
-    report += 'PTD Validated: ' + (document.getElementById('ptdValidated')?.textContent || '0') + '\n';
-    report += 'PTD Rejected: ' + (document.getElementById('ptdRejected')?.textContent || '0') + '\n';
-    report += 'Schedule Status: ' + (document.getElementById('provSchedule')?.textContent || 'Unknown') + '\n';
-    const blob = new Blob([report], {type:'text/plain'});
+    const progName = PROGS[progKey]?.name || 'Unknown';
+    let csv = 'Part Name,NSN,CAGE,FSC,Qty,Unit Cost,Total Value,Status,APL,Manufacturer,Notes\n';
+    items.forEach(it => {
+        csv += '"'+it.name+'","'+it.nsn+'","'+it.cage+'","'+it.fsc+'",'+it.qty+','+it.cost+','+(it.qty*it.cost).toFixed(2)+',"'+it.status+'","'+it.apl+'","'+it.mfg+'","'+(it.notes||'').replace(/"/g,'""')+'"\n';
+    });
+    const header = 'S4 LEDGER PROVISIONING EXPORT\nProgram: '+progName+'\nDate: '+new Date().toISOString()+'\nItems: '+items.length+'\nTotal Value: $'+items.reduce((s,it)=>s+it.qty*it.cost,0).toLocaleString()+'\n\n';
+    const blob = new Blob([header + csv], {type:'text/csv'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 's4_provisioning_' + progKey + '_' + new Date().toISOString().split('T')[0] + '.txt';
+    a.download = 's4_provisioning_' + (progKey||'export') + '_' + new Date().toISOString().split('T')[0] + '.csv';
     a.click();
-    showWorkspaceNotification('Provisioning report exported');
+    showWorkspaceNotification('Provisioning CSV exported — ' + items.length + ' items');
 }
 
 async function anchorProvisioning() {
     const progKey = document.getElementById('provProgram')?.value;
     if (!progKey) { showWorkspaceNotification('Select a program first', 'warning'); return; }
     const prog = PROGS[progKey];
-    const content = 'S4 Ledger Provisioning Report | Program: ' + prog.name + ' | Parts: ' + (document.getElementById('provParts')?.textContent||'0') + ' | APLs: ' + (document.getElementById('provAPLs')?.textContent||'0') + ' | NSNs: ' + (document.getElementById('provNSNs')?.textContent||'0') + ' | PTD Validated: ' + (document.getElementById('ptdValidated')?.textContent||'0') + ' | Generated: ' + new Date().toISOString();
+    const items = getActiveProvItems();
+    const content = 'S4 Ledger Provisioning Report | Program: ' + prog.name + ' | Parts: ' + items.length + ' | Validated: ' + items.filter(i=>i.status==='validated').length + ' | Total Value: $' + items.reduce((s,it)=>s+it.qty*it.cost,0).toLocaleString() + ' | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Provisioning Report', 'FOUO');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'provisioning_report', tx_hash:txHash})}); } catch(e) {}
     addToVault({hash, txHash, type:'provisioning_report', label:'Provisioning Report', branch: prog.branch || 'JOINT', icon:'📦', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
-    stats.anchored++; stats.slsFees += 0.01; updateStats(); saveStats();
+    stats.anchored++; stats.slsFees += 0.01; stats.types.add('provisioning_report'); updateStats(); saveStats();
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_report', record_label:'Provisioning Report — '+prog.name, branch:prog.branch||'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
