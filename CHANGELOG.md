@@ -5,6 +5,20 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.8] - 2026-02-15
+
+### Added
+- **Billion-Dollar Roadmap — Plain English Version** — New `BILLION_DOLLAR_ROADMAP_SIMPLE.md` with complete glossary of 40+ acronyms/terms, same financial data presented in plain language a high schooler can understand. CEO-ready presentation document.
+- **Competitive Analysis vs Palantir, Anduril, SAP** — Added detailed head-to-head comparison tables and narrative analysis to INVESTOR_OVERVIEW, INVESTOR_SLIDE_DECK, and S4_LEDGER_INTERNAL_PITCH. Explains why S4 Ledger serves an unoccupied market niche that $60B+ competitors don't address.
+- **Site-Wide Search v2** — Expanded search index from 60 to 120+ entries covering all pages, all 18 ILS tools, all 5 new SDK functions, security, login, marketplace, and documentation topics. Compatible with any search term across the entire website.
+
+### Changed
+- **Background Animation v3** — Anchors now have trailing chains (physics-based link following with wave motion), L-shaped circuit traces with traveling pulses, energy particles with glow halos. More futuristic + distinctly anchor-themed.
+- **About Page — "Our Mission" Gradient** — Added gradient-text styling to match other page headings.
+- **Financial Numbers Fixed** — Replaced all awkward "$601K" and "$1,595K/year" with properly rounded "~$600K" and "~$1.6M/year" across 5+ documents. Fixed tool count inconsistencies (INVESTOR_OVERVIEW 12→18, INVESTOR_SLIDE_DECK 13→18). Reconciled Internal Pitch savings table to match investor docs.
+- **DoW Terminology Standardized** — Updated all general "DoD" / "Department of Defense" references to "DoW" / "Department of War" across 10+ documents (preserving official directive names like DoD 5000.73, DoDI 4245.15).
+- **Cross-Document Consistency** — Harmonized tool counts (18 everywhere), savings figures, pricing tiers, and competitive positioning across all investor, executive, and internal documents.
+
 ## [3.8.7] - 2026-02-15
 
 ### Added

@@ -22,7 +22,7 @@ Later, if someone asks "was this receipt changed?" — you run it through S4 Led
 
 **Key point:** No actual data goes public. Just the fingerprint. It's like sealing a letter with a wax stamp — anyone can verify the seal is intact without opening the letter.
 
-**Why this matters:** Right now, if a database admin changes a logistics record, there's no way to know. S4 Ledger makes that kind of tampering detectable. The DoD spends billions fixing problems caused by unreliable records.
+**Why this matters:** Right now, if a database admin changes a logistics record, there's no way to know. S4 Ledger makes that kind of tampering detectable. The DoW spends billions fixing problems caused by unreliable records.
 
 ### Part 2: The ILS Workspace (Logistics Management Tools)
 
@@ -30,22 +30,22 @@ This is where it gets really practical for day-to-day ILS work. Instead of maint
 
 | What You'd Normally Use | What S4 Ledger Replaces It With | Saves |
 |------------------------|-------------------------------|-------|
-| A spreadsheet tracking which parts are going obsolete | **DMSMS Tracker** — shows you which parts are at risk, suggests alternatives | $30K–$80K/yr |
-| A calculator for figuring out equipment readiness rates | **Readiness Calculator** — plug in your MTBF/MTTR numbers, get Ao/Ai instantly | $20K–$60K/yr |
-| A spreadsheet cross-referencing parts across programs | **Parts Cross-Reference** — search by NSN, CAGE code, or part name across all programs | $25K–$75K/yr |
-| A separate sheet estimating total ownership costs | **Lifecycle Cost Estimator** — follows DoD 5000.73 methodology | $40K–$100K/yr |
+| A spreadsheet tracking which parts are going obsolete | **DMSMS Tracker** — shows you which parts are at risk, suggests alternatives | $60K–$200K/yr |
+| A calculator for figuring out equipment readiness rates | **Readiness Calculator** — plug in your MTBF/MTTR numbers, get Ao/Ai instantly | $25K–$60K/yr |
+| A spreadsheet cross-referencing parts across programs | **Parts Cross-Reference** — search by NSN, CAGE code, or part name across all programs | $15K–$40K/yr |
+| A separate sheet estimating total ownership costs | **Lifecycle Cost Estimator** — follows DoD 5000.73 methodology | $30K–$80K/yr |
 | A manual log of warranty expirations | **Warranty Tracker** — alerts you 90 days before contracts/warranties expire | $20K–$50K/yr |
-| An Excel ROI model | **ROI Calculator** — shows leadership the dollar value of using S4 Ledger | $10K–$25K/yr |
-| A shared to-do list for ILS issues | **Action Items** — auto-generates tasks from all the other tools, tracks severity, assigns people | $15K–$40K/yr |
-| A paper or Outlook calendar for ILS milestones | **ILS Calendar** — pulls in warranty expirations, DMSMS review dates, program milestones | $10K–$20K/yr |
-| A checklist for data package completeness | **Gap Analysis** — checks your ILS data package against MIL-STD requirements and tells you what's missing | $25K–$70K/yr |
-| Printing and filing every anchored record for auditors | **Audit Record Vault** — automatically saves every record you anchor, searchable, exportable. Lives in your browser, never on someone else's server | $20K–$50K/yr |
-| Hunting through binders for the right MIL-STD reference | **Defense Document Library** — 100+ real defense docs (MIL-STDs, OPNAVINSTs, DoD Directives) searchable by branch and category | $10K–$30K/yr |
-| A manual compliance checklist before audits | **Compliance Scorecard** — real-time grade (A+ through F) across CMMC, NIST, DFARS. Shows exactly what's passing and what needs work | $25K–$65K/yr |
-| Navy-only ICAPS for provisioning data packages | **Provisioning & PTD Manager** — does everything ICAPS does but works for ALL branches, not just Navy/Marines. Plus blockchain-verified records | $40K–$100K/yr |
+| An Excel ROI model | **ROI Calculator** — shows leadership the dollar value of using S4 Ledger | $10K–$20K/yr |
+| A shared to-do list for ILS issues | **Action Items** — auto-generates tasks from all the other tools, tracks severity, assigns people | $10K–$25K/yr |
+| A paper or Outlook calendar for ILS milestones | **ILS Calendar** — pulls in warranty expirations, DMSMS review dates, program milestones | $5K–$15K/yr |
+| A checklist for data package completeness | **Gap Analysis** — checks your ILS data package against MIL-STD requirements and tells you what's missing | $40K–$80K/yr |
+| Printing and filing every anchored record for auditors | **Audit Record Vault** — automatically saves every record you anchor, searchable, exportable. Lives in your browser, never on someone else's server | $45K–$150K/yr |
+| Hunting through binders for the right MIL-STD reference | **Defense Document Library** — 100+ real defense docs (MIL-STDs, OPNAVINSTs, DoD Directives) searchable by branch and category | $5K–$15K/yr |
+| A manual compliance checklist before audits | **Compliance Scorecard** — real-time grade (A+ through F) across CMMC, NIST, DFARS. Shows exactly what's passing and what needs work | $10K–$35K/yr |
+| Navy-only ICAPS for provisioning data packages | **Provisioning & PTD Manager** — does everything ICAPS does but works for ALL branches, not just Navy/Marines. Plus blockchain-verified records | $50K–$120K/yr |
 | Calling 5 people to check if a supplier is at risk | **AI Supply Chain Risk Engine** — scans 37 real defense suppliers across 35+ platforms. Flags risks (GIDEP alerts, lead time spikes, financial distress) before they become crises | $75K–$200K/yr |
 | Spending weeks assembling audit packages by hand | **Audit Report Generator** — one button, six report types, done in seconds instead of weeks. Compliance scores baked in. Hash-anchored so auditors can verify the report itself | $30K–$80K/yr |
-| Tracking 25+ contracts in separate spreadsheets | **Contract Lifecycle Management** — CDRL tracking, modification history, deliverable status, expiration alerts. 25 real DoD contract formats built in | $40K–$100K/yr |
+| Tracking 25+ contracts in separate spreadsheets | **Contract Lifecycle Management** — CDRL tracking, modification history, deliverable status, expiration alerts. 25 real DoW contract formats built in | $40K–$100K/yr |
 | Emailing around to figure out what configuration a platform is in | **Digital Thread / Config Bridge** — engineering changes, BOM revisions, config baselines, TDP versions. 32 platform configs with real variant designators. One screen shows you what version of what is where | $60K–$150K/yr |
 | Guessing when equipment will fail based on gut feeling | **Predictive Maintenance AI** — analyzes failure patterns across 40+ platforms with real fleet sizes. Tells you what's likely to fail, when, and what it'll cost if you don't act. Turns reactive maintenance into proactive planning | $80K–$250K/yr |
 
@@ -70,23 +70,37 @@ All 18 tools talk to each other. When the DMSMS Tracker finds an obsolete part, 
 
 ## How Is This Different From What's Already Out There?
 
-### vs. SAP, Oracle, Microsoft
-Those are giant enterprise systems that cost **$500K–$5M** to set up and take **6–24 months** to implement. They're designed for huge corporations and require dedicated IT teams.
+### Head-to-Head Comparison
 
-S4 Ledger is **$499–$4,999/month**, works in a **browser**, and can be set up **the same day**. It's built specifically for defense logistics — not adapted from commercial retail software.
+| Capability | S4 Ledger | Palantir Foundry | Anduril Lattice | SAP S/4HANA | Oracle NetSuite | Spreadsheets / SharePoint |
+|---|---|---|---|---|---|---|
+| **What they do** | ILS platform + tamper-proof records | Data analytics / AI | Autonomous systems / C2 | Enterprise ERP | Cloud ERP / SCM | Manual tracking |
+| **Defense ILS tools** | 18 purpose-built tools | None — analytics only | None — hardware/autonomy | Generic — not ILS-specific | Generic — not ILS-specific | None |
+| **Tamper-proof records** | Yes — SHA-256 on XRPL blockchain | No blockchain | No blockchain | No blockchain | No blockchain | No |
+| **Data stays off-chain** | Yes — only fingerprints on-chain | N/A | N/A | N/A | N/A | N/A |
+| **CMMC/NIST compliance built-in** | Yes — Compliance Scorecard | Partial | No | Partial (add-on) | Partial (add-on) | No |
+| **DMSMS tracking** | Built-in | No — requires custom build | No | No | No | Manual |
+| **Predictive maintenance** | Built-in AI | Custom build ($1M+) | Limited (hardware-focused) | SAP APM ($200K+/yr add-on) | No | No |
+| **Setup time** | Same day | 3–12 months | Hardware deployment | 6–24 months | 3–12 months | Immediate (but no features) |
+| **Annual cost** | $6K–$60K | $1M–$50M+ | $10M+ (hardware + software) | $500K–$5M+ | $100K–$1M+ | "Free" + $200K+ labor |
+| **Target customer** | Defense program offices, contractors | Intelligence community, large agencies | Combatant commands | Fortune 500 / large agencies | Mid-large enterprises | Small teams |
 
-### vs. Spreadsheets and SharePoint
-"Free" tools that actually cost a fortune in labor hours, errors, and lost data. No automation, no cross-referencing, no audit trail, and one accidental delete wipes everything.
+### Why S4 Ledger Wins Against Each Competitor
 
-S4 Ledger automates the grunt work and keeps everything connected.
+**vs. Palantir ($60B+ valuation, $2.2B revenue)**
+Palantir is a data analytics company — they help you visualize and query data you already have. They don't manage ILS processes, don't track parts obsolescence, don't generate provisioning data, and don't have blockchain record integrity. Their contracts start at $1M+/year and take months to deploy. S4 Ledger does what Palantir can't (ILS management + tamper-proof records) at 1/100th the price. We're complementary, not competing — but we capture budget Palantir doesn't touch.
 
-### vs. Other Blockchain Companies
-Most blockchain companies focus on cryptocurrency or consumer supply chains (tracking organic food, luxury goods, etc.). None of them:
-- Understand defense logistics or CMMC compliance
-- Offer ILS management tools
-- Keep all data off-chain (they put actual data on the blockchain, which is a non-starter for defense)
+**vs. Anduril ($14B valuation, ~$800M revenue)**
+Anduril builds autonomous hardware systems — drones, sensors, command-and-control. They don't do logistics software at all. Their Lattice platform is for battlefield awareness, not maintenance tracking or audit compliance. S4 Ledger operates in a completely different lane. We sustain the systems Anduril builds. If anything, Anduril's customers are our customers — they need ILS for their hardware too.
 
-S4 Ledger only puts fingerprints on-chain. All actual data stays in your control.
+**vs. SAP / Oracle / Microsoft ($500K–$5M to deploy)**
+These are massive, general-purpose enterprise systems designed for commercial retail and manufacturing. Adapting them for defense ILS requires expensive custom modules, 6–24 month implementations, and dedicated IT teams. Their ILS capabilities are bolted on, not built in. S4 Ledger was built from day one for defense logistics — every feature, every dropdown, every data field is defense-specific. And it costs 1/100th as much.
+
+**vs. Spreadsheets and SharePoint ("Free" — actually $200K+/year in hidden costs)**
+Spreadsheets have no automation, no cross-referencing, no audit trail, no compliance scoring, and one accidental delete wipes everything. The "free" tool actually costs a fortune in labor hours (2–5 FTEs just to maintain data), errors (which cause audit failures and safety risks), and lost data. S4 Ledger automates the grunt work and keeps everything connected — with a permanent, tamper-proof record.
+
+**vs. Other Blockchain Companies (Hyperledger/IBM, VeChain, Guardtime)**
+Most blockchain companies focus on cryptocurrency or consumer supply chains (tracking organic food, luxury goods). None of them understand defense logistics or CMMC compliance. None offer ILS management tools. And critically, most put actual data on the blockchain — which is a non-starter for defense (classified/controlled data cannot live on a public ledger). S4 Ledger only puts fingerprints (hashes) on-chain. All actual data stays in your control.
 
 ---
 
@@ -95,7 +109,7 @@ S4 Ledger only puts fingerprints on-chain. All actual data stays in your control
 Everything described above is **live and working right now** at [s4ledger.com](https://s4ledger.com). It was built by Nick Frankfort on his own time at zero cost to the company. The tech stack:
 
 - **Website:** 14+ pages, fully branded
-- **Demo App:** All 18 ILS Workspace tools working, 156+ pre-built record types (supports any defense record type), 500+ pre-loaded military platforms, ICAPS-replacement provisioning tool, real DoD data in all dropdowns (35+ platforms, 25 contracts, 37 suppliers)
+- **Demo App:** All 18 ILS Workspace tools working, 156+ pre-built record types (supports any defense record type), 500+ pre-loaded military platforms, ICAPS-replacement provisioning tool, real DoW data in all dropdowns (35+ platforms, 25 contracts, 37 suppliers)
 - **Audit Record Vault:** Automatically stores every anchored record with content + hash for instant auditing
 - **Defense Document Library:** 100+ real MIL-STDs, OPNAVINSTs, DoD Directives searchable by branch and category
 - **Compliance Scorecard:** Real-time CMMC/NIST/DFARS compliance calculator with letter grades
@@ -116,13 +130,13 @@ Everything described above is **live and working right now** at [s4ledger.com](h
 - **Year 5 projection:** $3M–$5M+
 
 ### Cost Savings for Government Customers
-These are realistic, defensible numbers:
+These are realistic, defensible numbers based on ~$600K–$1.6M per-program annual savings:
 
-| Scale | Programs | Government Saves | S4 Systems Earns |
+| Scale | Programs | Government Saves (Total) | S4 Systems Earns |
 |---|---|---|---|
-| Small pilot | 1–3 programs | $600K–$1.6M/year | $48K–$120K/year |
-| Mid adoption | 5–15 programs | $3M–$24M/year | $240K–$600K/year |
-| Enterprise | 50+ programs | $30M–$80M/year | $1.2M–$3.6M/year |
+| Small pilot | 1–3 programs | $180K–$420K/year | $48K–$120K/year |
+| Mid adoption | 5–15 programs | $1.2M–$4.8M/year | $240K–$600K/year |
+| Enterprise | 50+ programs | $12M–$48M/year | $1.2M–$3.6M/year |
 
 The savings come from:
 - **65% less time** spent on manual ILS documentation and verification
@@ -205,12 +219,12 @@ Nobody else pairs a client-side audit trail with public blockchain hash anchorin
 S4 Ledger isn't just a cost-savings play — it creates economic growth across the defense ecosystem.
 
 **The math:**
-- DoD spends **$2.1B+ annually** on manual ILS management and audit preparation
+- DoW spends **$2.1B+ annually** on manual ILS management and audit preparation
 - S4 Ledger reduces audit prep labor by **85–95%** (weeks → minutes)
 - At scale (Year 5, $3–5M ARR), we estimate **340+ jobs** created:
   - **30–45 direct** S4 Ledger jobs (engineering, support, sales)
   - **100–200 indirect** jobs at integrators and defense contractors
-  - **3.4× DoD economic multiplier** → **$8M–$17M total economic impact**
+  - **3.4× DoW economic multiplier** → **$8M–$17M total economic impact**
 - Every dollar a program saves on manual verification gets reinvested into actual readiness
 - Small businesses (Tier 2–4 suppliers) can finally afford CMMC-compliant record management
 

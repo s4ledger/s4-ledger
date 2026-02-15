@@ -110,7 +110,7 @@ S4 Ledger v3.8.3 includes a comprehensive ILS Workspace with 18 integrated tools
 8. **Lifecycle Estimator** — Total ownership cost modeling
 9. **Warranty Tracker** — Contract and warranty status monitoring
 10. **Audit Record Vault** — Searchable archive of all anchored records with hash verification
-11. **Defense Document Library** — 100+ real MIL-STDs, OPNAVINSTs, and DoD references
+11. **Defense Document Library** — 100+ real MIL-STDs, OPNAVINSTs, and DoW references
 12. **Compliance Scorecard** — Multi-framework compliance posture assessment
 13. **Provisioning Tool** — ICAPS-replacement provisioning with spares optimization, PHS&T data, cost analysis, and per-item XRPL anchoring
 14. **Supply Chain Risk Engine** — Automated supply chain risk scoring and mitigation recommendations

@@ -34,7 +34,7 @@ S4 Ledger: Immutable logistics verification for the defense industry, anchored o
 ## Traction
 - **$SLS token LIVE on XRPL Mainnet** — tradable, AMM pools, trustlines
 - 100M total supply | ~15M circulating | 30M multi-sig treasury
-- **13 interactive defense tools** live at s4ledger.com (not mockups)
+- **18 interactive defense tools** live at s4ledger.com (not mockups)
 - **462 real platforms** across 9 military branches
 - **100+ real defense documents** in searchable reference library
 - **Audit Record Vault** — automatic audit trail for every anchored record
@@ -59,6 +59,22 @@ Key: 65% labor reduction • 90% error savings • 70% audit reduction • 15-25
 - $800B+ annual DoW budget
 - 12 ILS elements = 12 addressable verticals
 - No competitor combines hash-only + public ledger + defense focus
+
+---
+
+## Competitive Landscape
+
+| Competitor | What They Do | ILS Tools | Blockchain | Annual Cost | Why S4 Wins |
+|---|---|---|---|---|---|
+| **Palantir** ($60B) | Data analytics / AI | None | No | $1M–$50M+ | We do ILS mgmt — they don't. 1/100th the cost |
+| **Anduril** ($14B) | Autonomous hardware | None | No | $10M+ | Different lane — we sustain what they build |
+| **SAP S/4HANA** | General-purpose ERP | Generic add-ons | No | $500K–$5M+ | 6–24 month deploy vs. same-day. Not defense-built |
+| **Oracle NetSuite** | Cloud ERP / SCM | Generic add-ons | No | $100K–$1M+ | Not defense-specific. No integrity layer |
+| **IBM Hyperledger** | Enterprise blockchain | None | Yes (private) | $200K–$2M+ | No ILS tools. Puts data on-chain (non-starter for defense) |
+| **Spreadsheets** | Manual tracking | None | No | "Free" + $200K+ labor | No automation, no audit trail, no compliance |
+| **S4 Ledger** | ILS + tamper-proof records | **18 built-in** | **Yes (hash-only, XRPL)** | **$6K–$60K** | **Purpose-built for defense logistics** |
+
+> **Key insight:** $25B+ defense logistics software market has no unified platform with blockchain-verified records. S4 Ledger is first to market.
 
 ---
 

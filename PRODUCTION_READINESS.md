@@ -20,7 +20,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | **SDK** | pip-installable with CLI, 12 commands (anchor, hash, verify, status, readiness, dmsms, roi, lifecycle, warranty, action-items, calendar, provisioning), 21 SDK Playground functions (incl. supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance), How It Works expanded | **85%** |
 | **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404, security response headers, ITAR notices — needs database, monitoring, load balancing | **60%** |
 | **Authentication** | Login portal with SSO/CAC support (UI), tutorial onboarding, API key system — needs production key management | **45%** |
-| **User Experience** | Full mobile/tablet responsive, ILS Workspace unified UX, conversational AI Agent, 8 interactive tools + calendar, realistic sample data, ITAR compliance notice, branded favicons on all pages | **97%** |
+| **User Experience** | Full mobile/tablet responsive, ILS Workspace unified UX, conversational AI Agent, 18 interactive tools + calendar, realistic sample data, ITAR compliance notice, branded favicons on all pages | **97%** |
 | **Documentation** | OpenAPI 3.0 spec (fully documenting all 27 endpoints), CHANGELOG.md, comprehensive README, API examples, whitepaper, technical specs, security policy | **85%** |
 | **Compliance** | NIST 800-171 architecture aligned, CMMC L2 roadmap, ITAR warnings, security headers, DoW branding — needs formal assessment | **35%** |
 | **Legal / Business** | Documentation complete — needs entity formation, CAGE code, SAM.gov | **15%** |
@@ -231,7 +231,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Transaction browser | ✅ Active | **High** | Filters, pagination, CSV export |
 | Investor portal | ✅ Active | **High** | Market opportunity, tokenomics |
 | Audit Record Vault | ✅ Active | **High** | Auto-saves all anchored records for audit |
-| Defense Doc Library | ✅ Active | **High** | 100+ real MIL-STDs, OPNAVINSTs, DoD refs |
+| Defense Doc Library | ✅ Active | **High** | 100+ real MIL-STDs, OPNAVINSTs, DoW refs |
 | Compliance Scorecard | ✅ Active | **High** | CMMC/NIST/DFARS/FAR/ILS/DMSMS scoring |
 | Terms of Service page | ✅ Active | **Critical** | s4-terms/ |
 | Privacy Policy page | ✅ Active | **Critical** | s4-privacy/ |
@@ -326,10 +326,10 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 ## 11. v3.8.x Changelog (Latest)
 
 ### v3.8.6 — Polish, Real Data, Financial Math
-- [x] **5 New ILS Tools Integrated** — AI Supply Chain Risk Engine (35+ platforms, 37 suppliers), Automated Audit Report Generator (6 report types), Contract Lifecycle Management (25 real DoD contracts), Digital Thread / Config Bridge (32 platform configs), Predictive Maintenance AI (40+ platforms with fleet sizes)
-- [x] **Real DoD Dropdown Data** — All tool dropdowns populated with researched real platforms, contract numbers (N00024, FA8615, W58RGZ formats), platform variants (Flight IIA/III, Block IV/V, SEPv3/v4), fleet sizes, and 37 real defense suppliers
+- [x] **5 New ILS Tools Integrated** — AI Supply Chain Risk Engine (35+ platforms, 37 suppliers), Automated Audit Report Generator (6 report types), Contract Lifecycle Management (25 real DoW contracts), Digital Thread / Config Bridge (32 platform configs), Predictive Maintenance AI (40+ platforms with fleet sizes)
+- [x] **Real DoW Dropdown Data** — All tool dropdowns populated with researched real platforms, contract numbers (N00024, FA8615, W58RGZ formats), platform variants (Flight IIA/III, Block IV/V, SEPv3/v4), fleet sizes, and 37 real defense suppliers
 - [x] **Custom Nautical Animation** — Replaced particles.js with zero-dependency canvas animation (floating anchors, chain links, hex hash fragments, wave lines)
-- [x] **Financial Math Updated** — 18-tool savings recalculated: $601K–$1.6M per program/year, 10–100x ROI, $601M–$1.6B at 1,000 programs
+- [x] **Financial Math Updated** — 18-tool savings recalculated: ~$600K–$1.6M per program/year, 10–100x ROI, ~$600M–$1.6B at 1,000 programs
 - [x] **API v3.8.6** — 27 endpoints, 18 tool handlers, health endpoint updated
 - [x] **Compliance Grade Enhanced** — Larger font (1.3rem/900-weight), gradient background, glow effects
 - [x] **How It Works Repositioned** — Collapsible boxes moved under Anchor/Verify headings for better UX

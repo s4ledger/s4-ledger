@@ -29,7 +29,7 @@ Every tool in S4 Ledger's current platform eliminates quantifiable labor, error,
 **At scale:**
 - Single program (10,000 records/year): **$250K–$1.5M saved/year**
 - 100 programs: **$25M–$150M saved/year**
-- 1,000 programs (DoD-wide): **$250M–$1.5B saved/year**
+- 1,000 programs (DoW-wide): **$250M–$1.5B saved/year**
 
 #### 2. ILS Workspace (18 Tools Replacing Manual Processes)
 
@@ -45,7 +45,7 @@ Every tool in S4 Ledger's current platform eliminates quantifiable labor, error,
 | Action Items / Alerts | $10K–$25K (coordination labor) | $0 (included) | $10K–$25K |
 | Audit Record Vault | $45K–$150K (audit prep labor) | $0 (included) | $45K–$150K |
 | Document Library | $5K–$15K (MIL-STD lookup time) | $0 (included) | $5K–$15K |
-| Compliance Scorecard | $12K–$35K (CMMC assessment) | $0 (included) | $12K–$35K |
+| Compliance Scorecard | $10K–$35K (CMMC assessment) | $0 (included) | $10K–$35K |
 | Provisioning / PTD Manager | $50K–$120K (replaces ICAPS licensing + labor) | $0 (included) | $50K–$120K |
 | AI Supply Chain Risk Engine | $75K–$200K (manual supply chain audits + GIDEP) | $0 (included) | $75K–$200K |
 | Audit Report Generator | $30K–$80K (audit package compilation) | $0 (included) | $30K–$80K |
@@ -53,12 +53,12 @@ Every tool in S4 Ledger's current platform eliminates quantifiable labor, error,
 | Digital Thread / Config Bridge | $60K–$150K (configuration management labor) | $0 (included) | $60K–$150K |
 | Predictive Maintenance AI | $80K–$250K (CBM+ analysis + unplanned downtime) | $0 (included) | $80K–$250K |
 | AI Agent | $0 (doesn't exist elsewhere) | $0 (included) | N/A (new capability) |
-| **TOTAL per program** | **$607K–$1,655K** | **$499–$4,999/mo** | **$601K–$1,595K/year** |
+| **TOTAL per program** | **~$600K–$1.7M** | **$499–$4,999/mo** | **~$600K–$1.6M/year** |
 
 **At scale:**
 - 10 programs: **$6.0M–$16.0M saved/year**
 - 100 programs: **$60M–$160M saved/year**
-- 1,000 programs: **$601M–$1.6B saved/year**
+- 1,000 programs: **$600M–$1.6B saved/year**
 
 #### 3. Combined Savings (Anchoring + ILS Workspace)
 
@@ -67,7 +67,7 @@ Every tool in S4 Ledger's current platform eliminates quantifiable labor, error,
 | **Pilot** | 5 | 50K | $1.8M–$5.6M | $90K–$280K |
 | **Growth** | 50 | 500K | $18M–$56M | $2.4M–$6M |
 | **Scale** | 500 | 5M | $180M–$560M | $24M–$60M |
-| **DoD-Wide** | 5,000 | 50M | $1.8B–$5.6B | $200M–$600M |
+| **DoW-Wide** | 5,000 | 50M | $1.8B–$5.6B | $200M–$600M |
 
 > **Key insight:** S4 Ledger charges 5–10% of the savings it delivers. The government gets $9–$19 back for every $1 they spend on S4 Ledger. That's a 900–1,900% ROI — the kind of number that makes appropriations committees enthusiastic.
 
@@ -175,7 +175,7 @@ S4 Systems currently provides defense logistics consulting/contracting services.
 | Capability Addition | TAM Unlocked | Revenue Impact |
 |---|---|---|
 | **Cross-domain analytics (unclass ↔ classified)** | Unique capability | $2M–$10M per major program |
-| **DoD enterprise-wide contract (IDIQ)** | All DoD | $20M–$50M ceiling value |
+| **DoW enterprise-wide contract (IDIQ)** | All DoW | $20M–$50M ceiling value |
 | **Acquisition of complementary tools** | Market consolidation | 2–3 acquisitions ($5M–$20M each) |
 | **International defense expansion (Japan, Korea, Israel)** | $15B+ | 30%+ revenue from international |
 | **Public offering or strategic acquisition** | — | $1B–$3B valuation event |
@@ -235,11 +235,11 @@ At 12–15x revenue multiple: **$1.07B–$1.34B valuation**
 
 ### The 5-Minute Pitch
 
-1. **The market is massive.** DoD spends $150B+/year on logistics. The software tools serving this market are fragmented, overpriced, and 10–20 years behind commercial tech. No one has built a unified ILS platform with blockchain-verified records.
+1. **The market is massive.** DoW spends $150B+/year on logistics. The software tools serving this market are fragmented, overpriced, and 10–20 years behind commercial tech. No one has built a unified ILS platform with blockchain-verified records.
 
 2. **We have a working prototype.** Not a slide deck. Not a concept. A live, functional platform with 18 ILS tools, a Python SDK, REST API, and real XRPL blockchain integration. Zero cost to the company so far.
 
-3. **The economics are undeniable.** S4 Ledger saves the government $601K–$1.6M per program per year. It costs them $6K–$60K/year. That's a 10–100x ROI. The government doesn't say no to that math.
+3. **The economics are undeniable.** S4 Ledger saves the government ~$600K–$1.6M per program per year. It costs them $6K–$60K/year. That's a 10–100x ROI. The government doesn't say no to that math.
 
 4. **The path to $1B is clear.** Defense SaaS companies are valued at 15–20x revenue. We need $70M ARR to reach $1B. The Defense Logistics market can support $200M+ ARR for a dominant platform player. Palantir did it. Anduril did it. We can do it — and we're starting with a working product, not a pitch deck.
 
@@ -305,7 +305,7 @@ At 12–15x revenue multiple: **$1.07B–$1.34B valuation**
 |---|---|---|---|---|
 | **Palantir** | Data analytics for defense/intel | $2.2B | $60B+ | 27x |
 | **Anduril** | Autonomous defense systems | ~$800M | $14B | 17x |
-| **Rebellion Defense** | AI/ML for DoD | ~$50M | $500M+ | 10x+ |
+| **Rebellion Defense** | AI/ML for DoW | ~$50M | $500M+ | 10x+ |
 | **Second Front Systems** | Defense SaaS platform accreditation | ~$20M | $200M+ | 10x |
 | **Govini** | Defense analytics platform | ~$30M | $300M+ | 10x |
 | **Qlik (Thales defense)** | Supply chain analytics | ~$100M defense | $1B+ defense unit | 10x+ |

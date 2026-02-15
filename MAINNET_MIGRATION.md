@@ -2057,7 +2057,7 @@ Letter grades: A+ (≥95) through F (<50). Color-coded with SVG ring chart visua
 
 ### 35.1 Overview
 
-Versions 3.8.0 through 3.8.6 added **5 new ILS Workspace tools** (bringing the total to 18), expanded the API to 27 endpoints, introduced the Developer Marketplace, replaced all placeholder data with researched real DoD data, and recalculated all financial projections.
+Versions 3.8.0 through 3.8.6 added **5 new ILS Workspace tools** (bringing the total to 18), expanded the API to 27 endpoints, introduced the Developer Marketplace, replaced all placeholder data with researched real DoW data, and recalculated all financial projections.
 
 ### 35.2 New ILS Tools Added
 
@@ -2065,7 +2065,7 @@ Versions 3.8.0 through 3.8.6 added **5 new ILS Workspace tools** (bringing the t
 |------|----------------|
 | **AI Supply Chain Risk Engine** | New sub-tab in ILS Workspace. Requires `s4-assets/platforms.js` for platform database. 35+ platform options in 7 optgroups, 37 real defense supplier names. No server-side dependencies. |
 | **Automated Audit Report Generator** | New sub-tab. 6 report types (Full Audit, Supply Chain, Maintenance, Compliance, Chain of Custody, Contract Deliverables). Client-side generation with anchor-to-XRPL. |
-| **Contract Lifecycle Management** | New sub-tab. 25 realistic DoD contracts with real prefix formats (N00024, FA8615, W58RGZ, etc.). CDRL tracking with DI number references. |
+| **Contract Lifecycle Management** | New sub-tab. 25 realistic DoW contracts with real prefix formats (N00024, FA8615, W58RGZ, etc.). CDRL tracking with DI number references. |
 | **Digital Thread / Configuration Bridge** | New sub-tab. 4 configuration views (Engineering Changes, BOM Revisions, Config Baselines, TDP Versions). 32 platform configurations with variant-specific designators. |
 | **Predictive Maintenance AI** | New sub-tab. 40+ platforms with real fleet sizes. Platform-specific system/component/failure mode data in JS objects. Confidence scoring and cost-if-unplanned estimates. |
 
@@ -2077,7 +2077,7 @@ Versions 3.8.0 through 3.8.6 added **5 new ILS Workspace tools** (bringing the t
 
 ### 35.4 Data Quality Overhaul
 
-- All dropdown selectors populated with researched real DoD data
+- All dropdown selectors populated with researched real DoW data
 - Contract numbers use authentic prefix formats per contracting command
 - Platform variants include real designators (Flight I/IIA/III, Block IV/V, SEPv3/v4, etc.)
 - Fleet sizes reflect publicly reported numbers
@@ -2092,9 +2092,9 @@ Versions 3.8.0 through 3.8.6 added **5 new ILS Workspace tools** (bringing the t
 
 ### 35.6 Financial Projections Updated
 
-- Per-program savings recalculated with 18 tools: $601K–$1.6M/year (up from $316K–$815K with 13 tools)
+- Per-program savings recalculated with 18 tools: ~$600K–$1.6M/year (up from ~$300K–$800K with 13 tools)
 - ROI: 10–100x
-- Scale projections: 10 programs ($6M–$16M), 100 programs ($60M–$160M), 1,000 programs ($601M–$1.6B)
+- Scale projections: 10 programs ($6M–$16M), 100 programs ($60M–$160M), 1,000 programs (~$600M–$1.6B)
 
 ### 35.7 Migration Checklist for v3.8.6
 

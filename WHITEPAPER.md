@@ -247,7 +247,7 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | **Provisioning & PTD Manager** | Replaces ICAPS — Provisioning Technical Documentation (PTD) per MIL-STD-1552, Allowance Parts List (APL) generation, NSN cataloging via FCS, Provisioning Performance Schedule tracking. All-branch (ICAPS is Navy/USMC only). Blockchain-verified provisioning decisions. |
 | **AI Supply Chain Risk Engine** | ML-powered supply chain risk scoring across 35+ defense platforms — analyzes supplier health (GIDEP alerts, DLA lead time spikes, financial distress, single-source dependency, counterfeit indicators). Risk levels (Critical/High/Medium/Low), ETA impact calculations, 37 real defense suppliers |
 | **Automated Audit Report Generator** | One-click audit package generation — 6 report types (Full Audit, Supply Chain, Maintenance, Compliance, Chain of Custody, Contract Deliverables). Configurable time periods, multi-format output, section-by-section compliance scoring. Report hashes anchored to XRPL |
-| **Contract Lifecycle Management** | CDRL tracking, contract modifications (Class I/II), and SOW deliverable status — 25 realistic DoD contracts from NAVSEA, NAVAIR, Army ACC, AF LCMC, DLA, MCSC, MDA. DI number references, status tracking (On Track/At Risk/Overdue/Delivered), blockchain-anchored delivery timestamps |
+| **Contract Lifecycle Management** | CDRL tracking, contract modifications (Class I/II), and SOW deliverable status — 25 realistic DoW contracts from NAVSEA, NAVAIR, Army ACC, AF LCMC, DLA, MCSC, MDA. DI number references, status tracking (On Track/At Risk/Overdue/Delivered), blockchain-anchored delivery timestamps |
 | **Digital Thread / Configuration Bridge** | 4 configuration views: Engineering Changes (ECP Class I/II), BOM Revisions (multi-level), Configuration Baselines (FBL/ABL/Product), TDP Versions. 32 platform configurations with variant-specific designators. Status workflow with per-item anchoring |
 | **Predictive Maintenance AI** | Fleet-wide failure prediction — analyzes MTBF trends, failure mode clustering, and component age curves. 40+ platforms with real fleet sizes, platform-specific system/component/failure mode data, confidence scoring, cost-if-unplanned estimates |
 | Record Anchoring | SHA-256 hash anchoring to XRPL ($0.01 SLS per transaction) |
@@ -266,7 +266,7 @@ S4 Ledger delivers measurable cost savings at every implementation tier:
 
 ### Economic Impact & Job Creation
 
-At scale (Year 5, $3–5M ARR), S4 Ledger is projected to create 340+ jobs (30–45 direct, 100–200 indirect at integrators and contractors) with a total economic impact of $8M–$17M based on the DoD's 3.4× economic multiplier. By lowering compliance barriers for Tier 2–4 suppliers, the platform expands the defense industrial base and enables small businesses to compete for contracts that were previously cost-prohibitive.
+At scale (Year 5, $3–5M ARR), S4 Ledger is projected to create 340+ jobs (30–45 direct, 100–200 indirect at integrators and contractors) with a total economic impact of $8M–$17M based on the DoW's 3.4× economic multiplier. By lowering compliance barriers for Tier 2–4 suppliers, the platform expands the defense industrial base and enables small businesses to compete for contracts that were previously cost-prohibitive.
 
 **Key Government Savings Drivers:**
 - **65% labor reduction** in manual ILS documentation and verification ($85K/FTE × 2080 hrs × 0.65)
@@ -276,7 +276,7 @@ At scale (Year 5, $3–5M ARR), S4 Ledger is projected to create 340+ jobs (30�
 - **$12K/program compliance acceleration** — Automated CMMC/NIST/DFARS compliance posture monitoring
 
 **S4 Systems Revenue Model:**
-- **SaaS licensing**: $20K–$120K/year per organization (tiered by platform count)
+- **SaaS licensing**: $6K–$60K/year per organization (tiered by platform count)
 - **$SLS transaction fees**: $0.01 per anchor × volume = $1K–$50K/year per active customer
 - **Enterprise API access**: $50K–$200K/year for high-volume integration
 - **SBIR/STTR potential**: $150K Phase I → $1M Phase II → $3M Phase III transition
