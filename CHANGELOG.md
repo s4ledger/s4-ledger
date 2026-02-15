@@ -5,6 +5,25 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.4] - 2026-02-15
+
+### Added
+- **Transactions Page localStorage Fallback** — When `/api/transactions` is unavailable, transactions page now builds the full table from localStorage-synced anchored records instead of showing an error. Shows helpful guidance when no records exist
+- **Transactions Page Timeout Guard** — Added AbortController with 8-second fetch timeout (matching metrics page) to prevent indefinite loading state
+- **Cross-Page Auto-Sync** — Both metrics and transactions pages now listen for `storage` events. When records are anchored in the Demo App, metrics and transactions pages update instantly without waiting for the 30-second poll interval
+- **Transactions USSF Branch Color** — Added Space Force branch color definition (was missing from transactions page)
+- **Billion-Dollar Roadmap** — New `BILLION_DOLLAR_ROADMAP.md` document with complete financial analysis: detailed savings math per tool, 10-year revenue waterfall projections, Phase 1–4 growth strategy, 15 new capabilities needed for billion-dollar scale, comparable defense tech valuations (Palantir, Anduril, Govini), and CEO-ready 5-minute pitch
+- **Path to $1B in Executive Proposal** — Added scaling math and 10 new capabilities table with development timelines and revenue unlocks to the executive proposal
+
+### Fixed
+- **Transactions Page Not Loading** — Transactions page previously failed silently when the API was unavailable, showing permanent "Loading..." state. Now properly falls back to localStorage records and displays informative empty state when no records exist
+- **About Page Title Formatting** — "Our Mission" was inside a card box with left accent border, but "Our Story", "What Makes Us Different", and "Technology Stack" used unstyled section titles. All four now use consistent card-style formatting with bordered accent strips
+- **How It Works Box Positioning** — Moved Anchor and Verify "How It Works" expandable sections from the sidebar column (col-lg-5) to directly under the tool's main content area (col-lg-7), matching the positioning pattern used by all 11 ILS Workspace tools
+
+### Changed
+- **Metrics Cross-Page Sync** — Added `storage` event listener to immediately refresh when new records are anchored from other pages
+- **Transactions Filter Population** — Refactored filter population into dedicated `populateFilters()` function for cleaner code reuse between API and localStorage fallback paths
+
 ## [3.8.3] - 2026-02-16
 
 ### Added

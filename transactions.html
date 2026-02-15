@@ -191,6 +191,7 @@
         DLA:   { bg: 'rgba(26,58,92,0.25)', color: '#8ab4d8', label: 'DLA' },
         JOINT: { bg: 'rgba(74,74,74,0.25)', color: '#aaaaaa', label: 'Joint' },
         SOCOM: { bg: 'rgba(45,45,45,0.25)', color: '#999999', label: 'SOCOM' },
+        USSF:  { bg: 'rgba(20,20,60,0.25)', color: '#aaaaff', label: 'Space Force' },
     };
 
     let allTransactions = [];
@@ -201,7 +202,10 @@
 
     async function loadTransactions() {
         try {
-            const res = await fetch('/api/transactions');
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            const res = await fetch('/api/transactions', { signal: controller.signal });
+            clearTimeout(timeoutId);
             const data = await res.json();
             allTransactions = data.transactions || [];
 
@@ -212,40 +216,60 @@
             }
 
             // Stats
-            document.getElementById('totalTx').textContent = (data.total || allTransactions.length).toLocaleString();
-            document.getElementById('totalFees').textContent = '$' + ((data.total || allTransactions.length) * 0.01).toFixed(2);
+            document.getElementById('totalTx').textContent = allTransactions.length.toLocaleString();
+            document.getElementById('totalFees').textContent = '$' + (allTransactions.length * 0.01).toFixed(2);
 
-            const branches = new Set(allTransactions.map(t => t.branch));
-            const types = new Set(allTransactions.map(t => t.record_label || t.record_type));
+            const branches = new Set(allTransactions.map(t => t.branch).filter(Boolean));
+            const types = new Set(allTransactions.map(t => t.record_label || t.record_type).filter(Boolean));
             document.getElementById('branchCount').textContent = branches.size;
             document.getElementById('typeCount').textContent = types.size;
 
-            // Populate filters once
-            if (!branchesPopulated) {
-                const branchSelect = document.getElementById('branchFilter');
-                branches.forEach(b => {
-                    const info = BRANCH_COLORS[b] || { label: b };
-                    const opt = document.createElement('option');
-                    opt.value = b;
-                    opt.textContent = info.label;
-                    branchSelect.appendChild(opt);
-                });
-
-                const typeSelect = document.getElementById('typeFilter');
-                const sortedTypes = [...types].sort();
-                sortedTypes.forEach(t => {
-                    const opt = document.createElement('option');
-                    opt.value = t;
-                    opt.textContent = t;
-                    typeSelect.appendChild(opt);
-                });
-                branchesPopulated = true;
-            }
-
+            populateFilters(branches, types);
             applyFilters();
         } catch (err) {
-            console.error('Failed to load transactions:', err);
-            document.getElementById('txBody').innerHTML = '<tr><td colspan="8" class="no-data"><i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i> Failed to load transactions. Check API connection.</td></tr>';
+            console.warn('API fetch failed, loading from localStorage:', err.message);
+            // Fallback: build transaction list entirely from localStorage
+            const localRecs = getLocalRecords();
+            if (localRecs.length > 0) {
+                allTransactions = localRecs.map(r => ({...r, _local: true})).reverse();
+                document.getElementById('totalTx').textContent = allTransactions.length.toLocaleString();
+                document.getElementById('totalFees').textContent = '$' + (allTransactions.length * 0.01).toFixed(2);
+                const branches = new Set(allTransactions.map(t => t.branch).filter(Boolean));
+                const types = new Set(allTransactions.map(t => t.record_label || t.record_type).filter(Boolean));
+                document.getElementById('branchCount').textContent = branches.size;
+                document.getElementById('typeCount').textContent = types.size;
+                populateFilters(branches, types);
+                applyFilters();
+            } else {
+                document.getElementById('txBody').innerHTML = '<tr><td colspan="8" class="no-data"><i class="fas fa-info-circle" style="color:var(--accent);"></i> No transactions yet. Anchor records in the <a href="demo-app/" style="color:var(--accent);">Demo App</a> to see them here.</td></tr>';
+                document.getElementById('totalTx').textContent = '0';
+                document.getElementById('totalFees').textContent = '$0.00';
+                document.getElementById('branchCount').textContent = '0';
+                document.getElementById('typeCount').textContent = '0';
+            }
+        }
+    }
+
+    function populateFilters(branches, types) {
+        if (!branchesPopulated && branches.size > 0) {
+            const branchSelect = document.getElementById('branchFilter');
+            branches.forEach(b => {
+                const info = BRANCH_COLORS[b] || { label: b };
+                const opt = document.createElement('option');
+                opt.value = b;
+                opt.textContent = info.label;
+                branchSelect.appendChild(opt);
+            });
+
+            const typeSelect = document.getElementById('typeFilter');
+            const sortedTypes = [...types].sort();
+            sortedTypes.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = t;
+                typeSelect.appendChild(opt);
+            });
+            branchesPopulated = true;
         }
     }
 
@@ -347,6 +371,11 @@
         link.download = 's4_transactions_' + new Date().toISOString().split('T')[0] + '.csv';
         link.click();
     }
+
+    // ── Cross-page sync: instantly update when records are anchored elsewhere ──
+    window.addEventListener('storage', (e) => {
+        if (e.key === S4_STORAGE_KEY) loadTransactions();
+    });
 
     // ── Init ──
     window.addEventListener('DOMContentLoaded', loadTransactions);

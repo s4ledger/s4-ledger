@@ -368,6 +368,11 @@
         document.getElementById('feeBtns').addEventListener('click', e => { if (e.target.dataset.view) { currentFeeView = e.target.dataset.view; document.querySelectorAll('#feeBtns .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.view === currentFeeView)); renderFeeChart(currentFeeView); } });
         document.getElementById('txBtns').addEventListener('click', e => { if (e.target.dataset.view) { currentTxView = e.target.dataset.view; document.querySelectorAll('#txBtns .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.view === currentTxView)); renderTxChart(currentTxView); } });
 
+        // ── Cross-page sync: instantly update when records are anchored elsewhere ──
+        window.addEventListener('storage', (e) => {
+            if (e.key === S4_STORAGE_KEY) loadMetrics();
+        });
+
         window.addEventListener('DOMContentLoaded', loadMetrics);
         setInterval(loadMetrics, 30000);
     </script>

@@ -341,6 +341,41 @@ S4 Ledger dramatically lowers the compliance barrier for small defense contracto
 
 ---
 
+## Path to $1B Company Valuation
+
+Defense SaaS companies are valued at 12–20× revenue (Palantir: 27×, Anduril: 17×, Rebellion Defense: 10×+). S4 Ledger needs approximately **$70M ARR to reach a $1B valuation** at a conservative 15× multiple.
+
+### The Math That Gets Us There
+
+**Current platform savings per program:** $316K–$815K/year (13 ILS tools + hash anchoring combined).  
+**S4 Ledger charges 5–10% of value delivered** → $6K–$60K/year per customer → 10–50× ROI for government.
+
+| Scale | Programs | Govt Savings/Year | S4 Revenue (ARR) | Valuation (15×) |
+|---|---|---|---|---|
+| **Pilot** | 5 | $1.8M–$5.6M | $90K–$280K | $1.4M–$4.2M |
+| **Growth** | 50 | $18M–$56M | $2.4M–$6M | $36M–$90M |
+| **Scale** | 500 | $180M–$560M | $24M–$60M | $360M–$900M |
+| **DoD-Wide** | 5,000 | $1.8B–$5.6B | $200M–$600M | **$3B–$9B** |
+
+### Capabilities Required for Billion-Dollar Scale
+
+| # | New Capability | Dev Time | Revenue Unlock | Build In |
+|---|---|---|---|---|
+| 1 | FedRAMP Authorization | 6–12 mo | Opens 80% of federal market | Years 1–2 |
+| 2 | AI Supply Chain Risk Engine | 4–6 mo | $500K–$2M/customer/year | Years 2–3 |
+| 3 | Automated Audit Report Generator | 3–4 mo | Replaces $45K–$150K manual process | Years 1–2 |
+| 4 | Contract Lifecycle Management | 4–6 mo | $100K–$400K/contract dispute avoidance | Years 2–3 |
+| 5 | IL4/IL5 Classified Deployment | 8–12 mo | $1M–$5M per classified contract | Years 3–5 |
+| 6 | Digital Thread / Digital Twin Bridge | 6–8 mo | $3B+ MBSE market access | Years 3–5 |
+| 7 | Predictive Maintenance AI | 6–10 mo | $2M–$10M per fleet | Years 3–5 |
+| 8 | Managed ILS-as-a-Service | 3–6 mo | $500K–$2M/program/year | Years 3–5 |
+| 9 | Developer Marketplace | 6–8 mo | Network effects + 25% platform fees | Years 4–6 |
+| 10 | NATO / Five Eyes International | 12–18 mo | $8B+ allied logistics market | Years 5–8 |
+
+> **Full detailed financial analysis with year-by-year revenue waterfalls available in [BILLION_DOLLAR_ROADMAP.md](BILLION_DOLLAR_ROADMAP.md).**
+
+---
+
 ## Live Demo
 
 The entire prototype is live right now:

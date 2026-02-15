@@ -447,11 +447,7 @@
                             </div>
                             <button class="btn-accent mt-3" onclick="anchorRecord()" id="anchorBtn"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
                             <div class="result-panel" id="anchorResult"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="demo-card">
-                            <details style="margin-bottom:0.5rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
+                            <details style="margin-top:16px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
                                 <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Anchoring Works</summary>
                                 <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                     <p><strong style="color:#fff;">What's real:</strong> Every anchor creates an actual XRPL transaction with your record's SHA-256 hash stored in the memo field. The hash, transaction ID, timestamp, and XRPL explorer link are all genuine blockchain data you can independently verify.</p>
@@ -461,6 +457,8 @@
                                 </div>
                             </details>
                         </div>
+                    </div>
+                    <div class="col-lg-5">
                         <div class="demo-card">
                             <h3><i class="fas fa-diagram-project"></i> Anchor Flow</h3>
                             <div style="font-size:0.9rem;line-height:2">
@@ -499,11 +497,7 @@
                             <input type="text" id="verifyHash" placeholder="SHA-256 hash to compare against">
                             <button class="btn-gold mt-3" onclick="verifyRecord()"><i class="fas fa-check-circle"></i> Verify Integrity</button>
                             <div class="result-panel" id="verifyResult"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="demo-card">
-                            <details style="margin-bottom:0.5rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
+                            <details style="margin-top:16px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
                                 <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Verification Works</summary>
                                 <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                     <p><strong style="color:#fff;">What's real:</strong> Verification computes the SHA-256 hash of your pasted content and compares it against the hash that was previously anchored on the XRPL. If they match, the record is proven unaltered since the anchor date — the blockchain itself is the proof.</p>
@@ -513,6 +507,8 @@
                                 </div>
                             </details>
                         </div>
+                    </div>
+                    <div class="col-lg-5">
                         <div class="demo-card">
                             <h3><i class="fas fa-question-circle"></i> Verification Use Cases</h3>
                             <div style="font-size:0.85rem;line-height:1.8;color:var(--steel)">
