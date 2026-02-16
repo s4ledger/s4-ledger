@@ -5,6 +5,20 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.14] - 2026-02-16
+
+### Changed — ILIE v2: Comprehensive Enhancement + Bug Fixes + SDK Expansion
+- **How It Works text fixed** — VRSL→VRS, grammar corrections
+- **AI Summary program name fix** — Platform display names resolve through S4_PLATFORMS DB (e.g., "ddg51" → "DDG-51 — Arleigh Burke Class Destroyer"); custom platform info now displays correctly in AI summary
+- **Navbar consolidated** — Use Cases, Pricing, Roadmap, FAQ, Contact moved into "More" dropdown across all site pages for cleaner navigation
+- **Action Items integration** — ILIE discrepancies auto-generate Action Items: critical findings create 7-day action items, warnings create 14-day items, tagged "ILIE" source
+- **Sample download files** — 5 downloadable CSV samples (VRS, IUID, BOM, Config Drawings, ECP) above upload zone for full workflow testing
+- **ECP/CDRL demo data** — 8-item ECP data with real NAVSEA-style change proposals + 8-item CDRL data with DI numbers
+- **Drag & drop upload** — Added handleSubFileDrop() for proper file drag-and-drop
+- **AI Agent ILIE context** — Agent provides ILIE-specific responses with discrepancy counts if analysis has been run
+- **SDK Playground expanded** — 27 functions (was 20): added ILIE, Defense DB Import, Compliance Score, ILS Calendar, Parts X-Ref, Doc Library, Audit Vault with Python code samples and realistic output
+- **Marketplace verified** — Exists at /s4-marketplace/ and is linked from Products dropdown
+
 ## [3.9.13] - 2026-02-16
 
 ### Changed — ILIE Enhancement: 500+ Platform Selector + Realistic Demo Data

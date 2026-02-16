@@ -17,7 +17,7 @@
 - NIST 800-171 / CMMC compliance documentation and Compliance Scorecard
 - Toast alert system for warranty, DMSMS, and readiness alerts
 - ILS Calendar with .ics export
-- Python SDK with 21 functions + SDK Playground with 500+ platform selector
+- Python SDK with 27 functions + SDK Playground with 500+ platform selector
 - CEO/investor pitch materials (Billion-Dollar Roadmap, Executive Proposal, Internal Pitch)
 - Competitive analysis vs Palantir, Anduril, SAP, Oracle
 - Partner outreach (defense contractors, system integrators)

@@ -363,11 +363,7 @@
                 <li class="nav-item"><a class="nav-link" href="../">Home</a></li>
                 <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Company</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="../s4-about/" style="color:#fff">About Us</a></li><li><a class="dropdown-item" href="../s4-investors/" style="color:#fff">Investors</a></li><li><a class="dropdown-item" href="../s4-partners/" style="color:#fff">Partners</a></li></ul></li>
                 <li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Products</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="#" style="color:#fff;font-weight:600"><i class="fas fa-play-circle" style="width:18px;margin-right:6px;color:#00aaff"></i>Demo App</a></li><li><a class="dropdown-item" href="../sdk-playground/" style="color:#fff"><i class="fas fa-code" style="width:18px;margin-right:6px;color:#c9a84c"></i>SDK Playground</a></li><li><a class="dropdown-item" href="../s4-marketplace/" style="color:#fff"><i class="fas fa-store" style="width:18px;margin-right:6px;color:#a855f7"></i>Marketplace</a></li><li><a class="dropdown-item" href="../metrics.html" style="color:#fff"><i class="fas fa-chart-bar" style="width:18px;margin-right:6px;color:#00aaff"></i>Live Metrics</a></li><li><a class="dropdown-item" href="../transactions.html" style="color:#fff"><i class="fas fa-list" style="width:18px;margin-right:6px;color:#c9a84c"></i>Transactions</a></li><li><a class="dropdown-item" href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:#fff"><i class="fab fa-github" style="width:18px;margin-right:6px"></i>SDK & Docs</a></li></ul></li>
-                <li class="nav-item"><a class="nav-link" href="../s4-use-cases/">Use Cases</a></li>
-                <li class="nav-item"><a class="nav-link" href="../s4-pricing/">Pricing</a></li>
-                <li class="nav-item"><a class="nav-link" href="../s4-roadmap/">Roadmap</a></li>
-                <li class="nav-item"><a class="nav-link" href="../s4-faq/">FAQ</a></li>
-                <li class="nav-item"><a class="nav-link" href="../s4-contact/">Contact</a></li>
+                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">More</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="../s4-use-cases/" style="color:#fff"><i class="fas fa-crosshairs" style="width:18px;margin-right:6px;color:#14f195"></i>Use Cases</a></li><li><a class="dropdown-item" href="../s4-pricing/" style="color:#fff"><i class="fas fa-tags" style="width:18px;margin-right:6px;color:#c9a84c"></i>Pricing</a></li><li><a class="dropdown-item" href="../s4-roadmap/" style="color:#fff"><i class="fas fa-road" style="width:18px;margin-right:6px;color:#00aaff"></i>Roadmap</a></li><li><a class="dropdown-item" href="../s4-faq/" style="color:#fff"><i class="fas fa-circle-question" style="width:18px;margin-right:6px;color:#ffa500"></i>FAQ</a></li><li><a class="dropdown-item" href="../s4-contact/" style="color:#fff"><i class="fas fa-envelope" style="width:18px;margin-right:6px;color:#a855f7"></i>Contact</a></li></ul></li>
                 <li class="nav-item"><a class="nav-link" href="../s4-login/" style="color:#00aaff !important;font-weight:700"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             </ul>
             <button class="notif-bell" onclick="toggleNotifPanel()" title="Alerts & Notifications"><i class="fas fa-bell"></i><span class="notif-badge" id="notifBadge"></span></button>
@@ -1828,7 +1824,7 @@
                             <i class="fas fa-info-circle"></i> How It Works — ILIE — Submission Intelligence &amp; Discrepancy Detection
                         </summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#fff;">What's real:</strong> Ingests ILS submissions from any OEM, shipbuilder, vendor, or contractor — including Vendor Recommended Spares Lists (VRSL), IUID registries, configuration drawings, outfitting lists/drawings, purchase order indices, provisioning technical data (PTD), allowance parts lists (APL), technical manuals (IETM/TM), maintenance plan updates, supply support requests, LSAR data, reliability reports (FRACAS), calibration records, packaging/PHS&amp;T data, training equipment lists, support equipment recommendations, warranty claims, Engineering Change Proposals (ECP), CDRL deliverables, and more. Each submission is hashed, version-tracked, and compared line-by-line against the previous accepted version for that program/platform/document type.</p>
+                            <p><strong style="color:#fff;">What's real:</strong> Ingests ILS submissions from any OEM, shipbuilder, vendor, or contractor — including Vendor Recommended Spares Lists (VRS), IUID registries, configuration drawings, outfitting lists/drawings, Purchase Order Indices, provisioning technical data (PTD), allowance parts lists (APL), technical manuals (IETM/TM), maintenance plan updates, supply support requests, LSAR data, reliability reports (FRACAS), calibration records, packaging/PHS&amp;T data, training equipment lists, support equipment recommendations, warranty claims, Engineering Change Proposals (ECP), CDRL deliverables, and more. Each submission is hashed, version-tracked, and compared line-by-line against the previous accepted version for that program/platform/document type.</p>
                             <p><strong style="color:#fff;">What's demo:</strong> Upload CSV, Excel (.xlsx), XML, JSON, or PDF submissions. S4 Ledger parses the data, auto-detects the submission type and format, maps fields, and runs the discrepancy engine against stored baselines. Demo mode generates realistic sample submissions with planted discrepancies for each document type so you can see the full analysis workflow.</p>
                             <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> ILS contractors manually reviewing vendor submissions spend 40-120 hours per submission package comparing line-by-line against previous versions. Across a major platform program with 15-25 submission cycles per year, this costs <strong>$800K-$1.5M/year per program</strong> in review labor alone — and still misses 12-18% of discrepancies that cause downstream procurement errors, maintenance failures, and readiness gaps. S4 Ledger's AI-powered discrepancy engine reviews submissions in <strong>seconds</strong>, catches <strong>99.7%</strong> of discrepancies (vs 82-88% manual), flags cost anomalies exceeding thresholds, and generates severity-rated reports ready for leadership. At scale across 100 programs, this tool alone generates <strong>$120M+/year</strong> in savings from eliminated review labor, prevented procurement errors, and avoided readiness shortfalls.</p>
                             <p><strong style="color:#00aaff;">Production mode:</strong> Connects to contractor submission portals (PIEE, WAWF, EDA, UID Registry) and OEM data feeds via IL4/IL5 secure channels. Automatically ingests new submissions, runs the discrepancy engine, cross-references against authoritative data sources (FLIS, DPAS, HAYSTACK, FEDLOG), and routes discrepancy reports to designated reviewers with severity ratings and recommended actions. Integrates with S4's AI Agent for natural-language querying of discrepancy history and predictive trend analysis.</p>
@@ -1858,7 +1854,7 @@
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Submission Type</label>
                             <select id="subDocType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:6px;font-size:.82rem">
-                                <option value="VRSL">Vendor Recommended Spares List (VRSL)</option>
+                                <option value="VRSL">Vendor Recommended Spares List (VRS)</option>
                                 <option value="IUID">IUID Registry / Serialized List</option>
                                 <option value="CONFIG_DWG">Configuration Drawing / Baseline</option>
                                 <option value="OUTFITTING">Outfitting List / Drawing</option>
@@ -1907,7 +1903,18 @@
                     </div>
 
                     <!-- File Upload Zone -->
-                    <div id="subUploadZone" onclick="document.getElementById('subFileInput').click()" style="border:2px dashed rgba(224,108,117,0.35);border-radius:10px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(224,108,117,0.04);transition:all 0.3s">
+                    <div style="margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15)">
+                        <div style="font-size:.8rem;font-weight:700;color:#c9a84c;margin-bottom:6px"><i class="fas fa-download"></i> Download Sample Submission Files</div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <button onclick="downloadSampleFile('VRS')" class="btn btn-sm" style="background:rgba(224,108,117,0.12);color:#e06c75;border:1px solid rgba(224,108,117,0.3);border-radius:6px;font-size:.72rem;padding:3px 10px"><i class="fas fa-file-csv"></i> Sample VRS (.csv)</button>
+                            <button onclick="downloadSampleFile('IUID')" class="btn btn-sm" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:6px;font-size:.72rem;padding:3px 10px"><i class="fas fa-file-csv"></i> Sample IUID (.csv)</button>
+                            <button onclick="downloadSampleFile('BOM')" class="btn btn-sm" style="background:rgba(20,241,149,0.1);color:#14f195;border:1px solid rgba(20,241,149,0.3);border-radius:6px;font-size:.72rem;padding:3px 10px"><i class="fas fa-file-csv"></i> Sample BOM (.csv)</button>
+                            <button onclick="downloadSampleFile('CONFIG_DWG')" class="btn btn-sm" style="background:rgba(168,85,247,0.1);color:#a855f7;border:1px solid rgba(168,85,247,0.3);border-radius:6px;font-size:.72rem;padding:3px 10px"><i class="fas fa-file-csv"></i> Sample Config (.csv)</button>
+                            <button onclick="downloadSampleFile('ECP')" class="btn btn-sm" style="background:rgba(201,168,76,0.12);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:6px;font-size:.72rem;padding:3px 10px"><i class="fas fa-file-csv"></i> Sample ECP (.csv)</button>
+                        </div>
+                        <div style="font-size:.7rem;color:var(--steel);margin-top:4px">Download these, then upload to test the ILIE discrepancy engine with realistic data.</div>
+                    </div>
+                    <div id="subUploadZone" onclick="document.getElementById('subFileInput').click()" style="border:2px dashed rgba(224,108,117,0.35);border-radius:10px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(224,108,117,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#e06c75'" ondragleave="this.style.borderColor='rgba(224,108,117,0.35)'" ondrop="handleSubFileDrop(event)">
                         <i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#e06c75;margin-bottom:8px;display:block"></i>
                         <div style="color:#e06c75;font-weight:600;font-size:.9rem">Upload Submission Data</div>
                         <div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF, or paste data below</div>
@@ -4751,7 +4758,15 @@ function generateAiResponse(query) {
         if (/defense.*doc|doc.*library|mil-std|opnavinst|regulation|standard|reference|mil-hdbk/.test(q)) return '<strong>Defense Document Library</strong><br><br>Searchable reference library of <strong>100+ real defense documents</strong> — MIL-STDs, MIL-HDBKs, OPNAVINSTs, COMDTINST, Army Regulations, Air Force Instructions, Marine Corps Orders, DFARS clauses, and NIST standards.<br><br>Features:<br>• <strong>Filter by category</strong> — ILS, Readiness, Maintenance, Supply, DMSMS, Cybersecurity, etc.<br>• <strong>Filter by branch</strong> — Joint, Navy, Coast Guard, Army, Air Force, Marines, Space Force<br>• <strong>Full-text search</strong> — by document ID, title, description, or keywords<br>• <strong>Direct links</strong> — click any document to open the official source<br><br>Use this while working in other tools to reference applicable standards without leaving the workspace.<br><br>Click the <strong>Doc Library</strong> tab above to browse.';
         if (/provision|ptd|provisioning.*tech|allowance.*part|apl.*gen|catalog|icaps|lmi|logistics.*product|ppd|provisioning.*part/.test(q)) return '<strong>Provisioning & ICAPS</strong><br><br>S4 Ledger supports provisioning workflows that go beyond what legacy tools like <strong>ICAPS</strong> (Interactive Computer-Aided Provisioning System) offer:<br><br>• <strong>Vendor Recommended Spares (VRS)</strong> — DI-020, tracked in gap analysis<br>• <strong>Allowance Parts List (APL)</strong> — DI-021, COSAL data for initial outfitting<br>• <strong>Spares Buylist</strong> — initial outfitting and provisioning data<br>• <strong>GoFM (GFM) List</strong> — government-furnished material tracking<br>• <strong>Parts Cross-Reference</strong> — NSN, CAGE, manufacturer data with alternates<br>• <strong>DMSMS Integration</strong> — obsolescence affects provisioning decisions<br><br><strong>How S4 beats ICAPS:</strong><br>• ICAPS covers <em>only</em> Supply Support — S4 covers all 12 ILS elements<br>• ICAPS is Navy/Marine Corps only — S4 is all-branch<br>• ICAPS has no blockchain verification — S4 anchors every provisioning decision<br>• ICAPS has no compliance scoring — S4 tracks CMMC, NIST, DFARS<br>• ICAPS is a standalone tool — S4 integrates provisioning with DMSMS, readiness, lifecycle cost, and warranty data<br><br>Use the <strong>Parts</strong> tab for cross-reference and the <strong>Gap Analysis</strong> tab to track provisioning deliverables.';
         if (/import|database.*import|db.*import|defense.*database|import.*record|import.*csv|import.*xml|import.*json|nserc|merlin|gcss|cdmd|navsup|remis|lims|dpas|flis|atlass|almis|piee|gcss.army|lmp|aesip|d200|cgone|ussf/.test(q)) return '<strong>Defense Database Import</strong><br><br>The Defense Database Import tool lets you ingest records from <strong>24+ systems across all branches</strong>:<br><br>🔹 <strong>Navy:</strong> NSERC/SE IDE, MERLIN, NAVAIR AMS PMT, CDMD-OA, NDE, PEO MLB, CSPT, NAVSUP<br>🟢 <strong>Army:</strong> GCSS-Army, LMP, AESIP<br>🔵 <strong>Air Force:</strong> REMIS, LIMS-EV, D200A<br>🔴 <strong>Marine Corps:</strong> GCSS-MC, ATLASS<br>🟠 <strong>Coast Guard:</strong> ALMIS, CGOne<br>⚫ <strong>Space Force:</strong> USSF LMS<br>🏛 <strong>Joint/OSD:</strong> COMPASS, MBPS, GCSS, DPAS, DLA FLIS, PIEE/WAWF<br><br><strong>How it works:</strong><br>1. Select a source system from the dropdown<br>2. Upload a CSV, XML, or JSON file — or paste data directly<br>3. S4 auto-detects format, maps fields, and computes SHA-256 hashes<br>4. Click <strong>"Anchor to XRPL"</strong> to create immutable blockchain records<br><br><strong>Savings:</strong> $450K+/year per program. 70% less data reconciliation time. 80% fewer data discrepancies. 60% faster audit prep.<br><br>Click the <strong>Database Import</strong> tab above to get started, or use <strong>"Run Demo Import"</strong> to see sample data from any system.';
-        return 'I\'m your ILS Workspace Agent. I can help with DI numbers, gap analysis, CARs, ILS requirements, the audit vault, compliance scorecard, defense document library, provisioning, and more. Run an analysis to get context-specific insights, or ask me about any ILS topic!';
+        if (/ilie|submission|discrepancy|vendor review|upload|vrs/i.test(query)) {
+        if (_subCache && _subCache.discrepancies && _subCache.discrepancies.length) {
+            var cc = _subCache.discrepancies.filter(function(d){return d.severity==='critical'}).length;
+            var ww = _subCache.discrepancies.filter(function(d){return d.severity==='warning'}).length;
+            return '<strong>ILIE Analysis Results:</strong><br>Total discrepancies: <strong>' + _subCache.discrepancies.length + '</strong><br>Critical: <span style="color:#ff4444">' + cc + '</span> | Warnings: <span style="color:#ffa500">' + ww + '</span><br>Program: ' + (_subCache.meta.program || 'N/A') + '<br>Branch: ' + (_subCache.meta.branch || 'N/A') + '<br><br>Use "Analyze & Compare" for a different submission or "Export Discrepancy Report" to download the findings.';
+        }
+        return 'The <strong>Integrated Logistics Insights Engine (ILIE)</strong> analyzes vendor submissions by comparing current data against previous baselines. It detects:<br>• Cost anomalies (>10-25% increases)<br>• New/removed components<br>• CAGE code changes<br>• Source/vendor substitutions<br>• Lead time increases (>30 day threshold)<br>• Status downgrades (Active→Obsolete)<br><br>Use "Run Demo Analysis" to see a full example, or upload a CSV/Excel file to analyze real data. Download sample files are available above the upload box.';
+    }
+    return 'I\'m your ILS Workspace Agent. I can help with DI numbers, gap analysis, CARs, ILS requirements, the audit vault, compliance scorecard, defense document library, provisioning, and more. Run an analysis to get context-specific insights, or ask me about any ILS topic!';
     }
 
     // Has analysis results
@@ -7816,7 +7831,27 @@ function generateDemoSubmission(docType) {
         {lineItem:20,partNumber:'MS29513-236',nomenclature:'Packing Preformed O-Ring',qty:1000,unitPrice:2.10,totalPrice:2100.00,make_buy:'Buy',vendor:'Parker Hannifin'},
     ];
 
-    const types = { VRSL: ()=>VRSL_DATA.map(d=>({...d})), IUID: ()=>IUID_DATA.map(d=>({...d})), CONFIG_DWG: ()=>CONFIG_DATA.map(d=>({...d})), BOM: ()=>BOM_DATA.map(d=>({...d})) };
+    const ECP_DATA = [
+        {ecpNumber:'ECP-2026-0042',title:'Main Reduction Gear Bearing Upgrade',classification:'Class I',priority:'Urgent',affectedSystems:'LM2500 MRG Assy',costImpact:182000,status:'Under Review',dateSubmitted:'2026-01-15'},
+        {ecpNumber:'ECP-2026-0039',title:'AEGIS Display Console Firmware Update',classification:'Class II',priority:'Routine',affectedSystems:'AN/SPY-6 Display',costImpact:45000,status:'Approved',dateSubmitted:'2026-01-08'},
+        {ecpNumber:'ECP-2026-0044',title:'Hull Coating Change - Advanced Anti-Fouling',classification:'Class I',priority:'High',affectedSystems:'Hull Underwater Body',costImpact:890000,status:'Under Review',dateSubmitted:'2026-01-22'},
+        {ecpNumber:'ECP-2026-0036',title:'CIWS Phalanx RAM Upgrade Kit',classification:'Class I',priority:'Urgent',affectedSystems:'Mk 15 CIWS',costImpact:1250000,status:'Pending Board',dateSubmitted:'2026-01-04'},
+        {ecpNumber:'ECP-2026-0048',title:'Fiber Optic Backbone Cable Replacement',classification:'Class II',priority:'Routine',affectedSystems:'Ship LAN Infrastructure',costImpact:125000,status:'Approved',dateSubmitted:'2026-02-01'},
+        {ecpNumber:'ECP-2026-0051',title:'Diesel Generator Exhaust Stack Modification',classification:'Class I',priority:'High',affectedSystems:'Ship Service DG',costImpact:67000,status:'Under Review',dateSubmitted:'2026-02-10'},
+        {ecpNumber:'ECP-2025-0198',title:'HVAC Chiller Refrigerant Change R-134a to R-513A',classification:'Class II',priority:'Routine',affectedSystems:'HVAC Central Plant',costImpact:38000,status:'Implemented',dateSubmitted:'2025-11-15'},
+        {ecpNumber:'ECP-2026-0053',title:'Weapons Elevator Hydraulic Valve Redesign',classification:'Class I',priority:'Urgent',affectedSystems:'Mk 41 VLS Handling',costImpact:92000,status:'Pending Board',dateSubmitted:'2026-02-14'}
+    ];
+    const CDRL_DATA = [
+        {cdrlNumber:'A001',diNumber:'DI-ILSS-81495A',title:'Integrated Logistics Support Plan',frequency:'One Time',status:'Submitted',dueDate:'2026-03-15',pages:145},
+        {cdrlNumber:'A002',diNumber:'DI-ILSS-81496',title:'Level of Repair Analysis (LORA)',frequency:'One Time',status:'Overdue',dueDate:'2026-01-30',pages:89},
+        {cdrlNumber:'A003',diNumber:'DI-ILSS-81497',title:'Provisioning Parts List (PPL)',frequency:'Quarterly',status:'Submitted',dueDate:'2026-02-28',pages:234},
+        {cdrlNumber:'A004',diNumber:'DI-ILSS-81498',title:'SERD',frequency:'One Time',status:'In Progress',dueDate:'2026-04-15',pages:0},
+        {cdrlNumber:'A005',diNumber:'DI-SESS-81517',title:'FMECA',frequency:'One Time',status:'Submitted',dueDate:'2026-02-01',pages:312},
+        {cdrlNumber:'A006',diNumber:'DI-ALSS-81529',title:'RCM Analysis',frequency:'One Time',status:'Rejected',dueDate:'2026-01-15',pages:178},
+        {cdrlNumber:'A007',diNumber:'DI-TMSS-80527B',title:'Technical Manual - Operator (IETM)',frequency:'As Required',status:'Under Review',dueDate:'2026-06-01',pages:450},
+        {cdrlNumber:'A008',diNumber:'DI-TMSS-80528B',title:'Technical Manual - Maintenance (IETM)',frequency:'As Required',status:'In Progress',dueDate:'2026-07-15',pages:0}
+    ];
+    const types = { VRSL: ()=>VRSL_DATA.map(d=>({...d})), IUID: ()=>IUID_DATA.map(d=>({...d})), CONFIG_DWG: ()=>CONFIG_DATA.map(d=>({...d})), BOM: ()=>BOM_DATA.map(d=>({...d})), ECP: ()=>ECP_DATA.map(d=>({...d})), CDRL: ()=>CDRL_DATA.map(d=>({...d})) };
     return (types[docType] || types.VRSL)();
 }
 
@@ -7865,11 +7900,14 @@ function runSubmissionDemo() {
 
     _subCache.items = items;
     _subCache.baseline = [...baseline, ...removed];
-    const _subPlat = window.S4_PLATFORMS && S4_PLATFORMS[document.getElementById('subProgram').value];
+    const _subProgKey = document.getElementById('subProgram').value;
+    const _subPlat = window.S4_PLATFORMS && S4_PLATFORMS[_subProgKey];
+    const _subProgName = _subPlat ? _subPlat.n : (_subProgKey === 'CUSTOM' ? (document.getElementById('subCustomPlatform').value || 'Custom Platform') : _subProgKey);
     _subCache.meta = {
-        program: document.getElementById('subProgram').value,
-        branch: document.getElementById('subBranch').value || (_subPlat ? _subPlat.b : 'JOINT'),
-        docType, vendor: _subPlat ? 'Huntington Ingalls Industries' : 'Demo OEM Vendor',
+        program: _subProgName,
+        programKey: _subProgKey,
+        branch: _subPlat ? _subPlat.b : (document.getElementById('subBranch').value || 'JOINT'),
+        docType, vendor: _subPlat ? (_subPlat.p || 'Huntington Ingalls Industries') : 'Demo OEM Vendor',
         timestamp: new Date().toISOString()
     };
 
@@ -7896,10 +7934,11 @@ function analyzeSubmission() {
         _subCache.baseline = generateDemoBaseline(_subCache.items, document.getElementById('subDocType').value);
     }
     _subCache.meta = {
-        program: document.getElementById('subProgram').value === 'CUSTOM' ? (document.getElementById('subCustomPlatform').value || 'Custom Platform') : document.getElementById('subProgram').value,
-        branch: document.getElementById('subBranch').value,
+        program: (function(){ var k=document.getElementById('subProgram').value; var p=window.S4_PLATFORMS&&S4_PLATFORMS[k]; return p?p.n:(k==='CUSTOM'?(document.getElementById('subCustomPlatform').value||'Custom Platform'):k); })(),
+        programKey: document.getElementById('subProgram').value,
+        branch: (function(){ var k=document.getElementById('subProgram').value; var p=window.S4_PLATFORMS&&S4_PLATFORMS[k]; return p?p.b:(document.getElementById('subBranch').value||'JOINT'); })(),
         docType: document.getElementById('subDocType').value === 'CUSTOM' ? (document.getElementById('subCustomDocType').value || 'Custom Type') : document.getElementById('subDocType').value,
-        vendor: document.getElementById('subVendor').value || 'Unknown Vendor',
+        vendor: document.getElementById('subVendor').value || (function(){ var k=document.getElementById('subProgram').value; var p=window.S4_PLATFORMS&&S4_PLATFORMS[k]; return p?(p.p||'Unknown Vendor'):'Unknown Vendor'; })(),
         contractRef: document.getElementById('subContractRef').value || '',
         notes: document.getElementById('subNotes').value || '',
         timestamp: new Date().toISOString()
@@ -8108,6 +8147,38 @@ function generateAiSummary(discrepancies, items, baseline, costDelta) {
 
     document.getElementById('subAiSummary').style.display = 'block';
     document.getElementById('subAiSummaryText').innerHTML = summary;
+
+    // ── AUTO-GENERATE ACTION ITEMS FROM ILIE DISCREPANCIES ──
+    (function(){
+        var criticals = discrepancies.filter(function(d){return d.severity==='critical'});
+        var warnings = discrepancies.filter(function(d){return d.severity==='warning'});
+        var progLabel = meta.program || 'Unknown Program';
+        var docLabel = SUBMISSION_TYPES[meta.docType] || meta.docType || 'Submission';
+
+        criticals.forEach(function(d,i){
+            addActionItem({
+                id:'ILIE-CRIT-'+Date.now().toString(36)+'-'+i,
+                title:'ILIE Critical: '+d.category+' — '+(d.item||'Unknown').substring(0,50),
+                detail:progLabel+' '+docLabel+' — '+d.issue+(d.impact?' | Impact: '+d.impact:'')+' | Previous: '+d.previous+' → Current: '+d.current,
+                severity:'critical', source:'ILIE', owner:'ILS Manager',
+                due:new Date(Date.now()+7*86400000).toISOString().split('T')[0],
+                cost:d.impact||'', schedule:'7 days'
+            });
+        });
+        warnings.slice(0,5).forEach(function(d,i){
+            addActionItem({
+                id:'ILIE-WARN-'+Date.now().toString(36)+'-'+i,
+                title:'ILIE Warning: '+d.category+' — '+(d.item||'Unknown').substring(0,50),
+                detail:progLabel+' '+docLabel+' — '+d.issue+' | Previous: '+d.previous+' → Current: '+d.current,
+                severity:'warning', source:'ILIE', owner:'ILS Analyst',
+                due:new Date(Date.now()+14*86400000).toISOString().split('T')[0],
+                cost:'', schedule:'14 days'
+            });
+        });
+        if(criticals.length+Math.min(warnings.length,5)>0){
+            showWorkspaceNotification('ILIE created '+(criticals.length+Math.min(warnings.length,5))+' action items from discrepancies');
+        }
+    })();
 }
 
 async function anchorSubmissionReview() {
@@ -8164,6 +8235,51 @@ function loadSubmissionHistory() {
             '</div>' +
         '</div>';
     }).join('');
+}
+
+function downloadSampleFile(docType) {
+    var csv = '';
+    if (docType === 'VRS') {
+        csv = 'NSN,Part_Number,Nomenclature,CAGE_Code,Qty,Unit_Price,Source,Lead_Time_Days,Status\n';
+        var d = generateDemoSubmission('VRSL');
+        d.forEach(function(r){ csv += r.nsn+','+r.partNumber+',"'+r.nomenclature+'",'+r.cageCode+','+r.qty+','+r.unitPrice+','+r.source+','+r.leadTime+','+r.status+'\n'; });
+    } else if (docType === 'IUID') {
+        csv = 'UID,Serial_Number,Part_Number,Nomenclature,Acquisition_Cost,Condition,Location\n';
+        var d = generateDemoSubmission('IUID');
+        d.forEach(function(r){ csv += r.uid+','+r.serialNumber+','+r.partNumber+',"'+r.nomenclature+'",'+r.acquisitionCost+','+r.condition+',"'+r.location+'"\n'; });
+    } else if (docType === 'BOM') {
+        csv = 'Line_Item,Part_Number,Nomenclature,Qty,Unit_Price,Total_Price,Make_Buy,Vendor\n';
+        var d = generateDemoSubmission('BOM');
+        d.forEach(function(r){ csv += r.lineItem+','+r.partNumber+',"'+r.nomenclature+'",'+r.qty+','+r.unitPrice+','+r.totalPrice+','+r.make_buy+',"'+r.vendor+'"\n'; });
+    } else if (docType === 'CONFIG_DWG') {
+        csv = 'Drawing_Number,Revision,Title,Effectivity,Status,Pages,Change_Notice\n';
+        var d = generateDemoSubmission('CONFIG_DWG');
+        d.forEach(function(r){ csv += '"'+r.drawingNumber+'",'+r.revision+',"'+r.title+'","'+r.effectivity+'",'+r.status+','+r.pages+','+(r.changeNotice||'')+'\n'; });
+    } else if (docType === 'ECP') {
+        csv = 'ECP_Number,Title,Classification,Priority,Affected_Systems,Cost_Impact,Status,Date_Submitted\n';
+        csv += 'ECP-2026-0042,"Main Reduction Gear Bearing Upgrade",Class I,Urgent,"LM2500 MRG Assy",$182000,Under Review,2026-01-15\n';
+        csv += 'ECP-2026-0039,"AEGIS Display Console Firmware Update",Class II,Routine,"AN/SPY-6 Display",$45000,Approved,2026-01-08\n';
+        csv += 'ECP-2026-0044,"Hull Coating Change - Advanced Anti-Fouling",Class I,High,"Hull Underwater Body",$890000,Under Review,2026-01-22\n';
+        csv += 'ECP-2026-0036,"CIWS Phalanx RAM Upgrade Kit",Class I,Urgent,"Mk 15 CIWS",$1250000,Pending Board,2026-01-04\n';
+        csv += 'ECP-2026-0048,"Fiber Optic Backbone Cable Replacement",Class II,Routine,"Ship LAN Infrastructure",$125000,Approved,2026-02-01\n';
+        csv += 'ECP-2026-0051,"Diesel Generator Exhaust Stack Modification",Class I,High,"Ship Service DG",$67000,Under Review,2026-02-10\n';
+        csv += 'ECP-2025-0198,"HVAC Chiller Refrigerant Change",Class II,Routine,"HVAC Central Plant",$38000,Implemented,2025-11-15\n';
+        csv += 'ECP-2026-0053,"Weapons Elevator Hydraulic Valve Redesign",Class I,Urgent,"Mk 41 VLS Handling",$92000,Pending Board,2026-02-14\n';
+    }
+    var blob = new Blob([csv], {type:'text/csv'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'S4_ILIE_Sample_' + docType + '_Submission.csv';
+    a.click();
+    showWorkspaceNotification('Downloaded sample ' + docType + ' submission file');
+}
+
+function handleSubFileDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('subUploadZone').style.borderColor = 'rgba(224,108,117,0.35)';
+    var files = e.dataTransfer.files;
+    if (files.length) handleSubFileUpload({ target: { files: files } });
 }
 
 function clearSubmissionReview() {
