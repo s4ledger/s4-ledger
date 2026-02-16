@@ -16,6 +16,19 @@
 | SBIR/STTR applications | Planned Q3 2026 |
 | Pilot deployment | Planned Q3-Q4 2026 |
 
+## Why the XRP Ledger?
+
+S4 Ledger uses the XRP Ledger over Ethereum, Solana, and private blockchains for four defense-critical reasons:
+
+| Requirement | XRPL | Ethereum | Private Chains |
+|---|---|---|---|
+| **Speed** | 3-5 seconds | 12+ minutes | Varies |
+| **Cost** | ~$0.001/tx | $5–$50+/tx | $500K+ infrastructure |
+| **Uptime** | 99.99% since 2012 | 99.9% | Operator-dependent |
+| **Independence** | 150+ validators, public | Public but expensive | Vendor-controlled ❌ |
+
+Private blockchains (Hyperledger, Guardtime KSI) defeat the purpose of independent verification. Ethereum's gas fees make volume anchoring cost-prohibitive. XRPL provides the speed, cost, neutrality, and reliability that defense logistics demands.
+
 ## Token Distribution
 
 Total Supply: **100,000,000 $SLS**

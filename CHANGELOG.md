@@ -5,6 +5,18 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.5] - 2026-02-15
+
+### Added
+- **"Why XRPL?" Section on Homepage** — New 6-card section between Competitive Advantage and ILS Workspace explaining why the XRP Ledger was chosen over Ethereum, Solana, and private blockchains. Covers: 3-5 second finality, ~$0.001 cost, public/neutral with 150+ validators, no mining/energy waste, quantum-resistant architecture, independent verifiability.
+- **"Why XRPL?" in README.md** — Added 7-point bullet list with blockchain comparison after the XRPL stats section.
+- **"Why XRPL?" in TECHNICAL_SPECS.md** — Added full comparison table (Ethereum vs Solana vs Hyperledger vs XRPL) across 6 criteria before the $SLS Token section.
+- **"Why XRPL?" in INVESTOR_PITCH.md** — Added blockchain evaluation section after competitor table — Ethereum (gas fees), Solana (outages), private chains (vendor control), XRPL (ideal).
+- **"Why XRPL?" in INVESTOR_RELATIONS.md** — Added comparison table (XRPL vs Ethereum vs Private Chains) for speed, cost, uptime, and independence.
+
+### Notes
+- WHITEPAPER.md (§1.3), s4-faq/index.html, and s4-about/index.html already contained full "Why XRPL" explanations — confirmed no changes needed.
+
 ## [3.9.4] - 2026-02-15
 
 ### Added

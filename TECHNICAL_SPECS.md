@@ -90,6 +90,21 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 | **Uptime** | 99.99%+ since 2012 |
 | **Explorer** | livenet.xrpl.org |
 
+### Why XRPL?
+
+S4 Ledger evaluated Ethereum, Solana, Hyperledger, and private blockchain platforms before selecting the XRP Ledger:
+
+| Criteria | Ethereum | Solana | Hyperledger | XRPL |
+|---|---|---|---|---|
+| **Finality** | 12+ minutes | 400ms (but outage-prone) | Varies | **3-5 seconds** |
+| **Cost/tx** | $5–$50+ | ~$0.00025 | Infrastructure cost $500K+ | **≈$0.000024** |
+| **Uptime** | 99.9% | ~98% (multiple outages) | Operator-dependent | **99.99%+ since 2012** |
+| **Public/Neutral** | Yes | Yes | ❌ Private/vendor-controlled | **Yes (150+ validators)** |
+| **Energy** | Proof-of-Stake | Proof-of-Stake/History | Varies | **Federated consensus (negligible energy)** |
+| **Defense suitability** | High fees prohibit volume | Reliability concerns | No independent verification | **Ideal: fast, cheap, public, reliable** |
+
+Private blockchains (Hyperledger, Guardtime KSI) defeat the purpose of independent verification — they're controlled by a single entity. Ethereum's gas fees ($5–$50+) make high-volume defense anchoring economically unviable. XRPL provides the speed, cost, neutrality, and reliability required for defense-grade audit trails.
+
 ## 8. $SLS Token
 
 | Property | Value |

@@ -27,6 +27,19 @@ Cost per anchor: **~$0.001** (XRPL base fee)
 Confirmation time: **3-5 seconds**  
 XRPL uptime: **99.99%**
 
+### Why XRPL?
+
+We chose the XRP Ledger over Ethereum, Solana, and private blockchains for defense logistics:
+
+- **Speed:** 3-5 second finality vs Ethereum's 12+ minutes
+- **Cost:** ~$0.001 per anchor vs Ethereum's $5-$50+ gas fees
+- **Reliability:** 99.99% uptime since 2012 — over 13 years of uninterrupted operation
+- **Neutrality:** Public ledger with 150+ independent validators — no vendor lock-in
+- **Energy:** Federated consensus (not proof-of-work) — negligible energy per transaction
+- **Verifiability:** Anyone can verify an anchor on the public XRPL explorer — no proprietary tools required
+
+Private blockchains (Hyperledger, Guardtime) defeat the purpose — they're controlled by a single vendor and aren't independently verifiable. XRPL provides the speed, cost, and neutrality required for defense-grade audit trails.
+
 ---
 
 ## $SLS Token — Secure Logistics Standard

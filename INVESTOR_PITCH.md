@@ -92,6 +92,17 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 | **Microsoft Dynamics** | — | $150K–$800K+ | Generic | No |
 | **S4 Ledger** | Pre-revenue | **$6K–$60K** | **18 built-in** | **Yes (XRPL)** |
 
+### Why the XRP Ledger?
+
+We evaluated every major blockchain platform:
+
+- **Ethereum** — $5–$50+ per transaction, 12+ minute finality. Gas fees alone would make defense-volume anchoring cost-prohibitive.
+- **Solana** — Fast but has suffered multiple network outages. Reliability is non-negotiable for defense systems.
+- **Hyperledger / Private chains** — Controlled by a single vendor. Defeats the purpose of independent, tamper-proof verification.
+- **XRPL** — 3-5 second finality, ~$0.001 per transaction, 99.99% uptime since 2012 (13+ years), 150+ independent validators, no mining/energy waste. Public and neutral — anyone can verify an anchor without proprietary software.
+
+XRPL is the only blockchain that meets all four defense requirements: speed, cost, reliability, and independent verifiability.
+
 ## Pricing
 
 | Tier | Monthly | Annual |
