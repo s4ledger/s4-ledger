@@ -153,7 +153,7 @@ Here's the critical difference between what S4 Systems is now vs. what it could 
 
 This is the "prove it works" phase:
 - Sign up 3–5 existing S4 Systems customers as early users
-- Apply for **SBIR grants** (free government money for small businesses — $150K to $1.5M, no strings attached, no giving up ownership)
+- Apply for **SBIR grants** (free government money for small businesses — $50K to $1.5M, no strings attached, no giving up ownership)
 - Get a security audit so big companies trust us (SOC 2)
 - Apply for a **GSA Schedule** listing (the government's "approved vendor" list — takes 6–9 months but opens up $50B/year in buying opportunities)
 - Land 10–15 paying subscribers

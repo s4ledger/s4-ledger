@@ -5,6 +5,13 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.1] - 2026-02-15
+
+### Changed
+- **PRODUCTION_READINESS.md — S4 Systems Infrastructure Framing** — Version bumped to v3.9.0. Corporate infrastructure items (EIN, D-U-N-S, CAGE Code, SAM.gov, NAICS, ITAR, CMMC) reframed from "Pending" to "🟡 Verify" — S4 Systems LLC likely already has these in place. Added header note clarifying that Nick leads product/technology while S4 Systems provides BD, legal, compliance, hiring, and corporate infrastructure. Legal/Business readiness score updated 30%→40%. ITAR warning marked complete. Quick Win Checklist updated with verify-first framing.
+- **SBIR Figures Corrected** — Fixed Phase I from "$150K" to "$50K–$250K" and Phase II from "$1M" to "$500K–$1.5M" in S4_SYSTEMS_EXECUTIVE_PROPOSAL.md. Fixed Phase I from "$150K–$250K" to "$50K–$250K" and Phase II from "$750K–$1.5M" to "$500K–$1.5M" in BILLION_DOLLAR_ROADMAP.md. Fixed "$150K to $1.5M" to "$50K to $1.5M" in BILLION_DOLLAR_ROADMAP_SIMPLE.md.
+- **Oracle Cost Corrected** — Fixed Oracle NetSuite from "$100K–$1M+" to "$200K–$1M+" in S4_LEDGER_INTERNAL_PITCH.md competitor table.
+
 ## [3.9.0] - 2026-02-15
 
 ### Added

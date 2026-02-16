@@ -1,8 +1,10 @@
 # S4 Ledger — Production Readiness Checklist
 
 > **Status:** Production ($SLS LIVE on XRPL Mainnet) — **Estimated ~84% Production Ready**  
-> **Last Updated:** February 2026 (v3.8.6)  
+> **Last Updated:** February 2026 (v3.9.0)  
 > **Target:** First enterprise pilot — $SLS LIVE on Mainnet
+
+> **Note:** S4 Ledger operates as a product line of S4 Systems, LLC. Many corporate infrastructure items below (CAGE Code, SAM.gov, EIN, D-U-N-S, legal counsel, compliance posture) may already be in place through S4 Systems. Items marked 🟡 should be verified with S4 Systems leadership rather than obtained from scratch. Nick Frankfort leads product/technology; S4 Systems provides business development, legal, compliance, hiring, and corporate infrastructure.
 
 ---
 
@@ -15,7 +17,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Area | Status | Score |
 |------|--------|-------|
 | **Frontend / Demo** | ILS Workspace (unified command center with 18 sub-tabs), 18 ILS tools + calendar + action items + AI Agent (conversational, 40+ capabilities, vault/compliance/provisioning-aware), universal program support, 156+ pre-built record types (any defense record type supported), 22 sample document types, ITAR warning banner, login portal with tutorial and persistent auth, ICAPS-beating provisioning tool, Anchor/Verify How It Works panels, economic impact section, expanded audit vault time filters, site-wide blockchain anchor canvas animation (zero external deps) | **99%** |
-| **API / Backend** | Serverless API v3.8.6, auth scaffolding, 27 endpoints (DMSMS, readiness, parts, ROI, lifecycle, warranty, action-items, calendar, provisioning, supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance), rate limiting, security headers (HSTS, X-Frame, CSP), request logging, health check, OpenAPI spec | **85%** |
+| **API / Backend** | Serverless API v3.9.0, auth scaffolding, 27 endpoints (DMSMS, readiness, parts, ROI, lifecycle, warranty, action-items, calendar, provisioning, supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance), rate limiting, security headers (HSTS, X-Frame, CSP), request logging, health check, OpenAPI spec | **85%** |
 | **XRPL Integration** | $SLS LIVE on XRPL Mainnet (100M total, ~15M circ, AMM pools). Demo anchoring uses Testnet. | **85%** |
 | **SDK** | pip-installable with CLI, 12 commands (anchor, hash, verify, status, readiness, dmsms, roi, lifecycle, warranty, action-items, calendar, provisioning), 21 SDK Playground functions (incl. supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance), How It Works expanded | **85%** |
 | **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404, security response headers, ITAR notices — needs database, monitoring, load balancing | **60%** |
@@ -23,7 +25,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | **User Experience** | Full mobile/tablet responsive, ILS Workspace unified UX, conversational AI Agent, 18 interactive tools + calendar, realistic sample data, ITAR compliance notice, branded favicons on all pages | **97%** |
 | **Documentation** | OpenAPI 3.0 spec (fully documenting all 27 endpoints), CHANGELOG.md, comprehensive README, API examples, whitepaper, technical specs, security policy | **85%** |
 | **Compliance** | NIST 800-171 architecture aligned, CMMC L2 roadmap, ITAR warnings, security headers, DoW branding — needs formal assessment | **35%** |
-| **Legal / Business** | S4 Systems, LLC exists — S4 Ledger operates as a product line. Needs CAGE code, SAM.gov verification | **30%** |
+| **Legal / Business** | S4 Systems, LLC exists — S4 Ledger operates as a product line. S4 Systems likely has CAGE, SAM.gov, EIN, D-U-N-S — verify with leadership | **40%** |
 | **Security** | Zero-data-on-chain, client-side processing, rate limiting, HSTS, security headers, ITAR warnings — needs pen test, SOC 2 | **35%** |
 | **Monitoring / Ops** | Health check endpoint, request logging — needs full monitoring, CI/CD | **20%** |
 
@@ -35,11 +37,11 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | S4 Ledger product line setup under S4 Systems, LLC | ✅ Complete | **Critical** | S4 Systems owns S4 Ledger as a product line — no separate entity needed |
-| EIN / Tax ID | ⬜ Pending | **Critical** | Required before any B2B contracts |
-| D-U-N-S Number | ⬜ Pending | **Critical** | Required for government contracting (SAM.gov) |
-| CAGE Code | ⬜ Pending | **Critical** | Required for DoW vendor registration |
-| SAM.gov Registration | ⬜ Pending | **Critical** | System for Award Management — required for fed contracts |
-| NAICS Code Registration | ⬜ Pending | **High** | 511210 (Software Publishers) / 518210 (Data Processing) |
+| EIN / Tax ID | 🟡 Verify | **Critical** | S4 Systems LLC likely already has this — verify and apply to S4 Ledger product line |
+| D-U-N-S Number | 🟡 Verify | **Critical** | S4 Systems LLC likely already has this — verify with S4 Systems leadership |
+| CAGE Code | 🟡 Verify | **Critical** | S4 Systems LLC likely already has this — verify with S4 Systems leadership |
+| SAM.gov Registration | 🟡 Verify | **Critical** | S4 Systems LLC likely already registered — verify and ensure S4 Ledger is covered |
+| NAICS Code Registration | 🟡 Verify | **High** | Verify S4 Systems has 511210 (Software Publishers) / 518210 (Data Processing) |
 | GSA Schedule / SEWP eligibility | ⬜ Pending | Medium | Government procurement vehicle |
 
 ### 1.2 Legal Documents
@@ -52,15 +54,15 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Business Associate Agreement (BAA) | ⬜ Template Ready | Medium | For healthcare-adjacent supply chain workflows |
 | Service Level Agreement (SLA) template | ⬜ Pending | **High** | 99.9% uptime target for Enterprise tier |
 | Non-Disclosure Agreement (NDA) template | ⬜ Pending | Medium | For partner/investor discussions |
-| $SLS Token legal opinion | ⬜ Pending | **Critical** | Utility token classification from counsel |
+| $SLS Token legal opinion | ⬜ Pending | **Critical** | Utility token classification — S4 Systems legal counsel or external crypto counsel |
 
 ### 1.3 Export Control & ITAR
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
-| ITAR compliance assessment | ⬜ Pending | **Critical** | Confirm platform doesn't handle ITAR data |
+| ITAR compliance assessment | 🟡 Verify | **Critical** | S4 Systems may already have ITAR posture — verify and extend to S4 Ledger |
 | EAR classification (ECCN) | ⬜ Pending | **High** | Self-classify encryption capabilities |
-| ITAR warning on all interfaces | ⬜ Pending | **High** | "Do not submit ITAR data" notice |
-| Export control legal review | ⬜ Pending | **High** | Counsel review of cross-border implications |
+| ITAR warning on all interfaces | ✅ Complete | **High** | "Do not submit ITAR data" notice on landing page + demo app |
+| Export control legal review | 🟡 Verify | **High** | S4 Systems legal counsel review of cross-border implications |
 
 ---
 
@@ -69,8 +71,8 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 ### 2.1 CMMC (Cybersecurity Maturity Model Certification)
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
-| CMMC Level 1 self-assessment | ⬜ Pending | **Critical** | 17 practices — basic cyber hygiene |
-| CMMC Level 2 assessment prep | ⬜ In Progress | **Critical** | 110 practices aligned with NIST SP 800-171 |
+| CMMC Level 1 self-assessment | 🟡 Verify | **Critical** | S4 Systems may already be pursuing CMMC — S4 Ledger inherits company posture |
+| CMMC Level 2 assessment prep | 🟡 In Progress | **Critical** | 110 practices aligned with NIST SP 800-171 — leverage S4 Systems compliance infrastructure |
 | System Security Plan (SSP) | ⬜ Pending | **Critical** | Document all security controls |
 | Plan of Action & Milestones (POA&M) | ⬜ Pending | **Critical** | Track remediation of gaps |
 | C3PAO assessment scheduling | ⬜ Pending | **High** | Third-party assessment organization |
@@ -297,15 +299,16 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 ## 10. Quick Win Checklist (Next 30 Days)
 
 - [x] S4 Ledger product line under S4 Systems, LLC ✅ (no separate entity needed)
-- [ ] Verify/obtain DUNS number for S4 Systems (free via Dun & Bradstreet)
-- [ ] Verify/update SAM.gov registration for S4 Systems
-- [ ] Obtain token legal opinion from crypto-friendly counsel
+- [ ] Verify S4 Systems DUNS number is active and covers S4 Ledger product line
+- [ ] Verify S4 Systems SAM.gov registration is current and covers software products
+- [ ] Verify S4 Systems CAGE Code is active
+- [ ] Obtain token legal opinion (via S4 Systems legal counsel or external crypto counsel)
 - [ ] Set up GitHub Actions CI pipeline (lint + test)
 - [x] Implement API key authentication ✅ (v3.0 — scaffolded with master key + org keys)
 - [ ] Set up external uptime monitoring
 - [x] Add ITAR/export control warning to all data input forms ✅ (v3.2 — ITAR banner on landing page + demo app)
 - [ ] Commission penetration test (budget: $5K-$15K)
-- [ ] Begin CMMC Level 1 self-assessment
+- [ ] Begin CMMC Level 1 self-assessment (verify S4 Systems' existing CMMC posture first)
 - [x] Create CHANGELOG.md with version history ✅ (v3.2 — complete changelog from v1.0 to v3.2)
 - [ ] Produce 2-minute demo video
 - [x] Database integration scaffolding ✅ (Supabase-ready API endpoints)

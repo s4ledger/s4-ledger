@@ -195,7 +195,7 @@ S4 Ledger delivers measurable, defensible savings at every scale:
 **Bottom line for S4 Systems, LLC:**
 - 10 mid-scale customers in Year 2 = $2.4M–$6M in government savings delivered (S4 revenue: $240K–$600K ARR)
 - 5 enterprise programs in Year 3 = $6M–$18M in government savings delivered (S4 revenue: $1.2M–$3.6M ARR)
-- SBIR Phase I ($150K) + Phase II ($1M) + Phase III ($3M) pipeline available immediately
+- SBIR Phase I ($50K–$250K) + Phase II ($500K–$1.5M) + Phase III (full production) pipeline available immediately
 
 ---
 

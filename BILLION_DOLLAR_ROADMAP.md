@@ -109,11 +109,11 @@ S4 Systems currently provides defense logistics consulting/contracting services.
 | Action | Revenue Impact |
 |---|---|
 | Launch pilot with 3–5 existing S4 Systems customers | $15K–$60K ARR |
-| SBIR Phase I award (non-dilutive funding) | $150K–$250K grant |
+| SBIR Phase I award (non-dilutive funding) | $50K–$250K grant |
 | Penetration test + SOC 2 Type I (unlocks enterprise sales) | Enables enterprise pricing |
 | GSA Schedule application (6–9 month process) | Opens $50B/year marketplace |
 | First 10–15 paying subscribers | $500K–$1M ARR |
-| SBIR Phase II submission | $750K–$1.5M grant pipeline |
+| SBIR Phase II submission | $500K–$1.5M grant pipeline |
 
 **Key milestone:** First $1M ARR demonstrates product-market fit.
 

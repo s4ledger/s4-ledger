@@ -82,7 +82,7 @@ All 18 tools talk to each other. When the DMSMS Tracker finds an obsolete part, 
 | **DMSMS tracking** | Built-in | No — requires custom build | No | No | No | Manual |
 | **Predictive maintenance** | Built-in AI | Custom build ($1M+) | Limited (hardware-focused) | SAP APM ($200K+/yr add-on) | No | No |
 | **Setup time** | Same day | 3–12 months | Hardware deployment | 6–24 months | 3–12 months | Immediate (but no features) |
-| **Annual cost** | $6K–$60K | $1M–$50M+ | $10M+ (hardware + software) | $500K–$5M+ | $100K–$1M+ | "Free" + $200K+ labor |
+| **Annual cost** | $6K–$60K | $1M–$50M+ | $10M+ (hardware + software) | $500K–$5M+ | $200K–$1M+ | "Free" + $200K+ labor |
 | **Target customer** | Defense program offices, contractors | Intelligence community, large agencies | Combatant commands | Fortune 500 / large agencies | Mid-large enterprises | Small teams |
 
 ### Why S4 Ledger Wins Against Each Competitor
