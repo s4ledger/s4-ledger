@@ -1,23 +1,23 @@
 [METADATA]
-modified = 2026-01-15T00:00:00Z
-expires = 2027-01-15T00:00:00Z
+modified = 2026-02-15T00:00:00Z
+expires = 2027-02-15T00:00:00Z
 
 [[ACCOUNTS]]
 address = "r95GyZac4butvVcsTWUPpxzekmyzaHsTA5"
-description = "S4 Ledger Issuing Address"
+description = "S4 Ledger — SLS Token Issuing Address"
 domain = "s4ledger.com"
 
 [[CURRENCIES]]
 code = "SLS"
 issuer = "r95GyZac4butvVcsTWUPpxzekmyzaHsTA5"
-display_name = "S4 Ledger"
+display_name = "Secure Logistics Standard"
 display_decimal = 6
 symbol = "$SLS"
 logo_250x250 = "https://raw.githubusercontent.com/s4ledger/s4-ledger/main/s4-assets/SLS_logo.png"
-description = "Utility token for defense logistics verification on XRPL"
+description = "Utility token powering defense logistics verification on the XRP Ledger. Each $SLS anchor creates an immutable, independently verifiable record of supply chain events, maintenance actions, and contract deliverables."
 website = "https://s4ledger.com"
-twitter = "https://x.com/S4Ledger
+twitter = "https://x.com/S4Ledger"
 
 [[PRINCIPALS]]
-name = "S4 Ledger"
+name = "S4 Systems, LLC"
 email = "info@s4ledger.com"

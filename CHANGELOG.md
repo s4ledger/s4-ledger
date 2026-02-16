@@ -5,6 +5,13 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.6] - 2026-02-15
+
+### Changed
+- **Solus Protocol Removed** — Replaced all 7 remaining "Solus Protocol" references across the codebase. OpenAPI spec contact name changed from "Solus Protocol" to "S4 Systems, LLC." CHANGELOG comparison URLs updated from `solus-protocol/s4-ledger` to `s4ledger/s4-ledger` to match current GitHub org.
+- **xrp-ledger.toml Updated for DEX Display** — Fixed `display_name` from "S4 Ledger" to "Secure Logistics Standard" (the official token name). Fixed missing closing quote on twitter URL. Updated `description` with full token purpose. Changed principal name to "S4 Systems, LLC." Updated `modified` date. Logo URL (`SLS_logo.png`) confirmed correct — DEXs pulling from this file will display the S4 Ledger SLS logo instead of the old Solus Protocol logo.
+- **Vercel CORS + Content-Type for .well-known** — Added headers rule to `vercel.json` serving `.well-known/*` with `Content-Type: application/toml` and `Access-Control-Allow-Origin: *` so XRPL DEXs (Sologenic, First Ledger, XPMarket, etc.) can fetch the token metadata file.
+
 ## [3.9.5] - 2026-02-15
 
 ### Added
@@ -481,9 +488,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Requirements and dependency management
 - MIT License
 
-[3.7.0]: https://github.com/solus-protocol/s4-ledger/compare/v3.6.0...v3.7.0
-[3.2.0]: https://github.com/solus-protocol/s4-ledger/compare/v3.1.0...v3.2.0
-[3.1.0]: https://github.com/solus-protocol/s4-ledger/compare/v3.0.0...v3.1.0
-[3.0.0]: https://github.com/solus-protocol/s4-ledger/compare/v2.0.0...v3.0.0
-[2.0.0]: https://github.com/solus-protocol/s4-ledger/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/solus-protocol/s4-ledger/releases/tag/v1.0.0
+[3.7.0]: https://github.com/s4ledger/s4-ledger/compare/v3.6.0...v3.7.0
+[3.2.0]: https://github.com/s4ledger/s4-ledger/compare/v3.1.0...v3.2.0
+[3.1.0]: https://github.com/s4ledger/s4-ledger/compare/v3.0.0...v3.1.0
+[3.0.0]: https://github.com/s4ledger/s4-ledger/compare/v2.0.0...v3.0.0
+[2.0.0]: https://github.com/s4ledger/s4-ledger/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/s4ledger/s4-ledger/releases/tag/v1.0.0

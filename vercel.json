@@ -3,6 +3,13 @@
     "cleanUrls": true,
     "headers": [
         {
+            "source": "/.well-known/(.*)",
+            "headers": [
+                { "key": "Content-Type", "value": "application/toml" },
+                { "key": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+        },
+        {
             "source": "/(.*)",
             "headers": [
                 { "key": "X-Content-Type-Options", "value": "nosniff" },
