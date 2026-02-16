@@ -235,7 +235,7 @@ footer { text-align: center; padding: 30px 20px; border-top: 1px solid var(--bor
 .dropdown-item:hover, .dropdown-item:focus { background: rgba(0,170,255,0.12); color: var(--accent) !important; }
 
 /* Logo styles */
-.nav-logo { height: 32px; width: 32px; margin-right: 8px; vertical-align: middle; animation: logoFloat 3s ease-in-out infinite; }
+.nav-logo { height: 44px; width: 44px; margin-right: 10px; vertical-align: middle; animation: logoFloat 3s ease-in-out infinite; }
 .footer-logo { height: 28px; width: 28px; margin-right: 8px; vertical-align: middle; animation: logoFloat 4s ease-in-out infinite; }
 .token-logo { height: 64px; width: 64px; animation: logoPulse 3s ease-in-out infinite; }
 
@@ -327,7 +327,7 @@ footer { text-align: center; padding: 30px 20px; border-top: 1px solid var(--bor
     .hero h1 { font-size: 1.2rem; }
     .hero p { font-size: 0.88rem; }
     .navbar-brand .brand-text { font-size: 1rem; }
-    .nav-logo { height: 26px; width: 26px; }
+    .nav-logo { height: 34px; width: 34px; }
     /* Sample doc dropdown full width */
     #sampleDocSelect { min-width: 100% !important; width: 100% !important; }
     .branch-tabs { justify-content: center; }
