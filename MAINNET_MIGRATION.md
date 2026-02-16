@@ -1886,7 +1886,7 @@ Each platform includes category-based system templates with realistic NSNs, manu
 ### 32.3 Migration Checklist for v3.3.0
 
 - [ ] Verify `s4-assets/platforms.js` loads correctly in production
-- [ ] Test all 7 dropdowns populate with 462 platforms
+- [ ] Test all 11 dropdowns populate with 500+ platforms from platforms.js
 - [ ] Validate ROI Calculator with real program data
 - [ ] Validate Lifecycle Cost Estimator projections
 - [ ] Validate Warranty Tracker contract dates
@@ -2063,11 +2063,11 @@ Versions 3.8.0 through 3.8.6 added **5 new ILS Workspace tools** (bringing the t
 
 | Tool | Migration Notes |
 |------|----------------|
-| **AI Supply Chain Risk Engine** | New sub-tab in ILS Workspace. Requires `s4-assets/platforms.js` for platform database. 35+ platform options in 7 optgroups, 37 real defense supplier names. No server-side dependencies. |
+| **AI Supply Chain Risk Engine** | New sub-tab in ILS Workspace. Requires `s4-assets/platforms.js` for platform database. 500+ platform options dynamically populated (8 branches, 35 categories), 37 real defense supplier names. Custom hull/designation + program office input. No server-side dependencies. |
 | **Automated Audit Report Generator** | New sub-tab. 6 report types (Full Audit, Supply Chain, Maintenance, Compliance, Chain of Custody, Contract Deliverables). Client-side generation with anchor-to-XRPL. |
 | **Contract Lifecycle Management** | New sub-tab. 25 realistic DoW contracts with real prefix formats (N00024, FA8615, W58RGZ, etc.). CDRL tracking with DI number references. |
 | **Digital Thread / Configuration Bridge** | New sub-tab. 4 configuration views (Engineering Changes, BOM Revisions, Config Baselines, TDP Versions). 32 platform configurations with variant-specific designators. |
-| **Predictive Maintenance AI** | New sub-tab. 40+ platforms with real fleet sizes. Platform-specific system/component/failure mode data in JS objects. Confidence scoring and cost-if-unplanned estimates. |
+| **Predictive Maintenance AI** | New sub-tab. 500+ platforms (dynamically populated from platforms.js) with real fleet sizes. Custom hull/designation + program office input. Platform-specific system/component/failure mode data in JS objects. Confidence scoring and cost-if-unplanned estimates. |
 
 ### 35.3 API Expansion
 
@@ -2115,5 +2115,5 @@ Versions 3.8.0 through 3.8.6 added **5 new ILS Workspace tools** (bringing the t
 
 ---
 
-*Last updated: v3.8.6 — February 2026*
+*Last updated: v3.9.3 — February 2026*
 *See also: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) | [SECURITY.md](SECURITY.md) | [NIST_COMPLIANCE.md](NIST_COMPLIANCE.md) | [WHITEPAPER.md](WHITEPAPER.md)*

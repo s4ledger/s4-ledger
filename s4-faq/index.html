@@ -95,6 +95,90 @@
             </div>
             <div class="faq-answer">Yes. Our Pilot tier is free during beta. You'll get SDK access, up to 1,000 anchors, and a basic dashboard. This lets you test the technology on real (non-sensitive) logistics data before subscribing. Contact us to get started.</div>
         </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>What ILS tools are included?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">S4 Ledger includes 18 interactive ILS Workspace tools: Gap Analysis, DMSMS Tracker, Readiness Calculator, Parts Cross-Reference, ROI Calculator, Lifecycle Cost Estimator, Warranty Tracker, Action Items & Task Tracker, Audit Record Vault, Defense Document Library, Compliance Scorecard, Provisioning & PTD Manager, AI Supply Chain Risk Engine, Audit Report Generator, Contract Lifecycle Management, Digital Thread / Configuration Bridge, Predictive Maintenance AI, and a Conversational AI Agent. All tools share data, sync automatically, and anchor results to the XRPL.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>Can I use my own platform, hull number, or program office?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">Yes. Every tool that uses a platform selector includes 500+ pre-loaded defense platforms across all branches — plus a "Custom Program" option for entering any platform, vessel, or aircraft not yet in the database. You can also input real hull numbers, tail numbers, designations, program offices, and contract numbers. This ensures S4 Ledger works with your actual program data, not just demo samples.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>What is the SDK Playground?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">The SDK Playground is an interactive sandbox where you can test all 21 Python SDK functions directly in your browser with live API calls. It includes a platform/program selector with 500+ platforms, hull/designation input, program office input, and contract number input — so you can test SDK functions against specific programs before writing any code.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>How does the Provisioning & PTD Manager compare to ICAPS?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">S4 Ledger's Provisioning & PTD Manager replaces ICAPS with significant improvements. ICAPS is limited to Navy/USMC, uses a legacy interface, and has no audit trail. S4 Ledger supports all branches, provides Provisioning Technical Documentation per MIL-STD-1552, Allowance Parts List generation, NSN cataloging via FCS, and blockchain-verified provisioning decisions — all with an immutable XRPL audit trail.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>What does the Compliance Scorecard measure?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">The Compliance Scorecard auto-calculates your compliance posture across 6 frameworks: CMMC Level 2, NIST SP 800-171 (110 controls), DFARS 252.204-7012, FAR 46 Quality, MIL-STD-1388 ILS, and DoDI 4245.15 DMSMS. Your score is calculated from real workspace activity — every record you anchor, DMSMS case you track, and readiness calculation you run contributes to your score. It outputs a letter grade (A+ through F) for executive reporting.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>What are the pricing tiers?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">S4 Ledger offers four tiers: <strong>Pilot</strong> (Free during beta — 1,000 anchors/month, SDK access), <strong>Professional</strong> ($499/month — 10,000 anchors, full API, priority support), <strong>Enterprise</strong> ($2,499/month — 100,000 anchors, dedicated support, SLA), and <strong>Government</strong> ($4,999/month — unlimited anchors, FedRAMP pathway, on-premises option, dedicated CSM). All tiers include the full 18-tool ILS Workspace and SDK Playground.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>How does the AI Supply Chain Risk Engine work?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">The risk engine analyzes supply chain health across 500+ defense platforms using ML-powered scoring. It evaluates supplier health indicators including GIDEP alerts, DLA lead time spikes, financial distress signals, single-source dependency, and counterfeit risk indicators. Each component receives a risk level (Critical/High/Medium/Low) with ETA impact calculations, sourced from 37 real Tier 1/1.5/2 defense suppliers.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>Is our actual data safe?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">Yes. S4 Ledger processes everything client-side in your browser. No documents, part numbers, serial numbers, or sensitive information are ever sent to our servers or the blockchain. The only thing that leaves your browser is a SHA-256 hash — a 64-character mathematical fingerprint. Even if someone intercepted the hash, they cannot reverse-engineer any data from it.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>Can I export or download my data?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">Yes. The Audit Record Vault stores every anchored record locally and supports CSV and XLSX export. The Compliance Scorecard exports scorecard reports. The Audit Report Generator produces multi-section audit packages. Transaction logs support CSV export with platform, date, and type filters. Calendar events export to .ics format.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>What programming languages does the SDK support?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">The current SDK is Python-based with 21 functions and a 12-command CLI. It's pip-installable and works with Python 3.7+. JavaScript, Go, and Rust SDKs are planned for Phase 3. In the meantime, any language that can make HTTP requests can use our REST API directly — the 7 API endpoints accept standard JSON.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>How much does each anchor transaction cost?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">Each anchor transaction costs approximately $0.01 in $SLS tokens. The underlying XRPL transaction fee is ~$0.001. Organizations can pay in USD — our fiat conversion mode handles the $SLS acquisition automatically, so users never need to interact with cryptocurrency. Batch anchoring supports up to 1,000 records per batch for high-volume operations.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                <span>Who built S4 Ledger?</span>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">S4 Ledger was created by Nick Frankfort, built as a product line of S4 Systems, LLC. The entire platform — 18 ILS tools, 21 SDK functions, 7 REST API endpoints, 500+ pre-loaded military entities, 156+ record types, and the complete website — was designed, engineered, and deployed as a zero-external-cost build. S4 Systems provides business development, legal, compliance, and corporate infrastructure.</div>
+        </div>
 
         <div class="cta-box reveal" style="margin-top: 30px;">
             <h3>Still have questions?</h3>

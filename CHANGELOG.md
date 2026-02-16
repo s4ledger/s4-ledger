@@ -5,6 +5,15 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.4] - 2026-02-15
+
+### Added
+- **FAQ Page Expanded** — Added 13 new FAQ entries (7→20 total). New topics: 18 ILS tools overview, custom input/hull/program office capabilities, SDK Playground description, ICAPS vs Provisioning comparison, Compliance Scorecard frameworks, pricing tiers, AI Supply Chain Risk Engine, data safety/client-side processing, export/download options, SDK language support, anchor transaction cost, project creator attribution.
+
+### Changed
+- **Documentation Audit for v3.9.3 Features** — Updated 6 docs (TECHNICAL_SPECS, WHITEPAPER, PRODUCTION_READINESS, README, MAINNET_MIGRATION, ROADMAP) to reflect v3.9.3 changes: version stamps bumped to 3.9.3, hardcoded platform counts (35+/40+/32) updated to 500+ dynamically populated, custom hull/designation + program office input noted on all tools, SDK Playground platform selector added, Metrics + Transactions platform filters documented, custom contract number input noted.
+- **Compliance Grade Position Fix** — Moved the compliance letter grade badge further below the SVG score ring (`bottom: -12px` → `bottom: -24px`) so it no longer overlaps the ring border.
+
 ## [3.9.3] - 2026-02-15
 
 ### Added
