@@ -136,6 +136,22 @@
             <div class="sdk-clf-banner" id="sdkClfBanner"><span class="sdk-clf-badge" id="sdkClfBadge"></span><span class="sdk-clf-text" id="sdkClfText"></span></div>
         </div>
 
+        <!-- ═══ PLATFORM / PROGRAM SELECTOR ═══ -->
+        <div class="card reveal" style="margin-bottom:20px">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+                <h3 style="margin:0"><i class="fas fa-ship" style="color:var(--gold);margin-right:8px"></i> Select Platform / Program</h3>
+                <span style="font-size:0.78rem;color:var(--text-muted)">500+ platforms across all branches — or define your own</span>
+            </div>
+            <select id="sdkPlatformSelect" style="background:rgba(5,8,16,0.95);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:10px 14px;color:#e0e8f0;font-family:inherit;font-size:0.9rem;width:100%">
+                <option value="">— Select a platform (optional) —</option>
+            </select>
+            <div class="row" style="margin-top:8px">
+                <div class="col-md-4 mb-2"><input type="text" id="sdkHull" placeholder="Hull # / Tail # / Designation" style="width:100%;background:rgba(5,8,16,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 12px;color:#e0e8f0;font-size:0.85rem"></div>
+                <div class="col-md-4 mb-2"><input type="text" id="sdkOffice" placeholder="Program Office (e.g. PMS 300)" style="width:100%;background:rgba(5,8,16,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 12px;color:#e0e8f0;font-size:0.85rem"></div>
+                <div class="col-md-4 mb-2"><input type="text" id="sdkContract" placeholder="Contract # (optional)" style="width:100%;background:rgba(5,8,16,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 12px;color:#e0e8f0;font-size:0.85rem"></div>
+            </div>
+        </div>
+
         <!-- ═══ SDK FUNCTION BOXES ═══ -->
         <h3 class="reveal" style="margin-bottom:16px;font-size:1.1rem"><i class="fas fa-cubes" style="color:var(--accent);margin-right:8px"></i> SDK Functions <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400">— click any box to load &amp; run</span></h3>
         <div class="row mb-4">
@@ -1248,11 +1264,17 @@
             var sel = document.getElementById('recordTypeSelect');
             if (sel && sel.value && sel.value !== 'CUSTOM') showSdkClassification(sel.value);
         });
+        // Populate platform dropdown from platforms.js
+        if (window.S4_buildProgramOptions) {
+            var platEl = document.getElementById('sdkPlatformSelect');
+            if (platEl) platEl.innerHTML = '<option value="">— Select a platform (optional) —</option>' + S4_buildProgramOptions(false, true);
+        }
         // Default: select Hash box
         var defaultBox = document.querySelector('.sdk-func-box[data-func="hash"]');
         if (defaultBox) defaultBox.classList.add('active');
     });
     </script>
+<script src="../s4-assets/platforms.js"></script>
 <script src="../s4-assets/s4-background.js"></script>
 </body>
 </html>

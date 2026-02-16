@@ -5,6 +5,26 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.3] - 2026-02-15
+
+### Added
+- **Custom Input Fields Across All ILS Tools** — Every ILS Workspace tool with a platform selector now includes hull/tail/designation and program office free-text input fields. Users can enter real vessel hull numbers, aircraft tail numbers, or custom designations alongside any selected program. Added to 9 tools: DMSMS Tracking, Readiness Reporting, Lifecycle Cost, Warranty Tracking, Compliance Audit, Provisioning, Supply Chain Risk, Digital Thread, and Predictive Maintenance.
+- **Custom Contract Number Input** — Contracts & Procurement tool now includes a "Custom" option in the contract dropdown. Selecting it reveals a free-text contract number input so users can enter real contract identifiers beyond the 25 pre-loaded samples.
+- **SDK Playground Platform Selector** — Added full "Select Platform / Program" card to SDK Playground with 500+ platform dropdown (populated from platforms.js), hull/tail/designation input, program office input, and contract number input. All SDK function calls can now target specific programs.
+- **Platform Filter — Metrics Dashboard** — Added platform/program filter dropdown to the Records Secured Breakdown section of metrics.html, enabling filtering by specific defense platform.
+- **Platform Filter — Transaction Log** — Added platform/program filter dropdown to the transaction log filter bar in transactions.html, enabling filtering by specific defense platform.
+
+### Changed
+- **Dynamic Platform Dropdowns for All Tools** — Converted 4 tools with hardcoded platform lists (Supply Chain Risk ≈35 options, Digital Thread ≈30 options, Predictive Maintenance ≈40 options, Contracts ≈25 options) to dynamic population from platforms.js (500+ platforms across 8 branches, 35 categories). All 11 platform dropdowns now load from the same master database.
+- **Custom Program Option Enabled Globally** — Changed `custom: true` on all platform dropdowns in `populateAllDropdowns()`. Previously only Gap Analysis allowed custom program entry; now all 11 dropdowns include a "Custom Program" option for free-text platform input.
+- **Files Modified** — demo-app/index.html (18 ILS tools updated), sdk-playground/index.html (platform selector added), metrics.html (platform filter added), transactions.html (platform filter added).
+
+## [3.9.2] - 2026-02-15
+
+### Changed
+- **TECHNICAL_SPECS.md Enriched** — Added REST API Endpoints section (7 endpoints with paths, methods, descriptions), ILS Workspace section (18 tools listed with categories), SDK function count (21), record type count (156+), pre-loaded entity count (500+: 462 platforms + 37 suppliers + 25 contracts). Version bumped to 3.9.0. Added S4 Systems, LLC attribution.
+- **GitHub Rendering Fix** — Replaced `~` prefix with `≈` in TECHNICAL_SPECS.md numeric values (e.g., `~0.000012` → `≈0.000012`) to prevent GitHub markdown parser from rendering tildes as strikethrough text.
+
 ## [3.9.1] - 2026-02-15
 
 ### Changed

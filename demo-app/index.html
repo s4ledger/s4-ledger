@@ -851,7 +851,11 @@
                             </div>
                         </details>
                         <label>Select Program</label>
-                        <select id="dmsmsProgram" class="form-select mb-3" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadDMSMSData()"></select>
+                        <select id="dmsmsProgram" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadDMSMSData()"></select>
+                        <div class="row mb-3">
+                            <div class="col-6"><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                        </div>
                         <div id="dmsmsResults" style="margin-top:1rem"></div>
                         <div class="row mt-3">
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="dmsmsTotalParts">0</div><div class="stat-mini-label">Parts Tracked</div></div></div>
@@ -883,6 +887,10 @@
                             <div class="col-md-6">
                                 <label>Select Program</label>
                                 <select id="readinessProgram" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadReadinessData()"></select>
+                                <div class="row mb-2">
+                                    <div class="col-6"><input type="text" id="readinessHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input type="text" id="readinessOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                </div>
                                 <label>Select System / Subsystem</label>
                                 <select id="readinessSystem" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="calcReadiness()"></select>
                             </div>
@@ -1031,6 +1039,10 @@
                             <div class="col-md-6">
                                 <label>Select Program</label>
                                 <select id="lifecycleProgram" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="calcLifecycle()"></select>
+                                <div class="row mb-2">
+                                    <div class="col-6"><input type="text" id="lifecycleHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input type="text" id="lifecycleOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                </div>
                                 <label>Planned Service Life (years)</label>
                                 <input type="number" id="lcServiceLife" class="form-control mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" placeholder="30" value="30" oninput="calcLifecycle()">
                                 <label>Annual Operating Hours</label>
@@ -1073,7 +1085,11 @@
                             </div>
                         </details>
                         <label>Select Program</label>
-                        <select id="warrantyProgram" class="form-select mb-3" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadWarrantyData()"></select>
+                        <select id="warrantyProgram" class="form-select mb-2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);" onchange="loadWarrantyData()"></select>
+                        <div class="row mb-3">
+                            <div class="col-6"><input type="text" id="warrantyHull" class="form-control" placeholder="Hull # / Tail # / Serial" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input type="text" id="warrantyOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                        </div>
                         <div id="warrantyResults" style="margin-top:1rem"></div>
                         <div class="row mt-3">
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="warActive" style="color:#14f195">0</div><div class="stat-mini-label">Active Warranties</div></div></div>
@@ -1213,6 +1229,10 @@
                     <div style="margin-bottom:16px">
                         <label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label>
                         <select id="complianceProgram" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;margin-top:4px" onchange="calcCompliance()"></select>
+                        <div class="row" style="margin-top:6px">
+                            <div class="col-6"><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                        </div>
                     </div>
 
                     <!-- Score Ring -->
@@ -1283,6 +1303,10 @@
                     <div style="margin-bottom:14px">
                         <label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label>
                         <select id="provProgram" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;margin-top:4px" onchange="loadProvisioningData()"></select>
+                        <div class="row" style="margin-top:6px">
+                            <div class="col-6"><input type="text" id="provHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input type="text" id="provOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                        </div>
                     </div>
 
                     <!-- View Toggle -->
@@ -1415,53 +1439,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>Select Program</label>
-                            <select id="riskProgram" onchange="loadRiskData()" style="font-size:0.88rem">
-                                <optgroup label="U.S. Navy">
-                                    <option value="ddg51">DDG-51 Arleigh Burke Destroyer</option>
-                                    <option value="cvn78">CVN-78 Gerald R. Ford Carrier</option>
-                                    <option value="ssn774">SSN-774 Virginia-class Submarine</option>
-                                    <option value="ssbn826">SSBN-826 Columbia-class SSBN</option>
-                                    <option value="cg47">CG-47 Ticonderoga Cruiser</option>
-                                    <option value="lcs1">LCS Freedom-class</option>
-                                    <option value="lpd17">LPD-17 San Antonio-class</option>
-                                </optgroup>
-                                <optgroup label="U.S. Air Force">
-                                    <option value="f35">F-35 Lightning II (JSF)</option>
-                                    <option value="f22a">F-22A Raptor</option>
-                                    <option value="f15ex">F-15EX Eagle II</option>
-                                    <option value="b21">B-21 Raider</option>
-                                    <option value="b52h">B-52H Stratofortress</option>
-                                    <option value="kc46a">KC-46A Pegasus Tanker</option>
-                                    <option value="c17a">C-17A Globemaster III</option>
-                                    <option value="mq9">MQ-9 Reaper UAS</option>
-                                </optgroup>
-                                <optgroup label="U.S. Army">
-                                    <option value="m1a2">M1A2 Abrams Main Battle Tank</option>
-                                    <option value="m2a3">M2A3 Bradley IFV</option>
-                                    <option value="stryker">Stryker Combat Vehicle Family</option>
-                                    <option value="himars">M142 HIMARS</option>
-                                    <option value="patriot">MIM-104 Patriot PAC-3</option>
-                                    <option value="ah64e">AH-64E Apache Guardian</option>
-                                    <option value="uh60m">UH-60M Black Hawk</option>
-                                </optgroup>
-                                <optgroup label="U.S. Marine Corps">
-                                    <option value="ch53k">CH-53K King Stallion</option>
-                                    <option value="v22">MV-22B Osprey</option>
-                                    <option value="acv">ACV Amphibious Combat Vehicle</option>
-                                    <option value="ah1z">AH-1Z Viper</option>
-                                    <option value="lav25">LAV-25 Light Armored Vehicle</option>
-                                </optgroup>
-                                <optgroup label="Space Force / MDA">
-                                    <option value="gpsiii">GPS III Space Vehicle</option>
-                                    <option value="thaad">THAAD Missile Defense</option>
-                                    <option value="sbirs">SBIRS Infrared System</option>
-                                </optgroup>
-                                <optgroup label="SOCOM / Coast Guard">
-                                    <option value="cv22b">CV-22B Osprey (AFSOC)</option>
-                                    <option value="ac130j">AC-130J Ghostrider</option>
-                                    <option value="wmsl750">WMSL-750 National Security Cutter</option>
-                                </optgroup>
-                            </select>
+                            <select id="riskProgram" onchange="loadRiskData()" style="font-size:0.88rem"></select>
+                            <div class="row" style="margin-top:6px">
+                                <div class="col-6"><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:5px 8px;width:100%"></div>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label>Risk Threshold</label>
@@ -1582,7 +1564,11 @@
                                     <option value="HQ0860-25-C-0007">HQ0860-25-C-0007 (THAAD Interceptor)</option>
                                     <option value="HQ0147-25-C-0034">HQ0147-25-C-0034 (GPS III SV11-14)</option>
                                 </optgroup>
+                                <optgroup label="Custom">
+                                    <option value="custom">Enter Custom Contract Number...</option>
+                                </optgroup>
                             </select>
+                            <input type="text" id="contractCustomId" placeholder="e.g. N00024-26-C-XXXX" style="display:none;margin-top:6px;font-size:0.85rem;background:#0a0e1a;color:#fff;border:1px solid rgba(201,168,76,0.3);border-radius:6px;padding:6px 10px;width:100%" onchange="loadContractData()">
                         </div>
                         <div class="col-md-4">
                             <label>Filter by Type</label>
@@ -1631,49 +1617,11 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Select Platform</label>
-                            <select id="threadPlatform" onchange="loadThreadData()" style="font-size:0.88rem">
-                                <optgroup label="Navy Surface">
-                                    <option value="ddg51">DDG-51 Flight III</option>
-                                    <option value="ddg51fiia">DDG-51 Flight IIA</option>
-                                    <option value="cvn78">CVN-78 Gerald R. Ford</option>
-                                    <option value="cg47">CG-47 Ticonderoga (Modernized)</option>
-                                    <option value="lcs1">LCS Freedom-class</option>
-                                    <option value="lcs2">LCS Independence-class</option>
-                                    <option value="lpd17f2">LPD-17 Flight II (LPD-30+)</option>
-                                </optgroup>
-                                <optgroup label="Submarines">
-                                    <option value="ssn774b5">SSN-774 Block V (VPM)</option>
-                                    <option value="ssn774b4">SSN-774 Block IV</option>
-                                    <option value="ssbn826">SSBN-826 Columbia-class</option>
-                                </optgroup>
-                                <optgroup label="Air Force / JSF">
-                                    <option value="f35a">F-35A CTOL</option>
-                                    <option value="f35b">F-35B STOVL (Marine Corps)</option>
-                                    <option value="f35c">F-35C CV (Carrier Variant)</option>
-                                    <option value="f22a">F-22A Block 35 (Inc 3.2B)</option>
-                                    <option value="f15ex">F-15EX Eagle II Batch 1</option>
-                                    <option value="b52h">B-52H CERP Re-engining</option>
-                                    <option value="b21a">B-21A Raider LRIP</option>
-                                    <option value="kc46a">KC-46A Pegasus Block 1</option>
-                                </optgroup>
-                                <optgroup label="Army">
-                                    <option value="m1a2v3">M1A2 SEPv3 Abrams</option>
-                                    <option value="m1a2v4">M1A2 SEPv4 Abrams (AMP)</option>
-                                    <option value="m2a4">M2A4 Bradley (ODS-SA)</option>
-                                    <option value="strykerdvh">Stryker DVH A1 (Double-V Hull)</option>
-                                    <option value="ah64ev6">AH-64E Apache Version 6</option>
-                                    <option value="uh60m">UH-60M Black Hawk Upgrade</option>
-                                </optgroup>
-                                <optgroup label="Marine Corps / Rotary">
-                                    <option value="ch53k">CH-53K King Stallion</option>
-                                    <option value="v22bc">MV-22B Block C Osprey</option>
-                                    <option value="cv22b">CV-22B Block 20 Osprey (AFSOC)</option>
-                                </optgroup>
-                                <optgroup label="Missile Defense">
-                                    <option value="pac3mse">Patriot PAC-3 MSE</option>
-                                    <option value="thaader">THAAD Extended Range</option>
-                                </optgroup>
-                            </select>
+                            <select id="threadPlatform" onchange="loadThreadData()" style="font-size:0.88rem"></select>
+                            <div class="row" style="margin-top:6px">
+                                <div class="col-6"><input type="text" id="threadHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input type="text" id="threadOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:5px 8px;width:100%"></div>
+                            </div>
                         </div>
                         <div class="col-md-4">
                             <label>View</label>
@@ -1722,55 +1670,11 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Select Fleet / Platform</label>
-                            <select id="pdmPlatform" onchange="loadPredictiveData()" style="font-size:0.88rem">
-                                <optgroup label="Navy Surface">
-                                    <option value="ddg51">DDG-51 Arleigh Burke (73 ships)</option>
-                                    <option value="cvn">CVN Carrier Fleet (11 ships)</option>
-                                    <option value="cg47">CG-47 Ticonderoga (22 ships)</option>
-                                    <option value="lcs">LCS Fleet (23 ships)</option>
-                                    <option value="lpd17">LPD-17 San Antonio (13 ships)</option>
-                                </optgroup>
-                                <optgroup label="Navy Submarines">
-                                    <option value="ssn774">SSN-774 Virginia (23 boats)</option>
-                                    <option value="ssn688">SSN-688 Los Angeles (28 boats)</option>
-                                    <option value="ssbn726">SSBN-726 Ohio (14 boats)</option>
-                                </optgroup>
-                                <optgroup label="Naval Aviation">
-                                    <option value="f18">F/A-18E/F Super Hornet (540+ aircraft)</option>
-                                    <option value="mh60">MH-60S/R Seahawk (280+ aircraft)</option>
-                                    <option value="p8a">P-8A Poseidon (128 aircraft)</option>
-                                    <option value="e2d">E-2D Advanced Hawkeye (44 aircraft)</option>
-                                </optgroup>
-                                <optgroup label="U.S. Army">
-                                    <option value="m1a2">M1A1/A2 Abrams (2,509 tanks)</option>
-                                    <option value="bradley">M2/M3 Bradley (2,380 IFVs)</option>
-                                    <option value="stryker">Stryker Family (4,466 vehicles)</option>
-                                    <option value="ah64">AH-64D/E Apache (790 aircraft)</option>
-                                    <option value="uh60">UH-60 Black Hawk (2,135 aircraft)</option>
-                                    <option value="ch47f">CH-47F Chinook (480 aircraft)</option>
-                                    <option value="himars">M142 HIMARS (550+ launchers)</option>
-                                </optgroup>
-                                <optgroup label="U.S. Air Force">
-                                    <option value="f22a">F-22A Raptor (186 aircraft)</option>
-                                    <option value="f15e">F-15E Strike Eagle (218 aircraft)</option>
-                                    <option value="f16">F-16C/D Fighting Falcon (936 aircraft)</option>
-                                    <option value="b52h">B-52H Stratofortress (76 aircraft)</option>
-                                    <option value="b1b">B-1B Lancer (45 aircraft)</option>
-                                    <option value="c17a">C-17A Globemaster III (222 aircraft)</option>
-                                    <option value="c130j">C-130J Hercules (300+ aircraft)</option>
-                                    <option value="kc46a">KC-46A Pegasus (79 delivered)</option>
-                                    <option value="kc135">KC-135 Stratotanker (396 aircraft)</option>
-                                    <option value="mq9">MQ-9 Reaper (286 aircraft)</option>
-                                    <option value="a10c">A-10C Thunderbolt II (281 aircraft)</option>
-                                </optgroup>
-                                <optgroup label="Marine Corps">
-                                    <option value="v22">MV/CV-22 Osprey (360 aircraft)</option>
-                                    <option value="f35b">F-35B STOVL (120+ delivered USMC)</option>
-                                    <option value="aav7">AAV-7A1 (1,062 vehicles)</option>
-                                    <option value="lav25">LAV-25 (758 vehicles)</option>
-                                    <option value="ah1z">AH-1Z Viper (189 aircraft)</option>
-                                </optgroup>
-                            </select>
+                            <select id="pdmPlatform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select>
+                            <div class="row" style="margin-top:6px">
+                                <div class="col-6"><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input type="text" id="pdmOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:5px 8px;width:100%"></div>
+                            </div>
                         </div>
                         <div class="col-md-4">
                             <label>Prediction Window</label>
@@ -5488,14 +5392,17 @@ async function anchorWarranty() {
 function populateAllDropdowns() {
     if (!window.S4_buildProgramOptions) { console.warn('S4 Platforms DB not loaded'); return; }
     const selects = {
-        ilsProgram:    {all: false, custom: true},
-        dmsmsProgram:  {all: false, custom: false},
-        readinessProgram: {all: false, custom: false},
-        partsProgram:  {all: true, custom: false},
-        lifecycleProgram: {all: false, custom: false},
-        warrantyProgram: {all: false, custom: false},
-        complianceProgram: {all: false, custom: false},
-        provProgram: {all: false, custom: false}
+        ilsProgram:        {all: false, custom: true},
+        dmsmsProgram:      {all: false, custom: true},
+        readinessProgram:  {all: false, custom: true},
+        partsProgram:      {all: true,  custom: true},
+        lifecycleProgram:  {all: false, custom: true},
+        warrantyProgram:   {all: false, custom: true},
+        complianceProgram: {all: false, custom: true},
+        provProgram:       {all: false, custom: true},
+        riskProgram:       {all: false, custom: true},
+        threadPlatform:    {all: false, custom: true},
+        pdmPlatform:       {all: false, custom: true}
     };
     Object.entries(selects).forEach(([id, opts]) => {
         const el = document.getElementById(id);
@@ -6773,7 +6680,13 @@ function generateContractItems(contractId) {
 }
 
 function loadContractData() {
-    const contractId = document.getElementById('contractSelect')?.value || 'N00024-25-C-5501';
+    const selEl = document.getElementById('contractSelect');
+    const customEl = document.getElementById('contractCustomId');
+    if (selEl && customEl) {
+        customEl.style.display = selEl.value === 'custom' ? 'block' : 'none';
+    }
+    let contractId = selEl?.value || 'N00024-25-C-5501';
+    if (contractId === 'custom' && customEl?.value) contractId = customEl.value;
     const typeFilter = document.getElementById('contractTypeFilter')?.value || 'all';
     const statusFilter = document.getElementById('contractStatusFilter')?.value || 'all';
     let items = generateContractItems(contractId);
