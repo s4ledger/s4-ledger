@@ -88,7 +88,7 @@
     <div class="container">
         <!-- Live indicator + stats -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <span class="live-indicator"><span class="live-dot"></span> Live &mdash; Auto-refreshing every 30s</span>
+            <span class="live-indicator"><span class="live-dot"></span> Live &mdash; Auto-refreshing every 5s</span>
             <button class="export-btn" onclick="exportTxCSV()"><i class="fas fa-download"></i> Export CSV</button>
         </div>
 
@@ -204,6 +204,7 @@
     let branchesPopulated = false;
 
     async function loadTransactions() {
+        branchesPopulated = false;
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -241,6 +242,7 @@
                 const types = new Set(allTransactions.map(t => t.record_label || t.record_type).filter(Boolean));
                 document.getElementById('branchCount').textContent = branches.size;
                 document.getElementById('typeCount').textContent = types.size;
+                branchesPopulated = false;
                 populateFilters(branches, types);
                 applyFilters();
             } else {
@@ -254,26 +256,34 @@
     }
 
     function populateFilters(branches, types) {
-        if (!branchesPopulated && branches.size > 0) {
-            const branchSelect = document.getElementById('branchFilter');
-            branches.forEach(b => {
-                const info = BRANCH_COLORS[b] || { label: b };
-                const opt = document.createElement('option');
-                opt.value = b;
-                opt.textContent = info.label;
-                branchSelect.appendChild(opt);
-            });
+        const branchSelect = document.getElementById('branchFilter');
+        const typeSelect = document.getElementById('typeFilter');
+        const prevBranch = branchSelect.value;
+        const prevType = typeSelect.value;
 
-            const typeSelect = document.getElementById('typeFilter');
-            const sortedTypes = [...types].sort();
-            sortedTypes.forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t;
-                opt.textContent = t;
-                typeSelect.appendChild(opt);
-            });
-            branchesPopulated = true;
-        }
+        // Clear and rebuild branch filter
+        branchSelect.innerHTML = '<option value="all">All Branches</option>';
+        branches.forEach(b => {
+            const info = BRANCH_COLORS[b] || { label: b };
+            const opt = document.createElement('option');
+            opt.value = b;
+            opt.textContent = info.label;
+            branchSelect.appendChild(opt);
+        });
+        if ([...branches].includes(prevBranch)) branchSelect.value = prevBranch;
+
+        // Clear and rebuild type filter
+        typeSelect.innerHTML = '<option value="all">All Record Types</option>';
+        const sortedTypes = [...types].sort();
+        sortedTypes.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            typeSelect.appendChild(opt);
+        });
+        if (sortedTypes.includes(prevType)) typeSelect.value = prevType;
+
+        branchesPopulated = true;
     }
 
     function applyFilters() {
@@ -382,7 +392,7 @@
 
     // ── Init ──
     window.addEventListener('DOMContentLoaded', loadTransactions);
-    setInterval(loadTransactions, 30000);
+    setInterval(loadTransactions, 5000);
     </script>
 <script src="s4-assets/s4-background.js"></script>
 </body>

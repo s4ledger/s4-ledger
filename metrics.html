@@ -71,7 +71,7 @@
 
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <span class="live-indicator"><span class="live-dot"></span> Live &mdash; Auto-refreshing every 30s</span>
+            <span class="live-indicator"><span class="live-dot"></span> Live &mdash; Auto-refreshing every 5s</span>
             <button class="export-btn" onclick="exportCSV()"><i class="fas fa-download"></i> Export Data</button>
         </div>
 
@@ -143,7 +143,7 @@
                     <tbody id="recentBody"><tr><td colspan="4" style="text-align:center;color:var(--text-secondary);">Loading...</td></tr></tbody>
                 </table>
             </div>
-            <p style="color:var(--text-muted);font-size:0.85rem;text-align:center;margin-top:12px;">Auto-refreshes every 30 seconds | Showing last 30 minutes of activity</p>
+            <p style="color:var(--text-muted);font-size:0.85rem;text-align:center;margin-top:12px;">Auto-refreshes every 5 seconds | Showing all activity</p>
         </div>
 
         <div style="text-align:center;padding:30px 20px;margin-top:30px;border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.9rem;">
@@ -154,7 +154,7 @@
         <!-- ILS Workspace Cross-Link -->
         <div class="card reveal" style="border-color:rgba(0,170,255,0.3);background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(20,241,149,0.02));text-align:center;margin-top:20px;">
             <h3 style="margin-bottom:8px;"><i class="fas fa-brain" style="color:var(--accent);margin-right:8px;"></i> ILS Workspace</h3>
-            <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:16px;">13-tool ILS command center — gap analysis, DMSMS, readiness, lifecycle cost, ROI, warranty, parts, action items, calendar, audit vault, doc library, compliance scorecard, provisioning & AI agent.</p>
+            <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:16px;">19-tool ILS command center — gap analysis, DMSMS, readiness, lifecycle cost, ROI, warranty, parts, action items, calendar, audit vault, doc library, compliance scorecard, provisioning, supply chain risk, audit reports, contracts, digital thread, predictive maintenance, defense database import &amp; AI agent.</p>
             <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
                 <a href="demo-app/#tabILS" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;padding:10px 22px;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.9rem;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-brain"></i> Open ILS Workspace</a>
                 <a href="sdk-playground/" style="background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:10px 22px;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.9rem;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-code"></i> SDK Playground</a>
@@ -227,11 +227,7 @@
                 document.getElementById('feesToday').textContent = '+$' + feesToday.toFixed(2) + ' today';
                 const thisMonth = metricsData.this_month || 0;
                 document.getElementById('thisMonth').textContent = thisMonth;
-                const filterSelect = document.getElementById('recordTypeFilter');
-                const types = Object.keys(metricsData.records_by_type || {});
-                if (filterSelect.options.length <= 1) {
-                    types.forEach(type => { const o = document.createElement('option'); o.value = type; o.textContent = type; filterSelect.appendChild(o); });
-                }
+                rebuildRecordTypeFilter();
                 renderHashChart(currentHashView);
                 renderRecordChart();
                 renderFeeChart(currentFeeView);
@@ -281,9 +277,7 @@
                 document.getElementById('hashesToday').textContent = '+' + (metricsData.hashes_today || 0) + ' today';
                 document.getElementById('feesToday').textContent = '+$' + (metricsData.fees_today || 0).toFixed(2) + ' today';
                 document.getElementById('thisMonth').textContent = metricsData.this_month || 0;
-                const filterSelect2 = document.getElementById('recordTypeFilter');
-                const types2 = Object.keys(metricsData.records_by_type || {});
-                if (filterSelect2.options.length <= 1) { types2.forEach(type => { const o = document.createElement('option'); o.value = type; o.textContent = type; filterSelect2.appendChild(o); }); }
+                rebuildRecordTypeFilter();
                 renderHashChart(currentHashView);
                 renderRecordChart();
                 renderFeeChart(currentFeeView);
@@ -304,6 +298,27 @@
         }
 
         function filterByRecordType() { selectedRecordType = document.getElementById('recordTypeFilter').value; renderRecordChart(); renderRecentTable(); }
+
+        // Rebuild record type and platform filter dropdowns from current data
+        function rebuildRecordTypeFilter() {
+            const filterSelect = document.getElementById('recordTypeFilter');
+            const prevVal = filterSelect.value;
+            // Clear all options except "All Record Types"
+            filterSelect.innerHTML = '<option value="all">All Record Types</option>';
+            const types = Object.keys(metricsData.records_by_type || {}).sort();
+            types.forEach(type => { const o = document.createElement('option'); o.value = type; o.textContent = type; filterSelect.appendChild(o); });
+            // Restore previous selection if still valid
+            if (types.includes(prevVal)) filterSelect.value = prevVal;
+            else { selectedRecordType = 'all'; filterSelect.value = 'all'; }
+
+            // Rebuild platform filter
+            const platSelect = document.getElementById('platformFilter');
+            const prevPlat = platSelect.value;
+            platSelect.innerHTML = '<option value="all">All Platforms</option>';
+            const branches = Object.keys(metricsData.records_by_branch || {}).sort();
+            branches.forEach(b => { const o = document.createElement('option'); o.value = b; o.textContent = b; platSelect.appendChild(o); });
+            if (branches.includes(prevPlat)) platSelect.value = prevPlat;
+        }
 
         function exportCSV() {
             if (!metricsData || !metricsData.individual_records) { alert('No data available to export'); return; }
@@ -361,10 +376,10 @@
             let records = metricsData.individual_records || [];
             const tbody = document.getElementById('recentBody');
             if (records.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No records found</td></tr>'; return; }
-            if (selectedRecordType !== 'all') { records = records.filter(r => r.record_type === selectedRecordType); }
+            if (selectedRecordType !== 'all') { records = records.filter(r => (r.record_label || r.record_type) === selectedRecordType); }
             const recent = [...records].reverse().slice(0, 50);
             if (recent.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No records for selected type</td></tr>'; return; }
-            tbody.innerHTML = recent.map(r => '<tr><td style="color:#00aaff;">' + r.timestamp_display + '</td><td><span class="badge-type">' + r.record_type + '</span></td><td style="font-family:monospace;font-size:0.85rem;color:var(--text-secondary);">' + r.hash + '</td><td style="color:#c9a84c;">$' + r.fee.toFixed(2) + '</td></tr>').join('');
+            tbody.innerHTML = recent.map(r => { const label = r.record_label || r.record_type || 'Unknown'; return '<tr><td style="color:#00aaff;">' + (r.timestamp_display || '') + '</td><td><span class="badge-type">' + label + '</span></td><td style="font-family:monospace;font-size:0.85rem;color:var(--text-secondary);">' + (r.hash || '').substring(0,24) + '...</td><td style="color:#c9a84c;">$' + (r.fee || 0.01).toFixed(2) + '</td></tr>'; }).join('');
         }
 
         document.getElementById('hashBtns').addEventListener('click', e => { if (e.target.dataset.view) { currentHashView = e.target.dataset.view; document.querySelectorAll('#hashBtns .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.view === currentHashView)); renderHashChart(currentHashView); } });
@@ -377,7 +392,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', loadMetrics);
-        setInterval(loadMetrics, 30000);
+        setInterval(loadMetrics, 5000);
     </script>
 <script src="s4-assets/s4-background.js"></script>
 </body>
