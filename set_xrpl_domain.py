@@ -57,16 +57,28 @@ def main():
     print(f"  Network:         XRPL Mainnet ({MAINNET_URL})")
     print()
 
-    # ─── Step 1: Get wallet seed securely ────────────────────────────
-    seed = getpass.getpass("Enter your XRPL wallet seed (hidden): ")
-    if not seed.strip():
-        print("ERROR: No seed provided. Aborting.")
-        sys.exit(1)
+    # ─── Step 1: Get wallet secret numbers securely ───────────────
+    print("  Enter your Xaman Secret Numbers (rows A through H).")
+    print("  Type each 6-digit row and press Enter.\n")
+
+    rows = []
+    for label in ["A", "B", "C", "D", "E", "F", "G", "H"]:
+        row = getpass.getpass(f"  Row {label} (6 digits, hidden): ")
+        row = row.strip()
+        if len(row) != 6 or not row.isdigit():
+            print(f"  ERROR: Row {label} must be exactly 6 digits. Got '{row}'. Aborting.")
+            sys.exit(1)
+        rows.append(row)
 
     try:
-        wallet = Wallet.from_seed(seed.strip())
+        wallet = Wallet.from_secret_numbers(rows)
+    except AttributeError:
+        # Older xrpl-py without from_secret_numbers — try manual conversion
+        print("  ERROR: Your xrpl-py version doesn't support from_secret_numbers().")
+        print("  Please upgrade: pip install xrpl-py>=2.6.0")
+        sys.exit(1)
     except Exception as e:
-        print(f"ERROR: Invalid seed — {e}")
+        print(f"  ERROR: Invalid secret numbers — {e}")
         sys.exit(1)
 
     # ─── Step 2: Verify this is the correct account ──────────────────
