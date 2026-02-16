@@ -140,4 +140,4 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 Apache License 2.0 — see [LICENSE](LICENSE)
 
-© 2026 S4 Ledger. Charleston, SC.
+© 2026 S4 Systems, LLC. Charleston, SC.

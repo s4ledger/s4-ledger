@@ -1,30 +1,37 @@
-# About the Founder
+# About the Creator
 
 ## Nick Frankfort
 
-Nick Frankfort is the founder of S4 Ledger, a defense logistics verification platform anchoring tamper-proof audit trails on the XRP Ledger.
+Nick Frankfort is the creator, owner, and sole developer of S4 Ledger — a defense logistics verification product line of **S4 Systems, LLC**. S4 Ledger anchors tamper-proof audit trails on the XRP Ledger, providing the defense industry's first blockchain-verified integrity layer for supply chains, maintenance records, and contract deliverables.
+
+Nick built the entire platform — 18 ILS tools, 21 SDK functions, 7 REST API endpoints, 14+ page website, and the $SLS utility token — at zero cost to the company, on his own time, as a working ILS contractor.
 
 ### Background
 
-- Years of experience in Integrated Logistics Support (ILS) across Navy and DoW programs
-- Expertise in Python, cryptography, and distributed systems
-- Deep understanding of defense supply chain challenges, maintenance record integrity, and configuration management
+- Active ILS contractor with years of hands-on experience across Navy and DoW programs
+- Proposed Product Lead / CTO for S4 Systems, LLC
+- Expertise in Python, cryptography, distributed systems, and defense logistics workflows
+- Deep understanding of defense supply chain challenges, maintenance record integrity, provisioning (PTD/ICAPS replacement), and configuration management
+
+### What He Built
+
+- **18 interactive ILS tools** covering every ILS element — readiness, DMSMS, lifecycle cost, provisioning, supply chain risk, predictive maintenance, contract management, audit reporting, and more
+- **21 Python SDK functions** for defense-grade hash anchoring and verification
+- **7 REST API endpoints** for enterprise integration
+- **462 real defense platforms** across 9 military branches with real program data
+- **156+ pre-built ILS record types** mapped to real-world logistics workflows
+- **$SLS utility token** live on XRPL Mainnet (100M supply)
+- **14+ page production website** at s4ledger.com
 
 ### Mission
 
-To give the defense industry an integrity layer it can trust — immutable proof that logistics records are authentic, unaltered, and independently verifiable.
-
-### Technical Focus
-
-- SHA-256 hash anchoring on XRPL
-- Python SDK development
-- NIST 800-171 / CMMC compliance alignment
-- Defense supply chain verification
+To give the defense industry an integrity layer it can trust — immutable proof that logistics records are authentic, unaltered, and independently verifiable. S4 Ledger saves the government ~$600K–$1.6M per program per year and delivers 10–100x ROI at a fraction of the cost of Palantir, SAP, or Oracle solutions.
 
 ### Contact
 
 - Email: info@s4ledger.com
 - Website: [s4ledger.com](https://s4ledger.com)
+- Company: S4 Systems, LLC — Charleston, SC
 - LinkedIn: [linkedin.com/in/nicolas-frankfort-6ab29090](https://www.linkedin.com/in/nicolas-frankfort-6ab29090/)
 
 Open to partnerships, consulting, and collaboration in defense logistics and blockchain verification.

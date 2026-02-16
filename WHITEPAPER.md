@@ -1,7 +1,7 @@
 # S4 Ledger Whitepaper
 
 **Immutable Logistics Verification for the Defense Industry**  
-Version 3.8.6 — February 2026  
+Version 3.9.0 — February 2026  
 
 ---
 
@@ -227,7 +227,7 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | **Phase 4 — Partner & SaaS** | Q1 – Q2 2027 | REST API, SaaS dashboard, DIU / NavalX engagement |
 | **Phase 5 — Scale & Certify** | Q3 2027+ | NIST/CMMC, FedRAMP, production deployments |
 
-### Current Toolset (v3.8.6)
+### Current Toolset (v3.9.0)
 
 | Tool | Description |
 |---|---|
@@ -279,13 +279,13 @@ At scale (Year 5, $3–5M ARR), S4 Ledger is projected to create 340+ jobs (30�
 - **SaaS licensing**: $6K–$60K/year per organization (tiered by platform count)
 - **$SLS transaction fees**: $0.01 per anchor × volume = $1K–$50K/year per active customer
 - **Enterprise API access**: $50K–$200K/year for high-volume integration
-- **SBIR/STTR potential**: $150K Phase I → $1M Phase II → $3M Phase III transition
+- **SBIR/STTR potential**: $50K–$250K Phase I → $500K–$1.5M Phase II → Phase III full production transition
 
 ---
 
 ## 8. Team
 
-S4 Ledger is built by ILS professionals with years of hands-on experience across Navy and DoW programs. We've lived the problems this technology solves — from supply chain breakdowns to audit fire drills.
+S4 Ledger is a product line of **S4 Systems, LLC**, created and built entirely by **Nick Frankfort** — ILS contractor and proposed Product Lead/CTO. Nick built the entire platform (18 ILS tools, 21 SDK functions, 7 REST API endpoints, $SLS token, 14+ page website, 500+ pre-loaded military entities) at zero cost to the company, on his own time, drawing on years of hands-on ILS experience across Navy and DoW programs.
 
 Based in Charleston, SC.
 
@@ -311,4 +311,4 @@ The math is the proof.
 
 ---
 
-© 2026 S4 Ledger. Charleston, SC.
+© 2026 S4 Systems, LLC. Charleston, SC.

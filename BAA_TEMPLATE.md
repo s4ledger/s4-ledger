@@ -243,4 +243,4 @@ https://s4ledger.com
 
 ---
 
-© 2026 S4 Ledger. All rights reserved.
+© 2026 S4 Systems, LLC. All rights reserved.

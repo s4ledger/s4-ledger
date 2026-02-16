@@ -5,6 +5,25 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.0] - 2026-02-15
+
+### Added
+- **Comprehensive Repo-Wide Documentation Audit** — Audited all 23 remaining markdown files against current key facts. Fixed every inconsistency found across investor docs, whitepaper, developer bio, and compliance documents.
+- **National Impact & Job Creation Sections** — Added to all 4 investor documents: 340+ jobs by Year 5, $8M–$17M economic impact, $150B+ addressable market, $600M–$1.6B/yr savings at scale, defense industrial base expansion.
+- **Key Metrics Enrichment** — All investor documents now include: 21 SDK functions, 7 REST API endpoints, 500+ pre-loaded military entities (462 platforms + 37 suppliers + 25 contracts), 156+ record types, ~$600K–$1.6M per-program savings, 10–100x ROI, pricing tiers ($499–$4,999/mo).
+- **Competitive Landscape Enhancement** — Added competitor valuations (Palantir $60B+/$2.2B rev, Anduril $14B/~$800M rev), Microsoft Dynamics ($150K–$800K+) to all competitor tables. SBIR Phase I/II/III dollar ranges ($50K–$250K/$500K–$1.5M/full production) added everywhere.
+- **Funding Path Sections** — Added explicit SBIR Phase I/II/III dollar ranges to INVESTOR_PITCH, INVESTOR_OVERVIEW, and INVESTOR_SLIDE_DECK.
+
+### Changed
+- **Background Animation v4** — Complete rewrite removing floating hash text fragments and matrix-style data streams. Added futuristic anchor enhancements: holographic aura (4-layer concentric glow rings), orbital rings with traveling bright node, energy pulses traveling along chains, chain glow trails, double-stroke shackle with brighter core, parallel shaft highlights, fluke tip micro-glows. Anchors and chains now look distinctly sci-fi/futuristic.
+- **Copyright Entity Branding** — Changed `© 2026 S4 Ledger` to `© 2026 S4 Systems, LLC` across 7 markdown files (WHITEPAPER, SECURITY_AUDIT, SECURITY, CONTRIBUTING, CODE_OF_CONDUCT, BAA_TEMPLATE, README).
+- **DEVELOPER_BIO.md Rewritten** — Changed "founder" to "creator and owner." Added S4 Systems LLC ownership, ILS contractor role, proposed Product Lead/CTO title, zero-cost build, and comprehensive scope of what was built (18 tools, 21 SDK functions, 7 API endpoints, 500+ entities).
+- **WHITEPAPER.md Updated** — Version bumped to 3.9.0. SBIR figures corrected ($50K–$250K Phase I / $500K–$1.5M Phase II / Phase III production). Team section updated with Nick Frankfort credit and S4 Systems LLC.
+- **DoW Budget Corrected** — Fixed `$800B+` to `$850B+` annual DoW budget in INVESTOR_PITCH, INVESTOR_OVERVIEW, and INVESTOR_SLIDE_DECK.
+- **Oracle Cost Fixed** — Corrected Oracle NetSuite from `$100K–$1M+` to `$200K–$1M+` in INVESTOR_SLIDE_DECK competitor table.
+- **S4 Systems LLC Attribution** — All investor documents now identify S4 Ledger as "A product line of S4 Systems, LLC" with Nick Frankfort credited by name.
+- **INVESTOR_RELATIONS.md Enriched** — Added full key performance metrics table, SDK/API counts, 500+ entities, per-program savings, AI Agent to tool list, zero-cost build credit.
+
 ## [3.8.9] - 2026-02-15
 
 ### Added

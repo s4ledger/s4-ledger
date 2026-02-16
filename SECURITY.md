@@ -100,4 +100,4 @@ In the event of a security incident:
 
 ---
 
-© 2026 S4 Ledger. Charleston, SC.
+© 2026 S4 Systems, LLC. Charleston, SC.

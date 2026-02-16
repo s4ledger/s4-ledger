@@ -164,4 +164,4 @@ S4 Ledger's hash-only architecture is fundamentally secure by design. The imposs
 
 ---
 
-© 2026 S4 Ledger. Charleston, SC.
+© 2026 S4 Systems, LLC. Charleston, SC.

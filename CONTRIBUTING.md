@@ -106,4 +106,4 @@ By contributing, you agree that your contributions will be licensed under the Ap
 
 ---
 
-© 2026 S4 Ledger. Charleston, SC.
+© 2026 S4 Systems, LLC. Charleston, SC.

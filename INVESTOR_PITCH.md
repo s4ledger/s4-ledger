@@ -1,8 +1,9 @@
 # S4 Ledger: Investor Pitch
+*A product line of S4 Systems, LLC — Charleston, SC*
 
 ## Vision
 
-S4 Ledger is building the integrity layer for defense logistics — immutable verification of supply chains, maintenance records, technical data, and contract deliverables, anchored on the XRPL and powered by the $SLS utility token.
+S4 Ledger is building the integrity layer for defense logistics — immutable verification of supply chains, maintenance records, technical data, and contract deliverables, anchored on the XRPL and powered by the $SLS utility token. Created and built entirely by **Nick Frankfort**, ILS contractor and proposed Product Lead/CTO, at zero cost to the company.
 
 ## Problem & Opportunity
 
@@ -11,6 +12,8 @@ S4 Ledger is building the integrity layer for defense logistics — immutable ve
 - CDRL delivery disputes consume months of contract resolution time
 - No common integrity layer exists across GCSS, DPAS, 3-M, and contractor ERPs
 - Current solutions are siloed, unverifiable, and expensive
+- **CMMC 2.0 enforcement begins 2025–2026** — every defense contractor must comply
+- **FedRAMP authorization needed to access 80% of the federal software market**
 
 ## Solution
 
@@ -40,7 +43,9 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
   - Issuer: `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5`
   - 100M total supply | ~15M circulating | 30M in multi-sig treasury
 - **18 interactive defense tools** live at s4ledger.com/demo-app — not mockups, real working interfaces
-- **462 real defense platforms** across 9 military branches (Navy, Army, Air Force, Marines, Coast Guard, Space Force, SOF, Joint, Civilian)
+- **21 Python SDK functions** for defense-grade hash anchoring, verification, and batch operations
+- **7 REST API endpoints** for enterprise integration (anchor, verify, batch, status, health, metrics, webhook)
+- **500+ pre-loaded military entities** — 462 real defense platforms across 9 branches, 37 real defense suppliers, 25 real DoW contracts
 - **156+ ILS record categories** mapped to real-world logistics workflows (supports any defense record type)
 - **100+ real defense documents** in searchable reference library (MIL-STDs, OPNAVINSTs, DoD Directives)
 - **Audit Record Vault** — automatic audit trail storage for every anchored record
@@ -48,6 +53,7 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 - Working Python SDK + CLI with defense use case library
 - 14+ page website at s4ledger.com
 - Open-source and auditable
+- **Built entirely by one person at zero cost to the company**
 
 ## Cost Savings
 
@@ -58,13 +64,41 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 | **High-Scale** (50+ programs) | $12M–$48M | $1.2M–$3.6M ARR/enterprise |
 
 *Key drivers: 65% labor reduction, 90% error savings, 70% audit cost reduction, 15-25% DMSMS cost avoidance*
+*Per-program savings: ~$600K–$1.6M/year from 18 ILS tools — 10–100x ROI for government*
+
+## National Impact
+
+- **$150B+ defense logistics market** directly addressable
+- **Saves $600M–$1.6B/year at scale** across all DoW programs
+- **340+ jobs created by Year 5** (30–45 direct + 100–200 indirect at integrators/contractors)
+- **$8M–$17M economic impact** based on DoW's 3.4× economic multiplier
+- Lowers compliance barriers for Tier 2–4 suppliers, expanding the defense industrial base
 
 ## Market
 
-- $800B+ annual DoW budget
+- $850B+ annual DoW budget
 - 12 ILS elements (MIL-STD-1388) — each an addressable market
 - No competitor combines hash-only architecture + public ledger + defense focus
 - Adjacent markets: NATO allies, defense contractors, shipbuilding, aviation MRO
+
+## Competitive Landscape
+
+| Competitor | Valuation | Annual Cost | ILS Tools | Blockchain |
+|---|---|---|---|---|
+| **Palantir** | $60B+ ($2.2B rev) | $1M–$50M+ | None | No |
+| **Anduril** | $14B (~$800M rev) | $10M+ | None | No |
+| **SAP S/4HANA** | — | $500K–$5M+ | Generic | No |
+| **Oracle NetSuite** | — | $200K–$1M+ | Generic | No |
+| **Microsoft Dynamics** | — | $150K–$800K+ | Generic | No |
+| **S4 Ledger** | Pre-revenue | **$6K–$60K** | **18 built-in** | **Yes (XRPL)** |
+
+## Pricing
+
+| Tier | Monthly | Annual |
+|---|---|---|
+| Starter | $499/mo | $6K/yr |
+| Professional | $1,999/mo | $24K/yr |
+| Enterprise | $4,999/mo | $60K/yr |
 
 ## Roadmap
 
@@ -90,9 +124,10 @@ $SLS is a utility token — not equity or a security.
 ## Ask
 
 Seeking strategic investment and partnership for:
-- SBIR/STTR applications (Navy, DIU)
+- SBIR/STTR applications ($50K–$250K Phase I → $500K–$1.5M Phase II → Phase III full production)
 - Pilot program with real contract data
 - Product development (REST API, SaaS dashboard, batch operations)
+- FedRAMP and CMMC certification
 - Compliance certification (NIST, FedRAMP)
 
 ## Contact
