@@ -22,7 +22,7 @@ import time
 try:
     from xrpl.clients import JsonRpcClient
     from xrpl.wallet import generate_faucet_wallet, Wallet
-    from xrpl.models import Memo, Payment, AccountSet
+    from xrpl.models import Memo, Payment, AccountSet, IssuedCurrencyAmount
     from xrpl.transaction import submit_and_wait
     from xrpl.core.keypairs.main import CryptoAlgorithm
     XRPL_AVAILABLE = True
@@ -413,12 +413,16 @@ XRPL_TESTNET_URL = "https://s.altnet.rippletest.net:51234"
 XRPL_MAINNET_URL = "https://xrplcluster.com"
 XRPL_EXPLORER_TESTNET = "https://testnet.xrpl.org/transactions/"
 XRPL_EXPLORER_MAINNET = "https://livenet.xrpl.org/transactions/"
+SLS_TREASURY_WALLET = "rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ"
+SLS_ISSUER_ADDRESS = "r95GyZac4butvVcsTWUPpxzekmyzaHsTA5"  # SLS token issuer
+SLS_ANCHOR_FEE = "0.01"  # SLS fee per anchor
 _xrpl_client = None
 _xrpl_wallet = None
+_xrpl_ops_wallet = None  # Operational wallet for SLS fee payments
 
 def _init_xrpl():
     """Initialize XRPL client and wallet for configured network."""
-    global _xrpl_client, _xrpl_wallet
+    global _xrpl_client, _xrpl_wallet, _xrpl_ops_wallet
     if not XRPL_AVAILABLE or _xrpl_client is not None:
         return
     try:
@@ -433,6 +437,10 @@ def _init_xrpl():
         else:
             print("XRPL mainnet requires XRPL_WALLET_SEED env var")
             _xrpl_client = None
+        # Initialize operational wallet for SLS fee payments
+        ops_seed = os.environ.get("XRPL_OPS_WALLET_SEED")
+        if ops_seed:
+            _xrpl_ops_wallet = Wallet.from_seed(ops_seed, algorithm=CryptoAlgorithm.SECP256K1)
     except Exception as e:
         print(f"XRPL init failed: {e}")
         _xrpl_client = None
@@ -460,7 +468,7 @@ def _anchor_xrpl(hash_value, record_type="", branch=""):
         if response.is_successful():
             tx_hash = response.result["hash"]
             explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
-            return {
+            result = {
                 "tx_hash": tx_hash,
                 "ledger_index": response.result.get("ledger_index"),
                 "fee_drops": response.result.get("Fee", "12"),
@@ -469,6 +477,32 @@ def _anchor_xrpl(hash_value, record_type="", branch=""):
                 "explorer_url": explorer_base + tx_hash,
                 "account": _xrpl_wallet.address
             }
+            # Send SLS anchor fee to treasury from operational wallet
+            if _xrpl_ops_wallet:
+                try:
+                    sls_payment = Payment(
+                        account=_xrpl_ops_wallet.address,
+                        destination=SLS_TREASURY_WALLET,
+                        amount=IssuedCurrencyAmount(
+                            currency="SLS",
+                            issuer=SLS_ISSUER_ADDRESS,
+                            value=SLS_ANCHOR_FEE
+                        ),
+                        memos=[Memo(
+                            memo_type=bytes("s4/fee", "utf-8").hex(),
+                            memo_data=bytes(json.dumps({"type": record_type, "anchor_tx": tx_hash}), "utf-8").hex()
+                        )]
+                    )
+                    fee_resp = submit_and_wait(sls_payment, _xrpl_client, _xrpl_ops_wallet)
+                    if fee_resp.is_successful():
+                        result["sls_fee_tx"] = fee_resp.result["hash"]
+                        result["sls_fee"] = SLS_ANCHOR_FEE
+                        result["sls_treasury"] = SLS_TREASURY_WALLET
+                    else:
+                        print(f"SLS fee payment failed: {fee_resp.result.get('engine_result_message', 'unknown')}")
+                except Exception as fee_err:
+                    print(f"SLS fee payment error: {fee_err}")
+            return result
     except Exception as e:
         print(f"XRPL anchor failed: {e}")
     return None
