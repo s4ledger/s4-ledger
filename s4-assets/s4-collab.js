@@ -1,6 +1,6 @@
 /* ============================================================
    S4 Ledger — Collaboration & Notification Module
-   v3.9.16 — Team action items, comments, email notifications
+   v3.9.17 — Team action items, comments, email notifications
    ============================================================ */
 
 const S4Collab = (() => {

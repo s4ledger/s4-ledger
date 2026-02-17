@@ -22,7 +22,7 @@ import time
 try:
     from xrpl.clients import JsonRpcClient
     from xrpl.wallet import generate_faucet_wallet, Wallet
-    from xrpl.models import Memo, Payment
+    from xrpl.models import Memo, Payment, AccountSet
     from xrpl.transaction import submit_and_wait
     XRPL_AVAILABLE = True
 except ImportError:
@@ -404,32 +404,41 @@ def _aggregate_metrics(records):
 
 
 # ═══════════════════════════════════════════════════════════════════════
-#  XRPL TESTNET ANCHOR ENGINE
+#  XRPL ANCHOR ENGINE — Testnet + Mainnet Support
 # ═══════════════════════════════════════════════════════════════════════
 
+XRPL_NETWORK = os.environ.get("XRPL_NETWORK", "testnet")  # "testnet" or "mainnet"
 XRPL_TESTNET_URL = "https://s.altnet.rippletest.net:51234"
+XRPL_MAINNET_URL = "https://xrplcluster.com"
+XRPL_EXPLORER_TESTNET = "https://testnet.xrpl.org/transactions/"
+XRPL_EXPLORER_MAINNET = "https://livenet.xrpl.org/transactions/"
 _xrpl_client = None
 _xrpl_wallet = None
 
 def _init_xrpl():
-    """Initialize XRPL testnet client and wallet (cached across warm invocations)."""
+    """Initialize XRPL client and wallet for configured network."""
     global _xrpl_client, _xrpl_wallet
     if not XRPL_AVAILABLE or _xrpl_client is not None:
         return
     try:
-        _xrpl_client = JsonRpcClient(XRPL_TESTNET_URL)
+        url = XRPL_MAINNET_URL if XRPL_NETWORK == "mainnet" else XRPL_TESTNET_URL
+        _xrpl_client = JsonRpcClient(url)
         seed = os.environ.get("XRPL_WALLET_SEED")
         if seed:
             _xrpl_wallet = Wallet.from_seed(seed)
-        else:
+        elif XRPL_NETWORK != "mainnet":
+            # Only auto-generate faucet wallet on testnet
             _xrpl_wallet = generate_faucet_wallet(_xrpl_client, debug=False)
+        else:
+            print("XRPL mainnet requires XRPL_WALLET_SEED env var")
+            _xrpl_client = None
     except Exception as e:
         print(f"XRPL init failed: {e}")
         _xrpl_client = None
         _xrpl_wallet = None
 
 def _anchor_xrpl(hash_value, record_type="", branch=""):
-    """Submit a real anchor transaction to XRPL Testnet. Returns tx info or None."""
+    """Submit a real anchor transaction to XRPL. Returns tx info or None."""
     _init_xrpl()
     if not _xrpl_client or not _xrpl_wallet:
         return None
@@ -438,25 +447,26 @@ def _anchor_xrpl(hash_value, record_type="", branch=""):
             "hash": hash_value, "type": record_type, "branch": branch,
             "platform": "S4 Ledger", "ts": datetime.now(timezone.utc).isoformat()
         })
-        tx = Payment(
+        # AccountSet with memo is cheaper than Payment and requires no trust line
+        tx = AccountSet(
             account=_xrpl_wallet.address,
-            destination=_xrpl_wallet.address,
-            amount="1",
             memos=[Memo(
-                memo_type=bytes("text/plain", "utf-8").hex(),
+                memo_type=bytes("s4/anchor", "utf-8").hex(),
                 memo_data=bytes(memo_data, "utf-8").hex()
             )]
         )
         response = submit_and_wait(tx, _xrpl_client, _xrpl_wallet)
         if response.is_successful():
             tx_hash = response.result["hash"]
+            explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
             return {
                 "tx_hash": tx_hash,
                 "ledger_index": response.result.get("ledger_index"),
                 "fee_drops": response.result.get("Fee", "12"),
-                "network": "testnet",
+                "network": XRPL_NETWORK,
                 "verified": True,
-                "explorer_url": f"https://testnet.xrpl.org/transactions/{tx_hash}"
+                "explorer_url": explorer_base + tx_hash,
+                "account": _xrpl_wallet.address
             }
     except Exception as e:
         print(f"XRPL anchor failed: {e}")
@@ -490,9 +500,13 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    MAX_BODY_SIZE = 1_048_576  # 1 MB
+
     def _read_body(self):
         length = int(self.headers.get("Content-Length", 0))
         if length == 0:
+            return {}
+        if length > self.MAX_BODY_SIZE:
             return {}
         raw = self.rfile.read(length)
         try:
@@ -607,7 +621,7 @@ class handler(BaseHTTPRequestHandler):
                 "uptime_seconds": round(uptime, 1),
                 "requests_served": len(_request_log),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
-                "version": "3.9.7",
+                "version": "3.9.17",
                 "tools": ["anchor", "verify", "ils-workspace", "dmsms-tracker", "readiness-calculator", "parts-xref", "roi-calculator", "lifecycle-cost", "warranty-tracker", "audit-vault", "doc-library", "compliance-scorecard", "provisioning-ptd", "supply-chain-risk", "audit-reports", "contracts", "digital-thread", "predictive-maintenance"],
             })
         elif route == "status":
@@ -615,7 +629,7 @@ class handler(BaseHTTPRequestHandler):
             self._send_json({
                 "status": "operational",
                 "service": "S4 Ledger Defense Metrics API",
-                "version": "3.9.7",
+                "version": "3.9.17",
                 "record_types": len(RECORD_CATEGORIES),
                 "branches": len(BRANCHES),
                 "total_records": len(_get_all_records()),
@@ -646,19 +660,22 @@ class handler(BaseHTTPRequestHandler):
             self._send_json({"branches": BRANCHES, "categories": RECORD_CATEGORIES, "grouped": grouped})
         elif route == "xrpl_status":
             _init_xrpl()
+            explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
+            endpoint = XRPL_MAINNET_URL if XRPL_NETWORK == "mainnet" else XRPL_TESTNET_URL
             self._send_json({
                 "xrpl_available": XRPL_AVAILABLE,
                 "connected": _xrpl_client is not None,
                 "wallet": _xrpl_wallet.address if _xrpl_wallet else None,
-                "network": "testnet",
-                "endpoint": XRPL_TESTNET_URL,
-                "note": "Real XRPL Testnet transactions. Verify at testnet.xrpl.org"
+                "network": XRPL_NETWORK,
+                "endpoint": endpoint,
+                "explorer": explorer_base,
+                "note": f"Real XRPL {XRPL_NETWORK.capitalize()} transactions. Verify at {'livenet' if XRPL_NETWORK == 'mainnet' else 'testnet'}.xrpl.org"
             })
         elif route == "infrastructure":
             self._send_json({
                 "infrastructure": {
-                    "api": {"status": "operational", "version": "3.9.7", "framework": "BaseHTTPRequestHandler", "tools": 9, "platforms": 462},
-                    "xrpl": {"available": XRPL_AVAILABLE, "network": "testnet", "endpoint": XRPL_TESTNET_URL},
+                    "api": {"status": "operational", "version": "3.9.17", "framework": "BaseHTTPRequestHandler", "tools": 9, "platforms": 462},
+                    "xrpl": {"available": XRPL_AVAILABLE, "network": XRPL_NETWORK, "endpoint": XRPL_MAINNET_URL if XRPL_NETWORK == "mainnet" else XRPL_TESTNET_URL},
                     "database": {"provider": "Supabase" if SUPABASE_AVAILABLE else "In-Memory", "connected": SUPABASE_AVAILABLE, "url": SUPABASE_URL[:30] + "..." if SUPABASE_URL else None},
                     "auth": {"enabled": True, "methods": ["API Key", "Bearer Token"], "master_key_set": bool(os.environ.get("S4_API_MASTER_KEY"))},
                     "compliance": {
@@ -806,8 +823,16 @@ class handler(BaseHTTPRequestHandler):
             self._send_json({"month": month, "year": year, "events": events, "total": len(events)})
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)
+
+    def do_POST(self):
         parsed = urlparse(self.path)
         route = self._route(parsed.path)
+
+        # Rate limiting
+        if not self._check_rate_limit():
+            self._send_json({"error": "Rate limit exceeded", "retry_after": RATE_LIMIT_WINDOW}, 429)
+            return
+
         data = self._read_body()
 
         if route == "anchor":
@@ -821,7 +846,7 @@ class handler(BaseHTTPRequestHandler):
 
             if xrpl_result:
                 tx_hash = xrpl_result["tx_hash"]
-                network = "XRPL Testnet"
+                network = "XRPL " + XRPL_NETWORK.capitalize()
                 explorer_url = xrpl_result["explorer_url"]
             else:
                 tx_hash = data.get("tx_hash", "TX" + hashlib.md5(str(now).encode()).hexdigest().upper()[:32])
@@ -876,7 +901,7 @@ class handler(BaseHTTPRequestHandler):
                 if found:
                     chain_hash = found[0].get("hash", "")
                     anchored_at = found[0].get("timestamp", "")
-                    explorer_url = found[0].get("explorer_url") or f"https://testnet.xrpl.org/transactions/{tx_hash}"
+                    explorer_url = found[0].get("explorer_url") or (XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET) + tx_hash
             elif expected_hash:
                 chain_hash = expected_hash
             else:
@@ -886,7 +911,7 @@ class handler(BaseHTTPRequestHandler):
                     chain_hash = found[0].get("hash", "")
                     tx_hash = found[0].get("tx_hash", "")
                     anchored_at = found[0].get("timestamp", "")
-                    explorer_url = found[0].get("explorer_url") or f"https://testnet.xrpl.org/transactions/{tx_hash}"
+                    explorer_url = found[0].get("explorer_url") or (XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET) + tx_hash
 
             if chain_hash is None:
                 status = "NOT_FOUND"

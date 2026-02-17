@@ -1,6 +1,6 @@
 /* ============================================================
    S4 Ledger — Auth & Session Management Service
-   v3.9.16 — User authentication, saved sessions, role-based UI
+   v3.9.17 — User authentication, saved sessions, role-based UI
    ============================================================ */
 
 const S4Auth = (() => {

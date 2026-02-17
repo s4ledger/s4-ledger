@@ -1,6 +1,6 @@
 /* ============================================================
    S4 Ledger — Persistent Data Layer (IndexedDB + localStorage)
-   v3.9.16 — Save analyses, action items, vault records, settings
+   v3.9.17 — Save analyses, action items, vault records, settings
    ============================================================ */
 
 const S4Data = (() => {

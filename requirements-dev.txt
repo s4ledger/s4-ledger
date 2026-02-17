@@ -1,5 +1,5 @@
-xrpl-py>=2.3.0
+xrpl-py>=2.6.0
 cryptography>=41.0.0
 pytest>=7.0.0
-flask
-flask-cors
+flask>=3.0.0
+flask-cors>=4.0.0

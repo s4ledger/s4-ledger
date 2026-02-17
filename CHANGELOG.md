@@ -5,6 +5,40 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.17] - 2026-02-17
+
+### Added — Context-Aware Export, XRPL Mainnet Support, Production Hardening
+
+- **Context-Aware PDF/CSV Export** — Export toolbar now detects which ILS tool tab is active and exports that tool's data. "Export PDF" generates per-tool PDF reports with classification banners, summary metrics, data tables, and structured content. "Export CSV" routes to each tool's native CSV export function. Export bar label dynamically updates to show "Export: [Tool Name]" when switching tabs.
+- **Universal Tool PDF Export** — New `S4PDF.exportActiveToolPDF()` and `S4PDF.exportActiveToolCSV()` methods route export to the correct sub-tool. New `S4PDF.exportToolPanelPDF()` captures any tool panel's tables, stats, and content into a professional PDF report.
+- **XRPL Mainnet Support** — API backend (`api/index.py`) now supports mainnet via `XRPL_NETWORK` env var. Uses `AccountSet` + memo (cheaper than Payment, no trust line needed). Explorer URLs dynamically switch between testnet.xrpl.org and livenet.xrpl.org. Mainnet requires `XRPL_WALLET_SEED` env var (no auto-generated faucet wallets).
+- **Real API Anchoring in Demo App** — `anchorRecord()` now uses the API response's real `tx_hash`, `network`, and `explorer_url` instead of generating random TX hashes. Anchor results display clickable explorer links and network badges (MAINNET/TESTNET/SIMULATED).
+- **Production Security Headers** — Added Content-Security-Policy, Permissions-Policy, X-Permitted-Cross-Domain-Policies to vercel.json. HSTS upgraded to 2-year with preload directive.
+- **API `do_POST` Method Fix** — **Critical bug fix**: POST endpoints (anchor, hash, verify, categorize, auth, db) were unreachable dead code inside `do_GET`. Now properly routed through a real `do_POST` method with rate limiting.
+- **Request Body Size Limit** — API now rejects request bodies larger than 1 MB.
+- **Marketplace Navigation** — Added Marketplace link to Products dropdown on all 12 pages that were missing it (s4-about, s4-pricing, s4-faq, s4-roadmap, s4-contact, s4-investors, s4-partners, s4-terms, s4-privacy, security, sdk-playground, s4-login).
+- **robots.txt** — Created with crawl rules (allow public pages, disallow API/assets/login/playground/demo-app).
+- **sitemap.xml** — Created with 14 public page entries and proper priority/changefreq values.
+- **Login Dashboard Expansion** — Now shows 12 tool cards (added PDF & CSV Export, Task Assignment & Collaboration, Authentication & Sessions, Marketplace). SDK card updated to "27 functions". Removed "Team Management COMING SOON".
+
+### Changed — Emoji Removal, UI Fixes, Pricing & Content Accuracy
+
+- **Demo-App Emoji Elimination (164+ lines)** — Replaced ALL remaining emojis in demo-app JavaScript: 4 CLF_META icons, 9 BRANCHES icons, 150+ record type icons (`_RT` object), srcIcons, vault icons, audit report type icons, AI chatbot greeting strings, optgroup labels, and all `animStatus` messages. All now use FontAwesome 6 class names rendered via `innerHTML` with `<i class="fas">` elements. Zero emojis remain.
+- **CUI Rendering Bug Fix** — CLF icon element was using `textContent` to set FontAwesome class names (displaying "fa-shield-alt" as text). Fixed to use `innerHTML` with proper `<i>` elements.
+- **Landing Page Title** — Changed from "XRP Ledger" focus to "Immutable Defense Logistics on the S4 Ledger". Meta title/description updated accordingly.
+- **Badge Alignment** — Added `white-space:nowrap` to "Built on XRP Ledger" and "$SLS Token LIVE" badges to prevent misalignment.
+- **Pricing Consistency** — Standardized all anchor cost references to `$0.01` SLS (was inconsistent between `$0.001` and `$0.01`). Updated stat card, Why XRPL section, and comparison table.
+- **Competitive Landscape Expanded** — From 4 entries to 9 competitors in 2 categories: Blockchain Solutions (Guardtime KSI, SIMBA Chain, Hyperledger/R3 Corda, Ethereum/Polygon) and Enterprise & Defense Tech (Palantir Foundry, IBM/Accenture, GCSS/GFEBS/LMP, Manual Audit/Excel), plus S4 Ledger highlight bar.
+- **Footer Copyright** — Updated from © 2025 to © 2026 across login page and PDF export engine.
+
+### Infrastructure — Production Readiness
+
+- **Dockerfile** — Updated from Python 3.14-slim (unreleased) to 3.12-slim. Added non-root user, health check, layer caching, proper WORKDIR setup.
+- **API Version Strings** — Normalized health, status, infrastructure, and openapi.json endpoints to v3.9.17.
+- **pyproject.toml** — Version updated from 3.0.0 to 3.9.17. Development status changed to "Production/Stable".
+- **requirements-dev.txt** — Aligned xrpl-py minimum version with production (>=2.6.0). Pinned flask (>=3.0.0) and flask-cors (>=4.0.0).
+- **vercel.json** — Added 8 missing API route rewrites (verify, supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance, action-items, calendar).
+
 ## [3.9.16] - 2026-02-16
 
 ### Added — Platform Feature Upgrades: Auth, Persistence, Export, Collaboration, Mobile

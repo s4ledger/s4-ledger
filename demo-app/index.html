@@ -1403,7 +1403,7 @@
                             <h5 style="font-size:0.88rem;margin-bottom:10px;color:#fff"><i class="fas fa-trophy" style="color:#c9a84c;margin-right:6px"></i> S4 Ledger vs ICAPS</h5>
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.78rem">
                                 <div style="color:var(--steel)"><span style="color:#14f195">✓</span> All DoW branches</div><div style="color:var(--muted)"><span style="color:#ff3333">✗</span> ICAPS: Navy/USMC only</div>
-                                <div style="color:var(--steel)"><span style="color:#14f195">✓</span> All 12 ILS elements</div><div style="color:var(--muted)"><span style="color:#ff3333">✗</span> ICAPS: Supply Support only</div>
+                                <div style="color:var(--steel)"><span style="color:#14f195">✓</span> All 20 ILS tools</div><div style="color:var(--muted)"><span style="color:#ff3333">✗</span> ICAPS: Supply Support only</div>
                                 <div style="color:var(--steel)"><span style="color:#14f195">✓</span> Blockchain verification</div><div style="color:var(--muted)"><span style="color:#ff3333">✗</span> ICAPS: No verification</div>
                                 <div style="color:var(--steel)"><span style="color:#14f195">✓</span> DMSMS + readiness integration</div><div style="color:var(--muted)"><span style="color:#ff3333">✗</span> ICAPS: Standalone tool</div>
                                 <div style="color:var(--steel)"><span style="color:#14f195">✓</span> Compliance scoring</div><div style="color:var(--muted)"><span style="color:#ff3333">✗</span> ICAPS: No compliance</div>
@@ -2173,176 +2173,176 @@ const CLF_META = {
 function getClassification(typeKey) { return CLASSIFICATION[typeKey] || 'CUI'; }
 
 const BRANCHES = {
-    USN:{name:"U.S. Navy",icon:"\u2693",short:"Navy"},
-    USA:{name:"U.S. Army",icon:"\u2B50",short:"Army"},
-    USAF:{name:"U.S. Air Force",icon:"\u2708\uFE0F",short:"Air Force"},
-    USMC:{name:"U.S. Marine Corps",icon:"\uD83E\uDD85",short:"Marines"},
-    USCG:{name:"U.S. Coast Guard",icon:"\uD83D\uDEDF\uFE0F",short:"Coast Guard"},
-    DLA:{name:"Defense Logistics Agency",icon:"\uD83C\uDFDB\uFE0F",short:"DLA"},
-    JOINT:{name:"Joint / Cross-Branch",icon:"\uD83C\uDF96\uFE0F",short:"Joint"},
-    SOCOM:{name:"Special Operations",icon:"\uD83D\uDDE1\uFE0F",short:"SOCOM"},
-    USSF:{name:"U.S. Space Force",icon:"\uD83D\uDE80",short:"Space Force"}
+    USN:{name:"U.S. Navy",icon:"fa-anchor",short:"Navy"},
+    USA:{name:"U.S. Army",icon:"fa-star",short:"Army"},
+    USAF:{name:"U.S. Air Force",icon:"fa-plane",short:"Air Force"},
+    USMC:{name:"U.S. Marine Corps",icon:"fa-feather-alt",short:"Marines"},
+    USCG:{name:"U.S. Coast Guard",icon:"fa-life-ring",short:"Coast Guard"},
+    DLA:{name:"Defense Logistics Agency",icon:"fa-landmark",short:"DLA"},
+    JOINT:{name:"Joint / Cross-Branch",icon:"fa-medal",short:"Joint"},
+    SOCOM:{name:"Special Operations",icon:"fa-shield-alt",short:"SOCOM"},
+    USSF:{name:"U.S. Space Force",icon:"fa-rocket",short:"Space Force"}
 };
 
 // Compact: [label, icon, color, branch, system]
 const _RT = {
-USN_SUPPLY_RECEIPT:["Supply Chain Receipt","\uD83D\uDCE6","#00aaff","USN","NAVSUP OneTouch"],
-USN_3M_MAINTENANCE:["3-M Maintenance Action","\uD83D\uDD27","#ffd700","USN","SKED/OARS"],
-USN_CASREP:["Casualty Report (CASREP)","\u26A0\uFE0F","#ff3333","USN","TYCOM"],
-USN_CDRL:["CDRL Delivery","\uD83D\uDCC4","#8ea4b8","USN","CDMD-OA"],
-USN_ORDNANCE:["Ordnance Lot Tracking","\uD83D\uDCA3","#ff6b6b","USN","AESIP"],
-USN_DEPOT_REPAIR:["Depot Repair Record","\uD83C\uDFED","#ff9933","USN","CNRMF"],
-USN_INSURV:["INSURV Inspection","\uD83D\uDD0D","#66ccff","USN","NRCC"],
-USN_CALIBRATION:["TMDE Calibration","\uD83D\uDCCF","#ff66aa","USN","METCAL"],
-USN_CONFIG:["Configuration Baseline","\u2699\uFE0F","#c9a84c","USN","CDMD-OA"],
-USN_CUSTODY:["Custody Transfer","\uD83D\uDD04","#14f195","USN","DPAS"],
-USN_TDP:["Technical Data Package","\uD83D\uDCD0","#9945ff","USN","NAVSEA"],
-USN_COC:["Certificate of Conformance","\u2705","#00cc88","USN","DCMA"],
-USN_SHIPALT:["Ship Alteration (SHIPALT)","\uD83D\uDEA2","#0077cc","USN","NAVSEA"],
-USN_PMS:["PMS/SKED Compliance","\uD83D\uDCCB","#44aa88","USN","3M/SKED"],
-USN_HME:["HM&E System Record","\u26A1","#dd8844","USN","ENGSKED"],
-USN_COMBAT_SYS:["Combat Systems Cert","\uD83C\uDFAF","#ff4444","USN","CSSQT"],
-USN_PROPULSION:["Propulsion Plant Exam","\uD83D\uDD25","#ff6600","USN","INSURV"],
-USN_AVIATION:["Aviation Maintenance","\u2708\uFE0F","#0088cc","USN","NALCOMIS"],
-USN_FLIGHT_OPS:["Flight Operations Record","\uD83D\uDEEB","#3399ff","USN","NATOPS"],
-USN_SUBSAFE:["SUBSAFE Certification","\uD83D\uDD12","#003366","USN","NAVSEA 07"],
-USN_DIVE_EQUIP:["Diving Equipment Inspection","\uD83E\uDD3F","#006699","USN","NAVSEA 00C"],
-USN_MEDICAL:["Medical Equipment Cert","\uD83C\uDFE5","#33cc66","USN","BUMED"],
-USN_QDR:["Quality Defect Report","\uD83D\uDEAB","#cc0000","USN","NAVSUP WSS"],
-USN_FIELDING:["Equipment Fielding","\uD83D\uDEA2","#00ddaa","USN","PMS"],
-USN_REACTOR:["Naval Reactor Test","\u2622\uFE0F","#ffcc00","USN","NAVSEA 08"],
-USN_DRL:["Data Requirements List (DRL)","\uD83D\uDCCB","#5599cc","USN","NAVSEA/PMS"],
-USN_DI:["Data Item Description (DID)","\uD83D\uDCC3","#4488bb","USN","CDMD-OA"],
-USN_VRS:["Vendor Recommended Spares","\uD83D\uDCE6","#7799aa","USN","NAVICP/DLA"],
-USN_BUYLIST:["Buylist / Provisioning","\uD83D\uDED2","#6688aa","USN","NAVSUP WSS"],
-USN_J1_ILS:["J-1 ILS Parameters / LORA","\uD83D\uDCD1","#336699","USN","PMS/ILS"],
-USN_J2_SE:["J-2 Support Equipment","\uD83D\uDD27","#337799","USN","PMS/ILS"],
-USN_J3_SUPPLY:["J-3 Supply Support","\uD83D\uDCE6","#338899","USN","NAVSUP"],
-USN_J4_TECHDATA:["J-4 Technical Data","\uD83D\uDCD6","#339999","USN","NAVSEA"],
-USN_J5_TRAINING:["J-5 Training","\uD83C\uDF93","#33aa99","USN","NETC"],
-USN_J6_MANPOWER:["J-6 Manpower & Personnel","\uD83D\uDC65","#4488cc","USN","OPNAV N1"],
-USN_J7_FACILITIES:["J-7 Facilities","\uD83C\uDFD7\uFE0F","#5577bb","USN","NAVFAC"],
-USN_J8_PHST:["J-8 PHS&T","\uD83D\uDCE6","#6699cc","USN","NAVSUP"],
-USN_J9_SOFTWARE:["J-9 Computer Resources","\uD83D\uDCBB","#4477aa","USN","SPAWAR/NAVWAR"],
-USN_J10_DESIGN:["J-10 Design Interface","\uD83D\uDCD0","#3366aa","USN","NAVSEA"],
-USN_J11_RAM:["J-11 RAM Analysis","\uD83D\uDCC8","#2255aa","USN","PMS/ILS"],
-USN_J12_ACQLOG:["J-12 Acquisition Logistics","\uD83D\uDCCA","#2266bb","USN","PMS/ILS"],
-USN_J13_CM:["J-13 Configuration Mgmt","\u2699\uFE0F","#3377cc","USN","CDMD-OA"],
-USN_J14_DISPOSAL:["J-14 Disposal","\uD83D\uDDD1\uFE0F","#667788","USN","DRMS"],
-USN_BAM:["Budget Allowance Mgmt (BAM)","\uD83D\uDCB0","#cc9933","USN","NAVSUP"],
-USN_TRANSFER_BOOK:["Transfer Book","\uD83D\uDCD3","#5588aa","USN","Supply Officer"],
-USN_COTS_MANUAL:["COTS Manual / Documentation","\uD83D\uDCD8","#4477bb","USN","NAVSEA"],
-USN_TM_INDEX:["Technical Manual Index","\uD83D\uDCC7","#3366bb","USN","NAVSEA"],
-USN_PO_INDEX:["Purchase Order Index","\uD83D\uDCC2","#5588cc","USN","NAVSUP"],
-USN_PID:["Program Introduction Doc (PID)","\uD83D\uDCC4","#6699bb","USN","PMS"],
-USN_CONTRACT_MOD:["Contract Modification","\uD83D\uDCDD","#7788aa","USN","NAVSEA Contracts"],
-USN_CONFIG_MGMT:["Configuration Mgmt Record","\u2699\uFE0F","#4466aa","USN","CDMD-OA"],
-USN_OUTFITTING:["Outfitting Requirements","\uD83D\uDEA2","#3355aa","USN","PMS/Outfitting"],
-USN_PURCHASE_REQ:["Purchase Request (PR)","\uD83D\uDCB3","#558899","USN","NAVSUP"],
-USA_HAND_RECEIPT:["DA 2062 Hand Receipt","\uD83D\uDCDD","#4b5320","USA","GCSS-Army"],
-USA_TM_UPDATE:["Technical Manual Update","\uD83D\uDCD6","#6b8e23","USA","LOGSA"],
-USA_ARMS_ROOM:["Arms Room Inventory","\uD83D\uDD2B","#8b4513","USA","PBUSE"],
-USA_FLIPL:["FLIPL Investigation","\uD83D\uDCCB","#cd853f","USA","GCSS-Army"],
-USA_VEHICLE:["Vehicle Dispatch Log","\uD83D\uDE9B","#556b2f","USA","GCSS-Army"],
-USA_CLASS_III:["Class III (POL) Issue","\u26FD","#8b8000","USA","GCSS-Army"],
-USA_CLASS_V:["Class V (Ammo) Issue","\uD83D\uDCA5","#b22222","USA","SAAS"],
-USA_EQUIP_MAINT:["Equipment Maintenance","\uD83D\uDD27","#696969","USA","GCSS-Army"],
-USA_AMMO_STORAGE:["Ammo Storage Inspection","\uD83C\uDFED","#a0522d","USA","QASAS"],
-USA_RANGE_QUAL:["Range Qualification","\uD83C\uDFAF","#2e8b57","USA","DTMS"],
-USA_CALIBRATION:["TMDE Calibration (Army)","\uD83D\uDCCF","#daa520","USA","TMDE Activity"],
+USN_SUPPLY_RECEIPT:["Supply Chain Receipt","fa-box","#00aaff","USN","NAVSUP OneTouch"],
+USN_3M_MAINTENANCE:["3-M Maintenance Action","fa-wrench","#ffd700","USN","SKED/OARS"],
+USN_CASREP:["Casualty Report (CASREP)","fa-exclamation-triangle","#ff3333","USN","TYCOM"],
+USN_CDRL:["CDRL Delivery","fa-file-alt","#8ea4b8","USN","CDMD-OA"],
+USN_ORDNANCE:["Ordnance Lot Tracking","fa-bomb","#ff6b6b","USN","AESIP"],
+USN_DEPOT_REPAIR:["Depot Repair Record","fa-industry","#ff9933","USN","CNRMF"],
+USN_INSURV:["INSURV Inspection","fa-search","#66ccff","USN","NRCC"],
+USN_CALIBRATION:["TMDE Calibration","fa-ruler","#ff66aa","USN","METCAL"],
+USN_CONFIG:["Configuration Baseline","fa-cog","#c9a84c","USN","CDMD-OA"],
+USN_CUSTODY:["Custody Transfer","fa-sync-alt","#14f195","USN","DPAS"],
+USN_TDP:["Technical Data Package","fa-drafting-compass","#9945ff","USN","NAVSEA"],
+USN_COC:["Certificate of Conformance","fa-check-circle","#00cc88","USN","DCMA"],
+USN_SHIPALT:["Ship Alteration (SHIPALT)","fa-ship","#0077cc","USN","NAVSEA"],
+USN_PMS:["PMS/SKED Compliance","fa-clipboard-list","#44aa88","USN","3M/SKED"],
+USN_HME:["HM&E System Record","fa-bolt","#dd8844","USN","ENGSKED"],
+USN_COMBAT_SYS:["Combat Systems Cert","fa-crosshairs","#ff4444","USN","CSSQT"],
+USN_PROPULSION:["Propulsion Plant Exam","fa-fire","#ff6600","USN","INSURV"],
+USN_AVIATION:["Aviation Maintenance","fa-plane","#0088cc","USN","NALCOMIS"],
+USN_FLIGHT_OPS:["Flight Operations Record","fa-plane-departure","#3399ff","USN","NATOPS"],
+USN_SUBSAFE:["SUBSAFE Certification","fa-lock","#003366","USN","NAVSEA 07"],
+USN_DIVE_EQUIP:["Diving Equipment Inspection","fa-water","#006699","USN","NAVSEA 00C"],
+USN_MEDICAL:["Medical Equipment Cert","fa-hospital","#33cc66","USN","BUMED"],
+USN_QDR:["Quality Defect Report","fa-ban","#cc0000","USN","NAVSUP WSS"],
+USN_FIELDING:["Equipment Fielding","fa-ship","#00ddaa","USN","PMS"],
+USN_REACTOR:["Naval Reactor Test","fa-radiation","#ffcc00","USN","NAVSEA 08"],
+USN_DRL:["Data Requirements List (DRL)","fa-clipboard-list","#5599cc","USN","NAVSEA/PMS"],
+USN_DI:["Data Item Description (DID)","fa-file-contract","#4488bb","USN","CDMD-OA"],
+USN_VRS:["Vendor Recommended Spares","fa-box","#7799aa","USN","NAVICP/DLA"],
+USN_BUYLIST:["Buylist / Provisioning","fa-shopping-cart","#6688aa","USN","NAVSUP WSS"],
+USN_J1_ILS:["J-1 ILS Parameters / LORA","fa-file-alt","#336699","USN","PMS/ILS"],
+USN_J2_SE:["J-2 Support Equipment","fa-wrench","#337799","USN","PMS/ILS"],
+USN_J3_SUPPLY:["J-3 Supply Support","fa-box","#338899","USN","NAVSUP"],
+USN_J4_TECHDATA:["J-4 Technical Data","fa-book-open","#339999","USN","NAVSEA"],
+USN_J5_TRAINING:["J-5 Training","fa-graduation-cap","#33aa99","USN","NETC"],
+USN_J6_MANPOWER:["J-6 Manpower & Personnel","fa-users","#4488cc","USN","OPNAV N1"],
+USN_J7_FACILITIES:["J-7 Facilities","fa-hard-hat","#5577bb","USN","NAVFAC"],
+USN_J8_PHST:["J-8 PHS&T","fa-box","#6699cc","USN","NAVSUP"],
+USN_J9_SOFTWARE:["J-9 Computer Resources","fa-laptop","#4477aa","USN","SPAWAR/NAVWAR"],
+USN_J10_DESIGN:["J-10 Design Interface","fa-drafting-compass","#3366aa","USN","NAVSEA"],
+USN_J11_RAM:["J-11 RAM Analysis","fa-chart-line","#2255aa","USN","PMS/ILS"],
+USN_J12_ACQLOG:["J-12 Acquisition Logistics","fa-chart-bar","#2266bb","USN","PMS/ILS"],
+USN_J13_CM:["J-13 Configuration Mgmt","fa-cog","#3377cc","USN","CDMD-OA"],
+USN_J14_DISPOSAL:["J-14 Disposal","fa-trash-alt","#667788","USN","DRMS"],
+USN_BAM:["Budget Allowance Mgmt (BAM)","fa-money-bill-wave","#cc9933","USN","NAVSUP"],
+USN_TRANSFER_BOOK:["Transfer Book","fa-book","#5588aa","USN","Supply Officer"],
+USN_COTS_MANUAL:["COTS Manual / Documentation","fa-book","#4477bb","USN","NAVSEA"],
+USN_TM_INDEX:["Technical Manual Index","fa-address-card","#3366bb","USN","NAVSEA"],
+USN_PO_INDEX:["Purchase Order Index","fa-folder-open","#5588cc","USN","NAVSUP"],
+USN_PID:["Program Introduction Doc (PID)","fa-file-alt","#6699bb","USN","PMS"],
+USN_CONTRACT_MOD:["Contract Modification","fa-pen","#7788aa","USN","NAVSEA Contracts"],
+USN_CONFIG_MGMT:["Configuration Mgmt Record","fa-cog","#4466aa","USN","CDMD-OA"],
+USN_OUTFITTING:["Outfitting Requirements","fa-ship","#3355aa","USN","PMS/Outfitting"],
+USN_PURCHASE_REQ:["Purchase Request (PR)","fa-credit-card","#558899","USN","NAVSUP"],
+USA_HAND_RECEIPT:["DA 2062 Hand Receipt","fa-pen","#4b5320","USA","GCSS-Army"],
+USA_TM_UPDATE:["Technical Manual Update","fa-book-open","#6b8e23","USA","LOGSA"],
+USA_ARMS_ROOM:["Arms Room Inventory","fa-crosshairs","#8b4513","USA","PBUSE"],
+USA_FLIPL:["FLIPL Investigation","fa-clipboard-list","#cd853f","USA","GCSS-Army"],
+USA_VEHICLE:["Vehicle Dispatch Log","fa-truck","#556b2f","USA","GCSS-Army"],
+USA_CLASS_III:["Class III (POL) Issue","fa-gas-pump","#8b8000","USA","GCSS-Army"],
+USA_CLASS_V:["Class V (Ammo) Issue","fa-bomb","#b22222","USA","SAAS"],
+USA_EQUIP_MAINT:["Equipment Maintenance","fa-wrench","#696969","USA","GCSS-Army"],
+USA_AMMO_STORAGE:["Ammo Storage Inspection","fa-industry","#a0522d","USA","QASAS"],
+USA_RANGE_QUAL:["Range Qualification","fa-crosshairs","#2e8b57","USA","DTMS"],
+USA_CALIBRATION:["TMDE Calibration (Army)","fa-ruler","#daa520","USA","TMDE Activity"],
 USA_PROPERTY_BOOK:["Property Book Record","\uD83D\uDCD7","#3cb371","USA","PBUSE"],
 USA_COMPONENT_HR:["Component Hand Receipt","\uD83D\uDDC2\uFE0F","#8fbc8f","USA","GCSS-Army"],
-USA_DENSITY_LIST:["Equipment Density List","\uD83D\uDCCA","#66cdaa","USA","GCSS-Army"],
-USA_GCSS_TRANS:["GCSS-Army Transaction","\uD83D\uDCBB","#20b2aa","USA","GCSS-Army"],
-USA_AVIATION:["Aviation Maintenance","\uD83D\uDE81","#2f4f4f","USA","ULLS-A(E)"],
-USA_MEDICAL:["Medical Supply Record","\uD83C\uDFE5","#3cb371","USA","DMLSS"],
+USA_DENSITY_LIST:["Equipment Density List","fa-chart-bar","#66cdaa","USA","GCSS-Army"],
+USA_GCSS_TRANS:["GCSS-Army Transaction","fa-laptop","#20b2aa","USA","GCSS-Army"],
+USA_AVIATION:["Aviation Maintenance","fa-helicopter","#2f4f4f","USA","ULLS-A(E)"],
+USA_MEDICAL:["Medical Supply Record","fa-hospital","#3cb371","USA","DMLSS"],
 USA_CBRN:["CBRN Equipment Record","\u2623\uFE0F","#8b0000","USA","GCSS-Army"],
-USA_ENGINEER:["Engineer Equipment","\uD83C\uDFD7\uFE0F","#808000","USA","GCSS-Army"],
-USA_SIGNAL:["Signal/Comms Equipment","\uD83D\uDCE1","#4682b4","USA","LMP"],
-USAF_781_FLIGHT:["AFTO 781 Flight Record","\u2708\uFE0F","#00308f","USAF","IMDS"],
-USAF_MUNITIONS:["Munitions Inspection","\uD83D\uDCA3","#cd5c5c","USAF","CAS"],
-USAF_ENGINE:["Engine Management Record","\uD83D\uDD25","#ff8c00","USAF","CEMS"],
-USAF_WEAPONS_LOAD:["Weapons Load Certification","\uD83C\uDFAF","#dc143c","USAF","MIS"],
-USAF_STRUCT_INTEG:["Aircraft Structural Record","\uD83D\uDEE1\uFE0F","#4169e1","USAF","ASIP"],
+USA_ENGINEER:["Engineer Equipment","fa-hard-hat","#808000","USA","GCSS-Army"],
+USA_SIGNAL:["Signal/Comms Equipment","fa-satellite-dish","#4682b4","USA","LMP"],
+USAF_781_FLIGHT:["AFTO 781 Flight Record","fa-plane","#00308f","USAF","IMDS"],
+USAF_MUNITIONS:["Munitions Inspection","fa-bomb","#cd5c5c","USAF","CAS"],
+USAF_ENGINE:["Engine Management Record","fa-fire","#ff8c00","USAF","CEMS"],
+USAF_WEAPONS_LOAD:["Weapons Load Certification","fa-crosshairs","#dc143c","USAF","MIS"],
+USAF_STRUCT_INTEG:["Aircraft Structural Record","fa-shield-alt","#4169e1","USAF","ASIP"],
 USAF_AVIONICS:["Avionics Test Record","\uD83D\uDCDF","#6a5acd","USAF","IMDS"],
-USAF_NUCLEAR:["Nuclear Weapons Cert","\u2622\uFE0F","#ffd700","USAF","AFGSC"],
-USAF_MISSILE:["Missile Maintenance Record","\uD83D\uDE80","#b8860b","USAF","MMICS"],
-USAF_SPACE:["Space Vehicle Certification","\uD83D\uDEF0\uFE0F","#191970","USAF","USSF"],
-USAF_RADAR:["Radar Calibration Record","\uD83D\uDCE1","#00bfff","USAF","IMDS"],
+USAF_NUCLEAR:["Nuclear Weapons Cert","fa-radiation","#ffd700","USAF","AFGSC"],
+USAF_MISSILE:["Missile Maintenance Record","fa-rocket","#b8860b","USAF","MMICS"],
+USAF_SPACE:["Space Vehicle Certification","fa-satellite","#191970","USAF","USSF"],
+USAF_RADAR:["Radar Calibration Record","fa-satellite-dish","#00bfff","USAF","IMDS"],
 USAF_RUNWAY:["Runway Condition Report","\uD83D\uDEEC","#708090","USAF","BCAS"],
-USAF_BDR:["Battle Damage Assessment","\uD83D\uDCA5","#ff4500","USAF","BDA"],
-USAF_SUPPLY:["AF Supply Transaction","\uD83D\uDCE6","#1e90ff","USAF","SBSS"],
+USAF_BDR:["Battle Damage Assessment","fa-bomb","#ff4500","USAF","BDA"],
+USAF_SUPPLY:["AF Supply Transaction","fa-box","#1e90ff","USAF","SBSS"],
 USAF_AGE:["Aerospace Ground Equipment","\uD83D\uDD29","#778899","USAF","IMDS"],
-USAF_FUEL:["Fuel Management Record","\u26FD","#daa520","USAF","AFPET"],
-USAF_DEPOT:["Depot Maintenance Record","\uD83C\uDFED","#cd853f","USAF","D200A"],
-USAF_PMEL:["PMEL Calibration","\uD83D\uDCCF","#da70d6","USAF","PMEL"],
-USAF_REFUEL:["Aerial Refueling Log","\u26FD","#2e8b57","USAF","ART"],
-USMC_GROUND_MAINT:["Ground Equipment Maint","\uD83D\uDD27","#cc0000","USMC","GCSS-MC"],
-USMC_AVIATION:["Aviation Intermediate Maint","\uD83D\uDE81","#8b0000","USMC","NALCOMIS"],
-USMC_WEAPONS:["Weapons Maintenance","\uD83D\uDD2B","#a52a2a","USMC","ATLASS"],
-USMC_COMMS:["Communications Equipment","\uD83D\uDCE1","#cd5c5c","USMC","GCSS-MC"],
-USMC_ENGINEER:["Engineer Equipment Record","\uD83C\uDFD7\uFE0F","#b22222","USMC","GCSS-MC"],
-USMC_MOTOR_T:["Motor Transport Record","\uD83D\uDE9B","#dc143c","USMC","GCSS-MC"],
-USMC_SUPPLY:["MAGTF Supply Chain","\uD83D\uDCE6","#800000","USMC","GCSS-MC"],
-USMC_ORDNANCE:["Marine Ordnance Record","\uD83D\uDCA3","#ff0000","USMC","TFSMS"],
-USMC_COMBAT_ENG:["Combat Engineering Record","\uD83D\uDCA5","#c41e3a","USMC","GCSS-MC"],
-USMC_AAV:["AAV/ACV Maintenance","\uD83D\uDEA2","#990000","USMC","GCSS-MC"],
-USMC_MEDICAL:["Medical Supply Record","\uD83C\uDFE5","#ff6666","USMC","DMLSS"],
+USAF_FUEL:["Fuel Management Record","fa-gas-pump","#daa520","USAF","AFPET"],
+USAF_DEPOT:["Depot Maintenance Record","fa-industry","#cd853f","USAF","D200A"],
+USAF_PMEL:["PMEL Calibration","fa-ruler","#da70d6","USAF","PMEL"],
+USAF_REFUEL:["Aerial Refueling Log","fa-gas-pump","#2e8b57","USAF","ART"],
+USMC_GROUND_MAINT:["Ground Equipment Maint","fa-wrench","#cc0000","USMC","GCSS-MC"],
+USMC_AVIATION:["Aviation Intermediate Maint","fa-helicopter","#8b0000","USMC","NALCOMIS"],
+USMC_WEAPONS:["Weapons Maintenance","fa-crosshairs","#a52a2a","USMC","ATLASS"],
+USMC_COMMS:["Communications Equipment","fa-satellite-dish","#cd5c5c","USMC","GCSS-MC"],
+USMC_ENGINEER:["Engineer Equipment Record","fa-hard-hat","#b22222","USMC","GCSS-MC"],
+USMC_MOTOR_T:["Motor Transport Record","fa-truck","#dc143c","USMC","GCSS-MC"],
+USMC_SUPPLY:["MAGTF Supply Chain","fa-box","#800000","USMC","GCSS-MC"],
+USMC_ORDNANCE:["Marine Ordnance Record","fa-bomb","#ff0000","USMC","TFSMS"],
+USMC_COMBAT_ENG:["Combat Engineering Record","fa-bomb","#c41e3a","USMC","GCSS-MC"],
+USMC_AAV:["AAV/ACV Maintenance","fa-ship","#990000","USMC","GCSS-MC"],
+USMC_MEDICAL:["Medical Supply Record","fa-hospital","#ff6666","USMC","DMLSS"],
 USMC_NBC:["NBC Equipment Inspection","\u2623\uFE0F","#660000","USMC","GCSS-MC"],
 USMC_EXPEDITIONARY:["Expeditionary Supply","\uD83C\uDFD5\uFE0F","#993333","USMC","GCSS-MC"],
 USMC_LAV:["LAV Maintenance Record","\uD83D\uDE97","#cc3333","USMC","GCSS-MC"],
-USCG_CUTTER_MAINT:["Cutter Maintenance","\uD83D\uDEA2","#003366","USCG","ABS NS5"],
+USCG_CUTTER_MAINT:["Cutter Maintenance","fa-ship","#003366","USCG","ABS NS5"],
 USCG_SMALL_BOAT:["Small Boat Inspection","\u26F5","#336699","USCG","CG-LIMS"],
 USCG_NAV_AID:["Aids to Navigation Maint","\uD83D\uDDFC","#0066cc","USCG","ATON MIS"],
-USCG_POLLUTION:["Pollution Response Equip","\uD83D\uDEE2\uFE0F","#669900","USCG","MISLE"],
+USCG_POLLUTION:["Pollution Response Equip","fa-drum","#669900","USCG","MISLE"],
 USCG_SAR:["Search & Rescue Equipment","\uD83C\uDD98","#ff3300","USCG","MISLE"],
-USCG_MARITIME_SEC:["Maritime Security Equip","\uD83D\uDD12","#003399","USCG","MISLE"],
-USCG_AVIATION:["CG Aviation Maintenance","\uD83D\uDE81","#3366ff","USCG","ALMIS"],
-USCG_PORT_SEC:["Port Security Inspection","\uD83C\uDFD7\uFE0F","#0033cc","USCG","MISLE"],
-USCG_ELECTRONICS:["Electronics Systems Maint","\uD83D\uDCE1","#0099ff","USCG","CG-LIMS"],
-USCG_WEAPONS:["CG Weapons System Maint","\uD83D\uDD2B","#002244","USCG","CG-LIMS"],
+USCG_MARITIME_SEC:["Maritime Security Equip","fa-lock","#003399","USCG","MISLE"],
+USCG_AVIATION:["CG Aviation Maintenance","fa-helicopter","#3366ff","USCG","ALMIS"],
+USCG_PORT_SEC:["Port Security Inspection","fa-hard-hat","#0033cc","USCG","MISLE"],
+USCG_ELECTRONICS:["Electronics Systems Maint","fa-satellite-dish","#0099ff","USCG","CG-LIMS"],
+USCG_WEAPONS:["CG Weapons System Maint","fa-crosshairs","#002244","USCG","CG-LIMS"],
 USCG_ICE_OPS:["Ice Operations Equipment","\uD83E\uDDCA","#66ccff","USCG","CG-LIMS"],
 USCG_BUOY_TENDER:["Buoy Tender Maintenance","\uD83D\uDD34","#ff6600","USCG","ATON MIS"],
 DLA_DISTRIBUTION:["DLA Distribution Receipt","\uD83C\uDFDB\uFE0F","#1a3a5c","DLA","DSS"],
 DLA_FMS:["Foreign Military Sales","\uD83C\uDF10","#2a5a8c","DLA","DSCA"],
-DLA_DRMO:["DRMO Disposal Record","\uD83D\uDDD1\uFE0F","#555555","DLA","DRMS"],
-DLA_HAZMAT:["Hazmat Certification","\u2622\uFE0F","#ff9900","DLA","HMIRS"],
-DLA_BULK_FUEL:["Bulk Fuel Receipt","\u26FD","#8b7355","DLA","DFSP"],
-DLA_TROOP_SUPPORT:["Troop Support Material","\uD83C\uDF96\uFE0F","#4a6741","DLA","BSM"],
+DLA_DRMO:["DRMO Disposal Record","fa-trash-alt","#555555","DLA","DRMS"],
+DLA_HAZMAT:["Hazmat Certification","fa-radiation","#ff9900","DLA","HMIRS"],
+DLA_BULK_FUEL:["Bulk Fuel Receipt","fa-gas-pump","#8b7355","DLA","DFSP"],
+DLA_TROOP_SUPPORT:["Troop Support Material","fa-medal","#4a6741","DLA","BSM"],
 DLA_STRATEGIC:["Strategic Material Reserve","\uD83C\uDFE6","#8b8682","DLA","NDS"],
-DLA_MEDICAL:["Medical Supply Chain","\uD83C\uDFE5","#2e8b57","DLA","ECAT"],
-DLA_DPAS:["DPAS Property Record","\uD83D\uDCCB","#4682b4","DLA","DPAS"],
-DLA_COMMISSARY:["Commissary Supply Record","\uD83D\uDED2","#6b8e23","DLA","DeCA"],
+DLA_MEDICAL:["Medical Supply Chain","fa-hospital","#2e8b57","DLA","ECAT"],
+DLA_DPAS:["DPAS Property Record","fa-clipboard-list","#4682b4","DLA","DPAS"],
+DLA_COMMISSARY:["Commissary Supply Record","fa-shopping-cart","#6b8e23","DLA","DeCA"],
 DLA_DISPOSITION:["Disposition Services","\uD83D\uDCE4","#8b8378","DLA","DRMS"],
-DLA_LAND_EQUIP:["Land Equipment Supply","\uD83D\uDE9B","#556b2f","DLA","DSS"],
+DLA_LAND_EQUIP:["Land Equipment Supply","fa-truck","#556b2f","DLA","DSS"],
 JOINT_NATO:["NATO STANAG Verification","\uD83C\uDFF3\uFE0F","#003399","JOINT","NATO"],
-JOINT_F35:["F-35 JSF Logistics","\u2708\uFE0F","#1a1a2e","JOINT","ALIS/ODIN"],
-JOINT_MISSILE_DEF:["Missile Defense Record","\uD83D\uDE80","#4a0080","JOINT","MDA"],
-JOINT_CYBER:["Cyber Equipment Cert","\uD83D\uDDA5\uFE0F","#00cc99","JOINT","CYBERCOM"],
+JOINT_F35:["F-35 JSF Logistics","fa-plane","#1a1a2e","JOINT","ALIS/ODIN"],
+JOINT_MISSILE_DEF:["Missile Defense Record","fa-rocket","#4a0080","JOINT","MDA"],
+JOINT_CYBER:["Cyber Equipment Cert","fa-desktop","#00cc99","JOINT","CYBERCOM"],
 JOINT_INTEL:["Intelligence Equipment","\uD83D\uDD75\uFE0F","#2d2d2d","JOINT","DIA"],
-JOINT_SPACE:["Space Command Asset","\uD83D\uDEF0\uFE0F","#000066","JOINT","USSPACECOM"],
-JOINT_TRANSPORT:["TRANSCOM Logistics","\uD83D\uDE9B","#4a6741","JOINT","USTRANSCOM"],
-JOINT_CONTRACT:["Contract Deliverable","\uD83D\uDCDD","#b8860b","JOINT","DCMA"],
-JOINT_READINESS:["Readiness Report","\uD83D\uDCC8","#00ff88","JOINT","DRRS"],
-JOINT_DISPOSAL:["Joint Disposal Record","\uD83D\uDDD1\uFE0F","#8b8682","JOINT","DLA"],
-SOCOM_WEAPONS:["SOF Weapons Maintenance","\uD83D\uDD2B","#2d2d2d","SOCOM","SOF-LAN"],
-SOCOM_COMMS:["SOF Communications Equip","\uD83D\uDCE1","#4a4a4a","SOCOM","SOF-LAN"],
-SOCOM_AVIATION:["SOF Aviation Maintenance","\uD83D\uDE81","#333333","SOCOM","SOF-LAN"],
-SOCOM_MARITIME:["SOF Maritime Equipment","\uD83E\uDD3F","#1a1a2e","SOCOM","SOF-LAN"],
+JOINT_SPACE:["Space Command Asset","fa-satellite","#000066","JOINT","USSPACECOM"],
+JOINT_TRANSPORT:["TRANSCOM Logistics","fa-truck","#4a6741","JOINT","USTRANSCOM"],
+JOINT_CONTRACT:["Contract Deliverable","fa-pen","#b8860b","JOINT","DCMA"],
+JOINT_READINESS:["Readiness Report","fa-chart-line","#00ff88","JOINT","DRRS"],
+JOINT_DISPOSAL:["Joint Disposal Record","fa-trash-alt","#8b8682","JOINT","DLA"],
+SOCOM_WEAPONS:["SOF Weapons Maintenance","fa-crosshairs","#2d2d2d","SOCOM","SOF-LAN"],
+SOCOM_COMMS:["SOF Communications Equip","fa-satellite-dish","#4a4a4a","SOCOM","SOF-LAN"],
+SOCOM_AVIATION:["SOF Aviation Maintenance","fa-helicopter","#333333","SOCOM","SOF-LAN"],
+SOCOM_MARITIME:["SOF Maritime Equipment","fa-water","#1a1a2e","SOCOM","SOF-LAN"],
 SOCOM_VEHICLE:["SOF Vehicle Maintenance","\uD83D\uDE97","#3d3d3d","SOCOM","SOF-LAN"],
 SOCOM_INTEL:["SOF Intelligence Equip","\uD83D\uDD75\uFE0F","#1a1a1a","SOCOM","SOF-LAN"],
-SOCOM_MEDICAL:["SOF Medical Supply","\uD83C\uDFE5","#4a4a4a","SOCOM","SOF-LAN"],
-SOCOM_DEMO:["SOF Demolition Record","\uD83D\uDCA5","#550000","SOCOM","SOF-LAN"],
-USSF_SAT_OPS:["Satellite Operations Record","\uD83D\uDEF0\uFE0F","#1a1a4e","USSF","18 SDS"],
-USSF_SPACE_VEH:["Space Vehicle Maintenance","\uD83D\uDE80","#2a2a5e","USSF","SMC"],
+SOCOM_MEDICAL:["SOF Medical Supply","fa-hospital","#4a4a4a","SOCOM","SOF-LAN"],
+SOCOM_DEMO:["SOF Demolition Record","fa-bomb","#550000","SOCOM","SOF-LAN"],
+USSF_SAT_OPS:["Satellite Operations Record","fa-satellite","#1a1a4e","USSF","18 SDS"],
+USSF_SPACE_VEH:["Space Vehicle Maintenance","fa-rocket","#2a2a5e","USSF","SMC"],
 USSF_SDA:["Space Domain Awareness","\uD83D\uDD2D","#000066","USSF","18 SDS"],
-USSF_GPS_CONST:["GPS Constellation Record","\uD83D\uDCE1","#003399","USSF","2 SOPS"],
-USSF_LAUNCH_VEH:["Launch Vehicle Record","\uD83D\uDE80","#0044aa","USSF","SLD 45"],
-USSF_RADAR_TRACK:["Space Surveillance Tracking","\uD83D\uDCE1","#0055bb","USSF","18 SDS"],
-USSF_GROUND_SYS:["Ground Systems Maint","\uD83D\uDDA5\uFE0F","#002266","USSF","SBIRS"],
-USSF_COMM_SAT:["Comm Satellite Record","\uD83D\uDCE1","#0033aa","USSF","MILSATCOM"],
-USSF_EARLY_WARN:["Early Warning System","\u26A0\uFE0F","#003377","USSF","SBIRS"],
-USSF_SPACE_CTRL:["Space Control Record","\uD83D\uDEE1\uFE0F","#001a66","USSF","SPACECOM"]
+USSF_GPS_CONST:["GPS Constellation Record","fa-satellite-dish","#003399","USSF","2 SOPS"],
+USSF_LAUNCH_VEH:["Launch Vehicle Record","fa-rocket","#0044aa","USSF","SLD 45"],
+USSF_RADAR_TRACK:["Space Surveillance Tracking","fa-satellite-dish","#0055bb","USSF","18 SDS"],
+USSF_GROUND_SYS:["Ground Systems Maint","fa-desktop","#002266","USSF","SBIRS"],
+USSF_COMM_SAT:["Comm Satellite Record","fa-satellite-dish","#0033aa","USSF","MILSATCOM"],
+USSF_EARLY_WARN:["Early Warning System","fa-exclamation-triangle","#003377","USSF","SBIRS"],
+USSF_SPACE_CTRL:["Space Control Record","fa-shield-alt","#001a66","USSF","SPACECOM"]
 };
 
 // Expand
@@ -2386,7 +2386,7 @@ function loadStats() {
     // Also restore session records from localStorage
     const localRecs = getLocalRecords();
     sessionRecords = localRecs.map(r => ({
-        type: r.record_type, label: r.record_label || r.record_type, icon: r.icon || '\uD83D\uDCCB',
+        type: r.record_type, label: r.record_label || r.record_type, icon: r.icon || 'fa-clipboard-list',
         branch: r.branch || 'JOINT', hash: r.hash, txHash: r.tx_hash,
         encrypted: false, timestamp: r.timestamp, content: ''
     }));
@@ -2469,7 +2469,7 @@ function showClassificationBanner(typeKey) {
     const clf = getClassification(typeKey);
     const meta = CLF_META[clf];
     banner.className = 'clf-banner show clf-' + clf;
-    banner.querySelector('.clf-icon').textContent = meta.icon;
+    banner.querySelector('.clf-icon').innerHTML = '<i class="fas ' + meta.icon + '" style="color:' + meta.color + '"></i>';
     document.getElementById('clfBadge').textContent = meta.label;
     document.getElementById('clfText').textContent = meta.desc;
 }
@@ -2525,7 +2525,7 @@ function showAnchorAnimation(hash, typeLabel, clfLevel) {
     // Show classification in animation
     const clfDiv = document.getElementById('animClf');
     if (clfDiv) {
-        clfDiv.innerHTML = '<span style="padding:4px 14px;border-radius:6px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;color:' + meta.color + ';border:1px solid ' + meta.color + '30;background:' + meta.color + '15">' + meta.icon + ' ' + meta.label + '</span>';
+        clfDiv.innerHTML = '<span style="padding:4px 14px;border-radius:6px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;color:' + meta.color + ';border:1px solid ' + meta.color + '30;background:' + meta.color + '15">' + '<i class="fas ' + meta.icon + '" style="margin-right:4px"></i>' + meta.label + '</span>';
         clfDiv.style.opacity = '0';
         clfDiv.style.animation = 'fadeUp 0.5s ease-out 0.7s both';
     }
@@ -2535,7 +2535,7 @@ function showAnchorAnimation(hash, typeLabel, clfLevel) {
     });
     overlay.classList.add('active');
     setTimeout(() => {
-        document.getElementById('animStatus').textContent = '\u2705 ' + typeLabel + ' Anchored!';
+        document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195;margin-right:4px"></i>' + typeLabel + ' Anchored!';
         document.getElementById('animStatus').style.color = '#14f195';
         document.getElementById('animSuccess').textContent = '\u2713 Record secured on XRPL';
         document.getElementById('animSuccess').style.animation = 'scaleIn 0.4s ease-out both';
@@ -2558,7 +2558,7 @@ async function anchorRecord() {
     const encrypt = document.getElementById('encryptCheck').checked;
     const hash = await sha256(input);
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
-    const typeInfo = RECORD_TYPES[selectedType] || {label:selectedType,icon:'\uD83D\uDCCB',branch:'JOINT'};
+    const typeInfo = RECORD_TYPES[selectedType] || {label:selectedType,icon:'fa-clipboard-list',color:'var(--accent)',branch:'JOINT'};
 
     const clfLevel = getClassification(selectedType);
     showAnchorAnimation(hash, typeInfo.label, clfLevel);
@@ -2596,11 +2596,11 @@ async function anchorRecord() {
     const panel = document.getElementById('anchorResult');
     panel.innerHTML = '<div class="result-label">STATUS</div><div class="result-value" style="font-size:1rem;margin-bottom:0.8rem">\u2705 Record anchored successfully</div>'
         + '<div class="result-label">RECORD TYPE</div><div style="margin-bottom:0.5rem">' + record.icon + ' ' + typeInfo.label + ' (' + typeInfo.branch + ')</div>'
-        + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:6px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + CLF_META[clfLevel].icon + ' ' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
+        + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:6px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + '<i class="fas ' + CLF_META[clfLevel].icon + '" style="margin-right:4px"></i>' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
         + '<div class="result-label">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
         + '<div class="result-label">TX HASH</div><div style="color:var(--muted);margin-bottom:0.5rem;word-break:break-all">' + txHash + '</div>'
         + '<div class="result-label">SYSTEM</div><div style="margin-bottom:0.5rem">' + (typeInfo.system||'N/A') + '</div>'
-        + '<div class="result-label">ENCRYPTED</div><div style="margin-bottom:0.5rem">' + (encrypt ? '\uD83D\uDD12 Yes (CUI protected)' : '\uD83D\uDD13 No (plaintext hash)') + '</div>'
+        + '<div class="result-label">ENCRYPTED</div><div style="margin-bottom:0.5rem">' + (encrypt ? '<i class="fas fa-lock" style="color:#c9a84c"></i> Yes (CUI protected)' : '\uD83D\uDD13 No (plaintext hash)') + '</div>'
         + '<div class="result-label">$SLS FEE</div><div>0.01 $SLS \u2192 Treasury</div>';
     panel.classList.add('show');
     updateTxLog();
@@ -2628,7 +2628,7 @@ async function verifyRecord() {
     let sessionHtml = '';
     if (sessionMatch) {
         sessionHtml = '<div class="result-label" style="margin-top:0.8rem">SESSION MATCH</div>'
-            + '<div style="color:var(--green)">\u2705 Found in session \u2014 ' + sessionMatch.icon + ' ' + sessionMatch.label + ' anchored at ' + new Date(sessionMatch.timestamp).toLocaleTimeString() + '</div>';
+            + '<div style="color:var(--green)"><i class="fas fa-check-circle"></i> Found in session \u2014 ' + sessionMatch.icon + ' ' + sessionMatch.label + ' anchored at ' + new Date(sessionMatch.timestamp).toLocaleTimeString() + '</div>';
     }
     panel.innerHTML = '<div class="result-label">COMPUTED SHA-256 <button class="copy-btn" onclick="copyHash(\'' + hash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + hash + '</div>' + matchHtml + sessionHtml
         + '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)">To verify on-chain: compare this hash with the MemoData field of the anchor transaction.</div>';
@@ -4927,7 +4927,7 @@ function generateAiResponse(query) {
         if (!r) return 'Run an analysis to see schedule risk details.';
         const overdue = r.drlResults.filter(d => d.found && /overdue|late/i.test(d.status));
         let resp = '<strong>Schedule Assessment — ' + r.prog.name + '</strong><br><br>';
-        resp += '⏰ Overall Schedule Risk: <strong style="color:#ffa500">' + (r.critGaps > 3 ? '6-12 months' : r.critGaps > 0 ? '2-6 months' : '< 2 months') + '</strong><br>';
+        resp += '<i class="fas fa-clock" style="color:#ff9900"></i> Overall Schedule Risk: <strong style="color:#ffa500">' + (r.critGaps > 3 ? '6-12 months' : r.critGaps > 0 ? '2-6 months' : '< 2 months') + '</strong><br>';
         resp += '<i class="fas fa-chart-bar"></i> Critical path items: ' + r.critGaps + '<br><br>';
         if (overdue.length) {
             resp += '<i class="fas fa-exclamation-triangle"></i> <strong>Overdue Items (' + overdue.length + '):</strong><br>';
@@ -4985,7 +4985,7 @@ function generateAiResponse(query) {
     }
 
     if (/provision|ptd|provisioning.*tech|allowance.*part|apl.*gen|catalog|icaps|lmi|logistics.*product|ppd|provisioning.*part/.test(q)) {
-        return '<strong>Provisioning & ICAPS Comparison</strong><br><br>S4 Ledger provides provisioning capabilities that surpass legacy tools like ICAPS:<br><br><strong>ICAPS limitations:</strong><br>• Navy/Marine Corps only<br>• Covers only Supply Support IPS element<br>• Mainframe + PC architecture<br>• No blockchain verification<br>• No compliance scoring<br><br><strong>S4 Ledger advantages:</strong><br>• <strong>All branches</strong> — Joint, Navy, Army, AF, USMC, CG, Space Force<br>• <strong>All 12 ILS elements</strong> — not just Supply Support<br>• <strong>Blockchain-verified</strong> — every provisioning decision anchored to XRPL<br>• <strong>Integrated</strong> — provisioning ties to DMSMS, readiness, lifecycle cost, warranty<br>• <strong>Compliance tracking</strong> — CMMC, NIST, DFARS scoring built-in<br>• <strong>Modern web platform</strong> — no mainframe required<br><br>Use the <strong>Parts</strong> tab for cross-reference and the <strong>Gap Analysis</strong> to track provisioning deliverables (DI-020 VRS, DI-021 APL).';
+        return '<strong>Provisioning & ICAPS Comparison</strong><br><br>S4 Ledger provides provisioning capabilities that surpass legacy tools like ICAPS:<br><br><strong>ICAPS limitations:</strong><br>• Navy/Marine Corps only<br>• Covers only Supply Support IPS element<br>• Mainframe + PC architecture<br>• No blockchain verification<br>• No compliance scoring<br><br><strong>S4 Ledger advantages:</strong><br>• <strong>All branches</strong> — Joint, Navy, Army, AF, USMC, CG, Space Force<br>• <strong>All 20 ILS tools</strong> — not just Supply Support<br>• <strong>Blockchain-verified</strong> — every provisioning decision anchored to XRPL<br>• <strong>Integrated</strong> — provisioning ties to DMSMS, readiness, lifecycle cost, warranty<br>• <strong>Compliance tracking</strong> — CMMC, NIST, DFARS scoring built-in<br>• <strong>Modern web platform</strong> — no mainframe required<br><br>Use the <strong>Parts</strong> tab for cross-reference and the <strong>Gap Analysis</strong> to track provisioning deliverables (DI-020 VRS, DI-021 APL).';
     }
 
     if (/thank|thanks|great|awesome|perfect|good/.test(q)) {
@@ -5227,7 +5227,7 @@ async function anchorDMSMS() {
     saveLocalRecord({hash, record_type:'DMSMS_REPORT', record_label:'DMSMS Obsolescence Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_d, system:'DMSMS Tracker'});
     updateTxLog();
     addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01});
-    setTimeout(() => { document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> DMSMS report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> DMSMS report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
 // ═══ OPERATIONAL READINESS CALCULATOR ═══
@@ -5341,7 +5341,7 @@ async function anchorReadiness() {
     saveLocalRecord({hash, record_type:'RAM_REPORT', record_label:'RAM Readiness Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_r, system:'Readiness Calculator'});
     updateTxLog();
     addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01});
-    setTimeout(() => { document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> RAM report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> RAM report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
 // ═══ NSN / PARTS CROSS-REFERENCE ═══
@@ -5488,7 +5488,7 @@ async function anchorParts() {
     saveLocalRecord({hash, record_type:'PARTS_XREF', record_label:'Parts Cross-Reference', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_p, system:'Parts X-Ref'});
     updateTxLog();
     addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'PARTS_XREF', label:'Parts Cross-Reference', branch:'JOINT', icon:'<i class="fas fa-wrench"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Parts X-Ref', fee:0.01});
-    setTimeout(() => { document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Parts data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Parts data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
 // ═══ ROI CALCULATOR ═══
@@ -6842,7 +6842,7 @@ async function anchorRisk() {
     addToVault({hash, txHash, type:'risk_report', label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'AI Supply Chain Risk Engine', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('risk_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'risk_report', record_label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Risk report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Risk report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -6885,7 +6885,7 @@ function generateReport() {
     let html = '<div style="border:1px solid rgba(201,168,76,0.2);border-radius:8px;overflow:hidden;">';
     html += '<div style="background:rgba(201,168,76,0.08);padding:16px;border-bottom:1px solid rgba(201,168,76,0.2);">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-    html += '<div><span style="font-size:1.3rem;margin-right:8px;">'+rt.icon+'</span><strong style="color:#fff;font-size:1.05rem;">'+rt.title+'</strong></div>';
+    html += '<div><span style="font-size:1.3rem;margin-right:8px;">'+'<i class="fas '+(rt.icon||'fa-file')+'"></i>'+'</span>'<strong style="color:#fff;font-size:1.05rem;">'+rt.title+'</strong></div>';
     html += '<span style="background:#c9a84c22;color:#c9a84c;padding:4px 10px;border-radius:6px;font-size:0.75rem;font-weight:600;">GENERATED</span></div>';
     html += '<div style="color:var(--text-muted);font-size:0.78rem;margin-top:6px;">Period: '+startDate.toLocaleDateString()+' — '+now.toLocaleDateString()+' | Records: '+totalRecords+' | Format: '+format.toUpperCase()+'</div></div>';
 
@@ -6940,7 +6940,7 @@ async function anchorReport() {
     addToVault({hash, txHash, type:'audit_report', label:r.title+' — Score: '+r.score+'%', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Audit Report Generator', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('audit_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'audit_report', record_label:r.title, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Audit report hash anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Audit report hash anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7063,7 +7063,7 @@ async function anchorContracts() {
     addToVault({hash, txHash, type:'contract_report', label:'Contract Report — '+cid, branch:'JOINT', icon:'<i class="fas fa-file-contract"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Contract Lifecycle Management', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('contract_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'contract_report', record_label:'Contract Report — '+cid, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Contract data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Contract data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7189,7 +7189,7 @@ async function anchorThread() {
     addToVault({hash, txHash, type:'digital_thread', label:'Digital Thread — '+platform.toUpperCase()+' ('+view+')', branch:'JOINT', icon:'<i class="fas fa-link"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Digital Thread Bridge', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('digital_thread'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'digital_thread', record_label:'Digital Thread — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Configuration data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Configuration data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7416,7 +7416,7 @@ async function anchorPredictive() {
     addToVault({hash, txHash, type:'predictive_maintenance', label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Predictive Maintenance AI', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('predictive_maintenance'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'predictive_maintenance', record_label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Predictive data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Predictive data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7664,7 +7664,7 @@ async function anchorDbImport() {
     updateStats(); saveStats(); updateTxLog();
     document.getElementById('dbImportAnchored').textContent = anchored;
     showAnchorAnimation(_dbImportCache.records[0].hash, info.name + ' — ' + anchored + ' Records', 'CUI');
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> ' + anchored + ' records anchored to XRPL!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> ' + anchored + ' records anchored to XRPL!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 

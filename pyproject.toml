@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "s4-ledger-sdk"
-version = "3.0.0"
+version = "3.9.17"
 description = "S4 Ledger — Immutable defense logistics verification SDK. Anchor, verify, and track records on the XRP Ledger."
 readme = "README.md"
 license = {text = "MIT"}
@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["defense", "logistics", "xrpl", "blockchain", "ils", "supply-chain", "verification", "military"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries",
     "License :: OSI Approved :: MIT License",

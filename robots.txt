@@ -1,0 +1,10 @@
+# S4 Ledger — Robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /s4-assets/
+Disallow: /s4-login/
+Disallow: /sdk-playground/
+Disallow: /demo-app/
+
+Sitemap: https://s4ledger.com/sitemap.xml
