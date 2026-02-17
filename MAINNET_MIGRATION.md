@@ -2240,5 +2240,177 @@ ILIE adds **$120K–$500K/year per program** in savings from:
 - [ ] Verify submission history persists across page reloads
 - [ ] Validate all financial figures updated across BILLION_DOLLAR_ROADMAP, pitches, and proposal docs
 
-*Last updated: v3.9.12 — February 2026*
-*See also: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) | [SECURITY.md](SECURITY.md) | [NIST_COMPLIANCE.md](NIST_COMPLIANCE.md) | [WHITEPAPER.md](WHITEPAPER.md)*
+---
+
+## Section 38: Mainnet Walkthrough — How XRPL Anchoring Actually Works
+
+### 38.1 XRPL Architecture & Addresses
+
+S4 Ledger uses two XRPL wallets:
+
+| Wallet | Address | Purpose |
+|--------|---------|---------|
+| **SLS Issuer** | `r95GyZac3LsFJqUbyQdaqzWJRCkj8kfKSA` | Issues $SLS tokens, anchors records to the ledger |
+| **SLS Treasury** | `rMLmkrxMBKYKzEnPTMd1sKQhtpGEhJF6p5` | Receives $SLS fees, holds operational reserves |
+
+The issuer wallet was funded with **50 XRP** — enough for **4,000,000+ transactions** at current fees.
+
+### 38.2 What Happens When You Anchor a Record
+
+When a user clicks "Anchor to XRPL," the following occurs:
+
+```
+1. Frontend computes SHA-256 hash of record data
+2. Frontend sends hash + metadata to /api/anchor
+3. Backend constructs an XRPL AccountSet transaction:
+   - Account: SLS Issuer (r95GyZac...)
+   - Memos[0]: SHA-256 hash of the record
+   - Memos[1]: Record type (e.g., "MAINTENANCE_LOG")
+   - Memos[2]: Timestamp + metadata
+4. Backend signs the transaction with the issuer secret (env var)
+5. Backend submits to XRPL via WebSocket
+6. XRPL validates and includes in the next ledger (~3-5 seconds)
+7. Backend returns the transaction hash to the frontend
+8. Frontend stores tx hash, displays confirmation with explorer link
+```
+
+**Why AccountSet?** It's the cheapest transaction type (~0.000012 XRP / ~$0.000024). It modifies nothing on-chain except adding Memo fields, which permanently store the record hash. Any auditor can later verify the hash against the original record to prove it existed at that point in time and hasn't been altered.
+
+### 38.3 The $SLS Fee Flow
+
+```
+User anchors a record
+  └──> Backend deducts $SLS from user's balance (off-chain ledger)
+         └──> $SLS fee credited to Treasury wallet (rMLmkrx...)
+               └──> Backend submits AccountSet tx to XRPL (costs ~0.000012 XRP)
+                      └──> Hash permanently stored in XRPL ledger
+```
+
+- **User pays**: $SLS tokens (priced per-anchor or included in subscription tier)
+- **S4 Ledger pays**: ~0.000012 XRP per anchor (from the 50 XRP in the issuer wallet)
+- **Revenue model**: The spread between $SLS fees collected and XRP costs paid is S4 Ledger's margin
+
+### 38.4 Escrow vs. Treasury — Key Distinction
+
+| Concept | Treasury | Escrow |
+|---------|----------|--------|
+| **Address** | `rMLmkrx...` | Created per-contract via XRPL EscrowCreate |
+| **Purpose** | Operational reserves, fee collection | Time-locked or condition-locked funds |
+| **Access** | Controlled by treasury secret key | Released only when conditions are met |
+| **Use case** | Day-to-day operations | Contract milestones, SLA guarantees, multi-sig approvals |
+
+Escrow is a future feature for contract-based anchoring where funds are locked until a delivery milestone is verified.
+
+### 38.5 Cost Breakdown
+
+| Volume | XRP Cost | USD Cost (at $2/XRP) | From 50 XRP Reserve |
+|--------|----------|---------------------|---------------------|
+| 1 anchor | 0.000012 XRP | $0.000024 | 4,166,666 remaining |
+| 1,000/day | 0.012 XRP/day | $0.024/day | 11,415 years |
+| 10,000/day | 0.12 XRP/day | $0.24/day | 1,141 years |
+| 100,000/day | 1.2 XRP/day | $2.40/day | 114 years |
+
+Even at extreme enterprise scale (100K anchors/day), the 50 XRP reserve lasts over a century.
+
+### 38.6 Switching to Mainnet
+
+The demo currently uses XRPL Testnet. Switching to mainnet requires changing **one environment variable**:
+
+```bash
+# Current (Testnet)
+XRPL_NETWORK=testnet
+XRPL_WS=wss://s.altnet.rippletest.net:51233
+
+# Mainnet
+XRPL_NETWORK=mainnet
+XRPL_WS=wss://xrplcluster.com
+```
+
+The issuer wallet (`r95GyZac...`) is already funded on mainnet with 50 XRP. The $SLS token is already issued on mainnet. The only change is pointing the WebSocket connection to mainnet instead of testnet.
+
+### 38.7 What "Testnet vs. Mainnet" Means for the Demo
+
+| Aspect | Testnet (Current) | Mainnet (Production) |
+|--------|-------------------|---------------------|
+| **XRP** | Free (faucet) | Real (~$2/XRP) |
+| **Transactions** | Ephemeral — testnet resets periodically | Permanent — immutable ledger |
+| **$SLS Token** | Test tokens, no value | Real issued tokens on mainnet |
+| **Explorer** | testnet.xrpl.org | livenet.xrpl.org |
+| **Signing** | Client-side (demo only) | Server-side (required for security) |
+| **Auditability** | Not meaningful — testnet data is temporary | Fully auditable — permanent proof of record |
+
+---
+
+## Section 39: Production Readiness Checklist
+
+### 39.1 Server-Side Infrastructure
+
+- [ ] Deploy backend API (Node.js or Python) with `/api/anchor` endpoint
+- [ ] Store XRPL issuer secret as environment variable (never in code)
+- [ ] Implement rate limiting (per-user, per-org, per-minute)
+- [ ] Add request authentication (API key, JWT, or session token)
+- [ ] Set up HTTPS with TLS 1.3 on all endpoints
+- [ ] Configure CORS to allow only authorized frontend origins
+- [ ] Implement request logging with tamper-evident audit trail
+
+### 39.2 XRPL Connection
+
+- [ ] Switch `XRPL_NETWORK` env var to `mainnet`
+- [ ] Point WebSocket to `wss://xrplcluster.com` (primary) with `wss://s1.ripple.com` (fallback)
+- [ ] Implement automatic reconnection with exponential backoff
+- [ ] Monitor issuer wallet balance (alert if < 5 XRP)
+- [ ] Test AccountSet + Memo transaction flow on mainnet
+
+### 39.3 Security & Compliance
+
+- [ ] Complete NIST 800-171 control mapping (see [NIST_CMMC_COMPLIANCE.md](NIST_CMMC_COMPLIANCE.md))
+- [ ] Implement CMMC Level 2 controls for CUI handling
+- [ ] Enable MFA on all operator/admin accounts
+- [ ] Conduct third-party security audit (OWASP Top 10, penetration test)
+- [ ] Establish incident response plan and breach notification SOP
+- [ ] Implement data classification labels (CUI, FOUO, Unclassified)
+- [ ] Configure automated vulnerability scanning (Dependabot, Snyk, or equivalent)
+
+### 39.4 Legal & Business
+
+- [ ] Execute BAA with any healthcare-adjacent customers (see [BAA_TEMPLATE.md](BAA_TEMPLATE.md))
+- [ ] File SEC compliance documentation if offering $SLS as investment (see [SEC_COMPLIANCE.md](SEC_COMPLIANCE.md))
+- [ ] Establish Terms of Service and Privacy Policy for production use
+- [ ] Obtain cyber liability insurance
+- [ ] Register as a money services business (MSB) if required by state/federal law
+- [ ] Engage legal counsel for token classification (utility vs. security)
+
+### 39.5 Observability & Operations
+
+- [ ] Deploy monitoring dashboard (Datadog, Grafana, or CloudWatch)
+- [ ] Set up alerts for: failed anchors, wallet balance, API latency > 5s, error rate > 1%
+- [ ] Implement structured logging (JSON format) with correlation IDs
+- [ ] Configure automatic database backups (if using off-chain storage)
+- [ ] Establish on-call rotation and escalation procedures
+- [ ] Document runbook for common operational scenarios
+
+### 39.6 Migration Sequence
+
+```
+Phase 1: Backend Deployment
+  └── Deploy /api/anchor endpoint with server-side signing
+  └── Verify on testnet first, then switch to mainnet
+
+Phase 2: Frontend Update
+  └── Remove client-side wallet secret from demo-app
+  └── Point all anchor calls to backend API
+  └── Update explorer links to livenet.xrpl.org
+
+Phase 3: Validation
+  └── Anchor 10 test records on mainnet
+  └── Verify each on livenet.xrpl.org
+  └── Confirm hash matches original record data
+
+Phase 4: Production Launch
+  └── Enable rate limiting and authentication
+  └── Monitor first 1,000 production anchors
+  └── Confirm wallet balance depletion matches expectations
+```
+
+*Last updated: v3.9.18a — February 2026*
+*See also: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) | [SECURITY.md](SECURITY.md) | [NIST_CMMC_COMPLIANCE.md](NIST_CMMC_COMPLIANCE.md) | [WHITEPAPER.md](WHITEPAPER.md)*
