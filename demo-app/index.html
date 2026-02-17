@@ -569,9 +569,9 @@
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="demo-card">
-                            <h3><i class="fas fa-brain"></i> ILS Workspace Analyzer</h3>
+                            <h3><i class="fas fa-brain"></i> ILS Gap Analysis</h3>
                             <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
-                                <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How S4 Ledger Works — Platform Overview</summary>
+                                <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How S4 Ledger Saves Money — Platform Overview</summary>
                                 <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                     <p>S4 Ledger creates <strong>tamper-proof records</strong> for defense logistics by anchoring SHA-256 hashes to the XRP Ledger. The process: (1) A defense record is created in your existing system, (2) S4 Ledger computes a SHA-256 hash, (3) Only the hash is written to an XRPL transaction memo, (4) A micro-fee of 0.01 $SLS is paid per anchor, (5) Anyone with the original can verify it hasn't been altered. <strong>No sensitive data on-chain.</strong></p>
                                     <p><strong style="color:#fff;">Supports any defense record type — 156+ pre-built templates across 9 branches</strong> — Navy (54), Army (20), Air Force (18), Marines (14), Coast Guard (12), DLA (12), Joint (10), SOCOM (8), Space Force (11). Any custom record type can also be anchored.</p>
@@ -2423,7 +2423,7 @@ function renderTypeGrid() {
         .filter(([k,v]) => !search || v.label.toLowerCase().includes(search) || k.toLowerCase().includes(search));
     document.getElementById('branchTypeCount').textContent = '(' + types.length + ' types)';
     grid.innerHTML = types.map(([key,t]) =>
-        '<div class="record-type-btn' + (key===selectedType?' selected':'') + '" data-type="'+key+'" onclick="selectType(\''+key+'\',this)" title="'+t.label+' \u2014 '+t.system+'"><span class="icon">'+t.icon+'</span>'+t.label+'</div>'
+        '<div class="record-type-btn' + (key===selectedType?' selected':'') + '" data-type="'+key+'" onclick="selectType(\''+key+'\',this)" title="'+t.label+' \u2014 '+t.system+'"><span class="icon"><i class="fas '+t.icon+'" style="color:'+t.color+'"></i></span>'+t.label+'</div>'
     ).join('');
 }
 
@@ -6885,7 +6885,7 @@ function generateReport() {
     let html = '<div style="border:1px solid rgba(201,168,76,0.2);border-radius:8px;overflow:hidden;">';
     html += '<div style="background:rgba(201,168,76,0.08);padding:16px;border-bottom:1px solid rgba(201,168,76,0.2);">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-    html += '<div><span style="font-size:1.3rem;margin-right:8px;">'+'<i class="fas '+(rt.icon||'fa-file')+'"></i>'+'</span>'<strong style="color:#fff;font-size:1.05rem;">'+rt.title+'</strong></div>';
+    html += '<div><span style="font-size:1.3rem;margin-right:8px;"><i class="fas '+(rt.icon||'fa-file')+'" style="color:'+(rt.color||'var(--accent)')+'"></i></span><strong style="color:#fff;font-size:1.05rem;">'+rt.title+'</strong></div>';
     html += '<span style="background:#c9a84c22;color:#c9a84c;padding:4px 10px;border-radius:6px;font-size:0.75rem;font-weight:600;">GENERATED</span></div>';
     html += '<div style="color:var(--text-muted);font-size:0.78rem;margin-top:6px;">Period: '+startDate.toLocaleDateString()+' — '+now.toLocaleDateString()+' | Records: '+totalRecords+' | Format: '+format.toUpperCase()+'</div></div>';
 
