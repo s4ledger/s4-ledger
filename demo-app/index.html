@@ -2579,7 +2579,7 @@ async function anchorRecord() {
     const clfLevel = getClassification(selectedType);
     showAnchorAnimation(hash, typeInfo.label, clfLevel);
 
-    const {txHash} = await _anchorToXRPL(hash, selectedType, input.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, selectedType, input.substring(0,100));
 
     const record = {
         type:selectedType, label:typeInfo.label, icon:typeInfo.icon, branch:typeInfo.branch,
@@ -2592,10 +2592,10 @@ async function anchorRecord() {
         hash, record_type: selectedType, record_label: typeInfo.label, branch: typeInfo.branch,
         icon: typeInfo.icon, timestamp: new Date().toISOString(),
         timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19) + ' UTC',
-        fee: 0.01, tx_hash: txHash, system: typeInfo.system || 'N/A'
+        fee: 0.01, tx_hash: txHash, system: typeInfo.system || 'N/A', explorer_url: explorerUrl, network
     });
     // Auto-save to Audit Vault
-    addToVault({hash, txHash, type:selectedType, label:typeInfo.label, branch:typeInfo.branch, icon:typeInfo.icon, content:input.substring(0,100)+(input.length>100?'...':''), encrypted:encrypt, timestamp:new Date().toISOString(), source:'Manual Anchor', fee:0.01});
+    addToVault({hash, txHash, type:selectedType, label:typeInfo.label, branch:typeInfo.branch, icon:typeInfo.icon, content:input.substring(0,100)+(input.length>100?'...':''), encrypted:encrypt, timestamp:new Date().toISOString(), source:'Manual Anchor', fee:0.01, explorerUrl, network});
     stats.anchored++;
     stats.types.add(selectedType);
     stats.slsFees += 0.01;
@@ -2611,7 +2611,8 @@ async function anchorRecord() {
         + '<div class="result-label">RECORD TYPE</div><div style="margin-bottom:0.5rem">' + record.icon + ' ' + typeInfo.label + ' (' + typeInfo.branch + ')</div>'
         + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:6px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + '<i class="fas ' + CLF_META[clfLevel].icon + '" style="margin-right:4px"></i>' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
         + '<div class="result-label">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
-        + '<div class="result-label">TX HASH</div><div style="color:var(--muted);margin-bottom:0.5rem;word-break:break-all">' + txHash + '</div>'
+        + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all">' + (explorerUrl ? '<a href="'+explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+txHash+' <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>' : '<span style="color:var(--muted)">'+txHash+'</span>') + '</div>'
+            + '<div class="result-label">NETWORK</div><div style="margin-bottom:0.5rem">' + (network === 'mainnet' ? '<span style="color:#14f195;font-weight:700"><i class="fas fa-globe" style="margin-right:4px"></i>XRPL Mainnet</span>' : '<span style="color:var(--muted)">' + (network||'Pending') + '</span>') + '</div>'
         + '<div class="result-label">SYSTEM</div><div style="margin-bottom:0.5rem">' + (typeInfo.system||'N/A') + '</div>'
         + '<div class="result-label">ENCRYPTED</div><div style="margin-bottom:0.5rem">' + (encrypt ? '<i class="fas fa-lock" style="color:#c9a84c"></i> Yes (CUI protected)' : '\uD83D\uDD13 No (plaintext hash)') + '</div>'
         + '<div class="result-label">$SLS FEE</div><div>0.01 $SLS \u2192 Treasury</div>';
@@ -4497,7 +4498,7 @@ async function anchorILSReport() {
     // Show the anchor animation (same as main anchor tab)
     showAnchorAnimation(hash, 'ILS Gap Analysis Report', 'UNCLASSIFIED');
 
-    const {txHash} = await _anchorToXRPL(hash, 'ILS_GAP_ANALYSIS', 'ILS Report: '+ilsResults.prog.name);
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'ILS_GAP_ANALYSIS', 'ILS Report: '+ilsResults.prog.name);
 
     // Record in session
     const record = {
@@ -4512,7 +4513,7 @@ async function anchorILSReport() {
         timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19) + ' UTC',
         fee:0.01, tx_hash:txHash, system:'ILS Workspace'
     });
-    addToVault({hash, txHash, type:'ILS_GAP_ANALYSIS', label:'ILS Gap Analysis Report', branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:'ILS Analysis: '+ilsResults.prog.name+' — '+ilsResults.pct+'% readiness', encrypted:false, timestamp:new Date().toISOString(), source:'ILS Gap Analysis', fee:0.01});
+    addToVault({hash, txHash, type:'ILS_GAP_ANALYSIS', label:'ILS Gap Analysis Report', branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:'ILS Analysis: '+ilsResults.prog.name+' — '+ilsResults.pct+'% readiness', encrypted:false, timestamp:new Date().toISOString(), source:'ILS Gap Analysis', fee:0.01, explorerUrl, network});
     stats.anchored++;
     stats.types.add('ILS_GAP_ANALYSIS');
     stats.slsFees += 0.01;
@@ -5230,12 +5231,12 @@ async function anchorDMSMS() {
     const hash = await sha256(text);
     showAnchorAnimation(hash, 'DMSMS Report', 'CUI');
     stats.anchored++; stats.types.add('DMSMS_REPORT'); stats.slsFees += 0.01; updateStats(); saveStats();
-    const {txHash} = await _anchorToXRPL(hash, 'DMSMS_REPORT', text.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'DMSMS_REPORT', text.substring(0,100));
     const rec = {hash, type:'DMSMS_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'DMSMS Obsolescence Report', txHash};
     sessionRecords.push(rec);
-    saveLocalRecord({hash, record_type:'DMSMS_REPORT', record_label:'DMSMS Obsolescence Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'DMSMS Tracker'});
+    saveLocalRecord({hash, record_type:'DMSMS_REPORT', record_label:'DMSMS Obsolescence Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'DMSMS Tracker', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01});
+    addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> DMSMS report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
@@ -5344,12 +5345,12 @@ async function anchorReadiness() {
     const hash = await sha256(text);
     showAnchorAnimation(hash, 'RAM Readiness Report', 'CUI');
     stats.anchored++; stats.types.add('RAM_REPORT'); stats.slsFees += 0.01; updateStats(); saveStats();
-    const {txHash} = await _anchorToXRPL(hash, 'RAM_REPORT', text.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'RAM_REPORT', text.substring(0,100));
     const rec = {hash, type:'RAM_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'RAM Readiness Report', txHash};
     sessionRecords.push(rec);
-    saveLocalRecord({hash, record_type:'RAM_REPORT', record_label:'RAM Readiness Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Readiness Calculator'});
+    saveLocalRecord({hash, record_type:'RAM_REPORT', record_label:'RAM Readiness Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Readiness Calculator', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01});
+    addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> RAM report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
@@ -5491,12 +5492,12 @@ async function anchorParts() {
     const hash = await sha256(text);
     showAnchorAnimation(hash, 'Parts Cross-Reference', 'CUI');
     stats.anchored++; stats.types.add('PARTS_XREF'); stats.slsFees += 0.01; updateStats(); saveStats();
-    const {txHash} = await _anchorToXRPL(hash, 'PARTS_XREF', text.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'PARTS_XREF', text.substring(0,100));
     const rec = {hash, type:'PARTS_XREF', branch:'JOINT', timestamp:new Date().toISOString(), label:'Parts Cross-Reference', txHash};
     sessionRecords.push(rec);
-    saveLocalRecord({hash, record_type:'PARTS_XREF', record_label:'Parts Cross-Reference', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Parts X-Ref'});
+    saveLocalRecord({hash, record_type:'PARTS_XREF', record_label:'Parts Cross-Reference', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Parts X-Ref', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'PARTS_XREF', label:'Parts Cross-Reference', branch:'JOINT', icon:'<i class="fas fa-wrench"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Parts X-Ref', fee:0.01});
+    addToVault({hash, txHash, type:'PARTS_XREF', label:'Parts Cross-Reference', branch:'JOINT', icon:'<i class="fas fa-wrench"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Parts X-Ref', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Parts data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
@@ -5559,12 +5560,12 @@ async function anchorROI() {
     const hash = await sha256(text);
     showAnchorAnimation(hash, 'ROI Analysis', 'CUI');
     stats.anchored++; stats.types.add('ROI_ANALYSIS'); stats.slsFees += 0.01; updateStats(); saveStats();
-    const {txHash} = await _anchorToXRPL(hash, 'ROI_ANALYSIS', text.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'ROI_ANALYSIS', text.substring(0,100));
     const rec = {hash, type:'ROI_ANALYSIS', branch:'JOINT', timestamp:new Date().toISOString(), label:'ROI Calculator Report', txHash};
     sessionRecords.push(rec);
-    saveLocalRecord({hash, record_type:'ROI_ANALYSIS', record_label:'ROI Calculator Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'ROI Calculator'});
+    saveLocalRecord({hash, record_type:'ROI_ANALYSIS', record_label:'ROI Calculator Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'ROI Calculator', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'ROI_ANALYSIS', label:'ROI Calculator Report', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01});
+    addToVault({hash, txHash, type:'ROI_ANALYSIS', label:'ROI Calculator Report', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01, explorerUrl, network});
 }
 
 // ═══ LIFECYCLE COST ESTIMATOR ═══
@@ -5622,12 +5623,12 @@ async function anchorLifecycle() {
     const hash = await sha256(text);
     showAnchorAnimation(hash, 'Lifecycle Cost Estimate', 'CUI');
     stats.anchored++; stats.types.add('LIFECYCLE_COST'); stats.slsFees += 0.01; updateStats(); saveStats();
-    const {txHash} = await _anchorToXRPL(hash, 'LIFECYCLE_COST', text.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'LIFECYCLE_COST', text.substring(0,100));
     const rec = {hash, type:'LIFECYCLE_COST', branch:'JOINT', timestamp:new Date().toISOString(), label:'Lifecycle Cost Estimate', txHash};
     sessionRecords.push(rec);
-    saveLocalRecord({hash, record_type:'LIFECYCLE_COST', record_label:'Lifecycle Cost Estimate', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Lifecycle Estimator'});
+    saveLocalRecord({hash, record_type:'LIFECYCLE_COST', record_label:'Lifecycle Cost Estimate', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Lifecycle Estimator', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost Estimate', branch:'JOINT', icon:'<i class="fas fa-chart-line"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Estimator', fee:0.01});
+    addToVault({hash, txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost Estimate', branch:'JOINT', icon:'<i class="fas fa-chart-line"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Estimator', fee:0.01, explorerUrl, network});
 }
 
 // ═══ WARRANTY & CONTRACT TRACKER ═══
@@ -5707,12 +5708,12 @@ async function anchorWarranty() {
     const hash = await sha256(text);
     showAnchorAnimation(hash, 'Warranty & Contract Data', 'CUI');
     stats.anchored++; stats.types.add('WARRANTY_CONTRACT'); stats.slsFees += 0.01; updateStats(); saveStats();
-    const {txHash} = await _anchorToXRPL(hash, 'WARRANTY_CONTRACT', text.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'WARRANTY_CONTRACT', text.substring(0,100));
     const rec = {hash, type:'WARRANTY_CONTRACT', branch:'JOINT', timestamp:new Date().toISOString(), label:'Warranty & Contract Tracker', txHash};
     sessionRecords.push(rec);
-    saveLocalRecord({hash, record_type:'WARRANTY_CONTRACT', record_label:'Warranty & Contract Tracker', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Warranty Tracker'});
+    saveLocalRecord({hash, record_type:'WARRANTY_CONTRACT', record_label:'Warranty & Contract Tracker', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Warranty Tracker', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'WARRANTY_CONTRACT', label:'Warranty & Contract Tracker', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Warranty Tracker', fee:0.01});
+    addToVault({hash, txHash, type:'WARRANTY_CONTRACT', label:'Warranty & Contract Tracker', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Warranty Tracker', fee:0.01, explorerUrl, network});
 }
 
 // ── Initialization ──
@@ -6210,7 +6211,7 @@ function renderVault() {
             ${v.content ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:8px;padding:6px 10px;background:var(--surface);border-radius:6px"><i class="fas fa-file-lines" style="margin-right:6px;opacity:0.5"></i>' + v.content + '</div>' : ''}
             <div class="vault-meta">
                 <span><i class="fas fa-clock"></i> ${new Date(v.timestamp).toLocaleString()}</span>
-                <span><i class="fas fa-hashtag"></i> TX: ${(v.txHash || '').substring(0, 16)}...</span>
+                <span><i class="fas fa-hashtag"></i> TX: ${v.explorerUrl ? '<a href="'+v.explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+(v.txHash||'').substring(0,16)+'… <i class="fas fa-external-link-alt" style="font-size:0.6rem"></i></a>' : (v.txHash||'').substring(0,16)+'...'}</span>
                 ${v.source ? '<span><i class="fas fa-tools"></i> ' + v.source + '</span>' : ''}
                 <span><i class="fas fa-coins"></i> 0.01 $SLS</span>
             </div>
@@ -6224,7 +6225,7 @@ function exportVault(format) {
         'Record Type': v.label || v.type, 'Branch': v.branch || '', 'SHA-256 Hash': v.hash,
         'TX Hash': v.txHash || '', 'Content Preview': v.content || '', 'Encrypted': v.encrypted ? 'Yes' : 'No',
         'Timestamp': v.timestamp, 'Verified': v.verified ? 'Yes' : 'No', 'Source Tool': v.source || 'Manual Anchor',
-        '$SLS Fee': '0.01'
+        '$SLS Fee': '0.01', 'Explorer URL': v.explorerUrl || '', 'Network': v.network || ''
     }));
     if (format === 'csv') {
         const headers = Object.keys(rows[0]);
@@ -6423,11 +6424,15 @@ async function anchorCompliance() {
     const grade = document.getElementById('complianceGrade')?.textContent || '?';
     const content = 'S4 Ledger Compliance Scorecard | Overall: ' + score + ' (' + grade + ') | CMMC: ' + (document.getElementById('pctCMMC')?.textContent||'') + ' | NIST: ' + (document.getElementById('pctNIST')?.textContent||'') + ' | Records: ' + s4Vault.length + ' | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash} = await _anchorToXRPL(hash, 'compliance_scorecard', content.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'compliance_scorecard', content.substring(0,100));
     showAnchorAnimation(hash, 'Compliance Scorecard', 'CUI');
 
-    addToVault({hash, txHash, type:'compliance_scorecard', label:'Compliance Scorecard', branch:'JOINT', icon:'<i class="fas fa-shield-alt"></i>', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Compliance Scorecard', fee:0.01});
-    stats.anchored++; stats.slsFees += 0.01; updateStats(); saveStats();
+    addToVault({hash, txHash, type:'compliance_scorecard', label:'Compliance Scorecard', branch:'JOINT', icon:'<i class="fas fa-shield-alt"></i>', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Compliance Scorecard', fee:0.01, explorerUrl, network});
+    stats.anchored++; stats.slsFees += 0.01; stats.types.add('compliance_scorecard'); updateStats(); saveStats();
+    const rec = {hash, type:'compliance_scorecard', branch:'JOINT', timestamp:new Date().toISOString(), label:'Compliance Scorecard', txHash};
+    sessionRecords.push(rec);
+    saveLocalRecord({hash, record_type:'compliance_scorecard', record_label:'Compliance Scorecard', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Compliance Scorecard', explorer_url: explorerUrl, network});
+    updateTxLog();
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -6670,12 +6675,14 @@ async function anchorProvItem(index) {
     if (!it) return;
     const content = 'Provisioning Item | ' + it.name + ' | NSN: ' + it.nsn + ' | CAGE: ' + it.cage + ' | Qty: ' + it.qty + ' | Status: ' + it.status + ' | Cost: $' + it.cost + ' | Mfg: ' + it.mfg + ' | ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash} = await _anchorToXRPL(hash, 'provisioning_item', it.name + ' NSN:' + it.nsn);
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'provisioning_item', it.name + ' NSN:' + it.nsn);
     showAnchorAnimation(hash, 'Provisioning: ' + it.name, 'CUI');
 
-    addToVault({hash, txHash, type:'provisioning_item', label:'Provisioning: ' + it.name, branch:'JOINT', icon:'<i class="fas fa-box"></i>', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
+    addToVault({hash, txHash, type:'provisioning_item', label:'Provisioning: ' + it.name, branch:'JOINT', icon:'<i class="fas fa-box"></i>', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('provisioning_item'); updateStats(); saveStats();
-    saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_item', record_label:'Provisioning: '+it.name, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_item', record_label:'Provisioning: '+it.name, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
+    sessionRecords.push({hash, type:'provisioning_item', branch:'JOINT', timestamp:new Date().toISOString(), label:'Provisioning Item', txHash});
+    updateTxLog();
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
     showWorkspaceNotification('Anchored: ' + it.name + ' — 0.01 $SLS');
 }
@@ -6688,14 +6695,16 @@ async function anchorAllProvisioning() {
     for (const it of items) {
         const content = 'Provisioning Item | ' + it.name + ' | NSN: ' + it.nsn + ' | CAGE: ' + it.cage + ' | Qty: ' + it.qty + ' | Status: ' + it.status + ' | Cost: $' + it.cost + ' | Mfg: ' + it.mfg + ' | Batch | ' + new Date().toISOString();
         const hash = await sha256(content);
-        const {txHash} = await _anchorToXRPL(hash, 'provisioning_item', it.name);
+        const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'provisioning_item', it.name);
 
-        addToVault({hash, txHash, type:'provisioning_item', label:'Prov: ' + it.name, branch:'JOINT', icon:'<i class="fas fa-box"></i>', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
-        saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_item', record_label:'Prov: '+it.name, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+        addToVault({hash, txHash, type:'provisioning_item', label:'Prov: ' + it.name, branch:'JOINT', icon:'<i class="fas fa-box"></i>', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01, explorerUrl, network});
+        saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_item', record_label:'Prov: '+it.name, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
+        sessionRecords.push({hash, type:'provisioning_item', branch:'JOINT', timestamp:new Date().toISOString(), label:'Provisioning Item', txHash});
         stats.anchored++; stats.slsFees += 0.01;
         count++;
     }
     stats.types.add('provisioning_item'); updateStats(); saveStats();
+    updateTxLog();
     showWorkspaceNotification('Batch anchored ' + count + ' items — ' + (count * 0.01).toFixed(2) + ' $SLS total');
 }
 
@@ -6731,12 +6740,14 @@ async function anchorProvisioning() {
     const items = getActiveProvItems();
     const content = 'S4 Ledger Provisioning Report | Program: ' + prog.name + ' | Parts: ' + items.length + ' | Validated: ' + items.filter(i=>i.status==='validated').length + ' | Total Value: $' + items.reduce((s,it)=>s+it.qty*it.cost,0).toLocaleString() + ' | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash} = await _anchorToXRPL(hash, 'provisioning_report', content.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'provisioning_report', content.substring(0,100));
     showAnchorAnimation(hash, 'Provisioning Report', 'FOUO');
 
-    addToVault({hash, txHash, type:'provisioning_report', label:'Provisioning Report', branch: prog.branch || 'JOINT', icon:'<i class="fas fa-box"></i>', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
+    addToVault({hash, txHash, type:'provisioning_report', label:'Provisioning Report', branch: prog.branch || 'JOINT', icon:'<i class="fas fa-box"></i>', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('provisioning_report'); updateStats(); saveStats();
-    saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_report', record_label:'Provisioning Report — '+prog.name, branch:prog.branch||'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_report', record_label:'Provisioning Report — '+prog.name, branch:prog.branch||'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
+    sessionRecords.push({hash, type:'provisioning_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Provisioning Report', txHash});
+    updateTxLog();
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -6845,12 +6856,14 @@ async function anchorRisk() {
     const high = items.filter(i=>i.level==='high').length;
     const content = 'S4 Ledger Supply Chain Risk Report | Program: ' + prog.toUpperCase() + ' | Total Parts: ' + items.length + ' | Critical: ' + crit + ' | High: ' + high + ' | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash} = await _anchorToXRPL(hash, 'risk_report', content.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'risk_report', content.substring(0,100));
     showAnchorAnimation(hash, 'Supply Chain Risk Report', 'CUI');
 
-    addToVault({hash, txHash, type:'risk_report', label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'AI Supply Chain Risk Engine', fee:0.01});
+    addToVault({hash, txHash, type:'risk_report', label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'AI Supply Chain Risk Engine', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('risk_report'); updateStats(); saveStats();
-    saveLocalRecord({hash, tx_hash:txHash, record_type:'risk_report', record_label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'risk_report', record_label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
+    sessionRecords.push({hash, type:'risk_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Supply Chain Risk Report', txHash});
+    updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Risk report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -6943,12 +6956,14 @@ async function anchorReport() {
     const r = _lastReport || {type:'full_audit',title:'Full Audit Package',records:0,score:'95.0'};
     const content = 'S4 Ledger Audit Report | Type: ' + r.title + ' | Records: ' + r.records + ' | Compliance Score: ' + r.score + '% | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash} = await _anchorToXRPL(hash, 'audit_report', content.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'audit_report', content.substring(0,100));
     showAnchorAnimation(hash, 'Audit Report Hash', 'CUI');
 
-    addToVault({hash, txHash, type:'audit_report', label:r.title+' — Score: '+r.score+'%', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Audit Report Generator', fee:0.01});
+    addToVault({hash, txHash, type:'audit_report', label:r.title+' — Score: '+r.score+'%', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Audit Report Generator', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('audit_report'); updateStats(); saveStats();
-    saveLocalRecord({hash, tx_hash:txHash, record_type:'audit_report', record_label:r.title, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'audit_report', record_label:r.title, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
+    sessionRecords.push({hash, type:'audit_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Audit Report', txHash});
+    updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Audit report hash anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -7066,12 +7081,14 @@ async function anchorContracts() {
     const delivered = items.filter(i=>i.status==='delivered').length;
     const content = 'S4 Ledger Contract Report | Contract: ' + cid + ' | Total Items: ' + items.length + ' | Delivered: ' + delivered + ' | Overdue: ' + overdue + ' | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash} = await _anchorToXRPL(hash, 'contract_report', content.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'contract_report', content.substring(0,100));
     showAnchorAnimation(hash, 'Contract Status Report', 'CUI');
 
-    addToVault({hash, txHash, type:'contract_report', label:'Contract Report — '+cid, branch:'JOINT', icon:'<i class="fas fa-file-contract"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Contract Lifecycle Management', fee:0.01});
+    addToVault({hash, txHash, type:'contract_report', label:'Contract Report — '+cid, branch:'JOINT', icon:'<i class="fas fa-file-contract"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Contract Lifecycle Management', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('contract_report'); updateStats(); saveStats();
-    saveLocalRecord({hash, tx_hash:txHash, record_type:'contract_report', record_label:'Contract Report — '+cid, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'contract_report', record_label:'Contract Report — '+cid, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
+    sessionRecords.push({hash, type:'contract_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Contract Report', txHash});
+    updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Contract data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -7192,12 +7209,14 @@ async function anchorThread() {
     const approved = items.filter(i=>i.status==='approved'||i.status==='implemented').length;
     const content = 'S4 Ledger Digital Thread Report | Platform: '+platform.toUpperCase()+' | View: '+view+' | Total: '+items.length+' | Pending: '+pending+' | Approved: '+approved+' | Generated: '+new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash} = await _anchorToXRPL(hash, 'digital_thread', content.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'digital_thread', content.substring(0,100));
     showAnchorAnimation(hash, 'Digital Thread Report', 'CUI');
 
-    addToVault({hash, txHash, type:'digital_thread', label:'Digital Thread — '+platform.toUpperCase()+' ('+view+')', branch:'JOINT', icon:'<i class="fas fa-link"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Digital Thread Bridge', fee:0.01});
+    addToVault({hash, txHash, type:'digital_thread', label:'Digital Thread — '+platform.toUpperCase()+' ('+view+')', branch:'JOINT', icon:'<i class="fas fa-link"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Digital Thread Bridge', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('digital_thread'); updateStats(); saveStats();
-    saveLocalRecord({hash, tx_hash:txHash, record_type:'digital_thread', record_label:'Digital Thread — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'digital_thread', record_label:'Digital Thread — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
+    sessionRecords.push({hash, type:'digital_thread', branch:'JOINT', timestamp:new Date().toISOString(), label:'Digital Thread', txHash});
+    updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Configuration data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -7419,12 +7438,14 @@ async function anchorPredictive() {
     const totalCost = items.reduce((s,i)=>s+i.cost,0);
     const content = 'S4 Ledger Predictive Maintenance Report | Platform: '+platform.toUpperCase()+' | Predictions: '+items.length+' | Urgent: '+urgent+' | Total Risk: $'+totalCost+'K | Generated: '+new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash} = await _anchorToXRPL(hash, 'predictive_maintenance', content.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'predictive_maintenance', content.substring(0,100));
     showAnchorAnimation(hash, 'Predictive Maintenance Report', 'CUI');
 
-    addToVault({hash, txHash, type:'predictive_maintenance', label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Predictive Maintenance AI', fee:0.01});
+    addToVault({hash, txHash, type:'predictive_maintenance', label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Predictive Maintenance AI', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('predictive_maintenance'); updateStats(); saveStats();
-    saveLocalRecord({hash, tx_hash:txHash, record_type:'predictive_maintenance', record_label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
+    saveLocalRecord({hash, tx_hash:txHash, record_type:'predictive_maintenance', record_label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
+    sessionRecords.push({hash, type:'predictive_maintenance', branch:'JOINT', timestamp:new Date().toISOString(), label:'Predictive Maintenance', txHash});
+    updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#14f195"></i> Predictive data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -7649,12 +7670,12 @@ async function anchorDbImport() {
     let anchored = 0;
     for (const rec of _dbImportCache.records) {
         const content = JSON.stringify(rec.data);
-        const {txHash} = await _anchorToXRPL(rec.hash, rec.type, content.substring(0,100));
+        const {txHash, explorerUrl, network} = await _anchorToXRPL(rec.hash, rec.type, content.substring(0,100));
         rec.txHash = txHash;
         rec.anchored = true;
         anchored++;
 
-        addToVault({hash:rec.hash, txHash, type:rec.type, label:info.name+' Import — '+rec.type.replace(/_/g,' '), branch:branchKey, icon:'<i class="fas fa-database"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:info.name+' Import', fee:0.01, data_source:_dbImportCache.system});
+        addToVault({hash:rec.hash, txHash, type:rec.type, label:info.name+' Import — '+rec.type.replace(/_/g,' '), branch:branchKey, icon:'<i class="fas fa-database"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:info.name+' Import', fee:0.01, data_source:_dbImportCache.system, explorerUrl, network});
         // Push to sessionRecords so Transaction Log updates
         sessionRecords.push({
             type:rec.type, label:info.name+' Import — '+rec.type.replace(/_/g,' '), icon:'<i class="fas fa-database"></i>',
@@ -8201,13 +8222,13 @@ async function anchorSubmissionReview() {
         ' | Date: ' + new Date().toISOString();
     const hash = await sha256(text);
     showAnchorAnimation(hash, 'ILIE Analysis — ' + docTypeLabel, 'CUI');
-    const {txHash} = await _anchorToXRPL(hash, 'SUBMISSION_REVIEW', text.substring(0,100));
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'SUBMISSION_REVIEW', text.substring(0,100));
     stats.anchored++; stats.types.add('SUBMISSION_REVIEW'); stats.slsFees += 0.01; updateStats(); saveStats();
     const rec = {hash, type:'SUBMISSION_REVIEW', branch:meta.branch, timestamp:new Date().toISOString(), label:'ILIE Analysis: ' + docTypeLabel, txHash};
     sessionRecords.push(rec);
-    saveLocalRecord({hash, record_type:'SUBMISSION_REVIEW', record_label:'ILIE Analysis: ' + docTypeLabel, branch:meta.branch, timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'ILIE'});
+    saveLocalRecord({hash, record_type:'SUBMISSION_REVIEW', record_label:'ILIE Analysis: ' + docTypeLabel, branch:meta.branch, timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'ILIE', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'ILIE Analysis: ' + docTypeLabel, branch:meta.branch, content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ILIE', fee:0.01});
+    addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'ILIE Analysis: ' + docTypeLabel, branch:meta.branch, content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ILIE', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').textContent = 'ILIE analysis anchored — ' + _subCache.discrepancies.length + ' discrepancies recorded on-chain'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
