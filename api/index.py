@@ -24,7 +24,7 @@ try:
     from xrpl.wallet import generate_faucet_wallet, Wallet
     from xrpl.models import Memo, Payment, AccountSet
     from xrpl.transaction import submit_and_wait
-    from xrpl.core.keypairs import CryptoAlgorithm
+    from xrpl.core.keypairs.main import CryptoAlgorithm
     XRPL_AVAILABLE = True
 except ImportError:
     XRPL_AVAILABLE = False
