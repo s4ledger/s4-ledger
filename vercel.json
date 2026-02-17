@@ -55,10 +55,6 @@
     ],
     "rewrites": [
         {
-            "source": "/api/env-check",
-            "destination": "/api"
-        },
-        {
             "source": "/api/status",
             "destination": "/api"
         },

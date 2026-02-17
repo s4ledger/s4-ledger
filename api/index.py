@@ -24,6 +24,7 @@ try:
     from xrpl.wallet import generate_faucet_wallet, Wallet
     from xrpl.models import Memo, Payment, AccountSet
     from xrpl.transaction import submit_and_wait
+    from xrpl.core.keypairs import CryptoAlgorithm
     XRPL_AVAILABLE = True
 except ImportError:
     XRPL_AVAILABLE = False
@@ -425,7 +426,7 @@ def _init_xrpl():
         _xrpl_client = JsonRpcClient(url)
         seed = os.environ.get("XRPL_WALLET_SEED")
         if seed:
-            _xrpl_wallet = Wallet.from_seed(seed)
+            _xrpl_wallet = Wallet.from_seed(seed, algorithm=CryptoAlgorithm.SECP256K1)
         elif XRPL_NETWORK != "mainnet":
             # Only auto-generate faucet wallet on testnet
             _xrpl_wallet = generate_faucet_wallet(_xrpl_client, debug=False)
@@ -534,10 +535,6 @@ class handler(BaseHTTPRequestHandler):
             return "categorize"
         if path == "/api/xrpl-status":
             return "xrpl_status"
-        if path == "/api/env-check":
-            return "env_check"
-        if path == "/api/env-check":
-            return "env_check"
         if path == "/api/auth/api-key":
             return "auth_api_key"
         if path == "/api/auth/validate":
@@ -674,26 +671,6 @@ class handler(BaseHTTPRequestHandler):
                 "endpoint": endpoint,
                 "explorer": explorer_base,
                 "note": f"Real XRPL {XRPL_NETWORK.capitalize()} transactions. Verify at {'livenet' if XRPL_NETWORK == 'mainnet' else 'testnet'}.xrpl.org"
-            })
-        elif route == "env_check":
-            import os as _os
-            self._send_json({
-                "XRPL_NETWORK_set": bool(_os.environ.get("XRPL_NETWORK")),
-                "XRPL_NETWORK_value": _os.environ.get("XRPL_NETWORK", "(unset)"),
-                "XRPL_WALLET_SEED_set": bool(_os.environ.get("XRPL_WALLET_SEED")),
-                "XRPL_WALLET_SEED_length": len(_os.environ.get("XRPL_WALLET_SEED", "")),
-                "all_env_keys_with_XRPL": [k for k in _os.environ if "XRPL" in k.upper()],
-                "all_env_keys_with_S4": [k for k in _os.environ if "S4" in k.upper()],
-            })
-        elif route == "env_check":
-            import os as _os
-            self._send_json({
-                "XRPL_NETWORK_set": bool(_os.environ.get("XRPL_NETWORK")),
-                "XRPL_NETWORK_value": _os.environ.get("XRPL_NETWORK", "(unset)"),
-                "XRPL_WALLET_SEED_set": bool(_os.environ.get("XRPL_WALLET_SEED")),
-                "XRPL_WALLET_SEED_length": len(_os.environ.get("XRPL_WALLET_SEED", "")),
-                "all_env_keys_with_XRPL": [k for k in _os.environ if "XRPL" in k.upper()],
-                "all_env_keys_with_S4": [k for k in _os.environ if "S4" in k.upper()],
             })
         elif route == "infrastructure":
             self._send_json({

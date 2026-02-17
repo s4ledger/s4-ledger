@@ -148,7 +148,7 @@
         </div>
 
         <div style="text-align:center;padding:24px 20px;color:var(--text-secondary);font-size:0.9rem;">
-            <p><i class="fas fa-satellite-dish" style="color:var(--accent);margin-right:6px;"></i> Data sourced from XRPL public ledger via account <a href="https://testnet.xrpl.org/accounts/rJPqcx8wUBM58ajPUoz1dReKkTT6hqrqJA" target="_blank" style="color:var(--accent);font-family:monospace;">rJPqcx8w...qJA</a></p>
+            <p><i class="fas fa-satellite-dish" style="color:var(--accent);margin-right:6px;"></i> Data sourced from XRPL public ledger via account <a href="https://livenet.xrpl.org/accounts/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5" target="_blank" style="color:var(--accent);font-family:monospace;">r95GyZac...TA5</a></p>
             <p style="margin-top:5px;">All transactions are verifiable on-chain. <a href="https://xrpl.org" target="_blank" style="color:var(--gold);">Learn about XRPL &rarr;</a></p>
         </div>
 
@@ -325,7 +325,7 @@
                 const txHashShort = (tx.tx_hash || '').substring(0, 14) + '...';
                 const label = tx.record_label || tx.record_type || 'Unknown';
                 const icon = tx.icon || '<i class="fas fa-clipboard-list"></i>';
-                const explorerUrl = 'https://testnet.xrpl.org/transactions/' + (tx.tx_hash || '');
+                const explorerUrl = 'https://livenet.xrpl.org/transactions/' + (tx.tx_hash || '');
                 return `<tr>
                     <td style="color:var(--accent);white-space:nowrap;font-size:0.82rem;">${tx.timestamp_display || ''}</td>
                     <td><span class="branch-badge" style="background:${bc.bg};color:${bc.color};">${icon} ${bc.label}</span></td>
