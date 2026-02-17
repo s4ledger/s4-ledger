@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.json">
@@ -617,39 +618,39 @@
                             <div style="margin:8px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                                 <div style="position:relative;display:inline-block">
                                     <select id="sampleDocSelect" onchange="loadSelectedSampleDoc(this.value)" style="background:linear-gradient(135deg,rgba(0,170,255,0.12),rgba(201,168,76,0.12))!important;border:1px solid rgba(0,170,255,0.25)!important;color:var(--accent)!important;border-radius:6px!important;padding:6px 14px!important;cursor:pointer;font-family:inherit!important;font-size:0.82rem!important;font-weight:600!important;min-width:260px">
-                                        <option value="" disabled selected>📄 Load Sample Document...</option>
-                                        <optgroup label="📋 Data Requirements">
+                                        <option value="" disabled selected>Load Sample Document...</option>
+                                        <optgroup label="Data Requirements">
                                             <option value="drl">DRL Tracker (CDRL Status Log)</option>
                                             <option value="cdrl_matrix">CDRL Compliance Matrix</option>
                                         </optgroup>
-                                        <optgroup label="📦 Provisioning & Supply">
+                                        <optgroup label="Provisioning & Supply">
                                             <option value="vrs">Vendor Recommended Spares (VRS)</option>
                                             <option value="buylist">Spares Buylist / Initial Outfitting</option>
                                             <option value="po_index">Purchase Order Index</option>
                                             <option value="gfm">Gov't Furnished Material (GFM) List</option>
                                             <option value="hazmat">HazMat Inventory</option>
                                         </optgroup>
-                                        <optgroup label="🔧 Maintenance & Support">
+                                        <optgroup label="Maintenance & Support">
                                             <option value="lcsp">Life Cycle Sustainment Plan (LCSP)</option>
                                             <option value="mrc">Maintenance Requirement Cards (MRCs)</option>
                                             <option value="mel">Machinery Equipment List (MEL)</option>
                                             <option value="pms_schedule">PMS Development Schedule</option>
                                         </optgroup>
-                                        <optgroup label="🔎 Configuration & ID">
+                                        <optgroup label="Configuration & ID">
                                             <option value="iuid">IUID Register</option>
                                             <option value="config_baseline">Configuration Baseline Index</option>
                                             <option value="weight_report">Weight Report</option>
                                         </optgroup>
-                                        <optgroup label="📊 Engineering & Test">
+                                        <optgroup label="Engineering & Test">
                                             <option value="ela">Electrical Load Analysis</option>
                                             <option value="temp">Test & Evaluation Master Plan (TEMP)</option>
                                             <option value="icd">Interface Control Document (ICD)</option>
                                         </optgroup>
-                                        <optgroup label="🎓 Training & Manpower">
+                                        <optgroup label="Training & Manpower">
                                             <option value="training_plan">Training Plan / NTSP</option>
                                             <option value="manpower">Manpower Estimate Report</option>
                                         </optgroup>
-                                        <optgroup label="📑 Contracts & Compliance">
+                                        <optgroup label="Contracts & Compliance">
                                             <option value="sow_matrix">SOW Compliance Matrix</option>
                                             <option value="ims">Integrated Master Schedule (IMS)</option>
                                             <option value="risk_register">Program Risk Register</option>
@@ -1723,7 +1724,7 @@
                         <div class="col-md-6">
                             <label style="font-weight:700;color:#c9a84c;font-size:.85rem">Source System</label>
                             <select id="dbImportSystem" class="form-select form-select-sm" style="background:#141926;color:#e0e6f0;border:1px solid rgba(201,168,76,0.3);border-radius:8px" onchange="updateDbImportInfo()">
-                                <optgroup label="🔹 U.S. Navy (USN)">
+                                <optgroup label="U.S. Navy (USN)">
                                 <option value="nserc_ide">NSERC / SE IDE — Configuration &amp; TDPs</option>
                                 <option value="merlin">MERLIN — Maintenance &amp; Engineering</option>
                                 <option value="navair_ams_pmt">NAVAIR AMS PMT — Aviation Maintenance</option>
@@ -1733,28 +1734,28 @@
                                 <option value="cspt">CSPT — Combat Systems Program</option>
                                 <option value="navsup">NAVSUP OneTouch / ERP</option>
                                 </optgroup>
-                                <optgroup label="🟢 U.S. Army (USA)">
+                                <optgroup label="U.S. Army (USA)">
                                 <option value="gcss_army">GCSS-Army — Global Combat Support</option>
                                 <option value="lmp">LMP — Logistics Modernization Program</option>
                                 <option value="aesip">AESIP — Army Enterprise Systems</option>
                                 </optgroup>
-                                <optgroup label="🔵 U.S. Air Force (USAF)">
+                                <optgroup label="U.S. Air Force (USAF)">
                                 <option value="remis">REMIS — Reliability &amp; Maintainability</option>
                                 <option value="lims_ev">LIMS-EV — Logistics Info Mgmt System</option>
                                 <option value="d200a">D200A — Air Force Supply Control</option>
                                 </optgroup>
-                                <optgroup label="🔴 U.S. Marine Corps (USMC)">
+                                <optgroup label="U.S. Marine Corps (USMC)">
                                 <option value="gcss_mc">GCSS-MC — Marine Corps Logistics</option>
                                 <option value="atlass">ATLASS — Marine Aviation Logistics</option>
                                 </optgroup>
-                                <optgroup label="🟠 U.S. Coast Guard (USCG)">
+                                <optgroup label="U.S. Coast Guard (USCG)">
                                 <option value="almis">ALMIS — Aviation Logistics MIS</option>
                                 <option value="cgone">CGOne — Coast Guard ERP</option>
                                 </optgroup>
-                                <optgroup label="⚫ U.S. Space Force (USSF)">
+                                <optgroup label="U.S. Space Force (USSF)">
                                 <option value="ussf_lms">USSF LMS — Space Logistics Mgmt</option>
                                 </optgroup>
-                                <optgroup label="🏛 Joint / OSD / DLA">
+                                <optgroup label="Joint / OSD / DLA">
                                 <option value="compass">COMPASS — Personnel &amp; Readiness</option>
                                 <option value="mbps">MBPS — Model Based Product Support</option>
                                 <option value="gcss">GCSS — Global Combat Support (Joint)</option>
@@ -2163,10 +2164,10 @@ const CLASSIFICATION = {
 };
 
 const CLF_META = {
-    U:    {label:'UNCLASSIFIED',  icon:'🟢', color:'#00cc66', desc:'No special handling required'},
-    CUI:  {label:'CUI',           icon:'🟡', color:'#c9a84c', desc:'Controlled Unclassified Information — NIST 800-171 handling required'},
-    SECRET:{label:'SECRET',       icon:'🔴', color:'#ff5555', desc:'Requires SIPRNet or equivalent classified network'},
-    TS:   {label:'TOP SECRET',    icon:'🟠', color:'#ffa500', desc:'Requires JWICS or equivalent TS/SCI network'}
+    U:    {label:'UNCLASSIFIED',  icon:'<i class="fas fa-circle" style="color:#14f195;font-size:0.7em"></i>', color:'#00cc66', desc:'No special handling required'},
+    CUI:  {label:'CUI',           icon:'<i class="fas fa-circle" style="color:#c9a84c;font-size:0.7em"></i>', color:'#c9a84c', desc:'Controlled Unclassified Information — NIST 800-171 handling required'},
+    SECRET:{label:'SECRET',       icon:'<i class="fas fa-circle" style="color:#ff3333;font-size:0.7em"></i>', color:'#ff5555', desc:'Requires SIPRNet or equivalent classified network'},
+    TS:   {label:'TOP SECRET',    icon:'<i class="fas fa-circle" style="color:#ffa500;font-size:0.7em"></i>', color:'#ffa500', desc:'Requires JWICS or equivalent TS/SCI network'}
 };
 
 function getClassification(typeKey) { return CLASSIFICATION[typeKey] || 'CUI'; }
@@ -4502,7 +4503,7 @@ async function anchorILSReport() {
         timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19) + ' UTC',
         fee:0.01, tx_hash:txHash, system:'ILS Workspace'
     });
-    addToVault({hash, txHash, type:'ILS_GAP_ANALYSIS', label:'ILS Gap Analysis Report', branch:'JOINT', icon:'🧠', content:'ILS Analysis: '+ilsResults.prog.name+' — '+ilsResults.pct+'% readiness', encrypted:false, timestamp:new Date().toISOString(), source:'ILS Gap Analysis', fee:0.01});
+    addToVault({hash, txHash, type:'ILS_GAP_ANALYSIS', label:'ILS Gap Analysis Report', branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:'ILS Analysis: '+ilsResults.prog.name+' — '+ilsResults.pct+'% readiness', encrypted:false, timestamp:new Date().toISOString(), source:'ILS Gap Analysis', fee:0.01});
     stats.anchored++;
     stats.types.add('ILS_GAP_ANALYSIS');
     stats.slsFees += 0.01;
@@ -4757,7 +4758,7 @@ function generateAiResponse(query) {
         if (/compliance.*score|cmmc|nist.*800|dfars.*252|compliance.*posture|compliance.*card/.test(q)) return '<strong>Compliance Scorecard</strong><br><br>The Compliance Scorecard auto-calculates your compliance posture across 6 frameworks:<br><br>• <strong>CMMC Level 2</strong> — Cybersecurity Maturity Model Certification<br>• <strong>NIST SP 800-171</strong> — CUI Protection (110 controls)<br>• <strong>DFARS 252.204-7012</strong> — Safeguarding Covered Defense Information<br>• <strong>FAR 46 Quality</strong> — Federal Acquisition Regulation quality clauses<br>• <strong>MIL-STD-1388 ILS</strong> — Logistics Support Analysis requirements<br>• <strong>DoDI 4245.15 DMSMS</strong> — Diminishing Manufacturing Sources management<br><br>Your score is calculated from <strong>real workspace activity</strong> — every record you anchor, DMSMS case you track, and readiness calculation you run contributes to your compliance posture. The overall score aggregates into a <strong>letter grade (A+ through F)</strong> for executive reporting.<br><br>Click the <strong>Compliance</strong> tab above to view your scorecard.';
         if (/defense.*doc|doc.*library|mil-std|opnavinst|regulation|standard|reference|mil-hdbk/.test(q)) return '<strong>Defense Document Library</strong><br><br>Searchable reference library of <strong>100+ real defense documents</strong> — MIL-STDs, MIL-HDBKs, OPNAVINSTs, COMDTINST, Army Regulations, Air Force Instructions, Marine Corps Orders, DFARS clauses, and NIST standards.<br><br>Features:<br>• <strong>Filter by category</strong> — ILS, Readiness, Maintenance, Supply, DMSMS, Cybersecurity, etc.<br>• <strong>Filter by branch</strong> — Joint, Navy, Coast Guard, Army, Air Force, Marines, Space Force<br>• <strong>Full-text search</strong> — by document ID, title, description, or keywords<br>• <strong>Direct links</strong> — click any document to open the official source<br><br>Use this while working in other tools to reference applicable standards without leaving the workspace.<br><br>Click the <strong>Doc Library</strong> tab above to browse.';
         if (/provision|ptd|provisioning.*tech|allowance.*part|apl.*gen|catalog|icaps|lmi|logistics.*product|ppd|provisioning.*part/.test(q)) return '<strong>Provisioning & ICAPS</strong><br><br>S4 Ledger supports provisioning workflows that go beyond what legacy tools like <strong>ICAPS</strong> (Interactive Computer-Aided Provisioning System) offer:<br><br>• <strong>Vendor Recommended Spares (VRS)</strong> — DI-020, tracked in gap analysis<br>• <strong>Allowance Parts List (APL)</strong> — DI-021, COSAL data for initial outfitting<br>• <strong>Spares Buylist</strong> — initial outfitting and provisioning data<br>• <strong>GoFM (GFM) List</strong> — government-furnished material tracking<br>• <strong>Parts Cross-Reference</strong> — NSN, CAGE, manufacturer data with alternates<br>• <strong>DMSMS Integration</strong> — obsolescence affects provisioning decisions<br><br><strong>How S4 beats ICAPS:</strong><br>• ICAPS covers <em>only</em> Supply Support — S4 covers all 12 ILS elements<br>• ICAPS is Navy/Marine Corps only — S4 is all-branch<br>• ICAPS has no blockchain verification — S4 anchors every provisioning decision<br>• ICAPS has no compliance scoring — S4 tracks CMMC, NIST, DFARS<br>• ICAPS is a standalone tool — S4 integrates provisioning with DMSMS, readiness, lifecycle cost, and warranty data<br><br>Use the <strong>Parts</strong> tab for cross-reference and the <strong>Gap Analysis</strong> tab to track provisioning deliverables.';
-        if (/import|database.*import|db.*import|defense.*database|import.*record|import.*csv|import.*xml|import.*json|nserc|merlin|gcss|cdmd|navsup|remis|lims|dpas|flis|atlass|almis|piee|gcss.army|lmp|aesip|d200|cgone|ussf/.test(q)) return '<strong>Defense Database Import</strong><br><br>The Defense Database Import tool lets you ingest records from <strong>24+ systems across all branches</strong>:<br><br>🔹 <strong>Navy:</strong> NSERC/SE IDE, MERLIN, NAVAIR AMS PMT, CDMD-OA, NDE, PEO MLB, CSPT, NAVSUP<br>🟢 <strong>Army:</strong> GCSS-Army, LMP, AESIP<br>🔵 <strong>Air Force:</strong> REMIS, LIMS-EV, D200A<br>🔴 <strong>Marine Corps:</strong> GCSS-MC, ATLASS<br>🟠 <strong>Coast Guard:</strong> ALMIS, CGOne<br>⚫ <strong>Space Force:</strong> USSF LMS<br>🏛 <strong>Joint/OSD:</strong> COMPASS, MBPS, GCSS, DPAS, DLA FLIS, PIEE/WAWF<br><br><strong>How it works:</strong><br>1. Select a source system from the dropdown<br>2. Upload a CSV, XML, or JSON file — or paste data directly<br>3. S4 auto-detects format, maps fields, and computes SHA-256 hashes<br>4. Click <strong>"Anchor to XRPL"</strong> to create immutable blockchain records<br><br><strong>Savings:</strong> $450K+/year per program. 70% less data reconciliation time. 80% fewer data discrepancies. 60% faster audit prep.<br><br>Click the <strong>Database Import</strong> tab above to get started, or use <strong>"Run Demo Import"</strong> to see sample data from any system.';
+        if (/import|database.*import|db.*import|defense.*database|import.*record|import.*csv|import.*xml|import.*json|nserc|merlin|gcss|cdmd|navsup|remis|lims|dpas|flis|atlass|almis|piee|gcss.army|lmp|aesip|d200|cgone|ussf/.test(q)) return '<strong>Defense Database Import</strong><br><br>The Defense Database Import tool lets you ingest records from <strong>24+ systems across all branches</strong>:<br><br><strong>Navy:</strong> NSERC/SE IDE, MERLIN, NAVAIR AMS PMT, CDMD-OA, NDE, PEO MLB, CSPT, NAVSUP<br><strong>Army:</strong> GCSS-Army, LMP, AESIP<br><strong>Air Force:</strong> REMIS, LIMS-EV, D200A<br><strong>Marine Corps:</strong> GCSS-MC, ATLASS<br><strong>Coast Guard:</strong> ALMIS, CGOne<br><strong>Space Force:</strong> USSF LMS<br><strong>Joint/OSD:</strong> COMPASS, MBPS, GCSS, DPAS, DLA FLIS, PIEE/WAWF<br><br><strong>How it works:</strong><br>1. Select a source system from the dropdown<br>2. Upload a CSV, XML, or JSON file — or paste data directly<br>3. S4 auto-detects format, maps fields, and computes SHA-256 hashes<br>4. Click <strong>"Anchor to XRPL"</strong> to create immutable blockchain records<br><br><strong>Savings:</strong> $450K+/year per program. 70% less data reconciliation time. 80% fewer data discrepancies. 60% faster audit prep.<br><br>Click the <strong>Database Import</strong> tab above to get started, or use <strong>"Run Demo Import"</strong> to see sample data from any system.';
         if (/ilie|submission|discrepancy|vendor review|upload|vrs/i.test(query)) {
         if (_subCache && _subCache.discrepancies && _subCache.discrepancies.length) {
             var cc = _subCache.discrepancies.filter(function(d){return d.severity==='critical'}).length;
@@ -4914,10 +4915,10 @@ function generateAiResponse(query) {
         const missing = r.clItems.filter(i=>!i.checked);
         const complete = r.clItems.filter(i=>i.checked);
         let resp = '<strong>ILS Checklist Status — ' + r.prog.name + '</strong><br><br>';
-        resp += '✅ <strong>Complete (' + complete.length + '):</strong><br>';
+        resp += '<i class="fas fa-check-circle" style="color:#14f195"></i> <strong>Complete (' + complete.length + '):</strong><br>';
         complete.slice(0,8).forEach(i => { resp += '• ' + i.l + (i.c?' [CRITICAL]':'') + '<br>'; });
         if (complete.length > 8) resp += '• ...and ' + (complete.length-8) + ' more<br>';
-        resp += '<br>❌ <strong>Incomplete (' + missing.length + '):</strong><br>';
+        resp += '<br><strong>Incomplete (' + missing.length + '):</strong><br>';
         missing.forEach(i => { resp += '• <span style="color:'+(i.c?'#ff3333':'#ffa500')+'">' + i.l + (i.c?' [CRITICAL]':'') + '</span><br>'; });
         return resp;
     }
@@ -4927,9 +4928,9 @@ function generateAiResponse(query) {
         const overdue = r.drlResults.filter(d => d.found && /overdue|late/i.test(d.status));
         let resp = '<strong>Schedule Assessment — ' + r.prog.name + '</strong><br><br>';
         resp += '⏰ Overall Schedule Risk: <strong style="color:#ffa500">' + (r.critGaps > 3 ? '6-12 months' : r.critGaps > 0 ? '2-6 months' : '< 2 months') + '</strong><br>';
-        resp += '📊 Critical path items: ' + r.critGaps + '<br><br>';
+        resp += '<i class="fas fa-chart-bar"></i> Critical path items: ' + r.critGaps + '<br><br>';
         if (overdue.length) {
-            resp += '⚠️ <strong>Overdue Items (' + overdue.length + '):</strong><br>';
+            resp += '<i class="fas fa-exclamation-triangle"></i> <strong>Overdue Items (' + overdue.length + '):</strong><br>';
             overdue.forEach(d => { resp += '• ' + d.di + ' — ' + d.t + ' (' + d.status + ')<br>'; });
         }
         resp += '<br><strong>Recommendation:</strong> ' + (r.critGaps > 3 ? 'Immediate intervention required. Consider contract modification or schedule re-baseline.' : r.critGaps > 0 ? 'Address critical items within 30 days to maintain schedule.' : 'Schedule risk is manageable. Continue monitoring.');
@@ -4937,7 +4938,7 @@ function generateAiResponse(query) {
     }
 
     if (/report|generate|export|download/.test(q)) {
-        return '📄 <strong>Available Reports & Exports:</strong><br><br>' +
+        return '<i class="fas fa-file-alt"></i> <strong>Available Reports & Exports:</strong><br><br>' +
             '• <strong>"Generate Report"</strong> button — Downloads a full text report<br>' +
             '• <strong>"Export Action Tracker"</strong> — CSV of all action items with owners/dates<br>' +
             '• <strong>"Anchor Report Hash"</strong> — Immutable XRPL proof of analysis<br>' +
@@ -4949,7 +4950,7 @@ function generateAiResponse(query) {
     // ── New Tool Topic Matchers (vault, docs, compliance, provisioning) ──
     if (/vault|audit.*record|audit.*trail|audit.*vault|anchored.*record/.test(q)) {
         const vault = JSON.parse(localStorage.getItem('s4_audit_vault') || '[]');
-        let resp = '<strong>🔒 Audit Record Vault</strong><br><br>';
+        let resp = '<strong>Audit Record Vault</strong><br><br>';
         if (vault.length > 0) {
             resp += 'Your vault contains <strong>' + vault.length + ' records</strong>.<br>';
             const types = [...new Set(vault.map(v => v.type || 'Unknown'))];
@@ -4967,7 +4968,7 @@ function generateAiResponse(query) {
     }
 
     if (/compliance.*score|cmmc|nist.*800|dfars.*252|compliance.*posture|compliance.*card|compliance.*grade/.test(q)) {
-        let resp = '<strong>🛡️ Compliance Scorecard</strong><br><br>';
+        let resp = '<strong>Compliance Scorecard</strong><br><br>';
         resp += 'Your compliance posture is auto-calculated across 6 frameworks based on your workspace activity:<br><br>';
         resp += '• <strong>CMMC Level 2</strong> — Cybersecurity maturity<br>';
         resp += '• <strong>NIST SP 800-171</strong> — CUI protection controls<br>';
@@ -4980,15 +4981,15 @@ function generateAiResponse(query) {
     }
 
     if (/defense.*doc|doc.*library|mil-std|opnavinst|regulation|standard.*reference|mil-hdbk|browse.*doc/.test(q)) {
-        return '<strong>📚 Defense Document Library</strong><br><br>Your workspace includes a searchable library of <strong>100+ real defense documents</strong>:<br><br>• MIL-STD-1388, MIL-STD-882, MIL-STD-461<br>• MIL-HDBK-502, MIL-HDBK-217<br>• OPNAVINST 4790.16, OPNAVINST 5100.19<br>• COMDTINST M4000.13, COMDTINST M3500.3<br>• AR 700-127, AR 750-1<br>• AFI 63-101, AFI 20-110<br>• MCO 4105.2, MCO 4400.150<br>• DFARS 252.204-7012, FAR 46<br>• NIST SP 800-171, NIST SP 800-53<br><br>Filter by category, branch, or full-text search. Click any document for the official source link.<br><br>Click the <strong>Doc Library</strong> tab to browse.';
+        return '<strong>Defense Document Library</strong><br><br>Your workspace includes a searchable library of <strong>100+ real defense documents</strong>:<br><br>• MIL-STD-1388, MIL-STD-882, MIL-STD-461<br>• MIL-HDBK-502, MIL-HDBK-217<br>• OPNAVINST 4790.16, OPNAVINST 5100.19<br>• COMDTINST M4000.13, COMDTINST M3500.3<br>• AR 700-127, AR 750-1<br>• AFI 63-101, AFI 20-110<br>• MCO 4105.2, MCO 4400.150<br>• DFARS 252.204-7012, FAR 46<br>• NIST SP 800-171, NIST SP 800-53<br><br>Filter by category, branch, or full-text search. Click any document for the official source link.<br><br>Click the <strong>Doc Library</strong> tab to browse.';
     }
 
     if (/provision|ptd|provisioning.*tech|allowance.*part|apl.*gen|catalog|icaps|lmi|logistics.*product|ppd|provisioning.*part/.test(q)) {
-        return '<strong>📦 Provisioning & ICAPS Comparison</strong><br><br>S4 Ledger provides provisioning capabilities that surpass legacy tools like ICAPS:<br><br><strong>ICAPS limitations:</strong><br>• Navy/Marine Corps only<br>• Covers only Supply Support IPS element<br>• Mainframe + PC architecture<br>• No blockchain verification<br>• No compliance scoring<br><br><strong>S4 Ledger advantages:</strong><br>• <strong>All branches</strong> — Joint, Navy, Army, AF, USMC, CG, Space Force<br>• <strong>All 12 ILS elements</strong> — not just Supply Support<br>• <strong>Blockchain-verified</strong> — every provisioning decision anchored to XRPL<br>• <strong>Integrated</strong> — provisioning ties to DMSMS, readiness, lifecycle cost, warranty<br>• <strong>Compliance tracking</strong> — CMMC, NIST, DFARS scoring built-in<br>• <strong>Modern web platform</strong> — no mainframe required<br><br>Use the <strong>Parts</strong> tab for cross-reference and the <strong>Gap Analysis</strong> to track provisioning deliverables (DI-020 VRS, DI-021 APL).';
+        return '<strong>Provisioning & ICAPS Comparison</strong><br><br>S4 Ledger provides provisioning capabilities that surpass legacy tools like ICAPS:<br><br><strong>ICAPS limitations:</strong><br>• Navy/Marine Corps only<br>• Covers only Supply Support IPS element<br>• Mainframe + PC architecture<br>• No blockchain verification<br>• No compliance scoring<br><br><strong>S4 Ledger advantages:</strong><br>• <strong>All branches</strong> — Joint, Navy, Army, AF, USMC, CG, Space Force<br>• <strong>All 12 ILS elements</strong> — not just Supply Support<br>• <strong>Blockchain-verified</strong> — every provisioning decision anchored to XRPL<br>• <strong>Integrated</strong> — provisioning ties to DMSMS, readiness, lifecycle cost, warranty<br>• <strong>Compliance tracking</strong> — CMMC, NIST, DFARS scoring built-in<br>• <strong>Modern web platform</strong> — no mainframe required<br><br>Use the <strong>Parts</strong> tab for cross-reference and the <strong>Gap Analysis</strong> to track provisioning deliverables (DI-020 VRS, DI-021 APL).';
     }
 
     if (/thank|thanks|great|awesome|perfect|good/.test(q)) {
-        return '🎯 Happy to help! Remember you can:<br>• Upload additional documents anytime to re-run analysis<br>• Ask me about any DI number, ILS term, or defense acronym<br>• Request drafts of memos, emails, or CARs<br>• Get schedule/cost analysis at any time';
+        return '<i class="fas fa-bullseye"></i> Happy to help! Remember you can:<br>• Upload additional documents anytime to re-run analysis<br>• Ask me about any DI number, ILS term, or defense acronym<br>• Request drafts of memos, emails, or CARs<br>• Get schedule/cost analysis at any time';
     }
 
     // ── Intelligent Conversational Handler ──
@@ -5092,7 +5093,7 @@ function generateAiResponse(query) {
     let response = '';
     if (r) {
         response = 'Regarding "<em>' + query + '</em>" — here\'s what I can tell you about <strong>' + progName + '</strong>:<br><br>';
-        response += '📊 Current readiness: <strong>' + r.pct + '%</strong> | Critical gaps: <strong>' + r.critGaps + '</strong> | Risk: <strong>' + formatCost(r.totalCost) + '</strong><br><br>';
+        response += '<i class="fas fa-chart-bar"></i> Current readiness: <strong>' + r.pct + '%</strong> | Critical gaps: <strong>' + r.critGaps + '</strong> | Risk: <strong>' + formatCost(r.totalCost) + '</strong><br><br>';
         if (r.critGaps > 0) {
             response += 'Your top priority should be addressing the <strong>' + r.critGaps + ' critical items</strong>. The most urgent is <strong>' + r.actions[0].title + '</strong> (Owner: ' + r.actions[0].owner + ').<br><br>';
         }
@@ -5225,8 +5226,8 @@ async function anchorDMSMS() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'DMSMS_REPORT', record_label:'DMSMS Obsolescence Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_d, system:'DMSMS Tracker'});
     updateTxLog();
-    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'⚠️', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01});
-    setTimeout(() => { document.getElementById('animStatus').textContent = '✅ DMSMS report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01});
+    setTimeout(() => { document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> DMSMS report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
 // ═══ OPERATIONAL READINESS CALCULATOR ═══
@@ -5282,7 +5283,7 @@ function calcReadiness() {
     const sysName = systems[sysIdx] ? systems[sysIdx].sys : 'System';
 
     let html = '<div style="background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.2);border-radius:12px;padding:16px;font-size:0.85rem;">';
-    html += '<div style="font-weight:700;color:#00aaff;margin-bottom:10px;font-size:1rem;">📊 RAM Analysis: ' + sysName + '</div>';
+    html += '<div style="font-weight:700;color:#00aaff;margin-bottom:10px;font-size:1rem;">RAM Analysis: ' + sysName + '</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
     html += '<div><strong>Operational Availability (Ao):</strong></div><div style="color:' + (ao>=0.9?'#14f195':ao>=0.75?'#ffa500':'#ff3333') + ';font-weight:700;">' + (ao*100).toFixed(2) + '%</div>';
     html += '<div><strong>Inherent Availability (Ai):</strong></div><div style="color:#fff;">' + (ai*100).toFixed(2) + '%</div>';
@@ -5295,11 +5296,11 @@ function calcReadiness() {
 
     // Assessment
     html += '<div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">';
-    if (ao >= 0.95) html += '<span style="color:#14f195;font-weight:700;">✅ EXCELLENT</span> — System exceeds readiness requirements. Ao > 95% meets most high-priority program thresholds.';
-    else if (ao >= 0.90) html += '<span style="color:#14f195;font-weight:700;">✅ MEETS REQUIREMENTS</span> — Ao > 90% is acceptable for most defense programs. Monitor MLDT for improvement opportunities.';
-    else if (ao >= 0.80) html += '<span style="color:#ffa500;font-weight:700;">⚠️ MARGINAL</span> — Ao between 80-90%. Consider reducing MLDT through pre-positioned spares or improving MTTR via better training/tools.';
-    else if (ao >= 0.70) html += '<span style="color:#ff9900;font-weight:700;">⚠️ BELOW THRESHOLD</span> — Ao below 80%. Recommend: (1) LSA review of failure modes, (2) spares stocking analysis, (3) MTTR reduction plan.';
-    else html += '<span style="color:#ff3333;font-weight:700;">🔴 CRITICAL</span> — Ao below 70% indicates significant readiness risk. Immediate corrective action required: DMSMS review, redesign consideration, enhanced depot support.';
+    if (ao >= 0.95) html += '<span style="color:#14f195;font-weight:700;">EXCELLENT</span> — System exceeds readiness requirements. Ao > 95% meets most high-priority program thresholds.';
+    else if (ao >= 0.90) html += '<span style="color:#14f195;font-weight:700;">MEETS REQUIREMENTS</span> — Ao > 90% is acceptable for most defense programs. Monitor MLDT for improvement opportunities.';
+    else if (ao >= 0.80) html += '<span style="color:#ffa500;font-weight:700;">MARGINAL</span> — Ao between 80-90%. Consider reducing MLDT through pre-positioned spares or improving MTTR via better training/tools.';
+    else if (ao >= 0.70) html += '<span style="color:#ff9900;font-weight:700;">BELOW THRESHOLD</span> — Ao below 80%. Recommend: (1) LSA review of failure modes, (2) spares stocking analysis, (3) MTTR reduction plan.';
+    else html += '<span style="color:#ff3333;font-weight:700;">CRITICAL</span> — Ao below 70% indicates significant readiness risk. Immediate corrective action required: DMSMS review, redesign consideration, enhanced depot support.';
     html += '</div>';
 
     // Formula reference
@@ -5339,8 +5340,8 @@ async function anchorReadiness() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'RAM_REPORT', record_label:'RAM Readiness Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_r, system:'Readiness Calculator'});
     updateTxLog();
-    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'📊', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01});
-    setTimeout(() => { document.getElementById('animStatus').textContent = '✅ RAM report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01});
+    setTimeout(() => { document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> RAM report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
 // ═══ NSN / PARTS CROSS-REFERENCE ═══
@@ -5486,8 +5487,8 @@ async function anchorParts() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'PARTS_XREF', record_label:'Parts Cross-Reference', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_p, system:'Parts X-Ref'});
     updateTxLog();
-    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'PARTS_XREF', label:'Parts Cross-Reference', branch:'JOINT', icon:'🔧', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Parts X-Ref', fee:0.01});
-    setTimeout(() => { document.getElementById('animStatus').textContent = '✅ Parts data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'PARTS_XREF', label:'Parts Cross-Reference', branch:'JOINT', icon:'<i class="fas fa-wrench"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Parts X-Ref', fee:0.01});
+    setTimeout(() => { document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Parts data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
 }
 
 // ═══ ROI CALCULATOR ═══
@@ -5554,7 +5555,7 @@ async function anchorROI() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'ROI_ANALYSIS', record_label:'ROI Calculator Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_roi, system:'ROI Calculator'});
     updateTxLog();
-    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'ROI_ANALYSIS', label:'ROI Calculator Report', branch:'JOINT', icon:'💰', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01});
+    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'ROI_ANALYSIS', label:'ROI Calculator Report', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01});
 }
 
 // ═══ LIFECYCLE COST ESTIMATOR ═══
@@ -5617,7 +5618,7 @@ async function anchorLifecycle() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'LIFECYCLE_COST', record_label:'Lifecycle Cost Estimate', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_lc, system:'Lifecycle Estimator'});
     updateTxLog();
-    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'LIFECYCLE_COST', label:'Lifecycle Cost Estimate', branch:'JOINT', icon:'📈', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Estimator', fee:0.01});
+    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'LIFECYCLE_COST', label:'Lifecycle Cost Estimate', branch:'JOINT', icon:'<i class="fas fa-chart-line"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Estimator', fee:0.01});
 }
 
 // ═══ WARRANTY & CONTRACT TRACKER ═══
@@ -5671,11 +5672,11 @@ function loadWarrantyData() {
     html += '</table></div>';
     if (expiring > 0) {
         html += '<div style="margin-top:0.8rem;padding:8px;background:rgba(255,165,0,0.08);border:1px solid rgba(255,165,0,0.2);border-radius:8px;color:#ffa500;font-size:0.85rem;">';
-        html += '<strong>⚠ Action Required:</strong> ' + expiring + ' warranty/contract item(s) expiring within 90 days. Initiate renewal or re-compete per FAR 46.7 / DFARS 246.7.</div>';
+        html += '<strong>Action Required:</strong> ' + expiring + ' warranty/contract item(s) expiring within 90 days. Initiate renewal or re-compete per FAR 46.7 / DFARS 246.7.</div>';
     }
     if (expired > 0) {
         html += '<div style="margin-top:0.5rem;padding:8px;background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:8px;color:#ff3333;font-size:0.85rem;">';
-        html += '<strong>🔴 Coverage Gap:</strong> ' + expired + ' expired warranty/contract item(s). Recommend immediate OEM engagement or bridge contract.</div>';
+        html += '<strong>Coverage Gap:</strong> ' + expired + ' expired warranty/contract item(s). Recommend immediate OEM engagement or bridge contract.</div>';
     }
     html += '</div>';
     document.getElementById('warrantyResults').innerHTML = html;
@@ -5702,7 +5703,7 @@ async function anchorWarranty() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'WARRANTY_CONTRACT', record_label:'Warranty & Contract Tracker', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash_w, system:'Warranty Tracker'});
     updateTxLog();
-    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'WARRANTY_CONTRACT', label:'Warranty & Contract Tracker', branch:'JOINT', icon:'📋', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Warranty Tracker', fee:0.01});
+    addToVault({hash, txHash:'TX'+Date.now().toString(16).toUpperCase(), type:'WARRANTY_CONTRACT', label:'Warranty & Contract Tracker', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Warranty Tracker', fee:0.01});
 }
 
 // ── Initialization ──
@@ -5999,10 +6000,10 @@ function renderHubActions(filter) {
     if (srcEl && s4ActionItems.length > 0) {
         const sources = {};
         s4ActionItems.filter(a=>!a.done).forEach(a => { sources[a.source||'other'] = (sources[a.source||'other']||0) + 1; });
-        const srcIcons = {dmsms:'⚠️',readiness:'📈',parts:'🔩',warranty:'📋',roi:'💰',lifecycle:'⏳',ils:'🧠',checklist:'✅',drl:'📄'};
+        const srcIcons = {dmsms:'<i class="fas fa-exclamation-triangle"></i>',readiness:'<i class="fas fa-chart-line"></i>',parts:'<i class="fas fa-cog"></i>',warranty:'<i class="fas fa-clipboard-list"></i>',roi:'<i class="fas fa-dollar-sign"></i>',lifecycle:'<i class="fas fa-hourglass-half"></i>',ils:'<i class="fas fa-brain"></i>',checklist:'<i class="fas fa-check-circle" style="color:#14f195"></i>',drl:'<i class="fas fa-file-alt"></i>'};
         let sHtml = '';
         Object.entries(sources).sort((a,b)=>b[1]-a[1]).forEach(([src,cnt]) => {
-            sHtml += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03)"><span>'+(srcIcons[src]||'📌')+' '+src.toUpperCase()+'</span><span style="font-weight:700;color:var(--accent)">'+cnt+'</span></div>';
+            sHtml += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03)"><span>'+(srcIcons[src]||'<i class="fas fa-thumbtack"></i>')+' '+src.toUpperCase()+'</span><span style="font-weight:700;color:var(--accent)">'+cnt+'</span></div>';
         });
         srcEl.innerHTML = sHtml;
     }
@@ -6187,7 +6188,7 @@ function renderVault() {
         <div class="vault-record" style="animation:slideUp ${0.2 + i * 0.05}s ease">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
                 <div>
-                    <span style="font-size:1rem;margin-right:6px">${v.icon || '📋'}</span>
+                    <span style="font-size:1rem;margin-right:6px">${v.icon || '<i class="fas fa-clipboard-list"></i>'}</span>
                     <strong style="color:#fff;font-size:0.88rem">${v.label || v.type}</strong>
                     <span style="font-size:0.72rem;color:var(--muted);margin-left:8px">${v.branch || ''}</span>
                 </div>
@@ -6416,7 +6417,7 @@ async function anchorCompliance() {
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Compliance Scorecard', 'CUI');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'compliance_scorecard', tx_hash:txHash})}); } catch(e) {}
-    addToVault({hash, txHash, type:'compliance_scorecard', label:'Compliance Scorecard', branch:'JOINT', icon:'🛡️', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Compliance Scorecard', fee:0.01});
+    addToVault({hash, txHash, type:'compliance_scorecard', label:'Compliance Scorecard', branch:'JOINT', icon:'<i class="fas fa-shield-alt"></i>', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Compliance Scorecard', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; updateStats(); saveStats();
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -6663,7 +6664,7 @@ async function anchorProvItem(index) {
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Provisioning: ' + it.name, 'CUI');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'provisioning_item', tx_hash:txHash, content_preview: it.name + ' NSN:' + it.nsn})}); } catch(e) {}
-    addToVault({hash, txHash, type:'provisioning_item', label:'Provisioning: ' + it.name, branch:'JOINT', icon:'📦', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
+    addToVault({hash, txHash, type:'provisioning_item', label:'Provisioning: ' + it.name, branch:'JOINT', icon:'<i class="fas fa-box"></i>', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('provisioning_item'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_item', record_label:'Provisioning: '+it.name, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
@@ -6680,7 +6681,7 @@ async function anchorAllProvisioning() {
         const hash = await sha256(content);
         const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
         try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'provisioning_item', tx_hash:txHash, content_preview: it.name})}); } catch(e) {}
-        addToVault({hash, txHash, type:'provisioning_item', label:'Prov: ' + it.name, branch:'JOINT', icon:'📦', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
+        addToVault({hash, txHash, type:'provisioning_item', label:'Prov: ' + it.name, branch:'JOINT', icon:'<i class="fas fa-box"></i>', content:content.substring(0,120), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
         saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_item', record_label:'Prov: '+it.name, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
         stats.anchored++; stats.slsFees += 0.01;
         count++;
@@ -6724,7 +6725,7 @@ async function anchorProvisioning() {
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Provisioning Report', 'FOUO');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'provisioning_report', tx_hash:txHash})}); } catch(e) {}
-    addToVault({hash, txHash, type:'provisioning_report', label:'Provisioning Report', branch: prog.branch || 'JOINT', icon:'📦', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
+    addToVault({hash, txHash, type:'provisioning_report', label:'Provisioning Report', branch: prog.branch || 'JOINT', icon:'<i class="fas fa-box"></i>', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Provisioning & PTD Manager', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('provisioning_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'provisioning_report', record_label:'Provisioning Report — '+prog.name, branch:prog.branch||'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
@@ -6838,10 +6839,10 @@ async function anchorRisk() {
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Supply Chain Risk Report', 'CUI');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'risk_report', tx_hash:txHash})}); } catch(e) {}
-    addToVault({hash, txHash, type:'risk_report', label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', icon:'⚠️', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'AI Supply Chain Risk Engine', fee:0.01});
+    addToVault({hash, txHash, type:'risk_report', label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'AI Supply Chain Risk Engine', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('risk_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'risk_report', record_label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '✅ Risk report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Risk report anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -6869,12 +6870,12 @@ function generateReport() {
     const totalRecords = Math.max(records.length, vaultRecords.length, stats.anchored || 0, 12);
 
     const reportTypes = {
-        full_audit: {title:'Full Audit Package',icon:'📋',sections:['Executive Summary','Anchoring History','Chain of Custody','Compliance Scorecard','Record Verification','Hash Integrity Report']},
-        supply_chain: {title:'Supply Chain Verification',icon:'📦',sections:['Supply Chain Overview','Receipt Verification','Custody Transfers','Lot Traceability','Counterfeit Prevention','Supplier Compliance']},
-        maintenance: {title:'Maintenance Records Audit',icon:'🔧',sections:['Maintenance Summary','Work Order Verification','Parts Usage','Readiness Impact','3-M Compliance','Predictive Analysis']},
-        compliance: {title:'Compliance Summary Report',icon:'✅',sections:['Overall Compliance Score','NIST 800-171 Mapping','CMMC Level Readiness','DFARS Clause Compliance','ITAR/EAR Verification','Gap Analysis']},
-        custody: {title:'Chain of Custody Report',icon:'🔗',sections:['Custody Timeline','Transfer Verification','Location History','Handler Authentication','Tamper Detection','Blockchain Proof']},
-        contract: {title:'Contract Deliverables Report',icon:'📑',sections:['CDRL Status Summary','Deliverable Timeline','Modification History','Quality Metrics','Schedule Compliance','Cost Performance']}
+        full_audit: {title:'Full Audit Package',icon:'<i class="fas fa-clipboard-list"></i>',sections:['Executive Summary','Anchoring History','Chain of Custody','Compliance Scorecard','Record Verification','Hash Integrity Report']},
+        supply_chain: {title:'Supply Chain Verification',icon:'<i class="fas fa-box"></i>',sections:['Supply Chain Overview','Receipt Verification','Custody Transfers','Lot Traceability','Counterfeit Prevention','Supplier Compliance']},
+        maintenance: {title:'Maintenance Records Audit',icon:'<i class="fas fa-wrench"></i>',sections:['Maintenance Summary','Work Order Verification','Parts Usage','Readiness Impact','3-M Compliance','Predictive Analysis']},
+        compliance: {title:'Compliance Summary Report',icon:'<i class="fas fa-check-circle" style="color:#14f195"></i>',sections:['Overall Compliance Score','NIST 800-171 Mapping','CMMC Level Readiness','DFARS Clause Compliance','ITAR/EAR Verification','Gap Analysis']},
+        custody: {title:'Chain of Custody Report',icon:'<i class="fas fa-link"></i>',sections:['Custody Timeline','Transfer Verification','Location History','Handler Authentication','Tamper Detection','Blockchain Proof']},
+        contract: {title:'Contract Deliverables Report',icon:'<i class="fas fa-file-contract"></i>',sections:['CDRL Status Summary','Deliverable Timeline','Modification History','Quality Metrics','Schedule Compliance','Cost Performance']}
     };
     const rt = reportTypes[rType] || reportTypes.full_audit;
     const now = new Date();
@@ -6936,10 +6937,10 @@ async function anchorReport() {
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Audit Report Hash', 'CUI');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'audit_report', tx_hash:txHash})}); } catch(e) {}
-    addToVault({hash, txHash, type:'audit_report', label:r.title+' — Score: '+r.score+'%', branch:'JOINT', icon:'📋', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Audit Report Generator', fee:0.01});
+    addToVault({hash, txHash, type:'audit_report', label:r.title+' — Score: '+r.score+'%', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Audit Report Generator', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('audit_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'audit_report', record_label:r.title, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '✅ Audit report hash anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Audit report hash anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7059,10 +7060,10 @@ async function anchorContracts() {
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Contract Status Report', 'CUI');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'contract_report', tx_hash:txHash})}); } catch(e) {}
-    addToVault({hash, txHash, type:'contract_report', label:'Contract Report — '+cid, branch:'JOINT', icon:'📑', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Contract Lifecycle Management', fee:0.01});
+    addToVault({hash, txHash, type:'contract_report', label:'Contract Report — '+cid, branch:'JOINT', icon:'<i class="fas fa-file-contract"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Contract Lifecycle Management', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('contract_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'contract_report', record_label:'Contract Report — '+cid, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '✅ Contract data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Contract data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7185,10 +7186,10 @@ async function anchorThread() {
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Digital Thread Report', 'CUI');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'digital_thread', tx_hash:txHash})}); } catch(e) {}
-    addToVault({hash, txHash, type:'digital_thread', label:'Digital Thread — '+platform.toUpperCase()+' ('+view+')', branch:'JOINT', icon:'🔗', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Digital Thread Bridge', fee:0.01});
+    addToVault({hash, txHash, type:'digital_thread', label:'Digital Thread — '+platform.toUpperCase()+' ('+view+')', branch:'JOINT', icon:'<i class="fas fa-link"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Digital Thread Bridge', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('digital_thread'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'digital_thread', record_label:'Digital Thread — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '✅ Configuration data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Configuration data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7385,7 +7386,7 @@ function loadPredictiveData() {
         html += '<td style="padding:10px 8px;"><div style="color:#fff;font-weight:600;font-size:0.82rem;">'+it.system+'</div><div style="color:var(--text-muted);font-size:0.72rem;">'+it.component+'</div></td>';
         html += '<td style="padding:10px 8px;color:var(--steel);font-size:0.8rem;">'+it.mode+'</td>';
         html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 10px;border-radius:20px;font-weight:700;font-size:0.82rem;background:'+confColor+'22;color:'+confColor+';border:1px solid '+confColor+'44;">'+it.confidence+'%</div></td>';
-        html += '<td style="padding:10px 8px;text-align:center;color:'+(it.urgent?'#ff3b30':'var(--steel)')+';font-weight:'+(it.urgent?'700':'400')+';font-size:0.82rem;">'+it.eta+(it.urgent?' ⚠️':'')+'</td>';
+        html += '<td style="padding:10px 8px;text-align:center;color:'+(it.urgent?'#ff3b30':'var(--steel)')+';font-weight:'+(it.urgent?'700':'400')+';font-size:0.82rem;">'+it.eta+(it.urgent?' <i class="fas fa-exclamation-triangle"></i>':'')+'</td>';
         html += '<td style="padding:10px 8px;text-align:right;color:#ff9500;font-weight:600;font-size:0.85rem;">$'+it.cost.toLocaleString()+'K</td>';
         html += '</tr>';
     });
@@ -7412,10 +7413,10 @@ async function anchorPredictive() {
     const txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     showAnchorAnimation(hash, 'Predictive Maintenance Report', 'CUI');
     try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type:'predictive_maintenance', tx_hash:txHash})}); } catch(e) {}
-    addToVault({hash, txHash, type:'predictive_maintenance', label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', icon:'🧠', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Predictive Maintenance AI', fee:0.01});
+    addToVault({hash, txHash, type:'predictive_maintenance', label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Predictive Maintenance AI', fee:0.01});
     stats.anchored++; stats.slsFees += 0.01; stats.types.add('predictive_maintenance'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'predictive_maintenance', record_label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01});
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '✅ Predictive data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> Predictive data anchored!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7644,17 +7645,17 @@ async function anchorDbImport() {
         rec.anchored = true;
         anchored++;
         try { await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash:rec.hash, record_type:rec.type, tx_hash:txHash, content_preview:content.substring(0,100)})}); } catch(e) {}
-        addToVault({hash:rec.hash, txHash, type:rec.type, label:info.name+' Import — '+rec.type.replace(/_/g,' '), branch:branchKey, icon:'🗄', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:info.name+' Import', fee:0.01, data_source:_dbImportCache.system});
+        addToVault({hash:rec.hash, txHash, type:rec.type, label:info.name+' Import — '+rec.type.replace(/_/g,' '), branch:branchKey, icon:'<i class="fas fa-database"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:info.name+' Import', fee:0.01, data_source:_dbImportCache.system});
         // Push to sessionRecords so Transaction Log updates
         sessionRecords.push({
-            type:rec.type, label:info.name+' Import — '+rec.type.replace(/_/g,' '), icon:'🗄',
+            type:rec.type, label:info.name+' Import — '+rec.type.replace(/_/g,' '), icon:'<i class="fas fa-database"></i>',
             branch:branchKey, hash:rec.hash, txHash, encrypted:false,
             timestamp:new Date().toISOString(), content:content.substring(0,100)
         });
         // Save to localStorage so Metrics & Transactions pages see it
         saveLocalRecord({
             hash:rec.hash, record_type:rec.type, record_label:info.name+' Import — '+rec.type.replace(/_/g,' '),
-            branch:branchKey, icon:'🗄', timestamp:new Date().toISOString(),
+            branch:branchKey, icon:'<i class="fas fa-database"></i>', timestamp:new Date().toISOString(),
             timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC',
             fee:0.01, tx_hash:txHash, system:info.name, data_source:_dbImportCache.system
         });
@@ -7663,7 +7664,7 @@ async function anchorDbImport() {
     updateStats(); saveStats(); updateTxLog();
     document.getElementById('dbImportAnchored').textContent = anchored;
     showAnchorAnimation(_dbImportCache.records[0].hash, info.name + ' — ' + anchored + ' Records', 'CUI');
-    setTimeout(()=>{ document.getElementById('animStatus').textContent = '✅ ' + anchored + ' records anchored to XRPL!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').textContent = '<i class="fas fa-check-circle" style="color:#14f195"></i> ' + anchored + ' records anchored to XRPL!'; document.getElementById('animStatus').style.color = '#14f195'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <title>S4 Ledger | Live XRPL Transactions</title>
@@ -323,7 +324,7 @@
                 const hashShort = (tx.hash || '').substring(0, 12) + '...';
                 const txHashShort = (tx.tx_hash || '').substring(0, 14) + '...';
                 const label = tx.record_label || tx.record_type || 'Unknown';
-                const icon = tx.icon || '📋';
+                const icon = tx.icon || '<i class="fas fa-clipboard-list"></i>';
                 const explorerUrl = 'https://testnet.xrpl.org/transactions/' + (tx.tx_hash || '');
                 return `<tr>
                     <td style="color:var(--accent);white-space:nowrap;font-size:0.82rem;">${tx.timestamp_display || ''}</td>
@@ -394,6 +395,7 @@
     window.addEventListener('DOMContentLoaded', loadTransactions);
     setInterval(loadTransactions, 5000);
     </script>
+<link rel="stylesheet" href="/s4-assets/s4-mobile.css">
 <script src="s4-assets/s4-background.js"></script>
 </body>
 </html>

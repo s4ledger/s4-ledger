@@ -5,6 +5,27 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.16] - 2026-02-16
+
+### Added — Platform Feature Upgrades: Auth, Persistence, Export, Collaboration, Mobile
+
+- **Auth & Session Management (`s4-auth.js`)** — Full authentication module with session CRUD, role-based access control (admin/manager/analyst/auditor/viewer), session history tracking, user preferences (auto-save, notifications, dark mode), auth badge UI with dropdown menu, profile & settings modals. Integrates with existing login system.
+- **Persistent Data Layer (`s4-data.js`)** — IndexedDB-backed persistence layer with 6 object stores (analyses, actionItems, vault, settings, comments, notifications). Full CRUD, domain-specific methods for analysis save/retrieve, action item management with filtering/sorting, vault record persistence, notification system with CustomEvent dispatch, comment threads, settings key-value store, stats aggregation, full JSON export/import.
+- **PDF & CSV Export Engine (`s4-pdf.js`)** — Professional report generation with A4 layout, classification banners, executive summary stats, readiness bar, gap analysis breakdown, action items table, vault records table, footer with report ID & timestamps. Also exports vault records and action items as CSV.
+- **Multi-User Collaboration (`s4-collab.js`)** — Team member management (7 simulated members across ranks), assignee picker widget, full action item assignment modal (title/assignee/priority/due date/status/notes/email notification), comment thread widget with real-time rendering, notification toasts.
+- **Mobile Responsive CSS (`s4-mobile.css`)** — Comprehensive responsive stylesheet: mobile ≤768px (horizontal-scroll ILS tabs, full-width panels, iOS zoom prevention), small phone ≤480px (compact nav/cards), tablet 769–991px (2-col grids), touch-friendly targets (44px min), print styles (hide nav/footer/particles, white background, page-break avoidance). Loaded on all 20 HTML pages.
+- **Export & Collaborate Toolbar** — New toolbar in ILS Workspace with Export PDF, Export CSV, Assign Task, and Saved Analyses buttons. Wired to S4PDF, S4Data, and S4Collab modules.
+- **Saved Analyses Viewer** — Modal overlay showing analysis count, vault record count, action item count, and scrollable list of saved analyses with readiness scores.
+- **Auth Badge in Navbar** — User avatar/role badge rendered in demo-app navbar with dropdown menu for profile, settings, and session management.
+- **Vault Auto-Persistence** — Vault records now automatically persist to IndexedDB via intercepted `pushToVault()` calls.
+
+### Changed — Favicon, Emoji Elimination, Claims Fix, Pricing Correction
+
+- **Favicon Overhaul** — Regenerated all icon sizes (32×32, 180×180, 192×192, 512×512) from S4Ledger_logo.png. New SVG favicon with dark hex shield, "S4" text in blue, gold divider bar, "LEDGER" subtitle. SVG favicon reference added to all 20 HTML pages.
+- **Site-Wide Emoji Elimination** — Replaced ~168 remaining emoji instances across 8 files (demo-app, SDK Playground, login, about, pricing, 404, transactions, landing page) with professional FontAwesome 6 icons. Zero emojis remain in the codebase.
+- **Use Cases & Landing Page Claims Fix** — Removed "Prime Contractors (LM, RTX, HII, GD, NG)", "Defense OEMs", "Sub-Contractors (Tier 2–4)", "Depot-Level MROs" from both pages. Replaced with role-based descriptions: "Program Offices (PEOs, NAVSEA, NAVAIR)", "ILS Managers", "Supply Chain Teams", "Compliance Officers".
+- **Pricing Page Fix** — "All 12 IPS modules" → "All 20 ILS tools" in Enterprise tier.
+
 ## [3.9.15] - 2026-02-16
 
 ### Changed — Professional UI Overhaul + Use Cases Expansion + Site-Wide Consistency

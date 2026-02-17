@@ -1,0 +1,237 @@
+/* ============================================================
+   S4 Ledger — Mobile Responsiveness Enhancement
+   v3.9.16 — Improved mobile/tablet experience for ILS Workspace
+   ============================================================ */
+
+/* ── Global Mobile Fixes ── */
+@media (max-width: 768px) {
+    /* ILS Workspace tabs — horizontal scroll on mobile */
+    .ils-hub-tabs {
+        display: flex !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px !important;
+        flex-wrap: nowrap !important;
+        gap: 3px !important;
+    }
+    .ils-hub-tabs::-webkit-scrollbar { display: none; }
+    .ils-hub-tab {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        padding: 6px 10px !important;
+        font-size: 0.72rem !important;
+        min-width: auto !important;
+    }
+
+    /* Cards stack properly */
+    .card, .vault-card, .ils-panel {
+        margin-bottom: 12px !important;
+    }
+
+    /* Action items panel */
+    .action-items-panel {
+        width: calc(100vw - 32px) !important;
+        max-width: 100% !important;
+        left: 16px !important;
+        right: 16px !important;
+    }
+
+    /* AI floating panel */
+    .ai-float-panel {
+        width: calc(100vw - 32px) !important;
+        max-height: 70vh !important;
+        right: 0 !important;
+        left: 16px !important;
+    }
+    .ai-float-wrapper {
+        right: 16px !important;
+        bottom: 16px !important;
+    }
+
+    /* Tables responsive */
+    .table-responsive, table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Vault stats grid */
+    .vault-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    /* Forms — full width */
+    select, input[type="text"], input[type="email"],
+    input[type="date"], textarea {
+        font-size: 16px !important; /* Prevent iOS zoom */
+    }
+
+    /* Hero section */
+    .hero h1 { font-size: 1.4rem !important; }
+    .hero p { font-size: 0.85rem !important; }
+
+    /* Compliance labels */
+    .compliance-label {
+        min-width: 80px !important;
+        font-size: 0.72rem !important;
+    }
+
+    /* Calendar */
+    .cal-day {
+        min-height: 40px !important;
+        padding: 2px !important;
+    }
+    .cal-day-num { font-size: 0.68rem !important; }
+
+    /* Branch tabs */
+    .branch-tabs {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    .branch-tab {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Record type grid */
+    .record-type-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Notification bell */
+    .notif-bell { right: 60px !important; }
+
+    /* Toast notifications */
+    #s4Toast {
+        left: 16px !important;
+        right: 16px !important;
+        max-width: none !important;
+    }
+
+    /* Toolbar buttons — wrap */
+    .ils-toolbar, .toolbar-row {
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+
+    /* PDF/Export buttons */
+    .s4-export-bar {
+        flex-direction: column !important;
+    }
+    .s4-export-bar button {
+        width: 100% !important;
+    }
+
+    /* Auth badge compact */
+    .s4-auth-badge > div:nth-child(2) {
+        display: none !important;
+    }
+
+    /* Auth menu mobile */
+    .s4-auth-menu {
+        right: -10px !important;
+        min-width: calc(100vw - 40px) !important;
+    }
+}
+
+/* ── Small Phone (< 480px) ── */
+@media (max-width: 480px) {
+    .ils-hub-tab {
+        padding: 5px 8px !important;
+        font-size: 0.68rem !important;
+    }
+
+    .navbar-brand .brand-text {
+        font-size: 0.9rem !important;
+    }
+    .nav-logo {
+        height: 28px !important;
+        width: 28px !important;
+    }
+
+    /* Container padding */
+    .container {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    /* Card padding */
+    .card {
+        padding: 12px !important;
+    }
+
+    .hero h1 { font-size: 1.2rem !important; }
+    .hero { padding-top: 5rem !important; }
+
+    /* Readiness bar */
+    .readiness-bar-container {
+        flex-direction: column !important;
+    }
+}
+
+/* ── Tablet (768px - 991px) ── */
+@media (min-width: 769px) and (max-width: 991px) {
+    .ils-hub-tabs {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+    .ils-hub-tab {
+        font-size: 0.78rem !important;
+    }
+
+    .record-type-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .vault-stats {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    .dash-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* ── Touch-Friendly Interactions ── */
+@media (hover: none), (pointer: coarse) {
+    /* Larger touch targets */
+    .ils-hub-tab, .branch-tab, .btn, button {
+        min-height: 44px;
+    }
+
+    /* No hover effects on touch */
+    .card:hover, .dash-card:hover, .btn:hover {
+        transform: none !important;
+    }
+
+    /* Active states for touch */
+    .ils-hub-tab:active, .branch-tab:active, .btn:active {
+        opacity: 0.7;
+        transition: opacity 0.1s;
+    }
+
+    /* Scroll indicators */
+    .ils-hub-tabs::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 30px;
+        background: linear-gradient(to left, rgba(5,8,16,0.9), transparent);
+        pointer-events: none;
+    }
+}
+
+/* ── Print Styles ── */
+@media print {
+    body { background: #fff !important; color: #000 !important; }
+    .navbar, footer, .ai-float-wrapper, .action-items-panel,
+    .notif-bell, #particles-js, .s4-export-bar { display: none !important; }
+    .card { border: 1px solid #dee2e6 !important; background: #fff !important; break-inside: avoid; }
+    .container { max-width: 100% !important; }
+    a { color: #000 !important; text-decoration: none !important; }
+}

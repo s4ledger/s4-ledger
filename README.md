@@ -1,14 +1,14 @@
 # S4 Ledger
 
-**Immutable Logistics Verification for the Defense Industry**
+**Immutable Defense Logistics on the XRP Ledger**
 
 S4 Ledger provides tamper-proof audit trails for defense supply chains, technical data, maintenance records, and contract deliverables using SHA-256 hash anchoring on the XRP Ledger.
 
 No sensitive data touches the blockchain — ever. Only cryptographic hashes.
 
-🌐 **Website:** [s4ledger.com](https://s4ledger.com)  
-📧 **Contact:** info@s4ledger.com  
-🪙 **Token:** [$SLS on xMagnetic](https://xmagnetic.org/tokens/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5+534C5300000000000000000000000000000000000000)
+**Website:** [s4ledger.com](https://s4ledger.com)  
+**Contact:** info@s4ledger.com  
+**Token:** [$SLS on xMagnetic](https://xmagnetic.org/tokens/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5+534C5300000000000000000000000000000000000000)
 
 ---
 

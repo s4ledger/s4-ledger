@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <title>S4 Ledger | SDK Playground</title>
@@ -127,7 +128,7 @@
                 <span style="font-size:0.78rem;color:var(--text-muted)">Any defense record type — 156+ pre-built templates across 9 branches</span>
             </div>
             <select id="recordTypeSelect" style="background:rgba(5,8,16,0.95);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:10px 14px;color:#e0e8f0;font-family:inherit;font-size:0.9rem;width:100%">
-                <option value="CUSTOM">✏️ Custom Record (free-form)</option>
+                <option value="CUSTOM"><i class="fas fa-edit"></i> Custom Record (free-form)</option>
             </select>
             <div class="sdk-clf-banner" id="sdkClfBanner"><span class="sdk-clf-badge" id="sdkClfBadge"></span><span class="sdk-clf-text" id="sdkClfText"></span></div>
         </div>
@@ -472,65 +473,65 @@
     // Fetch record types + populate dropdown with Custom option
     // ── Hardcoded fallback record types (used when API is unavailable) ──
     var FALLBACK_RECORD_TYPES = {
-        'USN': { name: '⚓ U.S. Navy', types: [
-            {key:'USN_SUPPLY_RECEIPT',label:'Supply Chain Receipt',icon:'📦'},{key:'USN_3M_MAINTENANCE',label:'3-M Maintenance Action',icon:'🔧'},{key:'USN_CASREP',label:'Casualty Report (CASREP)',icon:'⚠️'},
-            {key:'USN_CDRL',label:'CDRL Delivery',icon:'📄'},{key:'USN_ORDNANCE',label:'Ordnance Lot Tracking',icon:'💣'},{key:'USN_DEPOT_REPAIR',label:'Depot Repair Record',icon:'🏭'},
-            {key:'USN_CALIBRATION',label:'TMDE Calibration',icon:'📏'},{key:'USN_CONFIG',label:'Configuration Baseline',icon:'⚙️'},{key:'USN_CUSTODY',label:'Custody Transfer',icon:'🔄'},
-            {key:'USN_TDP',label:'Technical Data Package',icon:'📐'},{key:'USN_COC',label:'Certificate of Conformance',icon:'✅'},{key:'USN_SHIPALT',label:'Ship Alteration (SHIPALT)',icon:'🚢'},
-            {key:'USN_PMS',label:'PMS/SKED Compliance',icon:'📋'},{key:'USN_HME',label:'HM&E System Record',icon:'⚡'},{key:'USN_COMBAT_SYS',label:'Combat Systems Cert',icon:'🎯'},
-            {key:'USN_PROPULSION',label:'Propulsion Plant Exam',icon:'🔥'},{key:'USN_AVIATION',label:'Aviation Maintenance',icon:'✈️'},{key:'USN_SUBSAFE',label:'SUBSAFE Certification',icon:'🔒'},
-            {key:'USN_MEDICAL',label:'Medical Equipment Cert',icon:'🏥'},{key:'USN_REACTOR',label:'Naval Reactor Test',icon:'☢️'},
-            {key:'USN_DRL',label:'Data Requirements List (DRL)',icon:'📋'},{key:'USN_DI',label:'Data Item Description (DID)',icon:'📃'},{key:'USN_VRS',label:'Vendor Recommended Spares',icon:'📦'},
-            {key:'USN_BUYLIST',label:'Buylist / Provisioning',icon:'🛒'},{key:'USN_J1_ILS',label:'J-1 ILS Parameters / LORA',icon:'📑'},
-            {key:'USN_J3_SUPPLY',label:'J-3 Supply Support',icon:'📦'},{key:'USN_J4_TECHDATA',label:'J-4 Technical Data',icon:'📖'},
-            {key:'USN_J11_RAM',label:'J-11 RAM Analysis',icon:'📈'},{key:'USN_J13_CM',label:'J-13 Configuration Mgmt',icon:'⚙️'},
-            {key:'USN_TRANSFER_BOOK',label:'Transfer Book',icon:'📓'},{key:'USN_CONFIG_MGMT',label:'Configuration Mgmt Record',icon:'⚙️'}
+        'USN': { name: '<i class="fas fa-anchor"></i> U.S. Navy', types: [
+            {key:'USN_SUPPLY_RECEIPT',label:'Supply Chain Receipt',icon:'<i class="fas fa-box"></i>'},{key:'USN_3M_MAINTENANCE',label:'3-M Maintenance Action',icon:'<i class="fas fa-wrench"></i>'},{key:'USN_CASREP',label:'Casualty Report (CASREP)',icon:'<i class="fas fa-exclamation-triangle"></i>'},
+            {key:'USN_CDRL',label:'CDRL Delivery',icon:'<i class="fas fa-file-alt"></i>'},{key:'USN_ORDNANCE',label:'Ordnance Lot Tracking',icon:'<i class="fas fa-bomb"></i>'},{key:'USN_DEPOT_REPAIR',label:'Depot Repair Record',icon:'<i class="fas fa-industry"></i>'},
+            {key:'USN_CALIBRATION',label:'TMDE Calibration',icon:'<i class="fas fa-ruler"></i>'},{key:'USN_CONFIG',label:'Configuration Baseline',icon:'<i class="fas fa-cog"></i>'},{key:'USN_CUSTODY',label:'Custody Transfer',icon:'<i class="fas fa-exchange-alt"></i>'},
+            {key:'USN_TDP',label:'Technical Data Package',icon:'<i class="fas fa-drafting-compass"></i>'},{key:'USN_COC',label:'Certificate of Conformance',icon:'<i class="fas fa-check-circle" style="color:#14f195"></i>'},{key:'USN_SHIPALT',label:'Ship Alteration (SHIPALT)',icon:'<i class="fas fa-ship"></i>'},
+            {key:'USN_PMS',label:'PMS/SKED Compliance',icon:'<i class="fas fa-clipboard-list"></i>'},{key:'USN_HME',label:'HM&E System Record',icon:'<i class="fas fa-bolt"></i>'},{key:'USN_COMBAT_SYS',label:'Combat Systems Cert',icon:'<i class="fas fa-bullseye"></i>'},
+            {key:'USN_PROPULSION',label:'Propulsion Plant Exam',icon:'<i class="fas fa-fire"></i>'},{key:'USN_AVIATION',label:'Aviation Maintenance',icon:'<i class="fas fa-plane"></i>'},{key:'USN_SUBSAFE',label:'SUBSAFE Certification',icon:'<i class="fas fa-lock"></i>'},
+            {key:'USN_MEDICAL',label:'Medical Equipment Cert',icon:'<i class="fas fa-hospital"></i>'},{key:'USN_REACTOR',label:'Naval Reactor Test',icon:'<i class="fas fa-radiation"></i>'},
+            {key:'USN_DRL',label:'Data Requirements List (DRL)',icon:'<i class="fas fa-clipboard-list"></i>'},{key:'USN_DI',label:'Data Item Description (DID)',icon:'<i class="fas fa-file-alt"></i>'},{key:'USN_VRS',label:'Vendor Recommended Spares',icon:'<i class="fas fa-box"></i>'},
+            {key:'USN_BUYLIST',label:'Buylist / Provisioning',icon:'<i class="fas fa-shopping-cart"></i>'},{key:'USN_J1_ILS',label:'J-1 ILS Parameters / LORA',icon:'<i class="fas fa-file-contract"></i>'},
+            {key:'USN_J3_SUPPLY',label:'J-3 Supply Support',icon:'<i class="fas fa-box"></i>'},{key:'USN_J4_TECHDATA',label:'J-4 Technical Data',icon:'<i class="fas fa-book-open"></i>'},
+            {key:'USN_J11_RAM',label:'J-11 RAM Analysis',icon:'<i class="fas fa-chart-line"></i>'},{key:'USN_J13_CM',label:'J-13 Configuration Mgmt',icon:'<i class="fas fa-cog"></i>'},
+            {key:'USN_TRANSFER_BOOK',label:'Transfer Book',icon:'<i class="fas fa-book"></i>'},{key:'USN_CONFIG_MGMT',label:'Configuration Mgmt Record',icon:'<i class="fas fa-cog"></i>'}
         ]},
-        'USA': { name: '⭐ U.S. Army', types: [
-            {key:'USA_HAND_RECEIPT',label:'DA 2062 Hand Receipt',icon:'📝'},{key:'USA_TM_UPDATE',label:'Technical Manual Update',icon:'📖'},
-            {key:'USA_ARMS_ROOM',label:'Arms Room Inventory',icon:'🔫'},{key:'USA_FLIPL',label:'FLIPL Investigation',icon:'📋'},
-            {key:'USA_VEHICLE',label:'Vehicle Dispatch Log',icon:'🚛'},{key:'USA_CLASS_V',label:'Class V (Ammo) Issue',icon:'💥'},
-            {key:'USA_EQUIP_MAINT',label:'Equipment Maintenance',icon:'🔧'},{key:'USA_PROPERTY_BOOK',label:'Property Book Record',icon:'📗'},
-            {key:'USA_AVIATION',label:'Aviation Maintenance',icon:'🚁'},{key:'USA_MEDICAL',label:'Medical Supply Record',icon:'🏥'},
-            {key:'USA_CBRN',label:'CBRN Equipment Record',icon:'☣️'},{key:'USA_SIGNAL',label:'Signal/Comms Equipment',icon:'📡'}
+        'USA': { name: '<i class="fas fa-star" style="color:#c9a84c"></i> U.S. Army', types: [
+            {key:'USA_HAND_RECEIPT',label:'DA 2062 Hand Receipt',icon:'<i class="fas fa-edit"></i>'},{key:'USA_TM_UPDATE',label:'Technical Manual Update',icon:'<i class="fas fa-book-open"></i>'},
+            {key:'USA_ARMS_ROOM',label:'Arms Room Inventory',icon:'<i class="fas fa-crosshairs"></i>'},{key:'USA_FLIPL',label:'FLIPL Investigation',icon:'<i class="fas fa-clipboard-list"></i>'},
+            {key:'USA_VEHICLE',label:'Vehicle Dispatch Log',icon:'<i class="fas fa-truck"></i>'},{key:'USA_CLASS_V',label:'Class V (Ammo) Issue',icon:'<i class="fas fa-explosion"></i>'},
+            {key:'USA_EQUIP_MAINT',label:'Equipment Maintenance',icon:'<i class="fas fa-wrench"></i>'},{key:'USA_PROPERTY_BOOK',label:'Property Book Record',icon:'<i class="fas fa-book" style="color:#14f195"></i>'},
+            {key:'USA_AVIATION',label:'Aviation Maintenance',icon:'<i class="fas fa-helicopter"></i>'},{key:'USA_MEDICAL',label:'Medical Supply Record',icon:'<i class="fas fa-hospital"></i>'},
+            {key:'USA_CBRN',label:'CBRN Equipment Record',icon:'<i class="fas fa-biohazard"></i>'},{key:'USA_SIGNAL',label:'Signal/Comms Equipment',icon:'<i class="fas fa-satellite-dish"></i>'}
         ]},
-        'USAF': { name: '✈️ U.S. Air Force', types: [
-            {key:'USAF_781_FLIGHT',label:'AFTO 781 Flight Record',icon:'✈️'},{key:'USAF_MUNITIONS',label:'Munitions Inspection',icon:'💣'},
-            {key:'USAF_ENGINE',label:'Engine Management Record',icon:'🔥'},{key:'USAF_WEAPONS_LOAD',label:'Weapons Load Certification',icon:'🎯'},
-            {key:'USAF_AVIONICS',label:'Avionics Test Record',icon:'📟'},{key:'USAF_NUCLEAR',label:'Nuclear Weapons Cert',icon:'☢️'},
-            {key:'USAF_MISSILE',label:'Missile Maintenance Record',icon:'🚀'},{key:'USAF_RADAR',label:'Radar Calibration Record',icon:'📡'},
-            {key:'USAF_SUPPLY',label:'AF Supply Transaction',icon:'📦'},{key:'USAF_DEPOT',label:'Depot Maintenance Record',icon:'🏭'}
+        'USAF': { name: '<i class="fas fa-plane"></i> U.S. Air Force', types: [
+            {key:'USAF_781_FLIGHT',label:'AFTO 781 Flight Record',icon:'<i class="fas fa-plane"></i>'},{key:'USAF_MUNITIONS',label:'Munitions Inspection',icon:'<i class="fas fa-bomb"></i>'},
+            {key:'USAF_ENGINE',label:'Engine Management Record',icon:'<i class="fas fa-fire"></i>'},{key:'USAF_WEAPONS_LOAD',label:'Weapons Load Certification',icon:'<i class="fas fa-bullseye"></i>'},
+            {key:'USAF_AVIONICS',label:'Avionics Test Record',icon:'<i class="fas fa-microchip"></i>'},{key:'USAF_NUCLEAR',label:'Nuclear Weapons Cert',icon:'<i class="fas fa-radiation"></i>'},
+            {key:'USAF_MISSILE',label:'Missile Maintenance Record',icon:'<i class="fas fa-rocket"></i>'},{key:'USAF_RADAR',label:'Radar Calibration Record',icon:'<i class="fas fa-satellite-dish"></i>'},
+            {key:'USAF_SUPPLY',label:'AF Supply Transaction',icon:'<i class="fas fa-box"></i>'},{key:'USAF_DEPOT',label:'Depot Maintenance Record',icon:'<i class="fas fa-industry"></i>'}
         ]},
-        'USMC': { name: '🦅 U.S. Marines', types: [
-            {key:'USMC_GROUND_MAINT',label:'Ground Equipment Maint',icon:'🔧'},{key:'USMC_AVIATION',label:'Aviation Intermediate Maint',icon:'🚁'},
-            {key:'USMC_WEAPONS',label:'Weapons Maintenance',icon:'🔫'},{key:'USMC_COMMS',label:'Communications Equipment',icon:'📡'},
-            {key:'USMC_MOTOR_T',label:'Motor Transport Record',icon:'🚛'},{key:'USMC_SUPPLY',label:'MAGTF Supply Chain',icon:'📦'},
-            {key:'USMC_ORDNANCE',label:'Marine Ordnance Record',icon:'💣'},{key:'USMC_AAV',label:'AAV/ACV Maintenance',icon:'🚢'}
+        'USMC': { name: '<i class="fas fa-shield-alt" style="color:#c9a84c"></i> U.S. Marines', types: [
+            {key:'USMC_GROUND_MAINT',label:'Ground Equipment Maint',icon:'<i class="fas fa-wrench"></i>'},{key:'USMC_AVIATION',label:'Aviation Intermediate Maint',icon:'<i class="fas fa-helicopter"></i>'},
+            {key:'USMC_WEAPONS',label:'Weapons Maintenance',icon:'<i class="fas fa-crosshairs"></i>'},{key:'USMC_COMMS',label:'Communications Equipment',icon:'<i class="fas fa-satellite-dish"></i>'},
+            {key:'USMC_MOTOR_T',label:'Motor Transport Record',icon:'<i class="fas fa-truck"></i>'},{key:'USMC_SUPPLY',label:'MAGTF Supply Chain',icon:'<i class="fas fa-box"></i>'},
+            {key:'USMC_ORDNANCE',label:'Marine Ordnance Record',icon:'<i class="fas fa-bomb"></i>'},{key:'USMC_AAV',label:'AAV/ACV Maintenance',icon:'<i class="fas fa-ship"></i>'}
         ]},
-        'USCG': { name: '🛟 U.S. Coast Guard', types: [
-            {key:'USCG_CUTTER_MAINT',label:'Cutter Maintenance',icon:'🚢'},{key:'USCG_SMALL_BOAT',label:'Small Boat Inspection',icon:'⛵'},
-            {key:'USCG_NAV_AID',label:'Aids to Navigation Maint',icon:'🗼'},{key:'USCG_SAR',label:'Search & Rescue Equipment',icon:'🆘'},
-            {key:'USCG_AVIATION',label:'CG Aviation Maintenance',icon:'🚁'},{key:'USCG_ELECTRONICS',label:'Electronics Systems Maint',icon:'📡'}
+        'USCG': { name: '<i class="fas fa-life-ring"></i> U.S. Coast Guard', types: [
+            {key:'USCG_CUTTER_MAINT',label:'Cutter Maintenance',icon:'<i class="fas fa-ship"></i>'},{key:'USCG_SMALL_BOAT',label:'Small Boat Inspection',icon:'<i class="fas fa-sailboat"></i>'},
+            {key:'USCG_NAV_AID',label:'Aids to Navigation Maint',icon:'<i class="fas fa-broadcast-tower"></i>'},{key:'USCG_SAR',label:'Search & Rescue Equipment',icon:'<i class="fas fa-life-ring"></i>'},
+            {key:'USCG_AVIATION',label:'CG Aviation Maintenance',icon:'<i class="fas fa-helicopter"></i>'},{key:'USCG_ELECTRONICS',label:'Electronics Systems Maint',icon:'<i class="fas fa-satellite-dish"></i>'}
         ]},
-        'DLA': { name: '🏛️ Defense Logistics Agency', types: [
-            {key:'DLA_DISTRIBUTION',label:'DLA Distribution Receipt',icon:'🏛️'},{key:'DLA_FMS',label:'Foreign Military Sales',icon:'🌐'},
-            {key:'DLA_DRMO',label:'DRMO Disposal Record',icon:'🗑️'},{key:'DLA_HAZMAT',label:'Hazmat Certification',icon:'☢️'},
-            {key:'DLA_BULK_FUEL',label:'Bulk Fuel Receipt',icon:'⛽'},{key:'DLA_MEDICAL',label:'Medical Supply Chain',icon:'🏥'}
+        'DLA': { name: '<i class="fas fa-landmark"></i> Defense Logistics Agency', types: [
+            {key:'DLA_DISTRIBUTION',label:'DLA Distribution Receipt',icon:'<i class="fas fa-landmark"></i>'},{key:'DLA_FMS',label:'Foreign Military Sales',icon:'<i class="fas fa-globe"></i>'},
+            {key:'DLA_DRMO',label:'DRMO Disposal Record',icon:'<i class="fas fa-trash-alt"></i>'},{key:'DLA_HAZMAT',label:'Hazmat Certification',icon:'<i class="fas fa-radiation"></i>'},
+            {key:'DLA_BULK_FUEL',label:'Bulk Fuel Receipt',icon:'<i class="fas fa-gas-pump"></i>'},{key:'DLA_MEDICAL',label:'Medical Supply Chain',icon:'<i class="fas fa-hospital"></i>'}
         ]},
-        'JOINT': { name: '🎖️ Joint / Multi-Service', types: [
-            {key:'JOINT_NATO',label:'NATO STANAG Verification',icon:'🏳️'},{key:'JOINT_F35',label:'F-35 JSF Logistics',icon:'✈️'},
-            {key:'JOINT_MISSILE_DEF',label:'Missile Defense Record',icon:'🚀'},{key:'JOINT_CYBER',label:'Cyber Equipment Cert',icon:'🖥️'},
-            {key:'JOINT_CONTRACT',label:'Contract Deliverable',icon:'📝'},{key:'JOINT_READINESS',label:'Readiness Report',icon:'📈'}
+        'JOINT': { name: '<i class="fas fa-medal"></i> Joint / Multi-Service', types: [
+            {key:'JOINT_NATO',label:'NATO STANAG Verification',icon:'<i class="fas fa-flag"></i>'},{key:'JOINT_F35',label:'F-35 JSF Logistics',icon:'<i class="fas fa-plane"></i>'},
+            {key:'JOINT_MISSILE_DEF',label:'Missile Defense Record',icon:'<i class="fas fa-rocket"></i>'},{key:'JOINT_CYBER',label:'Cyber Equipment Cert',icon:'<i class="fas fa-desktop"></i>'},
+            {key:'JOINT_CONTRACT',label:'Contract Deliverable',icon:'<i class="fas fa-edit"></i>'},{key:'JOINT_READINESS',label:'Readiness Report',icon:'<i class="fas fa-chart-line"></i>'}
         ]},
-        'SOCOM': { name: '🗡️ Special Operations', types: [
-            {key:'SOCOM_WEAPONS',label:'SOF Weapons Maintenance',icon:'🔫'},{key:'SOCOM_COMMS',label:'SOF Communications Equip',icon:'📡'},
-            {key:'SOCOM_AVIATION',label:'SOF Aviation Maintenance',icon:'🚁'},{key:'SOCOM_MARITIME',label:'SOF Maritime Equipment',icon:'🤿'},
-            {key:'SOCOM_VEHICLE',label:'SOF Vehicle Maintenance',icon:'🚗'},{key:'SOCOM_MEDICAL',label:'SOF Medical Supply',icon:'🏥'}
+        'SOCOM': { name: '<i class="fas fa-crosshairs"></i> Special Operations', types: [
+            {key:'SOCOM_WEAPONS',label:'SOF Weapons Maintenance',icon:'<i class="fas fa-crosshairs"></i>'},{key:'SOCOM_COMMS',label:'SOF Communications Equip',icon:'<i class="fas fa-satellite-dish"></i>'},
+            {key:'SOCOM_AVIATION',label:'SOF Aviation Maintenance',icon:'<i class="fas fa-helicopter"></i>'},{key:'SOCOM_MARITIME',label:'SOF Maritime Equipment',icon:'<i class="fas fa-water"></i>'},
+            {key:'SOCOM_VEHICLE',label:'SOF Vehicle Maintenance',icon:'<i class="fas fa-car"></i>'},{key:'SOCOM_MEDICAL',label:'SOF Medical Supply',icon:'<i class="fas fa-hospital"></i>'}
         ]},
-        'USSF': { name: '🚀 U.S. Space Force', types: [
-            {key:'USSF_SAT_OPS',label:'Satellite Operations Record',icon:'🛰️'},{key:'USSF_SPACE_VEH',label:'Space Vehicle Maintenance',icon:'🚀'},
-            {key:'USSF_GPS_CONST',label:'GPS Constellation Record',icon:'📡'},{key:'USSF_LAUNCH_VEH',label:'Launch Vehicle Record',icon:'🚀'},
-            {key:'USSF_GROUND_SYS',label:'Ground Systems Maint',icon:'🖥️'},{key:'USSF_EARLY_WARN',label:'Early Warning System',icon:'⚠️'}
+        'USSF': { name: '<i class="fas fa-rocket"></i> U.S. Space Force', types: [
+            {key:'USSF_SAT_OPS',label:'Satellite Operations Record',icon:'<i class="fas fa-satellite"></i>'},{key:'USSF_SPACE_VEH',label:'Space Vehicle Maintenance',icon:'<i class="fas fa-rocket"></i>'},
+            {key:'USSF_GPS_CONST',label:'GPS Constellation Record',icon:'<i class="fas fa-satellite-dish"></i>'},{key:'USSF_LAUNCH_VEH',label:'Launch Vehicle Record',icon:'<i class="fas fa-rocket"></i>'},
+            {key:'USSF_GROUND_SYS',label:'Ground Systems Maint',icon:'<i class="fas fa-desktop"></i>'},{key:'USSF_EARLY_WARN',label:'Early Warning System',icon:'<i class="fas fa-exclamation-triangle"></i>'}
         ]}
     };
 
@@ -1437,5 +1438,8 @@
     </script>
 <script src="../s4-assets/platforms.js"></script>
 <script src="../s4-assets/s4-background.js"></script>
+<link rel="stylesheet" href="/s4-assets/s4-mobile.css">
+<script src="/s4-assets/s4-auth.js"></script>
+<script src="/s4-assets/s4-data.js"></script>
 </body>
 </html>
