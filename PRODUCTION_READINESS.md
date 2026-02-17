@@ -1,6 +1,6 @@
 # S4 Ledger — Production Readiness Checklist
 
-> **Status:** Production ($SLS LIVE on XRPL Mainnet) — **Estimated ~93% Production Ready**  
+> **Status:** Production ($SLS LIVE on XRPL Mainnet) — **Estimated ~95% Production Ready**  
 > **Last Updated:** February 2026 (v4.0.0)  
 > **Target:** First enterprise pilot — $SLS LIVE on Mainnet
 
@@ -12,18 +12,18 @@
 
 This document tracks every requirement for taking S4 Ledger to a fully production-ready, investor-grade defense logistics platform. It covers legal, compliance, infrastructure, security, documentation, business development, and operational requirements.
 
-### Current Readiness: ~93%
+### Current Readiness: ~95%
 
 | Area | Status | Score |
 |------|--------|-------|
 | **Frontend / Demo** | ILS Workspace (unified command center with 20 sub-tabs), 20 ILS tools + calendar + action items + AI Agent (conversational, 40+ capabilities, vault/compliance/provisioning-aware), universal program support with custom hull/designation + program office input on all tools, all 11 platform dropdowns dynamically populated from platforms.js (500+), custom contract number input, 156+ pre-built record types (any defense record type supported), 22 sample document types, ITAR warning banner, login portal with tutorial and persistent auth, ICAPS-beating provisioning tool, Anchor/Verify How It Works panels, economic impact section, expanded audit vault time filters, Metrics + Transactions platform filters, site-wide blockchain anchor canvas animation (zero external deps) | **99%** |
 | **API / Backend** | Serverless API v4.0.0, auth scaffolding, 29 endpoints (DMSMS, readiness, parts, ROI, lifecycle, warranty, action-items, calendar, provisioning, supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance), rate limiting, security headers (HSTS, X-Frame, CSP), request logging, health check, OpenAPI spec | **85%** |
 | **XRPL Integration** | $SLS LIVE on XRPL Mainnet (100M total). **Full mainnet anchoring live** — all 19 ILS tools anchor to mainnet with explorer links. 3-wallet architecture (Issuer, Ops, Treasury). secp256k1 (Xaman-compatible). 0.01 SLS fee per anchor (Ops→Treasury). | **100%** |
-| **SDK** | pip-installable with CLI, 12 commands (anchor, hash, verify, status, readiness, dmsms, roi, lifecycle, warranty, action-items, calendar, provisioning), 27 SDK Playground functions (incl. supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance), SDK Playground platform/program selector with 500+ platforms, How It Works expanded | **85%** |
+| **SDK** | pip-installable with CLI, 12 commands (anchor, hash, verify, status, readiness, dmsms, roi, lifecycle, warranty, action-items, calendar, provisioning), 27 SDK Playground functions (incl. supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance), SDK Playground platform/program selector with 500+ platforms, How It Works expanded, **full SDK documentation page** (27 functions, 15 CLI commands, REST API reference), User Training Guide (all 20 ILS tools + wallet + account + security) | **95%** |
 | **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404, security response headers, ITAR notices — phased scalability plan documented (Supabase/PostgreSQL → server-side pagination → Web Workers → Merkle batch anchoring → CDN/edge → microservices/FedRAMP). See [SCALABILITY_ARCHITECTURE.md](SCALABILITY_ARCHITECTURE.md) | **65%** |
-| **Authentication** | Login portal with SSO/CAC support (UI), tutorial onboarding, API key system — needs production key management | **45%** |
+| **Authentication** | Login portal with SSO/CAC support (UI), tutorial onboarding, API key system, **wallet provisioning API** (auto-create XRPL wallet + trust line + SLS allocation on signup), role-based access controls (Admin/PM/Standard) — needs production key management | **55%** |
 | **User Experience** | Full mobile/tablet responsive, ILS Workspace unified UX, conversational AI Agent, 20 interactive tools + calendar, realistic sample data, ITAR compliance notice, branded favicons on all pages | **97%** |
-| **Documentation** | OpenAPI 3.0 spec (fully documenting all 29 endpoints), CHANGELOG.md (v1.0–v4.0), comprehensive README, API examples, whitepaper, technical specs, security policy, investor docs, deployment guide | **90%** |
+| **Documentation** | OpenAPI 3.0 spec (fully documenting all 29 endpoints), CHANGELOG.md (v1.0–v4.0), comprehensive README, API examples, whitepaper, technical specs, security policy, investor docs, deployment guide, **full SDK reference** (27 functions documented with params/returns/examples), **User Training Guide** (step-by-step for every tool) | **97%** |
 | **Compliance** | NIST 800-171 architecture aligned, **CMMC Level 2 Assessment Pending** (S4 Systems pursuing certification), ITAR warnings, security headers, DoW branding — needs formal FedRAMP assessment | **65%** |
 | **Legal / Business** | S4 Systems, LLC exists — S4 Ledger operates as a product line. S4 Systems likely has CAGE, SAM.gov, EIN, D-U-N-S — verify with leadership | **40%** |
 | **Security** | Zero-data-on-chain, client-side processing, rate limiting, HSTS, security headers, ITAR warnings — needs pen test, SOC 2 | **35%** |
@@ -81,7 +81,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | Access Control (3.1) | 🟡 Partial | **Critical** | API keys implemented; need RBAC |
-| Awareness & Training (3.2) | ⬜ Pending | Medium | Personnel security training program |
+| Awareness & Training (3.2) | 🟡 Partial | Medium | User Training Guide v4.0 published; need personnel security training program |
 | Audit & Accountability (3.3) | 🟡 Partial | **Critical** | API logging exists; need SIEM integration |
 | Configuration Management (3.4) | 🟡 Partial | **High** | Git-based; need formal baseline management |
 | Identification & Authentication (3.5) | 🟡 Partial | **Critical** | Need MFA for admin access |
@@ -186,7 +186,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | API reference (interactive) | ✅ Complete | **Critical** | OpenAPI 3.0 spec at /api/openapi.json, api_examples.md, SDK Playground |
-| SDK documentation | 🟡 Partial | **High** | README + playground; need full Sphinx docs |
+| SDK documentation | ✅ Complete | **High** | Full SDK reference at /sdk/ — 27 functions, 15 CLI commands, REST API, code examples |
 | Integration guide | ✅ Published | **High** | INTEGRATIONS.md |
 | Deployment guide | ✅ Published | **High** | DEPLOYMENT_GUIDE.md |
 | Technical specifications | ✅ Published | **High** | TECHNICAL_SPECS.md |
@@ -198,6 +198,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | Architecture Decision Records (ADRs) | ⬜ Pending | Medium | Document key technical decisions |
+| User Training Guide | ✅ Complete | **High** | USER_TRAINING_GUIDE.md — all 20 ILS tools, wallet, account, CLI/SDK/API, security, FAQ |
 | Runbook / Operations manual | ⬜ Pending | **High** | Incident procedures, deployment steps |
 | Disaster recovery plan | ⬜ Pending | **Critical** | RTO/RPO targets, recovery procedures |
 | Business continuity plan | ⬜ Pending | **High** | Key person risk, vendor dependencies |

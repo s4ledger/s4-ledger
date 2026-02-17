@@ -8,7 +8,7 @@ No sensitive data touches the blockchain — ever. Only cryptographic hashes.
 
 **Website:** [s4ledger.com](https://s4ledger.com)  
 **Contact:** info@s4ledger.com  
-**Token:** [$SLS on xMagnetic](https://xmagnetic.org/tokens/r95GyZac4butvVcsTWUPpxzekmyzaHsTA5+534C5300000000000000000000000000000000000000)
+**Token:** [$SLS on xMagnetic](https://xmagnetic.org/tokens/SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)
 
 ---
 
@@ -148,12 +148,25 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 | Phase 4 — Partner Onboarding | Planned | SaaS launch, DIU/NavalX engagement |
 | Phase 5 — Scale & Certification | Planned | NIST, FedRAMP, SBIR/STTR |
 
+## Documentation
+
+| Document | Description |
+|---|---|
+| [SDK Documentation](sdk/) | Full Python SDK reference — 27 functions, 15 CLI commands, REST API |
+| [User Training Guide](USER_TRAINING_GUIDE.md) | Step-by-step guide for every tool, feature, and workflow |
+| [API Examples](api_examples.md) | Python, cURL, JavaScript code samples |
+| [Technical Specifications](TECHNICAL_SPECS.md) | Architecture, security, and performance |
+| [Whitepaper](WHITEPAPER.md) | Full protocol and token economics |
+| [Production Readiness](PRODUCTION_READINESS.md) | ~95% production readiness checklist |
+| [Deployment Guide](DEPLOYMENT_GUIDE.md) | Self-hosting and cloud deployment |
+| [Security Policy](SECURITY.md) | Vulnerability reporting and controls |
+
 ---
 
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE)
 
-**Version:** 4.0.0 — XRPL Mainnet Live
+**Version:** 4.0.1 — XRPL Mainnet Live
 
 © 2026 S4 Systems, LLC. Charleston, SC.

@@ -5,6 +5,32 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.1] - 2026-02-17
+
+### Documentation, UX, Compliance, and Wallet Improvements
+
+#### Added — Documentation
+- **Full SDK Documentation Page** — Replaced empty redirect at `/sdk/` with comprehensive 42KB reference: 27 functions documented with signatures, parameters, return types, and code examples. Sticky sidebar navigation, installation guide, Quick Start, CLI reference (15 commands), REST API endpoint cards.
+- **User Training Guide** — `USER_TRAINING_GUIDE.md`: Complete step-by-step guide covering account creation, wallet setup, all 5 tabs (Anchor, Verify, Log, ILS Workspace, My Wallet), all 20 ILS tools with instructions, CLI/SDK/API usage, security best practices, and FAQ.
+
+#### Added — Wallet & Compliance
+- **Wallet Navy/Gold/White Branding** — My Wallet tab restyled with S4 brand colors: navy (#1a3a5c) headers and buttons, gold (#c9a84c) accents and SLS balance, white text.
+- **SLS Usage Chart** — Canvas-based usage visualization with range buttons (Hour/Day/Week/Month/Year), legend (SLS Balance, Anchors Created, Purchases), and placeholder overlay.
+- **Role-Based SLS Purchase Controls** — 3-tier authorization panel: Admin/Leadership (full purchase), Program Manager (approval limits), Standard User (view-only).
+- **USD→SLS Purchase Flow Explainer** — 4-step visual guide: Pay USD via Stripe → S4 Processes → SLS Delivered on-chain → Ready to Use.
+- **SEC Regulatory Notice** — Comprehensive compliance notice in wallet tab: SLS classified as utility token / prepaid service credits per SEC/FinCEN guidance.
+
+#### Fixed — UX & Links
+- **Landing Page Box Alignment** — Added `height:100%;display:flex;flex-direction:column` to 18 inline-styled card boxes across competitive landscape, Why XRPL, and compliance sections. Cards now render uniform height side-by-side.
+- **Compliance Grade Overlap** — Fixed `.score-ring` margin (12px→48px) and `.score-grade` position (-24px→-36px) so the letter grade badge no longer overlaps the percentage circle.
+- **xMagnetic Broken Links** — Fixed URL format in 3 files (pricing, investors, README) from hex-padded currency code to correct `SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5` format.
+- **DEX Broken Link** — Fixed demo-app DEX link from defunct `xrpl.org/dex.html` to `xrpl.org/docs/concepts/tokens/decentralized-exchange`.
+- **SEC-Safe Token Language** — Changed "100 free SLS tokens" → "100 SLS service credits" across demo-app and login page. Changed "Free" → "Free Trial" on login page.
+
+#### Changed — Production Readiness
+- **Readiness Score** — Updated from 93% to 95% reflecting SDK docs, training guide, wallet onboarding, and compliance improvements.
+- **NIST 800-171 3.2 (Awareness & Training)** — Updated from Pending to Partial with User Training Guide v4.0.
+
 ## [4.0.0] - 2026-02-18
 
 ### XRPL Mainnet Migration Complete — Full Production Anchoring
