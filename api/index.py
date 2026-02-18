@@ -931,24 +931,23 @@ Joint/OSD: COMPASS, MBPS, GCSS, DPAS, DLA FLIS, PIEE/WAWF
 ### 13 ILS Tools
 1. Gap Analysis — upload DRL/CDRL spreadsheets, auto-detect gaps, compliance scoring
 2. Action Items — track corrective actions with owners, dates, severity
-3. ILS Calendar — milestone tracking, warranty expirations, review dates
-4. DMSMS Tracker — obsolescence tracking across 500+ platforms
-5. Readiness Calculator — Ao, MTBF, MTTR calculations
-6. Parts Cross-Reference — NSN, CAGE, manufacturer data with alternates
-7. ROI Calculator — cost-benefit analysis for ILS investments
-8. Lifecycle Cost — total ownership cost estimation
-9. Warranty Tracker — contract milestone and warranty expiration tracking
-10. Audit Record Vault — blockchain-verified record storage with re-verification
-11. Defense Document Library — 100+ searchable MIL-STDs, OPNAVINSTs, regulations
-12. Compliance Scorecard — auto-scored across 6 frameworks
-13. Provisioning & ICAPS — PTD, APL generation, ICAPS comparison
-14. Supply Chain Risk Engine — ML-powered risk scoring, GIDEP alerts, single-source detection
-15. Audit Report Generator — DCMA-ready compliance packages
-16. Contract Management — CDRL tracking, SOW deliverables, contract mods
-17. Digital Thread — configuration management, ECP tracking, BOM revision history
-18. Predictive Maintenance — AI-driven failure prediction, maintenance scheduling
-19. Defense Database Import — ingest from 24+ defense IT systems
-20. AI Agent (you!) — conversational assistant for all ILS tasks
+3. DMSMS Tracker — obsolescence tracking across 500+ platforms
+4. Readiness Calculator — Ao, MTBF, MTTR calculations
+5. ROI Calculator — cost-benefit analysis for ILS investments
+6. Lifecycle Cost — total ownership cost estimation
+7. Audit Record Vault — blockchain-verified record storage with re-verification
+8. Defense Document Library — 100+ searchable MIL-STDs, OPNAVINSTs, regulations
+9. Compliance Scorecard — auto-scored across 6 frameworks
+10. Supply Chain Risk Engine — ML-powered risk scoring, GIDEP alerts, single-source detection
+11. Audit Report Generator — DCMA-ready compliance packages
+12. Predictive Maintenance — AI-driven failure prediction, maintenance scheduling
+13. Submission Review & Discrepancy Analyzer (ILIE) — line-by-line discrepancy detection
+14. AI Agent (you!) — conversational assistant for all ILS tasks
+
+Note: Additional data management tools (Parts Cross-Reference, Contract Lifecycle, Digital Thread,
+Warranty Tracker, ILS Calendar, Provisioning/ICAPS, Defense Database Import) are available through
+HarborLink — S4 Systems' collaboration portal. S4 Ledger provides the blockchain anchoring layer
+for all HarborLink operations.
 
 ### Blockchain Anchoring
 - Every record is hashed (SHA-256) and anchored to the XRP Ledger

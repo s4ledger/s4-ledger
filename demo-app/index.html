@@ -11,7 +11,7 @@
     <title>S4 Ledger | Defense Logistics Demo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Nautical Anchor Canvas Animation -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -22,7 +22,7 @@
     <style>
         :root{--bg:#050810;--surface:#0a1020;--card:#0f1630;--border:#1a2550;--accent:#00aaff;--gold:#c9a84c;--steel:#8ea4b8;--green:#14f195;--red:#ff6b6b;--text:#e0e8f0;--muted:#6b7d93}
         *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
         .navbar-custom{background:rgba(5,8,16,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 0;position:fixed;top:0;width:100%;z-index:1000}
         .navbar-brand{font-weight:700;display:flex;align-items:center;gap:10px;text-decoration:none}
         .brand-text{background:linear-gradient(135deg,#00aaff,#ffffff,#c9a84c);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:brandGradient 4s ease infinite;font-size:1.2rem;letter-spacing:0.5px}
@@ -43,7 +43,7 @@
         .demo-card h3{font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:1rem}
         .demo-card h3 i{margin-right:0.5rem}
         label{font-weight:600;color:var(--steel);margin-bottom:0.4rem;font-size:0.9rem}
-        select,input,textarea{background:var(--surface)!important;color:var(--text)!important;border:1px solid var(--border)!important;border-radius:8px!important;padding:0.6rem 0.8rem!important;font-family:'Plus Jakarta Sans',sans-serif!important;font-size:0.95rem!important;width:100%}
+        select,input,textarea{background:var(--surface)!important;color:var(--text)!important;border:1px solid var(--border)!important;border-radius:8px!important;padding:0.6rem 0.8rem!important;font-family:'Inter',sans-serif!important;font-size:0.95rem!important;width:100%}
         select:focus,input:focus,textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(0,170,255,0.15)!important;outline:none}
         textarea{min-height:120px;resize:vertical;font-family:'Courier New',monospace!important;font-size:0.85rem!important}
         .btn-accent{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:0.65rem 1.5rem;font-weight:700;font-size:0.95rem;transition:all 0.2s;cursor:pointer}
@@ -84,7 +84,6 @@
         footer a{color:var(--accent);text-decoration:none}
         .sample-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.8rem;color:var(--steel);transition:all 0.2s;display:inline-block;margin:0.2rem}
         .sample-btn:hover{border-color:var(--gold);color:var(--gold)}
-        #particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none}
         #anchor-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none}
         .mesh-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
         .g-orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.15}
@@ -353,9 +352,7 @@
 </head>
 <body>
 <div style="background:#1a0a0a;border-bottom:1px solid rgba(255,0,0,0.2);padding:4px 0;text-align:center;font-size:0.72rem;color:#ff6666;"><i class="fas fa-exclamation-triangle" style="margin-right:4px;"></i> NOTICE: Do not submit ITAR-controlled, classified, or export-controlled data to this platform. This system processes UNCLASSIFIED and CUI data only. <a href="/security/" style="color:#ff9999;text-decoration:underline;">Security Policy</a></div>
-<div class="scroll-progress" id="scrollProgress"></div>
 <div class="mesh-overlay"><div class="g-orb g-orb-1"></div><div class="g-orb g-orb-2"></div><div class="g-orb g-orb-3"></div></div>
-<div id="particles-js"></div>
 <canvas id="anchor-canvas"></canvas>
 
 <nav class="navbar navbar-expand-lg navbar-custom">
@@ -1548,7 +1545,7 @@
                             <div id="walletNoWallet" style="text-align:center;padding:30px 10px">
                                 <i class="fas fa-wallet" style="font-size:2.5rem;color:var(--muted);opacity:0.3;display:block;margin-bottom:12px"></i>
                                 <p style="color:var(--muted);font-size:0.88rem;margin-bottom:14px">No wallet connected yet.</p>
-                                <button onclick="window.location.href='../s4-login/'" style="background:linear-gradient(135deg,#1a3a5c,#0f2640);color:#c9a84c;border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:12px 24px;font-weight:700;font-size:0.9rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif"><i class="fas fa-plus-circle" style="margin-right:6px"></i>Create Account & Wallet</button>
+                                <button onclick="window.location.href='../s4-login/'" style="background:linear-gradient(135deg,#1a3a5c,#0f2640);color:#c9a84c;border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:12px 24px;font-weight:700;font-size:0.9rem;cursor:pointer;font-family:'Inter',sans-serif"><i class="fas fa-plus-circle" style="margin-right:6px"></i>Create Account & Wallet</button>
                             </div>
 
                             <div id="walletCredentials" style="display:none">
@@ -1595,12 +1592,12 @@
                             <div style="margin-bottom:14px">
                                 <label style="font-size:0.82rem;font-weight:600;color:var(--steel);display:block;margin-bottom:6px">Amount (USD)</label>
                                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
-                                    <button class="sls-amt-btn" onclick="setSLSAmount(10)" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$10</button>
-                                    <button class="sls-amt-btn" onclick="setSLSAmount(50)" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$50</button>
-                                    <button class="sls-amt-btn" onclick="setSLSAmount(100)" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--accent);font-weight:700;font-size:0.85rem">$100</button>
-                                    <button class="sls-amt-btn" onclick="setSLSAmount(500)" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$500</button>
+                                    <button class="sls-amt-btn" onclick="setSLSAmount(10)" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$10</button>
+                                    <button class="sls-amt-btn" onclick="setSLSAmount(50)" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$50</button>
+                                    <button class="sls-amt-btn" onclick="setSLSAmount(100)" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--accent);font-weight:700;font-size:0.85rem">$100</button>
+                                    <button class="sls-amt-btn" onclick="setSLSAmount(500)" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$500</button>
                                 </div>
-                                <input type="number" id="slsUsdInput" value="100" min="1" step="1" onchange="updateSLSPreview()" oninput="updateSLSPreview()" style="width:100%;background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem">
+                                <input type="number" id="slsUsdInput" value="100" min="1" step="1" onchange="updateSLSPreview()" oninput="updateSLSPreview()" style="width:100%;background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.92rem">
                             </div>
 
                             <div style="padding:14px;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:14px">
@@ -1614,7 +1611,7 @@
                                 </div>
                             </div>
 
-                            <button id="buySLSBtn" onclick="handleBuySLS()" style="width:100%;background:linear-gradient(135deg,#1a3a5c,#0f2640);color:#c9a84c;border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:13px;font-weight:700;font-size:0.95rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s">
+                            <button id="buySLSBtn" onclick="handleBuySLS()" style="width:100%;background:linear-gradient(135deg,#1a3a5c,#0f2640);color:#c9a84c;border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:13px;font-weight:700;font-size:0.95rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s">
                                 <i class="fas fa-credit-card" style="margin-right:6px"></i> Purchase with Card
                             </button>
 
@@ -1711,11 +1708,11 @@
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
                             <h4 style="font-size:1rem;font-weight:700;margin:0"><i class="fas fa-chart-area" style="color:#c9a84c;margin-right:6px"></i>SLS Usage Over Time</h4>
                             <div style="display:flex;gap:6px">
-                                <button onclick="setChartRange('hour')" class="chart-range-btn" id="chartHour" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Hour</button>
-                                <button onclick="setChartRange('day')" class="chart-range-btn" id="chartDay" style="background:rgba(26,58,92,0.2);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700">Day</button>
-                                <button onclick="setChartRange('week')" class="chart-range-btn" id="chartWeek" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Week</button>
-                                <button onclick="setChartRange('month')" class="chart-range-btn" id="chartMonth" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Month</button>
-                                <button onclick="setChartRange('year')" class="chart-range-btn" id="chartYear" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Year</button>
+                                <button onclick="setChartRange('hour')" class="chart-range-btn" id="chartHour" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Inter',sans-serif">Hour</button>
+                                <button onclick="setChartRange('day')" class="chart-range-btn" id="chartDay" style="background:rgba(26,58,92,0.2);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Inter',sans-serif;font-weight:700">Day</button>
+                                <button onclick="setChartRange('week')" class="chart-range-btn" id="chartWeek" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Inter',sans-serif">Week</button>
+                                <button onclick="setChartRange('month')" class="chart-range-btn" id="chartMonth" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Inter',sans-serif">Month</button>
+                                <button onclick="setChartRange('year')" class="chart-range-btn" id="chartYear" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Inter',sans-serif">Year</button>
                             </div>
                         </div>
                         <div style="position:relative;height:200px;background:var(--surface);border-radius:10px;border:1px solid var(--border);overflow:hidden;padding:10px">
@@ -1776,7 +1773,7 @@
         </div>
         <div style="margin-bottom:12px">
             <label style="font-size:0.82rem">Message (optional)</label>
-            <textarea id="sendMessage" rows="3" placeholder="Please review the attached ILS gap analysis..." style="min-height:70px!important;font-family:'Plus Jakarta Sans',sans-serif!important;font-size:0.85rem!important"></textarea>
+            <textarea id="sendMessage" rows="3" placeholder="Please review the attached ILS gap analysis..." style="min-height:70px!important;font-family:'Inter',sans-serif!important;font-size:0.85rem!important"></textarea>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn-accent" onclick="executeSend()"><i class="fas fa-paper-plane"></i> Send via Email Client</button>
