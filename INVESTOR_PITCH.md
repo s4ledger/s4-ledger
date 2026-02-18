@@ -107,9 +107,10 @@ XRPL is the only blockchain that meets all four defense requirements: speed, cos
 
 | Tier | Monthly | Annual |
 |---|---|---|
-| Starter | $499/mo | $6K/yr |
-| Professional | $1,999/mo | $24K/yr |
-| Enterprise | $4,999/mo | $60K/yr |
+| Pilot | Free | $0/yr |
+| Starter | $999/mo | $12K/yr |
+| Professional | $2,499/mo | $30K/yr |
+| Enterprise | $9,999/mo | $120K/yr |
 
 ## Scalability Architecture
 

@@ -5,6 +5,36 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.5] - 2026-02-19
+
+### Enterprise Pricing, Enhanced AI Agent, ILS Demo Data
+
+#### Changed — Pricing Tiers (All Channels)
+- **New 4-tier pricing model** — Replaced legacy Starter ($9.99) / Professional ($49) / Enterprise (Custom) / Government (Custom) tiers with:
+  - **Pilot** — Free, 100 SLS/mo, 10,000 anchors
+  - **Starter** — $999/mo, 25,000 SLS/mo, 2,500,000 anchors
+  - **Professional** — $2,499/mo, 100,000 SLS/mo, 10,000,000 anchors
+  - **Enterprise** — $9,999/mo, 500,000 SLS/mo, Unlimited anchors
+- **Government tier removed** — Enterprise tier now covers DoD, federal agencies, and FedRAMP pathway.
+- **Pricing page (`s4-pricing/index.html`)** fully rewritten with 4 tier cards, updated CTA: "Start Free with Pilot — or Go Pro".
+- **Login page (`s4-login/index.html`)** updated — 4 plan cards with correct SLS/anchor allocations, all 3 `tierLabels`/`tierSLS`/`tierAnchors` JS objects updated.
+- **API (`api/index.py`)** `SUBSCRIPTION_TIERS` dict updated with `pilot`, `starter`, `professional`, `enterprise` at correct prices.
+- **11 markdown documents** updated with new pricing ranges ($999–$9,999/mo, $12K–$120K/year): WHITEPAPER, INVESTOR_PITCH, INVESTOR_SLIDE_DECK, INVESTOR_OVERVIEW, INVESTOR_RELATIONS, EXECUTIVE_PROPOSAL, PRODUCTION_READINESS, USER_TRAINING_GUIDE, BILLION_DOLLAR_ROADMAP (×2), INTERNAL_PITCH.
+
+#### Fixed — Wallet Language
+- **"TrustLine to Treasury issuer" → "TrustLine to SLS issuer"** — Corrected misleading language on pricing page. TrustLines point to the SLS issuer wallet (`r95GyZac...`), not the Treasury wallet (`rMLmkrxp...`). Treasury holds and distributes SLS; Issuer defines the token on XRPL.
+
+#### Enhanced — AI Agent (`generateAiResponse`)
+- **200+ response patterns** — Rewrote `generateAiResponse()` from ~20 patterns to 50+ pattern categories covering: all 20 ILS tools, product info, pricing tiers, wallet architecture (Treasury vs Issuer), SLS tokenomics, XRPL explanation, defense standards (MIL-STD-1388, NIST 800-171, CMMC, DFARS), acronyms (LCSP, LSAR, PHS&T, CBM+, FLIS, CDRL, ITAR), encryption, Xaman integration, SDK/API, workspace stats, and comprehensive catch-all.
+- **Demo mode indicator** — When `AI_ENGINE_CONFIG.enabled` is false (default), responses include a note that the agent is running in demo mode with instructions to enable full AI via Settings.
+- **Analysis-aware responses** — AI Agent now reads ILS analysis results and provides contextual answers about summary, critical findings, CAR reports, cost breakdowns, missing DIs, next steps, and can draft emails/memos based on analysis data.
+- **Handles ANY question** — Catch-all pattern provides relevant S4 Ledger context for unrecognized queries instead of generic "I don't understand" messages.
+
+#### Added — ILS Demo Data Seeding
+- **`seedDemoState()` function** — Seeds Action Items (8 realistic entries), Audit Vault (10 anchored records across Army/Navy/Joint), and Calendar (6 upcoming events) on first visit when these tools are empty. Only runs when localStorage arrays are empty — never overwrites user data.
+- **Cascading benefit** — Seeded vault entries automatically improve Compliance Scorecard scores and give Report Generator content to work with.
+- **Realistic defense data** — Demo entries include real NSNs, CAGE codes, DI numbers, contract references, and program names (Apache, Black Hawk, F-35, DDG-51, Stryker, Osprey, Seahawk, Patriot).
+
 ## [4.0.4] - 2026-02-19
 
 ### Critical Syntax Fix, CDN Cleanup, Wallet Language Correction

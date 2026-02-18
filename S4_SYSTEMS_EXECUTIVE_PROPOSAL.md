@@ -158,7 +158,7 @@ S4 Systems is pursuing CMMC Level 2 certification. S4 Ledger architecture is CMM
 | **Microsoft Dynamics 365 SCM** | $150K–$800K+ | 3–6 months | S4 Ledger provides tamper-proof anchoring that M365 cannot offer, plus defense-specific tools (gap analysis, readiness, DMSMS) absent from Dynamics. |
 | **Windchill / PTC** | $300K–$2M+ | 6–18 months | Focused on PLM (Product Lifecycle Management), not ILS. No readiness calculations, DMSMS tracking, or supply chain verification. |
 | **Spreadsheets + SharePoint** | "$0" (hidden labor costs) | Ongoing manual effort | No automation, no cross-tool integration, no audit trail, error-prone, unscalable. |
-| **S4 Ledger** | **$499–$4,999/mo** | **Same day** | **Full ILS Workspace + tamper-proof anchoring. No infrastructure setup. Browser-based. Defense-native.** |
+| **S4 Ledger** | **$999–$9,999/mo** | **Same day** | **Full ILS Workspace + tamper-proof anchoring. No infrastructure setup. Browser-based. Defense-native.** |
 
 **No one else combines tamper-proof record verification with a full ILS management workspace.** We would be category creators.
 
@@ -173,10 +173,10 @@ Every record anchored costs **0.01 $SLS** ($0.01 per record). The $SLS token act
 
 | Tier | Monthly | SLS/Month | Anchors/Month | Target Customer |
 |------|---------|-----------|---------------|------------------|
-| **Starter** | $9.99 | 500 | 50,000 | Individual analysts, small teams |
-| **Professional** | $49 | 5,000 | 500,000 | Contractors, depot-level maintenance |
-| **Enterprise** | Custom | Unlimited | Unlimited | Prime contractors, NAVSEA, DLA |
-| **Government** | Custom | Site license | Per-agency | NIST 800-171, FedRAMP pathway |
+| **Pilot** | Free | 100 | 10,000 | Evaluators, small teams |
+| **Starter** | $999/mo | 25,000 | 2,500,000 | Contractor teams, depot-level maintenance |
+| **Professional** | $2,499/mo | 100,000 | 10,000,000 | Program offices, fleet sustainment |
+| **Enterprise** | $9,999/mo | 500,000 | Unlimited | DoD agencies, OEMs, FedRAMP pathway |
 
 > Every subscription includes automatic XRPL wallet provisioning, SLS TrustLine, and SLS delivery via USD → XRP → SLS DEX conversion.
 

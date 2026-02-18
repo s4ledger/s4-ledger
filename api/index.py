@@ -465,9 +465,10 @@ XRP_ACCOUNT_RESERVE = "12"  # Minimum XRP to activate + TrustLine reserve
 
 # Subscription tiers — SLS included per month (purchased via USD→XRP→SLS DEX conversion)
 SUBSCRIPTION_TIERS = {
-    "starter": {"price_usd": 9.99,  "sls_monthly": 500,    "anchors": 50000,    "label": "Starter"},
-    "professional": {"price_usd": 49.00, "sls_monthly": 5000,  "anchors": 500000,   "label": "Professional"},
-    "enterprise":   {"price_usd": 0,     "sls_monthly": 0,     "anchors": 0,        "label": "Enterprise (Custom)"},
+    "pilot":        {"price_usd": 0,       "sls_monthly": 100,     "anchors": 10000,     "label": "Pilot (Free)"},
+    "starter":      {"price_usd": 999.00,  "sls_monthly": 25000,   "anchors": 2500000,   "label": "Starter"},
+    "professional": {"price_usd": 2499.00, "sls_monthly": 100000,  "anchors": 10000000,  "label": "Professional"},
+    "enterprise":   {"price_usd": 9999.00, "sls_monthly": 500000,  "anchors": 0,         "label": "Enterprise"},
 }
 
 # Stripe integration (required for SLS purchases — no free tokens)

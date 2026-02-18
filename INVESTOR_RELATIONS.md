@@ -72,7 +72,7 @@ Treasury address: `rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ`
 | Per-Program Savings | ~$1.02M–$2.6M/year |
 | ROI | 15–100x for government |
 | Jobs Created (Year 5) | 340+ (30–45 direct, 100–200 indirect) |
-| Pricing | $499–$4,999/mo ($6K–$60K/year) |
+| Pricing | $999–$9,999/mo ($12K–$120K/year) |
 
 ## Contact
 

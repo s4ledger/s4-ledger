@@ -86,9 +86,10 @@ Key: 65% labor reduction • 90% error savings • 70% audit reduction • 15-25
 
 | Tier | Monthly | Annual |
 |---|---|---|
-| Starter | $499/mo | $6K/yr |
-| Professional | $1,999/mo | $24K/yr |
-| Enterprise | $4,999/mo | $60K/yr |
+| Pilot | Free | $0/yr |
+| Starter | $999/mo | $12K/yr |
+| Professional | $2,499/mo | $30K/yr |
+| Enterprise | $9,999/mo | $120K/yr |
 
 ---
 

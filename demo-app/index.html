@@ -6239,395 +6239,202 @@ function buildAiContext(query, context) {
 function generateAiResponse(query) {
     const q = query.toLowerCase();
     const r = ilsResults;
+    const demoNote = !AI_ENGINE_CONFIG.enabled ? '<div style="margin-top:8px;font-size:0.7rem;color:#666;border-top:1px solid rgba(255,255,255,0.05);padding-top:6px"><i class="fas fa-info-circle"></i> Demo Mode — Configure AI API key in settings for enhanced responses</div>' : '';
 
-    // Context-aware responses based on analysis state
-    if (!r) {
-        if (/gap|analysis|result|score|status/.test(q)) return 'I don\'t have any analysis results yet. Please upload documents and click <strong>"Run Full Analysis"</strong> to generate results I can help interpret.';
-        if (/di-?\d+|di number/.test(q)) return explainDINumber(q);
-        if (/what.*do|help|how.*work/.test(q)) return 'I can help you with:<br>• <strong>Interpreting gap analysis results</strong> after you run an analysis<br>• <strong>Explaining DI number requirements</strong> (e.g., "What is DI-009?")<br>• <strong>Suggesting corrective actions</strong> for identified gaps<br>• <strong>Drafting CARs</strong> (Corrective Action Requests)<br>• <strong>Estimating cost/schedule impacts</strong><br><br>Upload your documents and run analysis to get started!';
-        if (/lcsp|life cycle/.test(q)) return '<strong>Life Cycle Sustainment Plan (LCSP)</strong> — DI-039 / DI-ILSS-81490<br><br>The LCSP is a top-level ILS planning document that:<br>• Defines the sustainment strategy for the entire program lifecycle<br>• Addresses all 12 ILS elements<br>• Establishes performance metrics (Ao, MTBF, MTTR)<br>• Required per DoW Instruction 5000.02<br><br>Use the <strong>"Load Full ILS Package"</strong> button to see a sample LCSP.';
-        if (/vault|audit.*record|audit.*trail|audit.*vault|anchored.*record/.test(q)) return '<strong>Audit Record Vault</strong><br><br>The Audit Record Vault automatically captures every record you anchor from any tool in the ILS Workspace — DMSMS cases, readiness calculations, warranty snapshots, lifecycle cost analyses, ROI reports, and gap analysis results.<br><br>Each record stores:<br>• <strong>SHA-256 hash</strong> — the cryptographic fingerprint<br>• <strong>Content preview</strong> — what was anchored<br>• <strong>Timestamp</strong> — when it was anchored<br>• <strong>TX Hash</strong> — XRPL transaction ID for independent verification<br>• <strong>Record type</strong> — which tool generated it<br><br>You can <strong>re-verify</strong> any record with one click, <strong>export</strong> as CSV/XLSX for audits, and <strong>search/filter</strong> across your entire audit trail. Think of it as a filing cabinet that\'s also blockchain-verified.<br><br>Click the <strong>Audit Vault</strong> tab above to view your records.';
-        if (/compliance.*score|cmmc|nist.*800|dfars.*252|compliance.*posture|compliance.*card/.test(q)) return '<strong>Compliance Scorecard</strong><br><br>The Compliance Scorecard auto-calculates your compliance posture across 6 frameworks:<br><br>• <strong>CMMC Level 2</strong> — Cybersecurity Maturity Model Certification<br>• <strong>NIST SP 800-171</strong> — CUI Protection (110 controls)<br>• <strong>DFARS 252.204-7012</strong> — Safeguarding Covered Defense Information<br>• <strong>FAR 46 Quality</strong> — Federal Acquisition Regulation quality clauses<br>• <strong>MIL-STD-1388 ILS</strong> — Logistics Support Analysis requirements<br>• <strong>DoDI 4245.15 DMSMS</strong> — Diminishing Manufacturing Sources management<br><br>Your score is calculated from <strong>real workspace activity</strong> — every record you anchor, DMSMS case you track, and readiness calculation you run contributes to your compliance posture. The overall score aggregates into a <strong>letter grade (A+ through F)</strong> for executive reporting.<br><br>Click the <strong>Compliance</strong> tab above to view your scorecard.';
-        if (/defense.*doc|doc.*library|mil-std|opnavinst|regulation|standard|reference|mil-hdbk/.test(q)) return '<strong>Defense Document Library</strong><br><br>Searchable reference library of <strong>100+ real defense documents</strong> — MIL-STDs, MIL-HDBKs, OPNAVINSTs, COMDTINST, Army Regulations, Air Force Instructions, Marine Corps Orders, DFARS clauses, and NIST standards.<br><br>Features:<br>• <strong>Filter by category</strong> — ILS, Readiness, Maintenance, Supply, DMSMS, Cybersecurity, etc.<br>• <strong>Filter by branch</strong> — Joint, Navy, Coast Guard, Army, Air Force, Marines, Space Force<br>• <strong>Full-text search</strong> — by document ID, title, description, or keywords<br>• <strong>Direct links</strong> — click any document to open the official source<br><br>Use this while working in other tools to reference applicable standards without leaving the workspace.<br><br>Click the <strong>Doc Library</strong> tab above to browse.';
-        if (/provision|ptd|provisioning.*tech|allowance.*part|apl.*gen|catalog|icaps|lmi|logistics.*product|ppd|provisioning.*part/.test(q)) return '<strong>Provisioning & ICAPS</strong><br><br>S4 Ledger supports provisioning workflows that go beyond what legacy tools like <strong>ICAPS</strong> (Interactive Computer-Aided Provisioning System) offer:<br><br>• <strong>Vendor Recommended Spares (VRS)</strong> — DI-020, tracked in gap analysis<br>• <strong>Allowance Parts List (APL)</strong> — DI-021, COSAL data for initial outfitting<br>• <strong>Spares Buylist</strong> — initial outfitting and provisioning data<br>• <strong>GoFM (GFM) List</strong> — government-furnished material tracking<br>• <strong>Parts Cross-Reference</strong> — NSN, CAGE, manufacturer data with alternates<br>• <strong>DMSMS Integration</strong> — obsolescence affects provisioning decisions<br><br><strong>How S4 beats ICAPS:</strong><br>• ICAPS covers <em>only</em> Supply Support — S4 covers all 12 ILS elements<br>• ICAPS is Navy/Marine Corps only — S4 is all-branch<br>• ICAPS has no blockchain verification — S4 anchors every provisioning decision<br>• ICAPS has no compliance scoring — S4 tracks CMMC, NIST, DFARS<br>• ICAPS is a standalone tool — S4 integrates provisioning with DMSMS, readiness, lifecycle cost, and warranty data<br><br>Use the <strong>Parts</strong> tab for cross-reference and the <strong>Gap Analysis</strong> tab to track provisioning deliverables.';
-        if (/import|database.*import|db.*import|defense.*database|import.*record|import.*csv|import.*xml|import.*json|nserc|merlin|gcss|cdmd|navsup|remis|lims|dpas|flis|atlass|almis|piee|gcss.army|lmp|aesip|d200|cgone|ussf/.test(q)) return '<strong>Defense Database Import</strong><br><br>The Defense Database Import tool lets you ingest records from <strong>24+ systems across all branches</strong>:<br><br><strong>Navy:</strong> NSERC/SE IDE, MERLIN, NAVAIR AMS PMT, CDMD-OA, NDE, PEO MLB, CSPT, NAVSUP<br><strong>Army:</strong> GCSS-Army, LMP, AESIP<br><strong>Air Force:</strong> REMIS, LIMS-EV, D200A<br><strong>Marine Corps:</strong> GCSS-MC, ATLASS<br><strong>Coast Guard:</strong> ALMIS, CGOne<br><strong>Space Force:</strong> USSF LMS<br><strong>Joint/OSD:</strong> COMPASS, MBPS, GCSS, DPAS, DLA FLIS, PIEE/WAWF<br><br><strong>How it works:</strong><br>1. Select a source system from the dropdown<br>2. Upload a CSV, XML, or JSON file — or paste data directly<br>3. S4 auto-detects format, maps fields, and computes SHA-256 hashes<br>4. Click <strong>"Anchor to XRPL"</strong> to create immutable blockchain records<br><br><strong>Savings:</strong> $450K+/year per program. 70% less data reconciliation time. 80% fewer data discrepancies. 60% faster audit prep.<br><br>Click the <strong>Database Import</strong> tab above to get started, or use <strong>"Run Demo Import"</strong> to see sample data from any system.';
-        if (/ilie|submission|discrepancy|vendor review|upload|vrs/i.test(query)) {
-        if (_subCache && _subCache.discrepancies && _subCache.discrepancies.length) {
+    // ── ANALYSIS-AWARE RESPONSES (when ilsResults loaded) ──
+    if (r) {
+        if (/summarize|summary|overview|gap/.test(q)) {
+            const critActions = r.actions.filter(a=>a.severity==='critical');
+            let resp = '<strong>' + r.prog.name + '</strong> — Overall Readiness: <strong style="color:'+(r.pct>=80?'#14f195':r.pct>=50?'#ffa500':'#ff3333')+'">' + r.pct + '%</strong><br><br>';
+            resp += '\uD83D\uDCCB Checklist: ' + r.clItems.filter(i=>i.checked).length + '/' + r.clItems.length + ' items (' + r.clPct + '%)<br>';
+            resp += '\uD83D\uDCC4 DRL Coverage: ' + r.drlFound + '/' + r.drlTotal + ' items (' + r.drlPct + '%)<br>';
+            if (critActions.length) { resp += '<br>\u26A0\uFE0F <strong style="color:#ff3333">' + critActions.length + ' critical gaps:</strong><br>'; critActions.slice(0,3).forEach(a => { resp += '\u2022 ' + a.title + '<br>'; }); if (critActions.length > 3) resp += '\u2022 ...and ' + (critActions.length-3) + ' more<br>'; }
+            resp += '<br>\uD83D\uDCB0 Est. risk cost: <strong>' + formatCost(r.totalCost) + '</strong>';
+            return resp + demoNote;
+        }
+        if (/critical|urgent|important|priority/.test(q)) {
+            const crit = r.actions.filter(a=>a.severity==='critical');
+            if (!crit.length) return '\u2705 <strong>No critical items found!</strong> Your ILS package appears to cover all critical requirements.' + demoNote;
+            let resp = '\u26A0\uFE0F <strong style="color:#ff3333">' + crit.length + ' Critical Items:</strong><br><br>';
+            crit.forEach((a,i) => { resp += '<strong>' + (i+1) + '. ' + a.id + '</strong>: ' + a.title + '<br>   \u2192 ' + a.action + '<br>   Owner: ' + a.owner + ' | ' + formatCost(a.cost) + ' | ' + a.schedule + '<br><br>'; });
+            resp += '<strong>Recommendation:</strong> Issue CARs for all critical items and escalate to the next ILS Review Board.';
+            return resp + demoNote;
+        }
+        if (/car|corrective\s*action/.test(q)) {
+            const gaps = r.actions.filter(a=>a.severity==='critical');
+            if (!gaps.length) return 'No critical gaps found that require a CAR.' + demoNote;
+            const g = gaps[0];
+            return '<strong>DRAFT \u2014 Corrective Action Request (CAR)</strong><br><br><strong>CAR Number:</strong> CAR-' + r.progKey.toUpperCase() + '-' + new Date().getFullYear() + '-001<br><strong>Program:</strong> ' + r.prog.name + '<br><strong>Office:</strong> ' + r.prog.ofc + '<br><strong>Date:</strong> ' + new Date().toISOString().split('T')[0] + '<br><br><strong>Deficiency:</strong> ' + g.title + '<br><strong>Required Action:</strong> ' + g.action + '<br><strong>Days to Respond:</strong> 14 calendar days<br><strong>Impact if Not Corrected:</strong> ' + formatCost(g.cost) + ' cost risk, ' + g.schedule + ' schedule impact<br><strong>Responsible Party:</strong> ' + g.owner + '<br><br><em>Note: ' + (gaps.length-1) + ' additional CARs may be required for remaining critical gaps.</em>' + demoNote;
+        }
+        if (/cost|risk|money|budget|expense/.test(q)) {
+            return '<strong>Cost & Schedule Risk Summary</strong><br><br>\uD83D\uDCB0 Total Estimated Risk: <strong style="color:#ff3333">' + formatCost(r.totalCost) + '</strong><br>\u23F0 Schedule Risk: <strong style="color:#ffa500">' + (r.critGaps > 3 ? '6-12 months' : r.critGaps > 0 ? '2-6 months' : '< 2 months') + '</strong><br>\uD83D\uDEA8 Critical Path Items: <strong>' + r.critGaps + '</strong><br><br>Cost breakdown by ILS element:<br>' + r.actions.slice(0,5).map(a => '\u2022 ' + a.id + ': ' + formatCost(a.cost) + ' (' + a.title.substring(0,40) + ')').join('<br>') + '<br><br>Early resolution typically reduces costs by 30-50% vs. late-stage remediation.' + demoNote;
+        }
+        if (/missing|di.*number|what.*missing/.test(q)) {
+            const missing = r.actions.filter(a=>a.id.startsWith('DI-'));
+            if (!missing.length) return 'No missing DI items detected in the current analysis.' + demoNote;
+            let resp = '<strong>Missing Data Items (DIs):</strong><br><br>';
+            missing.forEach(a => { resp += '\u2022 <strong>' + a.id + '</strong>: ' + a.title + '<br>'; });
+            return resp + '<br>These items should be included in the next CDRL update.' + demoNote;
+        }
+        if (/next.*step|recommend|suggest|what.*should/.test(q)) {
+            let resp = '<strong>Recommended Next Steps for ' + r.prog.name + ':</strong><br><br>';
+            resp += '1. <strong>Address ' + r.critGaps + ' critical gaps</strong> \u2014 issue CARs and assign action owners<br>';
+            resp += '2. <strong>Improve DRL coverage</strong> from ' + r.drlPct + '% \u2014 target 85%+ before next review<br>';
+            resp += '3. <strong>Complete checklist items</strong> \u2014 currently ' + r.clPct + '% done<br>';
+            resp += '4. <strong>Run DMSMS analysis</strong> on critical components<br>';
+            resp += '5. <strong>Schedule ILS Review Board</strong> within 30 days<br>';
+            resp += '6. <strong>Anchor all findings to XRPL</strong> for tamper-proof audit trail<br>';
+            return resp + demoNote;
+        }
+        if (/email|memo|draft.*email|draft.*memo/.test(q)) {
+            return '<strong>DRAFT \u2014 ILS Status Memo</strong><br><br><strong>TO:</strong> Program Manager, ' + r.prog.name + '<br><strong>FROM:</strong> ILS Manager<br><strong>DATE:</strong> ' + new Date().toISOString().split('T')[0] + '<br><strong>SUBJ:</strong> ILS Readiness Assessment Update<br><br>1. <strong>Overall Status:</strong> ' + r.pct + '% readiness (' + (r.pct >= 80 ? 'GREEN' : r.pct >= 50 ? 'AMBER' : 'RED') + ')<br>2. <strong>Critical Gaps:</strong> ' + r.critGaps + ' items requiring immediate attention<br>3. <strong>DRL Coverage:</strong> ' + r.drlPct + '%<br>4. <strong>Estimated Risk Cost:</strong> ' + formatCost(r.totalCost) + '<br><br><strong>Recommendation:</strong> Convene ILS Review Board within 14 days to address critical shortfalls.<br><br>V/r,<br>[Your Name]' + demoNote;
+        }
+    }
+
+    // ── GENERAL PATTERNS (always available) ──
+
+    // DI Number explanations
+    if (/di-?\d+|di number/.test(q)) return explainDINumber(q) + demoNote;
+
+    // ── S4 LEDGER PRODUCT ──
+    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Secure Logistics Standard<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>20 ILS tools</strong> covering all 12 ILS elements per MIL-STD-1388<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>$SLS utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192SLS<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>156+ defense record types</strong> across all branches<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.' + demoNote;
+
+    if (/how.*work|how.*anchor|how.*hash|how.*blockchain/.test(q)) return '<strong>How S4 Ledger Works:</strong><br><br>1. <strong>Upload or create a record</strong> \u2014 any ILS document, analysis, or data point<br>2. <strong>SHA-256 hash computed</strong> \u2014 a unique 64-character fingerprint of the content<br>3. <strong>Hash anchored to XRPL</strong> \u2014 written as a Memo on an XRP Ledger transaction<br>4. <strong>Transaction verified</strong> \u2014 XRPL validates within 3-5 seconds at ~$0.001 tx fee<br>5. <strong>SLS fee applied</strong> \u2014 0.01 SLS ($0.01) per anchor for network access<br><br>The original data stays on your device (never sent to blockchain). Only the hash is anchored. Anyone can independently verify a record by recomputing the hash and checking the XRPL transaction.<br><br><strong>Result:</strong> Tamper-proof, independently verifiable audit trail \u2014 1,500x cheaper than legacy verification.' + demoNote;
+
+    // ── PRICING ──
+    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(20,241,149,0.2);border-radius:8px"><strong style="color:#14f195">Pilot (Free)</strong><br>100 SLS/mo<br>10,000 anchors<br>All 20 tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:8px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 SLS/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(201,168,76,0.3);border-radius:8px"><strong style="color:#c9a84c">Professional ($2,499/mo)</strong><br>100,000 SLS/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(168,85,247,0.3);border-radius:8px"><strong style="color:#a855f7">Enterprise ($9,999/mo)</strong><br>500,000 SLS/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + SLS TrustLine setup. $0.01 SLS per anchor.' + demoNote;
+
+    // ── WALLETS & SLS ──
+    if (/wallet|xrpl.*wallet|seed|family.*seed|trustline|trust.*line/.test(q)) return '<strong>XRPL Wallet & TrustLine Setup</strong><br><br>When you subscribe, S4 automatically:<br><br>1. <strong>Generates a secp256k1 wallet</strong> \u2014 your unique XRPL address + family seed (secret key)<br>2. <strong>Funds with XRP</strong> \u2014 covers the 12 XRP account reserve + TrustLine reserve<br>3. <strong>Sets up SLS TrustLine</strong> \u2014 pointed at the SLS issuer (<code>r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code>)<br>4. <strong>SLS delivered</strong> \u2014 from the Treasury wallet to your wallet<br><br><strong>Important:</strong><br>\u2022 TrustLines go to the <strong>SLS issuer</strong> (r95...) \u2014 this is the wallet that created the SLS token<br>\u2022 SLS is delivered from the <strong>Treasury</strong> (rMLm...) \u2014 this holds the circulating supply<br>\u2022 Your family seed is the ONLY way to access your wallet \u2014 save it securely<br>\u2022 Compatible with <strong>Xaman</strong> (formerly XUMM) for mobile wallet management' + demoNote;
+
+    if (/sls.*token|what.*sls|\$sls|sls.*price|token.*economics|tokenomics/.test(q)) return '<strong>$SLS \u2014 Secure Logistics Standard Token</strong><br><br>\u2022 <strong>Type:</strong> XRPL issued currency (utility token)<br>\u2022 <strong>Price:</strong> $0.01 per SLS<br>\u2022 <strong>Usage:</strong> 0.01 SLS per anchor (~$0.0001)<br>\u2022 <strong>Total Supply:</strong> 100,000,000 SLS<br>\u2022 <strong>Issuer:</strong> <code>r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code><br>\u2022 <strong>Treasury:</strong> <code>rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ</code><br><br><strong>Distribution:</strong><br>\u2022 60% Public/Community (60M)<br>\u2022 15% Ecosystem & Grants (15M)<br>\u2022 15% Team & Founders (12-mo cliff + 24-mo vest)<br>\u2022 10% Strategic Reserves (DAO-governed)<br><br><strong>How users get SLS:</strong> USD \u2192 XRP on exchange \u2192 SLS on XRPL DEX. Fully automated \u2014 users never touch crypto directly.' + demoNote;
+
+    if (/treasury|treasury.*wallet/.test(q)) return '<strong>Treasury Wallet</strong><br><br>\u2022 <strong>Address:</strong> <code>rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ</code><br>\u2022 <strong>Purpose:</strong> Holds the circulating supply of $SLS and distributes tokens to subscribers<br>\u2022 <strong>Flow:</strong> When a user subscribes, S4 purchases SLS on the XRPL DEX and delivers it from the Treasury to the user\'s wallet<br><br><strong>Note:</strong> The Treasury wallet is <em>not</em> the SLS issuer. The issuer is <code>r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code> \u2014 that\'s the wallet that created the SLS token on XRPL. TrustLines are pointed at the issuer, but SLS is delivered from the Treasury.' + demoNote;
+
+    if (/issuer|issuer.*wallet|who.*issued|who.*created.*sls/.test(q)) return '<strong>SLS Issuer Wallet</strong><br><br>\u2022 <strong>Address:</strong> <code>r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code><br>\u2022 <strong>Purpose:</strong> The original issuer of the $SLS token on the XRP Ledger<br>\u2022 <strong>TrustLines:</strong> All SLS holders set their TrustLine to this address<br><br>The issuer wallet is separate from the Treasury wallet (<code>rMLm...</code>). The issuer created the token; the Treasury holds and distributes the circulating supply.' + demoNote;
+
+    if (/xrp.*ledger|what.*xrpl|why.*xrpl|which.*blockchain/.test(q)) return '<strong>Why XRPL (XRP Ledger)?</strong><br><br>S4 Ledger uses the XRP Ledger because it\'s:<br><br>\u2022 <strong>Fast:</strong> 3-5 second transaction finality<br>\u2022 <strong>Cheap:</strong> ~$0.001 per transaction (drops)<br>\u2022 <strong>Energy efficient:</strong> No mining \u2014 uses federated consensus<br>\u2022 <strong>Built-in DEX:</strong> Native token exchange for SLS liquidity<br>\u2022 <strong>Issued currencies:</strong> Native support for custom tokens like $SLS<br>\u2022 <strong>TrustLines:</strong> Controlled token distribution<br>\u2022 <strong>Battle-tested:</strong> Operating since 2012, used by 150+ financial institutions<br><br>XRPL\'s low transaction cost makes it practical for micro-anchoring \u2014 1,500x cheaper than traditional verification methods.' + demoNote;
+
+    // ── ILS TOOLS (20 tools) ──
+    if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against MIL-STD-1388 requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> across all branches. Results can be anchored to XRPL for audit purposes.<br><br><strong>Try it:</strong> Click "Load Full ILS Package" to see a complete demo analysis.' + demoNote;
+
+    if (/action.*item|task|open.*action|todo/.test(q)) { const total = s4ActionItems.length; const done = s4ActionItems.filter(a=>a.done).length; return '<strong>Action Items Manager</strong><br><br>' + (total > 0 ? 'Current status: <strong>' + done + '/' + total + '</strong> complete (' + Math.round(done/total*100) + '%)<br><br>' : 'No action items yet. Run a gap analysis to generate prioritized actions.<br><br>') + 'The Action Items Manager tracks all ILS-related tasks generated by gap analysis, DMSMS reviews, readiness assessments, and manual entries. Each item includes:<br>\u2022 Severity (critical/warning/info)<br>\u2022 Responsible owner<br>\u2022 Cost and schedule impact estimates<br>\u2022 Due dates and status tracking<br>\u2022 Linkage to specific DI numbers and ILS elements' + demoNote; }
+
+    if (/calendar|milestone|schedule|due.*date|ils.*calendar/.test(q)) return '<strong>ILS Calendar</strong><br><br>Tracks key logistics milestones and deadlines:<br><br>\u2022 <strong>Milestone events</strong> \u2014 MS A/B/C, IOC, FOC, CDR, PDR, TRR<br>\u2022 <strong>Warranty expirations</strong> \u2014 auto-alerts before expiry<br>\u2022 <strong>CDRL due dates</strong> \u2014 contractual deliverable deadlines<br>\u2022 <strong>DMSMS review cycles</strong> \u2014 periodic obsolescence assessments<br>\u2022 <strong>Action item deadlines</strong> \u2014 from gap analysis findings<br><br>Exportable to .ics format for integration with Outlook/Google Calendar.' + demoNote;
+
+    if (/dmsms|obsolescen|diminishing|obsolete.*part|end.of.life|eol/.test(q)) return '<strong>DMSMS Tracker</strong> (Diminishing Manufacturing Sources & Material Shortages)<br><br>Proactive obsolescence management per DoDI 4245.15:<br><br>\u2022 <strong>Component search</strong> \u2014 check any part against DMSMS databases<br>\u2022 <strong>Risk assessment</strong> \u2014 severity scoring (critical/high/medium/low)<br>\u2022 <strong>Alternate sourcing</strong> \u2014 find replacement parts and alternate manufacturers<br>\u2022 <strong>Cost impact estimation</strong> \u2014 redesign vs. bridge buy vs. lifetime buy<br>\u2022 <strong>Program-wide scan</strong> \u2014 analyze all components for a selected platform<br>\u2022 <strong>GIDEP integration</strong> \u2014 reference Government-Industry Data Exchange alerts<br><br><strong>Common DMSMS scenarios:</strong> single-source dependencies, vendor exits, technology refresh cycles, COTS obsolescence.<br><br>All DMSMS cases can be anchored to XRPL for audit trail compliance.' + demoNote;
+
+    if (/readiness|ram|availability|mtbf|mttr|mldt|ao |ai |operational.*avail/.test(q)) return '<strong>Readiness & RAM Calculator</strong><br><br>Calculates Reliability, Availability, and Maintainability metrics:<br><br>\u2022 <strong>Ao (Operational Availability)</strong> = MTBF / (MTBF + MTTR + MLDT)<br>\u2022 <strong>Ai (Inherent Availability)</strong> = MTBF / (MTBF + MTTR)<br>\u2022 <strong>Failure Rate (\u03BB)</strong> = 1/MTBF<br>\u2022 <strong>Mission Reliability</strong> = e^(\u2212\u03BBt) for 30-day missions<br>\u2022 <strong>Annual failure/downtime estimates</strong><br><br>Pre-loaded with realistic data for 462 defense platforms. Color-coded assessments:<br>\u2022 <span style="color:#14f195">GREEN (\u226590%)</span> \u2014 Meets requirements<br>\u2022 <span style="color:#ffa500">AMBER (70-90%)</span> \u2014 Monitor closely<br>\u2022 <span style="color:#ff3333">RED (&lt;70%)</span> \u2014 Immediate action required' + demoNote;
+
+    if (/nsn|parts|cross.?ref|cage|fsc|parts.*lookup|part.*search|national.*stock/.test(q)) return '<strong>NSN / Parts Cross-Reference</strong><br><br>Comprehensive parts database with cross-referencing:<br><br>\u2022 <strong>NSN lookup</strong> \u2014 National Stock Number search across all FSC groups<br>\u2022 <strong>CAGE code search</strong> \u2014 Commercial and Government Entity codes<br>\u2022 <strong>Manufacturer cross-ref</strong> \u2014 find parts by manufacturer name<br>\u2022 <strong>Alternate parts</strong> \u2014 identify substitute components<br>\u2022 <strong>Stock status</strong> \u2014 Available, Low Stock, Backordered indicators<br>\u2022 <strong>Lead times</strong> \u2014 procurement lead time estimates<br>\u2022 <strong>Unit pricing</strong> \u2014 historical cost data<br><br>Covers 15+ major defense manufacturers (Raytheon, Lockheed Martin, GE Aviation, BAE, Boeing, etc.) with real CAGE codes.' + demoNote;
+
+    if (/roi|return.*invest|savings|cost.*benefit|business.*case/.test(q)) return '<strong>ROI Calculator</strong><br><br>Demonstrates S4 Ledger value proposition:<br><br>\u2022 <strong>Labor savings</strong> \u2014 eliminate manual reconciliation ($150K-$450K/yr)<br>\u2022 <strong>Error reduction</strong> \u2014 blockchain eliminates data integrity disputes<br>\u2022 <strong>Audit efficiency</strong> \u2014 60% faster audit preparation<br>\u2022 <strong>DMSMS savings</strong> \u2014 proactive obsolescence avoids costly emergency buys<br>\u2022 <strong>5-year projection</strong> \u2014 cumulative savings vs. legacy systems<br><br>At $0.01/anchor vs. $15/verification legacy cost, S4 delivers <strong>1,500x cost reduction</strong> for data verification.<br><br>For a typical program: <strong>$2.1M \u2014 $4.5M</strong> savings over 5 years.' + demoNote;
+
+    if (/lifecycle|life.?cycle.*cost|lcc|total.*ownership|sustainment.*cost/.test(q)) return '<strong>Lifecycle Cost Estimator</strong><br><br>Models total ownership cost across the full system lifecycle:<br><br>\u2022 <strong>Acquisition costs</strong> \u2014 development, production, initial spares<br>\u2022 <strong>Operating costs</strong> \u2014 personnel, fuel, consumables<br>\u2022 <strong>Sustainment costs</strong> \u2014 maintenance, repair, overhaul (MRO)<br>\u2022 <strong>Disposal costs</strong> \u2014 demilitarization, environmental<br>\u2022 <strong>DMSMS impact</strong> \u2014 obsolescence-driven cost increases<br><br>Pre-loaded cost models for 462 defense platforms with adjustable parameters. Export to CSV or anchor to XRPL for auditable cost baselines.' + demoNote;
+
+    if (/warranty|warranty.*track|far.*46|clin|warranty.*expir/.test(q)) return '<strong>Warranty & Contract Tracker</strong><br><br>Tracks warranty obligations per FAR 46.7 and DFARS clauses:<br><br>\u2022 <strong>CLIN milestone tracking</strong> \u2014 contractual deliverable status<br>\u2022 <strong>Warranty expiration alerts</strong> \u2014 advance notification before expiry<br>\u2022 <strong>Claim management</strong> \u2014 track warranty claims and resolutions<br>\u2022 <strong>Option year tracking</strong> \u2014 exercise dates and decisions<br>\u2022 <strong>GFE/GFM tracking</strong> \u2014 government-furnished equipment and material<br><br>Warranty records are anchored to XRPL to create an irrefutable timeline for dispute resolution.' + demoNote;
+
+    if (/vault|audit.*record|audit.*trail|audit.*vault|anchored.*record/.test(q)) return '<strong>Audit Record Vault</strong><br><br>' + (s4Vault.length > 0 ? 'Currently storing <strong>' + s4Vault.length + ' records</strong> across your workspace.<br><br>' : '') + 'The Vault automatically captures every record you anchor from any ILS tool. Each entry stores:<br><br>\u2022 <strong>SHA-256 hash</strong> \u2014 cryptographic fingerprint of the content<br>\u2022 <strong>Content preview</strong> \u2014 what was anchored<br>\u2022 <strong>Timestamp</strong> \u2014 when it was created<br>\u2022 <strong>TX Hash</strong> \u2014 XRPL transaction ID for independent verification<br>\u2022 <strong>Source tool</strong> \u2014 which ILS tool generated it<br>\u2022 <strong>Encryption status</strong> \u2014 AES-encrypted or plaintext<br><br>You can <strong>re-verify</strong> any record, <strong>export</strong> as CSV/XLSX, and <strong>search/filter</strong> across your entire audit trail.' + demoNote;
+
+    if (/doc.*library|defense.*doc|mil-std|opnavinst|regulation|standard|reference|mil-hdbk/.test(q)) return '<strong>Defense Document Library</strong><br><br>Searchable reference of <strong>100+ real defense documents</strong>:<br><br>\u2022 MIL-STDs, MIL-HDBKs, MIL-PRFs<br>\u2022 OPNAVINSTs, COMDTINST, Army Regulations<br>\u2022 Air Force Instructions, Marine Corps Orders<br>\u2022 DFARS clauses, NIST standards<br>\u2022 NATO STANAGs<br><br>Filter by category (ILS, Readiness, DMSMS, Cybersecurity) or branch (Joint, Navy, CG, Army, AF, Marines, Space Force). Direct links to official sources.' + demoNote;
+
+    if (/compliance.*score|cmmc|nist.*800|dfars.*252|compliance.*posture|compliance.*card/.test(q)) return '<strong>Compliance Scorecard</strong><br><br>Auto-calculates compliance across 6 frameworks:<br><br>\u2022 <strong>CMMC Level 2</strong> \u2014 Cybersecurity Maturity Model<br>\u2022 <strong>NIST SP 800-171</strong> \u2014 CUI Protection (110 controls)<br>\u2022 <strong>DFARS 252.204-7012</strong> \u2014 Safeguarding CDI<br>\u2022 <strong>FAR 46 Quality</strong> \u2014 Federal quality clauses<br>\u2022 <strong>MIL-STD-1388 ILS</strong> \u2014 Logistics compliance<br>\u2022 <strong>DoDI 4245.15 DMSMS</strong> \u2014 Obsolescence management<br><br>Score is calculated from <strong>real workspace activity</strong> \u2014 every anchor, DMSMS case, and readiness calculation contributes. Aggregated into a letter grade (A+ through F).' + demoNote;
+
+    if (/provision|ptd|provisioning.*tech|allowance.*part|apl|catalog|icaps/.test(q)) return '<strong>Provisioning & PTD Manager</strong><br><br>Replaces legacy ICAPS (Interactive Computer-Aided Provisioning System):<br><br>\u2022 <strong>40 demo items</strong> pre-loaded \u2014 valves, pumps, radar, turbines, crypto modules<br>\u2022 <strong>APL generation</strong> \u2014 Allowance Parts Lists per NAVSEA standards<br>\u2022 <strong>NSN cataloging</strong> \u2014 status tracking for all provisioned parts<br>\u2022 <strong>Custom items</strong> \u2014 add your own parts for provisioning tracking<br>\u2022 <strong>Status workflow</strong> \u2014 Submitted \u2192 Pending \u2192 Validated or Rejected<br><br><strong>S4 vs. ICAPS advantages:</strong><br>\u2022 ICAPS = Supply Support only; S4 = all 12 ILS elements<br>\u2022 ICAPS = Navy/USMC only; S4 = all branches<br>\u2022 ICAPS = no blockchain; S4 = every decision anchored to XRPL<br>\u2022 ICAPS = standalone; S4 = integrated with DMSMS, readiness, lifecycle cost' + demoNote;
+
+    if (/risk.*engine|supply.*chain.*risk|single.*source|gidep|risk.*assessment/.test(q)) return '<strong>Supply Chain Risk Engine</strong><br><br>Automated risk assessment for defense supply chains:<br><br>\u2022 <strong>Single-source analysis</strong> \u2014 identify components with only one supplier<br>\u2022 <strong>GIDEP alert monitoring</strong> \u2014 Government-Industry Data Exchange Program<br>\u2022 <strong>Foreign dependency flags</strong> \u2014 ITAR/EAR compliance risk<br>\u2022 <strong>Lead time risk</strong> \u2014 procurement timeline analysis<br>\u2022 <strong>Cost impact scoring</strong> \u2014 financial exposure per risk item<br>\u2022 <strong>Mitigation recommendations</strong> \u2014 second source, redesign, strategic buy<br><br>Risk scores are color-coded and exportable. All risk assessments can be anchored to XRPL.' + demoNote;
+
+    if (/report.*gen|generate.*report|audit.*package|export.*report|dcma.*report/.test(q)) return '<strong>Report Generator</strong><br><br>Creates publication-ready reports from your workspace data:<br><br>\u2022 <strong>Full Audit Package</strong> \u2014 all anchored records with XRPL verification<br>\u2022 <strong>DCMA-Ready Report</strong> \u2014 formatted for Defense Contract Management Agency<br>\u2022 <strong>Compliance Summary</strong> \u2014 scorecard with all 6 framework scores<br>\u2022 <strong>Gap Analysis Report</strong> \u2014 findings, actions, cost/schedule impact<br>\u2022 <strong>Executive Brief</strong> \u2014 1-page summary for leadership<br><br>Reports include blockchain verification data \u2014 every hash and TX ID is embedded for independent verification.' + demoNote;
+
+    if (/contract|cdrl|sow|deliverable|contract.*mgmt|modification|mod.*pending/.test(q)) return '<strong>Contract Management</strong><br><br>Tracks contractual deliverables and modifications:<br><br>\u2022 <strong>CDRL tracking</strong> \u2014 Contract Data Requirements List status<br>\u2022 <strong>SOW deliverable tracking</strong> \u2014 Statement of Work milestone status<br>\u2022 <strong>Modification management</strong> \u2014 contract mods and amendments<br>\u2022 <strong>Dispute prevention</strong> \u2014 anchored records provide irrefutable evidence<br>\u2022 <strong>Overdue alerts</strong> \u2014 notifications for missed deliverables<br><br>Blockchain anchoring prevents contract disputes by creating a tamper-proof timeline of all deliverables and communications.' + demoNote;
+
+    if (/digital.*thread|config.*mgmt|ecp|engineering.*change|bom|bill.*material|baseline/.test(q)) return '<strong>Digital Thread & Configuration Management</strong><br><br>Tracks the complete lifecycle of technical configurations:<br><br>\u2022 <strong>ECP management</strong> \u2014 Engineering Change Proposals with approval workflow<br>\u2022 <strong>BOM revision tracking</strong> \u2014 Bill of Materials history and delta analysis<br>\u2022 <strong>Baseline management</strong> \u2014 functional, allocated, product baselines<br>\u2022 <strong>PLM integration</strong> \u2014 connects to Teamcenter, Windchill, Arena<br>\u2022 <strong>Audit trail</strong> \u2014 every configuration change anchored to XRPL<br><br>The Digital Thread connects design intent to as-built/as-maintained records across the lifecycle.' + demoNote;
+
+    if (/predict|predictive.*maint|cbm|condition.*based|failure.*predict|maintenance.*advisory/.test(q)) return '<strong>Predictive Maintenance Engine</strong><br><br>AI-powered maintenance forecasting:<br><br>\u2022 <strong>Failure prediction</strong> \u2014 machine learning models based on usage patterns<br>\u2022 <strong>CBM+ integration</strong> \u2014 Condition-Based Maintenance Plus methodology<br>\u2022 <strong>MTBF trending</strong> \u2014 track reliability trends over time<br>\u2022 <strong>Maintenance advisories</strong> \u2014 automated alerts for predicted failures<br>\u2022 <strong>Cost savings estimation</strong> \u2014 reactive vs. predictive maintenance costs<br>\u2022 <strong>Fleet-wide analysis</strong> \u2014 aggregate data across platform variants<br><br>Predictive models use MTBF, operating environment, and maintenance history to forecast failures before they occur, reducing unplanned downtime by 30-50%.' + demoNote;
+
+    if (/import|database.*import|db.*import|defense.*database|nserc|merlin|gcss|cdmd|navsup|remis|piee/.test(q)) return '<strong>Defense Database Import</strong><br><br>Ingest records from <strong>24+ defense systems</strong>:<br><br><strong>Navy:</strong> NSERC/SE IDE, MERLIN, NAVAIR AMS PMT, CDMD-OA, NDE, PEO MLB, CSPT, NAVSUP<br><strong>Army:</strong> GCSS-Army, LMP, AESIP<br><strong>Air Force:</strong> REMIS, LIMS-EV, D200A<br><strong>Marine Corps:</strong> GCSS-MC, ATLASS<br><strong>Coast Guard:</strong> ALMIS, CGOne<br><strong>Space Force:</strong> USSF LMS<br><strong>Joint/OSD:</strong> COMPASS, MBPS, GCSS, DPAS, DLA FLIS, PIEE/WAWF<br><br>Upload CSV, XML, or JSON. S4 auto-detects format, maps fields, computes SHA-256 hashes. Savings: <strong>$450K+/year per program</strong>, 70% less data reconciliation.' + demoNote;
+
+    if (/ilie|submission|discrepancy.*engine|vendor.*review|vendor.*submission/.test(q)) {
+        if (typeof _subCache !== 'undefined' && _subCache && _subCache.discrepancies && _subCache.discrepancies.length) {
             var cc = _subCache.discrepancies.filter(function(d){return d.severity==='critical'}).length;
             var ww = _subCache.discrepancies.filter(function(d){return d.severity==='warning'}).length;
-            return '<strong>ILIE Analysis Results:</strong><br>Total discrepancies: <strong>' + _subCache.discrepancies.length + '</strong><br>Critical: <span style="color:#ff4444">' + cc + '</span> | Warnings: <span style="color:#ffa500">' + ww + '</span><br>Program: ' + (_subCache.meta.program || 'N/A') + '<br>Branch: ' + (_subCache.meta.branch || 'N/A') + '<br><br>Use "Analyze & Compare" for a different submission or "Export Discrepancy Report" to download the findings.';
+            return '<strong>ILIE Analysis Results:</strong><br>Total discrepancies: <strong>' + _subCache.discrepancies.length + '</strong><br>Critical: <span style="color:#ff4444">' + cc + '</span> | Warnings: <span style="color:#ffa500">' + ww + '</span><br>Program: ' + (_subCache.meta.program || 'N/A') + '<br>Branch: ' + (_subCache.meta.branch || 'N/A') + '<br><br>Use "Analyze & Compare" for a different submission or "Export Discrepancy Report" to download findings.' + demoNote;
         }
-        return 'The <strong>Integrated Logistics Insights Engine (ILIE)</strong> analyzes vendor submissions by comparing current data against previous baselines. It detects:<br>• Cost anomalies (>10-25% increases)<br>• New/removed components<br>• CAGE code changes<br>• Source/vendor substitutions<br>• Lead time increases (>30 day threshold)<br>• Status downgrades (Active→Obsolete)<br><br>Use "Run Demo Analysis" to see a full example, or upload a CSV/Excel file to analyze real data. Download sample files are available above the upload box.';
-    }
-    return 'I\'m your ILS Workspace Agent. I can help with DI numbers, gap analysis, CARs, ILS requirements, the audit vault, compliance scorecard, defense document library, provisioning, and more. Run an analysis to get context-specific insights, or ask me about any ILS topic!';
+        return '<strong>Integrated Logistics Insights Engine (ILIE)</strong><br><br>Analyzes vendor submissions against baseline data to detect discrepancies:<br><br>\u2022 <strong>Cost anomalies</strong> \u2014 >10-25% cost increases flagged<br>\u2022 <strong>Component changes</strong> \u2014 new/removed items detected<br>\u2022 <strong>CAGE code changes</strong> \u2014 manufacturer substitutions<br>\u2022 <strong>Source/vendor swaps</strong> \u2014 supply chain changes<br>\u2022 <strong>Lead time increases</strong> \u2014 >30 day threshold<br>\u2022 <strong>Status downgrades</strong> \u2014 Active\u2192Obsolete flags<br><br>Upload a CSV/Excel file or use "Run Demo Analysis" to see a full example with sample discrepancies.' + demoNote;
     }
 
-    // Has analysis results
-    if (/summarize|summary|overview|gap/.test(q)) {
-        const critActions = r.actions.filter(a=>a.severity==='critical');
-        let resp = '<strong>' + r.prog.name + '</strong> — Overall Readiness: <strong style="color:'+(r.pct>=80?'#14f195':r.pct>=50?'#ffa500':'#ff3333')+'">' + r.pct + '%</strong><br><br>';
-        resp += '\uD83D\uDCCB Checklist: ' + r.clItems.filter(i=>i.checked).length + '/' + r.clItems.length + ' items (' + r.clPct + '%)<br>';
-        resp += '\uD83D\uDCC4 DRL Coverage: ' + r.drlFound + '/' + r.drlTotal + ' items (' + r.drlPct + '%)<br>';
-        if (critActions.length) {
-            resp += '<br>\u26A0\uFE0F <strong style="color:#ff3333">' + critActions.length + ' critical gaps:</strong><br>';
-            critActions.slice(0,3).forEach(a => { resp += '• ' + a.title + '<br>'; });
-            if (critActions.length > 3) resp += '• ...and ' + (critActions.length-3) + ' more<br>';
-        }
-        resp += '<br>\uD83D\uDCB0 Est. risk cost: <strong>' + formatCost(r.totalCost) + '</strong>';
-        return resp;
+    // ── DEFENSE STANDARDS ──
+    if (/mil.*std.*1388|ils.*element|12.*element|what.*ils/.test(q)) return '<strong>MIL-STD-1388 \u2014 12 ILS Elements</strong><br><br>Integrated Logistics Support covers these 12 elements:<br><br>1. <strong>Maintenance Planning</strong> \u2014 preventive/corrective maintenance strategies<br>2. <strong>Manpower & Personnel</strong> \u2014 staffing requirements<br>3. <strong>Supply Support</strong> \u2014 spares, repair parts, consumables<br>4. <strong>Support Equipment</strong> \u2014 tools, test equipment, TMDE<br>5. <strong>Technical Data</strong> \u2014 manuals, drawings, specifications<br>6. <strong>Training & Training Support</strong> \u2014 courses, devices, materials<br>7. <strong>Computer Resources Support</strong> \u2014 software, firmware<br>8. <strong>Facilities</strong> \u2014 maintenance shops, storage, training<br>9. <strong>Packaging, Handling, Storage & Transportation</strong> \u2014 PHS&T<br>10. <strong>Design Interface</strong> \u2014 R&M, human factors, safety<br>11. <strong>Standardization</strong> \u2014 interoperability, commonality<br>12. <strong>Product Support Management</strong> \u2014 PSM oversight' + demoNote;
+
+    if (/nist|800.171|cui.*protect|controlled.*unclass/.test(q)) return '<strong>NIST SP 800-171</strong> \u2014 Protecting Controlled Unclassified Information (CUI)<br><br>110 security controls across 14 families:<br><br>\u2022 Access Control (AC) \u2014 22 controls<br>\u2022 Awareness & Training (AT) \u2014 3 controls<br>\u2022 Audit & Accountability (AU) \u2014 9 controls<br>\u2022 Configuration Management (CM) \u2014 9 controls<br>\u2022 Identification & Authentication (IA) \u2014 11 controls<br>\u2022 Incident Response (IR) \u2014 3 controls<br>\u2022 Maintenance (MA) \u2014 6 controls<br>\u2022 Media Protection (MP) \u2014 9 controls<br>\u2022 Personnel Security (PS) \u2014 2 controls<br>\u2022 Physical Protection (PE) \u2014 6 controls<br>\u2022 Risk Assessment (RA) \u2014 3 controls<br>\u2022 Security Assessment (CA) \u2014 4 controls<br>\u2022 System & Communications Protection (SC) \u2014 16 controls<br>\u2022 System & Information Integrity (SI) \u2014 7 controls<br><br>S4 Ledger\'s blockchain anchoring directly supports AU (audit trail), SI (integrity), and SC (communications protection) controls.' + demoNote;
+
+    if (/cmmc.*level|cmmc.*2|cmmc.*certif|cybersecurity.*maturity/.test(q)) return '<strong>CMMC Level 2</strong> \u2014 Cybersecurity Maturity Model Certification<br><br>CMMC Level 2 requires implementation of all 110 NIST SP 800-171 controls:<br><br>\u2022 <strong>Assessment:</strong> Third-party C3PAO assessment required<br>\u2022 <strong>Scope:</strong> All systems processing, storing, or transmitting CUI<br>\u2022 <strong>Timeline:</strong> Required for all DoD contracts handling CUI (phased rollout 2025+)<br>\u2022 <strong>Validity:</strong> 3-year certification cycle<br><br><strong>How S4 helps:</strong><br>\u2022 Blockchain anchoring provides immutable audit trails (AU controls)<br>\u2022 SHA-256 hashing ensures data integrity (SI controls)<br>\u2022 AES encryption option for CUI records (SC controls)<br>\u2022 Compliance Scorecard auto-calculates CMMC readiness<br><br><em>Note: S4 Ledger\'s CMMC certification is In Progress (not yet certified).</em>' + demoNote;
+
+    if (/dfars|252\.204|safeguard.*defense|covered.*defense/.test(q)) return '<strong>DFARS 252.204-7012</strong> \u2014 Safeguarding Covered Defense Information<br><br>Key requirements:<br>\u2022 Implement NIST SP 800-171 controls for CDI/CUI<br>\u2022 Report cyber incidents within 72 hours<br>\u2022 Preserve media and data for 90 days post-incident<br>\u2022 Flow down to subcontractors<br><br>S4\'s blockchain anchoring creates verifiable evidence of data integrity controls, directly supporting DFARS compliance.' + demoNote;
+
+    // ── GENERAL HELP ──
+    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="../s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore the ILS Workspace</strong> \u2014 20 tools organized by function<br>3. <strong>Try a demo analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.' + demoNote;
+
+    if (/configure.*ai|api.*key|ai.*setup|enable.*ai|openai|anthropic|azure|groq|mistral/.test(q)) return '<strong>Configuring the AI Agent</strong><br><br>The AI Agent works in two modes:<br><br><strong>1. Demo Mode (default):</strong><br>\u2022 200+ pre-built response patterns<br>\u2022 Covers all 20 ILS tools, defense standards, pricing, wallets<br>\u2022 Context-aware \u2014 adapts responses based on loaded analysis<br>\u2022 No API key required<br><br><strong>2. Full AI Mode (API key required):</strong><br>\u2022 Powered by OpenAI, Azure OpenAI, Anthropic Claude, Mistral, or Groq<br>\u2022 Open-ended Q&A on any topic<br>\u2022 Advanced document analysis and summarization<br>\u2022 Custom report generation<br><br><strong>To enable Full AI Mode:</strong><br>Set <code>AI_ENGINE_CONFIG.enabled = true</code> and provide your <code>endpoint</code> and <code>apiKey</code> in the configuration. Supported providers: Azure OpenAI, OpenAI-compatible, AWS Bedrock.' + demoNote;
+
+    if (/encrypt|aes|security|data.*protect|secure.*record/.test(q)) return '<strong>Record Encryption</strong><br><br>S4 Ledger supports AES-256 encryption for sensitive records:<br><br>\u2022 <strong>Toggle encryption</strong> \u2014 enable per-record encryption before anchoring<br>\u2022 <strong>AES-256-GCM</strong> \u2014 military-grade symmetric encryption<br>\u2022 <strong>Client-side</strong> \u2014 encryption happens in your browser, never on the server<br>\u2022 <strong>Hash still verifiable</strong> \u2014 the SHA-256 hash is of the encrypted content<br>\u2022 <strong>Key management</strong> \u2014 you control the encryption key<br><br>CUI records should always be encrypted before anchoring to meet NIST 800-171 and DFARS requirements.' + demoNote;
+
+    if (/xaman|xumm|mobile.*wallet|import.*seed/.test(q)) return '<strong>Xaman (XUMM) Wallet Integration</strong><br><br>Your S4 Ledger wallet is <strong>Xaman-compatible</strong>:<br><br>1. Download <strong>Xaman</strong> from App Store / Google Play<br>2. Tap "Add Account" \u2192 "Import Existing Account"<br>3. Enter your <strong>family seed</strong> (from your wallet credentials file)<br>4. Your SLS balance, TrustLine, and transaction history will appear<br><br><strong>Note:</strong> Xaman uses the same secp256k1 key format as S4 Ledger. Your wallet works identically on both platforms.' + demoNote;
+
+    if (/sdk|api|developer|integrate|rest.*api|python.*sdk/.test(q)) return '<strong>S4 Ledger SDK & API</strong><br><br><strong>REST API:</strong><br>\u2022 29 endpoints covering all platform functionality<br>\u2022 JSON request/response format<br>\u2022 API key authentication<br>\u2022 Rate limiting per subscription tier<br><br><strong>Python SDK:</strong><br>\u2022 27 functions wrapping all API endpoints<br>\u2022 <code>pip install s4-sdk</code> (PyPI)<br>\u2022 Async support, retry logic, error handling<br>\u2022 Full documentation at <a href="../sdk/">sdk/</a><br><br><strong>Key endpoints:</strong><br>\u2022 <code>POST /api/anchor</code> \u2014 anchor a hash to XRPL<br>\u2022 <code>GET /api/verify/{hash}</code> \u2014 verify a record<br>\u2022 <code>POST /api/wallet/provision</code> \u2014 create a new wallet<br>\u2022 <code>GET /api/metrics</code> \u2014 platform metrics' + demoNote;
+
+    if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoD domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="../s4-about/">About page</a>.' + demoNote;
+
+    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 20 ILS tools<br><br>What can I help you with?' + demoNote;
+
+    if (/thank|thanks|thx|appreciate/.test(q)) return 'You\'re welcome! Let me know if you have any other questions about ILS, S4 Ledger, or defense logistics.' + demoNote;
+
+    if (/help|what.*can.*do|capabilities|feature/.test(q)) return '<strong>S4 Agent Capabilities</strong><br><br>I can answer questions about:<br><br><strong>ILS Tools (20):</strong><br>\u2022 Gap Analysis, Action Items, ILS Calendar, DMSMS Tracker<br>\u2022 Readiness/RAM Calculator, Parts Cross-Reference, ROI Calculator<br>\u2022 Lifecycle Cost Estimator, Warranty Tracker, Audit Vault<br>\u2022 Doc Library, Compliance Scorecard, Provisioning/PTD<br>\u2022 Risk Engine, Report Generator, Contract Management<br>\u2022 Digital Thread, Predictive Maintenance, Database Import, ILIE<br><br><strong>Product & Platform:</strong><br>\u2022 S4 Ledger overview, pricing, how anchoring works<br>\u2022 XRPL wallets, SLS token, TrustLines<br>\u2022 Treasury vs. Issuer wallets<br>\u2022 SDK, API, integration guides<br><br><strong>Defense Standards:</strong><br>\u2022 MIL-STD-1388 (12 ILS elements), NIST 800-171, CMMC, DFARS<br>\u2022 DI numbers (DI-001 through DI-050+)<br>\u2022 FAR/DFARS clauses, DoD 5000 series<br><br><strong>Context-Aware:</strong><br>\u2022 When analysis is loaded, I provide data-driven answers about gaps, costs, and recommendations<br>\u2022 When documents are uploaded, I reference analysis findings and discrepancies' + demoNote;
+
+    // ── WORKSPACE STATS ──
+    if (/stats|statistic|how.*many.*record|how.*many.*anchor|my.*data|workspace.*status/.test(q)) {
+        return '<strong>Workspace Statistics</strong><br><br>\u2022 Records in Vault: <strong>' + s4Vault.length + '</strong><br>\u2022 Action Items: <strong>' + s4ActionItems.length + '</strong> (' + s4ActionItems.filter(a=>a.done).length + ' complete)<br>\u2022 Total SLS Fees: <strong>' + (stats?.slsFees || 0).toFixed(2) + ' SLS</strong> ($' + ((stats?.slsFees || 0) * 0.01).toFixed(4) + ')<br>\u2022 Records Anchored: <strong>' + (stats?.anchored || 0) + '</strong><br>\u2022 Record Types Used: <strong>' + (stats?.types?.size || 0) + '</strong><br>\u2022 Uploaded Documents: <strong>' + (typeof uploadedDocumentStore !== 'undefined' ? uploadedDocumentStore.length : 0) + '</strong>' + demoNote;
     }
 
-    if (/critical|urgent|important|priority/.test(q)) {
-        const crit = r.actions.filter(a=>a.severity==='critical');
-        if (!crit.length) return '\u2705 <strong>No critical items found!</strong> Your ILS package appears to cover all critical requirements. Review the warning-level items to ensure full compliance.';
-        let resp = '\u26A0\uFE0F <strong style="color:#ff3333">' + crit.length + ' Critical Items Requiring Immediate Attention:</strong><br><br>';
-        crit.forEach((a,i) => {
-            resp += '<strong>' + (i+1) + '. ' + a.id + '</strong>: ' + a.title + '<br>';
-            resp += '   \u2192 ' + a.action + '<br>';
-            resp += '   \uD83D\uDC64 Owner: ' + a.owner + ' | \uD83D\uDCB0 ' + formatCost(a.cost) + ' | \u23F0 ' + a.schedule + '<br><br>';
-        });
-        resp += '<strong>Recommendation:</strong> Issue CARs for all critical items and escalate to the next ILS Review Board.';
-        return resp;
+    // ── ACRONYMS & TERMS ──
+    if (/what.*lcsp|lcsp|life.*cycle.*sustain.*plan/.test(q)) return '<strong>Life Cycle Sustainment Plan (LCSP)</strong> \u2014 DI-ILSS-81490<br><br>The LCSP is the top-level ILS planning document that defines the sustainment strategy for the entire program lifecycle. It addresses all 12 ILS elements, establishes performance metrics (Ao, MTBF, MTTR), and is required per DoD Instruction 5000.02.<br><br>Use "Load Full ILS Package" in Gap Analysis to see a sample LCSP structure.' + demoNote;
+
+    if (/what.*lsar|lsar|logistics.*support.*analysis.*record/.test(q)) return '<strong>Logistics Support Analysis Record (LSAR)</strong><br><br>The LSAR is the central database for logistics data generated during the Logistics Support Analysis (LSA) process. It captures task analysis, failure modes, repair levels, support equipment requirements, and spares data per MIL-STD-1388-2B.' + demoNote;
+
+    if (/what.*phs.*t|phs&t|packaging.*handling|mil.*std.*2073/.test(q)) return '<strong>PHS&T \u2014 Packaging, Handling, Storage & Transportation</strong><br><br>ILS Element #9 per MIL-STD-1388. Covers MIL-STD-2073 (packaging requirements), MIL-STD-129 (marking), and transportation planning. Ensures items arrive at the right place, undamaged, properly identified.' + demoNote;
+
+    if (/what.*cbm|cbm\+|condition.*based/.test(q)) return '<strong>CBM+ (Condition-Based Maintenance Plus)</strong><br><br>DoD maintenance strategy that uses real-time data and analytics to determine maintenance needs based on actual equipment condition rather than fixed schedules. CBM+ integrates with predictive maintenance to reduce unplanned downtime and optimize maintenance intervals.' + demoNote;
+
+    if (/what.*flis|flis|federal.*logistics/.test(q)) return '<strong>FLIS \u2014 Federal Logistics Information System</strong><br><br>The FLIS is the DoD\'s central database for logistics data, managed by DLA (Defense Logistics Agency). It contains NSN (National Stock Number) data, item descriptions, management codes, and sourcing information for millions of items. The Parts Cross-Reference tool in S4 provides a simplified interface to this type of data.' + demoNote;
+
+    if (/what.*cdrl|cdrl/.test(q)) return '<strong>CDRL \u2014 Contract Data Requirements List</strong><br><br>The CDRL (DD Form 1423) specifies all data deliverables required under a defense contract. Each CDRL item has:<br>\u2022 DI number (Data Item Description)<br>\u2022 Frequency of submission<br>\u2022 Distribution requirements<br>\u2022 Government review/approval authority<br><br>S4 tracks CDRL status in the Contract Management tool.' + demoNote;
+
+    if (/what.*itar|itar|arms.*regulation/.test(q)) return '<strong>ITAR \u2014 International Traffic in Arms Regulations</strong><br><br>ITAR controls the export and transfer of defense-related articles and services. Key points:<br>\u2022 Administered by DDTC (Directorate of Defense Trade Controls)<br>\u2022 Applies to items on the USML (US Munitions List)<br>\u2022 Violations can result in criminal penalties up to $1M per violation<br>\u2022 S4 Ledger\'s supply chain risk engine flags potential ITAR/EAR concerns in the supply chain' + demoNote;
+
+    // ── NO-ANALYSIS FALLBACK ──
+    if (!r) {
+        if (/gap|analysis|result|score|status/.test(q)) return 'I don\'t have analysis results yet. Upload documents and click <strong>"Run Full Analysis"</strong> to generate results I can help interpret.' + demoNote;
     }
 
-    if (/car|corrective\s*action/.test(q)) {
-        const gaps = r.actions.filter(a=>a.severity==='critical');
-        if (!gaps.length) return 'No critical gaps found that require a CAR. Your ILS package appears complete for this phase.';
-        const g = gaps[0];
-        return '<strong>DRAFT — Corrective Action Request (CAR)</strong><br><br>' +
-            '<strong>CAR Number:</strong> CAR-' + r.progKey.toUpperCase() + '-' + new Date().getFullYear() + '-001<br>' +
-            '<strong>Program:</strong> ' + r.prog.name + '<br>' +
-            '<strong>Office:</strong> ' + r.prog.ofc + '<br>' +
-            '<strong>Date:</strong> ' + new Date().toISOString().split('T')[0] + '<br><br>' +
-            '<strong>Deficiency:</strong> ' + g.title + '<br>' +
-            '<strong>Required Action:</strong> ' + g.action + '<br>' +
-            '<strong>Days to Respond:</strong> 14 calendar days<br>' +
-            '<strong>Impact if Not Corrected:</strong> ' + formatCost(g.cost) + ' cost risk, ' + g.schedule + ' schedule impact<br>' +
-            '<strong>Responsible Party:</strong> ' + g.owner + '<br><br>' +
-            '<em>Note: ' + (gaps.length-1) + ' additional CARs may be required for remaining critical gaps.</em>';
-    }
-
-    if (/cost|risk|money|budget|expense/.test(q)) {
-        return '<strong>Cost & Schedule Risk Summary</strong><br><br>' +
-            '\uD83D\uDCB0 Total Estimated Risk: <strong style="color:#ff3333">' + formatCost(r.totalCost) + '</strong><br>' +
-            '\u23F0 Schedule Risk: <strong style="color:#ffa500">' + (r.critGaps > 3 ? '6-12 months' : r.critGaps > 0 ? '2-6 months' : '< 2 months') + '</strong><br>' +
-            '\uD83D\uDEA8 Critical Path Items: <strong>' + r.critGaps + '</strong><br><br>' +
-            'Cost breakdown by ILS element:<br>' +
-            r.actions.slice(0,5).map(a => '• ' + a.id + ': ' + formatCost(a.cost) + ' (' + a.title.substring(0,40) + ')').join('<br>') +
-            '<br><br>Early resolution typically reduces costs by 30-50% vs. late-stage remediation.';
-    }
-
-    if (/missing|di.*number|what.*missing/.test(q)) {
-        const missing = r.drlResults.filter(d => !d.found);
-        if (!missing.length) return '\u2705 All DRL/CDRL items have been accounted for! No missing DI numbers detected.';
-        let resp = '\uD83D\uDCC4 <strong>Missing DI Numbers (' + missing.length + '):</strong><br><br>';
-        missing.forEach(d => {
-            resp += '• <strong>' + d.di + '</strong> — ' + d.t + (d.c ? ' <span style="color:#ff3333">[CRITICAL]</span>' : '') + '<br>';
-        });
-        return resp;
-    }
-
-    if (/next\s*step|recommend|suggest|what.*should/.test(q)) {
-        let resp = '<strong>Recommended Next Steps:</strong><br><br>';
-        if (r.critGaps > 0) {
-            resp += '1. \uD83D\uDEA8 <strong>Address critical gaps immediately</strong> — ' + r.critGaps + ' items need action before next milestone<br>';
-            resp += '2. \uD83D\uDCDD <strong>Issue CARs</strong> for all missing critical deliverables<br>';
-            resp += '3. \uD83D\uDCC5 <strong>Schedule ILS Review Board</strong> within 2 weeks to discuss contractor compliance<br>';
-            resp += '4. \uD83D\uDCCA <strong>Update program risk register</strong> with ' + formatCost(r.totalCost) + ' estimated impact<br>';
-            resp += '5. \u2693 <strong>Anchor this analysis</strong> to XRPL for immutable audit trail<br>';
-        } else {
-            resp += '1. \u2705 <strong>Review complete package</strong> for final quality check<br>';
-            resp += '2. \uD83D\uDD0D <strong>Verify configuration baseline</strong> matches as-built<br>';
-            resp += '3. \uD83D\uDCDD <strong>Prepare milestone briefing</strong> with readiness score<br>';
-            resp += '4. \u2693 <strong>Anchor final analysis</strong> for permanent record<br>';
-        }
-        return resp;
-    }
-
-    if (/di-?\d+/.test(q)) return explainDINumber(q);
-
-    // ── Custom / Freeform Task Handling ──
-    if (/compare|vs|versus|difference/.test(q)) {
-        if (!r) return 'Run an analysis first, then ask me to compare programs, phases, or checklists.';
-        const elChecked = r.clItems.filter(i=>i.checked).length;
-        return '<strong>Comparative Analysis — ' + r.prog.name + '</strong><br><br>' +
-            'Current readiness: <strong>' + r.pct + '%</strong><br>' +
-            'Checklist completion: ' + elChecked + '/' + r.clItems.length + ' (' + r.clPct + '%)<br>' +
-            'DRL coverage: ' + r.drlFound + '/' + r.drlTotal + ' (' + r.drlPct + '%)<br><br>' +
-            '<strong>Benchmark Comparison:</strong><br>' +
-            '• Industry avg at this phase: ~55-65%<br>' +
-            '• Top performers: 80%+<br>' +
-            '• Your program: <strong style="color:' + (r.pct>=70?'#14f195':'#ffa500') + '">' + r.pct + '%</strong> (' + (r.pct>=70?'Above':'Below') + ' average)<br><br>' +
-            'Tip: Re-run analysis after uploading additional documents to track improvement.';
-    }
-
-    if (/write|draft|compose|create|template|memo|email|letter/.test(q)) {
-        if (/memo/.test(q)) {
-            return '<strong>MEMORANDUM</strong><br><br>' +
-                '<strong>FROM:</strong> ILS Program Manager<br>' +
-                '<strong>TO:</strong> ' + (r ? r.prog.ofc : 'Program Office') + '<br>' +
-                '<strong>SUBJ:</strong> ILS Data Package Status — ' + (r ? r.prog.name : 'Program TBD') + '<br>' +
-                '<strong>DATE:</strong> ' + new Date().toISOString().split('T')[0] + '<br><br>' +
-                '1. <strong>Purpose:</strong> To provide current status of the Integrated Logistics Support data package and identify outstanding deliverables.' + (r ? '<br><br>2. <strong>Current Status:</strong> Overall readiness stands at ' + r.pct + '% with ' + r.critGaps + ' critical gaps requiring immediate attention. Estimated cost risk is ' + formatCost(r.totalCost) + '.' : '') +
-                '<br><br>3. <strong>Recommendation:</strong> ' + (r && r.critGaps > 0 ? 'Schedule review board within 14 days to address critical deficiencies.' : 'Proceed with milestone review as package is substantially complete.') +
-                '<br><br><em>Copy/paste and customize as needed.</em>';
-        }
-        if (/email/.test(q)) {
-            return '<strong>Draft Email</strong><br><br>' +
-                '<strong>Subject:</strong> ILS Status Update — ' + (r ? r.prog.name + ' (' + r.pct + '%)' : 'Program Update') + '<br><br>' +
-                'Team,<br><br>' +
-                'Please find below the current ILS data package status' + (r ? ' for ' + r.prog.name : '') + '.<br><br>' +
-                (r ? 'Overall Readiness: ' + r.pct + '%<br>Critical Gaps: ' + r.critGaps + '<br>Est. Risk: ' + formatCost(r.totalCost) + '<br><br>' : '') +
-                'Action Required: ' + (r && r.critGaps > 0 ? 'Review attached gap analysis and provide updated delivery schedule for outstanding items.' : 'No critical actions required at this time.') +
-                '<br><br>V/R,<br>[Your Name]<br><br><em>Customize and send via the "Send Analysis" button above.</em>';
-        }
-        return 'I can draft several document types for you:<br><br>' +
-            '• <strong>"Draft a memo"</strong> — formal memorandum template<br>' +
-            '• <strong>"Draft an email"</strong> — status update email<br>' +
-            '• <strong>"Draft a CAR"</strong> — Corrective Action Request<br><br>' +
-            'Just tell me what type of document you need!';
-    }
-
-    if (/explain|what is|what are|define|meaning|describe/.test(q)) {
-        if (/ils/.test(q) && !/di-/.test(q)) return '<strong>Integrated Logistics Support (ILS)</strong><br><br>ILS is a disciplined approach that ensures a system, equipment, or platform is supported throughout its lifecycle. The 12 ILS elements are:<br><br>1. ILS Management<br>2. Maintenance Planning<br>3. Supply Support<br>4. Support Equipment<br>5. Technical Data<br>6. Training & Training Support<br>7. Manpower & Personnel<br>8. Computer Resources<br>9. Facilities<br>10. PHS&T (Packaging, Handling, Storage & Transport)<br>11. Design Interface<br>12. Reliability, Availability & Maintainability (RAM)<br><br>Each element must be addressed per DoW 5000 series requirements.';
-        if (/cdrl|cdr/.test(q)) return '<strong>Contract Data Requirements List (CDRL)</strong><br><br>A CDRL (DD Form 1423) is the standard format for identifying data deliverables required under a DoW contract. Each CDRL references a Data Item Description (DID) number.<br><br>Key fields: Sequence number, DI number, title, approval authority, distribution, and delivery schedule.';
-        if (/drl/.test(q)) return '<strong>Data Requirements List (DRL)</strong><br><br>A DRL is a comprehensive list of all data items required for a program. It tracks the status of each deliverable including submission dates, review status, and approval authority.';
-        if (/car|corrective action/.test(q)) return '<strong>Corrective Action Request (CAR)</strong><br><br>A CAR is a formal contractual instrument used to notify a contractor of deficiencies requiring corrective action. It specifies the deficiency, required action, and response timeline (typically 14-30 days).';
-        if (/pms/.test(q) && !/pms 300/.test(q)) return '<strong>Planned Maintenance System (PMS)</strong><br><br>Navy PMS provides maintenance standards for all ships and equipment. It includes Maintenance Index Pages (MIPs) and Maintenance Requirement Cards (MRCs) that define scheduled maintenance tasks.';
-        if (/cosal|apl/.test(q)) return '<strong>Coordinated Shipboard Allowance List (COSAL)</strong><br><br>COSAL is the Navy\'s system for identifying all repair parts, special tools, and test equipment for shipboard systems. It consists of Allowance Parts Lists (APLs) and Allowance Equipage Lists (AELs).';
-        if (/lcsp/.test(q)) return '<strong>Life Cycle Sustainment Plan (LCSP)</strong> — DI-039<br><br>A top-level ILS planning document that defines the sustainment strategy, addresses all 12 ILS elements, establishes performance metrics (Ao, MTBF, MTTR), and is required per DoW Instruction 5000.02.';
-        if (/milestone|review/.test(q)) return '<strong>DoW Milestone Reviews</strong><br><br>• <strong>Milestone A:</strong> Material Development Decision — entry to Technology Maturation<br>• <strong>Milestone B:</strong> Entry into Engineering & Manufacturing Development<br>• <strong>Milestone C:</strong> Entry into Production & Deployment<br>• <strong>IOC:</strong> Initial Operational Capability<br>• <strong>FOC:</strong> Full Operational Capability<br><br>ILS deliverables are required at each milestone.';
-        // Generic explain handler
-        return 'I can explain many ILS and defense logistics terms. Try asking about:<br>' +
-            '• <strong>"What is ILS?"</strong><br>• <strong>"Explain CDRL"</strong><br>• <strong>"What is PMS?"</strong><br>• <strong>"Define COSAL"</strong><br>• <strong>"What are milestones?"</strong><br>• Any specific DI number (e.g., "What is DI-009?")';
-    }
-
-    if (/checklist|element|coverage|which.*missing|which.*complete/.test(q)) {
-        if (!r) return 'Run an analysis first to see checklist details.';
-        const missing = r.clItems.filter(i=>!i.checked);
-        const complete = r.clItems.filter(i=>i.checked);
-        let resp = '<strong>ILS Checklist Status — ' + r.prog.name + '</strong><br><br>';
-        resp += '<i class="fas fa-check-circle" style="color:#14f195"></i> <strong>Complete (' + complete.length + '):</strong><br>';
-        complete.slice(0,8).forEach(i => { resp += '• ' + i.l + (i.c?' [CRITICAL]':'') + '<br>'; });
-        if (complete.length > 8) resp += '• ...and ' + (complete.length-8) + ' more<br>';
-        resp += '<br><strong>Incomplete (' + missing.length + '):</strong><br>';
-        missing.forEach(i => { resp += '• <span style="color:'+(i.c?'#ff3333':'#ffa500')+'">' + i.l + (i.c?' [CRITICAL]':'') + '</span><br>'; });
-        return resp;
-    }
-
-    if (/schedule|timeline|when|deadline|overdue|late/.test(q)) {
-        if (!r) return 'Run an analysis to see schedule risk details.';
-        const overdue = r.drlResults.filter(d => d.found && /overdue|late/i.test(d.status));
-        let resp = '<strong>Schedule Assessment — ' + r.prog.name + '</strong><br><br>';
-        resp += '<i class="fas fa-clock" style="color:#ff9900"></i> Overall Schedule Risk: <strong style="color:#ffa500">' + (r.critGaps > 3 ? '6-12 months' : r.critGaps > 0 ? '2-6 months' : '< 2 months') + '</strong><br>';
-        resp += '<i class="fas fa-chart-bar"></i> Critical path items: ' + r.critGaps + '<br><br>';
-        if (overdue.length) {
-            resp += '<i class="fas fa-exclamation-triangle"></i> <strong>Overdue Items (' + overdue.length + '):</strong><br>';
-            overdue.forEach(d => { resp += '• ' + d.di + ' — ' + d.t + ' (' + d.status + ')<br>'; });
-        }
-        resp += '<br><strong>Recommendation:</strong> ' + (r.critGaps > 3 ? 'Immediate intervention required. Consider contract modification or schedule re-baseline.' : r.critGaps > 0 ? 'Address critical items within 30 days to maintain schedule.' : 'Schedule risk is manageable. Continue monitoring.');
-        return resp;
-    }
-
-    if (/report|generate|export|download/.test(q)) {
-        return '<i class="fas fa-file-alt"></i> <strong>Available Reports & Exports:</strong><br><br>' +
-            '• <strong>"Generate Report"</strong> button — Downloads a full text report<br>' +
-            '• <strong>"Export Action Tracker"</strong> — CSV of all action items with owners/dates<br>' +
-            '• <strong>"Anchor Report Hash"</strong> — Immutable XRPL proof of analysis<br>' +
-            '• <strong>"Send Analysis"</strong> — Email summary to stakeholders<br>' +
-            '• <strong>"Copy to Clipboard"</strong> — Quick text summary<br><br>' +
-            'Use the buttons above the chat to access any of these. Need a custom report format? Just describe what you need!';
-    }
-
-    // ── New Tool Topic Matchers (vault, docs, compliance, provisioning) ──
-    if (/vault|audit.*record|audit.*trail|audit.*vault|anchored.*record/.test(q)) {
-        const vault = JSON.parse(localStorage.getItem('s4_audit_vault') || '[]');
-        let resp = '<strong>Audit Record Vault</strong><br><br>';
-        if (vault.length > 0) {
-            resp += 'Your vault contains <strong>' + vault.length + ' records</strong>.<br>';
-            const types = [...new Set(vault.map(v => v.type || 'Unknown'))];
-            resp += 'Record types: ' + types.join(', ') + '<br>';
-            resp += 'Latest entry: ' + (vault[vault.length-1].timestamp || 'Unknown') + '<br><br>';
-        } else {
-            resp += 'Your vault is currently empty. Records will appear here automatically as you anchor them from any tool.<br><br>';
-        }
-        resp += 'The vault stores every anchored record with its SHA-256 hash, content preview, timestamp, and XRPL TX Hash. You can:<br>';
-        resp += '• <strong>Re-verify</strong> any record with one click<br>';
-        resp += '• <strong>Export</strong> as CSV/XLSX for compliance audits<br>';
-        resp += '• <strong>Search/filter</strong> by type, date, or content<br><br>';
-        resp += 'Click the <strong>Audit Vault</strong> tab to view your records.';
-        return resp;
-    }
-
-    if (/compliance.*score|cmmc|nist.*800|dfars.*252|compliance.*posture|compliance.*card|compliance.*grade/.test(q)) {
-        let resp = '<strong>Compliance Scorecard</strong><br><br>';
-        resp += 'Your compliance posture is auto-calculated across 6 frameworks based on your workspace activity:<br><br>';
-        resp += '• <strong>CMMC Level 2</strong> — Cybersecurity maturity<br>';
-        resp += '• <strong>NIST SP 800-171</strong> — CUI protection controls<br>';
-        resp += '• <strong>DFARS 252.204-7012</strong> — Covered defense information<br>';
-        resp += '• <strong>FAR 46 Quality</strong> — Quality assurance clauses<br>';
-        resp += '• <strong>MIL-STD-1388 ILS</strong> — Logistics support analysis<br>';
-        resp += '• <strong>DoDI 4245.15 DMSMS</strong> — Obsolescence management<br><br>';
-        resp += 'Every record you anchor, DMSMS case you track, and readiness calculation you run improves your score. Click the <strong>Compliance</strong> tab to see your current grade.';
-        return resp;
-    }
-
-    if (/defense.*doc|doc.*library|mil-std|opnavinst|regulation|standard.*reference|mil-hdbk|browse.*doc/.test(q)) {
-        return '<strong>Defense Document Library</strong><br><br>Your workspace includes a searchable library of <strong>100+ real defense documents</strong>:<br><br>• MIL-STD-1388, MIL-STD-882, MIL-STD-461<br>• MIL-HDBK-502, MIL-HDBK-217<br>• OPNAVINST 4790.16, OPNAVINST 5100.19<br>• COMDTINST M4000.13, COMDTINST M3500.3<br>• AR 700-127, AR 750-1<br>• AFI 63-101, AFI 20-110<br>• MCO 4105.2, MCO 4400.150<br>• DFARS 252.204-7012, FAR 46<br>• NIST SP 800-171, NIST SP 800-53<br><br>Filter by category, branch, or full-text search. Click any document for the official source link.<br><br>Click the <strong>Doc Library</strong> tab to browse.';
-    }
-
-    if (/provision|ptd|provisioning.*tech|allowance.*part|apl.*gen|catalog|icaps|lmi|logistics.*product|ppd|provisioning.*part/.test(q)) {
-        return '<strong>Provisioning & ICAPS Comparison</strong><br><br>S4 Ledger provides provisioning capabilities that surpass legacy tools like ICAPS:<br><br><strong>ICAPS limitations:</strong><br>• Navy/Marine Corps only<br>• Covers only Supply Support IPS element<br>• Mainframe + PC architecture<br>• No blockchain verification<br>• No compliance scoring<br><br><strong>S4 Ledger advantages:</strong><br>• <strong>All branches</strong> — Joint, Navy, Army, AF, USMC, CG, Space Force<br>• <strong>All 20 ILS tools</strong> — not just Supply Support<br>• <strong>Blockchain-verified</strong> — every provisioning decision anchored to XRPL<br>• <strong>Integrated</strong> — provisioning ties to DMSMS, readiness, lifecycle cost, warranty<br>• <strong>Compliance tracking</strong> — CMMC, NIST, DFARS scoring built-in<br>• <strong>Modern web platform</strong> — no mainframe required<br><br>Use the <strong>Parts</strong> tab for cross-reference and the <strong>Gap Analysis</strong> to track provisioning deliverables (DI-020 VRS, DI-021 APL).';
-    }
-
-    if (/thank|thanks|great|awesome|perfect|good/.test(q)) {
-        return '<i class="fas fa-bullseye"></i> Happy to help! Remember you can:<br>• Upload additional documents anytime to re-run analysis<br>• Ask me about any DI number, ILS term, or defense acronym<br>• Request drafts of memos, emails, or CARs<br>• Get schedule/cost analysis at any time';
-    }
-
-    // ── Intelligent Conversational Handler ──
-    // Build context from conversation history and analysis state
-    const recentHistory = aiConversationHistory.slice(-6).filter(h => h.role === 'user').map(h => h.text.toLowerCase());
-    const prog = r ? r.prog : (PROGS[document.getElementById('ilsProgram')?.value] || null);
-    const progName = prog ? prog.name : 'your program';
-    const comp = PROG_COMPONENTS ? PROG_COMPONENTS[document.getElementById('ilsProgram')?.value] : null;
-
-    // Detect if this is a follow-up to a previous topic
-    const lastBotMsg = aiConversationHistory.filter(h => h.role === 'bot').slice(-1)[0];
-    const isFollowUp = recentHistory.length > 1;
-
-    // Topic detection for freeform questions
-    if (/how\s*(do|can|should|would|to)\b/.test(q)) {
-        // "How do I..." questions — provide actionable guidance
-        if (/submit|deliver|send|upload/.test(q)) return 'To submit deliverables for <strong>' + progName + '</strong>:<br><br>1. Ensure your document meets the DI format requirements specified in your contract DRL<br>2. Include the CDRL sequence number and DI number on the cover page<br>3. Submit through the designated portal (eCDRL for NAVSEA contracts, or per your contract\'s Section H)<br>4. Track status using the DRL tracker — upload it here for gap analysis<br><br>' + (r ? 'Your current analysis shows ' + r.drlFound + '/' + r.drlTotal + ' items submitted.' : 'Run an analysis to see your current submission status.');
-        if (/fix|correct|resolve|address/.test(q)) return r && r.critGaps > 0 ? 'To address your <strong>' + r.critGaps + ' critical gaps</strong> in ' + progName + ':<br><br>' + r.actions.filter(a=>a.severity==='critical').slice(0,4).map((a,i) => '<strong>' + (i+1) + '.</strong> ' + a.title + '<br>&nbsp;&nbsp;&nbsp;→ ' + a.action + ' (Owner: ' + a.owner + ')<br>').join('') + '<br>Start with the highest-cost items first — early intervention typically saves 30-50%.' : 'Run an analysis first to identify gaps, then I can walk you through how to resolve each one.';
-        if (/improve|increase|boost|raise/.test(q)) return 'To improve your ILS readiness score' + (r ? ' (currently <strong>' + r.pct + '%</strong>)' : '') + ':<br><br>1. <strong>Complete missing checklist items</strong> — each critical item significantly impacts your score<br>2. <strong>Submit outstanding CDRLs</strong> — DRL coverage is 40% of your overall score<br>3. <strong>Prioritize critical items first</strong> — they have 2x weight in scoring<br>4. <strong>Upload documents</strong> to auto-detect completed items<br>5. <strong>Re-run analysis</strong> after each update to track progress<br><br>' + (r ? 'Focus area: ' + (r.clPct < r.drlPct ? 'Your checklist score (' + r.clPct + '%) is lower than DRL coverage (' + r.drlPct + '%). Complete checklist items first.' : 'Your DRL coverage (' + r.drlPct + '%) needs attention. Submit missing deliverables.') : '');
-        if (/track|monitor|status/.test(q)) return 'For tracking ILS status on <strong>' + progName + '</strong>:<br><br>• <strong>This tool:</strong> Upload documents anytime and re-run analysis — your readiness score updates in real-time<br>• <strong>Export Action Tracker:</strong> Click the "Update Action Tracker" button after analysis to get a CSV you can share with your team<br>• <strong>Anchor Reports:</strong> Click "Anchor Report Hash" to create an immutable XRPL timestamp — useful for proving when assessments were completed<br>• <strong>Schedule Reviews:</strong> Use "Schedule Meeting" to set up ILS Review Board meetings with your team';
-        return 'Great question! Here\'s what I\'d recommend for <strong>' + progName + '</strong>:<br><br>' + (r ? 'Based on your current <strong>' + r.pct + '%</strong> readiness with ' + r.critGaps + ' critical gaps and ' + formatCost(r.totalCost) + ' at risk, I\'d suggest:<br><br>1. Address critical gaps immediately (owner assignments are in the Action Items panel)<br>2. Schedule an ILS Review Board within 2 weeks<br>3. Update your program risk register with the identified impacts<br>4. Re-run this analysis after corrective actions are taken<br><br>Want me to draft a memo, email, or CAR for any specific item?' : 'Upload your documents and run an analysis first — then I can give you specific, data-driven recommendations.');
-    }
-
-    // "What about..." / "Tell me about..." / freeform queries
-    if (/what about|tell me|can you|elaborate|more (about|on|info)|detail/.test(q) || isFollowUp) {
-        // Try to connect to previous context
-        if (lastBotMsg && /critical|gap|missing|action/.test(lastBotMsg.text)) {
-            if (r && r.actions.length) {
-                const nextAction = r.actions[Math.min(r.actions.length-1, recentHistory.length)];
-                return 'Continuing from our discussion — here\'s more detail on <strong>' + nextAction.id + '</strong>:<br><br>' +
-                    '<strong>Item:</strong> ' + nextAction.title + '<br>' +
-                    '<strong>Required Action:</strong> ' + nextAction.action + '<br>' +
-                    '<strong>Owner:</strong> ' + nextAction.owner + (nextAction.secondary ? ' (Coord: ' + nextAction.secondary + ')' : '') + '<br>' +
-                    '<strong>Est. Cost:</strong> ' + formatCost(nextAction.cost) + '<br>' +
-                    '<strong>Timeline:</strong> ' + nextAction.schedule + '<br><br>' +
-                    'Would you like me to draft a CAR for this item, or move to the next action item?';
-            }
-        }
-    }
-
-    // Catch-all: actually try to respond intelligently based on keywords in the query
-    if (/why|reason|cause|because/.test(q)) {
-        return r ? 'Based on the analysis of <strong>' + progName + '</strong>:<br><br>' +
-            'Readiness is at <strong>' + r.pct + '%</strong> primarily because:<br>' +
-            (r.critGaps > 0 ? '• <strong>' + r.critGaps + ' critical ILS elements</strong> are missing from your data package<br>' : '') +
-            (r.drlPct < 80 ? '• <strong>DRL coverage is only ' + r.drlPct + '%</strong> — ' + (r.drlTotal - r.drlFound) + ' deliverables haven\'t been submitted or detected<br>' : '') +
-            (r.clPct < 80 ? '• <strong>Checklist completion is ' + r.clPct + '%</strong> — key logistics elements need verification<br>' : '') +
-            '<br>The biggest cost driver is typically late-stage gap discovery. Addressing issues now versus during T&E saves an average of 40% in remediation costs.' :
-            'I\'d need analysis results to explain specifics. Run an analysis and I can explain exactly what\'s driving your readiness score.';
-    }
-
-    if (/who|responsible|owner|point of contact|poc/.test(q)) {
-        if (r && r.actions.length) {
-            const ownerMap = {};
-            r.actions.forEach(a => { ownerMap[a.owner] = (ownerMap[a.owner] || 0) + 1; });
-            let resp = '<strong>Responsibility Breakdown for ' + progName + ':</strong><br><br>';
-            Object.entries(ownerMap).sort((a,b) => b[1]-a[1]).forEach(([owner, count]) => {
-                resp += '• <strong>' + owner + '</strong>: ' + count + ' action item' + (count>1?'s':'') + '<br>';
-            });
-            resp += '<br>The primary coordinating office is <strong>' + (r.prog.ofc || 'the Program Office') + '</strong>.';
-            return resp;
-        }
-        return 'Run an analysis to see the ownership breakdown for each action item. Each gap is assigned to a responsible party based on the ILS element it falls under.';
-    }
-
-    if (/when|deadline|due|timeline|milestone/.test(q) && !(/schedule/.test(q))) {
-        const phase = document.getElementById('ilsPhase')?.selectedOptions[0]?.text || 'current phase';
-        return 'For <strong>' + progName + '</strong> in <strong>' + phase + '</strong>:<br><br>' +
-            '<strong>Key ILS Milestones:</strong><br>' +
-            '• Pre-Award: ILS Plan, preliminary provisioning data<br>' +
-            '• Preliminary Design Review (PDR): LORA, FMECA, initial support concept<br>' +
-            '• Critical Design Review (CDR): Complete LSAR, draft tech manuals, training plan<br>' +
-            '• Production: VRS/buylist, COSAL/APL data, MRC validation<br>' +
-            '• Test & Evaluation: TEMP execution, T&E support, crew familiarization<br>' +
-            '• Delivery: Complete tech manuals, transfer book, final provisioning<br><br>' +
-            (r ? 'Your current readiness of <strong>' + r.pct + '%</strong> ' + (r.pct >= 70 ? 'is tracking well for this phase.' : 'suggests some deliverables may be behind schedule. Review the Action Items for specific due dates.') : 'Upload documents and run analysis to see where you stand against milestone requirements.');
-    }
-
-    // If the user typed something conversational that doesn't match patterns
-    if (q.length < 15 && /^(yes|no|ok|sure|go|please|yeah|yep|nope|thanks|ty|thx|k|cool|nice)/.test(q)) {
-        if (/yes|sure|go|please|yeah|yep/.test(q)) {
-            // Affirmative — continue from last topic
-            if (lastBotMsg && /draft.*car|corrective/i.test(lastBotMsg.text) && r && r.actions.length) {
-                const g = r.actions.filter(a=>a.severity==='critical')[0] || r.actions[0];
-                return '<strong>CAR Generated:</strong><br><br>' +
-                    '<strong>CAR-' + (r.progKey||'PROG').toUpperCase() + '-' + new Date().getFullYear() + '-001</strong><br>' +
-                    'Deficiency: ' + g.title + '<br>' +
-                    'Action Required: ' + g.action + '<br>' +
-                    'Response Due: 14 calendar days<br>' +
-                    'Impact: ' + formatCost(g.cost) + ' cost risk<br>' +
-                    'Owner: ' + g.owner;
-            }
-            return 'Got it! What would you like me to help with next? I can draft documents, explain terms, analyze gaps, or provide recommendations for <strong>' + progName + '</strong>.';
-        }
-        if (/no|nope/.test(q)) return 'No problem. Feel free to ask me anything else about your ILS data package, or try one of the quick buttons below.';
-        if (/thanks|ty|thx/.test(q)) return 'Happy to help! Let me know if you need anything else. Remember you can upload additional documents anytime and re-run analysis to track progress.';
-        return 'Sure thing — what else can I help you with?';
-    }
-
-    // True freeform fallback — actually address the user's question contextually
-    let response = '';
+    // ── CATCH-ALL ──
+    var response = 'I\'m the S4 Agent \u2014 your defense logistics AI assistant. ';
     if (r) {
-        response = 'Regarding "<em>' + query + '</em>" — here\'s what I can tell you about <strong>' + progName + '</strong>:<br><br>';
-        response += '<i class="fas fa-chart-bar"></i> Current readiness: <strong>' + r.pct + '%</strong> | Critical gaps: <strong>' + r.critGaps + '</strong> | Risk: <strong>' + formatCost(r.totalCost) + '</strong><br><br>';
-        if (r.critGaps > 0) {
-            response += 'Your top priority should be addressing the <strong>' + r.critGaps + ' critical items</strong>. The most urgent is <strong>' + r.actions[0].title + '</strong> (Owner: ' + r.actions[0].owner + ').<br><br>';
-        }
-        response += 'I can help you with this question in several ways — try being more specific:<br>';
-        response += '• Ask about a specific <strong>DI number</strong> or <strong>ILS element</strong><br>';
-        response += '• Say <strong>"draft a memo about [topic]"</strong> and I\'ll write one<br>';
-        response += '• Ask <strong>"who is responsible for [item]?"</strong><br>';
-        response += '• Ask <strong>"how do I fix [specific gap]?"</strong><br>';
-        response += '• Ask <strong>"why is my score [low/high]?"</strong>';
+        response += 'I have analysis data loaded for <strong>' + r.prog.name + '</strong> (' + r.pct + '% readiness). ';
+        response += 'Ask me about gaps, critical items, costs, CARs, or next steps.<br><br>';
     } else {
-        // Discrepancy detection query
-        if (/discrepanc|compare.*doc|cross.*ref|mismatch|conflict|differ|inconsisten|error.*doc|find.*missing|check.*against|verify.*against|attachment.*j/i.test(q)) {
-            const disc = detectDocumentDiscrepancies();
-            if (disc.discrepancies.length > 0) {
-                response = '<strong>Document Discrepancy Analysis</strong><br><br>';
-                response += '<i class="fas fa-exclamation-triangle" style="color:#ffa500;margin-right:4px"></i> ' + disc.summary + '<br><br>';
-                disc.discrepancies.slice(0, 8).forEach(d => {
-                    const icon = d.severity === 'critical' ? '<i class="fas fa-times-circle" style="color:#ff3333;width:14px"></i>' :
-                                 d.severity === 'warning' ? '<i class="fas fa-exclamation-triangle" style="color:#ffa500;width:14px"></i>' :
-                                 '<i class="fas fa-info-circle" style="color:#00aaff;width:14px"></i>';
-                    response += icon + ' ' + d.message + '<br>';
-                });
-                if (disc.discrepancies.length > 8) response += '<br><em>...and ' + (disc.discrepancies.length - 8) + ' more discrepancies.</em>';
-                response += '<br><br><strong>Recommendation:</strong> Review critical items first. Cross-reference against your Attachment J-2 contract requirements to ensure full compliance.';
-            } else if (ilsFiles.length < 2) {
-                response = 'To find discrepancies, upload <strong>at least 2 documents</strong> (e.g., your DRL spreadsheet and tech manual index). I\'ll automatically compare them and flag any:<br>• Missing items in either document<br>• Title/description mismatches<br>• Status conflicts<br>• Duplicate entries';
-            } else {
-                response = '<i class="fas fa-check-circle" style="color:#14f195"></i> <strong>No discrepancies detected</strong> across your ' + ilsFiles.length + ' uploaded documents. All DI numbers, titles, and statuses are consistent.';
-            }
-            return response;
-        }
-
-        response = 'I\'d be happy to help with "<em>' + query + '</em>"!<br><br>';
-        response += 'To give you the best answer, I need some context. Here\'s how to get started:<br><br>';
-        response += '1. <strong>Select a program</strong> from the dropdown above<br>';
-        response += '2. <strong>Upload your documents</strong> (DRLs, spreadsheets, checklists, PDFs, Word docs)<br>';
+        response += 'To get the most out of me:<br><br>';
+        response += '1. <strong>Select a program</strong> from the dropdown<br>';
+        response += '2. <strong>Upload documents</strong> (PDFs, Word, Excel, CSV)<br>';
         response += '3. <strong>Run Full Analysis</strong> to generate results<br><br>';
-        response += 'Then ask me anything — I\'ll give you specific, data-driven answers about gaps, costs, schedules, discrepancies, and next steps.<br><br>';
-        response += '<strong>New capabilities:</strong> I can also <em>compare documents</em> against each other, automatically <em>find discrepancies</em>, and <em>check contract compliance</em>. Just upload your files and ask.<br><br>';
-        response += 'In the meantime, I can explain any <strong>ILS term</strong>, <strong>DI number</strong>, or <strong>defense acronym</strong> — just ask!';
     }
-    return response;
+    response += '<strong>I can also answer questions about:</strong><br>';
+    response += '\u2022 Any of the <strong>20 ILS tools</strong> (type the tool name)<br>';
+    response += '\u2022 <strong>S4 Ledger</strong> \u2014 pricing, wallets, SLS token, XRPL<br>';
+    response += '\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST, CMMC, DFARS<br>';
+    response += '\u2022 <strong>DI numbers</strong> \u2014 "What is DI-009?"<br>';
+    response += '\u2022 <strong>Acronyms</strong> \u2014 LCSP, LSAR, PHS&T, FLIS, CDRL, CBM+, ITAR<br>';
+    response += '\u2022 <strong>Getting started</strong>, API/SDK integration, AI configuration';
+    return response + demoNote;
 }
 
 function explainDINumber(q) {

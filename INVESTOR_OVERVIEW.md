@@ -7,7 +7,7 @@
 - **Unique Approach:** Anchors only SHA-256 hashes (never sensitive data) to the XRP Ledger — zero data on-chain, full compliance with NIST/CMMC.
 - **Traction:** Live $SLS token on XRPL mainnet, 20 interactive ILS tools, 27 SDK functions, 29 REST API endpoints, 500+ pre-loaded military entities, and a clear path to pilot deployments.
 - **Market:** Defense logistics verification is underserved. $850B+ annual DoW budget with no common integrity layer across systems. CMMC 2.0 enforcement begins 2025–2026.
-- **Revenue Model:** SaaS subscriptions ($499–$4,999/mo), $SLS utility fees per anchor, enterprise API tiers. 15–100x ROI for government customers.
+- **Revenue Model:** SaaS subscriptions ($999–$9,999/mo), $SLS utility fees per anchor, enterprise API tiers. 15–100x ROI for government customers.
 - **Savings:** ~$1.02M–$2.6M per program per year from 20 ILS tools. Saves $1.02B–$2.6B/year at scale across all DoW programs.
 - **Compliance:** Designed for NIST 800-171, CMMC Level 2+, DFARS 252.204-7012. FedRAMP authorization needed for 80% of federal market. $SLS is a utility token — not a security.
 - **Team:** Created and built entirely by **Nick Frankfort**, ILS contractor and founder and CEO of S4 Systems, LLC — at zero cost to the company.

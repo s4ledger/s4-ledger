@@ -104,7 +104,7 @@ $SLS is consumed to pay for anchoring operations:
 | Single hash anchor | ~0.01 SLS |
 | Batch anchor (100 records) | ~0.50 SLS |
 | Verification | Free |
-| API access (per month) | $499–$4,999/mo ($6K–$60K/yr) |
+| API access (per month) | $999–$9,999/mo ($12K–$120K/yr) |
 
 ### 3.3 Supply Distribution
 

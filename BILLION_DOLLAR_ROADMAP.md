@@ -55,7 +55,7 @@ Every tool in S4 Ledger's current platform eliminates quantifiable labor, error,
 | AI Agent | $0 (doesn't exist elsewhere) | $0 (included) | N/A (new capability) |
 | ILIE (Integrated Logistics Insights Engine) | $120K–$500K (manual submission review labor + missed discrepancies) | $0 (included) | $120K–$500K |
 | Defense Database Import | $300K–$500K (manual data reconciliation across 24 systems) | $0 (included) | $300K–$500K |
-| **TOTAL per program** | **~$1.02M–$2.7M** | **$499–$4,999/mo** | **~$1.02M–$2.6M/year** |
+| **TOTAL per program** | **~$1.02M–$2.7M** | **$999–$9,999/mo** | **~$1.02M–$2.6M/year** |
 
 **At scale:**
 - 10 programs: **$10.2M–$26.0M saved/year**
@@ -129,7 +129,7 @@ S4 Systems currently provides defense logistics consulting/contracting services.
 |---|---|---|
 | **FedRAMP Authorization (Moderate/IL2)** | $5B+ govt cloud market | Required for 80%+ of federal customers |
 | **AI-Powered Supply Chain Risk Engine** | $2B+ predictive analytics | $500K–$2M in premium tier upgrades |
-| **Contract Lifecycle Management (CLM)** | $2B+ contract management | New revenue stream: $1,999/mo tier |
+| **Contract Lifecycle Management (CLM)** | $2B+ contract management | New revenue stream: $2,499/mo tier |
 | **Automated Audit Report Generator** | $1.5B+ audit services | Replaces $45K–$150K manual audits |
 | **SEWP V / CIO-SP4 contract vehicles** | $50B+ in buying power | 10x faster procurement for customers |
 | **50+ enterprise customers** | — | $5M–$15M ARR |

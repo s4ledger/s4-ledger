@@ -127,7 +127,7 @@ Here's a simple breakdown of the 20 tools and what they replace:
 
 ## Part 2: How Does S4 Systems Make Money?
 
-S4 Ledger charges customers a subscription — like Netflix, Spotify, or any other software service (SaaS). Plans range from **$499/month to $4,999/month** depending on the size and needs of the customer.
+S4 Ledger charges customers a subscription — like Netflix, Spotify, or any other software service (SaaS). Plans range from **$999/month to $9,999/month** depending on the size and needs of the customer.
 
 Here's the critical difference between what S4 Systems is now vs. what it could become:
 
