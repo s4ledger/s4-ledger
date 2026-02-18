@@ -5,6 +5,36 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-02-22
+
+### Dual-Product Restructuring — S4 Ledger × HarborLink
+
+#### Changed — Product Architecture (Breaking)
+- **S4 Ledger refocused as Trust & Intelligence Layer** — S4 Ledger now provides 13 ILS tools focused on hashing, blockchain anchoring, AI analysis, risk scoring, compliance, and audit verification. Data management and workflow tools moved to HarborLink.
+- **7 tools moved to HarborLink** — Parts Cross-Reference, Contract Lifecycle Management, Digital Thread / Configuration Bridge, Warranty Tracker, ILS Calendar, Provisioning / ICAPS / PTD Manager, and Defense Database Import are now part of HarborLink (S4 Systems' collaboration portal).
+- **13 tools remain in S4 Ledger** — Gap Analysis, Action Items, DMSMS Risk Tracker, Readiness Calculator, ROI Calculator, Lifecycle Cost Estimator, Audit Vault, Defense Doc Library, Compliance Scorecard, Supply Chain Risk Engine, Audit Report Generator, Predictive Maintenance AI, and Submission Review & Discrepancy Analyzer (ILIE).
+- **API endpoints preserved** — All 29 API routes remain in `api/index.py` for HarborLink to consume. S4 Ledger serves as the API and anchoring backend for both products.
+- **Demo app updated** — Removed 7 tab buttons, HTML panels, and JS function sections from `demo-app/index.html` (8,997 → ~7,137 lines). AI chatbot responses for moved tools now redirect to HarborLink.
+- **SDK playground updated** — Removed SDK cards, runner functions, and code samples for 7 moved tools. Added HarborLink redirect card.
+- **Tool count updated across 32+ files** — All references to "20 tools" updated to "13 tools" across documentation, HTML pages, and configuration files.
+
+#### Added
+- **HARBORLINK_INTEGRATION.md** — Comprehensive integration architecture document (1,311 lines) covering API contracts, data flow diagrams, webhook system, Merkle batch anchoring, and 4-phase implementation roadmap.
+- **Dual-product framing** — README, WHITEPAPER, INVESTOR_OVERVIEW, INVESTOR_PITCH, INVESTOR_SLIDE_DECK, INVESTOR_RELATIONS, and 12+ other docs updated to position S4 Ledger and HarborLink as complementary S4 Systems products.
+- **HarborLink redirect notes** — s4-use-cases, s4-faq, s4-login, sdk, and sdk-playground pages now direct users to HarborLink for data management tools.
+
+#### Removed (from S4 Ledger demo — still available via HarborLink)
+- Parts Cross-Reference tab, panel, and JS functions
+- Contract Lifecycle Management tab, panel, and JS functions
+- Digital Thread / Configuration Bridge tab, panel, and JS functions
+- Warranty Tracker tab, panel, and JS functions
+- ILS Calendar tab, panel, and JS functions
+- Provisioning / ICAPS / PTD Manager tab, panel, and JS functions
+- Defense Database Import tab, panel, and JS functions
+- Associated AI chatbot context entries, vault seed records, and dropdown configurations
+
+---
+
 ## [4.0.8] - 2026-02-21
 
 ### AI Agent Overhaul, File Upload Expansion & Product Audit
@@ -12,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Changed — AI Agent (Major)
 - **Real LLM Backend** — AI Agent now routes to Azure OpenAI (FedRAMP eligible) → OpenAI GPT-4o → Anthropic Claude with automatic fallback. Previously was 100% client-side regex pattern matching.
 - **`/api/ai-chat` endpoint** — New POST endpoint accepts message, conversation history (last 20), tool context, and analysis data. Returns LLM response or fallback signal.
-- **Defense-specific system prompt** — ~150 lines covering all 12 ILS elements, 30+ defense acronyms, 24+ weapon systems, 6 compliance frameworks, and all 20 S4 Ledger tools.
+- **Defense-specific system prompt** — ~150 lines covering all 12 ILS elements, 30+ defense acronyms, 24+ weapon systems, 6 compliance frameworks, and all S4 Ledger tools.
 - **Async frontend** — `aiSend()` rewritten as async function. LLM-first with pattern-matching fallback. Markdown→HTML conversion for responses.
 - **Context enrichment** — Frontend passes current tool context, gap analysis results (readiness %, critical gaps, top actions), and conversation history to LLM.
 - **New env vars**: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`, `AZURE_OPENAI_DEPLOYMENT`
@@ -82,7 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **"TrustLine to Treasury issuer" → "TrustLine to SLS issuer"** — Corrected misleading language on pricing page. TrustLines point to the SLS issuer wallet (`r95GyZac...`), not the Treasury wallet (`rMLmkrxp...`). Treasury holds and distributes SLS; Issuer defines the token on XRPL.
 
 #### Enhanced — AI Agent (`generateAiResponse`)
-- **200+ response patterns** — Rewrote `generateAiResponse()` from ~20 patterns to 50+ pattern categories covering: all 20 ILS tools, product info, pricing tiers, wallet architecture (Treasury vs Issuer), SLS tokenomics, XRPL explanation, defense standards (MIL-STD-1388, NIST 800-171, CMMC, DFARS), acronyms (LCSP, LSAR, PHS&T, CBM+, FLIS, CDRL, ITAR), encryption, Xaman integration, SDK/API, workspace stats, and comprehensive catch-all.
+- **200+ response patterns** — Rewrote `generateAiResponse()` from ~20 patterns to 50+ pattern categories covering: all 13 ILS tools, product info, pricing tiers, wallet architecture (Treasury vs Issuer), SLS tokenomics, XRPL explanation, defense standards (MIL-STD-1388, NIST 800-171, CMMC, DFARS), acronyms (LCSP, LSAR, PHS&T, CBM+, FLIS, CDRL, ITAR), encryption, Xaman integration, SDK/API, workspace stats, and comprehensive catch-all.
 - **Demo mode indicator** — When `AI_ENGINE_CONFIG.enabled` is false (default), responses include a note that the agent is running in demo mode with instructions to enable full AI via Settings.
 - **Analysis-aware responses** — AI Agent now reads ILS analysis results and provides contextual answers about summary, critical findings, CAR reports, cost breakdowns, missing DIs, next steps, and can draft emails/memos based on analysis data.
 - **Handles ANY question** — Catch-all pattern provides relevant S4 Ledger context for unrecognized queries instead of generic "I don't understand" messages.
@@ -114,7 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Progress steps show subscription activation** — Signup flow now shows 4 steps: subscription activation → wallet generation → XRP funding → SLS TrustLine + SLS delivery.
 
 #### Updated — All Repository Documentation
-- **17 markdown documents updated** to reflect current v4.0.4 state: fixed "Ops wallet" → "Treasury wallet", corrected "19 tools" → "20 tools", fixed CMMC "Certified" → "In Progress", updated pricing references, added ILS Analysis Engine sections, corrected per-anchor cost to $0.01, and removed legacy healthcare content from MAINNET_MIGRATION.md.
+- **17 markdown documents updated** to reflect current v4.0.4 state: fixed "Ops wallet" → "Treasury wallet", corrected "13 tools" → "13 tools", fixed CMMC "Certified" → "In Progress", updated pricing references, added ILS Analysis Engine sections, corrected per-anchor cost to $0.01, and removed legacy healthcare content from MAINNET_MIGRATION.md.
 
 #### Removed — Temporary Debug Files
 - Cleaned up 9 temporary debug/analysis scripts (`_check_syntax.py`, `_find_error.js`, `_debug_parse.js`, etc.) that were created during syntax error diagnosis.
@@ -174,7 +204,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Defense-Compliant AI Engine Config** — `AI_ENGINE_CONFIG` object supporting Azure OpenAI (FedRAMP High / IL5), AWS Bedrock (GovCloud), or any OpenAI-compatible endpoint. Plug-and-play: set `enabled: true` and provide endpoint + API key.
 - **Real LLM Integration** — `callAiEngine(query, context)` async function tries configured LLM API first with defense-specific system prompt (MIL-STD-1388, DRL analysis, DMSMS, provisioning, etc.), falls back to local pattern matching if unavailable.
 - **Context-Aware AI Prompts** — `buildAiContext(query, context)` constructs rich context from ILS analysis state, uploaded documents, and discrepancy results for LLM queries.
-- **Defense System Prompt** — Pre-built system prompt covering ILS standards, DI number interpretation, DRL/CDRL analysis, DMSMS obsolescence, provisioning, and all 20 ILS tools.
+- **Defense System Prompt** — Pre-built system prompt covering ILS standards, DI number interpretation, DRL/CDRL analysis, DMSMS obsolescence, provisioning, and all 13 ILS tools.
 
 #### Added — ILS Document Analysis Enhancements
 - **PDF Document Parsing** — pdf.js 3.11.174 integration for extracting text from PDF documents. Automatically detects DI numbers, NSN patterns, MIL-STD references, and record types.
@@ -191,7 +221,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **SEC Compliance Notice** — All SLS purchase flows include regulatory notice: utility token / prepaid service credits per SEC/FinCEN guidance.
 
 #### Changed — Documentation
-- **User Training Guide Complete Rewrite** — Replaced technical guide with plain-English version readable by a high schooler. No code blocks, no blockchain jargon. All 20 ILS tools explained in table format. Subscription model documented. Document analysis capabilities described.
+- **User Training Guide Complete Rewrite** — Replaced technical guide with plain-English version readable by a high schooler. No code blocks, no blockchain jargon. All 13 ILS tools explained in table format. Subscription model documented. Document analysis capabilities described.
 - **SDK Footer** — Version bumped to 4.0.2, copyright year to 2026.
 
 #### Changed — Production Readiness
@@ -204,7 +234,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added — Documentation
 - **Full SDK Documentation Page** — Replaced empty redirect at `/sdk/` with comprehensive 42KB reference: 27 functions documented with signatures, parameters, return types, and code examples. Sticky sidebar navigation, installation guide, Quick Start, CLI reference (15 commands), REST API endpoint cards.
-- **User Training Guide** — `USER_TRAINING_GUIDE.md`: Complete step-by-step guide covering account creation, wallet setup, all 5 tabs (Anchor, Verify, Log, ILS Workspace, My Wallet), all 20 ILS tools with instructions, CLI/SDK/API usage, security best practices, and FAQ.
+- **User Training Guide** — `USER_TRAINING_GUIDE.md`: Complete step-by-step guide covering account creation, wallet setup, all 5 tabs (Anchor, Verify, Log, ILS Workspace, My Wallet), all 13 ILS tools with instructions, CLI/SDK/API usage, security best practices, and FAQ.
 
 #### Added — Wallet & Compliance
 - **Wallet Navy/Gold/White Branding** — My Wallet tab restyled with S4 brand colors: navy (#1a3a5c) headers and buttons, gold (#c9a84c) accents and SLS balance, white text.
@@ -312,20 +342,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Favicon Overhaul** — Regenerated all icon sizes (32×32, 180×180, 192×192, 512×512) from S4Ledger_logo.png. New SVG favicon with dark hex shield, "S4" text in blue, gold divider bar, "LEDGER" subtitle. SVG favicon reference added to all 20 HTML pages.
 - **Site-Wide Emoji Elimination** — Replaced ~168 remaining emoji instances across 8 files (demo-app, SDK Playground, login, about, pricing, 404, transactions, landing page) with professional FontAwesome 6 icons. Zero emojis remain in the codebase.
 - **Use Cases & Landing Page Claims Fix** — Removed "Prime Contractors (LM, RTX, HII, GD, NG)", "Defense OEMs", "Sub-Contractors (Tier 2–4)", "Depot-Level MROs" from both pages. Replaced with role-based descriptions: "Program Offices (PEOs, NAVSEA, NAVAIR)", "ILS Managers", "Supply Chain Teams", "Compliance Officers".
-- **Pricing Page Fix** — "All 12 IPS modules" → "All 20 ILS tools" in Enterprise tier.
+- **Pricing Page Fix** — "All 12 IPS modules" → "All 13 ILS tools" in Enterprise tier.
 
 ## [3.9.15] - 2026-02-16
 
 ### Changed — Professional UI Overhaul + Use Cases Expansion + Site-Wide Consistency
 
-- **Use Cases page**: Complete rewrite — now shows all 20 ILS Workspace tools, 6 additional capabilities (AI Agent, SDK, $SLS, Metrics, Classified Architecture, Marketplace), 9 service branches, and stat pills
+- **Use Cases page**: Complete rewrite — now shows all 13 ILS Workspace tools, 6 additional capabilities (AI Agent, SDK, $SLS, Metrics, Classified Architecture, Marketplace), 9 service branches, and stat pills
 - **Landing page title**: "Immutable Logistics Verification" → "Immutable Defense Logistics on the XRP Ledger" (reflects broader platform scope)
 - **Landing page badges**: "Built on XRP Ledger" and "$SLS Token LIVE" now displayed side-by-side instead of stacked
 - **Emoji → FontAwesome**: Replaced 35+ emoji icons with professional FontAwesome 6 icons across landing page (How It Works, Why XRPL, Explore grid, Compliance, Built For sections)
 - **Use Cases page icons**: All emoji replaced with colored FontAwesome icons in styled containers
 - **Demo App XRPL banner**: Changed from green to blue (`#00aaff`) with white text for professional branding consistency
 - **Tool count consistency**: Fixed "18 integrated tools" → "20" and "19 Tools" → "20 Tools" across landing page and demo app
-- **ILS Workspace description**: Updated to reflect all 20 tools including Defense Database Import and ILIE
+- **ILS Workspace description**: Updated to reflect all 13 tools including Defense Database Import and ILIE
 
 ## [3.9.14] - 2026-02-16
 
@@ -376,12 +406,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **SDK/API compatible** — Anchored reviews auto-populate Metrics and Transactions pages; record_type: SUBMISSION_REVIEW
 
 ### Changed — 19→20 Tool Count Update
-- **All documentation updated** from "19-tool" to "20-tool" across: MAINNET_MIGRATION.md, PRODUCTION_READINESS.md, ROADMAP.md, INVESTOR_PITCH.md, INVESTOR_OVERVIEW.md, INVESTOR_RELATIONS.md, INVESTOR_SLIDE_DECK.md, TECHNICAL_SPECS.md, WHITEPAPER.md, metrics.html
+- **All documentation updated** from "19-tool" to "13-tool" across: MAINNET_MIGRATION.md, PRODUCTION_READINESS.md, ROADMAP.md, INVESTOR_PITCH.md, INVESTOR_OVERVIEW.md, INVESTOR_RELATIONS.md, INVESTOR_SLIDE_DECK.md, TECHNICAL_SPECS.md, WHITEPAPER.md, metrics.html
 - **Financial figures recalculated** — ILIE adds $120K–$500K/year per program in eliminated submission review labor, prevented procurement errors, and avoided readiness shortfalls. New per-program total: ~$1.02M–$2.6M/year (was ~$900K–$2.1M). Scale projection (1,000 programs): $1.02B–$2.6B/year.
 - **WHITEPAPER.md** — Added ILIE row to Current Toolset table
 - **ROADMAP.md** — Added ILIE to Phase 2 tool list
 - **demo-app/index.html** — Tab button, panel HTML, AI_TOOL_CONTEXT entry, switchHubTab block, full JavaScript engine (8180 lines total)
-- **metrics.html** — ILS cross-link updated to 20-tool with ILIE listed
+- **metrics.html** — ILS cross-link updated to 13-tool with ILIE listed
 
 ## [3.9.10] - 2026-02-16
 
@@ -517,7 +547,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.9.2] - 2026-02-15
 
 ### Changed
-- **TECHNICAL_SPECS.md Enriched** — Added REST API Endpoints section (7 endpoints with paths, methods, descriptions), ILS Workspace section (19 tools listed with categories), SDK function count (21), record type count (156+), pre-loaded entity count (500+: 462 platforms + 37 suppliers + 25 contracts). Version bumped to 3.9.0. Added S4 Systems, LLC attribution.
+- **TECHNICAL_SPECS.md Enriched** — Added REST API Endpoints section (7 endpoints with paths, methods, descriptions), ILS Workspace section (13 tools listed with categories), SDK function count (21), record type count (156+), pre-loaded entity count (500+: 462 platforms + 37 suppliers + 25 contracts). Version bumped to 3.9.0. Added S4 Systems, LLC attribution.
 - **GitHub Rendering Fix** — Replaced `~` prefix with `≈` in TECHNICAL_SPECS.md numeric values (e.g., `~0.000012` → `≈0.000012`) to prevent GitHub markdown parser from rendering tildes as strikethrough text.
 
 ## [3.9.1] - 2026-02-15

@@ -98,28 +98,23 @@ S4 Ledger is designed to be compatible with CMMC Level 2+ environments. The serv
 
 ### 3.4 ILS Workspace Tools
 
-S4 Ledger v4.0 includes a comprehensive ILS Workspace with 20 integrated tools:
+S4 Ledger v4.0 includes a comprehensive ILS Workspace with 13 integrated tools:
 
 1. **Gap Analysis** — MIL-STD-1388 compliance checklists for 462+ defense platforms
 2. **Action Items** — Task tracking with priority, assignment, and deadline management
-3. **Calendar** — Event scheduling with anchor-date tracking
-4. **DMSMS Tracker** — Obsolescence monitoring and resolution planning
-5. **Readiness Calculator** — RAM (Reliability, Availability, Maintainability) analysis
-6. **Parts Cross-Reference** — NSN/CAGE/FSC lookup across all programs
-7. **ROI Calculator** — Cost-benefit analysis with 5-year projections
-8. **Lifecycle Estimator** — Total ownership cost modeling
-9. **Warranty Tracker** — Contract and warranty status monitoring
-10. **Audit Record Vault** — Searchable archive of all anchored records with hash verification
-11. **Defense Document Library** — 100+ real MIL-STDs, OPNAVINSTs, and DoW references
-12. **Compliance Scorecard** — Multi-framework compliance posture assessment
-13. **Provisioning Tool** — ICAPS-replacement provisioning with spares optimization, PHS&T data, cost analysis, and per-item XRPL anchoring
-14. **Supply Chain Risk Engine** — Automated supply chain risk scoring and mitigation recommendations
-15. **Audit Report Generator** — One-click audit report generation with blockchain-verified evidence packages
-16. **Contract Lifecycle Management** — End-to-end contract tracking from solicitation through closeout
-17. **Digital Thread Bridge** — Cross-system data linkage connecting engineering, logistics, and sustainment records
-18. **Predictive Maintenance
-19. Defense Database Import
-20. ILIE (Integrated Logistics Item Explorer) Submissions AI** — AI-driven failure prediction and maintenance scheduling optimization
+3. **DMSMS Tracker** — Obsolescence monitoring and resolution planning
+4. **Readiness Calculator** — RAM (Reliability, Availability, Maintainability) analysis
+5. **ROI Calculator** — Cost-benefit analysis with 5-year projections
+6. **Lifecycle Estimator** — Total ownership cost modeling
+7. **Audit Record Vault** — Searchable archive of all anchored records with hash verification
+8. **Defense Document Library** — 100+ real MIL-STDs, OPNAVINSTs, and DoW references
+9. **Compliance Scorecard** — Multi-framework compliance posture assessment
+10. **Supply Chain Risk Engine** — Automated supply chain risk scoring and mitigation recommendations
+11. **Audit Report Generator** — One-click audit report generation with blockchain-verified evidence packages
+12. **Predictive Maintenance AI** — AI-driven failure prediction and maintenance scheduling optimization
+13. **Submission Review & Discrepancy Analyzer (ILIE)** — AI-powered submission review with severity-rated discrepancy reports
+
+> **Companion Product:** S4 Systems also offers **HarborLink**, a collaboration portal providing parts cross-reference, contract lifecycle management, provisioning (ICAPS replacement), warranty tracking, configuration management, scheduling, and defense database import/export.
 
 ---
 

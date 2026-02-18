@@ -1,6 +1,6 @@
 # S4 Ledger — XRPL Mainnet Migration Guide
 
-> **Status:** **$SLS Token: LIVE on XRPL Mainnet.** Token issuance, trustlines, and AMM pools are operational. COMPLETE — All 20 ILS tools anchor to XRPL Mainnet with explorer links (v4.0) server-side signing deployment (see Section 2).
+> **Status:** **$SLS Token: LIVE on XRPL Mainnet.** Token issuance, trustlines, and AMM pools are operational. COMPLETE — All 13 ILS tools anchor to XRPL Mainnet with explorer links (v4.0) server-side signing deployment (see Section 2).
 
 ---
 

@@ -31,45 +31,39 @@ Every tool in S4 Ledger's current platform eliminates quantifiable labor, error,
 - 100 programs: **$25M–$150M saved/year**
 - 1,000 programs (DoW-wide): **$250M–$1.5B saved/year**
 
-#### 2. ILS Workspace (20 Tools Replacing Manual Processes)
+#### 2. ILS Workspace (13 Tools Replacing Manual Processes)
 
 | Tool | Manual Cost (per program/year) | S4 Ledger Cost | Annual Savings |
 |---|---|---|---|
 | Gap Analysis | $40K–$80K (2–4 FTEs × weeks) | $0 (included) | $40K–$80K |
 | DMSMS Tracking | $60K–$200K (dedicated analyst + GIDEP/DLIS fees) | $0 (included) | $60K–$200K |
 | Readiness Calculator | $25K–$60K (manual spreadsheets) | $0 (included) | $25K–$60K |
-| Parts Cross-Reference | $15K–$40K (manual NSN lookups) | $0 (included) | $15K–$40K |
 | ROI Calculator | $10K–$20K (consultant or internal) | $0 (included) | $10K–$20K |
 | Lifecycle Cost Estimator | $30K–$80K (specialized analyst) | $0 (included) | $30K–$80K |
-| Warranty Tracker | $20K–$50K (contract admin time) | $0 (included) | $20K–$50K |
 | Action Items / Alerts | $10K–$25K (coordination labor) | $0 (included) | $10K–$25K |
 | Audit Record Vault | $45K–$150K (audit prep labor) | $0 (included) | $45K–$150K |
 | Document Library | $5K–$15K (MIL-STD lookup time) | $0 (included) | $5K–$15K |
 | Compliance Scorecard | $10K–$35K (CMMC assessment) | $0 (included) | $10K–$35K |
-| Provisioning / PTD Manager | $50K–$120K (replaces ICAPS licensing + labor) | $0 (included) | $50K–$120K |
 | AI Supply Chain Risk Engine | $75K–$200K (manual supply chain audits + GIDEP) | $0 (included) | $75K–$200K |
 | Audit Report Generator | $30K–$80K (audit package compilation) | $0 (included) | $30K–$80K |
-| Contract Lifecycle Management | $40K–$100K (CDRL tracking + administration) | $0 (included) | $40K–$100K |
-| Digital Thread / Config Bridge | $60K–$150K (configuration management labor) | $0 (included) | $60K–$150K |
 | Predictive Maintenance AI | $80K–$250K (CBM+ analysis + unplanned downtime) | $0 (included) | $80K–$250K |
 | AI Agent | $0 (doesn't exist elsewhere) | $0 (included) | N/A (new capability) |
 | ILIE (Integrated Logistics Insights Engine) | $120K–$500K (manual submission review labor + missed discrepancies) | $0 (included) | $120K–$500K |
-| Defense Database Import | $300K–$500K (manual data reconciliation across 24 systems) | $0 (included) | $300K–$500K |
-| **TOTAL per program** | **~$1.02M–$2.7M** | **$999–$9,999/mo** | **~$1.02M–$2.6M/year** |
+| **TOTAL per program** | **~$540K–$1.7M** | **$999–$9,999/mo** | **~$540K–$1.7M/year** |
 
 **At scale:**
-- 10 programs: **$10.2M–$26.0M saved/year**
-- 100 programs: **$102M–$260M saved/year**
-- 1,000 programs: **$1.02B–$2.6B saved/year**
+- 10 programs: **$5.4M–$17M saved/year**
+- 100 programs: **$54M–$170M saved/year**
+- 1,000 programs: **$540M–$1.7B saved/year**
 
 #### 3. Combined Savings (Anchoring + ILS Workspace)
 
 | Scale | Programs | Records/Year | Govt Savings/Year | S4 Systems Revenue (5–10% capture) |
 |---|---|---|---|---|
-| **Pilot** | 5 | 50K | $2.7M–$7.3M | $135K–$365K |
-| **Growth** | 50 | 500K | $27M–$73M | $3.6M–$7.8M |
-| **Scale** | 500 | 5M | $270M–$730M | $36M–$78M |
-| **DoW-Wide** | 5,000 | 50M | $2.7B–$7.3B | $360M–$780M |
+| **Pilot** | 5 | 50K | $1.4M–$4.6M | $70K–$230K |
+| **Growth** | 50 | 500K | $14M–$46M | $1.4M–$4.6M |
+| **Scale** | 500 | 5M | $140M–$460M | $14M–$46M |
+| **DoW-Wide** | 5,000 | 50M | $1.4B–$4.6B | $140M–$460M |
 
 > **Key insight:** S4 Ledger charges 5–10% of the savings it delivers. The government gets $15–$35 back for every $1 they spend on S4 Ledger. That's a 1,500–3,500% ROI — the kind of number that makes appropriations committees enthusiastic.
 
@@ -129,7 +123,7 @@ S4 Systems currently provides defense logistics consulting/contracting services.
 |---|---|---|
 | **FedRAMP Authorization (Moderate/IL2)** | $5B+ govt cloud market | Required for 80%+ of federal customers |
 | **AI-Powered Supply Chain Risk Engine** | $2B+ predictive analytics | $500K–$2M in premium tier upgrades |
-| **Contract Lifecycle Management (CLM)** | $2B+ contract management | New revenue stream: $2,499/mo tier |
+| **Contract Lifecycle Management (CLM)** *(now in HarborLink; S4 Ledger provides blockchain anchoring)* | $2B+ contract management | New revenue stream: $2,499/mo tier |
 | **Automated Audit Report Generator** | $1.5B+ audit services | Replaces $45K–$150K manual audits |
 | **SEWP V / CIO-SP4 contract vehicles** | $50B+ in buying power | 10x faster procurement for customers |
 | **50+ enterprise customers** | — | $5M–$15M ARR |
@@ -140,7 +134,7 @@ S4 Systems currently provides defense logistics consulting/contracting services.
 
 2. **Automated Audit Report Generator** — One-click generation of complete audit packages (DCMA-ready, DCAA-ready, IG-ready) from anchored records. Includes chain-of-custody proof, timeline visualization, and compliance gap analysis. **Replaces $45K–$150K in audit prep labor per event.**
 
-3. **Contract Lifecycle Management (CLM)** — Track CDRLs, DIDs, SOW deliverables, and contract modifications with blockchain-verified timestamps. Auto-flag late deliverables, scope creep, and unfunded requirements. **Value: $100K–$400K per contract in dispute avoidance.**
+3. **Contract Lifecycle Management (CLM)** *(✅ BUILT — now a HarborLink feature; S4 Ledger provides the blockchain verification layer)* — Track CDRLs, DIDs, SOW deliverables, and contract modifications with blockchain-verified timestamps. Auto-flag late deliverables, scope creep, and unfunded requirements. **Value: $100K–$400K per contract in dispute avoidance.**
 
 ---
 
@@ -151,7 +145,7 @@ S4 Systems currently provides defense logistics consulting/contracting services.
 | Capability Addition | TAM Unlocked | Revenue Impact |
 |---|---|---|
 | **IL4/IL5 Classified Deployment** | $5B+ classified systems | $1M–$5M per classified contract |
-| **Digital Thread / Digital Twin Bridge** | $3B+ MBSE market | Premium enterprise feature |
+| **Digital Thread / Digital Twin Bridge** *(now in HarborLink; S4 Ledger provides blockchain anchoring)* | $3B+ MBSE market | Premium enterprise feature |
 | **NATO/Five Eyes International Expansion** | $8B+ allied logistics | 50%+ market expansion |
 | **Managed ILS-as-a-Service** | $10B+ managed services | $500K–$2M per program/year |
 | **Developer Marketplace / App Store** | Network effects | 20–30% platform fee on third-party tools |
@@ -160,7 +154,7 @@ S4 Systems currently provides defense logistics consulting/contracting services.
 
 **New tools to build:**
 
-4. **Digital Thread Integrity Bridge** — Connect to PTC Windchill, Siemens Teamcenter, Dassault 3DEXPERIENCE, and MBE (Model-Based Engineering) platforms. Anchor every engineering change, BOM revision, and technical data package to XRPL. **This makes S4 Ledger the "integrity layer" for the entire digital thread — a $3B+ market that no single vendor owns.**
+4. **Digital Thread Integrity Bridge** *(✅ BUILT — now a HarborLink feature; S4 Ledger provides the blockchain verification layer)* — Connect to PTC Windchill, Siemens Teamcenter, Dassault 3DEXPERIENCE, and MBE (Model-Based Engineering) platforms. Anchor every engineering change, BOM revision, and technical data package to XRPL. **This makes S4 Ledger the "integrity layer" for the entire digital thread — a $3B+ market that no single vendor owns.**
 
 5. **Predictive Maintenance AI** — Analyze maintenance trends across the entire S4 Ledger network (anonymized/aggregated) to predict component failures before they happen. Similar to how Google Maps uses aggregate traffic data — individual records stay private, but patterns emerge at scale. **Value: $2M–$10M per fleet in avoided unplanned maintenance.**
 
@@ -239,7 +233,7 @@ At 12–15x revenue multiple: **$1.07B–$1.34B valuation**
 
 1. **The market is massive.** DoW spends $150B+/year on logistics. The software tools serving this market are fragmented, overpriced, and 10–20 years behind commercial tech. No one has built a unified ILS platform with blockchain-verified records.
 
-2. **We have a working prototype.** Not a slide deck. Not a concept. A live, functional platform with 20 ILS tools, a Python SDK, REST API, and real XRPL blockchain integration. Zero cost to the company so far.
+2. **We have a working prototype.** Not a slide deck. Not a concept. A live, functional platform with 13 ILS tools, a Python SDK, REST API, and real XRPL blockchain integration. Zero cost to the company so far.
 
 3. **The economics are undeniable.** S4 Ledger saves the government ~$1.02M–$2.6M per program per year. It costs them $6K–$60K/year. That's a 15–100x ROI. The government doesn't say no to that math.
 
@@ -365,7 +359,7 @@ The DoW's own industrial base strategy calls for exactly this kind of small busi
 | 1 | FedRAMP Authorization | 6–12 months | Opens 80% of federal market |
 | 2 | AI Supply Chain Risk Engine | 4–6 months | $500K–$2M/customer/year |
 | 3 | Automated Audit Report Generator | 3–4 months | Replaces $45K–$150K manual process |
-| 4 | Contract Lifecycle Management | 4–6 months | $100K–$400K/contract in savings |
+| 4 | Contract Lifecycle Management | ✅ BUILT — now in HarborLink | $100K–$400K/contract in savings |
 | 5 | GSA Schedule + SEWP V listing | 6–9 months | 10x faster procurement |
 
 ### Should-Build (Years 3–5) — Funded by Revenue + Series A
@@ -373,7 +367,7 @@ The DoW's own industrial base strategy calls for exactly this kind of small busi
 | # | Capability | Development Time | Revenue Unlock |
 |---|---|---|---|
 | 6 | IL4/IL5 Classified Deployment | 8–12 months | $1M–$5M/contract |
-| 7 | Digital Thread Integrity Bridge | 6–8 months | $3B+ MBSE market access |
+| 7 | Digital Thread Integrity Bridge | ✅ BUILT — now in HarborLink | $3B+ MBSE market access |
 | 8 | Predictive Maintenance AI | 6–10 months | $2M–$10M/fleet |
 | 9 | Managed ILS-as-a-Service offering | 3–6 months | $500K–$2M/program/year |
 | 10 | Developer Marketplace | 6–8 months | Platform network effects |

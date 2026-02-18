@@ -102,32 +102,27 @@ Each entry shows the time, type of record, the fingerprint (hash), a link to the
 
 ---
 
-### Tab 4 — ILS Workspace (20 Analysis Tools)
+### Tab 4 — ILS Workspace (13 Analysis Tools)
 
-This is the powerhouse of S4 Ledger. It contains **20 specialized tools** designed for defense logistics professionals. Here's what each one does in plain English:
+This is the powerhouse of S4 Ledger. It contains **13 specialized tools** designed for defense logistics professionals. Here's what each one does in plain English:
 
 | # | Tool | What It Does |
 |---|------|-------------|
 | 1 | **Gap Analysis** | Upload your program documents (DRL spreadsheets, PDFs, Word docs). The system checks them against what's required and scores your coverage. It tells you exactly what's missing, what's critical, and what to fix first. |
 | 2 | **Action Items** | Shows all the things that need attention — sorted by urgency (critical, warning, info) with cost estimates. |
-| 3 | **Calendar** | Tracks upcoming deadlines — DMSMS reviews, warranty expirations, audits. Like a planner for logistics milestones. |
-| 4 | **DMSMS Checker** | Enter part numbers (NSNs) and find out if they're still being manufactured, at risk, or obsolete. Helps prevent supply problems. |
-| 5 | **Readiness Calculator** | Plug in equipment reliability numbers and calculate how "available" your system will be. Uses standard DoD formulas. |
-| 6 | **Parts Lookup** | Search for any part by its National Stock Number (NSN). See pricing, availability, alternates. |
-| 7 | **ROI Calculator** | Calculate how much money and time S4 Ledger saves your organization. Generates briefing-ready numbers. |
-| 8 | **Lifecycle Cost** | Estimate the total cost of owning and maintaining a system over its entire life — from purchase through sustainment. |
-| 9 | **Warranty Tracker** | Track which warranties are active, expiring soon, or expired. Color-coded for quick scanning. |
-| 10 | **Audit Vault** | Every record you stamp is saved here with its blockchain verification. Export for audits anytime. |
-| 11 | **Document Library** | Searchable reference library of defense standards — MIL-STDs, regulations, instructions. |
-| 12 | **Compliance Dashboard** | See your compliance score across NIST 800-171, CMMC, DFARS, and more. Letter grade for executives. |
-| 13 | **Provisioning Status** | Track provisioning progress — parts lists, NSN cataloging, allowance lists. |
-| 14 | **Supply Chain Risk** | See which parts have single-source suppliers, geographic risks, or other vulnerabilities. |
-| 15 | **Audit Reports** | Generate formal audit reports automatically — stamped to the blockchain for tamper-proof storage. |
-| 16 | **Contracts** | Track contract milestones, modifications, and deliverables. |
-| 17 | **Digital Thread** | Visualize the full history of a system from design through sustainment — every change, every version. |
-| 18 | **Predictive Maintenance** | Analyze patterns to predict when equipment will need maintenance before it fails. |
-| 19 | **Database Import** | Import records from 24+ DoD logistics systems (GCSS, DPAS, NAVSUP, REMIS, and more) in CSV, XML, JSON, PDF, or Word format. Every imported record gets stamped automatically. |
-| 20 | **ILIE** | Formal logistics data exchange with blockchain verification. |
+| 3 | **DMSMS Checker** | Enter part numbers (NSNs) and find out if they're still being manufactured, at risk, or obsolete. Helps prevent supply problems. |
+| 4 | **Readiness Calculator** | Plug in equipment reliability numbers and calculate how "available" your system will be. Uses standard DoD formulas. |
+| 5 | **ROI Calculator** | Calculate how much money and time S4 Ledger saves your organization. Generates briefing-ready numbers. |
+| 6 | **Lifecycle Cost** | Estimate the total cost of owning and maintaining a system over its entire life — from purchase through sustainment. |
+| 7 | **Audit Vault** | Every record you stamp is saved here with its blockchain verification. Export for audits anytime. |
+| 8 | **Document Library** | Searchable reference library of defense standards — MIL-STDs, regulations, instructions. |
+| 9 | **Compliance Dashboard** | See your compliance score across NIST 800-171, CMMC, DFARS, and more. Letter grade for executives. |
+| 10 | **Supply Chain Risk** | See which parts have single-source suppliers, geographic risks, or other vulnerabilities. |
+| 11 | **Audit Reports** | Generate formal audit reports automatically — stamped to the blockchain for tamper-proof storage. |
+| 12 | **Predictive Maintenance** | Analyze patterns to predict when equipment will need maintenance before it fails. |
+| 13 | **ILIE** | AI-powered submission review — compares vendor data against baselines, flags discrepancies with severity ratings. |
+
+> **Note:** Tools for parts cross-reference, contract tracking, provisioning, warranty management, scheduling, configuration management, and database import are available in **HarborLink**, S4 Systems' companion collaboration portal.
 
 #### How Document Analysis Works
 

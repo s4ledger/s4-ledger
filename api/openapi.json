@@ -3,7 +3,7 @@
   "info": {
     "title": "S4 Ledger API",
     "version": "4.0.0",
-    "description": "S4 Ledger — Defense-grade blockchain-anchored logistics and supply chain integrity platform. 20 integrated tools: cryptographic anchoring, ILS workspace, DMSMS monitoring, operational readiness, parts cross-reference, lifecycle cost, ROI analysis, warranty management, audit record vault, defense document library, compliance scorecard, provisioning/PTD management, supply chain risk engine, audit report generator, contract lifecycle management, digital thread bridge, predictive maintenance AI, PDF/CSV export engine, task collaboration, and XRPL-based immutable record verification for defense and government supply chains.",
+    "description": "S4 Ledger — Defense-grade blockchain-anchored logistics and supply chain integrity platform. 13 integrated tools: cryptographic anchoring, ILS workspace, DMSMS monitoring, operational readiness, parts cross-reference, lifecycle cost, ROI analysis, warranty management, audit record vault, defense document library, compliance scorecard, provisioning/PTD management, supply chain risk engine, audit report generator, contract lifecycle management, digital thread bridge, predictive maintenance AI, PDF/CSV export engine, task collaboration, and XRPL-based immutable record verification for defense and government supply chains.",
     "contact": {
       "name": "S4 Systems, LLC",
       "url": "https://s4ledger.com",

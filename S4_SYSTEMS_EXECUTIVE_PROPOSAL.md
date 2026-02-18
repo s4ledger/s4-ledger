@@ -11,7 +11,7 @@
 
 I have independently developed a working prototype of **S4 Ledger** — a logistics verification and ILS (Integrated Logistics Support) management platform that creates tamper-proof records for defense supply chain data. The system works by creating a unique digital fingerprint (called a hash) of each logistics record and permanently storing that fingerprint on a public financial ledger (the XRP Ledger), so anyone can later prove a record was never altered. No sensitive data leaves your network — only a 64-character code that acts like a receipt.
 
-On top of this record integrity layer, S4 Ledger includes a full **ILS Workspace** — a unified suite of 20 logistics management tools including DMSMS (Diminishing Manufacturing Sources and Material Shortages) tracking, readiness calculations, parts cross-referencing, lifecycle cost estimation, ROI (Return on Investment) analysis, warranty management, gap analysis, action item tracking, audit record vault, defense document library, compliance scorecard, provisioning/PTD management (replacing DAU's ICAPS), AI supply chain risk engine, automated audit report generator, contract lifecycle management, digital thread/configuration bridge, and predictive maintenance AI. This positions S4 Ledger not just as a verification tool, but as a **complete ILS management platform** competitive with SAP, Oracle, Microsoft, and ICAPS — at a fraction of the cost.
+On top of this record integrity layer, S4 Ledger includes a full **ILS Workspace** — a unified suite of 13 logistics management tools including DMSMS (Diminishing Manufacturing Sources and Material Shortages) tracking, readiness calculations, parts cross-referencing, lifecycle cost estimation, ROI (Return on Investment) analysis, warranty management, gap analysis, action item tracking, audit record vault, defense document library, compliance scorecard, provisioning/PTD management (replacing DAU's ICAPS), AI supply chain risk engine, automated audit report generator, contract lifecycle management, digital thread/configuration bridge, and predictive maintenance AI. This positions S4 Ledger not just as a verification tool, but as a **complete ILS management platform** competitive with SAP, Oracle, Microsoft, and ICAPS — at a fraction of the cost.
 
 **I am proposing that S4 Systems adopt S4 Ledger as an official product line**, fund its production readiness, and bring it to market through our existing defense industry relationships. This benefits the company with a new revenue stream and competitive moat, and benefits me as the inventor with equity participation and product leadership.
 
@@ -54,29 +54,23 @@ Every day, the U.S. Department of War (DoW) processes millions of logistics reco
 
 ### ILS Workspace — Unified Tool Suite
 
-All of these tools operate within a single unified workspace, with shared data, cross-tool action items, and one-click export/anchoring:
+All of these tools operate within a single unified workspace, with shared data, cross-tool action items, and one-click export/anchoring. S4 Ledger serves as the **trust and intelligence layer** for defense logistics:
 
 | Tool | Capability | Standards Alignment |
 |------|-----------|-------------------|
 | **Gap Analysis Engine** | Analyzes ILS data package completeness across all elements — DRLs (Data Requirements Lists), DIs (Data Items), J-attachments, buylists, vendor spares, transfer books, tech manuals | MIL-STD-1388 |
 | **DMSMS Tracker** | Tracks obsolescence risk, identifies alternate sources, monitors diminishing manufacturing sources across programs | DoD 4140.1, DMSMS Guidebook |
 | **Readiness Calculator** | Computes Operational Availability (Ao), Inherent Availability (Ai), MTBF (Mean Time Between Failures), MTTR (Mean Time To Repair), MLDT (Mean Logistics Delay Time) | MIL-STD-1390D, RAM Analysis |
-| **Parts Cross-Reference** | NSN (National Stock Number) lookup, CAGE (Commercial and Government Entity) code search, alternate parts mapping across programs | FLIS (Federal Logistics Information System) |
 | **ROI Calculator** | Calculates return on investment from S4 Ledger adoption — labor savings, error reduction, audit cost avoidance, with 5-year projections | OMB A-94 |
 | **Lifecycle Cost Estimator** | Projects total ownership cost over a weapon system's lifecycle — acquisition, sustainment, DMSMS mitigation, disposal | DoD 5000.73 |
-| **Warranty & Contract Tracker** | Tracks OEM (Original Equipment Manufacturer) warranties, CLIN (Contract Line Item Number) milestones, contract expirations with 90-day advance alerts | FAR 46.7 |
 | **Audit Record Vault** | Client-side audit trail store — auto-saves every anchored record with content + SHA-256 hash + TX hash. Search, filter, re-verify, CSV/XLSX export. Zero server-side storage. | DFARS 252.204-7012 |
 | **Defense Document Library** | Searchable database of 100+ real defense documents — MIL-STDs, OPNAVINSTs, DoD Directives, NAVSEA/NAVAIR manuals, FAR/DFARS, NIST frameworks across all branches | MIL-STD-1388, OPNAVINST |
 | **Compliance Scorecard** | Real-time compliance calculator — CMMC L2, NIST 800-171, DFARS, FAR 46, MIL-STD-1388, DoDI 4245.15 — with SVG ring chart, letter grades, recommendations | CMMC v2.0, NIST 800-171 |
-| **Provisioning & PTD Manager** | Full ICAPS replacement — PTD (Provisioning Technical Documentation) submission/validation, APL (Allowance Parts List) generation, NSN cataloging, all-branch support, blockchain-anchored records | MIL-STD-1561, DoD 4100.39 |
 | **AI Supply Chain Risk Engine** | ML-powered supply chain risk scoring across 35+ defense platforms — supplier health analysis (GIDEP alerts, DLA lead times, financial distress, single-source dependency, counterfeit indicators), 37 real defense suppliers, risk-level scoring | GIDEP, DLA |
 | **Audit Report Generator** | One-click audit package generation — 6 report types (Full Audit, Supply Chain, Maintenance, Compliance, Chain of Custody, Contract Deliverables), configurable time periods, multi-format output, section-by-section compliance scoring | DFARS 252.204-7012, NIST 800-171 |
-| **Contract Lifecycle Management** | CDRL tracking, contract modifications (Class I/II), SOW deliverable status — 25 realistic DoW contracts with real prefix formats, DI number references, status tracking, blockchain-anchored delivery timestamps | FAR/DFARS, CDRL Requirements |
-| **Digital Thread / Config Bridge** | 4 configuration views: Engineering Changes (ECP I/II), BOM Revisions, Configuration Baselines (FBL/ABL/Product), TDP Versions — 32 platform configurations with variant-specific designators | MIL-STD-973, IEEE 828 |
 | **Predictive Maintenance AI** | Fleet-wide failure prediction — MTBF trend analysis, failure mode clustering, component age curves, 40+ platforms with real fleet sizes, confidence scoring, cost-if-unplanned estimates | MIL-STD-1629, MIL-HDBK-217 |
 | **Integrated Logistics Insights Engine (ILIE)** | AI-powered submission review: ingests OEM/vendor submissions (VRS, IUID, config drawings, BOMs, ECPs, CDRLs, 24+ document types), compares against previous baselines, flags cost anomalies, new/removed components, CAGE code changes, lead time increases; severity-rated discrepancy reports for leadership review | MIL-STD-1388, DLAD 4145.41, FAR 42.302 |
 | **Action Items Manager** | Cross-tool task queue with severity tagging, personnel delegation, cost tracking, CSV export, and calendar integration | — |
-| **ILS Calendar** | Program milestone scheduling, warranty expiration alerts, DMSMS review dates with .ics export | — |
 
 ### Supporting Infrastructure
 
@@ -293,7 +287,7 @@ S4 Ledger's prototype is essentially a **completed Phase I deliverable**. We cou
 1. **A working prototype** — live, publicly accessible, with 25+ pages and 27 API endpoints
 2. **Domain expertise** — I understand defense logistics AND the underlying technology
 3. **Complete documentation** — whitepaper, technical specs, migration guides, compliance docs, API specification
-4. **ILS Workspace** — a fully functional suite of 20 integrated logistics tools ready for demonstration, including a Provisioning & PTD Manager that replaces DAU's ICAPS for all branches
+4. **ILS Workspace** — a fully functional suite of 13 integrated logistics tools ready for demonstration — the trust and intelligence layer for defense ILS
 5. **Product vision** — detailed roadmap through enterprise-scale deployment
 6. **Speed** — I can have this production-ready in 60–90 days with company support
 
@@ -446,7 +440,7 @@ Defense SaaS companies are valued at 12–20× revenue (Palantir: 27×, Anduril:
 
 ### The Math That Gets Us There
 
-**Current platform savings per program:** ~$1.02M–$2.6M/year (20 ILS tools + hash anchoring + defense database import + ILIE submission intelligence combined).  
+**Current platform savings per program:** ~$1.02M–$2.6M/year (13 ILS tools + hash anchoring + defense database import + ILIE submission intelligence combined).  
 **S4 Ledger charges 5–10% of value delivered** → $6K–$60K/year per customer → 15–100× ROI for government.
 
 | Scale | Programs | Govt Savings/Year | S4 Revenue (ARR) | Valuation (15×) |
@@ -463,9 +457,9 @@ Defense SaaS companies are valued at 12–20× revenue (Palantir: 27×, Anduril:
 | 1 | FedRAMP Authorization | 6–12 mo | Opens 80% of federal market | Years 1–2 |
 | 2 | AI Supply Chain Risk Engine | 4–6 mo | $500K–$2M/customer/year | **✅ BUILT (v3.8.5)** |
 | 3 | Automated Audit Report Generator | 3–4 mo | Replaces $45K–$150K manual process | **✅ BUILT (v3.8.5)** |
-| 4 | Contract Lifecycle Management | 4–6 mo | $100K–$400K/contract dispute avoidance | **✅ BUILT (v3.8.5)** |
+| 4 | Contract Lifecycle Management | 4–6 mo | $100K–$400K/contract dispute avoidance | **✅ BUILT — now in HarborLink** |
 | 5 | IL4/IL5 Classified Deployment | 8–12 mo | $1M–$5M per classified contract | Years 3–5 |
-| 6 | Digital Thread / Digital Twin Bridge | 6–8 mo | $3B+ MBSE market access | **✅ BUILT (v3.8.5)** |
+| 6 | Digital Thread / Digital Twin Bridge | 6–8 mo | $3B+ MBSE market access | **✅ BUILT — now in HarborLink** |
 | 7 | Predictive Maintenance AI | 6–10 mo | $2M–$10M per fleet | **✅ BUILT (v3.8.5)** |
 | 8 | Managed ILS-as-a-Service | 3–6 mo | $500K–$2M/program/year | Years 3–5 |
 | 9 | Developer Marketplace | 6–8 mo | Network effects + 25% platform fees | Years 4–6 |

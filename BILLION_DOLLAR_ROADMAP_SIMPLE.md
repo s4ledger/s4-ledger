@@ -72,7 +72,7 @@ Think of it like this:
 
 - **The military** maintains thousands of weapon systems — jets, ships, tanks, missiles. Each one has thousands of parts, hundreds of documents, and years of maintenance history.
 - **Right now**, most of this tracking is done with spreadsheets, PDFs, and 20-year-old software systems that don't talk to each other. It's slow, expensive, error-prone, and easy to fake.
-- **S4 Ledger** replaces all of that with one modern platform. It has 20 built-in tools that handle everything from tracking parts to predicting when something will break, plus a defense database import tool that connects to 24 DoD/DoN systems. And it stamps every record onto a blockchain — which means no one can secretly change the records after the fact.
+- **S4 Ledger** replaces all of that with one modern platform. It has 13 built-in tools that handle everything from tracking parts to predicting when something will break, plus a defense database import tool that connects to 24 DoD/DoN systems. And it stamps every record onto a blockchain — which means no one can secretly change the records after the fact.
 
 **The bottom line:** S4 Ledger saves the government a LOT of money and makes defense logistics dramatically better. And that means S4 Systems (the company) can grow from a small consulting firm into a billion-dollar technology company.
 
@@ -86,7 +86,7 @@ The military runs thousands of "programs" — each one is basically a weapon sys
 
 **For each program, S4 Ledger saves roughly $1.02 million to $2.6 million per year** by replacing manual work with automated tools.
 
-Here's a simple breakdown of the 20 tools and what they replace:
+Here's a simple breakdown of the 13 tools and what they replace:
 
 | What S4 Ledger Does For You | What It Replaces | Money Saved Per Year |
 |---|---|---|
@@ -280,7 +280,7 @@ Here are the six things your CEO needs to hear:
 The U.S. military spends over **$150 billion a year** on logistics. The software supporting this is mostly outdated, fragmented, and overpriced. No one has built a single, modern platform that handles everything AND proves records haven't been tampered with.
 
 ### 2. We Already Have a Working Product
-This isn't a PowerPoint dream. S4 Ledger is a **live, functional platform** with 20 tools, a developer toolkit, and real blockchain integration. It cost the company zero dollars to build — Nick built it on his own time.
+This isn't a PowerPoint dream. S4 Ledger is a **live, functional platform** with 13 tools, a developer toolkit, and real blockchain integration. It cost the company zero dollars to build — Nick built it on his own time.
 
 ### 3. The Savings Are Insane
 S4 Ledger saves the government **~$1.02M–$2.6M per program per year**. It costs them **$6K–$60K/year**. That's a **15x to 100x return on investment**. The government does not say no to that kind of math.

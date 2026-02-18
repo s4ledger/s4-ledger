@@ -41,7 +41,7 @@ Keep these in your back pocket. Use them in order.
 
 ### 2. We Already Have a Working Product
 
-> "This isn't a concept or a slide deck. I built a fully working platform with 20 defense logistics tools, a Python SDK, REST API, and blockchain-verified audit trails. It's live at s4ledger.com right now. It cost the company zero dollars."
+> "This isn't a concept or a slide deck. I built a fully working platform with 13 defense logistics tools, a Python SDK, REST API, and blockchain-verified audit trails. It's live at s4ledger.com right now. It cost the company zero dollars."
 
 **Why this works:** CEOs hear pitches for vaporware all the time. Showing a working product built at no cost is the opposite of risk — it's pure upside.
 
@@ -122,8 +122,7 @@ If you get 10 minutes with a screen, here's the flow:
 4. **Run the Readiness Calculator** — Show real Ao/Ai/MTBF numbers generating instantly
 5. **Anchor a record** — Click "Anchor to XRPL" and show the 3-second blockchain confirmation
 6. **Show the Audit Vault** — "Every anchored record is automatically stored with proof"
-7. **Run Defense Database Import** — Show how data from GCSS, DPAS, or any of 24 DoD/DoN systems gets ingested, hashed, and anchored in seconds
-8. **Show the transaction on XRPL** — Open the Livenet Explorer link. "This is permanent, public, tamper-proof. Anyone can verify it."
+7. **Show the transaction on XRPL** — Open the Livenet Explorer link. "This is permanent, public, tamper-proof. Anyone can verify it."
 
 **Total demo time: 5-8 minutes.** Then say: "This is what $6K/year gets a program office. Their current tools cost $200K–$5M."
 
@@ -155,8 +154,7 @@ If the CEO says no:
 | Per-program savings | $1.02M–$2.6M/year |
 | S4 Ledger cost | $6K–$60K/year |
 | ROI for government | 15–100x |
-| ILS tools built | 19 |
-| Defense database integrations | 24 systems across all branches |
+| ILS tools built | 13 |
 | SDK functions | 27 |
 | API endpoints | 29 |
 | Pre-loaded platforms | 462 across 9 branches |

@@ -164,7 +164,7 @@ S4 Ledger provides native import adapters for 13+ DoD and DoN logistics informat
 3. **Parse & Map** — S4 automatically detects the format and maps fields to the appropriate record types
 4. **Hash** — Each record is individually hashed with SHA-256
 5. **Anchor** — Optionally anchor each hash to the XRPL blockchain for immutable verification
-6. **Integrate** — Imported data flows into all 20 ILS tools: DMSMS tracking, readiness, parts cross-reference, audit vault, etc.
+6. **Integrate** — Imported data flows into all 13 ILS tools: DMSMS tracking, readiness, parts cross-reference, audit vault, etc.
 
 ### SDK Import Methods
 

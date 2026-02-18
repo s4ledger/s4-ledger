@@ -27,7 +27,7 @@ S4 Ledger's current architecture is a client-side browser application optimized 
 │  │   demo-app/index.html     │  │
 │  │   (~7,500 lines)          │  │
 │  │                           │  │
-│  │  • 20 ILS Workspace tools │  │
+│  │  • 13 ILS Workspace tools │  │
 │  │  • Client-side hashing    │  │
 │  │  • localStorage/session   │  │
 │  │  • Direct XRPL calls      │  │
@@ -69,7 +69,7 @@ S4 Ledger's current architecture is a client-side browser application optimized 
 2. **Instant deployment** — Works anywhere with a browser
 3. **Full demo capability** — Investors/partners can see everything working immediately
 4. **Security simplicity** — No server = no server to hack
-5. **Development speed** — One developer built 20 tools, 29 API endpoints, and an entire platform
+5. **Development speed** — One developer built 13 tools, 29 API endpoints, and an entire platform
 
 **Bottom line:** Client-side architecture got us to a working product at zero cost. Now we need to scale it.
 
@@ -91,7 +91,7 @@ S4 Ledger's current architecture is a client-side browser application optimized 
 │  │   demo-app/index.html     │  │
 │  │   (progressively migrated)│  │
 │  │                           │  │
-│  │  • 20 ILS tools (UI)      │  │
+│  │  • 13 ILS tools (UI)      │  │
 │  │  • Client-side hashing    │  │
 │  │  • API calls for data     │ ◄── No more localStorage
 │  └───────────────────────────┘  │     for records
@@ -451,7 +451,7 @@ Record 8 ──► Hash H ─┘
 
 Starting with a client-side architecture was **strategic, not a limitation:**
 
-1. **Speed to market** — Full 20-tool platform built and deployed while competitors were still writing RFPs
+1. **Speed to market** — Full 13-tool platform built and deployed while competitors were still writing RFPs
 2. **Zero burn rate** — No infrastructure costs during pre-revenue phase
 3. **Investor-friendly** — Demo anywhere, anytime, no server dependencies
 4. **Security story** — "No server = no server to hack" is actually compelling for early defense conversations

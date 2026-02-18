@@ -85,10 +85,7 @@
                     <a href="#lookup_nsn">lookup_nsn()</a>
                     <a href="#calc_roi">calculate_roi()</a>
                     <a href="#lifecycle">estimate_lifecycle_cost()</a>
-                    <a href="#warranty">track_warranty()</a>
                     <a href="#action_items">get_action_items()</a>
-                    <a href="#calendar">get_calendar_events()</a>
-                    <a href="#provisioning">get_provisioning_status()</a>
                     <div class="nav-section">Data Import</div>
                     <a href="#import_csv">import_csv()</a>
                     <a href="#import_xml">import_xml()</a>
@@ -322,7 +319,7 @@ original = sdk.decrypt_data(encrypted)  # Original text restored</div>
                 <div id="warranty" class="method-card">
                     <h4><span class="badge-get">ILS</span> track_warranty()</h4>
                     <div class="method-sig">sdk.track_warranty(program="ddg51", systems=None)</div>
-                    <p style="font-size:0.85rem;color:var(--text-secondary)">Track warranty and contract status per FAR 46.7 / DFARS 246.7. Returns active, expiring, and expired items with values.</p>
+                    <p style="font-size:0.85rem;color:var(--text-secondary)">Track warranty and contract status per FAR 46.7 / DFARS 246.7. <em>Note: This method is now available through <strong style="color:#a855f7">HarborLink</strong>.</em></p>
                     <div class="returns"><strong>Returns:</strong> <code>dict</code> with <code>active</code>, <code>expiring_soon</code>, <code>expired</code> arrays, <code>total_value</code></div>
                 </div>
 
@@ -332,16 +329,9 @@ original = sdk.decrypt_data(encrypted)  # Original text restored</div>
                     <p style="font-size:0.85rem;color:var(--text-secondary)">Get cross-tool action items with severity tagging and estimated costs. Filter by severity (critical/warning) or source (dmsms/warranty/readiness).</p>
                 </div>
 
-                <div id="calendar" class="method-card">
-                    <h4><span class="badge-get">ILS</span> get_calendar_events()</h4>
-                    <div class="method-sig">sdk.get_calendar_events(month=None, year=None)</div>
-                    <p style="font-size:0.85rem;color:var(--text-secondary)">Get scheduled ILS events: DMSMS reviews, readiness assessments, warranty deadlines, audit milestones.</p>
-                </div>
-
-                <div id="provisioning" class="method-card">
-                    <h4><span class="badge-get">ILS</span> get_provisioning_status()</h4>
-                    <div class="method-sig">sdk.get_provisioning_status(program=None)</div>
-                    <p style="font-size:0.85rem;color:var(--text-secondary)">Get provisioning progress: PTD submissions, APL generation, NSN cataloging. Replaces ICAPS with all-branch support and blockchain verification.</p>
+                <div class="method-card" style="border-color:rgba(168,85,247,0.3);margin-top:16px">
+                    <h4 style="margin-bottom:10px"><i class="fas fa-arrow-up-right-from-square" style="color:#a855f7;margin-right:8px"></i>Additional ILS Methods via HarborLink</h4>
+                    <p style="font-size:0.85rem;color:var(--text-secondary)">The following SDK methods are available through <strong style="color:#a855f7">HarborLink</strong>, S4 Systems' collaboration portal: <code>track_warranty()</code>, <code>get_calendar_events()</code>, <code>get_provisioning_status()</code>, <code>manage_contracts()</code>, <code>get_digital_thread()</code>, <code>import_defense_data()</code>, and <code>cross_reference_parts()</code>.</p>
                 </div>
 
                 <hr style="border-color:var(--border);margin:30px 0">
@@ -445,8 +435,8 @@ python s4_sdk.py roi
 python s4_sdk.py lifecycle
 python s4_sdk.py warranty
 python s4_sdk.py action-items
-python s4_sdk.py calendar
-python s4_sdk.py provisioning</div>
+python s4_sdk.py calendar      # Available via HarborLink
+python s4_sdk.py provisioning   # Available via HarborLink</div>
                 </div>
 
                 <div id="cli2" class="method-card">

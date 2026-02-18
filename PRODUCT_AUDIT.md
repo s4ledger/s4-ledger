@@ -84,12 +84,7 @@ S4 Ledger is a **sophisticated, well-architected demo platform with real XRPL bl
 | Tool | What It Shows | Data Source |
 |------|-------------|-------------|
 | **DMSMS Tracker** | Parts with Active/At Risk/Obsolete status, resolution costs | `generateDMSMSData()` — deterministic simulation |
-| **Parts Cross-Ref** | NSN lookups, CAGE codes, alternates | Hardcoded samples |
-| **Warranty Tracker** | Warranty status, expiration dates | Simulated from program data |
-| **Contract Lifecycle** | CDRLs, modifications, SOW deliverables | Hardcoded 5 items per contract |
-| **Provisioning/ICAPS** | PTD/APL entries per program | Simulated data |
 | **Supply Chain Risk** | Risk scores for 10 parts | Hardcoded scores |
-| **Digital Thread** | 4 ECPs/BOMs | Hardcoded |
 | **Predictive Maintenance** | 4 predictions | Hardcoded |
 
 ### All 15 Export Buttons Produce Real Downloadable Files ✅

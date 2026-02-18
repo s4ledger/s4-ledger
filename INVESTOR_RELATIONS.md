@@ -48,7 +48,7 @@ Treasury address: `rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ`
 - Built 25+ page website with defense use cases, pricing, FAQ, and partner information
 - Established NIST 800-171 and CMMC compliance alignment documentation (CMMC 2.0 enforcement begins 2025–2026)
 - Created Defense Data Integrity Agreement (DDIA) template v2.0
-- Expanded ILS Workspace to **20 tools** including Integrated Logistics Insights Engine (ILIE), Audit Record Vault, Defense Document Library, Compliance Scorecard, Provisioning & PTD Manager (ICAPS replacement), Supply Chain Risk Engine, Audit Report Generator, Contract Lifecycle Management, Digital Thread Bridge, Predictive Maintenance AI, and Conversational AI Agent
+- Expanded ILS Workspace to **13 tools** including Integrated Logistics Insights Engine (ILIE), Audit Record Vault, Defense Document Library, Compliance Scorecard, Supply Chain Risk Engine, Audit Report Generator, Predictive Maintenance AI, and Conversational AI Agent
 - **27 Python SDK functions** for defense-grade hash anchoring and verification
 - **29 REST API endpoints** for enterprise integration
 - **500+ pre-loaded military entities** — 462 platforms, 37 suppliers, 25 contracts across 9 branches
@@ -64,7 +64,7 @@ Treasury address: `rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ`
 
 | Metric | Value |
 |---|---|
-| ILS Tools | 20 interactive workspace tools |
+| ILS Tools | 13 interactive workspace tools |
 | SDK Functions | 27 Python functions |
 | API Endpoints | 29 REST endpoints |
 | Pre-loaded Entities | 500+ (462 platforms + 37 suppliers + 25 contracts) |

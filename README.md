@@ -12,6 +12,17 @@ No sensitive data touches the blockchain — ever. Only cryptographic hashes.
 
 ---
 
+## S4 Systems — Two Products, One Mission
+
+S4 Systems offers two complementary products for defense logistics:
+
+- **S4 Ledger** — The trust and intelligence layer. 13 tools for risk analysis, readiness, compliance, audit, and AI-powered logistics intelligence. Every record is hash-anchored to the XRP Ledger for tamper-proof verification.
+- **HarborLink** — The collaboration portal. Tools for parts cross-reference, contract lifecycle management, provisioning, warranty tracking, configuration management, scheduling, and defense database import/export.
+
+Together, they provide a complete ILS platform. S4 Ledger focuses on analysis, compliance, and immutable record integrity. HarborLink focuses on day-to-day logistics workflows and cross-program collaboration.
+
+---
+
 ## How It Works
 
 ```
@@ -143,7 +154,7 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 | Phase | Status | Focus |
 |---|---|---|
 | Phase 1 — Foundation | ✅ Complete | SDK, hashing, XRPL anchoring, $SLS token live |
-| Phase 2 — Defense Platform | ✅ Complete | 20-tool ILS Workspace, 500+ platforms (dynamically loaded), ILIE, 27 SDK functions (dynamically loaded), custom hull/designation + program office input on all tools, AI agent, provisioning, audit vault, 156+ record types, SDK Playground platform selector, Metrics + Transactions platform filters |
+| Phase 2 — Defense Platform | ✅ Complete | 13-tool ILS Workspace, 500+ platforms (dynamically loaded), ILIE, 27 SDK functions (dynamically loaded), custom hull/designation + program office input on all tools, AI agent, audit vault, 156+ record types, SDK Playground platform selector, Metrics + Transactions platform filters |
 | Phase 3 — MVP & Pilot | Upcoming | Internal pilot on real contract data |
 | Phase 4 — Partner Onboarding | Planned | SaaS launch, DIU/NavalX engagement |
 | Phase 5 — Scale & Certification | Planned | NIST, FedRAMP, SBIR/STTR |

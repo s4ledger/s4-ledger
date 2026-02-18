@@ -206,7 +206,7 @@ SHA-256 is not directly vulnerable to Grover's algorithm. Grover's algorithm red
 
 | Solution | Approach | Cost | Data Exposure | Defense Focus |
 |---|---|---|---|---|
-| **S4 Ledger** | Hash anchoring on XRPL | 0.01 SLS/anchor | Zero | Built for DoW ILS — 20 tools, all branches |
+| **S4 Ledger** | Hash anchoring on XRPL | 0.01 SLS/anchor | Zero | Built for DoW ILS — 13 tools, all branches |
 | **ICAPS** (DAU) | Mainframe + PC provisioning | Free (gov only) | Internal database | Navy/USMC only, Supply Support only |
 | SAP S/4HANA | ERP platform | $1M+ | Full database | Commercial, adapted for defense |
 | Oracle Cloud | ERP platform | $500K+ | Cloud-hosted | Commercial, adapted for defense |
@@ -215,7 +215,9 @@ SHA-256 is not directly vulnerable to Grover's algorithm. Grover's algorithm red
 | Hyperledger Fabric | Private blockchain | High (infra) | Private chain data | Enterprise, finance |
 | Hedera Hashgraph | DLT consensus | Low-moderate | On-chain data | General enterprise |
 
-S4 Ledger is the only solution purpose-built for defense logistics that keeps zero data on-chain. It replaces ICAPS for provisioning while adding blockchain verification, all-branch support, and integration with 18 other ILS tools that ICAPS doesn't offer.
+S4 Ledger is the only solution purpose-built for defense logistics that keeps zero data on-chain. It provides blockchain verification, all-branch support, and 13 integrated ILS tools focused on analysis, compliance, and audit integrity.
+
+> **Companion Product:** S4 Systems also offers **HarborLink**, a collaboration portal for day-to-day logistics workflows — parts cross-reference, contract lifecycle management, provisioning (ICAPS replacement), warranty tracking, configuration management, scheduling, and defense database import/export. Together, S4 Ledger and HarborLink provide a complete ILS platform.
 
 ---
 
@@ -224,7 +226,7 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | Phase | Timeline | Milestones |
 |---|---|---|
 | **Phase 1 — Foundation** | Q4 2025 – Q1 2026 ✅ | SDK, hash anchoring, $SLS token, website |
-| **Phase 2 — Defense Platform** | Q1 – Q2 2026 ✅ | 462 real platforms, 20 interactive tools, 156+ pre-built record types, toast alerts, unified action tracking |
+| **Phase 2 — Defense Platform** | Q1 – Q2 2026 ✅ | 462 real platforms, 13 interactive tools, 156+ pre-built record types, toast alerts, unified action tracking |
 | **Phase 3 — MVP & Pilot** | Q3 – Q4 2026 | Internal pilot on real contract data, SBIR/STTR applications, server-side persistence, user auth |
 | **Phase 4 — Partner & SaaS** | Q1 – Q2 2027 | REST API, SaaS dashboard, DIU / NavalX engagement, Merkle tree batch anchoring |
 | **Phase 5 — Scale & Certify** | Q3 2027+ | NIST/CMMC, FedRAMP, CDN/edge caching, microservices, production deployments |
@@ -233,24 +235,18 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 
 | Tool | Description |
 |---|---|
-| **ILS Workspace** | Unified command center consolidating all 20 tools with cross-tool data syncing and sub-tab navigation |
+| **ILS Workspace** | Unified command center consolidating all 13 tools with cross-tool data syncing and sub-tab navigation |
 | ILS Workspace Engine | Per-program checklists for 462+ programs with DRL generation |
 | Action Items & Task Tracker | Cross-tool task queue with severity tagging, delegation, cost tracking, and source breakdown |
-| Calendar System | Month-grid calendar with auto-populated events from action item schedules and custom milestones |
 | DMSMS Tracker | Obsolescence monitoring with severity analysis |
 | Readiness Calculator | Ao/Ai computation per MIL-STD-1390D |
-| Parts Cross-Reference | NSN lookup with alternate sourcing |
 | ROI Calculator | Annual savings, payback period, and 5-year projections |
 | Lifecycle Cost Estimator | Total ownership cost per DoD 5000.73 |
-| Warranty & Contract Tracker | OEM warranty and CLIN deliverable tracking per FAR 46.7 |
 | **Audit Record Vault** | Client-side audit trail store — auto-saves content + SHA-256 hash + TX hash for every anchor across all tools. Search, filter, re-verify, CSV/XLSX export. |
 | **Defense Document Library** | Searchable database of 100+ real MIL-STDs, OPNAVINSTs, DoD Directives, FAR/DFARS clauses, NIST frameworks across 7 branches and 17 categories |
 | **Compliance Scorecard** | Multi-framework compliance calculator — CMMC L2, NIST 800-171, DFARS, FAR 46, MIL-STD-1388, DoDI 4245.15 — with SVG ring chart, letter grades, and actionable recommendations |
-| **Provisioning & PTD Manager** | Replaces ICAPS — Provisioning Technical Documentation (PTD) per MIL-STD-1552, Allowance Parts List (APL) generation, NSN cataloging via FCS, Provisioning Performance Schedule tracking. All-branch (ICAPS is Navy/USMC only). Blockchain-verified provisioning decisions. |
 | **AI Supply Chain Risk Engine** | ML-powered supply chain risk scoring across 500+ defense platforms (dynamically populated) — analyzes supplier health (GIDEP alerts, DLA lead time spikes, financial distress, single-source dependency, counterfeit indicators). Risk levels (Critical/High/Medium/Low), ETA impact calculations, 37 real defense suppliers. Custom hull/designation + program office input |
 | **Automated Audit Report Generator** | One-click audit package generation — 6 report types (Full Audit, Supply Chain, Maintenance, Compliance, Chain of Custody, Contract Deliverables). Configurable time periods, multi-format output, section-by-section compliance scoring. Report hashes anchored to XRPL |
-| **Contract Lifecycle Management** | CDRL tracking, contract modifications (Class I/II), and SOW deliverable status — 25 realistic DoW contracts from NAVSEA, NAVAIR, Army ACC, AF LCMC, DLA, MCSC, MDA. DI number references, status tracking (On Track/At Risk/Overdue/Delivered), blockchain-anchored delivery timestamps. Custom contract number input for real identifiers |
-| **Digital Thread / Configuration Bridge** | 4 configuration views: Engineering Changes (ECP Class I/II), BOM Revisions (multi-level), Configuration Baselines (FBL/ABL/Product), TDP Versions. 500+ platforms (dynamically populated) with variant-specific designators. Custom hull/designation + program office input. Status workflow with per-item anchoring |
 | **Predictive Maintenance AI** | Fleet-wide failure prediction — analyzes MTBF trends, failure mode clustering, and component age curves. 500+ platforms (dynamically populated) with real fleet sizes, platform-specific system/component/failure mode data, confidence scoring, cost-if-unplanned estimates. Custom hull/designation + program office input |
 | **Integrated Logistics Insights Engine (ILIE)** | AI-powered submission review and discrepancy detection — ingests OEM/vendor submissions (VRS, IUID, config drawings, outfitting lists, PO indices, PTD, APL, tech manuals, maintenance plans, LSAR, FRACAS, ECPs, CDRLs, BOMs, cost estimates, and 24+ document types), compares against previous baselines, flags new/removed components, cost anomalies, CAGE code changes, source substitutions, lead time increases, and configuration mismatches. Severity-rated discrepancy reports for leadership. All reviews hashed and anchored to XRPL. |
 | Record Anchoring | SHA-256 hash anchoring to XRPL ($0.01 SLS per transaction) |
@@ -301,7 +297,7 @@ Infrastructure costs scale with revenue and never exceed 6% of ARR at any phase.
 
 ## 8. Team
 
-S4 Ledger is a product line of **S4 Systems, LLC**, created and built entirely by **Nick Frankfort** — ILS contractor and founder and CEO. Nick built the entire platform (20 ILS tools, 27 SDK functions, 29 REST API endpoints, $SLS token, 25+ page website, 500+ pre-loaded military entities) at zero cost to the company, on his own time, drawing on years of hands-on ILS experience across Navy and DoW programs.
+S4 Ledger is a product line of **S4 Systems, LLC**, created and built entirely by **Nick Frankfort** — ILS contractor and founder and CEO. Nick built the entire platform (13 ILS tools, 27 SDK functions, 29 REST API endpoints, $SLS token, 25+ page website, 500+ pre-loaded military entities) at zero cost to the company, on his own time, drawing on years of hands-on ILS experience across Navy and DoW programs.
 
 Based in Charleston, SC.
 

@@ -31,7 +31,7 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 **What's real today:**
 - The $SLS token is live and tradable on XRPL Mainnet
 - 462 real defense platforms (DDG-51, F-35, CVN-78, etc.) with real program data
-- Tools that calculate readiness, track obsolescence, monitor warranties, estimate lifecycle costs, and generate action items — all using real MIL-STD formulas
+- Tools that calculate readiness, track obsolescence, estimate lifecycle costs, score compliance, and generate audit reports — all using real MIL-STD formulas
 - Every tool generates actionable alerts: warranty expirations 90 days out, DMSMS obsolescence flags, readiness threshold violations
 - A unified Action Items tracker that consolidates tasks across all tools with severity sorting, filtering, and CSV export
 
@@ -42,7 +42,7 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 - **$SLS token LIVE on XRPL Mainnet** — tradable, AMM pools active, trustlines established
   - Issuer: `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5`
   - 100M total supply | ~15M circulating | 30M in multi-sig treasury
-- **20 interactive defense tools** live at s4ledger.com/demo-app — not mockups, real working interfaces
+- **13 interactive defense tools** live at s4ledger.com/demo-app — not mockups, real working interfaces
 - **27 Python SDK functions** for defense-grade hash anchoring, verification, and batch operations
 - **29 REST API endpoints** for enterprise integration
 - **500+ pre-loaded military entities** — 462 real defense platforms across 9 branches, 37 real defense suppliers, 25 real DoW contracts
@@ -64,7 +64,7 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 | **High-Scale** (50+ programs) | $12M–$48M | $1.2M–$3.6M ARR/enterprise |
 
 *Key drivers: 65% labor reduction, 90% error savings, 70% audit cost reduction, 15-25% DMSMS cost avoidance, 70% less data reconciliation*
-*Per-program savings: ~$1.02M–$2.6M/year from 20 ILS tools (including ILIE submission intelligence) — 15–100x ROI for government*
+*Per-program savings: ~$1.02M–$2.6M/year from 13 ILS tools (including ILIE submission intelligence) — 15–100x ROI for government*
 
 ## National Impact
 
@@ -90,7 +90,7 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 | **SAP S/4HANA** | — | $500K–$5M+ | Generic | No |
 | **Oracle NetSuite** | — | $200K–$1M+ | Generic | No |
 | **Microsoft Dynamics** | — | $150K–$800K+ | Generic | No |
-| **S4 Ledger** | Pre-revenue | **$6K–$60K** | **20 built-in** | **Yes (XRPL)** |
+| **S4 Ledger** | Pre-revenue | **$6K–$60K** | **13 built-in** | **Yes (XRPL)** |
 
 ### Why the XRP Ledger?
 
@@ -133,7 +133,7 @@ S4 Ledger scales from zero infrastructure cost (today) to 50,000+ concurrent use
 | Phase | Timeline | Focus |
 |---|---|---|
 | Foundation | Q4 2025 – Q1 2026 ✅ | SDK, $SLS token, website |
-| Defense Platform | Q1 – Q2 2026 ✅ | 462 platforms, 20 tools, ILIE submission intelligence, defense database import, toast alerts, action tracking, ROI/Lifecycle/Warranty calculators |
+| Defense Platform | Q1 – Q2 2026 ✅ | 462 platforms, 13 tools, ILIE submission intelligence, toast alerts, action tracking, ROI/Lifecycle calculators |
 | MVP & Pilot | Q3 – Q4 2026 | Pilot on real data, server persistence, user auth, pagination |
 | Partner & SaaS | Q1 – Q2 2027 | REST API, SaaS dashboard, Merkle batch anchoring, DIU/NavalX |
 | Scale & Certify | Q3 2027+ | NIST, FedRAMP, CDN/edge, microservices, production deployments |

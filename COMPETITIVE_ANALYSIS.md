@@ -5,7 +5,7 @@
 
 ## Executive Summary
 
-S4 Ledger occupies a unique niche at the intersection of **blockchain-anchored audit trails** and **Integrated Logistics Support (ILS)** for defense. No direct competitor offers the specific combination of XRP Ledger anchoring + 20 ILS tools + SLS utility token for defense logistics micro-transactions. However, S4 Ledger faces indirect competition from massive incumbents across PLM, defense analytics, ERP, and emerging defense-tech startups. This report maps the competitive landscape to inform positioning, go-to-market strategy, and investor communications.
+S4 Ledger occupies a unique niche at the intersection of **blockchain-anchored audit trails** and **Integrated Logistics Support (ILS)** for defense. No direct competitor offers the specific combination of XRP Ledger anchoring + 13 ILS tools + SLS utility token for defense logistics micro-transactions. However, S4 Ledger faces indirect competition from massive incumbents across PLM, defense analytics, ERP, and emerging defense-tech startups. This report maps the competitive landscape to inform positioning, go-to-market strategy, and investor communications.
 
 ---
 
@@ -417,7 +417,7 @@ MONTH 36-48:  First production contract / Phase III commercialization
 ### 8.3 Competitive Moat
 S4 Ledger's defensible advantages:
 1. **First mover in blockchain-anchored ILS** — no one else is doing this
-2. **Domain specificity** — 20 ILS tools purpose-built for MIL-STD workflows
+2. **Domain specificity** — 13 ILS tools purpose-built for MIL-STD workflows
 3. **XRP Ledger anchoring** — tamper-proof audit trail that satisfies IG requirements
 4. **SLS micro-transaction model** — enables usage-based pricing inaccessible to enterprise vendors
 5. **Lightweight web workspace** — no IT infrastructure required, unlike PLM/ERP systems
@@ -453,7 +453,7 @@ S4 Ledger's defensible advantages:
                               │
                     PRISM ●   │   ● S4 LEDGER (UNIQUE POSITION)
                               │      - Blockchain anchoring
-                    IHS/GIDEP ●      - 20 ILS tools
+                    IHS/GIDEP ●      - 13 ILS tools
                               │      - SLS micro-transactions
                               │      - Web workspace
             Govini ●          │

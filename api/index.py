@@ -928,7 +928,7 @@ Joint/OSD: COMPASS, MBPS, GCSS, DPAS, DLA FLIS, PIEE/WAWF
 
 ## S4 LEDGER PLATFORM CAPABILITIES
 
-### 20 ILS Tools
+### 13 ILS Tools
 1. Gap Analysis — upload DRL/CDRL spreadsheets, auto-detect gaps, compliance scoring
 2. Action Items — track corrective actions with owners, dates, severity
 3. ILS Calendar — milestone tracking, warranty expirations, review dates

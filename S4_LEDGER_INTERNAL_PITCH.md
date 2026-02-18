@@ -32,26 +32,21 @@ This is where it gets really practical for day-to-day ILS work. Instead of maint
 |------------------------|-------------------------------|-------|
 | A spreadsheet tracking which parts are going obsolete | **DMSMS Tracker** — shows you which parts are at risk, suggests alternatives | $60K–$200K/yr |
 | A calculator for figuring out equipment readiness rates | **Readiness Calculator** — plug in your MTBF/MTTR numbers, get Ao/Ai instantly | $25K–$60K/yr |
-| A spreadsheet cross-referencing parts across programs | **Parts Cross-Reference** — search by NSN, CAGE code, or part name across all programs | $15K–$40K/yr |
 | A separate sheet estimating total ownership costs | **Lifecycle Cost Estimator** — follows DoD 5000.73 methodology | $30K–$80K/yr |
-| A manual log of warranty expirations | **Warranty Tracker** — alerts you 90 days before contracts/warranties expire | $20K–$50K/yr |
+| A manual log of warranty expirations | (Now in **HarborLink**) | — |
 | An Excel ROI model | **ROI Calculator** — shows leadership the dollar value of using S4 Ledger | $10K–$20K/yr |
 | A shared to-do list for ILS issues | **Action Items** — auto-generates tasks from all the other tools, tracks severity, assigns people | $10K–$25K/yr |
-| A paper or Outlook calendar for ILS milestones | **ILS Calendar** — pulls in warranty expirations, DMSMS review dates, program milestones | $5K–$15K/yr |
 | A checklist for data package completeness | **Gap Analysis** — checks your ILS data package against MIL-STD requirements and tells you what's missing | $40K–$80K/yr |
 | Printing and filing every anchored record for auditors | **Audit Record Vault** — automatically saves every record you anchor, searchable, exportable. Lives in your browser, never on someone else's server | $45K–$150K/yr |
 | Hunting through binders for the right MIL-STD reference | **Defense Document Library** — 100+ real defense docs (MIL-STDs, OPNAVINSTs, DoD Directives) searchable by branch and category | $5K–$15K/yr |
 | A manual compliance checklist before audits | **Compliance Scorecard** — real-time grade (A+ through F) across CMMC, NIST, DFARS. Shows exactly what's passing and what needs work | $10K–$35K/yr |
-| Navy-only ICAPS for provisioning data packages | **Provisioning & PTD Manager** — does everything ICAPS does but works for ALL branches, not just Navy/Marines. Plus blockchain-verified records | $50K–$120K/yr |
 | Calling 5 people to check if a supplier is at risk | **AI Supply Chain Risk Engine** — scans 37 real defense suppliers across 35+ platforms. Flags risks (GIDEP alerts, lead time spikes, financial distress) before they become crises | $75K–$200K/yr |
 | Spending weeks assembling audit packages by hand | **Audit Report Generator** — one button, six report types, done in seconds instead of weeks. Compliance scores baked in. Hash-anchored so auditors can verify the report itself | $30K–$80K/yr |
-| Tracking 25+ contracts in separate spreadsheets | **Contract Lifecycle Management** — CDRL tracking, modification history, deliverable status, expiration alerts. 25 real DoW contract formats built in | $40K–$100K/yr |
-| Emailing around to figure out what configuration a platform is in | **Digital Thread / Config Bridge** — engineering changes, BOM revisions, config baselines, TDP versions. 32 platform configs with real variant designators. One screen shows you what version of what is where | $60K–$150K/yr |
 | Guessing when equipment will fail based on gut feeling | **Predictive Maintenance AI** — analyzes failure patterns across 40+ platforms with real fleet sizes. Tells you what's likely to fail, when, and what it'll cost if you don't act. Turns reactive maintenance into proactive planning | $80K–$250K/yr |
 
 | Contractors manually reviewing every vendor submission line-by-line for errors | **Integrated Logistics Insights Engine (ILIE)** — Upload vendor submissions (spares lists, config drawings, BOMs, ECPs, 24+ types), auto-compare against previous versions, get severity-rated discrepancy reports with cost anomalies, new/removed components, and red flags. Leadership-ready reports in seconds. | $120K–$500K/yr |
 
-All 20 tools talk to each other. When the DMSMS Tracker finds an obsolete part, it automatically creates an action item. When a warranty is about to expire, it shows up on the calendar AND triggers an alert. When Supply Chain Risk flags a supplier issue, it connects to the affected contracts and parts.
+All 13 tools talk to each other. When the DMSMS Tracker finds an obsolete part, it automatically creates an action item. When a warranty is about to expire, it shows up on the calendar AND triggers an alert. When Supply Chain Risk flags a supplier issue, it connects to the affected contracts and parts.
 
 ---
 
@@ -111,7 +106,7 @@ Most blockchain companies focus on cryptocurrency or consumer supply chains (tra
 Everything described above is **live and working right now** at [s4ledger.com](https://s4ledger.com). It was built by Nick Frankfort on his own time at zero cost to the company. The tech stack:
 
 - **Website:** 25+ pages, fully branded
-- **Demo App:** All 20 ILS Workspace tools working, 156+ pre-built record types (supports any defense record type), 500+ pre-loaded military platforms, ICAPS-replacement provisioning tool, real DoW data in all dropdowns (35+ platforms, 25 contracts, 37 suppliers)
+- **Demo App:** All 13 ILS Workspace tools working, 156+ pre-built record types (supports any defense record type), 500+ pre-loaded military platforms, real DoW data in all dropdowns (35+ platforms, 25 contracts, 37 suppliers)
 - **Audit Record Vault:** Automatically stores every anchored record with content + hash for instant auditing
 - **Defense Document Library:** 100+ real MIL-STDs, OPNAVINSTs, DoD Directives searchable by branch and category
 - **Compliance Scorecard:** Real-time CMMC/NIST/DFARS compliance calculator with letter grades

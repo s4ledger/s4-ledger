@@ -150,7 +150,7 @@
         </div>
 
         <!-- ═══ SDK FUNCTION BOXES ═══ -->
-        <h3 class="reveal" style="margin-bottom:16px;font-size:1.1rem"><i class="fas fa-cubes" style="color:var(--accent);margin-right:8px"></i> SDK Functions (27) <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400">— click any box to load &amp; run</span></h3>
+        <h3 class="reveal" style="margin-bottom:16px;font-size:1.1rem"><i class="fas fa-cubes" style="color:var(--accent);margin-right:8px"></i> SDK Functions (20) <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400">— click any box to load &amp; run</span></h3>
         <div class="row mb-4">
             <!-- Core Functions -->
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="hash" onclick="loadAndRun('hash',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-hashtag"></i></div><div class="sdk-func-title">Hash Record</div><div class="sdk-func-desc">SHA-256 hash via POST /api/hash</div><div class="sdk-func-method">hash_record()</div></div></div>
@@ -161,27 +161,28 @@
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="metrics" onclick="loadAndRun('metrics',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-chart-bar"></i></div><div class="sdk-func-title">Live Metrics</div><div class="sdk-func-desc">GET /api/metrics dashboard</div><div class="sdk-func-method">get_metrics()</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="list_records" onclick="loadAndRun('list_records',this)"><div class="sdk-func-icon" style="color:#c9a84c"><i class="fas fa-list"></i></div><div class="sdk-func-title">List Records</div><div class="sdk-func-desc">All anchored records from API</div><div class="sdk-func-method">list_records()</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="record_types" onclick="loadAndRun('record_types',this)"><div class="sdk-func-icon" style="color:#14f195"><i class="fas fa-database"></i></div><div class="sdk-func-title">Record Types</div><div class="sdk-func-desc">Browse all defense record types</div><div class="sdk-func-method">get_record_types()</div></div></div>
-            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="provisioning" onclick="loadAndRun('provisioning',this)"><div class="sdk-func-icon" style="color:#9b59b6"><i class="fas fa-boxes-stacked"></i></div><div class="sdk-func-title">Provisioning</div><div class="sdk-func-desc">PTD status &amp; ICAPS comparison</div><div class="sdk-func-method">get_provisioning()</div></div></div>
+
             <!-- ILS Tools -->
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="ils_analysis" onclick="loadAndRun('ils_analysis',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-brain"></i></div><div class="sdk-func-title">ILS Analysis</div><div class="sdk-func-desc">Data package completeness</div><div class="sdk-func-method">ils_analysis()</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="dmsms" onclick="loadAndRun('dmsms',this)"><div class="sdk-func-icon" style="color:#ffa500"><i class="fas fa-exclamation-triangle"></i></div><div class="sdk-func-title">DMSMS Check</div><div class="sdk-func-desc">Obsolescence risk analysis</div><div class="sdk-func-method">check_dmsms()</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="readiness" onclick="loadAndRun('readiness',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-chart-line"></i></div><div class="sdk-func-title">Readiness Calc</div><div class="sdk-func-desc">Ao/Ai per MIL-STD-1390D</div><div class="sdk-func-method">calculate_readiness()</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="roi" onclick="loadAndRun('roi',this)"><div class="sdk-func-icon" style="color:#14f195"><i class="fas fa-dollar-sign"></i></div><div class="sdk-func-title">ROI Calculator</div><div class="sdk-func-desc">S4 Ledger ROI projection</div><div class="sdk-func-method">calculate_roi()</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="lifecycle" onclick="loadAndRun('lifecycle',this)"><div class="sdk-func-icon" style="color:#c9a84c"><i class="fas fa-clock"></i></div><div class="sdk-func-title">Lifecycle Cost</div><div class="sdk-func-desc">Total ownership per DoD 5000.73</div><div class="sdk-func-method">estimate_lifecycle_cost()</div></div></div>
-            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="warranty" onclick="loadAndRun('warranty',this)"><div class="sdk-func-icon" style="color:#ff6b6b"><i class="fas fa-file-contract"></i></div><div class="sdk-func-title">Warranty Tracker</div><div class="sdk-func-desc">OEM warranties &amp; contracts</div><div class="sdk-func-method">track_warranty()</div></div></div>
+
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="action_items" onclick="loadAndRun('action_items',this)"><div class="sdk-func-icon" style="color:#ffa500"><i class="fas fa-clipboard-list"></i></div><div class="sdk-func-title">Action Items</div><div class="sdk-func-desc">Cross-tool task queue</div><div class="sdk-func-method">get_action_items()</div></div></div>
             <!-- v3.8.5 New Tools -->
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="supply_chain_risk" onclick="loadAndRun('supply_chain_risk',this)"><div class="sdk-func-icon" style="color:#ff6b6b"><i class="fas fa-shield-halved"></i></div><div class="sdk-func-title">Supply Chain Risk</div><div class="sdk-func-desc">AI-powered risk scoring</div><div class="sdk-func-method">analyze_supply_chain_risk()</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="audit_reports" onclick="loadAndRun('audit_reports',this)"><div class="sdk-func-icon" style="color:#14f195"><i class="fas fa-file-shield"></i></div><div class="sdk-func-title">Audit Reports</div><div class="sdk-func-desc">One-click audit packages</div><div class="sdk-func-method">generate_audit_report()</div></div></div>
-            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="contracts" onclick="loadAndRun('contracts',this)"><div class="sdk-func-icon" style="color:#c9a84c"><i class="fas fa-file-signature"></i></div><div class="sdk-func-title">Contract Lifecycle</div><div class="sdk-func-desc">CDRL &amp; contract tracking</div><div class="sdk-func-method">manage_contracts()</div></div></div>
-            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="digital_thread" onclick="loadAndRun('digital_thread',this)"><div class="sdk-func-icon" style="color:#9b59b6"><i class="fas fa-diagram-project"></i></div><div class="sdk-func-title">Digital Thread</div><div class="sdk-func-desc">Config &amp; BOM management</div><div class="sdk-func-method">get_digital_thread()</div></div></div>
+
+
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="predictive_maintenance" onclick="loadAndRun('predictive_maintenance',this)"><div class="sdk-func-icon" style="color:#00e5ff"><i class="fas fa-gears"></i></div><div class="sdk-func-title">Predictive Maint.</div><div class="sdk-func-desc">AI failure prediction</div><div class="sdk-func-method">predict_maintenance()</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="ilie" onclick="loadAndRun('ilie',this)"><div class="sdk-func-icon" style="color:#e06c75"><i class="fas fa-file-circle-check"></i></div><div class="sdk-func-title">ILIE</div><div class="sdk-func-desc">Submission review &amp; discrepancy engine</div><div class="sdk-func-method">analyze_submission()</div></div></div>
-            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="db_import" onclick="loadAndRun('db_import',this)"><div class="sdk-func-icon" style="color:#14f195"><i class="fas fa-database"></i></div><div class="sdk-func-title">Defense DB Import</div><div class="sdk-func-desc">Import from 24+ defense systems</div><div class="sdk-func-method">import_defense_data()</div></div></div>
+
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="compliance" onclick="loadAndRun('compliance',this)"><div class="sdk-func-icon" style="color:#34c759"><i class="fas fa-shield-halved"></i></div><div class="sdk-func-title">Compliance Score</div><div class="sdk-func-desc">MIL-STD / FAR compliance calc</div><div class="sdk-func-method">calculate_compliance()</div></div></div>
-            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="calendar" onclick="loadAndRun('calendar',this)"><div class="sdk-func-icon" style="color:#ffa500"><i class="fas fa-calendar-alt"></i></div><div class="sdk-func-title">ILS Calendar</div><div class="sdk-func-desc">Milestone &amp; deadline tracking</div><div class="sdk-func-method">get_calendar_events()</div></div></div>
-            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="parts_xref" onclick="loadAndRun('parts_xref',this)"><div class="sdk-func-icon" style="color:#c9a84c"><i class="fas fa-cogs"></i></div><div class="sdk-func-title">Parts X-Ref</div><div class="sdk-func-desc">Cross-reference NSN/CAGE/PN</div><div class="sdk-func-method">cross_reference_parts()</div></div></div>
+
+
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="doc_library" onclick="loadAndRun('doc_library',this)"><div class="sdk-func-icon" style="color:#00aaff"><i class="fas fa-book"></i></div><div class="sdk-func-title">Doc Library</div><div class="sdk-func-desc">Defense standards &amp; references</div><div class="sdk-func-method">search_documents()</div></div></div>
+            <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" style="border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.04);cursor:default;"><div class="sdk-func-icon" style="color:#a855f7"><i class="fas fa-arrow-up-right-from-square"></i></div><div class="sdk-func-title">HarborLink Tools</div><div class="sdk-func-desc">Parts X-Ref, Contracts, Digital Thread, Warranty, Calendar, Provisioning &amp; DB Import available via HarborLink</div><div class="sdk-func-method" style="color:#a855f7">harborlink.s4systems.com</div></div></div>
             <div class="col-6 col-md-4 col-lg-3 mb-3 reveal"><div class="sdk-func-box" data-func="audit_vault" onclick="loadAndRun('audit_vault',this)"><div class="sdk-func-icon" style="color:#9b59b6"><i class="fas fa-vault"></i></div><div class="sdk-func-title">Audit Vault</div><div class="sdk-func-desc">Encrypted record storage</div><div class="sdk-func-method">store_in_vault()</div></div></div>
         </div>
 
@@ -252,23 +253,23 @@
                         <tr><td class="ref-method">batch_anchor()</td><td>Anchor multiple records in one call</td></tr>
                         <tr><td class="ref-method">list_records()</td><td>List all anchored records</td></tr>
                         <tr><td class="ref-method">get_record_types()</td><td>Browse all defense record types</td></tr>
-                        <tr><td class="ref-method">get_provisioning()</td><td>Provisioning status &amp; ICAPS comparison</td></tr>
+
                         <tr><td class="ref-method">check_dmsms()</td><td>Obsolescence risk analysis</td></tr>
                         <tr><td class="ref-method">calculate_readiness()</td><td>Ao/Ai per MIL-STD-1390D</td></tr>
                         <tr><td class="ref-method">calculate_roi()</td><td>S4 Ledger ROI projection</td></tr>
                         <tr><td class="ref-method">estimate_lifecycle_cost()</td><td>Total ownership cost per DoD 5000.73</td></tr>
-                        <tr><td class="ref-method">track_warranty()</td><td>OEM warranty &amp; contract tracking</td></tr>
+
                         <tr><td class="ref-method">get_action_items()</td><td>Cross-tool task queue with severity</td></tr>
                         <tr><td class="ref-method">analyze_supply_chain_risk()</td><td>AI supply chain risk scoring (35+ platforms)</td></tr>
                         <tr><td class="ref-method">generate_audit_report()</td><td>One-click audit report generation (6 types)</td></tr>
-                        <tr><td class="ref-method">manage_contracts()</td><td>CDRL tracking &amp; contract lifecycle</td></tr>
-                        <tr><td class="ref-method">get_digital_thread()</td><td>Configuration &amp; BOM management</td></tr>
+
+
                         <tr><td class="ref-method">predict_maintenance()</td><td>AI predictive maintenance analysis</td></tr>
                         <tr><td class="ref-method">analyze_submission()</td><td>ILIE submission review &amp; discrepancy engine</td></tr>
-                        <tr><td class="ref-method">import_defense_data()</td><td>Import from 24+ defense data systems</td></tr>
+
                         <tr><td class="ref-method">calculate_compliance()</td><td>MIL-STD / FAR compliance scoring</td></tr>
-                        <tr><td class="ref-method">get_calendar_events()</td><td>ILS milestone &amp; deadline tracking</td></tr>
-                        <tr><td class="ref-method">cross_reference_parts()</td><td>NSN/CAGE/PN cross-reference tool</td></tr>
+
+
                         <tr><td class="ref-method">search_documents()</td><td>Defense standards document library</td></tr>
                         <tr><td class="ref-method">store_in_vault()</td><td>Encrypted audit vault storage</td></tr>
                     </table>
@@ -284,23 +285,23 @@
                         <tr><td class="ref-method">/api/metrics</td><td>GET &mdash; dashboard data</td></tr>
                         <tr><td class="ref-method">/api/transactions</td><td>GET &mdash; recent activity</td></tr>
                         <tr><td class="ref-method">/api/record-types</td><td>GET &mdash; All defense types</td></tr>
-                        <tr><td class="ref-method">/api/provisioning</td><td>GET &mdash; provisioning status</td></tr>
+
                         <tr><td class="ref-method">/api/dmsms</td><td>POST &mdash; obsolescence check</td></tr>
                         <tr><td class="ref-method">/api/readiness</td><td>POST &mdash; readiness calc</td></tr>
                         <tr><td class="ref-method">/api/roi</td><td>POST &mdash; ROI analysis</td></tr>
                         <tr><td class="ref-method">/api/lifecycle</td><td>POST &mdash; lifecycle cost</td></tr>
-                        <tr><td class="ref-method">/api/warranty</td><td>POST &mdash; warranty tracker</td></tr>
+
                         <tr><td class="ref-method">/api/action-items</td><td>GET &mdash; action item queue</td></tr>
                         <tr><td class="ref-method">/api/supply-chain-risk</td><td>POST &mdash; AI risk analysis</td></tr>
                         <tr><td class="ref-method">/api/audit-reports</td><td>POST &mdash; audit report gen</td></tr>
-                        <tr><td class="ref-method">/api/contracts</td><td>POST &mdash; contract lifecycle</td></tr>
-                        <tr><td class="ref-method">/api/digital-thread</td><td>POST &mdash; config management</td></tr>
+
+
                         <tr><td class="ref-method">/api/predictive-maintenance</td><td>POST &mdash; failure prediction</td></tr>
                         <tr><td class="ref-method">/api/ilie</td><td>POST &mdash; submission analysis</td></tr>
-                        <tr><td class="ref-method">/api/db-import</td><td>POST &mdash; defense data import</td></tr>
+
                         <tr><td class="ref-method">/api/compliance</td><td>POST &mdash; compliance scoring</td></tr>
-                        <tr><td class="ref-method">/api/calendar</td><td>GET &mdash; ILS calendar events</td></tr>
-                        <tr><td class="ref-method">/api/parts-xref</td><td>POST &mdash; parts cross-reference</td></tr>
+
+
                         <tr><td class="ref-method">/api/doc-library</td><td>GET &mdash; standards lookup</td></tr>
                         <tr><td class="ref-method">/api/audit-vault</td><td>POST &mdash; vault storage</td></tr>
                     </table>
@@ -814,7 +815,7 @@
         return output;
     }
 
-    var RUNNERS = { hash:runHash, anchor:runAnchor, verify:runVerify, batch:runBatch, metrics:runMetrics, list_records:runListRecords, record_types:runRecordTypes, provisioning:runProvisioning, ils_analysis:runILSAnalysis, dmsms:runDMSMS, readiness:runReadiness, roi:runROI, lifecycle:runLifecycle, warranty:runWarranty, action_items:runActionItems, supply_chain_risk:runSupplyChainRisk, audit_reports:runAuditReports, contracts:runContracts, digital_thread:runDigitalThread, predictive_maintenance:runPredictiveMaintenance, ilie:runILIE, db_import:runDbImport, compliance:runCompliance, calendar:runCalendar, parts_xref:runPartsXref, doc_library:runDocLibrary, audit_vault:runAuditVault };
+    var RUNNERS = { hash:runHash, anchor:runAnchor, verify:runVerify, batch:runBatch, metrics:runMetrics, list_records:runListRecords, record_types:runRecordTypes, ils_analysis:runILSAnalysis, dmsms:runDMSMS, readiness:runReadiness, roi:runROI, lifecycle:runLifecycle, action_items:runActionItems, supply_chain_risk:runSupplyChainRisk, audit_reports:runAuditReports, predictive_maintenance:runPredictiveMaintenance, ilie:runILIE, compliance:runCompliance, doc_library:runDocLibrary, audit_vault:runAuditVault };
     var TEMPLATES = {
         hash: { showRecordType: true },
         anchor: { showRecordType: true },
@@ -823,24 +824,17 @@
         metrics: { showRecordType: false },
         list_records: { showRecordType: false },
         record_types: { showRecordType: false },
-        provisioning: { showRecordType: false },
         ils_analysis: { showRecordType: false },
         dmsms: { showRecordType: false },
         readiness: { showRecordType: false },
         roi: { showRecordType: false },
         lifecycle: { showRecordType: false },
-        warranty: { showRecordType: false },
         action_items: { showRecordType: false },
         supply_chain_risk: { showRecordType: false },
         audit_reports: { showRecordType: false },
-        contracts: { showRecordType: false },
-        digital_thread: { showRecordType: false },
         predictive_maintenance: { showRecordType: false },
         ilie: { showRecordType: false },
-        db_import: { showRecordType: false },
         compliance: { showRecordType: false },
-        calendar: { showRecordType: false },
-        parts_xref: { showRecordType: false },
         doc_library: { showRecordType: false },
         audit_vault: { showRecordType: false }
     };
@@ -848,23 +842,16 @@
     var SDK_TOOL_TEMPLATES = {
         list_records: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# List all anchored records\nrecords = ledger.list_records()\n\nfor rec in records:\n    print(f"{rec[\'type\']} — {rec[\'hash\'][:16]}...")',
         record_types: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Browse all defense record types\ntypes = ledger.get_record_types()\n\nfor branch, data in types.items():\n    print(f"\\n{branch}: {len(data)} types")\n    for t in data:\n        print(f"  {t[\'icon\']} {t[\'label\']}")',
-        provisioning: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Get provisioning status & PTD comparison\nresult = ledger.get_provisioning(\n    program="DDG-51 Flight III",\n    elements=["APL", "NSN", "CAGE", "FSC"]\n)\n\nprint(f"Total items: {result[\'total_items\']}")\nprint(f"Provisioned: {result[\'provisioned\']}")\nprint(f"PTD complete: {result[\'ptd_complete\']}%")',
         dmsms: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Check DMSMS obsolescence risk for a weapon system\nresult = ledger.check_dmsms(\n    program="F-15E Strike Eagle",\n    system="AN/APG-82(V)1 AESA Radar"\n)\n\nprint(f"Parts analyzed: {result[\'total_parts\']}")\nprint(f"At-risk: {result[\'at_risk\']}")\nprint(f"Risk cost: ${result[\'risk_cost\']}K")',
         readiness: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate operational availability per MIL-STD-1390D\nresult = ledger.calculate_readiness(\n    program="DDG-51 Flight III",\n    system="AN/SPY-6(V)1 AMDR",\n    mtbf=850,    # Mean Time Between Failures (hrs)\n    mttr=4.2,    # Mean Time To Repair (hrs)\n    mldt=6.5     # Mean Logistics Delay Time (hrs)\n)\n\nprint(f"Ao (Operational): {result[\'ao\']}%")\nprint(f"Ai (Inherent):    {result[\'ai\']}%")',
         roi: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate ROI from S4 Ledger adoption\nresult = ledger.calculate_roi(\n    programs=12,\n    records_per_month=5000,\n    fte_rate=95\n)\n\nprint(f"Monthly savings: ${result[\'monthly_savings\']}K")\nprint(f"Annual savings:  ${result[\'annual_savings\']}K")\nprint(f"ROI:             {result[\'roi_percent\']}%")',
         lifecycle: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Estimate lifecycle cost per DoD 5000.73\nresult = ledger.estimate_lifecycle_cost(\n    program="DDG-51 Flight III",\n    fleet_size=20,\n    service_life_years=35\n)\n\nprint(f"Total ownership: {result[\'total_cost\']}")\nprint(f"Sustainment:     {result[\'sustainment_cost\']}")\nprint(f"S4 savings:      {result[\'s4_savings\']}")',
-        warranty: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Track warranties & contracts\nresult = ledger.track_warranty(\n    program="F-35A Lightning II"\n)\n\nfor w in result["warranties"]:\n    print(f"{w[\'item\']}: {w[\'status\']} — expires {w[\'expiry\']}")',
         action_items: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Get action items across all ILS tools\nitems = ledger.get_action_items(\n    program="DDG-51 Flight III",\n    severity="critical"\n)\n\nfor item in items:\n    print(f"[{item[\'severity\'].upper()}] {item[\'title\']}")\n    print(f"  Source: {item[\'source\']} | Cost: ${item[\'cost\']}K")\n    print(f"  Schedule: {item[\'schedule\']}")',
         supply_chain_risk: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Analyze supply chain risk for a defense platform\nresult = ledger.analyze_supply_chain_risk(\n    platform="DDG-51 Flight III",\n    suppliers=["Raytheon", "BAE Systems", "Huntington Ingalls"]\n)\n\nprint(f"Overall Risk: {result[\'risk_level\']}")\nprint(f"Suppliers Analyzed: {result[\'suppliers_analyzed\']}")\nfor alert in result[\'alerts\']:\n    print(f"  [{alert[\'severity\']}] {alert[\'supplier\']} — {alert[\'issue\']}")\n    print(f"    ETA Impact: +{alert[\'eta_impact_days\']} days")',
         audit_reports: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Generate a compliance audit report\nreport = ledger.generate_audit_report(\n    report_type="Full Audit",\n    program="F-35A Lightning II",\n    time_period="last_90_days"\n)\n\nprint(f"Report: {report[\'title\']}")\nprint(f"Sections: {report[\'section_count\']}")\nprint(f"Compliance Score: {report[\'compliance_score\']}%")\nprint(f"Hash: {report[\'report_hash\'][:32]}...")\nprint(f"Anchored: {report[\'anchored\']}")',
-        contracts: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Track contract lifecycle and CDRLs\nresult = ledger.manage_contracts(\n    contract="N00024-22-C-5312",\n    program="DDG-51 Flight III"\n)\n\nprint(f"Contract: {result[\'contract_number\']}")\nprint(f"CDRLs: {result[\'total_cdrls\']}")\nfor cdrl in result[\'cdrls\']:\n    print(f"  {cdrl[\'di_number\']} — {cdrl[\'title\']}")\n    print(f"    Status: {cdrl[\'status\']} | Due: {cdrl[\'due_date\']}")',
-        digital_thread: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Get digital thread configuration data\nresult = ledger.get_digital_thread(\n    platform="DDG-51 Flight III",\n    view="engineering_changes"\n)\n\nprint(f"Platform: {result[\'platform\']}")\nprint(f"Config View: {result[\'view\']}")\nfor ecp in result[\'changes\']:\n    print(f"  ECP-{ecp[\'number\']} [{ecp[\'class\']}] {ecp[\'title\']}")\n    print(f"    Status: {ecp[\'status\']} | Impact: {ecp[\'impact\']}")',
         predictive_maintenance: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Predict maintenance failures for a fleet\nresult = ledger.predict_maintenance(\n    platform="F-35A Lightning II",\n    fleet_size=450\n)\n\nprint(f"Platform: {result[\'platform\']}")\nprint(f"Fleet Size: {result[\'fleet_size\']}")\nfor pred in result[\'predictions\']:\n    print(f"  {pred[\'system\']} — {pred[\'failure_mode\']}")\n    print(f"    Confidence: {pred[\'confidence\']}% | Window: {pred[\'prediction_window\']}")\n    print(f"    Cost if Unplanned: ${pred[\'cost_unplanned\']}K")',
         ilie: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Analyze a vendor submission for discrepancies\nresult = ledger.analyze_submission(\n    program="DDG-51 Arleigh Burke",\n    branch="USN",\n    doc_type="VRS",\n    current_file="current_vrs_submission.csv",\n    baseline_file="previous_vrs_accepted.csv"\n)\n\nprint(f"Total discrepancies: {result[\'total_discrepancies\']}")\nprint(f"Critical: {result[\'criticals\']}")\nprint(f"Warnings: {result[\'warnings\']}")\nprint(f"Cost delta: ${result[\'cost_delta\']}K")\nprint(f"Hash: {result[\'hash\'][:32]}...")',
-        db_import: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Import records from a defense system\nresult = ledger.import_defense_data(\n    source_system="NSERC",\n    file_format="csv",\n    file_path="nserc_config_export.csv"\n)\n\nprint(f"Records imported: {result[\'total\']}")\nprint(f"Hashed: {result[\'hashed\']}")\nprint(f"Anchored: {result[\'anchored\']}")',
         compliance: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate compliance scorecard\nresult = ledger.calculate_compliance(\n    program="CVN-78 Gerald R. Ford",\n    standards=["MIL-STD-1388-2B", "MIL-STD-1390D"]\n)\n\nprint(f"Overall Score: {result[\'overall_score\']}%")\nprint(f"Standards Met: {result[\'met\']}/{result[\'total\']}")',
-        calendar: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Get calendar events and milestones\nevents = ledger.get_calendar_events(\n    program="F-35A Lightning II",\n    range_days=90\n)\n\nfor event in events:\n    print(f"{event[\'date\']} — {event[\'title\']} ({event[\'type\']})")',
-        parts_xref: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Cross-reference a part across databases\nresult = ledger.cross_reference_parts(\n    nsn="5998-01-422-7891"\n)\n\nprint(f"NSN: {result[\'nsn\']}")\nprint(f"Part Number: {result[\'part_number\']}")\nprint(f"CAGE: {result[\'cage_code\']}")',
         doc_library: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Search defense standards library\nresults = ledger.search_documents(\n    query="logistics support analysis",\n    categories=["MIL-STD", "MIL-HDBK"]\n)\n\nfor doc in results:\n    print(f"{doc[\'id\']} — {doc[\'title\']} ({doc[\'status\']})")',
         audit_vault: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Store a record in the encrypted audit vault\nresult = ledger.store_in_vault(\n    record_type="USN_CDRL",\n    content="CDRL A001 — ILSP submitted for DDG-137",\n    encrypt=True\n)\n\nprint(f"Vault ID: {result[\'vault_id\']}")\nprint(f"Hash: {result[\'hash\'][:32]}...")\nprint(f"XRPL TX: {result[\'tx_hash\']}")'
     };
@@ -923,41 +910,6 @@
         return output;
     }
 
-    async function runProvisioning() {
-        var output = '>>> ledger.get_provisioning(program="DDG-51 Flight III")\n\nGET /api/provisioning  \u2192  200 OK\n\n';
-        output += '\u2550'.repeat(55) + '\n';
-        output += '  PROVISIONING & PTD STATUS \u2014 DDG-51 Flight III\n';
-        output += '\u2550'.repeat(55) + '\n\n';
-        output += '  Total Line Items:     2,847\n';
-        output += '  Provisioned:          2,614 (91.8%)\n';
-        output += '  Pending:              233\n\n';
-        output += '  PTD Status:\n';
-        output += '    Phase I  (Screening):    Complete \u2713\n';
-        output += '    Phase II (Cataloging):   94.2%\n';
-        output += '    Phase III (Procurement): 87.6%\n';
-        output += '    Phase IV (Fielding):     In Progress\n\n';
-        output += '\u2500'.repeat(55) + '\n';
-        output += 'APL ASSIGNMENTS:\n';
-        output += '  APL-001 Hull Mechanical:       412 items  \u2713\n';
-        output += '  APL-002 Combat Systems:        387 items  \u2713\n';
-        output += '  APL-003 Propulsion:            294 items  96%\n';
-        output += '  APL-004 Electronics/RADAR:     341 items  89%\n';
-        output += '  APL-005 Ordnance:              218 items  \u2713\n';
-        output += '\u2500'.repeat(55) + '\n\n';
-        output += 'ICAPS vs S4 COMPARISON:\n';
-        output += '  Feature            ICAPS      S4 Ledger\n';
-        output += '  ─────────────────────────────────────────\n';
-        output += '  Blockchain audit   \u2718          \u2713\n';
-        output += '  Real-time sync     \u2718          \u2713\n';
-        output += '  Multi-branch       Limited    \u2713 9 branches\n';
-        output += '  Custom entry       Limited    \u2713 Full\n';
-        output += '  Export CSV         \u2713          \u2713\n';
-        output += '  Cost/year          $850K      $24K\n\n';
-        output += '\u2713 Full provisioning manager in Demo App > ILS Workspace\n';
-        output += '\u2713 40+ demo items pre-loaded for testing\n';
-        output += '\u2713 Custom data entry supported';
-        return output;
-    }
 
     async function runDMSMS() {
         var output = '>>> ledger.check_dmsms(program="F-15E Strike Eagle")\n\nPOST /api/dmsms  \u2192  200 OK\n\n';
@@ -1043,25 +995,6 @@
         return output;
     }
 
-    async function runWarranty() {
-        var output = '>>> ledger.track_warranty(program="F-35A Lightning II")\n\nPOST /api/warranty  \u2192  200 OK\n\n';
-        output += '\u2550'.repeat(55) + '\n';
-        output += '  WARRANTY & CONTRACT TRACKER \u2014 F-35A\n';
-        output += '\u2550'.repeat(55) + '\n\n';
-        output += '  Active Warranties:    24\n';
-        output += '  Expiring (90 days):   6\n';
-        output += '  Expired:              3\n';
-        output += '  Total Value:          $12.8M\n\n';
-        output += '\u2500'.repeat(55) + '\n';
-        output += 'EXPIRING SOON:\n';
-        output += '  \u26a0 F135-PW-100 Engine    Pratt & Whitney  2025-09-15\n';
-        output += '  \u26a0 AN/AAQ-37 DAS         Northrop Grumman 2025-10-01\n';
-        output += '  \u26a0 ALIS Sustainment      Lockheed Martin  2025-08-22\n';
-        output += '\u2500'.repeat(55) + '\n\n';
-        output += '\u2713 Full warranty tracker in Demo App > ILS Workspace\n';
-        output += '\u2713 90-day expiry alerts generated automatically';
-        return output;
-    }
 
     async function runActionItems() {
         var output = '>>> ledger.get_action_items(severity="critical")\n\nGET /api/action-items  \u2192  200 OK\n\n';
@@ -1148,63 +1081,7 @@
         return output;
     }
 
-    async function runContracts() {
-        var output = '>>> ledger.manage_contracts(contract="N00024-22-C-5312")\n\nPOST /api/contracts  \u2192  200 OK\n\n';
-        output += '\u2550'.repeat(55) + '\n';
-        output += '  CONTRACT LIFECYCLE \u2014 N00024-22-C-5312\n';
-        output += '\u2550'.repeat(55) + '\n\n';
-        output += '  Contract:     N00024-22-C-5312 (NAVSEA)\n';
-        output += '  Program:      DDG-51 Flight III\n';
-        output += '  Total CDRLs:  18\n';
-        output += '  On Track:     12\n';
-        output += '  At Risk:      4\n';
-        output += '  Overdue:      2\n\n';
-        output += '\u2500'.repeat(55) + '\n';
-        output += 'KEY CDRLs:\n';
-        output += '  DI-ILSS-81495  ILS Plan              On Track   2025-06-15\n';
-        output += '  DI-SESS-81517  Failure Summary        On Track   2025-07-01\n';
-        output += '  DI-ALSS-81529  Provisioning Parts     At Risk    2025-05-30\n';
-        output += '  DI-MGMT-81466  Technical Data Package Overdue    2025-03-01\n\n';
-        output += 'MODIFICATIONS:\n';
-        output += '  Mod 04 (Class I)  \u2014 SPY-6 radar upgrade  \u2713 Approved\n';
-        output += '  Mod 05 (Class II) \u2014 HVAC redesign        Pending\n\n';
-        output += '\u2500'.repeat(55) + '\n';
-        output += '\u2713 25 real DoD contract formats in database\n';
-        output += '\u2713 CDRL tracking with DI number references\n';
-        output += '\u2713 Full lifecycle tracking in Demo App > ILS Workspace';
-        return output;
-    }
 
-    async function runDigitalThread() {
-        var output = '>>> ledger.get_digital_thread(platform="DDG-51 Flight III")\n\nPOST /api/digital-thread  \u2192  200 OK\n\n';
-        output += '\u2550'.repeat(55) + '\n';
-        output += '  DIGITAL THREAD \u2014 DDG-51 Flight III\n';
-        output += '\u2550'.repeat(55) + '\n\n';
-        output += '  View:                Engineering Changes\n';
-        output += '  Active ECPs:         14\n';
-        output += '  Pending Approval:    5\n';
-        output += '  Implemented:         42\n\n';
-        output += '\u2500'.repeat(55) + '\n';
-        output += 'RECENT ENGINEERING CHANGES:\n';
-        output += '  ECP-2025-031 [Class I]  SPY-6 software v4.2 update\n';
-        output += '    Status: Under Review | Impact: High\n';
-        output += '    Affected Configs: ABL, Product Baseline\n\n';
-        output += '  ECP-2025-028 [Class II] HVAC filter redesign\n';
-        output += '    Status: Approved | Impact: Low\n';
-        output += '    Affected Configs: Product Baseline\n\n';
-        output += '  ECP-2025-025 [Class I]  Hull coating material change\n';
-        output += '    Status: Implemented | Impact: Medium\n';
-        output += '    Affected Configs: FBL, ABL, Product Baseline\n\n';
-        output += 'CONFIG VIEWS AVAILABLE:\n';
-        output += '  1. Engineering Changes (ECP Class I/II)\n';
-        output += '  2. BOM Revisions (multi-level)\n';
-        output += '  3. Configuration Baselines (FBL/ABL/Product)\n';
-        output += '  4. TDP Versions\n\n';
-        output += '\u2500'.repeat(55) + '\n';
-        output += '\u2713 32 platform configurations with variant designators\n';
-        output += '\u2713 Full config management in Demo App > ILS Workspace';
-        return output;
-    }
 
     async function runPredictiveMaintenance() {
         var output = '>>> ledger.predict_maintenance(platform="F-35A", fleet_size=450)\n\nPOST /api/predictive-maintenance  \u2192  200 OK\n\n';
@@ -1264,26 +1141,6 @@
         return output;
     }
 
-    async function runDbImport() {
-        var output = '>>> ledger.import_defense_data(source="NSERC", format="csv")\n\nPOST /api/db-import  \u2192  200 OK\n\n';
-        output += '\u2550'.repeat(55) + '\n';
-        output += '  DEFENSE DATABASE IMPORT \u2014 24+ SYSTEMS\n';
-        output += '\u2550'.repeat(55) + '\n\n';
-        output += '  Source System:  NSERC\n';
-        output += '  Records Found:  47\n';
-        output += '  Hashed:         47\n';
-        output += '  Anchored:       47\n';
-        output += '  Types Detected: [USN_CONFIG, USN_TDP, USN_CDRL]\n\n';
-        var fakeHash = await computeHash('DB Import NSERC ' + Date.now());
-        output += '\u2500'.repeat(55) + '\n';
-        output += '  Hash: ' + fakeHash.substring(0,32) + '...\n';
-        output += '  \u2713 All records anchored to XRPL \n';
-        output += '  \u2713 Supports: NSERC, DPAS, FLIS, FEDLOG, HAYSTACK,\n';
-        output += '    PIIN, NIIN, CAGE, FSC, SL-3, COSAL, APL/AEL,\n';
-        output += '    OMMS-NG, 3M/MDS, OARS, NALDA, DECKPLATE, iRAPT,\n';
-        output += '    PIEE, WAWF, DLA BSM, GCSS-MC, GCSS-Army, LMP';
-        return output;
-    }
 
     async function runCompliance() {
         var output = '>>> ledger.calculate_compliance(program="CVN-78")\n\nPOST /api/compliance  \u2192  200 OK\n\n';
@@ -1301,40 +1158,7 @@
         return output;
     }
 
-    async function runCalendar() {
-        var output = '>>> ledger.get_calendar_events(program="F-35A", range=90)\n\nGET /api/calendar  \u2192  200 OK\n\n';
-        output += '\u2550'.repeat(55) + '\n';
-        output += '  ILS CALENDAR \u2014 MILESTONES & DEADLINES\n';
-        output += '\u2550'.repeat(55) + '\n\n';
-        output += '  2026-02-28 \u2014 CDRL A003 PPL Due (CDRL)\n';
-        output += '  2026-03-15 \u2014 ILSP Final Submission (Milestone)\n';
-        output += '  2026-04-01 \u2014 Quarterly ILS Review (Meeting)\n';
-        output += '  2026-04-15 \u2014 SERD Data Due (CDRL)\n';
-        output += '  2026-05-01 \u2014 Mid-Year Readiness Assessment (Review)\n\n';
-        output += '\u2500'.repeat(55) + '\n';
-        output += '  \u2713 5 events in next 90 days\n';
-        output += '  \u2713 Full calendar in Demo App > ILS Workspace';
-        return output;
-    }
 
-    async function runPartsXref() {
-        var output = '>>> ledger.cross_reference_parts(nsn="5998-01-422-7891")\n\nPOST /api/parts-xref  \u2192  200 OK\n\n';
-        output += '\u2550'.repeat(55) + '\n';
-        output += '  PARTS CROSS-REFERENCE\n';
-        output += '\u2550'.repeat(55) + '\n\n';
-        output += '  NSN:           5998-01-422-7891\n';
-        output += '  Part Number:   6872843-1\n';
-        output += '  CAGE:          53711\n';
-        output += '  Nomenclature:  Circuit Card Assy, Radar Interface\n\n';
-        output += '  Sources Found: 3\n';
-        output += '    FLIS:      $12,450.00 \u2014 Available\n';
-        output += '    DLA:       $11,890.00 \u2014 30-day lead time\n';
-        output += '    HAYSTACK:  $12,100.00 \u2014 In stock\n\n';
-        output += '\u2500'.repeat(55) + '\n';
-        output += '  \u2713 Cross-reference complete\n';
-        output += '  \u2713 Full parts tool in Demo App > ILS Workspace';
-        return output;
-    }
 
     async function runDocLibrary() {
         var output = '>>> ledger.search_documents(query="logistics support")\n\nGET /api/doc-library  \u2192  200 OK\n\n';
