@@ -39,21 +39,21 @@
     </style>
 </head>
 <body>
-<nav class="nav" id="mainNav">
-    <div class="nav-inner">
-        <a href="/" class="nav-brand">
-            <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger">
+<nav id="mainNav" style="position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(5,8,16,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);height:64px;">
+    <div style="max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:100%;">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:1rem;">
+            <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:32px;width:32px;">
             <span>S4 Ledger</span>
         </a>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="/demo-app/">Platform</a></li>
-            <li><a href="/s4-use-cases/">Use Cases</a></li>
-            <li><a href="/s4-pricing/">Pricing</a></li>
-            <li><a href="/s4-investors/">Company</a></li>
-            <li><a href="https://github.com/s4ledger/s4-ledger" target="_blank">Docs</a></li>
-            <li><a href="/s4-contact/" class="nav-cta">Request Demo</a></li>
+        <ul id="navLinks" style="display:flex;align-items:center;gap:0.25rem;list-style:none;margin:0;padding:0;">
+            <li><a href="/demo-app/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Platform</a></li>
+            <li><a href="/s4-use-cases/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Use Cases</a></li>
+            <li><a href="/s4-pricing/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Pricing</a></li>
+            <li><a href="/s4-investors/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Company</a></li>
+            <li><a href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Docs</a></li>
+            <li><a href="/s4-contact/" style="background:#00aaff;color:#fff;padding:0.5rem 1.25rem;font-size:0.875rem;font-weight:600;text-decoration:none;border-radius:6px;margin-left:0.5rem;">Request Demo</a></li>
         </ul>
-        <button class="nav-mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">
+        <button onclick="var nl=document.getElementById('navLinks');nl.style.display=nl.style.display==='flex'?'none':'flex';" aria-label="Menu" style="display:none;background:none;border:none;color:#fff;font-size:1.25rem;cursor:pointer;padding:0.5rem;">
             <i class="fas fa-bars"></i>
         </button>
     </div>
