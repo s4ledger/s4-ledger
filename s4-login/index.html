@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../s4-assets/style.css">
+    <link rel="stylesheet" href="/s4-assets/style.css">
     <style>
         .login-container{max-width:460px;margin:0 auto;padding-top:8rem}
         .login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem;position:relative;overflow:hidden}
@@ -134,28 +134,61 @@
     </style>
 </head>
 <body>
+<div class="mesh-bg"><div class="gradient-orb orb-1"></div><div class="gradient-orb orb-2"></div><div class="gradient-orb orb-3"></div></div>
 <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="../"><img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" class="nav-logo"><span class="brand-text">S4 Ledger</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><i class="fas fa-bars" style="color:#fff"></i></button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto" id="navLinks">
-                    <li class="nav-item"><a class="nav-link" href="../">Home</a></li>
-                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Company</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1);"><li><a class="dropdown-item" href="../s4-about/" style="color:#fff;">About Us</a></li><li><a class="dropdown-item" href="../s4-investors/" style="color:#fff;">Investors</a></li><li><a class="dropdown-item" href="../s4-partners/" style="color:#fff;">Partners</a></li></ul></li>
-                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Products</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1);"><li><a class="dropdown-item" href="../demo-app/" style="color:#fff;"><i class="fas fa-play-circle" style="width:18px;margin-right:6px;color:#00aaff;"></i>Demo App</a></li><li><a class="dropdown-item" href="../sdk-playground/" style="color:#fff;"><i class="fas fa-code" style="width:18px;margin-right:6px;color:#c9a84c;"></i>SDK Playground</a></li><li><a class="dropdown-item" href="../metrics.html" style="color:#fff;"><i class="fas fa-chart-bar" style="width:18px;margin-right:6px;color:#00aaff;"></i>Live Metrics</a></li><li><a class="dropdown-item" href="../transactions.html" style="color:#fff;"><i class="fas fa-list" style="width:18px;margin-right:6px;color:#c9a84c;"></i>Transactions</a></li><li><a class="dropdown-item" href="../s4-marketplace/" style="color:#fff;"><i class="fas fa-store" style="width:18px;margin-right:6px;color:#a855f7;"></i>Marketplace</a></li><li><a class="dropdown-item" href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:#fff;"><i class="fab fa-github" style="width:18px;margin-right:6px;"></i>SDK & Docs</a></li></ul></li>
-                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">More</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1);"><li><a class="dropdown-item" href="../s4-use-cases/" style="color:#fff;"><i class="fas fa-crosshairs" style="width:18px;margin-right:6px;color:#14f195;"></i>Use Cases</a></li><li><a class="dropdown-item" href="../s4-pricing/" style="color:#fff;"><i class="fas fa-tags" style="width:18px;margin-right:6px;color:#c9a84c;"></i>Pricing</a></li><li><a class="dropdown-item" href="../s4-roadmap/" style="color:#fff;"><i class="fas fa-road" style="width:18px;margin-right:6px;color:#00aaff;"></i>Roadmap</a></li><li><a class="dropdown-item" href="../s4-faq/" style="color:#fff;"><i class="fas fa-circle-question" style="width:18px;margin-right:6px;color:#ffa500;"></i>FAQ</a></li><li><a class="dropdown-item" href="../s4-contact/" style="color:#fff;"><i class="fas fa-envelope" style="width:18px;margin-right:6px;color:#a855f7;"></i>Contact</a></li></ul></li>
-                    <li class="nav-item" id="navLoginItem"><a class="nav-link active" href="./" style="color:#00aaff !important;font-weight:700"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                </ul>
-            </div>
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/s4-assets/S4Ledger_logo.png" alt="S4" class="nav-logo">
+            <span class="brand-text">S4 Ledger</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center gap-1" id="navLinks">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Company</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/s4-about/"><i class="fas fa-building dd-accent"></i> About</a></li>
+                        <li><a class="dropdown-item" href="/s4-investors/"><i class="fas fa-chart-line dd-accent"></i> Investors</a></li>
+                        <li><a class="dropdown-item" href="/s4-partners/"><i class="fas fa-handshake dd-accent"></i> Partners</a></li>
+                        <li><a class="dropdown-item" href="/s4-contact/"><i class="fas fa-envelope dd-accent"></i> Contact</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Products</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/demo-app/"><i class="fas fa-terminal dd-green"></i> ILS Workspace</a></li>
+                        <li><a class="dropdown-item" href="/sdk-playground/"><i class="fas fa-code dd-gold"></i> SDK Playground</a></li>
+                        <li><a class="dropdown-item" href="/sdk/"><i class="fas fa-book dd-gold"></i> SDK Docs</a></li>
+                        <li><a class="dropdown-item" href="/s4-marketplace/"><i class="fas fa-store dd-purple"></i> Marketplace</a></li>
+                        <li><a class="dropdown-item" href="/metrics.html"><i class="fas fa-chart-bar dd-accent"></i> Metrics</a></li>
+                        <li><a class="dropdown-item" href="/transactions.html"><i class="fas fa-exchange-alt dd-accent"></i> Transactions</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">More</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/s4-use-cases/"><i class="fas fa-boxes-stacked dd-orange"></i> Use Cases</a></li>
+                        <li><a class="dropdown-item" href="/s4-pricing/"><i class="fas fa-tags dd-accent"></i> Pricing</a></li>
+                        <li><a class="dropdown-item" href="/s4-roadmap/"><i class="fas fa-road dd-accent"></i> Roadmap</a></li>
+                        <li><a class="dropdown-item" href="/s4-faq/"><i class="fas fa-question-circle dd-accent"></i> FAQ</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item" id="navLoginItem">
+                    <a class="nav-link active" href="/s4-login/" style="color:#00aaff !important;font-weight:700"><i class="fas fa-sign-in-alt"></i> Login</a>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- LOGIN FORM -->
     <div id="loginView" class="login-container">
         <div class="login-card">
             <div class="login-logo">
-                <img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger">
+                <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger">
                 <h2>Welcome Back</h2>
                 <p>Sign in to your S4 Ledger account</p>
             </div>
@@ -210,7 +243,7 @@
         <!-- SIGNUP FORM -->
         <div class="signup-view" id="signupView">
             <div class="login-logo">
-                <img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:50px;width:50px;margin-bottom:8px">
+                <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:50px;width:50px;margin-bottom:8px">
                 <h2>Create Your Account</h2>
                 <p>Get your XRPL wallet automatically</p>
             </div>
@@ -446,67 +479,67 @@
         </div>
 
         <div class="dash-grid">
-            <a href="../demo-app/#tabILS" class="dash-card">
+            <a href="/demo-app/#tabILS" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-brain" style="color:var(--accent)"></i></div>
                 <h4>ILS Workspace</h4>
                 <p>13-tool command center — gap analysis, action items, DMSMS, readiness, ROI, lifecycle cost, audit vault, doc library, compliance, supply chain risk, audit reports, predictive maintenance, and ILIE — all across 500+ platforms.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../demo-app/#tabAnchor" class="dash-card">
+            <a href="/demo-app/#tabAnchor" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-anchor" style="color:var(--accent)"></i></div>
                 <h4>Anchor Records</h4>
                 <p>Hash-anchor any defense record to the XRPL — 156+ pre-built templates across 9 branches with CUI encryption, classification banners, and XRPL verification links.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../demo-app/#tabVerify" class="dash-card">
+            <a href="/demo-app/#tabVerify" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-search" style="color:var(--accent)"></i></div>
                 <h4>Verify Records</h4>
                 <p>Cryptographic verification — paste content to recompute SHA-256 hash and compare against the immutable XRPL anchor. Instant proof of integrity.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../demo-app/#hub-vault" class="dash-card">
+            <a href="/demo-app/#hub-vault" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-landmark" style="color:var(--accent)"></i></div>
                 <h4>Audit Record Vault</h4>
                 <p>Auto-stored anchored records with full content, hash, timestamp, branch, and XRPL TX link. Filterable, searchable, and exportable. Persists to IndexedDB.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../demo-app/" class="dash-card">
+            <a href="/demo-app/" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-arrow-up-right-from-square" style="color:#a855f7"></i></div>
                 <h4>HarborLink Tools</h4>
                 <p>Additional ILS tools — Parts Cross-Reference, Contracts, Digital Thread, Warranty Tracker, ILS Calendar, Provisioning, and Defense Database Import — are available through HarborLink, S4 Systems' collaboration portal.</p>
                 <span class="dash-badge beta">HARBORLINK</span>
             </a>
-            <a href="../demo-app/" class="dash-card">
+            <a href="/demo-app/" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-file-pdf" style="color:#ff6b6b"></i></div>
                 <h4>PDF & CSV Export</h4>
                 <p>Generate professional PDF reports with classification banners, executive summary, gap analysis, action items, and vault records. Export vault & action items as CSV.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../demo-app/" class="dash-card">
+            <a href="/demo-app/" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-user-plus" style="color:#14f195"></i></div>
                 <h4>Task Assignment & Collaboration</h4>
                 <p>Assign action items to team members with priority, due dates, and status tracking. Comment threads, notification toasts, and team roster management.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../demo-app/" class="dash-card">
+            <a href="/demo-app/" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-user-shield" style="color:#c9a84c"></i></div>
                 <h4>Authentication & Sessions</h4>
                 <p>Role-based access control (admin, manager, analyst, auditor, viewer), session management, user preferences, and activity tracking with auto-save.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../sdk-playground/" class="dash-card">
+            <a href="/sdk-playground/" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-code" style="color:var(--accent)"></i></div>
                 <h4>SDK Playground</h4>
                 <p>Interactive Python SDK sandbox — 27 functions with card-style testing, any record type. Anchor, verify, batch process, and query records programmatically.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../s4-marketplace/" class="dash-card">
+            <a href="/s4-marketplace/" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-store" style="color:#a855f7"></i></div>
                 <h4>Marketplace</h4>
                 <p>Browse and deploy S4 Ledger integrations, templates, and connectors for defense logistics systems — GCSS-Army, NALCOMIS, CDMD-OA, and more.</p>
                 <span class="dash-badge live">LIVE</span>
             </a>
-            <a href="../metrics.html" class="dash-card">
+            <a href="/metrics.html" class="dash-card">
                 <div class="dash-card-icon"><i class="fas fa-chart-bar" style="color:var(--accent)"></i></div>
                 <h4>Live Metrics</h4>
                 <p>Real-time platform statistics — anchor counts by branch, active programs, $SLS token activity, and system health monitoring with auto-refresh.</p>
@@ -559,13 +592,54 @@
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" class="footer-logo">
-            <a href="../">S4 Ledger</a> — Hash-Verified Logistics for the Defense Industry<br>
-            <span style="font-size:0.8rem;">© 2026 S4 Ledger. All Rights Reserved.</span>
+    <footer class="site-footer">
+    <div class="footer-grid">
+        <div>
+            <a href="/" class="footer-brand-link">
+                <img src="/s4-assets/S4Ledger_logo.png" alt="S4">
+                S4 Ledger
+            </a>
+            <p class="footer-tagline">Immutable logistics verification anchored to the XRP Ledger. The secure standard for defense and enterprise supply chains.</p>
+            <div class="footer-social">
+                <a href="https://github.com/S4-Ledger" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://x.com/S4Ledger" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://discord.gg/s4ledger" aria-label="Discord"><i class="fab fa-discord"></i></a>
+            </div>
         </div>
-    </footer>
+        <div class="footer-col">
+            <h5>Product</h5>
+            <a href="/demo-app/">ILS Workspace</a>
+            <a href="/sdk/">SDK Docs</a>
+            <a href="/sdk-playground/">SDK Playground</a>
+            <a href="/s4-marketplace/">Marketplace</a>
+            <a href="/s4-pricing/">Pricing</a>
+        </div>
+        <div class="footer-col">
+            <h5>Company</h5>
+            <a href="/s4-about/">About</a>
+            <a href="/s4-investors/">Investors</a>
+            <a href="/s4-partners/">Partners</a>
+            <a href="/s4-roadmap/">Roadmap</a>
+            <a href="/s4-contact/">Contact</a>
+        </div>
+        <div class="footer-col">
+            <h5>Resources</h5>
+            <a href="/s4-use-cases/">Use Cases</a>
+            <a href="/s4-faq/">FAQ</a>
+            <a href="/metrics.html">Metrics</a>
+            <a href="/transactions.html">Transactions</a>
+            <a href="/security/">Security</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2025 S4 Ledger. All rights reserved.</span>
+        <div class="footer-bottom-links">
+            <a href="/s4-terms/">Terms</a>
+            <a href="/s4-privacy/">Privacy</a>
+            <a href="/security/">Security</a>
+        </div>
+    </div>
+</footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -585,9 +659,9 @@
     function updateNavForAuth(loggedIn, userName) {
         const navLoginItem = document.getElementById('navLoginItem');
         if (loggedIn && userName) {
-            navLoginItem.innerHTML = '<a class="nav-link" href="./" style="color:#14f195 !important;font-weight:700"><i class="fas fa-user-circle"></i> ' + userName + '</a>';
+            navLoginItem.innerHTML = '<a class="nav-link" href="/s4-login/" style="color:#14f195 !important;font-weight:700"><i class="fas fa-user-circle"></i> ' + userName + '</a>';
         } else {
-            navLoginItem.innerHTML = '<a class="nav-link active" href="./" style="color:#00aaff !important;font-weight:700"><i class="fas fa-sign-in-alt"></i> Login</a>';
+            navLoginItem.innerHTML = '<a class="nav-link active" href="/s4-login/" style="color:#00aaff !important;font-weight:700"><i class="fas fa-sign-in-alt"></i> Login</a>';
         }
     }
 
@@ -921,7 +995,7 @@
         }
     });
     </script>
-<script src="../s4-assets/s4-background.js"></script>
+<script src="/s4-assets/s4-background.js"></script>
 <link rel="stylesheet" href="/s4-assets/s4-mobile.css">
 <script src="/s4-assets/s4-auth.js"></script>
 <script src="/s4-assets/s4-data.js"></script>

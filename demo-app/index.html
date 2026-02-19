@@ -20,7 +20,7 @@
     <script src="/s4-assets/platforms.js"></script>
     <script src="/s4-assets/defense-docs.js"></script>
     <style>
-        :root{--bg:#050810;--surface:#0a1020;--card:#0f1630;--border:#1a2550;--accent:#00aaff;--gold:#c9a84c;--steel:#8ea4b8;--green:#14f195;--red:#ff6b6b;--text:#e0e8f0;--muted:#6b7d93}
+        :root{--bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:rgba(255,255,255,0.08);--accent:#00aaff;--gold:#c9a84c;--steel:#8ea4b8;--green:#14f195;--red:#ff6b6b;--text:#f0f0f5;--muted:#5a5e72}
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
         .navbar-custom{background:rgba(5,8,16,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 0;position:fixed;top:0;width:100%;z-index:1000}
@@ -28,6 +28,15 @@
         .brand-text{background:linear-gradient(135deg,#00aaff,#ffffff,#c9a84c);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:brandGradient 4s ease infinite;font-size:1.2rem;letter-spacing:0.5px}
         .nav-link{color:#fff!important;padding:8px 12px!important;font-size:0.9rem!important;font-weight:500;transition:color 0.2s}
         .nav-link:hover,.nav-link.active{color:var(--accent)!important}
+        .dropdown-menu{background:rgba(10,10,15,0.98)!important;border:1px solid rgba(255,255,255,0.08)!important;border-radius:12px;padding:8px 0}
+        .dropdown-item{color:var(--steel)!important;padding:8px 18px;font-size:0.875rem;transition:all 0.2s}
+        .dropdown-item:hover,.dropdown-item:focus{background:rgba(0,170,255,0.08)!important;color:var(--accent)!important}
+        .dropdown-item i{width:18px;margin-right:6px;display:inline-block;text-align:center}
+        .dd-accent{color:var(--accent)}.dd-gold{color:var(--gold)}.dd-green{color:var(--green)}.dd-purple{color:#a855f7}.dd-orange{color:#ffa500}
+        .btn-accent{background:var(--accent);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-weight:600;cursor:pointer;display:inline-block;transition:all 0.2s;font-size:0.9rem;text-decoration:none}
+        .btn-accent:hover{background:#0099ee;color:#fff}
+        .search-btn{background:none;border:none;cursor:pointer;padding:8px 12px;color:var(--steel);transition:color 0.2s}
+        .search-btn:hover{color:var(--text)}
         .hero{padding:7.5rem 0 3rem;text-align:center;background:linear-gradient(180deg,rgba(0,170,255,0.05) 0%,transparent 60%)}
         .hero h1{font-size:2.4rem;font-weight:800;margin-bottom:0.75rem}.hero h1 .accent{color:var(--accent)}.hero h1 .gold{color:var(--gold)}
         .hero p{color:var(--steel);font-size:1.1rem;max-width:700px;margin:0 auto 1.5rem}
@@ -357,15 +366,47 @@
 
 <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container">
-        <a class="navbar-brand" href="../"><img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" class="nav-logo"><span class="brand-text">S4 Ledger</span></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><i class="fas fa-bars" style="color:#fff"></i></button>
+        <a class="navbar-brand" href="/">
+            <img src="/s4-assets/S4Ledger_logo.png" alt="S4" class="nav-logo">
+            <span class="brand-text">S4 Ledger</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="fas fa-bars" style="color:#fff"></i>
+        </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="../">Home</a></li>
-                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Company</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="../s4-about/" style="color:#fff">About Us</a></li><li><a class="dropdown-item" href="../s4-investors/" style="color:#fff">Investors</a></li><li><a class="dropdown-item" href="../s4-partners/" style="color:#fff">Partners</a></li></ul></li>
-                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Products</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="#" style="color:#fff;font-weight:600"><i class="fas fa-play-circle" style="width:18px;margin-right:6px;color:#00aaff"></i>Demo App</a></li><li><a class="dropdown-item" href="../sdk-playground/" style="color:#fff"><i class="fas fa-code" style="width:18px;margin-right:6px;color:#c9a84c"></i>SDK Playground</a></li><li><a class="dropdown-item" href="../s4-marketplace/" style="color:#fff"><i class="fas fa-store" style="width:18px;margin-right:6px;color:#a855f7"></i>Marketplace</a></li><li><a class="dropdown-item" href="../metrics.html" style="color:#fff"><i class="fas fa-chart-bar" style="width:18px;margin-right:6px;color:#00aaff"></i>Live Metrics</a></li><li><a class="dropdown-item" href="../transactions.html" style="color:#fff"><i class="fas fa-list" style="width:18px;margin-right:6px;color:#c9a84c"></i>Transactions</a></li><li><a class="dropdown-item" href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:#fff"><i class="fab fa-github" style="width:18px;margin-right:6px"></i>SDK & Docs</a></li></ul></li>
-                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">More</a><ul class="dropdown-menu" style="background:rgba(5,8,16,0.98);border:1px solid rgba(255,255,255,0.1)"><li><a class="dropdown-item" href="../s4-use-cases/" style="color:#fff"><i class="fas fa-crosshairs" style="width:18px;margin-right:6px;color:#14f195"></i>Use Cases</a></li><li><a class="dropdown-item" href="../s4-pricing/" style="color:#fff"><i class="fas fa-tags" style="width:18px;margin-right:6px;color:#c9a84c"></i>Pricing</a></li><li><a class="dropdown-item" href="../s4-roadmap/" style="color:#fff"><i class="fas fa-road" style="width:18px;margin-right:6px;color:#00aaff"></i>Roadmap</a></li><li><a class="dropdown-item" href="../s4-faq/" style="color:#fff"><i class="fas fa-circle-question" style="width:18px;margin-right:6px;color:#ffa500"></i>FAQ</a></li><li><a class="dropdown-item" href="../s4-contact/" style="color:#fff"><i class="fas fa-envelope" style="width:18px;margin-right:6px;color:#a855f7"></i>Contact</a></li></ul></li>
-                <li class="nav-item"><a class="nav-link" href="../s4-login/" style="color:#00aaff !important;font-weight:700"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            <ul class="navbar-nav ms-auto align-items-center gap-1">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Company</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/s4-about/"><i class="fas fa-building dd-accent"></i> About</a></li>
+                        <li><a class="dropdown-item" href="/s4-investors/"><i class="fas fa-chart-line dd-accent"></i> Investors</a></li>
+                        <li><a class="dropdown-item" href="/s4-partners/"><i class="fas fa-handshake dd-accent"></i> Partners</a></li>
+                        <li><a class="dropdown-item" href="/s4-contact/"><i class="fas fa-envelope dd-accent"></i> Contact</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Products</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/demo-app/"><i class="fas fa-terminal dd-green"></i> ILS Workspace</a></li>
+                        <li><a class="dropdown-item" href="/sdk-playground/"><i class="fas fa-code dd-gold"></i> SDK Playground</a></li>
+                        <li><a class="dropdown-item" href="/sdk/"><i class="fas fa-book dd-gold"></i> SDK Docs</a></li>
+                        <li><a class="dropdown-item" href="/s4-marketplace/"><i class="fas fa-store dd-purple"></i> Marketplace</a></li>
+                        <li><a class="dropdown-item" href="/metrics.html"><i class="fas fa-chart-bar dd-accent"></i> Metrics</a></li>
+                        <li><a class="dropdown-item" href="/transactions.html"><i class="fas fa-exchange-alt dd-accent"></i> Transactions</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">More</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/s4-use-cases/"><i class="fas fa-boxes-stacked dd-orange"></i> Use Cases</a></li>
+                        <li><a class="dropdown-item" href="/s4-pricing/"><i class="fas fa-tags dd-accent"></i> Pricing</a></li>
+                        <li><a class="dropdown-item" href="/s4-roadmap/"><i class="fas fa-road dd-accent"></i> Roadmap</a></li>
+                        <li><a class="dropdown-item" href="/s4-faq/"><i class="fas fa-question-circle dd-accent"></i> FAQ</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="btn-accent" href="/s4-login/" style="font-size:0.85rem;padding:8px 18px">Sign In</a>
+                </li>
             </ul>
             <button class="notif-bell" onclick="toggleNotifPanel()" title="Alerts & Notifications"><i class="fas fa-bell"></i><span class="notif-badge" id="notifBadge"></span></button>
         </div>
@@ -1737,7 +1778,7 @@
                         <h5 style="font-size:0.88rem;font-weight:700;color:#c9a84c;margin-bottom:8px"><i class="fas fa-gavel" style="margin-right:6px"></i>Regulatory Notice</h5>
                         <p style="font-size:0.78rem;color:var(--steel);margin-bottom:6px">$SLS is a <strong style="color:#fff">utility token</strong> used exclusively for platform service fees (anchoring, verification, and record integrity operations). SLS is not equity, not a security, and confers no ownership, governance rights, or expectation of profit.</p>
                         <p style="font-size:0.78rem;color:var(--steel);margin-bottom:6px">SLS tokens are <strong style="color:#fff">purchased at fair market value</strong> via your subscription plan (USD → XRP → SLS on XRPL DEX). They are consumed as services are used and have no cash value or redemption mechanism outside the S4 Ledger platform. SLS is never given away for free — all SLS is purchased through transparent, auditable on-chain transactions.</p>
-                        <p style="font-size:0.72rem;color:var(--muted);margin:0">S4 Systems, LLC is committed to full regulatory compliance and maintains ongoing legal counsel for digital asset classification under SEC, FinCEN, and state-level guidance. <a href="../s4-terms/" style="color:var(--accent)">Terms of Service</a> | <a href="../SEC_COMPLIANCE.md" style="color:var(--accent)">SEC Compliance</a></p>
+                        <p style="font-size:0.72rem;color:var(--muted);margin:0">S4 Systems, LLC is committed to full regulatory compliance and maintains ongoing legal counsel for digital asset classification under SEC, FinCEN, and state-level guidance. <a href="/s4-terms/" style="color:var(--accent)">Terms of Service</a> | <a href="../SEC_COMPLIANCE.md" style="color:var(--accent)">SEC Compliance</a></p>
                     </div>
 
                 </div>
@@ -1811,13 +1852,52 @@
     </div>
 </div>
 
-<footer>
-    <div class="container">
-        <div style="margin-bottom:12px;"><img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" class="footer-logo"><span style="font-weight:700;font-size:1.1rem;">S4 Ledger</span><span style="color:var(--muted);margin-left:5px;">&mdash; Secure Logistics Standard</span></div>
-        <p style="font-size:0.82rem;margin-bottom:10px;">Immutable logistics verification for the defense industry. Built on the XRP Ledger.</p>
-        <div style="margin-bottom:10px;"><a href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:var(--muted);margin:0 10px;text-decoration:none;"><i class="fab fa-github fa-lg"></i></a><a href="https://x.com/S4_Ledger" target="_blank" style="color:var(--muted);margin:0 10px;text-decoration:none;"><i class="fab fa-x-twitter fa-lg"></i></a><a href="https://linkedin.com" target="_blank" style="color:var(--muted);margin:0 10px;text-decoration:none;"><i class="fab fa-linkedin fa-lg"></i></a></div>
-        <div style="margin-bottom:10px;font-size:0.78rem;"><a href="../s4-terms/" style="color:var(--muted);margin:0 10px;text-decoration:none;">Terms of Service</a><a href="../s4-privacy/" style="color:var(--muted);margin:0 10px;text-decoration:none;">Privacy Policy</a><a href="../security/" style="color:var(--muted);margin:0 10px;text-decoration:none;">Security</a></div>
-        <p style="font-size:0.75rem;color:var(--muted);">$SLS is a utility token &mdash; not equity or an investment contract. &copy; 2026 S4 Ledger. Powered by XRPL Mainnet.</p>
+<footer class="site-footer" style="border-top:1px solid var(--border);padding:40px 24px 30px;margin-top:3rem">
+    <div class="footer-grid" style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:30px">
+        <div>
+            <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:700;font-size:1.1rem;margin-bottom:12px">
+                <img src="/s4-assets/S4Ledger_logo.png" alt="S4" style="height:32px;width:32px">
+                S4 Ledger
+            </a>
+            <p style="color:var(--muted);font-size:0.85rem;line-height:1.6;margin-bottom:16px">Immutable logistics verification anchored to the XRP Ledger. The secure standard for defense and enterprise supply chains.</p>
+            <div style="display:flex;gap:16px">
+                <a href="https://github.com/S4-Ledger" style="color:var(--muted);font-size:1.1rem;text-decoration:none"><i class="fab fa-github"></i></a>
+                <a href="https://x.com/S4Ledger" style="color:var(--muted);font-size:1.1rem;text-decoration:none"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://discord.gg/s4ledger" style="color:var(--muted);font-size:1.1rem;text-decoration:none"><i class="fab fa-discord"></i></a>
+            </div>
+        </div>
+        <div>
+            <h5 style="color:var(--muted);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px">Product</h5>
+            <a href="/demo-app/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">ILS Workspace</a>
+            <a href="/sdk/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">SDK Docs</a>
+            <a href="/sdk-playground/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">SDK Playground</a>
+            <a href="/s4-marketplace/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Marketplace</a>
+            <a href="/s4-pricing/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Pricing</a>
+        </div>
+        <div>
+            <h5 style="color:var(--muted);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px">Company</h5>
+            <a href="/s4-about/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">About</a>
+            <a href="/s4-investors/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Investors</a>
+            <a href="/s4-partners/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Partners</a>
+            <a href="/s4-roadmap/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Roadmap</a>
+            <a href="/s4-contact/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Contact</a>
+        </div>
+        <div>
+            <h5 style="color:var(--muted);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px">Resources</h5>
+            <a href="/s4-use-cases/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Use Cases</a>
+            <a href="/s4-faq/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">FAQ</a>
+            <a href="/metrics.html" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Metrics</a>
+            <a href="/transactions.html" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Transactions</a>
+            <a href="/security/" style="display:block;color:var(--steel);font-size:0.875rem;text-decoration:none;margin-bottom:10px">Security</a>
+        </div>
+    </div>
+    <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--border);font-size:0.8125rem;color:var(--muted)">
+        <span>&copy; 2025 S4 Ledger. All rights reserved. $SLS is a utility token — not equity or an investment contract.</span>
+        <div style="display:flex;gap:24px">
+            <a href="/s4-terms/" style="color:var(--muted);text-decoration:none">Terms</a>
+            <a href="/s4-privacy/" style="color:var(--muted);text-decoration:none">Privacy</a>
+            <a href="/security/" style="color:var(--muted);text-decoration:none">Security</a>
+        </div>
     </div>
 </footer>
 
@@ -4888,7 +4968,7 @@ function generateAiResponse(query) {
     if (/dfars|252\.204|safeguard.*defense|covered.*defense/.test(q)) return '<strong>DFARS 252.204-7012</strong> \u2014 Safeguarding Covered Defense Information<br><br>Key requirements:<br>\u2022 Implement NIST SP 800-171 controls for CDI/CUI<br>\u2022 Report cyber incidents within 72 hours<br>\u2022 Preserve media and data for 90 days post-incident<br>\u2022 Flow down to subcontractors<br><br>S4\'s blockchain anchoring creates verifiable evidence of data integrity controls, directly supporting DFARS compliance.' + demoNote;
 
     // ── GENERAL HELP ──
-    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="../s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore the ILS Workspace</strong> \u2014 13 tools organized by function<br>3. <strong>Try a demo analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.' + demoNote;
+    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore the ILS Workspace</strong> \u2014 13 tools organized by function<br>3. <strong>Try a demo analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.' + demoNote;
 
     if (/configure.*ai|api.*key|ai.*setup|enable.*ai|openai|anthropic|azure|groq|mistral/.test(q)) return '<strong>Configuring the AI Agent</strong><br><br>The AI Agent works in two modes:<br><br><strong>1. Demo Mode (default):</strong><br>\u2022 200+ pre-built response patterns<br>\u2022 Covers all 13 ILS tools, defense standards, pricing, wallets<br>\u2022 Context-aware \u2014 adapts responses based on loaded analysis<br>\u2022 No API key required<br><br><strong>2. Full AI Mode (API key required):</strong><br>\u2022 Powered by OpenAI, Azure OpenAI, Anthropic Claude, Mistral, or Groq<br>\u2022 Open-ended Q&A on any topic<br>\u2022 Advanced document analysis and summarization<br>\u2022 Custom report generation<br><br><strong>To enable Full AI Mode:</strong><br>Set <code>AI_ENGINE_CONFIG.enabled = true</code> and provide your <code>endpoint</code> and <code>apiKey</code> in the configuration. Supported providers: Azure OpenAI, OpenAI-compatible, AWS Bedrock.' + demoNote;
 
@@ -4898,7 +4978,7 @@ function generateAiResponse(query) {
 
     if (/sdk|api|developer|integrate|rest.*api|python.*sdk/.test(q)) return '<strong>S4 Ledger SDK & API</strong><br><br><strong>REST API:</strong><br>\u2022 29 endpoints covering all platform functionality<br>\u2022 JSON request/response format<br>\u2022 API key authentication<br>\u2022 Rate limiting per subscription tier<br><br><strong>Python SDK:</strong><br>\u2022 27 functions wrapping all API endpoints<br>\u2022 <code>pip install s4-sdk</code> (PyPI)<br>\u2022 Async support, retry logic, error handling<br>\u2022 Full documentation at <a href="../sdk/">sdk/</a><br><br><strong>Key endpoints:</strong><br>\u2022 <code>POST /api/anchor</code> \u2014 anchor a hash to XRPL<br>\u2022 <code>GET /api/verify/{hash}</code> \u2014 verify a record<br>\u2022 <code>POST /api/wallet/provision</code> \u2014 create a new wallet<br>\u2022 <code>GET /api/metrics</code> \u2014 platform metrics' + demoNote;
 
-    if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoD domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="../s4-about/">About page</a>.' + demoNote;
+    if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoD domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="/s4-about/">About page</a>.' + demoNote;
 
     if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 13 ILS tools<br><br>What can I help you with?' + demoNote;
 
@@ -6914,7 +6994,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
-<script src="../s4-assets/s4-background.js"></script>
+<script src="/s4-assets/s4-background.js"></script>
 
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;left:30px;width:45px;height:45px;background:linear-gradient(135deg,#00aaff,#c9a84c);border:none;border-radius:50%;color:#fff;font-size:1.3rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;z-index:999;display:flex;align-items:center;justify-content:center;">&uarr;</button>
 <script>
@@ -7041,7 +7121,7 @@ async function handleBuySLS() {
         resultEl.style.background = 'rgba(255,51,51,0.08)';
         resultEl.style.border = '1px solid rgba(255,51,51,0.2)';
         resultEl.style.color = '#ff6b6b';
-        resultEl.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px"></i>Please <a href="../s4-login/" style="color:var(--accent)">create an account</a> first to get a wallet.';
+        resultEl.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px"></i>Please <a href="/s4-login/" style="color:var(--accent)">create an account</a> first to get a wallet.';
         return;
     }
 
