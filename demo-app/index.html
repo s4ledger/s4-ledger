@@ -355,12 +355,13 @@
         .workspace-notification .notif-close{position:absolute;top:6px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem}
         .tooltip-enhanced{position:relative}.tooltip-enhanced::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(0.8);opacity:0;background:rgba(15,22,48,0.95);border:1px solid var(--accent);color:#fff;padding:6px 12px;border-radius:8px;font-size:0.72rem;white-space:nowrap;pointer-events:none;transition:all 0.2s;z-index:999}
         .tooltip-enhanced:hover::after{opacity:1;transform:translateX(-50%) scale(1)}
-        @media(max-width:768px){.ils-hub-tabs{gap:2px}.ils-hub-tab{padding:6px 10px;font-size:0.72rem}.cal-day{min-height:50px}.vault-stats{grid-template-columns:repeat(2,1fr)}.compliance-label{min-width:100px;font-size:0.75rem}}
+        @media(max-width:768px){.ils-hub-tabs{gap:2px}.ils-hub-tab{padding:6px 10px;font-size:0.72rem}.cal-day{min-height:50px}.vault-stats{grid-template-columns:repeat(2,1fr)}.compliance-label{min-width:100px;font-size:0.75rem}#demoSteps{grid-template-columns:repeat(2,1fr)!important}}
     .active-link{color:#00aaff !important;font-weight:600 !important;}
 </style>
 </head>
 <body>
 <div style="background:rgba(10,10,15,0.95);border-bottom:1px solid rgba(255,255,255,0.06);padding:4px 0;text-align:center;font-size:0.72rem;color:#8b8fa3;"><i class="fas fa-exclamation-triangle" style="margin-right:4px;"></i> NOTICE: Do not submit ITAR-controlled, classified, or export-controlled data to this platform. This system processes UNCLASSIFIED and CUI data only. <a href="/security/" style="color:#00aaff;text-decoration:underline;">Security Policy</a></div>
+<div id="demoBanner" style="display:none;background:linear-gradient(90deg,rgba(0,170,255,0.12),rgba(201,168,76,0.12));border-bottom:1px solid rgba(0,170,255,0.3);padding:6px 0;text-align:center;font-size:0.78rem;color:#8ea4b8;cursor:pointer;" onclick="document.getElementById('demoPanel').scrollIntoView({behavior:'smooth'})"></div>
 <nav id="mainNav" style="position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(5,8,16,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);height:64px;">
     <div style="max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:100%;">
         <a href="../" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:1rem;">
@@ -456,6 +457,36 @@
             <div class="col-md-4 mb-3"><div class="stat-card"><div class="stat-value" id="statVerified">0</div><div class="stat-label">Records Verified</div></div></div>
             <div class="col-md-4 mb-3"><div class="stat-card"><div class="stat-value" id="statTypes">0</div><div class="stat-label">Record Types Used</div></div></div>
             <div class="col-md-4 mb-3"><div class="stat-card"><div class="stat-value" id="statSlsFees">0.000</div><div class="stat-label">$SLS Fees</div></div></div>
+        </div>
+
+        <!-- DEMO MODE PANEL — Remove after Stripe is live -->
+        <div id="demoPanel" class="reveal-demo" style="margin-bottom:16px;display:none;">
+            <div style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:14px;padding:20px 24px;position:relative;overflow:hidden;">
+                <div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:4px 16px;border-radius:0 14px 0 10px;font-size:0.68rem;font-weight:700;color:#050810;letter-spacing:0.5px;">DEMO MODE</div>
+                <h3 style="margin:0 0 4px;font-size:1.1rem;color:#fff;"><i class="fas fa-flask" style="color:#00aaff;margin-right:8px;"></i> SLS Economic Flow &mdash; Live Demo</h3>
+                <p style="color:#8ea4b8;font-size:0.8rem;margin:0 0 16px;">Experience the full $SLS token economics. Steps 1-3 are simulated. <strong style="color:#14f195;">Step 4 is REAL on-chain.</strong></p>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" id="demoSteps">
+                    <div id="demoStep1" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-user-plus" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">1. Account Created</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep1Status">Waiting...</div></div>
+                    <div id="demoStep2" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-wallet" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">2. Wallet Funded</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep2Status">12 XRP reserve</div></div>
+                    <div id="demoStep3" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">3. $SLS Allocated</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep3Status">Based on plan tier</div></div>
+                    <div id="demoStep4" style="background:rgba(20,241,149,0.06);border:1px solid rgba(20,241,149,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(20,241,149,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-arrow-right" style="color:#14f195;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#14f195;margin-bottom:4px;">4. 0.01 $SLS &rarr; Treasury</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep4Status">Real on-chain transfer</div></div>
+                </div>
+                <div id="demoSessionInfo" style="display:none;margin-top:14px;padding:12px 16px;background:rgba(0,0,0,0.25);border-radius:8px;font-size:0.76rem;">
+                    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                        <div><span style="color:#8ea4b8;">Session:</span> <span style="color:#00aaff;font-family:monospace;" id="demoSessionId">&mdash;</span></div>
+                        <div><span style="color:#8ea4b8;">Wallet:</span> <span style="color:#14f195;font-family:monospace;" id="demoWalletAddr">&mdash;</span></div>
+                        <div><span style="color:#8ea4b8;">Plan:</span> <span style="color:#c9a84c;font-weight:600;" id="demoPlanLabel">&mdash;</span></div>
+                        <div><span style="color:#8ea4b8;">SLS Balance:</span> <span style="color:#c9a84c;font-weight:700;" id="demoSlsBalance">&mdash;</span></div>
+                    </div>
+                    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                        <button onclick="document.querySelector('a[href=&quot;#tabAnchor&quot;]').click();" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:6px 16px;border-radius:8px;font-size:0.76rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;"><i class="fas fa-anchor"></i> Anchor a Record</button>
+                        <button onclick="document.querySelector('a[href=&quot;#tabILS&quot;]').click();" style="background:rgba(0,170,255,0.12);color:#00aaff;border:1px solid rgba(0,170,255,0.3);padding:6px 16px;border-radius:8px;font-size:0.76rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;"><i class="fas fa-brain"></i> ILS Workspace</button>
+                        <button onclick="_checkDemoStatus();" style="background:rgba(201,168,76,0.12);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);padding:6px 16px;border-radius:8px;font-size:0.76rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;"><i class="fas fa-sync-alt"></i> Refresh Status</button>
+                        <a href="https://livenet.xrpl.org/accounts/rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ" target="_blank" style="background:rgba(20,241,149,0.1);color:#14f195;border:1px solid rgba(20,241,149,0.3);padding:6px 16px;border-radius:8px;font-size:0.76rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;"><i class="fas fa-external-link-alt"></i> View Treasury on XRPL</a>
+                    </div>
+                </div>
+                <div id="demoProvSpinner" style="text-align:center;padding:12px;margin-top:10px;display:none;"><i class="fas fa-spinner fa-spin" style="color:#00aaff;margin-right:6px;"></i><span style="color:#8ea4b8;font-size:0.8rem;">Provisioning demo session...</span></div>
+            </div>
         </div>
 
         <ul class="nav nav-pills mb-2" role="tablist">
@@ -2224,22 +2255,175 @@ function hideAnchorAnimation() {
     document.getElementById('anchorOverlay').classList.remove('active');
 }
 
+
+// ══════════════════════════════════════════════════════════════
+//  DEMO MODE — SLS Economic Flow
+// ══════════════════════════════════════════════════════════════
+//  TO DISABLE DEMO MODE (when Stripe is live):
+//    1. Set _demoMode = false  (line below)
+//    2. The demo panel, banner, and demo routing will all auto-hide
+//    3. Anchor calls will route to /api/anchor with user_email auth
+//    4. Optionally remove: #demoPanel HTML block, #demoBanner div
+// ══════════════════════════════════════════════════════════════
+let _demoSession = null;
+let _demoMode = true;  // SET TO false WHEN STRIPE IS LIVE
+
+async function _initDemoSession() {
+    if (_demoSession) return _demoSession;
+    const panel = document.getElementById('demoPanel');
+    const spinner = document.getElementById('demoProvSpinner');
+    if (panel) panel.style.display = 'block';
+    if (spinner) spinner.style.display = 'block';
+    try {
+        const resp = await fetch('/api/demo/provision', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name: 'Demo User', plan: 'starter'})
+        });
+        if (resp.ok) {
+            const data = await resp.json();
+            _demoSession = data;
+            console.log('Demo session:', data.session_id);
+            const banner = document.getElementById('demoBanner');
+            if (banner) {
+                banner.style.display = 'block';
+                banner.innerHTML = '<i class="fas fa-flask"></i> <strong>Demo Mode Active</strong> — '
+                    + (data.subscription?.label || 'Starter') + ' plan &bull; '
+                    + 'Per-anchor fee: 0.01 $SLS (real on-chain) &bull; '
+                    + '<span style="color:#14f195">' + (data.wallet?.address?.substring(0,8) || '') + '...' + (data.wallet?.address?.slice(-4) || '') + '</span> '
+                    + '&bull; <span style="text-decoration:underline;cursor:pointer">&#9660; View Details</span>';
+            }
+            _animateDemoSteps(data);
+            return data;
+        } else {
+            if (spinner) spinner.style.display = 'none';
+            _showDemoOffline();
+        }
+    } catch(e) {
+        console.warn('Demo provision failed:', e);
+        if (spinner) spinner.style.display = 'none';
+        _showDemoOffline();
+    }
+    return null;
+}
+
+function _showDemoOffline() {
+    const panel = document.getElementById('demoPanel');
+    if (panel) panel.style.display = 'block';
+    const s1 = document.getElementById('demoStep1Status');
+    if (s1) { s1.textContent = 'Offline — using local mode'; s1.style.color = '#c9a84c'; }
+}
+
+function _animateDemoSteps(data) {
+    const spinner = document.getElementById('demoProvSpinner');
+    if (spinner) spinner.style.display = 'none';
+    setTimeout(() => {
+        const s1 = document.getElementById('demoStep1');
+        const s1s = document.getElementById('demoStep1Status');
+        if (s1) { s1.style.borderColor = 'rgba(0,170,255,0.6)'; s1.style.background = 'rgba(0,170,255,0.15)'; }
+        if (s1s) { s1s.innerHTML = '<i class="fas fa-check" style="color:#14f195;margin-right:3px;"></i> Provisioned'; s1s.style.color = '#14f195'; }
+    }, 300);
+    setTimeout(() => {
+        const s2 = document.getElementById('demoStep2');
+        const s2s = document.getElementById('demoStep2Status');
+        if (s2) { s2.style.borderColor = 'rgba(0,170,255,0.6)'; s2.style.background = 'rgba(0,170,255,0.15)'; }
+        if (s2s) { s2s.innerHTML = '<i class="fas fa-check" style="color:#14f195;margin-right:3px;"></i> 12 XRP funded'; s2s.style.color = '#14f195'; }
+    }, 800);
+    setTimeout(() => {
+        const s3 = document.getElementById('demoStep3');
+        const s3s = document.getElementById('demoStep3Status');
+        if (s3) { s3.style.borderColor = 'rgba(201,168,76,0.6)'; s3.style.background = 'rgba(201,168,76,0.12)'; }
+        const alloc = data.subscription?.sls_allocation?.toLocaleString() || '25,000';
+        if (s3s) { s3s.innerHTML = '<i class="fas fa-check" style="color:#14f195;margin-right:3px;"></i> ' + alloc + ' SLS'; s3s.style.color = '#c9a84c'; }
+    }, 1300);
+    setTimeout(() => {
+        const s4 = document.getElementById('demoStep4');
+        const s4s = document.getElementById('demoStep4Status');
+        if (s4) { s4.style.borderColor = 'rgba(20,241,149,0.6)'; s4.style.background = 'rgba(20,241,149,0.1)'; }
+        if (s4s) { s4s.innerHTML = '<i class="fas fa-bolt" style="color:#14f195;margin-right:3px;"></i> Ready — anchor to trigger'; s4s.style.color = '#14f195'; }
+    }, 1800);
+    setTimeout(() => {
+        const info = document.getElementById('demoSessionInfo');
+        if (info) info.style.display = 'block';
+        const sid = document.getElementById('demoSessionId');
+        const wal = document.getElementById('demoWalletAddr');
+        const plan = document.getElementById('demoPlanLabel');
+        const bal = document.getElementById('demoSlsBalance');
+        if (sid) sid.textContent = (data.session_id || '').substring(0, 12) + '...';
+        if (wal) wal.textContent = (data.wallet?.address?.substring(0,8) || '') + '...' + (data.wallet?.address?.slice(-4) || '');
+        if (plan) plan.textContent = data.subscription?.label || 'Starter';
+        if (bal) bal.textContent = (data.subscription?.sls_allocation?.toLocaleString() || '25,000') + ' SLS';
+    }, 2200);
+}
+
+async function _checkDemoStatus() {
+    if (!_demoSession) { _initDemoSession(); return; }
+    try {
+        const resp = await fetch('/api/demo/status?session_id=' + encodeURIComponent(_demoSession.session_id));
+        if (resp.ok) {
+            const data = await resp.json();
+            const bal = document.getElementById('demoSlsBalance');
+            if (bal) bal.textContent = (data.sls_balance?.toLocaleString() || '') + ' SLS';
+            const s4s = document.getElementById('demoStep4Status');
+            const anchors = data.anchors_used || 0;
+            if (s4s && anchors > 0) {
+                s4s.innerHTML = '<i class="fas fa-check" style="color:#14f195;margin-right:3px;"></i> ' + anchors + ' anchor' + (anchors > 1 ? 's' : '') + ' (' + (anchors * 0.01).toFixed(2) + ' SLS)';
+            }
+        }
+    } catch(e) { console.warn('Demo status check failed:', e); }
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  DEMO MODE — SLS Economic Flow
+// ══════════════════════════════════════════════════════════════
+//  TO DISABLE DEMO MODE (when Stripe is live):
+//    1. Set _demoMode = false  (line below)
+//    2. The demo panel, banner, and demo routing will all auto-hide
+//    3. Anchor calls will route to /api/anchor with user_email auth
+//    4. Optionally remove: #demoPanel HTML block, #demoBanner div
+// ══════════════════════════════════════════════════════════════
+let _demoSession = null;
 async function _anchorToXRPL(hash, record_type, content_preview) {
     let txHash = 'TX' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
     let network = 'Pending';
     let explorerUrl = null;
+    let feeTxHash = null;
     try {
-        const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview})});
-        if (resp.ok) {
-            const result = await resp.json();
-            if (result.record) {
-                txHash = result.record.tx_hash || txHash;
-                network = result.record.network || network;
-                explorerUrl = result.record.explorer_url || null;
+        // DEMO MODE: route through /api/demo/anchor (real 0.01 SLS transfer)
+        if (_demoMode && _demoSession) {
+            const resp = await fetch('/api/demo/anchor', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    hash, record_type, content_preview,
+                    session_id: _demoSession.session_id,
+                    user_email: 'demo@s4ledger.com'
+                })
+            });
+            if (resp.ok) {
+                const result = await resp.json();
+                if (result.record) {
+                    txHash = result.record.tx_hash || txHash;
+                    network = result.record.network || network;
+                    explorerUrl = result.record.explorer_url || null;
+                }
+                if (result.fee_tx) feeTxHash = result.fee_tx.tx_hash || null;
+            }
+        } else {
+            // PRODUCTION PATH: /api/anchor with user_email auth
+            const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview})});
+            if (resp.ok) {
+                const result = await resp.json();
+                if (result.record) {
+                    txHash = result.record.tx_hash || txHash;
+                    network = result.record.network || network;
+                    explorerUrl = result.record.explorer_url || null;
+                }
             }
         }
     } catch(e) { console.warn('API anchor failed:', e); }
-    return { txHash, network, explorerUrl };
+    return { txHash, network, explorerUrl, feeTxHash };
 }
 
 async function anchorRecord() {
@@ -2278,7 +2462,11 @@ async function anchorRecord() {
     stats.slsFees += 0.01;
     updateStats();
     saveStats();
-
+    // Pulse Demo Step 4 on each anchor
+    var s4el = document.getElementById('demoStep4');
+    var s4s = document.getElementById('demoStep4Status');
+    if (s4el) { s4el.style.boxShadow = '0 0 20px rgba(20,241,149,0.4)'; setTimeout(function(){ s4el.style.boxShadow = 'none'; }, 2000); }
+    if (s4s) { s4s.innerHTML = '<i class="fas fa-bolt" style="color:#14f195;margin-right:3px;"></i> ' + stats.anchored + ' anchor' + (stats.anchored > 1 ? 's' : '') + ' (' + stats.slsFees.toFixed(2) + ' SLS)'; }
 
     await new Promise(r => setTimeout(r, 3200));
     hideAnchorAnimation();
@@ -6876,6 +7064,8 @@ document.addEventListener('DOMContentLoaded', () => {
     handleHash();
     window.addEventListener('hashchange', handleHash);
     });
+    // Demo Mode init — Remove after Stripe is live
+    if (typeof _demoMode !== 'undefined' && _demoMode) { _initDemoSession(); }
 });
 
 </script>
