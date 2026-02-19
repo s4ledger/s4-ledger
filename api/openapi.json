@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "S4 Ledger API",
-    "version": "4.0.0",
+    "version": "5.0.0",
     "description": "S4 Ledger — Defense-grade blockchain-anchored logistics and supply chain integrity platform. 13 integrated tools: cryptographic anchoring, ILS workspace, DMSMS monitoring, operational readiness, parts cross-reference, lifecycle cost, ROI analysis, warranty management, audit record vault, defense document library, compliance scorecard, provisioning/PTD management, supply chain risk engine, audit report generator, contract lifecycle management, digital thread bridge, predictive maintenance AI, PDF/CSV export engine, task collaboration, and XRPL-based immutable record verification for defense and government supply chains.",
     "contact": {
       "name": "S4 Systems, LLC",
@@ -1289,6 +1289,260 @@
           "404": { "description": "Account not found on XRPL" }
         }
       }
+    },
+    "/api/webhooks/register": {
+      "post": {
+        "summary": "Register webhook endpoint",
+        "description": "Register an HTTPS endpoint to receive async event notifications. Returns a signing secret for HMAC-SHA256 payload verification.",
+        "operationId": "registerWebhook",
+        "tags": ["HarborLink Integration"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri", "description": "HTTPS endpoint to receive webhook POSTs" },
+                  "events": { "type": "array", "items": { "type": "string", "enum": ["anchor.confirmed","verify.completed","tamper.detected","batch.completed","custody.transferred","sls.balance_low","chain.integrity_check","proof.appended"] }, "description": "Events to subscribe to (default: all)" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Webhook registered with signing secret" },
+          "401": { "description": "Invalid API key" },
+          "409": { "description": "Webhook URL already registered" }
+        }
+      }
+    },
+    "/api/webhooks/list": {
+      "get": {
+        "summary": "List registered webhooks",
+        "operationId": "listWebhooks",
+        "tags": ["HarborLink Integration"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "List of webhooks for this org" } }
+      }
+    },
+    "/api/webhooks/deliveries": {
+      "get": {
+        "summary": "Webhook delivery history",
+        "operationId": "webhookDeliveries",
+        "tags": ["HarborLink Integration"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Recent webhook delivery attempts with status" } }
+      }
+    },
+    "/api/webhooks/test": {
+      "post": {
+        "summary": "Send test webhook",
+        "operationId": "testWebhook",
+        "tags": ["HarborLink Integration"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "event": { "type": "string", "default": "anchor.confirmed" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Test webhook sent" } }
+      }
+    },
+    "/api/anchor/composite": {
+      "post": {
+        "summary": "Anchor composite record (file + metadata)",
+        "description": "Anchors a composite hash = SHA-256(file_hash || metadata_hash) in a single XRPL transaction. Use when HarborLink needs to anchor both a document and its metadata atomically.",
+        "operationId": "anchorComposite",
+        "tags": ["HarborLink Integration"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["file_hash", "metadata_hash"],
+                "properties": {
+                  "file_hash": { "type": "string", "description": "SHA-256 hash of file binary" },
+                  "metadata_hash": { "type": "string", "description": "SHA-256 hash of metadata JSON" },
+                  "record_type": { "type": "string", "default": "JOINT_CONTRACT" },
+                  "record_id": { "type": "string" },
+                  "user_email": { "type": "string" },
+                  "source_system": { "type": "string", "default": "harborlink" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Composite record anchored" },
+          "400": { "description": "Missing required fields" }
+        }
+      }
+    },
+    "/api/anchor/batch": {
+      "post": {
+        "summary": "Merkle batch anchor (N records → 1 XRPL tx)",
+        "description": "Anchors up to 1000 records in a single XRPL transaction using a Merkle tree. Cost: 0.01 SLS total regardless of batch size.",
+        "operationId": "anchorBatch",
+        "tags": ["HarborLink Integration"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["records"],
+                "properties": {
+                  "records": { "type": "array", "items": { "type": "object", "properties": { "hash": { "type": "string" }, "record_text": { "type": "string" }, "record_type": { "type": "string" }, "record_id": { "type": "string" } } }, "maxItems": 1000 },
+                  "user_email": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Batch anchored with merkle_root, batch_id, tx_hash, cost_per_record" },
+          "400": { "description": "Invalid records array" }
+        }
+      }
+    },
+    "/api/proof-chain": {
+      "get": {
+        "summary": "Get proof chain (event history) for a record",
+        "description": "Returns the full sequential event history for a record: creation, modifications, custody transfers, verifications — each with XRPL anchor proof.",
+        "operationId": "getProofChain",
+        "tags": ["HarborLink Integration"],
+        "parameters": [
+          { "name": "record_id", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Proof chain with events and integrity status" },
+          "400": { "description": "Missing record_id" }
+        }
+      }
+    },
+    "/api/custody/transfer": {
+      "post": {
+        "summary": "Record custody transfer (blockchain-anchored)",
+        "description": "Creates a blockchain-verified custody chain entry linking the previous custodian to the new one with location and condition data.",
+        "operationId": "custodyTransfer",
+        "tags": ["HarborLink Integration"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["record_id", "from_entity", "to_entity"],
+                "properties": {
+                  "record_id": { "type": "string" },
+                  "from_entity": { "type": "string", "description": "Current custodian" },
+                  "to_entity": { "type": "string", "description": "New custodian" },
+                  "location": { "type": "string" },
+                  "condition": { "type": "string", "enum": ["serviceable","unserviceable","repairable","condemned","new"] },
+                  "notes": { "type": "string" },
+                  "user_email": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Custody transfer anchored with transfer_id and chain_length" },
+          "400": { "description": "Missing required fields" }
+        }
+      }
+    },
+    "/api/custody/chain": {
+      "get": {
+        "summary": "Get custody chain for a record",
+        "description": "Returns every custody transfer: who held it, when, where, condition, and XRPL tx_hash proving each transfer.",
+        "operationId": "getCustodyChain",
+        "tags": ["HarborLink Integration"],
+        "parameters": [
+          { "name": "record_id", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Custody chain with current custodian and verification status" },
+          "400": { "description": "Missing record_id" }
+        }
+      }
+    },
+    "/api/hash/file": {
+      "post": {
+        "summary": "Hash file content (binary or text)",
+        "description": "Compute SHA-256 hash of file content. Accepts UTF-8 text or base64-encoded binary.",
+        "operationId": "hashFile",
+        "tags": ["HarborLink Integration"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "content": { "type": "string", "description": "File content (text or base64)" },
+                  "encoding": { "type": "string", "enum": ["utf-8","base64"], "default": "utf-8" },
+                  "filename": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "SHA-256 hash with file size" } }
+      }
+    },
+    "/api/verify/batch": {
+      "post": {
+        "summary": "Bulk verify multiple records",
+        "description": "Verify up to 100 records against the chain in a single call. Returns per-record MATCH/MISMATCH/NOT_FOUND and summary statistics.",
+        "operationId": "verifyBatch",
+        "tags": ["HarborLink Integration"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["records"],
+                "properties": {
+                  "records": { "type": "array", "items": { "type": "object", "required": ["record_text"], "properties": { "record_text": { "type": "string" }, "expected_hash": { "type": "string" }, "tx_hash": { "type": "string" }, "record_id": { "type": "string" } } }, "maxItems": 100 },
+                  "operator": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Batch verification results with summary" } }
+      }
+    },
+    "/api/org/records": {
+      "get": {
+        "summary": "Get org-scoped records (multi-tenant)",
+        "description": "Retrieve only records anchored by this organization's API key. Provides tenant isolation for multi-org deployments.",
+        "operationId": "getOrgRecords",
+        "tags": ["HarborLink Integration"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 100 } },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated org-scoped records" },
+          "401": { "description": "Invalid API key" }
+        }
+      }
     }
   },
   "components": {
@@ -1321,6 +1575,7 @@
     { "name": "Authentication", "description": "API key generation and validation" },
     { "name": "Database", "description": "Analysis storage and retrieval" },
     { "name": "Verification", "description": "Record integrity verification and tamper detection" },
-    { "name": "Wallet", "description": "XRPL wallet provisioning, SLS token purchases, and balance queries" }
+    { "name": "Wallet", "description": "XRPL wallet provisioning, SLS token purchases, and balance queries" },
+    { "name": "HarborLink Integration", "description": "Integration endpoints for HarborLink: webhooks, composite anchoring, Merkle batching, proof chains, custody transfers, file hashing, bulk verification, and multi-tenant org isolation" }
   ]
 }

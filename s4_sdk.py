@@ -977,6 +977,290 @@ class S4SDK:
         result["anchor_enabled"] = anchor
         return result
 
+    # ═══════════════════════════════════════════════════════════════════
+    #  HarborLink Integration Methods
+    # ═══════════════════════════════════════════════════════════════════
+
+    def register_webhook(self, url, events=None, api_base="https://s4ledger.com"):
+        """Register a webhook endpoint to receive async event notifications.
+
+        Args:
+            url: HTTPS endpoint to receive webhook POST requests
+            events: List of events to subscribe to. Defaults to all.
+                Valid events: anchor.confirmed, verify.completed, tamper.detected,
+                batch.completed, custody.transferred, sls.balance_low,
+                chain.integrity_check, proof.appended
+            api_base: S4 Ledger API base URL
+
+        Returns:
+            Webhook registration with signing secret for HMAC verification
+        """
+        import urllib.request
+        payload = {"url": url}
+        if events:
+            payload["events"] = events
+        req = urllib.request.Request(
+            f"{api_base}/api/webhooks/register",
+            data=json.dumps(payload).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "X-API-Key": self.api_key or "",
+            },
+            method="POST",
+        )
+        resp = urllib.request.urlopen(req, timeout=15)
+        return json.loads(resp.read())
+
+    def list_webhooks(self, api_base="https://s4ledger.com"):
+        """List all registered webhooks for this organization."""
+        import urllib.request
+        req = urllib.request.Request(
+            f"{api_base}/api/webhooks/list",
+            headers={"X-API-Key": self.api_key or ""},
+        )
+        resp = urllib.request.urlopen(req, timeout=15)
+        return json.loads(resp.read())
+
+    def verify_webhook_signature(self, payload_body, signature, secret):
+        """Verify an incoming webhook's HMAC-SHA256 signature.
+
+        Args:
+            payload_body: Raw JSON string from webhook POST body
+            signature: Value of X-S4-Signature header
+            secret: Your webhook signing secret (from register_webhook)
+
+        Returns:
+            True if signature is valid, False otherwise
+        """
+        expected = hmac.new(secret.encode(), payload_body.encode(), hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature)
+
+    def anchor_composite(self, file_hash, metadata_hash, record_type="JOINT_CONTRACT",
+                         record_id=None, wallet_seed=None, user_email="",
+                         source_system="harborlink", api_base="https://s4ledger.com"):
+        """Anchor a composite record (file + metadata) in a single XRPL transaction.
+
+        Computes composite_hash = SHA-256(file_hash || metadata_hash) and anchors it.
+        Use when HarborLink needs to anchor both a document and its metadata atomically.
+
+        Args:
+            file_hash: SHA-256 hash of the file binary content
+            metadata_hash: SHA-256 hash of the metadata JSON
+            record_type: Defense record category (e.g., USN_SUPPLY_RECEIPT)
+            record_id: Optional custom record ID
+            wallet_seed: XRPL wallet seed for SLS fee
+            user_email: User email for fee deduction
+            source_system: Originating system (default: harborlink)
+
+        Returns:
+            Anchor result with composite hash, tx_hash, and explorer URL
+        """
+        import urllib.request
+        payload = {
+            "file_hash": file_hash,
+            "metadata_hash": metadata_hash,
+            "record_type": record_type,
+            "source_system": source_system,
+            "user_email": user_email,
+        }
+        if record_id:
+            payload["record_id"] = record_id
+        req = urllib.request.Request(
+            f"{api_base}/api/anchor/composite",
+            data=json.dumps(payload).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "X-API-Key": self.api_key or "",
+            },
+            method="POST",
+        )
+        resp = urllib.request.urlopen(req, timeout=30)
+        return json.loads(resp.read())
+
+    def anchor_batch(self, records, user_email="", api_base="https://s4ledger.com"):
+        """Anchor multiple records in a single Merkle-tree XRPL transaction.
+
+        Builds a Merkle tree from all record hashes and anchors only the root.
+        Cost: 0.01 SLS total regardless of batch size (up to 1000 records).
+
+        Args:
+            records: List of dicts, each with 'hash' or 'record_text',
+                     optionally 'record_type', 'record_id', 'branch'
+            user_email: User email for SLS fee deduction
+
+        Returns:
+            Batch result with merkle_root, batch_id, tx_hash, cost_per_record
+        """
+        import urllib.request
+        payload = {"records": records, "user_email": user_email}
+        req = urllib.request.Request(
+            f"{api_base}/api/anchor/batch",
+            data=json.dumps(payload).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "X-API-Key": self.api_key or "",
+            },
+            method="POST",
+        )
+        resp = urllib.request.urlopen(req, timeout=60)
+        return json.loads(resp.read())
+
+    def transfer_custody(self, record_id, from_entity, to_entity,
+                         location="", condition="serviceable", notes="",
+                         user_email="", api_base="https://s4ledger.com"):
+        """Record a custody transfer event, anchored to XRPL.
+
+        Creates a blockchain-verified custody chain entry linking the
+        previous custodian to the new one with location and condition data.
+
+        Args:
+            record_id: The record being transferred
+            from_entity: Current custodian (org, unit, person, location)
+            to_entity: New custodian
+            location: Physical location of transfer
+            condition: Item condition (serviceable, unserviceable, etc.)
+            notes: Additional transfer notes
+
+        Returns:
+            Transfer result with transfer_id, tx_hash, chain_length
+        """
+        import urllib.request
+        payload = {
+            "record_id": record_id,
+            "from_entity": from_entity,
+            "to_entity": to_entity,
+            "location": location,
+            "condition": condition,
+            "notes": notes,
+            "user_email": user_email,
+        }
+        req = urllib.request.Request(
+            f"{api_base}/api/custody/transfer",
+            data=json.dumps(payload).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "X-API-Key": self.api_key or "",
+            },
+            method="POST",
+        )
+        resp = urllib.request.urlopen(req, timeout=30)
+        return json.loads(resp.read())
+
+    def get_custody_chain(self, record_id, api_base="https://s4ledger.com"):
+        """Retrieve the full custody chain for a record.
+
+        Returns every custody transfer event: who held it, when, where,
+        and the XRPL tx_hash proving each transfer.
+
+        Args:
+            record_id: The record to look up
+
+        Returns:
+            Custody chain with transfers, current custodian, and verification status
+        """
+        import urllib.request
+        req = urllib.request.Request(
+            f"{api_base}/api/custody/chain?record_id={record_id}",
+            headers={"X-API-Key": self.api_key or ""},
+        )
+        resp = urllib.request.urlopen(req, timeout=15)
+        return json.loads(resp.read())
+
+    def get_proof_chain(self, record_id, api_base="https://s4ledger.com"):
+        """Retrieve the full proof chain (event history) for a record.
+
+        Returns every event related to a record: creation, modifications,
+        custody transfers, verifications — each with an XRPL anchor.
+
+        Args:
+            record_id: The record to look up
+
+        Returns:
+            Proof chain with events, first/last timestamps, integrity status
+        """
+        import urllib.request
+        req = urllib.request.Request(
+            f"{api_base}/api/proof-chain?record_id={record_id}",
+            headers={"X-API-Key": self.api_key or ""},
+        )
+        resp = urllib.request.urlopen(req, timeout=15)
+        return json.loads(resp.read())
+
+    def hash_file(self, content, encoding="utf-8", filename="",
+                  api_base="https://s4ledger.com"):
+        """Hash a file's binary content via the API.
+
+        For local hashing without API call, use:
+            hashlib.sha256(open('file','rb').read()).hexdigest()
+
+        Args:
+            content: File content (UTF-8 text or base64-encoded binary)
+            encoding: 'utf-8' for text, 'base64' for binary
+            filename: Optional filename for reference
+
+        Returns:
+            SHA-256 hash and file size
+        """
+        import urllib.request
+        payload = {"content": content, "encoding": encoding, "filename": filename}
+        req = urllib.request.Request(
+            f"{api_base}/api/hash/file",
+            data=json.dumps(payload).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "X-API-Key": self.api_key or "",
+            },
+            method="POST",
+        )
+        resp = urllib.request.urlopen(req, timeout=15)
+        return json.loads(resp.read())
+
+    def verify_batch(self, records, operator="sdk", api_base="https://s4ledger.com"):
+        """Verify multiple records against the chain in a single call.
+
+        Args:
+            records: List of dicts, each with 'record_text' and optionally
+                     'expected_hash', 'tx_hash', 'record_id'
+            operator: Identity of the person/system performing verification
+
+        Returns:
+            Batch verification results with per-record status and summary
+        """
+        import urllib.request
+        payload = {"records": records, "operator": operator}
+        req = urllib.request.Request(
+            f"{api_base}/api/verify/batch",
+            data=json.dumps(payload).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "X-API-Key": self.api_key or "",
+            },
+            method="POST",
+        )
+        resp = urllib.request.urlopen(req, timeout=30)
+        return json.loads(resp.read())
+
+    def get_org_records(self, limit=100, offset=0, api_base="https://s4ledger.com"):
+        """Retrieve records scoped to this organization's API key.
+
+        Multi-tenant isolation: only returns records anchored by this org.
+
+        Args:
+            limit: Max records to return (default 100)
+            offset: Pagination offset
+
+        Returns:
+            Paginated org-scoped records with total count
+        """
+        import urllib.request
+        req = urllib.request.Request(
+            f"{api_base}/api/org/records?limit={limit}&offset={offset}",
+            headers={"X-API-Key": self.api_key or ""},
+        )
+        resp = urllib.request.urlopen(req, timeout=15)
+        return json.loads(resp.read())
+
+
 if __name__ == "__main__":
     main_cli()
 

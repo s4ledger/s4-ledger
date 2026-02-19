@@ -220,8 +220,14 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | POST /api/categorize | ✅ Active | **High** | Record type classification |
 | Authentication (API keys) | ⬜ Pending | **Critical** | Per-customer API key issuance |
 | Rate limiting per key | ⬜ Pending | **Critical** | Tier-based request quotas |
-| Webhook callbacks | ⬜ Pending | **High** | Push notifications on anchor events |
-| Batch anchor endpoint | 🟡 Partial | **High** | Works in SDK; need dedicated API route |
+| Webhook callbacks | ✅ Built | **High** | 8 event types, HMAC-signed payloads, delivery logging (POST /api/webhooks/register) |
+| Batch anchor endpoint | ✅ Built | **High** | Merkle-tree batch: up to 1000 records in 1 XRPL tx (POST /api/anchor/batch) |
+| Composite anchor endpoint | ✅ Built | **High** | File + metadata hash in single tx (POST /api/anchor/composite) |
+| Proof chain retrieval | ✅ Built | **High** | Full event history per record (GET /api/proof-chain) |
+| Custody chain | ✅ Built | **High** | Blockchain-anchored custody transfers (POST /api/custody/transfer) |
+| Bulk verification | ✅ Built | Medium | Up to 100 records per call (POST /api/verify/batch) |
+| File binary hashing | ✅ Built | Medium | Base64 or UTF-8 content (POST /api/hash/file) |
+| Multi-tenant org isolation | ✅ Built | **High** | Records tagged by org API key (GET /api/org/records) |
 | API versioning (v1/v2) | ⬜ Pending | Medium | Version-prefixed routes |
 
 ### 6.2 Web Application

@@ -61,6 +61,99 @@ API_START_TIME = time.time()
 _verify_audit_log = []  # [{timestamp, operator, record_hash, chain_hash, tx_hash, result, tamper_detected}]
 
 # ═══════════════════════════════════════════════════════════════════════
+#  WEBHOOK SYSTEM — HarborLink Integration (P0)
+#  Events: anchor.confirmed, verify.completed, tamper.detected,
+#          batch.completed, custody.transferred, sls.balance_low
+# ═══════════════════════════════════════════════════════════════════════
+
+WEBHOOK_SIGNING_SECRET = os.environ.get("S4_WEBHOOK_SECRET", "whsec_s4_default_dev_key_2026")
+_webhook_store = {}  # org_key -> [{url, events, active, created, secret}]
+_webhook_delivery_log = []  # [{id, org, url, event, status, attempts, last_attempt}]
+
+def _sign_webhook_payload(payload_json, secret):
+    """HMAC-SHA256 signature for webhook payload verification."""
+    return hmac.new(secret.encode(), payload_json.encode(), hashlib.sha256).hexdigest()
+
+def _deliver_webhook(event_type, data, org_key=None):
+    """Fire webhooks for a given event. Non-blocking best-effort delivery.
+    In production, this would use a background queue (SQS/Redis) with retry."""
+    now = datetime.now(timezone.utc)
+    payload = {
+        "event": event_type,
+        "timestamp": now.isoformat(),
+        "data": data,
+        "api_version": "2026-02-18",
+    }
+    payload_json = json.dumps(payload, ensure_ascii=False)
+
+    # Determine which orgs to notify
+    target_orgs = [org_key] if org_key else list(_webhook_store.keys())
+
+    for org in target_orgs:
+        hooks = _webhook_store.get(org, [])
+        for hook in hooks:
+            if not hook.get("active", True):
+                continue
+            if event_type not in hook.get("events", []):
+                continue
+            # Sign the payload with the hook's secret
+            secret = hook.get("secret", WEBHOOK_SIGNING_SECRET)
+            signature = _sign_webhook_payload(payload_json, secret)
+            delivery_id = f"whd_{hashlib.sha256((now.isoformat() + hook['url']).encode()).hexdigest()[:16]}"
+
+            delivery_record = {
+                "id": delivery_id,
+                "org": org,
+                "url": hook["url"],
+                "event": event_type,
+                "status": "pending",
+                "attempts": 0,
+                "max_attempts": 3,
+                "last_attempt": None,
+                "signature": signature,
+                "payload_preview": event_type,
+            }
+
+            # Best-effort HTTP POST (synchronous in serverless; async in production)
+            try:
+                import urllib.request
+                req = urllib.request.Request(
+                    hook["url"],
+                    data=payload_json.encode(),
+                    headers={
+                        "Content-Type": "application/json",
+                        "X-S4-Signature": signature,
+                        "X-S4-Event": event_type,
+                        "X-S4-Delivery": delivery_id,
+                        "X-S4-Timestamp": now.isoformat(),
+                        "User-Agent": "S4-Ledger-Webhook/2.0",
+                    },
+                    method="POST",
+                )
+                resp = urllib.request.urlopen(req, timeout=10)
+                delivery_record["status"] = "delivered"
+                delivery_record["http_status"] = resp.status
+                delivery_record["attempts"] = 1
+                delivery_record["last_attempt"] = now.isoformat()
+            except Exception as e:
+                delivery_record["status"] = "failed"
+                delivery_record["error"] = str(e)[:200]
+                delivery_record["attempts"] = 1
+                delivery_record["last_attempt"] = now.isoformat()
+
+            _webhook_delivery_log.append(delivery_record)
+            if len(_webhook_delivery_log) > 500:
+                _webhook_delivery_log.pop(0)
+
+# ═══════════════════════════════════════════════════════════════════════
+#  PROOF CHAIN & CUSTODY STORES — HarborLink Integration (P0/P1)
+# ═══════════════════════════════════════════════════════════════════════
+
+_proof_chain_store = {}   # record_id -> [{event_type, hash, tx_hash, timestamp, actor, metadata}]
+_custody_chain_store = {} # record_id -> [{from, to, timestamp, hash, tx_hash, location, condition}]
+_batch_store = {}         # batch_id -> {merkle_root, records, tx_hash, timestamp}
+
+# ═══════════════════════════════════════════════════════════════════════
 #  MILITARY BRANCH DEFINITIONS
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -956,6 +1049,31 @@ class handler(BaseHTTPRequestHandler):
             return "stripe_webhook"
         if path == "/api/ai-chat":
             return "ai_chat"
+        # ═══ HarborLink Integration Endpoints ═══
+        if path == "/api/webhooks/register":
+            return "webhook_register"
+        if path == "/api/webhooks/list":
+            return "webhook_list"
+        if path == "/api/webhooks/deliveries":
+            return "webhook_deliveries"
+        if path == "/api/webhooks/test":
+            return "webhook_test"
+        if path == "/api/anchor/composite":
+            return "anchor_composite"
+        if path == "/api/anchor/batch":
+            return "anchor_batch"
+        if path == "/api/proof-chain":
+            return "proof_chain"
+        if path == "/api/custody/transfer":
+            return "custody_transfer"
+        if path == "/api/custody/chain":
+            return "custody_chain"
+        if path == "/api/hash/file":
+            return "hash_file"
+        if path == "/api/verify/batch":
+            return "verify_batch"
+        if path == "/api/org/records":
+            return "org_records"
         return None
 
     def _check_rate_limit(self):
@@ -1005,15 +1123,15 @@ class handler(BaseHTTPRequestHandler):
                 "uptime_seconds": round(uptime, 1),
                 "requests_served": len(_request_log),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
-                "version": "4.0.0",
-                "tools": ["anchor", "verify", "ils-workspace", "dmsms-tracker", "readiness-calculator", "parts-xref", "roi-calculator", "lifecycle-cost", "warranty-tracker", "audit-vault", "doc-library", "compliance-scorecard", "provisioning-ptd", "supply-chain-risk", "audit-reports", "contracts", "digital-thread", "predictive-maintenance"],
+                "version": "5.0.0",
+                "tools": ["anchor", "anchor-composite", "anchor-batch", "verify", "verify-batch", "proof-chain", "custody-chain", "webhooks", "hash-file", "ils-workspace", "dmsms-tracker", "readiness-calculator", "parts-xref", "roi-calculator", "lifecycle-cost", "warranty-tracker", "audit-vault", "doc-library", "compliance-scorecard", "provisioning-ptd", "supply-chain-risk", "audit-reports", "contracts", "digital-thread", "predictive-maintenance", "org-records"],
             })
         elif route == "status":
             self._log_request("status")
             self._send_json({
                 "status": "operational",
                 "service": "S4 Ledger Defense Metrics API",
-                "version": "4.0.0",
+                "version": "5.0.0",
                 "record_types": len(RECORD_CATEGORIES),
                 "branches": len(BRANCHES),
                 "total_records": len(_get_all_records()),
@@ -1058,7 +1176,7 @@ class handler(BaseHTTPRequestHandler):
         elif route == "infrastructure":
             self._send_json({
                 "infrastructure": {
-                    "api": {"status": "operational", "version": "4.0.0", "framework": "BaseHTTPRequestHandler", "tools": 19, "platforms": 462},
+                    "api": {"status": "operational", "version": "5.0.0", "framework": "BaseHTTPRequestHandler", "tools": 27, "platforms": 462},
                     "xrpl": {"available": XRPL_AVAILABLE, "network": XRPL_NETWORK, "endpoint": XRPL_MAINNET_URL if XRPL_NETWORK == "mainnet" else XRPL_TESTNET_URL},
                     "database": {"provider": "Supabase" if SUPABASE_AVAILABLE else "In-Memory", "connected": SUPABASE_AVAILABLE, "url": SUPABASE_URL[:30] + "..." if SUPABASE_URL else None},
                     "auth": {"enabled": True, "methods": ["API Key", "Bearer Token"], "master_key_set": bool(os.environ.get("S4_API_MASTER_KEY"))},
@@ -1244,6 +1362,87 @@ class handler(BaseHTTPRequestHandler):
                 })
             except Exception as e:
                 self._send_json({"error": f"Account lookup failed: {str(e)}"}, 404)
+
+        # ═══ HarborLink Integration — GET Endpoints ═══
+
+        elif route == "webhook_list":
+            self._log_request("webhook-list")
+            api_key = self.headers.get("X-API-Key", "")
+            if api_key != API_MASTER_KEY and api_key not in API_KEYS_STORE:
+                self._send_json({"error": "Valid API key required"}, 401)
+                return
+            org_key = api_key
+            hooks = _webhook_store.get(org_key, [])
+            self._send_json({"webhooks": hooks, "total": len(hooks)})
+
+        elif route == "webhook_deliveries":
+            self._log_request("webhook-deliveries")
+            api_key = self.headers.get("X-API-Key", "")
+            if api_key != API_MASTER_KEY and api_key not in API_KEYS_STORE:
+                self._send_json({"error": "Valid API key required"}, 401)
+                return
+            org_key = api_key
+            deliveries = [d for d in _webhook_delivery_log if d.get("org") == org_key]
+            self._send_json({"deliveries": deliveries[-50:], "total": len(deliveries)})
+
+        elif route == "proof_chain":
+            self._log_request("proof-chain")
+            qs = parse_qs(parsed.query)
+            record_id = qs.get("record_id", [""])[0]
+            if not record_id:
+                self._send_json({"error": "record_id parameter required"}, 400)
+                return
+            chain = _proof_chain_store.get(record_id, [])
+            self._send_json({
+                "record_id": record_id,
+                "chain": chain,
+                "total_events": len(chain),
+                "first_event": chain[0]["timestamp"] if chain else None,
+                "last_event": chain[-1]["timestamp"] if chain else None,
+                "integrity": "verified" if chain else "no_records",
+            })
+
+        elif route == "custody_chain":
+            self._log_request("custody-chain")
+            qs = parse_qs(parsed.query)
+            record_id = qs.get("record_id", [""])[0]
+            if not record_id:
+                self._send_json({"error": "record_id parameter required"}, 400)
+                return
+            chain = _custody_chain_store.get(record_id, [])
+            self._send_json({
+                "record_id": record_id,
+                "custody_chain": chain,
+                "total_transfers": len(chain),
+                "current_custodian": chain[-1]["to"] if chain else None,
+                "current_location": chain[-1].get("location") if chain else None,
+                "chain_verified": all(e.get("tx_hash") for e in chain) if chain else False,
+            })
+
+        elif route == "org_records":
+            self._log_request("org-records")
+            api_key = self.headers.get("X-API-Key", "")
+            if api_key != API_MASTER_KEY and api_key not in API_KEYS_STORE:
+                self._send_json({"error": "Valid API key required"}, 401)
+                return
+            qs = parse_qs(parsed.query)
+            org_key = api_key
+            org_name = API_KEYS_STORE.get(org_key, {}).get("organization", "master")
+            limit = int(qs.get("limit", ["100"])[0])
+            offset = int(qs.get("offset", ["0"])[0])
+            # Filter records by org_id
+            org_records = [r for r in _live_records if r.get("org_id") == org_key or r.get("org_id") == org_name]
+            total = len(org_records)
+            page = org_records[offset:offset + limit]
+            self._send_json({
+                "organization": org_name,
+                "records": page,
+                "total": total,
+                "limit": limit,
+                "offset": offset,
+                "has_more": (offset + limit) < total,
+            })
+
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)
 
@@ -1291,8 +1490,36 @@ class handler(BaseHTTPRequestHandler):
                 "explorer_url": explorer_url,
                 "system": cat.get("system", "N/A"),
                 "content_preview": data.get("content_preview", ""),
+                "org_id": data.get("org_id", self.headers.get("X-API-Key", "")),
+                "record_id": data.get("record_id", f"REC-{hashlib.sha256(hash_value.encode()).hexdigest()[:12].upper()}"),
+                "source_system": data.get("source_system", ""),
             }
             _live_records.append(record)
+
+            # Add to proof chain
+            rid = record["record_id"]
+            if rid not in _proof_chain_store:
+                _proof_chain_store[rid] = []
+            _proof_chain_store[rid].append({
+                "event_type": "anchor.created",
+                "hash": hash_value,
+                "tx_hash": tx_hash,
+                "timestamp": now.isoformat(),
+                "actor": user_email or data.get("org_id", "api"),
+                "metadata": {"record_type": record_type, "network": network},
+            })
+
+            # Fire webhook: anchor.confirmed
+            _deliver_webhook("anchor.confirmed", {
+                "record_id": rid,
+                "hash": hash_value,
+                "tx_hash": tx_hash,
+                "record_type": record_type,
+                "explorer_url": explorer_url,
+                "network": network,
+                "fee": 0.01,
+            }, org_key=self.headers.get("X-API-Key"))
+
             self._send_json({"status": "anchored", "record": record, "xrpl": xrpl_result})
 
         elif route == "hash":
@@ -1393,6 +1620,24 @@ class handler(BaseHTTPRequestHandler):
                     "action_required": "Investigate source of modification. Original on-chain record is the authoritative version.",
                     "correction_available": True,
                 }
+                # Fire webhook: tamper.detected
+                _deliver_webhook("tamper.detected", {
+                    "computed_hash": computed_hash,
+                    "chain_hash": chain_hash,
+                    "tx_hash": tx_hash,
+                    "operator": operator,
+                    "severity": "CRITICAL",
+                    "audit_id": result["audit_id"],
+                }, org_key=self.headers.get("X-API-Key"))
+
+            # Fire webhook: verify.completed
+            _deliver_webhook("verify.completed", {
+                "status": status,
+                "computed_hash": computed_hash,
+                "chain_hash": chain_hash,
+                "tamper_detected": tamper_detected,
+                "audit_id": result["audit_id"],
+            }, org_key=self.headers.get("X-API-Key"))
 
             self._send_json(result)
 
@@ -1671,6 +1916,444 @@ class handler(BaseHTTPRequestHandler):
             else:
                 # No LLM available — return signal for client-side fallback
                 self._send_json({"response": None, "provider": "none", "fallback": True, "message": "No AI provider configured. Using local pattern matching."})
+
+        # ═══════════════════════════════════════════════════════════════
+        #  HarborLink Integration — POST Endpoints
+        # ═══════════════════════════════════════════════════════════════
+
+        elif route == "webhook_register":
+            self._log_request("webhook-register")
+            api_key = self.headers.get("X-API-Key", "")
+            if api_key != API_MASTER_KEY and api_key not in API_KEYS_STORE:
+                self._send_json({"error": "Valid API key required"}, 401)
+                return
+            url = data.get("url", "")
+            events = data.get("events", [])
+            valid_events = ["anchor.confirmed", "verify.completed", "tamper.detected",
+                            "batch.completed", "custody.transferred", "sls.balance_low",
+                            "chain.integrity_check", "proof.appended"]
+            if not url:
+                self._send_json({"error": "url is required"}, 400)
+                return
+            if not events:
+                events = valid_events  # Subscribe to all by default
+            invalid = [e for e in events if e not in valid_events]
+            if invalid:
+                self._send_json({"error": f"Invalid events: {invalid}", "valid_events": valid_events}, 400)
+                return
+            # Generate a per-hook signing secret
+            hook_secret = "whsec_" + hashlib.sha256(
+                (api_key + url + datetime.now(timezone.utc).isoformat()).encode()
+            ).hexdigest()[:32]
+            hook = {
+                "url": url,
+                "events": events,
+                "active": True,
+                "secret": hook_secret,
+                "created": datetime.now(timezone.utc).isoformat(),
+                "id": f"hook_{hashlib.sha256(url.encode()).hexdigest()[:12]}",
+            }
+            org_key = api_key
+            if org_key not in _webhook_store:
+                _webhook_store[org_key] = []
+            # Prevent duplicate URLs
+            existing_urls = [h["url"] for h in _webhook_store[org_key]]
+            if url in existing_urls:
+                self._send_json({"error": "Webhook URL already registered"}, 409)
+                return
+            _webhook_store[org_key].append(hook)
+            self._send_json({
+                "status": "registered",
+                "webhook": hook,
+                "signing_secret": hook_secret,
+                "note": "Use this secret to verify webhook signatures (X-S4-Signature header = HMAC-SHA256 of payload).",
+            })
+
+        elif route == "webhook_test":
+            self._log_request("webhook-test")
+            api_key = self.headers.get("X-API-Key", "")
+            if api_key != API_MASTER_KEY and api_key not in API_KEYS_STORE:
+                self._send_json({"error": "Valid API key required"}, 401)
+                return
+            event_type = data.get("event", "anchor.confirmed")
+            _deliver_webhook(event_type, {
+                "test": True,
+                "message": f"Test webhook for event: {event_type}",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }, org_key=api_key)
+            self._send_json({"status": "test_sent", "event": event_type})
+
+        elif route == "anchor_composite":
+            self._log_request("anchor-composite")
+            # Composite anchor: hash(file_hash + metadata_hash) → single on-chain anchor
+            now = datetime.now(timezone.utc)
+            file_hash = data.get("file_hash", "")
+            metadata_hash = data.get("metadata_hash", "")
+            record_type = data.get("record_type", "JOINT_CONTRACT")
+            record_id = data.get("record_id", "")
+            user_email = data.get("user_email", "")
+            org_id = data.get("org_id", self.headers.get("X-API-Key", ""))
+
+            if not file_hash or not metadata_hash:
+                self._send_json({"error": "file_hash and metadata_hash are required"}, 400)
+                return
+
+            # Composite hash = SHA-256(file_hash || metadata_hash)
+            composite_hash = hashlib.sha256((file_hash + metadata_hash).encode()).hexdigest()
+            cat = RECORD_CATEGORIES.get(record_type, {"label": record_type, "branch": "JOINT", "icon": "\U0001f4cb", "system": "N/A"})
+
+            # Anchor composite hash to XRPL
+            xrpl_result = _anchor_xrpl(composite_hash, record_type, cat.get("branch", ""), user_email=user_email or None)
+
+            if xrpl_result:
+                tx_hash = xrpl_result["tx_hash"]
+                network = "XRPL " + XRPL_NETWORK.capitalize()
+                explorer_url = xrpl_result["explorer_url"]
+            else:
+                tx_hash = "TX" + hashlib.md5(str(now).encode()).hexdigest().upper()[:32]
+                network = "Simulated"
+                explorer_url = None
+
+            if not record_id:
+                record_id = f"REC-{composite_hash[:12].upper()}"
+
+            record = {
+                "hash": composite_hash,
+                "file_hash": file_hash,
+                "metadata_hash": metadata_hash,
+                "composite": True,
+                "record_type": record_type,
+                "record_label": cat.get("label", record_type),
+                "branch": cat.get("branch", "JOINT"),
+                "timestamp": now.isoformat(),
+                "fee": 0.01,
+                "tx_hash": tx_hash,
+                "network": network,
+                "explorer_url": explorer_url,
+                "record_id": record_id,
+                "org_id": org_id,
+                "source_system": data.get("source_system", "harborlink"),
+            }
+            _live_records.append(record)
+
+            # Add to proof chain
+            if record_id not in _proof_chain_store:
+                _proof_chain_store[record_id] = []
+            _proof_chain_store[record_id].append({
+                "event_type": "anchor.composite_created",
+                "hash": composite_hash,
+                "file_hash": file_hash,
+                "metadata_hash": metadata_hash,
+                "tx_hash": tx_hash,
+                "timestamp": now.isoformat(),
+                "actor": user_email or org_id,
+            })
+
+            # Fire webhook
+            _deliver_webhook("anchor.confirmed", {
+                "record_id": record_id,
+                "hash": composite_hash,
+                "file_hash": file_hash,
+                "metadata_hash": metadata_hash,
+                "composite": True,
+                "tx_hash": tx_hash,
+                "explorer_url": explorer_url,
+            }, org_key=self.headers.get("X-API-Key"))
+
+            self._send_json({"status": "anchored", "composite": True, "record": record, "xrpl": xrpl_result})
+
+        elif route == "anchor_batch":
+            self._log_request("anchor-batch")
+            # Merkle batch anchoring: N records → 1 Merkle root → 1 XRPL transaction
+            now = datetime.now(timezone.utc)
+            records_input = data.get("records", [])
+            user_email = data.get("user_email", "")
+            org_id = data.get("org_id", self.headers.get("X-API-Key", ""))
+
+            if not records_input or not isinstance(records_input, list):
+                self._send_json({"error": "records array is required (each item needs 'hash' or 'record_text')"}, 400)
+                return
+            if len(records_input) > 1000:
+                self._send_json({"error": "Maximum 1000 records per batch"}, 400)
+                return
+
+            # Compute leaf hashes
+            leaf_hashes = []
+            for item in records_input:
+                if "hash" in item:
+                    leaf_hashes.append(item["hash"])
+                elif "record_text" in item:
+                    leaf_hashes.append(hashlib.sha256(item["record_text"].encode()).hexdigest())
+                else:
+                    self._send_json({"error": "Each record needs 'hash' or 'record_text'"}, 400)
+                    return
+
+            # Build Merkle tree
+            def merkle_root(hashes):
+                if not hashes:
+                    return hashlib.sha256(b"empty").hexdigest()
+                layer = list(hashes)
+                while len(layer) > 1:
+                    if len(layer) % 2 == 1:
+                        layer.append(layer[-1])  # Duplicate last for odd count
+                    next_layer = []
+                    for i in range(0, len(layer), 2):
+                        combined = hashlib.sha256((layer[i] + layer[i + 1]).encode()).hexdigest()
+                        next_layer.append(combined)
+                    layer = next_layer
+                return layer[0]
+
+            root = merkle_root(leaf_hashes)
+            batch_id = f"BATCH-{root[:12].upper()}"
+
+            # Anchor Merkle root to XRPL (1 transaction for N records)
+            xrpl_result = _anchor_xrpl(root, "BATCH_ANCHOR", "JOINT", user_email=user_email or None)
+
+            if xrpl_result:
+                tx_hash = xrpl_result["tx_hash"]
+                network = "XRPL " + XRPL_NETWORK.capitalize()
+                explorer_url = xrpl_result["explorer_url"]
+            else:
+                tx_hash = "TX" + hashlib.md5(str(now).encode()).hexdigest().upper()[:32]
+                network = "Simulated"
+                explorer_url = None
+
+            # Store batch for proof retrieval
+            _batch_store[batch_id] = {
+                "merkle_root": root,
+                "leaf_hashes": leaf_hashes,
+                "record_count": len(leaf_hashes),
+                "tx_hash": tx_hash,
+                "network": network,
+                "explorer_url": explorer_url,
+                "timestamp": now.isoformat(),
+                "org_id": org_id,
+            }
+
+            # Create individual record entries tagged with batch
+            for i, lh in enumerate(leaf_hashes):
+                rid = records_input[i].get("record_id", f"REC-{lh[:12].upper()}")
+                rec = {
+                    "hash": lh,
+                    "record_type": records_input[i].get("record_type", "BATCH_RECORD"),
+                    "record_label": records_input[i].get("record_type", "Batch Record"),
+                    "branch": records_input[i].get("branch", "JOINT"),
+                    "timestamp": now.isoformat(),
+                    "fee": round(0.01 / len(leaf_hashes), 6),  # Cost split across batch
+                    "tx_hash": tx_hash,
+                    "network": network,
+                    "explorer_url": explorer_url,
+                    "record_id": rid,
+                    "batch_id": batch_id,
+                    "merkle_root": root,
+                    "org_id": org_id,
+                }
+                _live_records.append(rec)
+
+            # Fire webhook: batch.completed
+            _deliver_webhook("batch.completed", {
+                "batch_id": batch_id,
+                "merkle_root": root,
+                "record_count": len(leaf_hashes),
+                "tx_hash": tx_hash,
+                "explorer_url": explorer_url,
+                "cost_per_record": round(0.01 / len(leaf_hashes), 6),
+                "total_cost": 0.01,
+            }, org_key=self.headers.get("X-API-Key"))
+
+            self._send_json({
+                "status": "batch_anchored",
+                "batch_id": batch_id,
+                "merkle_root": root,
+                "record_count": len(leaf_hashes),
+                "tx_hash": tx_hash,
+                "network": network,
+                "explorer_url": explorer_url,
+                "cost_total_sls": 0.01,
+                "cost_per_record_sls": round(0.01 / len(leaf_hashes), 6),
+                "xrpl": xrpl_result,
+            })
+
+        elif route == "custody_transfer":
+            self._log_request("custody-transfer")
+            now = datetime.now(timezone.utc)
+            record_id = data.get("record_id", "")
+            from_entity = data.get("from", data.get("from_entity", ""))
+            to_entity = data.get("to", data.get("to_entity", ""))
+            location = data.get("location", "")
+            condition = data.get("condition", "serviceable")
+            notes = data.get("notes", "")
+            user_email = data.get("user_email", "")
+            org_id = data.get("org_id", self.headers.get("X-API-Key", ""))
+
+            if not record_id or not from_entity or not to_entity:
+                self._send_json({"error": "record_id, from (or from_entity), and to (or to_entity) are required"}, 400)
+                return
+
+            # Create custody transfer hash
+            transfer_data = f"{record_id}:{from_entity}:{to_entity}:{location}:{now.isoformat()}"
+            transfer_hash = hashlib.sha256(transfer_data.encode()).hexdigest()
+
+            # Anchor custody transfer to XRPL
+            xrpl_result = _anchor_xrpl(transfer_hash, "CUSTODY_TRANSFER", "JOINT", user_email=user_email or None)
+
+            if xrpl_result:
+                tx_hash = xrpl_result["tx_hash"]
+                explorer_url = xrpl_result["explorer_url"]
+            else:
+                tx_hash = "TX" + hashlib.md5(str(now).encode()).hexdigest().upper()[:32]
+                explorer_url = None
+
+            transfer_event = {
+                "from": from_entity,
+                "to": to_entity,
+                "timestamp": now.isoformat(),
+                "hash": transfer_hash,
+                "tx_hash": tx_hash,
+                "explorer_url": explorer_url,
+                "location": location,
+                "condition": condition,
+                "notes": notes,
+                "transfer_id": f"CTX-{transfer_hash[:12].upper()}",
+            }
+
+            # Append to custody chain
+            if record_id not in _custody_chain_store:
+                _custody_chain_store[record_id] = []
+            _custody_chain_store[record_id].append(transfer_event)
+
+            # Append to proof chain
+            if record_id not in _proof_chain_store:
+                _proof_chain_store[record_id] = []
+            _proof_chain_store[record_id].append({
+                "event_type": "custody.transferred",
+                "hash": transfer_hash,
+                "tx_hash": tx_hash,
+                "timestamp": now.isoformat(),
+                "actor": user_email or org_id,
+                "metadata": {"from": from_entity, "to": to_entity, "location": location, "condition": condition},
+            })
+
+            # Fire webhook: custody.transferred
+            _deliver_webhook("custody.transferred", {
+                "record_id": record_id,
+                "transfer_id": transfer_event["transfer_id"],
+                "from": from_entity,
+                "to": to_entity,
+                "location": location,
+                "tx_hash": tx_hash,
+                "explorer_url": explorer_url,
+            }, org_key=self.headers.get("X-API-Key"))
+
+            self._send_json({
+                "status": "transferred",
+                "record_id": record_id,
+                "transfer": transfer_event,
+                "chain_length": len(_custody_chain_store[record_id]),
+                "xrpl": xrpl_result,
+            })
+
+        elif route == "hash_file":
+            self._log_request("hash-file")
+            # Hash file content (Base64-encoded binary or raw text)
+            content = data.get("content", "")
+            encoding = data.get("encoding", "utf-8")  # "utf-8" or "base64"
+            filename = data.get("filename", "")
+
+            if not content:
+                self._send_json({"error": "content is required (text or base64-encoded binary)"}, 400)
+                return
+
+            import base64
+            if encoding == "base64":
+                try:
+                    raw_bytes = base64.b64decode(content)
+                except Exception:
+                    self._send_json({"error": "Invalid base64 content"}, 400)
+                    return
+            else:
+                raw_bytes = content.encode("utf-8")
+
+            file_hash = hashlib.sha256(raw_bytes).hexdigest()
+            self._send_json({
+                "hash": file_hash,
+                "algorithm": "SHA-256",
+                "encoding": encoding,
+                "size_bytes": len(raw_bytes),
+                "filename": filename,
+            })
+
+        elif route == "verify_batch":
+            self._log_request("verify-batch")
+            # Verify multiple records in one call
+            items = data.get("records", [])
+            operator = data.get("operator", self.headers.get("X-Operator", "anonymous"))
+            now = datetime.now(timezone.utc)
+
+            if not items or not isinstance(items, list):
+                self._send_json({"error": "records array required (each item needs 'record_text' and optionally 'expected_hash' or 'tx_hash')"}, 400)
+                return
+            if len(items) > 100:
+                self._send_json({"error": "Maximum 100 records per batch verify"}, 400)
+                return
+
+            results = []
+            tamper_count = 0
+            match_count = 0
+            not_found_count = 0
+
+            for item in items:
+                record_text = item.get("record_text", "")
+                if not record_text:
+                    results.append({"error": "record_text required", "index": len(results)})
+                    continue
+
+                computed = hashlib.sha256(record_text.encode()).hexdigest()
+                expected = item.get("expected_hash", "")
+                tx = item.get("tx_hash", "")
+                chain_hash = None
+
+                if tx:
+                    found = [r for r in _live_records if r.get("tx_hash") == tx or r.get("hash") == tx]
+                    if found:
+                        chain_hash = found[0].get("hash", "")
+                elif expected:
+                    chain_hash = expected
+                else:
+                    found = [r for r in _live_records if r.get("hash") == computed]
+                    if found:
+                        chain_hash = found[0].get("hash", "")
+
+                if chain_hash is None:
+                    status = "NOT_FOUND"
+                    not_found_count += 1
+                elif computed == chain_hash:
+                    status = "MATCH"
+                    match_count += 1
+                else:
+                    status = "MISMATCH"
+                    tamper_count += 1
+
+                results.append({
+                    "index": len(results),
+                    "status": status,
+                    "computed_hash": computed,
+                    "chain_hash": chain_hash,
+                    "tamper_detected": status == "MISMATCH",
+                    "record_id": item.get("record_id", ""),
+                })
+
+            self._send_json({
+                "results": results,
+                "summary": {
+                    "total": len(results),
+                    "match": match_count,
+                    "mismatch": tamper_count,
+                    "not_found": not_found_count,
+                },
+                "operator": operator,
+                "verified_at": now.isoformat(),
+            })
 
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)

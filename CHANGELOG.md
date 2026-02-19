@@ -5,6 +5,53 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0] - 2026-02-18
+
+### HarborLink Integration — Full API Surface Built
+
+#### Added — New API Endpoints (12 routes)
+- **POST /api/webhooks/register** — Register HTTPS endpoints for async event notifications with HMAC-SHA256 signed payloads
+- **GET /api/webhooks/list** — List all registered webhooks for an org
+- **GET /api/webhooks/deliveries** — View webhook delivery history and status
+- **POST /api/webhooks/test** — Send test webhook to verify endpoint connectivity
+- **POST /api/anchor/composite** — Anchor file + metadata in a single XRPL transaction (composite hash)
+- **POST /api/anchor/batch** — Merkle-tree batch anchoring: up to 1000 records in 1 XRPL tx (0.01 SLS total)
+- **GET /api/proof-chain** — Retrieve full sequential event history for any record
+- **POST /api/custody/transfer** — Record blockchain-anchored custody transfer events
+- **GET /api/custody/chain** — Retrieve full custody chain with current custodian and verification
+- **POST /api/hash/file** — Hash file binary content (base64 or UTF-8)
+- **POST /api/verify/batch** — Verify up to 100 records in a single call
+- **GET /api/org/records** — Multi-tenant org-scoped record retrieval (records tagged by API key)
+
+#### Added — Webhook Event System
+- 8 event types: `anchor.confirmed`, `verify.completed`, `tamper.detected`, `batch.completed`, `custody.transferred`, `sls.balance_low`, `chain.integrity_check`, `proof.appended`
+- HMAC-SHA256 signed payloads with per-hook signing secrets
+- Delivery logging with attempt tracking
+- Automatic webhook firing on anchor, verify, tamper detection, batch completion, and custody transfer
+
+#### Added — SDK Methods (10 new)
+- `register_webhook()` — Register webhook endpoint
+- `list_webhooks()` — List registered webhooks
+- `verify_webhook_signature()` — HMAC-SHA256 signature verification
+- `anchor_composite()` — Composite file + metadata anchoring
+- `anchor_batch()` — Merkle-tree batch anchoring
+- `transfer_custody()` — Record custody transfer
+- `get_custody_chain()` — Retrieve custody chain
+- `get_proof_chain()` — Retrieve proof chain
+- `hash_file()` — Hash file content via API
+- `verify_batch()` — Bulk record verification
+- `get_org_records()` — Multi-tenant record retrieval
+
+#### Changed
+- API version bumped to 5.0.0
+- Anchor endpoint now tags records with `org_id`, `record_id`, `source_system`
+- Anchor endpoint now auto-appends to proof chain store
+- Verify endpoint now fires `verify.completed` and `tamper.detected` webhooks
+- OpenAPI spec updated with all 12 new HarborLink Integration endpoints
+- HARBORLINK_INTEGRATION.md status updated: Planning → Integration Endpoints Built
+
+---
+
 ## [4.1.0] - 2026-02-22
 
 ### Dual-Product Restructuring — S4 Ledger × HarborLink
