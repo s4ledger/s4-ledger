@@ -464,6 +464,26 @@ SUBSCRIPTION_TIERS = {
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")  # Required in production
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")  # Webhook signature verification
 
+# ══ DEMO MODE — Ops wallet for demo SLS fee flow ══
+# Uses Nick's Ops wallet (99M SLS) instead of real user wallets.
+# Remove this entire block after Stripe is live and real subscriptions exist.
+XRPL_DEMO_SEED = os.environ.get("XRPL_DEMO_SEED", "")  # Ops wallet seed
+_xrpl_demo_wallet = None
+_demo_sessions = {}  # {session_id: {name, plan, address, provisioned_at, anchors, total_fees}}
+
+def _init_demo_wallet():
+    """Initialize the Ops wallet (99M SLS) for demo fee transfers."""
+    global _xrpl_demo_wallet
+    if _xrpl_demo_wallet is not None:
+        return
+    _init_xrpl()
+    if XRPL_DEMO_SEED and XRPL_AVAILABLE:
+        try:
+            _xrpl_demo_wallet = Wallet.from_seed(XRPL_DEMO_SEED, algorithm=CryptoAlgorithm.SECP256K1)
+            print(f"Demo wallet initialized: {_xrpl_demo_wallet.address}")
+        except Exception as e:
+            print(f"Demo wallet init failed: {e}")
+
 # In-memory wallet cache (production: Supabase)
 # Stores {email: {address, seed, plan, created}} for custodial signing
 _wallet_store = {}  # Cleared on cold start; Supabase is the source of truth
@@ -761,10 +781,56 @@ def _deduct_anchor_fee(user_email=None, user_address=None):
         print(f"Anchor fee deduction failed: {e}")
         return {"error": str(e)}
 
+def _send_anchor_fee_to_treasury(anchor_hash=""):
+    """Send 0.01 SLS from Issuer → Treasury as the platform anchor fee.
+    The Issuer IS the SLS token issuer on XRPL, so this is a valid issuance
+    that appears in Treasury's wallet as an incoming 0.01 SLS payment.
+    This runs on EVERY anchor — not gated by user_email."""
+    if not _xrpl_client or not _xrpl_wallet:
+        return None
+    try:
+        from xrpl.models.transactions import Payment as Pay
+        from xrpl.models.amounts import IssuedCurrencyAmount as ICA
+
+        fee_payment = Pay(
+            account=_xrpl_wallet.address,
+            destination=SLS_TREASURY_ADDRESS,
+            amount=ICA(
+                currency="SLS",
+                issuer=SLS_ISSUER_ADDRESS,
+                value=SLS_ANCHOR_FEE
+            ),
+            memos=[Memo(
+                memo_type=bytes("s4/anchor-fee", "utf-8").hex(),
+                memo_data=bytes(json.dumps({
+                    "type": "anchor_fee",
+                    "amount": SLS_ANCHOR_FEE,
+                    "anchor_hash": anchor_hash[:16] if anchor_hash else "",
+                    "ts": datetime.now(timezone.utc).isoformat()
+                }), "utf-8").hex()
+            )]
+        )
+        resp = submit_and_wait(fee_payment, _xrpl_client, _xrpl_wallet)
+        if resp.is_successful():
+            return {
+                "success": True,
+                "fee_tx": resp.result["hash"],
+                "fee_amount": SLS_ANCHOR_FEE,
+                "from_issuer": _xrpl_wallet.address,
+                "to_treasury": SLS_TREASURY_ADDRESS,
+            }
+        else:
+            return {"error": resp.result.get("engine_result_message", "unknown")}
+    except Exception as e:
+        print(f"Anchor fee to treasury failed: {e}")
+        return {"error": str(e)}
+
+
 def _anchor_xrpl(hash_value, record_type="", branch="", user_email=None):
-    """Submit a real anchor transaction to XRPL and deduct 0.01 SLS from the user's wallet.
+    """Submit a real anchor transaction to XRPL and send 0.01 SLS fee to Treasury.
     1. Issuer wallet signs an AccountSet memo (the hash anchor) — XRPL_WALLET_SEED
-    2. User's wallet sends 0.01 SLS → Treasury (custodial, using stored seed from Supabase)
+    2. Issuer sends 0.01 SLS → Treasury (automatic on every anchor)
+    3. If user_email provided, also deducts from user's custodial wallet (future subscription model)
     Returns tx info or None."""
     _init_xrpl()
     if not _xrpl_client or not _xrpl_wallet:
@@ -795,15 +861,21 @@ def _anchor_xrpl(hash_value, record_type="", branch="", user_email=None):
                 "explorer_url": explorer_base + tx_hash,
                 "account": _xrpl_wallet.address
             }
-            # Deduct 0.01 SLS anchor fee: User's wallet → Treasury (custodial signing)
+            # ALWAYS send 0.01 SLS anchor fee: Issuer → Treasury
+            fee_result = _send_anchor_fee_to_treasury(anchor_hash=hash_value)
+            if fee_result and fee_result.get("success"):
+                result["sls_fee_tx"] = fee_result["fee_tx"]
+                result["sls_fee"] = SLS_ANCHOR_FEE
+                result["sls_treasury"] = SLS_TREASURY_ADDRESS
+            elif fee_result and fee_result.get("error"):
+                result["sls_fee_error"] = fee_result.get("error")
+                # Anchor still succeeded — fee failure is non-fatal
+                print(f"SLS fee transfer note: {fee_result.get('error')}")
+            # Future: if user has custodial wallet, additionally deduct from their balance
             if user_email:
-                fee_result = _deduct_anchor_fee(user_email=user_email)
-                if fee_result and fee_result.get("success"):
-                    result["sls_fee_tx"] = fee_result["fee_tx"]
-                    result["sls_fee"] = SLS_ANCHOR_FEE
-                    result["sls_treasury"] = SLS_TREASURY_ADDRESS
-                elif fee_result and fee_result.get("error"):
-                    result["sls_fee_error"] = fee_result["error"]
+                user_fee = _deduct_anchor_fee(user_email=user_email)
+                if user_fee and user_fee.get("success"):
+                    result["user_fee_tx"] = user_fee["fee_tx"]
             return result
     except Exception as e:
         print(f"XRPL anchor failed: {e}")
@@ -1045,6 +1117,15 @@ class handler(BaseHTTPRequestHandler):
             return "wallet_buy_sls"
         if path == "/api/wallet/balance":
             return "wallet_balance"
+        # ══ DEMO MODE routes — Remove after Stripe is live ══
+        if path == "/api/demo/provision":
+            return "demo_provision"
+        if path == "/api/demo/anchor":
+            return "demo_anchor"
+        if path == "/api/demo/status":
+            return "demo_status"
+        if path == "/api/treasury/health":
+            return "treasury_health"
         if path == "/api/webhook/stripe":
             return "stripe_webhook"
         if path == "/api/ai-chat":
@@ -1443,6 +1524,79 @@ class handler(BaseHTTPRequestHandler):
                 "has_more": (offset + limit) < total,
             })
 
+        # ══ DEMO & TREASURY GET endpoints ══
+
+        elif route == "treasury_health":
+            self._log_request("treasury-health")
+            _init_xrpl()
+            if not _xrpl_client or not XRPL_AVAILABLE:
+                self._send_json({"error": "XRPL not available"}, 503)
+                return
+            try:
+                from xrpl.models.requests import AccountInfo, AccountLines
+                acc = _xrpl_client.request(AccountInfo(account=SLS_TREASURY_ADDRESS))
+                xrp_drops = int(acc.result.get("account_data", {}).get("Balance", "0"))
+                xrp_balance = round(xrp_drops / 1_000_000, 6)
+                lines = _xrpl_client.request(AccountLines(account=SLS_TREASURY_ADDRESS))
+                sls_balance = "0"
+                for line in lines.result.get("lines", []):
+                    if line.get("currency") == "SLS" and line.get("account") == SLS_ISSUER_ADDRESS:
+                        sls_balance = line.get("balance", "0")
+                        break
+                xrp_low = xrp_balance < 100
+                sls_low = float(sls_balance) < 10000
+                provisions_remaining = int(xrp_balance / float(XRP_ACCOUNT_RESERVE)) if xrp_balance > 0 else 0
+                explorer_base = (XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET).replace("/transactions/", "/accounts/")
+                alerts = []
+                if xrp_low:
+                    alerts.append(f"XRP LOW — Treasury can only fund {provisions_remaining} more wallets. Top up XRP.")
+                if sls_low:
+                    alerts.append(f"SLS LOW — Only {sls_balance} SLS remaining in Treasury.")
+                self._send_json({
+                    "treasury": SLS_TREASURY_ADDRESS,
+                    "xrp_balance": xrp_balance,
+                    "sls_balance": sls_balance,
+                    "xrp_low_alert": xrp_low,
+                    "sls_low_alert": sls_low,
+                    "healthy": not xrp_low and not sls_low,
+                    "provisions_remaining": provisions_remaining,
+                    "alerts": alerts,
+                    "network": XRPL_NETWORK,
+                    "explorer_url": explorer_base + SLS_TREASURY_ADDRESS,
+                    "demo_sessions_active": len(_demo_sessions),
+                })
+            except Exception as e:
+                self._send_json({"error": str(e)}, 500)
+
+        elif route == "demo_status":
+            self._log_request("demo-status")
+            _init_demo_wallet()
+            session_id = parse_qs(parsed.query).get("session_id", [""])[0]
+            if session_id and session_id in _demo_sessions:
+                session = _demo_sessions[session_id]
+                balance_info = {"address": session["address"], "sls_balance": "unknown"}
+                if _xrpl_client and XRPL_AVAILABLE and _xrpl_demo_wallet:
+                    try:
+                        from xrpl.models.requests import AccountLines
+                        lines = _xrpl_client.request(AccountLines(account=_xrpl_demo_wallet.address))
+                        for line in lines.result.get("lines", []):
+                            if line.get("currency") == "SLS" and line.get("account") == SLS_ISSUER_ADDRESS:
+                                balance_info["sls_balance"] = line.get("balance", "0")
+                                break
+                    except Exception:
+                        pass
+                self._send_json({
+                    "demo": True, "session_id": session_id,
+                    "session": session, "balance": balance_info,
+                    "network": XRPL_NETWORK,
+                })
+            else:
+                self._send_json({
+                    "demo": True,
+                    "active_sessions": len(_demo_sessions),
+                    "sessions": {k: {"name": v["name"], "plan": v["plan"], "anchors": v["anchors"]} for k, v in _demo_sessions.items()},
+                })
+
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)
 
@@ -1812,6 +1966,190 @@ class handler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_json({"error": str(e)}, 500)
 
+        # ══════════════════════════════════════════════════════════════
+        # DEMO MODE — SLS Economic Flow Without Stripe
+        #
+        # Uses Ops wallet (99M SLS) to demonstrate the full flow:
+        #   1. Simulated account creation (display only)
+        #   2. Simulated 12 XRP wallet funding (display only)
+        #   3. Simulated SLS allocation (display only)
+        #   4. REAL 0.01 SLS transfer: Ops wallet → Treasury (on-chain)
+        #
+        # Remove this entire section after Stripe is live.
+        # ══════════════════════════════════════════════════════════════
+
+        elif route == "demo_provision":
+            self._log_request("demo-provision")
+            _init_demo_wallet()
+            plan = data.get("plan", "starter")
+            demo_name = data.get("name", "Demo User")
+            now = datetime.now(timezone.utc)
+            session_id = "demo_" + hashlib.md5(f"{demo_name}{now.isoformat()}".encode()).hexdigest()[:12]
+            tier = SUBSCRIPTION_TIERS.get(plan, SUBSCRIPTION_TIERS["starter"])
+            demo_address = _xrpl_demo_wallet.address if _xrpl_demo_wallet else "raWL7nYZkuXMUurHcp5ZXkABfVgStdun51"
+
+            _demo_sessions[session_id] = {
+                "name": demo_name,
+                "plan": plan,
+                "address": demo_address,
+                "provisioned_at": now.isoformat(),
+                "anchors": 0,
+                "total_fees": 0.0,
+            }
+
+            self._send_json({
+                "demo": True,
+                "session_id": session_id,
+                "flow": [
+                    {
+                        "step": 1, "label": "Account Created", "status": "complete",
+                        "detail": f"{demo_name} subscribed to {tier['label']} (${tier['price_usd']:,.0f}/mo)",
+                        "simulated": True,
+                    },
+                    {
+                        "step": 2, "label": "Wallet Funded", "status": "complete",
+                        "detail": f"Treasury sent {XRP_ACCOUNT_RESERVE} XRP to activate wallet {demo_address[:8]}...{demo_address[-4:]}",
+                        "simulated": True, "xrp_amount": XRP_ACCOUNT_RESERVE,
+                    },
+                    {
+                        "step": 3, "label": "SLS Allocated", "status": "complete",
+                        "detail": f"Treasury delivered {tier['sls_monthly']:,} SLS ({tier['label']} tier)",
+                        "simulated": True, "sls_amount": tier["sls_monthly"],
+                    },
+                    {
+                        "step": 4, "label": "Ready to Anchor", "status": "ready",
+                        "detail": "Each anchor costs 0.01 SLS — real on-chain transfer to Treasury",
+                        "simulated": False,
+                    },
+                ],
+                "wallet": {"address": demo_address, "network": XRPL_NETWORK, "sls_allocation": tier["sls_monthly"]},
+                "subscription": {
+                    "plan": plan, "label": tier["label"],
+                    "price_usd": tier["price_usd"], "sls_monthly": tier["sls_monthly"],
+                    "anchors_available": tier["anchors"],
+                },
+                "message": f"Demo session created. Steps 1-3 simulated. Anchor fee (step 4) is a real 0.01 SLS transfer on XRPL {XRPL_NETWORK}.",
+            })
+
+        elif route == "demo_anchor":
+            self._log_request("demo-anchor")
+            _init_demo_wallet()
+            session_id = data.get("session_id", "")
+            hash_value = data.get("hash", "")
+            record_type = data.get("record_type", "JOINT_CONTRACT")
+            content_preview = data.get("content_preview", "")
+
+            if not session_id or session_id not in _demo_sessions:
+                self._send_json({"error": "Invalid demo session. Call /api/demo/provision first."}, 400)
+                return
+
+            cat = RECORD_CATEGORIES.get(record_type, {"label": record_type, "branch": "JOINT", "icon": "\U0001f4cb", "system": "N/A"})
+            now = datetime.now(timezone.utc)
+            if not hash_value:
+                hash_value = hashlib.sha256(str(now).encode()).hexdigest()
+
+            # Step A: Anchor the hash to XRPL (Issuer signs the memo — same as production)
+            xrpl_result = _anchor_xrpl(hash_value, record_type, cat.get("branch", ""))
+
+            anchor_tx = None
+            anchor_network = "Simulated"
+            anchor_explorer = None
+            if xrpl_result:
+                anchor_tx = xrpl_result["tx_hash"]
+                anchor_network = "XRPL " + XRPL_NETWORK.capitalize()
+                anchor_explorer = xrpl_result["explorer_url"]
+
+            # Step B: REAL 0.01 SLS fee transfer — Ops wallet → Treasury
+            fee_result = {"status": "pending"}
+            if _xrpl_demo_wallet and _xrpl_client and XRPL_AVAILABLE:
+                try:
+                    from xrpl.models.transactions import Payment as Pay
+                    from xrpl.models.amounts import IssuedCurrencyAmount as ICA
+                    fee_tx = Pay(
+                        account=_xrpl_demo_wallet.address,
+                        destination=SLS_TREASURY_ADDRESS,
+                        amount=ICA(
+                            currency="SLS",
+                            issuer=SLS_ISSUER_ADDRESS,
+                            value=SLS_ANCHOR_FEE,
+                        ),
+                        memos=[Memo(
+                            memo_type=bytes("s4/demo-anchor-fee", "utf-8").hex(),
+                            memo_data=bytes(json.dumps({
+                                "type": "demo_anchor_fee",
+                                "amount": SLS_ANCHOR_FEE,
+                                "hash": hash_value[:16],
+                                "session": session_id,
+                                "record_type": record_type,
+                            }), "utf-8").hex(),
+                        )]
+                    )
+                    fee_resp = submit_and_wait(fee_tx, _xrpl_client, _xrpl_demo_wallet)
+                    if fee_resp.is_successful():
+                        explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
+                        fee_result = {
+                            "status": "confirmed",
+                            "tx_hash": fee_resp.result["hash"],
+                            "explorer_url": explorer_base + fee_resp.result["hash"],
+                            "from": _xrpl_demo_wallet.address,
+                            "to": SLS_TREASURY_ADDRESS,
+                            "amount": SLS_ANCHOR_FEE + " SLS",
+                        }
+                    else:
+                        fee_result = {"status": "failed", "error": fee_resp.result.get("engine_result_message", "unknown")}
+                except Exception as e:
+                    fee_result = {"status": "error", "error": str(e)}
+            else:
+                fee_result = {"status": "simulated", "note": "XRPL_DEMO_SEED not set — fee transfer simulated"}
+
+            # Update session stats
+            session = _demo_sessions[session_id]
+            session["anchors"] += 1
+            session["total_fees"] += 0.01
+
+            # Add to _live_records for metrics dashboard
+            record = {
+                "hash": hash_value, "record_type": record_type,
+                "record_label": cat.get("label", record_type),
+                "branch": cat.get("branch", "JOINT"),
+                "icon": cat.get("icon", "\U0001f4cb"),
+                "timestamp": now.isoformat(),
+                "timestamp_display": now.strftime("%Y-%m-%d %H:%M:%S UTC"),
+                "fee": 0.01,
+                "tx_hash": anchor_tx or ("TX" + hashlib.md5(str(now).encode()).hexdigest().upper()[:32]),
+                "network": anchor_network,
+                "explorer_url": anchor_explorer,
+                "system": cat.get("system", "N/A"),
+                "content_preview": content_preview[:100] if content_preview else "",
+            }
+            _live_records.append(record)
+
+            # Fire webhook
+            _deliver_webhook("anchor.confirmed", {
+                "record_id": f"DEMO-{hash_value[:12].upper()}",
+                "hash": hash_value, "tx_hash": record["tx_hash"],
+                "record_type": record_type, "network": anchor_network,
+                "fee": 0.01, "demo": True,
+            })
+
+            self._send_json({
+                "demo": True,
+                "status": "anchored",
+                "record": record,
+                "anchor": {
+                    "tx_hash": anchor_tx,
+                    "network": anchor_network,
+                    "explorer_url": anchor_explorer,
+                },
+                "fee_transfer": fee_result,
+                "session": {
+                    "session_id": session_id,
+                    "total_anchors": session["anchors"],
+                    "total_fees_sls": round(session["total_fees"], 4),
+                },
+                "message": "Hash anchored to XRPL" + (" + 0.01 SLS fee sent to Treasury" if fee_result.get("status") == "confirmed" else " (fee transfer " + fee_result.get("status", "unknown") + ")"),
+            })
+
         elif route == "stripe_webhook":
             self._log_request("stripe-webhook")
             # Stripe webhook for automatic monthly SLS renewal
@@ -1827,6 +2165,16 @@ class handler(BaseHTTPRequestHandler):
                     self._send_json(result)
                 else:
                     self._send_json({"error": "No customer_email in invoice"}, 400)
+            elif event_type == "customer.subscription.created":
+                # NEW subscriber — auto-provision XRPL wallet + deliver first SLS allocation
+                sub = data.get("data", {}).get("object", {})
+                customer_email = sub.get("metadata", {}).get("email", "") or sub.get("customer_email", "")
+                plan = sub.get("metadata", {}).get("plan", "starter")
+                if customer_email:
+                    result = _provision_wallet(customer_email, plan=plan)
+                    self._send_json(result or {"error": "Provisioning unavailable"})
+                else:
+                    self._send_json({"error": "No customer email in subscription metadata"}, 400)
             elif event_type == "customer.subscription.deleted":
                 # Subscription cancelled — no action needed (SLS stays in user's wallet until used)
                 self._send_json({"received": True, "action": "none", "note": "SLS balance remains until exhausted"})

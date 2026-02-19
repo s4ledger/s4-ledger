@@ -30,7 +30,7 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 
 **What's real today:**
 - The $SLS token is live and tradable on XRPL Mainnet
-- 462 real defense platforms (DDG-51, F-35, CVN-78, etc.) with real program data
+- 500+ real defense platforms (DDG-51, F-35, CVN-78, etc.) with real program data
 - Tools that calculate readiness, track obsolescence, estimate lifecycle costs, score compliance, and generate audit reports — all using real MIL-STD formulas
 - Every tool generates actionable alerts: warranty expirations 90 days out, DMSMS obsolescence flags, readiness threshold violations
 - A unified Action Items tracker that consolidates tasks across all tools with severity sorting, filtering, and CSV export
@@ -43,10 +43,10 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
   - Issuer: `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5`
   - 100M total supply | ~15M circulating | 30M in multi-sig treasury
 - **13 interactive defense tools** live at s4ledger.com/demo-app — not mockups, real working interfaces
-- **27 Python SDK functions** for defense-grade hash anchoring, verification, and batch operations
-- **29 REST API endpoints** for enterprise integration
-- **500+ pre-loaded military entities** — 462 real defense platforms across U.S. Navy, 37 real defense suppliers, 25 real DoW contracts
-- **54+ Navy ILS record categories** mapped to real-world logistics workflows (supports any defense record type)
+- **38+ Python SDK methods** for defense-grade hash anchoring, verification, and batch operations
+- **49+ REST API endpoints** for enterprise integration
+- **500+ pre-loaded military entities** — 500+ defense platforms across 9 U.S. military branches, 37 real defense suppliers, 25 real DoW contracts
+- **156+ pre-built record types across 9 military branches** mapped to real-world logistics workflows (supports any defense record type)
 - **100+ real defense documents** in searchable reference library (MIL-STDs, OPNAVINSTs, DoD Directives)
 - **Audit Record Vault** — automatic audit trail storage for every anchored record
 - **Compliance Scorecard** — real-time CMMC/NIST/DFARS compliance posture calculator
@@ -133,7 +133,7 @@ S4 Ledger scales from zero infrastructure cost (today) to 50,000+ concurrent use
 | Phase | Timeline | Focus |
 |---|---|---|
 | Foundation | Q4 2025 – Q1 2026 ✅ | SDK, $SLS token, website |
-| Defense Platform | Q1 – Q2 2026 ✅ | 462 platforms, 13 tools, ILIE submission intelligence, toast alerts, action tracking, ROI/Lifecycle calculators |
+| Defense Platform | Q1 – Q2 2026 ✅ | 500+ platforms, 13 tools, ILIE submission intelligence, toast alerts, action tracking, ROI/Lifecycle calculators |
 | MVP & Pilot | Q3 – Q4 2026 | Pilot on real data, server persistence, user auth, pagination |
 | Partner & SaaS | Q1 – Q2 2027 | REST API, SaaS dashboard, Merkle batch anchoring, DIU/NavalX |
 | Scale & Certify | Q3 2027+ | NIST, FedRAMP, CDN/edge, microservices, production deployments |

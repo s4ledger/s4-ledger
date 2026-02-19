@@ -177,6 +177,78 @@
         {
             "source": "/api/wallet/balance",
             "destination": "/api"
+        },
+        {
+            "source": "/api/demo/provision",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/demo/anchor",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/demo/status",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/treasury/health",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/webhook/stripe",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/ai-chat",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/webhooks/register",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/webhooks/list",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/webhooks/deliveries",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/webhooks/test",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/anchor/composite",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/anchor/batch",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/proof-chain",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/custody/transfer",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/custody/chain",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/hash/file",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/verify/batch",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/org/records",
+            "destination": "/api"
         }
     ]
 }

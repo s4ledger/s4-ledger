@@ -455,18 +455,7 @@
         <div class="row mb-4" id="statsRow">
             <div class="col-md-4 mb-3"><div class="stat-card"><div class="stat-value" id="statVerified">0</div><div class="stat-label">Records Verified</div></div></div>
             <div class="col-md-4 mb-3"><div class="stat-card"><div class="stat-value" id="statTypes">0</div><div class="stat-label">Record Types Used</div></div></div>
-            <div class="col-md-4 mb-3">
-                <div class="stat-card" style="position:relative;overflow:hidden">
-                    <div id="treasuryPulse" style="position:absolute;inset:0;background:radial-gradient(circle,rgba(20,241,149,0.15),transparent 70%);opacity:0;transition:opacity 0.6s"></div>
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-                        <span style="width:8px;height:8px;border-radius:50%;background:#14f195;display:inline-block;animation:pulse 2s infinite"></span>
-                        <span style="font-size:0.72rem;color:var(--green);font-weight:700;letter-spacing:1px">TREASURY WALLET</span>
-                    </div>
-                    <div style="font-family:monospace;font-size:0.7rem;color:var(--steel);margin-bottom:4px;word-break:break-all">rMLm...KLqJ</div>
-                    <div class="stat-value" id="statSlsFees" style="color:var(--green)">0.000</div>
-                    <div class="stat-label">$SLS Collected</div>
-                </div>
-            </div>
+            <div class="col-md-4 mb-3"><div class="stat-card"><div class="stat-value" id="statSlsFees">0.000</div><div class="stat-label">$SLS Fees</div></div></div>
         </div>
 
         <ul class="nav nav-pills mb-2" role="tablist">
@@ -2289,9 +2278,7 @@ async function anchorRecord() {
     stats.slsFees += 0.01;
     updateStats();
     saveStats();
-    // Treasury pulse flash
-    const tp = document.getElementById('treasuryPulse');
-    if (tp) { tp.style.opacity = '1'; setTimeout(() => tp.style.opacity = '0', 1200); }
+
 
     await new Promise(r => setTimeout(r, 3200));
     hideAnchorAnimation();

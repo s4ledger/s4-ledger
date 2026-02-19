@@ -5,6 +5,63 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.0] - 2026-02-20
+
+### Demo Mode — Real SLS Fee Transfers on XRPL
+
+#### Added — Demo Mode (4 new endpoints)
+- **`/api/demo/provision`** — Creates a simulated demo session: shows hypothetical account creation, 12 XRP wallet funding, and SLS allocation (steps 1-3 simulated display). Uses Ops wallet (99M SLS) as demo wallet
+- **`/api/demo/anchor`** — Real 0.01 SLS transfer from Ops wallet → Treasury (`rMLm…KLqJ`) on XRPL Mainnet + standard hash anchor via Issuer. Both transactions are real on-chain
+- **`/api/demo/status`** — Returns demo session status, Ops wallet SLS balance (real from XRPL), and anchor history
+- **`/api/treasury/health`** — Live Treasury health monitor: XRP balance, SLS balance, low-balance alerts, wallet provisions remaining, explorer link
+
+#### Added — Stripe Auto-Provisioning
+- **`customer.subscription.created`** webhook handler — Automatically provisions XRPL wallet and delivers first SLS allocation when a new Stripe subscription is created
+- Existing `invoice.payment_succeeded` and `customer.subscription.deleted` handlers remain
+
+#### Changed — Demo App Frontend
+- **Demo mode integration** — `_anchorToXRPL()` function now routes through `/api/demo/anchor` when in demo mode, showing real on-chain fee transfer results (TX hash + explorer link)
+- **Demo banner** — Auto-provisions demo session on page load; shows plan, wallet address, and "Demo Mode" indicator
+- **Anchor result panel** — Now displays `$SLS FEE` line with `ON-CHAIN ✓` badge and clickable fee TX explorer link when demo mode is active
+- **Treasury stat card** — Reverted to simple `$SLS Fees` display (user preference)
+
+#### Changed — Hero Video
+- **Brightness increased** — Video opacity raised from 0.55 to 0.65, brightness filter from 1.3 to 1.4, gradient overlay lightened (0.45/0.15/0.55)
+
+#### Changed — Vercel Configuration
+- **19 new route rewrites** — Added demo mode (4), Stripe webhook, AI chat, HarborLink (4), composite/batch anchor, proof-chain, custody transfer/chain, file hash, batch verify, org records. Total: 51 rewrites
+
+#### Changed — Documentation (All 43 .md files audited)
+- **73+ replacements** across 22 files: `29 endpoints → 49+`, `27 SDK functions → 38+`, `54+ record types → 156+`, `462 platforms → 500+`, version numbers updated to v5.1
+- **CHANGELOG.md** — This entry
+
+#### Architecture — SLS Economic Flow (Demo Mode)
+```
+┌─────────────────────────────────────────────────────────────┐
+│  DEMO MODE (Stripe not yet live — CEO approval pending)     │
+│                                                              │
+│  Step 1: Simulated account creation          [display only] │
+│  Step 2: Simulated 12 XRP wallet funding     [display only] │
+│  Step 3: Simulated SLS tier allocation       [display only] │
+│  Step 4: REAL 0.01 SLS Ops → Treasury        [on-chain]    │
+│                                                              │
+│  Ops Wallet: raWL7nYZkuXMUurHcp5ZXkABfVgStdun51 (99M SLS) │
+│  Treasury:   rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ           │
+│  Issuer:     r95GyZac4butvVcsTWUPpxzekmyzaHsTA5             │
+│  Network:    XRPL Mainnet                                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Environment Variables (Vercel)
+| Variable | Purpose |
+|---|---|
+| `XRPL_WALLET_SEED` | Issuer wallet — signs anchor AccountSet memos |
+| `XRPL_TREASURY_SEED` | Treasury wallet — provisions user wallets, collects fees |
+| `XRPL_DEMO_SEED` | **NEW** — Ops wallet for demo SLS fee transfers |
+| `XRPL_NETWORK` | `mainnet` or `testnet` |
+
+---
+
 ## [5.0.1] - 2026-02-19
 
 ### QA Fixes & SDK Playground Overhaul
@@ -87,7 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **API endpoints preserved** — All 29 API routes remain in `api/index.py` for HarborLink to consume. S4 Ledger serves as the API and anchoring backend for both products.
 - **Demo app updated** — Removed 7 tab buttons, HTML panels, and JS function sections from `demo-app/index.html` (8,997 → ~7,137 lines). AI chatbot responses for moved tools now redirect to HarborLink.
 - **SDK playground updated** — Removed SDK cards, runner functions, and code samples for 7 moved tools. Added HarborLink redirect card.
-- **Tool count updated across 32+ files** — All references to "20 tools" updated to "13 tools" across documentation, HTML pages, and configuration files.
+- **Tool count updated across 32+ files** — All references to "13 purpose-built ILS tools" updated to "13 tools" across documentation, HTML pages, and configuration files.
 
 #### Added
 - **HARBORLINK_INTEGRATION.md** — Comprehensive integration architecture document (1,311 lines) covering API contracts, data flow diagrams, webhook system, Merkle batch anchoring, and 4-phase implementation roadmap.
@@ -304,7 +361,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Documentation, UX, Compliance, and Wallet Improvements
 
 #### Added — Documentation
-- **Full SDK Documentation Page** — Replaced empty redirect at `/sdk/` with comprehensive 42KB reference: 27 functions documented with signatures, parameters, return types, and code examples. Sticky sidebar navigation, installation guide, Quick Start, CLI reference (15 commands), REST API endpoint cards.
+- **Full SDK Documentation Page** — Replaced empty redirect at `/sdk/` with comprehensive 42KB reference: 38+ functions documented with signatures, parameters, return types, and code examples. Sticky sidebar navigation, installation guide, Quick Start, CLI reference (15 commands), REST API endpoint cards.
 - **User Training Guide** — `USER_TRAINING_GUIDE.md`: Complete step-by-step guide covering account creation, wallet setup, all 5 tabs (Anchor, Verify, Log, ILS Workspace, My Wallet), all 13 ILS tools with instructions, CLI/SDK/API usage, security best practices, and FAQ.
 
 #### Added — Wallet & Compliance
@@ -374,7 +431,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Marketplace Navigation** — Added Marketplace link to Products dropdown on all 12 pages that were missing it (s4-about, s4-pricing, s4-faq, s4-roadmap, s4-contact, s4-investors, s4-partners, s4-terms, s4-privacy, security, sdk-playground, s4-login).
 - **robots.txt** — Created with crawl rules (allow public pages, disallow API/assets/login/playground/demo-app).
 - **sitemap.xml** — Created with 14 public page entries and proper priority/changefreq values.
-- **Login Dashboard Expansion** — Now shows 12 tool cards (added PDF & CSV Export, Task Assignment & Collaboration, Authentication & Sessions, Marketplace). SDK card updated to "27 functions". Removed "Team Management COMING SOON".
+- **Login Dashboard Expansion** — Now shows 12 tool cards (added PDF & CSV Export, Task Assignment & Collaboration, Authentication & Sessions, Marketplace). SDK card updated to "38+ functions". Removed "Team Management COMING SOON".
 
 ### Changed — Emoji Removal, UI Fixes, Pricing & Content Accuracy
 
@@ -425,7 +482,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Emoji → FontAwesome**: Replaced 35+ emoji icons with professional FontAwesome 6 icons across landing page (How It Works, Why XRPL, Explore grid, Compliance, Built For sections)
 - **Use Cases page icons**: All emoji replaced with colored FontAwesome icons in styled containers
 - **Demo App XRPL banner**: Changed from green to blue (`#00aaff`) with white text for professional branding consistency
-- **Tool count consistency**: Fixed "18 integrated tools" → "20" and "19 Tools" → "20 Tools" across landing page and demo app
+- **Tool count consistency**: Fixed "18 integrated tools" → "20" and "19 Tools" → "13 purpose-built ILS tools" across landing page and demo app
 - **ILS Workspace description**: Updated to reflect all 13 tools including Defense Database Import and ILIE
 
 ## [3.9.14] - 2026-02-16
@@ -439,7 +496,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ECP/CDRL demo data** — 8-item ECP data with real NAVSEA-style change proposals + 8-item CDRL data with DI numbers
 - **Drag & drop upload** — Added handleSubFileDrop() for proper file drag-and-drop
 - **AI Agent ILIE context** — Agent provides ILIE-specific responses with discrepancy counts if analysis has been run
-- **SDK Playground expanded** — 27 functions (was 20): added ILIE, Defense DB Import, Compliance Score, ILS Calendar, Parts X-Ref, Doc Library, Audit Vault with Python code samples and realistic output
+- **SDK Playground expanded** — 38+ functions (was 20): added ILIE, Defense DB Import, Compliance Score, ILS Calendar, Parts X-Ref, Doc Library, Audit Vault with Python code samples and realistic output
 - **Marketplace verified** — Exists at /s4-marketplace/ and is linked from Products dropdown
 
 ## [3.9.13] - 2026-02-16
@@ -476,7 +533,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Full platform integration** — saveLocalRecord(), addToVault(), sessionRecords, updateTxLog(), showAnchorAnimation(), fetch('/api/anchor'), AI_TOOL_CONTEXT quick actions, switchHubTab() initialization
 - **SDK/API compatible** — Anchored reviews auto-populate Metrics and Transactions pages; record_type: SUBMISSION_REVIEW
 
-### Changed — 19→20 Tool Count Update
+### Changed — 19→13 purpose-built ILS tools Count Update
 - **All documentation updated** from "19-tool" to "13-tool" across: MAINNET_MIGRATION.md, PRODUCTION_READINESS.md, ROADMAP.md, INVESTOR_PITCH.md, INVESTOR_OVERVIEW.md, INVESTOR_RELATIONS.md, INVESTOR_SLIDE_DECK.md, TECHNICAL_SPECS.md, WHITEPAPER.md, metrics.html
 - **Financial figures recalculated** — ILIE adds $120K–$500K/year per program in eliminated submission review labor, prevented procurement errors, and avoided readiness shortfalls. New per-program total: ~$1.02M–$2.6M/year (was ~$900K–$2.1M). Scale projection (1,000 programs): $1.02B–$2.6B/year.
 - **WHITEPAPER.md** — Added ILIE row to Current Toolset table
@@ -507,7 +564,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed — Remaining 18→19 Tool Count Audit
 - **43 references fixed** across: index.html, PRODUCTION_READINESS.md (4 locations), MAINNET_MIGRATION.md, WHITEPAPER.md (2 locations), INVESTOR_SLIDE_DECK.md (2 locations), S4_LEDGER_INTERNAL_PITCH.md, s4-use-cases/index.html, S4_SYSTEMS_EXECUTIVE_PROPOSAL.md, DEVELOPER_BIO.md (2 locations), s4-faq/index.html (2 locations), INVESTOR_PITCH.md (3 locations), INVESTOR_OVERVIEW.md (4 locations), INVESTOR_RELATIONS.md, TECHNICAL_SPECS.md (2 locations), BILLION_DOLLAR_ROADMAP.md (2 locations), BILLION_DOLLAR_ROADMAP_SIMPLE.md (4 locations).
-- **API endpoint count updated** from "27 REST API endpoints" to "29 REST API endpoints" across 8+ files.
+- **API endpoint count updated** from "27 REST API endpoints" to "49+ REST API endpoints" across 8+ files.
 - **Files Modified** — CEO_CONVERSATION_GUIDE.md (new), SCALABILITY_ARCHITECTURE.md (new), BILLION_DOLLAR_ROADMAP.md, BILLION_DOLLAR_ROADMAP_SIMPLE.md, INVESTOR_PITCH.md, INVESTOR_SLIDE_DECK.md, INVESTOR_OVERVIEW.md, INVESTOR_RELATIONS.md, S4_SYSTEMS_EXECUTIVE_PROPOSAL.md, S4_LEDGER_INTERNAL_PITCH.md, WHITEPAPER.md, ROADMAP.md, PRODUCTION_READINESS.md, DEVELOPER_BIO.md, MAINNET_MIGRATION.md, TECHNICAL_SPECS.md, index.html, s4-use-cases/index.html, s4-faq/index.html, s4-assets/search.js, CHANGELOG.md.
 
 ## [3.9.9] - 2026-02-16
@@ -633,7 +690,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Comprehensive Repo-Wide Documentation Audit** — Audited all 23 remaining markdown files against current key facts. Fixed every inconsistency found across investor docs, whitepaper, developer bio, and compliance documents.
 - **National Impact & Job Creation Sections** — Added to all 4 investor documents: 340+ jobs by Year 5, $8M–$17M economic impact, $150B+ addressable market, $600M–$1.6B/yr savings at scale, defense industrial base expansion.
-- **Key Metrics Enrichment** — All investor documents now include: 21 SDK functions, 7 REST API endpoints, 500+ pre-loaded military entities (462 platforms + 37 suppliers + 25 contracts), 54+ record types, ~$600K–$1.6M per-program savings, 10–100x ROI, pricing tiers ($499–$4,999/mo).
+- **Key Metrics Enrichment** — All investor documents now include: 21 SDK functions, 7 REST API endpoints, 500+ pre-loaded military entities (462 platforms + 37 suppliers + 25 contracts), 156+ pre-built record types across 9 military branches, ~$600K–$1.6M per-program savings, 10–100x ROI, pricing tiers ($499–$4,999/mo).
 - **Competitive Landscape Enhancement** — Added competitor valuations (Palantir $60B+/$2.2B rev, Anduril $14B/~$800M rev), Microsoft Dynamics ($150K–$800K+) to all competitor tables. SBIR Phase I/II/III dollar ranges ($50K–$250K/$500K–$1.5M/full production) added everywhere.
 - **Funding Path Sections** — Added explicit SBIR Phase I/II/III dollar ranges to INVESTOR_PITCH, INVESTOR_OVERVIEW, and INVESTOR_SLIDE_DECK.
 
@@ -659,7 +716,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Production Readiness — Entity Formation Fixed** — Updated PRODUCTION_READINESS.md to reflect that S4 Systems, LLC already exists. Removed "Form legal entity (Delaware C-Corp)" items, replaced with "S4 Ledger product line under S4 Systems" (marked complete). Changed CAGE/SAM items to "verify/obtain" rather than "create from scratch."
 - **DoDI Directive Name Fix** — Fixed "DoWI 4245.14" back to "DoDI 4245.14" in PRODUCTION_READINESS.md (official directive names keep DoD prefix). Fixed "DoW 5200.01" back to "DoD 5200.01" in BAA_TEMPLATE.md.
 - **Tool Count Corrections** — Fixed "12 ILS Workspace sub-tabs" → "19" in MAINNET_MIGRATION.md. Fixed "13-tool ILS Workspace" → "19-tool" in README.md.
-- **ROADMAP.md Phase 2 Updated** — Updated Phase 2 from vague/outdated description to comprehensive feature list: 18 tools, 500+ platforms, 54+ record types, SDK Playground, competitive analysis, all pitch materials.
+- **ROADMAP.md Phase 2 Updated** — Updated Phase 2 from vague/outdated description to comprehensive feature list: 18 tools, 500+ platforms, 156+ pre-built record types across 9 military branches, SDK Playground, competitive analysis, all pitch materials.
 - **CHANGELOG.md Terminology** — Fixed remaining "DoD" → "DoW" in changelog entries where not referring to official directive names.
 
 ## [3.8.8] - 2026-02-15

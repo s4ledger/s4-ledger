@@ -69,6 +69,52 @@
 <div class="container"><div class="divider"></div></div>
 <section class="section"><div class="container">
 
+        <!-- ═══ Stat Boxes ═══ -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-lg-4 col-xl-2">
+                <div class="stat-box">
+                    <div class="stat-value" id="totalHashes">0</div>
+                    <div class="stat-label">Total Hashes</div>
+                    <div class="stat-delta" id="hashesToday">+0 today</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 col-xl-2">
+                <div class="stat-box">
+                    <div class="stat-value" id="totalFees">0.00</div>
+                    <div class="stat-label">$SLS Collected</div>
+                    <div class="stat-delta" id="feesToday">+$0.00 today</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 col-xl-2">
+                <div class="stat-box">
+                    <div class="stat-value" id="recordTypes">0</div>
+                    <div class="stat-label">Record Types</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 col-xl-2">
+                <div class="stat-box">
+                    <div class="stat-value" id="thisMonth">0</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 col-xl-2">
+                <div class="stat-box">
+                    <div class="stat-value" style="font-size:1.1rem;color:var(--accent)">rMLm…KLqJ</div>
+                    <div class="stat-label">Treasury Wallet</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 col-xl-2">
+                <div class="stat-box">
+                    <div class="live-indicator"><span class="live-dot"></span> LIVE</div>
+                    <div class="stat-label" style="margin-top:10px">XRPL Mainnet</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center;margin-bottom:24px;">
+            <button class="export-btn" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+
         <div class="card reveal">
             <h3 style="margin-bottom:5px;"><i class="fas fa-bolt" style="color:var(--accent);margin-right:8px;"></i> Hash Anchoring Over Time</h3>
             <p style="color:var(--text-secondary);font-size:0.9rem;">Each bar represents hashes anchored during that time period</p>

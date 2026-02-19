@@ -4,7 +4,7 @@
 
 Nick Frankfort is the creator, owner, and sole developer of S4 Ledger — a defense logistics verification product line of **S4 Systems, LLC**. S4 Ledger anchors tamper-proof audit trails on the XRP Ledger, providing the defense industry's first blockchain-verified integrity layer for supply chains, maintenance records, and contract deliverables.
 
-Nick built the entire platform — 13 ILS tools, 27 SDK functions, 29 REST API endpoints, 25+ page website, and the $SLS utility token — at zero cost to the company, on his own time, as a working ILS contractor.
+Nick built the entire platform — 13 ILS tools, 38+ Python SDK methods, 49+ REST API endpoints, 25+ page website, and the $SLS utility token — at zero cost to the company, on his own time, as a working ILS contractor.
 
 ### Background
 
@@ -16,10 +16,10 @@ Nick built the entire platform — 13 ILS tools, 27 SDK functions, 29 REST API e
 ### What He Built
 
 - **13 interactive ILS tools** covering every ILS element — readiness, DMSMS, lifecycle cost, supply chain risk, predictive maintenance, audit reporting, submission review & discrepancy analysis (ILIE), and more
-- **27 Python SDK functions** for defense-grade hash anchoring and verification
-- **29 REST API endpoints** for enterprise integration
-- **462 real defense platforms** across the U.S. Navy with real program data
-- **54+ pre-built ILS record types** mapped to real-world logistics workflows
+- **38+ Python SDK methods** for defense-grade hash anchoring and verification
+- **49+ REST API endpoints** for enterprise integration
+- **500+ real defense platforms** across the U.S. Navy with real program data
+- **156+ pre-built record types across 9 military branches** mapped to real-world logistics workflows
 - **$SLS utility token** live on XRPL Mainnet (100M supply)
 - **25+ page production website** at s4ledger.com
 

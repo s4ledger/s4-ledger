@@ -1,6 +1,6 @@
 # SLS Economy — CEO Explainer
 
-**S4 Systems, LLC | S4 Ledger v4.0.7**
+**S4 Systems, LLC | S4 Ledger v5.1**
 **For: Leadership, Board, Investors**
 
 ---

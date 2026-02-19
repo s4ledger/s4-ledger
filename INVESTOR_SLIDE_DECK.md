@@ -38,10 +38,10 @@ S4 Ledger: Immutable logistics verification for the defense industry, anchored o
 - **$SLS token LIVE on XRPL Mainnet** — tradable, AMM pools, trustlines
 - 100M total supply | ~15M circulating | 30M multi-sig treasury
 - **13 interactive defense tools** live at s4ledger.com (not mockups)
-- **27 Python SDK functions** for defense-grade hash anchoring and verification
-- **29 REST API endpoints** for enterprise integration
-- **500+ pre-loaded military entities** — 462 platforms, 37 suppliers, 25 contracts
-- **54+ Navy ILS record categories** mapped to real-world logistics workflows
+- **38+ Python SDK methods** for defense-grade hash anchoring and verification
+- **49+ REST API endpoints** for enterprise integration
+- **500+ pre-loaded military entities** — 500+ platforms, 37 suppliers, 25 contracts
+- **156+ pre-built record types across 9 military branches** mapped to real-world logistics workflows
 - **100+ real defense documents** in searchable reference library
 - **Audit Record Vault** — automatic audit trail for every anchored record
 - **Compliance Scorecard** — CMMC/NIST/DFARS compliance calculator
@@ -119,7 +119,7 @@ Key: 65% labor reduction • 90% error savings • 70% audit reduction • 15-25
 
 ## Roadmap
 - Phase 1 ✅: SDK, token, website
-- Phase 2 ✅: 462 platforms, 13 tools, alerts, action tracking
+- Phase 2 ✅: 500+ platforms, 13 tools, alerts, action tracking
 - Phase 3: MVP pilot on real contract data, server persistence, user auth
 - Phase 4: REST API, SaaS, Merkle batch anchoring, DIU/NavalX
 - Phase 5: NIST, FedRAMP, CDN/edge, microservices, production

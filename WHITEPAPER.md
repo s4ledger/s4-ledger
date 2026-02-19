@@ -187,7 +187,7 @@ See [SEC_COMPLIANCE.md](SEC_COMPLIANCE.md) for full analysis under the Howey tes
 - **Batch support:** Up to 1,000 records per batch
 - **CLI:** Command-line interface for scripting and automation
 
-### 5.2 REST API (29 Endpoints — Live)
+### 5.2 REST API (49+ endpoints — Live)
 
 - REST API with API key authentication (master + org keys)
 - 27 production endpoints: anchor, verify, hash, categorize, status, health, metrics, transactions, record-types, xrpl-status, auth, infrastructure, and 15 ILS tool endpoints
@@ -226,7 +226,7 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | Phase | Timeline | Milestones |
 |---|---|---|
 | **Phase 1 — Foundation** | Q4 2025 – Q1 2026 ✅ | SDK, hash anchoring, $SLS token, website |
-| **Phase 2 — Defense Platform** | Q1 – Q2 2026 ✅ | 462 real platforms, 13 interactive tools, 54+ pre-built record types, toast alerts, unified action tracking |
+| **Phase 2 — Defense Platform** | Q1 – Q2 2026 ✅ | 500+ real platforms, 13 interactive tools, 156+ pre-built record types across 9 military branches, toast alerts, unified action tracking |
 | **Phase 3 — MVP & Pilot** | Q3 – Q4 2026 | Internal pilot on real contract data, SBIR/STTR applications, server-side persistence, user auth |
 | **Phase 4 — Partner & SaaS** | Q1 – Q2 2027 | REST API, SaaS dashboard, DIU / NavalX engagement, Merkle tree batch anchoring |
 | **Phase 5 — Scale & Certify** | Q3 2027+ | NIST/CMMC, FedRAMP, CDN/edge caching, microservices, production deployments |
@@ -236,7 +236,7 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | Tool | Description |
 |---|---|
 | **ILS Workspace** | Unified command center consolidating all 13 tools with cross-tool data syncing and sub-tab navigation |
-| ILS Workspace Engine | Per-program checklists for 462+ programs with DRL generation |
+| ILS Workspace Engine | Per-program checklists for 500+ programs with DRL generation |
 | Action Items & Task Tracker | Cross-tool task queue with severity tagging, delegation, cost tracking, and source breakdown |
 | DMSMS Tracker | Obsolescence monitoring with severity analysis |
 | Readiness Calculator | Ao/Ai computation per MIL-STD-1390D |
@@ -297,7 +297,7 @@ Infrastructure costs scale with revenue and never exceed 6% of ARR at any phase.
 
 ## 8. Team
 
-S4 Ledger is a product line of **S4 Systems, LLC**, created and built entirely by **Nick Frankfort** — ILS contractor and founder and CEO. Nick built the entire platform (13 ILS tools, 27 SDK functions, 29 REST API endpoints, $SLS token, 25+ page website, 500+ pre-loaded military entities) at zero cost to the company, on his own time, drawing on years of hands-on ILS experience across Navy and DoW programs.
+S4 Ledger is a product line of **S4 Systems, LLC**, created and built entirely by **Nick Frankfort** — ILS contractor and founder and CEO. Nick built the entire platform (13 ILS tools, 38+ Python SDK methods, 49+ REST API endpoints, $SLS token, 25+ page website, 500+ pre-loaded military entities) at zero cost to the company, on his own time, drawing on years of hands-on ILS experience across Navy and DoW programs.
 
 Based in Charleston, SC.
 
@@ -368,7 +368,7 @@ The AI Agent operates in a hybrid local+cloud model with server-side LLM integra
 - **Context enrichment**: The frontend passes the current tool context, conversation history (last 20 messages), and analysis summaries (readiness scores, gap findings, action items) to the LLM for informed, context-aware responses.
 - **Environment variables**: `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`, `AZURE_OPENAI_DEPLOYMENT` for FedRAMP-eligible Azure; `OPENAI_API_KEY` for OpenAI; `ANTHROPIC_API_KEY` for Anthropic Claude. All optional — the system degrades gracefully to local patterns.
 
-### SLS Token Economy (v4.0.7+)
+### SLS Token Economy (v5.1+)
 
 S4 Ledger uses a Treasury-based delivery model for its native SLS token:
 - **No DEX or exchange trading** — SLS tokens are delivered directly from the S4 Treasury wallet to subscriber custodial wallets.

@@ -1,4 +1,4 @@
-# S4 Ledger — Full Product Audit (v4.0.8)
+# S4 Ledger — Full Product Audit (v5.1)
 
 **Date**: June 2025
 **Auditor**: Automated code review
@@ -27,7 +27,7 @@ S4 Ledger is a **sophisticated, well-architected demo platform with real XRPL bl
 | `GET /api/readiness` | Real Ao/Ai/MTBF math from parameters | ✅ PRODUCTION-READY |
 | `GET /api/roi` | Real ROI calculation from parameters | ✅ PRODUCTION-READY |
 | `GET /api/lifecycle` | Real lifecycle cost estimation | ✅ PRODUCTION-READY |
-| `GET /api/record-types` | 54+ Navy record types (accurate taxonomy) | ✅ PRODUCTION-READY |
+| `GET /api/record-types` | 156+ pre-built record types across 9 military branches (accurate taxonomy) | ✅ PRODUCTION-READY |
 | `GET /api/wallet/balance` | Queries real XRPL node for balances | ✅ PRODUCTION-READY |
 | `POST /api/wallet/provision` | Creates real XRPL wallet, sets TrustLine, delivers SLS | ⚡ WORKS ON TESTNET |
 | `POST /api/wallet/buy-sls` | Real XRPL token delivery from Treasury | ⚡ WORKS ON TESTNET |
@@ -60,7 +60,7 @@ S4 Ledger is a **sophisticated, well-architected demo platform with real XRPL bl
 
 ---
 
-## 2. ILS Workspace — 20 Tools
+## 2. ILS Workspace — 13 purpose-built ILS tools
 
 ### Tools That Genuinely Work
 
@@ -137,7 +137,7 @@ S4 Ledger is a **sophisticated, well-architected demo platform with real XRPL bl
 1. **XRPL integration is real** — wallet provisioning, SLS token economy, anchor transactions all work on testnet and the code handles mainnet
 2. **SLS token economy is fully designed** — Treasury → User circulation, subscription tiers, monthly allocations, per-anchor fee deduction
 3. **File upload/parsing genuinely works** — PDF (pdf.js), DOCX (mammoth.js), XLSX (SheetJS), CSV all parse real files client-side
-4. **Defense domain expertise is extensive** — 54+ record types, 500+ platforms, correct DI numbers, MIL-STD references, CAGE codes
+4. **Defense domain expertise is extensive** — 156+ pre-built record types across 9 military branches, 500+ platforms, correct DI numbers, MIL-STD references, CAGE codes
 5. **AI Agent system prompt** — 200+ lines of accurate defense-specific ILS guidance
 6. **Security headers** — HSTS, CSP, X-Frame-Options, Referrer-Policy all properly configured in vercel.json
 7. **All export buttons produce real downloadable files**

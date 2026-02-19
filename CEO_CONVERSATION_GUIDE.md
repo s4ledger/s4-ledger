@@ -157,7 +157,7 @@ If the CEO says no:
 | ILS tools built | 13 |
 | SDK functions | 27 |
 | API endpoints | 29 |
-| Pre-loaded platforms | 462 across U.S. Navy |
+| Pre-loaded platforms | 500+ across 9 U.S. military branches |
 | Cost to build so far | $0 to the company |
 | Cost to go production | $12K–$35K |
 | SBIR Phase I funding | $50K–$250K (free, no equity) |

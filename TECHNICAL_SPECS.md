@@ -45,7 +45,7 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 | `batch_coc` | Batch certificate of conformance | 24x transmission assemblies |
 | `audit_artifact` | Audit evidence / inspection report | INSURV finding |
 
-*S4 Ledger supports **54+ pre-built ILS record categories** mapped to real-world defense logistics workflows. The table above shows core examples — any defense record type can be anchored.*
+*S4 Ledger supports **156+ pre-built record types across 9 military branches** mapped to real-world defense logistics workflows. The table above shows core examples — any defense record type can be anchored.*
 
 ## 4. SDK Specifications
 
@@ -75,8 +75,8 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 | Property | Value |
 |---|---|
 | **Tools** | 20 interactive ILS management tools |
-| **Platforms** | 500+ pre-loaded (462 platforms, 37 suppliers, 25 contracts) |
-| **Record Types** | 54+ pre-built ILS record categories |
+| **Platforms** | 500+ pre-loaded (500+ platforms, 37 suppliers, 25 contracts) |
+| **Record Types** | 156+ pre-built record types across 9 military branches |
 | **Standards** | MIL-STD-1388, DoDI 4245.15, DoD 5000.73, FAR 46.7, MIL-STD-1390D |
 
 ## 7. XRPL Network

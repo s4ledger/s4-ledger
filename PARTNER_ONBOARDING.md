@@ -31,7 +31,7 @@
 | Contractor ERP | SDK + REST API (Phase 4) |
 | CDMD-OA | SDK + configuration baseline anchoring |
 
-## API Access (Live — 29 endpoints)
+## API Access (Live — 49+ endpoints)
 
 - REST API with key-based authentication
 - Tier-based rate limits (1K / 10K / 100K anchors per month)

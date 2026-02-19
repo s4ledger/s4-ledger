@@ -96,7 +96,7 @@ This document maps the exact technical integration surface — every API call, e
 | **Hash any data** | `POST /api/hash` | Live | SHA-256, returns 64-char hex |
 | **Anchor to XRPL** | `POST /api/anchor` | Live | Hash + `AccountSet` memo + SLS fee |
 | **Verify integrity** | `POST /api/verify` | Live | Recompute hash vs. chain, returns `tamper_detected` |
-| **Record categorization** | `POST /api/categorize` | Live | 54+ Navy record types |
+| **Record categorization** | `POST /api/categorize` | Live | 156+ pre-built record types across 9 military branches |
 | **AI analysis** | `POST /api/ai-chat` | Live | Azure OpenAI → GPT-4o → Claude fallback |
 | **Wallet provisioning** | `POST /api/wallet/provision` | Live | Creates XRPL wallet, funds XRP + SLS |
 | **SLS balance check** | `GET /api/wallet/balance` | Live | Query wallet SLS/XRP balance |
@@ -149,7 +149,7 @@ event = {
 
 # 2. HarborLink calls S4 Ledger
 response = requests.post("https://s4ledger.com/api/anchor", json={
-    "record_type": "cdrl_delivery",          # One of 54+ types
+    "record_type": "cdrl_delivery",          # One of 156+ types
     "hash": event["file_hash"],              # SHA-256 of the raw file
     "user_email": event["actor"],            # For SLS fee deduction
     "metadata": {                            # Stored in anchor memo (optional extension)
@@ -220,7 +220,7 @@ X-API-Key: harborlink-org-key
 
 ### Record Type Mapping
 
-HarborLink artifact types should map to S4 Ledger's 54+ record types:
+HarborLink artifact types should map to S4 Ledger's 156+ pre-built record types across 9 military branches:
 
 | HarborLink Artifact | S4 Record Type | Branch |
 |---|---|---|
@@ -632,7 +632,7 @@ Response: A portable package containing:
     "program": "DDG-51 Flight III",
     "period": { "start": "2025-01-01", "end": "2026-02-18" },
     "generated_at": "2026-02-18T15:00:00Z",
-    "generated_by": "S4 Ledger v4.0.8",
+    "generated_by": "S4 Ledger v5.1",
 
     "summary": {
         "total_records": 1247,
@@ -1248,7 +1248,7 @@ prediction = ledger.calculate_readiness(
 
 ## Appendix A — Record Type Catalog
 
-S4 Ledger supports 54+ record types across U.S. Navy. Key categories for HarborLink:
+S4 Ledger supports 156+ pre-built record types across 9 military branches across U.S. Navy. Key categories for HarborLink:
 
 | Branch | Types | Examples |
 |---|---|---|
