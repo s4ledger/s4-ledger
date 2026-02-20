@@ -356,7 +356,16 @@
         .score-ring{width:120px;height:120px;position:relative;margin:0 auto 12px}
         .score-ring svg{transform:rotate(-90deg)}
         .score-ring .score-val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:800;color:#fff}
-        .score-ring .score-grade{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:1.3rem;font-weight:900;padding:6px 18px;border-radius:12px;letter-spacing:2px;text-transform:uppercase;box-shadow:0 0 16px rgba(0,170,255,0.3);border:2px solid rgba(0,170,255,0.3);min-width:48px;text-align:center;transition:all 0.5s ease}
+        
+        /* Persistent SLS Balance Bar — replaces flow box when in tabs */
+        #slsBalanceBar{display:none;background:linear-gradient(90deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.15);border-radius:10px;padding:10px 20px;margin:0 0 16px;align-items:center;justify-content:space-between;gap:12px;font-size:0.82rem;transition:all 0.3s}
+        #slsBalanceBar .sls-stat{display:flex;align-items:center;gap:6px}
+        #slsBalanceBar .sls-stat-val{font-weight:700;color:#c9a84c}
+        #slsBalanceBar .sls-stat-label{color:var(--steel);font-size:0.72rem}
+        #slsBalanceBar .sls-expand-btn{background:none;border:1px solid rgba(0,170,255,0.2);color:var(--accent);padding:4px 12px;border-radius:6px;font-size:0.72rem;cursor:pointer;transition:all 0.2s}
+        #slsBalanceBar .sls-expand-btn:hover{background:rgba(0,170,255,0.1);border-color:var(--accent)}
+
+        .score-ring .score-grade{display:none}
         .compliance-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:all 0.3s}
         .compliance-row:hover{border-color:var(--accent);background:rgba(0,170,255,0.03)}
         .compliance-bar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
@@ -654,6 +663,18 @@
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabOffline" role="tab"><i class="fas fa-wifi" id="offlineTabIcon"></i> Offline Queue</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabWallet" role="tab"><i class="fas fa-wallet"></i> My Wallet</a></li>
         </ul>
+
+        
+        <!-- Persistent SLS Balance Bar (shown when flow box is collapsed) -->
+        <div id="slsBalanceBar">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div class="sls-stat"><i class="fas fa-coins" style="color:#c9a84c"></i> <span class="sls-stat-label">SLS Balance:</span> <span class="sls-stat-val" id="slsBarBalance">25,000 SLS</span></div>
+                <div class="sls-stat"><i class="fas fa-anchor" style="color:var(--accent)"></i> <span class="sls-stat-label">Anchors:</span> <span class="sls-stat-val" id="slsBarAnchors" style="color:#00aaff">0</span></div>
+                <div class="sls-stat"><i class="fas fa-bolt" style="color:var(--accent)"></i> <span class="sls-stat-label">SLS Spent:</span> <span class="sls-stat-val" id="slsBarSpent">0.00</span></div>
+                <div class="sls-stat"><i class="fas fa-layer-group" style="color:var(--accent)"></i> <span class="sls-stat-label">Plan:</span> <span class="sls-stat-val" id="slsBarPlan" style="color:#fff">Starter</span></div>
+            </div>
+            <button class="sls-expand-btn" onclick="toggleFlowBox()"><i class="fas fa-chart-simple" style="margin-right:4px"></i>Show Flow Details</button>
+        </div>
 
         <div class="tab-content">
             <div class="tab-pane fade" id="tabAnchor" role="tabpanel">
@@ -1452,7 +1473,7 @@
                             <div class="score-val" id="complianceScore">—</div>
                             <div class="score-grade" id="complianceGrade" style="background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(0,170,255,0.1));color:#00aaff;border:2px solid rgba(0,170,255,0.2)">—</div>
                         </div>
-                        <div id="complianceGradeBelow" style="text-align:center;margin:16px 0 4px"><span id="complianceGradeLetter" style="display:inline-block;font-size:1.4rem;font-weight:900;padding:8px 24px;border-radius:12px;letter-spacing:2px;background:rgba(0,170,255,0.1);color:#00aaff;border:2px solid rgba(0,170,255,0.3);min-width:52px;text-align:center;transition:all 0.5s ease">—</span></div>
+                        <div id="complianceGradeBelow" style="text-align:center;margin:24px 0 8px"><span id="complianceGradeLetter" style="display:inline-block;font-size:1.4rem;font-weight:900;padding:8px 24px;border-radius:12px;letter-spacing:2px;background:rgba(0,170,255,0.1);color:#00aaff;border:2px solid rgba(0,170,255,0.3);min-width:52px;text-align:center;transition:all 0.5s ease">—</span></div>
                         <div style="font-size:0.82rem;color:var(--steel);font-weight:600;margin-top:4px">Overall Compliance Posture</div>
                     </div>
 
@@ -2328,6 +2349,7 @@ let stats = {anchored:0,verified:0,types:new Set(),slsFees:0};
 
 // ── Demo SLS Balance Tracker ──
 function _updateDemoSlsBalance() {
+    if (typeof _syncSlsBar === 'function') _syncSlsBar();
     var allocation = _demoSession ? (_demoSession.subscription?.sls_allocation || 25000) : 25000;
     var spent = stats.slsFees || 0;
     var remaining = allocation - spent;
@@ -2360,9 +2382,66 @@ function _updateDemoSlsBalance() {
     }
 }
 
+
+// ═══ SLS Flow Box Collapse/Expand Logic ═══
+var _flowBoxCollapsed = false;
+
+function collapseFlowBox() {
+    var panel = document.getElementById('demoPanel');
+    var bar = document.getElementById('slsBalanceBar');
+    if (panel) { panel.style.display = 'none'; }
+    if (bar) { bar.style.display = 'flex'; }
+    _flowBoxCollapsed = true;
+    _syncSlsBar();
+}
+
+function expandFlowBox() {
+    var panel = document.getElementById('demoPanel');
+    var bar = document.getElementById('slsBalanceBar');
+    if (panel) { panel.style.display = 'block'; }
+    if (bar) { bar.style.display = 'none'; }
+    _flowBoxCollapsed = false;
+}
+
+function toggleFlowBox() {
+    if (_flowBoxCollapsed) expandFlowBox();
+    else collapseFlowBox();
+}
+
+function _syncSlsBar() {
+    var allocation = _demoSession ? (_demoSession.subscription?.sls_allocation || 25000) : 25000;
+    var spent = stats.slsFees || 0;
+    var remaining = allocation - spent;
+    var plan = _demoSession ? (_demoSession.subscription?.label || 'Starter') : 'Starter';
+    
+    var balEl = document.getElementById('slsBarBalance');
+    var anchorsEl = document.getElementById('slsBarAnchors');
+    var spentEl = document.getElementById('slsBarSpent');
+    var planEl = document.getElementById('slsBarPlan');
+    
+    if (balEl) { balEl.textContent = remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' SLS'; balEl.style.color = remaining < 100 ? '#ff3333' : '#c9a84c'; }
+    if (anchorsEl) anchorsEl.textContent = stats.anchored || 0;
+    if (spentEl) spentEl.textContent = (spent).toFixed(2) + ' SLS';
+    if (planEl) planEl.textContent = plan;
+}
+
+// Auto-collapse flow box when user clicks any main tab (not the first time on anchor)
+document.addEventListener('click', function(e) {
+    var tab = e.target.closest('[data-bs-toggle="tab"]');
+    if (tab && !_flowBoxCollapsed) {
+        // Collapse the flow box once user starts using tabs
+        setTimeout(collapseFlowBox, 300);
+    }
+});
+
 // Initialize SLS balance display on page load
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() { _updateDemoSlsBalance(); }, 2500);
+    // Show initial balance immediately, then update periodically
+    setTimeout(function() { 
+        _updateDemoSlsBalance();
+        // Keep syncing every 5 seconds to catch any updates
+        setInterval(_updateDemoSlsBalance, 5000);
+    }, 2500);
 });
 
 // ── localStorage cross-page record sync ──
@@ -2681,6 +2760,9 @@ async function _initDemoSession() {
 }
 
 function _showDemoOffline() {
+    // Ensure allocation is set even in offline mode
+    if (!_demoSession) _demoSession = {};
+    if (!_demoSession.subscription) _demoSession.subscription = {label:'Starter',sls_allocation:25000};
     document.getElementById('demoBanner').style.display = 'block';
     document.getElementById('demoBanner').innerHTML = '<i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong style="color:#fff;">S4 Ledger</strong> &mdash; Offline mode. Anchors are queued locally and will sync when connected.';
     var panel = document.getElementById('demoPanel');
