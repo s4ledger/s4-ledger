@@ -2804,6 +2804,7 @@ async function _initDemoSession() {
     // Panel visibility is controlled by wallet tab listener — don't force-show here
     if (spinner) spinner.style.display = 'block';
     try {
+        // NETWORK_DEPENDENT: Provision requires server — offline interceptor returns mock session
         const resp = await fetch('/api/demo/provision', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -2914,6 +2915,7 @@ function _animateDemoSteps(data) {
 async function _checkDemoStatus() {
     if (!_demoSession) { _initDemoSession(); return; }
     try {
+        // NETWORK_DEPENDENT: Status check — gracefully fails offline
         const resp = await fetch('/api/demo/status?session_id=' + encodeURIComponent(_demoSession.session_id));
         if (resp.ok) {
             const data = await resp.json();
@@ -2935,6 +2937,7 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
     let anchorError = null;
     try {
         if (_demoMode && _demoSession) {
+            // NETWORK_DEPENDENT: Anchor — interceptor queues offline
             const resp = await fetch('/api/demo/anchor', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -2958,6 +2961,7 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
                 console.error('Anchor API error:', resp.status, anchorError);
             }
         } else {
+            // NETWORK_DEPENDENT: Production anchor — interceptor queues offline
             const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview})});
             if (resp.ok) {
                 const result = await resp.json();
@@ -5461,6 +5465,7 @@ async function aiSend() {
 
     let responded = false;
     try {
+        // NETWORK_DEPENDENT: AI chat requires server — returns error offline
         const resp = await fetch('/api/ai-chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -7888,6 +7893,7 @@ function loadWalletData() {
 
 async function fetchWalletBalance(address) {
     try {
+        // NETWORK_DEPENDENT: Wallet balance requires XRPL connectivity
         const resp = await fetch('/api/wallet/balance?address=' + encodeURIComponent(address));
         const data = await resp.json();
         if (data.error) {
@@ -7982,6 +7988,7 @@ async function handleBuySLS() {
     resultEl.style.display = 'none';
 
     try {
+        // NETWORK_DEPENDENT: SLS purchase requires XRPL connectivity
         const resp = await fetch('/api/wallet/buy-sls', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -8194,6 +8201,7 @@ async function loadPerformanceMetrics() {
     });
 
     try {
+        // NETWORK_DEPENDENT: Metrics requires server — silently fails offline
         var res = await fetch('/api/metrics/performance');
         var data = await res.json();
         var el = function(id, val) { var e = document.getElementById(id); if (e) e.textContent = val; };
@@ -8258,9 +8266,94 @@ setInterval(function() {
 // ── Offline Queue Client-Side ──
 var OFFLINE_QUEUE_KEY = 's4_offline_queue';
 var OFFLINE_SYNC_KEY = 's4_offline_last_sync';
+var OFFLINE_QUEUE_ENCRYPTED_KEY = 's4_offline_queue_enc';
+var OFFLINE_QUEUE_IV_KEY = 's4_offline_queue_iv';
+var _offlineCryptoKey = null;
 
-function getOfflineQueue() { try { return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]'); } catch(e) { return []; } }
-function saveOfflineQueue(queue) { localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue)); refreshOfflineQueueUI(); }
+// ── Offline Queue Encryption (AES-256-GCM via Web Crypto) ──
+async function _getOfflineCryptoKey() {
+    if (_offlineCryptoKey) return _offlineCryptoKey;
+    // Derive key from a device fingerprint (user agent + origin) via PBKDF2
+    var seed = navigator.userAgent + '|' + location.origin + '|s4ledger_offline_v1';
+    var enc = new TextEncoder();
+    var keyMaterial = await crypto.subtle.importKey('raw', enc.encode(seed), 'PBKDF2', false, ['deriveKey']);
+    _offlineCryptoKey = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: enc.encode('s4_offline_salt_v1'), iterations: 100000, hash: 'SHA-256' },
+        keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+    );
+    return _offlineCryptoKey;
+}
+
+async function _encryptQueue(data) {
+    var key = await _getOfflineCryptoKey();
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    var enc = new TextEncoder();
+    var ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, enc.encode(JSON.stringify(data)));
+    return { iv: Array.from(iv), data: Array.from(new Uint8Array(ciphertext)) };
+}
+
+async function _decryptQueue(encrypted) {
+    var key = await _getOfflineCryptoKey();
+    var iv = new Uint8Array(encrypted.iv);
+    var ciphertext = new Uint8Array(encrypted.data);
+    var decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, ciphertext);
+    return JSON.parse(new TextDecoder().decode(decrypted));
+}
+
+// Read queue — tries encrypted first, falls back to plain localStorage
+function getOfflineQueue() {
+    try {
+        var encStr = localStorage.getItem(OFFLINE_QUEUE_ENCRYPTED_KEY);
+        if (encStr) {
+            // Return empty synchronously, then decrypt async
+            // For sync callers, we cache the last known queue
+            return _offlineQueueCache || [];
+        }
+        return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]');
+    } catch(e) { return []; }
+}
+
+// Async read — use this when you need the actual encrypted data
+var _offlineQueueCache = [];
+async function getOfflineQueueAsync() {
+    try {
+        var encStr = localStorage.getItem(OFFLINE_QUEUE_ENCRYPTED_KEY);
+        if (encStr) {
+            var encrypted = JSON.parse(encStr);
+            _offlineQueueCache = await _decryptQueue(encrypted);
+            return _offlineQueueCache;
+        }
+        // Migrate plain queue to encrypted
+        var plain = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]');
+        if (plain.length > 0) {
+            await _saveEncryptedQueue(plain);
+            localStorage.removeItem(OFFLINE_QUEUE_KEY); // Remove plain after migration
+        }
+        _offlineQueueCache = plain;
+        return plain;
+    } catch(e) { console.warn('Queue decrypt error:', e); return []; }
+}
+
+async function _saveEncryptedQueue(queue) {
+    try {
+        var encrypted = await _encryptQueue(queue);
+        localStorage.setItem(OFFLINE_QUEUE_ENCRYPTED_KEY, JSON.stringify(encrypted));
+        _offlineQueueCache = queue;
+    } catch(e) {
+        console.warn('Queue encrypt error, falling back to plain:', e);
+        localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+    }
+}
+
+function saveOfflineQueue(queue) {
+    // Save plain for immediate sync reads, then encrypt async
+    _offlineQueueCache = queue;
+    localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+    _saveEncryptedQueue(queue).then(function() {
+        localStorage.removeItem(OFFLINE_QUEUE_KEY); // Remove plain after encrypted save
+    }).catch(function() {});
+    refreshOfflineQueueUI();
+}
 
 function refreshOfflineQueueUI() {
     var queue = getOfflineQueue();
@@ -8279,6 +8372,7 @@ function refreshOfflineQueueUI() {
 
 function refreshOfflineQueue() {
     refreshOfflineQueueUI();
+    // NETWORK_DEPENDENT: Server-side queue status — gracefully fails offline
     fetch('/api/offline/queue').then(function(r){return r.json();}).then(function(data) {
         if (data.queue_size > 0) { var c = document.getElementById('offlineQueueCount'); var lc = getOfflineQueue().length; if (c) c.textContent = lc + data.queue_size; }
         if (data.last_sync) { var s = document.getElementById('offlineLastSync'); if (s) s.textContent = new Date(data.last_sync).toLocaleString(); }
@@ -8300,39 +8394,85 @@ function offlineQueueHash() {
 function offlineRemoveItem(index) { var q = getOfflineQueue(); q.splice(index,1); saveOfflineQueue(q); }
 function offlineClearQueue() { if (confirm('Clear all offline queued hashes?')) { saveOfflineQueue([]); _showNotif('Offline queue cleared.', 'info'); } }
 
-async function offlineSyncAll() {
+async function offlineSyncAll() { return offlineSyncWithBackoff(); }
+
+// Exponential backoff sync with configurable retries
+var _syncRetryCount = 0;
+var _syncMaxRetries = 5;
+var _syncBaseDelay = 1000; // 1 second base
+
+async function offlineSyncWithBackoff(attempt) {
+    attempt = attempt || 0;
     var queue = getOfflineQueue();
     var pending = queue.filter(function(i){return !i.synced;});
-    if (!pending.length) { _showNotif('No pending hashes to sync.', 'info'); return; }
+    if (!pending.length) { _syncRetryCount = 0; _showNotif('No pending hashes to sync.', 'info'); return; }
     if (!navigator.onLine) { _showNotif('Cannot sync — currently offline.', 'warning'); return; }
-    _showNotif('Syncing ' + pending.length + ' hashes to XRPL...', 'info');
+    _showNotif('Syncing ' + pending.length + ' hashes to XRPL' + (attempt > 0 ? ' (retry ' + attempt + '/' + _syncMaxRetries + ')' : '') + '...', 'info');
     try {
-        var res = await fetch('/api/offline/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hashes: pending }) });
+        // NETWORK_DEPENDENT: Sync endpoint — requires connectivity
+        var res = await _origFetch('/api/offline/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hashes: pending }) });
+        if (!res.ok) throw new Error('Server returned ' + res.status);
         var data = await res.json();
         for (var i = 0; i < queue.length; i++) { if (!queue[i].synced) { queue[i].synced = true; queue[i].synced_at = new Date().toISOString(); } }
         saveOfflineQueue(queue);
         localStorage.setItem(OFFLINE_SYNC_KEY, new Date().toISOString());
+        _syncRetryCount = 0;
         _showNotif('Sync complete: ' + (data.synced||pending.length) + ' anchored.', 'success');
         refreshOfflineQueueUI();
-    } catch (e) { _showNotif('Sync failed: ' + e.message, 'error'); }
+    } catch (e) {
+        _syncRetryCount = attempt + 1;
+        if (_syncRetryCount <= _syncMaxRetries) {
+            // Exponential backoff: 1s, 2s, 4s, 8s, 16s + jitter
+            var delay = _syncBaseDelay * Math.pow(2, attempt) + Math.floor(Math.random() * 500);
+            _showNotif('Sync failed (' + e.message + '). Retrying in ' + Math.round(delay / 1000) + 's...', 'warning');
+            setTimeout(function() { offlineSyncWithBackoff(_syncRetryCount); }, delay);
+        } else {
+            _syncRetryCount = 0;
+            _showNotif('Sync failed after ' + _syncMaxRetries + ' retries: ' + e.message + '. Try again later.', 'error');
+        }
+    }
 }
 
-// Auto-queue anchors when offline
+// Auto-queue anchors when offline — NETWORK_DEPENDENT
 var _origFetch = window.fetch;
 window.fetch = function(url, opts) {
-    if (!navigator.onLine && typeof url === 'string' && url.indexOf('/api/anchor') !== -1) {
-        try {
-            var body = opts && opts.body ? JSON.parse(opts.body) : {};
-            var queue = getOfflineQueue();
-            queue.push({ hash: body.hash || body.data_hash || 'UNKNOWN', record_type: body.record_type || 'QUEUED_ANCHOR', branch: body.branch || 'JOINT', timestamp: new Date().toISOString(), synced: false });
-            saveOfflineQueue(queue);
-        } catch(e) {}
-        return Promise.resolve(new Response(JSON.stringify({ status: 'queued_offline', message: 'Hash queued for offline sync.' }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    if (!navigator.onLine && typeof url === 'string') {
+        // NETWORK_DEPENDENT: All anchor-related endpoints must be queued offline
+        var isAnchorRoute = url.indexOf('/api/anchor') !== -1
+            || url.indexOf('/api/demo/anchor') !== -1;
+        // NETWORK_DEPENDENT: Provision can't work offline — return cached/mock session
+        var isProvisionRoute = url.indexOf('/api/demo/provision') !== -1;
+        if (isAnchorRoute) {
+            try {
+                var body = opts && opts.body ? JSON.parse(opts.body) : {};
+                var queue = getOfflineQueue();
+                queue.push({ hash: body.hash || body.data_hash || 'UNKNOWN', record_type: body.record_type || 'QUEUED_ANCHOR', branch: body.branch || 'JOINT', timestamp: new Date().toISOString(), synced: false });
+                saveOfflineQueue(queue);
+                _showNotif('Offline: anchor queued locally. Will sync when reconnected.', 'info');
+            } catch(e) { console.warn('Offline queue error:', e); }
+            return Promise.resolve(new Response(JSON.stringify({ status: 'queued_offline', message: 'Hash queued for offline sync.', record: { tx_hash: 'OFFLINE_' + Date.now().toString(36).toUpperCase(), network: 'Queued Offline' } }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+        }
+        if (isProvisionRoute) {
+            // NETWORK_DEPENDENT: Return a mock offline provision response
+            var _offTier = localStorage.getItem('s4_selected_tier') || 'starter';
+            var _offTiers = {pilot:{label:'Pilot',sls:100},starter:{label:'Starter',sls:25000},professional:{label:'Professional',sls:100000},enterprise:{label:'Enterprise',sls:500000}};
+            var _offT = _offTiers[_offTier] || _offTiers['starter'];
+            return Promise.resolve(new Response(JSON.stringify({ session_id: 'offline_' + Date.now(), subscription: { label: _offT.label, sls_allocation: _offT.sls }, wallet: { address: 'rOfflineMode' }, xrp_balance: 12, sls_balance: _offT.sls }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+        }
     }
     return _origFetch.apply(this, arguments);
 };
 
-window.addEventListener('online', function() { refreshOfflineQueueUI(); _showNotif('Connection restored. Sync offline queue now.', 'success'); });
+window.addEventListener('online', function() {
+    refreshOfflineQueueUI();
+    _showNotif('Connection restored. Auto-syncing offline queue...', 'success');
+    // Auto-sync after a 2-second delay to allow network stabilization
+    setTimeout(function() {
+        var q = getOfflineQueue();
+        var pending = q.filter(function(i){ return !i.synced; });
+        if (pending.length > 0) { offlineSyncWithBackoff(); }
+    }, 2000);
+});
 window.addEventListener('offline', function() { refreshOfflineQueueUI(); _showNotif('Connection lost. Anchors will be queued locally.', 'warning'); });
 
 function _showNotif(msg, type) {
