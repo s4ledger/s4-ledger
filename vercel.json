@@ -249,6 +249,62 @@
         {
             "source": "/api/org/records",
             "destination": "/api"
+        },
+        {
+            "source": "/api/integrations/wawf",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/ai/query",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/ils/gap-analysis",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/logistics/risk-score",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/defense/task",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/offline/queue",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/offline/sync",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/metrics/performance",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/security/audit-trail",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/verify/ai",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/security/rbac",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/security/zkp",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/security/threat-model",
+            "destination": "/api"
+        },
+        {
+            "source": "/api/security/dependency-audit",
+            "destination": "/api"
         }
     ]
 }

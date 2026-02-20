@@ -1,5 +1,5 @@
 # S4 Ledger: Technical Specifications
-*Version 4.0.0 — A product line of S4 Systems, LLC*
+*Version 5.0.1 — A product line of S4 Systems, LLC*
 
 **Architecture: Hash Anchoring via XRP Ledger (XRPL)**
 
@@ -58,13 +58,13 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 | **Transport** | WebSocket (wss://) to XRPL nodes |
 | **Encryption** | TLS 1.3 |
 | **Batch Size** | Up to 1,000 records |
-| **SDK Functions** | 27 (anchor, verify, batch, status, readiness, dmsms, roi, lifecycle, warranty, supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance, compliance, ILIE, defense-db-import, and more) |
+| **SDK Functions** | 38+ (anchor, verify, batch, status, readiness, dmsms, roi, lifecycle, warranty, supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance, compliance, ILIE, defense-db-import, custody-transfer, proof-chain, webhook, composite-anchor, ai-query, offline-sync, and more) |
 
 ## 5. REST API
 
 | Property | Value |
 |---|---|
-| **Endpoints** | 29 production REST API endpoints |
+| **Endpoints** | 63 production REST API endpoints |
 | **Framework** | Zero-dependency (BaseHTTPRequestHandler) |
 | **Authentication** | API key (master + org keys) |
 | **Rate Limiting** | 120 requests/minute per IP |
@@ -74,7 +74,7 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 
 | Property | Value |
 |---|---|
-| **Tools** | 20 interactive ILS management tools |
+| **Tools** | 13 interactive ILS management tools |
 | **Platforms** | 500+ pre-loaded (500+ platforms, 37 suppliers, 25 contracts) |
 | **Record Types** | 156+ pre-built record types across 9 military branches |
 | **Standards** | MIL-STD-1388, DoDI 4245.15, DoD 5000.73, FAR 46.7, MIL-STD-1390D |
@@ -208,6 +208,125 @@ When a tampered record is corrected:
 - The memo includes `CORRECTION:{new_hash}:SUPERSEDES:{original_tx}` linking the two
 - The original transaction remains on-chain as part of the immutable audit trail
 - A correction notice is sent via the comms module to all stakeholders
+
+---
+
+## 10. Full API Endpoint Inventory (63 Endpoints)
+
+### Core Platform
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/status` | GET | Platform status and version |
+| `/api/health` | GET | Health check |
+| `/api/metrics` | GET | Platform metrics summary |
+| `/api/transactions` | GET | Transaction history |
+| `/api/record-types` | GET | List all supported record types |
+| `/api/xrpl-status` | GET | XRPL network status |
+| `/api/infrastructure` | GET | Infrastructure overview |
+
+### Anchoring & Verification
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/anchor` | POST | Anchor a hash to XRPL |
+| `/api/anchor/batch` | POST | Batch anchor multiple hashes |
+| `/api/anchor/composite` | POST | Composite multi-doc anchor |
+| `/api/verify` | POST | Verify a hash against XRPL |
+| `/api/verify/batch` | POST | Batch verify multiple hashes |
+| `/api/verify/ai` | POST | Verify an AI decision hash |
+| `/api/hash` | POST | Generate SHA-256 hash |
+| `/api/hash/file` | POST | Hash a file upload |
+| `/api/categorize` | POST | Auto-categorize a record |
+| `/api/proof-chain` | GET | Get proof chain for a hash |
+
+### ILS & Defense
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/dmsms` | GET | DMSMS obsolescence data |
+| `/api/readiness` | GET | Readiness metrics (Ao/Ai) |
+| `/api/parts` | GET | Parts lookup |
+| `/api/roi` | GET | ROI calculator |
+| `/api/lifecycle` | GET | Lifecycle cost analysis |
+| `/api/warranty` | GET | Warranty tracker |
+| `/api/supply-chain-risk` | GET | Supply chain risk assessment |
+| `/api/audit-reports` | GET | Audit report data |
+| `/api/contracts` | GET | Contract management |
+| `/api/digital-thread` | GET | Digital thread tracker |
+| `/api/predictive-maintenance` | GET | Predictive maintenance data |
+| `/api/action-items` | GET | Action item management |
+| `/api/calendar` | GET | Milestone calendar |
+| `/api/ils/gap-analysis` | GET | ILS gap analysis with scoring |
+| `/api/logistics/risk-score` | GET | Weighted logistics risk score |
+| `/api/defense/task` | POST | Execute defense tasks (compliance, readiness, threat sim) |
+
+### AI & NLP
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/ai-chat` | POST | AI assistant chat (OpenAI/Anthropic/local) |
+| `/api/ai/query` | POST | NLP query with intent detection |
+
+### Integrations
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/integrations/wawf` | POST | WAWF/PIEE webhook receiver |
+| `/api/webhooks/register` | POST | Register webhook endpoint |
+| `/api/webhooks/list` | GET | List registered webhooks |
+| `/api/webhooks/deliveries` | GET | Webhook delivery history |
+| `/api/webhooks/test` | POST | Test webhook delivery |
+
+### Custody & Chain of Custody
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/custody/transfer` | POST | Transfer custody |
+| `/api/custody/chain` | GET | Get custody chain |
+| `/api/org/records` | GET | Organization records |
+
+### Wallet & Economy
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/wallet/provision` | POST | Provision XRPL wallet |
+| `/api/wallet/buy-sls` | POST | Purchase SLS tokens |
+| `/api/wallet/balance` | GET | Wallet balance |
+| `/api/treasury/health` | GET | Treasury health status |
+| `/api/webhook/stripe` | POST | Stripe payment webhook |
+
+### Offline / On-Prem
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/offline/queue` | GET | Offline queue status |
+| `/api/offline/sync` | POST | Batch sync queued hashes |
+
+### Performance Metrics
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/metrics/performance` | GET | Real-time performance dashboard data |
+
+### Security
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/security/audit-trail` | GET | AI + verification audit trail |
+| `/api/security/rbac` | GET/POST | RBAC role management |
+| `/api/security/zkp` | GET/POST | Zero-Knowledge Proof generation & verification |
+| `/api/security/threat-model` | GET | STRIDE threat model assessment |
+| `/api/security/dependency-audit` | GET | Dependency security audit (CycloneDX SBOM) |
+
+### Auth
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/auth/api-key` | POST | Generate API key |
+| `/api/auth/validate` | POST | Validate API key |
+
+### Demo
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/demo/provision` | POST | Provision demo session |
+| `/api/demo/anchor` | POST | Demo anchor |
+| `/api/demo/status` | GET | Demo session status |
+
+### Database
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/db/save-analysis` | POST | Save ILS analysis to Supabase |
+| `/api/db/get-analyses` | GET | Retrieve saved analyses |
 
 ---
 

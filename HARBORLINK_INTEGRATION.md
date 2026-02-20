@@ -108,19 +108,36 @@ This document maps the exact technical integration surface — every API call, e
 | **Supply chain risk** | `GET /api/supply-chain-risk` | Live | Multi-factor risk scoring |
 | **Digital thread** | `GET /api/digital-thread` | Live | ECP tracking, BOM revisions |
 | **Audit reports** | `GET /api/audit-reports` | Live | 6 report types (full, supply, maintenance, compliance, custody, contract) |
-| **SDK (Python)** | `pip install` / `s4-anchor` CLI | Live | 27+ methods, CLI tool |
+| **SDK (Python)** | `pip install` / `s4-anchor` CLI | Live | 38+ methods, CLI tool |
+| **Webhook registration** | `POST /api/webhooks/register` | Live | Register webhook URL with HMAC secret |
+| **Webhook deliveries** | `GET /api/webhooks/deliveries` | Live | View webhook delivery history |
+| **File-level hashing** | `POST /api/hash/file` | Live | Binary hash of uploaded file |
+| **Batch anchoring** | `POST /api/anchor/batch` | Live | Batch anchor multiple hashes |
+| **Batch verification** | `POST /api/verify/batch` | Live | Batch verify multiple hashes |
+| **Custody transfer** | `POST /api/custody/transfer` | Live | Formal chain-of-custody linking |
+| **Custody chain** | `GET /api/custody/chain` | Live | Sequential custody graph |
+| **Composite anchor** | `POST /api/anchor/composite` | Live | Multi-document composite anchor |
+| **Proof chain** | `GET /api/proof-chain` | Live | Full proof chain for a hash |
+| **WAWF integration** | `POST /api/integrations/wawf` | Live | WAWF/PIEE webhook receiver |
+| **AI NLP query** | `POST /api/ai/query` | Live | Intent detection + task execution |
+| **Defense task** | `POST /api/defense/task` | Live | Compliance, readiness, threat sim |
+| **Offline queue** | `GET /api/offline/queue` | Live | Air-gapped hash queue status |
+| **Offline sync** | `POST /api/offline/sync` | Live | Batch sync queued hashes |
+| **Performance metrics** | `GET /api/metrics/performance` | Live | Real-time dashboard data |
+| **ZKP** | `POST /api/security/zkp` | Live | Zero-Knowledge Proof stubs |
+| **RBAC** | `GET /api/security/rbac` | Live | Role-based access control |
+| **Threat model** | `GET /api/security/threat-model` | Live | STRIDE threat model |
+| **Dependency audit** | `GET /api/security/dependency-audit` | Live | CycloneDX SBOM audit |
 
 ### What Does NOT Exist Yet (Required for Full Integration)
 
 | Capability | Status | Priority |
 |---|---|---|
-| Webhook callbacks (anchor confirmation → HarborLink) | Not built | **P0 — Required** |
-| Merkle batch anchoring | Designed, not built | P1 — Phase 2 |
-| Formal chain-of-custody linking (sequential custody graph) | Partial | P1 |
 | Multi-tenant org isolation | Not built (single API key namespace) | P1 |
-| Persistent storage (records beyond cold start) | Supabase designed, not deployed | P1 |
+| Persistent storage (records beyond cold start) | Supabase designed, partially deployed | P1 |
 | JWT / session auth | Not built (API key only) | P2 |
-| File-level hashing (binary hash of uploaded file) | SDK supports, API does not | P1 |
+| MFA (multi-factor authentication) | Planned | P2 |
+| Production ZKP circuits (Bulletproofs/Groth16) | Stub implemented | P2 |
 
 ---
 

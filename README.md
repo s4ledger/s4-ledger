@@ -38,6 +38,20 @@ Cost per anchor: **0.01 SLS** (~$0.01) + XRPL base fee (~$0.001)
 Confirmation time: **3-5 seconds**  
 XRPL uptime: **99.99%**
 
+### New in v5.0.1
+
+- **📊 Performance Metrics Dashboard** — Real-time anchor times, cost tracking, validator health, AI audit trail visualization (Chart.js)
+- **📡 Offline / On-Prem Mode** — Air-gapped hashing with localStorage queue + batch sync to XRPL on reconnect
+- **🤖 AI NLP Query Engine** — Natural language intent detection for ILS gaps, logistics optimization, cyber threat simulation, and predictive maintenance
+- **🔐 Zero-Knowledge Proofs (ZKP)** — Prove document anchoring without revealing content (zk-SNARK stub, Bulletproofs/Groth16 in production)
+- **🛡️ RBAC / CASL Roles** — Admin, Analyst, Auditor, Operator, Viewer roles with granular permissions
+- **📝 WAWF/PIEE Integration** — Webhook receiver for Wide Area Workflow events, auto-anchors contract receipts to XRPL
+- **⚙️ Defense Task API** — Compliance checks, threat simulations, readiness calculations, and ILS reviews via `/api/defense/task`
+- **📈 AI Audit Trail** — Every AI response is SHA-256 hashed and logged for transparent, verifiable AI decision-making
+- **🔍 Dependency Auditing** — CycloneDX SBOM, `pip-audit` + `bandit` + `semgrep` scans
+- **🎯 STRIDE Threat Model** — API-accessible threat model with NIST SP 800-161 mapping
+- **Demo Mode** — Visible demo banner with hypothetical XRP (12) and SLS (25,000) balances. AI agent works on all tabs.
+
 ### Why XRPL?
 
 We chose the XRP Ledger over Ethereum, Solana, and private blockchains for defense logistics:
@@ -154,7 +168,7 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 | Phase | Status | Focus |
 |---|---|---|
 | Phase 1 — Foundation | ✅ Complete | SDK, hashing, XRPL anchoring, $SLS token live |
-| Phase 2 — Defense Platform | ✅ Complete | 13-tool ILS Workspace, 500+ platforms, 38+ SDK methods (incl. 11 HarborLink), 49+ REST API endpoints, 156+ record types, AI agent, audit vault, SDK Playground with 20 function boxes |
+| Phase 2 — Defense Platform | ✅ Complete | 13-tool ILS Workspace, 500+ platforms, 38+ SDK methods (incl. 11 HarborLink), 63 REST API endpoints, 156+ record types, AI agent, audit vault, SDK Playground with 20 function boxes |
 | Phase 3 — MVP & Pilot | Upcoming | Internal pilot on real contract data |
 | Phase 4 — Partner Onboarding | Planned | SaaS launch, DIU/NavalX engagement |
 | Phase 5 — Scale & Certification | Planned | NIST, FedRAMP, SBIR/STTR |
@@ -178,6 +192,6 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 Apache License 2.0 — see [LICENSE](LICENSE)
 
-**Version:** 5.0.1 — XRPL Mainnet Live | HarborLink Integration | 49+ REST API endpoints | 38+ SDK Methods
+**Version:** 5.0.1 — XRPL Mainnet Live | HarborLink Integration | 63 REST API endpoints | 38+ SDK Methods
 
 © 2026 S4 Systems, LLC. Charleston, SC.

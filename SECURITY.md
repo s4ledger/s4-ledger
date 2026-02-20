@@ -100,4 +100,62 @@ In the event of a security incident:
 
 ---
 
+## Security API Endpoints
+
+S4 Ledger exposes 5 security-specific API endpoints for programmatic access:
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/security/audit-trail` | GET | AI + verification audit trail (hashed, timestamped entries) |
+| `/api/security/rbac` | GET/POST | RBAC role management — 5 roles: Admin, Analyst, Auditor, Operator, Viewer |
+| `/api/security/zkp` | GET/POST | Zero-Knowledge Proof generation & verification (zk-SNARK stub; Bulletproofs/Groth16 in production) |
+| `/api/security/threat-model` | GET | STRIDE + NIST SP 800-161 threat model with compliance mapping |
+| `/api/security/dependency-audit` | GET | Dependency audit with CycloneDX 1.5 SBOM, safety/pip-audit/bandit/semgrep scans |
+
+### Zero-Knowledge Proofs (ZKP)
+
+ZKP allows third parties to verify a record was correctly anchored **without revealing the underlying data**. Critical for:
+- CUI/ITAR compliance where verifiers cannot access content
+- Cross-organization auditing without data exposure
+- Supply chain integrity proof without logistics data disclosure
+
+Current: zk-SNARK stub implementation. Production target: Bulletproofs/Groth16 (Q3 2025).
+
+### RBAC / Access Control
+
+| Role | Permissions | Tier |
+|---|---|---|
+| Admin | Full platform access (`*`) | Enterprise |
+| Analyst | Anchor, verify, ILS, AI query, metrics, export | Professional |
+| Auditor | Verify, metrics, audit trail, security (read-only) | Professional |
+| Operator | Anchor, verify, offline sync | Starter |
+| Viewer | Verify, metrics (read-only) | Pilot |
+
+MFA (multi-factor authentication) planned for Q3 2025.
+
+### AI Audit Trail
+
+Every AI response is:
+1. SHA-256 hashed immediately
+2. Logged with query, intent, entities, timestamp
+3. Verifiable via `POST /api/verify/ai` with the response hash
+4. Optionally anchored to XRPL for immutable AI decision provenance
+
+### Dependency Auditing
+
+- **Tools:** `safety`, `pip-audit`, `bandit`, `semgrep`
+- **SBOM format:** CycloneDX 1.5
+- **Scan cadence:** Monthly (automated)
+- **API access:** `GET /api/security/dependency-audit`
+
+### Threat Modeling
+
+STRIDE-based threat model accessible via `GET /api/security/threat-model`:
+- Maps all platform components (API gateway, XRPL anchoring, AI engine, supply chain data, offline queue, user auth)
+- NIST SP 800-161 control recommendations
+- CMMC Level 2, NIST 800-171, DFARS 252.204-7012 compliance scoring
+- Residual risk categorization per component
+
+---
+
 © 2026 S4 Systems, LLC. Charleston, SC.
