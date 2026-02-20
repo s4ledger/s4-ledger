@@ -2529,7 +2529,6 @@ class handler(BaseHTTPRequestHandler):
             azure_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
             azure_key = os.environ.get("AZURE_OPENAI_KEY", "")
             azure_deployment = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
-            _ai_debug = {"openai": bool(openai_key), "openai_prefix": openai_key[:7] if openai_key else "empty", "anthropic": bool(anthropic_key), "azure": bool(azure_endpoint and azure_key)}
 
             ai_response = None
 
@@ -2564,7 +2563,6 @@ class handler(BaseHTTPRequestHandler):
                         result = json.loads(resp.read().decode())
                         ai_response = result["choices"][0]["message"]["content"]
                 except Exception as e:
-                    _ai_debug["openai_error"] = str(e)
                     ai_response = None
 
             if not ai_response and anthropic_key:
@@ -2589,7 +2587,7 @@ class handler(BaseHTTPRequestHandler):
                 self._send_json({"response": ai_response, "provider": "llm", "fallback": False})
             else:
                 # No LLM available — return signal for client-side fallback
-                self._send_json({"response": None, "provider": "none", "fallback": True, "message": "No AI provider configured. Using local pattern matching.", "debug": _ai_debug})
+                self._send_json({"response": None, "provider": "none", "fallback": True, "message": "No AI provider configured. Using local pattern matching."})
 
         # ═══════════════════════════════════════════════════════════════
         #  HarborLink Integration — POST Endpoints
