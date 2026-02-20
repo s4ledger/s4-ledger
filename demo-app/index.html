@@ -21,9 +21,9 @@
     <script src="/s4-assets/defense-docs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        :root{--bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:rgba(255,255,255,0.08);--accent:#00aaff;--gold:#c9a84c;--steel:#8ea4b8;--green:#00aaff;--red:#ff6b6b;--text:#f0f0f5;--muted:#5a5e72}
+        :root{--bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--accent:#00aaff;--gold:#c9a84c;--steel:#8ea4b8;--green:#00aaff;--red:#ff6b6b;--text:#f0f0f5;--muted:#5a5e72;--radius:12px;--radius-lg:20px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1)}
         *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.6;overflow-x:hidden}
         .navbar-custom{display:none}
         .navbar-brand{font-weight:700;display:flex;align-items:center;gap:10px;text-decoration:none}
         .brand-text{color:#fff;font-size:1.2rem;letter-spacing:0.5px;font-weight:700}
@@ -38,26 +38,26 @@
         .btn-accent:hover{background:#0099ee;color:#fff}
         .search-btn{background:none;border:none;cursor:pointer;padding:8px 12px;color:var(--steel);transition:color 0.2s}
         .search-btn:hover{color:var(--text)}
-        .hero{padding:7rem 0 3rem;text-align:center;background:transparent}
-        .hero h1{font-size:2.4rem;font-weight:800;margin-bottom:0.75rem}.hero h1 .accent{color:var(--accent)}.hero h1 .gold{color:var(--accent)}
-        .hero p{color:var(--steel);font-size:1.1rem;max-width:700px;margin:0 auto 1.5rem}
-        .badge-live{display:inline-flex;align-items:center;gap:6px;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.35);color:#fff;padding:8px 20px;border-radius:20px;font-size:0.85rem;font-weight:600;letter-spacing:0.3px}
+        .hero{padding:7rem 0 3rem;text-align:center;background:transparent;position:relative}
+        .hero h1{font-size:2.4rem;font-weight:800;margin-bottom:0.75rem;letter-spacing:-0.035em;line-height:1.1}.hero h1 .accent{color:var(--accent)}.hero h1 .gold{color:var(--accent)}
+        .hero p{color:var(--steel);font-size:1.05rem;max-width:640px;margin:0 auto 1.5rem;line-height:1.7;font-weight:400}
+        .badge-live{display:inline-flex;align-items:center;gap:8px;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.12);color:var(--accent);padding:8px 20px;border-radius:100px;font-size:0.8125rem;font-weight:500;letter-spacing:0.02em}
         .badge-live::before{content:'';width:8px;height:8px;background:#00aaff;border-radius:50%;animation:pulse 2s infinite}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
         .tab-section{padding:2rem 0}
-        .nav-pills .nav-link{background:var(--card);color:var(--steel)!important;border:1px solid var(--border);margin-right:0.5rem;margin-bottom:0.5rem;border-radius:8px;font-weight:600;padding:0.6rem 1.2rem;transition:all 0.2s}
+        .nav-pills .nav-link{background:var(--card);color:var(--steel)!important;border:1px solid var(--border);margin-right:0.5rem;margin-bottom:0.5rem;border-radius:8px;font-weight:600;padding:0.6rem 1.2rem;transition:all var(--transition);letter-spacing:-0.01em;font-size:0.875rem}
         .nav-pills .nav-link:hover{color:var(--accent)!important}
         .nav-pills .nav-link.active{background:linear-gradient(135deg,#00aaff,#0088cc)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 4px 15px rgba(0,170,255,0.3)}
         .tab-content{margin-top:1.5rem}
-        .demo-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
-        .demo-card h3{font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:1rem}
+        .demo-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;transition:border-color var(--transition),box-shadow var(--transition)}
+        .demo-card h3{font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:1rem;letter-spacing:-0.02em}
         .demo-card h3 i{margin-right:0.5rem}
         label{font-weight:600;color:var(--steel);margin-bottom:0.4rem;font-size:0.9rem}
         select,input,textarea{background:var(--surface)!important;color:var(--text)!important;border:1px solid var(--border)!important;border-radius:8px!important;padding:0.6rem 0.8rem!important;font-family:'Inter',sans-serif!important;font-size:0.95rem!important;width:100%}
         select:focus,input:focus,textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(0,170,255,0.15)!important;outline:none}
         textarea{min-height:120px;resize:vertical;font-family:'Courier New',monospace!important;font-size:0.85rem!important}
         .btn-accent{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:0.65rem 1.5rem;font-weight:700;font-size:0.95rem;transition:all 0.2s;cursor:pointer}
-        .btn-accent:hover{background:#0099ee;transform:translateY(-1px);color:#fff}
+        .btn-accent:hover{background:#0099ee;transform:translateY(-1px);color:#fff;box-shadow:0 4px 15px rgba(0,170,255,0.25)}
         .btn-accent:disabled{opacity:0.5;cursor:not-allowed;transform:none}
         .btn-gold{background:var(--gold);color:#050810;border:none;border-radius:8px;padding:0.65rem 1.5rem;font-weight:700;font-size:0.95rem;cursor:pointer}
         .btn-gold:hover{background:#0099dd;color:#fff}
@@ -82,15 +82,15 @@
         .type-search::placeholder{color:var(--muted)}
         .tx-log{max-height:400px;overflow-y:auto}
         .tx-entry{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem 1rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:1rem;transition:all 0.2s}
-        .tx-entry:hover{border-color:var(--accent)}
+        .tx-entry:hover{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,170,255,0.1)}
         .tx-icon{font-size:1.4rem;min-width:36px;text-align:center}
         .tx-info{flex:1}.tx-type{font-weight:700;font-size:0.9rem}.tx-hash{font-family:monospace;color:var(--muted);font-size:0.75rem}
         .tx-time{color:var(--muted);font-size:0.75rem;white-space:nowrap}
         .tx-badge{font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px}
         .tx-badge.anchored{background:rgba(0,170,255,0.06);color:var(--accent)}
-        .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;text-align:center}
-        .stat-value{font-size:2rem;font-weight:800;color:var(--accent)}.stat-label{font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-        footer{border-top:1px solid var(--border);padding:2rem 0;margin-top:3rem;text-align:center;color:var(--muted);font-size:0.85rem}
+        .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;transition:border-color var(--transition),box-shadow var(--transition)}
+        .stat-value{font-size:2rem;font-weight:800;color:var(--accent);letter-spacing:-0.03em}.stat-label{font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+        footer{border-top:1px solid var(--border);padding:3rem 0;margin-top:4rem;text-align:center;color:var(--muted);font-size:0.8125rem;letter-spacing:-0.01em}
         footer a{color:var(--accent);text-decoration:none}
         .sample-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.8rem;color:var(--steel);transition:all 0.2s;display:inline-block;margin:0.2rem}
         .sample-btn:hover{border-color:var(--accent);color:var(--accent)}
@@ -358,7 +358,7 @@
         .score-ring .score-val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:800;color:#fff}
         
         /* Persistent SLS Balance Bar — replaces flow box when in tabs */
-        #slsBalanceBar{display:none;background:linear-gradient(90deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.15);border-radius:10px;padding:10px 20px;margin:0 0 16px;align-items:center;justify-content:space-between;gap:12px;font-size:0.82rem;transition:all 0.3s}
+        #slsBalanceBar{display:flex;background:linear-gradient(90deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.15);border-radius:10px;padding:10px 20px;margin:0 0 16px;align-items:center;justify-content:space-between;gap:12px;font-size:0.82rem;transition:all 0.3s;position:sticky;top:68px;z-index:900}
         #slsBalanceBar .sls-stat{display:flex;align-items:center;gap:6px}
         #slsBalanceBar .sls-stat-val{font-weight:700;color:#c9a84c}
         #slsBalanceBar .sls-stat-label{color:var(--steel);font-size:0.72rem}
@@ -429,6 +429,19 @@
         .ils-hub-panel .form-control,.ils-hub-panel select,.ils-hub-panel .form-select{background:var(--surface);border:1px solid var(--border);color:#fff;border-radius:8px;padding:8px 12px;font-size:0.85rem;font-family:inherit}
         .ils-hub-panel .form-control:focus,.ils-hub-panel select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(0,170,255,0.15)}
         .ils-hub-panel label{color:var(--steel);font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+    
+        
+        .demo-card:hover{border-color:var(--border-hover)}
+        .stat-card:hover{border-color:var(--border-hover);box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+        .record-type-btn{transition:all var(--transition)}
+        .branch-tab{transition:all var(--transition)}
+        select,input,textarea{transition:border-color var(--transition),box-shadow var(--transition)}
+        .container{max-width:1200px;margin:0 auto;padding:0 24px}
+        
+        #platformLanding .col-md-4 > div{transition:all var(--transition)}
+        #platformLanding .col-md-4 > div:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.2)}
+        @keyframes slsToastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes slsToastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
     </style>
 </head>
 <body>
@@ -441,7 +454,7 @@
             <img src="../s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:32px;width:32px;">
             <span>S4 Ledger</span>
         </a>
-        <ul id="navLinks" style="display:flex;align-items:center;gap:0.25rem;list-style:none;margin:0;padding:0;">
+        <ul id="navLinks" style="display:flex;align-items:center;gap:0.5rem;list-style:none;margin:0;padding:0;">
             <li><a href="../demo-app/" style="color:#00aaff;padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Platform</a></li>
             <li><a href="../s4-use-cases/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Use Cases</a></li>
             <li><a href="../s4-pricing/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Pricing</a></li>
@@ -458,7 +471,7 @@
 
 <section class="hero" style="padding:4rem 0 2rem;text-align:center;">
     <div class="container">
-        <h1 style="font-size:2.4rem;font-weight:800;margin-bottom:0.75rem;color:#fff;">S4 Ledger <span style="color:var(--accent);">Platform</span></h1>
+        <h1 style="font-size:2.4rem;font-weight:800;margin-bottom:0.75rem;color:#fff;letter-spacing:-0.035em;line-height:1.1;">S4 Ledger <span style="color:var(--accent);">Platform</span></h1>
         <p style="color:var(--steel);font-size:1.05rem;">Anchor, verify, and track Navy logistics records on the XRP Ledger with blockchain-grade integrity.</p>
         <div class="badge-live" style="display:inline-block;margin-top:12px;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.25);color:var(--accent);padding:6px 16px;border-radius:20px;font-size:0.8rem;font-weight:600;">XRPL Mainnet Connected &mdash; Navy Record Types &bull; 54+ Pre-Built Templates</div>
     </div>
@@ -467,7 +480,7 @@
 <section id="platformLanding" style="padding:3rem 0 4rem;">
     <div class="container">
         <div style="text-align:center;margin-bottom:3rem;">
-            <h2 style="font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:0.75rem;">The Complete Defense Logistics Toolkit</h2>
+            <h2 style="font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:0.75rem;letter-spacing:-0.03em;line-height:1.15;">The Complete Defense Logistics Toolkit</h2>
             <p style="color:var(--steel);font-size:1.05rem;max-width:640px;margin:0 auto;">20+ integrated tools for anchoring, verifying, and managing Navy logistics records on the XRP Ledger. Built by ILS professionals, for ILS professionals.</p>
         </div>
         <div class="row" style="margin-bottom:2rem;">
@@ -505,7 +518,7 @@
             </div></div>
         </div>
         <div style="text-align:center;">
-            <button onclick="document.getElementById('platformLanding').style.display='none';document.getElementById('platformWorkspace').style.display='block';" style="background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+            <button onclick="document.getElementById('platformLanding').style.display='none';document.getElementById('platformWorkspace').style.display='block';" style="background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:10px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
         </div>
     </div>
 </section>
@@ -636,7 +649,7 @@
                     <div id="demoStep3" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">3. $SLS Allocated</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep3Status">Based on plan tier</div></div>
                     <div id="demoStep4" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-arrow-right" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#00aaff;margin-bottom:4px;">4. 0.01 $SLS &rarr; Treasury</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep4Status">0.01 SLS per anchor</div></div>
                 </div>
-                <div id="demoSessionInfo" style="display:none;margin-top:14px;padding:12px 16px;background:rgba(0,0,0,0.25);border-radius:8px;font-size:0.76rem;">
+                <div id="demoSessionInfo" style="display:block;margin-top:14px;padding:12px 16px;background:rgba(0,0,0,0.25);border-radius:8px;font-size:0.76rem;">
                     <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
                         <div><span style="color:#8ea4b8;">Session:</span> <span style="color:#00aaff;font-family:monospace;" id="demoSessionId">&mdash;</span></div>
                         <div><span style="color:#8ea4b8;">Wallet:</span> <span style="color:#00aaff;font-family:monospace;" id="demoWalletAddr">&mdash;</span></div>
@@ -673,7 +686,7 @@
                 <div class="sls-stat"><i class="fas fa-bolt" style="color:var(--accent)"></i> <span class="sls-stat-label">SLS Spent:</span> <span class="sls-stat-val" id="slsBarSpent">0.00</span></div>
                 <div class="sls-stat"><i class="fas fa-layer-group" style="color:var(--accent)"></i> <span class="sls-stat-label">Plan:</span> <span class="sls-stat-val" id="slsBarPlan" style="color:#fff">Starter</span></div>
             </div>
-            <button class="sls-expand-btn" onclick="toggleFlowBox()"><i class="fas fa-chart-simple" style="margin-right:4px"></i>Show Flow Details</button>
+            <button class="sls-expand-btn" id="slsToggleBtn" onclick="toggleFlowBox()"><i class="fas fa-chart-simple" style="margin-right:4px"></i>Show Flow Details</button>
         </div>
 
         <div class="tab-content">
@@ -2383,29 +2396,51 @@ function _updateDemoSlsBalance() {
 }
 
 
+
+// Flash toast showing SLS balance update
+function _flashSlsBalance(newBalance, fee) {
+    var existing = document.getElementById('slsFlashToast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.id = 'slsFlashToast';
+    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:12px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
+    toast.innerHTML = '<div style="font-weight:700;color:#c9a84c;margin-bottom:6px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-coins" style="margin-right:6px"></i>SLS Balance Updated</div>'
+        + '<div style="font-size:1.4rem;font-weight:800;color:#c9a84c;">' + newBalance + ' <span style="font-size:0.8rem;font-weight:600;">SLS</span></div>'
+        + '<div style="font-size:0.78rem;color:#ff6b6b;margin-top:4px;">-' + fee.toFixed(2) + ' SLS (anchor fee)</div>';
+    document.body.appendChild(toast);
+    setTimeout(function() {
+        toast.style.animation = 'slsToastOut 0.4s ease-in forwards';
+        setTimeout(function() { toast.remove(); }, 400);
+    }, 3500);
+}
+
 // ═══ SLS Flow Box Collapse/Expand Logic ═══
 var _flowBoxCollapsed = false;
 
 function collapseFlowBox() {
     var panel = document.getElementById('demoPanel');
-    var bar = document.getElementById('slsBalanceBar');
     if (panel) { panel.style.display = 'none'; }
-    if (bar) { bar.style.display = 'flex'; }
     _flowBoxCollapsed = true;
     _syncSlsBar();
 }
 
 function expandFlowBox() {
     var panel = document.getElementById('demoPanel');
-    var bar = document.getElementById('slsBalanceBar');
     if (panel) { panel.style.display = 'block'; }
-    if (bar) { bar.style.display = 'none'; }
     _flowBoxCollapsed = false;
+    _syncSlsBar();
 }
 
 function toggleFlowBox() {
-    if (_flowBoxCollapsed) expandFlowBox();
-    else collapseFlowBox();
+    if (_flowBoxCollapsed) {
+        expandFlowBox();
+        var btn = document.getElementById('slsToggleBtn');
+        if (btn) btn.innerHTML = '<i class="fas fa-chevron-up" style="margin-right:4px"></i>Hide Flow Details';
+    } else {
+        collapseFlowBox();
+        var btn = document.getElementById('slsToggleBtn');
+        if (btn) btn.innerHTML = '<i class="fas fa-chart-simple" style="margin-right:4px"></i>Show Flow Details';
+    }
 }
 
 function _syncSlsBar() {
@@ -2427,7 +2462,7 @@ function _syncSlsBar() {
 
 // Auto-collapse flow box when user clicks any main tab (not the first time on anchor)
 document.addEventListener('click', function(e) {
-    var tab = e.target.closest('[data-bs-toggle="tab"]');
+    var tab = e.target.closest('[data-bs-toggle="pill"], [data-bs-toggle="tab"]');
     if (tab && !_flowBoxCollapsed) {
         // Collapse the flow box once user starts using tabs
         setTimeout(collapseFlowBox, 300);
@@ -2436,12 +2471,8 @@ document.addEventListener('click', function(e) {
 
 // Initialize SLS balance display on page load
 document.addEventListener('DOMContentLoaded', function() {
-    // Show initial balance immediately, then update periodically
-    setTimeout(function() { 
-        _updateDemoSlsBalance();
-        // Keep syncing every 5 seconds to catch any updates
-        setInterval(_updateDemoSlsBalance, 5000);
-    }, 2500);
+    _updateDemoSlsBalance();
+    setInterval(_updateDemoSlsBalance, 3000);
 });
 
 // ── localStorage cross-page record sync ──
@@ -2932,6 +2963,10 @@ async function anchorRecord() {
     if (s4s) { s4s.innerHTML = '<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px;"></i> ' + stats.anchored + ' anchor' + (stats.anchored > 1 ? 's' : '') + ' (' + stats.slsFees.toFixed(2) + ' SLS)'; }
     // Auto-update demo SLS balance display
     _updateDemoSlsBalance();
+    // Flash visible toast showing new balance
+    var _flAlloc = _demoSession ? (_demoSession.subscription?.sls_allocation || 25000) : 25000;
+    var _flRemaining = _flAlloc - stats.slsFees;
+    _flashSlsBalance(_flRemaining.toLocaleString(undefined,{maximumFractionDigits:2}), 0.01);
 
     await new Promise(r => setTimeout(r, 3200));
     hideAnchorAnimation();
