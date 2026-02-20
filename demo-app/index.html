@@ -358,7 +358,7 @@
         .score-ring .score-val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:800;color:#fff}
         
         /* Persistent SLS Balance Bar — replaces flow box when in tabs */
-        #slsBalanceBar{display:flex;background:linear-gradient(90deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.15);border-radius:10px;padding:10px 20px;margin:0 0 16px;align-items:center;justify-content:space-between;gap:12px;font-size:0.82rem;transition:all 0.3s;position:sticky;top:68px;z-index:900}
+        #slsBalanceBar{display:flex;background:linear-gradient(135deg,rgba(0,170,255,0.08),rgba(201,168,76,0.06));border:1px solid rgba(0,170,255,0.18);border-radius:12px;padding:14px 20px;margin:0 0 20px;align-items:center;justify-content:space-between;gap:12px;font-size:0.82rem;transition:all 0.3s}
         #slsBalanceBar .sls-stat{display:flex;align-items:center;gap:6px}
         #slsBalanceBar .sls-stat-val{font-weight:700;color:#c9a84c}
         #slsBalanceBar .sls-stat-label{color:var(--steel);font-size:0.72rem}
@@ -678,16 +678,7 @@
         </ul>
 
         
-        <!-- Persistent SLS Balance Bar (shown when flow box is collapsed) -->
-        <div id="slsBalanceBar">
-            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-                <div class="sls-stat"><i class="fas fa-coins" style="color:#c9a84c"></i> <span class="sls-stat-label">SLS Balance:</span> <span class="sls-stat-val" id="slsBarBalance">25,000 SLS</span></div>
-                <div class="sls-stat"><i class="fas fa-anchor" style="color:var(--accent)"></i> <span class="sls-stat-label">Anchors:</span> <span class="sls-stat-val" id="slsBarAnchors" style="color:#00aaff">0</span></div>
-                <div class="sls-stat"><i class="fas fa-bolt" style="color:var(--accent)"></i> <span class="sls-stat-label">SLS Spent:</span> <span class="sls-stat-val" id="slsBarSpent">0.00</span></div>
-                <div class="sls-stat"><i class="fas fa-layer-group" style="color:var(--accent)"></i> <span class="sls-stat-label">Plan:</span> <span class="sls-stat-val" id="slsBarPlan" style="color:#fff">Starter</span></div>
-            </div>
-            <button class="sls-expand-btn" id="slsToggleBtn" onclick="toggleFlowBox()"><i class="fas fa-chart-simple" style="margin-right:4px"></i>Show Flow Details</button>
-        </div>
+
 
         <div class="tab-content">
             <div class="tab-pane fade" id="tabAnchor" role="tabpanel">
@@ -1869,6 +1860,19 @@
             <!--  MY WALLET TAB                                             -->
             <!-- ═══════════════════════════════════════════════════════════ -->
             <div class="tab-pane fade" id="tabWallet" role="tabpanel">
+                <!-- SLS Balance & Usage Bar (moved here from floating position) -->
+                <div id="slsBalanceBar">
+                    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                        <div class="sls-stat"><i class="fas fa-coins" style="color:#c9a84c"></i> <span class="sls-stat-label">SLS Balance:</span> <span class="sls-stat-val" id="slsBarBalance">25,000 SLS</span></div>
+                        <div class="sls-stat"><i class="fas fa-anchor" style="color:var(--accent)"></i> <span class="sls-stat-label">Anchors:</span> <span class="sls-stat-val" id="slsBarAnchors" style="color:#00aaff">0</span></div>
+                        <div class="sls-stat"><i class="fas fa-bolt" style="color:var(--accent)"></i> <span class="sls-stat-label">SLS Spent:</span> <span class="sls-stat-val" id="slsBarSpent">0.00 SLS</span></div>
+                        <div class="sls-stat"><i class="fas fa-layer-group" style="color:var(--accent)"></i> <span class="sls-stat-label">Plan:</span> <span class="sls-stat-val" id="slsBarPlan" style="color:#fff">Starter</span></div>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <button class="sls-expand-btn" id="slsToggleBtn" onclick="toggleFlowBox()"><i class="fas fa-chart-simple" style="margin-right:4px"></i>Flow Details</button>
+                        <button class="sls-expand-btn" onclick="resetDemoSession()" style="border-color:rgba(255,107,107,0.3);color:#ff6b6b;" title="Reset session & clear cache"><i class="fas fa-right-from-bracket" style="margin-right:4px"></i>Logout</button>
+                    </div>
+                </div>
                 <div style="max-width:900px;margin:0 auto;padding:1rem 0">
                     <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:4px"><i class="fas fa-wallet" style="color:#00aaff;margin-right:8px"></i>My Wallet & SLS</h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:4px"><strong style="color:#00aaff">SLS</strong> = <strong>Secure Logistics Standard</strong> — the utility token that powers every action on S4 Ledger.</p>
@@ -2363,7 +2367,7 @@ let stats = {anchored:0,verified:0,types:new Set(),slsFees:0};
 // ── Demo SLS Balance Tracker ──
 function _updateDemoSlsBalance() {
     if (typeof _syncSlsBar === 'function') _syncSlsBar();
-    var allocation = _demoSession ? (_demoSession.subscription?.sls_allocation || 25000) : 25000;
+    var _tFallback = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined') ? (_onboardTiers[_onboardTier]?.sls || 25000) : 25000; var allocation = _demoSession ? (_demoSession.subscription?.sls_allocation || _tFallback) : _tFallback;
     var spent = stats.slsFees || 0;
     var remaining = allocation - spent;
     var bal = document.getElementById('demoSlsBalance');
@@ -2444,7 +2448,7 @@ function toggleFlowBox() {
 }
 
 function _syncSlsBar() {
-    var allocation = _demoSession ? (_demoSession.subscription?.sls_allocation || 25000) : 25000;
+    var _tFallback = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined') ? (_onboardTiers[_onboardTier]?.sls || 25000) : 25000; var allocation = _demoSession ? (_demoSession.subscription?.sls_allocation || _tFallback) : _tFallback;
     var spent = stats.slsFees || 0;
     var remaining = allocation - spent;
     var plan = _demoSession ? (_demoSession.subscription?.label || 'Starter') : 'Starter';
@@ -2460,14 +2464,30 @@ function _syncSlsBar() {
     if (planEl) planEl.textContent = plan;
 }
 
-// Auto-collapse flow box when user clicks any main tab (not the first time on anchor)
-document.addEventListener('click', function(e) {
-    var tab = e.target.closest('[data-bs-toggle="pill"], [data-bs-toggle="tab"]');
-    if (tab && !_flowBoxCollapsed) {
-        // Collapse the flow box once user starts using tabs
-        setTimeout(collapseFlowBox, 300);
-    }
-});
+// ═══ Logout / Reset Demo Session ═══
+function resetDemoSession() {
+    if (!confirm('Reset your demo session? This will clear all anchored records, stats, and cached data.')) return;
+    // Clear all S4 localStorage keys
+    localStorage.removeItem('s4_demo_stats');
+    localStorage.removeItem('s4_anchored_records');
+    localStorage.removeItem('s4_wallet');
+    localStorage.removeItem('s4_selected_tier');
+    localStorage.removeItem('s4_vault');
+    localStorage.removeItem('s4_action_items');
+    localStorage.removeItem('s4_uploaded_docs');
+    // Clear sessionStorage
+    sessionStorage.removeItem('s4_onboard_done');
+    // Reset in-memory state
+    _demoSession = null;
+    stats = {anchored:0, verified:0, types:new Set(), slsFees:0};
+    sessionRecords = [];
+    if (typeof s4Vault !== 'undefined') s4Vault = [];
+    if (typeof s4ActionItems !== 'undefined') s4ActionItems = [];
+    // Reload page (will trigger onboarding again since sessionStorage cleared)
+    window.location.reload();
+}
+
+// Flow box collapse removed — SLS bar now lives in Wallet tab
 
 // Initialize SLS balance display on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -2761,7 +2781,7 @@ async function _initDemoSession() {
         const resp = await fetch('/api/demo/provision', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({name: 'Demo User', plan: 'starter'})
+            body: JSON.stringify({name: 'Demo User', plan: (typeof _onboardTier !== 'undefined' ? _onboardTier : 'starter')})
         });
         if (resp.ok) {
             const data = await resp.json();
@@ -2793,7 +2813,10 @@ async function _initDemoSession() {
 function _showDemoOffline() {
     // Ensure allocation is set even in offline mode
     if (!_demoSession) _demoSession = {};
-    if (!_demoSession.subscription) _demoSession.subscription = {label:'Starter',sls_allocation:25000};
+    var _savedTier = localStorage.getItem('s4_selected_tier') || (typeof _onboardTier !== 'undefined' ? _onboardTier : 'starter');
+    var _tierLookup = (typeof _onboardTiers !== 'undefined') ? _onboardTiers : {pilot:{label:'Pilot',sls:100},starter:{label:'Starter',sls:25000},professional:{label:'Professional',sls:100000},enterprise:{label:'Enterprise',sls:500000}};
+    var _tierData = _tierLookup[_savedTier] || _tierLookup['starter'];
+    if (!_demoSession.subscription) _demoSession.subscription = {label:_tierData.label,sls_allocation:_tierData.sls};
     document.getElementById('demoBanner').style.display = 'block';
     document.getElementById('demoBanner').innerHTML = '<i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong style="color:#fff;">S4 Ledger</strong> &mdash; Offline mode. Anchors are queued locally and will sync when connected.';
     var panel = document.getElementById('demoPanel');
@@ -2815,7 +2838,7 @@ function _showDemoOffline() {
             + '</div>';
     }
     // Set a local demo session so AI agent works
-    _demoSession = { session_id: 'demo_offline_' + Date.now(), xrp_balance: 12, sls_balance: 25000 };
+    _demoSession = { session_id: 'demo_offline_' + Date.now(), xrp_balance: 12, sls_balance: _tierData.sls, subscription: {label: _tierData.label, sls_allocation: _tierData.sls} };
 }
 
 function _animateDemoSteps(data) {
@@ -7997,7 +8020,7 @@ if (window.location.hash === '#tabWallet') {
 <!-- ═══ DEMO ONBOARDING WIZARD JS ═══ -->
 <script>
 var _onboardStep = 0;
-var _onboardTier = 'starter';
+var _onboardTier = localStorage.getItem('s4_selected_tier') || 'starter';
 var _onboardTiers = {
     pilot: { label: 'Pilot (Free)', sls: 100, price: 'Free' },
     starter: { label: 'Starter ($999/mo)', sls: 25000, price: '$999/mo' },
@@ -8016,7 +8039,12 @@ function closeOnboarding() {
     var overlay = document.getElementById('onboardOverlay');
     if (overlay) overlay.style.display = 'none';
     sessionStorage.setItem('s4_onboard_done', '1');
-    // Trigger demo session init
+    // Store selected tier in localStorage so it persists across reloads
+    var tierInfo = _onboardTiers[_onboardTier] || _onboardTiers['starter'];
+    localStorage.setItem('s4_selected_tier', _onboardTier);
+    // Clear any existing session so init uses the new tier
+    _demoSession = null;
+    // Trigger demo session init with selected tier
     if (typeof _initDemoSession === 'function') _initDemoSession();
 }
 
