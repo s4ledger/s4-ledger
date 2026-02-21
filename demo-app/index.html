@@ -285,142 +285,333 @@
         .ils-hub-tab .tab-badge{font-size:0.65rem;padding:1px 6px;border-radius:10px;background:rgba(255,51,51,0.2);color:#ff3333;font-weight:700}
         .ils-hub-tab.active .tab-badge{background:rgba(255,255,255,0.2);color:#fff}
         /* ═══ ANCHOR-S4 UX OVERHAUL — Professional Enhancement ═══ */
-        .ils-hub-panel .demo-card{border:1px solid var(--border);border-radius:14px;background:var(--card);padding:24px 28px;transition:border-color 0.3s,box-shadow 0.3s}
-        .ils-hub-panel .demo-card:hover{border-color:rgba(0,170,255,0.12);box-shadow:0 4px 24px rgba(0,0,0,0.15)}
-        .ils-hub-panel .demo-card h3{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:10px;letter-spacing:-0.01em}
-        .ils-hub-panel .demo-card h3 i{color:var(--accent);font-size:0.95rem}
         
-        /* KPI Dashboard Strips */
-        .kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
-        .kpi-card{background:linear-gradient(145deg,var(--surface),rgba(0,170,255,0.03));border:1px solid var(--border);border-radius:12px;padding:16px 18px;text-align:center;transition:all 0.3s;position:relative;overflow:hidden}
+        /* ── Override inline styles on panel cards ── */
+        .ils-hub-panel .demo-card,
+        .ils-hub-panel .demo-card.glass-card{
+            border:1px solid var(--border) !important;
+            border-radius:14px !important;
+            background:var(--card) !important;
+            padding:28px 32px !important;
+            transition:border-color 0.3s,box-shadow 0.3s !important;
+            animation:panelSlideIn 0.4s ease !important;
+            position:relative !important;
+            overflow:hidden !important;
+        }
+        .ils-hub-panel .demo-card::before{
+            content:'';position:absolute;top:0;left:0;right:0;height:3px;
+            background:linear-gradient(90deg,var(--accent),var(--gold),transparent);
+            opacity:0.6;z-index:1;
+        }
+        .ils-hub-panel .demo-card:hover{
+            border-color:rgba(0,170,255,0.15) !important;
+            box-shadow:0 8px 32px rgba(0,0,0,0.2) !important;
+        }
+        @keyframes panelSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        
+        /* ── Panel headers ── */
+        .ils-hub-panel .demo-card h3,
+        .ils-hub-panel .demo-card h4{
+            font-size:1.1rem !important;font-weight:700 !important;
+            color:#fff !important;margin-bottom:18px !important;
+            display:flex !important;align-items:center !important;
+            gap:10px !important;letter-spacing:-0.01em !important;
+            padding-bottom:14px !important;
+            border-bottom:1px solid var(--border) !important;
+        }
+        .ils-hub-panel .demo-card h3 i,
+        .ils-hub-panel .demo-card h4 i{
+            color:var(--accent) !important;font-size:1rem !important;
+            margin-right:0 !important;
+        }
+        .ils-hub-panel .hub-tool-header{
+            display:flex !important;align-items:center !important;
+            justify-content:space-between !important;
+            margin-bottom:0 !important;
+            padding-bottom:14px !important;
+            border-bottom:1px solid var(--border) !important;
+        }
+        .ils-hub-panel .hub-tool-header h4{
+            border-bottom:none !important;padding-bottom:0 !important;margin-bottom:0 !important;
+        }
+        
+        /* ── Override inline styles on Details/Accordion ── */
+        .ils-hub-panel details{
+            margin-bottom:16px !important;
+            background:rgba(0,170,255,0.03) !important;
+            border:1px solid rgba(0,170,255,0.08) !important;
+            border-radius:12px !important;
+            padding:0 16px !important;
+            transition:all 0.3s !important;
+        }
+        .ils-hub-panel details[open]{
+            background:rgba(0,170,255,0.05) !important;
+            border-color:rgba(0,170,255,0.15) !important;
+        }
+        .ils-hub-panel details summary{
+            cursor:pointer !important;
+            padding:14px 0 !important;
+            color:var(--accent) !important;
+            font-weight:600 !important;
+            font-size:0.82rem !important;
+            display:flex !important;
+            align-items:center !important;
+            gap:8px !important;
+            transition:color 0.2s !important;
+            list-style:none !important;
+        }
+        .ils-hub-panel details summary::-webkit-details-marker{display:none !important}
+        .ils-hub-panel details summary::before{
+            content:'\f054' !important;font-family:'Font Awesome 6 Free' !important;
+            font-weight:900 !important;font-size:0.65rem !important;
+            transition:transform 0.25s !important;color:var(--accent) !important;
+            flex-shrink:0 !important;
+        }
+        .ils-hub-panel details[open] summary::before{transform:rotate(90deg) !important}
+        .ils-hub-panel details > div{
+            padding:0 0 14px !important;
+            color:var(--steel) !important;
+            font-size:0.82rem !important;
+            line-height:1.65 !important;
+        }
+        
+        /* ── Description paragraphs ── */
+        .ils-hub-panel .demo-card > p{
+            color:var(--steel) !important;
+            font-size:0.88rem !important;
+            line-height:1.6 !important;
+            margin-bottom:16px !important;
+        }
+        
+        /* ── KPI Dashboard Strips (upgraded stat-mini) ── */
+        .kpi-strip{display:grid !important;grid-template-columns:repeat(auto-fit,minmax(130px,1fr)) !important;gap:12px !important;margin-bottom:20px !important}
+        .kpi-card{
+            background:linear-gradient(145deg,var(--surface),rgba(0,170,255,0.03)) !important;
+            border:1px solid var(--border) !important;
+            border-radius:12px !important;
+            padding:16px 14px !important;
+            text-align:center !important;
+            transition:all 0.3s !important;
+            position:relative !important;
+            overflow:hidden !important;
+        }
         .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity 0.3s}
-        .kpi-card:hover{border-color:rgba(0,170,255,0.2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.2)}
+        .kpi-card:hover{border-color:rgba(0,170,255,0.2) !important;transform:translateY(-2px) !important;box-shadow:0 6px 20px rgba(0,0,0,0.2) !important}
         .kpi-card:hover::before{opacity:1}
-        .kpi-val{font-size:1.5rem;font-weight:800;color:#fff;line-height:1.2;margin-bottom:4px;font-variant-numeric:tabular-nums}
-        .kpi-val.accent{color:var(--accent)}
-        .kpi-val.gold{color:var(--gold)}
-        .kpi-val.red{color:#ff4444}
-        .kpi-val.green{color:#00cc66}
-        .kpi-lbl{font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.8px;font-weight:600}
-        .kpi-trend{font-size:0.68rem;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:4px}
-        .kpi-trend.up{color:#00cc66}
-        .kpi-trend.down{color:#ff4444}
-        .kpi-trend.neutral{color:var(--steel)}
+        .kpi-val{font-size:1.5rem !important;font-weight:800 !important;color:#fff !important;line-height:1.2 !important;margin-bottom:4px !important;font-variant-numeric:tabular-nums !important}
+        .kpi-val.accent{color:var(--accent) !important}
+        .kpi-val.gold{color:var(--gold) !important}
+        .kpi-val.red{color:#ff4444 !important}
+        .kpi-val.green{color:#00cc66 !important}
+        .kpi-lbl{font-size:0.68rem !important;color:var(--steel) !important;text-transform:uppercase !important;letter-spacing:0.8px !important;font-weight:600 !important;margin-top:4px !important}
         
-        /* Chart Containers */
-        .chart-container{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;position:relative}
-        .chart-container canvas{max-height:260px}
-        .chart-title{font-size:0.78rem;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-        .chart-title i{color:var(--accent);font-size:0.72rem}
+        /* ── Enhanced Stat Mini Cards (original class override) ── */
+        .ils-hub-panel .stat-mini{
+            background:linear-gradient(145deg,var(--surface),rgba(0,170,255,0.03)) !important;
+            border:1px solid var(--border) !important;
+            border-radius:12px !important;
+            padding:16px 14px !important;
+            text-align:center !important;
+            transition:all 0.3s !important;
+            position:relative !important;
+            overflow:hidden !important;
+        }
+        .ils-hub-panel .stat-mini::before{
+            content:'';position:absolute;top:0;left:0;right:0;height:3px;
+            background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity 0.3s;
+        }
+        .ils-hub-panel .stat-mini:hover{
+            border-color:rgba(0,170,255,0.2) !important;
+            transform:translateY(-2px) !important;
+            box-shadow:0 6px 20px rgba(0,0,0,0.2) !important;
+        }
+        .ils-hub-panel .stat-mini:hover::before{opacity:1}
+        .ils-hub-panel .stat-mini-val{
+            font-size:1.3rem !important;font-weight:800 !important;
+            line-height:1.2 !important;font-variant-numeric:tabular-nums !important;
+        }
+        .ils-hub-panel .stat-mini-label,
+        .ils-hub-panel .stat-mini-lbl{
+            font-size:0.68rem !important;color:var(--steel) !important;
+            text-transform:uppercase !important;letter-spacing:0.5px !important;
+            margin-top:4px !important;font-weight:600 !important;
+        }
+
+        /* ── Chart Containers ── */
+        .chart-container{
+            background:var(--surface) !important;
+            border:1px solid var(--border) !important;
+            border-radius:12px !important;
+            padding:20px !important;
+            margin-bottom:16px !important;
+            position:relative !important;
+            transition:border-color 0.3s !important;
+        }
+        .chart-container:hover{border-color:rgba(0,170,255,0.12) !important}
+        .chart-container canvas{max-height:260px !important}
+        .chart-title{
+            font-size:0.78rem !important;font-weight:700 !important;
+            color:var(--steel) !important;text-transform:uppercase !important;
+            letter-spacing:0.5px !important;margin-bottom:14px !important;
+            display:flex !important;align-items:center !important;gap:6px !important;
+        }
+        .chart-title i{color:var(--accent) !important;font-size:0.72rem !important}
         
-        /* Tool Header Bar */
-        .tool-header-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-        .tool-header-bar h3{margin:0;font-size:1.08rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px}
-        .tool-header-bar h3 i{color:var(--accent)}
-        .tool-header-actions{display:flex;gap:8px;flex-wrap:wrap}
-        .tool-header-actions .btn-tool{background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:8px;padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;font-family:inherit}
-        .tool-header-actions .btn-tool:hover{background:rgba(0,170,255,0.15);border-color:rgba(0,170,255,0.35)}
-        .tool-header-actions .btn-tool.primary{background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;box-shadow:0 2px 10px rgba(0,170,255,0.25)}
-        .tool-header-actions .btn-tool.primary:hover{box-shadow:0 4px 16px rgba(0,170,255,0.35);transform:translateY(-1px)}
+        /* ── Section Labels ── */
+        .section-divider{border:none !important;border-top:1px solid var(--border) !important;margin:20px 0 !important}
+        .section-label{
+            font-size:0.7rem !important;font-weight:700 !important;
+            color:var(--steel) !important;text-transform:uppercase !important;
+            letter-spacing:1.2px !important;margin-bottom:12px !important;
+            display:flex !important;align-items:center !important;gap:6px !important;
+        }
+        .section-label i{color:var(--accent) !important;font-size:0.65rem !important}
         
-        /* Section Dividers */  
-        .section-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
-        .section-label{font-size:0.72rem;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-        .section-label i{color:var(--accent);font-size:0.68rem}
+        /* ── Enhanced Buttons ── */
+        .btn-anchor{
+            background:linear-gradient(135deg,#00aaff,#0077cc) !important;
+            color:#fff !important;border:none !important;border-radius:10px !important;
+            padding:10px 20px !important;font-size:0.82rem !important;font-weight:700 !important;
+            cursor:pointer !important;transition:all 0.3s !important;
+            display:inline-flex !important;align-items:center !important;gap:8px !important;
+            font-family:inherit !important;box-shadow:0 2px 12px rgba(0,170,255,0.25) !important;
+        }
+        .btn-anchor:hover{transform:translateY(-1px) !important;box-shadow:0 4px 20px rgba(0,170,255,0.35) !important}
+        .btn-export{
+            background:rgba(0,170,255,0.08) !important;color:var(--accent) !important;
+            border:1px solid rgba(0,170,255,0.2) !important;border-radius:10px !important;
+            padding:10px 20px !important;font-size:0.82rem !important;font-weight:700 !important;
+            cursor:pointer !important;transition:all 0.2s !important;
+            display:inline-flex !important;align-items:center !important;gap:8px !important;
+            font-family:inherit !important;
+        }
+        .btn-export:hover{background:rgba(0,170,255,0.15) !important;border-color:rgba(0,170,255,0.35) !important}
         
-        /* Enhanced Details/Accordion */
-        .ils-hub-panel details{margin-bottom:16px;background:rgba(0,170,255,0.02);border:1px solid rgba(0,170,255,0.1);border-radius:10px;padding:0 16px;transition:all 0.3s}
-        .ils-hub-panel details[open]{background:rgba(0,170,255,0.04);border-color:rgba(0,170,255,0.15)}
-        .ils-hub-panel details summary{cursor:pointer;padding:12px 0;color:var(--accent);font-weight:600;font-size:0.82rem;display:flex;align-items:center;gap:8px;transition:color 0.2s;list-style:none}
-        .ils-hub-panel details summary::-webkit-details-marker{display:none}
-        .ils-hub-panel details summary::before{content:'\f054';font-family:'Font Awesome 6 Free';font-weight:900;font-size:0.65rem;transition:transform 0.2s;color:var(--accent)}
-        .ils-hub-panel details[open] summary::before{transform:rotate(90deg)}
+        /* ── Actions Bar ── */
+        .tool-actions-bar{
+            display:flex !important;gap:10px !important;flex-wrap:wrap !important;
+            margin-top:20px !important;padding-top:16px !important;
+            border-top:1px solid var(--border) !important;
+        }
         
-        /* Enhanced Stat Mini Cards */
-        .stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center;transition:all 0.3s}
-        .stat-mini:hover{border-color:rgba(0,170,255,0.15);box-shadow:0 4px 16px rgba(0,0,0,0.15)}
-        .stat-mini-val{font-size:1.25rem;font-weight:800;line-height:1.2;font-variant-numeric:tabular-nums}
-        .stat-mini-lbl,.stat-mini-label{font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;font-weight:600}
-        
-        /* Enhanced Buttons */
-        .btn-anchor{background:linear-gradient(135deg,#00aaff,#0077cc);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;font-family:inherit;box-shadow:0 2px 12px rgba(0,170,255,0.25)}
-        .btn-anchor:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,170,255,0.35)}
-        .btn-export{background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:10px 20px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;font-family:inherit}
-        .btn-export:hover{background:rgba(0,170,255,0.15);border-color:rgba(0,170,255,0.35)}
-        
-        /* Data Tables */
+        /* ── Data Tables ── */
         .data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:0.82rem;border:1px solid var(--border);border-radius:10px;overflow:hidden}
         .data-table thead th{background:var(--surface);color:var(--steel);font-weight:700;text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;padding:12px 14px;border-bottom:1px solid var(--border);text-align:left}
         .data-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
         .data-table tbody tr:hover{background:rgba(0,170,255,0.03)}
         .data-table tbody tr:last-child td{border-bottom:none}
         
-        /* Badge/Tag Styles */
+        /* ── Badge/Tag Styles ── */
         .severity-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:6px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.3px}
         .severity-badge.critical{background:rgba(255,68,68,0.15);color:#ff4444;border:1px solid rgba(255,68,68,0.2)}
         .severity-badge.warning{background:rgba(255,165,0,0.15);color:#ffa500;border:1px solid rgba(255,165,0,0.2)}
         .severity-badge.info{background:rgba(0,170,255,0.12);color:var(--accent);border:1px solid rgba(0,170,255,0.2)}
         .severity-badge.success{background:rgba(0,204,102,0.12);color:#00cc66;border:1px solid rgba(0,204,102,0.2)}
         
-        /* Progress Bars */
+        /* ── Progress Bars ── */
         .progress-bar-container{background:var(--surface);border:1px solid var(--border);border-radius:8px;height:10px;overflow:hidden;position:relative}
         .progress-bar-fill{height:100%;border-radius:8px;transition:width 0.6s cubic-bezier(0.25,0.1,0.25,1);position:relative}
         .progress-bar-fill::after{content:'';position:absolute;top:0;right:0;bottom:0;width:30px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15));border-radius:8px}
         
-        /* Empty State */
+        /* ── Empty State ── */
         .empty-state{text-align:center;padding:40px 20px;color:var(--steel)}
         .empty-state i{font-size:2.5rem;color:var(--border);margin-bottom:12px}
         .empty-state h4{color:#fff;font-size:0.95rem;margin-bottom:8px}
         .empty-state p{font-size:0.82rem;max-width:400px;margin:0 auto}
         
-        /* Smooth Scrollbars */
+        /* ── Smooth Scrollbars ── */
         .ils-hub-panel ::-webkit-scrollbar{width:6px;height:6px}
         .ils-hub-panel ::-webkit-scrollbar-track{background:transparent}
         .ils-hub-panel ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
         .ils-hub-panel ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
         
-        /* Enhanced Form Controls within panels */
-        .ils-hub-panel .form-control,.ils-hub-panel select,.ils-hub-panel .form-select{background:var(--surface);border:1px solid var(--border);color:#fff;border-radius:10px;padding:10px 14px;font-size:0.85rem;font-family:inherit;transition:all 0.2s}
-        .ils-hub-panel .form-control:focus,.ils-hub-panel select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(0,170,255,0.1)}
-        .ils-hub-panel label{color:var(--steel);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:6px}
+        /* ── Enhanced Form Controls ── */
+        .ils-hub-panel input[type="text"],
+        .ils-hub-panel input[type="number"],
+        .ils-hub-panel select,
+        .ils-hub-panel .form-control,
+        .ils-hub-panel .form-select{
+            background:var(--surface) !important;
+            border:1px solid var(--border) !important;
+            color:#fff !important;
+            border-radius:10px !important;
+            padding:10px 14px !important;
+            font-size:0.85rem !important;
+            font-family:inherit !important;
+            transition:all 0.2s !important;
+        }
+        .ils-hub-panel input:focus,
+        .ils-hub-panel select:focus,
+        .ils-hub-panel .form-control:focus,
+        .ils-hub-panel .form-select:focus{
+            border-color:var(--accent) !important;
+            outline:none !important;
+            box-shadow:0 0 0 3px rgba(0,170,255,0.1) !important;
+        }
+        .ils-hub-panel label{
+            color:var(--steel) !important;
+            font-size:0.72rem !important;
+            font-weight:700 !important;
+            text-transform:uppercase !important;
+            letter-spacing:0.7px !important;
+            margin-bottom:6px !important;
+        }
         
-        /* Card Grid Layout */
+        /* ── Tool Card Grid ── */
         .tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px}
         .tool-grid-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.3s}
         .tool-grid-item:hover{border-color:rgba(0,170,255,0.15);box-shadow:0 4px 20px rgba(0,0,0,0.15)}
         
-        /* Anchor-S4 Workspace Header Enhancement */
-        .anchor-s4-header{background:linear-gradient(135deg,rgba(0,170,255,0.08),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.12);border-radius:14px;padding:16px 24px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-        .anchor-s4-header h3{margin:0;font-size:1.2rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:10px;letter-spacing:-0.02em}
-        .anchor-s4-header h3 i{color:var(--accent);font-size:1rem}
-        .anchor-s4-meta{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
-        .anchor-s4-meta .meta-item{font-size:0.75rem;color:var(--steel);display:flex;align-items:center;gap:5px}
-        .anchor-s4-meta .meta-item i{color:var(--accent);font-size:0.68rem}
-        .anchor-s4-meta .meta-item strong{color:#fff}
+        /* ── ILS Dropzone Enhancement ── */
+        .ils-hub-panel .ils-dropzone{
+            border-radius:12px !important;
+            padding:24px !important;
+            transition:all 0.3s !important;
+        }
+        .ils-hub-panel .ils-dropzone:hover{
+            border-color:rgba(0,170,255,0.3) !important;
+            box-shadow:0 0 20px rgba(0,170,255,0.08) !important;
+        }
         
-        /* Enhanced ILS Sub-Hub Cards */
-        .ils-sub-hub{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px;padding:4px 0}
-        .ils-tool-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 16px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
-        .ils-tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity 0.3s}
-        .ils-tool-card:hover{border-color:rgba(0,170,255,0.25);transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,0.2)}
-        .ils-tool-card:hover::before{opacity:1}
-        .itc-icon{font-size:1.3rem;margin-bottom:10px;display:block}
-        .itc-title{font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-0.01em}
-        .itc-desc{font-size:0.75rem;color:var(--steel);line-height:1.5}
+        /* ── Vault Stats Enhancement ── */
+        .ils-hub-panel .vault-stats{
+            display:grid !important;
+            grid-template-columns:repeat(auto-fit,minmax(120px,1fr)) !important;
+            gap:12px !important;
+            margin-bottom:20px !important;
+        }
+        .ils-hub-panel .vault-stat{
+            background:linear-gradient(145deg,var(--surface),rgba(0,170,255,0.03)) !important;
+            border:1px solid var(--border) !important;
+            border-radius:12px !important;
+            padding:16px 14px !important;
+            text-align:center !important;
+            transition:all 0.3s !important;
+            position:relative !important;
+            overflow:hidden !important;
+        }
+        .ils-hub-panel .vault-stat::before{
+            content:'';position:absolute;top:0;left:0;right:0;height:3px;
+            background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity 0.3s;
+        }
+        .ils-hub-panel .vault-stat:hover{
+            border-color:rgba(0,170,255,0.2) !important;
+            transform:translateY(-2px) !important;
+            box-shadow:0 6px 20px rgba(0,0,0,0.2) !important;
+        }
+        .ils-hub-panel .vault-stat:hover::before{opacity:1}
         
-        /* Responsive improvements */
+        /* ── Responsive ── */
         @media(max-width:768px){
-            .kpi-strip{grid-template-columns:repeat(2,1fr)}
-            .tool-grid{grid-template-columns:1fr}
-            .ils-sub-hub{grid-template-columns:repeat(2,1fr)}
-            .anchor-s4-header{padding:14px 16px}
-            .ils-hub-panel .demo-card{padding:18px 16px}
+            .kpi-strip{grid-template-columns:repeat(2,1fr) !important}
+            .tool-grid{grid-template-columns:1fr !important}
+            .ils-hub-panel .demo-card{padding:18px 16px !important}
         }
         @media(max-width:480px){
-            .kpi-strip{grid-template-columns:1fr 1fr}
-            .ils-sub-hub{grid-template-columns:1fr 1fr}
+            .kpi-strip{grid-template-columns:1fr 1fr !important}
         }
-        .ils-hub-panel{display:none;animation:fadeIn 0.3s ease}
+        
+                .ils-hub-panel{display:none;animation:fadeIn 0.3s ease}
         .ils-hub-panel.active{display:block}
         /* ═══ CALENDAR STYLES ═══ */
         .cal-container{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
@@ -9109,222 +9300,290 @@ function animateKPI(el, target, prefix, suffix, duration) {
 
 // ═══ Chart rendering for Gap Analysis ═══
 function renderGapAnalysisCharts() {
-    if (!ilsResults || !ilsResults.catScores) return;
-    var cats = ilsResults.catScores;
-    var labels = cats.map(function(c) { return c.name.substring(0, 20); });
-    var scores = cats.map(function(c) { return c.pct; });
-    var colors = scores.map(function(s) { return s >= 80 ? '#00cc66' : s >= 50 ? '#ff8c00' : '#ff4444'; });
+    // Show demo data if no real analysis has been run
+    var radarCanvas = document.getElementById('gapRadarChart');
+    var barCanvas = document.getElementById('gapBarChart');
+    if (!radarCanvas || !barCanvas) return;
     
-    // Radar chart for element coverage
-    createS4Chart('gapRadarChart', {
+    var chartsRow = document.getElementById('gapChartsRow');
+    if (chartsRow) chartsRow.style.display = 'flex';
+    
+    // Use real data if available, otherwise use demo baseline
+    var labels, scores;
+    if (typeof ilsResults !== 'undefined' && ilsResults && ilsResults.elements) {
+        labels = Object.keys(ilsResults.elements);
+        scores = labels.map(function(k){ return ilsResults.elements[k]?.score || 0; });
+    } else {
+        labels = ['Supply Support','Maintenance Planning','Tech Data','Training','Config Mgmt','DMSMS','PHS&T','Reliability','Support Equipment','Manpower'];
+        scores = [72, 58, 85, 44, 91, 35, 67, 78, 52, 63];
+    }
+    
+    // Radar Chart
+    if (radarCanvas.__chartInstance) radarCanvas.__chartInstance.destroy();
+    radarCanvas.__chartInstance = new Chart(radarCanvas, {
         type: 'radar',
         data: {
-            labels: labels,
+            labels: labels.map(function(l){ return l.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()}); }),
             datasets: [{
-                label: 'Coverage %',
+                label: 'ILS Element Coverage %',
                 data: scores,
+                backgroundColor: 'rgba(0,170,255,0.12)',
                 borderColor: '#00aaff',
-                backgroundColor: 'rgba(0,170,255,0.1)',
                 borderWidth: 2,
-                pointBackgroundColor: colors,
-                pointBorderColor: colors,
+                pointBackgroundColor: '#00aaff',
+                pointBorderColor: '#fff',
                 pointRadius: 4
             }]
         },
         options: {
-            scales: { r: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8ea4b8', backdropColor: 'transparent', font: { size: 9 } }, pointLabels: { color: '#8ea4b8', font: { size: 9, weight: '600' } } } },
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.06)' }, angleLines: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#8ea4b8', font: { size: 10 } } } },
             plugins: { legend: { display: false } }
         }
     });
     
-    // Bar chart for element scores
-    createS4Chart('gapBarChart', {
+    // Bar Chart
+    var barColors = scores.map(function(s){ return s >= 80 ? '#00cc66' : s >= 50 ? '#ffa500' : '#ff4444'; });
+    if (barCanvas.__chartInstance) barCanvas.__chartInstance.destroy();
+    barCanvas.__chartInstance = new Chart(barCanvas, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: labels.map(function(l){ return l.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()}); }),
             datasets: [{
-                label: 'Score %',
+                label: 'Score',
                 data: scores,
-                backgroundColor: colors.map(function(c) { return c + '33'; }),
-                borderColor: colors,
-                borderWidth: 1,
-                borderRadius: 6
+                backgroundColor: barColors,
+                borderRadius: 6,
+                borderSkipped: false
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             indexAxis: 'y',
-            plugins: { legend: { display: false } },
-            scales: { x: { max: 100, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#8ea4b8' } }, y: { grid: { display: false }, ticks: { color: '#8ea4b8', font: { size: 10 } } } }
+            scales: { x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8' } }, y: { ticks: { color: '#8ea4b8', font: { size: 10 } }, grid: { display: false } } },
+            plugins: { legend: { display: false } }
         }
     });
-}
+    return; // Skip original logic since we handled everything
+
+
 
 // ═══ Chart rendering for DMSMS ═══
 function renderDMSMSCharts() {
-    var container = document.getElementById('dmsmsChartArea');
-    if (!container) return;
-    // Get current DMSMS data from the displayed table
-    var rows = document.querySelectorAll('#dmsmsResults tr');
-    if (rows.length < 2) return;
-    var riskCounts = { Critical: 0, High: 0, Medium: 0, Low: 0 };
-    rows.forEach(function(r, i) {
-        if (i === 0) return;
-        var cells = r.querySelectorAll('td');
-        if (cells.length > 3) {
-            var risk = cells[3].textContent.trim();
-            if (risk in riskCounts) riskCounts[risk]++;
-        }
-    });
-    createS4Chart('dmsmsPieChart', {
+    var canvas = document.getElementById('dmsmsPieChart');
+    if (!canvas) return;
+    if (canvas.__chartInstance) canvas.__chartInstance.destroy();
+    canvas.__chartInstance = new Chart(canvas, {
         type: 'doughnut',
         data: {
-            labels: Object.keys(riskCounts),
-            datasets: [{ data: Object.values(riskCounts), backgroundColor: ['#ff4444','#ff8c00','#c9a84c','#00cc66'], borderWidth: 0, spacing: 2 }]
+            labels: ['Active', 'At Risk', 'Obsolete', 'Resolved', 'Monitoring'],
+            datasets: [{
+                data: [45, 18, 12, 20, 5],
+                backgroundColor: ['#00cc66','#ffa500','#ff4444','#00aaff','#8ea4b8'],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
         },
-        options: { cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '55%',
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#8ea4b8', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
+            }
+        }
     });
-}
+
+
 
 // ═══ Chart rendering for Readiness ═══
 function renderReadinessCharts() {
-    var aoEl = document.getElementById('readinessAo');
-    if (!aoEl) return;
-    var ao = parseFloat(aoEl.textContent) || 0;
-    createS4Chart('readinessGauge', {
+    var canvas = document.getElementById('readinessGauge');
+    if (!canvas) return;
+    var ao = 0.87;
+    var el = document.getElementById('readinessAo') || document.getElementById('statAo');
+    if (el && el.textContent && el.textContent !== '—') {
+        var parsed = parseFloat(el.textContent);
+        if (!isNaN(parsed)) ao = parsed > 1 ? parsed / 100 : parsed;
+    }
+    if (canvas.__chartInstance) canvas.__chartInstance.destroy();
+    var gaugeColor = ao >= 0.9 ? '#00cc66' : ao >= 0.7 ? '#ffa500' : '#ff4444';
+    canvas.__chartInstance = new Chart(canvas, {
         type: 'doughnut',
         data: {
             labels: ['Operational', 'Downtime'],
-            datasets: [{ data: [ao, 100 - ao], backgroundColor: [ao >= 90 ? '#00cc66' : ao >= 75 ? '#ff8c00' : '#ff4444', 'rgba(255,255,255,0.05)'], borderWidth: 0 }]
+            datasets: [{
+                data: [Math.round(ao * 100), Math.round((1 - ao) * 100)],
+                backgroundColor: [gaugeColor, 'rgba(255,255,255,0.05)'],
+                borderWidth: 0,
+                circumference: 270,
+                rotation: 225
+            }]
         },
-        options: { cutout: '75%', rotation: -90, circumference: 180, plugins: { legend: { display: false } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: true }
+            }
+        }
     });
-}
+
+
 
 // ═══ Chart rendering for Compliance ═══
 function renderComplianceCharts() {
-    var chart = document.getElementById('complianceRadarChart');
-    if (!chart) return;
-    var frameworks = ['NIST 800-171','CMMC','DFARS','ITAR','FAR','FISMA'];
-    var scores = frameworks.map(function(f) {
-        var el = document.querySelector('[data-framework="' + f + '"]');
-        return el ? parseFloat(el.textContent) || Math.floor(70 + Math.random() * 25) : Math.floor(70 + Math.random() * 25);
-    });
-    createS4Chart('complianceRadarChart', {
+    var canvas = document.getElementById('complianceRadarChart');
+    if (!canvas) return;
+    if (canvas.__chartInstance) canvas.__chartInstance.destroy();
+    canvas.__chartInstance = new Chart(canvas, {
         type: 'radar',
         data: {
-            labels: frameworks,
+            labels: ['CMMC L2','NIST 800-171','DFARS 7012','ITAR','FIPS 140-2','FedRAMP','IL4/IL5'],
             datasets: [{
-                label: 'Compliance Score',
-                data: scores,
+                label: 'Current Posture',
+                data: [78, 85, 92, 88, 70, 65, 82],
+                backgroundColor: 'rgba(0,170,255,0.12)',
                 borderColor: '#00aaff',
-                backgroundColor: 'rgba(0,170,255,0.08)',
                 borderWidth: 2,
                 pointBackgroundColor: '#00aaff',
                 pointRadius: 4
-            }, {
-                label: 'Target (95%)',
-                data: [95,95,95,95,95,95],
-                borderColor: 'rgba(201,168,76,0.4)',
-                backgroundColor: 'transparent',
-                borderDash: [5,5],
+            },{
+                label: 'Target',
+                data: [95, 95, 100, 100, 90, 85, 95],
+                backgroundColor: 'rgba(201,168,76,0.06)',
+                borderColor: 'rgba(201,168,76,0.5)',
                 borderWidth: 1,
-                pointRadius: 0
+                borderDash: [4,4],
+                pointRadius: 2
             }]
         },
-        options: { scales: { r: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false }, pointLabels: { color: '#8ea4b8', font: { size: 10, weight: '600' } } } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.06)' }, angleLines: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#8ea4b8', font: { size: 10 } } } },
+            plugins: { legend: { labels: { color: '#8ea4b8', usePointStyle: true, font: { size: 11 } } } }
+        }
     });
-}
+
+
 
 // ═══ Chart rendering for ROI ═══
 function renderROICharts() {
-    var el = document.getElementById('roiChartArea');
-    if (!el) return;
+    var canvas = document.getElementById('roiLineChart');
+    if (!canvas) return;
+    if (canvas.__chartInstance) canvas.__chartInstance.destroy();
+    var baseSavings = 650000;
+    var license = 120000;
+    var cumulative = [];
     var years = ['Year 1','Year 2','Year 3','Year 4','Year 5'];
-    var savings = [0,0,0,0,0];
-    var costs = [0,0,0,0,0];
-    // Pull data from ROI results if available
-    var annualSavings = parseFloat((document.getElementById('roiAnnualSavings')|| {}).textContent) || 250000;
-    var setupCost = annualSavings * 0.6;
-    for (var i = 0; i < 5; i++) {
-        savings[i] = annualSavings * (i + 1);
-        costs[i] = setupCost + (annualSavings * 0.1 * (i + 1));
+    for (var y = 0; y < 5; y++) {
+        cumulative.push(((y + 1) * baseSavings) - ((y + 1) * license));
     }
-    createS4Chart('roiLineChart', {
+    canvas.__chartInstance = new Chart(canvas, {
         type: 'line',
         data: {
             labels: years,
             datasets: [{
-                label: 'Cumulative Savings',
-                data: savings,
-                borderColor: '#00cc66',
-                backgroundColor: 'rgba(0,204,102,0.08)',
+                label: 'Cumulative ROI ($)',
+                data: cumulative,
+                borderColor: '#00aaff',
+                backgroundColor: 'rgba(0,170,255,0.08)',
                 fill: true,
                 tension: 0.3,
                 borderWidth: 2,
-                pointRadius: 4,
-                pointBackgroundColor: '#00cc66'
-            }, {
-                label: 'Cumulative Cost',
-                data: costs,
-                borderColor: '#ff4444',
-                backgroundColor: 'rgba(255,68,68,0.05)',
-                fill: true,
-                tension: 0.3,
-                borderWidth: 2,
-                borderDash: [5,5],
-                pointRadius: 4,
-                pointBackgroundColor: '#ff4444'
-            }]
-        },
-        options: { plugins: { legend: { position: 'bottom' } } }
-    });
-}
-
-// ═══ Chart rendering for Risk Engine ═══
-function renderRiskCharts() {
-    var el = document.getElementById('riskChartArea');
-    if (!el) return;
-    createS4Chart('riskHeatChart', {
-        type: 'bar',
-        data: {
-            labels: ['Supply Chain','Cybersecurity','Obsolescence','Compliance','Vendor','Geopolitical'],
-            datasets: [{
-                label: 'Risk Score',
-                data: [82, 65, 78, 45, 58, 72],
-                backgroundColor: ['rgba(255,68,68,0.6)','rgba(255,140,0,0.6)','rgba(255,68,68,0.5)','rgba(0,204,102,0.5)','rgba(255,140,0,0.5)','rgba(255,68,68,0.4)'],
-                borderRadius: 6,
-                borderWidth: 0
+                pointBackgroundColor: '#00aaff',
+                pointBorderColor: '#fff',
+                pointRadius: 5,
+                pointHoverRadius: 7
+            },{
+                label: 'Break-Even Line',
+                data: [0, 0, 0, 0, 0],
+                borderColor: 'rgba(255,255,255,0.2)',
+                borderDash: [5, 5],
+                borderWidth: 1,
+                pointRadius: 0,
+                fill: false
             }]
         },
         options: {
-            indexAxis: 'y',
-            plugins: { legend: { display: false } },
-            scales: { x: { max: 100, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#8ea4b8' } }, y: { grid: { display: false }, ticks: { color: '#8ea4b8', font: { size: 11, weight: '600' } } } }
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8', callback: function(v) { return '$' + (v/1000).toFixed(0) + 'K'; } } },
+                x: { grid: { display: false }, ticks: { color: '#8ea4b8' } }
+            },
+            plugins: { legend: { labels: { color: '#8ea4b8', usePointStyle: true, font: { size: 11 } } } }
         }
     });
-}
+
+
+
+// ═══ Chart rendering for Risk Engine ═══
+function renderRiskCharts() {
+    var canvas = document.getElementById('riskHeatChart');
+    if (!canvas) return;
+    if (canvas.__chartInstance) canvas.__chartInstance.destroy();
+    canvas.__chartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: ['Supply Chain','Cyber/Data','Obsolescence','Financial','Regulatory','Operational'],
+            datasets: [{
+                label: 'Risk Score',
+                data: [78, 62, 85, 45, 55, 71],
+                backgroundColor: function(ctx) {
+                    var v = ctx.raw;
+                    return v >= 75 ? 'rgba(255,68,68,0.7)' : v >= 50 ? 'rgba(255,165,0,0.7)' : 'rgba(0,204,102,0.7)';
+                },
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            scales: {
+                x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8' } },
+                y: { ticks: { color: '#8ea4b8', font: { size: 11 } }, grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+
 
 // ═══ Chart rendering for Lifecycle Cost ═══
 function renderLifecycleCharts() {
-    var el = document.getElementById('lifecycleChartArea');
-    if (!el) return;
-    var acq = parseFloat((document.getElementById('lcAcqCost')||{}).value) || 85;
-    var fleet = parseFloat((document.getElementById('lcFleetSize')||{}).value) || 20;
-    var sustRate = parseFloat((document.getElementById('lcSustRate')||{}).value) || 8;
-    var life = parseFloat((document.getElementById('lcServiceLife')||{}).value) || 30;
-    var totalAcq = acq * fleet;
-    var totalSust = totalAcq * (sustRate/100) * life;
-    var dmsms = totalAcq * 0.04 * life;
-    
-    createS4Chart('lifecyclePieChart', {
+    var canvas = document.getElementById('lifecyclePieChart');
+    if (!canvas) return;
+    if (canvas.__chartInstance) canvas.__chartInstance.destroy();
+    canvas.__chartInstance = new Chart(canvas, {
         type: 'doughnut',
         data: {
-            labels: ['Acquisition','Sustainment (O&S)','DMSMS/Obsolescence','Tech Refresh'],
-            datasets: [{ data: [totalAcq, totalSust, dmsms, totalAcq * 0.02 * 6], backgroundColor: ['#00aaff','#c9a84c','#ff4444','#8b5cf6'], borderWidth: 0, spacing: 3 }]
+            labels: ['Acquisition','Sustainment (O&S)','DMSMS / Obsol.','Disposal','Personnel','Training'],
+            datasets: [{
+                data: [28, 42, 12, 5, 8, 5],
+                backgroundColor: ['#00aaff','#c9a84c','#ff4444','#8ea4b8','#00cc66','#9b59b6'],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
         },
-        options: { cutout: '60%', plugins: { legend: { position: 'bottom' } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '50%',
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#8ea4b8', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
+            }
+        }
     });
-}
+
+
 
 // ═══ Inject Chart Canvases into Panels ═══
 function injectChartContainers() {
@@ -9457,6 +9716,226 @@ if (typeof calcLifecycle === 'function') {
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(injectChartContainers, 2000);
 });
+
+// ═══════════════════════════════════════════════════════════════
+// ═══ ANCHOR-S4 DOM TRANSFORMATION ENGINE ═══
+// Restructures tool panels for professional dashboard appearance
+// ═══════════════════════════════════════════════════════════════
+(function() {
+    'use strict';
+    
+    function transformPanel(panelId) {
+        var panel = document.getElementById(panelId);
+        if (!panel || panel.dataset.uxDone) return;
+        panel.dataset.uxDone = '1';
+        
+        // ── Phase 1: Strip inline styles to let CSS take over ──
+        panel.querySelectorAll('details').forEach(function(el) {
+            el.removeAttribute('style');
+        });
+        panel.querySelectorAll('details summary').forEach(function(el) {
+            el.removeAttribute('style');
+        });
+        panel.querySelectorAll('details > div').forEach(function(el) {
+            el.removeAttribute('style');
+        });
+        // Strip inline color from h3/h4 icons (let CSS handle accent color)
+        panel.querySelectorAll('h3 > i[style], h4 > i[style]').forEach(function(el) {
+            el.removeAttribute('style');
+        });
+        // Strip inline style from first description paragraph
+        var cards = panel.querySelectorAll('.demo-card');
+        cards.forEach(function(card) {
+            var h = card.querySelector('h3, h4');
+            if (h) {
+                var sib = h.nextElementSibling;
+                // Check for hub-tool-header wrapper
+                var header = card.querySelector('.hub-tool-header');
+                if (header) sib = header.nextElementSibling;
+                if (sib && sib.tagName === 'P' && sib.getAttribute('style')) {
+                    sib.removeAttribute('style');
+                }
+            }
+        });
+        
+        // ── Phase 2: Upgrade buttons ──
+        panel.querySelectorAll('button[style]').forEach(function(btn) {
+            // Skip dropzone buttons, post-action buttons, file inputs
+            if (btn.closest('.ils-dropzone') || btn.closest('.post-actions') || btn.closest('.post-action-btn')) return;
+            if (btn.style.display === 'none') return;
+            
+            var text = btn.textContent.toLowerCase();
+            var isAnchor = text.includes('anchor') || text.includes('xrpl');
+            var isExport = text.includes('export') || text.includes('download') || text.includes('generate');
+            var isRunAction = text.includes('run ') || text.includes('analyze') || text.includes('calculate');
+            var isDanger = text.includes('clear') || text.includes('delete');
+            
+            if (isDanger) return; // Keep danger buttons as-is
+            var innerHtml = btn.innerHTML;
+            var onclick = btn.getAttribute('onclick');
+            if (isAnchor) {
+                btn.removeAttribute('style');
+                btn.className = 'btn-anchor';
+            } else if (isRunAction) {
+                btn.removeAttribute('style');
+                btn.className = 'btn-anchor';
+            } else if (isExport) {
+                btn.removeAttribute('style');
+                btn.className = 'btn-export';
+            }
+        });
+        
+        // ── Phase 3: Upgrade button containers to action bars ──
+        panel.querySelectorAll('div[style]').forEach(function(div) {
+            var s = div.getAttribute('style') || '';
+            if (s.includes('display:flex') && s.includes('gap:10') && s.includes('flex-wrap:wrap') && !div.classList.contains('ils-dropzone') && !div.querySelector('.ils-dropzone') && !div.closest('.post-actions')) {
+                // Check if it contains action buttons
+                var btns = div.querySelectorAll('button');
+                if (btns.length > 0) {
+                    div.className = 'tool-actions-bar';
+                    div.removeAttribute('style');
+                }
+            }
+        });
+        
+        // ── Phase 4: Add section dividers ──
+        cards.forEach(function(card) {
+            // Find the first <label> element (start of configuration)
+            var labels = card.querySelectorAll(':scope > label, :scope > .row > .col-md-6 > label');
+            var firstLabel = card.querySelector(':scope > label');
+            if (firstLabel && !firstLabel.previousElementSibling?.classList?.contains('section-label')) {
+                var divider = document.createElement('div');
+                divider.className = 'section-label';
+                divider.innerHTML = '<i class="fas fa-sliders"></i> CONFIGURATION';
+                var hr = document.createElement('hr');
+                hr.className = 'section-divider';
+                firstLabel.parentNode.insertBefore(hr, firstLabel);
+                firstLabel.parentNode.insertBefore(divider, hr);
+            }
+            
+            // Find results container and add results section label
+            var resultDiv = card.querySelector('[id$="Results"], [id$="Output"], [id$="result"], [id$="Result"]');
+            if (resultDiv && !resultDiv.previousElementSibling?.classList?.contains('section-label')) {
+                var divider2 = document.createElement('div');
+                divider2.className = 'section-label';
+                divider2.innerHTML = '<i class="fas fa-chart-bar"></i> RESULTS';
+                var hr2 = document.createElement('hr');
+                hr2.className = 'section-divider';
+                resultDiv.parentNode.insertBefore(hr2, resultDiv);
+                resultDiv.parentNode.insertBefore(divider2, hr2);
+            }
+            
+            // Add actions section label before action bars
+            var actionBar = card.querySelector('.tool-actions-bar');
+            if (actionBar && !actionBar.previousElementSibling?.classList?.contains('section-label')) {
+                var divider3 = document.createElement('div');
+                divider3.className = 'section-label';
+                divider3.innerHTML = '<i class="fas fa-bolt"></i> ACTIONS';
+                actionBar.parentNode.insertBefore(divider3, actionBar);
+            }
+        });
+        
+        // ── Phase 5: Move stat-mini rows to top (dashboard KPI strip) ──
+        var firstCard = panel.querySelector('.demo-card');
+        if (!firstCard) return;
+        
+        // For panels with a two-column layout (hub-analysis, hub-actions), 
+        // skip moving stats as they're in different columns.
+        var twoCol = panelId === 'hub-analysis' || panelId === 'hub-actions';
+        
+        if (!twoCol) {
+            // Find stat rows that contain 3+ stat-mini cards
+            var allDirectRows = firstCard.querySelectorAll(':scope > .row');
+            var statRow = null;
+            for (var i = 0; i < allDirectRows.length; i++) {
+                var row = allDirectRows[i];
+                if (row.querySelectorAll('.stat-mini').length >= 3) {
+                    statRow = row;
+                    break;
+                }
+            }
+            
+            if (statRow) {
+                // Get the h3/h4 or hub-tool-header
+                var header = firstCard.querySelector('.hub-tool-header') || firstCard.querySelector('h3, h4');
+                if (header) {
+                    var insertAfter = header;
+                    // Wrap stat row in KPI strip styling
+                    statRow.style.cssText = '';
+                    statRow.classList.add('mb-3');
+                    // Move to right after the header
+                    insertAfter.parentNode.insertBefore(statRow, insertAfter.nextSibling);
+                }
+            }
+        }
+        
+        // For hub-actions, find stats in the left column
+        if (panelId === 'hub-actions') {
+            var leftCol = firstCard.querySelector('.col-lg-8');
+            if (leftCol) {
+                var innerCard = leftCol.querySelector('.demo-card');
+                if (innerCard) {
+                    var statsInActions = null;
+                    var rows = innerCard.querySelectorAll(':scope > .row');
+                    for (var j = 0; j < rows.length; j++) {
+                        if (rows[j].querySelectorAll('.stat-mini').length >= 3) {
+                            statsInActions = rows[j];
+                            break;
+                        }
+                    }
+                    if (statsInActions) {
+                        var h3a = innerCard.querySelector('h3');
+                        if (h3a) {
+                            statsInActions.style.cssText = '';
+                            statsInActions.classList.add('mb-3');
+                            h3a.parentNode.insertBefore(statsInActions, h3a.nextSibling);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // ── Phase 6: Strip inline styles from form inputs ──
+        panel.querySelectorAll('input[style], select[style]').forEach(function(el) {
+            // Keep hidden inputs and file inputs
+            if (el.type === 'file' || el.type === 'hidden') return;
+            if (el.style.display === 'none') return;
+            // Remove inline background/color/border styles
+            el.removeAttribute('style');
+        });
+        
+        // ── Phase 7: Show chart containers immediately with placeholder ──
+        var chartAreas = panel.querySelectorAll('.chart-container');
+        chartAreas.forEach(function(c) {
+            c.style.display = 'block';
+        });
+        var gapChartsRow = panel.querySelector('#gapChartsRow');
+        if (gapChartsRow) gapChartsRow.style.display = 'flex';
+    }
+    
+    // ═══ Hook into panel opening ═══
+    var _prevOpen2 = openILSTool;
+    openILSTool = function(toolId) {
+        _prevOpen2(toolId);
+        setTimeout(function() { transformPanel(toolId); }, 100);
+    };
+    
+    var _prevSwitch2 = switchHubTab;
+    switchHubTab = function(panelId, btn) {
+        _prevSwitch2(panelId, btn);
+        setTimeout(function() { transformPanel(panelId); }, 100);
+    };
+    
+    // Transform any currently visible panel on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            document.querySelectorAll('.ils-hub-panel.active, .ils-hub-panel[style*="display:block"], .ils-hub-panel[style*="display: block"]').forEach(function(p) {
+                transformPanel(p.id);
+            });
+        }, 2500);
+    });
+})();
+
 
 console.log('[Anchor-S4] Chart & KPI Enhancement Engine loaded');
 
