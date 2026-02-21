@@ -16,8 +16,8 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 
 | Area | Status | MVP Score | Enterprise Score |
 |------|--------|-----------|-----------------|
-| **Frontend / Demo** | ILS Workspace (unified command center with 13 sub-tabs), 13 ILS tools + action items + AI Agent, universal program support, 130+ pre-built record types, PDF/DOCX document parsing, cross-document discrepancy detection, ITAR warning banner, login portal, SDK Playground with 20 interactive function boxes, Metrics dashboard auto-refresh (5s), Transactions page with filters, Treasury Wallet widget, classification banners | **95%** | **90%** |
-| **API / Backend** | Serverless API v5.1, 49+ endpoints including 12 HarborLink integration endpoints (webhooks, composite anchor, Merkle batch, proof chain, custody chain, file hash, bulk verify, org isolation), subscription-based SLS provisioning, Stripe payment verification, rate limiting, security headers, health check, OpenAPI 3.0 spec | **88%** | **80%** |
+| **Frontend / Demo** | ILS Workspace (unified command center with 13 ILS tools (hub/card layout)), 13 ILS tools + action items + AI Agent, universal program support, 130+ pre-built record types, PDF/DOCX document parsing, cross-document discrepancy detection, ITAR warning banner, login portal, SDK Playground with 20 interactive function boxes, Metrics dashboard auto-refresh (5s), Transactions page with filters, Treasury Wallet widget, classification banners | **95%** | **90%** |
+| **API / Backend** | Serverless API v5.1, 63+ endpoints including 12 HarborLink integration endpoints (webhooks, composite anchor, Merkle batch, proof chain, custody chain, file hash, bulk verify, org isolation), subscription-based SLS provisioning, Stripe payment verification, rate limiting, security headers, health check, OpenAPI 3.0 spec | **88%** | **80%** |
 | **XRPL Integration** | $SLS LIVE on XRPL Mainnet (100M total). Full mainnet anchoring live — all 13 ILS tools anchor to mainnet with explorer links. 3-wallet architecture (Issuer, Treasury, Ops). secp256k1 (Xaman-compatible). 0.01 SLS fee per anchor. | **100%** | **98%** |
 | **SDK** | Python SDK with 38+ methods including 11 new HarborLink methods (webhooks, composite, batch, custody, proof chain, file hash, bulk verify, org records), CLI tool, CSV/XML/JSON import, encryption, SDK Playground with 20 clickable function boxes | **92%** | **90%** |
 | **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404, security headers — **no persistent database** (in-memory only), no monitoring/APM, no GovCloud, no multi-region | **65%** | **50%** |
@@ -198,7 +198,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Technical specifications | ✅ Published | **High** | TECHNICAL_SPECS.md |
 | Whitepaper | ✅ Published | **Critical** | WHITEPAPER.md |
 | Security audit report | 🟡 Draft | **Critical** | SECURITY_AUDIT.md — needs formal third-party audit |
-| Changelog / Release notes | ✅ Published | Medium | CHANGELOG.md with semantic versioning (v1.0.0 through v4.0.4) |
+| Changelog / Release notes | ✅ Published | Medium | CHANGELOG.md with semantic versioning (v1.0.0 through v5.2.0) |
 
 ### 5.2 Internal Documentation
 | Item | Status | Priority | Notes |
@@ -240,7 +240,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | Landing page | ✅ Active | **Critical** | Trust signals, compliance badges, CTA |
-| Demo App | ✅ Active | **Critical** | 13 ILS tools, 156+ pre-built record types across 9 military branches, 13 ILS workspace tabs |
+| Demo App | ✅ Active | **Critical** | 13 ILS tools, 156+ pre-built record types across 9 military branches, 13 ILS tools in hub/card workspace |
 | SDK Playground | ✅ Active | **Critical** | Interactive with live API, 500+ platform selector, hull/designation + program office input |
 | Live Metrics dashboard | ✅ Active | **High** | Real-time with Chart.js, platform filter |
 | Transaction browser | ✅ Active | **High** | Filters, pagination, CSV export, platform filter |

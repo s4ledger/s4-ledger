@@ -108,7 +108,7 @@ S4 Ledger exposes 5 security-specific API endpoints for programmatic access:
 |---|---|---|
 | `/api/security/audit-trail` | GET | AI + verification audit trail (hashed, timestamped entries) |
 | `/api/security/rbac` | GET/POST | RBAC role management — 5 roles: Admin, Analyst, Auditor, Operator, Viewer |
-| `/api/security/zkp` | GET/POST | Zero-Knowledge Proof generation & verification (zk-SNARK stub; Bulletproofs/Groth16 in production) |
+| `/api/security/zkp` | GET/POST | Zero-Knowledge Proof generation & verification (Pedersen commitments (v5.2); Bulletproofs/Groth16 planned) |
 | `/api/security/threat-model` | GET | STRIDE + NIST SP 800-161 threat model with compliance mapping |
 | `/api/security/dependency-audit` | GET | Dependency audit with CycloneDX 1.5 SBOM, safety/pip-audit/bandit/semgrep scans |
 
@@ -119,7 +119,7 @@ ZKP allows third parties to verify a record was correctly anchored **without rev
 - Cross-organization auditing without data exposure
 - Supply chain integrity proof without logistics data disclosure
 
-Current: zk-SNARK stub implementation. Production target: Bulletproofs/Groth16 (Q3 2025).
+Current: Enhanced ZKP with Pedersen commitments (v5.2). Production target: Bulletproofs/Groth16.
 
 ### RBAC / Access Control
 
@@ -131,7 +131,7 @@ Current: zk-SNARK stub implementation. Production target: Bulletproofs/Groth16 (
 | Operator | Anchor, verify, offline sync | Starter |
 | Viewer | Verify, metrics (read-only) | Pilot |
 
-MFA (multi-factor authentication) planned for Q3 2025.
+MFA (multi-factor authentication) planned for future release.
 
 ### AI Audit Trail
 

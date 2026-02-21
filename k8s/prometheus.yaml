@@ -1,0 +1,35 @@
+# S4 Ledger — Prometheus Monitoring Configuration
+# Includes XRPL metrics, AI agent metrics, and platform alerts
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alerts.yaml"
+
+scrape_configs:
+  - job_name: 's4-ledger-api'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ['s4-ledger']
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        target_label: __address__
+        regex: (.+)
+        replacement: ${1}:${2}
+
+  - job_name: 's4-redis'
+    static_configs:
+      - targets: ['s4-redis:9121']
+
+  - job_name: 's4-xrpl-validators'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['localhost:9091']
+    metrics_path: /xrpl/metrics

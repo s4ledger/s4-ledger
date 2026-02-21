@@ -101,3 +101,50 @@ For air-gapped, SCIF, or shipboard environments:
 - Check `/api/health` for API status
 - Check `/api/xrpl-status` for XRPL connectivity
 - Check `/api/security/dependency-audit` for package security
+
+---
+
+## Kubernetes Deployment (Production)
+
+For production-scale deployments, S4 Ledger includes Kubernetes manifests in the `k8s/` directory:
+
+### Files
+| File | Purpose |
+|------|---------|
+| `k8s/deployment.yaml` | Deployment (3 replicas), HPA (3-25 pods), Redis, ServiceMonitor |
+| `k8s/prometheus.yaml` | Prometheus scrape configuration |
+| `k8s/alerts.yaml` | Alert rules: availability, XRPL health, queue depth, SLOs |
+| `k8s/grafana-dashboard.yaml` | Pre-built Grafana dashboard ConfigMap |
+
+### Quick Start
+```bash
+kubectl create namespace s4-ledger
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/prometheus.yaml
+kubectl apply -f k8s/alerts.yaml
+kubectl apply -f k8s/grafana-dashboard.yaml
+```
+
+### Monitoring
+- **Prometheus** scrapes `/api/metrics/prometheus` on port 8000
+- **Grafana** dashboard auto-provisions via ConfigMap
+- **Alerts** fire to AlertManager for email/Slack/PagerDuty routing
+
+### Scaling
+- HPA scales from 3 to 25 pods based on CPU, memory, and custom `s4_anchor_queue_depth` metric
+- Redis sidecar provides queue persistence and caching
+- Scale-up: 50% increase per 60s. Scale-down: 25% decrease per 120s.
+
+### Backend Modules
+New production-ready Python modules available:
+
+| Module | Purpose |
+|--------|---------|
+| `ai/` | Intent detection, entity extraction, anomaly detection, federated learning stubs |
+| `monitoring/` | Prometheus metrics, XRPL health monitor, alert manager |
+| `resilience/` | Circuit breakers, persistent queue (SQLite), WebSocket health, data caps |
+| `interop/` | OpenAPI 3.1 spec, gRPC proto, MIL-STD XML parsing, ERP adapters |
+| `security/` | Enhanced ZKP (Pedersen), HSM stubs, RBAC enforcer, dependency auditor, OWASP headers |
+
+### gRPC
+Proto definitions available at `interop/s4_ledger.proto` for high-performance system-to-system integration.

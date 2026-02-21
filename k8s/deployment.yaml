@@ -1,0 +1,209 @@
+# S4 Ledger — Kubernetes Deployment
+# Auto-scaling with HPA + Prometheus monitoring
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s4-ledger-api
+  namespace: s4-ledger
+  labels:
+    app: s4-ledger
+    component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: s4-ledger
+      component: api
+  template:
+    metadata:
+      labels:
+        app: s4-ledger
+        component: api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: s4-ledger-api
+        image: s4systems/s4-ledger-api:latest
+        ports:
+        - containerPort: 8000
+          name: http
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: XRPL_MAINNET_URL
+          valueFrom:
+            secretKeyRef:
+              name: s4-xrpl-secrets
+              key: mainnet-url
+        - name: ISSUER_SEED
+          valueFrom:
+            secretKeyRef:
+              name: s4-xrpl-secrets
+              key: issuer-seed
+        - name: REDIS_URL
+          value: "redis://s4-redis:6379/0"
+        - name: QUEUE_BACKEND
+          value: "redis"
+        - name: LOG_LEVEL
+          value: "info"
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "2Gi"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: s4-ledger-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: s4-ledger-api
+  namespace: s4-ledger
+spec:
+  selector:
+    app: s4-ledger
+    component: api
+  ports:
+  - port: 80
+    targetPort: 8000
+    name: http
+  - port: 9090
+    targetPort: 9090
+    name: metrics
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: s4-ledger-api-hpa
+  namespace: s4-ledger
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: s4-ledger-api
+  minReplicas: 3
+  maxReplicas: 25
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Pods
+    pods:
+      metric:
+        name: s4_anchor_queue_depth
+      target:
+        type: AverageValue
+        averageValue: "100"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Percent
+        value: 25
+        periodSeconds: 60
+---
+# Redis for queue management and caching
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s4-redis
+  namespace: s4-ledger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s4-redis
+  template:
+    metadata:
+      labels:
+        app: s4-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        command: ["redis-server", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: s4-redis
+  namespace: s4-ledger
+spec:
+  selector:
+    app: s4-redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: s4-ledger
+  labels:
+    app: s4-ledger
+---
+# Prometheus ServiceMonitor for auto-discovery
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: s4-ledger-monitor
+  namespace: s4-ledger
+  labels:
+    app: s4-ledger
+spec:
+  selector:
+    matchLabels:
+      app: s4-ledger
+  endpoints:
+  - port: metrics
+    interval: 15s
+    path: /metrics

@@ -1,5 +1,5 @@
 # S4 Ledger: Technical Specifications
-*Version 5.0.1 — A product line of S4 Systems, LLC*
+*Version 5.2.0 — A product line of S4 Systems, LLC*
 
 **Architecture: Hash Anchoring via XRP Ledger (XRPL)**
 

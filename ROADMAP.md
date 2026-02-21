@@ -36,7 +36,7 @@
 - Server-side pagination and virtual scrolling for large datasets
 - Multi-language SDKs (JavaScript, Go, Rust)
 - Enhanced CLI with batch operations
-- Real-time audit dashboard
+- Real-time audit dashboard ✅ (metrics dashboard with auto-refresh + Prometheus + Grafana)
 
 ## Phase 4 — Partner Onboarding & SaaS (Q1 – Q2 2027)
 
@@ -56,7 +56,7 @@
 - Horizontally scaled API pods (10,000+ concurrent users)
 - Production deployments across defense programs
 - NATO ally partner program
-- Advanced analytics and anomaly detection
+- Advanced analytics and anomaly detection ✅ (supply chain anomaly detection + IsolationForest-ready)
 - Post-quantum hash migration readiness (SHA-3)
 
 ## Continuous

@@ -1,0 +1,184 @@
+syntax = "proto3";
+
+package s4ledger.v1;
+
+option go_package = "github.com/s4ledger/proto/v1";
+option java_package = "com.s4systems.ledger.v1";
+
+// ═══════════════════════════════════════════════════════════════════════
+//  S4 Ledger — Anchor Service (gRPC)
+//  High-performance binary protocol for system-to-system integration
+// ═══════════════════════════════════════════════════════════════════════
+
+service AnchorService {
+  // Anchor a single record hash to XRPL
+  rpc Anchor(AnchorRequest) returns (AnchorResponse);
+  
+  // Batch anchor multiple records (Merkle tree)
+  rpc BatchAnchor(BatchAnchorRequest) returns (BatchAnchorResponse);
+  
+  // Verify a record's integrity against chain
+  rpc Verify(VerifyRequest) returns (VerifyResponse);
+  
+  // Stream real-time anchor confirmations
+  rpc StreamAnchors(StreamRequest) returns (stream AnchorEvent);
+}
+
+service ILSService {
+  // Run gap analysis on uploaded data
+  rpc AnalyzeGaps(GapAnalysisRequest) returns (GapAnalysisResponse);
+  
+  // Get supply chain risk score
+  rpc ScoreRisk(RiskScoreRequest) returns (RiskScoreResponse);
+  
+  // Query AI agent
+  rpc QueryAgent(AgentRequest) returns (AgentResponse);
+  
+  // Stream AI agent responses (for long queries)
+  rpc StreamAgent(AgentRequest) returns (stream AgentChunk);
+}
+
+// ── Anchor Messages ──────────────────────────────────────────────────
+
+message AnchorRequest {
+  string data = 1;
+  string record_type = 2;
+  string branch = 3;
+  map<string, string> metadata = 4;
+  string api_key = 5;
+}
+
+message AnchorResponse {
+  string status = 1;
+  string hash = 2;
+  string tx_hash = 3;
+  string explorer_url = 4;
+  double fee = 5;
+  string timestamp = 6;
+  string record_type = 7;
+  string branch = 8;
+}
+
+message BatchAnchorRequest {
+  repeated AnchorRequest records = 1;
+  bool use_merkle = 2;
+  string api_key = 3;
+}
+
+message BatchAnchorResponse {
+  string status = 1;
+  string merkle_root = 2;
+  string tx_hash = 3;
+  int32 records_anchored = 4;
+  double total_fee = 5;
+  repeated AnchorResponse results = 6;
+}
+
+// ── Verify Messages ──────────────────────────────────────────────────
+
+message VerifyRequest {
+  string hash = 1;
+  string tx_hash = 2;
+}
+
+message VerifyResponse {
+  string status = 1;
+  bool hash_match = 2;
+  bool tamper_detected = 3;
+  string chain_hash = 4;
+  string local_hash = 5;
+  string verified_at = 6;
+}
+
+// ── Stream Messages ──────────────────────────────────────────────────
+
+message StreamRequest {
+  string record_type_filter = 1;
+  string branch_filter = 2;
+  int64 since_timestamp = 3;
+}
+
+message AnchorEvent {
+  string hash = 1;
+  string tx_hash = 2;
+  string record_type = 3;
+  string branch = 4;
+  string timestamp = 5;
+  double fee = 6;
+}
+
+// ── ILS Messages ─────────────────────────────────────────────────────
+
+message GapAnalysisRequest {
+  bytes data = 1;
+  string format = 2;
+  string framework = 3;
+}
+
+message GapAnalysisResponse {
+  float compliance_score = 1;
+  int32 total_items = 2;
+  int32 gaps_found = 3;
+  repeated Gap gaps = 4;
+}
+
+message Gap {
+  string item = 1;
+  string severity = 2;
+  string recommendation = 3;
+  string di_number = 4;
+}
+
+message RiskScoreRequest {
+  string nsn = 1;
+  float lead_time_days = 2;
+  float unit_price = 3;
+  int32 vendor_count = 4;
+  int32 obsolescence_year = 5;
+  string cage_code = 6;
+}
+
+message RiskScoreResponse {
+  string nsn = 1;
+  int32 risk_score = 2;
+  string risk_level = 3;
+  string recommendation = 4;
+  repeated RiskFactor factors = 5;
+}
+
+message RiskFactor {
+  string factor = 1;
+  string severity = 2;
+  string detail = 3;
+  int32 score = 4;
+}
+
+// ── AI Agent Messages ────────────────────────────────────────────────
+
+message AgentRequest {
+  string query = 1;
+  string tool_context = 2;
+  string session_id = 3;
+  map<string, string> analysis_data = 4;
+}
+
+message AgentResponse {
+  string response = 1;
+  string intent = 2;
+  float confidence = 3;
+  repeated Entity entities = 4;
+  string session_id = 5;
+}
+
+message AgentChunk {
+  string text = 1;
+  bool done = 2;
+}
+
+message Entity {
+  string type = 1;
+  string value = 2;
+  string label = 3;
+  int32 start = 4;
+  int32 end = 5;
+}

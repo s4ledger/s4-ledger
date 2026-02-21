@@ -417,7 +417,7 @@ MONTH 36-48:  First production contract / Phase III commercialization
 ### 8.3 Competitive Moat
 S4 Ledger's defensible advantages:
 1. **First mover in blockchain-anchored ILS** — no one else is doing this
-2. **Domain specificity** — 13 ILS tools purpose-built for MIL-STD workflows
+2. **Domain specificity** — 13 ILS tools purpose-built for MIL-STD workflows + enterprise infrastructure (K8s, Prometheus, circuit breakers, gRPC, enhanced ZKP, anomaly detection)
 3. **XRP Ledger anchoring** — tamper-proof audit trail that satisfies IG requirements
 4. **SLS micro-transaction model** — enables usage-based pricing inaccessible to enterprise vendors
 5. **Lightweight web workspace** — no IT infrastructure required, unlike PLM/ERP systems

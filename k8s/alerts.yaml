@@ -1,0 +1,175 @@
+# S4 Ledger — Prometheus Alert Rules
+# Tailored for defense logistics anchor platform
+
+groups:
+  - name: s4-ledger-api
+    rules:
+      # --- Availability ---
+      - alert: S4APIDown
+        expr: up{job="s4-ledger-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "S4 Ledger API is unreachable"
+          description: "{{ $labels.instance }} has been down for more than 2 minutes."
+
+      - alert: S4HighErrorRate
+        expr: rate(s4_http_errors_total[5m]) / rate(s4_http_requests_total[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "S4 API error rate exceeds 5%"
+          description: "Error rate is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+      # --- Latency ---
+      - alert: S4AnchorLatencyHigh
+        expr: histogram_quantile(0.95, rate(s4_anchor_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "XRPL anchor p95 latency > 5s"
+          description: "95th percentile anchor latency is {{ $value }}s"
+
+      - alert: S4VerifyLatencyHigh
+        expr: histogram_quantile(0.95, rate(s4_verify_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Verification p95 latency > 2s"
+
+      # --- Queue & Throughput ---
+      - alert: S4AnchorQueueBacklog
+        expr: s4_anchor_queue_depth > 500
+        for: 3m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Anchor queue depth exceeds 500"
+          description: "Queue depth is {{ $value }}, indicating backpressure"
+
+      - alert: S4AnchorQueueCritical
+        expr: s4_anchor_queue_depth > 2000
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Anchor queue depth critical (>2000)"
+          description: "Immediate scaling needed — queue depth {{ $value }}"
+
+      # --- XRPL Health ---
+      - alert: S4XRPLValidatorUnreachable
+        expr: s4_xrpl_validator_healthy == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: blockchain
+        annotations:
+          summary: "XRPL validator node is unreachable"
+          description: "Primary XRPL validator on {{ $labels.instance }} is down"
+
+      - alert: S4XRPLHighFee
+        expr: s4_xrpl_last_fee_drops > 50
+        for: 10m
+        labels:
+          severity: warning
+          team: blockchain
+        annotations:
+          summary: "XRPL transaction fees elevated"
+          description: "Current fee: {{ $value }} drops (normal: 12)"
+
+      - alert: S4TreasuryBalanceLow
+        expr: s4_treasury_xrp_balance < 50
+        for: 5m
+        labels:
+          severity: critical
+          team: finance
+        annotations:
+          summary: "Treasury XRP balance below 50 XRP"
+          description: "Balance: {{ $value }} XRP — wallet activation may fail"
+
+      # --- AI Agent ---
+      - alert: S4AIAgentErrorRate
+        expr: rate(s4_ai_query_errors_total[10m]) / rate(s4_ai_queries_total[10m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI Agent error rate > 10%"
+
+      - alert: S4AIAgentSlowResponse
+        expr: histogram_quantile(0.95, rate(s4_ai_response_seconds_bucket[5m])) > 15
+        for: 5m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI Agent p95 response time > 15s"
+
+      # --- Redis ---
+      - alert: S4RedisDown
+        expr: redis_up{job="s4-redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Redis instance is down"
+
+      - alert: S4RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Redis memory usage > 85%"
+
+      # --- Offline Sync ---
+      - alert: S4OfflineQueueStale
+        expr: time() - s4_offline_last_sync_timestamp > 86400
+        for: 10m
+        labels:
+          severity: warning
+          team: operations
+        annotations:
+          summary: "Offline queue not synced in 24+ hours"
+          description: "Last sync: {{ $value | humanizeDuration }} ago"
+
+  - name: s4-ledger-slos
+    rules:
+      # --- SLO: 99.9% availability ---
+      - record: s4:api_availability:rate5m
+        expr: avg_over_time(up{job="s4-ledger-api"}[5m])
+
+      - alert: S4SLOAvailabilityBreach
+        expr: s4:api_availability:rate5m < 0.999
+        for: 15m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "SLO breach — availability below 99.9%"
+
+      # --- SLO: Anchor success rate > 99.5% ---
+      - record: s4:anchor_success:rate5m
+        expr: rate(s4_anchors_success_total[5m]) / rate(s4_anchors_total[5m])
+
+      - alert: S4SLOAnchorSuccessBreach
+        expr: s4:anchor_success:rate5m < 0.995
+        for: 10m
+        labels:
+          severity: critical
+          team: blockchain
+        annotations:
+          summary: "SLO breach — anchor success rate below 99.5%"

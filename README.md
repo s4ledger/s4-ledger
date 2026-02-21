@@ -50,7 +50,7 @@ XRPL uptime: **99.99%**
 - **📈 AI Audit Trail** — Every AI response is SHA-256 hashed and logged for transparent, verifiable AI decision-making
 - **🔍 Dependency Auditing** — CycloneDX SBOM, `pip-audit` + `bandit` + `semgrep` scans
 - **🎯 STRIDE Threat Model** — API-accessible threat model with NIST SP 800-161 mapping
-- **Demo Mode** — Visible demo banner with hypothetical XRP (12) and SLS (25,000) balances. AI agent works on all tabs.
+- **Demo Mode** — Visible demo banner with hypothetical XRP (12) and SLS (25,000) balances. AI agent works across all tools in the hub.
 
 ### Why XRPL?
 

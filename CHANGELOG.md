@@ -5,6 +5,63 @@ All notable changes to the S4 Ledger project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.0] - 2026-02-22
+
+### Major
+- **Hub Landing Page Architecture** — Platform now opens to a hub with 5 cards (Anchor, Verify, Tx Log, Logistics Workspace, Systems) replacing direct tab navigation. Each card navigates to its own sub-page with back navigation.
+- **ILS Workspace Sub-Hub** — 13 ILS tools presented as visual cards with descriptions. Click to open individual tool pages.
+- **Floating Wallet Sidebar** — Wallet moved from main tab to persistent floating sidebar (slide-out from right edge). Shows SLS balance in header.
+- **Compact Stat Strip** — Replaced 3 large stat cards with single-line inline strip for cleaner layout.
+- **Backend Infrastructure Modules** — 6 new production-ready Python modules:
+  - `ai/` — Defense NLP (intent detection, entity extraction for NSN/CAGE/DI/MIL-STD), supply chain anomaly detection (IsolationForest-ready), federated learning stubs (Flower-compatible), DLA/GIDEP/PIEE API adapters
+  - `monitoring/` — Prometheus metrics (counters, gauges, histograms), XRPL multi-validator health monitor with failover, alert manager (email/Slack/PagerDuty routing)
+  - `resilience/` — SQLite-backed persistent queue, circuit breakers (XRPL/Supabase/DLA), WebSocket ping/pong health, data cap manager for air-gapped environments
+  - `interop/` — OpenAPI 3.1 specification, gRPC protobuf definitions, MIL-STD XML parser (LSAR/WAWF), ERP adapters (SAP/Oracle/Deltek), CDRL data transformer
+  - `security/` — Enhanced ZKP (Pedersen commitments), HSM key management stubs, RBAC enforcer with audit trail, dependency auditing, OWASP security headers, Snyk config
+  - `k8s/` — Kubernetes deployment (3-25 pod HPA), Redis, Prometheus/Grafana configs, 20+ alert rules with SLOs
+
+### Added
+- File-based verification with drag-drop (PDFs, XLSX, contracts) and binary SHA-256 hashing
+- Offline queue with AES-256-GCM encryption and exponential backoff retry
+- Supply chain anomaly detection with risk scoring (lead time, price, vendor, DMSMS, GIDEP)
+- Defense entity extraction: NSN, CAGE code, DI number, MIL-STD, contract number, DD Form, OPNAVINST, NIST SP patterns
+- AI agent intent classification with confidence scoring
+- Prometheus-compatible /api/metrics/prometheus endpoint
+- XRPL multi-validator routing with health checks, exponential backoff, and automatic failover
+- Circuit breaker pattern for XRPL, Supabase, and DLA service calls
+- gRPC service definitions (AnchorService, ILSService) with streaming support
+- OpenAPI 3.1 specification with full endpoint documentation
+- MIL-STD-1388-2B XML import/export for LSAR data exchange
+- WAWF XML parsing for PIEE integration
+- ERP adapter stubs (SAP S/4HANA, Oracle Cloud SCM, Deltek Costpoint)
+- CDRL (DD Form 1423) data transformer
+- NSN normalization utility
+- Pedersen commitment scheme for enhanced zero-knowledge proofs
+- HSM-ready key management with FIPS 140-2 Level 3 interface
+- RBAC enforcer with role inheritance and access audit trail
+- Dependency vulnerability auditing (Snyk/safety/OSV.dev compatible)
+- OWASP security headers (HSTS, CSP, X-Frame-Options, etc.)
+- Snyk policy file (.snyk) with license compliance
+- Kubernetes deployment: 3-replica Deployment, HPA (3-25 pods, CPU/memory/custom metrics), Redis (512MB), ServiceMonitor, Namespace
+- Prometheus alert rules: 20+ rules covering API availability, XRPL health, queue depth, treasury balance, AI agent, Redis, offline sync, SLOs
+- Grafana dashboard: anchors/min, API rate, queue depth, XRPL health, treasury balance, SLS economy, p95 latency, AI queries, error rate, Redis stats, offline status
+- Alert routing: email (Nodemailer), Slack webhook, PagerDuty with severity-based channels
+- WebSocket health monitoring with ping/pong and latency tracking
+- Data cap manager for offline environments (10K records / 500MB default)
+- Federated learning coordinator stub (Flower-compatible) for cross-org model training
+- PUBLIC_FEATURES.md — comprehensive public-facing feature documentation with sandbox API access
+
+### Changed
+- demo-app/index.html: ~8,760 → ~9,100 lines (hub architecture + ILS sub-hub + wallet sidebar + stat strip + back navigation)
+- api/index.py: ~3,300 → ~3,337 lines
+- SLS Economic Flow duplicates removed (merged into wallet sidebar)
+- Tab navigation hidden — replaced by hub card navigation with JavaScript routing
+
+### Fixed
+- Duplicate SLS explanations across demoPanel, wallet tab "How SLS Works", and "How USD to SLS Works"
+- Visual clutter from 7 simultaneous tabs in navigation bar
+- Stat boxes too large and dominating viewport
+
 ## [5.1.0] - 2026-02-20
 
 ### Demo Mode — Real SLS Fee Transfers on XRPL

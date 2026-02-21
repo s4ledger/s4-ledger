@@ -25,7 +25,7 @@ S4 Ledger's current architecture is a client-side browser application optimized 
 │                                 │
 │  ┌───────────────────────────┐  │
 │  │   demo-app/index.html     │  │
-│  │   (~7,500 lines)          │  │
+│  │   (~9,100 lines)          │  │
 │  │                           │  │
 │  │  • 13 ILS Workspace tools │  │
 │  │  • Client-side hashing    │  │
@@ -40,7 +40,7 @@ S4 Ledger's current architecture is a client-side browser application optimized 
 ┌──────────┐    ┌──────────────┐
 │ Vercel   │    │ XRPL         │
 │ API      │    │ (Testnet/    │
-│ (49+ EP)  │    │  Mainnet)    │
+│ (63+ EP)  │    │  Mainnet)    │
 └──────────┘    └──────────────┘
 ```
 
@@ -51,7 +51,7 @@ S4 Ledger's current architecture is a client-side browser application optimized 
 - **Record Count**: Comfortable up to ~1,000 records per session
 - **Users**: Single user per browser instance
 - **Authentication**: Login portal (UI only, no backend session management)
-- **API**: 29 serverless Vercel endpoints (stateless)
+- **API**: 63+ serverless Vercel endpoints (stateless)
 
 ### Current Limitations
 | Limitation | Impact | Threshold |
@@ -69,7 +69,7 @@ S4 Ledger's current architecture is a client-side browser application optimized 
 2. **Instant deployment** — Works anywhere with a browser
 3. **Full demo capability** — Investors/partners can see everything working immediately
 4. **Security simplicity** — No server = no server to hack
-5. **Development speed** — One developer built 13 tools, 49+ REST API endpoints, and an entire platform
+5. **Development speed** — One developer built 13 tools, 63+ REST API endpoints, and an entire platform
 
 **Bottom line:** Client-side architecture got us to a working product at zero cost. Now we need to scale it.
 
