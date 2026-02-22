@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""Quick validation of Round 9 fixes."""
+ix = open('demo-app/index.html','r').read()
+dm = open('demo-app/demo.html','r').read()
+
+print('INDEX:')
+print('  script open:', ix.count('<script'))
+print('  script close:', ix.count('</script>'))
+print('  Lines:', ix.count('\n'))
+print('  S4_buildProgramOptions:', 'window.S4_buildProgramOptions = function' in ix)
+print('  S4_countPlatforms:', 'window.S4_countPlatforms = function' in ix)
+print('  populateAllDropdowns calls it:', 'S4_buildProgramOptions(opts' in ix)
+print('  ddg51 preload:', 'progSel.value = \'ddg51\'' in ix)
+print('  adoptionRate old:', 'adoptionRate = 0.20' in ix)
+print('  adoptRate bp:', 'adoptRate = 0.20' in ix)
+print('  __custom__ check:', '__custom__' in ix.split('onILSProgramChange')[1][:500])
+
+print()
+print('DEMO:')
+print('  script open:', dm.count('<script'))
+print('  script close:', dm.count('</script>'))
+print('  Lines:', dm.count('\n'))
+print('  autoVerifyAnchored:', 'function autoVerifyAnchored' in dm)
+print('  Content saved:', "content: document.getElementById('demoContent').value" in dm)
+print('  Button calls autoVerify:', 'autoVerifyAnchored()' in dm)

@@ -629,7 +629,7 @@
         <div class="xrpl-field"><span class="label">Explorer:</span><span class="value" id="resultExplorer">—</span></div>
         <div style="margin-top:16px;text-align:center">
             <button class="demo-btn gold" onclick="resetAnchorDemo()" style="margin-right:8px"><i class="fas fa-redo"></i> Try Again</button>
-            <button class="demo-btn green" onclick="switchDemoTab('verify')"><i class="fas fa-check-circle"></i> Now Verify It</button>
+            <button class="demo-btn green" onclick="autoVerifyAnchored()"><i class="fas fa-check-circle"></i> Now Verify It</button>
         </div>
     </div>
 </div>
@@ -2275,10 +2275,11 @@ async function runAnchorDemo() {
     var txHash = randomHex(64).toUpperCase();
     var ledgerIndex = 95000000 + Math.floor(Math.random() * 500000);
 
-    // Store for verify demo
+    // Store for verify demo (including raw content for auto-verify)
     _anchoredRecords.push({
         type: _selectedType,
         hash: _currentHash,
+        content: document.getElementById('demoContent').value,
         txHash: txHash,
         ledger: ledgerIndex,
         time: new Date().toISOString()
@@ -2436,6 +2437,33 @@ async function runVerifyDemo() {
 }
 
 function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+// ═══ AUTO-VERIFY: Pre-fill verify tab with last anchored content ═══
+async function autoVerifyAnchored() {
+    // Switch to verify tab
+    switchDemoTab('verify');
+    
+    // Get the most recent anchored record
+    if (_anchoredRecords.length === 0) return;
+    var lastRecord = _anchoredRecords[_anchoredRecords.length - 1];
+    
+    // Pre-fill the verify content textarea with the anchored content
+    var verifyTA = document.getElementById('verifyContent');
+    if (verifyTA && lastRecord.content) {
+        verifyTA.value = lastRecord.content;
+        // Trigger the hash comparison
+        await onVerifyInput();
+        // Scroll to verify button
+        var vBtn = document.getElementById('verifyBtn');
+        if (vBtn) {
+            vBtn.disabled = false;
+            setTimeout(function() {
+                vBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+    }
+}
+
 </script>
 
 </body>

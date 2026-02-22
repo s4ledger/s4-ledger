@@ -3089,7 +3089,7 @@ function preloadAllILSDemoData() {
     // Pre-load Gap Analysis with DDG-51 program
     var progSel = document.getElementById('ilsProgram');
     if (progSel && progSel.value === '') {
-        progSel.value = 'DDG51';
+        progSel.value = 'ddg51';
         if (typeof onILSProgramChange === 'function') onILSProgramChange();
     }
     
@@ -3162,12 +3162,16 @@ function preloadAllILSDemoData() {
         recInput.dispatchEvent(new Event('input'));
     }
 
+    // Ensure dropdowns populated (Round 9 safety)
+    if (typeof populateAllDropdowns === 'function') populateAllDropdowns();
     console.log('[S4] Pre-loaded demo data into all ILS tools');
 }
 
 // Auto-run after page loads
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(preloadAllILSDemoData, 3000);
+    // Force calendar render after preload (Round 9 safety)
+    setTimeout(function() { if (typeof renderActionCalendar === 'function') renderActionCalendar(); }, 3500);
 });
 
 function loadStats() {
@@ -5623,10 +5627,12 @@ function updateChecklistFromUploads() {
 }
 
 function onILSProgramChange() {
+    // Clear bp-rendered flags so charts refresh with new program data (Round 9)
+    document.querySelectorAll('.ils-hub-panel.active canvas[data-bp-rendered]').forEach(function(c) { c.removeAttribute('data-bp-rendered'); });
     const key = document.getElementById('ilsProgram').value;
     if (!key) return; // respect empty default
     // Handle custom program
-    if (key === 'custom') {
+    if (key === 'custom' || key === '__custom__') {
         showCustomProgramInput();
         return;
     }
@@ -7012,6 +7018,64 @@ function applyCustomProgram() {
     initILSChecklist('custom_' + name.replace(/\s+/g,'_'));
     s4Notify('Custom Program', name + ' loaded with MIL-STD-1388 ILS template', 'success');
 }
+
+
+// ═══ S4 PLATFORM DATABASE BRIDGE (Round 9) ═══
+// Generates program <option> elements from the PROGS object for all tool dropdowns
+window.S4_buildProgramOptions = function(includeAll, includeCustom) {
+    if (typeof PROGS === 'undefined') return '<option value="">No platforms loaded</option>';
+    var html = '<option value="" disabled selected>— Select a Program —</option>';
+    // Group programs by service branch
+    var groups = {
+        'Navy (NAVSEA)': [],
+        'Navy (NAVAIR)': [],
+        'Army': [],
+        'Air Force': [],
+        'Marines': [],
+        'Space Force': [],
+        'Coast Guard': [],
+        'Joint / Other': []
+    };
+    var branchMap = {
+        yrbm:'Navy (NAVSEA)', apl:'Navy (NAVSEA)', afdm:'Navy (NAVSEA)', ydt:'Navy (NAVSEA)', yon:'Navy (NAVSEA)',
+        ddg51:'Navy (NAVSEA)', lcs:'Navy (NAVSEA)', cvn78:'Navy (NAVSEA)', ffg62:'Navy (NAVSEA)', lpd17:'Navy (NAVSEA)',
+        f35:'Navy (NAVAIR)', f35b:'Marines', ch53k:'Navy (NAVAIR)',
+        m1:'Army', stryker:'Army', ah64:'Army', himars:'Army', jltv:'Army', patriot:'Army',
+        f35a:'Air Force', kc46:'Air Force', b21:'Air Force', c17:'Air Force', f15ex:'Air Force', t7a:'Air Force',
+        gps3:'Space Force', sbirs:'Space Force',
+        nsc:'Coast Guard', opc:'Coast Guard', frc:'Coast Guard',
+        acv:'Marines', aav:'Marines'
+    };
+    Object.keys(PROGS).forEach(function(key) {
+        var prog = PROGS[key];
+        var branch = branchMap[key] || 'Joint / Other';
+        if (!groups[branch]) groups[branch] = [];
+        groups[branch].push({key: key, name: prog.name, ofc: prog.ofc});
+    });
+    // Build optgroups
+    Object.keys(groups).forEach(function(branch) {
+        var items = groups[branch];
+        if (items.length === 0) return;
+        html += '<optgroup label="' + branch + '">';
+        items.forEach(function(item) {
+            html += '<option value="' + item.key + '">' + item.name + ' (' + item.ofc + ')</option>';
+        });
+        html += '</optgroup>';
+    });
+    if (includeCustom) {
+        html += '<optgroup label="Custom"><option value="__custom__">+ Add Custom Program...</option></optgroup>';
+    }
+    if (includeAll) {
+        html = '<option value="all">All Programs</option>' + html;
+    }
+    return html;
+};
+
+window.S4_countPlatforms = function() {
+    if (typeof PROGS === 'undefined') return 0;
+    return Object.keys(PROGS).length;
+};
+// ═══ END S4 PLATFORM DATABASE BRIDGE ═══
 
 function populateAllDropdowns() {
     if (!window.S4_buildProgramOptions) { console.warn('S4 Platforms DB not loaded'); return; }
@@ -10023,7 +10087,7 @@ function renderROICharts() {
         // Let existing chart remain if it looks correct
         var existing = null;
         try { existing = Chart.getChart(canvas); } catch(e) {}
-        if (existing && existing.data && existing.data.labels && existing.data.labels.length >= 10) return;
+        if (existing && existing.data && existing.data.labels && existing.data.labels.length >= 20) return;
         // Otherwise destroy and let bulletproof re-render on next hook
     }
     // Fallback: render directly if bulletproof not yet loaded
@@ -10040,9 +10104,14 @@ function renderROICharts() {
     var auditSavings = auditCost * 0.70;
     var baseSavings = laborSavings + errorSavings + auditSavings;
     var cumulative = [];
-    var years = ['Year 1','Year 2','Year 3','Year 4','Year 5'];
-    for (var y = 0; y < 5; y++) {
-        cumulative.push(((y + 1) * baseSavings) - ((y + 1) * license));
+    var years = ['Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q14','Q15','Q16','Q17','Q18','Q19','Q20'];
+    for (var q = 1; q <= 20; q++) {
+        // Realistic adoption curve: savings ramp from 20% to 85% over 20 quarters
+        var adoptionRate = 0.20 + 0.65 * (1 - Math.exp(-0.18 * q));
+        var qtrlySavings = (baseSavings / 4) * adoptionRate;
+        var qtrlyLicense = license / 4;
+        var prev = q > 1 ? cumulative[q - 2] : 0;
+        cumulative.push(Math.round(prev + qtrlySavings - qtrlyLicense));
     }
     canvas.__chartInstance = new Chart(canvas, {
         type: 'line',
@@ -11372,11 +11441,12 @@ function initRoleSystem() {
             var auditSave = s.roiAudit * 0.70 * Math.max(1, s.roiPrograms / 5);
             var totalAnnual = laborSave + auditSave;
             var license = s.roiLicense || 1;
-            // Build 20 quarters (5 full years) of cumulative ROI
+            // Build 20 quarters (5 full years) with realistic adoption ramp
             var labels = []; var data = [];
             var hasInput = (s.roiPrograms > 0 || s.roiFTEs > 0 || s.roiLicense > 0);
             if (hasInput) {
-                for (var y = 1; y <= 5; y++) { for (var q = 1; q <= 4; q++) { labels.push('Y'+y+'-Q'+q); var months = ((y-1)*4+q)*3; var cumSavings = (totalAnnual/12)*months; var cumLicense = (license/12)*months; var roiPct = cumLicense>0?((cumSavings-cumLicense)/cumLicense*100):0; data.push(Math.round(roiPct)); }}
+                var cumNet = 0;
+                for (var y = 1; y <= 5; y++) { for (var q = 1; q <= 4; q++) { labels.push('Y'+y+'-Q'+q); var qtr = (y-1)*4+q; var adoptRate = 0.20 + 0.65 * (1 - Math.exp(-0.18 * qtr)); var qtrlySavings = (totalAnnual / 4) * adoptRate; var qtrlyLicense = license / 4; cumNet += (qtrlySavings - qtrlyLicense); var roiPct = license > 0 ? ((cumNet / license) * 100) : 0; data.push(Math.round(roiPct)); }}
             }
             // Always use the visually appealing default curve when no real inputs
             if (!hasInput || data.length === 0 || data.every(function(v){return v===0;})) {
