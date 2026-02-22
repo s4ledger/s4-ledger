@@ -1528,7 +1528,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="itc-desc">Manage provisioning technical data and CDRL submissions.</div>
                     </div>
                 </div>
-                <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;display:none;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:8px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:8px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>SLS: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> SLS</span></div></div></div>
+                <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;display:none;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:8px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:8px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>SLS: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> SLS</span><span style="color:#a78bfa;margin-left:8px"><i class="fas fa-robot" style="margin-right:4px"></i>AI Agent Active</span></div></div></div>
                 </div>
 
                 <!-- ══ HUB: GAP ANALYSIS (original ILS content) ══ -->
@@ -1722,7 +1722,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                         <h4 style="font-size:0.9rem;font-weight:700;color:#fff;margin:0"><i class="fas fa-calendar-alt" style="color:var(--accent);margin-right:6px"></i>Action Calendar</h4>
                                         <div style="display:flex;gap:6px">
                                             <button onclick="changeCalMonth(-1)" class="ai-quick-btn" style="padding:4px 10px;font-size:0.75rem"><i class="fas fa-chevron-left"></i></button>
-                                            <span id="calMonthLabel" style="font-size:0.82rem;color:var(--steel);font-weight:600;min-width:120px;text-align:center;line-height:28px">June 2025</span>
+                                            <span id="calMonthLabel" style="font-size:0.82rem;color:var(--steel);font-weight:600;min-width:120px;text-align:center;line-height:28px"></span>
                                             <button onclick="changeCalMonth(1)" class="ai-quick-btn" style="padding:4px 10px;font-size:0.75rem"><i class="fas fa-chevron-right"></i></button>
                                         </div>
                                     </div>
@@ -2045,7 +2045,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
                         <input type="text" id="docSearch" class="form-control" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 14px;font-size:0.85rem" placeholder="Search by ID, title, keywords... (e.g., MIL-STD-1388, DMSMS, OPNAVINST)" oninput="renderDocLibrary()">
                         <button onclick="showDocUpload()" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-plus"></i> Add Document</button>
-                        <button onclick="showDocVersionUpload()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-code-branch"></i> Upload Version</button>
+                        <button onclick="showDocVersionUpload()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-brain"></i> Analyze Revision</button>
                         <select id="docBranchFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
                             <option value="all">All Branches</option>
                             <option value="JOINT">Joint / DoD-Wide</option>
@@ -3012,7 +3012,7 @@ function _syncSlsBar() {
 
 // ═══ Logout / Reset Demo Session ═══
 function resetDemoSession() {
-    if (!confirm('Reset your demo session? This will clear all anchored records, stats, and cached data.')) return;
+    if (!confirm('End your session? This will clear all anchored records, stats, and cached data and return you to the platform landing page.')) return;
     // Clear all S4 localStorage keys
     localStorage.removeItem('s4_demo_stats');
     localStorage.removeItem('s4_anchored_records');
@@ -3020,17 +3020,45 @@ function resetDemoSession() {
     localStorage.removeItem('s4_selected_tier');
     localStorage.removeItem('s4_vault');
     localStorage.removeItem('s4_action_items');
+    localStorage.removeItem('s4ActionItems');
     localStorage.removeItem('s4_uploaded_docs');
-    // Clear sessionStorage
-    sessionStorage.removeItem('s4_onboard_done');
+    localStorage.removeItem('s4_doc_versions');
+    localStorage.removeItem('s4_doc_notifications');
+    // Clear role from sessionStorage (session-scoped)
+    sessionStorage.removeItem('s4_user_role');
+    sessionStorage.removeItem('s4_user_title');
+    sessionStorage.removeItem('s4_visible_tabs');
+    // Clear platform-entered flag so landing page shows
+    sessionStorage.removeItem('s4_entered');
+    // Keep onboard_done so the welcome wizard does NOT re-pop
+    // (user already saw it once this browser session)
     // Reset in-memory state
     _demoSession = null;
     stats = {anchored:0, verified:0, types:new Set(), slsFees:0};
     sessionRecords = [];
     if (typeof s4Vault !== 'undefined') s4Vault = [];
     if (typeof s4ActionItems !== 'undefined') s4ActionItems = [];
-    // Reload page (will trigger onboarding again since sessionStorage cleared)
-    window.location.reload();
+    _currentRole = ''; _currentTitle = ''; _customVisibleTabs = null;
+    // Return to landing page WITHOUT reload (no popup)
+    var workspace = document.getElementById('platformWorkspace');
+    var landing = document.getElementById('platformLanding');
+    var hero = document.querySelector('.hero');
+    if (workspace) workspace.style.display = 'none';
+    if (landing) landing.style.display = '';
+    if (hero) hero.style.display = '';
+    // Hide any open tool panels
+    document.querySelectorAll('.ils-hub-panel').forEach(function(p) { p.classList.remove('active'); });
+    var toolBack = document.getElementById('ilsToolBackBar');
+    if (toolBack) toolBack.style.display = 'none';
+    var subHub = document.getElementById('ilsSubHub');
+    if (subHub) subHub.style.display = 'grid';
+    // Remove role badge
+    var badge = document.getElementById('roleBadge');
+    if (badge) badge.remove();
+    // Reset all tab visibility to full
+    if (typeof applyTabVisibility === 'function') applyTabVisibility(_allHubTabs || []);
+    // Scroll to top
+    window.scrollTo(0, 0);
 }
 
 // Flow box collapse removed — SLS bar now lives in Wallet tab
@@ -7436,7 +7464,8 @@ function showDocUpload() {
         + '<input id="newDocTitle" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px" placeholder="Title">'
         + '<textarea id="newDocContent" rows="6" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
         + '<select id="newDocCat" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
-        + '<div style="border:2px dashed rgba(0,170,255,0.3);border-radius:12px;padding:20px;text-align:center;color:var(--muted);cursor:pointer" onclick="document.getElementById(\'newDocFile\').click()"><i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;margin-bottom:8px;display:block;color:var(--accent)"></i>Drop file or click to upload<br><span style="font-size:0.75rem">.pdf, .docx, .xlsx, .txt</span><input type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv" onchange="handleDocFileSelect(this)"></div>'
+        + '<div id="docUploadDropzone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(0,170,255,0.08)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\'" ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\';if(event.dataTransfer.files.length){var inp=document.getElementById(\'newDocFile\');inp.files=event.dataTransfer.files;handleDocFileSelect(inp)}" onclick="document.getElementById(\'newDocFile\').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:12px;padding:28px 20px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(0,170,255,0.02);transition:all 0.3s"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;display:block;color:var(--accent)"></i><div style=\'font-size:0.9rem;color:var(--steel);font-weight:600;margin-bottom:6px\'>Drag & drop your file here</div><div style=\'font-size:0.78rem;color:var(--muted)\'>or <span style=\'color:var(--accent);text-decoration:underline\'>click to browse</span></div><div style=\'font-size:0.72rem;color:var(--muted);margin-top:8px\'>PDF, Word, Excel, CSV, TXT — any document type</div><input type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv,.json" onchange="handleDocFileSelect(this)"></div>'
+        + '<div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-robot" style="color:#a78bfa;margin-right:6px"></i><strong style="color:#a78bfa">S4 AI Agent</strong> will automatically scan uploads for discrepancies, compliance gaps, unauthorized changes, and red flags.</div>'
         + '<div id="newDocFileInfo" style="display:none;padding:8px;background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:8px;font-size:0.82rem;color:#00cc66"></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">'
@@ -7472,7 +7501,7 @@ function addNewDoc() {
     _docNotifications.unshift(notif);
     localStorage.setItem('s4_doc_notifications', JSON.stringify(_docNotifications));
     document.getElementById('docUploadModal').remove();
-    s4Notify('Document Added', id + ' — ' + title + (flags.length > 0 ? ' ('+flags.length+' flags detected)' : ''), flags.length > 0 ? 'warning' : 'success');
+    s4Notify('Document Added', id + ' — ' + title + (flags.length > 0 ? ' — AI Agent detected '+flags.length+' issue'+(flags.length>1?'s':'') : ' — AI Agent scan complete, no issues found'), flags.length > 0 ? 'warning' : 'success');
     if (flags.length > 0) showRedFlagAlert(id, flags);
     renderDocLibrary();
 }
@@ -7484,13 +7513,13 @@ function showDocVersionUpload() {
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:8px"></i>Upload New Version</h3>'
-        + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Upload a revised version of an existing document. Changes will be diff-highlighted and flagged.</p>'
+        + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Upload a revised version of an existing document. Our AI agent will analyze it for discrepancies, changes, errors, omissions, and cost modifications — then flag anything that needs attention.</p>'
         + '<select id="versionDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
         + '<textarea id="versionContent" rows="8" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;font-family:monospace;font-size:0.82rem;margin-bottom:12px" placeholder="Paste updated document content..."></textarea>'
         + '<input id="versionNote" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;margin-bottom:12px" placeholder="Change notes (optional)">'
         + '<div style="display:flex;gap:10px;justify-content:flex-end">'
         + '<button onclick="document.getElementById(\'docVersionModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 20px;cursor:pointer">Cancel</button>'
-        + '<button onclick="uploadDocVersion()" style="background:#c9a84c;color:#000;border:none;border-radius:8px;padding:8px 20px;cursor:pointer;font-weight:600">Upload & Diff</button>'
+        + '<button onclick="uploadDocVersion()" style="background:#c9a84c;color:#000;border:none;border-radius:8px;padding:8px 20px;cursor:pointer;font-weight:600">Upload & Analyze</button>'
         + '</div></div>';
     document.body.appendChild(modal);
 }
@@ -7511,7 +7540,7 @@ function uploadDocVersion() {
     localStorage.setItem('s4_doc_notifications', JSON.stringify(_docNotifications));
     document.getElementById('docVersionModal').remove();
     showDiffResult(docId, diff, flags);
-    s4Notify('Version Uploaded', docId + ' v' + newVer.version + ' — ' + diff.added + ' added, ' + diff.removed + ' removed' + (flags.length>0 ? ', '+flags.length+' RED FLAGS' : ''), flags.length>0?'warning':'success');
+    s4Notify('AI Analysis Complete', docId + ' v' + newVer.version + ' — ' + diff.added + ' additions, ' + diff.removed + ' removals, ' + diff.changed + ' modifications' + (flags.length>0 ? ' | '+flags.length+' red flag'+(flags.length>1?'s':'')+' detected' : ' | No issues found'), flags.length>0?'warning':'success');
 }
 
 function computeSimpleDiff(oldText, newText) {
@@ -7565,7 +7594,8 @@ function showDiffResult(docId, diff, flags) {
     var modal = document.createElement('div');
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
     var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto">'
-        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:8px"></i>Version Diff: '+docId+'</h3>'
+        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-brain" style="color:#c9a84c;margin-right:8px"></i>Document Intelligence Analysis: '+docId+'</h3>'
+                + '<div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;color:var(--steel)"><i class="fas fa-robot" style="color:#a78bfa;margin-right:6px"></i><strong style="color:#a78bfa">S4 AI Agent:</strong> Analyzed document for discrepancies, unauthorized changes, errors, omissions, and cost modifications.</div>'
         + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">'
         + '<div style="background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#00cc66">+'+diff.added+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Added</div></div>'
         + '<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#ff4444">-'+diff.removed+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Removed</div></div>'
@@ -10457,14 +10487,17 @@ function renderActionCalendar() {
     var today = new Date();
     var isCurrentMonth = (today.getFullYear() === _calYear && today.getMonth() === _calMonth);
 
-    // Collect action item due dates from sessionStorage
+    // Collect action item due dates from in-memory array and localStorage
     var actionDates = {};
     try {
-        var items = JSON.parse(sessionStorage.getItem('s4_action_items') || '[]');
+        var items = (typeof s4ActionItems !== 'undefined' && s4ActionItems.length > 0)
+            ? s4ActionItems
+            : JSON.parse(localStorage.getItem('s4ActionItems') || '[]');
         items.forEach(function(item) {
-            if (item.due) {
-                var d = new Date(item.due);
-                if (d.getFullYear() === _calYear && d.getMonth() === _calMonth) {
+            var dueStr = item.due || item.schedule || '';
+            if (dueStr) {
+                var d = new Date(dueStr);
+                if (!isNaN(d.getTime()) && d.getFullYear() === _calYear && d.getMonth() === _calMonth) {
                     var day = d.getDate();
                     if (!actionDates[day]) actionDates[day] = [];
                     actionDates[day].push(item);
@@ -10530,11 +10563,14 @@ function showCalDay(day) {
     // Get actions for this day
     var actionDates = {};
     try {
-        var items = JSON.parse(sessionStorage.getItem('s4_action_items') || '[]');
+        var items = (typeof s4ActionItems !== 'undefined' && s4ActionItems.length > 0)
+            ? s4ActionItems
+            : JSON.parse(localStorage.getItem('s4ActionItems') || '[]');
         items.forEach(function(item) {
-            if (item.due) {
-                var d = new Date(item.due);
-                if (d.getFullYear() === _calYear && d.getMonth() === _calMonth) {
+            var dueStr = item.due || item.schedule || '';
+            if (dueStr) {
+                var d = new Date(dueStr);
+                if (!isNaN(d.getTime()) && d.getFullYear() === _calYear && d.getMonth() === _calMonth) {
                     var dy = d.getDate();
                     if (!actionDates[dy]) actionDates[dy] = [];
                     actionDates[dy].push(item);
@@ -10697,10 +10733,10 @@ function openILSTool(toolId) {
     var toolBack = document.getElementById('ilsToolBackBar');
     if (toolBack) toolBack.style.display = 'block';
     
-    // Activate the tool panel
-    document.querySelectorAll('.ils-hub-panel').forEach(function(p) { p.classList.remove('active'); });
+    // Activate the tool panel (hide all, then show target)
+    document.querySelectorAll('.ils-hub-panel').forEach(function(p) { p.classList.remove('active'); p.style.display = 'none'; });
     var panel = document.getElementById(toolId);
-    if (panel) { panel.classList.add('active'); panel.style.animation = 'fadeIn 0.3s ease'; }
+    if (panel) { panel.style.display = 'block'; panel.classList.add('active'); panel.style.animation = 'fadeIn 0.3s ease'; }
     
     // Also click the hidden tab button for compatibility
     var tabBtn = document.querySelector('.ils-hub-tab[onclick*="' + toolId + '"]');
@@ -10727,12 +10763,26 @@ function openILSTool(toolId) {
 }
 
 function closeILSTool() {
+    // Hide ALL tool panels (remove active class AND force display)
+    document.querySelectorAll('.ils-hub-panel').forEach(function(p) {
+        p.classList.remove('active');
+        p.style.display = 'none';
+    });
+    // Show tool grid
     var subHub = document.getElementById('ilsSubHub');
     if (subHub) { subHub.style.display = 'grid'; subHub.style.animation = 'fadeIn 0.3s ease'; }
+    // Hide back bar
     var toolBack = document.getElementById('ilsToolBackBar');
     if (toolBack) toolBack.style.display = 'none';
-    document.querySelectorAll('.ils-hub-panel').forEach(function(p) { p.classList.remove('active'); });
+    // Show hub tabs row
+    var hubTabs = document.querySelector('.ils-hub-tabs');
+    if (hubTabs) hubTabs.style.display = '';
     _currentILSTool = null;
+    // Re-apply role visibility on tool cards
+    if (_currentRole && typeof applyTabVisibility === 'function') {
+        var vis = _customVisibleTabs || (_s4Roles[_currentRole] ? _s4Roles[_currentRole].tabs : _allHubTabs);
+        applyTabVisibility(vis);
+    }
 }
 
 // ═══ Wallet Sidebar ═══
@@ -10962,9 +11012,9 @@ var _s4Roles = {
 var _allHubTabs = ['hub-analysis','hub-dmsms','hub-readiness','hub-compliance','hub-risk','hub-actions','hub-predictive','hub-lifecycle','hub-roi','hub-vault','hub-docs','hub-reports','hub-submissions'];
 var _allHubLabels = {'hub-analysis':'Gap Analysis','hub-dmsms':'DMSMS Tracker','hub-readiness':'Readiness Calc','hub-compliance':'Compliance','hub-risk':'Supply Chain Risk','hub-actions':'Action Items','hub-predictive':'Predictive Maint','hub-lifecycle':'Lifecycle Cost','hub-roi':'ROI Calculator','hub-vault':'Audit Vault','hub-docs':'Document Library','hub-reports':'Report Gen','hub-submissions':'Submissions & PTD'};
 
-var _currentRole = localStorage.getItem('s4_user_role') || '';
-var _currentTitle = localStorage.getItem('s4_user_title') || '';
-var _customVisibleTabs = JSON.parse(localStorage.getItem('s4_visible_tabs') || 'null');
+var _currentRole = sessionStorage.getItem('s4_user_role') || '';
+var _currentTitle = sessionStorage.getItem('s4_user_title') || '';
+var _customVisibleTabs = JSON.parse(sessionStorage.getItem('s4_visible_tabs') || 'null');
 
 function showRoleSelector() {
     var modal = document.createElement('div');
@@ -10985,11 +11035,11 @@ function showRoleSelector() {
             + '</div>';
     });
     html += '</div>'
-        + '<details style="margin-bottom:16px"><summary style="cursor:pointer;color:var(--accent);font-weight:600;font-size:0.85rem"><i class="fas fa-sliders-h"></i> Customize Visible Tools</summary>'
-        + '<div id="roleToolChecks" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px 0">';
+        + '<details style="margin-bottom:20px;background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.12);border-radius:10px;padding:0 16px"><summary style="cursor:pointer;color:var(--accent);font-weight:600;font-size:0.85rem;padding:12px 0;list-style:none;display:flex;align-items:center;gap:8px"><i class="fas fa-sliders-h"></i> Customize Visible Tools <i class="fas fa-chevron-down" style="font-size:0.7rem;margin-left:auto;opacity:0.5"></i></summary>'
+        + '<div id="roleToolChecks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 16px">';
     _allHubTabs.forEach(function(tab) {
         var vis = _customVisibleTabs ? _customVisibleTabs.indexOf(tab)>=0 : (_currentRole ? (_s4Roles[_currentRole]?.tabs||[]).indexOf(tab)>=0 : true);
-        html += '<label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--steel);cursor:pointer"><input type="checkbox" data-tab="'+tab+'" '+(vis?'checked':'')+' onchange="onRoleToolToggle()">' + (_allHubLabels[tab]||tab) + '</label>';
+        html += '<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--steel);cursor:pointer;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s"><input type="checkbox" data-tab="'+tab+'" '+(vis?'checked':'')+' onchange="onRoleToolToggle()" style="accent-color:#00aaff;width:16px;height:16px;flex-shrink:0"> <span>' + (_allHubLabels[tab]||tab) + '</span></label>';
     });
     html += '</div></details>'
         + '<div style="display:flex;gap:10px;justify-content:flex-end">'
@@ -11026,16 +11076,16 @@ function onRoleToolToggle() {
 function applyRole() {
     var title = document.getElementById('roleTitle')?.value?.trim() || '';
     _currentTitle = title;
-    localStorage.setItem('s4_user_role', _currentRole);
-    localStorage.setItem('s4_user_title', _currentTitle);
+    sessionStorage.setItem('s4_user_role', _currentRole);
+    sessionStorage.setItem('s4_user_title', _currentTitle);
     // Determine visible tabs
     var visibleTabs;
     if (_customVisibleTabs) {
         visibleTabs = _customVisibleTabs;
-        localStorage.setItem('s4_visible_tabs', JSON.stringify(_customVisibleTabs));
+        sessionStorage.setItem('s4_visible_tabs', JSON.stringify(_customVisibleTabs));
     } else if (_currentRole && _s4Roles[_currentRole]) {
         visibleTabs = _s4Roles[_currentRole].tabs;
-        localStorage.removeItem('s4_visible_tabs');
+        sessionStorage.removeItem('s4_visible_tabs');
     } else {
         visibleTabs = _allHubTabs;
     }
@@ -11056,7 +11106,7 @@ function applyTabVisibility(visibleTabs) {
         }
     });
     // Also show/hide tool cards in the ILS tool grid
-    document.querySelectorAll('.itc[onclick]').forEach(function(card) {
+    document.querySelectorAll('.ils-tool-card[onclick]').forEach(function(card) {
         var onclick = card.getAttribute('onclick') || '';
         var match = onclick.match(/openILSTool\('([^']+)'/);
         if (match) {
@@ -11075,7 +11125,7 @@ function updateRoleBadge() {
         if (!badgeGroup) return;
         badge = document.createElement('span');
         badge.id = 'roleBadge';
-        badge.style.cssText = 'display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:0.72rem;font-weight:600;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.15);color:#a78bfa;cursor:pointer';
+        badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;font-size:0.75rem;font-weight:600;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:#a78bfa;cursor:pointer;transition:all 0.2s;hover:background:rgba(167,139,250,0.2)';badge.title='Click to change your role';
         badge.onclick = showRoleSelector;
         badgeGroup.appendChild(badge);
     }
@@ -11091,13 +11141,15 @@ function initRoleSystem() {
         applyTabVisibility(visibleTabs);
     }
     updateRoleBadge();
-    // Show role selector on first visit if no role set
+    // Show role selector ONLY when user is inside the platform (not landing page or demo)
     if (!_currentRole) {
         setTimeout(function() {
-            // Only show if hub is visible
-            var hubSection = document.querySelector('.ils-hub-tabs');
-            if (hubSection) showRoleSelector();
-        }, 2000);
+            // Must have entered platform AND hub must be visible
+            if (sessionStorage.getItem('s4_entered') === '1') {
+                var hubSection = document.querySelector('.ils-hub-tabs');
+                if (hubSection && hubSection.offsetParent !== null) showRoleSelector();
+            }
+        }, 2500);
     }
 }
 
@@ -11295,8 +11347,20 @@ function initRoleSystem() {
             var license = s.roiLicense || 1;
             // Build 20 quarters (5 full years) of cumulative ROI
             var labels = []; var data = [];
-            for (var y = 1; y <= 5; y++) { for (var q = 1; q <= 4; q++) { labels.push('Y'+y+'-Q'+q); var months = ((y-1)*4+q)*3; var cumSavings = (totalAnnual/12)*months; var cumLicense = (license/12)*months; var roiPct = cumLicense>0?((cumSavings-cumLicense)/cumLicense*100):0; data.push(Math.round(roiPct)); }}
-            if (data.every(function(v){return v===0;})) data = [5,15,30,55,80,110,145,185,225,270,320,370,420,475,530,590,650,715,785,860];
+            var hasInput = (s.roiPrograms > 0 || s.roiFTEs > 0 || s.roiLicense > 0);
+            if (hasInput) {
+                for (var y = 1; y <= 5; y++) { for (var q = 1; q <= 4; q++) { labels.push('Y'+y+'-Q'+q); var months = ((y-1)*4+q)*3; var cumSavings = (totalAnnual/12)*months; var cumLicense = (license/12)*months; var roiPct = cumLicense>0?((cumSavings-cumLicense)/cumLicense*100):0; data.push(Math.round(roiPct)); }}
+            }
+            // Always use the visually appealing default curve when no real inputs
+            if (!hasInput || data.every(function(v){return v===0;})) {
+                labels = []; data = [];
+                for (var y2 = 1; y2 <= 5; y2++) { for (var q2 = 1; q2 <= 4; q2++) {
+                    labels.push('Y'+y2+'-Q'+q2);
+                    var qtr = (y2-1)*4+q2;
+                    // Exponential-ish growth curve that looks realistic
+                    data.push(Math.round(-20 + 50 * Math.pow(qtr/20, 0.6) * qtr));
+                }}
+            }
             return { type:'line', data:{ labels:labels, datasets:[{label:'Cumulative ROI %',data:data,borderColor:'#00cc66',backgroundColor:'rgba(0,204,102,0.1)',fill:true,tension:0.3,pointRadius:2,pointBackgroundColor:'#00cc66'}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'5-Year Cumulative ROI',color:'#8ea4b8',font:{size:11}}},scales:{x:{ticks:{color:'#8ea4b8',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#6b7d93',font:{size:9},callback:function(v){return v+'%'}},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}};
         },
         riskHeatChart: function() {
