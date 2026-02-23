@@ -1166,7 +1166,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <p style="color:var(--steel);font-size:0.85rem;line-height:1.6;margin-bottom:16px">S4 Ledger will set up your account, provision your XRPL wallet, and allocate your $SLS tokens. This takes just a few seconds.</p>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--accent)"><i class="fas fa-anchor"></i></div><div><strong style="color:#fff">Anchor Records</strong><div style="color:var(--steel);font-size:0.8rem">SHA-256 hash any document to the XRP Ledger in 3-5 seconds</div></div></div>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(201,168,76,0.1);color:var(--gold)"><i class="fas fa-coins"></i></div><div><strong style="color:#fff">$SLS Token Economy</strong><div style="color:var(--steel);font-size:0.8rem">0.01 SLS per anchor (~$0.0001). Real on-chain token transfers.</div></div></div>
-                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--green)"><i class="fas fa-brain"></i></div><div><strong style="color:#fff">13 ILS Tools</strong><div style="color:var(--steel);font-size:0.8rem">Gap analysis, DMSMS, readiness, compliance, risk, and more</div></div></div>
+                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--green)"><i class="fas fa-brain"></i></div><div><strong style="color:#fff">14 ILS Tools</strong><div style="color:var(--steel);font-size:0.8rem">Gap analysis, DMSMS, readiness, compliance, risk, and more</div></div></div>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(167,139,250,0.1);color:#a78bfa"><i class="fas fa-robot"></i></div><div><strong style="color:#fff">AI Agent</strong><div style="color:var(--steel);font-size:0.8rem">Context-aware assistant available on every tool and tab</div></div></div>
                     <div style="text-align:center;margin-top:20px"><button class="onboard-btn" onclick="onboardNext()"><i class="fas fa-arrow-right" style="margin-right:6px"></i>Start Setup</button></div>
                 </div>
@@ -3366,9 +3366,22 @@ function startAuthFlow() {
 function acceptDodConsent() {
     var consent = document.getElementById('dodConsentBanner');
     if (consent) consent.style.display = 'none';
-    // Now show CAC/login popup
+    // Now show CAC/login popup — reset buttons first so re-login works
     var login = document.getElementById('cacLoginModal');
-    if (login) login.style.display = 'flex';
+    if (login) {
+        var cacBtn = login.querySelector('button[onclick*="simulateCacLogin"]');
+        if (cacBtn) { cacBtn.innerHTML = '<i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC'; cacBtn.disabled = false; }
+        var acctBtn = login.querySelector('button[onclick*="simulateAccountLogin"]');
+        if (acctBtn) { acctBtn.innerHTML = '<i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In'; acctBtn.disabled = false; }
+        // Reset input fields
+        var emailInput = login.querySelector('#loginEmail');
+        var passInput = login.querySelector('#loginPassword');
+        if (emailInput) emailInput.value = '';
+        if (passInput) passInput.value = '';
+        // Reset tab to CAC
+        switchLoginTab('cac');
+        login.style.display = 'flex';
+    }
 }
 
 function switchLoginTab(tab) {
@@ -7102,7 +7115,7 @@ function generateAiResponse(query) {
         return '**S4 Ledger Pricing:**\n\n| Tier | Price | SLS Included |\n|---|---|---|\n| Pilot | Free | 100 SLS |\n| Starter | $999/mo | 25,000 SLS |\n| Professional | $2,499/mo | 100,000 SLS |\n| Enterprise | $9,999/mo | 500,000 SLS |\n\nAll tiers include full API access, 156+ record types, and ILS tools. Enterprise adds SSO, dedicated support, and custom integrations.';
     }
     if (/what is s4|about s4|platform|overview|what can you do|capabilities/.test(q)) {
-        return '**S4 Ledger** — Immutable Defense Logistics on the XRP Ledger\n\n• **63 REST API endpoints** for anchoring, verification, ILS, AI, and security\n• **156+ record types** across 9 military branches\n• **13 ILS tools** (DMSMS, readiness, supply chain risk, digital thread, etc.)\n• **AI-powered** logistics intelligence with audit trails\n• **$SLS token** economy — $0.01/SLS, 0.01 SLS per anchor\n• **XRPL Mainnet** — 3-5 second finality, 99.99% uptime\n• **Python SDK** with 38+ functions + REST API\n\nAsk me about any specific feature!';
+        return '**S4 Ledger** — Immutable Defense Logistics on the XRP Ledger\n\n• **63 REST API endpoints** for anchoring, verification, ILS, AI, and security\n• **156+ record types** across 9 military branches\n• **14 ILS tools** (DMSMS, readiness, supply chain risk, digital thread, etc.)\n• **AI-powered** logistics intelligence with audit trails\n• **$SLS token** economy — $0.01/SLS, 0.01 SLS per anchor\n• **XRPL Mainnet** — 3-5 second finality, 99.99% uptime\n• **Python SDK** with 38+ functions + REST API\n\nAsk me about any specific feature!';
     }
     const r = ilsResults;
     // AI Agent operates in full production mode
@@ -7249,7 +7262,7 @@ function generateAiResponse(query) {
 
     if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoD domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="/s4-about/">About page</a>.';
 
-    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 13 ILS tools<br><br>What can I help you with?';
+    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 14 ILS tools<br><br>What can I help you with?';
 
     if (/thank|thanks|thx|appreciate/.test(q)) return 'You\'re welcome! Let me know if you have any other questions about ILS, S4 Ledger, or defense logistics.';
 
@@ -7357,7 +7370,7 @@ function generateAiResponse(query) {
     }
 
     // ── S4 PLATFORM QUESTIONS ──
-    if (/pricing|how\s*much|cost|subscription|plan/i.test(q)) return '<strong>S4 Ledger Pricing</strong><br><br>\u2022 <strong>Starter</strong> — $29/mo: 25,000 SLS tokens, 5 users, all 13 ILS tools<br>\u2022 <strong>Professional</strong> — $99/mo: 100,000 SLS, 25 users, API access, HarborLink<br>\u2022 <strong>Enterprise</strong> — $299/mo: 500,000 SLS, unlimited users, dedicated support, SSO<br>\u2022 <strong>Government</strong> — Custom: FedRAMP, IL4/5, on-prem option<br><br>Each anchor costs 0.01 SLS (~$0.0001). SLS = Secure Logistics Standard, our utility token on XRPL.<br><br><a href="../s4-pricing/" style="color:#00aaff">View full pricing →</a>';
+    if (/pricing|how\s*much|cost|subscription|plan/i.test(q)) return '<strong>S4 Ledger Pricing</strong><br><br>\u2022 <strong>Starter</strong> — $29/mo: 25,000 SLS tokens, 5 users, all 14 ILS tools<br>\u2022 <strong>Professional</strong> — $99/mo: 100,000 SLS, 25 users, API access, HarborLink<br>\u2022 <strong>Enterprise</strong> — $299/mo: 500,000 SLS, unlimited users, dedicated support, SSO<br>\u2022 <strong>Government</strong> — Custom: FedRAMP, IL4/5, on-prem option<br><br>Each anchor costs 0.01 SLS (~$0.0001). SLS = Secure Logistics Standard, our utility token on XRPL.<br><br><a href="../s4-pricing/" style="color:#00aaff">View full pricing →</a>';
 
     if (/what\s*is\s*sls|sls\s*token|what.*sls/i.test(q)) return '<strong>SLS — Secure Logistics Standard</strong><br><br>SLS is S4 Ledger\'s utility token on the XRP Ledger (XRPL). It powers every action on the platform:<br>\u2022 <strong>0.01 SLS per anchor</strong> — ~$0.0001 per record<br>\u2022 100M fixed supply — deflationary model<br>\u2022 Issued on XRPL — fast, transparent, low-cost<br>\u2022 Purchased through your subscription plan<br>\u2022 Each anchor sends 0.01 SLS from your operational wallet to the Treasury wallet<br><br>Each anchor transfers 0.01 SLS from your operational wallet to the S4 Treasury on the XRP Ledger — fully verifiable on-chain.';
 
@@ -7413,7 +7426,7 @@ function generateAiResponse(query) {
         if (/blockchain|distributed ledger|dlt/i.test(q)) return '<strong>Blockchain / Distributed Ledger Technology</strong><br><br>A blockchain is a distributed, immutable ledger that records transactions across a peer-to-peer network. Key properties:<br><br>\u2022 <strong>Immutability</strong> \u2014 once written, records cannot be altered<br>\u2022 <strong>Transparency</strong> \u2014 all participants can verify the ledger<br>\u2022 <strong>Decentralization</strong> \u2014 no single point of failure<br>\u2022 <strong>Cryptographic security</strong> \u2014 SHA-256 hashing ensures integrity<br><br>S4 Ledger uses the <strong>XRP Ledger</strong> (XRPL) \u2014 a high-speed, energy-efficient blockchain with 3-5 second settlement and minimal fees.';
         if (/xrp|xrpl|xrp ledger|ripple/i.test(q)) return '<strong>XRP Ledger (XRPL)</strong><br><br>The XRP Ledger is an open-source, decentralized blockchain:<br><br>\u2022 <strong>Speed:</strong> 3-5 second transaction settlement<br>\u2022 <strong>Cost:</strong> ~$0.0002 per transaction<br>\u2022 <strong>Energy:</strong> 61,000x more efficient than Bitcoin<br>\u2022 <strong>Reliability:</strong> 10+ years of operation, 80M+ ledgers closed<br>\u2022 <strong>Tokens:</strong> Native issued currency support (like $SLS)<br><br>S4 Ledger anchors defense records to XRPL Mainnet, making them independently verifiable by anyone.';
         if (/sha.?256|hash function|hashing|cryptograph/i.test(q)) return '<strong>SHA-256 Hashing</strong><br><br>SHA-256 (Secure Hash Algorithm 256-bit) produces a unique 64-character fingerprint of any data:<br><br>\u2022 <strong>Deterministic:</strong> Same input always produces the same hash<br>\u2022 <strong>One-way:</strong> Cannot reverse the hash to get original data<br>\u2022 <strong>Collision-resistant:</strong> Virtually impossible for two inputs to produce the same hash<br>\u2022 <strong>Avalanche effect:</strong> Changing one bit changes ~50% of the output<br><br>S4 Ledger uses SHA-256 to create tamper-proof fingerprints of defense records before anchoring to XRPL.';
-        if (/s4\s*(ledger|systems|platform)|this platform/i.test(q)) return '<strong>S4 Ledger</strong><br><br>S4 Ledger is a blockchain-verified defense record management platform built by S4 Systems, LLC.<br><br><strong>What it does:</strong><br>\u2022 Anchors defense logistics records to the XRP Ledger<br>\u2022 Creates tamper-proof audit trails for CDRL, maintenance, supply chain, and ordnance records<br>\u2022 Provides 13 integrated ILS (Integrated Logistics Support) analysis tools<br>\u2022 Supports 156+ military record types across all service branches<br><br><strong>Key value:</strong> 99.9% cost reduction vs. traditional notarization ($0.0001 vs. $25-$150 per record).<br><br><strong>Technology:</strong> XRPL Mainnet, $SLS utility token, SHA-256 hashing, AI-powered analysis.';
+        if (/s4\s*(ledger|systems|platform)|this platform/i.test(q)) return '<strong>S4 Ledger</strong><br><br>S4 Ledger is a blockchain-verified defense record management platform built by S4 Systems, LLC.<br><br><strong>What it does:</strong><br>\u2022 Anchors defense logistics records to the XRP Ledger<br>\u2022 Creates tamper-proof audit trails for CDRL, maintenance, supply chain, and ordnance records<br>\u2022 Provides 14 integrated ILS (Integrated Logistics Support) analysis tools<br>\u2022 Supports 156+ military record types across all service branches<br><br><strong>Key value:</strong> 99.9% cost reduction vs. traditional notarization ($0.0001 vs. $25-$150 per record).<br><br><strong>Technology:</strong> XRPL Mainnet, $SLS utility token, SHA-256 hashing, AI-powered analysis.';
     }
 
     if (/who\s*(made|built|created|founded|is behind)/i.test(q)) return '<strong>S4 Systems, LLC</strong><br><br>S4 Ledger is built by <strong>S4 Systems, LLC</strong>, founded by <strong>Nick Frankfort</strong>. The platform combines blockchain technology with defense logistics expertise to create tamper-proof audit trails for the Department of Defense.<br><br>\u2022 Website: <a href="https://s4ledger.com" target="_blank" style="color:var(--accent)">s4ledger.com</a><br>\u2022 Treasury: <a href="https://livenet.xrpl.org/accounts/rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ" target="_blank" style="color:var(--accent)">View on XRPL</a>';
@@ -13716,7 +13729,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
     ];
 
     window._s4TeamMembers = _teamMembers;
-    window._s4Roles = ROLES;
+    window._s4TeamRoles = ROLES;
     window._s4CurrentRole = 'admin';
 
     // Show team panel
@@ -13728,7 +13741,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:16px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-users" style="color:var(--accent);margin-right:8px"></i>Team Workspace</h3>';
-        html += '<button onclick="document.getElementById(\'teamManagePanel\').remove()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
+        html += '<button onclick="var p=document.getElementById(\'teamManagePanel\');var o=document.getElementById(\'teamManageOverlay\');if(p)p.remove();if(o)o.remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
         html += '</div>';
         html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:16px;">Manage team roles and access. Changes sync across all workspace sessions.</div>';
         html += '<table style="width:100%;border-collapse:collapse;">';

@@ -197,6 +197,8 @@
                     <h3 style="margin-bottom:12px;"><i class="fas fa-book" style="color:var(--accent);margin-right:8px;"></i> SDK Quick Reference</h3>
                     <table class="ref-table">
                         <tr><th>Method</th><th>Description</th></tr>
+
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-link" style="margin-right:6px;"></i>Core Anchoring &amp; Verification</td></tr>
                         <tr><td class="ref-method">hash_record()</td><td>SHA-256 hash of record content</td></tr>
                         <tr><td class="ref-method">anchor_record()</td><td>Anchor hash to XRPL with $SLS fee</td></tr>
                         <tr><td class="ref-method">verify_record()</td><td>Verify record against anchored hash</td></tr>
@@ -204,23 +206,24 @@
                         <tr><td class="ref-method">list_records()</td><td>List all anchored records</td></tr>
                         <tr><td class="ref-method">get_record_types()</td><td>Browse all defense record types</td></tr>
 
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-clipboard-list" style="margin-right:6px;"></i>ILS Analysis Tools</td></tr>
                         <tr><td class="ref-method">check_dmsms()</td><td>Obsolescence risk analysis</td></tr>
                         <tr><td class="ref-method">calculate_readiness()</td><td>Ao/Ai per MIL-STD-1390D</td></tr>
+                        <tr><td class="ref-method">calculate_compliance()</td><td>MIL-STD / FAR compliance scoring</td></tr>
+                        <tr><td class="ref-method">get_action_items()</td><td>Cross-tool task queue with severity</td></tr>
+
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-brain" style="margin-right:6px;"></i>AI &amp; Risk Intelligence</td></tr>
+                        <tr><td class="ref-method">analyze_supply_chain_risk()</td><td>AI supply chain risk scoring (35+ platforms)</td></tr>
+                        <tr><td class="ref-method">predict_maintenance()</td><td>AI predictive maintenance analysis</td></tr>
+
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-dollar-sign" style="margin-right:6px;"></i>Finance &amp; Lifecycle</td></tr>
                         <tr><td class="ref-method">calculate_roi()</td><td>S4 Ledger ROI projection</td></tr>
                         <tr><td class="ref-method">estimate_lifecycle_cost()</td><td>Total ownership cost per DoD 5000.73</td></tr>
 
-                        <tr><td class="ref-method">get_action_items()</td><td>Cross-tool task queue with severity</td></tr>
-                        <tr><td class="ref-method">analyze_supply_chain_risk()</td><td>AI supply chain risk scoring (35+ platforms)</td></tr>
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-folder-open" style="margin-right:6px;"></i>Documents &amp; Reporting</td></tr>
                         <tr><td class="ref-method">generate_audit_report()</td><td>One-click audit report generation (6 types)</td></tr>
-
-
-                        <tr><td class="ref-method">predict_maintenance()</td><td>AI predictive maintenance analysis</td></tr>
                         <tr><td class="ref-method">analyze_submission()</td><td>Submissions &amp; PTD discrepancy engine</td></tr>
                         <tr><td class="ref-method">scan_sbom()</td><td>Software Bill of Materials viewer &amp; risk scan</td></tr>
-
-                        <tr><td class="ref-method">calculate_compliance()</td><td>MIL-STD / FAR compliance scoring</td></tr>
-
-
                         <tr><td class="ref-method">search_documents()</td><td>Defense standards document library</td></tr>
                         <tr><td class="ref-method">store_in_vault()</td><td>Encrypted audit vault storage</td></tr>
                     </table>
@@ -231,29 +234,32 @@
                     <h3 style="margin-bottom:12px;"><i class="fas fa-plug" style="color:var(--accent);margin-right:8px;"></i> Live API Endpoints</h3>
                     <table class="ref-table">
                         <tr><th>Endpoint</th><th>Method</th></tr>
+
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-link" style="margin-right:6px;"></i>Core Anchoring &amp; Verification</td></tr>
                         <tr><td class="ref-method">/api/hash</td><td>POST &mdash; compute SHA-256</td></tr>
                         <tr><td class="ref-method">/api/anchor</td><td>POST &mdash; anchor record</td></tr>
                         <tr><td class="ref-method">/api/metrics</td><td>GET &mdash; dashboard data</td></tr>
                         <tr><td class="ref-method">/api/transactions</td><td>GET &mdash; recent activity</td></tr>
                         <tr><td class="ref-method">/api/record-types</td><td>GET &mdash; All defense types</td></tr>
 
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-clipboard-list" style="margin-right:6px;"></i>ILS Analysis Tools</td></tr>
                         <tr><td class="ref-method">/api/dmsms</td><td>POST &mdash; obsolescence check</td></tr>
                         <tr><td class="ref-method">/api/readiness</td><td>POST &mdash; readiness calc</td></tr>
+                        <tr><td class="ref-method">/api/compliance</td><td>POST &mdash; compliance scoring</td></tr>
+                        <tr><td class="ref-method">/api/action-items</td><td>GET &mdash; action item queue</td></tr>
+
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-brain" style="margin-right:6px;"></i>AI &amp; Risk Intelligence</td></tr>
+                        <tr><td class="ref-method">/api/supply-chain-risk</td><td>POST &mdash; AI risk analysis</td></tr>
+                        <tr><td class="ref-method">/api/predictive-maintenance</td><td>POST &mdash; failure prediction</td></tr>
+
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-dollar-sign" style="margin-right:6px;"></i>Finance &amp; Lifecycle</td></tr>
                         <tr><td class="ref-method">/api/roi</td><td>POST &mdash; ROI analysis</td></tr>
                         <tr><td class="ref-method">/api/lifecycle</td><td>POST &mdash; lifecycle cost</td></tr>
 
-                        <tr><td class="ref-method">/api/action-items</td><td>GET &mdash; action item queue</td></tr>
-                        <tr><td class="ref-method">/api/supply-chain-risk</td><td>POST &mdash; AI risk analysis</td></tr>
+                        <tr><td colspan="2" style="background:rgba(0,170,255,0.06);color:var(--accent);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;border-bottom:1px solid rgba(0,170,255,0.15);"><i class="fas fa-folder-open" style="margin-right:6px;"></i>Documents &amp; Reporting</td></tr>
                         <tr><td class="ref-method">/api/audit-reports</td><td>POST &mdash; audit report gen</td></tr>
-
-
-                        <tr><td class="ref-method">/api/predictive-maintenance</td><td>POST &mdash; failure prediction</td></tr>
                         <tr><td class="ref-method">/api/ilie</td><td>POST &mdash; submissions &amp; PTD analysis</td></tr>
                         <tr><td class="ref-method">/api/sbom</td><td>POST &mdash; SBOM scan &amp; risk report</td></tr>
-
-                        <tr><td class="ref-method">/api/compliance</td><td>POST &mdash; compliance scoring</td></tr>
-
-
                         <tr><td class="ref-method">/api/doc-library</td><td>GET &mdash; standards lookup</td></tr>
                         <tr><td class="ref-method">/api/audit-vault</td><td>POST &mdash; vault storage</td></tr>
                     </table>

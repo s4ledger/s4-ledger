@@ -73,7 +73,7 @@ const searchIndex = [
     { title: 'Partner Program — Benefits & Integration', tags: 'partner benefits early access co-marketing volume pricing Python REST API SDK integration reseller', page: 'Partners', url: 'partners' },
 
     // ═══ DEMO APP — ILS WORKSPACE (20 Tools) ═══
-    { title: 'ILS Workspace — Unified Command Center', tags: 'ILS workspace command center dashboard unified interface all tools 13 tools defense logistics management platform', page: 'Demo App', url: 'demo-app' },
+    { title: 'ILS Workspace — Unified Command Center', tags: 'ILS workspace command center dashboard unified interface all tools 14 tools defense logistics management platform', page: 'Demo App', url: 'demo-app' },
     { title: 'Gap Analysis Engine', tags: 'gap analysis ILS data package completeness DRL data item J-attachment buylist vendor spares transfer book tech manual MIL-STD-1388 deficiency what is missing', page: 'Demo App', url: 'demo-app' },
     { title: 'DMSMS Tracker — Obsolescence Risk', tags: 'DMSMS diminishing manufacturing sources material shortages obsolescence end of life EOL alternate sources redesign risk parts going away discontinued', page: 'Demo App', url: 'demo-app' },
     { title: 'Readiness Calculator — Ao & Ai', tags: 'readiness availability operational Ao inherent Ai MTBF mean time between failures MTTR mean time to repair MLDT mean logistics delay time RAM reliability', page: 'Demo App', url: 'demo-app' },
