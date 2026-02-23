@@ -1556,12 +1556,13 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="demo-card">
                             <h3><i class="fas fa-brain"></i> ILS Gap Analysis</h3>
                             <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
-                                <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How S4 Ledger Saves Money — Platform Overview</summary>
-                                <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                    <p>S4 Ledger creates <strong>tamper-proof records</strong> for defense logistics by anchoring SHA-256 hashes to the XRP Ledger. The process: (1) A defense record is created in your existing system, (2) S4 Ledger computes a SHA-256 hash, (3) Only the hash is written to an XRPL transaction memo, (4) A micro-fee of 0.01 $SLS is paid per anchor, (5) Anyone with the original can verify it hasn't been altered. <strong>No sensitive data on-chain.</strong></p>
-                                    <p><strong style="color:#fff;">Supports 54+ Navy-specific record types</strong> — supply chain receipts, 3-M maintenance, ordnance tracking, CASREP, CDRL, depot repair, SUBSAFE, configuration management, and more. Custom record types can also be anchored.</p>
-                                    <p><strong style="color:#00aaff;">$SLS Token:</strong> Live on XRPL Mainnet | Total Supply: 100M | Circulating: ~15M | Anchor Fee: 0.01 $SLS | AMM pools and trustlines active.</p>
-                                </div>
+                                <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Gap Analysis Works</summary>
+                                    <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                                        <p><strong style="color:#fff;">What this tool does:</strong> The ILS Gap Analysis Engine evaluates your program’s compliance with <strong>MIL-STD-1388-1A/2B</strong> Integrated Logistics Support requirements. It scores 10 ILS element areas — Supply Support, Maintenance Planning, Technical Data, Training, Configuration Management, DMSMS, PHS&amp;T, Reliability, Support Equipment, and Manpower — to identify gaps, missing deliverables, and corrective actions.</p>
+                                        <p><strong style="color:#2ecc71;">Step-by-step:</strong> (1) Select your program and hull/tail number. (2) Review the generated ILS checklist and mark items as complete. (3) Upload DRL spreadsheets, CDRLs, or ILS documents for automated cross-reference. (4) Click “Run Full Analysis” — the engine scores your checklist (weighted: critical items ×2), cross-references uploaded documents against DRL requirements using fuzzy matching, and outputs a combined coverage score (60% checklist + 40% DRL). (5) Review critical gaps, action items, estimated remediation costs, and recommended owners.</p>
+                                        <p><strong style="color:#ff6b6b;">Action output:</strong> Gap Analysis generates a prioritized corrective action register (CAR) with severity ratings, cost estimates ($K), schedule targets, and assigned owners (government + contractor). Critical gaps are flagged for immediate attention. Every analysis result can be anchored to the XRP Ledger for tamper-proof audit trail.</p>
+                                        <p><strong style="color:#00aaff;">Charts:</strong> After analysis, a radar chart shows ILS element coverage and a horizontal bar chart shows individual element scores color-coded (green ≥80%, amber ≥50%, red &lt;50%). Charts update automatically when you re-run with different parameters.</p>
+                                    </div>
                             </details>
                             <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload your DRLs, spreadsheets, checklists, and documents. The analyzer will parse them, cross-reference against program requirements, and identify gaps, missing deliverables, and actionable items.</p>
 
@@ -6112,7 +6113,35 @@ function runFullILSAnalysis() {
     const critGaps = actions.filter(a => a.severity==='critical').length;
     const totalCost = actions.reduce((s,a) => s + a.cost, 0);
 
-    ilsResults = { clItems, clPct, drlResults, drlPct, drlFound, drlTotal, pct, actions, critGaps, totalCost, prog, hull, phase, progKey, cl };
+    // Derive per-element scores for chart reactivity
+    const _ilsElementMap = {};
+    const _ilsElementGroups = {
+        'Supply Support': ['supply','spares','provisioning','pica','sica','allowance','apl','cosal','repairables'],
+        'Maintenance Planning': ['maintenance','pms','mrc','3-m','rmc','depot','overhaul','avail','maint_plan'],
+        'Technical Data': ['tech_data','technical','tm','ecp','drawing','specification','navsea_drawing','tdp'],
+        'Training': ['training','course','trainee','curriculum','simulation','ntsp','ctt'],
+        'Config Management': ['config','configuration','baseline','change_control','ecp_review','audit'],
+        'DMSMS': ['dmsms','obsolescence','diminishing','replacement','alternate','lifecycle_buy'],
+        'PHS&T': ['packaging','handling','storage','transport','phst','container','shipping'],
+        'Reliability': ['reliability','mtbf','mttr','ram','failure','fracas','rma','rcm'],
+        'Support Equipment': ['support_equip','se','test_equip','calibration','tmde','tools'],
+        'Manpower': ['manpower','personnel','manning','billet','rate','mos','navy_rate']
+    };
+    Object.keys(_ilsElementGroups).forEach(function(elName) {
+        var keywords = _ilsElementGroups[elName];
+        var relevant = clItems.filter(function(item) {
+            var txt = (item.l + ' ' + item.id + ' ' + (item.el || '')).toLowerCase();
+            return keywords.some(function(kw) { return txt.indexOf(kw) >= 0; });
+        });
+        if (relevant.length === 0) {
+            _ilsElementMap[elName] = { score: clPct, items: 0 };
+        } else {
+            var checked = relevant.filter(function(i) { return i.checked; }).length;
+            _ilsElementMap[elName] = { score: relevant.length > 0 ? Math.round((checked / relevant.length) * 100) : 0, items: relevant.length };
+        }
+    });
+
+    ilsResults = { clItems, clPct, drlResults, drlPct, drlFound, drlTotal, pct, actions, critGaps, totalCost, prog, hull, phase, progKey, cl, elements: _ilsElementMap };
 
     renderILSScore(pct, critGaps);
     renderILSCoverage(clItems, drlResults);
@@ -10322,9 +10351,9 @@ function renderGapAnalysisCharts() {
     
     // Use real data if available, otherwise use demo baseline
     var labels, scores;
-    if (typeof ilsResults !== 'undefined' && ilsResults && ilsResults.elements) {
+    if (typeof ilsResults !== 'undefined' && ilsResults && ilsResults.elements && Object.keys(ilsResults.elements).length > 0) {
         labels = Object.keys(ilsResults.elements);
-        scores = labels.map(function(k){ return ilsResults.elements[k]?.score || 0; });
+        scores = labels.map(function(k){ return (ilsResults.elements[k] && typeof ilsResults.elements[k].score === 'number') ? ilsResults.elements[k].score : 0; });
     } else {
         labels = ['Supply Support','Maintenance Planning','Tech Data','Training','Config Mgmt','DMSMS','PHS&T','Reliability','Support Equipment','Manpower'];
         scores = [72, 58, 85, 44, 91, 35, 67, 78, 52, 63];
@@ -12294,18 +12323,32 @@ function initRoleSystem() {
 })();
 
 // ═══════════════════════════════════════════════════════════════
-// ═══ ROUND 12b — COMPETITIVE ENHANCEMENT SUITE ═══
+// ═══ ROUND 12b/13 — COMPETITIVE ENHANCEMENT SUITE (ROBUST) ═══
 // 6 features vs Palantir/Oracle/Angular
 // ═══════════════════════════════════════════════════════════════
 
 // ── 1. AI THREAT INTELLIGENCE SCORING ──
+// Use MutationObserver on riskTableBody to trigger after any risk load
 (function() {
-    var _origLoadRisk = window.loadRiskData;
-    if (typeof _origLoadRisk !== 'function') return;
-    window.loadRiskData = function() {
-        _origLoadRisk.apply(this, arguments);
-        setTimeout(computeThreatIntelScore, 300);
-    };
+    function _hookRiskLoad() {
+        var orig = window.loadRiskData;
+        if (typeof orig !== 'function') return;
+        // Only wrap once
+        if (orig._s4ThreatHooked) return;
+        window.loadRiskData = function() {
+            orig.apply(this, arguments);
+            setTimeout(computeThreatIntelScore, 350);
+        };
+        window.loadRiskData._s4ThreatHooked = true;
+    }
+    _hookRiskLoad();
+    // Also watch the riskTableBody for mutations
+    setTimeout(function() {
+        var tb = document.getElementById('riskTableBody');
+        if (tb) {
+            new MutationObserver(function() { setTimeout(computeThreatIntelScore, 200); }).observe(tb, {childList:true});
+        }
+    }, 2000);
 })();
 
 function computeThreatIntelScore() {
@@ -12356,12 +12399,24 @@ function computeThreatIntelScore() {
 
 // ── 2. PREDICTIVE FAILURE TIMELINE ──
 (function() {
-    var _origLoadPDM = window.loadPredictiveData;
-    if (typeof _origLoadPDM !== 'function') return;
-    window.loadPredictiveData = function() {
-        _origLoadPDM.apply(this, arguments);
-        setTimeout(renderFailureTimeline, 400);
-    };
+    function _hookPDM() {
+        var orig = window.loadPredictiveData;
+        if (typeof orig !== 'function') return;
+        if (orig._s4TimelineHooked) return;
+        window.loadPredictiveData = function() {
+            orig.apply(this, arguments);
+            setTimeout(renderFailureTimeline, 450);
+        };
+        window.loadPredictiveData._s4TimelineHooked = true;
+    }
+    _hookPDM();
+    // Also watch pdmTableBody for mutations
+    setTimeout(function() {
+        var tb = document.getElementById('pdmTableBody');
+        if (tb) {
+            new MutationObserver(function() { setTimeout(renderFailureTimeline, 300); }).observe(tb, {childList:true});
+        }
+    }, 2000);
 })();
 
 function renderFailureTimeline() {
@@ -12550,10 +12605,12 @@ function closeDigitalThread() {
 
 // Hook vault rendering to add "View Thread" buttons
 (function() {
-    var _origRenderVault = window.renderVault;
-    if (typeof _origRenderVault !== 'function') return;
-    window.renderVault = function() {
-        _origRenderVault.apply(this, arguments);
+    function _hookVault() {
+        var orig = window.renderVault;
+        if (typeof orig !== 'function') return;
+        if (orig._s4ThreadHooked) return;
+        window.renderVault = function() {
+            orig.apply(this, arguments);
         // After render, inject thread buttons
         setTimeout(function() {
             var rows = document.querySelectorAll('#vaultList .vault-row, #vaultList [data-hash]');
@@ -12579,6 +12636,36 @@ function closeDigitalThread() {
             });
         }, 200);
     };
+    window.renderVault._s4ThreadHooked = true;
+    }
+    _hookVault();
+    // Also watch vaultList for mutations
+    setTimeout(function() {
+        var vl = document.getElementById('vaultList');
+        if (vl) {
+            new MutationObserver(function() {
+                setTimeout(function() {
+                    var rows = vl.querySelectorAll('.vault-row, [data-hash]');
+                    rows.forEach(function(row) {
+                        if (row.querySelector('.thread-btn')) return;
+                        var hashEl = row.querySelector('[style*="monospace"]');
+                        var hash = hashEl ? hashEl.textContent.replace(/\.{3}/g,'').trim() : '';
+                        if (hash && hash.length >= 16) {
+                            var btn = document.createElement('button');
+                            btn.className = 'thread-btn';
+                            btn.innerHTML = '<i class="fas fa-project-diagram"></i>';
+                            btn.title = 'View Digital Thread';
+                            btn.style.cssText = 'background:rgba(155,89,182,0.12);color:#9b59b6;border:1px solid rgba(155,89,182,0.3);border-radius:6px;padding:3px 8px;font-size:0.7rem;cursor:pointer;margin-left:4px;';
+                            btn.onclick = function(e) { e.stopPropagation(); showDigitalThread(hash); };
+                            var actions = row.querySelector('.vault-actions, [style*="gap"]');
+                            if (actions) actions.appendChild(btn);
+                            else row.appendChild(btn);
+                        }
+                    });
+                }, 200);
+            }).observe(vl, {childList:true, subtree:true});
+        }
+    }, 3000);
 })();
 
 
@@ -12676,15 +12763,27 @@ async function anchorSBOM() {
 
 // Also populate SBOM dropdown
 (function() {
-    var _origPopulate = window.populateAllDropdowns;
-    if (typeof _origPopulate !== 'function') return;
-    window.populateAllDropdowns = function() {
-        _origPopulate.apply(this, arguments);
+    function _hookPopulate() {
+        var orig = window.populateAllDropdowns;
+        if (typeof orig !== 'function') return;
+        if (orig._s4SBOMHooked) return;
+        window.populateAllDropdowns = function() {
+            orig.apply(this, arguments);
+            var sbomSel = document.getElementById('sbomProgram');
+            if (sbomSel && typeof S4_buildProgramOptions === 'function') {
+                sbomSel.innerHTML = S4_buildProgramOptions(false, false);
+            }
+        };
+        window.populateAllDropdowns._s4SBOMHooked = true;
+    }
+    _hookPopulate();
+    // Also run immediately on boot
+    setTimeout(function() {
         var sbomSel = document.getElementById('sbomProgram');
-        if (sbomSel && typeof S4_buildProgramOptions === 'function') {
+        if (sbomSel && (!sbomSel.options || sbomSel.options.length === 0) && typeof S4_buildProgramOptions === 'function') {
             sbomSel.innerHTML = S4_buildProgramOptions(false, false);
         }
-    };
+    }, 2500);
 })();
 
 // Register SBOM in hub system
@@ -12752,6 +12851,349 @@ window._s4AuditWatermark = function(csvContent, reportType, programKey) {
 })();
 
 console.log('[Round-12b] Competitive Enhancement Suite loaded: AI Threat Scoring, Failure Timeline, Collaboration, Digital Thread, SBOM, Zero-Trust Watermark');
+
+// ═══════════════════════════════════════════════════════════════
+// ═══ ROUND 13 — MASTER BOOT SEQUENCE ═══
+// Ensures all charts render, all features initialize, all hooks bind
+// ═══════════════════════════════════════════════════════════════
+(function() {
+    // 1. Ensure chart containers are injected into all panels at boot
+    function _bootCharts() {
+        if (typeof injectChartContainers === 'function') injectChartContainers();
+        // Render charts for whichever panel is visible
+        var visible = document.querySelector('.ils-hub-panel[style*="display: block"], .ils-hub-panel[style*="display:block"], .ils-hub-panel.active');
+        if (!visible) {
+            // Default: render DMSMS, Readiness, Compliance, Risk, Lifecycle, ROI with demo data
+            ['renderDMSMSCharts','renderReadinessCharts','renderComplianceCharts','renderRiskCharts','renderLifecycleCharts','renderROICharts'].forEach(function(fn) {
+                if (typeof window[fn] === 'function') {
+                    try { window[fn](); } catch(e) { console.warn('[R13] Chart render error:', fn, e); }
+                }
+            });
+        }
+    }
+
+    // 2. Ensure competitive feature hooks are bound
+    function _bootCompetitive() {
+        // Threat scoring
+        if (typeof computeThreatIntelScore === 'function') {
+            var riskBtn = document.querySelector('[onclick*="loadRiskData"]');
+            if (riskBtn && !riskBtn._s4ThreatBound) {
+                var origClick = riskBtn.getAttribute('onclick');
+                riskBtn.setAttribute('onclick', origClick + '; setTimeout(computeThreatIntelScore, 500);');
+                riskBtn._s4ThreatBound = true;
+            }
+        }
+        // Failure timeline
+        if (typeof renderFailureTimeline === 'function') {
+            var pdmBtn = document.querySelector('[onclick*="loadPredictiveData"]');
+            if (pdmBtn && !pdmBtn._s4TimelineBound) {
+                var origClick2 = pdmBtn.getAttribute('onclick');
+                pdmBtn.setAttribute('onclick', origClick2 + '; setTimeout(renderFailureTimeline, 600);');
+                pdmBtn._s4TimelineBound = true;
+            }
+        }
+    }
+
+    // 3. Ensure switchHubTab renders charts for the target panel
+    function _bootTabHook() {
+        var origSwitch = window.switchHubTab;
+        if (typeof origSwitch !== 'function' || origSwitch._s4R13Hooked) return;
+        window.switchHubTab = function(panelId, btn) {
+            origSwitch.call(this, panelId, btn);
+            // After switching, ensure chart containers exist and render
+            setTimeout(function() {
+                if (typeof injectChartContainers === 'function') injectChartContainers();
+                var chartMap = {
+                    'hub-analysis':    'renderGapAnalysisCharts',
+                    'hub-dmsms':       'renderDMSMSCharts',
+                    'hub-readiness':   'renderReadinessCharts',
+                    'hub-compliance':  'renderComplianceCharts',
+                    'hub-risk':        'renderRiskCharts',
+                    'hub-lifecycle':   'renderLifecycleCharts',
+                    'hub-roi':         'renderROICharts'
+                };
+                var fn = chartMap[panelId];
+                if (fn && typeof window[fn] === 'function') {
+                    try { window[fn](); } catch(e) {}
+                }
+            }, 400);
+        };
+        window.switchHubTab._s4R13Hooked = true;
+    }
+
+    // 4. Same for openILSTool
+    function _bootToolHook() {
+        var origOpen = window.openILSTool;
+        if (typeof origOpen !== 'function' || origOpen._s4R13Hooked) return;
+        window.openILSTool = function(toolId) {
+            origOpen.call(this, toolId);
+            setTimeout(function() {
+                if (typeof injectChartContainers === 'function') injectChartContainers();
+                var chartMap = {
+                    'hub-analysis':    'renderGapAnalysisCharts',
+                    'hub-dmsms':       'renderDMSMSCharts',
+                    'hub-readiness':   'renderReadinessCharts',
+                    'hub-compliance':  'renderComplianceCharts',
+                    'hub-risk':        'renderRiskCharts',
+                    'hub-lifecycle':   'renderLifecycleCharts',
+                    'hub-roi':         'renderROICharts'
+                };
+                var fn = chartMap[toolId];
+                if (fn && typeof window[fn] === 'function') {
+                    try { window[fn](); } catch(e) {}
+                }
+            }, 400);
+        };
+        window.openILSTool._s4R13Hooked = true;
+    }
+
+    // 5. Ensure all calc/load functions trigger chart re-render
+    function _bootCalcHooks() {
+        var hooks = [
+            ['loadDMSMSData', 'renderDMSMSCharts', 300],
+            ['calcReadiness', 'renderReadinessCharts', 300],
+            ['calcCompliance', 'renderComplianceCharts', 300],
+            ['loadRiskData', 'renderRiskCharts', 300],
+            ['calcLifecycle', 'renderLifecycleCharts', 300],
+            ['calcROI', 'renderROICharts', 300],
+            ['runFullILSAnalysis', 'renderGapAnalysisCharts', 500]
+        ];
+        hooks.forEach(function(h) {
+            var fnName = h[0], chartFn = h[1], delay = h[2];
+            var orig = window[fnName];
+            if (typeof orig !== 'function') return;
+            if (orig._s4R13ChartHooked) return;
+            window[fnName] = function() {
+                var result = orig.apply(this, arguments);
+                setTimeout(function() {
+                    if (typeof injectChartContainers === 'function') injectChartContainers();
+                    if (typeof window[chartFn] === 'function') {
+                        try { window[chartFn](); } catch(e) {}
+                    }
+                }, delay);
+                return result;
+            };
+            window[fnName]._s4R13ChartHooked = true;
+        });
+    }
+
+    // Run all boot sequences
+    setTimeout(function() {
+        _bootCharts();
+        _bootCompetitive();
+        _bootTabHook();
+        _bootToolHook();
+        _bootCalcHooks();
+        console.log('[Round-13] Master boot sequence complete — charts, hooks, features initialized');
+    }, 3000);
+
+    // Second pass at 5s in case DOM was slow
+    setTimeout(function() {
+        _bootCharts();
+        _bootCompetitive();
+    }, 5000);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// ═══ ROUND 13 — PRODUCTION SUBSCRIPTION CODE (Stripe) ═══
+// Complete Stripe Checkout flow for live subscriptions
+// ═══════════════════════════════════════════════════════════════
+
+// Production subscription tiers
+var S4_SUBSCRIPTION_TIERS = {
+    starter: {
+        name: 'Starter',
+        price_monthly: 99,
+        price_annual: 999,
+        sls_monthly: 10000,
+        anchors_monthly: 10000,
+        features: ['5 ILS Tools', 'Up to 3 programs', '10K anchors/mo', 'Email support'],
+        stripe_monthly: 'price_starter_monthly',    // Replace with real Stripe Price IDs
+        stripe_annual: 'price_starter_annual'
+    },
+    professional: {
+        name: 'Professional',
+        price_monthly: 499,
+        price_annual: 4999,
+        sls_monthly: 100000,
+        anchors_monthly: 100000,
+        features: ['All 14 ILS Tools', 'Unlimited programs', '100K anchors/mo', 'Priority support', 'API access'],
+        stripe_monthly: 'price_pro_monthly',
+        stripe_annual: 'price_pro_annual'
+    },
+    enterprise: {
+        name: 'Enterprise',
+        price_monthly: 2499,
+        price_annual: 24999,
+        sls_monthly: 1000000,
+        anchors_monthly: 1000000,
+        features: ['All 14 ILS Tools', 'Unlimited everything', '1M anchors/mo', '24/7 support', 'Dedicated CSM', 'On-prem option', 'Custom integrations'],
+        stripe_monthly: 'price_ent_monthly',
+        stripe_annual: 'price_ent_annual'
+    }
+};
+
+// Create Stripe Checkout Session
+async function createCheckoutSession(tierKey, billingCycle) {
+    if (typeof _demoMode !== 'undefined' && _demoMode) {
+        if (typeof _showNotif === 'function') _showNotif('Demo mode active — Stripe checkout disabled. Set _demoMode = false when ready for production.', 'warning');
+        return null;
+    }
+    var tier = S4_SUBSCRIPTION_TIERS[tierKey];
+    if (!tier) { console.error('Invalid tier:', tierKey); return null; }
+
+    var priceId = billingCycle === 'annual' ? tier.stripe_annual : tier.stripe_monthly;
+
+    try {
+        var resp = await fetch('/api/checkout/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                price_id: priceId,
+                tier: tierKey,
+                billing_cycle: billingCycle,
+                success_url: window.location.origin + '/demo-app/?session_id={CHECKOUT_SESSION_ID}&sub=success',
+                cancel_url: window.location.origin + '/demo-app/?sub=cancelled'
+            })
+        });
+        var data = await resp.json();
+        if (data.checkout_url) {
+            window.location.href = data.checkout_url;
+        } else if (data.error) {
+            if (typeof _showNotif === 'function') _showNotif('Checkout error: ' + data.error, 'error');
+        }
+        return data;
+    } catch(err) {
+        console.error('Checkout error:', err);
+        if (typeof _showNotif === 'function') _showNotif('Unable to create checkout session. Check your connection.', 'error');
+        return null;
+    }
+}
+
+// Handle subscription success callback
+function handleSubscriptionCallback() {
+    var params = new URLSearchParams(window.location.search);
+    var sessionId = params.get('session_id');
+    var subStatus = params.get('sub');
+
+    if (subStatus === 'success' && sessionId) {
+        // Verify the session and provision SLS
+        fetch('/api/wallet/provision', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ checkout_session_id: sessionId })
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.wallet_address) {
+                if (typeof _showNotif === 'function') _showNotif('Subscription activated! Wallet: ' + data.wallet_address.substring(0,12) + '...', 'success');
+                // Store session info
+                localStorage.setItem('s4_subscription', JSON.stringify({
+                    session_id: sessionId,
+                    wallet: data.wallet_address,
+                    tier: data.subscription?.tier || 'starter',
+                    sls_balance: data.subscription?.sls_balance || 0,
+                    activated_at: new Date().toISOString()
+                }));
+                // Clean URL
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        }).catch(function(err) { console.error('Provision error:', err); });
+    } else if (subStatus === 'cancelled') {
+        if (typeof _showNotif === 'function') _showNotif('Checkout cancelled. You can subscribe anytime.', 'info');
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+}
+
+// Check for existing subscription
+function getActiveSubscription() {
+    try {
+        var stored = localStorage.getItem('s4_subscription');
+        return stored ? JSON.parse(stored) : null;
+    } catch(e) { return null; }
+}
+
+// Verify subscription with backend
+async function verifySubscription() {
+    var sub = getActiveSubscription();
+    if (!sub || !sub.wallet) return null;
+    try {
+        var resp = await fetch('/api/wallet/balance?address=' + sub.wallet);
+        var data = await resp.json();
+        if (data.sls_balance !== undefined) {
+            sub.sls_balance = data.sls_balance;
+            sub.xrp_balance = data.xrp_balance;
+            sub.last_verified = new Date().toISOString();
+            localStorage.setItem('s4_subscription', JSON.stringify(sub));
+        }
+        return sub;
+    } catch(e) { return sub; }
+}
+
+// SLS top-up (additional SLS purchase)
+async function purchaseAdditionalSLS(amount, stripePaymentId) {
+    if (typeof _demoMode !== 'undefined' && _demoMode) {
+        if (typeof _showNotif === 'function') _showNotif('Demo mode — SLS purchase disabled.', 'warning');
+        return;
+    }
+    var sub = getActiveSubscription();
+    if (!sub || !sub.wallet) {
+        if (typeof _showNotif === 'function') _showNotif('No active subscription. Please subscribe first.', 'error');
+        return;
+    }
+    try {
+        var resp = await fetch('/api/wallet/buy-sls', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                wallet_address: sub.wallet,
+                sls_amount: amount,
+                stripe_payment_id: stripePaymentId
+            })
+        });
+        var data = await resp.json();
+        if (data.new_balance) {
+            sub.sls_balance = data.new_balance;
+            localStorage.setItem('s4_subscription', JSON.stringify(sub));
+            if (typeof _showNotif === 'function') _showNotif('SLS top-up complete! New balance: ' + data.new_balance.toLocaleString() + ' SLS', 'success');
+        }
+        return data;
+    } catch(err) {
+        console.error('SLS purchase error:', err);
+    }
+}
+
+// Production anchor call (uses real wallet instead of demo)
+async function productionAnchor(hash, recordType, memoContent) {
+    var sub = getActiveSubscription();
+    if (!sub || !sub.wallet) {
+        // Fall back to demo mode
+        if (typeof _anchorToXRPL === 'function') return _anchorToXRPL(hash, recordType, memoContent);
+        return {};
+    }
+    try {
+        var resp = await fetch('/api/anchor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                hash: hash,
+                record_type: recordType,
+                memo_content: memoContent,
+                wallet_address: sub.wallet
+            })
+        });
+        return await resp.json();
+    } catch(err) {
+        console.error('Anchor error:', err);
+        // Fall back to demo
+        if (typeof _anchorToXRPL === 'function') return _anchorToXRPL(hash, recordType, memoContent);
+        return {};
+    }
+}
+
+// Check for subscription callback on page load
+setTimeout(handleSubscriptionCallback, 1000);
+
+console.log('[Round-13] Production subscription code loaded — Stripe Checkout + SLS provisioning + wallet management');
 </script>
 </body>
 </html>
