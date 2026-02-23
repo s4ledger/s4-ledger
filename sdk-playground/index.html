@@ -259,59 +259,6 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-    <div class="container">
-        <div class="footer-inner">
-            <div>
-                <a href="/" class="footer-brand">
-                    <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger">
-                    <span>S4 Ledger</span>
-                </a>
-                <div class="footer-tagline">Immutable defense logistics. Built on the XRP Ledger.</div>
-            </div>
-            <div class="footer-links">
-                <div class="footer-col">
-                    <h5>Product</h5>
-                    <a href="/demo-app/">Platform</a>
-                    <a href="/sdk-playground/">SDK Playground</a>
-                    <a href="/metrics.html">Live Metrics</a>
-                    <a href="/transactions.html">Transactions</a>
-                </div>
-                <div class="footer-col">
-                    <h5>Company</h5>
-                    <a href="/s4-about/">About</a>
-                    <a href="/s4-investors/">Investors</a>
-                    <a href="/s4-partners/">Partners</a>
-                    <a href="/s4-roadmap/">Roadmap</a>
-                </div>
-                <div class="footer-col">
-                    <h5>Resources</h5>
-                    <a href="/s4-use-cases/">Use Cases</a>
-                    <a href="/s4-faq/">FAQ</a>
-                    <a href="/s4-pricing/">Pricing</a>
-                    <a href="/security/">Security</a>
-                </div>
-                <div class="footer-col">
-                    <h5>Connect</h5>
-                    <a href="/s4-contact/">Contact</a>
-                    <a href="https://github.com/s4ledger/s4-ledger" target="_blank">GitHub</a>
-                    <a href="https://x.com" target="_blank">X / Twitter</a>
-                    <a href="https://linkedin.com" target="_blank">LinkedIn</a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <span>&copy; 2025 S4 Systems, LLC. $SLS is a utility token &mdash; not equity or an investment contract.</span>
-            <div class="footer-bottom-links">
-                <a href="/s4-terms/">Terms</a>
-                <a href="/s4-privacy/">Privacy</a>
-                <a href="/security-policy/">Security Policy</a>
-            </div>
-        </div>
-    </div>
-</footer>
-
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -432,7 +379,7 @@
     // Build editor content based on current example + dropdown selection
     function buildEditorContent() {
         if (currentExample === 'metrics') return "# Fetch live S4 Ledger network metrics\nledger.get_metrics()";
-        if (currentExample === 'ils_analysis') return "# ILS Workspace — Analyze data package completeness\n# Checks all Navy ILS elements: DRLs, DIs, J-attachments,\n# buylists, vendor spares, transfer books, tech manuals, etc.\n\nledger.ils_analysis(\n  program  = \"DDG-51 Flight III\",\n  branch   = \"USN\",\n  elements = [\n    \"DRL\", \"DI\", \"J-1 ILS Parameters\", \"J-3 Supply Support\",\n    \"J-4 Technical Data\", \"J-11 RAM Analysis\",\n    \"J-13 Configuration Mgmt\", \"Vendor Recommended Spares\",\n    \"Buylist\", \"Transfer Book\", \"TM Index\", \"Config Baseline\"\n  ]\n)";
+        if (currentExample === 'ils_analysis') return "# Anchor-S4 — Analyze data package completeness\n# Checks all Navy ILS elements: DRLs, DIs, J-attachments,\n# buylists, vendor spares, transfer books, tech manuals, etc.\n\nledger.ils_analysis(\n  program  = \"DDG-51 Flight III\",\n  branch   = \"USN\",\n  elements = [\n    \"DRL\", \"DI\", \"J-1 ILS Parameters\", \"J-3 Supply Support\",\n    \"J-4 Technical Data\", \"J-11 RAM Analysis\",\n    \"J-13 Configuration Mgmt\", \"Vendor Recommended Spares\",\n    \"Buylist\", \"Transfer Book\", \"TM Index\", \"Config Baseline\"\n  ]\n)";
         if (SDK_TOOL_TEMPLATES[currentExample]) return SDK_TOOL_TEMPLATES[currentExample];
         var select = document.getElementById('recordTypeSelect');
         var typeKey = (select && select.value) ? select.value : 'USN_SUPPLY_RECEIPT';
@@ -800,7 +747,7 @@
         output += '  Overall ILS Readiness: 100%\n';
         output += '\u2500'.repeat(55) + '\n\n';
         output += '\u2713 All ILS element types available for anchoring.\n';
-        output += '\u2713 Use Demo App > ILS Workspace for gap analysis.\n';
+        output += '\u2713 Use Platform > Anchor-S4 for gap analysis.\n';
         output += '\u2713 Generate customer-ready reports with one click.';
         return output;
     }
@@ -918,7 +865,7 @@
         output += '  \u26a0 NSN 5962-01-234-5678  DSP Processor      NRND\n';
         output += '  \u26a0 NSN 5961-01-789-0123  Power Regulator    Obsolete\n';
         output += '\u2500'.repeat(55) + '\n\n';
-        output += '\u2713 Full DMSMS analysis available in Demo App > ILS Workspace\n';
+        output += '\u2713 Full DMSMS analysis available in Platform > Anchor-S4\n';
         output += '\u2713 Action items auto-generated for at-risk parts\n';
         output += '\u2713 Results anchored to XRPL for audit trail';
         return output;
@@ -941,7 +888,7 @@
         output += '  RAM ASSESSMENT: EXCEEDS THRESHOLD\n';
         output += '  \u2713 Ao \u2265 95% requirement  \u2713 MTBF \u2265 500hr target\n';
         output += '\u2500'.repeat(55) + '\n\n';
-        output += '\u2713 Readiness metrics available in Demo App > ILS Workspace';
+        output += '\u2713 Readiness metrics available in Platform > Anchor-S4';
         return output;
     }
 
@@ -960,7 +907,7 @@
         output += '  ROI:                  1,612%\n';
         output += '  Payback Period:       < 1 month\n\n';
         output += '\u2500'.repeat(55) + '\n';
-        output += '\u2713 ROI calculator available in Demo App > ILS Workspace';
+        output += '\u2713 ROI calculator available in Platform > Anchor-S4';
         return output;
     }
 
@@ -981,7 +928,7 @@
         output += '  Cost/Operating Hour:  $12,450\n\n';
         output += '  S4 Impact (12% savings): -$960M\n\n';
         output += '\u2500'.repeat(55) + '\n';
-        output += '\u2713 Lifecycle estimator available in Demo App > ILS Workspace';
+        output += '\u2713 Lifecycle estimator available in Platform > Anchor-S4';
         return output;
     }
 
@@ -1008,8 +955,8 @@
         output += '  [CRITICAL] Ao below 95% threshold on SPY-6 radar\n';
         output += '    Source: READINESS | Cost: $180K | Schedule: 60 days\n\n';
         output += '\u2500'.repeat(55) + '\n';
-        output += '\u2713 Action items auto-generated from all ILS Workspace tools\n';
-        output += '\u2713 Track, delegate, and schedule in Demo App > ILS Workspace\n';
+        output += '\u2713 Action items auto-generated from all Anchor-S4 tools\n';
+        output += '\u2713 Track, delegate, and schedule in Platform > Anchor-S4\n';
         output += '\u2713 Calendar integration for milestone tracking';
         return output;
     }
@@ -1039,7 +986,7 @@
         output += '\u2500'.repeat(55) + '\n';
         output += '\u2713 37 real defense suppliers in database\n';
         output += '\u2713 Risk analysis across 35+ platforms available\n';
-        output += '\u2713 Full engine in Demo App > ILS Workspace';
+        output += '\u2713 Full engine in Platform > Anchor-S4';
         return output;
     }
 
@@ -1067,7 +1014,7 @@
         output += '\u2500'.repeat(55) + '\n';
         output += '\u2713 6 report types available (Full, Supply Chain, Maintenance,\n';
         output += '  Compliance, Chain of Custody, Contract Deliverables)\n';
-        output += '\u2713 One-click generation in Demo App > ILS Workspace';
+        output += '\u2713 One-click generation in Platform > Anchor-S4';
         return output;
     }
 
@@ -1102,7 +1049,7 @@
         output += '\u2500'.repeat(55) + '\n';
         output += '\u2713 40+ platforms with real fleet sizes\n';
         output += '\u2713 ML-powered failure mode clustering\n';
-        output += '\u2713 Full analysis in Demo App > ILS Workspace';
+        output += '\u2713 Full analysis in Platform > Anchor-S4';
         return output;
     }
 
@@ -1127,7 +1074,7 @@
         output += '\u2500'.repeat(55) + '\n';
         output += '  Hash: ' + fakeHash.substring(0,32) + '...\n';
         output += '  \u2713 Anchored to XRPL Mainnet\n';
-        output += '  \u2713 Full ILIE in Demo App > ILS Workspace';
+        output += '  \u2713 Full ILIE in Platform > Anchor-S4';
         return output;
     }
 
@@ -1162,7 +1109,7 @@
         output += '  MIL-STD-1369   \u2014 ILS Managers Guide (Active)\n\n';
         output += '\u2500'.repeat(55) + '\n';
         output += '  \u2713 5 documents found\n';
-        output += '  \u2713 Full library in Demo App > ILS Workspace';
+        output += '  \u2713 Full library in Platform > Anchor-S4';
         return output;
     }
 
@@ -1179,7 +1126,7 @@
         output += '  Classification: CUI\n\n';
         output += '\u2500'.repeat(55) + '\n';
         output += '  \u2713 Record stored and anchored\n';
-        output += '  \u2713 Full vault in Demo App > ILS Workspace';
+        output += '  \u2713 Full vault in Platform > Anchor-S4';
         return output;
     }
 
@@ -1266,11 +1213,11 @@
                 <div class="footer-col"><h5>Product</h5><a href="/demo-app/">Platform</a><a href="/sdk-playground/">SDK Playground</a><a href="/metrics.html">Live Metrics</a><a href="/transactions.html">Transactions</a></div>
                 <div class="footer-col"><h5>Company</h5><a href="/s4-about/">About</a><a href="/s4-investors/">Investors</a><a href="/s4-partners/">Partners</a><a href="/s4-roadmap/">Roadmap</a></div>
                 <div class="footer-col"><h5>Resources</h5><a href="/s4-use-cases/">Use Cases</a><a href="/s4-faq/">FAQ</a><a href="/s4-pricing/">Pricing</a><a href="/security/">Security</a></div>
-                <div class="footer-col"><h5>Connect</h5><a href="/s4-contact/">Contact</a><a href="https://github.com/s4ledger/s4-ledger" target="_blank">GitHub</a></div>
+                <div class="footer-col"><h5>Connect</h5><a href="/s4-contact/">Contact</a><a href="https://github.com/s4ledger/s4-ledger" target="_blank">GitHub</a><a href="https://x.com" target="_blank">X / Twitter</a><a href="https://linkedin.com" target="_blank">LinkedIn</a></div>
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; 2025 S4 Systems, LLC. $SLS is a utility token &mdash; not equity or an investment contract.</span>
+            <span>&copy; 2025–2026 S4 Systems, LLC. $SLS is a utility token &mdash; not equity or an investment contract.</span>
             <div class="footer-bottom-links"><a href="/s4-terms/">Terms</a><a href="/s4-privacy/">Privacy</a><a href="/security-policy/">Security Policy</a></div>
         </div>
     </div>

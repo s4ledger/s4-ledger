@@ -21,7 +21,7 @@
     <script src="/s4-assets/defense-docs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        :root{--bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:rgba(255,255,255,0.06);--border-hover:rgba(255,255,255,0.12);--accent:#00aaff;--gold:#c9a84c;--steel:#8ea4b8;--green:#00aaff;--red:#ff6b6b;--text:#f0f0f5;--muted:#5a5e72;--radius:12px;--radius-lg:20px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1)}
+        :root{--bg:#000000;--surface:#0a0a0a;--card:#111111;--border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.15);--accent:#00aaff;--gold:#c9a84c;--steel:#86868b;--green:#30d158;--red:#ff453a;--text:#f5f5f7;--muted:#6e6e73;--radius:16px;--radius-lg:24px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1)}
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.6;overflow-x:hidden}
         .navbar-custom{display:none}
@@ -825,6 +825,168 @@
         .ils-tool-card .itc-desc { font-size:0.73rem; color:var(--steel); line-height:1.5; }
         .ils-sub-hub { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:10px; }
 
+        /* ═══ APPLE-STYLE UI MODERNIZATION ═══ */
+        /* Pure black canvas, cleaner surfaces, refined typography */
+        body { background:#000; letter-spacing:-0.01em; }
+        
+        /* Refined card/panel surfaces — subtle glass effect */
+        .demo-card, .glass-card { 
+            background:rgba(18,18,18,0.8) !important; 
+            backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); 
+            border:1px solid rgba(255,255,255,0.06) !important; 
+            border-radius:18px !important;
+        }
+        
+        /* Hub cards — cleaner, more spacious */
+        .hub-card { 
+            background:rgba(18,18,18,0.6); 
+            border:1px solid rgba(255,255,255,0.06); 
+            border-radius:18px; 
+            padding:28px 26px; 
+            backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+        }
+        .hub-card:hover { 
+            border-color:rgba(0,170,255,0.25); 
+            background:rgba(0,170,255,0.04); 
+            box-shadow:0 12px 40px rgba(0,170,255,0.08);
+        }
+        
+        /* Tool cards — subtler surfaces */
+        .ils-tool-card {
+            background:rgba(18,18,18,0.6);
+            border:1px solid rgba(255,255,255,0.05);
+            border-radius:14px;
+            backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+        }
+        .ils-tool-card:hover {
+            border-color:rgba(0,170,255,0.2);
+            box-shadow:0 8px 24px rgba(0,170,255,0.06);
+        }
+        
+        /* Nav pills — cleaner active states */
+        .nav-pills .nav-link {
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.06);
+            border-radius:100px;
+            font-weight:500;
+            font-size:0.84rem;
+            letter-spacing:-0.005em;
+        }
+        .nav-pills .nav-link.active {
+            background:var(--accent) !important;
+            border-color:transparent !important;
+            box-shadow:none !important;
+            font-weight:600;
+        }
+        
+        /* Buttons — Apple-style solid fills */
+        .btn-accent {
+            background:var(--accent);
+            border-radius:100px;
+            padding:0.6rem 1.8rem;
+            font-weight:600;
+            font-size:0.9rem;
+            letter-spacing:-0.005em;
+            transition:all 0.25s;
+        }
+        .btn-accent:hover {
+            filter:brightness(1.1);
+            transform:translateY(-1px);
+            box-shadow:0 6px 20px rgba(0,170,255,0.25);
+        }
+        
+        /* Inputs — refined, subtle */
+        select, input, textarea {
+            background:rgba(255,255,255,0.04) !important;
+            border:1px solid rgba(255,255,255,0.08) !important;
+            border-radius:12px !important;
+            font-size:0.88rem !important;
+            transition:border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        select:focus, input:focus, textarea:focus {
+            background:rgba(255,255,255,0.06) !important;
+            border-color:rgba(0,170,255,0.4) !important;
+            box-shadow:0 0 0 4px rgba(0,170,255,0.08) !important;
+        }
+        
+        /* Stat strip — cleaner */
+        .stat-strip {
+            background:rgba(255,255,255,0.02);
+            border:1px solid rgba(255,255,255,0.05);
+            border-radius:16px;
+            backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+        }
+        
+        /* Section headings — Apple-level typography */
+        .hero h1 {
+            font-size:2.8rem;
+            font-weight:700;
+            letter-spacing:-0.04em;
+            line-height:1.05;
+        }
+        .hero p {
+            font-size:1.1rem;
+            color:var(--steel);
+            font-weight:400;
+            line-height:1.7;
+        }
+        
+        /* Hub header — more breathing room */
+        .hub-header h2 {
+            font-size:1.7rem;
+            font-weight:700;
+            letter-spacing:-0.03em;
+        }
+        .hub-header p {
+            font-size:0.9rem;
+            color:var(--steel);
+        }
+        
+        /* Tool panel headers — cleaner */
+        .hub-tool-header h4 {
+            font-size:1rem;
+            font-weight:700;
+            letter-spacing:-0.02em;
+        }
+        
+        /* Landing feature cards — Apple grid style */
+        #platformLanding .col-md-4 > div {
+            background:rgba(18,18,18,0.6) !important;
+            border:1px solid rgba(255,255,255,0.06) !important;
+            border-radius:18px !important;
+            backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+            transition:all 0.3s;
+        }
+        #platformLanding .col-md-4 > div:hover {
+            border-color:rgba(0,170,255,0.2) !important;
+            transform:translateY(-4px);
+            box-shadow:0 12px 40px rgba(0,170,255,0.08);
+        }
+        
+        /* Scrollbars — minimal */
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
+        
+        /* Details/summary — cleaner toggles */
+        details { border-radius:14px !important; }
+        details summary { font-size:0.84rem; }
+        
+        /* ILS hub tab buttons — pill style */
+        .ils-hub-tab {
+            border-radius:100px !important;
+            font-size:0.78rem;
+            letter-spacing:-0.005em;
+        }
+        
+        /* Result panels — subtle */
+        .result-panel {
+            background:rgba(255,255,255,0.02);
+            border:1px solid rgba(255,255,255,0.06);
+            border-radius:14px;
+        }
+
     </style>
 </head>
 <body>
@@ -856,6 +1018,52 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
     </div>
 </nav>
 
+
+<!-- ═══ DoD CONSENT BANNER ═══ -->
+<div id="dodConsentBanner" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;">
+    <div style="background:#0a0e1a;border:2px solid rgba(255,149,0,0.5);border-radius:16px;padding:40px;max-width:680px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+        <div style="margin-bottom:20px;"><i class="fas fa-shield-halved" style="font-size:3rem;color:#ff9500;"></i></div>
+        <h2 style="color:#ff9500;font-size:1.3rem;font-weight:800;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">U.S. Department of Defense Information System</h2>
+        <div style="background:rgba(255,149,0,0.06);border:1px solid rgba(255,149,0,0.2);border-radius:12px;padding:20px;margin-bottom:20px;text-align:left;">
+            <p style="color:var(--steel);font-size:0.82rem;line-height:1.7;margin:0 0 12px;">You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.</p>
+            <p style="color:var(--steel);font-size:0.82rem;line-height:1.7;margin:0 0 12px;">By using this IS (which includes any device attached to this IS), you consent to the following conditions:</p>
+            <ul style="color:var(--steel);font-size:0.78rem;line-height:1.8;margin:0 0 12px;padding-left:20px;">
+                <li>The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.</li>
+                <li>At any time, the USG may inspect and seize data stored on this IS.</li>
+                <li>Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.</li>
+                <li>This IS includes security measures (e.g., authentication and access controls) to protect USG interests — not for your personal benefit or privacy.</li>
+            </ul>
+            <p style="color:#ff9500;font-size:0.82rem;line-height:1.7;margin:0;font-weight:600;">Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications.</p>
+        </div>
+        <button onclick="acceptDodConsent()" style="background:linear-gradient(135deg,#ff9500,#e68600);color:#fff;border:none;padding:14px 48px;border-radius:10px;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.5px;">I Accept &mdash; Continue</button>
+        <div style="margin-top:12px;font-size:0.7rem;color:var(--muted);">By clicking "I Accept" you acknowledge and consent to the terms above.</div>
+    </div>
+</div>
+
+<!-- ═══ CAC / LOGIN POPUP ═══ -->
+<div id="cacLoginModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.88);z-index:99998;align-items:center;justify-content:center;">
+    <div style="background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:16px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+        <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:48px;width:48px;margin-bottom:8px;"><h3 style="color:#fff;font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the ILS workspace</p></div>
+        <div id="cacLoginTabs" style="display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+            <button onclick="switchLoginTab('cac')" id="loginTabCac" style="flex:1;padding:10px;background:rgba(0,170,255,0.1);color:var(--accent);border:none;font-weight:700;font-size:0.82rem;cursor:pointer;"><i class="fas fa-id-card" style="margin-right:6px;"></i>CAC / PIV</button>
+            <button onclick="switchLoginTab('account')" id="loginTabAcct" style="flex:1;padding:10px;background:transparent;color:var(--steel);border:none;font-weight:600;font-size:0.82rem;cursor:pointer;"><i class="fas fa-user" style="margin-right:6px;"></i>Account</button>
+        </div>
+        <div id="cacLoginPane" style="">
+            <div style="background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:12px;padding:24px;margin-bottom:16px;">
+                <i class="fas fa-id-card" style="font-size:2.5rem;color:var(--accent);margin-bottom:12px;display:block;"></i>
+                <p style="color:var(--steel);font-size:0.85rem;margin:0 0 12px;">Insert your Common Access Card (CAC) or PIV card and select your certificate.</p>
+                <div style="font-size:0.75rem;color:var(--muted);">(Demo mode — click below to simulate CAC authentication)</div>
+            </div>
+            <button onclick="simulateCacLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC</button>
+        </div>
+        <div id="acctLoginPane" style="display:none;">
+            <div style="margin-bottom:12px;text-align:left;"><label style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email / User ID</label><input type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
+            <div style="margin-bottom:16px;text-align:left;"><label style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input type="password" id="loginPassword" placeholder="••••••••" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
+            <button onclick="simulateAccountLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In</button>
+            <div style="margin-top:12px;font-size:0.78rem;"><a href="#" onclick="event.preventDefault();if(typeof _showNotif==='function')_showNotif('Password reset link sent to your .mil email.','info');" style="color:var(--accent);text-decoration:none;">Forgot password?</a></div>
+        </div>
+    </div>
+</div>
 
 <section class="hero" style="padding:4rem 0 2rem;text-align:center;">
     <div class="container">
@@ -906,7 +1114,7 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
             </div></div>
         </div>
         <div style="text-align:center;">
-            <button onclick="document.getElementById('platformLanding').style.display='none';document.querySelector('.hero').style.display='none';document.getElementById('platformWorkspace').style.display='block';sessionStorage.setItem('s4_entered','1');if(!sessionStorage.getItem('s4_onboard_done')){setTimeout(showOnboarding,600);}" style="background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:10px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+            <button onclick="startAuthFlow()" style="background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:10px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
             <a href="/demo-app/demo" style="display:inline-block;margin-left:12px;background:transparent;color:var(--accent);border:1px solid rgba(0,170,255,0.4);padding:14px 28px;border-radius:10px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;text-decoration:none;letter-spacing:-0.01em;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See a Demo</a>
         </div>
     </div>
@@ -2099,7 +2307,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 <div class="demo-card glass-card" style="animation:slideUp 0.4s ease">
                     <div class="hub-tool-header">
                         <h4><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:8px"></i> Compliance Scorecard</h4>
-                        <span class="pulse-dot"></span><span style="font-size:0.75rem;color:var(--accent);font-weight:600">REAL-TIME</span>
+                        <div style="display:flex;align-items:center;gap:6px;margin-left:auto;"><span class="pulse-dot"></span><span style="font-size:0.75rem;color:var(--accent);font-weight:600">REAL-TIME</span></div>
                     </div>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Live compliance posture across CMMC, NIST SP 800-171, DFARS, and program-specific requirements. Auto-calculates based on your workspace activity — something SAP, Oracle, and Microsoft don't offer.</p>
 
@@ -3125,6 +3333,88 @@ function _syncSlsBar() {
     if (planEl) planEl.textContent = plan;
 }
 
+// ═══ Authentication Flow: DoD Consent → CAC/Login → Platform ═══
+function startAuthFlow() {
+    // If user already authenticated this session, skip straight through
+    if (sessionStorage.getItem('s4_authenticated') === '1') {
+        enterPlatformAfterAuth();
+        return;
+    }
+    // Show DoD consent banner first
+    var consent = document.getElementById('dodConsentBanner');
+    if (consent) consent.style.display = 'flex';
+}
+
+function acceptDodConsent() {
+    var consent = document.getElementById('dodConsentBanner');
+    if (consent) consent.style.display = 'none';
+    // Now show CAC/login popup
+    var login = document.getElementById('cacLoginModal');
+    if (login) login.style.display = 'flex';
+}
+
+function switchLoginTab(tab) {
+    var cacPane = document.getElementById('cacLoginPane');
+    var acctPane = document.getElementById('acctLoginPane');
+    var tabCac = document.getElementById('loginTabCac');
+    var tabAcct = document.getElementById('loginTabAcct');
+    if (tab === 'cac') {
+        if (cacPane) cacPane.style.display = '';
+        if (acctPane) acctPane.style.display = 'none';
+        if (tabCac) { tabCac.style.background = 'rgba(0,170,255,0.1)'; tabCac.style.color = 'var(--accent)'; }
+        if (tabAcct) { tabAcct.style.background = 'transparent'; tabAcct.style.color = 'var(--steel)'; }
+    } else {
+        if (cacPane) cacPane.style.display = 'none';
+        if (acctPane) acctPane.style.display = '';
+        if (tabAcct) { tabAcct.style.background = 'rgba(0,170,255,0.1)'; tabAcct.style.color = 'var(--accent)'; }
+        if (tabCac) { tabCac.style.background = 'transparent'; tabCac.style.color = 'var(--steel)'; }
+    }
+}
+
+function simulateCacLogin() {
+    var modal = document.getElementById('cacLoginModal');
+    // Show loading state
+    var btn = modal.querySelector('button[onclick*="simulateCacLogin"]');
+    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Reading CAC certificate...'; btn.disabled = true; }
+    setTimeout(function() {
+        if (btn) { btn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i>Authenticated — DoD PKI Verified'; }
+        setTimeout(function() {
+            if (modal) modal.style.display = 'none';
+            sessionStorage.setItem('s4_authenticated', '1');
+            sessionStorage.setItem('s4_auth_method', 'cac');
+            enterPlatformAfterAuth();
+        }, 800);
+    }, 1500);
+}
+
+function simulateAccountLogin() {
+    var email = (document.getElementById('loginEmail') || {}).value || '';
+    var pass = (document.getElementById('loginPassword') || {}).value || '';
+    if (!email) { if (typeof _showNotif === 'function') _showNotif('Please enter your email or User ID.', 'warning'); return; }
+    var modal = document.getElementById('cacLoginModal');
+    var btn = modal.querySelector('button[onclick*="simulateAccountLogin"]');
+    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Authenticating...'; btn.disabled = true; }
+    setTimeout(function() {
+        if (btn) { btn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i>Signed In'; }
+        setTimeout(function() {
+            if (modal) modal.style.display = 'none';
+            sessionStorage.setItem('s4_authenticated', '1');
+            sessionStorage.setItem('s4_auth_method', 'account');
+            enterPlatformAfterAuth();
+        }, 600);
+    }, 1200);
+}
+
+function enterPlatformAfterAuth() {
+    document.getElementById('platformLanding').style.display = 'none';
+    document.querySelector('.hero').style.display = 'none';
+    document.getElementById('platformWorkspace').style.display = 'block';
+    sessionStorage.setItem('s4_entered', '1');
+    if (!sessionStorage.getItem('s4_onboard_done')) {
+        setTimeout(showOnboarding, 600);
+    }
+}
+
 // ═══ Logout / Reset Demo Session ═══
 function resetDemoSession() {
     if (!confirm('End your session? This will clear all anchored records, stats, and cached data and return you to the platform landing page.')) return;
@@ -3152,8 +3442,11 @@ function resetDemoSession() {
     sessionStorage.removeItem('s4_visible_tabs');
     // Clear platform-entered flag so landing page shows
     sessionStorage.removeItem('s4_entered');
-    // Keep onboard_done so the welcome wizard does NOT re-pop
-    // (user already saw it once this browser session)
+    // Clear authentication so user must re-authenticate
+    sessionStorage.removeItem('s4_authenticated');
+    sessionStorage.removeItem('s4_auth_method');
+    // Clear onboarding so full flow re-triggers on next "Enter Platform"
+    sessionStorage.removeItem('s4_onboard_done');
     // Reset in-memory state
     _demoSession = null;
     stats = {anchored:0, verified:0, types:new Set(), slsFees:0};
@@ -13732,11 +14025,21 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var btnGroup = document.createElement('div');
         btnGroup.id = 'r14-header-btns';
         btnGroup.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;';
+        // Style to match hub-card / Anchor-S4 box aesthetic
+        var _btnBase = 'background:linear-gradient(145deg,var(--card),rgba(0,170,255,0.015));border:1px solid var(--border);border-radius:14px;padding:12px 18px;cursor:pointer;transition:all 0.28s;display:flex;align-items:center;gap:8px;font-family:inherit;position:relative;overflow:hidden;';
         btnGroup.innerHTML = ''
-            + '<button onclick="showSavedAnalyses()" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:#a78bfa;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="fas fa-history"></i> My Analyses</button>'
-            + '<button onclick="showTeamPanel()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="fas fa-users"></i> Team</button>'
-            + '<button onclick="showWebhookSettings()" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:#c9a84c;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="fas fa-plug"></i> Webhooks</button>'
-            + '<button onclick="exportPDF()" style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);color:#ff6b6b;border-radius:8px;padding:5px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="fas fa-file-pdf"></i> PDF Export</button>';
+            + '<button onclick="showSavedAnalyses()" style="' + _btnBase + '" onmouseover="this.style.borderColor=\'rgba(167,139,250,0.5)\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 6px 20px rgba(167,139,250,0.12)\';" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\';">' 
+            + '<div style="width:32px;height:32px;border-radius:10px;background:rgba(167,139,250,0.1);display:flex;align-items:center;justify-content:center;"><i class="fas fa-history" style="color:#a78bfa;font-size:0.8rem;"></i></div>'
+            + '<div><div style="font-size:0.82rem;font-weight:700;color:#fff;">My Analyses</div><div style="font-size:0.68rem;color:var(--steel);">Saved runs</div></div></button>'
+            + '<button onclick="showTeamPanel()" style="' + _btnBase + '" onmouseover="this.style.borderColor=\'rgba(0,170,255,0.5)\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 6px 20px rgba(0,170,255,0.12)\';" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\';">' 
+            + '<div style="width:32px;height:32px;border-radius:10px;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;"><i class="fas fa-users" style="color:var(--accent);font-size:0.8rem;"></i></div>'
+            + '<div><div style="font-size:0.82rem;font-weight:700;color:#fff;">Team</div><div style="font-size:0.68rem;color:var(--steel);">Workspace roles</div></div></button>'
+            + '<button onclick="showWebhookSettings()" style="' + _btnBase + '" onmouseover="this.style.borderColor=\'rgba(201,168,76,0.5)\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 6px 20px rgba(201,168,76,0.12)\';" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\';">' 
+            + '<div style="width:32px;height:32px;border-radius:10px;background:rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:center;"><i class="fas fa-plug" style="color:#c9a84c;font-size:0.8rem;"></i></div>'
+            + '<div><div style="font-size:0.82rem;font-weight:700;color:#fff;">Webhooks</div><div style="font-size:0.68rem;color:var(--steel);">Integrations</div></div></button>'
+            + '<button onclick="exportPDF()" style="' + _btnBase + '" onmouseover="this.style.borderColor=\'rgba(255,107,107,0.5)\';this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 6px 20px rgba(255,107,107,0.12)\';" onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\';">' 
+            + '<div style="width:32px;height:32px;border-radius:10px;background:rgba(255,107,107,0.1);display:flex;align-items:center;justify-content:center;"><i class="fas fa-file-pdf" style="color:#ff6b6b;font-size:0.8rem;"></i></div>'
+            + '<div><div style="font-size:0.82rem;font-weight:700;color:#fff;">PDF Export</div><div style="font-size:0.68rem;color:var(--steel);">Reports</div></div></button>';
         wrapper.appendChild(btnGroup);
     }
     // Inject on tool open and after DOM settles
