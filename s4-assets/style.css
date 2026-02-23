@@ -14,8 +14,8 @@
     --text-muted: #5a5e72;
     --border: rgba(255,255,255,0.06);
     --border-hover: rgba(255,255,255,0.12);
-    --radius: 12px;
-    --radius-lg: 20px;
+    --radius: 6px;
+    --radius-lg: 10px;
     --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
@@ -65,11 +65,11 @@ a:hover { color: var(--accent); opacity: 0.85; }
 }
 .nav-links a:hover { color: var(--text-primary); }
 .nav-cta {
-    background: var(--text-primary) !important; color: var(--bg) !important;
-    padding: 8px 20px !important; border-radius: 8px; font-weight: 600 !important;
+    background: #00aaff !important; color: #fff !important;
+    padding: 8px 20px !important; border-radius: 6px; font-weight: 600 !important;
     font-size: 0.8125rem !important; transition: opacity var(--transition);
 }
-.nav-cta:hover { opacity: 0.85; color: var(--bg) !important; }
+.nav-cta:hover { opacity: 0.85; color: #fff !important; }
 .nav-mobile-toggle {
     display: none; background: none; border: none; color: var(--text-primary);
     font-size: 1.25rem; cursor: pointer; padding: 8px;
@@ -100,14 +100,14 @@ a:hover { color: var(--accent); opacity: 0.85; }
 /* ═══ Buttons ═══ */
 .btn-primary {
     display: inline-flex; align-items: center; gap: 8px; background: var(--accent);
-    color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none;
+    color: #fff; padding: 14px 32px; border-radius: 6px; text-decoration: none;
     font-weight: 600; font-size: 0.9375rem; transition: all var(--transition);
     border: none; cursor: pointer;
 }
 .btn-primary:hover { background: #0099ee; color: #fff; }
 .btn-ghost {
     display: inline-flex; align-items: center; gap: 8px; background: transparent;
-    color: var(--text-secondary); padding: 14px 32px; border-radius: 10px;
+    color: var(--text-secondary); padding: 14px 32px; border-radius: 6px;
     text-decoration: none; font-weight: 500; font-size: 0.9375rem;
     border: 1px solid var(--border-hover); transition: all var(--transition);
 }
@@ -405,7 +405,7 @@ textarea { min-height: 120px; resize: vertical; }
 /* ═══ Back to Top ═══ */
 .back-to-top {
     position: fixed; bottom: 24px; right: 24px; width: 40px; height: 40px;
-    border-radius: 10px; background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: 6px; background: var(--bg-elevated); border: 1px solid var(--border);
     color: var(--text-secondary); font-size: 1rem; cursor: pointer;
     transition: all var(--transition); z-index: 999; display: none;
 }

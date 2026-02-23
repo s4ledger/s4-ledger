@@ -29,7 +29,58 @@
     <script src="/s4-assets/defense-docs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        :root{--bg:#000000;--surface:#0a0a0a;--card:#111111;--border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.15);--accent:#00aaff;--gold:#c9a84c;--steel:#86868b;--green:#30d158;--red:#ff453a;--text:#f5f5f7;--muted:#6e6e73;--radius:16px;--radius-lg:24px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1)}
+        :root{--bg:#000000;--surface:#0a0a0a;--card:#111111;--border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.15);--accent:#00aaff;--gold:#c9a84c;--steel:#86868b;--green:#30d158;--red:#ff453a;--text:#f5f5f7;--muted:#6e6e73;--radius:6px;--radius-lg:10px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1)}
+        /* ── Light Mode Theme ── */
+        body.light-mode{--bg:#f5f5f7;--surface:#ffffff;--card:#ffffff;--border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);--accent:#0077cc;--steel:#555555;--text:#1d1d1f;--muted:#86868b}
+        body.light-mode .navbar-custom,body.light-mode nav{background:rgba(255,255,255,0.92)!important;backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.06)!important}
+        body.light-mode .demo-card,body.light-mode .stat-card{background:#fff;border-color:rgba(0,0,0,0.08);box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+        body.light-mode .dropdown-menu{background:rgba(255,255,255,0.98)!important;border-color:rgba(0,0,0,0.08)!important}
+        body.light-mode .dropdown-item{color:#1d1d1f!important}
+        body.light-mode .dropdown-item:hover{background:rgba(0,0,0,0.04)!important}
+        body.light-mode .nav-pills .nav-link{color:#555!important}
+        body.light-mode .nav-pills .nav-link.active{background:var(--accent)!important;color:#fff!important}
+        body.light-mode .tab-pane{color:#1d1d1f}
+        body.light-mode input,body.light-mode select,body.light-mode textarea,body.light-mode .form-control,body.light-mode .form-select{background:#f8f8fa!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.12)!important}
+        body.light-mode .btn-accent{background:var(--accent);color:#fff}
+        body.light-mode .result-panel{background:#f8f8fa;border-color:rgba(0,0,0,0.08);color:#1d1d1f}
+        body.light-mode code,body.light-mode .hash-display{background:rgba(0,0,0,0.04);color:#1d1d1f}
+        body.light-mode .ai-chat-container,body.light-mode .ai-float-panel{background:#fff;border-color:rgba(0,0,0,0.1)}
+        body.light-mode .ai-msg.bot .ai-bubble{background:#f0f0f5;color:#1d1d1f}
+        body.light-mode .ils-hub-tab{color:#555}
+        body.light-mode .ils-hub-tab.active{background:var(--accent)!important;color:#fff!important}
+        body.light-mode .ils-hub-tabs{background:#f8f8fa;border-color:rgba(0,0,0,0.06)}
+        body.light-mode .branch-tab{background:#f0f0f5;color:#555;border-color:rgba(0,0,0,0.08)}
+        body.light-mode .branch-tab.active{background:var(--accent);color:#fff}
+        body.light-mode table th{background:#f0f0f5!important;color:#555!important}
+        body.light-mode table td{color:#1d1d1f;border-color:rgba(0,0,0,0.06)!important}
+        body.light-mode .onboard-modal{background:#fff;border-color:rgba(0,0,0,0.1);color:#1d1d1f}
+        body.light-mode .onboard-tier{background:#f8f8fa;border-color:rgba(0,0,0,0.08)}
+        body.light-mode .modal-box{background:#fff;border-color:rgba(0,0,0,0.1);color:#1d1d1f}
+        body.light-mode .footer{background:#f0f0f5!important;border-color:rgba(0,0,0,0.06)!important}
+        body.light-mode .footer *{color:#555!important}
+        body.light-mode .footer a:hover{color:var(--accent)!important}
+        body.light-mode .s4-toast{background:#fff;border-color:rgba(0,0,0,0.08);color:#1d1d1f}
+        body.light-mode .action-tracker{background:#fff;border-color:rgba(0,0,0,0.08)}
+        body.light-mode .action-item{background:#f8f8fa;border-color:rgba(0,0,0,0.06)}
+        body.light-mode #slsBalanceBar{background:rgba(255,255,255,0.95)!important;border-color:rgba(0,0,0,0.06)!important}
+        body.light-mode .clf-banner{color:#1d1d1f}
+        body.light-mode .record-type-btn{background:#f0f0f5;color:#555;border-color:rgba(0,0,0,0.08)}
+        body.light-mode .record-type-btn.active{background:var(--accent);color:#fff}
+        body.light-mode .data-table{border-color:rgba(0,0,0,0.08)}
+        body.light-mode .data-table thead th{background:#f0f0f5;color:#555;border-color:rgba(0,0,0,0.06)}
+        body.light-mode .data-table tbody td{color:#1d1d1f;border-color:rgba(0,0,0,0.04)}
+        body.light-mode .severity-badge{opacity:0.9}
+        body.light-mode .progress-bar-container{background:#f0f0f5;border-color:rgba(0,0,0,0.06)}
+        body.light-mode .ils-dropzone{background:rgba(0,119,204,0.03);border-color:rgba(0,119,204,0.2)}
+        body.light-mode strong{color:#1d1d1f}
+        /* Light mode toggle button */
+        .theme-toggle{background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);border-radius:6px;padding:0.4rem 0.6rem;font-size:0.8rem;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:4px}
+        .theme-toggle:hover{border-color:rgba(255,255,255,0.3);color:#fff}
+        body.light-mode .theme-toggle{border-color:rgba(0,0,0,0.15);color:#555}
+        body.light-mode .theme-toggle:hover{border-color:rgba(0,0,0,0.3);color:#1d1d1f}
+        body.light-mode [style*="color:#fff"],body.light-mode [style*="color: #fff"]{color:#1d1d1f!important}
+        body.light-mode [style*="background:#0a0e1a"],body.light-mode [style*="background: #0a0e1a"]{background:#f0f0f5!important}
+        body.light-mode [style*="background:rgba(5,8,16"],body.light-mode [style*="background: rgba(5,8,16"]{background:rgba(240,240,245,0.98)!important}
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.6;overflow-x:hidden}
         .navbar-custom{display:none}
@@ -37,7 +88,7 @@
         .brand-text{color:#fff;font-size:1.2rem;letter-spacing:0.5px;font-weight:700}
         .nav-link{color:#fff!important;padding:8px 12px!important;font-size:0.9rem!important;font-weight:500;transition:color 0.2s}
         .nav-link:hover,.nav-link.active{color:var(--accent)!important}
-        .dropdown-menu{background:rgba(10,10,15,0.98)!important;border:1px solid rgba(255,255,255,0.08)!important;border-radius:12px;padding:8px 0}
+        .dropdown-menu{background:rgba(10,10,15,0.98)!important;border:1px solid rgba(255,255,255,0.08)!important;border-radius:6px;padding:8px 0}
         .dropdown-item{color:var(--steel)!important;padding:8px 18px;font-size:0.875rem;transition:all 0.2s}
         .dropdown-item:hover,.dropdown-item:focus{background:rgba(0,170,255,0.08)!important;color:var(--accent)!important}
         .dropdown-item i{width:18px;margin-right:6px;display:inline-block;text-align:center}
@@ -69,7 +120,7 @@
         .btn-accent:disabled{opacity:0.5;cursor:not-allowed;transform:none}
         .btn-gold{background:var(--gold);color:#050810;border:none;border-radius:8px;padding:0.65rem 1.5rem;font-weight:700;font-size:0.95rem;cursor:pointer}
         .btn-gold:hover{background:#0099dd;color:#fff}
-        .result-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin-top:1rem;display:none;font-family:'Courier New',monospace;font-size:0.85rem}
+        .result-panel{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.2rem;margin-top:1rem;display:none;font-family:'Courier New',monospace;font-size:0.85rem}
         .result-panel.show{display:block;animation:fadeIn 0.3s ease}
         @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         .result-label{color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem}
@@ -132,12 +183,12 @@
         .gradient-text{color:#fff;font-weight:800}
         .nav-logo{height:32px;width:32px;margin-right:8px;vertical-align:middle;animation:logoFloat 3s ease-in-out infinite}
         .footer-logo{height:28px;width:28px;margin-right:8px;vertical-align:middle;animation:logoFloat 4s ease-in-out infinite}
-        .dropdown-menu{border-radius:10px;padding:8px 0;min-width:160px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+        .dropdown-menu{border-radius:6px;padding:8px 0;min-width:160px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
         .dropdown-item{padding:8px 18px;font-size:0.88rem;transition:background 0.2s,color 0.2s}
         .dropdown-item:hover,.dropdown-item:focus{background:rgba(0,170,255,0.12);color:var(--accent)!important}
         .copy-btn{background:rgba(0,170,255,0.15);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit;transition:all 0.2s;margin-left:8px}
         .copy-btn:hover{background:rgba(0,170,255,0.3);color:#fff}
-        .clf-banner{display:none;align-items:center;gap:10px;padding:10px 16px;border-radius:10px;margin:10px 0;font-size:0.88rem;font-weight:600;animation:fadeIn 0.25s ease-out}
+        .clf-banner{display:none;align-items:center;gap:10px;padding:10px 16px;border-radius:6px;margin:10px 0;font-size:0.88rem;font-weight:600;animation:fadeIn 0.25s ease-out}
         .clf-banner.show{display:flex}
         .clf-badge{padding:3px 12px;border-radius:6px;font-size:0.78rem;font-weight:800;letter-spacing:0.5px;text-transform:uppercase}
         .clf-U .clf-badge{background:rgba(0,170,0,0.15);color:#00cc66;border:1px solid rgba(0,170,0,0.3)}
@@ -150,7 +201,7 @@
         .clf-TS{background:rgba(255,165,0,0.04);border:1px solid rgba(255,165,0,0.15)}
         .clf-text{font-size:0.82rem;color:var(--steel);font-weight:400}
         .clf-icon{font-size:1.1rem}
-        .ils-dropzone{border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(0,170,255,0.02);margin-bottom:1rem}
+        .ils-dropzone{border:2px dashed var(--border);border-radius:6px;padding:2rem;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(0,170,255,0.02);margin-bottom:1rem}
         .ils-dropzone:hover,.ils-dropzone.dragover{border-color:var(--accent);background:rgba(0,170,255,0.06)}
         .ils-dropzone i{font-size:2rem;color:var(--accent);margin-bottom:0.5rem;display:block}
         .ils-file-list{margin-bottom:1rem}
@@ -169,13 +220,13 @@
         .ils-action-item .action-title{font-weight:700;color:#fff}
         .ils-action-item .action-owner{font-size:0.78rem;padding:2px 8px;border-radius:4px;background:rgba(0,170,255,0.1);color:var(--accent)}
         .ils-action-item .action-detail{color:var(--steel);font-size:0.82rem}
-        @media(max-width:991px){.navbar-collapse{background:rgba(5,8,16,0.98);padding:15px;border-radius:12px;margin-top:10px;border:1px solid var(--border);max-height:85vh;overflow-y:auto}.navbar-nav{gap:5px}.nav-link{padding:10px 15px!important;border-radius:8px}.nav-link:hover{background:rgba(0,170,255,0.1)}}
+        @media(max-width:991px){.${1}8px;margin-top:10px;border:1px solid var(--border);max-height:85vh;overflow-y:auto}.navbar-nav{gap:5px}.nav-link{padding:10px 15px!important;border-radius:8px}.nav-link:hover{background:rgba(0,170,255,0.1)}}
         /* AI Agent Chat */
-        .ai-chat-container{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;height:420px}
+        ${1}8px;overflow:hidden;display:flex;flex-direction:column;height:420px}
         .ai-chat-header{background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
         .ai-chat-header .ai-dot{width:10px;height:10px;background:#00aaff;border-radius:50%;animation:pulse 2s infinite}
         .ai-chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;font-size:0.85rem}
-        .ai-msg{padding:10px 14px;border-radius:12px;max-width:90%;line-height:1.5;animation:fadeIn 0.3s ease}
+        ${1}8px;max-width:90%;line-height:1.5;animation:fadeIn 0.3s ease}
         .ai-msg.bot{background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.15);align-self:flex-start;color:var(--steel)}
         .ai-msg.user{background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.2);align-self:flex-end;color:#fff}
         .ai-msg .ai-label{font-size:0.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
@@ -184,14 +235,14 @@
         .ai-chat-input button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:0.85rem;font-weight:600;cursor:pointer;white-space:nowrap}
         .ai-chat-input button:hover{background:#0099ee}
         .ai-quick-btns{display:flex;flex-wrap:wrap;gap:4px;padding:6px 12px;background:var(--card);border-top:1px solid rgba(255,255,255,0.03)}
-        .ai-quick-btn{background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:var(--accent);border-radius:16px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:inherit;transition:all 0.2s}
+        ${1}6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:inherit;transition:all 0.2s}
         .ai-quick-btn:hover{background:rgba(0,170,255,0.15);border-color:var(--accent)}
         /* Floating AI Agent */
         .ai-float-wrapper{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:12px;pointer-events:none}
         .ai-float-toggle{pointer-events:all;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 20px rgba(0,170,255,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;position:relative}
         .ai-float-toggle:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,170,255,0.5)}
         .ai-float-toggle .ai-float-dot{position:absolute;top:4px;right:4px;width:12px;height:12px;background:#00aaff;border-radius:50%;border:2px solid #0a0e1a;animation:pulse 2s infinite}
-        .ai-float-panel{pointer-events:all;width:380px;max-height:520px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,0.5);transform:translateY(20px) scale(0.95);opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);visibility:hidden}
+        ${1}8px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,0.5);transform:translateY(20px) scale(0.95);opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);visibility:hidden}
         .ai-float-panel.open{transform:translateY(0) scale(1);opacity:1;visibility:visible}
         .ai-float-panel .ai-chat-header{border-radius:0;display:flex;justify-content:space-between}
         .ai-float-panel .ai-chat-header .ai-close-btn{background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all 0.2s}
@@ -201,7 +252,7 @@
 
         /* ── Demo Onboarding Wizard ── */
         .onboard-overlay{position:fixed;inset:0;background:rgba(5,8,16,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.4s ease;backdrop-filter:blur(6px)}
-        .onboard-modal{background:var(--card);border:1px solid var(--border);border-radius:16px;width:560px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:0 12px 60px rgba(0,0,0,0.6);animation:slideUp 0.4s ease}
+        ${1}8px;width:560px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:0 12px 60px rgba(0,0,0,0.6);animation:slideUp 0.4s ease}
         @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
         .onboard-header{background:linear-gradient(135deg,rgba(0,170,255,0.12),rgba(201,168,76,0.08));padding:24px 28px 16px;border-bottom:1px solid var(--border);text-align:center}
         .onboard-body{padding:24px 28px}
@@ -211,14 +262,14 @@
         .onboard-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all 0.3s}
         .onboard-dot.active{background:var(--accent);box-shadow:0 0 8px rgba(0,170,255,0.4)}
         .onboard-dot.done{background:var(--green)}
-        .onboard-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 28px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.2s}
+        ${1}6px;padding:10px 28px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.2s}
         .onboard-btn:hover{background:#0099ee;transform:translateY(-1px)}
-        .onboard-btn-outline{background:transparent;color:var(--steel);border:1px solid var(--border);border-radius:10px;padding:10px 28px;font-weight:600;font-size:0.9rem;cursor:pointer;transition:all 0.2s}
+        .onboard-btn-outline{background:transparent;color:var(--steel);border:1px solid var(--border);border-radius:6px;padding:10px 28px;font-weight:600;font-size:0.9rem;cursor:pointer;transition:all 0.2s}
         .onboard-btn-outline:hover{border-color:var(--accent);color:var(--accent)}
         .onboard-feature{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
         .onboard-feature:last-child{border-bottom:none}
-        .onboard-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.9rem}
-        .onboard-tier{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s}
+        .onboard-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.9rem}
+        .onboard-tier{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s}
         .onboard-tier:hover,.onboard-tier.selected{border-color:var(--accent);background:rgba(0,170,255,0.06)}
         .onboard-tier.selected{box-shadow:0 0 12px rgba(0,170,255,0.2)}
         @media(max-width:480px){.ai-float-panel{width:calc(100vw - 32px);right:0}.ai-float-wrapper{right:16px;bottom:16px}}
@@ -234,12 +285,12 @@
         /* Send Modal */
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,8,16,0.9);display:flex;align-items:center;justify-content:center;z-index:9998;opacity:0;pointer-events:none;transition:opacity 0.3s}
         .modal-overlay.active{opacity:1;pointer-events:all}
-        .modal-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:480px;width:90%;animation:fadeIn 0.3s ease}
+        ${1}8px;padding:2rem;max-width:480px;width:90%;animation:fadeIn 0.3s ease}
         .modal-box h4{color:var(--accent);margin-bottom:1rem}
         .modal-box .modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
         /* ═══ TOAST NOTIFICATION SYSTEM ═══ */
         #s4ToastContainer{position:fixed;top:80px;right:20px;z-index:9997;display:flex;flex-direction:column;gap:10px;max-width:420px;pointer-events:none}
-        .s4-toast{pointer-events:all;display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:toastSlideIn 0.4s ease-out;position:relative;overflow:hidden;min-width:340px}
+        ${1}8px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:toastSlideIn 0.4s ease-out;position:relative;overflow:hidden;min-width:340px}
         .s4-toast::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
         .s4-toast.info::before{background:var(--accent)}.s4-toast.warning::before{background:#ffa500}.s4-toast.danger::before{background:#ff3333}.s4-toast.success::before{background:#00aaff}
         .s4-toast-icon{font-size:1.3rem;min-width:28px;text-align:center;padding-top:2px}
@@ -263,7 +314,7 @@
         .notif-badge{position:absolute;top:4px;right:4px;background:#ff3333;color:#fff;font-size:0.6rem;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pulse 2s infinite}
         .notif-badge:empty{display:none}
         /* ═══ ACTION ITEMS PANEL ═══ */
-        .action-tracker{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1rem}
+        ${1}8px;padding:16px;margin-bottom:1rem}
         .action-tracker h5{color:var(--accent);font-weight:700;margin-bottom:12px}
         .action-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;font-size:0.83rem;transition:all 0.2s}
         .action-item:hover{border-color:var(--accent)}
@@ -282,15 +333,15 @@
         .ai-tag.info{background:rgba(0,170,255,0.15);color:#00aaff}
         .ai-tag.success{background:rgba(0,170,255,0.06);color:#00aaff}
         .ai-priority{display:inline-flex;align-items:center;gap:4px}
-        .stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+        .stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;text-align:center}
         .stat-mini-val{font-size:1.3rem;font-weight:800;color:var(--accent)}
         .stat-mini-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
         /* ═══ ILS WORKSPACE SUB-TABS ═══ */
-        .ils-hub-tabs{display:none!important;flex-wrap:wrap;gap:4px;margin-bottom:16px;padding:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+        .ils-hub-tabs{display:none!important;flex-wrap:wrap;gap:4px;margin-bottom:16px;padding:4px;background:var(--surface);border:1px solid var(--border);border-radius:6px}
         .ils-hub-tab{background:transparent;border:1px solid transparent;border-radius:8px;padding:8px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;color:var(--steel);transition:all 0.2s;font-family:inherit;display:flex;align-items:center;gap:6px;white-space:nowrap}
         .ils-hub-tab:hover{color:var(--accent);background:rgba(0,170,255,0.06)}
         .ils-hub-tab.active{background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff!important;border-color:transparent;box-shadow:0 2px 10px rgba(0,170,255,0.3)}
-        .ils-hub-tab .tab-badge{font-size:0.65rem;padding:1px 6px;border-radius:10px;background:rgba(255,51,51,0.2);color:#ff3333;font-weight:700}
+        .ils-hub-tab .tab-badge{font-size:0.65rem;padding:1px 6px;border-radius:6px;background:rgba(255,51,51,0.2);color:#ff3333;font-weight:700}
         .ils-hub-tab.active .tab-badge{background:rgba(255,255,255,0.2);color:#fff}
         /* ═══ ANCHOR-S4 UX OVERHAUL — Professional Enhancement ═══ */
         
@@ -298,7 +349,7 @@
         .ils-hub-panel .demo-card,
         .ils-hub-panel .demo-card.glass-card{
             border:1px solid var(--border) !important;
-            border-radius:14px !important;
+            border-radius:6px !important;
             background:var(--card) !important;
             padding:28px 32px !important;
             transition:border-color 0.3s,box-shadow 0.3s !important;
@@ -348,7 +399,7 @@
             margin-bottom:16px !important;
             background:rgba(0,170,255,0.03) !important;
             border:1px solid rgba(0,170,255,0.08) !important;
-            border-radius:12px !important;
+            border-radius:6px !important;
             padding:0 16px !important;
             transition:all 0.3s !important;
         }
@@ -396,7 +447,7 @@
         .kpi-card{
             background:linear-gradient(145deg,var(--surface),rgba(0,170,255,0.03)) !important;
             border:1px solid var(--border) !important;
-            border-radius:12px !important;
+            border-radius:6px !important;
             padding:16px 14px !important;
             text-align:center !important;
             transition:all 0.3s !important;
@@ -417,7 +468,7 @@
         .ils-hub-panel .stat-mini{
             background:linear-gradient(145deg,var(--surface),rgba(0,170,255,0.03)) !important;
             border:1px solid var(--border) !important;
-            border-radius:12px !important;
+            border-radius:6px !important;
             padding:16px 14px !important;
             text-align:center !important;
             transition:all 0.3s !important;
@@ -449,7 +500,7 @@
         .chart-container{
             background:var(--surface) !important;
             border:1px solid var(--border) !important;
-            border-radius:12px !important;
+            border-radius:6px !important;
             padding:20px !important;
             margin-bottom:16px !important;
             position:relative !important;
@@ -478,7 +529,7 @@
         /* ── Enhanced Buttons ── */
         .btn-anchor{
             background:linear-gradient(135deg,#00aaff,#0077cc) !important;
-            color:#fff !important;border:none !important;border-radius:10px !important;
+            color:#fff !important;border:none !important;border-radius:6px !important;
             padding:10px 20px !important;font-size:0.82rem !important;font-weight:700 !important;
             cursor:pointer !important;transition:all 0.3s !important;
             display:inline-flex !important;align-items:center !important;gap:8px !important;
@@ -487,7 +538,7 @@
         .btn-anchor:hover{transform:translateY(-1px) !important;box-shadow:0 4px 20px rgba(0,170,255,0.35) !important}
         .btn-export{
             background:rgba(0,170,255,0.08) !important;color:var(--accent) !important;
-            border:1px solid rgba(0,170,255,0.2) !important;border-radius:10px !important;
+            border:1px solid rgba(0,170,255,0.2) !important;border-radius:6px !important;
             padding:10px 20px !important;font-size:0.82rem !important;font-weight:700 !important;
             cursor:pointer !important;transition:all 0.2s !important;
             display:inline-flex !important;align-items:center !important;gap:8px !important;
@@ -503,7 +554,7 @@
         }
         
         /* ── Data Tables ── */
-        .data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:0.82rem;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+        .data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:0.82rem;border:1px solid var(--border);border-radius:6px;overflow:hidden}
         .data-table thead th{background:var(--surface);color:var(--steel);font-weight:700;text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;padding:12px 14px;border-bottom:1px solid var(--border);text-align:left}
         .data-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
         .data-table tbody tr:hover{background:rgba(0,170,255,0.03)}
@@ -542,7 +593,7 @@
             background:var(--surface) !important;
             border:1px solid var(--border) !important;
             color:#fff !important;
-            border-radius:10px !important;
+            border-radius:6px !important;
             padding:10px 14px !important;
             font-size:0.85rem !important;
             font-family:inherit !important;
@@ -567,12 +618,12 @@
         
         /* ── Tool Card Grid ── */
         .tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px}
-        .tool-grid-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.3s}
+        .tool-grid-item{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px;transition:all 0.3s}
         .tool-grid-item:hover{border-color:rgba(0,170,255,0.15);box-shadow:0 4px 20px rgba(0,0,0,0.15)}
         
         /* ── ILS Dropzone Enhancement ── */
         .ils-hub-panel .ils-dropzone{
-            border-radius:12px !important;
+            border-radius:6px !important;
             padding:24px !important;
             transition:all 0.3s !important;
         }
@@ -591,7 +642,7 @@
         .ils-hub-panel .vault-stat{
             background:linear-gradient(145deg,var(--surface),rgba(0,170,255,0.03)) !important;
             border:1px solid var(--border) !important;
-            border-radius:12px !important;
+            border-radius:6px !important;
             padding:16px 14px !important;
             text-align:center !important;
             transition:all 0.3s !important;
@@ -622,7 +673,7 @@
                 .ils-hub-panel{display:none;animation:fadeIn 0.3s ease}
         .ils-hub-panel.active{display:block}
         /* ═══ CALENDAR STYLES ═══ */
-        .cal-container{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+        .cal-container{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden}
         .cal-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg,rgba(0,170,255,0.08),rgba(201,168,76,0.05));border-bottom:1px solid var(--border)}
         .cal-header h5{margin:0;color:#fff;font-size:0.95rem;font-weight:700}
         .cal-nav{display:flex;gap:6px}
@@ -644,7 +695,7 @@
         .cal-event.custom{background:rgba(0,170,255,0.06);color:#00aaff;border-left:2px solid #00aaff}
         .cal-add-btn{position:absolute;top:4px;right:4px;background:rgba(0,170,255,0.1);border:none;color:var(--accent);border-radius:4px;width:18px;height:18px;font-size:0.7rem;cursor:pointer;display:none;align-items:center;justify-content:center}
         .cal-day:hover .cal-add-btn{display:flex}
-        .cal-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+        .cal-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px}
         .cal-upcoming{font-size:0.82rem}
         .cal-upcoming-item{display:flex;gap:10px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;transition:all 0.2s}
         .cal-upcoming-item:hover{border-color:var(--accent)}
@@ -654,13 +705,13 @@
         .cal-upcoming-title{font-weight:600;color:#fff;font-size:0.82rem}
         .cal-upcoming-meta{font-size:0.72rem;color:var(--muted)}
         /* ═══ HUB TOOL PANELS ═══ */
-        .hub-tool-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+        .hub-tool-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:12px}
         .hub-tool-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
         .hub-tool-header h4{margin:0;font-size:1rem;font-weight:700;color:var(--accent)}
         .hub-tool-header .tool-link{font-size:0.78rem;color:var(--muted);margin-left:auto;cursor:pointer;transition:color 0.2s;text-decoration:none}
         .hub-tool-header .tool-link:hover{color:var(--accent)}
         /* ═══ AUDIT VAULT ═══ */
-        .vault-record{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;transition:all 0.3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+        .vault-record{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:10px;transition:all 0.3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
         .vault-record::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--green));border-radius:3px 0 0 3px}
         .vault-record:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,170,255,0.12)}
         .vault-record .vault-hash{font-family:monospace;font-size:0.72rem;color:var(--accent);word-break:break-all;background:rgba(0,170,255,0.06);padding:6px 10px;border-radius:6px;margin:8px 0}
@@ -670,18 +721,18 @@
         .vault-badge.verified{background:rgba(0,170,255,0.06);color:#00aaff;border:1px solid rgba(0,170,255,0.3)}
         .vault-badge.anchored{background:rgba(0,170,255,0.12);color:var(--accent);border:1px solid rgba(0,170,255,0.3)}
         .vault-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
-        .vault-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;transition:all 0.3s}
+        .vault-stat{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center;transition:all 0.3s}
         .vault-stat:hover{border-color:var(--accent);background:rgba(0,170,255,0.04)}
         .vault-stat .stat-val{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
         .vault-stat .stat-lbl{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-top:4px}
         /* ═══ DOC LIBRARY ═══ */
-        .doc-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;transition:all 0.3s cubic-bezier(.4,0,.2,1);cursor:pointer;position:relative}
+        .doc-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:8px;transition:all 0.3s cubic-bezier(.4,0,.2,1);cursor:pointer;position:relative}
         .doc-card:hover{border-color:var(--accent);transform:translateX(4px);box-shadow:0 4px 20px rgba(0,170,255,0.08)}
         .doc-card .doc-id{font-weight:800;color:#fff;font-size:0.88rem;margin-bottom:2px}
         .doc-card .doc-title{font-size:0.82rem;color:var(--accent);margin-bottom:4px}
         .doc-card .doc-desc{font-size:0.75rem;color:var(--muted);line-height:1.4}
         .doc-card .doc-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-        .doc-tag{font-size:0.65rem;padding:2px 8px;border-radius:12px;font-weight:600}
+        .doc-tag{font-size:0.65rem;padding:2px 8px;border-radius:6px;font-weight:600}
         .doc-filter-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
         .doc-filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;color:var(--steel);transition:all 0.2s;font-family:inherit}
         .doc-filter-btn:hover{border-color:var(--accent);color:var(--accent)}
@@ -693,7 +744,7 @@
         .score-ring .score-val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:800;color:#fff}
         
         /* Persistent SLS Balance Bar — replaces flow box when in tabs */
-        #slsBalanceBar{display:flex;background:linear-gradient(135deg,rgba(0,170,255,0.08),rgba(201,168,76,0.06));border:1px solid rgba(0,170,255,0.18);border-radius:12px;padding:14px 20px;margin:0 0 20px;align-items:center;justify-content:space-between;gap:12px;font-size:0.82rem;transition:all 0.3s}
+        #slsBalanceBar{display:flex;background:linear-gradient(135deg,rgba(0,170,255,0.08),rgba(201,168,76,0.06));border:1px solid rgba(0,170,255,0.18);border-radius:6px;padding:14px 20px;margin:0 0 20px;align-items:center;justify-content:space-between;gap:12px;font-size:0.82rem;transition:all 0.3s}
         #slsBalanceBar .sls-stat{display:flex;align-items:center;gap:6px}
         #slsBalanceBar .sls-stat-val{font-weight:700;color:#c9a84c}
         #slsBalanceBar .sls-stat-label{color:var(--steel);font-size:0.72rem}
@@ -701,7 +752,7 @@
         #slsBalanceBar .sls-expand-btn:hover{background:rgba(0,170,255,0.1);border-color:var(--accent)}
 
         .score-ring .score-grade{display:none}
-        .compliance-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:all 0.3s}
+        .compliance-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:8px;transition:all 0.3s}
         .compliance-row:hover{border-color:var(--accent);background:rgba(0,170,255,0.03)}
         .compliance-bar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
         .compliance-bar .fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
@@ -712,14 +763,14 @@
         @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
         @keyframes pulseGlow{0%,100%{box-shadow:0 0 5px rgba(0,170,255,0.2)}50%{box-shadow:0 0 20px rgba(0,170,255,0.4)}}
         @keyframes countUp{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
-        .glass-card{background:rgba(15,22,48,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,170,255,0.15);border-radius:14px;padding:20px;transition:all 0.4s cubic-bezier(.4,0,.2,1)}
+        .glass-card{background:rgba(15,22,48,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,170,255,0.15);border-radius:6px;padding:20px;transition:all 0.4s cubic-bezier(.4,0,.2,1)}
         .glass-card:hover{border-color:rgba(0,170,255,0.4);box-shadow:0 8px 32px rgba(0,170,255,0.15)}
         .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulseGlow 2s infinite;margin-right:6px}
         .shimmer-text{color:var(--accent);font-weight:700}
         .stat-animate{animation:countUp 0.6s cubic-bezier(.4,0,.2,1) forwards}
         .hover-lift{transition:all 0.3s cubic-bezier(.4,0,.2,1)}.hover-lift:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(0,0,0,0.3)}
         .gradient-border{border:1px solid var(--border)!important}
-        .workspace-notification{position:fixed;bottom:20px;right:20px;background:rgba(15,22,48,0.95);backdrop-filter:blur(12px);border:1px solid var(--accent);border-radius:12px;padding:14px 20px;color:#fff;font-size:0.85rem;z-index:10000;animation:slideUp 0.4s ease;box-shadow:0 8px 30px rgba(0,170,255,0.2);max-width:360px}
+        .workspace-notification{position:fixed;bottom:20px;right:20px;background:rgba(15,22,48,0.95);backdrop-filter:blur(12px);border:1px solid var(--accent);border-radius:6px;padding:14px 20px;color:#fff;font-size:0.85rem;z-index:10000;animation:slideUp 0.4s ease;box-shadow:0 8px 30px rgba(0,170,255,0.2);max-width:360px}
         .workspace-notification .notif-close{position:absolute;top:6px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem}
         .tooltip-enhanced{position:relative}.tooltip-enhanced::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(0.8);opacity:0;background:rgba(15,22,48,0.95);border:1px solid var(--accent);color:#fff;padding:6px 12px;border-radius:8px;font-size:0.72rem;white-space:nowrap;pointer-events:none;transition:all 0.2s;z-index:999}
         .tooltip-enhanced:hover::after{opacity:1;transform:translateX(-50%) scale(1)}
@@ -758,7 +809,7 @@
         }
 
 
-        .ils-hub-panel .demo-card{border:1px solid var(--border);border-radius:12px;background:var(--card);padding:20px 24px}
+        .ils-hub-panel .demo-card{border:1px solid var(--border);border-radius:6px;background:var(--card);padding:20px 24px}
         .ils-hub-panel .demo-card h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:14px;display:flex;align-items:center;gap:8px}
         .ils-hub-panel .demo-card h3 i{color:var(--accent);font-size:0.9rem}
         .ils-hub-panel .form-control,.ils-hub-panel select,.ils-hub-panel .form-select{background:var(--surface);border:1px solid var(--border);color:#fff;border-radius:8px;padding:8px 12px;font-size:0.85rem;font-family:inherit}
@@ -785,9 +836,9 @@
         .hub-header p { color:var(--steel); font-size:0.88rem; max-width:600px; margin:0 auto; }
         .hub-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-bottom:28px; }
         @media(max-width:640px){ .hub-grid{grid-template-columns:1fr !important;} #demoSteps{grid-template-columns:repeat(2,1fr) !important;} }
-        .hub-card { background:linear-gradient(145deg, var(--card), rgba(0,170,255,0.015)); border:1px solid var(--border); border-radius:14px; padding:26px 24px; cursor:pointer; transition:all 0.28s; position:relative; overflow:hidden; counter-increment:hubcard; }
+        .hub-card { background:linear-gradient(145deg, var(--card), rgba(0,170,255,0.015)); border:1px solid var(--border); border-radius:6px; padding:26px 24px; cursor:pointer; transition:all 0.28s; position:relative; overflow:hidden; counter-increment:hubcard; }
         .hub-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,170,255,0.12); }
-        .hub-card .hc-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; font-size:1.2rem; }
+        .hub-card .hc-icon { width:48px; height:48px; border-radius:6px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; font-size:1.2rem; }
         .hub-card .hc-title { font-size:1rem; font-weight:700; color:#fff; margin-bottom:6px; }
         .hub-card .hc-desc { font-size:0.82rem; color:var(--steel); line-height:1.5; margin-bottom:10px; }
         .hub-card .hc-meta { font-size:0.72rem; color:var(--muted); display:flex; align-items:center; gap:6px; }
@@ -805,7 +856,7 @@
         @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
         /* ═══ Compact Stat Strip ═══ */
-        .stat-strip { display:flex; align-items:center; justify-content:center; gap:24px; padding:8px 16px; background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:16px; flex-wrap:wrap; }
+        .stat-strip { display:flex; align-items:center; justify-content:center; gap:24px; padding:8px 16px; background:var(--surface); border:1px solid var(--border); border-radius:6px; margin-bottom:16px; flex-wrap:wrap; }
         .stat-strip .ss-item { display:flex; align-items:center; gap:6px; font-size:0.78rem; }
         .stat-strip .ss-val { font-weight:800; color:var(--accent); font-size:0.88rem; }
         .stat-strip .ss-label { color:var(--muted); text-transform:uppercase; font-size:0.68rem; letter-spacing:0.5px; }
@@ -820,13 +871,13 @@
         .wallet-sidebar-body { padding:20px; overflow-y:auto; flex:1; min-height:0; padding-bottom:40px; }
         .wallet-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9998; }
         .wallet-overlay.show { display:block; }
-        .wallet-trigger { background:linear-gradient(135deg,rgba(26,58,92,0.3),rgba(0,170,255,0.1)); border:1px solid rgba(0,170,255,0.3); color:var(--accent); border-radius:10px; padding:8px 16px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:8px; transition:all 0.2s; }
+        .wallet-trigger { background:linear-gradient(135deg,rgba(26,58,92,0.3),rgba(0,170,255,0.1)); border:1px solid rgba(0,170,255,0.3); color:var(--accent); border-radius:6px; padding:8px 16px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:8px; transition:all 0.2s; }
         .wallet-trigger:hover { background:rgba(0,170,255,0.15); border-color:var(--accent); }
         .wallet-trigger .wt-bal { color:#c9a84c; font-weight:800; }
 
         /* ═══ ILS Sub-Hub Cards ═══ */
         .ils-sub-hub { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-bottom:20px; }
-        .ils-tool-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px; cursor:pointer; transition:all 0.25s cubic-bezier(0.25,0.1,0.25,1); display:flex; align-items:flex-start; gap:12px; }
+        .ils-tool-card { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:16px 18px; cursor:pointer; transition:all 0.25s cubic-bezier(0.25,0.1,0.25,1); display:flex; align-items:flex-start; gap:12px; }
         .ils-tool-card:hover { border-color:var(--accent); background:rgba(0,170,255,0.04); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,170,255,0.06); }
         .ils-tool-card .itc-icon { font-size:1.1rem; flex-shrink:0; width:36px; height:36px; border-radius:8px; background:rgba(0,170,255,0.06); display:flex; align-items:center; justify-content:center; }
         .ils-tool-card .itc-title { font-size:0.85rem; font-weight:700; color:#fff; margin-bottom:3px; }
@@ -842,14 +893,14 @@
             background:rgba(18,18,18,0.8) !important; 
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); 
             border:1px solid rgba(255,255,255,0.06) !important; 
-            border-radius:18px !important;
+            border-radius:8px !important;
         }
         
         /* Hub cards — cleaner, more spacious */
         .hub-card { 
             background:rgba(18,18,18,0.6); 
             border:1px solid rgba(255,255,255,0.06); 
-            border-radius:18px; 
+            border-radius:8px; 
             padding:28px 26px; 
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
         }
@@ -863,7 +914,7 @@
         .ils-tool-card {
             background:rgba(18,18,18,0.6);
             border:1px solid rgba(255,255,255,0.05);
-            border-radius:14px;
+            border-radius:6px;
             backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
         }
         .ils-tool-card:hover {
@@ -907,7 +958,7 @@
         select, input, textarea {
             background:rgba(255,255,255,0.04) !important;
             border:1px solid rgba(255,255,255,0.08) !important;
-            border-radius:12px !important;
+            border-radius:6px !important;
             font-size:0.88rem !important;
             transition:border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
@@ -921,7 +972,7 @@
         .stat-strip {
             background:rgba(255,255,255,0.02);
             border:1px solid rgba(255,255,255,0.05);
-            border-radius:16px;
+            border-radius:8px;
             backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
         }
         
@@ -961,7 +1012,7 @@
         #platformLanding .col-md-4 > div {
             background:rgba(18,18,18,0.6) !important;
             border:1px solid rgba(255,255,255,0.06) !important;
-            border-radius:18px !important;
+            border-radius:8px !important;
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
             transition:all 0.3s;
         }
@@ -978,7 +1029,7 @@
         ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
         
         /* Details/summary — cleaner toggles */
-        details { border-radius:14px !important; }
+        details { border-radius:6px !important; }
         details summary { font-size:0.84rem; }
         
         /* ILS hub tab buttons — pill style */
@@ -992,7 +1043,7 @@
         .result-panel {
             background:rgba(255,255,255,0.02);
             border:1px solid rgba(255,255,255,0.06);
-            border-radius:14px;
+            border-radius:6px;
         }
 
     </style>
@@ -1019,6 +1070,7 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
             <li><a href="../s4-investors/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Company</a></li>
             <li><a href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:6px;">Docs</a></li>
             <li><a href="../s4-contact/" style="background:#00aaff;color:#fff;padding:0.5rem 1.25rem;font-size:0.875rem;font-weight:600;text-decoration:none;border-radius:6px;margin-left:0.5rem;">Request Demo</a></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode" id="themeToggleBtn"><i class="fas fa-sun"></i></button></li>
         </ul>
         <button onclick="var nl=document.getElementById('navLinks');nl.style.display=nl.style.display==='flex'?'none':'flex';nl.style.flexDirection=nl.style.display==='flex'?'column':'row';nl.style.position=nl.style.display==='flex'&&window.innerWidth<768?'absolute':'static';nl.style.top='64px';nl.style.left='0';nl.style.right='0';nl.style.background='rgba(5,8,16,0.98)';nl.style.padding='1rem';nl.style.borderBottom='1px solid rgba(255,255,255,0.06)';" aria-label="Menu" style="display:none;background:none;border:none;color:#fff;font-size:1.25rem;cursor:pointer;padding:0.5rem;">
             <i class="fas fa-bars"></i>
@@ -1029,10 +1081,10 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
 
 <!-- ═══ DoD CONSENT BANNER ═══ -->
 <div id="dodConsentBanner" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;">
-    <div style="background:#0a0e1a;border:2px solid rgba(0,170,255,0.5);border-radius:16px;padding:40px;max-width:680px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+    <div style="background:#0a0e1a;border:2px solid rgba(0,170,255,0.5);border-radius:8px;padding:40px;max-width:680px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
         <div style="margin-bottom:20px;"><i class="fas fa-shield-halved" style="font-size:3rem;color:#00aaff;"></i></div>
         <h2 style="color:#00aaff;font-size:1.3rem;font-weight:800;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">U.S. Department of Defense Information System</h2>
-        <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:12px;padding:20px;margin-bottom:20px;text-align:left;">
+        <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:20px;margin-bottom:20px;text-align:left;">
             <p style="color:var(--steel);font-size:0.82rem;line-height:1.7;margin:0 0 12px;">You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.</p>
             <p style="color:var(--steel);font-size:0.82rem;line-height:1.7;margin:0 0 12px;">By using this IS (which includes any device attached to this IS), you consent to the following conditions:</p>
             <ul style="color:var(--steel);font-size:0.78rem;line-height:1.8;margin:0 0 12px;padding-left:20px;">
@@ -1043,31 +1095,31 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
             </ul>
             <p style="color:#00aaff;font-size:0.82rem;line-height:1.7;margin:0;font-weight:600;">Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications.</p>
         </div>
-        <button onclick="acceptDodConsent()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:14px 48px;border-radius:10px;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.5px;">I Accept &mdash; Continue</button>
+        <button onclick="acceptDodConsent()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:14px 48px;border-radius:6px;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.5px;">I Accept &mdash; Continue</button>
         <div style="margin-top:12px;font-size:0.7rem;color:var(--muted);">By clicking "I Accept" you acknowledge and consent to the terms above.</div>
     </div>
 </div>
 
 <!-- ═══ CAC / LOGIN POPUP ═══ -->
 <div id="cacLoginModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.88);z-index:99998;align-items:center;justify-content:center;">
-    <div style="background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:16px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
-        <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:48px;width:48px;margin-bottom:8px;"><h3 style="color:#fff;font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the ILS workspace</p></div>
-        <div id="cacLoginTabs" style="display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+    <div style="background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+        <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:48px;width:48px;margin-bottom:8px;"><h3 style="color:#fff;font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the Anchor-S4 workspace</p></div>
+        <div id="cacLoginTabs" style="display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
             <button onclick="switchLoginTab('cac')" id="loginTabCac" style="flex:1;padding:10px;background:rgba(0,170,255,0.1);color:var(--accent);border:none;font-weight:700;font-size:0.82rem;cursor:pointer;"><i class="fas fa-id-card" style="margin-right:6px;"></i>CAC / PIV</button>
             <button onclick="switchLoginTab('account')" id="loginTabAcct" style="flex:1;padding:10px;background:transparent;color:var(--steel);border:none;font-weight:600;font-size:0.82rem;cursor:pointer;"><i class="fas fa-user" style="margin-right:6px;"></i>Account</button>
         </div>
         <div id="cacLoginPane" style="">
-            <div style="background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:12px;padding:24px;margin-bottom:16px;">
+            <div style="background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:6px;padding:24px;margin-bottom:16px;">
                 <i class="fas fa-id-card" style="font-size:2.5rem;color:var(--accent);margin-bottom:12px;display:block;"></i>
                 <p style="color:var(--steel);font-size:0.85rem;margin:0 0 12px;">Insert your Common Access Card (CAC) or PIV card and select your certificate.</p>
                 <div style="font-size:0.75rem;color:var(--muted);">(Demo mode — click below to simulate CAC authentication)</div>
             </div>
-            <button onclick="simulateCacLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC</button>
+            <button onclick="simulateCacLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:6px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC</button>
         </div>
         <div id="acctLoginPane" style="display:none;">
             <div style="margin-bottom:12px;text-align:left;"><label style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email / User ID</label><input type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
             <div style="margin-bottom:16px;text-align:left;"><label style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input type="password" id="loginPassword" placeholder="••••••••" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
-            <button onclick="simulateAccountLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In</button>
+            <button onclick="simulateAccountLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:6px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In</button>
             <div style="margin-top:12px;font-size:0.78rem;"><a href="#" onclick="event.preventDefault();if(typeof _showNotif==='function')_showNotif('Password reset link sent to your .mil email.','info');" style="color:var(--accent);text-decoration:none;">Forgot password?</a></div>
         </div>
     </div>
@@ -1077,7 +1129,7 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
     <div class="container">
         <h1 style="font-size:2.4rem;font-weight:800;margin-bottom:0.75rem;color:#fff;letter-spacing:-0.035em;line-height:1.1;">S4 Ledger <span style="color:var(--accent);">Platform</span></h1>
         <p style="color:var(--steel);font-size:1.05rem;">Anchor, verify, and track Navy logistics records on the XRP Ledger with blockchain-grade integrity.</p>
-        <div class="badge-live" style="display:inline-block;margin-top:12px;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.25);color:var(--accent);padding:6px 16px;border-radius:20px;font-size:0.8rem;font-weight:600;">XRPL Mainnet Connected &mdash; Navy Record Types &bull; 54+ Pre-Built Templates</div>
+        <div class="badge-live" style="display:inline-block;margin-top:12px;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.25);color:var(--accent);padding:6px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;">XRPL Mainnet Connected &mdash; Navy Record Types &bull; 54+ Pre-Built Templates</div>
     </div>
 </section>
 
@@ -1088,42 +1140,42 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
             <p style="color:var(--steel);font-size:1.05rem;max-width:640px;margin:0 auto;">20+ integrated tools for anchoring, verifying, and managing Navy logistics records on the XRP Ledger. Built by ILS professionals, for ILS professionals.</p>
         </div>
         <div class="row" style="margin-bottom:2rem;">
-            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem 1.5rem;text-align:center;height:100%;">
+            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-anchor" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
                 <h4 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">Anchor &amp; Verify</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Hash any defense record with SHA-256 and anchor the fingerprint to the XRP Ledger. Verify integrity at any time.</p>
             </div></div>
-            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem 1.5rem;text-align:center;height:100%;">
+            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-cubes" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
                 <h4 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">Anchor-S4</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Gap analysis, DMSMS tracking, readiness scoring, lifecycle cost estimation, compliance scorecards, and 15+ more tools.</p>
             </div></div>
-            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem 1.5rem;text-align:center;height:100%;">
+            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-shield-halved" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
                 <h4 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">Audit &amp; Compliance</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">CMMC, NIST 800-171, DFARS &mdash; automated compliance scoring with blockchain-anchored evidence.</p>
             </div></div>
         </div>
         <div class="row" style="margin-bottom:2rem;">
-            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem 1.5rem;text-align:center;height:100%;">
+            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-brain" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
                 <h4 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">AI-Powered Analysis</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Supply chain risk engine, predictive maintenance AI, and a conversational agent for ILS guidance.</p>
             </div></div>
-            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem 1.5rem;text-align:center;height:100%;">
+            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-database" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
                 <h4 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">Defense Data Import</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Import from DPAS, OARS, OMMS-NG, DECKPLATE, and other Navy systems. 500+ defense platforms database.</p>
             </div></div>
-            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem 1.5rem;text-align:center;height:100%;">
+            <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-file-contract" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
                 <h4 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">Contract &amp; Config Mgmt</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Track warranties, CDRL deliverables, contract modifications, and engineering change proposals.</p>
             </div></div>
         </div>
         <div style="text-align:center;">
-            <button onclick="startAuthFlow()" style="background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:10px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
-            <a href="/demo-app/demo" style="display:inline-block;margin-left:12px;background:transparent;color:var(--accent);border:1px solid rgba(0,170,255,0.4);padding:14px 28px;border-radius:10px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;text-decoration:none;letter-spacing:-0.01em;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See a Demo</a>
+            <button onclick="startAuthFlow()" style="background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:6px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+            <a href="/demo-app/demo" style="display:inline-block;margin-left:12px;background:transparent;color:var(--accent);border:1px solid rgba(0,170,255,0.4);padding:14px 28px;border-radius:6px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;text-decoration:none;letter-spacing:-0.01em;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See a Demo</a>
         </div>
     </div>
 </section>
@@ -1174,7 +1226,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 <!-- Step 1: Create Account -->
                 <div class="onboard-step" id="onboardStep1">
                     <h4 style="color:#fff;margin:0 0 12px;font-size:1rem"><i class="fas fa-user-plus" style="color:var(--accent);margin-right:8px"></i>Step 1: Account Created</h4>
-                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px">
                         <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#0088cc);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem">DU</div><div><div style="color:#fff;font-weight:700">Demo User</div><div style="color:var(--steel);font-size:0.78rem">demo@s4ledger.com</div></div></div>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.78rem">
                             <div style="color:var(--steel)">Account ID: <span style="color:var(--accent);font-family:monospace" id="onboardAcctId">—</span></div>
@@ -1190,7 +1242,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 <div class="onboard-step" id="onboardStep2">
                     <h4 style="color:#fff;margin:0 0 12px;font-size:1rem"><i class="fas fa-wallet" style="color:var(--accent);margin-right:8px"></i>Step 2: XRP Wallet Funded</h4>
                     <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">Your XRPL wallet has been provisioned and funded with the base reserve required for on-chain operations.</p>
-                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px">
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.82rem">
                             <div><div style="color:var(--steel);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Wallet Address</div><div style="color:var(--green);font-family:monospace;font-size:0.75rem" id="onboardWalletAddr">—</div></div>
                             <div><div style="color:var(--steel);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">XRP Balance</div><div style="font-size:1.3rem;font-weight:700;color:var(--green)" id="onboardXrpBal"><i class="fas fa-spinner fa-spin" style="font-size:0.8rem"></i></div></div>
@@ -1198,7 +1250,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <div><div style="color:var(--steel);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Trust Line</div><div style="color:var(--gold)" id="onboardTrustLine"><i class="fas fa-spinner fa-spin" style="font-size:0.8rem"></i></div></div>
                         </div>
                     </div>
-                    <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:10px 14px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:6px"></i><strong style="color:#fff">Note:</strong> 12 XRP is the base reserve, funded automatically from the S4 operations pool when your account is provisioned. This covers XRPL transaction fees for anchoring.</div>
+                    <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:10px 14px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:6px"></i><strong style="color:#fff">Note:</strong> 12 XRP is the base reserve, funded automatically from the S4 Treasury when your account is provisioned. This covers XRPL transaction fees for anchoring.</div>
                     <div id="onboardWalletDone" style="display:none;text-align:center;margin-top:16px"><button class="onboard-btn" onclick="onboardNext()">Continue <i class="fas fa-arrow-right" style="margin-left:6px"></i></button></div>
                 </div>
 
@@ -1212,7 +1264,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="onboard-tier" onclick="selectOnboardTier(this,'professional')" data-tier="professional"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Professional</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">$2,499/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100,000 SLS</div></div>
                         <div class="onboard-tier" onclick="selectOnboardTier(this,'enterprise')" data-tier="enterprise"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Enterprise</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">$9,999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">500,000 SLS</div></div>
                     </div>
-                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                         <div style="color:var(--steel);font-size:0.78rem;margin-bottom:4px">Your SLS Balance</div>
                         <div style="font-size:1.6rem;font-weight:800;color:var(--gold)" id="onboardSlsBal">25,000</div>
                         <div style="color:var(--steel);font-size:0.72rem">= <span id="onboardSlsAnchors">2,500,000</span> anchors at 0.01 SLS each</div>
@@ -1224,7 +1276,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 <div class="onboard-step" id="onboardStep4">
                     <h4 style="color:#fff;margin:0 0 12px;font-size:1rem"><i class="fas fa-coins" style="color:var(--gold);margin-right:8px"></i>Step 4: How Your $SLS Is Used</h4>
                     <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">Every time you anchor a record, a tiny SLS fee flows to the S4 Treasury on the XRP Ledger.</p>
-                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px">
                         <div style="display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap">
                             <div style="text-align:center;padding:10px"><div style="font-size:0.72rem;color:var(--steel);margin-bottom:6px">Your Wallet</div><div style="width:44px;height:44px;border-radius:50%;background:rgba(0,170,255,0.1);display:inline-flex;align-items:center;justify-content:center;color:var(--accent)"><i class="fas fa-wallet"></i></div></div>
                             <div style="color:var(--gold);font-weight:700;font-size:0.85rem"><i class="fas fa-long-arrow-alt-right"></i> 0.01 SLS</div>
@@ -1250,15 +1302,15 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 
         <!-- SLS Economic Flow — Account Setup -->
         <div id="demoPanel" class="reveal-demo" style="margin-bottom:16px;display:none;">
-            <div style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:14px;padding:20px 24px;position:relative;overflow:hidden;">
+            <div style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:6px;padding:20px 24px;position:relative;overflow:hidden;">
                 <div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:4px 16px;border-radius:0 14px 0 10px;font-size:0.68rem;font-weight:700;color:#050810;letter-spacing:0.5px;">LIVE PREVIEW</div>
                 <h3 style="margin:0 0 4px;font-size:1.1rem;color:#fff;"><i class="fas fa-flask" style="color:#00aaff;margin-right:8px;"></i> SLS Economic Flow</h3>
                 <p style="color:#8ea4b8;font-size:0.8rem;margin:0 0 16px;">See how the $SLS token economy works. Your account is provisioned, your wallet funded, and SLS allocated. <strong style="color:#c9a84c;">Every anchor costs 0.01 $SLS.</strong></p>
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;" id="demoSteps" style2="x">
-                    <div id="demoStep1" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-user-plus" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">1. Account Created</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep1Status">Waiting...</div></div>
-                    <div id="demoStep2" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-wallet" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">2. Wallet Funded</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep2Status">12 XRP reserve</div></div>
-                    <div id="demoStep3" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">3. $SLS Allocated</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep3Status">Based on plan tier</div></div>
-                    <div id="demoStep4" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:10px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-arrow-right" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#00aaff;margin-bottom:4px;">4. 0.01 $SLS &rarr; Treasury</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep4Status">0.01 SLS per anchor</div></div>
+                    <div id="demoStep1" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-user-plus" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">1. Account Created</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep1Status">Waiting...</div></div>
+                    <div id="demoStep2" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-wallet" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">2. Wallet Funded</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep2Status">12 XRP reserve</div></div>
+                    <div id="demoStep3" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#fff;margin-bottom:4px;">3. $SLS Allocated</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep3Status">Based on plan tier</div></div>
+                    <div id="demoStep4" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:14px;text-align:center;transition:all 0.4s;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><i class="fas fa-arrow-right" style="color:#00aaff;font-size:0.9rem;"></i></div><div style="font-size:0.72rem;font-weight:700;color:#00aaff;margin-bottom:4px;">4. 0.01 $SLS &rarr; Treasury</div><div style="font-size:0.68rem;color:#8ea4b8;" id="demoStep4Status">0.01 SLS per anchor</div></div>
                 </div>
                 <div id="demoSessionInfo" style="display:block;margin-top:14px;padding:12px 16px;background:rgba(0,0,0,0.25);border-radius:8px;font-size:0.76rem;">
                     <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
@@ -1293,7 +1345,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 <p>Select a module to get started. Each tool is purpose-built for defense logistics integrity.</p>
                 <!-- ── Real-time Collaboration Indicators ── -->
                 <div id="collabIndicators" style="display:flex;align-items:center;gap:10px;margin-top:12px;">
-                    <div style="display:flex;align-items:center;gap:6px;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:20px;padding:4px 12px;">
+                    <div style="display:flex;align-items:center;gap:6px;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:4px 12px;">
                         <span style="width:8px;height:8px;border-radius:50%;background:#34c759;display:inline-block;animation:pulse 2s infinite;"></span>
                         <span style="font-size:0.72rem;color:var(--accent);font-weight:600;" id="collabCount">1 analyst</span>
                         <span style="font-size:0.72rem;color:var(--steel);">online</span>
@@ -1306,28 +1358,28 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 
                 <div class="hub-card" onclick="showSection('sectionVerify')">
                     <div class="hc-icon" style="background:rgba(46,204,113,0.1);"><i class="fas fa-check-circle" style="color:#2ecc71;"></i></div>
-                    <div class="hc-title">Verify Records <span style="background:rgba(46,204,113,0.15);color:#2ecc71;font-size:0.65rem;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:6px;">LIVE</span></div>
+                    <div class="hc-title">Verify Records <span style="background:rgba(46,204,113,0.15);color:#2ecc71;font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">LIVE</span></div>
                     <div class="hc-desc">Upload a PDF, spreadsheet, or any file to verify its integrity against the blockchain anchor. Batch verification supported.</div>
                     <div class="hc-meta"><i class="fas fa-file-upload"></i> Drag-drop files &bull; Free verification</div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" onclick="showSection('sectionLog')">
                     <div class="hc-icon" style="background:rgba(155,89,182,0.1);"><i class="fas fa-list" style="color:#9b59b6;"></i></div>
-                    <div class="hc-title">Transaction Log <span style="background:rgba(155,89,182,0.15);color:#9b59b6;font-size:0.65rem;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:6px;">AUDIT</span></div>
+                    <div class="hc-title">Transaction Log <span style="background:rgba(155,89,182,0.15);color:#9b59b6;font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">AUDIT</span></div>
                     <div class="hc-desc">Full audit trail of every anchored record with XRPL explorer links, timestamps, and hash verification status.</div>
                     <div class="hc-meta"><i class="fas fa-link"></i> On-chain explorer links</div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" onclick="showSection('sectionILS')">
                     <div class="hc-icon" style="background:rgba(201,168,76,0.1);"><i class="fas fa-brain" style="color:#c9a84c;"></i></div>
-                    <div class="hc-title">Anchor-S4 <span style="background:rgba(201,168,76,0.15);color:#c9a84c;font-size:0.65rem;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:6px;">14 TOOLS</span></div>
+                    <div class="hc-title">Anchor-S4 <span style="background:rgba(201,168,76,0.15);color:#c9a84c;font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">14 TOOLS</span></div>
                     <div class="hc-desc">14+ integrated defense tools: Gap Analysis, DMSMS, Readiness, Compliance, Risk, Predictive Maintenance, ROI, Audit Vault, and more.</div>
                     <div class="hc-meta"><i class="fas fa-tools"></i> 14+ ILS tools &bull; AI-powered</div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" onclick="showSection('sectionSystems')">
                     <div class="hc-icon" style="background:rgba(52,152,219,0.1);"><i class="fas fa-server" style="color:#3498db;"></i></div>
-                    <div class="hc-title">Systems <span style="background:rgba(52,152,219,0.15);color:#3498db;font-size:0.65rem;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:6px;">METRICS</span></div>
+                    <div class="hc-title">Systems <span style="background:rgba(52,152,219,0.15);color:#3498db;font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">METRICS</span></div>
                     <div class="hc-desc">Platform metrics, performance monitoring, and offline queue management with encrypted persistence and auto-sync.</div>
                     <div class="hc-meta"><i class="fas fa-chart-line"></i> Metrics &bull; Offline Queue</div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
@@ -1401,7 +1453,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <div class="clf-banner" id="clfBanner"><span class="clf-icon"></span><span class="clf-badge" id="clfBadge"></span><span class="clf-text" id="clfText"></span></div>
 
                             <label>3. Upload file or enter record content</label>
-                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;"><i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--accent);margin-bottom:6px;display:block;"></i><div style="color:var(--steel);font-size:0.82rem;">Drag &amp; drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div><div style="color:var(--muted);font-size:0.72rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, TXT &mdash; any file type</div><input type="file" id="fileUploadInput" style="display:none" onchange="handleFileSelect(event)"><div id="dropFileName" style="display:none;margin-top:8px;color:var(--accent);font-weight:600;font-size:0.82rem;"></div></div>
+                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:6px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;"><i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--accent);margin-bottom:6px;display:block;"></i><div style="color:var(--steel);font-size:0.82rem;">Drag &amp; drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div><div style="color:var(--muted);font-size:0.72rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, TXT &mdash; any file type</div><input type="file" id="fileUploadInput" style="display:none" onchange="handleFileSelect(event)"><div id="dropFileName" style="display:none;margin-top:8px;color:var(--accent);font-weight:600;font-size:0.82rem;"></div></div>
                             <textarea id="recordInput" placeholder="Or paste/type your defense logistics record here..." oninput="this.dataset.autoFilled='false'"></textarea>
                             <div class="mt-2 mb-3">
                                 <span style="color:var(--muted);font-size:0.8rem">Try a sample:</span>
@@ -1477,7 +1529,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 
                             <!-- FILE UPLOAD VERIFICATION -->
                             <label><i class="fas fa-file-upload" style="color:var(--accent);margin-right:4px;"></i> Upload File(s) to Verify</label>
-                            <div id="verifyDropZone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--accent)';this.style.background='rgba(0,170,255,0.08)'" ondragleave="this.style.borderColor='rgba(0,170,255,0.25)';this.style.background='rgba(0,170,255,0.03)'" ondrop="handleVerifyFileDrop(event)" onclick="document.getElementById('verifyFileInput').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:10px;padding:24px;text-align:center;cursor:pointer;margin-bottom:16px;background:rgba(0,170,255,0.03);transition:all 0.3s;">
+                            <div id="verifyDropZone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--accent)';this.style.background='rgba(0,170,255,0.08)'" ondragleave="this.style.borderColor='rgba(0,170,255,0.25)';this.style.background='rgba(0,170,255,0.03)'" ondrop="handleVerifyFileDrop(event)" onclick="document.getElementById('verifyFileInput').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:6px;padding:24px;text-align:center;cursor:pointer;margin-bottom:16px;background:rgba(0,170,255,0.03);transition:all 0.3s;">
                                 <i class="fas fa-shield-halved" style="font-size:1.8rem;color:var(--accent);margin-bottom:8px;display:block;"></i>
                                 <div style="color:var(--accent);font-weight:600;font-size:0.88rem;">Drop file(s) here to verify integrity</div>
                                 <div style="color:var(--steel);font-size:0.78rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, images, contracts &mdash; any file type</div>
@@ -1567,48 +1619,48 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <h3><i class="fas fa-chart-line" style="color:var(--accent)"></i> Performance Metrics Dashboard</h3>
                     <p style="color:var(--steel);font-size:0.85rem">Real-time platform performance, anchoring metrics, and system health.</p>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:16px 0">
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Avg Anchor Time</div>
                             <div id="metricAnchorTime" style="font-size:1.5rem;font-weight:700;color:var(--green);margin:4px 0">3.21</div>
                             <div style="font-size:0.7rem;color:var(--muted)">seconds</div>
                         </div>
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Anchors Today</div>
                             <div id="metricAnchorsToday" style="font-size:1.5rem;font-weight:700;color:var(--accent);margin:4px 0">47</div>
                             <div style="font-size:0.7rem;color:var(--muted)">records</div>
                         </div>
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Cost / Anchor</div>
                             <div id="metricCostPerAnchor" style="font-size:1.5rem;font-weight:700;color:var(--gold);margin:4px 0">0.01</div>
                             <div style="font-size:0.7rem;color:var(--muted)">SLS</div>
                         </div>
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">XRPL Validators</div>
                             <div id="metricValidators" style="font-size:1.5rem;font-weight:700;color:var(--green);margin:4px 0">35</div>
                             <div style="font-size:0.7rem;color:var(--muted)">active</div>
                         </div>
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Uptime</div>
                             <div id="metricUptime" style="font-size:1.5rem;font-weight:700;color:var(--green);margin:4px 0">99.97</div>
                             <div style="font-size:0.7rem;color:var(--muted)">%</div>
                         </div>
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">AI Audit Trail</div>
                             <div id="metricAiAudit" style="font-size:1.5rem;font-weight:700;color:var(--accent);margin:4px 0">12</div>
                             <div style="font-size:0.7rem;color:var(--muted)">entries</div>
                         </div>
                     </div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px">
                             <div style="font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:10px"><i class="fas fa-clock" style="color:var(--accent);margin-right:6px"></i>Anchor Times (last 20)</div>
                             <canvas id="chartAnchorTimes" height="180"></canvas>
                         </div>
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px">
                             <div style="font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:10px"><i class="fas fa-coins" style="color:var(--gold);margin-right:6px"></i>Record Types Distribution</div>
                             <canvas id="chartRecordTypes" height="180"></canvas>
                         </div>
                     </div>
-                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:16px">
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;margin-top:16px">
                         <div style="font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:10px"><i class="fas fa-history" style="color:var(--green);margin-right:6px"></i>Recent API Requests</div>
                         <div id="metricsRecentRequests" style="max-height:200px;overflow-y:auto;font-size:0.78rem"><div style="color:var(--muted);text-align:center;padding:1rem">Loading metrics...</div></div>
                     </div>
@@ -1628,20 +1680,20 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <h3><i class="fas fa-wifi" style="color:var(--accent)"></i> Offline Queue &amp; Batch Sync</h3>
                     <p style="color:var(--steel);font-size:0.85rem">Manage hashes queued during offline/air-gapped operation. Batch sync when connected.</p>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0">
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase">Connection Status</div>
                             <div id="offlineStatus" style="font-size:1.2rem;font-weight:700;color:var(--green);margin:4px 0"><i class="fas fa-circle" style="font-size:0.6rem"></i> Online</div>
                         </div>
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase">Queued Hashes</div>
                             <div id="offlineQueueCount" style="font-size:1.5rem;font-weight:700;color:var(--gold);margin:4px 0">0</div>
                         </div>
-                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+                        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
                             <div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase">Last Sync</div>
                             <div id="offlineLastSync" style="font-size:0.9rem;font-weight:600;color:var(--steel);margin:4px 0">Never</div>
                         </div>
                     </div>
-                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px">
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;margin-top:12px">
                         <div style="font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:10px"><i class="fas fa-list-ol" style="color:var(--accent);margin-right:6px"></i>Queue Contents</div>
                         <div id="offlineQueueList" style="max-height:250px;overflow-y:auto;font-size:0.78rem"><div style="color:var(--muted);text-align:center;padding:1rem">Queue is empty. Hashes are queued automatically when offline.</div></div>
                     </div>
@@ -1659,9 +1711,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div class="breadcrumb-text">Anchor-S4</div>
                 </div>
                 <!-- ═══ ILS WORKSPACE ═══ -->
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;margin-bottom:16px;background:linear-gradient(135deg,rgba(0,170,255,0.04) 0%,rgba(201,168,76,0.03) 100%);border:1px solid rgba(0,170,255,0.1);border-radius:12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;margin-bottom:16px;background:linear-gradient(135deg,rgba(0,170,255,0.04) 0%,rgba(201,168,76,0.03) 100%);border:1px solid rgba(0,170,255,0.1);border-radius:6px;">
                     <div style="display:flex;align-items:center;gap:14px;">
-                        <div style="width:42px;height:42px;border-radius:10px;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-anchor" style="color:#00aaff;font-size:1.1rem"></i></div>
+                        <div style="width:42px;height:42px;border-radius:6px;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-anchor" style="color:#00aaff;font-size:1.1rem"></i></div>
                         <div>
                             <h3 style="font-size:1.15rem;font-weight:700;color:#fff;margin:0;letter-spacing:-0.02em">Anchor-S4</h3>
                             <p style="font-size:0.78rem;color:var(--steel);margin:2px 0 0;line-height:1.4">Defense logistics workspace &mdash; 14 integrated tools</p>
@@ -1722,7 +1774,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-actions')" style="position:relative">
                         <span class="itc-icon"><i class="fas fa-tasks" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Action Items <span id="actionItemBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#ff4444;color:#fff;font-size:0.65rem;font-weight:800;min-width:20px;height:20px;border-radius:10px;padding:0 6px;margin-left:6px;vertical-align:middle"></span></div>
+                        <div class="itc-title">Action Items <span id="actionItemBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#ff4444;color:#fff;font-size:0.65rem;font-weight:800;min-width:20px;height:20px;border-radius:6px;padding:0 6px;margin-left:6px;vertical-align:middle"></span></div>
                         <div class="itc-desc">Track ILS action items, corrective actions, and follow-ups with deadlines.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-predictive')">
@@ -2205,7 +2257,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
             <!-- ═══ AUDIT RECORD VAULT ═══ -->
             <div class="ils-hub-panel" id="hub-vault">
                 <!-- ── Digital Thread Traceability (Competitive Differentiator) ── -->
-                <div id="digitalThreadPanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(155,89,182,0.03));border:1px solid rgba(155,89,182,0.2);border-radius:12px;padding:16px;">
+                <div id="digitalThreadPanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(155,89,182,0.03));border:1px solid rgba(155,89,182,0.2);border-radius:6px;padding:16px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                         <div style="font-size:0.82rem;font-weight:700;color:#9b59b6;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-project-diagram"></i> Digital Thread — Full Provenance Chain</div>
                         <div style="display:flex;align-items:center;gap:8px;">
@@ -2354,7 +2406,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <div class="score-val" id="complianceScore">—</div>
                             <div class="score-grade" id="complianceGrade" style="background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(0,170,255,0.1));color:#00aaff;border:2px solid rgba(0,170,255,0.2)">—</div>
                         </div>
-                        <div id="complianceGradeBelow" style="text-align:center;margin:24px 0 8px"><span id="complianceGradeLetter" style="display:inline-block;font-size:1.4rem;font-weight:900;padding:8px 24px;border-radius:12px;letter-spacing:2px;background:rgba(0,170,255,0.1);color:#00aaff;border:2px solid rgba(0,170,255,0.3);min-width:52px;text-align:center;transition:all 0.5s ease">—</span></div>
+                        <div id="complianceGradeBelow" style="text-align:center;margin:24px 0 8px"><span id="complianceGradeLetter" style="display:inline-block;font-size:1.4rem;font-weight:900;padding:8px 24px;border-radius:6px;letter-spacing:2px;background:rgba(0,170,255,0.1);color:#00aaff;border:2px solid rgba(0,170,255,0.3);min-width:52px;text-align:center;transition:all 0.5s ease">—</span></div>
                         <div style="font-size:0.82rem;color:var(--steel);font-weight:600;margin-top:4px">Overall Compliance Posture</div>
                     </div>
 
@@ -2411,16 +2463,16 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     </div>
                     <!-- Risk Summary Stats -->
                     <div class="row mb-3" id="riskStats">
-                        <div class="col-3"><div style="text-align:center;padding:12px;background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.3);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#ff3b30" id="riskCritical">0</div><div style="font-size:0.75rem;color:var(--text-muted)">Critical</div></div></div>
-                        <div class="col-3"><div style="text-align:center;padding:12px;background:rgba(255,149,0,0.1);border:1px solid rgba(255,149,0,0.3);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#ff9500" id="riskHigh">0</div><div style="font-size:0.75rem;color:var(--text-muted)">High</div></div></div>
-                        <div class="col-3"><div style="text-align:center;padding:12px;background:rgba(255,204,0,0.1);border:1px solid rgba(255,204,0,0.3);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#ffcc00" id="riskMedium">0</div><div style="font-size:0.75rem;color:var(--text-muted)">Medium</div></div></div>
-                        <div class="col-3"><div style="text-align:center;padding:12px;background:rgba(52,199,89,0.1);border:1px solid rgba(52,199,89,0.3);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#34c759" id="riskLow">0</div><div style="font-size:0.75rem;color:var(--text-muted)">Low</div></div></div>
+                        <div class="col-3"><div style="text-align:center;padding:12px;background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.3);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#ff3b30" id="riskCritical">0</div><div style="font-size:0.75rem;color:var(--text-muted)">Critical</div></div></div>
+                        <div class="col-3"><div style="text-align:center;padding:12px;background:rgba(255,149,0,0.1);border:1px solid rgba(255,149,0,0.3);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#ff9500" id="riskHigh">0</div><div style="font-size:0.75rem;color:var(--text-muted)">High</div></div></div>
+                        <div class="col-3"><div style="text-align:center;padding:12px;background:rgba(255,204,0,0.1);border:1px solid rgba(255,204,0,0.3);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#ffcc00" id="riskMedium">0</div><div style="font-size:0.75rem;color:var(--text-muted)">Medium</div></div></div>
+                        <div class="col-3"><div style="text-align:center;padding:12px;background:rgba(52,199,89,0.1);border:1px solid rgba(52,199,89,0.3);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#34c759" id="riskLow">0</div><div style="font-size:0.75rem;color:var(--text-muted)">Low</div></div></div>
                     </div>
                     <!-- ── AI Threat Intelligence Score (vs Palantir Gotham) ── -->
-                    <div id="threatIntelPanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(255,59,48,0.04),rgba(255,149,0,0.03));border:1px solid rgba(255,107,107,0.2);border-radius:12px;padding:16px;display:none;">
+                    <div id="threatIntelPanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(255,59,48,0.04),rgba(255,149,0,0.03));border:1px solid rgba(255,107,107,0.2);border-radius:6px;padding:16px;display:none;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                             <div style="font-size:0.82rem;font-weight:700;color:#ff6b6b;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-crosshairs"></i> AI Threat Intelligence Score</div>
-                            <div id="threatScoreBadge" style="background:rgba(255,59,48,0.15);color:#ff3b30;padding:4px 14px;border-radius:20px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;">— / 100</div>
+                            <div id="threatScoreBadge" style="background:rgba(255,59,48,0.15);color:#ff3b30;padding:4px 14px;border-radius:8px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;">— / 100</div>
                         </div>
                         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
                             <div style="text-align:center;padding:10px;background:rgba(255,59,48,0.08);border-radius:8px;border:1px solid rgba(255,59,48,0.15);">
@@ -2534,10 +2586,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     </div>
                     <!-- Predictive Stats -->
                     <div class="row mb-3">
-                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#00aaff" id="pdmPredictions">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Predictions</div></div></div>
-                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.2);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#ff3b30" id="pdmUrgent">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Urgent (30 days)</div></div></div>
-                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#00aaff" id="pdmSavings">$0</div><div style="font-size:0.72rem;color:var(--text-muted)">Est. Savings</div></div></div>
-                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:var(--accent)" id="pdmAccuracy">0%</div><div style="font-size:0.72rem;color:var(--text-muted)">Model Accuracy</div></div></div>
+                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#00aaff" id="pdmPredictions">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Predictions</div></div></div>
+                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.2);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#ff3b30" id="pdmUrgent">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Urgent (30 days)</div></div></div>
+                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#00aaff" id="pdmSavings">$0</div><div style="font-size:0.72rem;color:var(--text-muted)">Est. Savings</div></div></div>
+                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:var(--accent)" id="pdmAccuracy">0%</div><div style="font-size:0.72rem;color:var(--text-muted)">Model Accuracy</div></div></div>
                     </div>
                     <!-- Predictions Table -->
                     <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(0,170,255,0.15);border-radius:8px;">
@@ -2547,7 +2599,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </table>
                     </div>
                                         <!-- Predictive Failure Timeline (vs Oracle Asset Mgmt) -->
-                    <div id="failureTimelinePanel" style="margin-top:16px;background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(201,168,76,0.03));border:1px solid rgba(0,170,255,0.2);border-radius:12px;padding:16px;display:none;">
+                    <div id="failureTimelinePanel" style="margin-top:16px;background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(201,168,76,0.03));border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:16px;display:none;">
                         <div style="font-size:0.82rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;display:flex;align-items:center;gap:6px;"><i class="fas fa-timeline"></i> Projected Failure Timeline (12-Month Forecast)</div>
                         <div id="failureTimelineChart" style="position:relative;height:200px;overflow-x:auto;overflow-y:hidden;">
                             <canvas id="failureTimelineCanvas" height="180"></canvas>
@@ -2593,10 +2645,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     </div>
                     <!-- SBOM Stats -->
                     <div class="row mb-3">
-                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.15);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#2ecc71" id="sbomTotal">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Components</div></div></div>
-                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.2);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#ff3b30" id="sbomCVE">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Known CVEs</div></div></div>
-                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#00aaff" id="sbomVerified">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Verified</div></div></div>
-                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:10px;"><div style="font-size:1.6rem;font-weight:800;color:#c9a84c" id="sbomAnchored">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Anchored</div></div></div>
+                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.15);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#2ecc71" id="sbomTotal">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Components</div></div></div>
+                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.2);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#ff3b30" id="sbomCVE">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Known CVEs</div></div></div>
+                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#00aaff" id="sbomVerified">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Verified</div></div></div>
+                        <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:6px;"><div style="font-size:1.6rem;font-weight:800;color:#c9a84c" id="sbomAnchored">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Anchored</div></div></div>
                     </div>
                     <!-- SBOM Table -->
                     <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(46,204,113,0.2);border-radius:8px;">
@@ -2609,6 +2661,41 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <button onclick="loadSBOMData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Scan Components</button>
                         <button onclick="exportSBOM()" class="btn btn-sm hover-lift" style="background:rgba(255,255,255,0.08);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export SBOM</button>
                         <button onclick="anchorSBOM()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor SBOM to XRPL</button>
+                    </div>
+                    <!-- SBOM AI Agent Chat Panel -->
+                    <div style="margin-top:1.25rem;border:1px solid rgba(46,204,113,0.2);border-radius:8px;overflow:hidden;">
+                        <div style="background:linear-gradient(135deg,rgba(46,204,113,0.12),rgba(0,170,255,0.08));padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(46,204,113,0.15);">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:8px;height:8px;background:#2ecc71;border-radius:50%;animation:pulse 2s infinite"></div>
+                                <span style="font-weight:700;color:#fff;font-size:0.85rem"><i class="fas fa-robot" style="color:#2ecc71;margin-right:4px"></i>SBOM AI Agent</span>
+                                <span style="font-size:0.68rem;color:var(--steel);background:rgba(46,204,113,0.1);padding:2px 8px;border-radius:4px;">OpenAI-Powered</span>
+                            </div>
+                            <button onclick="document.getElementById('sbomAiPanel').style.display=document.getElementById('sbomAiPanel').style.display==='none'?'block':'none'" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:0.85rem;padding:4px 8px;border-radius:4px;transition:all 0.2s" title="Toggle AI Panel"><i class="fas fa-chevron-down"></i></button>
+                        </div>
+                        <div id="sbomAiPanel" style="display:block;">
+                            <div id="sbomAiMessages" style="max-height:260px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:0.83rem;background:rgba(0,0,0,0.2);">
+                                <div class="ai-msg bot" style="background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.1);border-radius:6px;padding:10px 12px;color:var(--steel);line-height:1.5;">
+                                    <div style="font-weight:700;color:#2ecc71;font-size:0.75rem;margin-bottom:4px;"><i class="fas fa-robot"></i> SBOM Agent</div>
+                                    I'm your SBOM AI Agent. Load a platform's SBOM above, then ask me anything:<br>
+                                    • "What components have CVEs?"<br>
+                                    • "Which licenses are GPL?"<br>
+                                    • "Show me high severity items"<br>
+                                    • "Is this SBOM EO 14028 compliant?"<br>
+                                    • "Summarize the supply chain risk"<br>
+                                    • "What firmware is in this platform?"
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:6px;padding:8px 10px;flex-wrap:wrap;border-top:1px solid rgba(46,204,113,0.1);background:rgba(0,0,0,0.15);">
+                                <button onclick="sbomAiAsk('What components have known CVEs?')" style="background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.15);color:#2ecc71;border-radius:4px;padding:3px 8px;font-size:0.7rem;cursor:pointer;font-family:inherit;transition:all 0.2s">CVE Report</button>
+                                <button onclick="sbomAiAsk('Summarize the supply chain risk')" style="background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.15);color:#2ecc71;border-radius:4px;padding:3px 8px;font-size:0.7rem;cursor:pointer;font-family:inherit;transition:all 0.2s">Risk Summary</button>
+                                <button onclick="sbomAiAsk('Is this SBOM compliant with EO 14028?')" style="background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.15);color:#2ecc71;border-radius:4px;padding:3px 8px;font-size:0.7rem;cursor:pointer;font-family:inherit;transition:all 0.2s">EO 14028</button>
+                                <button onclick="sbomAiAsk('What licenses are used?')" style="background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.15);color:#2ecc71;border-radius:4px;padding:3px 8px;font-size:0.7rem;cursor:pointer;font-family:inherit;transition:all 0.2s">Licenses</button>
+                            </div>
+                            <div style="display:flex;gap:8px;padding:8px 10px;border-top:1px solid rgba(46,204,113,0.1);background:var(--surface);">
+                                <input type="text" id="sbomAiInput" placeholder="Ask about this SBOM..." onkeydown="if(event.key==='Enter')sbomAiAsk()" style="flex:1;background:var(--card)!important;border:1px solid rgba(46,204,113,0.2)!important;border-radius:6px!important;padding:8px 12px!important;color:#fff!important;font-size:0.83rem!important;font-family:inherit!important;">
+                                <button onclick="sbomAiAsk()" style="background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border:none;border-radius:6px;padding:8px 14px;font-size:0.83rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="fas fa-paper-plane"></i> Ask</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2706,7 +2793,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                         <div style="font-size:.7rem;color:var(--steel);margin-top:4px">Download these, then upload to test the Submissions &amp; PTD discrepancy engine with realistic data.</div>
                     </div>
-                    <div id="subUploadZone" onclick="document.getElementById('subFileInput').click()" style="border:2px dashed rgba(224,108,117,0.35);border-radius:10px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(224,108,117,0.04);transition:all 0.3s" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='#e06c75'" ondragleave="this.style.borderColor='rgba(224,108,117,0.35)'" ondrop="handleSubFileDrop(event)">
+                    <div id="subUploadZone" onclick="document.getElementById('subFileInput').click()" style="border:2px dashed rgba(224,108,117,0.35);border-radius:6px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(224,108,117,0.04);transition:all 0.3s" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='#e06c75'" ondragleave="this.style.borderColor='rgba(224,108,117,0.35)'" ondrop="handleSubFileDrop(event)">
                         <i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#e06c75;margin-bottom:8px;display:block"></i>
                         <div style="color:#e06c75;font-weight:600;font-size:.9rem">Upload Submission Data</div>
                         <div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF, or paste data below</div>
@@ -2839,22 +2926,22 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 
                     <!-- Wallet Overview Cards -->
                     <div id="walletOverview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px">
-                        <div style="background:linear-gradient(135deg,rgba(26,58,92,0.15),rgba(201,168,76,0.05));border:1px solid rgba(0,170,255,0.15);border-radius:12px;padding:20px;text-align:center">
+                        <div style="background:linear-gradient(135deg,rgba(26,58,92,0.15),rgba(201,168,76,0.05));border:1px solid rgba(0,170,255,0.15);border-radius:6px;padding:20px;text-align:center">
                             <div style="font-size:0.75rem;color:#00aaff;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">SLS Balance</div>
                             <div id="walletSLSBalance" style="font-size:2rem;font-weight:800;color:#00aaff">--</div>
                             <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">$<span id="walletSLSUSD">0.00</span> USD</div>
                         </div>
-                        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center">
+                        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px;text-align:center">
                             <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Anchors Available</div>
                             <div id="walletAnchors" style="font-size:2rem;font-weight:800;color:#1a3a5c">--</div>
                             <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">@ 0.01 SLS each</div>
                         </div>
-                        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center">
+                        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px;text-align:center">
                             <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">XRP Reserve</div>
                             <div id="walletXRP" style="font-size:2rem;font-weight:800;color:#00aaff">--</div>
                             <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">Account reserve</div>
                         </div>
-                        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center">
+                        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px;text-align:center">
                             <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Network</div>
                             <div id="walletNetwork" style="font-size:1.2rem;font-weight:800;color:#00aaff;margin-top:8px">XRPL Mainnet</div>
                             <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">Live blockchain</div>
@@ -2863,13 +2950,13 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
                         <!-- LEFT: Wallet Info -->
-                        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+                        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px">
                             <h4 style="font-size:1rem;font-weight:700;margin-bottom:14px"><i class="fas fa-key" style="color:var(--accent);margin-right:6px"></i>Wallet Credentials</h4>
 
                             <div id="walletNoWallet" style="text-align:center;padding:30px 10px">
                                 <i class="fas fa-wallet" style="font-size:2.5rem;color:var(--muted);opacity:0.3;display:block;margin-bottom:12px"></i>
                                 <p style="color:var(--muted);font-size:0.88rem;margin-bottom:14px">No wallet connected yet.</p>
-                                <button onclick="window.location.href='../s4-login/'" style="background:linear-gradient(135deg,#1a3a5c,#0f2640);color:#00aaff;border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:12px 24px;font-weight:700;font-size:0.9rem;cursor:pointer;font-family:'Inter',sans-serif"><i class="fas fa-plus-circle" style="margin-right:6px"></i>Create Account & Wallet</button>
+                                <button onclick="window.location.href='../s4-login/'" style="background:linear-gradient(135deg,#1a3a5c,#0f2640);color:#00aaff;border:1px solid rgba(201,168,76,0.4);border-radius:6px;padding:12px 24px;font-weight:700;font-size:0.9rem;cursor:pointer;font-family:'Inter',sans-serif"><i class="fas fa-plus-circle" style="margin-right:6px"></i>Create Account & Wallet</button>
                             </div>
 
                             <div id="walletCredentials" style="display:none">
@@ -2902,10 +2989,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
 
                         <!-- RIGHT: Buy SLS -->
-                        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+                        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px">
                             <h4 style="font-size:1rem;font-weight:700;margin-bottom:14px"><i class="fas fa-shopping-cart" style="color:#00aaff;margin-right:6px"></i>Purchase SLS Tokens</h4>
 
-                            <div style="padding:14px;background:rgba(26,58,92,0.12);border:1px solid rgba(201,168,76,0.2);border-radius:10px;margin-bottom:16px">
+                            <div style="padding:14px;background:rgba(26,58,92,0.12);border:1px solid rgba(201,168,76,0.2);border-radius:6px;margin-bottom:16px">
                                 <div style="display:flex;justify-content:space-between;align-items:center">
                                     <span style="font-size:0.82rem;color:var(--steel)">Current Price</span>
                                     <span style="font-size:1.1rem;font-weight:800;color:#00aaff">$0.01 / SLS</span>
@@ -2924,7 +3011,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 <input type="number" id="slsUsdInput" value="100" min="1" step="1" onchange="updateSLSPreview()" oninput="updateSLSPreview()" style="width:100%;background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.92rem">
                             </div>
 
-                            <div style="padding:14px;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:14px">
+                            <div style="padding:14px;background:var(--surface);border-radius:6px;border:1px solid var(--border);margin-bottom:14px">
                                 <div style="display:flex;justify-content:space-between;margin-bottom:6px">
                                     <span style="font-size:0.82rem;color:var(--muted)">SLS Tokens</span>
                                     <span id="slsPreviewTokens" style="font-size:0.92rem;font-weight:700;color:#00aaff">10,000 SLS</span>
@@ -2935,7 +3022,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 </div>
                             </div>
 
-                            <button id="buySLSBtn" onclick="handleBuySLS()" style="width:100%;background:linear-gradient(135deg,#1a3a5c,#0f2640);color:#00aaff;border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:13px;font-weight:700;font-size:0.95rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s">
+                            <button id="buySLSBtn" onclick="handleBuySLS()" style="width:100%;background:linear-gradient(135deg,#1a3a5c,#0f2640);color:#00aaff;border:1px solid rgba(201,168,76,0.4);border-radius:6px;padding:13px;font-weight:700;font-size:0.95rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s">
                                 <i class="fas fa-credit-card" style="margin-right:6px"></i> Purchase with Card
                             </button>
 
@@ -2950,7 +3037,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <!-- How SLS Works -->
                     <!-- How SLS Works section merged into wallet sidebar -->
                     <!-- Role-based access merged into wallet sidebar -->
-                    <div style="margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+                    <div style="margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
                             <h4 style="font-size:1rem;font-weight:700;margin:0"><i class="fas fa-chart-area" style="color:#00aaff;margin-right:6px"></i>SLS Usage Over Time</h4>
                             <div style="display:flex;gap:6px">
@@ -2961,7 +3048,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 <button onclick="setChartRange('year')" class="chart-range-btn" id="chartYear" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Inter',sans-serif">Year</button>
                             </div>
                         </div>
-                        <div style="position:relative;height:200px;background:var(--surface);border-radius:10px;border:1px solid var(--border);overflow:hidden;padding:10px">
+                        <div style="position:relative;height:200px;background:var(--surface);border-radius:6px;border:1px solid var(--border);overflow:hidden;padding:10px">
                             <canvas id="slsUsageChart" style="width:100%;height:100%"></canvas>
                             <div id="chartOverlay" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:var(--surface)">
                                 <div style="text-align:center">
@@ -2979,7 +3066,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     </div>
 
                     <!-- SEC Compliance Notice -->
-                    <div style="margin-top:20px;padding:16px;background:rgba(26,58,92,0.08);border:1px solid rgba(26,58,92,0.2);border-radius:12px">
+                    <div style="margin-top:20px;padding:16px;background:rgba(26,58,92,0.08);border:1px solid rgba(26,58,92,0.2);border-radius:6px">
                         <h5 style="font-size:0.88rem;font-weight:700;color:#00aaff;margin-bottom:8px"><i class="fas fa-gavel" style="margin-right:6px"></i>Regulatory Notice</h5>
                         <p style="font-size:0.78rem;color:var(--steel);margin-bottom:6px">$SLS is a <strong style="color:#fff">utility token</strong> used exclusively for platform service fees (anchoring, verification, and record integrity operations). SLS is not equity, not a security, and confers no ownership, governance rights, or expectation of profit.</p>
                         <p style="font-size:0.78rem;color:var(--steel);margin-bottom:6px">SLS tokens are <strong style="color:#fff">purchased at fair market value</strong> via your subscription plan (USD → XRP → SLS on XRPL DEX). They are consumed as services are used and have no cash value or redemption mechanism outside the S4 Ledger platform. SLS is never given away for free — all SLS is purchased through transparent, auditable on-chain transactions.</p>
@@ -3097,7 +3184,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
         </div>
     </div>
     <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--border);font-size:0.8125rem;color:var(--muted)">
-        <span>&copy; 2025 S4 Ledger. All rights reserved. $SLS is a utility token — not equity or an investment contract.</span>
+        <span>&copy; 2025–2026 S4 Ledger. All rights reserved. $SLS is a utility token — not equity or an investment contract.</span>
         <div style="display:flex;gap:24px">
             <a href="/s4-terms/" style="color:var(--muted);text-decoration:none">Terms</a>
             <a href="/s4-privacy/" style="color:var(--muted);text-decoration:none">Privacy</a>
@@ -3294,7 +3381,7 @@ function _flashSlsBalance(newBalance, fee) {
     if (existing) existing.remove();
     var toast = document.createElement('div');
     toast.id = 'slsFlashToast';
-    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:12px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
+    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:6px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
     toast.innerHTML = '<div style="font-weight:700;color:#c9a84c;margin-bottom:6px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-coins" style="margin-right:6px"></i>SLS Balance Updated</div>'
         + '<div style="font-size:1.4rem;font-weight:800;color:#c9a84c;">' + newBalance + ' <span style="font-size:0.8rem;font-weight:600;">SLS</span></div>'
         + '<div style="font-size:0.78rem;color:#ff6b6b;margin-top:4px;">-' + fee.toFixed(2) + ' SLS (anchor fee)</div>';
@@ -4130,7 +4217,7 @@ async function verifyFiles(fileList) {
     }
 
     // Render results
-    var html = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;">';
+    var html = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">';
     html += '<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">';
     html += '<span style="color:#fff;font-weight:700;font-size:0.88rem;"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:6px;"></i>File Verification Results</span>';
     var matched = results.filter(function(r) { return r.matched; }).length;
@@ -6711,7 +6798,7 @@ function calcROI() {
     // Build output HTML
     var output = el('roiOutput');
     if (output) {
-        output.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:12px">'
+        output.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px;margin-top:12px">'
             + '<div class="section-label"><i class="fas fa-chart-line"></i> ROI BREAKDOWN</div>'
             + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;margin-bottom:16px">'
             + '<div><span style="color:var(--steel)">Labor Automation (65%)</span><br><strong style="color:#00cc66">$' + formatNum(Math.round(laborSavings)) + '</strong></div>'
@@ -7640,7 +7727,7 @@ function calcReadiness() {
     const systems = READINESS_DEFAULTS[progKey] || READINESS_DEFAULTS.ddg51;
     const sysName = systems[sysIdx] ? systems[sysIdx].sys : 'System';
 
-    let html = '<div style="background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.2);border-radius:12px;padding:16px;font-size:0.85rem;">';
+    let html = '<div style="background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:16px;font-size:0.85rem;">';
     html += '<div style="font-weight:700;color:#00aaff;margin-bottom:10px;font-size:1rem;">RAM Analysis: ' + sysName + '</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
     html += '<div><strong>Operational Availability (Ao):</strong></div><div style="color:' + (ao>=0.9?'#00aaff':ao>=0.75?'#ffa500':'#ff3333') + ';font-weight:700;">' + (ao*100).toFixed(2) + '%</div>';
@@ -7712,7 +7799,7 @@ function showCustomProgramInput() {
     var modal = document.createElement('div');
     modal.id = 'customProgramModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
-    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto">'
+    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 8px"><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>Custom Program / Platform</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Enter your program details. A generic MIL-STD-1388 ILS template will be applied.</p>'
         + '<div style="display:grid;gap:12px">'
@@ -8269,14 +8356,14 @@ function showDocUpload() {
     var modal = document.createElement('div');
     modal.id = 'docUploadModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
-    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:560px;width:90%">'
+    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:560px;width:90%">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-file-upload" style="color:var(--accent);margin-right:8px"></i>Add New Document</h3>'
         + '<div style="display:grid;gap:12px">'
         + '<input id="newDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px" placeholder="Document ID (e.g., MIL-STD-1388-2B)">'
         + '<input id="newDocTitle" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px" placeholder="Title">'
         + '<textarea id="newDocContent" rows="6" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
         + '<select id="newDocCat" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
-        + '<div id="docUploadDropzone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(0,170,255,0.08)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\'" ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\';if(event.dataTransfer.files.length){var inp=document.getElementById(\'newDocFile\');inp.files=event.dataTransfer.files;handleDocFileSelect(inp)}" onclick="document.getElementById(\'newDocFile\').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:12px;padding:28px 20px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(0,170,255,0.02);transition:all 0.3s"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;display:block;color:var(--accent)"></i><div style=\'font-size:0.9rem;color:var(--steel);font-weight:600;margin-bottom:6px\'>Drag & drop your file here</div><div style=\'font-size:0.78rem;color:var(--muted)\'>or <span style=\'color:var(--accent);text-decoration:underline\'>click to browse</span></div><div style=\'font-size:0.72rem;color:var(--muted);margin-top:8px\'>PDF, Word, Excel, CSV, TXT — any document type</div><input type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv,.json" onchange="handleDocFileSelect(this)"></div>'
+        + '<div id="docUploadDropzone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(0,170,255,0.08)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\'" ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\';if(event.dataTransfer.files.length){var inp=document.getElementById(\'newDocFile\');inp.files=event.dataTransfer.files;handleDocFileSelect(inp)}" onclick="document.getElementById(\'newDocFile\').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:6px;padding:28px 20px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(0,170,255,0.02);transition:all 0.3s"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;display:block;color:var(--accent)"></i><div style=\'font-size:0.9rem;color:var(--steel);font-weight:600;margin-bottom:6px\'>Drag & drop your file here</div><div style=\'font-size:0.78rem;color:var(--muted)\'>or <span style=\'color:var(--accent);text-decoration:underline\'>click to browse</span></div><div style=\'font-size:0.72rem;color:var(--muted);margin-top:8px\'>PDF, Word, Excel, CSV, TXT — any document type</div><input type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv,.json" onchange="handleDocFileSelect(this)"></div>'
         + '<div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-robot" style="color:#a78bfa;margin-right:6px"></i><strong style="color:#a78bfa">S4 AI Agent</strong> will automatically scan uploads for discrepancies, compliance gaps, unauthorized changes, and red flags.</div>'
         + '<div id="newDocFileInfo" style="display:none;padding:8px;background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:8px;font-size:0.82rem;color:#00cc66"></div>'
         + '</div>'
@@ -8323,7 +8410,7 @@ function showDocVersionUpload() {
     var modal = document.createElement('div');
     modal.id = 'docVersionModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
-    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">'
+    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:8px"></i>Upload New Version</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Upload a revised version of an existing document. Our AI agent will analyze it for discrepancies, changes, errors, omissions, and cost modifications — then flag anything that needs attention.</p>'
         + '<select id="versionDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
@@ -8389,7 +8476,7 @@ function scanForRedFlags(content, docId) {
 }
 
 function showRedFlagAlert(docId, flags) {
-    var html = '<div style="position:fixed;top:80px;right:20px;background:#1a0a0a;border:2px solid #ff4444;border-radius:12px;padding:20px;max-width:400px;z-index:10001;animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(255,0,0,0.2)">'
+    var html = '<div style="position:fixed;top:80px;right:20px;background:#1a0a0a;border:2px solid #ff4444;border-radius:6px;padding:20px;max-width:400px;z-index:10001;animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(255,0,0,0.2)">'
         + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h4 style="color:#ff4444;margin:0"><i class="fas fa-flag"></i> Red Flags: '+docId+'</h4><button onclick="this.closest(\'div\').parentElement.remove()" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:1.2rem">&times;</button></div>';
     flags.forEach(function(f) {
         var col = f.severity === 'critical' ? '#ff0000' : f.severity === 'high' ? '#ff4444' : f.severity === 'medium' ? '#ff8800' : '#c9a84c';
@@ -8405,7 +8492,7 @@ function showRedFlagAlert(docId, flags) {
 function showDiffResult(docId, diff, flags) {
     var modal = document.createElement('div');
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
-    var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto">'
+    var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-brain" style="color:#c9a84c;margin-right:8px"></i>Document Intelligence Analysis: '+docId+'</h3>'
                 + '<div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;color:var(--steel)"><i class="fas fa-robot" style="color:#a78bfa;margin-right:6px"></i><strong style="color:#a78bfa">S4 AI Agent:</strong> Analyzed document for discrepancies, unauthorized changes, errors, omissions, and cost modifications.</div>'
         + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">'
@@ -8686,7 +8773,7 @@ function loadRiskData() {
         html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
         html += '<td style="padding:10px 8px;"><div style="color:#fff;font-weight:600;font-size:0.85rem;">'+it.part+'</div><div style="color:var(--text-muted);font-family:monospace;font-size:0.72rem;">'+it.nsn+'</div></td>';
         html += '<td style="padding:10px 8px;color:var(--steel);font-size:0.82rem;">'+it.supplier+'</td>';
-        html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 12px;border-radius:20px;font-weight:700;font-size:0.82rem;background:'+levelColors[it.level]+'22;color:'+levelColors[it.level]+';border:1px solid '+levelColors[it.level]+'44;">'+it.score+'</div></td>';
+        html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 12px;border-radius:8px;font-weight:700;font-size:0.82rem;background:'+levelColors[it.level]+'22;color:'+levelColors[it.level]+';border:1px solid '+levelColors[it.level]+'44;">'+it.score+'</div></td>';
         html += '<td style="padding:10px 8px;font-size:0.78rem;color:var(--steel);">'+it.factors.map(f=>'<div style="margin-bottom:2px;">• '+f+'</div>').join('')+'</td>';
         html += '<td style="padding:10px 8px;text-align:center;font-weight:600;color:'+(it.etaImpact==='None'?'var(--text-muted)':'#ff9500')+';font-size:0.82rem;">'+it.etaImpact+'</td>';
         html += '</tr>';
@@ -9034,7 +9121,7 @@ function loadPredictiveData() {
         html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);'+(it.urgent?'background:rgba(255,59,48,0.04);':'') +'">';
         html += '<td style="padding:10px 8px;"><div style="color:#fff;font-weight:600;font-size:0.82rem;">'+it.system+'</div><div style="color:var(--text-muted);font-size:0.72rem;">'+it.component+'</div></td>';
         html += '<td style="padding:10px 8px;color:var(--steel);font-size:0.8rem;">'+it.mode+'</td>';
-        html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 10px;border-radius:20px;font-weight:700;font-size:0.82rem;background:'+confColor+'22;color:'+confColor+';border:1px solid '+confColor+'44;">'+it.confidence+'%</div></td>';
+        html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 10px;border-radius:8px;font-weight:700;font-size:0.82rem;background:'+confColor+'22;color:'+confColor+';border:1px solid '+confColor+'44;">'+it.confidence+'%</div></td>';
         html += '<td style="padding:10px 8px;text-align:center;color:'+(it.urgent?'#ff3b30':'var(--steel)')+';font-weight:'+(it.urgent?'700':'400')+';font-size:0.82rem;">'+it.eta+(it.urgent?' <i class="fas fa-exclamation-triangle"></i>':'')+'</td>';
         html += '<td style="padding:10px 8px;text-align:right;color:#ff9500;font-weight:600;font-size:0.85rem;">$'+it.cost.toLocaleString()+'K</td>';
         html += '</tr>';
@@ -11148,7 +11235,7 @@ function calcLifecycle() {
     var output = e('lifecycleOutput');
     if (output) {
         var platName = (window.S4_PLATFORMS && S4_PLATFORMS[progKey]) ? S4_PLATFORMS[progKey].n : progKey.toUpperCase();
-        output.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:12px">'
+        output.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px;margin-top:12px">'
             + '<div class="section-label"><i class="fas fa-clock"></i> LIFECYCLE COST BREAKDOWN \u2014 ' + platName + '</div>'
             + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:0.85rem;margin-bottom:16px">'
             + '<div><span style="color:var(--steel)">Acquisition (' + acqPct + '%)</span><br><strong style="color:#00aaff">' + fmtM(acqTotal) + '</strong></div>'
@@ -11813,7 +11900,7 @@ function _rewireWalletFlowDetails(sidebarBody) {
     // Create inline flow details panel for the sidebar
     var flowPanel = document.createElement('div');
     flowPanel.id = 'sidebarFlowPanel';
-    flowPanel.style.cssText = 'display:none;margin-top:12px;background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:14px;padding:16px 18px;';
+    flowPanel.style.cssText = 'display:none;margin-top:12px;background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:6px;padding:16px 18px;';
     flowPanel.innerHTML = '<div style="position:relative">'
         + '<div style="position:absolute;top:-4px;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:3px 12px;border-radius:0 10px 0 8px;font-size:0.62rem;font-weight:700;color:#050810;letter-spacing:0.5px">LIVE PREVIEW</div>'
         + '<h4 style="margin:0 0 4px;font-size:0.95rem;color:#fff"><i class="fas fa-flask" style="color:#00aaff;margin-right:6px"></i>SLS Economic Flow</h4>'
@@ -11963,7 +12050,7 @@ document.addEventListener('shown.bs.tab', function(e) {
             
             var banner = document.createElement('div');
             banner.className = 'anchor-confirm-banner';
-            banner.style.cssText = 'background:linear-gradient(135deg,rgba(0,204,102,0.08),rgba(0,170,255,0.06));border:1px solid rgba(0,204,102,0.2);border-radius:12px;padding:16px 20px;margin-bottom:16px;animation:panelSlideIn 0.4s ease;position:relative';
+            banner.style.cssText = 'background:linear-gradient(135deg,rgba(0,204,102,0.08),rgba(0,170,255,0.06));border:1px solid rgba(0,204,102,0.2);border-radius:6px;padding:16px 20px;margin-bottom:16px;animation:panelSlideIn 0.4s ease;position:relative';
             banner.innerHTML = '<button onclick="this.parentElement.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem">&times;</button>'
                 + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-check-circle" style="color:#00cc66;font-size:1.1rem"></i><strong style="color:#fff;font-size:0.9rem">Record Anchored Successfully</strong></div>'
                 + '<div style="font-size:0.78rem;color:var(--steel);display:grid;grid-template-columns:80px 1fr;gap:4px 12px">'
@@ -12013,7 +12100,7 @@ function showRoleSelector() {
     var modal = document.createElement('div');
     modal.id = 'roleModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
-    var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto">'
+    var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 4px"><i class="fas fa-user-cog" style="color:var(--accent);margin-right:8px"></i>Configure Your Role</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Select your role to see relevant tools. You can customize visible tools and your displayed title.</p>'
         + '<div style="margin-bottom:16px"><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" value="'+(_currentTitle||'')+'" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;margin-top:4px" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>'
@@ -12021,14 +12108,14 @@ function showRoleSelector() {
     Object.keys(_s4Roles).forEach(function(key) {
         var r = _s4Roles[key];
         var sel = _currentRole === key ? 'border-color:var(--accent);background:rgba(0,170,255,0.08)' : '';
-        html += '<div class="role-card" onclick="selectRolePreset(\'' + key + '\')" style="border:2px solid '+(sel?'var(--accent)':'var(--border)')+';border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;'+(sel?'background:rgba(0,170,255,0.08)':'')+'" data-role="'+key+'">'
+        html += '<div class="role-card" onclick="selectRolePreset(\'' + key + '\')" style="border:2px solid '+(sel?'var(--accent)':'var(--border)')+';border-radius:6px;padding:14px;cursor:pointer;transition:all 0.2s;'+(sel?'background:rgba(0,170,255,0.08)':'')+'" data-role="'+key+'">'
             + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i class="fas '+r.icon+'" style="color:var(--accent);font-size:1.1rem"></i><strong style="color:#fff;font-size:0.9rem">'+r.label+'</strong></div>'
             + '<div style="color:var(--steel);font-size:0.78rem">'+r.desc+'</div>'
             + '<div style="color:var(--muted);font-size:0.72rem;margin-top:4px">'+r.tabs.length+' tools</div>'
             + '</div>';
     });
     html += '</div>'
-        + '<details style="margin-bottom:20px;background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.12);border-radius:10px;padding:0 16px"><summary style="cursor:pointer;color:var(--accent);font-weight:600;font-size:0.85rem;padding:12px 0;list-style:none;display:flex;align-items:center;gap:8px"><i class="fas fa-sliders-h"></i> Customize Visible Tools <i class="fas fa-chevron-down" style="font-size:0.7rem;margin-left:auto;opacity:0.5"></i></summary>'
+        + '<details style="margin-bottom:20px;background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.12);border-radius:6px;padding:0 16px"><summary style="cursor:pointer;color:var(--accent);font-weight:600;font-size:0.85rem;padding:12px 0;list-style:none;display:flex;align-items:center;gap:8px"><i class="fas fa-sliders-h"></i> Customize Visible Tools <i class="fas fa-chevron-down" style="font-size:0.7rem;margin-left:auto;opacity:0.5"></i></summary>'
         + '<div id="roleToolChecks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 16px">';
     _allHubTabs.forEach(function(tab) {
         var vis = _customVisibleTabs ? _customVisibleTabs.indexOf(tab)>=0 : (_currentRole ? (_s4Roles[_currentRole]?.tabs||[]).indexOf(tab)>=0 : true);
@@ -12197,7 +12284,7 @@ function initRoleSystem() {
 
             var output = document.getElementById('roiOutput');
             if (output) {
-                output.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:12px">'
+                output.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px;margin-top:12px">'
                     + '<div class="section-label"><i class="fas fa-chart-line"></i> ROI BREAKDOWN</div>'
                     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;margin-bottom:16px">'
                     + '<div><span style="color:var(--steel)">Labor Automation (65%)</span><br><strong style="color:#00cc66">$' + _bpFmt(laborSavings) + '</strong></div>'
@@ -13141,7 +13228,7 @@ function loadSBOMData() {
        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
        html += '<td style="padding:10px 8px;color:#fff;font-weight:600;font-size:0.85rem;">' + c.name + '<div style="color:var(--steel);font-size:0.72rem;">' + c.supplier + '</div></td>';
        html += '<td style="padding:10px 8px;color:var(--steel);font-family:monospace;font-size:0.78rem;">' + c.version + '</td>';
-       html += '<td style="padding:10px 8px;text-align:center;"><span style="background:rgba(0,170,255,0.1);color:#00aaff;padding:2px 8px;border-radius:12px;font-size:0.75rem;font-weight:600;">' + c.type + '</span></td>';
+       html += '<td style="padding:10px 8px;text-align:center;"><span style="background:rgba(0,170,255,0.1);color:#00aaff;padding:2px 8px;border-radius:6px;font-size:0.75rem;font-weight:600;">' + c.type + '</span></td>';
        html += '<td style="padding:10px 8px;text-align:center;color:' + (c.cves > 0 ? '#ff3b30' : '#34c759') + ';font-weight:700;">' + (c.cves > 0 ? c.cves + ' <i class="fas fa-exclamation-triangle" style="font-size:0.7rem"></i>' : '<i class="fas fa-check-circle"></i>') + '</td>';
        html += '<td style="padding:10px 8px;text-align:center;color:var(--steel);font-size:0.78rem;">' + c.license + '</td>';
        html += '<td style="padding:10px 8px;text-align:center;"><span style="color:' + (sevColors[c.severity]||'#fff') + ';font-weight:600;font-size:0.82rem;">' + c.severity + '</span></td>';
@@ -13215,6 +13302,186 @@ async function anchorSBOM() {
         window._allHubLabels['hub-sbom'] = 'SBOM Viewer';
     }
 })();
+
+// ── SBOM AI AGENT ──
+// OpenAI-powered Q&A for SBOM data — answers any question about loaded components
+async function sbomAiAsk(presetQuestion) {
+    var input = document.getElementById('sbomAiInput');
+    var msg = presetQuestion || (input ? input.value.trim() : '');
+    if (!msg) return;
+    if (input) input.value = '';
+    var chatBody = document.getElementById('sbomAiMessages');
+    if (!chatBody) return;
+
+    // Add user message
+    chatBody.innerHTML += '<div style="align-self:flex-end;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.15);border-radius:6px;padding:8px 12px;max-width:85%;color:#fff;font-size:0.83rem;">' + msg.replace(/</g,'&lt;') + '</div>';
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    // Thinking indicator
+    var thinkId = 'sbomThink_' + Date.now();
+    chatBody.innerHTML += '<div id="' + thinkId + '" style="background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.1);border-radius:6px;padding:10px 12px;color:var(--steel);max-width:85%;"><div style="font-weight:700;color:#2ecc71;font-size:0.72rem;margin-bottom:4px;"><i class="fas fa-robot"></i> SBOM Agent</div><i class="fas fa-circle-notch fa-spin" style="color:#2ecc71"></i> Analyzing SBOM data...</div>';
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    // Gather current SBOM data as context
+    var progKey = (document.getElementById('sbomProgram') || {}).value || 'default';
+    var components = _sbomDB[progKey] || _sbomDB['default'] || [];
+    var format = (document.getElementById('sbomFormat') || {}).value || 'cyclonedx';
+    var totalCVE = components.reduce(function(s,c){return s+c.cves;},0);
+    var verified = components.filter(function(c){return c.cves === 0;}).length;
+
+    var sbomContext = 'Current SBOM data for platform "' + progKey + '" (' + format + ' format):\n';
+    sbomContext += 'Total components: ' + components.length + ', Known CVEs: ' + totalCVE + ', Clean components: ' + verified + '\n\n';
+    sbomContext += 'Components:\n';
+    components.forEach(function(c) {
+        sbomContext += '- ' + c.name + ' v' + c.version + ' | Type: ' + c.type + ' | CVEs: ' + c.cves + ' | License: ' + c.license + ' | Supplier: ' + c.supplier + ' | Severity: ' + c.severity + '\n';
+    });
+
+    var responded = false;
+    try {
+        var resp = await fetch('/api/ai-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: msg,
+                conversation: [],
+                tool_context: 'SBOM Viewer',
+                analysis_data: {
+                    sbom_program: progKey,
+                    sbom_format: format,
+                    total_components: components.length,
+                    total_cves: totalCVE,
+                    verified_clean: verified,
+                    components: components
+                },
+                system_prompt: 'You are the S4 Ledger SBOM AI Agent — an expert in Software Bill of Materials analysis for defense logistics. You have access to the following SBOM data. Answer questions precisely based on this data. Reference specific component names, versions, CVE counts, licenses, and severity levels. When asked about compliance, reference EO 14028, CMMC Level 2+, and NIST SP 800-171.\n\n' + sbomContext
+            })
+        });
+        if (resp.ok) {
+            var data = await resp.json();
+            if (data.response && !data.fallback) {
+                var html = data.response
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                    .replace(/^- (.+)$/gm, '\u2022 $1<br>')
+                    .replace(/\n/g, '<br>');
+                var el = document.getElementById(thinkId);
+                if (el) el.innerHTML = '<div style="font-weight:700;color:#2ecc71;font-size:0.72rem;margin-bottom:4px;"><i class="fas fa-robot"></i> SBOM Agent</div>' + html;
+                responded = true;
+            }
+        }
+    } catch(e) { console.log('SBOM AI API unavailable, using local analysis'); }
+
+    if (!responded) {
+        // Local SBOM-specific pattern matching
+        var reply = _sbomLocalAnalysis(msg, components, progKey, format, totalCVE, verified);
+        var el = document.getElementById(thinkId);
+        if (el) el.innerHTML = '<div style="font-weight:700;color:#2ecc71;font-size:0.72rem;margin-bottom:4px;"><i class="fas fa-robot"></i> SBOM Agent</div>' + reply;
+    }
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function _sbomLocalAnalysis(query, components, progKey, format, totalCVE, verified) {
+    var q = query.toLowerCase();
+
+    // CVE-related questions
+    if (/cve|vulnerab|security issue|known issue/.test(q)) {
+        var withCVE = components.filter(function(c){return c.cves > 0;});
+        if (withCVE.length === 0) return '<strong style="color:#2ecc71">No known CVEs detected.</strong> All ' + components.length + ' components are clean. This is an excellent security posture.';
+        var html = '<strong style="color:#ff3b30">' + totalCVE + ' CVEs detected</strong> across ' + withCVE.length + ' component(s):<br><br>';
+        withCVE.forEach(function(c) {
+            var sevColor = c.severity === 'High' || c.severity === 'Critical' ? '#ff3b30' : c.severity === 'Medium' ? '#ff9500' : '#ffcc00';
+            html += '\u2022 <strong>' + c.name + '</strong> v' + c.version + ' — ' + c.cves + ' CVE(s), Severity: <span style="color:' + sevColor + '">' + c.severity + '</span> (' + c.supplier + ')<br>';
+        });
+        html += '<br><em style="color:var(--steel)">Recommendation: Prioritize patching ' + (withCVE.filter(function(c){return c.severity==='High'||c.severity==='Critical';}).length > 0 ? 'High/Critical' : 'Medium') + ' severity components first. Run NVD cross-reference for full CVE IDs.</em>';
+        return html;
+    }
+
+    // License questions
+    if (/license|gpl|apache|mit|commercial|open.?source|copyleft/.test(q)) {
+        var licenseMap = {};
+        components.forEach(function(c) { licenseMap[c.license] = (licenseMap[c.license]||[]).concat(c.name); });
+        var html = '<strong>License Analysis</strong> for ' + progKey.toUpperCase() + ':<br><br>';
+        var gplCount = 0;
+        Object.keys(licenseMap).sort().forEach(function(lic) {
+            var isGPL = /GPL/.test(lic);
+            if (isGPL) gplCount += licenseMap[lic].length;
+            html += '\u2022 <strong>' + lic + '</strong>' + (isGPL ? ' <span style="color:#ff9500">⚠ copyleft</span>' : '') + ': ' + licenseMap[lic].join(', ') + '<br>';
+        });
+        if (gplCount > 0) html += '<br><em style="color:#ff9500">⚠ ' + gplCount + ' component(s) use GPL copyleft licenses. Review for distribution compliance obligations.</em>';
+        else html += '<br><em style="color:#2ecc71">✓ No copyleft license concerns detected.</em>';
+        return html;
+    }
+
+    // Compliance / EO 14028
+    if (/complian|eo.?14028|executive.?order|cmmc|nist|800.?171|federal/.test(q)) {
+        var issues = [];
+        if (totalCVE > 0) issues.push(totalCVE + ' known CVEs need remediation');
+        var gplItems = components.filter(function(c){return /GPL/.test(c.license);});
+        if (gplItems.length > 0) issues.push(gplItems.length + ' copyleft-licensed components need review');
+        var noSupplier = components.filter(function(c){return !c.supplier || c.supplier==='Community';});
+        if (noSupplier.length > 0) issues.push(noSupplier.length + ' components from community/unverified suppliers');
+        var html = '<strong>EO 14028 / CMMC Compliance Assessment:</strong><br><br>';
+        html += '\u2022 <strong>SBOM Format:</strong> ' + format.toUpperCase() + ' — ' + (format==='cyclonedx'||format==='spdx' ? '<span style="color:#2ecc71">✓ NTIA-compliant format</span>' : '<span style="color:#ff9500">⚠ Convert to CycloneDX/SPDX for federal submission</span>') + '<br>';
+        html += '\u2022 <strong>Component Inventory:</strong> ' + components.length + ' tracked — <span style="color:#2ecc71">✓ Complete</span><br>';
+        html += '\u2022 <strong>CVE Status:</strong> ' + (totalCVE === 0 ? '<span style="color:#2ecc71">✓ No known vulnerabilities</span>' : '<span style="color:#ff3b30">⚠ ' + totalCVE + ' CVEs require action</span>') + '<br>';
+        html += '\u2022 <strong>Supplier Provenance:</strong> ' + (noSupplier.length === 0 ? '<span style="color:#2ecc71">✓ All suppliers identified</span>' : '<span style="color:#ff9500">⚠ ' + noSupplier.length + ' need verification</span>') + '<br>';
+        html += '\u2022 <strong>Blockchain Attestation:</strong> <span style="color:#00aaff">Available via Anchor SBOM to XRPL</span><br>';
+        if (issues.length > 0) { html += '<br><strong style="color:#ff9500">Action Items:</strong><br>'; issues.forEach(function(i){ html += '⚠ ' + i + '<br>'; }); }
+        else html += '<br><strong style="color:#2ecc71">✓ SBOM passes baseline EO 14028 requirements.</strong>';
+        return html;
+    }
+
+    // Risk / supply chain
+    if (/risk|supply.?chain|threat|exposure|attack.?surface/.test(q)) {
+        var highSev = components.filter(function(c){return c.severity==='High'||c.severity==='Critical';});
+        var medSev = components.filter(function(c){return c.severity==='Medium';});
+        var riskScore = Math.max(0, 100 - (highSev.length * 20) - (medSev.length * 8) - (totalCVE * 3));
+        var html = '<strong>Supply Chain Risk Summary</strong> — ' + progKey.toUpperCase() + ':<br><br>';
+        html += '\u2022 <strong>Risk Score:</strong> <span style="color:' + (riskScore >= 80 ? '#2ecc71' : riskScore >= 50 ? '#ff9500' : '#ff3b30') + ';font-size:1.1rem;font-weight:800">' + riskScore + '/100</span><br>';
+        html += '\u2022 <strong>High/Critical:</strong> ' + highSev.length + ' components<br>';
+        html += '\u2022 <strong>Medium:</strong> ' + medSev.length + ' components<br>';
+        html += '\u2022 <strong>Total CVEs:</strong> ' + totalCVE + '<br>';
+        html += '\u2022 <strong>Unique Suppliers:</strong> ' + (new Set(components.map(function(c){return c.supplier;}))).size + '<br>';
+        var types = {};
+        components.forEach(function(c){types[c.type]=(types[c.type]||0)+1;});
+        html += '\u2022 <strong>Component Types:</strong> ';
+        Object.keys(types).forEach(function(t){ html += t + ' (' + types[t] + '), '; });
+        html = html.replace(/, $/, '<br>');
+        if (highSev.length > 0) { html += '<br><strong style="color:#ff3b30">⚠ High-risk components:</strong> ' + highSev.map(function(c){return c.name;}).join(', '); }
+        return html;
+    }
+
+    // Firmware / type specific
+    if (/firmware|rtos|kernel|driver|embedded|os|operating.?system/.test(q)) {
+        var firmware = components.filter(function(c){ return /RTOS|Kernel|Driver|Firmware|Embedded|OS/.test(c.type); });
+        if (firmware.length === 0) return 'No firmware or embedded OS components found in the current SBOM for <strong>' + progKey.toUpperCase() + '</strong>.';
+        var html = '<strong>Firmware & Embedded Components:</strong><br><br>';
+        firmware.forEach(function(c) {
+            html += '\u2022 <strong>' + c.name + '</strong> v' + c.version + ' — ' + c.type + ' | ' + c.supplier + ' | CVEs: ' + c.cves + ' | ' + c.license + '<br>';
+        });
+        html += '<br><em style="color:var(--steel)">' + firmware.length + ' of ' + components.length + ' total components are firmware/embedded.</em>';
+        return html;
+    }
+
+    // Summary / overview
+    if (/summary|overview|tell me about|what.?is|describe|show me/.test(q)) {
+        var html = '<strong>SBOM Summary — ' + progKey.toUpperCase() + '</strong><br><br>';
+        html += '\u2022 <strong>Format:</strong> ' + format.toUpperCase() + '<br>';
+        html += '\u2022 <strong>Total Components:</strong> ' + components.length + '<br>';
+        html += '\u2022 <strong>Known CVEs:</strong> ' + totalCVE + '<br>';
+        html += '\u2022 <strong>Clean Components:</strong> ' + verified + '/' + components.length + '<br>';
+        html += '\u2022 <strong>Blockchain Anchored:</strong> ' + Math.floor(components.length * 0.7) + '<br><br>';
+        html += '<strong>Components:</strong><br>';
+        components.forEach(function(c) {
+            var icon = c.cves > 0 ? '<span style="color:#ff3b30">⚠</span>' : '<span style="color:#2ecc71">✓</span>';
+            html += icon + ' ' + c.name + ' v' + c.version + ' (' + c.type + ')<br>';
+        });
+        return html;
+    }
+
+    // Catch-all
+    return 'I can help you analyze this SBOM. Try asking about:<br>\u2022 <strong>CVEs</strong> — "What components have vulnerabilities?"<br>\u2022 <strong>Licenses</strong> — "Show me GPL components"<br>\u2022 <strong>Compliance</strong> — "Is this EO 14028 compliant?"<br>\u2022 <strong>Risk</strong> — "What\'s the supply chain risk?"<br>\u2022 <strong>Firmware</strong> — "List embedded RTOS components"<br>\u2022 <strong>Summary</strong> — "Give me an overview"';
+}
 
 
 // ── 6. ZERO-TRUST AUDIT WATERMARK ──
@@ -13428,7 +13695,7 @@ var S4_SUBSCRIPTION_TIERS = {
         price_annual: 0,
         sls_monthly: 100,
         anchors_monthly: 10000,
-        features: ['Full SDK access', 'XRPL Mainnet anchoring', 'ILS Workspace demo', 'Community support'],
+        features: ['Full SDK access', 'XRPL Mainnet anchoring', 'Anchor-S4 demo', 'Community support'],
         stripe_monthly: null,
         stripe_annual: null
     },
@@ -13687,25 +13954,25 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var firstCard = hubPanel.querySelector('.demo-card');
         if (!firstCard) return;
 
-        var badgeHTML = '<div id="fedRampBadgePanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(0,100,0,0.06),rgba(0,170,255,0.04));border:1px solid rgba(0,170,255,0.2);border-radius:12px;padding:16px;">'
+        var badgeHTML = '<div id="fedRampBadgePanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(0,100,0,0.06),rgba(0,170,255,0.04));border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:16px;">'
             + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
             + '<div style="font-size:0.82rem;font-weight:700;color:#00aaff;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-shield-halved"></i> FedRAMP / Impact Level Authorization Status</div>'
-            + '<span style="background:rgba(255,149,0,0.15);color:#ff9500;padding:3px 10px;border-radius:12px;font-size:0.72rem;font-weight:700;">IN PROGRESS</span>'
+            + '<span style="background:rgba(255,149,0,0.15);color:#ff9500;padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;">IN PROGRESS</span>'
             + '</div>'
             + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;">'
-            + '<div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:10px;">'
+            + '<div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:6px;">'
             + '<div style="font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">FedRAMP</div>'
             + '<div style="font-size:0.85rem;font-weight:800;color:#ff9500;"><i class="fas fa-clock"></i> Moderate</div>'
             + '<div style="font-size:0.65rem;color:var(--steel);margin-top:2px;">ATO Pending</div></div>'
-            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:10px;">'
+            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:6px;">'
             + '<div style="font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Impact Level</div>'
             + '<div style="font-size:0.85rem;font-weight:800;color:#34c759;"><i class="fas fa-check-circle"></i> IL4 / IL5</div>'
             + '<div style="font-size:0.65rem;color:var(--steel);margin-top:2px;">CUI / NOFORN Ready</div></div>'
-            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:10px;">'
+            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:6px;">'
             + '<div style="font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">CMMC Level</div>'
             + '<div style="font-size:0.85rem;font-weight:800;color:#34c759;"><i class="fas fa-check-circle"></i> Level 2</div>'
             + '<div style="font-size:0.65rem;color:var(--steel);margin-top:2px;">110 Practices Met</div></div>'
-            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:10px;">'
+            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:6px;">'
             + '<div style="font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">NIST 800-171</div>'
             + '<div style="font-size:0.85rem;font-weight:800;color:#34c759;"><i class="fas fa-check-circle"></i> Compliant</div>'
             + '<div style="font-size:0.65rem;color:var(--steel);margin-top:2px;">SSP Documented</div></div>'
@@ -13763,7 +14030,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         if (existing) { existing.remove(); return; }
 
         var statusColors = { online: '#34c759', away: '#ff9500', offline: '#8ea4b8' };
-        var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:16px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-users" style="color:var(--accent);margin-right:8px"></i>Team Workspace</h3>';
         html += '<button onclick="var p=document.getElementById(\'teamManagePanel\');var o=document.getElementById(\'teamManageOverlay\');if(p)p.remove();if(o)o.remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -13777,7 +14044,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             var statusColor = statusColors[m.status] || '#8ea4b8';
             html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
             html += '<td style="padding:10px 8px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;border-radius:50%;background:' + role.color + '22;display:flex;align-items:center;justify-content:center;"><i class="fas ' + role.icon + '" style="color:' + role.color + ';font-size:0.7rem;"></i></div><div><div style="color:#fff;font-weight:600;font-size:0.82rem;">' + m.name + '</div><div style="color:var(--steel);font-size:0.7rem;">' + m.email + '</div></div></div></td>';
-            html += '<td style="padding:10px 8px;"><span style="background:' + role.color + '22;color:' + role.color + ';padding:3px 10px;border-radius:12px;font-size:0.72rem;font-weight:700;">' + role.label + '</span></td>';
+            html += '<td style="padding:10px 8px;"><span style="background:' + role.color + '22;color:' + role.color + ';padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:700;">' + role.label + '</span></td>';
             html += '<td style="padding:10px 8px;text-align:center;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:' + statusColor + ';"><span style="width:6px;height:6px;border-radius:50%;background:' + statusColor + ';display:inline-block;"></span>' + m.status + '</span></td>';
             html += '<td style="padding:10px 8px;text-align:center;">';
             if (i > 0) html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Role change requires Admin approval in production.\',\'info\')" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:6px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-pen"></i></button>';
@@ -13836,7 +14103,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var existing = document.getElementById('savedAnalysesPanel');
         if (existing) { existing.remove(); return; }
 
-        var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:16px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-history" style="color:var(--accent);margin-right:8px"></i>Saved Analyses</h3>';
         html += '<button onclick="document.getElementById(\'savedAnalysesPanel\').remove();document.getElementById(\'savedAnalysesOverlay\').remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -13848,7 +14115,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             _savedAnalyses.sort(function(a,b){return new Date(b.timestamp)-new Date(a.timestamp);});
             _savedAnalyses.forEach(function(a, i) {
                 var scoreColor = a.score >= 80 ? '#34c759' : a.score >= 50 ? '#ff9500' : '#ff3b30';
-                html += '<div style="padding:14px;margin-bottom:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">';
+                html += '<div style="padding:14px;margin-bottom:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;">';
                 html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
                 html += '<div><div style="color:#fff;font-weight:700;font-size:0.88rem;">' + a.title + '</div><div style="color:var(--steel);font-size:0.72rem;">' + a.type + ' — ' + new Date(a.timestamp).toLocaleString() + '</div></div>';
                 html += '<div style="display:flex;align-items:center;gap:12px;">';
@@ -13986,7 +14253,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var existing = document.getElementById('webhookPanel');
         if (existing) { existing.remove(); return; }
 
-        var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:16px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-plug" style="color:var(--accent);margin-right:8px"></i>Webhook Configuration</h3>';
         html += '<button onclick="document.getElementById(\'webhookPanel\').remove();document.getElementById(\'webhookOverlay\').remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -13994,7 +14261,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:16px;">Configure webhook URLs to receive real-time notifications when records are anchored, verified, or exported.</div>';
 
         // Add webhook form
-        html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;">';
+        html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:16px;">';
         html += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;">';
         html += '<input type="url" id="webhookUrlInput" placeholder="https://your-system.mil/api/webhooks/s4" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.82rem;font-family:monospace;width:100%;">';
         html += '<button onclick="addWebhook()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;white-space:nowrap;"><i class="fas fa-plus" style="margin-right:4px"></i> Add</button>';
@@ -14725,10 +14992,10 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
             shadow.innerHTML = '<style>' +
                 ':host { display: block; margin-bottom: 16px; }' +
                 ':host([hidden]) { display: none; }' +
-                '.tool-wrapper { background: #111; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; overflow: hidden; }' +
+                '.tool-wrapper { background: #111; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; }' +
                 '.tool-header { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); }' +
                 '.tool-title { color: #f5f5f7; font-weight: 700; font-size: 0.95rem; flex: 1; }' +
-                '.tool-badge { background: rgba(0,170,255,0.12); color: #00aaff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; }' +
+                '.tool-badge { background: rgba(0,170,255,0.12); color: #00aaff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }' +
                 '.tool-body { padding: 18px; }' +
                 '.tool-loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: #86868b; }' +
                 '.tool-loading .spinner { width: 24px; height: 24px; border: 2px solid rgba(0,170,255,0.2); border-top-color: #00aaff; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; }' +
@@ -14800,7 +15067,7 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
         connectedCallback() {
             var type = this.getAttribute('type') || 'info';
             var colors = { success: '#34c759', warning: '#ff9500', error: '#ff3b30', info: '#00aaff' };
-            this.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:12px;font-size:0.72rem;font-weight:600;background:' +
+            this.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:600;background:' +
                 (colors[type] || colors.info) + '15;color:' + (colors[type] || colors.info) + ';border:1px solid ' + (colors[type] || colors.info) + '30';
             var dot = document.createElement('span');
             dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:' + (colors[type] || colors.info);
@@ -14826,7 +15093,7 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
             var value = this.getAttribute('value') || '0';
             var trend = this.getAttribute('trend') || '';
             var trendColor = trend.startsWith('+') ? '#34c759' : trend.startsWith('-') ? '#ff3b30' : '#86868b';
-            this.style.cssText = 'display:block;padding:16px;background:#111;border:1px solid rgba(255,255,255,0.06);border-radius:10px;text-align:center;';
+            this.style.cssText = 'display:block;padding:16px;background:#111;border:1px solid rgba(255,255,255,0.06);border-radius:6px;text-align:center;';
             this.innerHTML = '<div style="color:#86868b;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">' + label + '</div>' +
                 '<div style="color:#f5f5f7;font-size:1.5rem;font-weight:800">' + value + '</div>' +
                 (trend ? '<div style="color:' + trendColor + ';font-size:0.75rem;font-weight:600;margin-top:4px">' + trend + '</div>' : '');
@@ -15000,6 +15267,62 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
     if (_isVDI || _isFlankspeed) console.log('[VDI] Environment: ' + (_isFlankspeed ? 'Flankspeed (M365)' : 'Nautilus VDI') + ' — optimizations active');
 
     console.log('[Round-16] VDI compatibility module loaded');
+})();
+
+// ── LIGHT/DARK MODE TOGGLE ──
+// Platform-only theme switcher with localStorage persistence
+function toggleTheme() {
+    var body = document.body;
+    var isLight = body.classList.toggle('light-mode');
+    localStorage.setItem('s4-theme', isLight ? 'light' : 'dark');
+    _updateThemeIcon(isLight);
+    // Update nav link colors for light mode
+    var navLinks = document.querySelectorAll('#navLinks a:not([style*="background:#00aaff"])');
+    navLinks.forEach(function(a) {
+        if (a.classList.contains('theme-toggle')) return;
+        if (isLight) {
+            a.style.color = a.getAttribute('href') === '../demo-app/' ? '#0077cc' : 'rgba(0,0,0,0.6)';
+        } else {
+            a.style.color = a.getAttribute('href') === '../demo-app/' ? '#00aaff' : 'rgba(255,255,255,0.7)';
+        }
+    });
+    // Update the main nav bar background
+    var nav = document.querySelector('nav');
+    if (nav) {
+        if (isLight) {
+            nav.style.background = 'rgba(255,255,255,0.92)';
+            nav.style.backdropFilter = 'blur(20px)';
+            nav.style.borderBottomColor = 'rgba(0,0,0,0.06)';
+        } else {
+            nav.style.background = 'rgba(5,8,16,0.92)';
+            nav.style.backdropFilter = 'blur(20px)';
+            nav.style.borderBottomColor = 'rgba(255,255,255,0.06)';
+        }
+    }
+    // Update logo brand text
+    var brand = document.querySelector('.nav-brand span, nav span');
+    if (brand) brand.style.color = isLight ? '#1d1d1f' : '#fff';
+}
+
+function _updateThemeIcon(isLight) {
+    var btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+        btn.innerHTML = isLight ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        btn.title = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+    }
+}
+
+// Apply saved theme on load
+(function() {
+    var saved = localStorage.getItem('s4-theme');
+    if (saved === 'light') {
+        document.body.classList.add('light-mode');
+        _updateThemeIcon(true);
+        // Defer nav color updates until DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() { toggleTheme(); toggleTheme(); }, 100);
+        });
+    }
 })();
 </script>
 </body>

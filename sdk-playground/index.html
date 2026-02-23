@@ -37,7 +37,7 @@
         .ref-cat-header .cat-chevron{color:rgba(0,170,255,0.5);font-size:0.7rem;transition:transform 0.2s}
         .ref-cat-header.open .cat-chevron{transform:rotate(90deg)}
         .ref-items{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 4px;max-height:0;overflow:hidden;transition:max-height 0.3s ease,opacity 0.2s;opacity:0}
-        .ref-items.open{max-height:600px;opacity:1;margin-bottom:8px}
+        .ref-items.open{max-height:900px;opacity:1;margin-bottom:8px}
         .ref-item{display:flex;flex-direction:column;gap:2px;padding:8px 12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;transition:all 0.2s}
         .ref-item:hover{background:rgba(0,170,255,0.04);border-color:rgba(0,170,255,0.15)}
         .ref-item .ri-name{font-family:'Monaco',monospace;color:var(--accent);font-weight:600;font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -151,8 +151,9 @@
             </div>
         </div>
 
+        <!-- Row 1: Code Editor + Output + How It Works sidebar -->
         <div class="row">
-            <div class="col-lg-7 mb-4">
+            <div class="col-lg-8 mb-4">
                 <!-- Code Editor -->
                 <div class="card reveal">
                     <div class="editor-header">
@@ -177,7 +178,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-5 mb-4">
+            <div class="col-lg-4 mb-4">
                 <!-- How It Works -->
                 <div class="card reveal">
                     <h3 style="margin-bottom:12px;"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:8px;"></i> How It Works</h3>
@@ -206,7 +207,11 @@
                     <div class="install-box">pip install s4-ledger-sdk</div>
                     <p style="font-size:0.85rem;color:var(--text-muted);margin-top:10px;">Requires Python 3.8+ and xrpl-py</p>
                 </div>
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-lg-6 mb-4">
                 <!-- SDK Reference -->
                 <div class="card reveal">
                     <h3 style="margin-bottom:14px;"><i class="fas fa-book" style="color:var(--accent);margin-right:8px;"></i> SDK Quick Reference</h3>
@@ -285,7 +290,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="col-lg-6 mb-4">
                 <!-- API Endpoints -->
                 <div class="card reveal">
                     <h3 style="margin-bottom:14px;"><i class="fas fa-plug" style="color:var(--accent);margin-right:8px;"></i> Live API Endpoints</h3>
@@ -1350,9 +1357,9 @@
                 <div class="footer-tagline">Immutable defense logistics. Built on the XRP Ledger.</div>
             </div>
             <div class="footer-links">
-                <div class="footer-col"><h5>Product</h5><a href="/demo-app/">Platform</a><a href="/sdk-playground/">SDK Playground</a><a href="/metrics.html">Live Metrics</a><a href="/transactions.html">Transactions</a></div>
+                <div class="footer-col"><h5>Product</h5><a href="/demo-app/">Anchor-S4</a><a href="/sdk-playground/">SDK Playground</a><a href="/s4-marketplace/">Marketplace</a><a href="/s4-pricing/">Pricing</a></div>
                 <div class="footer-col"><h5>Company</h5><a href="/s4-about/">About</a><a href="/s4-investors/">Investors</a><a href="/s4-partners/">Partners</a><a href="/s4-roadmap/">Roadmap</a></div>
-                <div class="footer-col"><h5>Resources</h5><a href="/s4-use-cases/">Use Cases</a><a href="/s4-faq/">FAQ</a><a href="/s4-pricing/">Pricing</a><a href="/security/">Security</a></div>
+                <div class="footer-col"><h5>Resources</h5><a href="/s4-use-cases/">Use Cases</a><a href="/s4-faq/">FAQ</a><a href="/metrics.html">Metrics</a><a href="/transactions.html">Transactions</a><a href="/security/">Security</a></div>
                 <div class="footer-col"><h5>Connect</h5><a href="/s4-contact/">Contact</a><a href="https://github.com/s4ledger/s4-ledger" target="_blank">GitHub</a><a href="https://x.com" target="_blank">X / Twitter</a><a href="https://linkedin.com" target="_blank">LinkedIn</a></div>
             </div>
         </div>
