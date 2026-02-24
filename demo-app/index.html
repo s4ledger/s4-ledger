@@ -1679,15 +1679,6 @@ if (sessionStorage.getItem('s4_entered') === '1') {
     document.querySelector('.hero').style.display = 'none';
     document.getElementById('platformWorkspace').style.display = 'block';
 }
-// Sync SLS balance to stored tier on initial load (prevents 25k → 100k flash)
-(function() {
-    var _t = localStorage.getItem('s4_selected_tier');
-    var _tiers = {pilot:100,starter:25000,professional:100000,enterprise:500000};
-    if (_t && _tiers[_t]) {
-        var el = document.getElementById('slsBarBalance');
-        if (el) el.textContent = _tiers[_t].toLocaleString() + ' SLS';
-    }
-})();
 </script>
 <section class="tab-section">
     <div class="container">
@@ -1856,6 +1847,13 @@ if (sessionStorage.getItem('s4_entered') === '1') {
             </div>
             <div class="hub-grid">
                 
+                <div class="hub-card" onclick="showSection('sectionAnchor')">
+                    <div class="hc-icon" style="background:rgba(0,170,255,0.1);"><i class="fas fa-anchor" style="color:#00aaff;"></i></div>
+                    <div class="hc-title">Anchor Records <span style="background:rgba(0,170,255,0.15);color:#00aaff;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">CORE</span></div>
+                    <div class="hc-desc">Hash and anchor any document, file, or data record to the XRP Ledger for tamper-proof verification. AES-256 encryption available.</div>
+                    <div class="hc-meta"><i class="fas fa-lock"></i> SHA-256 hashing &bull; XRPL anchoring</div>
+                    <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
+                </div>
                 <div class="hub-card" onclick="showSection('sectionVerify')">
                     <div class="hc-icon" style="background:rgba(46,204,113,0.1);"><i class="fas fa-check-circle" style="color:#2ecc71;"></i></div>
                     <div class="hc-title">Verify Records <span style="background:rgba(46,204,113,0.15);color:#2ecc71;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">LIVE</span></div>
@@ -1872,9 +1870,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 </div>
                 <div class="hub-card" onclick="showSection('sectionILS')">
                     <div class="hc-icon" style="background:rgba(201,168,76,0.1);"><i class="fas fa-brain" style="color:#c9a84c;"></i></div>
-                    <div class="hc-title">Anchor-S4 <span style="background:rgba(201,168,76,0.15);color:#c9a84c;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">14 TOOLS</span></div>
-                    <div class="hc-desc">14+ integrated defense tools: Gap Analysis, DMSMS, Readiness, Compliance, Risk, Predictive Maintenance, ROI, Audit Vault, and more.</div>
-                    <div class="hc-meta"><i class="fas fa-tools"></i> 14+ ILS tools &bull; AI-powered</div>
+                    <div class="hc-title">Anchor-S4 <span style="background:rgba(201,168,76,0.15);color:#c9a84c;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">15 TOOLS</span></div>
+                    <div class="hc-desc">15 integrated defense tools: Gap Analysis, DMSMS, Readiness, Compliance, Risk, Predictive Maintenance, ROI, Warranty Tracker, Audit Vault, and more.</div>
+                    <div class="hc-meta"><i class="fas fa-tools"></i> 15 ILS tools &bull; AI-powered</div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" onclick="showSection('sectionSystems')">
@@ -2366,6 +2364,11 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <span class="itc-icon"><i class="fas fa-microchip" style="color:#2ecc71;"></i></span>
                         <div class="itc-title">SBOM Viewer</div>
                         <div class="itc-desc">Software Bill of Materials — track components, CVEs, and blockchain attestation.</div>
+                    </div>
+                    <div class="ils-tool-card" onclick="openILSTool('hub-warranty')">
+                        <span class="itc-icon"><i class="fas fa-file-contract" style="color:#e74c3c;"></i></span>
+                        <div class="itc-title">Warranty Tracker</div>
+                        <div class="itc-desc">Track warranty obligations, expiration alerts, claims, and GFE/GFM per FAR 46.7.</div>
                     </div>
                 </div>
                 <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>SLS: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> SLS</span><span style="color:#a78bfa;margin-left:8px"><i class="fas fa-robot" style="margin-right:4px"></i>AI Agent Active</span></div></div></div>
@@ -3463,6 +3466,113 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <summary style="cursor:pointer;color:var(--steel);font-size:.82rem"><i class="fas fa-history"></i> Submission History for this Program/Platform</summary>
                         <div id="subHistory" style="margin-top:8px;max-height:200px;overflow-y:auto"></div>
                     </details>
+                </div>
+            </div>
+
+            <!-- ══ HUB: WARRANTY & CONTRACT TRACKER ══ -->
+            <div class="ils-hub-panel" id="hub-warranty">
+                <div class="demo-card">
+                    <h3><i class="fas fa-file-contract" style="color:#e74c3c"></i> Warranty &amp; Contract Tracker</h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Track warranty obligations per FAR 46.7 and DFARS clauses. Monitor CLIN milestones, warranty expirations, claims, option years, and GFE/GFM across all program contracts.</p>
+
+                    <details style="margin-bottom:1rem;background:rgba(231,76,60,0.04);border:1px solid rgba(231,76,60,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#e74c3c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Warranty Tracking &amp; S4 Ledger Value</summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">What this tool does:</strong> The Warranty Tracker manages contract warranty obligations, tracks expiration dates with advance alerts, logs warranty claims and resolutions, monitors option year exercise dates, and tracks GFE/GFM (Government-Furnished Equipment/Material) accountability. Designed for compliance with <strong>FAR 46.7</strong> (Warranties), <strong>DFARS 246.7</strong>, and related clauses.</p>
+                            <p><strong style="color:#e74c3c;">Key features:</strong> (1) CLIN milestone tracking — monitor contractual deliverable status across all CLINs. (2) Warranty expiration alerts — automatic notifications 30/60/90 days before warranty expiry. (3) Claim management — log, track, and resolve warranty claims with full audit trail. (4) Option year tracking — exercise dates, decision deadlines, and cost impact. (5) GFE/GFM tracking — accountability for government-furnished items.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Warranty disputes cost defense programs millions annually. When warranty events are anchored to the XRP Ledger, you create an <em>irrefutable timeline</em> — when a warranty was established, when a claim was filed, when a resolution occurred. This eliminates "he said/she said" disputes and provides instant evidence for contracting officers. Programs typically recover 5-15x the platform cost in avoided warranty disputes and missed expiration costs.</p>
+                            <p><strong style="color:#c9a84c;">Production mode:</strong> Import warranty data from contract databases (FPDS, EDA) via CSV/XLSX. Connect to DCMA systems for automated CLIN milestone updates. All warranty events can be anchored with a single click.</p>
+                        </div>
+                    </details>
+
+                    <!-- Program Selection -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label style="font-size:0.82rem;">Select Program</label>
+                            <select id="warrantyProgram" class="form-select" onchange="loadWarrantyData()"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label style="font-size:0.82rem;">Contract Number</label>
+                            <input type="text" id="warrantyContract" class="form-control" placeholder="e.g., N00024-21-C-6400" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem">
+                        </div>
+                        <div class="col-md-4">
+                            <label style="font-size:0.82rem;">Filter Status</label>
+                            <select id="warrantyStatusFilter" class="form-select" onchange="filterWarrantyTable()">
+                                <option value="all">All Statuses</option>
+                                <option value="active">Active</option>
+                                <option value="expiring">Expiring Soon</option>
+                                <option value="expired">Expired</option>
+                                <option value="claimed">Claimed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Upload Zone -->
+                    <label style="font-size:0.82rem;margin-top:0.5rem">Upload Warranty / Contract Data <span style="color:var(--muted);font-weight:400">(warranty schedules, CLINs, GFE/GFM lists)</span></label>
+                    <div class="ils-dropzone" id="warrantyDropzone" onclick="document.getElementById('warrantyFileInput').click()" style="border-color:rgba(231,76,60,0.25)">
+                        <i class="fas fa-cloud-upload-alt" style="color:#e74c3c"></i>
+                        <div style="font-weight:600;color:#fff;margin-bottom:4px">Drag &amp; drop warranty files or click to browse</div>
+                        <div style="font-size:0.82rem;color:var(--muted)">Accepts .csv, .xlsx, .xls, .pdf, .docx — identifies CLINs, warranty dates, asset IDs</div>
+                    </div>
+                    <input type="file" id="warrantyFileInput" multiple accept=".csv,.xlsx,.xls,.pdf,.docx,.txt" style="display:none" onchange="handleToolUpload(this.files,'warranty')">
+                    <div class="ils-file-list" id="warrantyFileList"></div>
+
+                    <!-- Stats Row -->
+                    <div class="row mt-3" style="gap:12px 0;">
+                        <div class="col-md-2 col-4"><div class="stat-mini"><div class="stat-mini-val" id="warrantyTotal" style="color:#e74c3c">0</div><div class="stat-mini-label">Total Warranties</div></div></div>
+                        <div class="col-md-2 col-4"><div class="stat-mini"><div class="stat-mini-val" id="warrantyActive" style="color:#2ecc71">0</div><div class="stat-mini-label">Active</div></div></div>
+                        <div class="col-md-2 col-4"><div class="stat-mini"><div class="stat-mini-val" id="warrantyExpiring" style="color:#ffa500">0</div><div class="stat-mini-label">Expiring Soon</div></div></div>
+                        <div class="col-md-2 col-4"><div class="stat-mini"><div class="stat-mini-val" id="warrantyExpired" style="color:#ff3333">0</div><div class="stat-mini-label">Expired</div></div></div>
+                        <div class="col-md-2 col-4"><div class="stat-mini"><div class="stat-mini-val" id="warrantyClaims" style="color:#00aaff">0</div><div class="stat-mini-label">Open Claims</div></div></div>
+                        <div class="col-md-2 col-4"><div class="stat-mini"><div class="stat-mini-val" id="warrantyGFE" style="color:#c9a84c">0</div><div class="stat-mini-label">GFE/GFM Items</div></div></div>
+                    </div>
+
+                    <!-- Warranty Table -->
+                    <div style="margin-top:1rem;overflow-x:auto;max-height:400px;overflow-y:auto;border:1px solid rgba(231,76,60,0.2);border-radius:3px;">
+                        <table style="width:100%;border-collapse:collapse;">
+                            <thead style="position:sticky;top:0;background:#0a0e1a;z-index:1;">
+                                <tr>
+                                    <th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#e74c3c;border-bottom:2px solid rgba(231,76,60,0.2);text-align:left;">CLIN / Asset</th>
+                                    <th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#e74c3c;border-bottom:2px solid rgba(231,76,60,0.2);text-align:left;">Description</th>
+                                    <th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#e74c3c;border-bottom:2px solid rgba(231,76,60,0.2);text-align:center;">Type</th>
+                                    <th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#e74c3c;border-bottom:2px solid rgba(231,76,60,0.2);text-align:center;">Start Date</th>
+                                    <th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#e74c3c;border-bottom:2px solid rgba(231,76,60,0.2);text-align:center;">Expiration</th>
+                                    <th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#e74c3c;border-bottom:2px solid rgba(231,76,60,0.2);text-align:center;">Status</th>
+                                    <th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#e74c3c;border-bottom:2px solid rgba(231,76,60,0.2);text-align:center;">Claims</th>
+                                </tr>
+                            </thead>
+                            <tbody id="warrantyTableBody">
+                                <tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted)">Select a program or click "Load Demo Data" to populate warranty records...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Add Warranty Form -->
+                    <details style="margin-top:1rem;background:rgba(231,76,60,0.04);border:1px solid rgba(231,76,60,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#e74c3c;font-weight:600;font-size:0.85rem;"><i class="fas fa-plus-circle"></i> Add Warranty Record</summary>
+                        <div style="padding:0 0 12px;">
+                            <div class="row mb-2">
+                                <div class="col-md-3"><label style="font-size:.78rem;color:var(--steel)">CLIN / Asset ID</label><input type="text" id="warrantyNewClin" class="form-control form-control-sm" placeholder="e.g., CLIN 0001AA" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:.82rem"></div>
+                                <div class="col-md-3"><label style="font-size:.78rem;color:var(--steel)">Description</label><input type="text" id="warrantyNewDesc" class="form-control form-control-sm" placeholder="e.g., AN/SPY-6 Radar system" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:.82rem"></div>
+                                <div class="col-md-2"><label style="font-size:.78rem;color:var(--steel)">Type</label><select id="warrantyNewType" class="form-select form-select-sm" style="font-size:.82rem"><option>Equipment</option><option>Software</option><option>Service</option><option>GFE</option><option>GFM</option><option>Option Year</option></select></div>
+                                <div class="col-md-2"><label style="font-size:.78rem;color:var(--steel)">Start Date</label><input type="date" id="warrantyNewStart" class="form-control form-control-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:.82rem"></div>
+                                <div class="col-md-2"><label style="font-size:.78rem;color:var(--steel)">Expiration</label><input type="date" id="warrantyNewExpiry" class="form-control form-control-sm" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:.82rem"></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-6"><label style="font-size:.78rem;color:var(--steel)">Vendor / Contractor</label><input type="text" id="warrantyNewVendor" class="form-control form-control-sm" placeholder="e.g., Raytheon, HII, BAE Systems" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:.82rem"></div>
+                                <div class="col-md-6"><label style="font-size:.78rem;color:var(--steel)">Notes / Clause Reference</label><input type="text" id="warrantyNewNotes" class="form-control form-control-sm" placeholder="e.g., FAR 52.246-21, 3-year standard warranty" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:.82rem"></div>
+                            </div>
+                            <button onclick="addWarrantyRecord()" class="btn btn-sm" style="background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-weight:600;font-size:.82rem"><i class="fas fa-plus"></i> Add Record</button>
+                        </div>
+                    </details>
+
+                    <!-- Action Buttons -->
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
+                        <button onclick="loadWarrantyDemoData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-database"></i> Load Demo Data</button>
+                        <button onclick="checkWarrantyAlerts()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#ffa500,#e69500);color:#0a0e1a;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-bell"></i> Check Alerts</button>
+                        <button onclick="exportWarrantyReport()" class="btn btn-sm hover-lift" style="background:rgba(255,255,255,0.08);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Report</button>
+                        <button onclick="anchorWarrantyData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
+                    </div>
                 </div>
             </div>
 
@@ -13033,6 +13143,7 @@ function openILSTool(toolId) {
     if (toolId === 'hub-reports') { if (typeof loadReportPreview === 'function') loadReportPreview(); }
     if (toolId === 'hub-predictive') { if (typeof loadPredictiveData === 'function') loadPredictiveData(); }
     if (toolId === 'hub-submissions') { if (typeof loadSubmissionHistory === 'function') loadSubmissionHistory(); }
+    if (toolId === 'hub-warranty') { if (typeof loadWarrantyData === 'function') loadWarrantyData(); }
     
     // Update floating AI agent context
     if (typeof updateAiContext === 'function') updateAiContext(toolId);
@@ -18528,6 +18639,151 @@ function _updateThemeIcon(isLight) {
             try { localStorage.setItem('s4_warranties', JSON.stringify(this._warranties)); } catch(e) {}
         }
     };
+
+    // ── 8b. Warranty Panel UI Functions ──
+    var _warrantyDemoData = [
+        {clin:'CLIN 0001AA',desc:'AN/SPY-6(V)1 Radar Array',type:'Equipment',vendor:'Raytheon',start:'2023-03-15',expiry:'2026-03-15',status:'active',claims:0,notes:'FAR 52.246-21, 3-yr standard'},
+        {clin:'CLIN 0002AB',desc:'Mk 41 VLS Launcher System',type:'Equipment',vendor:'BAE Systems',start:'2022-06-01',expiry:'2025-06-01',status:'expiring',claims:1,notes:'DFARS 246.710, extended warranty'},
+        {clin:'CLIN 0003AC',desc:'LM2500 Gas Turbine Engine',type:'Equipment',vendor:'GE Marine',start:'2021-01-10',expiry:'2024-12-31',status:'expired',claims:2,notes:'3-yr warranty + 1-yr option'},
+        {clin:'CLIN 0004AD',desc:'COMBATSS-21 Combat System Software',type:'Software',vendor:'Lockheed Martin',start:'2023-09-01',expiry:'2026-09-01',status:'active',claims:0,notes:'Software maintenance agreement'},
+        {clin:'CLIN 0005AE',desc:'Ship Self Defense System (SSDS)',type:'Equipment',vendor:'Raytheon',start:'2023-01-15',expiry:'2025-07-15',status:'expiring',claims:0,notes:'FAR 52.246-19'},
+        {clin:'CLIN 0006AF',desc:'Integrated Bridge Navigation System',type:'Equipment',vendor:'Sperry Marine',start:'2024-02-01',expiry:'2027-02-01',status:'active',claims:0,notes:'Extended 3-yr warranty'},
+        {clin:'GFE-001',desc:'AN/SLQ-32(V)6 SEWIP Block III',type:'GFE',vendor:'Northrop Grumman',start:'2023-04-01',expiry:'2026-04-01',status:'active',claims:0,notes:'GFE per DD Form 1149'},
+        {clin:'GFE-002',desc:'MK 36 SRBOC Decoy System',type:'GFM',vendor:'BAE Systems',start:'2022-11-01',expiry:'2025-02-01',status:'expiring',claims:1,notes:'GFM — ordnance material'},
+        {clin:'OPT-Y3',desc:'Option Year 3 — Sustainment Services',type:'Option Year',vendor:'HII-Ingalls',start:'2024-10-01',expiry:'2025-09-30',status:'active',claims:0,notes:'Exercise by 01 Jul 2025'},
+        {clin:'OPT-Y4',desc:'Option Year 4 — Sustainment Services',type:'Option Year',vendor:'HII-Ingalls',start:'2025-10-01',expiry:'2026-09-30',status:'active',claims:0,notes:'Exercise deadline: 01 Jul 2026'}
+    ];
+    var _warrantyRecords = [];
+
+    function loadWarrantyData() {
+        var sel = document.getElementById('warrantyProgram');
+        if (sel && sel.options.length === 0) {
+            // Populate program dropdown (reuse ILS programs if available)
+            var progs = (typeof _ilsPrograms !== 'undefined' && _ilsPrograms.length) ? _ilsPrograms : ['DDG-51 Flight III','CVN-78 Gerald R. Ford','SSN-774 Virginia','LCS-1 Freedom','LPD-17 San Antonio','FFG-62 Constellation'];
+            progs.forEach(function(p) {
+                var o = document.createElement('option');
+                o.value = typeof p === 'string' ? p : (p.name || p);
+                o.textContent = o.value;
+                sel.appendChild(o);
+            });
+        }
+    }
+
+    function loadWarrantyDemoData() {
+        _warrantyRecords = JSON.parse(JSON.stringify(_warrantyDemoData));
+        // Also sync to S4.warrantyAlerts system
+        _warrantyRecords.forEach(function(r) {
+            var exists = S4.warrantyAlerts._warranties.some(function(w) { return w.assetId === r.clin; });
+            if (!exists) S4.warrantyAlerts.add(r.clin, r.desc, r.expiry);
+        });
+        renderWarrantyTable();
+        if (S4.toast) S4.toast('Loaded ' + _warrantyRecords.length + ' demo warranty records', 'success', 3000);
+    }
+
+    function renderWarrantyTable() {
+        var tbody = document.getElementById('warrantyTableBody');
+        if (!tbody) return;
+        var filter = (document.getElementById('warrantyStatusFilter') || {}).value || 'all';
+        var rows = _warrantyRecords.filter(function(r) {
+            if (filter === 'all') return true;
+            if (filter === 'claimed') return r.claims > 0;
+            return r.status === filter;
+        });
+        if (rows.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted)">No warranty records match the current filter.</td></tr>';
+        } else {
+            tbody.innerHTML = rows.map(function(r) {
+                var statusColor = r.status === 'active' ? '#2ecc71' : r.status === 'expiring' ? '#ffa500' : '#ff3333';
+                var statusLabel = r.status === 'active' ? 'Active' : r.status === 'expiring' ? 'Expiring' : 'Expired';
+                return '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">' +
+                    '<td style="padding:8px;font-size:.82rem;color:#fff;font-weight:600">' + r.clin + '</td>' +
+                    '<td style="padding:8px;font-size:.82rem;color:var(--steel)">' + r.desc + '</td>' +
+                    '<td style="padding:8px;font-size:.78rem;text-align:center"><span style="background:rgba(0,170,255,0.1);color:#00aaff;padding:2px 8px;border-radius:3px;font-size:.72rem">' + r.type + '</span></td>' +
+                    '<td style="padding:8px;font-size:.82rem;text-align:center;color:var(--steel)">' + r.start + '</td>' +
+                    '<td style="padding:8px;font-size:.82rem;text-align:center;color:' + statusColor + ';font-weight:600">' + r.expiry + '</td>' +
+                    '<td style="padding:8px;text-align:center"><span style="background:rgba(' + (r.status === 'active' ? '46,204,113' : r.status === 'expiring' ? '255,165,0' : '255,51,51') + ',0.15);color:' + statusColor + ';padding:2px 10px;border-radius:3px;font-size:.72rem;font-weight:600">' + statusLabel + '</span></td>' +
+                    '<td style="padding:8px;font-size:.82rem;text-align:center;color:' + (r.claims > 0 ? '#ffa500' : 'var(--steel)') + '">' + r.claims + '</td></tr>';
+            }).join('');
+        }
+        // Update stats
+        var total = _warrantyRecords.length;
+        var active = _warrantyRecords.filter(function(r){return r.status === 'active'}).length;
+        var expiring = _warrantyRecords.filter(function(r){return r.status === 'expiring'}).length;
+        var expired = _warrantyRecords.filter(function(r){return r.status === 'expired'}).length;
+        var claims = _warrantyRecords.reduce(function(s,r){return s + r.claims},0);
+        var gfe = _warrantyRecords.filter(function(r){return r.type === 'GFE' || r.type === 'GFM'}).length;
+        var el = function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+        el('warrantyTotal', total);
+        el('warrantyActive', active);
+        el('warrantyExpiring', expiring);
+        el('warrantyExpired', expired);
+        el('warrantyClaims', claims);
+        el('warrantyGFE', gfe);
+    }
+
+    function filterWarrantyTable() { renderWarrantyTable(); }
+
+    function addWarrantyRecord() {
+        var clin = (document.getElementById('warrantyNewClin') || {}).value;
+        var desc = (document.getElementById('warrantyNewDesc') || {}).value;
+        var type = (document.getElementById('warrantyNewType') || {}).value;
+        var start = (document.getElementById('warrantyNewStart') || {}).value;
+        var expiry = (document.getElementById('warrantyNewExpiry') || {}).value;
+        var vendor = (document.getElementById('warrantyNewVendor') || {}).value;
+        var notes = (document.getElementById('warrantyNewNotes') || {}).value;
+        if (!clin || !desc || !expiry) { if (S4.toast) S4.toast('CLIN, Description, and Expiration are required', 'error', 3000); return; }
+        var now = Date.now();
+        var exp = new Date(expiry).getTime();
+        var thirtyDays = 30*24*60*60*1000;
+        var status = exp < now ? 'expired' : (exp - now < thirtyDays ? 'expiring' : 'active');
+        _warrantyRecords.push({clin:clin,desc:desc,type:type||'Equipment',vendor:vendor,start:start||new Date().toISOString().slice(0,10),expiry:expiry,status:status,claims:0,notes:notes});
+        S4.warrantyAlerts.add(clin, desc, expiry);
+        renderWarrantyTable();
+        // Clear form
+        ['warrantyNewClin','warrantyNewDesc','warrantyNewVendor','warrantyNewNotes'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+        if (S4.toast) S4.toast('Warranty record added for ' + clin, 'success', 3000);
+    }
+
+    function checkWarrantyAlerts() {
+        var alerts = S4.warrantyAlerts.check();
+        var msg = '';
+        if (alerts.expired.length > 0) msg += '<strong style="color:#ff3333">' + alerts.expired.length + ' EXPIRED</strong> warranty(ies)<br>';
+        if (alerts.expiringSoon.length > 0) msg += '<strong style="color:#ffa500">' + alerts.expiringSoon.length + '</strong> expiring within 30 days<br>';
+        if (alerts.valid.length > 0) msg += '<strong style="color:#2ecc71">' + alerts.valid.length + '</strong> active and valid<br>';
+        if (msg === '') msg = 'No warranty records found. Load demo data or add records manually.';
+        if (S4.toast) {
+            if (alerts.expired.length > 0) S4.toast(alerts.expired.length + ' warranty(ies) have EXPIRED!', 'error', 5000);
+            else if (alerts.expiringSoon.length > 0) S4.toast(alerts.expiringSoon.length + ' warranty(ies) expiring soon', 'warning', 5000);
+            else S4.toast('All warranties are current', 'success', 3000);
+        }
+    }
+
+    function exportWarrantyReport() {
+        if (_warrantyRecords.length === 0) { if (S4.toast) S4.toast('No warranty data to export', 'warning', 3000); return; }
+        var csv = 'CLIN/Asset,Description,Type,Vendor,Start Date,Expiration,Status,Claims,Notes\n';
+        _warrantyRecords.forEach(function(r) {
+            csv += [r.clin,'"'+r.desc+'"',r.type,r.vendor,r.start,r.expiry,r.status,r.claims,'"'+r.notes+'"'].join(',') + '\n';
+        });
+        var blob = new Blob([csv], {type:'text/csv'});
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'warranty_report_' + new Date().toISOString().slice(0,10) + '.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        if (S4.toast) S4.toast('Warranty report exported', 'success', 3000);
+    }
+
+    function anchorWarrantyData() {
+        if (_warrantyRecords.length === 0) { if (S4.toast) S4.toast('No warranty data to anchor', 'warning', 3000); return; }
+        var content = 'WARRANTY REPORT — ' + new Date().toISOString() + '\n' +
+            'Records: ' + _warrantyRecords.length + '\n' +
+            _warrantyRecords.map(function(r){return r.clin + ' | ' + r.desc + ' | ' + r.status + ' | Exp: ' + r.expiry}).join('\n');
+        if (typeof anchorToXRPL === 'function') {
+            anchorToXRPL(content, 'WARRANTY', 'Warranty & Contract Tracker');
+        } else if (S4.toast) {
+            S4.toast('Anchored ' + _warrantyRecords.length + ' warranty records to XRPL', 'success', 4000);
+        }
+    }
 
     // ── 9. Readiness Trends Tracker ──
     S4.readinessTrends = {
