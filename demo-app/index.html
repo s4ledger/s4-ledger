@@ -19715,8 +19715,8 @@ function _updateThemeIcon(isLight) {
         });
         test('S4.sanitize strips XSS', function(t) {
             if (!S4.sanitize) return;
-            var result = S4.sanitize('<script>alert(1)</script>Hello');
-            t.assert(result.indexOf('<script>') === -1, 'Script tags removed');
+            var result = S4.sanitize('<scr' + 'ipt>alert(1)<\/scr' + 'ipt>Hello');
+            t.assert(result.indexOf('<scr' + 'ipt>') === -1, 'Script tags removed');
             t.assert(result.indexOf('Hello') !== -1, 'Safe text preserved');
         });
         test('S4.debounce is defined', function(t) {
