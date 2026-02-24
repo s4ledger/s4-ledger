@@ -314,20 +314,20 @@
         .modal-box h4{color:var(--accent);margin-bottom:1rem}
         .modal-box .modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
         /* ═══ TOAST NOTIFICATION SYSTEM ═══ */
-        #s4ToastContainer{position:fixed;top:80px;right:20px;z-index:9997;display:flex;flex-direction:column;gap:10px;max-width:420px;pointer-events:none}
-        .s4-toast{pointer-events:all;display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:toastSlideIn 0.4s ease-out;position:relative;overflow:hidden;min-width:340px}
-        .s4-toast::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+        #s4ToastContainer{position:fixed;top:80px;right:20px;z-index:9997;display:flex;flex-direction:column;gap:8px;max-width:340px;pointer-events:none}
+        .s4-toast{pointer-events:all;display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:10px 14px;box-shadow:0 4px 20px rgba(0,0,0,0.4);animation:toastSlideIn 0.3s ease-out;position:relative;overflow:hidden;min-width:260px;max-width:340px}
+        .s4-toast::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px}
         .s4-toast.info::before{background:var(--accent)}.s4-toast.warning::before{background:#ffa500}.s4-toast.danger::before{background:#ff3333}.s4-toast.success::before{background:#00aaff}
-        .s4-toast-icon{font-size:1.3rem;min-width:28px;text-align:center;padding-top:2px}
+        .s4-toast-icon{font-size:1.1rem;min-width:22px;text-align:center;padding-top:1px}
         .s4-toast-body{flex:1}
-        .s4-toast-title{font-weight:700;font-size:0.9rem;color:#fff;margin-bottom:2px}
-        .s4-toast-msg{font-size:0.82rem;color:var(--steel);line-height:1.4}
-        .s4-toast-close{background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:0 0 0 8px;line-height:1}
+        .s4-toast-title{font-weight:700;font-size:0.8rem;color:#fff;margin-bottom:1px}
+        .s4-toast-msg{font-size:0.76rem;color:var(--steel);line-height:1.35}
+        .s4-toast-close{background:none;border:none;color:var(--muted);font-size:0.9rem;cursor:pointer;padding:0 0 0 6px;line-height:1}
         .s4-toast-close:hover{color:#fff}
-        .s4-toast-actions{display:flex;gap:6px;margin-top:8px}
-        .s4-toast-action{background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:4px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.2s}
+        .s4-toast-actions{display:flex;gap:6px;margin-top:6px}
+        .s4-toast-action{background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.2s}
         .s4-toast-action:hover{background:rgba(0,170,255,0.2)}
-        .s4-toast-progress{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);border-radius:0 0 0 4px;animation:toastProgress 8s linear forwards}
+        .s4-toast-progress{position:absolute;bottom:0;left:0;height:2px;background:var(--accent);border-radius:0 0 0 3px;animation:toastProgress 8s linear forwards}
         .s4-toast.warning .s4-toast-progress{background:#ffa500}.s4-toast.danger .s4-toast-progress{background:#ff3333}.s4-toast.success .s4-toast-progress{background:#00aaff}
         @keyframes toastSlideIn{from{opacity:0;transform:translateX(100px)}to{opacity:1;transform:translateX(0)}}
         @keyframes toastSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(100px)}}
@@ -736,8 +736,8 @@
         .hub-tool-header .tool-link{font-size:0.78rem;color:var(--muted);margin-left:auto;cursor:pointer;transition:color 0.2s;text-decoration:none}
         .hub-tool-header .tool-link:hover{color:var(--accent)}
         /* ═══ AUDIT VAULT ═══ */
-        .vault-record{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:10px;transition:all 0.3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-        .vault-record::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--green));border-radius:3px 0 0 3px}
+        .vault-record{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:10px;transition:all 0.3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;contain:content}
+        .vault-record::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--green));border-radius:3px 0 0 3px;z-index:1}
         .vault-record:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,170,255,0.12)}
         .vault-record .vault-hash{font-family:monospace;font-size:0.72rem;color:var(--accent);word-break:break-all;background:rgba(0,170,255,0.06);padding:6px 10px;border-radius:3px;margin:8px 0}
         .vault-record .vault-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:0.75rem;color:var(--muted)}
@@ -2535,7 +2535,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 <div class="ils-hub-panel" id="hub-dmsms">
                     <div class="demo-card">
                         <h3><i class="fas fa-exclamation-triangle" style="color:var(--accent)"></i> DMSMS / Obsolescence Tracker</h3>
-                        <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Track Diminishing Manufacturing Sources and Material Shortages (DMSMS). Identify parts at risk of obsolescence, find alternates, and estimate resolution costs. Per DoWI 4245.14.</p>
+                        <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Track Diminishing Manufacturing Sources and Material Shortages (DMSMS). Identify parts at risk of obsolescence, find alternates, and estimate resolution costs. Per DoDI 4245.14.</p>
                         <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(255,153,0,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
@@ -2576,7 +2576,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 <div class="ils-hub-panel" id="hub-readiness">
                     <div class="demo-card">
                         <h3><i class="fas fa-chart-line" style="color:var(--accent)"></i> Operational Readiness Calculator</h3>
-                        <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Calculate Operational Availability (Ao), Mean Time Between Failures (MTBF), Mean Time To Repair (MTTR), and Mean Logistics Delay Time (MLDT). Per MIL-STD-1390D and DoWI 5000.02.</p>
+                        <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Calculate Operational Availability (Ao), Mean Time Between Failures (MTBF), Mean Time To Repair (MTTR), and Mean Logistics Delay Time (MLDT). Per MIL-STD-1388-2B and DoDI 5000.02.</p>
                         <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
@@ -2823,10 +2823,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <button onclick="vaultPageNext()" class="btn btn-sm" style="background:rgba(255,255,255,0.06);color:#ccc;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:4px 12px;font-size:0.78rem">Next <i class="fas fa-chevron-right"></i></button>
                     </div>
 
-                    <!-- Performance Metrics Dashboard -->
+                    <!-- Vault Analytics Dashboard -->
                     <div id="vaultMetricsDashboard" style="margin-top:1rem;background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(201,168,76,0.03));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:16px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                            <div style="font-size:0.82rem;font-weight:700;color:#00aaff;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-chart-line"></i> Performance Metrics</div>
+                            <div style="font-size:0.82rem;font-weight:700;color:#00aaff;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-chart-bar"></i> Vault Analytics</div>
                             <button onclick="refreshVaultMetrics()" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:3px 10px;font-size:0.72rem;cursor:pointer;font-weight:600"><i class="fas fa-sync-alt"></i> Refresh</button>
                         </div>
                         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;" id="vaultMetricsGrid">
@@ -4797,8 +4797,20 @@ async function verifyRecord() {
             + '<div style="color:var(--accent)"><i class="fas fa-check-circle"></i> Found in session \u2014 ' + sessionMatch.icon + ' ' + sessionMatch.label + ' anchored at ' + new Date(sessionMatch.timestamp).toLocaleTimeString() + '</div>';
     }
     panel.innerHTML = '<div class="result-label">COMPUTED SHA-256 <button class="copy-btn" onclick="copyHash(\'' + effectiveHash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + effectiveHash + '</div>' + matchHtml + sessionHtml
-        + '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)">To verify on-chain: compare this hash with the MemoData field of the anchor transaction.</div>';
+        + '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)">To verify on-chain: compare this hash with the MemoData field of the anchor transaction.</div>'
+        + '<button onclick="resetVerify()" style="margin-top:12px;background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:8px 18px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit;transition:all 0.2s"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another Record</button>';
     panel.classList.add('show');
+}
+
+function resetVerify() {
+    document.getElementById('verifyInput').value = '';
+    document.getElementById('verifyHash').value = '';
+    var panel = document.getElementById('verifyResult');
+    if (panel) { panel.innerHTML = ''; panel.classList.remove('show'); }
+    // Also reset file verification drop zone if it exists
+    var fileResult = document.getElementById('verifyFileResult');
+    if (fileResult) { fileResult.innerHTML = ''; fileResult.classList.remove('show'); }
+    document.getElementById('verifyInput').focus();
 }
 
 
@@ -6288,7 +6300,7 @@ function loadSelectedSampleDoc(docType) {
             txt += '3.0 TEST SCHEDULE\n  Phase 1: Factory Acceptance Test (FAT) — Month 18\n  Phase 2: Dock Trials — Month 24\n  Phase 3: Sea Trials — Month 26\n  Phase 4: Operational Evaluation — Month 30\n\n';
             txt += '4.0 CRITICAL OPERATIONAL ISSUES (COIs)\n  COI-1: Can the system achieve required operational availability (Ao >= 0.85)?\n  COI-2: Is the system suitable for its intended operational environment?\n  COI-3: Can the crew effectively maintain the system?\n\n';
             txt += '5.0 RESOURCE REQUIREMENTS\n  Test facilities, instrumentation, target services, and support personnel.\n\n';
-            txt += 'Prepared per DoWI 5000.89\n';
+            txt += 'Prepared per DoDI 5000.89\n';
             content = txt; filename = 'TEMP_'+progKey.toUpperCase()+'.txt'; mime = 'text/plain'; break;
         }
         case 'icd': {
@@ -8270,7 +8282,7 @@ function explainDINumber(q) {
         3: {t:'Integrated Master Schedule (IMS)', desc:'High-level program schedule linking all logistics milestones.'},
         4: {t:'Systems Engineering Plan (SEP)', desc:'Systems engineering approach and design review gates.'},
         5: {t:'Interface Control Document (ICD)', desc:'Defines all system interfaces (mechanical, electrical, data).'},
-        6: {t:'Test & Evaluation Master Plan (TEMP)', desc:'Comprehensive T&E strategy per DoWI 5000.89.'},
+        6: {t:'Test & Evaluation Master Plan (TEMP)', desc:'Comprehensive T&E strategy per DoDI 5000.89.'},
         7: {t:'Weight Report', desc:'Weight accounting for hull margins, stability compliance.'},
         8: {t:'Electrical Load Analysis', desc:'Power generation vs. demand analysis for all ship conditions.'},
         9: {t:'Purchase Order Index', desc:'Tracks all subcontract and material purchase orders. Essential for schedule management and GFM coordination.'},
@@ -9048,17 +9060,15 @@ function renderVault() {
     var useAnim = items.length <= 200;
 
     container.innerHTML = pageItems.map((v, i) => `
-        <div class="vault-record"${useAnim ? ' style="animation:slideUp ' + (0.2 + i * 0.05) + 's ease"' : ''}>
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-                <div style="display:flex;align-items:flex-start;gap:8px;min-width:0;flex:1">
-                    <input type="checkbox" class="vault-cb" data-hash="${v.hash}" onchange="_updateBulkBar()" style="accent-color:#00aaff;margin-top:4px;cursor:pointer;flex-shrink:0">
-                    <div style="min-width:0;flex:1">
-                        <span style="font-size:1rem;margin-right:6px;vertical-align:middle">${v.icon || '<i class="fas fa-clipboard-list"></i>'}</span>
-                        <strong style="color:#fff;font-size:0.88rem;vertical-align:middle">${v.label || v.type}</strong>
-                        <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;vertical-align:middle">${v.branch || ''}</span>
-                    </div>
+        <div class="vault-record"${useAnim ? ' style="animation:slideUp 0.3s ease"' : ''}>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
+                <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden">
+                    <input type="checkbox" class="vault-cb" data-hash="${v.hash}" onchange="_updateBulkBar()" style="accent-color:#00aaff;cursor:pointer;flex-shrink:0">
+                    <span style="font-size:0.95rem;flex-shrink:0;width:20px;text-align:center;line-height:1">${v.icon || '<i class="fas fa-clipboard-list"></i>'}</span>
+                    <strong style="color:#fff;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.label || v.type}</strong>
+                    <span style="font-size:0.72rem;color:var(--muted);flex-shrink:0;white-space:nowrap">${v.branch || ''}</span>
                 </div>
-                <div style="display:flex;gap:6px">
+                <div style="display:flex;gap:6px;flex-shrink:0">
                     ${v.verified ? '<span class="vault-badge verified"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="vault-badge anchored"><i class="fas fa-anchor"></i> Anchored</span>'}
                     ${v.encrypted ? '<span class="vault-badge" style="background:rgba(0,170,255,0.06);color:var(--accent);border:1px solid rgba(0,170,255,0.15)"><i class="fas fa-lock"></i> Encrypted</span>' : ''}
                 </div>
@@ -11900,26 +11910,40 @@ function renderReadinessCharts() {
         }
     }
     if (canvas.__chartInstance) canvas.__chartInstance.destroy();
-    var gaugeColor = ao >= 0.9 ? '#00cc66' : ao >= 0.7 ? '#ffa500' : '#ff4444';
+    // Derive category readiness from Ao baseline
+    var base = Math.round(ao * 100);
+    var personnel = Math.min(100, base + 8);
+    var equipment = Math.min(100, base - 3);
+    var supply = Math.min(100, base - 10);
+    var training = Math.min(100, base + 12);
+    var maintenance = Math.min(100, base + 2);
+    var c4isr = Math.min(100, base + 5);
+    var barColors = [personnel, equipment, supply, training, maintenance, c4isr].map(function(v) {
+        return v >= 90 ? 'rgba(0,204,102,0.7)' : v >= 75 ? 'rgba(0,170,255,0.6)' : v >= 60 ? 'rgba(255,165,0,0.6)' : 'rgba(255,68,68,0.6)';
+    });
     canvas.__chartInstance = new Chart(canvas, {
-        type: 'doughnut',
+        type: 'bar',
         data: {
-            labels: ['Operational', 'Downtime'],
+            labels: ['Personnel', 'Equipment', 'Supply', 'Training', 'Maintenance', 'C4ISR'],
             datasets: [{
-                data: [Math.round(ao * 100), Math.round((1 - ao) * 100)],
-                backgroundColor: [gaugeColor, 'rgba(255,255,255,0.05)'],
-                borderWidth: 0,
-                circumference: 270,
-                rotation: 225
+                label: 'Readiness %',
+                data: [personnel, equipment, supply, training, maintenance, c4isr],
+                backgroundColor: barColors,
+                borderColor: barColors.map(function(c) { return c.replace('0.7','1').replace('0.6','1'); }),
+                borderWidth: 1,
+                borderRadius: 4
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '75%',
             plugins: {
                 legend: { display: false },
-                tooltip: { enabled: true }
+                tooltip: { callbacks: { label: function(ctx) { return ctx.parsed.y + '%'; } } }
+            },
+            scales: {
+                x: { ticks: { color: '#8ea4b8', font: { size: 11 } }, grid: { display: false } },
+                y: { ticks: { color: '#6b7d93', font: { size: 10 }, callback: function(v) { return v + '%'; } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true, max: 100 }
             }
         }
     });
@@ -12114,7 +12138,7 @@ function injectChartContainers() {
     var panels = {
         'hub-analysis': {target:'ilsResult', charts:'<div class="row mt-3" id="gapChartsRow"><div class="col-md-6"><div class="chart-container"><div class="chart-title"><i class="fas fa-chart-radar"></i> ILS Element Coverage</div><canvas id="gapRadarChart" height="240"></canvas></div></div><div class="col-md-6"><div class="chart-container"><div class="chart-title"><i class="fas fa-chart-bar"></i> Element Scores</div><canvas id="gapBarChart" height="240"></canvas></div></div></div>'},
         'hub-dmsms': {target:null, charts:'<div class="chart-container mt-3" id="dmsmsChartArea"><div class="chart-title"><i class="fas fa-chart-pie"></i> Obsolescence Risk Distribution</div><canvas id="dmsmsPieChart" height="200"></canvas></div>'},
-        'hub-readiness': {target:null, charts:'<div class="chart-container mt-3" style="max-width:300px" id="readinessGaugeArea"><div class="chart-title"><i class="fas fa-gauge-high"></i> Operational Availability</div><canvas id="readinessGauge" height="160"></canvas></div>'},
+        'hub-readiness': {target:null, charts:'<div class="chart-container mt-3" style="max-width:100%" id="readinessGaugeArea"><div class="chart-title"><i class="fas fa-gauge-high"></i> Operational Availability</div><canvas id="readinessGauge" height="300"></canvas></div>'},
         'hub-compliance': {target:null, charts:'<div class="chart-container mt-3" id="complianceChartArea"><div class="chart-title"><i class="fas fa-shield-halved"></i> Compliance Framework Radar</div><canvas id="complianceRadarChart" height="250"></canvas></div>'},
         'hub-roi': {target:null, charts:'<div class="chart-container mt-3" id="roiChartArea"><div class="chart-title"><i class="fas fa-chart-line"></i> ROI Projection — 5 Year Cumulative</div><canvas id="roiLineChart" height="220"></canvas></div>'},
         'hub-risk': {target:null, charts:'<div class="chart-container mt-3" id="riskChartArea"><div class="chart-title"><i class="fas fa-triangle-exclamation"></i> Risk Category Assessment</div><canvas id="riskHeatChart" height="220"></canvas></div>'},
@@ -17827,11 +17851,18 @@ function _updateThemeIcon(isLight) {
         };
     }
 
-    // Offer tour on first visit
+    // Offer tour on first visit — only after user enters the platform workspace
     if (!localStorage.getItem('s4_tour_completed')) {
-        setTimeout(function() {
-            S4.toast('Welcome to S4 Ledger! Click the help icon or press Cmd+/ to start the tour.', 'info', 8000);
-        }, 2000);
+        var _tourCheckInterval = setInterval(function() {
+            if (sessionStorage.getItem('s4_entered')) {
+                clearInterval(_tourCheckInterval);
+                setTimeout(function() {
+                    S4.toast('Welcome to S4 Ledger! Click the help icon or press Cmd+/ to start the tour.', 'info', 8000);
+                }, 3000);
+            }
+        }, 1000);
+        // Clear interval after 60s max to avoid leak
+        setTimeout(function() { clearInterval(_tourCheckInterval); }, 60000);
     }
 
     // Render favorites and activity on load
@@ -18462,8 +18493,14 @@ function _updateThemeIcon(isLight) {
         ]);
     }
 
-    // Check warranty alerts on load
-    setTimeout(function() { S4.warrantyAlerts.notifyExpiring(); }, 5000);
+    // Check warranty alerts only after user enters the platform workspace
+    var _warrantyCheckInterval = setInterval(function() {
+        if (sessionStorage.getItem('s4_entered')) {
+            clearInterval(_warrantyCheckInterval);
+            setTimeout(function() { S4.warrantyAlerts.notifyExpiring(); }, 5000);
+        }
+    }, 1000);
+    setTimeout(function() { clearInterval(_warrantyCheckInterval); }, 60000);
 
     S4.register('tools', {version:'1.0.0', features:['batch-anchor','scheduler','templates','ai-classify','cross-link','diff-viewer','gantt','warranty-alerts','readiness-trends','parts-search']});
     console.log('[S4 Tools] Module loaded — 10 features active');
