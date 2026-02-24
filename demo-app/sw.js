@@ -1,5 +1,5 @@
 // S4 Ledger Service Worker v3.1.0 — Full Offline / Air-Gapped Support
-const CACHE_VERSION = 's4-v310';
+const CACHE_VERSION = 's4-v320';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const DYNAMIC_CACHE = CACHE_VERSION + '-dynamic';
 const API_CACHE = CACHE_VERSION + '-api';
@@ -20,7 +20,9 @@ const PRECACHE_ASSETS = [
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
-  'https://cdn.jsdelivr.net/npm/chart.js'
+  'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
+  '/s4-assets/platforms.js',
+  '/s4-assets/defense-docs.js'
 ];
 
 // ── Install — precache shell ──
@@ -94,20 +96,16 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Strategy 2: StaleWhileRevalidate for HTML pages (serve cache, update in background)
+  // Strategy 2: NetworkFirst for HTML pages (always fetch fresh, fall back to cache)
   if (e.request.destination === 'document' || url.pathname.endsWith('.html')) {
     e.respondWith(
-      caches.match(e.request).then(cached => {
-        const networkFetch = fetch(e.request).then(response => {
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(STATIC_CACHE).then(cache => cache.put(e.request, clone));
-          }
-          return response;
-        }).catch(() => cached || caches.match('./index.html'));
-
-        return cached || networkFetch;
-      })
+      fetch(e.request).then(response => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(STATIC_CACHE).then(cache => cache.put(e.request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(e.request).then(cached => cached || caches.match('./index.html')))
     );
     return;
   }
