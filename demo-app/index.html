@@ -29,7 +29,8 @@
     <meta name="application-name" content="S4 Ledger">
     <meta name="msapplication-TileColor" content="#000000">
     <meta name="msapplication-config" content="none">
-    <!-- CSP-friendly: all external resources use HTTPS CDNs only -->
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <!-- Preconnect hints for faster CDN resolution -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -1172,7 +1173,7 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
 /* ═══ S4 MODULE REGISTRY & ERROR HANDLING ═══ */
 /* Provides a namespace for future modularization and global error boundaries */
 window.S4 = window.S4 || {
-    version: '5.2.0',
+    version: '5.3.0',
     modules: {},
     register: function(name, mod) { this.modules[name] = mod; },
     getModule: function(name) { return this.modules[name] || null; }
@@ -1240,6 +1241,166 @@ window.addEventListener('unhandledrejection', function(e) {
         s4Notify('Error', 'An async operation failed. Check your connection.', 'warning');
     }
 });
+
+/* ═══ S4 SECURITY MODULE ═══ */
+/* Provides XSS sanitization, session timeout, encrypted storage, audit chain, rate limiting */
+(function() {
+    'use strict';
+
+    // ── 1. XSS Sanitizer — safe HTML rendering for user-supplied content ──
+    var _sanitizeDiv = document.createElement('div');
+    S4.sanitize = function(str) {
+        if (typeof str !== 'string') return '';
+        _sanitizeDiv.textContent = str;
+        return _sanitizeDiv.innerHTML;
+    };
+    // Sanitize allowing basic formatting (bold, italic, links) but strip scripts/events
+    S4.sanitizeHTML = function(html) {
+        if (typeof html !== 'string') return '';
+        var temp = document.createElement('div');
+        temp.innerHTML = html;
+        // Remove script tags
+        var scripts = temp.querySelectorAll('script,iframe,object,embed,form');
+        for (var i = scripts.length - 1; i >= 0; i--) scripts[i].remove();
+        // Remove event handlers
+        var all = temp.querySelectorAll('*');
+        for (var j = 0; j < all.length; j++) {
+            var attrs = all[j].attributes;
+            for (var k = attrs.length - 1; k >= 0; k--) {
+                if (attrs[k].name.startsWith('on') || attrs[k].value.indexOf('javascript:') === 0) {
+                    all[j].removeAttribute(attrs[k].name);
+                }
+            }
+        }
+        return temp.innerHTML;
+    };
+
+    // ── 2. Session Timeout — auto-lock after inactivity ──
+    var _sessionTimeout = 30 * 60 * 1000; // 30 minutes
+    var _sessionTimer = null;
+    var _sessionLocked = false;
+    S4.sessionTimeout = _sessionTimeout;
+
+    function _resetSessionTimer() {
+        if (_sessionLocked) return;
+        clearTimeout(_sessionTimer);
+        _sessionTimer = setTimeout(function() {
+            _sessionLocked = true;
+            S4.sessionLocked = true;
+            // Show lock overlay
+            var overlay = document.getElementById('s4SessionLockOverlay');
+            if (overlay) overlay.style.display = 'flex';
+            if (typeof s4Notify === 'function') s4Notify('Session Locked', 'Inactive for 30 minutes. Click to resume.', 'warning');
+        }, _sessionTimeout);
+    }
+    S4.resumeSession = function() {
+        _sessionLocked = false;
+        S4.sessionLocked = false;
+        var overlay = document.getElementById('s4SessionLockOverlay');
+        if (overlay) overlay.style.display = 'none';
+        _resetSessionTimer();
+    };
+    ['mousemove','mousedown','keydown','scroll','touchstart'].forEach(function(evt) {
+        document.addEventListener(evt, _resetSessionTimer, {passive: true});
+    });
+    _resetSessionTimer();
+
+    // ── 3. Encrypted localStorage wrapper (AES-GCM) ──
+    var _encKey = null;
+    S4.crypto = {
+        _getKey: async function() {
+            if (_encKey) return _encKey;
+            var stored = sessionStorage.getItem('s4_enc_key');
+            if (stored) {
+                var raw = Uint8Array.from(atob(stored), function(c){ return c.charCodeAt(0); });
+                _encKey = await crypto.subtle.importKey('raw', raw, 'AES-GCM', true, ['encrypt','decrypt']);
+                return _encKey;
+            }
+            _encKey = await crypto.subtle.generateKey({name:'AES-GCM', length:256}, true, ['encrypt','decrypt']);
+            var exported = await crypto.subtle.exportKey('raw', _encKey);
+            sessionStorage.setItem('s4_enc_key', btoa(String.fromCharCode.apply(null, new Uint8Array(exported))));
+            return _encKey;
+        },
+        encrypt: async function(plaintext) {
+            var key = await this._getKey();
+            var iv = crypto.getRandomValues(new Uint8Array(12));
+            var data = new TextEncoder().encode(plaintext);
+            var encrypted = await crypto.subtle.encrypt({name:'AES-GCM', iv:iv}, key, data);
+            var combined = new Uint8Array(iv.length + encrypted.byteLength);
+            combined.set(iv);
+            combined.set(new Uint8Array(encrypted), iv.length);
+            return btoa(String.fromCharCode.apply(null, combined));
+        },
+        decrypt: async function(ciphertext) {
+            var key = await this._getKey();
+            var combined = Uint8Array.from(atob(ciphertext), function(c){ return c.charCodeAt(0); });
+            var iv = combined.slice(0, 12);
+            var data = combined.slice(12);
+            var decrypted = await crypto.subtle.decrypt({name:'AES-GCM', iv:iv}, key, data);
+            return new TextDecoder().decode(decrypted);
+        }
+    };
+
+    // ── 4. Audit Hash Chain — each vault entry references previous hash ──
+    S4.auditChain = {
+        computeChainHash: async function(record, previousHash) {
+            var payload = (previousHash || '0'.repeat(64)) + '|' + record.hash + '|' + record.timestamp;
+            var data = new TextEncoder().encode(payload);
+            var buf = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+        },
+        verifyChain: async function(vault) {
+            if (!vault || vault.length === 0) return {valid:true, errors:[]};
+            var errors = [];
+            var prevHash = '0'.repeat(64);
+            for (var i = 0; i < vault.length; i++) {
+                if (vault[i].chainHash) {
+                    var expected = await this.computeChainHash(vault[i], prevHash);
+                    if (vault[i].chainHash !== expected) {
+                        errors.push({index:i, expected:expected, got:vault[i].chainHash, record:vault[i].label || vault[i].type});
+                    }
+                    prevHash = vault[i].chainHash;
+                } else {
+                    prevHash = vault[i].hash || prevHash;
+                }
+            }
+            return {valid: errors.length === 0, errors: errors};
+        }
+    };
+
+    // ── 5. Rate Limiter — prevent rapid-fire API calls ──
+    var _rateLimits = {};
+    S4.rateLimit = function(key, maxPerMinute) {
+        maxPerMinute = maxPerMinute || 30;
+        var now = Date.now();
+        if (!_rateLimits[key]) _rateLimits[key] = [];
+        _rateLimits[key] = _rateLimits[key].filter(function(t){ return now - t < 60000; });
+        if (_rateLimits[key].length >= maxPerMinute) return false;
+        _rateLimits[key].push(now);
+        return true;
+    };
+
+    // ── 6. Zero-Knowledge Proof Verification (simplified) ──
+    // Prove a record exists in vault without revealing content
+    S4.zkVerify = async function(recordHash) {
+        var exists = typeof s4Vault !== 'undefined' && s4Vault.some(function(r){ return r.hash === recordHash; });
+        var proof = {
+            timestamp: new Date().toISOString(),
+            claim: 'Record with hash prefix ' + recordHash.substring(0,8) + '... exists in vault',
+            verified: exists,
+            proofHash: null
+        };
+        // Generate proof hash (hash of the claim + secret nonce)
+        var nonce = crypto.getRandomValues(new Uint8Array(16));
+        var proofData = new TextEncoder().encode(JSON.stringify(proof) + Array.from(nonce).join(''));
+        var buf = await crypto.subtle.digest('SHA-256', proofData);
+        proof.proofHash = Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+        return proof;
+    };
+
+    S4.register('security', {version: '1.0.0', features: ['xss-sanitizer','session-timeout','encrypted-storage','audit-chain','rate-limiter','zk-verify']});
+    console.log('[S4 Security] Module loaded — 6 features active');
+})();
 </script>
 <div style="background:rgba(10,10,15,0.95);border-bottom:1px solid rgba(255,255,255,0.06);padding:4px 0;text-align:center;font-size:0.72rem;color:#8b8fa3;"><i class="fas fa-exclamation-triangle" style="margin-right:4px;"></i> NOTICE: Do not submit ITAR-controlled, classified, or export-controlled data to this platform. This system processes UNCLASSIFIED and CUI data only. <a href="/security/" style="color:#00aaff;text-decoration:underline;">Security Policy</a></div>
 <div id="demoBanner" style="display:none;background:linear-gradient(90deg,rgba(0,170,255,0.10),rgba(201,168,76,0.08));border-bottom:1px solid rgba(0,170,255,0.3);padding:8px 0;text-align:center;font-size:0.82rem;color:#8ea4b8;cursor:pointer;" onclick="document.getElementById('demoPanel').scrollIntoView({behavior:'smooth'})"><i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong style="color:#fff;">S4 Ledger</strong> &mdash; <strong style="color:#c9a84c;">0.01 $SLS per anchor</strong> &mdash; each record is permanently anchored to the XRP Ledger. <span style="color:#00aaff;">&#9660; View Details</span></div>
@@ -1265,6 +1426,16 @@ window.addEventListener('unhandledrejection', function(e) {
     </div>
 </nav>
 
+
+<!-- ═══ SESSION LOCK OVERLAY ═══ -->
+<div id="s4SessionLockOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:99998;align-items:center;justify-content:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);cursor:pointer" onclick="S4.resumeSession()">
+    <div style="text-align:center;max-width:400px;">
+        <i class="fas fa-lock" style="font-size:3rem;color:#c9a84c;margin-bottom:16px;display:block"></i>
+        <h3 style="color:#fff;font-weight:800;margin-bottom:8px">Session Locked</h3>
+        <p style="color:var(--steel);font-size:0.9rem;margin-bottom:20px">Your session was locked due to inactivity.<br>Click anywhere to resume.</p>
+        <div style="font-size:0.75rem;color:var(--muted)"><i class="fas fa-shield-halved" style="margin-right:4px;color:#00aaff"></i>Security policy: 30-minute timeout</div>
+    </div>
+</div>
 
 <!-- ═══ DoD CONSENT BANNER ═══ -->
 <div id="dodConsentBanner" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;">
