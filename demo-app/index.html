@@ -3352,12 +3352,12 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div style="margin-top:12px;border:1px solid rgba(167,139,250,0.15);border-radius:3px;overflow:hidden">
                         <div onclick="toggleComplianceSection('docAI')" style="cursor:pointer;padding:12px 16px;background:rgba(167,139,250,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-file-invoice" style="color:#a78bfa"></i>
-                            <strong style="color:#fff;font-size:0.92rem">Document AI Extraction</strong>
+                            <strong style="color:#fff;font-size:0.92rem">Document AI — Data Extraction</strong>
                             <span style="background:rgba(167,139,250,0.15);color:#a78bfa;padding:2px 8px;border-radius:3px;font-size:0.7rem;font-weight:600">CLIENT-SIDE</span>
                             <i id="docAIChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
                         <div id="docAISection" style="display:none;padding:12px 16px">
-                            <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Extract structured data from uploaded documents — auto-detect NSNs, CAGE codes, part numbers, dates, and dollar amounts from CDRLs, SOWs, and ILS data packages.</p>
+                            <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Extract structured data from uploaded defense documents — auto-detect NSNs, CAGE codes, part numbers, dates, and dollar amounts. Feeds extracted data into the risk analysis pipeline for automated risk scoring.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
                                 <label class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.82rem;cursor:pointer;margin:0">
                                     <i class="fas fa-upload"></i> Upload Document
@@ -4075,7 +4075,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 </div>
 
 <!-- ══ ACTION ITEM ADD / EDIT MODAL ══ -->
-<div id="actionItemModal" class="modal-overlay" onclick="if(event.target===this)closeActionModal()" style="display:none">
+<div id="actionItemModal" class="modal-overlay" onclick="if(event.target===this)closeActionModal()">
     <div class="modal-box" style="position:relative;max-width:540px">
         <button onclick="closeActionModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button>
         <h4 id="actionModalTitle"><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>New Action Item</h4>
@@ -4145,7 +4145,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 </div>
 
 <!-- ══ PRODUCTION FEATURES MODAL ══ -->
-<div id="prodFeaturesModal" class="modal-overlay" onclick="if(event.target===this)closeProdFeatures()" style="display:none">
+<div id="prodFeaturesModal" class="modal-overlay" onclick="if(event.target===this)closeProdFeatures()">
     <div class="modal-box" style="position:relative;max-width:720px;max-height:85vh;overflow-y:auto">
         <button onclick="closeProdFeatures()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button>
         <h4 style="margin-bottom:4px"><i class="fas fa-rocket" style="color:#00aaff;margin-right:8px"></i>Production Features Roadmap</h4>
@@ -9243,7 +9243,7 @@ function showAddActionModal(preSource) {
     document.getElementById('actionModalDue').value = '';
     document.getElementById('actionModalCost').value = '';
     document.getElementById('actionModalSchedule').value = '';
-    document.getElementById('actionItemModal').style.display = 'flex';
+    document.getElementById('actionItemModal').classList.add('active');
 }
 function editActionItem(id) {
     const item = s4ActionItems.find(a => a.id === id);
@@ -9260,7 +9260,7 @@ function editActionItem(id) {
     // Parse due date from schedule if it's a date, or try item.due
     if (item.due) document.getElementById('actionModalDue').value = item.due;
     else document.getElementById('actionModalDue').value = '';
-    document.getElementById('actionItemModal').style.display = 'flex';
+    document.getElementById('actionItemModal').classList.add('active');
 }
 function deleteActionItem(id) {
     if (!confirm('Delete this action item?')) return;
@@ -9309,7 +9309,7 @@ function saveActionFromModal() {
     s4Notify(editId ? 'Updated' : 'Created', editId ? 'Action item updated.' : 'New action item created.', 'success');
 }
 function closeActionModal() {
-    document.getElementById('actionItemModal').style.display = 'none';
+    document.getElementById('actionItemModal').classList.remove('active');
 }
 // ── Production Features Modal ──
 var _prodFeatures = [
@@ -9362,9 +9362,9 @@ function openProdFeatures(){
     html+='</div>';
   });
   list.innerHTML=html;
-  el.style.display='flex';
+  el.classList.add('active');
 }
-function closeProdFeatures(){ document.getElementById('prodFeaturesModal').style.display='none'; }
+function closeProdFeatures(){ document.getElementById('prodFeaturesModal').classList.remove('active'); }
 // ── Bulk Action Item Operations ──
 var _actionSelected = new Set();
 function toggleActionSelect(id, checked) {
