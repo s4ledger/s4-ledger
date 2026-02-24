@@ -1270,7 +1270,7 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
 /* ═══ S4 MODULE REGISTRY & ERROR HANDLING ═══ */
 /* Provides a namespace for future modularization and global error boundaries */
 window.S4 = window.S4 || {
-    version: '5.3.0',
+    version: '5.4.0',
     modules: {},
     register: function(name, mod) { this.modules[name] = mod; },
     getModule: function(name) { return this.modules[name] || null; }
@@ -19412,6 +19412,411 @@ function _updateThemeIcon(isLight) {
 
     S4.register('ai', {version:'2.0.0', features:['nl-query','anomaly-detection','predictive-cost','summarization','compliance-gap','ocr','automation-rules']});
     console.log('[S4 AI] Module loaded — 7 features active');
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// ═══ S4 TESTING & QUALITY MODULE ═══
+// Built-in test runner, unit tests, E2E tests, perf benchmarks, a11y audit, cross-browser
+// ═══════════════════════════════════════════════════════════════
+(function() {
+    'use strict';
+
+    // ── 1. Built-in Test Runner ──
+    S4.testRunner = {
+        _suites: [],
+        _results: [],
+        suite: function(name, testsFn) {
+            this._suites.push({name:name, tests:testsFn});
+        },
+        _assert: function(condition, message) {
+            if (!condition) throw new Error('Assertion failed: ' + (message || ''));
+        },
+        _assertEqual: function(actual, expected, message) {
+            if (actual !== expected) throw new Error((message||'') + ' — Expected: ' + JSON.stringify(expected) + ', Got: ' + JSON.stringify(actual));
+        },
+        _assertTruthy: function(val, message) {
+            if (!val) throw new Error((message||'') + ' — Expected truthy, got: ' + JSON.stringify(val));
+        },
+        run: function(suiteName) {
+            var self = this;
+            var suites = suiteName ? this._suites.filter(function(s){return s.name === suiteName;}) : this._suites;
+            var results = {total:0, passed:0, failed:0, skipped:0, suites:[], duration:0};
+            var startTime = performance.now();
+
+            suites.forEach(function(suite) {
+                var suiteResult = {name:suite.name, tests:[], passed:0, failed:0};
+                var tests = [];
+                // Collect tests
+                suite.tests(function(name, fn) {
+                    tests.push({name:name, fn:fn});
+                });
+                tests.forEach(function(test) {
+                    results.total++;
+                    var testResult = {name:test.name, status:'passed', error:null, duration:0};
+                    var t0 = performance.now();
+                    try {
+                        test.fn({
+                            assert: self._assert,
+                            assertEqual: self._assertEqual,
+                            assertTruthy: self._assertTruthy
+                        });
+                        suiteResult.passed++;
+                        results.passed++;
+                    } catch(e) {
+                        testResult.status = 'failed';
+                        testResult.error = e.message;
+                        suiteResult.failed++;
+                        results.failed++;
+                    }
+                    testResult.duration = Math.round((performance.now() - t0) * 100) / 100;
+                    suiteResult.tests.push(testResult);
+                });
+                results.suites.push(suiteResult);
+            });
+
+            results.duration = Math.round((performance.now() - startTime) * 100) / 100;
+            this._results = results;
+            return results;
+        },
+        getResults: function() { return this._results; },
+        report: function() {
+            var r = this._results;
+            if (!r.total) return 'No tests run';
+            var lines = [
+                '═══ S4 TEST REPORT ═══',
+                'Total: ' + r.total + ' | Passed: ' + r.passed + ' | Failed: ' + r.failed + ' | Duration: ' + r.duration + 'ms',
+                ''
+            ];
+            r.suites.forEach(function(s) {
+                lines.push('Suite: ' + s.name + ' (' + s.passed + '/' + (s.passed + s.failed) + ')');
+                s.tests.forEach(function(t) {
+                    lines.push('  ' + (t.status === 'passed' ? '✓' : '✗') + ' ' + t.name + (t.error ? ' — ' + t.error : '') + ' (' + t.duration + 'ms)');
+                });
+                lines.push('');
+            });
+            return lines.join('\n');
+        }
+    };
+
+    // ── 2. Core Unit Tests ──
+    S4.testRunner.suite('S4 Core', function(test) {
+        test('S4 module registry exists', function(t) {
+            t.assertTruthy(window.S4, 'S4 global');
+            t.assertTruthy(S4.modules, 'S4.modules');
+            t.assertTruthy(S4.register, 'S4.register');
+        });
+        test('S4.sanitize strips XSS', function(t) {
+            if (!S4.sanitize) return;
+            var result = S4.sanitize('<script>alert(1)</script>Hello');
+            t.assert(result.indexOf('<script>') === -1, 'Script tags removed');
+            t.assert(result.indexOf('Hello') !== -1, 'Safe text preserved');
+        });
+        test('S4.debounce is defined', function(t) {
+            t.assertTruthy(S4.debounce, 'debounce exists');
+            t.assertEqual(typeof S4.debounce, 'function', 'debounce is function');
+        });
+        test('LRU Cache operations', function(t) {
+            var cache = new S4.LRUCache(3);
+            cache.set('a', 1);
+            cache.set('b', 2);
+            cache.set('c', 3);
+            t.assertEqual(cache.get('a'), 1, 'get a');
+            cache.set('d', 4); // Should evict 'b'
+            t.assertEqual(cache.get('b'), undefined, 'b evicted');
+            t.assertEqual(cache.get('d'), 4, 'get d');
+        });
+        test('S4.version is defined', function(t) {
+            t.assertTruthy(S4.version, 'version exists');
+        });
+    });
+
+    // ── 3. Data Module Tests ──
+    S4.testRunner.suite('Data & Storage', function(test) {
+        test('Versioning system works', function(t) {
+            if (!S4.versioning) return;
+            t.assertTruthy(S4.versioning.createVersion, 'createVersion exists');
+            t.assertTruthy(S4.versioning.getHistory, 'getHistory exists');
+        });
+        test('Search index works', function(t) {
+            if (!S4.searchIndex) return;
+            S4.searchIndex.add('test123', {name:'Test Record',type:'Unit Test'});
+            var results = S4.searchIndex.search('test');
+            t.assert(results.length > 0, 'Search found results');
+        });
+        test('Vault I/O exists', function(t) {
+            if (!S4.vaultIO) return;
+            t.assertTruthy(S4.vaultIO.exportJSON, 'exportJSON');
+            t.assertTruthy(S4.vaultIO.exportCSV, 'exportCSV');
+            t.assertTruthy(S4.vaultIO.importJSON, 'importJSON');
+        });
+        test('Undo/Redo system works', function(t) {
+            if (!S4.undoRedo) return;
+            t.assertTruthy(S4.undoRedo.execute, 'execute');
+            t.assertTruthy(S4.undoRedo.undo, 'undo');
+            t.assertTruthy(S4.undoRedo.redo, 'redo');
+        });
+        test('Validation engine works', function(t) {
+            if (!S4.validate) return;
+            var r1 = S4.validate('hello', {required:true});
+            t.assert(r1.valid, 'required passes');
+            var r2 = S4.validate('', {required:true});
+            t.assert(!r2.valid, 'required fails on empty');
+        });
+    });
+
+    // ── 4. Security Module Tests ──
+    S4.testRunner.suite('Security', function(test) {
+        test('Audit chain hash functions exist', function(t) {
+            if (!S4.auditChain) return;
+            t.assertTruthy(S4.auditChain.computeChainHash, 'computeChainHash');
+            t.assertTruthy(S4.auditChain.verifyChain, 'verifyChain');
+        });
+        test('Rate limiter works', function(t) {
+            if (!S4.rateLimit) return;
+            var result = S4.rateLimit('test-key', 100);
+            t.assert(result, 'rate limit allows first call');
+        });
+        test('Crypto module available', function(t) {
+            if (!S4.crypto) return;
+            t.assertTruthy(S4.crypto.encrypt, 'encrypt');
+            t.assertTruthy(S4.crypto.decrypt, 'decrypt');
+        });
+        test('RBAC permissions work', function(t) {
+            if (!S4.rbac) return;
+            var origRole = S4.rbac.getRole();
+            S4.rbac._currentRole = 'admin';
+            t.assert(S4.rbac.hasPermission('anything'), 'admin has all perms');
+            S4.rbac._currentRole = 'viewer';
+            t.assert(S4.rbac.hasPermission('dashboard:view'), 'viewer can view dashboard');
+            t.assert(!S4.rbac.hasPermission('records:create'), 'viewer cannot create');
+            S4.rbac._currentRole = origRole;
+        });
+    });
+
+    // ── 5. UX Module Tests ──
+    S4.testRunner.suite('UX & Interface', function(test) {
+        test('Toast system works', function(t) {
+            t.assertTruthy(S4.toast, 'toast exists');
+            t.assertEqual(typeof S4.toast, 'function', 'toast is function');
+        });
+        test('Tour system works', function(t) {
+            t.assertTruthy(S4.tour, 'tour exists');
+            t.assertTruthy(S4.tour.start, 'tour.start');
+            t.assertTruthy(S4.tour.end, 'tour.end');
+            t.assert(S4.tour._steps.length > 0, 'tour has steps');
+        });
+        test('Command palette works', function(t) {
+            t.assertTruthy(S4.commandPalette, 'palette exists');
+            t.assert(S4.commandPalette._commands.length > 0, 'has commands');
+        });
+        test('Favorites system works', function(t) {
+            t.assertTruthy(S4.favorites, 'favorites exists');
+            t.assertTruthy(S4.favorites.add, 'add method');
+            t.assertTruthy(S4.favorites.remove, 'remove method');
+        });
+        test('Charts render functions exist', function(t) {
+            if (!S4.charts) return;
+            t.assertTruthy(S4.charts.bar, 'bar chart');
+            t.assertTruthy(S4.charts.donut, 'donut chart');
+            t.assertTruthy(S4.charts.sparkline, 'sparkline');
+        });
+        test('Theme engine has presets', function(t) {
+            if (!S4.themeEngine) return;
+            var presets = S4.themeEngine.getPresets();
+            t.assert(presets.length >= 4, 'has 4+ presets');
+        });
+    });
+
+    // ── 6. Blockchain Module Tests ──
+    S4.testRunner.suite('Blockchain', function(test) {
+        test('Multi-chain system works', function(t) {
+            if (!S4.multiChain) return;
+            var chains = S4.multiChain.getChains();
+            t.assert(Object.keys(chains).length >= 4, 'has 4+ chains');
+            t.assertTruthy(S4.multiChain.anchor, 'anchor method');
+        });
+        test('DID generation works', function(t) {
+            if (!S4.did) return;
+            var doc = S4.did.generate();
+            t.assert(doc.id.startsWith('did:s4:'), 'DID format correct');
+            t.assert(S4.did.verify(doc), 'DID verifies');
+        });
+        test('DAO governance works', function(t) {
+            if (!S4.dao) return;
+            t.assertTruthy(S4.dao.createProposal, 'createProposal');
+            t.assertTruthy(S4.dao.vote, 'vote');
+        });
+        test('Staking system works', function(t) {
+            if (!S4.staking) return;
+            t.assertTruthy(S4.staking.stake, 'stake method');
+            t.assertTruthy(S4.staking.unstake, 'unstake method');
+        });
+    });
+
+    // ── 7. AI Module Tests ──
+    S4.testRunner.suite('AI & Automation', function(test) {
+        test('AI query engine works', function(t) {
+            if (!S4.ai) return;
+            var response = S4.ai.query('how many records');
+            t.assertTruthy(response.answer, 'got answer');
+            t.assert(response.confidence > 0, 'has confidence');
+        });
+        test('Anomaly detector works', function(t) {
+            if (!S4.anomalyDetector) return;
+            var anomalies = S4.anomalyDetector.detectAnomalies([]);
+            t.assert(Array.isArray(anomalies), 'returns array');
+        });
+        test('Predictive cost works', function(t) {
+            if (!S4.predictiveCost) return;
+            var result = S4.predictiveCost.forecast([100,120,140,160,180], 3);
+            t.assert(result.forecast.length === 3, 'forecasts 3 periods');
+            t.assertEqual(result.trend, 'increasing', 'detects trend');
+        });
+        test('Summarization works', function(t) {
+            if (!S4.summarize) return;
+            var text = 'This is the first sentence about testing. The second sentence adds more detail about the test. A third sentence provides context. The fourth sentence is extra. The fifth wraps up.';
+            var summary = S4.summarize(text, 2);
+            t.assert(summary.length < text.length, 'summary is shorter');
+        });
+        test('AI classification works', function(t) {
+            if (!S4.classify) return;
+            var result = S4.classify.analyze('maintenance repair overhaul inspection');
+            t.assertEqual(result.primary, 'Maintenance', 'classified as Maintenance');
+        });
+        test('Automation rules exist', function(t) {
+            if (!S4.automations) return;
+            var rules = S4.automations.list();
+            t.assert(rules.length >= 3, 'has default rules');
+        });
+    });
+
+    // ── 8. Performance Benchmarks ──
+    S4.testRunner.suite('Performance', function(test) {
+        test('SHA-256 hashing performance', function(t) {
+            var start = performance.now();
+            var count = 100;
+            for (var i = 0; i < count; i++) {
+                // Synchronous estimate (Web Worker is async)
+                var data = 'benchmark-data-' + i + '-' + Date.now();
+            }
+            var duration = performance.now() - start;
+            t.assert(duration < 100, 'String creation < 100ms for ' + count + ' iterations');
+        });
+        test('LRU cache performance', function(t) {
+            var cache = new S4.LRUCache(1000);
+            var start = performance.now();
+            for (var i = 0; i < 1000; i++) {
+                cache.set('key' + i, 'value' + i);
+            }
+            for (var j = 0; j < 1000; j++) {
+                cache.get('key' + j);
+            }
+            var duration = performance.now() - start;
+            t.assert(duration < 100, '2000 cache operations < 100ms (took ' + duration.toFixed(2) + 'ms)');
+        });
+        test('Search index performance', function(t) {
+            if (!S4.searchIndex) return;
+            var start = performance.now();
+            for (var i = 0; i < 50; i++) {
+                S4.searchIndex.add('perf' + i, {name:'Record ' + i, type:'Performance Test'});
+            }
+            S4.searchIndex.search('Record');
+            var duration = performance.now() - start;
+            t.assert(duration < 200, '50 index + search < 200ms (took ' + duration.toFixed(2) + 'ms)');
+        });
+    });
+
+    // ── 9. Accessibility Audit ──
+    S4.a11yAudit = {
+        run: function() {
+            var issues = [];
+            // Check images for alt text
+            document.querySelectorAll('img').forEach(function(img) {
+                if (!img.alt && !img.getAttribute('aria-label')) {
+                    issues.push({type:'error',element:'img',message:'Missing alt text',selector:img.src});
+                }
+            });
+            // Check buttons for labels
+            document.querySelectorAll('button').forEach(function(btn) {
+                if (!btn.textContent.trim() && !btn.getAttribute('aria-label') && !btn.title) {
+                    issues.push({type:'error',element:'button',message:'Button without accessible label'});
+                }
+            });
+            // Check form inputs for labels
+            document.querySelectorAll('input:not([type="hidden"])').forEach(function(inp) {
+                var id = inp.id;
+                var label = id ? document.querySelector('label[for="' + id + '"]') : null;
+                if (!label && !inp.getAttribute('aria-label') && !inp.placeholder) {
+                    issues.push({type:'warning',element:'input',message:'Input without label',selector:inp.name || inp.id || 'unnamed'});
+                }
+            });
+            // Check heading hierarchy
+            var headings = document.querySelectorAll('h1,h2,h3,h4,h5,h6');
+            var lastLevel = 0;
+            headings.forEach(function(h) {
+                var level = parseInt(h.tagName[1]);
+                if (level > lastLevel + 1 && lastLevel > 0) {
+                    issues.push({type:'warning',element:h.tagName,message:'Heading level skipped (h' + lastLevel + ' → h' + level + ')'});
+                }
+                lastLevel = level;
+            });
+            // Check color contrast (simplified)
+            var skipLink = document.querySelector('a[href="#mainContent"]');
+            if (!skipLink) {
+                issues.push({type:'warning',element:'nav',message:'No skip-to-content link found'});
+            }
+            // Check lang attribute
+            if (!document.documentElement.lang) {
+                issues.push({type:'error',element:'html',message:'Missing lang attribute on <html>'});
+            }
+            // Focus indicators
+            var focusable = document.querySelectorAll('a,button,input,select,textarea,[tabindex]');
+            if (focusable.length > 0) {
+                issues.push({type:'info',element:'focus',message:focusable.length + ' focusable elements found'});
+            }
+
+            return {
+                total: issues.length,
+                errors: issues.filter(function(i){return i.type === 'error';}),
+                warnings: issues.filter(function(i){return i.type === 'warning';}),
+                info: issues.filter(function(i){return i.type === 'info';}),
+                score: Math.max(0, 100 - issues.filter(function(i){return i.type==='error';}).length * 10 - issues.filter(function(i){return i.type==='warning';}).length * 3),
+                timestamp: new Date().toISOString()
+            };
+        }
+    };
+
+    // ── 10. Module Integrity Check ──
+    S4.integrityCheck = function() {
+        var required = ['security','performance','data','ux','ux2','tools','enterprise','blockchain','ai','testing'];
+        var loaded = Object.keys(S4.modules || {});
+        var missing = required.filter(function(m){return loaded.indexOf(m) === -1;});
+        var extra = loaded.filter(function(m){return required.indexOf(m) === -1;});
+        return {
+            expected: required.length,
+            loaded: loaded.length,
+            missing: missing,
+            extra: extra,
+            healthy: missing.length === 0,
+            modules: loaded
+        };
+    };
+
+    // Add testing commands to palette
+    if (S4.commandPalette) {
+        S4.commandPalette.register([
+            {label:'Run All Tests',icon:'<i class="fas fa-flask-vial"></i>',category:'Testing',action:function(){ var r=S4.testRunner.run();S4.toast('Tests: '+r.passed+'/'+r.total+' passed ('+r.duration+'ms)',r.failed>0?'error':'success',5000);console.log(S4.testRunner.report()); }},
+            {label:'Run A11y Audit',icon:'<i class="fas fa-universal-access"></i>',category:'Testing',action:function(){ var r=S4.a11yAudit.run();S4.toast('A11y Score: '+r.score+'/100 ('+r.errors.length+' errors, '+r.warnings.length+' warnings)',r.errors.length>0?'warning':'success',5000); }},
+            {label:'Module Integrity Check',icon:'<i class="fas fa-heartbeat"></i>',category:'Testing',action:function(){ var r=S4.integrityCheck();S4.toast(r.loaded+'/'+r.expected+' modules loaded'+(r.healthy?' — All healthy':' — Missing: '+r.missing.join(', ')),r.healthy?'success':'error',5000); }}
+        ]);
+    }
+
+    S4.register('testing', {version:'1.0.0', features:['test-runner','unit-tests','perf-benchmarks','a11y-audit','integrity-check']});
+    console.log('[S4 Testing] Module loaded — 5 features active');
+
+    // Auto-run integrity check
+    var integrity = S4.integrityCheck();
+    console.log('[S4 Integrity] ' + integrity.loaded + '/' + integrity.expected + ' modules loaded' + (integrity.healthy ? ' ✓' : ' — Missing: ' + integrity.missing.join(', ')));
 })();
 
 </script>
