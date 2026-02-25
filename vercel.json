@@ -167,6 +167,22 @@
       "destination": "/api"
     },
     {
+      "source": "/api/audit-vault",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/doc-library",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/compliance-scorecard",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/provisioning-ptd",
+      "destination": "/api"
+    },
+    {
       "source": "/api/wallet/provision",
       "destination": "/api"
     },
@@ -176,18 +192,6 @@
     },
     {
       "source": "/api/wallet/balance",
-      "destination": "/api"
-    },
-    {
-      "source": "/api/demo/provision",
-      "destination": "/api"
-    },
-    {
-      "source": "/api/demo/anchor",
-      "destination": "/api"
-    },
-    {
-      "source": "/api/demo/status",
       "destination": "/api"
     },
     {
@@ -311,8 +315,80 @@
       "destination": "/api"
     },
     {
-      "source": "/demo",
-      "destination": "/demo-app/demo.html"
+      "source": "/api/ils/uploads",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/documents",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/documents/versions",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/poam",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/compliance/evidence",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/submissions",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/team",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/team/members",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/team/invite",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/gfp",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/sbom",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/provenance",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/ai/rag",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/ai/conversations",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/analytics/cross-program",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/cdrl/validate",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/contracts/extract",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/program-metrics",
+      "destination": "/api"
+    },
+    {
+      "source": "/",
+      "destination": "/prod-app/index.html"
     }
   ]
 }

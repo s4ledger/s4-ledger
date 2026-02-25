@@ -3933,10 +3933,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <div style="margin-bottom:14px">
                                 <label style="font-size:0.82rem;font-weight:600;color:var(--steel);display:block;margin-bottom:6px">Amount (USD)</label>
                                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
-                                    <button class="sls-amt-btn" onclick="setSLSAmount(10)" style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$10</button>
-                                    <button class="sls-amt-btn" onclick="setSLSAmount(50)" style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$50</button>
-                                    <button class="sls-amt-btn" onclick="setSLSAmount(100)" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--accent);font-weight:700;font-size:0.85rem">$100</button>
-                                    <button class="sls-amt-btn" onclick="setSLSAmount(500)" style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$500</button>
+                                    <button class="sls-amt-btn" onclick="setSLSAmount(10,this)" style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$10</button>
+                                    <button class="sls-amt-btn" onclick="setSLSAmount(50,this)" style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$50</button>
+                                    <button class="sls-amt-btn" onclick="setSLSAmount(100,this)" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--accent);font-weight:700;font-size:0.85rem">$100</button>
+                                    <button class="sls-amt-btn" onclick="setSLSAmount(500,this)" style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$500</button>
                                 </div>
                                 <input type="number" id="slsUsdInput" value="100" min="1" step="1" onchange="updateSLSPreview()" oninput="updateSLSPreview()" style="width:100%;background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.92rem">
                             </div>
@@ -9212,7 +9212,10 @@ try { s4ActionItems = JSON.parse(localStorage.getItem('s4ActionItems') || '[]');
 function saveActionItems() {
     localStorage.setItem('s4ActionItems', JSON.stringify(s4ActionItems));
     updateNotifBadge();
-    renderActionItemsPanel();
+    renderHubActions();
+    // Update hub badge
+    const open = s4ActionItems.filter(a => !a.done).length;
+    const badge = document.getElementById('hubActionBadge'); if (badge) { badge.textContent = open > 0 ? open : '0'; badge.style.display = open > 0 ? 'inline' : 'none'; }
 }
 function addActionItem(item) {
     // item = {id, title, detail, severity, source, owner, due, cost, schedule}
@@ -9494,57 +9497,9 @@ function inlineEditActionTitle(id, el) {
     el.onkeydown = function(e) { if (e.key === 'Enter') { e.preventDefault(); save(); } if (e.key === 'Escape') { el.textContent = original; save(); } };
 }
 function filterActionItems(filter) {
-    renderActionItemsPanel(filter);
+    renderHubActions(filter);
 }
-function renderActionItemsPanel(filter) {
-    filter = filter || 'all';
-    const container = document.getElementById('actionItemsList');
-    if (!container) return;
-    let items = [...s4ActionItems];
-    if (filter === 'critical') items = items.filter(a => a.severity === 'critical' && !a.done);
-    else if (filter === 'warning') items = items.filter(a => a.severity === 'warning' && !a.done);
-    else if (filter === 'info') items = items.filter(a => a.severity === 'info' && !a.done);
-    else if (filter === 'completed') items = items.filter(a => a.done);
-    else if (filter === 'all') { /* show all */ }
-    // Sort: critical first, then warning, then info, done last
-    items.sort((a,b) => {
-        if (a.done !== b.done) return a.done ? 1 : -1;
-        const sev = {critical:0, warning:1, info:2};
-        return (sev[a.severity]||3) - (sev[b.severity]||3);
-    });
-    // Stats
-    const total = s4ActionItems.length;
-    const critical = s4ActionItems.filter(a => a.severity === 'critical' && !a.done).length;
-    const open = s4ActionItems.filter(a => !a.done).length;
-    const done = s4ActionItems.filter(a => a.done).length;
-    document.getElementById('aiTotal').textContent = total;
-    document.getElementById('aiCritical').textContent = critical;
-    document.getElementById('aiOpen').textContent = open;
-    document.getElementById('aiDone').textContent = done;
-
-    if (items.length === 0) {
-        container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem"><i class="fas fa-clipboard-list" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>' + (filter==='all'?'No action items yet. Use the tools to generate tasks.':'No items match this filter.') + '</div>';
-        return;
-    }
-    let html = '';
-    const sourceIcons = {dmsms:'<i class="fas fa-exclamation-triangle" style="color:var(--accent)"></i>', readiness:'<i class="fas fa-chart-line" style="color:var(--accent)"></i>', parts:'<i class="fas fa-cogs" style="color:var(--accent)"></i>', warranty:'<i class="fas fa-file-contract" style="color:var(--accent)"></i>', roi:'<i class="fas fa-dollar-sign" style="color:var(--accent)"></i>', lifecycle:'<i class="fas fa-clock" style="color:var(--accent)"></i>', ils:'<i class="fas fa-brain" style="color:var(--accent)"></i>'};
-    items.forEach(item => {
-        html += '<div class="action-item' + (item.done ? ' completed' : '') + '">';
-        html += '<div class="ai-check' + (item.done ? ' done' : '') + '" onclick="toggleActionDone(\'' + item.id + '\')"></div>';
-        html += '<div class="ai-body">';
-        html += '<div class="ai-title">' + (sourceIcons[item.source]||'') + ' ' + item.title + '</div>';
-        html += '<div class="ai-meta">';
-        html += '<span class="ai-tag ' + (item.severity||'info') + '">' + (item.severity||'info').toUpperCase() + '</span>';
-        html += '<span>' + (item.source||'').toUpperCase() + '</span>';
-        if (item.owner) html += '<span><i class="fas fa-user" style="margin-right:3px"></i>' + item.owner + '</span>';
-        if (item.cost) html += '<span style="color:#ffa500">$' + item.cost + 'K</span>';
-        if (item.schedule) html += '<span><i class="fas fa-calendar" style="margin-right:3px"></i>' + item.schedule + '</span>';
-        html += '</div>';
-        if (item.detail) html += '<div style="color:var(--steel);font-size:0.78rem;margin-top:4px">' + item.detail + '</div>';
-        html += '</div></div>';
-    });
-    container.innerHTML = html;
-}
+/* renderActionItemsPanel removed — renderHubActions is the canonical renderer */
 function exportActionItems() {
     const items = s4ActionItems;
     if (!items.length) { s4Notify('No Data', 'No action items to export.', 'info'); return; }
@@ -9640,12 +9595,12 @@ function switchHubTab(panelId, btn) {
     // Load data for workspace panels
     if (panelId === 'hub-actions') { renderHubActions(); if (typeof renderActionCalendar === 'function') renderActionCalendar(); }
     if (panelId === 'hub-vault') { renderVault(); setTimeout(function(){ if (typeof showSampleDigitalThread === 'function') showSampleDigitalThread(); populateDigitalThreadDropdown(); }, 400); }
-    if (panelId === 'hub-docs') renderDocLibrary();
-    if (panelId === 'hub-compliance') calcCompliance();
-    if (panelId === 'hub-risk') loadRiskData();
-    if (panelId === 'hub-reports') loadReportPreview();
-    if (panelId === 'hub-predictive') loadPredictiveData();
-    if (panelId === 'hub-submissions') loadSubmissionHistory();
+    if (panelId === 'hub-docs') { if (typeof renderDocLibrary === 'function') renderDocLibrary(); }
+    if (panelId === 'hub-compliance') { if (typeof calcCompliance === 'function') calcCompliance(); }
+    if (panelId === 'hub-risk') { if (typeof loadRiskData === 'function') loadRiskData(); }
+    if (panelId === 'hub-reports') { if (typeof loadReportPreview === 'function') loadReportPreview(); }
+    if (panelId === 'hub-predictive') { if (typeof loadPredictiveData === 'function') loadPredictiveData(); }
+    if (panelId === 'hub-submissions') { if (typeof loadSubmissionHistory === 'function') loadSubmissionHistory(); }
     if (panelId === 'hub-sbom') { if (typeof loadSBOMData === 'function') loadSBOMData(); }
     if (panelId === 'hub-dmsms') { if (typeof loadDMSMSData === 'function') loadDMSMSData(); }
     if (panelId === 'hub-readiness') { if (typeof loadReadinessData === 'function') loadReadinessData(); }
@@ -9714,16 +9669,7 @@ function renderHubActions(filter) {
     container.innerHTML = html;
 }
 
-// ── Update workspace stats when action items change ──
-const _origSaveActionItems = saveActionItems;
-saveActionItems = function() {
-    localStorage.setItem('s4ActionItems', JSON.stringify(s4ActionItems));
-    updateNotifBadge();
-    renderHubActions();
-    // Also update hub badge
-    const open = s4ActionItems.filter(a => !a.done).length;
-    const badge = document.getElementById('hubActionBadge'); if (badge) { badge.textContent = open > 0 ? open : '0'; badge.style.display = open > 0 ? 'inline' : 'none'; }
-};
+/* Override removed — saveActionItems now calls renderHubActions and updates badge directly */
 
 // ═══ AUDIT RECORD VAULT ═══
 // Vault key is scoped by role — each role sees only its own records
@@ -9731,7 +9677,7 @@ function _vaultKey() {
     return 's4Vault' + (typeof _currentRole !== 'undefined' && _currentRole ? '_' + _currentRole : '');
 }
 let s4Vault;
-try { s4Vault = JSON.parse(localStorage.getItem('s4Vault') || '[]'); } catch(_e) { s4Vault = []; }
+try { s4Vault = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(_e) { s4Vault = []; }
 function saveVault() { localStorage.setItem(_vaultKey(), JSON.stringify(s4Vault)); }
 // Called when the user switches roles — loads that role's vault and re-renders
 function reloadVaultForRole() {
@@ -12558,7 +12504,7 @@ function copyWalletField(id) {
     });
 }
 
-function setSLSAmount(usd) {
+function setSLSAmount(usd, btn) {
     document.getElementById('slsUsdInput').value = usd;
     updateSLSPreview();
     // Highlight selected button
@@ -12567,15 +12513,16 @@ function setSLSAmount(usd) {
         b.style.background = 'var(--surface)';
         b.style.color = 'var(--steel)';
     });
-    event.target.style.borderColor = 'rgba(0,170,255,0.5)';
-    event.target.style.background = 'rgba(0,170,255,0.08)';
-    event.target.style.color = 'var(--accent)';
+    if (btn) {
+        btn.style.borderColor = 'rgba(0,170,255,0.5)';
+        btn.style.background = 'rgba(0,170,255,0.08)';
+        btn.style.color = 'var(--accent)';
+    }
 }
 
 function updateSLSPreview() {
     const usd = parseFloat(document.getElementById('slsUsdInput').value) || 0;
     const slsTokens = Math.round(usd / 0.01);
-    const anchors = Math.round(slsTokens / 0.01 * 0.01);  // each anchor = 0.01 SLS
     document.getElementById('slsPreviewTokens').textContent = slsTokens.toLocaleString() + ' SLS';
     document.getElementById('slsPreviewAnchors').textContent = (slsTokens * 100).toLocaleString();
 }
@@ -12855,12 +12802,12 @@ async function loadPerformanceMetrics() {
 
         // New stats: Records Generated, Vault Size, Storage Used, Total Time
         var vaultRecords = [];
-        try { vaultRecords = JSON.parse(localStorage.getItem('s4_vault') || '[]'); } catch(_e) {}
+        try { vaultRecords = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(_e) {}
         var totalRecords = localRecords.length + vaultRecords.length;
         el('metricRecordsGenerated', totalRecords > 0 ? totalRecords : '—');
         el('metricVaultSize', vaultRecords.length > 0 ? vaultRecords.length : '—');
         var storageKB = 0;
-        try { storageKB = Math.round(new Blob([localStorage.getItem('s4_vault') || '']).size / 1024 * 10) / 10; } catch(_e2) {}
+        try { storageKB = Math.round(new Blob([localStorage.getItem(_vaultKey()) || '']).size / 1024 * 10) / 10; } catch(_e2) {}
         el('metricStorageUsed', storageKB > 0 ? storageKB.toFixed(1) : '—');
         el('metricTotalTime', data.total_processing_time || (localAnchors > 0 ? (localAnchors * 3.2).toFixed(1) : '—'));
 
@@ -12916,12 +12863,12 @@ async function loadPerformanceMetrics() {
 
         // New stats: Records Generated, Vault Size, Storage Used, Total Time
         var vaultRecords2 = [];
-        try { vaultRecords2 = JSON.parse(localStorage.getItem('s4_vault') || '[]'); } catch(_e) {}
+        try { vaultRecords2 = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(_e) {}
         var totalRecords2 = localRecords.length + vaultRecords2.length;
         el('metricRecordsGenerated', totalRecords2 > 0 ? totalRecords2 : '—');
         el('metricVaultSize', vaultRecords2.length > 0 ? vaultRecords2.length : '—');
         var storageKB2 = 0;
-        try { storageKB2 = Math.round(new Blob([localStorage.getItem('s4_vault') || '']).size / 1024 * 10) / 10; } catch(_e2) {}
+        try { storageKB2 = Math.round(new Blob([localStorage.getItem(_vaultKey()) || '']).size / 1024 * 10) / 10; } catch(_e2) {}
         el('metricStorageUsed', storageKB2 > 0 ? storageKB2.toFixed(1) : '—');
         el('metricTotalTime', localAnchors > 0 ? (localAnchors * 3.2).toFixed(1) : '—');
 
@@ -18391,6 +18338,9 @@ function _updateThemeIcon(isLight) {
             // Close AI panel if open
             var aiPanel = document.querySelector('.ai-float-panel');
             if (aiPanel && aiPanel.style.display !== 'none') { aiPanel.style.display = 'none'; return; }
+            // Close wallet sidebar if open
+            var walletSidebar = document.getElementById('walletSidebar');
+            if (walletSidebar && walletSidebar.classList.contains('open')) { if (typeof closeWalletSidebar === 'function') closeWalletSidebar(); return; }
             return;
         }
 

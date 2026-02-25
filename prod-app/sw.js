@@ -1,9 +1,9 @@
-// S4 Ledger Service Worker v3.1.0 — Full Offline / Air-Gapped Support
-const CACHE_VERSION = 's4-v330';
+// S4 Ledger Service Worker v6.0.0 — Production / Full Offline / Air-Gapped Support
+const CACHE_VERSION = 's4-prod-v600';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const DYNAMIC_CACHE = CACHE_VERSION + '-dynamic';
 const API_CACHE = CACHE_VERSION + '-api';
-const MAX_DYNAMIC_ITEMS = 100;
+const MAX_DYNAMIC_ITEMS = 200;
 
 // Core shell assets — precached on install
 const PRECACHE_ASSETS = [
@@ -13,6 +13,11 @@ const PRECACHE_ASSETS = [
   '/s4-assets/S4Ledger_logo.png',
   '/s4-assets/style.css',
   '/s4-assets/s4-mobile.css',
+  '/s4-assets/main.js',
+  '/s4-assets/s4-auth.js',
+  '/s4-assets/s4-data.js',
+  '/s4-assets/s4-pdf.js',
+  '/s4-assets/search.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2',

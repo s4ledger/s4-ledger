@@ -1,0 +1,2 @@
+[console_scripts]
+s4-anchor = s4_sdk:main_cli

@@ -1,13 +1,22 @@
 {
-  "name": "S4 Ledger",
+  "name": "S4 Ledger — Defense Logistics Platform",
   "short_name": "S4 Ledger",
-  "description": "Defense Logistics Verification Platform on XRPL",
-  "start_url": "/demo-app/",
+  "description": "Immutable defense logistics verification anchored to the XRP Ledger. Anchor, verify, and track military supply chain records with blockchain-grade integrity.",
+  "start_url": "/prod-app/",
+  "scope": "/prod-app/",
+  "id": "/prod-app/",
   "display": "standalone",
-  "background_color": "#050810",
-  "theme_color": "#050810",
-  "orientation": "portrait",
-  "categories": ["defense", "logistics", "blockchain"],
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "any",
+  "dir": "ltr",
+  "lang": "en-US",
+  "categories": ["defense", "logistics", "blockchain", "security", "government"],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
   "icons": [
     {
       "src": "/s4-assets/icon-192.png",
@@ -21,5 +30,46 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/s4-assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "S4 Ledger Platform Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Anchor Record",
+      "short_name": "Anchor",
+      "description": "Anchor a defense logistics record to the XRP Ledger",
+      "url": "/prod-app/#anchor",
+      "icons": [{"src": "/s4-assets/icon-192.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "Verify Record",
+      "short_name": "Verify",
+      "description": "Verify a record against blockchain anchors",
+      "url": "/prod-app/#verify",
+      "icons": [{"src": "/s4-assets/icon-192.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "Anchor-S4 Tools",
+      "short_name": "ILS Tools",
+      "description": "Access 20+ ILS analysis and compliance tools",
+      "url": "/prod-app/#ils",
+      "icons": [{"src": "/s4-assets/icon-192.png", "sizes": "192x192"}]
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+s4",
+      "url": "/prod-app/?action=%s"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 480
+  }
 }
