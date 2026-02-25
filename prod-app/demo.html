@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S4 Ledger — See How It Works</title>
+    <meta name="description" content="Interactive demo showing how S4 Ledger anchors and verifies defense logistics records on the XRP Ledger blockchain.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #050810;
+            --surface: #0a0f1c;
+            --card: #0d1220;
+            --border: rgba(255,255,255,0.06);
+            --accent: #00aaff;
+            --gold: #c9a84c;
+            --text: #c8d6e5;
+            --muted: #6b7d93;
+            --steel: #8ea4b8;
+            --green: #00cc66;
+            --red: #ff6b6b;
+            --demo-border: rgba(255,255,255,0.1);
+            --demo-card-bg: #0d1220;
+            --demo-text: #c8d6e5;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+        
+        /* ═══ HEADER ═══ */
+        .demo-header {
+            background:linear-gradient(180deg,rgba(0,170,255,0.06) 0%,transparent 100%);
+            border-bottom:1px solid var(--border);
+            padding:20px 32px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+        }
+        .demo-logo {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            text-decoration:none;
+        }
+        .demo-logo img { height:32px; }
+        .demo-logo span { font-size:1.2rem; font-weight:800; color:#fff; letter-spacing:-0.5px; }
+        .demo-logo .sub { font-size:0.72rem; color:var(--muted); font-weight:500; margin-left:8px; }
+        .demo-nav { display:flex; gap:12px; align-items:center; }
+        .demo-nav a {
+            color:var(--accent);
+            text-decoration:none;
+            font-size:0.82rem;
+            font-weight:600;
+            padding:8px 18px;
+            border-radius:3px;
+            border:1px solid rgba(0,170,255,0.3);
+            transition:all 0.2s;
+        }
+        .demo-nav a:hover { background:rgba(0,170,255,0.1); }
+        .demo-nav a.primary {
+            background:linear-gradient(135deg,#00aaff,#0088cc);
+            color:#fff;
+            border:none;
+        }
+        .demo-nav a.primary:hover { opacity:0.9; }
+
+        /* ═══ HERO ═══ */
+        .demo-hero {
+            text-align:center;
+            padding:60px 32px 40px;
+            max-width:800px;
+            margin:0 auto;
+        }
+        .demo-hero h1 {
+            font-size:2.4rem;
+            font-weight:900;
+            color:#fff;
+            margin-bottom:12px;
+            letter-spacing:-1px;
+        }
+        .demo-hero h1 span { color:var(--accent); }
+        .demo-hero p {
+            font-size:1.05rem;
+            color:var(--steel);
+            max-width:600px;
+            margin:0 auto 24px;
+            line-height:1.6;
+        }
+        .demo-tabs {
+            display:flex;
+            justify-content:center;
+            gap:8px;
+            margin-bottom:32px;
+        }
+        .demo-tab {
+            padding:10px 24px;
+            border-radius:3px;
+            font-size:0.88rem;
+            font-weight:700;
+            border:1px solid var(--border);
+            background:var(--card);
+            color:var(--muted);
+            cursor:pointer;
+            transition:all 0.25s;
+            font-family:inherit;
+        }
+        .demo-tab.active {
+            background:rgba(0,170,255,0.12);
+            color:var(--accent);
+            border-color:rgba(0,170,255,0.4);
+        }
+        .demo-tab:hover:not(.active) { border-color:rgba(255,255,255,0.15); color:var(--steel); }
+
+        /* ═══ DEMO PANELS ═══ */
+        .demo-panel { display:none; max-width:900px; margin:0 auto; padding:0 32px 60px; }
+        .demo-panel.active { display:block; }
+
+        /* ═══ ANCHOR DEMO ═══ */
+        .anchor-demo-card {
+            background:var(--card);
+            border:1px solid var(--border);
+            border-radius:16px;
+            padding:32px;
+            margin-bottom:24px;
+        }
+        .anchor-demo-card h3 {
+            font-size:1.1rem;
+            font-weight:800;
+            color:#fff;
+            margin-bottom:16px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .step-indicator {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:28px;
+            height:28px;
+            border-radius:50%;
+            background:rgba(0,170,255,0.15);
+            color:var(--accent);
+            font-size:0.75rem;
+            font-weight:800;
+            flex-shrink:0;
+        }
+        .step-indicator.done {
+            background:rgba(0,204,102,0.15);
+            color:var(--green);
+        }
+
+        /* Record type selector */
+        .record-type-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+            gap:8px;
+            margin-bottom:16px;
+            max-height:360px;
+            overflow-y:auto;
+            padding:4px;
+        }
+        .record-type-btn {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:3px;
+            padding:12px;
+            text-align:center;
+            cursor:pointer;
+            transition:all 0.25s;
+            font-family:inherit;
+            color:var(--steel);
+        }
+        .record-type-btn:hover { border-color:rgba(0,170,255,0.3); }
+        .record-type-btn.selected {
+            border-color:var(--accent);
+            background:rgba(0,170,255,0.08);
+            color:var(--accent);
+        }
+        .record-type-btn i { display:block; font-size:1.2rem; margin-bottom:6px; }
+        .record-type-btn .label { font-size:0.75rem; font-weight:600; }
+
+        /* Content area */
+        .demo-textarea {
+            width: 100%;
+            min-height: 400px;
+            border: 2px solid var(--demo-border);
+            border-radius: 3px;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            resize: vertical;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: var(--demo-card-bg);
+            color: var(--demo-text);
+        }
+        .demo-textarea:focus { border-color:var(--accent); }
+        .demo-textarea::placeholder { color:var(--muted); }
+
+        /* Hash display */
+        .hash-display {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:3px;
+            padding:16px;
+            margin-top:12px;
+            font-family:'Courier New',monospace;
+            font-size:0.78rem;
+            word-break:break-all;
+            color:var(--accent);
+            position:relative;
+            min-height:50px;
+        }
+        .hash-label {
+            position:absolute;
+            top:-9px;
+            left:12px;
+            background:var(--card);
+            padding:0 8px;
+            font-family:'Inter',sans-serif;
+            font-size:0.68rem;
+            font-weight:700;
+            color:var(--muted);
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+        }
+
+        /* Pipeline visualization */
+        .pipeline {
+            display:flex;
+            align-items:center;
+            gap:0;
+            margin:24px 0;
+            padding:0 20px;
+        }
+        .pipeline-step {
+            flex:1;
+            text-align:center;
+            position:relative;
+            padding:16px 8px;
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:3px;
+            transition:all 0.5s cubic-bezier(0.4,0,0.2,1);
+        }
+        .pipeline-step.active {
+            border-color:var(--accent);
+            background:rgba(0,170,255,0.06);
+            box-shadow:0 0 20px rgba(0,170,255,0.1);
+        }
+        .pipeline-step.done {
+            border-color:var(--green);
+            background:rgba(0,204,102,0.06);
+        }
+        .pipeline-step .ps-icon {
+            width:36px;
+            height:36px;
+            border-radius:50%;
+            background:rgba(0,170,255,0.12);
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            margin-bottom:8px;
+            transition:all 0.5s;
+        }
+        .pipeline-step.active .ps-icon { background:rgba(0,170,255,0.25); }
+        .pipeline-step.done .ps-icon { background:rgba(0,204,102,0.25); }
+        .pipeline-step .ps-icon i { font-size:0.85rem; color:var(--accent); transition:color 0.3s; }
+        .pipeline-step.done .ps-icon i { color:var(--green); }
+        .pipeline-step .ps-label { font-size:0.72rem; font-weight:700; color:var(--steel); }
+        .pipeline-step .ps-sub { font-size:0.62rem; color:var(--muted); margin-top:2px; }
+        
+        .pipeline-arrow {
+            width:40px;
+            text-align:center;
+            color:var(--border);
+            font-size:0.85rem;
+            flex-shrink:0;
+            transition:color 0.3s;
+        }
+        .pipeline-arrow.active { color:var(--accent); }
+        .pipeline-arrow.done { color:var(--green); }
+
+        /* Button */
+        .demo-btn {
+            background:linear-gradient(135deg,#00aaff,#0088cc);
+            color:#fff;
+            border:none;
+            padding:12px 28px;
+            border-radius:3px;
+            font-size:0.9rem;
+            font-weight:700;
+            cursor:pointer;
+            font-family:inherit;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            transition:all 0.2s;
+            margin-top:16px;
+        }
+        .demo-btn:hover { opacity:0.9; transform:translateY(-1px); }
+        .demo-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+        .demo-btn.green { background:linear-gradient(135deg,#00cc66,#009944); }
+        .demo-btn.gold { background:linear-gradient(135deg,#c9a84c,#a68836); }
+
+        /* XRPL result card */
+        .xrpl-result {
+            background:linear-gradient(135deg,rgba(0,204,102,0.06),rgba(0,170,255,0.04));
+            border:1px solid rgba(0,204,102,0.25);
+            border-radius:14px;
+            padding:24px;
+            display:none;
+            animation:slideUp 0.5s ease;
+        }
+        .xrpl-result.show { display:block; }
+        .xrpl-field { display:grid; grid-template-columns:100px 1fr; gap:4px 12px; font-size:0.82rem; margin-bottom:4px; }
+        .xrpl-field .label { color:var(--muted); font-weight:600; }
+        .xrpl-field .value { color:var(--text); font-family:monospace; word-break:break-all; }
+        .xrpl-field .value a { color:var(--accent); text-decoration:none; }
+
+        /* ═══ VERIFY DEMO ═══ */
+        .verify-zone {
+            border:2px dashed rgba(0,170,255,0.3);
+            border-radius:14px;
+            padding:40px;
+            text-align:center;
+            transition:all 0.3s;
+            cursor:pointer;
+        }
+        .verify-zone:hover { border-color:var(--accent); background:rgba(0,170,255,0.03); }
+        .verify-zone.dragover { border-color:var(--green); background:rgba(0,204,102,0.03); }
+        .verify-zone i { font-size:2rem; color:var(--accent); margin-bottom:12px; }
+        .verify-zone .vz-text { font-size:0.9rem; color:var(--steel); margin-bottom:4px; }
+        .verify-zone .vz-sub { font-size:0.75rem; color:var(--muted); }
+
+        .verify-result {
+            background:var(--card);
+            border:1px solid var(--border);
+            border-radius:14px;
+            padding:24px;
+            margin-top:20px;
+            display:none;
+            animation:slideUp 0.5s ease;
+        }
+        .verify-result.show { display:block; }
+        .verify-match { color:var(--green); }
+        .verify-fail { color:var(--red); }
+        
+        .compare-hash {
+            display:grid;
+            grid-template-columns:1fr;
+            gap:8px;
+            margin:16px 0;
+        }
+        .compare-hash-row {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            background:var(--surface);
+            border-radius:3px;
+            padding:12px 16px;
+        }
+        .compare-hash-row .ch-label {
+            font-size:0.72rem;
+            font-weight:700;
+            color:var(--muted);
+            text-transform:uppercase;
+            width:80px;
+            flex-shrink:0;
+        }
+        .compare-hash-row .ch-val {
+            font-family:monospace;
+            font-size:0.72rem;
+            word-break:break-all;
+            flex:1;
+        }
+
+        /* ═══ ANIMATIONS ═══ */
+        @keyframes slideUp {
+            from { opacity:0; transform:translateY(16px); }
+            to { opacity:1; transform:translateY(0); }
+        }
+        @keyframes pulse {
+            0%,100% { opacity:1; }
+            50% { opacity:0.5; }
+        }
+        @keyframes hashStream {
+            0% { opacity:0; transform:translateX(-10px); }
+            50% { opacity:1; }
+            100% { opacity:0; transform:translateX(10px); }
+        }
+        .pulsing { animation:pulse 1s ease-in-out infinite; }
+
+        /* ═══ INFO SECTION ═══ */
+        .demo-info {
+            max-width:900px;
+            margin:0 auto;
+            padding:40px 32px 80px;
+        }
+        .info-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+            gap:16px;
+        }
+        .info-card {
+            background:var(--card);
+            border:1px solid var(--border);
+            border-radius:3px;
+            padding:24px;
+        }
+        .info-card h4 { font-size:0.9rem; color:#fff; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+        .info-card p { font-size:0.8rem; color:var(--steel); line-height:1.5; }
+        .info-card i { color:var(--accent); }
+
+        /* ═══ FOOTER ═══ */
+        .demo-footer {
+            border-top:1px solid var(--border);
+            padding:24px 32px;
+            text-align:center;
+            font-size:0.75rem;
+            color:var(--muted);
+        }
+        .demo-footer a { color:var(--accent); text-decoration:none; }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width:768px) {
+            .demo-hero h1 { font-size:1.6rem; }
+            .pipeline { flex-direction:column; padding:0; }
+            .pipeline-arrow { transform:rotate(90deg); width:auto; }
+            .record-type-grid { grid-template-columns:repeat(4,1fr); }
+            .demo-header { flex-direction:column; gap:12px; }
+            .demo-tabs { flex-wrap:wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="demo-header">
+    <a href="/demo-app/" class="demo-logo">
+        <i class="fas fa-shield-halved" style="font-size:1.5rem;color:var(--accent)"></i>
+        <span>S4 Ledger <span class="sub">Interactive Demo</span></span>
+    </a>
+    <div class="demo-nav">
+        <a href="/demo-app/">Back to Home</a>
+        <a href="/demo-app/" class="primary"><i class="fas fa-rocket"></i> Enter Platform</a>
+    </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<div class="demo-hero">
+    <h1>See How <span>Blockchain Anchoring</span> Works</h1>
+    <p>Watch a defense logistics record get hashed, anchored to the XRP Ledger, and verified — all in real time. No account needed.</p>
+    
+    <div class="demo-tabs">
+        <button class="demo-tab active" onclick="switchDemoTab('anchor')"><i class="fas fa-anchor" style="margin-right:6px"></i>Anchor a Record</button>
+        <button class="demo-tab" onclick="switchDemoTab('verify')"><i class="fas fa-check-circle" style="margin-right:6px"></i>Verify a Record</button>
+    </div>
+</div>
+
+<!-- ═══ ANCHOR DEMO ═══ -->
+<div class="demo-panel active" id="panelAnchor">
+
+    <!-- Step 1: Select Record Type -->
+    <div class="anchor-demo-card" id="anchorStep1">
+        <h3><span class="step-indicator" id="si1">1</span> Select a Record Type</h3>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px">Choose the type of defense logistics document to anchor. Each type gets a unique classification on-chain.</p>
+        <div class="record-type-grid">
+            <div class="record-type-btn" onclick="selectRecordType(this,'DD Form 1149')" data-type="DD Form 1149">
+                <i class="fas fa-file-invoice"></i>
+                <div class="label">DD-1149</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'DD Form 250')" data-type="DD Form 250">
+                <i class="fas fa-clipboard-check"></i>
+                <div class="label">DD-250</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'WAWF Receipt')" data-type="WAWF Receipt">
+                <i class="fas fa-receipt"></i>
+                <div class="label">WAWF</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Container Manifest')" data-type="Container Manifest">
+                <i class="fas fa-box"></i>
+                <div class="label">Container</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Custody Transfer')" data-type="Custody Transfer">
+                <i class="fas fa-handshake"></i>
+                <div class="label">Custody</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Maintenance Log')" data-type="Maintenance Log">
+                <i class="fas fa-wrench"></i>
+                <div class="label">Maintenance</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Contract Modification')" data-type="Contract Modification">
+                <i class="fas fa-file-contract"></i>
+                <div class="label">Contract Mod</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Spares Spreadsheet')" data-type="Spares Spreadsheet">
+                <i class="fas fa-table"></i>
+                <div class="label">Spares List</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'COTS Manual')" data-type="COTS Manual">
+                <i class="fas fa-book"></i>
+                <div class="label">COTS Manual</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Tech Manual')" data-type="Tech Manual">
+                <i class="fas fa-book-open"></i>
+                <div class="label">Tech Manual</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'TM Index')" data-type="TM Index">
+                <i class="fas fa-list-ol"></i>
+                <div class="label">TM Index</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'PO Index')" data-type="PO Index">
+                <i class="fas fa-shopping-cart"></i>
+                <div class="label">PO Index</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'ECP')" data-type="ECP">
+                <i class="fas fa-drafting-compass"></i>
+                <div class="label">ECP</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'LCSP')" data-type="LCSP">
+                <i class="fas fa-project-diagram"></i>
+                <div class="label">LCSP</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Engineering Drawing')" data-type="Engineering Drawing">
+                <i class="fas fa-pencil-ruler"></i>
+                <div class="label">Drawing</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Configuration Status')" data-type="Configuration Status">
+                <i class="fas fa-cogs"></i>
+                <div class="label">Config Status</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Outfitting List')" data-type="Outfitting List">
+                <i class="fas fa-boxes"></i>
+                <div class="label">Outfitting/APL</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Material Ordering Schedule')" data-type="Material Ordering Schedule">
+                <i class="fas fa-calendar-alt"></i>
+                <div class="label">Mat'l Ordering</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'Master Equipment List')" data-type="Master Equipment List">
+                <i class="fas fa-server"></i>
+                <div class="label">Equipment MEL</div>
+            </div>
+            <div class="record-type-btn" onclick="selectRecordType(this,'DRL/CDRL Tracker')" data-type="DRL/CDRL Tracker">
+                <i class="fas fa-tasks"></i>
+                <div class="label">DRL/CDRL</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Enter Content -->
+    <div class="anchor-demo-card" id="anchorStep2" style="opacity:0.4;pointer-events:none;transition:all 0.4s">
+        <h3><span class="step-indicator" id="si2">2</span> Enter Record Content</h3>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px">Type or paste the content that will be hashed and anchored. In production, you'd upload a file.</p>
+        <textarea class="demo-textarea" id="demoContent" placeholder="Type sample content here... e.g., 'NSN 5820-01-234-5678 shipped via DD1149 to Camp Pendleton, 14 APR 2025'" oninput="onContentChange()"></textarea>
+        <div id="charCount" style="text-align:right;font-size:0.7rem;color:var(--muted);margin-top:4px">0 characters</div>
+    </div>
+
+    <!-- Step 3: SHA-256 Hash -->
+    <div class="anchor-demo-card" id="anchorStep3" style="opacity:0.4;pointer-events:none;transition:all 0.4s">
+        <h3><span class="step-indicator" id="si3">3</span> SHA-256 Hash Generated</h3>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px">The content is hashed client-side using SHA-256. This fingerprint is what gets stored on the blockchain — not the content itself.</p>
+        <div class="hash-display" id="hashDisplay">
+            <span class="hash-label">SHA-256</span>
+            <span id="hashValue" style="color:var(--muted)">Waiting for content...</span>
+        </div>
+    </div>
+
+    <!-- Pipeline Visualization -->
+    <div class="pipeline" id="anchorPipeline" style="opacity:0.4;transition:all 0.4s">
+        <div class="pipeline-step" id="ps1">
+            <div class="ps-icon"><i class="fas fa-file-alt"></i></div>
+            <div class="ps-label">Record</div>
+            <div class="ps-sub">Selected</div>
+        </div>
+        <div class="pipeline-arrow" id="pa1"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" id="ps2">
+            <div class="ps-icon"><i class="fas fa-fingerprint"></i></div>
+            <div class="ps-label">SHA-256</div>
+            <div class="ps-sub">Hashed</div>
+        </div>
+        <div class="pipeline-arrow" id="pa2"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" id="ps3">
+            <div class="ps-icon"><i class="fas fa-coins"></i></div>
+            <div class="ps-label">0.01 SLS</div>
+            <div class="ps-sub">Fee Deducted</div>
+        </div>
+        <div class="pipeline-arrow" id="pa3"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" id="ps4">
+            <div class="ps-icon"><i class="fas fa-link"></i></div>
+            <div class="ps-label">XRPL</div>
+            <div class="ps-sub">Anchored</div>
+        </div>
+        <div class="pipeline-arrow" id="pa4"><i class="fas fa-chevron-right"></i></div>
+        <div class="pipeline-step" id="ps5">
+            <div class="ps-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="ps-label">Confirmed</div>
+            <div class="ps-sub">Immutable</div>
+        </div>
+    </div>
+
+    <!-- Anchor Button -->
+    <div style="text-align:center;margin:24px 0">
+        <button class="demo-btn" id="anchorBtn" disabled onclick="runAnchorDemo()">
+            <i class="fas fa-anchor"></i> Anchor to XRPL
+        </button>
+        <div id="anchorStatus" style="font-size:0.75rem;color:var(--muted);margin-top:8px"></div>
+    </div>
+
+    <!-- XRPL Result -->
+    <div class="xrpl-result" id="anchorResult">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+            <i class="fas fa-check-circle" style="color:var(--green);font-size:1.3rem"></i>
+            <div>
+                <div style="font-size:1rem;font-weight:800;color:#fff">Record Anchored Successfully</div>
+                <div style="font-size:0.75rem;color:var(--green)">Permanent, tamper-proof record on the XRP Ledger</div>
+            </div>
+        </div>
+        <div class="xrpl-field"><span class="label">Type:</span><span class="value" id="resultType">—</span></div>
+        <div class="xrpl-field"><span class="label">Hash:</span><span class="value" id="resultHash">—</span></div>
+        <div class="xrpl-field"><span class="label">TX Hash:</span><span class="value" id="resultTx">—</span></div>
+        <div class="xrpl-field"><span class="label">Ledger:</span><span class="value" id="resultLedger">—</span></div>
+        <div class="xrpl-field"><span class="label">Fee:</span><span class="value" style="color:var(--gold)">0.01 SLS ($0.0001)</span></div>
+        <div class="xrpl-field"><span class="label">Time:</span><span class="value" id="resultTime">—</span></div>
+        <div class="xrpl-field"><span class="label">Explorer:</span><span class="value" id="resultExplorer">—</span></div>
+        <div style="margin-top:16px;text-align:center">
+            <button class="demo-btn gold" onclick="resetAnchorDemo()" style="margin-right:8px"><i class="fas fa-redo"></i> Try Again</button>
+            <button class="demo-btn green" onclick="autoVerifyAnchored()"><i class="fas fa-check-circle"></i> Now Verify It</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ VERIFY DEMO ═══ -->
+<div class="demo-panel" id="panelVerify">
+
+    <div class="anchor-demo-card">
+        <h3><span class="step-indicator">1</span> Upload or Enter Content to Verify</h3>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px">Upload a file or enter text to generate its SHA-256 hash. S4 Ledger compares it against all blockchain-anchored records.</p>
+        
+        <div class="verify-zone" id="verifyZone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleVerifyDrop(event)">
+            <i class="fas fa-cloud-upload-alt" style="display:block"></i>
+            <div class="vz-text">Drop a file here or click to type content</div>
+            <div class="vz-sub">PDF, Excel, Word, CSV, TXT — any file format</div>
+        </div>
+
+        <div style="margin-top:16px">
+            <textarea class="demo-textarea" id="verifyContent" placeholder="Or type/paste content here to verify..." oninput="onVerifyInput()"></textarea>
+        </div>
+    </div>
+
+    <div class="anchor-demo-card" id="verifyStep2" style="opacity:0.4;pointer-events:none;transition:all 0.4s">
+        <h3><span class="step-indicator" id="vsi2">2</span> Hash Comparison</h3>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px">We hash your content and compare it against the on-chain record. If they match, the content is verified as authentic and unaltered.</p>
+        
+        <div class="compare-hash">
+            <div class="compare-hash-row">
+                <span class="ch-label">Your File</span>
+                <span class="ch-val" id="verifyYourHash" style="color:var(--accent)">—</span>
+            </div>
+            <div style="text-align:center;padding:4px 0">
+                <i class="fas fa-arrows-up-down" id="verifyCompareIcon" style="color:var(--muted)"></i>
+            </div>
+            <div class="compare-hash-row">
+                <span class="ch-label">On-Chain</span>
+                <span class="ch-val" id="verifyChainHash" style="color:var(--gold)">—</span>
+            </div>
+        </div>
+
+        <div style="text-align:center;margin-top:12px">
+            <button class="demo-btn green" id="verifyBtn" onclick="runVerifyDemo()"><i class="fas fa-search"></i> Verify on Blockchain</button>
+        </div>
+    </div>
+
+    <!-- Verify Result -->
+    <div class="verify-result" id="verifyResult">
+        <div id="verifyResultContent"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:20px">
+        <button class="demo-btn" onclick="switchDemoTab('anchor')" style="background:var(--card);border:1px solid var(--border);color:var(--text)">
+            <i class="fas fa-arrow-left"></i> Back to Anchor Demo
+        </button>
+    </div>
+</div>
+
+<!-- ═══ INFO SECTION ═══ -->
+<div class="demo-info">
+    <h2 style="font-size:1.3rem;font-weight:800;color:#fff;text-align:center;margin-bottom:24px"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:8px"></i>How S4 Ledger Works</h2>
+    <div class="info-grid">
+        <div class="info-card">
+            <h4><i class="fas fa-fingerprint"></i> SHA-256 Hashing</h4>
+            <p>Every record is hashed client-side using the SHA-256 algorithm. The hash is a unique 64-character fingerprint — change one bit of the original, and the hash changes completely.</p>
+        </div>
+        <div class="info-card">
+            <h4><i class="fas fa-link"></i> XRPL Anchoring</h4>
+            <p>The hash is embedded in an XRPL Memo field on a real blockchain transaction. Once confirmed by validators, the record is permanent and tamper-proof — nobody can alter it.</p>
+        </div>
+        <div class="info-card">
+            <h4><i class="fas fa-coins" style="color:var(--gold)"></i> SLS Token Economy</h4>
+            <p>Each anchor costs 0.01 SLS (~$0.0001). SLS is the utility token that powers every action. Subscriptions include SLS allocations based on your tier.</p>
+        </div>
+        <div class="info-card">
+            <h4><i class="fas fa-shield-halved"></i> Defense-Grade Security</h4>
+            <p>Compliant with NIST 800-171, DFARS, ITAR, and CMMC Level 3. Built specifically for defense logistics integrity and chain of custody.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="demo-footer">
+    <p>&copy; 2025 S4 Ledger — Blockchain Integrity for Defense Logistics &nbsp;|&nbsp; <a href="/demo-app/">Home</a> &nbsp;|&nbsp; <a href="/demo-app/">Enter Platform</a></p>
+</div>
+
+<script>
+// ═══ DEMO STATE ═══
+var _selectedType = null;
+var _currentHash = null;
+var _anchoredRecords = []; // Store demo-anchored records for verify demo
+
+// ═══ TAB SWITCHING ═══
+function switchDemoTab(tab) {
+    document.querySelectorAll('.demo-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.demo-panel').forEach(function(p) { p.classList.remove('active'); });
+    
+    if (tab === 'anchor') {
+        document.querySelector('.demo-tab:nth-child(1)').classList.add('active');
+        document.getElementById('panelAnchor').classList.add('active');
+    } else {
+        document.querySelector('.demo-tab:nth-child(2)').classList.add('active');
+        document.getElementById('panelVerify').classList.add('active');
+    }
+}
+
+// ═══ RECORD TYPE SELECTION ═══
+function selectRecordType(btn, type) {
+    document.querySelectorAll('.record-type-btn').forEach(function(b) { b.classList.remove('selected'); });
+    btn.classList.add('selected');
+    _selectedType = type;
+    
+    // Enable step 2
+    document.getElementById('anchorStep2').style.opacity = '1';
+    document.getElementById('anchorStep2').style.pointerEvents = 'auto';
+    document.getElementById('si1').classList.add('done');
+    document.getElementById('si1').innerHTML = '<i class="fas fa-check" style="font-size:0.65rem"></i>';
+    
+    // Auto-fill sample content based on type
+    var samples = {
+        'DD Form 1149':             '═══════════════════════════════════════════════════════════════\n' +
+            '                    DEPARTMENT OF DEFENSE\n' +
+            '           REQUISITION AND INVOICE / SHIPPING DOCUMENT\n' +
+            '                       DD FORM 1149\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Document Number:   DD1149-2025-04821          Date: 14 APR 2025\n' +
+            'Priority:          02 – URGENT                Requisitioner: SSgt A. Morales\n' +
+            'Fund Code:         4A7 (O&M, Marine Corps)    Signal Code: A\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'FROM: Supply Battalion, 1st MLG\n' +
+            '      Camp Pendleton, CA  92055\n' +
+            '      DoDAAC: M67004\n' +
+            '\n' +
+            'TO:   3rd Maintenance Battalion, 1st MLG\n' +
+            '      Camp Pendleton, CA  92055\n' +
+            '      DoDAAC: M67399\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'LINE│ NSN                │ NOMENCLATURE            │ QTY │ UI │ UNIT PRICE │ TOTAL\n' +
+            '────┼────────────────────┼─────────────────────────┼─────┼────┼────────────┼────────────\n' +
+            ' 001│ 5820-01-234-5678   │ Receiver-Transmitter    │  48 │ EA │ $12,430.00 │ $596,640.00\n' +
+            '    │                    │ RT-1523/SINCGARS        │     │    │            │\n' +
+            ' 002│ 5985-01-451-9032   │ Antenna Group, VHF      │  48 │ EA │  $1,820.00 │  $87,360.00\n' +
+            '    │                    │ OE-254/GRC              │     │    │            │\n' +
+            ' 003│ 6130-01-399-7438   │ Battery, Lithium        │ 192 │ EA │    $347.50 │  $66,720.00\n' +
+            '    │                    │ BA-5590/U               │     │    │            │\n' +
+            ' 004│ 5895-01-553-2100   │ GPS Receiver AN/PSN-13  │  24 │ EA │  $8,750.00 │ $210,000.00\n' +
+            ' 005│ 5820-01-512-3344   │ Handset H-250/U         │  96 │ EA │    $142.00 │  $13,632.00\n' +
+            ' 006│ 6135-01-423-9876   │ Cable Assembly CX-4722  │  96 │ EA │     $89.00 │   $8,544.00\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            '                                          TOTAL: $982,896.00\n' +
+            '\n' +
+            'Contract:          W56HZV-24-C-0093\n' +
+            'MILSTRIP:          M67004-5042-B231\n' +
+            'Transportation:    Government Bill of Lading – GBL 2025-44819\n' +
+            'Required Delivery: NLT 28 APR 2025\n' +
+            'Mode of Shipment:  Motor Freight, CONUS\n' +
+            '\n' +
+            'PACKAGING:         MIL-STD-2073-1E, Level A, Method 10\n' +
+            'MARKING:           MIL-STD-129R\n' +
+            'HAZMAT:            None applicable\n' +
+            '\n' +
+            '── Authorized Signature ──────────────────────────────────────\n' +
+            'Name:  Capt. J. Rivera, USMC       Rank/Grade: O-3\n' +
+            'Title: Supply Officer               Phone: DSN 312-725-4100\n' +
+            'Date:  14 APR 2025\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'DD Form 250':             '═══════════════════════════════════════════════════════════════\n' +
+            '                    DEPARTMENT OF DEFENSE\n' +
+            '      MATERIAL INSPECTION AND RECEIVING REPORT (DD 250)\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Report Number:  DD250-2025-07744            Date: 22 APR 2025\n' +
+            'Shipment No.:   S-07744-2025\n' +
+            'Contract No.:   N00024-23-C-5520            CAGE: 3R2Y7\n' +
+            'Prime Contractor: L3Harris Technologies\n' +
+            '                  1025 W NASA Blvd, Melbourne, FL 32919\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'SHIPPED FROM:   L3Harris – Plant 4, Melbourne FL\n' +
+            'SHIPPED TO:     NAVSUP Weapon Systems Support\n' +
+            '                5450 Carlisle Pike, Mechanicsburg, PA 17050\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'CLIN │ NSN                │ NOMENCLATURE              │ QTY│ UI│ UNIT PRICE   │ TOTAL\n' +
+            '─────┼────────────────────┼───────────────────────────┼────┼───┼──────────────┼──────────────\n' +
+            '0001 │ 5895-01-589-1027   │ AN/SLQ-32(V)6 EW Suite   │   2│ EA│ $4,200,000.00│ $8,400,000.00\n' +
+            '0002 │ 5895-01-612-4401   │ Countermeasure Disp Set   │   4│ EA│   $185,000.00│   $740,000.00\n' +
+            '0003 │ 5820-01-678-9921   │ SATCOM Terminal AN/USC-61│   2│ EA│   $890,000.00│ $1,780,000.00\n' +
+            '0004 │ spare kit CLIN 0001│ Spare & Repair Parts      │   2│ LT│   $320,000.00│   $640,000.00\n' +
+            '0005 │ 5895-01-701-3382   │ Radar Warning Receiver    │   4│ EA│   $175,000.00│   $700,000.00\n' +
+            '0006 │ 6625-01-715-4410   │ Test Equipment Set        │   1│ KT│    $95,000.00│    $95,000.00\n' +
+            '─────┼────────────────────┼───────────────────────────┼────┼───┼──────────────┼──────────────\n' +
+            '                                                GRAND TOTAL: $12,355,000.00\n' +
+            '\n' +
+            'ACCEPTANCE:  ☑ Source   ☐ Destination\n' +
+            'Inspector:   DCMA San Diego – J. Whitfield, GS-13\n' +
+            'Signature:   /s/ J. Whitfield        Date: 22 APR 2025\n' +
+            '\n' +
+            'Contractor Rep: Mark Ellison, Dir. Quality Assurance\n' +
+            'Signature:      /s/ M. Ellison        Date: 22 APR 2025\n' +
+            '\n' +
+            'DISTRIBUTION:\n' +
+            '  Copy 1 – DCMA San Diego (Inspection Office)\n' +
+            '  Copy 2 – DFAS Columbus (Payment Office)\n' +
+            '  Copy 3 – N00024 (Contracting Officer)\n' +
+            '  Copy 4 – NAVSUP WSS (Receiving Activity)\n' +
+            '  Copy 5 – L3Harris (Contractor File)\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'WAWF Receipt':             '═══════════════════════════════════════════════════════════════\n' +
+            '           WIDE AREA WORKFLOW (WAWF) – RECEIVING REPORT\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Document ID:    WAWF-RR-2025-19334          Status: ACCEPTED\n' +
+            'Contract:       N00024-23-C-5520\n' +
+            'Delivery Order: N00024-23-C-5520-DO-0012\n' +
+            'CAGE Code:      3R2Y7 (L3Harris Technologies)\n' +
+            'Vendor DUNS:    001368083\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'Ship To DoDAAC: N32253  (NAVSUP WSS Mechanicsburg)\n' +
+            'Accept Point:   N32253\n' +
+            'Inspect Point:  Source (DCMA San Diego)\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'LINE│ CLIN  │ NSN               │ DESCRIPTION              │ QTY│ UI│ AMT\n' +
+            '────┼───────┼───────────────────┼──────────────────────────┼────┼───┼──────────────\n' +
+            '  1 │ 0001  │ 5895-01-589-1027  │ EW Suite AN/SLQ-32(V)6  │   2│ EA│ $8,400,000.00\n' +
+            '  2 │ 0002  │ 5895-01-612-4401  │ CM Dispensing Set        │   4│ EA│   $740,000.00\n' +
+            '  3 │ 0003  │ 5820-01-678-9921  │ SATCOM AN/USC-61        │   2│ EA│ $1,780,000.00\n' +
+            '  4 │ 0004  │ (CLIN 0001 spare) │ Spare & Repair Parts    │   2│ LT│   $640,000.00\n' +
+            '────┼───────┼───────────────────┼──────────────────────────┼────┼───┼──────────────\n' +
+            '                                            Invoice Total: $11,560,000.00\n' +
+            '\n' +
+            'GFM Receipt Confirmation:\n' +
+            '  Received By:   PO2 T. Nakamura, USN\n' +
+            '  Date Received: 24 APR 2025  0930Z\n' +
+            '  Condition:     A (New / Serviceable)\n' +
+            '  Discrepancies: NONE\n' +
+            '\n' +
+            'WAWF Processing Timestamps:\n' +
+            '  Submitted:     24 APR 2025  0945Z\n' +
+            '  Govt Review:   24 APR 2025  1400Z\n' +
+            '  Accepted:      24 APR 2025  1515Z\n' +
+            '  Forwarded to DFAS: 24 APR 2025  1520Z\n' +
+            '\n' +
+            'Acceptor:  Lt. Cmdr. S. Patel, USN (ACO)\n' +
+            'Signature: /s/ S. Patel             Date: 24 APR 2025\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Container Manifest':             '═══════════════════════════════════════════════════════════════\n' +
+            '            MILITARY CONTAINER SHIPPING MANIFEST\n' +
+            '         TRANSPORTATION COMMAND – USTRANSCOM / SDDC\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Manifest ID:    CONT-USMIL-2025-5521       Date: 10 APR 2025\n' +
+            'Container No.:  MSKU-7734219               Size: 20ft ISO\n' +
+            'Seal Number:    4479218 (High-Security Bolt Seal)\n' +
+            'Gross Weight:   14,200 kg  /  31,306 lbs\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'ORIGIN:      Naval Station Rota, Spain (DODAAC: SW3103)\n' +
+            'DESTINATION: Naval Station Norfolk, VA  (DODAAC: N62788)\n' +
+            'VESSEL:      USNS Bob Hope (T-AKR-300)\n' +
+            'Voyage:      VBH-2025-018       ETD: 12 APR 2025\n' +
+            '                                 ETA: 23 APR 2025\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'ITEM│ NSN               │ NOMENCLATURE            │ QTY│ WT(kg)│ HAZ\n' +
+            '────┼───────────────────┼─────────────────────────┼────┼───────┼─────\n' +
+            '  1 │ 2320-01-371-9577  │ HMMWV M1151 (engine)    │   4│  5,400│ N\n' +
+            '  2 │ 2590-01-553-4810  │ HMMWV Armor Kit, B2     │   4│  3,600│ N\n' +
+            '  3 │ 5895-01-589-1027  │ EW Spares (SLQ-32)      │ 1LT│  2,800│ N\n' +
+            '  4 │ 1377-01-449-2990  │ Decoy Cartridge MK-214  │  20│  1,200│ Y (1.3G)\n' +
+            '  5 │ 8140-01-487-3221  │ Barrier Material, HESCO │  40│  1,200│ N\n' +
+            '────┼───────────────────┼─────────────────────────┼────┼───────┼─────\n' +
+            '                                     Total Weight: 14,200 kg\n' +
+            '\n' +
+            'HAZMAT Cert:     IMDG Class 1.3G – Approved (Cert# HM-2025-0228)\n' +
+            'Customs Decl:    NATO Form 302 – Ref# NF302-2025-1194\n' +
+            'Security Class:  UNCLASSIFIED // FOUO\n' +
+            '\n' +
+            'Shipping Officer: MSgt R. Coleman, USMC\n' +
+            'Signature:        /s/ R. Coleman       Date: 10 APR 2025\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Custody Transfer':             '═══════════════════════════════════════════════════════════════\n' +
+            '              CHAIN OF CUSTODY TRANSFER RECORD\n' +
+            '         CONTROLLED CRYPTOGRAPHIC ITEM (CCI) TRANSFER\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Transfer ID:   CT-2025-3389                Date: 18 APR 2025\n' +
+            'Authorization: COMSEC Account 5A-7721\n' +
+            'Classification: SECRET // NOFORN\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'ITEM DESCRIPTION:\n' +
+            '  Nomenclature:   JTRS HMS Manpack Radio Set AN/PRC-155\n' +
+            '  NSN:            5820-01-592-4202\n' +
+            '  Serial No.:     PRC155-2019-003471\n' +
+            '  COMSEC Acct#:   CCI-2023-88210\n' +
+            '  Condition:      A (Serviceable)\n' +
+            '  Last COMSEC Audit: 02 MAR 2025 – PASSED\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'RELEASING UNIT:\n' +
+            '  Organization:   3rd Marine Division, Comm Co\n' +
+            '  DoDAAC:         M00264\n' +
+            '  Location:       MCB Camp Butler, Okinawa, Japan\n' +
+            '  COMSEC Custodian: GySgt M. Tanaka\n' +
+            '  Signature:      /s/ M. Tanaka         Date: 18 APR 2025\n' +
+            '\n' +
+            'RECEIVING UNIT:\n' +
+            '  Organization:   MARCORLOGCOM, Comm Maint Div\n' +
+            '  DoDAAC:         M67400\n' +
+            '  Location:       MCLB Albany, GA 31704\n' +
+            '  COMSEC Custodian: MSgt L. Washington\n' +
+            '  Signature:      /s/ L. Washington     Date: 20 APR 2025\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'WITNESS:\n' +
+            '  Name: Col. D. Reynolds, USMC\n' +
+            '  Title: G-6, 3rd Marine Division\n' +
+            '  Signature: /s/ D. Reynolds            Date: 18 APR 2025\n' +
+            '\n' +
+            'Transfer Method: Secure Air – AMC Channel Flight\n' +
+            'Tracking:        TC-PRI-2025-00712\n' +
+            'Two-Person Integrity: VERIFIED\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Maintenance Log':             '═══════════════════════════════════════════════════════════════\n' +
+            '              NAVAL AIR MAINTENANCE DISCREPANCY RECORD\n' +
+            '                   VIDS/MAF – OPNAV 4790/2K\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Work Order:     MX-2025-8812               Date: 25 APR 2025\n' +
+            'Bureau No.:     168451                     Type/Model: CH-53K\n' +
+            'Organization:   HMH-461 "Iron Horse", MAG-29, 2nd MAW\n' +
+            'Location:       MCAS New River, NC\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'PHASE INSPECTION:  200-Hour Phase (Scheduled)\n' +
+            'Aircraft Hours:    1,847.3 / Cycles: 923\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'MAF│ WUC    │ DISCREPANCY                         │ ACTION\n' +
+            '───┼────────┼─────────────────────────────────────┼──────────────────────────\n' +
+            ' 1 │ 63A000 │ #1 TGB oil temp sensor reads high   │ R&R sensor P/N 70358-\n' +
+            '   │        │ (238°F, limit 230°F)                │ 08300-043; ops check SAT\n' +
+            ' 2 │ 14A200 │ FMC #2 Tail Rotor Servo Cyl         │ Replaced servo; leak/ops\n' +
+            '   │        │ slight hydraulic seep noted          │ check SAT; RFI\n' +
+            ' 3 │ 65C100 │ IFF Mode 5 self-test intermittent   │ Reseated crypto applique;\n' +
+            '   │        │ failure on BIT during preflight      │ 3/3 BIT pass – RFI\n' +
+            ' 4 │ 97A000 │ Blade erosion tape 3R, Sta 247-263  │ Applied erosion kit per\n' +
+            '   │        │ delamination > 2in limit             │ AWR; limits restored\n' +
+            ' 5 │ 42A000 │ Canopy seal LH – minor moisture     │ Replaced seal P/N GS301-\n' +
+            '   │        │ intrusion noted after rain ops       │ 1025; leak check SAT\n' +
+            ' 6 │ 71A000 │ APU exhaust temp elevated +15°C     │ Cleaned compressor inlet;\n' +
+            '   │        │ above baseline during ground run     │ performance within limits\n' +
+            '───┼────────┼─────────────────────────────────────┼──────────────────────────\n' +
+            'Total Maintenance Man-Hours: 186.5\n' +
+            'Aircraft Downtime:  4.2 days\n' +
+            'Aircraft Status:  FMC (Full Mission Capable)\n' +
+            '\n' +
+            'Quality Assurance:  SSgt D. Jimenez, CDI #447\n' +
+            'Signature:          /s/ D. Jimenez        Date: 25 APR 2025\n' +
+            '\n' +
+            'Maintenance Officer: CWO3 K. Brooks\n' +
+            'Signature:           /s/ K. Brooks        Date: 25 APR 2025\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Contract Modification':             '═══════════════════════════════════════════════════════════════\n' +
+            '              STANDARD FORM 30 – AMENDMENT OF SOLICITATION /\n' +
+            '                    MODIFICATION OF CONTRACT\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                                                  Page 1 of 8\n' +
+            '\n' +
+            '1. CONTRACT ID CODE:  A (Fixed-Price)\n' +
+            '2. AMENDMENT/MODIFICATION NO.: P00017\n' +
+            '3. EFFECTIVE DATE: 15 MAR 2025\n' +
+            '4. REQUISITION/PURCHASE REQ. NO.: N/A\n' +
+            '5. PROJECT NO.: N/A\n' +
+            '6. ISSUED BY:               7. ADMINISTERED BY (If other):\n' +
+            '   NAVSEA                      DCMA San Diego\n' +
+            '   1333 Isaac Hull Ave SE      9174 Sky Park Court\n' +
+            '   Washington, DC 20376        San Diego, CA 92123\n' +
+            '   Code: SEA 02                Code: S2101A\n' +
+            '\n' +
+            '8. NAME AND ADDRESS OF CONTRACTOR:\n' +
+            '   L3Harris Technologies, Inc.\n' +
+            '   1025 W NASA Blvd\n' +
+            '   Melbourne, FL 32919\n' +
+            '   CAGE: 3R2Y7    DUNS: 001368083\n' +
+            '\n' +
+            '9. TYPE OF MODIFICATION:\n' +
+            '   ☑ Bilateral – Signed by both parties\n' +
+            '   ☐ Unilateral – Signed only by Contracting Officer\n' +
+            '\n' +
+            '10. CONTRACT NO.: N00024-23-C-5520     TASK ORDER: N/A\n' +
+            '11. ORIGINAL CONTRACT DATE: 28 SEP 2023\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                                                  Page 2 of 8\n' +
+            '\n' +
+            '12. DESCRIPTION OF MODIFICATION:\n' +
+            '\n' +
+            'SECTION I – ADMINISTRATIVE CHANGES\n' +
+            '────────────────────────────────────────────────────────────\n' +
+            'a) The Period of Performance is hereby extended from\n' +
+            '   30 SEP 2025 to 31 MAR 2026 (6-month extension).\n' +
+            'b) The Contracting Officer Representative (COR) is changed:\n' +
+            '   FROM: Mr. David Chen, Code 521\n' +
+            '   TO:   Ms. Sarah Kim, Code 521, sarah.kim@navy.mil\n' +
+            'c) The Government Furnished Property (GFP) list at\n' +
+            '   Attachment J-008 is updated per Attachment A hereto.\n' +
+            '\n' +
+            'SECTION II – SCOPE CHANGES\n' +
+            '────────────────────────────────────────────────────────────\n' +
+            'a) CLIN 0001 – AN/SLQ-32(V)6 EW Suite:\n' +
+            '   Quantity increased from 8 EA to 10 EA (+2 units)\n' +
+            '   Unit Price unchanged: $4,200,000.00\n' +
+            '   CLIN 0001 Total: FROM $33,600,000.00 TO $42,000,000.00\n' +
+            '\n' +
+            'b) NEW CLIN 0007 is hereby added:\n' +
+            '   CLIN 0007 – Engineering Change Proposal (ECP) N-2025-041\n' +
+            '   "Software Update v4.2.1 – Threat Library Expansion"\n' +
+            '   ───────────────────────────────────────────────\n' +
+            '   Qty: 10 EA (applied to all delivered units)\n' +
+            '   Unit Price: $185,000.00\n' +
+            '   CLIN Total: $1,850,000.00\n' +
+            '   Delivery:   NLT 90 days ARO\n' +
+            '\n' +
+            'c) NEW CLIN 0008:\n' +
+            '   CLIN 0008 – Field Service Representative Support\n' +
+            '   ───────────────────────────────────────────────\n' +
+            '   12 months × 2 FSRs × $28,500/mo = $684,000.00\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                                                  Page 3 of 8\n' +
+            '\n' +
+            'SECTION III – FINANCIAL SUMMARY\n' +
+            '────────────────────────────────────────────────────────────\n' +
+            '                            Previous       This Mod      New Total\n' +
+            'CLIN 0001 (EW Suite)     $33,600,000.00  +$8,400,000.00  $42,000,000.00\n' +
+            'CLIN 0002 (CM Disp)        $740,000.00           $0.00     $740,000.00\n' +
+            'CLIN 0003 (SATCOM)       $1,780,000.00           $0.00   $1,780,000.00\n' +
+            'CLIN 0004 (Spares)         $640,000.00           $0.00     $640,000.00\n' +
+            'CLIN 0005 (RWR)            $700,000.00           $0.00     $700,000.00\n' +
+            'CLIN 0006 (Test Equip)      $95,000.00           $0.00      $95,000.00\n' +
+            'CLIN 0007 (SW Update)             $0.00  +$1,850,000.00   $1,850,000.00\n' +
+            'CLIN 0008 (FSR Support)           $0.00    +$684,000.00     $684,000.00\n' +
+            '─────────────────────────────────────────────────────────────\n' +
+            'CONTRACT TOTAL           $37,555,000.00 +$10,934,000.00  $48,489,000.00\n' +
+            '\n' +
+            'FUNDING:\n' +
+            '  Previous Obligated:  $37,555,000.00\n' +
+            '  This Action:        +$10,934,000.00\n' +
+            '  Total Obligated:     $48,489,000.00\n' +
+            '  Appropriation:       1711319  (SCN – Shipbuilding & Conv, Navy)\n' +
+            '  ACRN: AA             PR No.: N00024-25-NR-00412\n' +
+            '\n' +
+            '                                                  Page 4 of 8\n' +
+            'SECTION IV – DELIVERY SCHEDULE (REVISED)\n' +
+            '────────────────────────────────────────────────────────────\n' +
+            'CLIN │ Description          │ Qty │ Original     │ Revised\n' +
+            '─────┼──────────────────────┼─────┼──────────────┼──────────────\n' +
+            '0001 │ EW Suite (Units 1-8) │   8 │ 30 SEP 2025  │ 30 SEP 2025\n' +
+            '0001 │ EW Suite (Units 9-10)│   2 │ N/A          │ 31 MAR 2026\n' +
+            '0002 │ CM Dispensing Sets   │   4 │ 30 SEP 2025  │ 30 SEP 2025\n' +
+            '0003 │ SATCOM Terminals     │   2 │ 30 SEP 2025  │ 30 SEP 2025\n' +
+            '0004 │ Spares Kits          │   2 │ 30 SEP 2025  │ 30 SEP 2025\n' +
+            '0005 │ Radar Warning Rcvrs  │   4 │ 15 AUG 2025  │ 15 AUG 2025\n' +
+            '0006 │ Test Equipment       │   1 │ 15 AUG 2025  │ 15 AUG 2025\n' +
+            '0007 │ SW Update v4.2.1     │  10 │ N/A          │ 15 JUN 2025\n' +
+            '0008 │ FSR Support (Start)  │ 12mo│ N/A          │ 01 APR 2025\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                                                  Page 5 of 8\n' +
+            '\n' +
+            'SECTION V – SPECIAL PROVISIONS\n' +
+            '────────────────────────────────────────────────────────────\n' +
+            'H-101: ITAR RESTRICTIONS – All technical data, software,\n' +
+            'and defense articles under this contract are controlled\n' +
+            'under the International Traffic in Arms Regulations (ITAR),\n' +
+            '22 CFR 120-130. No export or re-transfer is authorized\n' +
+            'without prior written approval of DDTC.\n' +
+            '\n' +
+            'H-102: CYBERSECURITY – The Contractor shall comply with\n' +
+            'DFARS 252.204-7012 (Safeguarding Covered Defense Info)\n' +
+            'and maintain CMMC Level 2 certification throughout the\n' +
+            'period of performance.\n' +
+            '\n' +
+            'H-103: COUNTERFEIT PARTS PREVENTION – The Contractor\n' +
+            'shall comply with DFARS 252.246-7008 and maintain a\n' +
+            'counterfeit parts prevention program per SAE AS6174.\n' +
+            'All parts shall be procured from OCM/OEM or authorized\n' +
+            'distributors only.\n' +
+            '\n' +
+            'H-104: WARRANTY – The Contractor provides a 24-month\n' +
+            'warranty from date of Government acceptance per CLIN.\n' +
+            'Warranty repair turnaround: NTE 30 calendar days.\n' +
+            '\n' +
+            '                                                  Page 6 of 8\n' +
+            'SECTION VI – GOVERNMENT FURNISHED PROPERTY (UPDATED)\n' +
+            '────────────────────────────────────────────────────────────\n' +
+            'GFP│ NSN               │ DESCRIPTION               │ QTY│ VALUE\n' +
+            '───┼───────────────────┼───────────────────────────┼────┼──────────\n' +
+            ' 1 │ 5895-01-544-0012  │ AN/SLQ-32 Test Fixture    │   1│ $890,000\n' +
+            ' 2 │ 6625-01-580-3311  │ RF Signal Generator       │   2│ $125,000\n' +
+            ' 3 │ 7025-01-601-2209  │ EW Simulation Computer    │   1│ $340,000\n' +
+            ' 4 │ 5895-01-620-7788  │ CW Antenna Coupler (NEW)  │   2│ $78,000\n' +
+            '───┼───────────────────┼───────────────────────────┼────┼──────────\n' +
+            '                                         GFP Total: $1,433,000\n' +
+            '\n' +
+            '                                                  Page 7 of 8\n' +
+            'SECTION VII – POINTS OF CONTACT\n' +
+            '────────────────────────────────────────────────────────────\n' +
+            'Contracting Officer:    Ms. Rebecca Torres\n' +
+            '                        NAVSEA SEA 02\n' +
+            '                        rebecca.torres@navy.mil\n' +
+            '                        (202) 781-4100\n' +
+            '\n' +
+            'COR (New):              Ms. Sarah Kim\n' +
+            '                        PMS 500, Code 521\n' +
+            '                        sarah.kim@navy.mil\n' +
+            '                        (619) 553-7200\n' +
+            '\n' +
+            'Contractor Program Mgr: Mr. James Harrington\n' +
+            '                        L3Harris Technologies\n' +
+            '                        james.harrington@l3harris.com\n' +
+            '                        (321) 727-9100 x4412\n' +
+            '\n' +
+            'DCMA ACO:               Mr. Paul Ogawa\n' +
+            '                        DCMA San Diego\n' +
+            '                        paul.ogawa@dcma.mil\n' +
+            '                        (858) 537-6200\n' +
+            '\n' +
+            '                                                  Page 8 of 8\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '13. CONTRACTOR SIGNATURE:\n' +
+            '    Name:  James Harrington, Program Manager\n' +
+            '    Signed: /s/ J. Harrington        Date: 12 MAR 2025\n' +
+            '\n' +
+            '14. GOVERNMENT SIGNATURE:\n' +
+            '    Name:  Rebecca Torres, Contracting Officer\n' +
+            '    Title: PCO, NAVSEA SEA 02\n' +
+            '    Signed: /s/ R. Torres            Date: 15 MAR 2025\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Spares Spreadsheet':             '═══════════════════════════════════════════════════════════════\n' +
+            '     VENDOR RECOMMENDED SPARES LIST (VRSL) – DDG-51 CLASS\n' +
+            '         AN/SLQ-32(V)6 ELECTRONIC WARFARE SUITE\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Contract: N00024-23-C-5520    CAGE: 3R2Y7     Date: 18 APR 2025\n' +
+            'Program:  DDG-51 Flight III   Prepared By: L3Harris ILS Dept\n' +
+            'Document: VRSL-SLQ32-2025-R3  Status: APPROVED\n' +
+            '\n' +
+            'ITEM│ NSN               │ PART NUMBER     │ NOMENCLATURE                   │ QTY│ UI│ UM PRICE   │ EXT PRICE   │ SRC│ SMR   │ ESSENTIALITY│ MTBF(hrs)│ NOTES\n' +
+            '────┼───────────────────┼─────────────────┼────────────────────────────────┼────┼───┼────────────┼─────────────┼────┼───────┼─────────────┼──────────┼──────────\n' +
+            '  1 │ 5961-01-589-2001  │ 73-10-0201-003  │ RF Amplifier Module, High-Power│   4│ EA│  $42,500.00│  $170,000.00│ DLA│ PAOZZ │ Critical    │    2,200 │ Long Lead\n' +
+            '  2 │ 5961-01-589-2002  │ 73-10-0201-007  │ RF Amplifier Module, Low-Noise │   4│ EA│  $18,900.00│   $75,600.00│ DLA│ PAOZZ │ Critical    │    3,500 │ DMSMS Alert\n' +
+            '  3 │ 5962-01-589-3001  │ 73-20-0350-001  │ Digital Signal Processor Board │   3│ EA│  $67,200.00│  $201,600.00│ DLA│ PAOZZ │ Critical    │    5,000 │ ECP-041 Rev\n' +
+            '  4 │ 5998-01-589-4001  │ 73-30-0400-012  │ Power Supply Module, 28VDC     │   6│ EA│   $4,800.00│   $28,800.00│ DLA│ PAOZZ │ Essential   │    8,000 │\n' +
+            '  5 │ 5999-01-589-5001  │ 73-30-0410-004  │ Cable Assembly, RF Coaxial     │  12│ EA│   $1,250.00│   $15,000.00│ DLA│ PAOZB │ Essential   │   25,000 │\n' +
+            '  6 │ 5985-01-589-6001  │ 73-40-0500-001  │ Antenna Element, Broadband     │   2│ EA│  $31,400.00│   $62,800.00│ DLA│ PAOZZ │ Critical    │   12,000 │\n' +
+            '  7 │ 5985-01-589-6002  │ 73-40-0500-008  │ Antenna Rotary Joint           │   2│ EA│  $12,700.00│   $25,400.00│ DLA│ PAOZZ │ Essential   │   15,000 │\n' +
+            '  8 │ 5895-01-589-7001  │ 73-50-0600-003  │ Countermeasure Controller PCB  │   3│ EA│  $28,600.00│   $85,800.00│ DLA│ PAOZZ │ Critical    │    4,500 │\n' +
+            '  9 │ 5820-01-589-8001  │ 73-50-0610-001  │ SATCOM Interface Module        │   2│ EA│  $22,100.00│   $44,200.00│ DLA│ PAOZZ │ Essential   │    6,000 │\n' +
+            ' 10 │ 6625-01-589-9001  │ 73-60-0700-002  │ Built-In Test Module           │   2│ EA│  $15,300.00│   $30,600.00│ DLA│ PAPZZ │ Essential   │    9,000 │\n' +
+            ' 11 │ 6110-01-590-0001  │ 73-70-0100-005  │ Cooling Fan Assembly           │   8│ EA│   $2,100.00│   $16,800.00│ DLA│ PAOZB │ Desirable   │   12,000 │\n' +
+            ' 12 │ 5340-01-590-0002  │ 73-70-0100-012  │ EMI Gasket Set                 │  20│ EA│     $340.00│    $6,800.00│ DLA│ XBOZB │ Desirable   │   50,000 │\n' +
+            ' 13 │ 5999-01-590-0003  │ 73-70-0100-019  │ Fiber Optic Cable, 2m         │   8│ EA│     $890.00│    $7,120.00│ DLA│ PAOZB │ Essential   │   40,000 │\n' +
+            ' 14 │ 5905-01-590-1001  │ 73-80-0200-003  │ RF Connector SMA-N Adapter    │  24│ EA│     $125.00│    $3,000.00│ COM│ XAOZB │ Desirable   │  100,000 │\n' +
+            ' 15 │ 6135-01-590-1002  │ 73-80-0200-010  │ Wiring Harness, Main          │   2│ EA│   $8,450.00│   $16,900.00│ DLA│ PAOZZ │ Essential   │   20,000 │\n' +
+            ' 16 │ 5962-01-590-2001  │ 73-20-0350-008  │ FPGA Processor Card           │   2│ EA│  $54,300.00│  $108,600.00│ DLA│ PAOZZ │ Critical    │    6,000 │ DMSMS Alert\n' +
+            ' 17 │ 5895-01-590-3001  │ 73-50-0620-004  │ Threat ID Correlation Module  │   2│ EA│  $38,900.00│   $77,800.00│ DLA│ PAOZZ │ Critical    │    5,500 │\n' +
+            ' 18 │ 5820-01-590-4001  │ 73-90-0300-001  │ GPS Timing Module             │   2│ EA│  $11,200.00│   $22,400.00│ DLA│ PAOZZ │ Essential   │    8,500 │\n' +
+            ' 19 │ 5961-01-590-5001  │ 73-10-0201-015  │ Traveling Wave Tube (TWT)     │   4│ EA│  $56,700.00│  $226,800.00│ DLA│ PAOZD │ Critical    │    3,000 │ Long Lead\n' +
+            ' 20 │ 5998-01-590-6001  │ 73-30-0400-020  │ UPS Battery Pack              │   6│ EA│   $2,850.00│   $17,100.00│ DLA│ PAOZB │ Essential   │    4,000 │\n' +
+            ' 21 │ 6695-01-590-7001  │ 73-60-0710-002  │ Environmental Sensor Module   │   4│ EA│   $3,200.00│   $12,800.00│ DLA│ XAOZB │ Desirable   │   15,000 │\n' +
+            ' 22 │ 5895-01-590-8001  │ 73-50-0630-001  │ Jammer Transmitter Module     │   3│ EA│  $89,400.00│  $268,200.00│ DLA│ PAOZD │ Critical    │    2,500 │ Long Lead\n' +
+            ' 23 │ 5998-01-590-9001  │ 73-30-0410-009  │ Fiber Optic Transceiver       │   6│ EA│   $4,100.00│   $24,600.00│ DLA│ PAOZZ │ Essential   │    7,500 │\n' +
+            ' 24 │ 5895-01-591-0001  │ 73-50-0640-002  │ ECM Controller Card           │   2│ EA│  $41,200.00│   $82,400.00│ DLA│ PAOZZ │ Critical    │    4,800 │\n' +
+            ' 25 │ 5820-01-591-1001  │ 73-90-0310-005  │ Freq Synthesizer Module       │   2│ EA│  $33,700.00│   $67,400.00│ DLA│ PAOZZ │ Critical    │    5,200 │\n' +
+            '────┼───────────────────┼─────────────────┼────────────────────────────────┼────┼───┼────────────┼─────────────┼────┼───────┼─────────────┼──────────┼──────────\n' +
+            '                                                                VRSL TOTAL:                        $1,678,220.00\n' +
+            '\n' +
+            'SMR CODE KEY:  PA=Procure/Assemble  XA=Not Reparable  XB=Bench Repair  D=Depot  O=Org  Z=Non-Reparable  B=Bench\n' +
+            'ESSENTIALITY:  Critical=Mission-essential  Essential=Needed for ops  Desirable=Nice-to-have\n' +
+            'SRC:           DLA=Defense Logistics Agency  COM=Commercial Source\n' +
+            '\n' +
+            'APPROVED BY:\n' +
+            '  L3Harris ILS Manager: T. Rodriguez    Date: 18 APR 2025\n' +
+            '  NAVSUP WSS POC:       Lt. A. Foster   Date: 22 APR 2025\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'COTS Manual':             '═══════════════════════════════════════════════════════════════\n' +
+            '         COMMERCIAL-OFF-THE-SHELF (COTS) EQUIPMENT MANUAL\n' +
+            '                   OPERATOR/MAINTENANCE GUIDE\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '\n' +
+            '                    L3HARRIS TECHNOLOGIES\n' +
+            '                    DEFENSE ELECTRONIC SYSTEMS\n' +
+            '\n' +
+            '           AN/SLQ-32(V)6 ELECTRONIC WARFARE SUITE\n' +
+            '            OPERATOR AND INTERMEDIATE MAINTENANCE\n' +
+            '                     TECHNICAL MANUAL\n' +
+            '\n' +
+            '     Publication No.: TM-SLQ32-V6-001      Rev: D\n' +
+            '     Date:            15 JAN 2025\n' +
+            '     Classification:  UNCLASSIFIED // FOUO\n' +
+            '     Distribution:    Statement D – DoD and U.S. DoD\n' +
+            '                      Contractors Only\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                     TABLE OF CONTENTS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Chapter 1 – General Information ................ Page 1-1\n' +
+            '  1.1  Equipment Description ................... Page 1-1\n' +
+            '  1.2  Intended Use ............................ Page 1-3\n' +
+            '  1.3  Technical Characteristics ............... Page 1-4\n' +
+            '  1.4  Equipment Data .......................... Page 1-8\n' +
+            'Chapter 2 – Operating Instructions ............. Page 2-1\n' +
+            '  2.1  Controls and Indicators ................. Page 2-1\n' +
+            '  2.2  System Power-Up Procedures .............. Page 2-6\n' +
+            '  2.3  Normal Operating Procedures ............. Page 2-12\n' +
+            '  2.4  Tactical Modes of Operation ............. Page 2-18\n' +
+            '  2.5  Emergency Procedures .................... Page 2-24\n' +
+            'Chapter 3 – Operator Maintenance ............... Page 3-1\n' +
+            '  3.1  Preventive Maintenance Checks ........... Page 3-1\n' +
+            '  3.2  Cleaning and Inspection ................. Page 3-4\n' +
+            'Chapter 4 – Troubleshooting .................... Page 4-1\n' +
+            '  4.1  Fault Isolation Procedures .............. Page 4-1\n' +
+            '  4.2  Built-In Test (BIT) Description ......... Page 4-8\n' +
+            '  4.3  Troubleshooting Procedures .............. Page 4-12\n' +
+            'Chapter 5 – Intermediate Maintenance ........... Page 5-1\n' +
+            '  5.1  Module Removal and Replacement .......... Page 5-1\n' +
+            '  5.2  Alignment and Calibration ............... Page 5-15\n' +
+            '  5.3  Parts Replacement ....................... Page 5-22\n' +
+            'Appendix A – Parts List ....................... Page A-1\n' +
+            'Appendix B – Wiring Diagrams .................. Page B-1\n' +
+            'Appendix C – Illustrated Parts Breakdown ....... Page C-1\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                    CHAPTER 1\n' +
+            '              GENERAL INFORMATION\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '1.1  EQUIPMENT DESCRIPTION\n' +
+            '\n' +
+            '1.1.1  The AN/SLQ-32(V)6 is the latest variant of the\n' +
+            'Surface Electronic Warfare Improvement Program (SEWIP)\n' +
+            'Block 3 system. It provides passive Electronic Support\n' +
+            '(ES), active Electronic Attack (EA), and integrated\n' +
+            'countermeasures control for DDG-51 Flight III class\n' +
+            'destroyers and other surface combatants.\n' +
+            '\n' +
+            '1.1.2  The system consists of the following major\n' +
+            'components:\n' +
+            '\n' +
+            '  a) Antenna Group (4 arrays, topside mounted)\n' +
+            '     - Broadband DF/Intercept Arrays (2)\n' +
+            '     - Active EA Transmit Arrays (2)\n' +
+            '     - Operating Frequency: 0.5 – 40 GHz\n' +
+            '\n' +
+            '  b) Below Decks Equipment Group\n' +
+            '     - Equipment Cabinet A (Signal Processor)\n' +
+            '     - Equipment Cabinet B (Threat Evaluation)\n' +
+            '     - Equipment Cabinet C (EA Controller)\n' +
+            '     - Equipment Cabinet D (Power Distribution)\n' +
+            '     - Operator Console OJ-794/SLQ-32\n' +
+            '\n' +
+            '  c) Countermeasure Dispensing System\n' +
+            '     - MK-36 SRBOC Launchers (4 stations)\n' +
+            '     - MK-53 Decoy Launching System (Nulka)\n' +
+            '     - Integrated CM Controller\n' +
+            '\n' +
+            '1.1.3  PHYSICAL CHARACTERISTICS:\n' +
+            '  Weight (Total Installed):    4,200 kg (9,259 lbs)\n' +
+            '  Power Required:              440V 3-Phase, 60Hz, 45kVA\n' +
+            '  Cooling:                     Seawater-to-chilled water\n' +
+            '  Operating Temperature:       0°C to +50°C\n' +
+            '  Storage Temperature:         -40°C to +65°C\n' +
+            '  Humidity:                    0–95% RH (non-condensing)\n' +
+            '  MIL-STD-810H:                Method 514.8 (Vibration)\n' +
+            '  EMI/EMC:                     MIL-STD-461G compliant\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '1.2  INTENDED USE\n' +
+            '\n' +
+            'This equipment provides shipboard electronic warfare\n' +
+            'capability to detect, identify, locate, and counter\n' +
+            'radio frequency threats including:\n' +
+            '  • Anti-ship cruise missiles (ASCM)\n' +
+            '  • Surface-to-air missile seekers\n' +
+            '  • Fire control and target tracking radars\n' +
+            '  • Surveillance and early warning radars\n' +
+            '  • Communication intercept and DF\n' +
+            '\n' +
+            'The system operates autonomously or under operator\n' +
+            'control, with threat library updates received via\n' +
+            'the SEWIP Program Office distribution channel.\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '1.4  EQUIPMENT DATA\n' +
+            '\n' +
+            'TABLE 1-1: SYSTEM PERFORMANCE PARAMETERS\n' +
+            '─────────────────────────────────────────────────────────\n' +
+            'Parameter                │ Specification\n' +
+            '─────────────────────────┼───────────────────────────────\n' +
+            'Frequency Coverage       │ 0.5 – 40 GHz\n' +
+            'Sensitivity              │ -65 dBm (typical)\n' +
+            'Dynamic Range            │ > 80 dB\n' +
+            'DF Accuracy              │ < 2° RMS\n' +
+            'Simultaneous Track Cap.  │ > 256 emitters\n' +
+            'Threat ID Time           │ < 1.5 sec (known threats)\n' +
+            'Reaction Time (EA)       │ < 0.5 sec\n' +
+            'MTBF (System)            │ > 1,200 hours\n' +
+            'MTTR (Org Level)         │ < 0.5 hours\n' +
+            'Availability             │ > 99.2%\n' +
+            '─────────────────────────────────────────────────────────\n' +
+            '\n' +
+            'TABLE 1-2: POWER REQUIREMENTS BY CABINET\n' +
+            '─────────────────────────────────────────────────────────\n' +
+            'Cabinet    │ Voltage│ Phase│ Freq │ Max Draw │ Breaker\n' +
+            '───────────┼────────┼──────┼──────┼──────────┼─────────\n' +
+            'Cabinet A  │ 440V   │  3Ø  │ 60Hz │ 12 kVA   │ 30A\n' +
+            'Cabinet B  │ 440V   │  3Ø  │ 60Hz │ 10 kVA   │ 25A\n' +
+            'Cabinet C  │ 440V   │  3Ø  │ 60Hz │ 15 kVA   │ 40A\n' +
+            'Cabinet D  │ 440V   │  3Ø  │ 60Hz │  8 kVA   │ 20A\n' +
+            'Console    │ 115V   │  1Ø  │ 60Hz │  2 kVA   │ 15A\n' +
+            '───────────┼────────┼──────┼──────┼──────────┼─────────\n' +
+            '                              Total: 47 kVA\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Tech Manual':             '═══════════════════════════════════════════════════════════════\n' +
+            '              NAVSEA TECHNICAL MANUAL\n' +
+            '    OPERATION AND MAINTENANCE INSTRUCTIONS WITH IPB\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '\n' +
+            'TMINS: S9593-BC-MMI-010/SLQ-32(V)6   Volume: 1 of 3\n' +
+            'Rev:   7                              Date: 01 FEB 2025\n' +
+            'Classification: UNCLASSIFIED // FOUO\n' +
+            'Dist Statement: C – USG Agencies & Contractors\n' +
+            '\n' +
+            '═════════════════════════════════════════\n' +
+            ' CHAPTER 5 – MODULE REMOVAL & REPLACEMENT\n' +
+            '═════════════════════════════════════════\n' +
+            '\n' +
+            '5.1  RF AMPLIFIER MODULE (HIGH-POWER)\n' +
+            '     P/N: 73-10-0201-003    NSN: 5961-01-589-2001\n' +
+            '\n' +
+            '5.1.1  REMOVAL PROCEDURE\n' +
+            '\n' +
+            '  WARNING: HIGH VOLTAGE. Ensure power supply is\n' +
+            '  de-energized and DANGER tag applied per\n' +
+            '  NAVSEA ST000-AB-GYD-010 before performing\n' +
+            '  any maintenance on RF amplifier modules.\n' +
+            '\n' +
+            '  WARNING: RF RADIATION. Verify all antenna\n' +
+            '  emissions are secured. Obtain RADHAZ clearance\n' +
+            '  from Weapons Officer before opening Cabinet C.\n' +
+            '\n' +
+            '  CAUTION: ESD-sensitive components. Wear grounded\n' +
+            '  wrist strap at all times during this procedure.\n' +
+            '\n' +
+            '  STEP 1:  De-energize Cabinet C per Section 2.2.4.\n' +
+            '           Verify all status indicators are OFF on\n' +
+            '           front panel. Wait 5 minutes for capacitor\n' +
+            '           discharge.\n' +
+            '\n' +
+            '  STEP 2:  Open Cabinet C front access door.\n' +
+            '           Remove 8x Dzus fasteners (1/4 turn CCW).\n' +
+            '           Stow door in open/locked position.\n' +
+            '\n' +
+            '  STEP 3:  Disconnect the following cables from\n' +
+            '           Module A3 (RF Amplifier, High-Power):\n' +
+            '           a) RF Input   – W301 (SMA connector)\n' +
+            '           b) RF Output  – W302 (N-type connector)\n' +
+            '           c) Power      – W303 (28VDC, Cannon plug)\n' +
+            '           d) Control    – W304 (37-pin D-sub)\n' +
+            '           e) Cooling    – Disconnect quick-disconnect\n' +
+            '              fittings on coolant inlet/outlet lines\n' +
+            '\n' +
+            '  STEP 4:  Remove 4x captive mounting screws\n' +
+            '           (Phillips #3, torque: 45 in-lb).\n' +
+            '           Module weight: 8.2 kg (18 lbs).\n' +
+            '           Support module during extraction.\n' +
+            '\n' +
+            '  STEP 5:  Carefully slide module straight out on\n' +
+            '           guide rails. Place on ESD-safe work surface.\n' +
+            '\n' +
+            '  STEP 6:  Install protective caps on all connectors:\n' +
+            '           a) RF ports – SMA/N-type dust caps\n' +
+            '           b) Electrical – connector savers\n' +
+            '           c) Coolant – line plugs (prevent drip)\n' +
+            '\n' +
+            '5.1.2  INSTALLATION PROCEDURE\n' +
+            '\n' +
+            '  STEP 1:  Inspect replacement module:\n' +
+            '           a) Verify P/N and S/N on data plate\n' +
+            '           b) Check for shipping damage\n' +
+            '           c) Remove protective caps (save for reuse)\n' +
+            '           d) Verify configuration per TDMIS\n' +
+            '\n' +
+            '  STEP 2:  Align module on guide rails.\n' +
+            '           Slide fully into position until\n' +
+            '           locking detents engage (audible click).\n' +
+            '\n' +
+            '  STEP 3:  Secure 4x captive mounting screws.\n' +
+            '           Torque: 45 in-lb ± 5 in-lb.\n' +
+            '           Torque pattern: diagonal, 2-pass.\n' +
+            '\n' +
+            '  STEP 4:  Reconnect cables:\n' +
+            '           a) W301 – RF Input (SMA, 8 in-lb)\n' +
+            '           b) W302 – RF Output (N-type, 12 in-lb)\n' +
+            '           c) W303 – Power (bayonet, verify pin align)\n' +
+            '           d) W304 – Control (D-sub, jackscrews finger\n' +
+            '              tight + 1/4 turn)\n' +
+            '           e) Coolant lines – push QD fittings until\n' +
+            '              locked. Verify no leaks.\n' +
+            '\n' +
+            '  STEP 5:  Perform post-installation BIT:\n' +
+            '           a) Energize Cabinet C per Section 2.2.3\n' +
+            '           b) Initiate Module BIT from Console:\n' +
+            '              MENU > MAINTENANCE > BIT > A3 MODULE\n' +
+            '           c) Verify BIT PASS indication\n' +
+            '           d) Record BIT results in OMMS-NG\n' +
+            '\n' +
+            '  STEP 6:  Perform Operational Test:\n' +
+            '           a) Select TEST mode from Operator Console\n' +
+            '           b) Run RF Power Output test per Section 4.3.2\n' +
+            '           c) Verify output within +/- 1 dB of nominal\n' +
+            '           d) Record results in 2K VIDS/MAF\n' +
+            '\n' +
+            '═══════════════════════════════════════════\n' +
+            ' 5.2  DIGITAL SIGNAL PROCESSOR BOARD\n' +
+            '      P/N: 73-20-0350-001    NSN: 5962-01-589-3001\n' +
+            '═══════════════════════════════════════════\n' +
+            '\n' +
+            '  [Similar R&R procedures for all modules continue\n' +
+            '   through Sections 5.3 – 5.14, covering all 25\n' +
+            '   VRSL line items. Total manual: 847 pages.]\n' +
+            '\n' +
+            '═══════════════════════════════════════════\n' +
+            ' APPENDIX A – PARTS LIST (EXCERPT)\n' +
+            '═══════════════════════════════════════════\n' +
+            '\n' +
+            'FIG│ IDX│ NSN               │ PART NUMBER     │ DESCRIPTION              │ QTY\n' +
+            '───┼────┼───────────────────┼─────────────────┼──────────────────────────┼────\n' +
+            ' 1 │  1 │ 5961-01-589-2001  │ 73-10-0201-003  │ RF Amplifier, HP         │   1\n' +
+            ' 1 │  2 │ 5961-01-589-2002  │ 73-10-0201-007  │ RF Amplifier, LN         │   1\n' +
+            ' 1 │  3 │ 5962-01-589-3001  │ 73-20-0350-001  │ DSP Board                │   1\n' +
+            ' 1 │  4 │ 5998-01-589-4001  │ 73-30-0400-012  │ Power Supply, 28VDC      │   1\n' +
+            ' 1 │  5 │ 5999-01-589-5001  │ 73-30-0410-004  │ Cable Assy, RF Coax      │   2\n' +
+            ' 1 │  6 │ 5985-01-589-6001  │ 73-40-0500-001  │ Antenna Element          │   1\n' +
+            ' 1 │  7 │ 5895-01-589-7001  │ 73-50-0600-003  │ CM Controller PCB        │   1\n' +
+            ' 1 │  8 │ 5820-01-589-8001  │ 73-50-0610-001  │ SATCOM Interface Mod     │   1\n' +
+            ' 1 │  9 │ 6110-01-590-0001  │ 73-70-0100-005  │ Cooling Fan Assy         │   2\n' +
+            ' 1 │ 10 │ 5340-01-590-0002  │ 73-70-0100-012  │ EMI Gasket Set           │   1\n' +
+            ' 1 │ 11 │ 5999-01-590-0003  │ 73-70-0100-019  │ Fiber Optic Cable, 2m    │   2\n' +
+            '───┼────┼───────────────────┼─────────────────┼──────────────────────────┼────\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'TM Index':             '═══════════════════════════════════════════════════════════════\n' +
+            '         TECHNICAL MANUAL INDEX – DDG-51 FLIGHT III CLASS\n' +
+            '            NAVSEA / NSWCCD-SSES TECHNICAL PUBLICATIONS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'As of:  01 APR 2025          Prepared By: PMS 400D ILS Team\n' +
+            'Classification: UNCLASSIFIED  Total Manuals: 47\n' +
+            '\n' +
+            'TMINS                          │ TITLE                                    │ VOL │ PAGES│ REV │ DATE      │ FORMAT │ STATUS\n' +
+            '───────────────────────────────┼──────────────────────────────────────────┼─────┼──────┼─────┼───────────┼────────┼──────────\n' +
+            'S9593-BC-MMI-010/SLQ-32(V)6   │ EW Suite – O&I Level Maintenance         │ 1/3 │   847│  7  │ 01FEB2025 │ IETM   │ Current\n' +
+            'S9593-BC-MMI-010/SLQ-32(V)6   │ EW Suite – Depot Level Maintenance       │ 2/3 │   412│  5  │ 15DEC2024 │ IETM   │ Current\n' +
+            'S9593-BC-MMI-010/SLQ-32(V)6   │ EW Suite – Illustrated Parts Breakdown   │ 3/3 │   298│  6  │ 01FEB2025 │ IETM   │ Current\n' +
+            'S9086-KC-STM-010              │ NSTM Ch 400 – Electronics               │ 1/1 │   340│ 12  │ 01OCT2024 │ PDF    │ Current\n' +
+            'S9086-S3-STM-010              │ NSTM Ch 300 – Electric Plant             │ 1/1 │   520│ 14  │ 15SEP2024 │ PDF    │ Current\n' +
+            'S9086-TX-STM-010              │ NSTM Ch 583 – Boats & Small Craft        │ 1/1 │   180│  8  │ 01JUL2024 │ PDF    │ Current\n' +
+            'S9593-A2-MMI-010/DDG-51-FIII  │ Combat System – Operational Procedure    │ 1/2 │   620│  3  │ 01MAR2025 │ IETM   │ Current\n' +
+            'S9593-A2-MMI-010/DDG-51-FIII  │ Combat System – Maintenance Plan         │ 2/2 │   445│  3  │ 01MAR2025 │ IETM   │ Current\n' +
+            'S9593-AL-MMI-010/SPY-6(V)1    │ AN/SPY-6 Radar – O&I Maintenance        │ 1/4 │ 1,240│  2  │ 15JAN2025 │ IETM   │ Current\n' +
+            'S9593-AL-MMI-010/SPY-6(V)1    │ AN/SPY-6 Radar – Depot Maintenance      │ 2/4 │   680│  2  │ 15JAN2025 │ IETM   │ Current\n' +
+            'S9593-AL-MMI-010/SPY-6(V)1    │ AN/SPY-6 Radar – IPB                    │ 3/4 │   510│  2  │ 15JAN2025 │ IETM   │ Current\n' +
+            'S9593-AL-MMI-010/SPY-6(V)1    │ AN/SPY-6 Radar – Software Maintenance   │ 4/4 │   220│  2  │ 15JAN2025 │ IETM   │ Current\n' +
+            'S9593-BB-MMI-010/MK45-MOD4    │ 5in/62 Gun Mount – Maintenance          │ 1/2 │   890│  9  │ 01NOV2024 │ IETM   │ Current\n' +
+            'S9593-BB-MMI-010/MK45-MOD4    │ 5in/62 Gun Mount – IPB                  │ 2/2 │   340│  8  │ 01NOV2024 │ IETM   │ Current\n' +
+            'SW060-AF-MMI-010              │ Gas Turbine Engine LM2500+G4             │ 1/1 │   480│ 11  │ 01AUG2024 │ PDF    │ Under Rev\n' +
+            'S9593-CN-MMI-010/VLS          │ MK41 VLS – O&I Maintenance              │ 1/2 │   710│  6  │ 15SEP2024 │ IETM   │ Current\n' +
+            'S9593-CN-MMI-010/VLS          │ MK41 VLS – IPB                          │ 2/2 │   280│  5  │ 15SEP2024 │ IETM   │ Current\n' +
+            'S9593-CD-MMI-010/CIWS         │ Phalanx CIWS Block 1B – Maintenance     │ 1/1 │   560│ 10  │ 01DEC2024 │ IETM   │ Current\n' +
+            'S9086-H8-STM-010              │ NSTM Ch 244 – Pollution Prevention      │ 1/1 │   210│  6  │ 15JUN2024 │ PDF    │ Current\n' +
+            'S9593-DE-MMI-010/SSDS         │ SSDS MK 2 – Combat System Maintenance   │ 1/2 │   380│  4  │ 01FEB2025 │ IETM   │ Current\n' +
+            'S9086-GV-STM-010              │ NSTM Ch 505 – Piping Systems            │ 1/1 │   440│ 13  │ 01SEP2024 │ PDF    │ Superceded\n' +
+            '───────────────────────────────┼──────────────────────────────────────────┼─────┼──────┼─────┼───────────┼────────┼──────────\n' +
+            '                                                            Total Pages:           10,602\n' +
+            '\n' +
+            'NOTES:\n' +
+            '1. IETM = Interactive Electronic Technical Manual (NAVSEA XML Standard)\n' +
+            '2. PDF manuals scheduled for IETM conversion FY26-FY28\n' +
+            '3. Superceded manuals retained for 24 months after replacement\n' +
+            '4. All IETMs hosted on NTMMS (Navy TM Management System)\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'PO Index':             '═══════════════════════════════════════════════════════════════\n' +
+            '       PURCHASE ORDER INDEX & TRACKING REGISTER\n' +
+            '        DDG-51 FLIGHT III – ILS PROCUREMENT LOG\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Program: DDG-51 Flt III (DDG-133/134)  As Of: 25 APR 2025\n' +
+            'Prepared By: ILS Contracts Team, PMS 400D\n' +
+            '\n' +
+            'PO NUMBER       │ VENDOR              │ CAGE  │ DESCRIPTION                       │ CLIN  │ PO VALUE      │ FUNDED    │ OBLIGATED    │ EXPENDED     │ STATUS      │ DEL DATE   │ SHIP TO\n' +
+            '────────────────┼─────────────────────┼───────┼───────────────────────────────────┼───────┼───────────────┼───────────┼──────────────┼──────────────┼─────────────┼────────────┼──────────\n' +
+            'N00024-24-P-0101│ L3Harris Tech       │ 3R2Y7 │ AN/SLQ-32(V)6 Spares, Initial    │ 0001  │  $1,678,220.00│ $1,678,220│ $1,678,220.00│  $1,200,400.00│ In Progress │ 30SEP2025  │ N32253\n' +
+            'N00024-24-P-0102│ Raytheon Missiles   │ 7S695 │ AN/SPY-6(V)1 LRU Spares          │ 0001  │  $4,250,000.00│ $4,250,000│ $4,250,000.00│  $3,890,000.00│ In Progress │ 15AUG2025  │ N32253\n' +
+            'N00024-24-P-0103│ BAE Systems         │ K4895 │ MK45 Mod 4 Barrel Assembly       │ 0001  │    $890,000.00│   $890,000│   $890,000.00│    $890,000.00│ Complete    │ 01MAR2025  │ N62788\n' +
+            'N00024-24-P-0104│ GE Marine           │ 0DKM0 │ LM2500+G4 Hot Section Spares     │ 0002  │  $2,100,000.00│ $2,100,000│ $2,100,000.00│         $0.00│ Awarded     │ 31DEC2025  │ N32253\n' +
+            'N00024-24-P-0105│ Lockheed Martin     │ 64547 │ MK41 VLS Canister Seals          │ 0001  │    $340,000.00│   $340,000│   $340,000.00│    $320,000.00│ In Progress │ 30JUN2025  │ N62788\n' +
+            'N00024-24-P-0106│ Huntington Ingalls  │ 2Y197 │ Hull Structural Repair Kit       │ 0003  │  $1,450,000.00│ $1,450,000│ $1,450,000.00│    $725,000.00│ In Progress │ 30SEP2025  │ NNSY\n' +
+            'N00024-24-P-0107│ Rolls-Royce Naval   │ U7390 │ Controllable Pitch Prop Blades   │ 0001  │  $3,200,000.00│ $3,200,000│ $3,200,000.00│  $1,600,000.00│ In Progress │ 31OCT2025  │ PSNS\n' +
+            'N00024-24-P-0108│ Curtiss-Wright      │ 74628 │ DRSVM Valve Actuator Set         │ 0001  │    $560,000.00│   $560,000│   $560,000.00│    $560,000.00│ Complete    │ 15FEB2025  │ N32253\n' +
+            'N00024-24-P-0109│ Raytheon IDS        │ 7S695 │ Phalanx Block 1B Barrel Assy     │ 0002  │    $420,000.00│   $420,000│   $420,000.00│    $210,000.00│ In Progress │ 30JUL2025  │ N32253\n' +
+            'N00024-24-P-0110│ DRS Defense Soln    │ 5K575 │ Power Conversion Module (PCM)    │ 0001  │    $780,000.00│   $780,000│   $780,000.00│    $390,000.00│ In Progress │ 31AUG2025  │ N62788\n' +
+            'N00024-24-P-0111│ Elbit Systems       │ 8B825 │ Ship Self-Defense System SW Lic  │ 0001  │    $220,000.00│   $220,000│   $220,000.00│    $220,000.00│ Complete    │ 01JAN2025  │ N/A Digital\n' +
+            'N00024-24-P-0112│ Thales Defense      │ F4835 │ SonarTAS Array Spares            │ 0001  │  $1,890,000.00│ $1,890,000│ $1,890,000.00│    $945,000.00│ In Progress │ 30NOV2025  │ N32253\n' +
+            'N00024-24-P-0113│ Northrop Grumman    │ 27539 │ Navigation System Upgrade Kit    │ 0001  │    $650,000.00│   $650,000│   $650,000.00│         $0.00│ Awarded     │ 31MAR2026  │ N62788\n' +
+            'N00024-24-P-0114│ General Dynamics    │ 77040 │ MK110 CIGS 57mm Barrel           │ 0002  │    $380,000.00│   $380,000│   $380,000.00│    $380,000.00│ Complete    │ 28FEB2025  │ N32253\n' +
+            'N00024-24-P-0115│ Harris Corp         │ 3R2Y7 │ SATCOM AN/USC-61 Crypto Module   │ 0003  │    $290,000.00│   $290,000│   $290,000.00│    $145,000.00│ In Progress │ 30SEP2025  │ N32253\n' +
+            '────────────────┼─────────────────────┼───────┼───────────────────────────────────┼───────┼───────────────┼───────────┼──────────────┼──────────────┼─────────────┼────────────┼──────────\n' +
+            '                                                                        TOTALS:         │ $19,098,220.00│$19,098,220│$19,098,220.00│ $11,475,400.00│\n' +
+            '\n' +
+            'SUMMARY:\n' +
+            '  Total POs: 15       Complete: 4       In Progress: 9       Awarded: 2\n' +
+            '  Total Value: $19,098,220.00\n' +
+            '  Expended:    $11,475,400.00  (60.1%)\n' +
+            '  Remaining:    $7,622,820.00  (39.9%)\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'ECP':             '═══════════════════════════════════════════════════════════════\n' +
+            '           ENGINEERING CHANGE PROPOSAL (ECP)\n' +
+            '              MIL-STD-480B / EIA-649-1\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'ECP Number:      N-2025-041            Priority: URGENT\n' +
+            'Originator:      L3Harris Technologies (CAGE: 3R2Y7)\n' +
+            'Date Submitted:  10 MAR 2025\n' +
+            'Classification:  Class I (Requires Government Approval)\n' +
+            'Justification:   Safety, Performance, Logistics\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                   SECTION I – IDENTIFICATION\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '1.1  Title: Software Update v4.2.1 – Threat Library\n' +
+            '     Expansion and Processing Enhancement\n' +
+            '\n' +
+            '1.2  System: AN/SLQ-32(V)6 Electronic Warfare Suite\n' +
+            '1.3  Contract: N00024-23-C-5520\n' +
+            '1.4  Affected Configuration Item: CI-003 (Signal Processor)\n' +
+            '     Configuration Baseline: FCA-2024-003, Rev C\n' +
+            '1.5  Affected NSN: 5962-01-589-3001 (DSP Board)\n' +
+            '                   5895-01-589-7001 (CM Controller PCB)\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                   SECTION II – NEED / DESCRIPTION\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '2.1  STATEMENT OF NEED:\n' +
+            '\n' +
+            'Recent intelligence (TECHEVAL-2024-377) has identified 14\n' +
+            'new threat emitter modes not currently in the AN/SLQ-32(V)6\n' +
+            'threat library. Additionally, fleet feedback (CASREP DDG-118\n' +
+            '#2024-0847) reported a 0.3-second latency increase in threat\n' +
+            'identification during high-density emitter environments\n' +
+            '(>100 simultaneous signals).\n' +
+            '\n' +
+            'This ECP addresses both deficiencies by:\n' +
+            '  a) Expanding the threat library from 1,847 to 2,094\n' +
+            '     emitter modes (+13.4% coverage increase)\n' +
+            '  b) Optimizing the DSP correlation algorithm to reduce\n' +
+            '     worst-case ID time from 1.5s to 0.8s\n' +
+            '  c) Adding new Mode 5 IFF deconfliction logic\n' +
+            '\n' +
+            '2.2  DESCRIPTION OF CHANGE:\n' +
+            '\n' +
+            'Block diagram affected: Figure 3-2, Signal Processing Flow\n' +
+            '\n' +
+            '  COMPONENT         │ CURRENT (Rev C)    │ PROPOSED (Rev D)\n' +
+            '  ──────────────────┼────────────────────┼────────────────────\n' +
+            '  Threat Library    │ 1,847 modes        │ 2,094 modes\n' +
+            '  DSP Algorithm     │ FFT-based, v4.1.3  │ Hybrid FFT/ML v4.2.1\n' +
+            '  Processing Cores  │ 4 active, 2 spare  │ 6 active (all used)\n' +
+            '  Memory Allocation │ 2 GB threat DB     │ 3.2 GB threat DB\n' +
+            '  FPGA Image        │ Build 1184         │ Build 1247\n' +
+            '  IFF Logic         │ Mode 4/5 basic     │ Mode 5 enhanced\n' +
+            '  BIT Coverage      │ 94.2%              │ 96.8%\n' +
+            '\n' +
+            '2.3  RISK ASSESSMENT:\n' +
+            '  Technical Risk: LOW – Algorithm validated in lab (>10,000\n' +
+            '  scenarios, 99.7% positive ID rate)\n' +
+            '  Schedule Risk: LOW – 90-day implementation from approval\n' +
+            '  Cost Risk: MEDIUM – Requires FPGA reflash at depot level\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                   SECTION III – IMPACT ANALYSIS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '3.1  HARDWARE IMPACT:\n' +
+            '  - No hardware changes required\n' +
+            '  - Existing DSP Board and FPGA Card are compatible\n' +
+            '  - Memory margin: 3.2 GB of 4 GB available (80% utilization)\n' +
+            '\n' +
+            '3.2  SOFTWARE IMPACT:\n' +
+            '  - CSCI-001: Threat Processor Software – MAJOR update\n' +
+            '  - CSCI-003: BIT Software – MINOR update (new test vectors)\n' +
+            '  - CSCI-005: Display Software – MINOR update (new symbology)\n' +
+            '\n' +
+            '3.3  LOGISTICS IMPACT:\n' +
+            '  a) Technical Manuals: Sections 4.2, 4.3, 5.2 require update\n' +
+            '     (estimated 45 pages of changes)\n' +
+            '  b) Training: 2-hour fleet sailor familiarization brief\n' +
+            '  c) Spares: No impact – same hardware\n' +
+            '  d) Support Equipment: SE software v2.1 update required\n' +
+            '  e) VRSL Update: Items 3, 8, 16 – FPGA image change only\n' +
+            '\n' +
+            '3.4  COST IMPACT:\n' +
+            '  NRE (Non-Recurring Engineering):    $1,240,000\n' +
+            '  Unit Recurring Cost Change:              $0.00 (SW only)\n' +
+            '  Retrofit Cost (10 units × $185K):   $1,850,000\n' +
+            '  TM Update Cost:                        $95,000\n' +
+            '  Training Development:                  $45,000\n' +
+            '  ────────────────────────────────────────────────\n' +
+            '  TOTAL ECP COST:                     $3,230,000\n' +
+            '\n' +
+            '3.5  SCHEDULE:\n' +
+            '  Approval to CDR:       30 days\n' +
+            '  CDR to TRR:            45 days\n' +
+            '  TRR to Fleet Release:  15 days\n' +
+            '  Total Implementation:  90 days\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                   SECTION IV – APPROVAL\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Submitted By:\n' +
+            '  L3Harris Chief Engineer: Dr. Angela Torres\n' +
+            '  Date: 10 MAR 2025      Signature: /s/ A. Torres\n' +
+            '\n' +
+            'Reviewed By:\n' +
+            '  NAVSEA Config Mgr: Mr. Steven Barker\n' +
+            '  Date: 18 MAR 2025      Signature: /s/ S. Barker\n' +
+            '\n' +
+            'Approved By:\n' +
+            '  PMS 500 Program Mgr: CAPT William Chen, USN\n' +
+            '  Date: 22 MAR 2025      Signature: /s/ W. Chen\n' +
+            '\n' +
+            '  CCB Decision: APPROVED with conditions\n' +
+            '  Condition: Fleet release NLT 01 JUL 2025\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'LCSP':             '═══════════════════════════════════════════════════════════════\n' +
+            '             LIFE CYCLE SUSTAINMENT PLAN (LCSP)\n' +
+            '          DoDI 5000.02 / DoD Instruction 5000.85\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'System:   AN/SLQ-32(V)6 Electronic Warfare Suite\n' +
+            'Program:  SEWIP Block 3, PMS 500\n' +
+            'Document: LCSP-SLQ32V6-2025-R2    Date: 01 MAR 2025\n' +
+            'Classification: UNCLASSIFIED // FOUO\n' +
+            'Approved By: PMS 500 / SEA 04\n' +
+            '\n' +
+            '                     TABLE OF CONTENTS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Section 1  – Executive Summary ................ Page 3\n' +
+            'Section 2  – System Description ............... Page 5\n' +
+            'Section 3  – Sustainment Strategy ............. Page 8\n' +
+            'Section 4  – Reliability & Maintainability .... Page 12\n' +
+            'Section 5  – Supply Support ................... Page 16\n' +
+            'Section 6  – Maintenance Planning ............. Page 20\n' +
+            'Section 7  – Technical Data ................... Page 24\n' +
+            'Section 8  – Support Equipment ................ Page 27\n' +
+            'Section 9  – Training & Training Devices ...... Page 30\n' +
+            'Section 10 – Manpower & Personnel ............. Page 33\n' +
+            'Section 11 – Facilities ....................... Page 35\n' +
+            'Section 12 – DMSMS Management ................. Page 37\n' +
+            'Section 13 – Cost Estimates ................... Page 40\n' +
+            'Annex A    – Product Support BCA .............. Page 44\n' +
+            'Annex B    – KPP/KSA Matrix .................. Page 48\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '\n' +
+            'SECTION 1 – EXECUTIVE SUMMARY\n' +
+            '\n' +
+            '1.1  The AN/SLQ-32(V)6 is the primary surface electronic\n' +
+            'warfare system for DDG-51 Flight III class destroyers.\n' +
+            'Initial operational capability (IOC) was achieved in FY2024\n' +
+            'with USS Jack H. Lucas (DDG-125). Full operational\n' +
+            'capability (FOC) is planned for FY2028 across 22 hulls.\n' +
+            '\n' +
+            '1.2  SUSTAINMENT KEY METRICS:\n' +
+            '  ┌───────────────────────────────────┬─────────────┐\n' +
+            '  │ KPP/KSA                          │ Threshold   │\n' +
+            '  ├───────────────────────────────────┼─────────────┤\n' +
+            '  │ Operational Availability (Ao)     │ ≥ 0.992     │\n' +
+            '  │ Mean Time Between Failure (MTBF)  │ ≥ 1,200 hrs │\n' +
+            '  │ Mean Time To Repair (MTTR)        │ ≤ 0.5 hrs   │\n' +
+            '  │ Mission Capable Rate              │ ≥ 95%       │\n' +
+            '  │ Supply Response Time              │ ≤ 48 hrs    │\n' +
+            '  │ Total Ownership Cost (TOC) Ratio  │ ≤ 0.35      │\n' +
+            '  └───────────────────────────────────┴─────────────┘\n' +
+            '\n' +
+            '1.3  LIFE CYCLE COST ESTIMATE (20-YEAR):\n' +
+            '  ┌────────────────────────────┬──────────────────┐\n' +
+            '  │ Cost Category              │ Estimate ($M)    │\n' +
+            '  ├────────────────────────────┼──────────────────┤\n' +
+            '  │ RDT&E (completed)         │      $1,240      │\n' +
+            '  │ Procurement (22 units)    │      $3,850      │\n' +
+            '  │ Sustainment (20 years)    │      $2,180      │\n' +
+            '  │ Disposal                  │         $45      │\n' +
+            '  ├────────────────────────────┼──────────────────┤\n' +
+            '  │ TOTAL LIFE CYCLE COST     │      $7,315      │\n' +
+            '  └────────────────────────────┴──────────────────┘\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'SECTION 3 – SUSTAINMENT STRATEGY\n' +
+            '\n' +
+            '3.1  PRODUCT SUPPORT STRATEGY:\n' +
+            'The sustainment strategy employs a Performance-Based\n' +
+            'Logistics (PBL) approach with L3Harris Technologies as\n' +
+            'the Product Support Integrator (PSI). Key elements:\n' +
+            '\n' +
+            '  a) Contractor Logistics Support (CLS) – Initial 5-year\n' +
+            '     period (FY2024-FY2028) covering:\n' +
+            '     - On-site FSRs at homeports (2 per squadron)\n' +
+            '     - 24/7 technical reach-back support\n' +
+            '     - Software updates (quarterly releases)\n' +
+            '     - Depot repair at Melbourne, FL facility\n' +
+            '\n' +
+            '  b) Organic Transition Plan – FY2029-FY2032:\n' +
+            '     - Progressive transfer to NSWC facilities\n' +
+            '     - Navy depot repair at Tobyhanna Army Depot\n' +
+            '     - Sailor self-sufficiency for O/I-level\n' +
+            '     - CLS retained for depot-unique capabilities\n' +
+            '\n' +
+            '  c) Steady-State Organic (FY2033+):\n' +
+            '     - Full organic maintenance through I-level\n' +
+            '     - Depot split: 60% organic / 40% CLS\n' +
+            '     - Threat library updates remain CLS\n' +
+            '\n' +
+            '3.2  MAINTENANCE CONCEPT:\n' +
+            '  Level       │ Location         │ Responsibility     │ Scope\n' +
+            '  ────────────┼──────────────────┼────────────────────┼───────────────\n' +
+            '  Org (O)     │ Ship             │ Ship\'s Force       │ BIT/Op checks\n' +
+            '  Int (I)     │ Shore/TYCOM      │ Regional Maint     │ Module R&R\n' +
+            '  Depot (D)   │ Tobyhanna/OEM    │ Organic + CLS      │ Full repair\n' +
+            '  Software    │ OEM facility     │ L3Harris CLS       │ Updates/patches\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'SECTION 5 – SUPPLY SUPPORT\n' +
+            '\n' +
+            '5.1  PROVISIONING APPROACH:\n' +
+            '  a) Initial Outfitting: 2 APLs per hull (1 installed, 1 shore)\n' +
+            '  b) VRSL approved: 25 line items, $1.68M per ship set\n' +
+            '  c) Wholesale stock level: 6 ship-sets at DLA minimum\n' +
+            '  d) Total provisioning budget: $36.9M (FY24-FY28)\n' +
+            '\n' +
+            '5.2  SUPPLY PERFORMANCE TARGETS:\n' +
+            '  ┌──────────────────────────────┬────────────┬────────────┐\n' +
+            '  │ Metric                       │ Objective  │ Threshold  │\n' +
+            '  ├──────────────────────────────┼────────────┼────────────┤\n' +
+            '  │ Material Availability        │ ≥ 95%      │ ≥ 90%      │\n' +
+            '  │ Avg Customer Wait Time       │ ≤ 30 days  │ ≤ 48 days  │\n' +
+            '  │ Backorder Rate               │ ≤ 5%       │ ≤ 10%      │\n' +
+            '  │ APL Effectiveness            │ ≥ 85%      │ ≥ 75%      │\n' +
+            '  │ NIIN Fill Rate               │ ≥ 90%      │ ≥ 80%      │\n' +
+            '  └──────────────────────────────┴────────────┴────────────┘\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'SECTION 12 – DMSMS MANAGEMENT\n' +
+            '\n' +
+            '12.1  DMSMS RISK ITEMS (Current):\n' +
+            '  NSN               │ P/N             │ Item                │ Status         │ Resolution\n' +
+            '  ──────────────────┼─────────────────┼─────────────────────┼────────────────┼──────────────────\n' +
+            '  5961-01-589-2002  │ 73-10-0201-007  │ RF Amplifier, LN    │ LAST TIME BUY  │ LTB Q3 FY2025\n' +
+            '  5962-01-590-2001  │ 73-20-0350-008  │ FPGA Processor Card │ DIMINISHING    │ Redesign FY2026\n' +
+            '  5895-01-590-3001  │ 73-50-0620-004  │ Threat ID Module    │ DIMINISHING    │ ECP under eval\n' +
+            '  5961-01-590-5001  │ 73-10-0201-015  │ Traveling Wave Tube │ LAST TIME BUY  │ LTB Q4 FY2025\n' +
+            '\n' +
+            '12.2  DMSMS MITIGATION BUDGET: $4.2M / year (FY2025-FY2035)\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'ANNEX B – KPP / KSA MATRIX\n' +
+            '\n' +
+            '                    Requirement        │ Threshold │ Objective │ Current  │ Status\n' +
+            '  ─────────────────────────────────────┼───────────┼───────────┼──────────┼────────\n' +
+            '  Ao (Operational Availability)        │  0.992    │  0.998    │  0.996   │  MET\n' +
+            '  MTBF                                 │  1,200 hr │  1,800 hr │  1,547   │  MET\n' +
+            '  MTTR                                 │  0.5 hr   │  0.25 hr  │  0.38    │  MET\n' +
+            '  Mission Capable Rate                 │  95%      │  98%      │  96.2%   │  MET\n' +
+            '  Supply Response Time                 │  48 hr    │  24 hr    │  36 hr   │  MET\n' +
+            '  TOC Ratio                            │  0.35     │  0.25     │  0.31    │  MET\n' +
+            '  SW Update Deployment Time            │  30 days  │  14 days  │  21 days │  MET\n' +
+            '  DMSMS Resolution Lead Time           │  18 mo    │  12 mo    │  14 mo   │  MET\n' +
+            '  ─────────────────────────────────────┼───────────┼───────────┼──────────┼────────\n' +
+            '                                         ALL KPPs/KSAs: MET\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Engineering Drawing':             '═══════════════════════════════════════════════════════════════\n' +
+            '           ENGINEERING DRAWING / TECHNICAL DATA PACKAGE\n' +
+            '                  NAVAIR / NAVSEA STANDARD\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Drawing No.:   73-10-0201-003-DWG       Sheet: 1 of 4\n' +
+            'Title:         RF AMPLIFIER MODULE, HIGH-POWER – ASSEMBLY\n' +
+            'System:        AN/SLQ-32(V)6    Config Item: CI-003\n' +
+            'Rev:           D               Date: 15 FEB 2025\n' +
+            'Scale:         1:2             Size: D (22" × 34")\n' +
+            'CAGE:          3R2Y7           Classification: UNCLASSIFIED\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                    TITLE BLOCK\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            'Designed By:     R. Vasquez          Date: 12 JAN 2024\n' +
+            'Checked By:      M. Nguyen           Date: 18 JAN 2024\n' +
+            'Stress Analyst:  K. Patel            Date: 20 JAN 2024\n' +
+            'Approved By:     Dr. A. Torres       Date: 25 JAN 2024\n' +
+            'Rev D Approved:  S. Barker (NAVSEA)  Date: 15 FEB 2025\n' +
+            '───────────────────────────────────────────────────────────────\n' +
+            '\n' +
+            'SHEET 1/4 – TOP ASSEMBLY VIEW\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '                ┌─────────────────────────────────────┐\n' +
+            '                │          RF AMPLIFIER MODULE         │\n' +
+            '                │         P/N: 73-10-0201-003          │\n' +
+            '                │     ┌───────────────────────────┐    │\n' +
+            '                │     │  POWER AMP STAGE          │    │\n' +
+            '                │     │  ┌─────┐  ┌─────┐         │    │\n' +
+            '  RF IN ════════╪═════╪══│ LNA │──│ DRV │──┐      │    │\n' +
+            '  (SMA)         │     │  └─────┘  └─────┘  │      │    │\n' +
+            '                │     │              ┌──────┘      │    │\n' +
+            '                │     │              ▼             │    │\n' +
+            '                │     │         ┌─────────┐       │    │\n' +
+            '                │     │         │  SSPA    │       │    │\n' +
+            '                │     │         │  (GaN)   │       │    │══════ RF OUT\n' +
+            '                │     │         └─────────┘       │    │ (N-Type)\n' +
+            '                │     │              │             │    │\n' +
+            '                │     └───────────────────────────┘    │\n' +
+            '                │     ┌───────────┐  ┌───────────┐     │\n' +
+            '                │     │ POWER     │  │ CONTROL   │     │\n' +
+            '                │     │ SUPPLY    │  │ LOGIC     │     │\n' +
+            '  28VDC ════════╪═════│ (DC-DC)   │  │ (FPGA)    │═════╪════ CTRL\n' +
+            '  (Cannon)      │     └───────────┘  └───────────┘     │ (37-pin)\n' +
+            '                │          │              │             │\n' +
+            '                │     ┌────┴──────────────┴────┐       │\n' +
+            '  COOLANT IN ═══╪═════│    COLD PLATE / HEATSINK│══════╪═══ COOLANT OUT\n' +
+            '                │     │    (Aluminum 6061-T6)   │      │\n' +
+            '                │     └────────────────────────┘       │\n' +
+            '                └─────────────────────────────────────┘\n' +
+            '\n' +
+            '  Overall: 12.5" × 8.0" × 3.2"   Weight: 8.2 kg (18.0 lbs)\n' +
+            '\n' +
+            'SHEET 2/4 – DIMENSIONS & TOLERANCES\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '  GENERAL TOLERANCES (ASME Y14.5-2018):\n' +
+            '  ────────────────────────────────────────\n' +
+            '  Linear:     ±0.005" (unless noted)\n' +
+            '  Angular:    ±0°30\'\n' +
+            '  Surface:    125 μin Ra (machined)\n' +
+            '              32 μin Ra (mating surfaces)\n' +
+            '  Flatness:   0.002" over 8" span (cold plate)\n' +
+            '  True Position: 0.003" dia (mounting holes)\n' +
+            '\n' +
+            '  CRITICAL DIMENSIONS:\n' +
+            '  ───────────────────────────────────────────────\n' +
+            '  A) Module Envelope:  12.500 ±0.010 × 8.000 ±0.010 × 3.200 ±0.005\n' +
+            '  B) Mounting Holes:   4× ∅0.250 +0.001/-0.000 THRU\n' +
+            '                       Bolt Circle: 11.500 × 7.000 (true pos ∅0.003)\n' +
+            '  C) RF SMA Port CL:  6.250 from datum A, 1.600 from datum B\n' +
+            '  D) RF N-Type Port:   6.250 from datum A, on opposite face\n' +
+            '  E) Coolant Ports:    QD fittings, 1/4" NPT, center of baseplate\n' +
+            '  F) Cannon Connector: MIL-DTL-38999 Series III, backshell 90°\n' +
+            '\n' +
+            'SHEET 3/4 – BILL OF MATERIALS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'ITEM│ PART NUMBER      │ DESCRIPTION                  │ QTY│ MATERIAL\n' +
+            '────┼──────────────────┼──────────────────────────────┼────┼────────────\n' +
+            '  1 │ 73-10-0201-100   │ Housing Assembly, Machined    │   1│ Al 6061-T6\n' +
+            '  2 │ 73-10-0201-110   │ Cold Plate, Brazed Assembly   │   1│ Al/Cu\n' +
+            '  3 │ 73-10-0201-120   │ LNA Module, GaAs              │   1│ (procured)\n' +
+            '  4 │ 73-10-0201-130   │ Driver Amp Module              │   1│ (procured)\n' +
+            '  5 │ 73-10-0201-140   │ SSPA Module, GaN               │   1│ (procured)\n' +
+            '  6 │ 73-10-0201-150   │ DC-DC Converter, 28V→Multi    │   1│ (procured)\n' +
+            '  7 │ 73-10-0201-160   │ FPGA Control Board            │   1│ FR-4/HDI\n' +
+            '  8 │ 73-10-0201-170   │ EMI Gasket Set                │   1│ BeCu/Silicone\n' +
+            '  9 │ 73-10-0201-180   │ RF Cable Assembly, Internal   │   3│ Semi-rigid\n' +
+            ' 10 │ 73-10-0201-190   │ Hardware Kit (screws, inserts)│   1│ SS/Ti\n' +
+            ' 11 │ 73-10-0201-200   │ Conformal Coating Material    │   1│ MIL-I-46058C\n' +
+            '────┼──────────────────┼──────────────────────────────┼────┼────────────\n' +
+            '\n' +
+            'SHEET 4/4 – NOTES & SPECIFICATIONS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'NOTES:\n' +
+            '1. All dimensions in inches unless noted.\n' +
+            '2. Deburr all machined edges 0.010-0.020 R.\n' +
+            '3. Anodize per MIL-A-8625F, Type III, Class 1.\n' +
+            '4. Apply conformal coating per MIL-I-46058C, Type UR.\n' +
+            '5. Torque all module mounting screws to 45 ±5 in-lb.\n' +
+            '6. RF connectors: Torque SMA to 8 in-lb, N-type to 12 in-lb.\n' +
+            '7. Leak test coolant circuit at 50 PSI for 30 min, zero leaks.\n' +
+            '8. All solder joints per J-STD-001 Class 3 (Space/Military).\n' +
+            '9. Cleanliness: MIL-STD-1246D, Level 300.\n' +
+            '\n' +
+            'APPLICABLE SPECIFICATIONS:\n' +
+            '  MIL-STD-810H    – Environmental Test Methods\n' +
+            '  MIL-STD-461G    – EMI/EMC Requirements\n' +
+            '  MIL-STD-1275E   – 28VDC Power Quality\n' +
+            '  MIL-DTL-38999   – Connector, Cannon Plug\n' +
+            '  ASME Y14.5-2018 – GD&T Standard\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Configuration Status':             '═══════════════════════════════════════════════════════════════\n' +
+            '         CONFIGURATION STATUS ACCOUNTING (CSA) REPORT\n' +
+            '              MIL-STD-3046 / EIA-649-1 / ANSI/EIA-836\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'System:    AN/SLQ-32(V)6 Electronic Warfare Suite\n' +
+            'Program:   SEWIP Block 3, PMS 500\n' +
+            'Baseline:  FCA-2024-003, Rev C (Functional Config Audit)\n' +
+            'Date:      01 APR 2025\n' +
+            'Prepared:  L3Harris Configuration Mgmt Office\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '     SECTION 1 – CONFIGURATION IDENTIFICATION STATUS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '\n' +
+            'CI#  │ CI NAME                    │ P/N              │ CURR REV│ BASELINE │ STATUS\n' +
+            '─────┼────────────────────────────┼──────────────────┼─────────┼──────────┼──────────\n' +
+            'CI-001│ Antenna Group Assembly     │ 73-40-0500-ASSY  │ Rev B   │ FCA-001  │ Current\n' +
+            'CI-002│ Below-Decks Cabinet Set    │ 73-70-0100-ASSY  │ Rev C   │ FCA-002  │ Current\n' +
+            'CI-003│ Signal Processor (HW)     │ 73-20-0350-ASSY  │ Rev C   │ FCA-003  │ ECP Pending\n' +
+            'CI-004│ Signal Processor (SW)     │ CSCI-001         │ v4.1.3  │ FCA-004  │ ECP-041 Appr\n' +
+            'CI-005│ EA Controller             │ 73-50-0600-ASSY  │ Rev B   │ FCA-005  │ Current\n' +
+            'CI-006│ Power Distribution        │ 73-30-0400-ASSY  │ Rev A   │ FCA-006  │ Current\n' +
+            'CI-007│ Operator Console          │ OJ-794-ASSY      │ Rev B   │ FCA-007  │ Current\n' +
+            'CI-008│ CM Dispensing Controller  │ 73-50-0630-ASSY  │ Rev A   │ FCA-008  │ Current\n' +
+            'CI-009│ BIT Software              │ CSCI-003         │ v2.8.1  │ FCA-009  │ ECP-041 Minor\n' +
+            'CI-010│ Display Software          │ CSCI-005         │ v3.2.0  │ FCA-010  │ ECP-041 Minor\n' +
+            '─────┼────────────────────────────┼──────────────────┼─────────┼──────────┼──────────\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '     SECTION 2 – ENGINEERING CHANGE STATUS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '\n' +
+            'ECP#          │ TITLE                           │ CLASS│ STATUS    │ CCB DATE  │ IMPL TARGET\n' +
+            '──────────────┼─────────────────────────────────┼──────┼───────────┼───────────┼────────────\n' +
+            'N-2024-038    │ EMI Filter Upgrade              │ II   │ COMPLETED │ 15AUG2024 │ Completed\n' +
+            'N-2024-039    │ Cooling System Enhancement      │ I    │ COMPLETED │ 01OCT2024 │ Completed\n' +
+            'N-2024-040    │ Console Display Resolution      │ II   │ COMPLETED │ 15DEC2024 │ Completed\n' +
+            'N-2025-041    │ SW v4.2.1 Threat Library        │ I    │ APPROVED  │ 22MAR2025 │ 01JUL2025\n' +
+            'N-2025-042    │ Antenna Radome Material Change  │ I    │ IN REVIEW │ TBD       │ FY2026 Q1\n' +
+            'N-2025-043    │ GaN Amplifier Second Source     │ I    │ SUBMITTED │ TBD       │ FY2026 Q2\n' +
+            '──────────────┼─────────────────────────────────┼──────┼───────────┼───────────┼────────────\n' +
+            '\n' +
+            'DEVIATION/WAIVER LOG:\n' +
+            'DEV#          │ DESCRIPTION                     │ AUTHORIZED │ EXPIRY\n' +
+            '──────────────┼─────────────────────────────────┼────────────┼──────────\n' +
+            'DW-2024-015   │ Temp use of alternate RF gasket  │ 01NOV2024  │ 30APR2025\n' +
+            'DW-2025-001   │ FPGA rev B1 instead of B2        │ 15JAN2025  │ 01JUL2025\n' +
+            '──────────────┼─────────────────────────────────┼────────────┼──────────\n' +
+            '\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '     SECTION 3 – DOCUMENT/DATA STATUS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            '\n' +
+            'DOCUMENT                          │ CURRENT │ REVIEW DUE │ CUSTODIAN\n' +
+            '──────────────────────────────────┼─────────┼────────────┼──────────────\n' +
+            'System Specification (SS)          │ Rev D   │ 01OCT2025  │ L3Harris SE\n' +
+            'HW Development Spec               │ Rev C   │ 01OCT2025  │ L3Harris HW\n' +
+            'SW Requirements Spec (SRS)        │ Rev E   │ 01JUL2025  │ L3Harris SW\n' +
+            'Interface Control Doc (ICD)       │ Rev C   │ 01OCT2025  │ L3Harris/Navy\n' +
+            'Test & Evaluation Master Plan     │ Rev B   │ 01JAN2026  │ PMS 500\n' +
+            'LCSP                              │ Rev B   │ 01MAR2026  │ PMS 500 ILS\n' +
+            'ILSP                              │ Rev C   │ 01OCT2025  │ L3Harris ILS\n' +
+            'Technical Manuals (Set of 3)      │ Rev 7   │ 01FEB2026  │ L3Harris TP\n' +
+            '──────────────────────────────────┼─────────┼────────────┼──────────────\n' +
+            '\n' +
+            'APPROVED BY:\n' +
+            '  L3Harris CM Manager: J. Whitfield    Date: 01 APR 2025\n' +
+            '  Navy Config Mgr:     S. Barker       Date: 03 APR 2025\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Outfitting List':             '═══════════════════════════════════════════════════════════════\n' +
+            '        SHIP OUTFITTING LIST / ALLOWANCE PARTS LIST (APL)\n' +
+            '         INITIAL OUTFITTING – DDG-133 (DDG-51 FLT III)\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'APL Number:   APL-SLQ32V6-001       Date: 01 APR 2025\n' +
+            'System:       AN/SLQ-32(V)6         Hull: DDG-133\n' +
+            'Prepared By:  NAVSUP WSS / L3Harris ILS\n' +
+            'Approved By:  PMS 400D Provisioning\n' +
+            '\n' +
+            'INITIAL OUTFITTING ALLOWANCE (Installed + On-Board Spares)\n' +
+            '\n' +
+            'ITEM│ NSN               │ PART NUMBER     │ NOMENCLATURE                   │ APL QTY│ ONBD│ SHORE│ UNIT$     │ EXT$\n' +
+            '────┼───────────────────┼─────────────────┼────────────────────────────────┼────────┼─────┼──────┼───────────┼────────────\n' +
+            '  1 │ 5961-01-589-2001  │ 73-10-0201-003  │ RF Amplifier Module, HP        │      2 │   1 │    1 │ $42,500.00│  $85,000.00\n' +
+            '  2 │ 5961-01-589-2002  │ 73-10-0201-007  │ RF Amplifier Module, LN        │      2 │   1 │    1 │ $18,900.00│  $37,800.00\n' +
+            '  3 │ 5962-01-589-3001  │ 73-20-0350-001  │ Digital Signal Processor Bd    │      2 │   1 │    1 │ $67,200.00│ $134,400.00\n' +
+            '  4 │ 5998-01-589-4001  │ 73-30-0400-012  │ Power Supply Module, 28VDC     │      3 │   1 │    2 │  $4,800.00│  $14,400.00\n' +
+            '  5 │ 5999-01-589-5001  │ 73-30-0410-004  │ Cable Assembly, RF Coaxial     │      6 │   2 │    4 │  $1,250.00│   $7,500.00\n' +
+            '  6 │ 5985-01-589-6001  │ 73-40-0500-001  │ Antenna Element, Broadband     │      1 │   0 │    1 │ $31,400.00│  $31,400.00\n' +
+            '  7 │ 5985-01-589-6002  │ 73-40-0500-008  │ Antenna Rotary Joint           │      1 │   0 │    1 │ $12,700.00│  $12,700.00\n' +
+            '  8 │ 5895-01-589-7001  │ 73-50-0600-003  │ CM Controller PCB              │      2 │   1 │    1 │ $28,600.00│  $57,200.00\n' +
+            '  9 │ 5820-01-589-8001  │ 73-50-0610-001  │ SATCOM Interface Module        │      1 │   0 │    1 │ $22,100.00│  $22,100.00\n' +
+            ' 10 │ 6625-01-589-9001  │ 73-60-0700-002  │ Built-In Test Module           │      1 │   0 │    1 │ $15,300.00│  $15,300.00\n' +
+            ' 11 │ 6110-01-590-0001  │ 73-70-0100-005  │ Cooling Fan Assembly           │      4 │   2 │    2 │  $2,100.00│   $8,400.00\n' +
+            ' 12 │ 5340-01-590-0002  │ 73-70-0100-012  │ EMI Gasket Set                 │     10 │   4 │    6 │    $340.00│   $3,400.00\n' +
+            ' 13 │ 5999-01-590-0003  │ 73-70-0100-019  │ Fiber Optic Cable, 2m          │      4 │   2 │    2 │    $890.00│   $3,560.00\n' +
+            ' 14 │ 5905-01-590-1001  │ 73-80-0200-003  │ RF Connector Adapter SMA-N     │     12 │   6 │    6 │    $125.00│   $1,500.00\n' +
+            ' 15 │ 6135-01-590-1002  │ 73-80-0200-010  │ Wiring Harness, Main           │      1 │   0 │    1 │  $8,450.00│   $8,450.00\n' +
+            ' 16 │ 5962-01-590-2001  │ 73-20-0350-008  │ FPGA Processor Card            │      1 │   0 │    1 │ $54,300.00│  $54,300.00\n' +
+            ' 17 │ 5895-01-590-3001  │ 73-50-0620-004  │ Threat ID Correlation Module   │      1 │   0 │    1 │ $38,900.00│  $38,900.00\n' +
+            ' 18 │ 5820-01-590-4001  │ 73-90-0300-001  │ GPS Timing Module              │      1 │   0 │    1 │ $11,200.00│  $11,200.00\n' +
+            ' 19 │ 5961-01-590-5001  │ 73-10-0201-015  │ Traveling Wave Tube (TWT)      │      2 │   1 │    1 │ $56,700.00│ $113,400.00\n' +
+            ' 20 │ 5998-01-590-6001  │ 73-30-0400-020  │ UPS Battery Pack               │      3 │   1 │    2 │  $2,850.00│   $8,550.00\n' +
+            ' 21 │ 5895-01-590-8001  │ 73-50-0630-001  │ Jammer Transmitter Module      │      2 │   1 │    1 │ $89,400.00│ $178,800.00\n' +
+            ' 22 │ 5895-01-591-0001  │ 73-50-0640-002  │ ECM Controller Card            │      1 │   0 │    1 │ $41,200.00│  $41,200.00\n' +
+            ' 23 │ 5820-01-591-1001  │ 73-90-0310-005  │ Freq Synthesizer Module        │      1 │   0 │    1 │ $33,700.00│  $33,700.00\n' +
+            ' 24 │ 6695-01-590-7001  │ 73-60-0710-002  │ Environmental Sensor Module    │      2 │   1 │    1 │  $3,200.00│   $6,400.00\n' +
+            ' 25 │ 5998-01-590-9001  │ 73-30-0410-009  │ Fiber Optic Transceiver        │      3 │   1 │    2 │  $4,100.00│  $12,300.00\n' +
+            '────┼───────────────────┼─────────────────┼────────────────────────────────┼────────┼─────┼──────┼───────────┼────────────\n' +
+            '                                                                          │  TOTAL │  26 │   44 │           │ $931,760.00\n' +
+            '\n' +
+            'NOTES:\n' +
+            '1.  ONBD = Quantity stowed aboard ship in designated storerooms\n' +
+            '2.  SHORE = Quantity held at shore intermediate maintenance activity (IMA)\n' +
+            '3.  All items sourced through DLA/NAVSUP wholesale system\n' +
+            '4.  Reorder Point (ROP) and Reorder Quantity (ROQ) per NAVSUP P-485\n' +
+            '5.  DMSMS items (2, 16) flagged for Last Time Buy coordination\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Material Ordering Schedule':             '═══════════════════════════════════════════════════════════════\n' +
+            '        MATERIAL ORDERING SCHEDULE (MOS)\n' +
+            '         DDG-51 FLIGHT III – DDG-133/134\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Program:    PMS 400D DDG-51 Flight III\n' +
+            'Prepared:   ILS/Provisioning Team      Date: 01 APR 2025\n' +
+            'Period:     FY2025-FY2027              Rev: 4\n' +
+            '\n' +
+            '────────────────────────────────────────────────────────────────────────────────────\n' +
+            'ORD  │ PR/REQ NUMBER    │ SYSTEM/COMPONENT          │ VENDOR              │ CAGE  │ VALUE         │ LEAD TIME │ ORDER BY   │ NEED DATE  │ FUND SRC│ STATUS\n' +
+            '─────┼──────────────────┼───────────────────────────┼─────────────────────┼───────┼───────────────┼───────────┼────────────┼────────────┼─────────┼──────────\n' +
+            ' 001 │ N00024-25-NR-001 │ EW Suite Initial Spares   │ L3Harris Tech       │ 3R2Y7 │  $1,678,220.00│  180 days │ 01 APR 2025│ 01 OCT 2025│ SCN     │ ON ORDER\n' +
+            ' 002 │ N00024-25-NR-002 │ SPY-6 Radar LRU Spares   │ Raytheon            │ 7S695 │  $4,250,000.00│  270 days │ 01 JAN 2025│ 01 OCT 2025│ SCN     │ ON ORDER\n' +
+            ' 003 │ N00024-25-NR-003 │ MK45 Gun Barrel (spare)   │ BAE Systems         │ K4895 │    $890,000.00│  120 days │ 15 NOV 2024│ 01 MAR 2025│ O&MN    │ RECEIVED\n' +
+            ' 004 │ N00024-25-NR-004 │ LM2500+G4 Hot Section     │ GE Marine           │ 0DKM0 │  $2,100,000.00│  365 days │ 01 JAN 2025│ 01 JAN 2026│ SCN     │ ON ORDER\n' +
+            ' 005 │ N00024-25-NR-005 │ VLS Canister Seals        │ Lockheed Martin     │ 64547 │    $340,000.00│   90 days │ 01 APR 2025│ 01 JUL 2025│ O&MN    │ ON ORDER\n' +
+            ' 006 │ N00024-25-NR-006 │ Hull Structural Kit       │ HII                 │ 2Y197 │  $1,450,000.00│  210 days │ 01 MAR 2025│ 01 OCT 2025│ SCN     │ ON ORDER\n' +
+            ' 007 │ N00024-25-NR-007 │ CP Propeller Blades       │ Rolls-Royce         │ U7390 │  $3,200,000.00│  300 days │ 01 JAN 2025│ 01 NOV 2025│ SCN     │ ON ORDER\n' +
+            ' 008 │ N00024-25-NR-008 │ DRSVM Valve Actuators     │ Curtiss-Wright      │ 74628 │    $560,000.00│  150 days │ 01 SEP 2024│ 01 FEB 2025│ O&MN    │ RECEIVED\n' +
+            ' 009 │ N00024-25-NR-009 │ Phalanx Barrel Assy       │ Raytheon            │ 7S695 │    $420,000.00│  120 days │ 01 APR 2025│ 01 AUG 2025│ O&MN    │ ON ORDER\n' +
+            ' 010 │ N00024-25-NR-010 │ PCM Power Modules         │ DRS Defense         │ 5K575 │    $780,000.00│  180 days │ 01 MAR 2025│ 01 SEP 2025│ SCN     │ ON ORDER\n' +
+            ' 011 │ N00024-25-NR-011 │ SSDS SW License           │ Elbit Systems       │ 8B825 │    $220,000.00│   30 days │ 01 DEC 2024│ 01 JAN 2025│ O&MN    │ RECEIVED\n' +
+            ' 012 │ N00024-25-NR-012 │ Sonar TAS Array Spares    │ Thales Defense      │ F4835 │  $1,890,000.00│  240 days │ 01 APR 2025│ 01 DEC 2025│ SCN     │ ON ORDER\n' +
+            ' 013 │ N00024-25-NR-013 │ Navigation Upgrade Kit    │ Northrop Grumman    │ 27539 │    $650,000.00│  365 days │ 01 APR 2025│ 01 APR 2026│ SCN     │ PENDING\n' +
+            ' 014 │ N00024-25-NR-014 │ CIGS 57mm Barrel          │ General Dynamics    │ 77040 │    $380,000.00│  150 days │ 01 OCT 2024│ 01 MAR 2025│ O&MN    │ RECEIVED\n' +
+            ' 015 │ N00024-25-NR-015 │ SATCOM Crypto Module      │ Harris Corp         │ 3R2Y7 │    $290,000.00│  180 days │ 01 APR 2025│ 01 OCT 2025│ O&MN    │ ON ORDER\n' +
+            '─────┼──────────────────┼───────────────────────────┼─────────────────────┼───────┼───────────────┼───────────┼────────────┼────────────┼─────────┼──────────\n' +
+            '                                                                                 │$19,098,220.00 │\n' +
+            '\n' +
+            'PROCUREMENT TIMELINE SUMMARY:\n' +
+            '  FY2025 Q1 (Oct-Dec): Orders 3, 4, 7, 8, 11, 14 ─ $7,150,000\n' +
+            '  FY2025 Q2 (Jan-Mar): Orders 2, 6, 10            ─ $8,130,000\n' +
+            '  FY2025 Q3 (Apr-Jun): Orders 1, 5, 9, 12, 15     ─ $4,618,220\n' +
+            '  FY2025 Q4 (Jul-Sep): No new orders (deliveries)\n' +
+            '  FY2026 Q1 (Oct-Dec): Order 13                    ─   $650,000\n' +
+            '\n' +
+            'CRITICAL PATH ITEMS (Long Lead > 270 Days):\n' +
+            '  ⚠ SPY-6 Radar Spares     – 270 days (Order by Q2 FY25)\n' +
+            '  ⚠ CP Propeller Blades    – 300 days (Order by Q1 FY25)\n' +
+            '  ⚠ LM2500 Hot Section     – 365 days (Order by Q1 FY25)\n' +
+            '  ⚠ Navigation Upgrade     – 365 days (Order by Q3 FY25)\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'Master Equipment List':             '═══════════════════════════════════════════════════════════════\n' +
+            '              MASTER EQUIPMENT LIST (MEL)\n' +
+            '      DDG-133 (DDG-51 FLIGHT III) – COMBAT SYSTEMS\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Hull:      DDG-133                    Date: 01 APR 2025\n' +
+            'Program:   PMS 400D                   Rev:  3\n' +
+            'Prepared:  NAVSEA SEA 05 / PMS 400D\n' +
+            'Classification: UNCLASSIFIED\n' +
+            '\n' +
+            'EQUIP ID │ SYSTEM/SUBSYSTEM         │ NOMENCLATURE                    │ NSN               │ QTY│ LOCATION       │ INSTALL DATE │ WARRANTY EXP  │ PM CYCLE│ STATUS\n' +
+            '─────────┼──────────────────────────┼─────────────────────────────────┼───────────────────┼────┼────────────────┼──────────────┼───────────────┼─────────┼──────────\n' +
+            'CS-001   │ EW Suite                 │ AN/SLQ-32(V)6 Complete System   │ 5895-01-589-1000  │   1│ CIC/Topside    │ 15 NOV 2024  │ 15 NOV 2026   │ 500 hrs │ FMC\n' +
+            'CS-002   │ Air/Missile Defense Radar│ AN/SPY-6(V)1 AMDR               │ 5840-01-700-0001  │   1│ Superstructure │ 01 SEP 2024  │ 01 SEP 2026   │ 720 hrs │ FMC\n' +
+            'CS-003   │ Gun Weapon System        │ MK45 Mod 4 5in/62 Cal           │ 1015-01-200-0001  │   1│ Fwd Mount      │ 01 AUG 2024  │ 01 AUG 2029   │ 250 rds │ FMC\n' +
+            'CS-004   │ Vertical Launch System   │ MK41 VLS (96 cells)             │ 1440-01-300-0001  │   2│ Fwd/Aft        │ 01 JUL 2024  │ 01 JUL 2029   │ Annual  │ FMC\n' +
+            'CS-005   │ Close-In Weapon System   │ Phalanx Block 1B CIWS           │ 1015-01-400-0001  │   2│ Fwd/Aft        │ 01 OCT 2024  │ 01 OCT 2026   │ 200 hrs │ FMC\n' +
+            'CS-006   │ Combat Management        │ SSDS MK 2 Mod 2                 │ 5895-01-500-0001  │   1│ CIC            │ 01 SEP 2024  │ 01 SEP 2026   │ 90 days │ FMC\n' +
+            'CS-007   │ Sonar Suite              │ AN/SQQ-89A(V)15                 │ 5845-01-600-0001  │   1│ Sonar Room     │ 01 OCT 2024  │ 01 OCT 2026   │ 500 hrs │ FMC\n' +
+            'CS-008   │ Fire Control             │ MK160 Mod 11 GFCS               │ 5895-01-350-0001  │   1│ CIC            │ 01 AUG 2024  │ 01 AUG 2026   │ 360 hrs │ FMC\n' +
+            'CS-009   │ SATCOM                   │ AN/USC-61(V) Terminal           │ 5820-01-678-9921  │   2│ Comm Center    │ 15 NOV 2024  │ 15 NOV 2026   │ 720 hrs │ FMC\n' +
+            'CS-010   │ Navigation               │ AN/WSN-12 RLGN                  │ 5826-01-250-0001  │   2│ Nav Center     │ 01 JUL 2024  │ 01 JUL 2029   │ Annual  │ FMC\n' +
+            'CS-011   │ Decoy System             │ MK36 SRBOC (6 launchers)       │ 1095-01-150-0001  │   6│ Weatherdeck    │ 01 SEP 2024  │ 01 SEP 2029   │ Annual  │ FMC\n' +
+            'CS-012   │ Torpedo Defense          │ AN/SLQ-25E Nixie                │ 5895-01-450-0001  │   1│ Fantail        │ 01 OCT 2024  │ 01 OCT 2026   │ 180 hrs │ FMC\n' +
+            'CS-013   │ IFF System               │ AN/UPX-29(V) Interrogator      │ 5840-01-550-0001  │   1│ CIC            │ 01 AUG 2024  │ 01 AUG 2026   │ 500 hrs │ FMC\n' +
+            'CS-014   │ Comms Suite              │ AN/SRC-64(V)1 MFTA             │ 5820-01-750-0001  │   1│ Comm Center    │ 01 SEP 2024  │ 01 SEP 2026   │ 360 hrs │ FMC\n' +
+            'CS-015   │ Propulsion Control       │ ECSS Engineering Control        │ 5895-01-650-0001  │   1│ Main Control   │ 01 JUN 2024  │ 01 JUN 2029   │ 90 days │ FMC\n' +
+            '─────────┼──────────────────────────┼─────────────────────────────────┼───────────────────┼────┼────────────────┼──────────────┼───────────────┼─────────┼──────────\n' +
+            '                                                                                          │ 24 │                │              │               │         │\n' +
+            '\n' +
+            'EQUIPMENT SUMMARY:\n' +
+            '  Total Combat System Equipment:  15 major systems (24 units)\n' +
+            '  Full Mission Capable (FMC):      24 / 24  (100%)\n' +
+            '  Partial Mission Capable (PMC):    0\n' +
+            '  Not Mission Capable (NMC):        0\n' +
+            '\n' +
+            'WARRANTY STATUS:\n' +
+            '  Under Warranty:   15 systems\n' +
+            '  Warranty Expired:  0 systems\n' +
+            '  Next Expiry:      CS-003 MK45 Gun – 01 AUG 2029\n' +
+            '\n' +
+            'MAINTENANCE NOTES:\n' +
+            '  Next scheduled availability: DDG-133 SRA – FY2027 Q2\n' +
+            '  Outstanding CASREPs: None\n' +
+            '  DMSMS Watch Items: CS-001 (RF Amp LN, TWT), CS-002 (Processor cards)\n' +
+            '═══════════════════════════════════════════════════════════════',
+
+        'DRL/CDRL Tracker':             '═══════════════════════════════════════════════════════════════\n' +
+            '        DATA REQUIREMENTS LIST (DRL) / CDRL TRACKER\n' +
+            '              CONTRACT N00024-23-C-5520\n' +
+            '═══════════════════════════════════════════════════════════════\n' +
+            'Program:   DDG-51 Flight III – SEWIP Block 3\n' +
+            'Contractor: L3Harris Technologies (CAGE: 3R2Y7)\n' +
+            'Tracking Period: FY2025 Q2 (01 JAN – 31 MAR 2025)\n' +
+            'Report Date: 01 APR 2025\n' +
+            '\n' +
+            'DRL │ DI NUMBER      │ CDRL TITLE                         │ DUE DATE   │ SUBMIT DATE│ STATUS    │ GOVT REVIEW│ DISPOSITION\n' +
+            '────┼────────────────┼────────────────────────────────────┼────────────┼────────────┼───────────┼────────────┼─────────────\n' +
+            'A001│ DI-ILSS-81490  │ Integrated Logistics Support Plan   │ 15 JAN 2025│ 14 JAN 2025│ APPROVED  │ 12 FEB 2025│ Approved w/comments\n' +
+            'A002│ DI-ILSS-81494  │ PMS Development Plan                │ 01 FEB 2025│ 30 JAN 2025│ APPROVED  │ 28 FEB 2025│ Approved\n' +
+            'A003│ DI-ILSS-81493  │ Provisioning Tech Documentation    │ 01 MAR 2025│ 28 FEB 2025│ IN REVIEW │ TBD        │ Under Government review\n' +
+            'A004│ DI-ILSS-81495  │ Vendor Recommended Spares List      │ 15 MAR 2025│ 15 MAR 2025│ APPROVED  │ 10 APR 2025│ Approved\n' +
+            'A005│ DI-ILSS-81496  │ Allowance Parts List (APL)         │ 01 APR 2025│ 29 MAR 2025│ SUBMITTED │ TBD        │ Pending review\n' +
+            'A006│ DI-TMSS-81000  │ Technical Manual – Operator        │ 01 APR 2025│ 01 APR 2025│ SUBMITTED │ TBD        │ Pending review\n' +
+            'A007│ DI-TMSS-80063  │ TM Content Verification            │ 15 APR 2025│             │ PENDING   │            │ Not yet due\n' +
+            'A008│ DI-SESS-81521  │ Support Equipment Recommendation   │ 01 FEB 2025│ 01 FEB 2025│ APPROVED  │ 01 MAR 2025│ Approved\n' +
+            'A009│ DI-CMAN-81248  │ Engineering Change Proposal        │ As Required│ 10 MAR 2025│ APPROVED  │ 22 MAR 2025│ ECP N-2025-041 approved\n' +
+            'A010│ DI-MISC-81355  │ Program Management Review (PMR)    │ Monthly    │ 15 MAR 2025│ DELIVERED │ 20 MAR 2025│ Acknowledged\n' +
+            'A011│ DI-ILSS-81497  │ DMSMS Management Plan              │ 01 FEB 2025│ 31 JAN 2025│ APPROVED  │ 27 FEB 2025│ Approved w/conditions\n' +
+            'A012│ DI-RELI-81369  │ Reliability Analysis Report        │ 01 MAR 2025│ 28 FEB 2025│ IN REVIEW │ TBD        │ Under Government review\n' +
+            'A013│ DI-ALSS-81375  │ Training Plan                      │ 15 FEB 2025│ 14 FEB 2025│ APPROVED  │ 14 MAR 2025│ Approved\n' +
+            'A014│ DI-CMAN-81249  │ Configuration Status Accounting    │ Quarterly  │ 01 APR 2025│ SUBMITTED │ TBD        │ Pending review\n' +
+            'A015│ DI-QCIC-81013  │ Quality Assurance Plan             │ 15 JAN 2025│ 14 JAN 2025│ APPROVED  │ 10 FEB 2025│ Approved\n' +
+            '────┼────────────────┼────────────────────────────────────┼────────────┼────────────┼───────────┼────────────┼─────────────\n' +
+            '\n' +
+            'SUMMARY:\n' +
+            '  Total CDRLs: 15\n' +
+            '  Approved:     9  ██████████░░░░░  60%\n' +
+            '  In Review:    2  ██░░░░░░░░░░░░░  13%\n' +
+            '  Submitted:    2  ██░░░░░░░░░░░░░  13%\n' +
+            '  Pending:      1  █░░░░░░░░░░░░░░   7%\n' +
+            '  Delivered:    1  █░░░░░░░░░░░░░░   7%\n' +
+            '\n' +
+            'OVERDUE: None\n' +
+            'ON-TIME DELIVERY RATE: 100% (15/15 submitted on or before due date)\n' +
+            '\n' +
+            'NEXT QUARTER DELIVERABLES (FY2025 Q3):\n' +
+            '  A003 – PTD (resubmit after comments)  Due: 15 APR 2025\n' +
+            '  A007 – TM Content Verification        Due: 15 APR 2025\n' +
+            '  A010 – PMR (April)                    Due: 15 APR 2025\n' +
+            '  A010 – PMR (May)                      Due: 15 MAY 2025\n' +
+            '  A010 – PMR (June)                     Due: 15 JUN 2025\n' +
+            '═══════════════════════════════════════════════════════════════'
+    };
+    var textarea = document.getElementById('demoContent');
+    textarea.value = samples[type] || '';
+    onContentChange();
+}
+
+// ═══ CONTENT CHANGE → LIVE HASH ═══
+async function onContentChange() {
+    var content = document.getElementById('demoContent').value;
+    document.getElementById('charCount').textContent = content.length + ' characters';
+    
+    if (content.length > 0) {
+        // Enable step 3
+        document.getElementById('anchorStep3').style.opacity = '1';
+        document.getElementById('anchorStep3').style.pointerEvents = 'auto';
+        document.getElementById('si2').classList.add('done');
+        document.getElementById('si2').innerHTML = '<i class="fas fa-check" style="font-size:0.65rem"></i>';
+        
+        // Generate SHA-256 hash
+        var hash = await sha256(content);
+        _currentHash = hash;
+        
+        // Animate hash display
+        var hashEl = document.getElementById('hashValue');
+        hashEl.style.color = 'var(--accent)';
+        hashEl.textContent = hash;
+        
+        document.getElementById('si3').classList.add('done');
+        document.getElementById('si3').innerHTML = '<i class="fas fa-check" style="font-size:0.65rem"></i>';
+        
+        // Enable pipeline and button
+        document.getElementById('anchorPipeline').style.opacity = '1';
+        document.getElementById('anchorBtn').disabled = false;
+        
+        // Light up first two pipeline steps
+        document.getElementById('ps1').classList.add('done');
+        document.getElementById('ps2').classList.add('done');
+        document.getElementById('pa1').classList.add('done');
+        document.getElementById('pa2').classList.add('done');
+    } else {
+        document.getElementById('anchorStep3').style.opacity = '0.4';
+        document.getElementById('anchorStep3').style.pointerEvents = 'none';
+        document.getElementById('hashValue').textContent = 'Waiting for content...';
+        document.getElementById('hashValue').style.color = 'var(--muted)';
+        document.getElementById('anchorPipeline').style.opacity = '0.4';
+        document.getElementById('anchorBtn').disabled = true;
+        _currentHash = null;
+    }
+}
+
+// ═══ SHA-256 HASH ═══
+async function sha256(message) {
+    var msgBuffer = new TextEncoder().encode(message);
+    var hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    var hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+
+// ═══ RANDOM HEX ═══
+function randomHex(len) {
+    var chars = '0123456789abcdef';
+    var result = '';
+    for (var i = 0; i < len; i++) result += chars[Math.floor(Math.random() * 16)];
+    return result;
+}
+
+// ═══ ANCHOR DEMO ANIMATION ═══
+async function runAnchorDemo() {
+    var btn = document.getElementById('anchorBtn');
+    var status = document.getElementById('anchorStatus');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Anchoring...';
+
+    // Animate pipeline step 3: SLS fee
+    status.textContent = 'Deducting 0.01 SLS fee...';
+    document.getElementById('ps3').classList.add('active');
+    document.getElementById('pa3').classList.add('active');
+    await sleep(800);
+    document.getElementById('ps3').classList.remove('active');
+    document.getElementById('ps3').classList.add('done');
+
+    // Animate pipeline step 4: XRPL transaction
+    status.textContent = 'Submitting to XRPL validators...';
+    document.getElementById('ps4').classList.add('active');
+    document.getElementById('pa4').classList.add('active');
+    await sleep(1200);
+    document.getElementById('ps4').classList.remove('active');
+    document.getElementById('ps4').classList.add('done');
+
+    // Animate pipeline step 5: Confirmed
+    status.textContent = 'Waiting for ledger confirmation...';
+    document.getElementById('ps5').classList.add('active');
+    await sleep(600);
+    document.getElementById('ps5').classList.remove('active');
+    document.getElementById('ps5').classList.add('done');
+    document.getElementById('pa4').classList.add('done');
+
+    // Generate fake but realistic XRPL data
+    var txHash = randomHex(64).toUpperCase();
+    var ledgerIndex = 95000000 + Math.floor(Math.random() * 500000);
+
+    // Store for verify demo (including raw content for auto-verify)
+    _anchoredRecords.push({
+        type: _selectedType,
+        hash: _currentHash,
+        content: document.getElementById('demoContent').value,
+        txHash: txHash,
+        ledger: ledgerIndex,
+        time: new Date().toISOString()
+    });
+
+    // Show result
+    document.getElementById('resultType').textContent = _selectedType;
+    document.getElementById('resultHash').textContent = _currentHash;
+    document.getElementById('resultTx').innerHTML = '<a href="https://livenet.xrpl.org/transactions/' + txHash + '" target="_blank">' + txHash.substring(0, 32) + '... <i class="fas fa-external-link-alt" style="font-size:0.6rem"></i></a>';
+    document.getElementById('resultLedger').textContent = '#' + ledgerIndex.toLocaleString();
+    document.getElementById('resultTime').textContent = new Date().toLocaleTimeString() + ' — ~3.2 seconds';
+    document.getElementById('resultExplorer').innerHTML = '<a href="https://livenet.xrpl.org/accounts/rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ" target="_blank">View S4 Treasury on XRPL <i class="fas fa-external-link-alt" style="font-size:0.6rem"></i></a>';
+
+    var result = document.getElementById('anchorResult');
+    result.classList.add('show');
+    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    btn.innerHTML = '<i class="fas fa-check"></i> Anchored!';
+    btn.style.background = 'linear-gradient(135deg,#00cc66,#009944)';
+    status.textContent = 'Record anchored to XRPL ledger #' + ledgerIndex.toLocaleString();
+}
+
+function resetAnchorDemo() {
+    // Reset UI
+    document.querySelectorAll('.record-type-btn').forEach(function(b) { b.classList.remove('selected'); });
+    document.getElementById('demoContent').value = '';
+    document.getElementById('charCount').textContent = '0 characters';
+    document.getElementById('hashValue').textContent = 'Waiting for content...';
+    document.getElementById('hashValue').style.color = 'var(--muted)';
+    document.getElementById('anchorStep2').style.opacity = '0.4';
+    document.getElementById('anchorStep2').style.pointerEvents = 'none';
+    document.getElementById('anchorStep3').style.opacity = '0.4';
+    document.getElementById('anchorStep3').style.pointerEvents = 'none';
+    document.getElementById('anchorPipeline').style.opacity = '0.4';
+    
+    // Reset step indicators
+    ['si1','si2','si3'].forEach(function(id, i) {
+        var el = document.getElementById(id);
+        el.classList.remove('done');
+        el.textContent = (i + 1).toString();
+    });
+    
+    // Reset pipeline
+    for (var i = 1; i <= 5; i++) {
+        var ps = document.getElementById('ps' + i);
+        if (ps) { ps.classList.remove('active','done'); }
+    }
+    for (var i = 1; i <= 4; i++) {
+        var pa = document.getElementById('pa' + i);
+        if (pa) { pa.classList.remove('active','done'); }
+    }
+    
+    var btn = document.getElementById('anchorBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-anchor"></i> Anchor to XRPL';
+    btn.style.background = '';
+    document.getElementById('anchorStatus').textContent = '';
+    document.getElementById('anchorResult').classList.remove('show');
+    
+    _selectedType = null;
+    _currentHash = null;
+}
+
+// ═══ VERIFY DEMO ═══
+async function onVerifyInput() {
+    var content = document.getElementById('verifyContent').value;
+    if (content.length > 0) {
+        document.getElementById('verifyStep2').style.opacity = '1';
+        document.getElementById('verifyStep2').style.pointerEvents = 'auto';
+        
+        var hash = await sha256(content);
+        document.getElementById('verifyYourHash').textContent = hash;
+        document.getElementById('vsi2').classList.add('done');
+        document.getElementById('vsi2').innerHTML = '<i class="fas fa-check" style="font-size:0.65rem"></i>';
+    } else {
+        document.getElementById('verifyStep2').style.opacity = '0.4';
+        document.getElementById('verifyStep2').style.pointerEvents = 'none';
+    }
+}
+
+function handleVerifyDrop(e) {
+    e.preventDefault();
+    document.getElementById('verifyZone').classList.remove('dragover');
+    var files = e.dataTransfer.files;
+    if (files.length > 0) {
+        var reader = new FileReader();
+        reader.onload = async function() {
+            // Hash the file content
+            var buffer = reader.result;
+            var hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            var hashArray = Array.from(new Uint8Array(hashBuffer));
+            var hash = hashArray.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+            
+            document.getElementById('verifyContent').value = '[File: ' + files[0].name + ' — ' + (files[0].size / 1024).toFixed(1) + ' KB]';
+            document.getElementById('verifyYourHash').textContent = hash;
+            document.getElementById('verifyStep2').style.opacity = '1';
+            document.getElementById('verifyStep2').style.pointerEvents = 'auto';
+            document.getElementById('vsi2').classList.add('done');
+            document.getElementById('vsi2').innerHTML = '<i class="fas fa-check" style="font-size:0.65rem"></i>';
+        };
+        reader.readAsArrayBuffer(files[0]);
+    }
+}
+
+async function runVerifyDemo() {
+    var yourHash = document.getElementById('verifyYourHash').textContent;
+    var btn = document.getElementById('verifyBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching blockchain...';
+    
+    await sleep(1500);
+    
+    // Check if this hash was anchored in the demo
+    var found = _anchoredRecords.find(function(r) { return r.hash === yourHash; });
+    
+    var chainHash = found ? found.hash : randomHex(64);
+    document.getElementById('verifyChainHash').textContent = chainHash;
+    
+    var compareIcon = document.getElementById('verifyCompareIcon');
+    var resultDiv = document.getElementById('verifyResultContent');
+    
+    if (found) {
+        compareIcon.className = 'fas fa-equals';
+        compareIcon.style.color = 'var(--green)';
+        document.getElementById('verifyChainHash').style.color = 'var(--green)';
+        
+        resultDiv.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
+            + '<i class="fas fa-shield-halved" style="color:var(--green);font-size:1.3rem"></i>'
+            + '<div><div style="font-size:1rem;font-weight:800;color:var(--green)">VERIFIED — Record is Authentic</div>'
+            + '<div style="font-size:0.75rem;color:var(--steel)">The content matches the blockchain-anchored hash exactly. This record has not been tampered with.</div></div></div>'
+            + '<div class="xrpl-field"><span class="label">Type:</span><span class="value">' + found.type + '</span></div>'
+            + '<div class="xrpl-field"><span class="label">Anchored:</span><span class="value">' + new Date(found.time).toLocaleString() + '</span></div>'
+            + '<div class="xrpl-field"><span class="label">TX Hash:</span><span class="value"><a href="https://livenet.xrpl.org/transactions/' + found.txHash + '" target="_blank">' + found.txHash.substring(0, 32) + '...</a></span></div>'
+            + '<div class="xrpl-field"><span class="label">Ledger:</span><span class="value">#' + found.ledger.toLocaleString() + '</span></div>';
+    } else {
+        compareIcon.className = 'fas fa-not-equal';
+        compareIcon.style.color = 'var(--red)';
+        document.getElementById('verifyChainHash').style.color = 'var(--red)';
+        
+        resultDiv.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
+            + '<i class="fas fa-exclamation-triangle" style="color:var(--red);font-size:1.3rem"></i>'
+            + '<div><div style="font-size:1rem;font-weight:800;color:var(--red)">NOT FOUND — No Matching Record</div>'
+            + '<div style="font-size:0.75rem;color:var(--steel)">This content does not match any anchored record on the XRPL. It may not have been anchored, or the content may have been modified.</div></div></div>'
+            + '<div style="padding:12px;background:rgba(255,107,107,0.06);border-radius:3px;margin-top:12px;font-size:0.82rem;color:var(--steel)">'
+            + '<strong>Tip:</strong> Try anchoring a record first in the Anchor demo, then come back here and enter the same content to see a successful verification.'
+            + '</div>';
+    }
+    
+    var result = document.getElementById('verifyResult');
+    result.classList.add('show');
+    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-search"></i> Verify on Blockchain';
+}
+
+function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+// ═══ AUTO-VERIFY: Pre-fill verify tab with last anchored content ═══
+async function autoVerifyAnchored() {
+    // Switch to verify tab
+    switchDemoTab('verify');
+    
+    // Get the most recent anchored record
+    if (_anchoredRecords.length === 0) return;
+    var lastRecord = _anchoredRecords[_anchoredRecords.length - 1];
+    
+    // Pre-fill the verify content textarea with the anchored content
+    var verifyTA = document.getElementById('verifyContent');
+    if (verifyTA && lastRecord.content) {
+        verifyTA.value = lastRecord.content;
+        // Trigger the hash comparison
+        await onVerifyInput();
+        // Scroll to verify button
+        var vBtn = document.getElementById('verifyBtn');
+        if (vBtn) {
+            vBtn.disabled = false;
+            setTimeout(function() {
+                vBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+    }
+}
+
+</script>
+
+</body>
+</html>
