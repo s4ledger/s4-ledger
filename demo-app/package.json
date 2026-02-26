@@ -1,0 +1,15 @@
+{
+  "name": "s4-ledger-demo",
+  "version": "5.12.0",
+  "private": true,
+  "type": "module",
+  "description": "S4 Ledger — Demo Application (ILS Platform Demo)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
+}
