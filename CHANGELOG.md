@@ -1,5 +1,30 @@
 # Changelog
 
+## [5.11.0] — 2025-01-XX
+### Added
+- Supabase state sync engine — ALL localStorage data now persists to cloud database
+- Custom program persistence — saved programs survive page refresh and sync across sessions
+- Navigator.sendBeacon flush on page unload for zero data loss
+### Changed
+- Landing page and all satellite pages now route to demo-app (prod-app reserved for authenticated orgs)
+- Removed "Production" and "Demo" labels from tool cards
+### Fixed
+- Custom programs lost on page refresh — now persist to localStorage + Supabase
+
+## [5.10.0] — 2025-01-XX
+### Added
+- PMS 325 (SSC) and PMS 385 (DLS) programs
+- USCG support across all tool dropdowns
+- How It Works → real modal popup overlay
+- Light-mode chart visibility (CSS vars + Chart.js theme awareness)
+### Changed
+- All tool icons standardized to blue (var(--accent))
+- Branches restricted to Navy, USMC, USCG only
+- Roadmap box redesigned with PLANNED badges
+- Full demo-app mirror with sample data retained
+
+---
+
 ## v5.6.0 — Full Persistence & Superior Features (2026-02-25)
 
 ### Database

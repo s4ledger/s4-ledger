@@ -11,7 +11,7 @@ The platform uses a **Hub → Section → Tab** navigation model:
 
 - **Landing Page** — hero, feature cards, footer (public-facing)
 - **Platform Hub** — 4 hub cards: Verify Records, Transaction Log, Anchor-S4 (ILS), Systems
-- **Anchor-S4 ILS** — sub-hub with 14 tool cards, each opening a full-page tool panel
+- **Anchor-S4 ILS** — sub-hub with 20+ tool cards, each opening a full-page tool panel
 - **AI Agent** — floating chat widget accessible from all ILS tools
 - **Wallet** — slide-in sidebar from "My Wallet" button
 - **Command Palette** — Cmd+K overlay from anywhere in workspace
@@ -65,7 +65,7 @@ The platform uses a **Hub → Section → Tab** navigation model:
 - **4 hub cards** in a grid layout:
   1. **Verify Records** (LIVE) — Upload files to verify blockchain integrity
   2. **Transaction Log** (AUDIT) — Full audit trail with XRPL explorer links
-  3. **Anchor-S4** (14 TOOLS) — 14 integrated defense ILS tools
+  3. **Anchor-S4** (20+ TOOLS) — 20+ integrated defense ILS tools
   4. **Systems** (METRICS) — Platform metrics and offline queue
 
 ### Upgrades:
@@ -77,7 +77,7 @@ The platform uses a **Hub → Section → Tab** navigation model:
 ### ANCHOR RECORDS (first hub card)
 
 **What you should see:**
-- **Branch tabs** (NAVY, ARMY, USMC, USAF, USCG, JOINT) — filter record types by military branch
+- **Branch tabs** (NAVY, USMC, USCG, JOINT) — filter record types by military branch
 - **Record type search bar** — real-time filter on the type grid
 - **Record type grid** — 54+ types (DD1149, DD250, WAWF, etc.)
 - Generate Record button → builds a record with realistic demo data
@@ -135,12 +135,12 @@ The platform uses a **Hub → Section → Tab** navigation model:
 ### ANCHOR-S4 ILS HUB (third hub card — 20+ tools)
 
 **What you should see when entering:**
-- Sub-hub grid with **14 tool cards**, each opening a full-page tool panel
+- Sub-hub grid with **20+ tool cards**, each opening a full-page tool panel
 - "Back to Tools" button to return to the card grid
 - SLS balance strip showing current SLS, anchors, spent
 - AI Agent indicator "AI Agent Active"
 
-**14 ILS Tool Cards:**
+**20+ ILS Tool Cards:**
 1. Gap Analysis — ILS gap identification with MIL-STD-1388 scoring
 2. DMSMS Tracker — Diminishing Manufacturing Sources & Material Shortages
 3. Readiness Calculator — Operational Availability (Ao), MTBF, MTTR, MLDT
@@ -157,7 +157,7 @@ The platform uses a **Hub → Section → Tab** navigation model:
 14. SBOM Viewer — Software Bill of Materials with CVE tracking
 
 ### Upgrades:
-28. ✅ **14 ILS tool cards** — organized by function in a card grid
+28. ✅ **20+ ILS tool cards** — organized by function in a card grid
 29. ✅ **500+ defense platforms database** — pre-loaded platform data
 30. ✅ **Gap analysis engine** — automated ILS gap identification with radar chart
 31. ✅ **DMSMS tracking** — parts at risk, alternates, resolution cost
@@ -349,7 +349,7 @@ The platform uses a **Hub → Section → Tab** navigation model:
 | UPGRADE_LOCATIONS.md rewritten | d5120c5 | ✅ Pushed |
 | Unauthorized Anchor Records card reverted | d5120c5 | ✅ Pushed |
 | Unauthorized Warranty tool removed | d5120c5 | ✅ Pushed |
-| 14 TOOLS count restored | d5120c5 | ✅ Pushed |
+| 20+ TOOLS count restored | d5120c5 | ✅ Pushed |
 | SW cache bumped to s4-v310 | 1e6440f | ✅ Pushed |
 | **CRITICAL: `</script>` inside JS string killed 6,300-line script block** | 4891bcc | ✅ Pushed |
 | Warranty command palette entry removed | dc67f79 | ✅ Pushed |
@@ -367,7 +367,7 @@ The platform uses a **Hub → Section → Tab** navigation model:
 ### How to Navigate
 
 1. Open platform → click **Platform Workspace**
-2. Click any of the **14 tool tabs** in the left sidebar (ILS Hub)
+2. Click any of the **20+ tool tabs** in the left sidebar (ILS Hub)
 3. Each tool panel scrolls vertically — competitive upgrades are typically **collapsible sections** with arrow toggles
 
 ---
@@ -465,7 +465,7 @@ The platform uses a **Hub → Section → Tab** navigation model:
 ```
 Platform Workspace
 ├── Top Bar (search, tabs, Roadmap button)
-├── ILS Hub (left sidebar with 14 tool tabs)
+├── ILS Hub (left sidebar with 20+ tool tabs)
 │   ├── Action Items     ← Upgrades 91-98 (bulk ops, calendar, smart sort, etc.)
 │   ├── SBOM
 │   ├── DMSMS
@@ -493,7 +493,7 @@ Platform Workspace
 
 | Fix | Commit | Status |
 |-----|--------|--------|
-| **CRITICAL: Stray `</div>` at line 2366 broke tabILS — all 14 hub panels ejected** | d17cb6a | ✅ Pushed |
+| **CRITICAL: Stray `</div>` at line 2366 broke tabILS — all 20+ hub panels ejected** | d17cb6a | ✅ Pushed |
 | Duplicate `</div></section>` at end of platformWorkspace removed | d17cb6a | ✅ Pushed |
 | 5 Pro-only FA icons replaced (fa-radar, fa-chart-radar, fa-shield-check, fa-shield-xmark, fa-hexagon-vertical-nft) | 2baf6ac | ✅ Pushed |
 | Light mode invisible text — CSS for .ai-title/.ai-body/.ai-meta/.ai-check/.stat-mini | 34a2b57 | ✅ Pushed |

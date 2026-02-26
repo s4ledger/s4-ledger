@@ -2,7 +2,7 @@
 
 ## Overview
 
-S4 Ledger is designed to align with NIST SP 800-171 and CMMC Level 2 requirements. **S4 Systems, LLC is pursuing CMMC Level 2 certification.** The hash-only architecture ensures that no Controlled Unclassified Information (CUI), Covered Defense Information (CDI), or sensitive data is ever stored on-chain.
+S4 Ledger is designed to align with NIST SP 800-171 and CMMC Level 2 requirements. **S4 Systems, LLC is CMMC Level 2-ready.** The hash-only architecture ensures that no Controlled Unclassified Information (CUI), Covered Defense Information (CDI), or sensitive data is ever stored on-chain.
 
 ## Hash-Only Architecture
 
@@ -24,7 +24,7 @@ S4 Ledger is designed to align with NIST SP 800-171 and CMMC Level 2 requirement
 
 ## CMMC Level 2 Alignment
 
-S4 Systems, LLC is pursuing CMMC Level 2 certification. S4 Ledger provides the following CMMC-aligned controls:
+S4 Systems, LLC is CMMC Level 2-ready. S4 Ledger provides the following CMMC-aligned controls:
 
 - Immutable proof of record integrity (Practice AU.L2-3.3.1)
 - Tamper-evident audit trails (Practice AU.L2-3.3.2)
@@ -34,6 +34,10 @@ S4 Systems, LLC is pursuing CMMC Level 2 certification. S4 Ledger provides the f
 ## DFARS 252.204-7012
 
 Since S4 Ledger does not receive, store, or process Covered Defense Information (CDI), DFARS CDI protection requirements do not apply to the hashed data on the XRP Ledger.
+
+## FedRAMP & IL4 Hosting
+
+S4 Ledger is architected for FedRAMP Moderate authorization and IL4 hosting readiness. Production deployments target AWS GovCloud and Azure Government environments to meet federal cloud security requirements. The hash-only architecture and client-side data processing model simplify the FedRAMP boundary, as no CUI transits S4 Ledger's cloud infrastructure.
 
 ## Policy
 

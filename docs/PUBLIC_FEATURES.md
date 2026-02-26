@@ -74,7 +74,7 @@ Designed for disconnected environments (naval vessels, forward bases):
 
 | Feature | Status |
 |---------|--------|
-| CMMC Level 2 | 91% compliant (110 controls) |
+| CMMC Level 2 | Level 2-ready (110 controls aligned) |
 | NIST SP 800-171 | 85% (12/14 families) |
 | DFARS 252.204-7012 | Compliant |
 | RBAC (5 roles) | Active |
@@ -183,10 +183,10 @@ curl -X POST https://s4ledger.com/api/anchor \
 
 | Plan | Monthly | SLS/mo | Anchors | AI Queries | ILS Tools |
 |------|---------|--------|---------|------------|-----------|
-| Pilot | Free | 100 | 10,000 | 50 | 14 |
-| Starter | $999 | 25,000 | 2,500,000 | 500 | 14 |
-| Professional | $2,499 | 100,000 | 10,000,000 | Unlimited | 14 |
-| Enterprise | $9,999 | 500,000 | Unlimited | Unlimited | 14 + HarborLink |
+| Pilot | Free | 100 | 10,000 | 50 | 20+ |
+| Starter | $999 | 25,000 | 2,500,000 | 500 | 20+ |
+| Professional | $2,499 | 100,000 | 10,000,000 | Unlimited | 20+ |
+| Enterprise | $9,999 | 500,000 | Unlimited | Unlimited | 20+ + HarborLink |
 
 ---
 

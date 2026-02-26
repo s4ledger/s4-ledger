@@ -109,9 +109,9 @@ No transitive dependencies with known CVEs at time of audit.
 
 No Covered Defense Information (CDI) is stored, processed, or transmitted on-chain.
 
-### CMMC Level 2 — COMPATIBLE ✅
+### CMMC Level 2 — LEVEL 2-READY ✅
 
-S4 Ledger supplements existing CMMC controls. It does not replace CMMC-required security practices.
+S4 Ledger supplements existing CMMC controls and is CMMC Level 2-ready. It does not replace CMMC-required security practices. Production deployment targets FedRAMP Moderate / IL4 hosting environments (AWS GovCloud, Azure Government).
 
 ---
 

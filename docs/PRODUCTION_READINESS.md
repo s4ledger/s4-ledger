@@ -23,7 +23,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404, security headers — **no persistent database** (in-memory only), no monitoring/APM, no GovCloud, no multi-region | **65%** | **50%** |
 | **Authentication** | Login portal, API key system, wallet provisioning, subscription-gated SLS delivery, role-based access controls (UI) — no MFA, no JWT, no key rotation | **65%** | **50%** |
 | **Documentation** | OpenAPI 3.0 spec (90+ endpoints), SDK reference (37 methods), whitepaper, technical specs, security policy, investor docs, deployment guide, User Training Guide, HarborLink Integration doc v2.0 | **95%** | **95%** |
-| **Compliance** | NIST 800-171 architecture aligned, ITAR warnings, security headers — zero certifications (no CMMC, no FedRAMP, no SOC 2) | **40%** | **40%** |
+| **Compliance** | NIST 800-171 architecture aligned, ITAR warnings, security headers — practically CMMC Level 2-ready, FedRAMP/IL4 hosting planned, no SOC 2 | **40%** | **40%** |
 | **Legal / Business** | S4 Systems LLC exists, TOS + Privacy Policy published — token legal opinion, EULA, DPA, SLA pending | **40%** | **35%** |
 | **Security** | Zero-data-on-chain, HMAC-SHA256 webhook signing, rate limiting, HSTS, security headers — no pen test, no SOC 2, no WAF | **35%** | **30%** |
 | **Monitoring / Ops** | Health check, request logging, GitHub Actions CI/CD — no APM, no SIEM, no alerting | **30%** | **25%** |
@@ -33,7 +33,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 1. **Deploy persistent storage** (Supabase/PostgreSQL) — eliminates data loss risk on cold start
 2. **Security audit** — penetration test + SOC 2 Type I
 3. **Monitoring stack** — APM + error tracking + alerting
-4. **CMMC/FedRAMP assessment** — required for DoD contracts
+4. **CMMC/FedRAMP/IL4 assessment** — required for DoD contracts
 
 ---
 
@@ -78,7 +78,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | CMMC Level 1 self-assessment | 🟡 Verify | **Critical** | S4 Systems may already be pursuing CMMC — S4 Ledger inherits company posture |
-| CMMC Level 2 assessment prep | 🟡 In Progress | **Critical** | S4 Systems pursuing CMMC L2 — 110 practices aligned with NIST SP 800-171, leveraging S4 Systems compliance infrastructure |
+| CMMC Level 2 assessment prep | 🟡 Level 2-ready | **Critical** | S4 Systems practically CMMC Level 2-ready — 110 practices aligned with NIST SP 800-171, leveraging S4 Systems compliance infrastructure |
 | System Security Plan (SSP) | ⬜ Pending | **Critical** | Document all security controls |
 | Plan of Action & Milestones (POA&M) | ⬜ Pending | **Critical** | Track remediation of gaps |
 | C3PAO assessment scheduling | ⬜ Pending | **High** | Third-party assessment organization |
@@ -101,10 +101,10 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | System & Communications Protection (3.13) | 🟡 Partial | **Critical** | TLS enforced; need boundary protection |
 | System & Information Integrity (3.14) | 🟡 Partial | **High** | Hash integrity built-in; need flaw remediation |
 
-### 2.3 FedRAMP
+### 2.3 FedRAMP / IL4
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
-| FedRAMP readiness assessment | ⬜ Pending | Medium | Li-SaaS or Low baseline for initial scope |
+| FedRAMP readiness assessment | 🟡 Planned | **High** | Li-SaaS or Low baseline for initial scope; targeting IL4-ready hosting for CUI environments |
 | 3PAO engagement | ⬜ Pending | Medium | When targeting gov cloud deployment |
 | ATO package preparation | ⬜ Pending | Medium | Authority to Operate |
 
@@ -240,7 +240,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | Landing page | ✅ Active | **Critical** | Trust signals, compliance badges, CTA |
-| Demo App | ✅ Active | **Critical** | 20+ ILS tools, 156+ pre-built record types across 9 military branches, 20+ ILS tools in hub/card workspace |
+| Demo App | ✅ Active | **Critical** | 20+ ILS tools, 156+ pre-built record types across Navy, USMC, and USCG, 20+ ILS tools in hub/card workspace |
 | SDK Playground | ✅ Active | **Critical** | Interactive with live API, 500+ platform selector, hull/designation + program office input |
 | Live Metrics dashboard | ✅ Active | **High** | Real-time with Chart.js, platform filter |
 | Transaction browser | ✅ Active | **High** | Filters, pagination, CSV export, platform filter |
@@ -305,7 +305,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | **Phase 3: Mainnet Migration** | ✅ COMPLETE | Multi-sig, mainnet wallets, $SLS issuance, parallel run — **fully migrated Feb 2026** |
 | **Phase 4: Enterprise Readiness** | Month 4-6 | SOC 2 Type I, GovCloud option, SLA, DPA, API versioning |
 | **Phase 5: First Pilot** | Month 5-8 | Partner onboarding, case study, SBIR proposal |
-| **Phase 6: Scale** | Month 8-12 | CMMC L2 assessment, FedRAMP prep, GSA listing |
+| **Phase 6: Scale** | Month 8-12 | CMMC L2 formal assessment, FedRAMP/IL4 prep, GSA listing |
 
 ---
 
@@ -360,7 +360,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 
 ### New ILS Workspace Tools
 - [x] **Audit Record Vault** — Client-side audit trail store. Every record anchored via any workspace tool is automatically saved with content + SHA-256 hash + TX hash. Search, filter by date, re-verify, export CSV/XLSX, and clear. Zero server-side storage — all data in browser localStorage.
-- [x] **Defense Document Reference Library** — Searchable database of 100+ real defense documents loaded from `s4-assets/defense-docs.js`: MIL-STDs (810H, 882E, 881F, 1388-2B, 461G, etc.), OPNAVINSTs (4790.4F, 4441.12G, 5100.23H), DoD Directives (5000.01, 5000.02, 4140.01), NAVSEA/NAVAIR/NAVSUP manuals, FAR/DFARS clauses, NIST frameworks (800-171, 800-53, CMMC v2.0), Army/Air Force/Marine Corps/Coast Guard/Space Force regulations, DMSMS standards, CDRLs, and ILS element references. Filterable by branch (7) and category (17) with full-text search.
+- [x] **Defense Document Reference Library** — Searchable database of 100+ real defense documents loaded from `s4-assets/defense-docs.js`: MIL-STDs (810H, 882E, 881F, 1388-2B, 461G, etc.), OPNAVINSTs (4790.4F, 4441.12G, 5100.23H), DoD Directives (5000.01, 5000.02, 4140.01), NAVSEA/NAVAIR/NAVSUP manuals, FAR/DFARS clauses, NIST frameworks (800-171, 800-53, CMMC v2.0), Navy/USMC/USCG regulations, DMSMS standards, CDRLs, and ILS element references. Filterable by branch and category with full-text search.
 - [x] **Compliance Scorecard** — Real-time multi-framework compliance calculator scoring CMMC Level 2 (25%), NIST 800-171 (20%), DFARS 252.204 (15%), FAR 46 Quality (15%), MIL-STD-1388 ILS (15%), DoDI 4245.15 DMSMS (10%). SVG ring chart with animated arc, letter grades (A+ through F), actionable recommendations, export to XLSX, and anchor scorecard to XRPL.
 
 ### Vault Integration

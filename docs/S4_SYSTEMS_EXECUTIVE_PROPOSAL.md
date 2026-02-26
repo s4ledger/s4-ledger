@@ -48,7 +48,7 @@ Every day, the U.S. Department of War (DoW) processes millions of logistics reco
 |-----------|-------------|--------|
 | **Live Website** | 25+ pages at [s4ledger.com](https://s4ledger.com) with full branding | ✅ Deployed |
 | **Python API** | 65 REST endpoints, zero external dependencies | ✅ Live |
-| **Demo Application** | Interactive platform — the U.S. Navy, 156+ pre-built record types across 9 military branches (any defense record type supported) | ✅ Live |
+| **Demo Application** | Interactive platform — the U.S. Navy, 156+ pre-built record types across Navy, USMC, and USCG (any defense record type supported) | ✅ Live |
 | **SDK Playground** | Browser-based Python SDK sandbox with live API | ✅ Live |
 | **$SLS Utility Token** | LIVE on XRPL Mainnet — 100M supply, ~15M circulating, AMM (Automated Market Maker) pools active | ✅ Live |
 
@@ -88,7 +88,7 @@ All of these tools operate within a single unified workspace, with shared data, 
 | Document | Description | Status |
 |----------|-------------|--------|
 | **Technical Whitepaper** | Full architectural documentation | ✅ Complete |
-| **NIST/CMMC Compliance Guide** | Alignment with NIST SP 800-171 & CMMC Level 2 | ✅ Complete |
+| **NIST/CMMC Compliance Guide** | Alignment with NIST SP 800-171 & practically CMMC Level 2 | ✅ Complete |
 | **Mainnet Migration Guide** | 33-section, 1,900+ line production migration plan | ✅ Complete |
 | **Production Readiness Checklist** | 200+ line items across 10 categories | ✅ Complete |
 | **Security Audit Documentation** | Threat model and architecture review | ✅ Draft |
@@ -125,7 +125,7 @@ We have existing relationships with DoW entities, prime contractors, and the def
 S4 Systems likely already has the government registrations (CAGE Code — our unique identifier for government contracting, SAM.gov registration, and D-U-N-S number) that a startup would spend months obtaining. We can move immediately.
 
 ### 4. CMMC Compliance Path
-S4 Systems is pursuing CMMC Level 2 certification. S4 Ledger architecture is CMMC-aligned, which will dramatically reduce the cost and timeline to bring the product to market once certification is achieved.
+S4 Systems is practically CMMC Level 2-ready. S4 Ledger architecture is CMMC-aligned, which will dramatically reduce the cost and timeline to bring the product to market once formal certification is achieved.
 
 ### 5. Name Alignment
 "S4 Ledger" was designed to align with "S4 Systems." The brand reinforces our company identity.
@@ -267,8 +267,7 @@ The SBIR (Small Business Innovation Research) program is a federal funding mecha
 
 Relevant DoW solicitation topics appear regularly from:
 - **Navy SBIR** (NAVSEA — Naval Sea Systems Command, NAVAIR — Naval Air Systems Command, NAVSUP — Naval Supply Systems Command)
-- **AFWERX** (Air Force innovation arm)
-- **DIU** (Defense Innovation Unit — bridges commercial technology into DoW)
+- **NavalX / DIU** (Naval innovation arm / Defense Innovation Unit — bridges commercial technology into DoW)
 
 S4 Ledger's prototype is essentially a **completed Phase I deliverable**. We could apply directly for Phase II in many cases.
 
@@ -287,7 +286,7 @@ S4 Ledger's prototype is essentially a **completed Phase I deliverable**. We cou
 1. **A working prototype** — live, publicly accessible, with 25+ pages and 90+ API endpoints
 2. **Domain expertise** — I understand defense logistics AND the underlying technology
 3. **Complete documentation** — whitepaper, technical specs, migration guides, compliance docs, API specification
-4. **ILS Workspace** — a fully functional suite of 14 integrated logistics tools ready for demonstration — the trust and intelligence layer for defense ILS
+4. **ILS Workspace** — a fully functional suite of 20+ integrated logistics tools ready for demonstration — the trust and intelligence layer for defense ILS
 5. **Product vision** — detailed roadmap through enterprise-scale deployment
 6. **Speed** — I can have this production-ready in 60–90 days with company support
 

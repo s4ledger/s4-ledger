@@ -41,7 +41,7 @@ Keep these in your back pocket. Use them in order.
 
 ### 2. We Already Have a Working Product
 
-> "This isn't a concept or a slide deck. I built a fully working platform with 14 defense logistics tools, a Python SDK, REST API, and blockchain-verified audit trails. It's live at s4ledger.com right now. It cost the company zero dollars."
+> "This isn't a concept or a slide deck. I built a fully working platform with 20+ defense logistics tools, a Python SDK, REST API, and blockchain-verified audit trails. It's live at s4ledger.com right now. It cost the company zero dollars."
 
 **Why this works:** CEOs hear pitches for vaporware all the time. Showing a working product built at no cost is the opposite of risk — it's pure upside.
 
@@ -154,10 +154,10 @@ If the CEO says no:
 | Per-program savings | $1.02M–$2.6M/year |
 | S4 Ledger cost | $6K–$60K/year |
 | ROI for government | 15–100x |
-| ILS tools built | 14 |
+| ILS tools built | 20+ |
 | SDK functions | 27 |
 | API endpoints | 29 |
-| Pre-loaded platforms | 500+ across 9 U.S. military branches |
+| Pre-loaded platforms | 500+ across Navy, USMC, and USCG |
 | Cost to build so far | $0 to the company |
 | Cost to go production | $12K–$35K |
 | SBIR Phase I funding | $50K–$250K (free, no equity) |

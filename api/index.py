@@ -455,6 +455,29 @@ def _hydrate_from_supabase():
         print(f"Supabase hydration error (continuing with empty stores): {e}")
 
 
+_user_state_ensured = False
+
+def _ensure_user_state_table():
+    """Ensure user_state table exists in Supabase via SQL RPC or direct insert.
+    The table stores localStorage key/value pairs for cross-session persistence."""
+    global _user_state_ensured
+    if _user_state_ensured:
+        return
+    _user_state_ensured = True
+    # The table should be pre-created in Supabase Dashboard:
+    # CREATE TABLE IF NOT EXISTS user_state (
+    #   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    #   org_id TEXT NOT NULL DEFAULT 'default',
+    #   session_id TEXT NOT NULL DEFAULT 'default',
+    #   state_key TEXT NOT NULL,
+    #   state_value TEXT,
+    #   updated_at TIMESTAMPTZ DEFAULT now(),
+    #   UNIQUE(org_id, session_id, state_key)
+    # );
+    # If it doesn't exist, upserts will simply fail gracefully.
+    print("user_state table should be pre-created in Supabase Dashboard")
+
+
 # API Key auth
 API_MASTER_KEY = os.environ.get("S4_API_MASTER_KEY", "").strip()
 if not API_MASTER_KEY:
@@ -1676,6 +1699,10 @@ class handler(BaseHTTPRequestHandler):
             return "contract_extract"
         if path == "/api/program-metrics":
             return "program_metrics"
+        if path == "/api/state/save":
+            return "state_save"
+        if path == "/api/state/load":
+            return "state_load"
         return None
 
     def _check_rate_limit(self):
@@ -2372,6 +2399,10 @@ class handler(BaseHTTPRequestHandler):
             self._log_request("program-metrics-get")
             self._get_program_metrics(parse_qs(parsed.query))
 
+        elif route == "state_load":
+            self._log_request("state-load")
+            self._get_user_state(parse_qs(parsed.query))
+
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)
 
@@ -2611,6 +2642,59 @@ class handler(BaseHTTPRequestHandler):
             qp += f"&program=eq.{program}" if qp else f"program=eq.{program}"
         rows = _sb_select("program_metrics", query_params=qp, order="recorded_at.desc", limit=500)
         self._send_json({"items": rows, "count": len(rows)})
+
+    # ── User State Persistence (localStorage ↔ Supabase sync) ──
+
+    def _get_user_state(self, params):
+        """Load all persisted user state from Supabase user_state table."""
+        session_id = params.get("session_id", [None])[0] or self.headers.get("X-Session-ID", "default")
+        org_id = self.headers.get("X-API-Key", "") or "default"
+        qp = f"org_id=eq.{org_id}&session_id=eq.{session_id}"
+        rows = _sb_select("user_state", query_params=qp, limit=500)
+        if rows:
+            state = {}
+            for row in rows:
+                state[row.get("state_key", "")] = row.get("state_value", "")
+            self._send_json({"state": state, "count": len(state), "session_id": session_id})
+        else:
+            self._send_json({"state": {}, "count": 0, "session_id": session_id})
+
+    def _save_user_state(self, data):
+        """Save user state key-value pairs to Supabase user_state table.
+        Accepts: { session_id, entries: [{key, value}, ...] } or { session_id, key, value }
+        """
+        session_id = data.get("session_id", self.headers.get("X-Session-ID", "default"))
+        org_id = self.headers.get("X-API-Key", "") or "default"
+
+        entries = data.get("entries", [])
+        if not entries and data.get("key"):
+            entries = [{"key": data["key"], "value": data.get("value", "")}]
+
+        saved = 0
+        for entry in entries:
+            key = entry.get("key", "")
+            value = entry.get("value", "")
+            if not key:
+                continue
+            row = {
+                "org_id": org_id,
+                "session_id": session_id,
+                "state_key": key,
+                "state_value": value,
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            }
+            # Upsert on (org_id, session_id, state_key)
+            result = _sb_upsert("user_state", row)
+            if result is not None:
+                saved += 1
+            else:
+                # Table might not exist yet — try to create it and retry
+                _ensure_user_state_table()
+                result = _sb_upsert("user_state", row)
+                if result is not None:
+                    saved += 1
+
+        self._send_json({"status": "saved", "saved": saved, "total": len(entries), "session_id": session_id})
 
     def do_POST(self):
         _hydrate_from_supabase()  # Cold-start recovery
@@ -4943,6 +5027,10 @@ class handler(BaseHTTPRequestHandler):
                 return
             result = _sb_insert("program_metrics", row)
             self._send_json({"status": "created", "item": result[0] if result else row}, 201 if result else 200)
+
+        elif route == "state_save":
+            self._log_request("state-save")
+            self._save_user_state(data)
 
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)

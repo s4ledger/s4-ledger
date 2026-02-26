@@ -27,7 +27,7 @@ Before we start, here's every acronym, buzzword, and piece of jargon in this doc
 | **DIU** | Defense Innovation Unit — a Pentagon office that finds and funds startups building cool tech for the military |
 | **DLA** | Defense Logistics Agency — the government organization that manages the military supply chain (food, fuel, spare parts, etc.) |
 | **DMSMS** | Diminishing Manufacturing Sources and Material Shortages — when the company that makes a critical part stops making it, and you need to find a replacement before you run out. This is a HUGE expensive problem in defense |
-| **DoW** | Department of War — the U.S. military (Navy, Marines, Space Force, and all their agencies) |
+| **DoW** | Department of War — the U.S. military (Navy, USMC, Coast Guard, and all their agencies) |
 | **FedRAMP** | Federal Risk and Authorization Management Program — a security certification that cloud software must pass before the government will use it. Think of it as the government's seal of approval for cloud services |
 | **FTE** | Full-Time Equivalent — one person working full-time (40 hours/week) |
 | **GIDEP** | Government-Industry Data Exchange Program — a database where government and industry share information about parts that are defective or becoming obsolete |
@@ -72,7 +72,7 @@ Think of it like this:
 
 - **The military** maintains thousands of weapon systems — jets, ships, tanks, missiles. Each one has thousands of parts, hundreds of documents, and years of maintenance history.
 - **Right now**, most of this tracking is done with spreadsheets, PDFs, and 20-year-old software systems that don't talk to each other. It's slow, expensive, error-prone, and easy to fake.
-- **S4 Ledger** replaces all of that with one modern platform. It has 14 built-in tools that handle everything from tracking parts to predicting when something will break, plus a defense database import tool that connects to 24 DoD/DoN systems. And it stamps every record onto a blockchain — which means no one can secretly change the records after the fact.
+- **S4 Ledger** replaces all of that with one modern platform. It has 20+ built-in tools that handle everything from tracking parts to predicting when something will break, plus a defense database import tool that connects to 24 DoD/DoN systems. And it stamps every record onto a blockchain — which means no one can secretly change the records after the fact.
 
 **The bottom line:** S4 Ledger saves the government a LOT of money and makes defense logistics dramatically better. And that means S4 Systems (the company) can grow from a small consulting firm into a billion-dollar technology company.
 

@@ -60,7 +60,7 @@ Clears all localStorage/sessionStorage keys, resets in-memory state, returns to 
 |------|---------|---------|
 | Verify Records | `showSection('sectionVerify')` | `#tabVerify` |
 | Transaction Log | `showSection('sectionLog')` | `#tabLog` |
-| Anchor-S4 (14 ILS tools) | `showSection('sectionILS')` | `#tabILS` → `#ilsSubHub` |
+| Anchor-S4 (20+ ILS tools) | `showSection('sectionILS')` | `#tabILS` → `#ilsSubHub` |
 | Systems | `showSection('sectionSystems')` | `#sectionSystems` |
 
 ### 2.2 `showSection(sectionId)` (line 14472)
@@ -142,12 +142,12 @@ Renders `sessionRecords[]` in reverse chronological order. Each entry shows icon
 
 ---
 
-## 6. ILS SUB-HUB (14 TOOL CARDS)
+## 6. ILS SUB-HUB (20+ TOOL CARDS)
 
 ### 6.0 Tool Card Navigation → `openILSTool(toolId)` (line 14540)
 **WORKS**
 
-Flow: Hides `#ilsSubHub` → shows `#ilsToolBackBar` → hides all `.ils-hub-panel` → shows target panel → calls data-loading function per toolId. All 14 tools have correct mapping with `typeof` guards.
+Flow: Hides `#ilsSubHub` → shows `#ilsToolBackBar` → hides all `.ils-hub-panel` → shows target panel → calls data-loading function per toolId. All 20+ tools have correct mapping with `typeof` guards.
 
 ---
 
@@ -608,7 +608,7 @@ If `index.html` is opened via `file://` protocol, the script tags loading `/s4-a
 | Anchor Tab | 4 | 1 | 3 | 0 | 0 |
 | Verify Tab | 3 | 2 | 1 | 0 | 0 |
 | Transaction Log | 1 | 1 | 0 | 0 | 0 |
-| ILS Tools (14) | 14 | 10 | 4 | 0 | 0 |
+| ILS Tools (20+) | 14 | 10 | 4 | 0 | 0 |
 | Wallet Sidebar | 1 | 1 | 0 | 0 | 0 |
 | Keyboard Shortcuts | 10 | 8 | 0 | 2 | 0 |
 | Theme System | 2 | 2 | 0 | 0 | 0 |
@@ -618,4 +618,4 @@ If `index.html` is opened via `file://` protocol, the script tags loading `/s4-a
 | Security | 7 | 7 | 0 | 0 | 0 |
 | **TOTALS** | **68** | **55 (81%)** | **9 (13%)** | **2 (3%)** | **2 (3%)** |
 
-### Overall Verdict: **All major execution paths are wired and functional.** The 14 ILS tools, core anchor/verify/log system, wallet, theme, command palette, security module, and notification system all have complete HTML→JS→data pipelines. The 5 bugs found are low-to-medium severity (missing shortcut, tab map typo, prompt-based POA&M, file:// protocol issue). No critical bugs or broken execution paths were found.
+### Overall Verdict: **All major execution paths are wired and functional.** The 20+ ILS tools, core anchor/verify/log system, wallet, theme, command palette, security module, and notification system all have complete HTML→JS→data pipelines. The 5 bugs found are low-to-medium severity (missing shortcut, tab map typo, prompt-based POA&M, file:// protocol issue). No critical bugs or broken execution paths were found.

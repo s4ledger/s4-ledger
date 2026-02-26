@@ -84,9 +84,10 @@ For air-gapped, SCIF, or shipboard environments:
 ## Compliance Modules
 
 - NIST 800-171 alignment verification
-- CMMC Level 2 compatibility checks
+- CMMC Level 2-ready compatibility checks
 - DFARS 252.204-7012 compliance tracking
 - Automated audit trail generation
+- FedRAMP Moderate / IL4 hosting planned for production deployments
 - STRIDE threat model accessible via API (`/api/security/threat-model`)
 - Dependency auditing with CycloneDX SBOM (`/api/security/dependency-audit`)
 

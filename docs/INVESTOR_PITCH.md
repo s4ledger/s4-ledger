@@ -45,8 +45,8 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 - **20+ interactive defense tools** live at s4ledger.com/prod-app — not mockups, real working interfaces
 - **37 Python SDK methods** for defense-grade hash anchoring, verification, and batch operations
 - **90+ REST API endpoints** for enterprise integration
-- **500+ pre-loaded military entities** — 500+ defense platforms across 9 U.S. military branches, 37 real defense suppliers, 25 real DoW contracts
-- **156+ pre-built record types across 9 military branches** mapped to real-world logistics workflows (supports any defense record type)
+- **500+ pre-loaded military entities** — 500+ defense platforms across the U.S. Navy, USMC, and USCG, 37 real defense suppliers, 25 real DoW contracts
+- **156+ pre-built record types across Navy, USMC, and USCG** mapped to real-world logistics workflows (supports any defense record type)
 - **100+ real defense documents** in searchable reference library (MIL-STDs, OPNAVINSTs, DoD Directives)
 - **Audit Record Vault** — automatic audit trail storage for every anchored record
 - **Compliance Scorecard** — real-time CMMC/NIST/DFARS compliance posture calculator
@@ -90,7 +90,7 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 | **SAP S/4HANA** | — | $500K–$5M+ | Generic | No |
 | **Oracle NetSuite** | — | $200K–$1M+ | Generic | No |
 | **Microsoft Dynamics** | — | $150K–$800K+ | Generic | No |
-| **S4 Ledger** | Pre-revenue | **$6K–$60K** | **14 built-in** | **Yes (XRPL)** |
+| **S4 Ledger** | Pre-revenue | **$6K–$60K** | **20+ built-in** | **Yes (XRPL)** |
 
 ### Why the XRP Ledger?
 
@@ -155,8 +155,8 @@ Seeking strategic investment and partnership for:
 - SBIR/STTR applications ($50K–$250K Phase I → $500K–$1.5M Phase II → Phase III full production)
 - Pilot program with real contract data
 - Product development (REST API, SaaS dashboard, batch operations)
-- FedRAMP and CMMC certification
-- Compliance certification (NIST, FedRAMP)
+- FedRAMP, CMMC, and IL4-ready hosting certification
+- Compliance certification (NIST, FedRAMP, IL4)
 
 ## Contact
 

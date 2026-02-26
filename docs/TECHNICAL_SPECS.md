@@ -45,7 +45,7 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 | `batch_coc` | Batch certificate of conformance | 24x transmission assemblies |
 | `audit_artifact` | Audit evidence / inspection report | INSURV finding |
 
-*S4 Ledger supports **156+ pre-built record types across 9 military branches** mapped to real-world defense logistics workflows. The table above shows core examples — any defense record type can be anchored.*
+*S4 Ledger supports **156+ pre-built record types across Navy, USMC, and USCG** mapped to real-world defense logistics workflows. The table above shows core examples — any defense record type can be anchored.*
 
 ## 4. SDK Specifications
 
@@ -74,9 +74,9 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 
 | Property | Value |
 |---|---|
-| **Tools** | 14 interactive ILS management tools |
+| **Tools** | 20+ interactive ILS management tools |
 | **Platforms** | 500+ pre-loaded (500+ platforms, 37 suppliers, 25 contracts) |
-| **Record Types** | 156+ pre-built record types across 9 military branches |
+| **Record Types** | 156+ pre-built record types across Navy, USMC, and USCG |
 | **Standards** | MIL-STD-1388, DoDI 4245.15, DoD 5000.73, FAR 46.7, MIL-STD-1390D |
 
 ## 7. XRPL Network
@@ -129,10 +129,10 @@ Private blockchains (Hyperledger, Guardtime KSI) defeat the purpose of independe
 | Standard | Status |
 |---|---|
 | NIST SP 800-171 | Aligned |
-| CMMC Level 2 | **In Progress** — S4 Systems, LLC |
+| CMMC Level 2 | **Level 2-ready** (practically CMMC Level 2) — S4 Systems, LLC |
 | DFARS 252.204-7012 | Compliant (no CDI on-chain) |
 | NIST SP 800-53 (AU) | Immutable audit trail |
-| FedRAMP | Planned (Phase 5) |
+| FedRAMP / IL4 | Planned — targeting FedRAMP authorization and IL4-ready hosting for CUI environments |
 | FIPS 180-4 | SHA-256 compliant |
 
 ## DoD / DoN Database Integration

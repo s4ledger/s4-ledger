@@ -94,13 +94,13 @@ S4 Ledger's architecture aligns with NIST SP 800-171 requirements for CUI protec
 
 ### 3.3 CMMC Compatibility
 
-S4 Ledger is designed to be compatible with CMMC Level 2+ environments. The service supplements, rather than replaces, a Customer's CMMC compliance posture. The built-in **Compliance Scorecard** provides real-time visibility into the Customer's compliance posture across CMMC, NIST 800-171, DFARS, FAR 46, MIL-STD-1388, and DoDI 4245.15 frameworks — based on actual anchoring and tool usage activity.
+S4 Ledger is designed to be compatible with CMMC Level 2-ready environments. The service supplements, rather than replaces, a Customer's CMMC compliance posture. The built-in **Compliance Scorecard** provides real-time visibility into the Customer's compliance posture across CMMC, NIST 800-171, DFARS, FAR 46, MIL-STD-1388, and DoDI 4245.15 frameworks — based on actual anchoring and tool usage activity.
 
 ### 3.4 ILS Workspace Tools
 
-S4 Ledger v5.2.0 includes a comprehensive ILS Workspace with 14 integrated tools:
+S4 Ledger v5.2.0 includes a comprehensive ILS Workspace with 20+ integrated tools:
 
-1. **Gap Analysis** — MIL-STD-1388 compliance checklists for 500+ defense platforms across 9 military branches
+1. **Gap Analysis** — MIL-STD-1388 compliance checklists for 500+ defense platforms for Navy, USMC, and USCG
 2. **Action Items** — Task tracking with priority, assignment, and deadline management
 3. **DMSMS Tracker** — Obsolescence monitoring and resolution planning
 4. **Readiness Calculator** — RAM (Reliability, Availability, Maintainability) analysis

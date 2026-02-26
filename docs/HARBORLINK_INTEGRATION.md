@@ -96,7 +96,7 @@ This document maps the exact technical integration surface — every API call, e
 | **Hash any data** | `POST /api/hash` | Live | SHA-256, returns 64-char hex |
 | **Anchor to XRPL** | `POST /api/anchor` | Live | Hash + `AccountSet` memo + SLS fee |
 | **Verify integrity** | `POST /api/verify` | Live | Recompute hash vs. chain, returns `tamper_detected` |
-| **Record categorization** | `POST /api/categorize` | Live | 156+ pre-built record types across 9 military branches |
+| **Record categorization** | `POST /api/categorize` | Live | 156+ pre-built record types across Navy, USMC, and USCG |
 | **AI analysis** | `POST /api/ai-chat` | Live | Azure OpenAI → GPT-4o → Claude fallback |
 | **Wallet provisioning** | `POST /api/wallet/provision` | Live | Creates XRPL wallet, funds XRP + SLS |
 | **SLS balance check** | `GET /api/wallet/balance` | Live | Query wallet SLS/XRP balance |
@@ -237,7 +237,7 @@ X-API-Key: harborlink-org-key
 
 ### Record Type Mapping
 
-HarborLink artifact types should map to S4 Ledger's 156+ pre-built record types across 9 military branches:
+HarborLink artifact types should map to S4 Ledger's 156+ pre-built record types across Navy, USMC, and USCG:
 
 | HarborLink Artifact | S4 Record Type | Branch |
 |---|---|---|
@@ -1265,16 +1265,13 @@ prediction = ledger.calculate_readiness(
 
 ## Appendix A — Record Type Catalog
 
-S4 Ledger supports 156+ pre-built record types across 9 military branches across U.S. Navy. Key categories for HarborLink:
+S4 Ledger supports 156+ pre-built record types focused on U.S. Navy, USMC, and USCG. Key categories for HarborLink:
 
 | Branch | Types | Examples |
 |---|---|---|
 | USN (Navy) | 30+ | Supply, Maintenance, CDRL, Config, Custody, DMSMS, ECP, LSA, PMS, COSAL |
-| USA (Army) | 20+ | Supply, Readiness, Training, Depot Repair |
-| USAF (Air Force) | 20+ | Supply, Maintenance, Tech Orders, Config |
 | USMC (Marines) | 15+ | Ground Equipment, Aviation, Supply |
 | USCG (Coast Guard) | 12+ | Cutter Maintenance, Supply, Compliance |
-| USSF (Space Force) | 10+ | Satellite Ops, Ground Systems |
 | DLA | 10+ | FLIS, Procurement, Disposal |
 | Cross-Branch | 20+ | Contract, Audit, Calibration, Ordnance, Transport |
 | Generic | 19+ | Supply chain receipt, maintenance, depot repair, custody transfer |

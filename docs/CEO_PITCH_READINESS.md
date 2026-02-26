@@ -23,9 +23,9 @@ S4 Ledger is ready to pitch as a **working prototype with real blockchain integr
 | **File upload** | ✅ Yes | Drag-and-drop CSV, XLSX, PDF, DOCX — parsed client-side, no data leaves the browser |
 | **SLS token economy** | ✅ Yes | Real XRPL wallet provisioning, TrustLine setup, SLS delivery from Treasury |
 | **AI Agent** | ✅ Yes | LLM-powered defense logistics assistant (if API keys configured) with regex fallback |
-| **500+ platforms** | ✅ Yes | Real defense platform database (Navy, USAF, USMC, Coast Guard, NATO, Five Eyes) |
+| **500+ platforms** | ✅ Yes | Real defense platform database (Navy, USMC, Coast Guard, NATO, Five Eyes) |
 | **Export reports** | ✅ Yes | All 15 export buttons produce real downloadable CSV files |
-| **Defense domain depth** | ✅ Yes | 156+ pre-built record types across 9 military branches, correct DI numbers, MIL-STD references, CAGE codes |
+| **Defense domain depth** | ✅ Yes | 156+ pre-built record types across Navy, USMC, and USCG, correct DI numbers, MIL-STD references, CAGE codes |
 
 ### What You Should NOT Claim
 
@@ -111,7 +111,7 @@ The defense logistics software market has no direct competitor doing what S4 Led
 - **Defense customers**: Every major defense prime
 - **ILS overlap**: Maintenance planning, supply management, procurement
 - **Why they're not a direct threat**: SAP implementations cost $1M–$50M+. Take 12-36 months. Require armies of consultants. SAP does the "big ERP" — S4 Ledger does the "last mile" of ILS management that SAP doesn't touch (document-level anchoring, blockchain immutability, per-record audit trails).
-- **S4 Ledger advantage**: $999/mo vs $1M+ implementation. 14 ILS-specific tools vs generic ERP. Blockchain anchoring vs database records.
+- **S4 Ledger advantage**: $999/mo vs $1M+ implementation. 20+ ILS-specific tools vs generic ERP. Blockchain anchoring vs database records.
 
 #### Oracle Federal — Similar to SAP
 - **ILS overlap**: Similar to SAP — enterprise ERP, not ILS-specific
@@ -226,7 +226,7 @@ Every successful defense tech company spent **2-4 years in prototype/demo mode**
 
 ### Near-Term (6-12 Months)
 
-5. **Pursue ATO** (Authority to Operate) — Required to process government data. Start with a NIST 800-171 self-assessment and move toward CMMC Level 2.
+5. **Pursue ATO** (Authority to Operate) — Required to process government data. Start with a NIST 800-171 self-assessment and move toward CMMC Level 2-ready posture. Plan for FedRAMP Moderate / IL4 hosting for production deployments.
 
 6. **Get on GSA Schedule** — Opens the door to simplified government procurement.
 

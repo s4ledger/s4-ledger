@@ -212,9 +212,9 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 | Standard | Status |
 |---|---|
 | NIST 800-171 | Aligned — zero CUI on-chain |
-| CMMC Level 2 | **In Progress** — S4 Systems, LLC |
+| CMMC Level 2 | **Level 2-ready** (practically CMMC Level 2) — S4 Systems, LLC |
 | DFARS 252.204-7012 | Compliant — no covered defense info on-chain |
-| FedRAMP | Roadmap (Phase 5) |
+| FedRAMP / IL4 | Planned — targeting FedRAMP authorization and IL4-ready hosting for CUI environments |
 
 ---
 

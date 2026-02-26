@@ -72,7 +72,7 @@ All 20+ tools talk to each other. When the DMSMS Tracker finds an obsolete part,
 | Capability | S4 Ledger | Palantir Foundry | Anduril Lattice | SAP S/4HANA | Oracle NetSuite | Spreadsheets / SharePoint |
 |---|---|---|---|---|---|---|
 | **What they do** | ILS platform + tamper-proof records | Data analytics / AI | Autonomous systems / C2 | Enterprise ERP | Cloud ERP / SCM | Manual tracking |
-| **Defense ILS tools** | 14 purpose-built ILS tools | None — analytics only | None — hardware/autonomy | Generic — not ILS-specific | Generic — not ILS-specific | None |
+| **Defense ILS tools** | 20+ purpose-built ILS tools | None — analytics only | None — hardware/autonomy | Generic — not ILS-specific | Generic — not ILS-specific | None |
 | **Tamper-proof records** | Yes — SHA-256 on XRPL blockchain | No blockchain | No blockchain | No blockchain | No blockchain | No |
 | **Data stays off-chain** | Yes — only fingerprints on-chain | N/A | N/A | N/A | N/A | N/A |
 | **CMMC/NIST compliance built-in** | Yes — Compliance Scorecard | Partial | No | Partial (add-on) | Partial (add-on) | No |
@@ -106,7 +106,7 @@ Most blockchain companies focus on cryptocurrency or consumer supply chains (tra
 Everything described above is **live and working right now** at [s4ledger.com](https://s4ledger.com). It was built by Nick Frankfort on his own time at zero cost to the company. The tech stack:
 
 - **Website:** 25+ pages, fully branded
-- **Demo App:** All 14 ILS Workspace tools working, 156+ pre-built record types across 9 military branches (supports any defense record type), 500+ pre-loaded military platforms, real DoW data in all dropdowns (35+ platforms, 25 contracts, 37 suppliers)
+- **Demo App:** All 20+ ILS Workspace tools working, 156+ pre-built record types across Navy, USMC, and USCG (supports any defense record type), 500+ pre-loaded military platforms, real DoW data in all dropdowns (35+ platforms, 25 contracts, 37 suppliers)
 - **Audit Record Vault:** Automatically stores every anchored record with content + hash for instant auditing
 - **Defense Document Library:** 100+ real MIL-STDs, OPNAVINSTs, DoD Directives searchable by branch and category
 - **Compliance Scorecard:** Real-time CMMC/NIST/DFARS compliance calculator with letter grades

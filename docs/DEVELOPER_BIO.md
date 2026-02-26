@@ -19,7 +19,7 @@ Nick built the entire platform — 20+ ILS tools, 37 Python SDK methods, 90+ RES
 - **37 Python SDK methods** for defense-grade hash anchoring and verification
 - **90+ REST API endpoints** for enterprise integration
 - **500+ real defense platforms** across the U.S. Navy with real program data
-- **156+ pre-built record types across 9 military branches** mapped to real-world logistics workflows
+- **156+ pre-built record types across Navy, USMC, and USCG** mapped to real-world logistics workflows
 - **$SLS utility token** live on XRPL Mainnet (100M supply)
 - **25+ page production website** at s4ledger.com
 

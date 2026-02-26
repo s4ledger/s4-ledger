@@ -37,11 +37,11 @@ S4 Ledger: Immutable logistics verification for the defense industry, anchored o
 ## Traction
 - **$SLS token LIVE on XRPL Mainnet** — tradable, AMM pools, trustlines
 - 100M total supply | ~15M circulating | 30M multi-sig treasury
-- **14 interactive defense tools** live at s4ledger.com (not mockups)
+- **20+ interactive defense tools** live at s4ledger.com (not mockups)
 - **37 Python SDK methods** for defense-grade hash anchoring and verification
 - **90+ REST API endpoints** for enterprise integration
 - **500+ pre-loaded military entities** — 500+ platforms, 37 suppliers, 25 contracts
-- **156+ pre-built record types across 9 military branches** mapped to real-world logistics workflows
+- **156+ pre-built record types across Navy, USMC, and USCG** mapped to real-world logistics workflows
 - **100+ real defense documents** in searchable reference library
 - **Audit Record Vault** — automatic audit trail for every anchored record
 - **Compliance Scorecard** — CMMC/NIST/DFARS compliance calculator
@@ -111,7 +111,7 @@ Key: 65% labor reduction • 90% error savings • 70% audit reduction • 15-25
 | **Microsoft Dynamics** | Cloud ERP / CRM | Generic add-ons | No | $150K–$800K+ | Not defense-built. No ILS tools |
 | **IBM Hyperledger** | Enterprise blockchain | None | Yes (private) | $200K–$2M+ | No ILS tools. Puts data on-chain (non-starter for defense) |
 | **Spreadsheets** | Manual tracking | None | No | "Free" + $200K+ labor | No automation, no audit trail, no compliance |
-| **S4 Ledger** | ILS + tamper-proof records | **14 built-in** | **Yes (hash-only, XRPL)** | **$6K–$60K** | **Purpose-built for defense logistics** |
+| **S4 Ledger** | ILS + tamper-proof records | **20+ built-in** | **Yes (hash-only, XRPL)** | **$6K–$60K** | **Purpose-built for defense logistics** |
 
 > **Key insight:** $25B+ defense logistics software market has no unified platform with blockchain-verified records. S4 Ledger is first to market.
 

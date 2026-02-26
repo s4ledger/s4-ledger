@@ -27,7 +27,7 @@ S4 Ledger's current architecture is a client-side browser application optimized 
 │  │   prod-app/index.html     │  │
 │  │   (~22,077 lines)          │  │
 │  │                           │  │
-│  │  • 14 ILS Workspace tools │  │
+│  │  • 20+ ILS Workspace tools│  │
 │  │  • Client-side hashing    │  │
 │  │  • localStorage/session   │  │
 │  │  • Direct XRPL calls      │  │
