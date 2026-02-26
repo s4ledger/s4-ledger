@@ -238,3 +238,11 @@ document.addEventListener('shown.bs.tab', function(e) {
 if (window.location.hash === '#tabWallet') {
     document.addEventListener('DOMContentLoaded', () => setTimeout(loadWalletData, 500));
 }
+
+// === Window exports for inline event handlers ===
+window.copyWalletField = copyWalletField;
+window.handleBuySLS = handleBuySLS;
+window.setChartRange = setChartRange;
+window.setSLSAmount = setSLSAmount;
+window.toggleSeed = toggleSeed;
+window.updateSLSPreview = updateSLSPreview;

@@ -6368,3 +6368,10 @@ function _updateThemeIcon(isLight) {
     console.log('[S4 Integrity] ' + integrity.loaded + '/' + integrity.expected + ' modules loaded' + (integrity.healthy ? ' ✓' : ' — Missing: ' + integrity.missing.join(', ')));
 })();
 
+// === Window exports for inline event handlers ===
+window.anchorSBOM = anchorSBOM;
+window.closeDigitalThread = closeDigitalThread;
+window.exportSBOM = exportSBOM;
+window.loadSBOMData = loadSBOMData;
+window.showDigitalThreadFromSelect = showDigitalThreadFromSelect;
+window.toggleTheme = toggleTheme;

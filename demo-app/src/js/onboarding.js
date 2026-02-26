@@ -129,3 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(showOnboarding, 600);
     }
 });
+
+// === Window exports for inline event handlers ===
+window.onboardNext = onboardNext;
+window.selectOnboardTier = selectOnboardTier;

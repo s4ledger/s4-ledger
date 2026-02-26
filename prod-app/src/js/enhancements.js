@@ -7180,3 +7180,35 @@ console.log('[S4 Superior Platform] All modules loaded — IndexedDB, SBOM, GFP,
 
 })();
 
+// === Window exports for inline event handlers ===
+window.anchorCdrlRecord = anchorCdrlRecord;
+window.anchorContractRecord = anchorContractRecord;
+window.anchorGfpRecord = anchorGfpRecord;
+window.anchorProvenanceChain = anchorProvenanceChain;
+window.anchorSBOM = anchorSBOM;
+window.closeDigitalThread = closeDigitalThread;
+window.createNewTeam = createNewTeam;
+window.exportAnalyticsCSV = exportAnalyticsCSV;
+window.exportAnalyticsReport = exportAnalyticsReport;
+window.exportCdrlReport = exportCdrlReport;
+window.exportContractMatrix = exportContractMatrix;
+window.exportGfpReport = exportGfpReport;
+window.exportSBOM = exportSBOM;
+window.exportTeamAudit = exportTeamAudit;
+window.generateProvenanceQR = generateProvenanceQR;
+window.handleCdrlFileUpload = handleCdrlFileUpload;
+window.handleContractFileUpload = handleContractFileUpload;
+window.handleGfpFileUpload = handleGfpFileUpload;
+window.handleProvFileUpload = handleProvFileUpload;
+window.inviteTeamMember = inviteTeamMember;
+window.loadSBOMData = loadSBOMData;
+window.loadTeamDetails = loadTeamDetails;
+window.recordProvenanceEvent = recordProvenanceEvent;
+window.refreshAnalytics = refreshAnalytics;
+window.runAccessReview = runAccessReview;
+window.runCdrlValidation = runCdrlValidation;
+window.runContractExtraction = runContractExtraction;
+window.runGfpInventory = runGfpInventory;
+window.showDigitalThreadFromSelect = showDigitalThreadFromSelect;
+window.toggleTheme = toggleTheme;
+window.verifyProvenanceChain = verifyProvenanceChain;

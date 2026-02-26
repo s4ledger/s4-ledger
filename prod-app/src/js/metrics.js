@@ -1541,3 +1541,15 @@ if (document.readyState === 'loading') {
     }
 })();
 
+// === Window exports for inline event handlers ===
+window.anchorLifecycle = anchorLifecycle;
+window.calcLifecycle = calcLifecycle;
+window.changeCalMonth = changeCalMonth;
+window.exportLifecycle = exportLifecycle;
+window.handleFileSelect = handleFileSelect;
+window.loadPerformanceMetrics = loadPerformanceMetrics;
+window.offlineClearQueue = offlineClearQueue;
+window.offlineQueueHash = offlineQueueHash;
+window.offlineRemoveItem = offlineRemoveItem;
+window.offlineSyncAll = offlineSyncAll;
+window.showCalDay = showCalDay;

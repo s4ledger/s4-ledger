@@ -587,3 +587,11 @@ document.addEventListener('shown.bs.tab', function(e) {
     };
 })();
 
+// === Window exports for inline event handlers ===
+window.closeILSTool = closeILSTool;
+window.closeWalletSidebar = closeWalletSidebar;
+window.openILSTool = openILSTool;
+window.openWalletSidebar = openWalletSidebar;
+window.showHub = showHub;
+window.showSection = showSection;
+window.showSystemsSub = showSystemsSub;

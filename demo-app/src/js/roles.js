@@ -544,3 +544,8 @@ function initRoleSystem() {
         _bpInit();
     }
 })();
+
+// === Window exports for inline event handlers ===
+window.applyRole = applyRole;
+window.onRoleToolToggle = onRoleToolToggle;
+window.selectRolePreset = selectRolePreset;
