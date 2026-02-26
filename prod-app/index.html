@@ -453,7 +453,7 @@
             transition:all 0.3s !important;
             position:relative !important;
         }
-        /* ── How It Works ? help icon (shows on return visits when details collapsed) ── */
+        /* ── How It Works ? help icon ── */
         .hiw-help-btn{
             width:26px !important;height:26px !important;border-radius:50% !important;
             background:rgba(0,170,255,0.12) !important;border:1px solid rgba(0,170,255,0.25) !important;
@@ -464,6 +464,19 @@
             vertical-align:middle !important;
         }
         .hiw-help-btn:hover{background:rgba(0,170,255,0.25) !important;transform:scale(1.1) !important}
+        /* ── How It Works modal popup ── */
+        .hiw-modal-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.65);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease;backdrop-filter:blur(4px)}
+        .hiw-modal-box{background:var(--card,#0f1318);border:1px solid rgba(0,170,255,0.25);border-radius:8px;max-width:560px;width:92%;max-height:75vh;overflow-y:auto;padding:28px 24px 24px;position:relative;box-shadow:0 12px 40px rgba(0,0,0,0.5);animation:scaleIn 0.25s ease}
+        @keyframes scaleIn{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}
+        .hiw-modal-box h4{color:#00aaff;font-size:1rem;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+        .hiw-modal-box .hiw-close{position:absolute;top:10px;right:14px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px 8px;line-height:1}
+        .hiw-modal-box .hiw-close:hover{color:#fff}
+        .hiw-modal-box .hiw-body{color:var(--steel);font-size:0.84rem;line-height:1.65}
+        .hiw-modal-box .hiw-body p{margin:0 0 10px}
+        .hiw-modal-box .hiw-body strong{color:#fff}
+        [data-theme="light"] .hiw-modal-box{background:#fff;border-color:rgba(0,170,255,0.2);box-shadow:0 12px 40px rgba(0,0,0,0.15)}
+        [data-theme="light"] .hiw-modal-box .hiw-body strong{color:#1a1a2e}
+        [data-theme="light"] .hiw-modal-box .hiw-close{color:#999}
 
         /* ── Drag-reorder tool cards ── */
         .ils-tool-card{cursor:grab;user-select:none;-webkit-user-select:none;transition:transform 0.15s ease,opacity 0.15s ease,box-shadow 0.15s ease}
@@ -1311,6 +1324,18 @@
         [data-theme="light"] .s4-activity-item{border-bottom-color:rgba(0,0,0,0.06)}
         [data-theme="light"] .s4-favorites-bar{background:rgba(245,245,247,0.5);border-bottom-color:#d2d2d7}
 
+        /* ── Light-mode Chart.js & Diagram Visibility ── */
+        [data-theme="light"] canvas{background:rgba(255,255,255,0.95);border-radius:3px}
+        [data-theme="light"] .chart-container,[data-theme="light"] [id*="Chart"]{background:#fff;border-radius:3px;padding:4px}
+        [data-theme="light"] .tool-panel table,[data-theme="light"] .tool-panel table th,[data-theme="light"] .tool-panel table td{color:#1d1d1f;border-color:rgba(0,0,0,0.12)}
+        [data-theme="light"] .tool-panel table th{background:rgba(0,170,255,0.06);color:#1a1a2e}
+        [data-theme="light"] .tool-panel table td{background:#fff}
+        [data-theme="light"] .tool-panel .form-control,[data-theme="light"] .tool-panel .form-select,[data-theme="light"] .tool-panel select,[data-theme="light"] .tool-panel input[type="text"],[data-theme="light"] .tool-panel input[type="number"],[data-theme="light"] .tool-panel textarea{background:#fff !important;color:#1d1d1f !important;border-color:rgba(0,0,0,0.15) !important}
+        [data-theme="light"] .tool-panel{color:#1d1d1f}
+        [data-theme="light"] .tool-panel h3,[data-theme="light"] .tool-panel h4,[data-theme="light"] .tool-panel strong{color:#1a1a2e}
+        [data-theme="light"] .tool-panel p,[data-theme="light"] .tool-panel span,[data-theme="light"] .tool-panel label,[data-theme="light"] .tool-panel li{color:#333}
+        [data-theme="light"] .tool-panel .card,[data-theme="light"] .tool-panel [style*="background:#0a0e1a"],[data-theme="light"] .tool-panel [style*="background:var(--surface)"]{background:#fff !important;border-color:rgba(0,0,0,0.1) !important}
+
     </style>
 </head>
 <body>
@@ -2093,20 +2118,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 
                             <label>3. Upload file or enter record content</label>
                             <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:3px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;"><i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--accent);margin-bottom:6px;display:block;"></i><div style="color:var(--steel);font-size:0.82rem;">Drag &amp; drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div><div style="color:var(--muted);font-size:0.72rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, TXT &mdash; any file type</div><input type="file" id="fileUploadInput" style="display:none" onchange="handleFileSelect(event)"><div id="dropFileName" style="display:none;margin-top:8px;color:var(--accent);font-weight:600;font-size:0.82rem;"></div></div>
-                            <textarea id="recordInput" aria-label="Record content to anchor" placeholder="Or paste/type your defense logistics record here..." oninput="this.dataset.autoFilled='false'"></textarea>
-                            <div class="mt-2 mb-3">
-                                <span style="color:var(--muted);font-size:0.8rem">Try a sample:</span>
-                                <span class="sample-btn" onclick="loadSample('supply')">Supply Receipt</span>
-                                <span class="sample-btn" onclick="loadSample('maintenance')">3-M Maint</span>
-                                <span class="sample-btn" onclick="loadSample('ordnance')">Ordnance Lot</span>
-                                <span class="sample-btn" onclick="loadSample('casrep')">CASREP</span>
-                                <span class="sample-btn" onclick="loadSample('custody')">Custody Transfer</span>
-                                
-                                
-                                <span class="sample-btn" onclick="loadSample('drl')">Navy DRL</span>
-                                <span class="sample-btn" onclick="loadSample('buylist')">Navy Buylist</span>
-                                <span class="sample-btn" onclick="loadSample('transfer_book')">Transfer Book</span>
-                            </div>
+                            <textarea id="recordInput" aria-label="Record content to anchor" placeholder="Paste or type your defense logistics record here..." oninput="this.dataset.autoFilled='false'"></textarea>
                             <div class="d-flex gap-2 align-items-center">
                                 <label class="form-check-label" style="font-size:0.85rem">
                                     <input type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px"> Encrypt before hashing (CUI protection)
@@ -2505,37 +2517,37 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="itc-desc">Manage provisioning technical data and CDRL submissions.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-sbom')">
-                        <span class="itc-icon"><i class="fas fa-microchip" style="color:#00aaff;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-microchip" style="color:var(--accent);"></i></span>
                         <div class="itc-title">SBOM Viewer</div>
                         <div class="itc-desc">Software Bill of Materials — track components, CVEs, and blockchain attestation.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-gfp')">
-                        <span class="itc-icon"><i class="fas fa-boxes-stacked" style="color:#00aaff;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-boxes-stacked" style="color:var(--accent);"></i></span>
                         <div class="itc-title">GFP Tracker</div>
                         <div class="itc-desc">Government-Furnished Property tracking — DD 1662, inventory management, and accountability.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-cdrl')">
-                        <span class="itc-icon"><i class="fas fa-clipboard-check" style="color:#c9a84c;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-clipboard-check" style="color:var(--accent);"></i></span>
                         <div class="itc-title">CDRL Validator</div>
                         <div class="itc-desc">Contract Data Requirements List validation — DI format checks and content analysis.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-contract')">
-                        <span class="itc-icon"><i class="fas fa-file-contract" style="color:#00aaff;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-file-contract" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Contract Extractor</div>
                         <div class="itc-desc">AI-powered clause extraction — FAR/DFARS, CDRL detection, and obligation mapping.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-provenance')">
-                        <span class="itc-icon"><i class="fas fa-link" style="color:#c9a84c;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-link" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Provenance Chain</div>
                         <div class="itc-desc">Blockchain-verified chain of custody — QR codes and custody transfer tracking.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-analytics')">
-                        <span class="itc-icon"><i class="fas fa-chart-pie" style="color:#00aaff;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-chart-pie" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Cross-Program Analytics</div>
                         <div class="itc-desc">Multi-program dashboard — aggregate metrics, trends, and comparative analysis.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-team')">
-                        <span class="itc-icon"><i class="fas fa-users-gear" style="color:#c9a84c;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-users-gear" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Team Management</div>
                         <div class="itc-desc">Multi-tenant team operations — invitations, roles, and access control.</div>
                     </div>
@@ -2597,49 +2609,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             </div>
                             <input type="file" id="ilsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx,.doc" style="display:none" onchange="handleILSFiles(this.files)">
                             <div style="margin:8px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                                <div style="position:relative;display:inline-block">
-                                    <select id="sampleDocSelect" onchange="loadSelectedSampleDoc(this.value)" style="font-weight:600;min-width:260px;border-color:rgba(0,170,255,0.25) !important;color:var(--accent) !important">
-                                        <option value="" disabled selected>Load Sample Document...</option>
-                                        <optgroup label="Data Requirements">
-                                            <option value="drl">DRL Tracker (CDRL Status Log)</option>
-                                            <option value="cdrl_matrix">CDRL Compliance Matrix</option>
-                                        </optgroup>
-                                        <optgroup label="Provisioning & Supply">
-                                            <option value="vrs">Vendor Recommended Spares (VRS)</option>
-                                            <option value="buylist">Spares Buylist / Initial Outfitting</option>
-                                            <option value="po_index">Purchase Order Index</option>
-                                            <option value="gfm">Gov't Furnished Material (GFM) List</option>
-                                            <option value="hazmat">HazMat Inventory</option>
-                                        </optgroup>
-                                        <optgroup label="Maintenance & Support">
-                                            <option value="lcsp">Life Cycle Sustainment Plan (LCSP)</option>
-                                            <option value="mrc">Maintenance Requirement Cards (MRCs)</option>
-                                            <option value="mel">Machinery Equipment List (MEL)</option>
-                                            <option value="pms_schedule">PMS Development Schedule</option>
-                                        </optgroup>
-                                        <optgroup label="Configuration & ID">
-                                            <option value="iuid">IUID Register</option>
-                                            <option value="config_baseline">Configuration Baseline Index</option>
-                                            <option value="weight_report">Weight Report</option>
-                                        </optgroup>
-                                        <optgroup label="Engineering & Test">
-                                            <option value="ela">Electrical Load Analysis</option>
-                                            <option value="temp">Test & Evaluation Master Plan (TEMP)</option>
-                                            <option value="icd">Interface Control Document (ICD)</option>
-                                        </optgroup>
-                                        <optgroup label="Training & Manpower">
-                                            <option value="training_plan">Training Plan / NTSP</option>
-                                            <option value="manpower">Manpower Estimate Report</option>
-                                        </optgroup>
-                                        <optgroup label="Contracts & Compliance">
-                                            <option value="sow_matrix">SOW Compliance Matrix</option>
-                                            <option value="ims">Integrated Master Schedule (IMS)</option>
-                                            <option value="risk_register">Program Risk Register</option>
-                                        </optgroup>
-                                    </select>
-                                </div>
-                                <button style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.15);color:var(--accent);border-radius:3px;padding:6px 14px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600;transition:all 0.2s" onmouseover="this.style.background='rgba(201,168,76,0.2)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(201,168,76,0.12),rgba(0,170,255,0.2))'" onclick="event.stopPropagation();loadSamplePackage()"><i class="fas fa-box-open"></i> Load Full ILS Package</button>
-                                <span style="font-size:0.78rem;color:var(--muted)">22 document types — DRL, LCSP, IUID, VRS, IMS & more</span>
+                                <span style="font-size:0.78rem;color:var(--muted)">Supports 22+ document types — DRL, LCSP, IUID, VRS, IMS, CDRL & more</span>
                             </div>
                             <div class="ils-file-list" id="ilsFileList"></div>
 
@@ -2802,7 +2772,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 <p><strong style="color:#fff;">What's real:</strong> Platform names, system names, manufacturers, CAGE codes, and FSC groups are all real. The systems shown (AN/SPY-6, Mk 41 VLS, LM2500, etc.) are the actual systems installed on these platforms.</p>
                                 <p><strong style="color:#ffa500;">Data source note:</strong> The DMSMS statuses (Active/At Risk/Obsolete) are <em>simulated</em> in sample mode. Real obsolescence data comes from <strong>GIDEP</strong> (Government-Industry Data Exchange Program), <strong>DLA</strong> (Defense Logistics Agency), and vendor EOL notices — all of which require authenticated access.</p>
                                 <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> When a DMSMS case is identified and a resolution is chosen (bridge buy, redesign, alternate source), S4 Ledger anchors a SHA-256 hash of that decision to the XRP Ledger. This creates <em>immutable proof</em> that the obsolescence was documented, analyzed, and resolved at a specific date — critical for audits, contract disputes, and proving due diligence. Without this, programs lose millions to undocumented obsolescence discoveries during production.</p>
-                                <p><strong style="color:#00aaff;">Production mode:</strong> Connect to GIDEP, DLA ASSIST, or your own parts database via the S4 API. Upload real DMSMS case files via CSV/XLSX. The tool structure is designed for real data — swap the sample data layer for your authenticated data source.</p>
+                                <p><strong style="color:#00aaff;">Production mode:</strong> Connect to GIDEP, DLA ASSIST, or your own parts database via the S4 API. Upload real DMSMS case files via CSV/XLSX. The tool structure is designed for real data — connect your authenticated data source for full integration.</p>
                             </div>
                         </details>
                         <label>Select Program</label>
@@ -3171,8 +3141,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <button onclick="showDocVersionUpload()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-brain"></i> Analyze Revision</button>
                         <select id="docBranchFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
                             <option value="all">All Branches</option>
-                            <option value="JOINT">Joint / DoD-Wide</option>
                             <option value="USN">U.S. Navy</option>
+                            <option value="USMC">U.S. Marine Corps</option>
+                            <option value="USCG">U.S. Coast Guard</option>
                         </select>
                     </div>
                     <!-- Category Filter Row -->
@@ -3801,8 +3772,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="subBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
-                                <option value="USN">Navy</option>
-                                <option value="JOINT" selected>Joint</option>
+                                <option value="USN" selected>Navy</option>
+                                <option value="USMC">Marine Corps</option>
+                                <option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
@@ -3985,7 +3957,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="gfpBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
-                                <option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option>
+                                <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
@@ -4082,7 +4054,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="cdrlBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
-                                <option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option>
+                                <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
@@ -4177,7 +4149,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="contractBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
-                                <option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option>
+                                <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
@@ -4274,7 +4246,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="provBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
-                                <option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option>
+                                <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
@@ -4373,7 +4345,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch Filter</label>
                             <select id="analyticsBranch" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
-                                <option value="ALL" selected>All Branches</option><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT">Joint</option>
+                                <option value="ALL" selected>All Branches</option><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
@@ -4839,8 +4811,8 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 <div id="prodFeaturesModal" class="modal-overlay" onclick="if(event.target===this)closeProdFeatures()">
     <div class="modal-box" style="position:relative;max-width:720px;max-height:85vh;overflow-y:auto">
         <button onclick="closeProdFeatures()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button>
-        <h4 style="margin-bottom:4px"><i class="fas fa-rocket" style="color:#00aaff;margin-right:8px"></i>Production Features Roadmap</h4>
-        <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">These features require server-side infrastructure and are available in the production deployment of S4 Ledger. Each is architected and ready for implementation.</p>
+        <h4 style="margin-bottom:4px"><i class="fas fa-rocket" style="color:#00aaff;margin-right:8px"></i>S4 Ledger Roadmap</h4>
+        <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">Upcoming capabilities planned for future releases. Core ILS tools, Supabase persistence, XRP Ledger anchoring, and 20+ analysis tools are live now.</p>
         <div id="prodFeaturesList"></div>
         <div style="margin-top:16px;padding:12px;background:rgba(0,170,255,0.06);border-radius:3px;border-left:3px solid #00aaff;font-size:0.82rem;color:var(--steel)"><strong style="color:#00aaff">Contact sales@s4ledger.com</strong> to discuss production deployment, IL4/IL5 hosting, and enterprise licensing for your organization.</div>
     </div>
@@ -6809,6 +6781,31 @@ const PROGS = {
         {s:'A004',di:'DI-TMSS-81000',t:'Technical Manuals',el:'techdata',c:1},
         {s:'A005',di:'DI-CMAN-81250',t:'Configuration Status Accounting',el:'config',c:1},
         {s:'A006',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
+    ]},
+    ssc:{name:'SSC (Ship-to-Shore Connector)',ofc:'PMS 325',type:'Landing Craft Air Cushion',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Technical Documentation',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Recommended Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Configuration Status Accounting',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1},
+        {s:'A009',di:'DI-SESS-81519',t:'Support Equipment',el:'se',c:1},
+        {s:'A010',di:'DI-PACK-80886',t:'PHS&T Plan',el:'phst',c:1},
+        {s:'A011',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
+    ]},
+    dls:{name:'Diving & Life Support Systems',ofc:'PMS 385',type:'Salvage & Diving Equipment',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Technical Documentation',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Recommended Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals — Dive Systems',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Configuration Status Accounting',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan — Dive Certification',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM / Safety Analysis',el:'ram',c:1},
+        {s:'A009',di:'DI-SESS-81519',t:'Support Equipment — Dive Lockers',el:'se',c:1},
+        {s:'A010',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
     ]},
     fa18:{name:'F/A-18E/F Super Hornet',ofc:'PMA-265',type:'Carrier-Based Strike Fighter',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
@@ -8947,7 +8944,7 @@ function generateAiResponse(query) {
     if (/xrp.*ledger|what.*xrpl|why.*xrpl|which.*blockchain/.test(q)) return '<strong>Why XRPL (XRP Ledger)?</strong><br><br>S4 Ledger uses the XRP Ledger because it\'s:<br><br>\u2022 <strong>Fast:</strong> 3-5 second transaction finality<br>\u2022 <strong>Cheap:</strong> ~$0.001 per transaction (drops)<br>\u2022 <strong>Energy efficient:</strong> No mining \u2014 uses federated consensus<br>\u2022 <strong>Built-in DEX:</strong> Native token exchange for SLS liquidity<br>\u2022 <strong>Issued currencies:</strong> Native support for custom tokens like $SLS<br>\u2022 <strong>TrustLines:</strong> Controlled token distribution<br>\u2022 <strong>Battle-tested:</strong> Operating since 2012, used by 150+ financial institutions<br><br>XRPL\'s low transaction cost makes it practical for micro-anchoring \u2014 1,500x cheaper than traditional verification methods.';
 
     // ── ILS TOOLS (20+ tools) ──
-    if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against MIL-STD-1388 requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> for Navy programs. Results can be anchored to XRPL for audit purposes.<br><br><strong>Try it:</strong> Click "Load Full ILS Package" to see a complete analysis.';
+    if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against MIL-STD-1388 requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> for Navy programs. Results can be anchored to XRPL for audit purposes.<br><br><strong>Try it:</strong> Upload your program documents to run a full analysis.';
 
     if (/action.*item|task|open.*action|todo/.test(q)) { const total = s4ActionItems.length; const done = s4ActionItems.filter(a=>a.done).length; return '<strong>Action Items Manager</strong><br><br>' + (total > 0 ? 'Current status: <strong>' + done + '/' + total + '</strong> complete (' + Math.round(done/total*100) + '%)<br><br>' : 'No action items yet. Run a gap analysis to generate prioritized actions.<br><br>') + 'The Action Items Manager tracks all ILS-related tasks generated by gap analysis, DMSMS reviews, readiness assessments, and manual entries. Each item includes:<br>\u2022 Severity (critical/warning/info)<br>\u2022 Responsible owner<br>\u2022 Cost and schedule impact estimates<br>\u2022 Due dates and status tracking<br>\u2022 Linkage to specific DI numbers and ILS elements'; }
 
@@ -8989,7 +8986,7 @@ function generateAiResponse(query) {
             var ww = _subCache.discrepancies.filter(function(d){return d.severity==='warning'}).length;
             return '<strong>Submissions & PTD Analysis Results:</strong><br>Total discrepancies: <strong>' + _subCache.discrepancies.length + '</strong><br>Critical: <span style="color:#ff4444">' + cc + '</span> | Warnings: <span style="color:#ffa500">' + ww + '</span><br>Program: ' + (_subCache.meta.program || 'N/A') + '<br>Branch: ' + (_subCache.meta.branch || 'N/A') + '<br><br>Use "Analyze & Compare" for a different submission or "Export Discrepancy Report" to download findings.';
         }
-        return '<strong>Submissions &amp; PTD</strong><br><br>Analyzes vendor submissions against baseline data to detect discrepancies:<br><br>\u2022 <strong>Cost anomalies</strong> \u2014 >10-25% cost increases flagged<br>\u2022 <strong>Component changes</strong> \u2014 new/removed items detected<br>\u2022 <strong>CAGE code changes</strong> \u2014 manufacturer substitutions<br>\u2022 <strong>Source/vendor swaps</strong> \u2014 supply chain changes<br>\u2022 <strong>Lead time increases</strong> \u2014 >30 day threshold<br>\u2022 <strong>Status downgrades</strong> \u2014 Active\u2192Obsolete flags<br><br>Upload a CSV/Excel file or use "Run Sample Analysis" to see a full example with sample discrepancies.';
+        return '<strong>Submissions &amp; PTD</strong><br><br>Analyzes vendor submissions against baseline data to detect discrepancies:<br><br>\u2022 <strong>Cost anomalies</strong> \u2014 >10-25% cost increases flagged<br>\u2022 <strong>Component changes</strong> \u2014 new/removed items detected<br>\u2022 <strong>CAGE code changes</strong> \u2014 manufacturer substitutions<br>\u2022 <strong>Source/vendor swaps</strong> \u2014 supply chain changes<br>\u2022 <strong>Lead time increases</strong> \u2014 >30 day threshold<br>\u2022 <strong>Status downgrades</strong> \u2014 Active\u2192Obsolete flags<br><br>Upload a CSV/Excel file to run discrepancy analysis on your data.';
     }
 
     // ── DEFENSE STANDARDS ──
@@ -9002,7 +8999,7 @@ function generateAiResponse(query) {
     if (/dfars|252\.204|safeguard.*defense|covered.*defense/.test(q)) return '<strong>DFARS 252.204-7012</strong> \u2014 Safeguarding Covered Defense Information<br><br>Key requirements:<br>\u2022 Implement NIST SP 800-171 controls for CDI/CUI<br>\u2022 Report cyber incidents within 72 hours<br>\u2022 Preserve media and data for 90 days post-incident<br>\u2022 Flow down to subcontractors<br><br>S4\'s blockchain anchoring creates verifiable evidence of data integrity controls, directly supporting DFARS compliance.';
 
     // ── GENERAL HELP ──
-    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore Anchor-S4</strong> \u2014 20+ tools organized by function<br>3. <strong>Try a sample analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.';
+    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore Anchor-S4</strong> \u2014 20+ tools organized by function<br>3. <strong>Upload your documents</strong> \u2014 PDFs, Excel, Word, CSV \u2014 into Gap Analysis<br>4. <strong>Run a full analysis</strong> \u2014 the engine cross-references against ILS requirements<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.';
 
     if (/configure.*ai|api.*key|ai.*setup|enable.*ai|openai|anthropic|azure|groq|mistral/.test(q)) return '<strong>S4 AI Agent Configuration</strong><br><br>The AI Agent is a production-grade assistant powered by large language models (LLMs). It provides:<br><br>\u2022 <strong>Context-aware analysis</strong> across all 20+ ILS tools<br>\u2022 <strong>Natural language Q&A</strong> on defense logistics, supply chain, compliance, and more<br>\u2022 <strong>Document analysis &amp; summarization</strong> for uploaded files<br>\u2022 <strong>Real-time insights</strong> based on your loaded program data<br>\u2022 <strong>Custom report generation</strong> and memo drafting<br><br>The agent automatically adapts based on which ILS tool you\u2019re using and what data you\u2019ve loaded. Just type your question — the agent handles the rest.';
 
@@ -9026,7 +9023,7 @@ function generateAiResponse(query) {
     }
 
     // ── ACRONYMS & TERMS ──
-    if (/what.*lcsp|lcsp|life.*cycle.*sustain.*plan/.test(q)) return '<strong>Life Cycle Sustainment Plan (LCSP)</strong> \u2014 DI-ILSS-81490<br><br>The LCSP is the top-level ILS planning document that defines the sustainment strategy for the entire program lifecycle. It addresses all 12 ILS elements, establishes performance metrics (Ao, MTBF, MTTR), and is required per DoD Instruction 5000.02.<br><br>Use "Load Full ILS Package" in Gap Analysis to see a sample LCSP structure.';
+    if (/what.*lcsp|lcsp|life.*cycle.*sustain.*plan/.test(q)) return '<strong>Life Cycle Sustainment Plan (LCSP)</strong> \u2014 DI-ILSS-81490<br><br>The LCSP is the top-level ILS planning document that defines the sustainment strategy for the entire program lifecycle. It addresses all 12 ILS elements, establishes performance metrics (Ao, MTBF, MTTR), and is required per DoD Instruction 5000.02.<br><br>Upload your LCSP document in Gap Analysis for full element-by-element analysis.';
 
     if (/what.*lsar|lsar|logistics.*support.*analysis.*record/.test(q)) return '<strong>Logistics Support Analysis Record (LSAR)</strong><br><br>The LSAR is the central database for logistics data generated during the Logistics Support Analysis (LSA) process. It captures task analysis, failure modes, repair levels, support equipment requirements, and spares data per MIL-STD-1388-2B.';
 
@@ -9545,7 +9542,7 @@ function showCustomProgramInput() {
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Acquiring Office</label><input id="customProgOffice" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., PMS 400D, PMA-299"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USA">U.S. Army</option><option value="USAF">U.S. Air Force</option><option value="USSF">U.S. Space Force</option><option value="USCG">U.S. Coast Guard</option><option value="JOINT">Joint / DoD-Wide</option></select></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">'
         + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Cancel</button>'
@@ -9601,14 +9598,15 @@ window.S4_buildProgramOptions = function(includeAll, includeCustom) {
         'NAVSEA \u2014 Surface Combatants': ['ddg51','ddg1000','ffg62','cg47','lcs'],
         'NAVSEA \u2014 Carriers & Amphibs': ['cvn78','lpd17','lha6','lhd1','lsd49'],
         'NAVSEA \u2014 Submarines': ['ssn774','ssbn826'],
-        'NAVSEA \u2014 Mine Warfare': ['mcm1'],
+        'NAVSEA \u2014 Mine Warfare & Special Mission': ['mcm1','ssc','dls'],
         'NAVSEA \u2014 Service Craft (PMS 300)': ['yrbm','apl','afdm','ydt','yon'],
         'NAVAIR \u2014 Strike Fighters': ['f35','f35b','fa18'],
         'NAVAIR \u2014 Mission Support': ['e2d','ea18g','p8a','mq4c','mq25'],
         'NAVAIR \u2014 Rotary Wing': ['ch53k','mh60r','mh60s'],
         'NAVAIR \u2014 Tiltrotor & COD': ['cmv22'],
         'NAVAIR \u2014 Training': ['t45'],
-        'USMC \u2014 Aviation': ['ah1z','uh1y','kc130j']
+        'USMC \u2014 Aviation': ['ah1z','uh1y','kc130j'],
+        'USCG \u2014 Cutters': ['nsc','opc','frc']
     };
     Object.keys(navyKeys).forEach(function(group) {
         var keys = navyKeys[group];
@@ -9634,7 +9632,7 @@ window.S4_buildProgramOptions = function(includeAll, includeCustom) {
 
 window.S4_countPlatforms = function() {
     if (typeof PROGS === 'undefined') return 0;
-    var navyKeys = ['ddg51','ddg1000','ffg62','cg47','lcs','cvn78','lpd17','lha6','lhd1','lsd49','ssn774','ssbn826','mcm1','yrbm','apl','afdm','ydt','yon','f35','f35b','fa18','e2d','ea18g','p8a','mq4c','mq25','ch53k','mh60r','mh60s','cmv22','t45','ah1z','uh1y','kc130j'];
+    var navyKeys = ['ddg51','ddg1000','ffg62','cg47','lcs','cvn78','lpd17','lha6','lhd1','lsd49','ssn774','ssbn826','mcm1','ssc','dls','yrbm','apl','afdm','ydt','yon','f35','f35b','fa18','e2d','ea18g','p8a','mq4c','mq25','ch53k','mh60r','mh60s','cmv22','t45','ah1z','uh1y','kc130j','nsc','opc','frc'];
     var count = 0;
     navyKeys.forEach(function(k){ if(PROGS[k]) count++; });
     return count;
@@ -9886,7 +9884,7 @@ function openProdFeatures(){
     g.items.forEach(function(f){
       html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin-bottom:4px;background:var(--surface);border-radius:3px;border:1px solid var(--border)">';
       html+='<div style="flex:1"><strong style="font-size:0.85rem">'+f.name+'</strong><p style="margin:2px 0 0;font-size:0.78rem;color:var(--steel)">'+f.desc+'</p></div>';
-      html+='<span style="white-space:nowrap;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:3px;background:rgba(201,168,76,0.15);color:#c9a84c;border:1px solid rgba(201,168,76,0.3)">PRODUCTION</span>';
+      html+='<span style="white-space:nowrap;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:3px;background:rgba(0,170,255,0.12);color:#00aaff;border:1px solid rgba(0,170,255,0.3)">PLANNED</span>';
       html+='</div>';
     });
     html+='</div>';
@@ -12375,7 +12373,7 @@ function analyzeSubmission() {
                 _subCache.items = pasteData.startsWith('[') ? JSON.parse(pasteData) : parseCSVSubmission(pasteData);
             } catch(e) { showWorkspaceNotification('Could not parse pasted data'); return; }
         } else {
-            showWorkspaceNotification('Upload a file or paste data first, or click "Run Sample Analysis"');
+            showWorkspaceNotification('Upload a file or paste data first to run analysis');
             return;
         }
     }
@@ -14826,38 +14824,43 @@ function openILSTool(toolId) {
     // Update floating AI agent context
     if (typeof updateAiContext === 'function') updateAiContext(toolId);
     
-    // ── How It Works: first-visit auto-open, return-visit collapsed + ? icon ──
+    // ── How It Works: modal popup on first visit, ? icon on return visits ──
     if (panel) {
         var det = panel.querySelector('details');
         var h3 = panel.querySelector('h3');
         if (det && h3) {
+            // Always hide the <details> element — we use modal popups now
+            det.style.display = 'none';
+            det.removeAttribute('open');
             var storageKey = 's4_hiw_' + toolId;
             var visited = false;
             try { visited = localStorage.getItem(storageKey) === '1'; } catch(e) {}
             // Remove any existing ? button
             var existingBtn = h3.querySelector('.hiw-help-btn');
             if (existingBtn) existingBtn.remove();
-            if (!visited) {
-                // First visit: open details, mark as visited
-                det.setAttribute('open', '');
-                det.style.display = '';
-                try { localStorage.setItem(storageKey, '1'); } catch(e) {}
-            } else {
-                // Return visit: collapse details, show ? icon in header
-                det.removeAttribute('open');
-                det.style.display = 'none';
-                var qBtn = document.createElement('button');
-                qBtn.className = 'hiw-help-btn';
-                qBtn.innerHTML = '?';
-                qBtn.title = 'Show How It Works';
-                qBtn.onclick = function(e) {
-                    e.stopPropagation();
-                    det.style.display = '';
-                    det.setAttribute('open', '');
-                    qBtn.style.display = 'none';
-                };
-                h3.appendChild(qBtn);
+
+            function showHIWModal() {
+                var title = det.querySelector('summary') ? det.querySelector('summary').textContent.trim() : 'How It Works';
+                var bodyContent = det.querySelector('summary + div, div') ? det.querySelector('summary + div, div').innerHTML : det.innerHTML;
+                var overlay = document.createElement('div');
+                overlay.className = 'hiw-modal-overlay';
+                overlay.onclick = function(e) { if (e.target === overlay) { overlay.remove(); } };
+                overlay.innerHTML = '<div class="hiw-modal-box"><button class="hiw-close" onclick="this.closest(\'.hiw-modal-overlay\').remove()">&times;</button><h4><i class="fas fa-info-circle" style="color:#00aaff"></i> ' + title + '</h4><div class="hiw-body">' + bodyContent + '</div></div>';
+                document.body.appendChild(overlay);
             }
+
+            if (!visited) {
+                // First visit: auto-popup
+                try { localStorage.setItem(storageKey, '1'); } catch(e) {}
+                setTimeout(showHIWModal, 300);
+            }
+            // Always add ? icon for manual access
+            var qBtn = document.createElement('button');
+            qBtn.className = 'hiw-help-btn';
+            qBtn.innerHTML = '?';
+            qBtn.title = 'Show How It Works';
+            qBtn.onclick = function(e) { e.stopPropagation(); showHIWModal(); };
+            h3.appendChild(qBtn);
         }
     }
     
@@ -18493,6 +18496,29 @@ function toggleTheme() {
     // Update hamburger menu button
     var hamburger = document.querySelector('nav button[aria-label="Menu"]');
     if (hamburger) hamburger.style.color = isLight ? '#1d1d1f' : '#fff';
+    // Update Chart.js chart colors for theme
+    if (typeof Chart !== 'undefined') {
+        var textColor = isLight ? '#333' : '#ccc';
+        var gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.06)';
+        Chart.defaults.color = textColor;
+        Chart.defaults.borderColor = gridColor;
+        Object.values(Chart.instances || {}).forEach(function(c) {
+            if (!c || !c.options) return;
+            try {
+                if (c.options.scales) {
+                    Object.values(c.options.scales).forEach(function(s) {
+                        if (s.ticks) s.ticks.color = textColor;
+                        if (s.grid) s.grid.color = gridColor;
+                        if (s.title) s.title.color = textColor;
+                    });
+                }
+                if (c.options.plugins && c.options.plugins.legend && c.options.plugins.legend.labels) {
+                    c.options.plugins.legend.labels.color = textColor;
+                }
+                c.update('none');
+            } catch(e) {}
+        });
+    }
 }
 
 function _updateThemeIcon(isLight) {

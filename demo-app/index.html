@@ -1285,6 +1285,32 @@
         [data-theme="light"] .s4-activity-item{border-bottom-color:rgba(0,0,0,0.06)}
         [data-theme="light"] .s4-favorites-bar{background:rgba(245,245,247,0.5);border-bottom-color:#d2d2d7}
 
+        /* ── How It Works Modal Popup ── */
+        .hiw-modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;animation:fadeIn .25s ease}
+        .hiw-modal-box{background:#111;border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:28px 32px 24px;max-width:560px;width:92%;max-height:80vh;overflow-y:auto;position:relative;box-shadow:0 12px 48px rgba(0,0,0,0.5);animation:scaleIn .3s ease}
+        .hiw-modal-box .hiw-close{position:absolute;top:10px;right:14px;background:none;border:none;color:#888;font-size:1.4rem;cursor:pointer;line-height:1}
+        .hiw-modal-box .hiw-close:hover{color:#fff}
+        .hiw-modal-box h4{color:#00aaff;font-size:1rem;margin-bottom:12px}
+        .hiw-modal-box .hiw-body{font-size:0.84rem;color:#ccc;line-height:1.7}
+        .hiw-modal-box .hiw-body strong{color:#fff}
+        .hiw-modal-box .hiw-body ol,.hiw-modal-box .hiw-body ul{padding-left:18px;margin:8px 0}
+        @keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+        [data-theme="light"] .hiw-modal-box{background:#fff;border-color:rgba(0,170,255,0.2);box-shadow:0 12px 40px rgba(0,0,0,0.15)}
+        [data-theme="light"] .hiw-modal-box .hiw-body strong{color:#1a1a2e}
+        [data-theme="light"] .hiw-modal-box .hiw-close{color:#999}
+
+        /* ── Light-mode Chart.js & Diagram Visibility ── */
+        [data-theme="light"] canvas{background:rgba(255,255,255,0.95);border-radius:3px}
+        [data-theme="light"] .chart-container,[data-theme="light"] [id*="Chart"]{background:#fff;border-radius:3px;padding:4px}
+        [data-theme="light"] .tool-panel table,[data-theme="light"] .tool-panel table th,[data-theme="light"] .tool-panel table td{color:#1d1d1f;border-color:rgba(0,0,0,0.12)}
+        [data-theme="light"] .tool-panel table th{background:rgba(0,170,255,0.06);color:#1a1a2e}
+        [data-theme="light"] .tool-panel table td{background:#fff}
+        [data-theme="light"] .tool-panel .form-control,[data-theme="light"] .tool-panel .form-select,[data-theme="light"] .tool-panel select,[data-theme="light"] .tool-panel input[type="text"],[data-theme="light"] .tool-panel input[type="number"],[data-theme="light"] .tool-panel textarea{background:#fff !important;color:#1d1d1f !important;border-color:rgba(0,0,0,0.15) !important}
+        [data-theme="light"] .tool-panel{color:#1d1d1f}
+        [data-theme="light"] .tool-panel h3,[data-theme="light"] .tool-panel h4,[data-theme="light"] .tool-panel strong{color:#1a1a2e}
+        [data-theme="light"] .tool-panel p,[data-theme="light"] .tool-panel span,[data-theme="light"] .tool-panel label,[data-theme="light"] .tool-panel li{color:#333}
+        [data-theme="light"] .tool-panel .card,[data-theme="light"] .tool-panel [style*="background:#0a0e1a"],[data-theme="light"] .tool-panel [style*="background:var(--surface)"]{background:#fff !important;border-color:rgba(0,0,0,0.1) !important}
+
     </style>
 </head>
 <body>
@@ -2377,37 +2403,37 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="itc-desc">Manage provisioning technical data and CDRL submissions.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-sbom')">
-                        <span class="itc-icon"><i class="fas fa-microchip" style="color:#00aaff;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-microchip" style="color:var(--accent);"></i></span>
                         <div class="itc-title">SBOM Viewer</div>
                         <div class="itc-desc">Software Bill of Materials — track components, CVEs, and blockchain attestation.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-gfp')">
-                        <span class="itc-icon"><i class="fas fa-boxes-stacked" style="color:#00aaff;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-boxes-stacked" style="color:var(--accent);"></i></span>
                         <div class="itc-title">GFP Tracker</div>
                         <div class="itc-desc">Government-Furnished Property tracking — DD 1662, inventory management, and accountability.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-cdrl')">
-                        <span class="itc-icon"><i class="fas fa-clipboard-check" style="color:#00aaff;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-clipboard-check" style="color:var(--accent);"></i></span>
                         <div class="itc-title">CDRL Validator</div>
                         <div class="itc-desc">Contract Data Requirements List validation — DI format checks and content analysis.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-contract')">
-                        <span class="itc-icon"><i class="fas fa-file-contract" style="color:#c9a84c;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-file-contract" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Contract Extractor</div>
                         <div class="itc-desc">AI-powered clause extraction — FAR/DFARS, CDRL detection, and obligation mapping.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-provenance')">
-                        <span class="itc-icon"><i class="fas fa-link" style="color:#c9a84c;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-link" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Provenance Chain</div>
                         <div class="itc-desc">Blockchain-verified chain of custody — QR codes and custody transfer tracking.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-analytics')">
-                        <span class="itc-icon"><i class="fas fa-chart-pie" style="color:#00aaff;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-chart-pie" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Cross-Program Analytics</div>
                         <div class="itc-desc">Multi-program dashboard — aggregate metrics, trends, and comparative analysis.</div>
                     </div>
                     <div class="ils-tool-card" onclick="openILSTool('hub-team')">
-                        <span class="itc-icon"><i class="fas fa-users-gear" style="color:#c9a84c;"></i></span>
+                        <span class="itc-icon"><i class="fas fa-users-gear" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Team Management</div>
                         <div class="itc-desc">Multi-tenant team operations — invitations, roles, and access control.</div>
                     </div>
@@ -3042,8 +3068,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <button onclick="showDocVersionUpload()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-brain"></i> Analyze Revision</button>
                         <select id="docBranchFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
                             <option value="all">All Branches</option>
-                            <option value="JOINT">Joint / DoD-Wide</option>
                             <option value="USN">U.S. Navy</option>
+                            <option value="USMC">U.S. Marine Corps</option>
+                            <option value="USCG">U.S. Coast Guard</option>
                         </select>
                     </div>
                     <!-- Category Filter Row -->
@@ -3672,8 +3699,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="subBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
-                                <option value="USN">Navy</option>
-                                <option value="JOINT" selected>Joint</option>
+                                <option value="USN" selected>Navy</option>
+                                <option value="USMC">Marine Corps</option>
+                                <option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
@@ -3861,7 +3889,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="gfpBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="gfpBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="gfpProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="gfpContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Property Category</label><select id="gfpCategory" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL">All Categories</option><option value="EQUIP">Equipment</option><option value="MATERIAL">Material</option><option value="SPECIAL_TOOLING">Special Tooling</option><option value="SPECIAL_TEST">Special Test Equipment</option></select></div>
@@ -3902,7 +3930,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="cdrlBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="cdrlBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="cdrlProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="cdrlContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">DI Number</label><input type="text" id="cdrlDINumber" class="form-control form-control-sm" placeholder="e.g., DI-ILSS-81495" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
@@ -3943,7 +3971,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="contractBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="contractBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="contractProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="contractNumber" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract Type</label><select id="contractType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="FFP">Firm Fixed Price</option><option value="CPFF">Cost Plus Fixed Fee</option><option value="IDIQ">IDIQ</option><option value="T_M">Time & Materials</option></select></div>
@@ -3984,7 +4012,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="provBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="provBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="provProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="provContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Transfer Type</label><select id="provTransferType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="CUSTODY">Custody Transfer</option><option value="LOCATION">Location Change</option><option value="INSPECTION">Inspection / Test</option><option value="RECEIPT">Receipt</option><option value="SHIPMENT">Shipment</option></select></div>
@@ -4420,8 +4448,8 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 <div id="prodFeaturesModal" class="modal-overlay" onclick="if(event.target===this)closeProdFeatures()">
     <div class="modal-box" style="position:relative;max-width:720px;max-height:85vh;overflow-y:auto">
         <button onclick="closeProdFeatures()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button>
-        <h4 style="margin-bottom:4px"><i class="fas fa-rocket" style="color:#00aaff;margin-right:8px"></i>Production Features Roadmap</h4>
-        <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">These features require server-side infrastructure and are available in the production deployment of S4 Ledger. Each is architected and ready for implementation.</p>
+        <h4 style="margin-bottom:4px"><i class="fas fa-rocket" style="color:#00aaff;margin-right:8px"></i>S4 Ledger Roadmap</h4>
+        <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">Upcoming capabilities planned for future releases. Core ILS tools, Supabase persistence, XRP Ledger anchoring, and 20+ analysis tools are live now.</p>
         <div id="prodFeaturesList"></div>
         <div style="margin-top:16px;padding:12px;background:rgba(0,170,255,0.06);border-radius:3px;border-left:3px solid #00aaff;font-size:0.82rem;color:var(--steel)"><strong style="color:#00aaff">Contact sales@s4ledger.com</strong> to discuss production deployment, IL4/IL5 hosting, and enterprise licensing for your organization.</div>
     </div>
@@ -6684,6 +6712,31 @@ const PROGS = {
         {s:'A004',di:'DI-TMSS-81000',t:'Technical Manuals',el:'techdata',c:1},
         {s:'A005',di:'DI-CMAN-81250',t:'Configuration Status Accounting',el:'config',c:1},
         {s:'A006',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
+    ]},
+    ssc:{name:'SSC (Ship-to-Shore Connector)',ofc:'PMS 325',type:'Landing Craft Air Cushion',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Technical Documentation',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Recommended Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Configuration Status Accounting',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM Analysis',el:'ram',c:1},
+        {s:'A009',di:'DI-SESS-81519',t:'Support Equipment',el:'se',c:1},
+        {s:'A010',di:'DI-PACK-80886',t:'PHS&T Plan',el:'phst',c:1},
+        {s:'A011',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
+    ]},
+    dls:{name:'Diving & Life Support Systems',ofc:'PMS 385',type:'Salvage & Diving Equipment',drls:[
+        {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
+        {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
+        {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Technical Documentation',el:'supply',c:1},
+        {s:'A004',di:'DI-ILSS-81495',t:'Vendor Recommended Spares',el:'supply',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals \u2014 Dive Systems',el:'techdata',c:1},
+        {s:'A006',di:'DI-CMAN-81250',t:'Configuration Status Accounting',el:'config',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan \u2014 Dive Certification',el:'training',c:1},
+        {s:'A008',di:'DI-RELI-80255',t:'RAM / Safety Analysis',el:'ram',c:1},
+        {s:'A009',di:'DI-SESS-81519',t:'Support Equipment \u2014 Dive Lockers',el:'se',c:1},
+        {s:'A010',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
     ]},
     fa18:{name:'F/A-18E/F Super Hornet',ofc:'PMA-265',type:'Carrier-Based Strike Fighter',drls:[
         {s:'A001',di:'DI-ILSS-81490',t:'Integrated Logistics Support Plan',el:'ilsmgmt',c:1},
@@ -9290,7 +9343,7 @@ function showCustomProgramInput() {
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Acquiring Office</label><input id="customProgOffice" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., PMS 400D, PMA-299"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USA">U.S. Army</option><option value="USAF">U.S. Air Force</option><option value="USSF">U.S. Space Force</option><option value="USCG">U.S. Coast Guard</option><option value="JOINT">Joint / DoD-Wide</option></select></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">'
         + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Cancel</button>'
@@ -9346,14 +9399,15 @@ window.S4_buildProgramOptions = function(includeAll, includeCustom) {
         'NAVSEA \u2014 Surface Combatants': ['ddg51','ddg1000','ffg62','cg47','lcs'],
         'NAVSEA \u2014 Carriers & Amphibs': ['cvn78','lpd17','lha6','lhd1','lsd49'],
         'NAVSEA \u2014 Submarines': ['ssn774','ssbn826'],
-        'NAVSEA \u2014 Mine Warfare': ['mcm1'],
+        'NAVSEA \u2014 Mine Warfare & Special Mission': ['mcm1','ssc','dls'],
         'NAVSEA \u2014 Service Craft (PMS 300)': ['yrbm','apl','afdm','ydt','yon'],
         'NAVAIR \u2014 Strike Fighters': ['f35','f35b','fa18'],
         'NAVAIR \u2014 Mission Support': ['e2d','ea18g','p8a','mq4c','mq25'],
         'NAVAIR \u2014 Rotary Wing': ['ch53k','mh60r','mh60s'],
         'NAVAIR \u2014 Tiltrotor & COD': ['cmv22'],
         'NAVAIR \u2014 Training': ['t45'],
-        'USMC \u2014 Aviation': ['ah1z','uh1y','kc130j']
+        'USMC \u2014 Aviation': ['ah1z','uh1y','kc130j'],
+        'USCG \u2014 Cutters': ['nsc','opc','frc']
     };
     Object.keys(navyKeys).forEach(function(group) {
         var keys = navyKeys[group];
@@ -9379,7 +9433,7 @@ window.S4_buildProgramOptions = function(includeAll, includeCustom) {
 
 window.S4_countPlatforms = function() {
     if (typeof PROGS === 'undefined') return 0;
-    var navyKeys = ['ddg51','ddg1000','ffg62','cg47','lcs','cvn78','lpd17','lha6','lhd1','lsd49','ssn774','ssbn826','mcm1','yrbm','apl','afdm','ydt','yon','f35','f35b','fa18','e2d','ea18g','p8a','mq4c','mq25','ch53k','mh60r','mh60s','cmv22','t45','ah1z','uh1y','kc130j'];
+    var navyKeys = ['ddg51','ddg1000','ffg62','cg47','lcs','cvn78','lpd17','lha6','lhd1','lsd49','ssn774','ssbn826','mcm1','ssc','dls','yrbm','apl','afdm','ydt','yon','f35','f35b','fa18','e2d','ea18g','p8a','mq4c','mq25','ch53k','mh60r','mh60s','cmv22','t45','ah1z','uh1y','kc130j','nsc','opc','frc'];
     var count = 0;
     navyKeys.forEach(function(k){ if(PROGS[k]) count++; });
     return count;
@@ -9631,7 +9685,7 @@ function openProdFeatures(){
     g.items.forEach(function(f){
       html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin-bottom:4px;background:var(--surface);border-radius:3px;border:1px solid var(--border)">';
       html+='<div style="flex:1"><strong style="font-size:0.85rem">'+f.name+'</strong><p style="margin:2px 0 0;font-size:0.78rem;color:var(--steel)">'+f.desc+'</p></div>';
-      html+='<span style="white-space:nowrap;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:3px;background:rgba(201,168,76,0.15);color:#c9a84c;border:1px solid rgba(201,168,76,0.3)">PRODUCTION</span>';
+      html+='<span style="white-space:nowrap;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:3px;background:rgba(0,170,255,0.12);color:#00aaff;border:1px solid rgba(0,170,255,0.3)">PLANNED</span>';
       html+='</div>';
     });
     html+='</div>';
@@ -14793,33 +14847,41 @@ function openILSTool(toolId) {
     // Update floating AI agent context
     if (typeof updateAiContext === 'function') updateAiContext(toolId);
     
-    // How It Works: auto-open first visit, show ? icon on return visits
+    // How It Works: modal popup — first visit auto-shows, ? icon on return visits
     (function(){
         var panel = document.getElementById(toolId);
         if(!panel) return;
         var det = panel.querySelector('details');
         if(!det) return;
+        det.style.display = 'none';
         var key = 's4_hiw_' + toolId;
+        function showHIWModal(){
+            var existing = document.querySelector('.hiw-modal-overlay');
+            if(existing) existing.remove();
+            var title = det.querySelector('summary') ? det.querySelector('summary').textContent.replace(/[▸▾▾]/g,'').trim() : 'How It Works';
+            var body = '';
+            det.querySelectorAll('p,ol,ul,li').forEach(function(el){ body += el.outerHTML; });
+            if(!body) body = det.innerHTML.replace(/<summary[^>]*>.*?<\/summary>/i,'');
+            var overlay = document.createElement('div');
+            overlay.className = 'hiw-modal-overlay';
+            overlay.innerHTML = '<div class="hiw-modal-box"><button class="hiw-close" title="Close">&times;</button><h4><i class="fas fa-info-circle" style="margin-right:6px"></i>' + title + '</h4><div class="hiw-body">' + body + '</div></div>';
+            overlay.querySelector('.hiw-close').onclick = function(){ overlay.remove(); };
+            overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
+            document.body.appendChild(overlay);
+        }
         if(!localStorage.getItem(key)){
-            det.setAttribute('open','');
-            det.style.display = '';
             localStorage.setItem(key,'1');
-        } else {
-            det.style.display = 'none';
-            var h3 = panel.querySelector('h3');
-            if(h3 && !h3.querySelector('.hiw-help-btn')){
-                var btn = document.createElement('button');
-                btn.className = 'hiw-help-btn';
-                btn.title = 'Show How It Works';
-                btn.textContent = '?';
-                btn.onclick = function(e){
-                    e.stopPropagation();
-                    det.style.display = '';
-                    det.setAttribute('open','');
-                    btn.remove();
-                };
-                h3.appendChild(btn);
-            }
+            setTimeout(showHIWModal, 300);
+        }
+        var h3 = panel.querySelector('h3');
+        if(h3 && !h3.querySelector('.hiw-help-btn')){
+            var btn = document.createElement('button');
+            btn.className = 'hiw-help-btn';
+            btn.title = 'How It Works';
+            btn.textContent = '?';
+            btn.style.cssText = 'margin-left:8px;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:50%;width:22px;height:22px;font-size:0.72rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;';
+            btn.onclick = function(e){ e.stopPropagation(); showHIWModal(); };
+            h3.appendChild(btn);
         }
     })();
 
@@ -18462,6 +18524,29 @@ function toggleTheme() {
     // Update hamburger menu button
     var hamburger = document.querySelector('nav button[aria-label="Menu"]');
     if (hamburger) hamburger.style.color = isLight ? '#1d1d1f' : '#fff';
+    // Update Chart.js chart colors for theme
+    if (typeof Chart !== 'undefined') {
+        var textColor = isLight ? '#333' : '#ccc';
+        var gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.06)';
+        Chart.defaults.color = textColor;
+        Chart.defaults.borderColor = gridColor;
+        Object.values(Chart.instances || {}).forEach(function(c) {
+            if (!c || !c.options) return;
+            try {
+                if (c.options.scales) {
+                    Object.values(c.options.scales).forEach(function(s) {
+                        if (s.ticks) s.ticks.color = textColor;
+                        if (s.grid) s.grid.color = gridColor;
+                        if (s.title) s.title.color = textColor;
+                    });
+                }
+                if (c.options.plugins && c.options.plugins.legend && c.options.plugins.legend.labels) {
+                    c.options.plugins.legend.labels.color = textColor;
+                }
+                c.update('none');
+            } catch(e) {}
+        });
+    }
 }
 
 function _updateThemeIcon(isLight) {
