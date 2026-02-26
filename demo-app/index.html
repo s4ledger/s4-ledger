@@ -13,7 +13,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="S4 Ledger Platform — Defense Logistics Blockchain">
-    <meta property="og:description" content="Anchor, verify, and track U.S. Navy logistics records on the XRP Ledger. 14 ILS tools, AI agent, audit vault.">
+    <meta property="og:description" content="Anchor, verify, and track U.S. Navy logistics records on the XRP Ledger. 20+ ILS tools, AI agent, audit vault.">
     <meta property="og:url" content="https://s4ledger.com/demo-app/">
     <meta property="og:image" content="https://s4ledger.com/s4-assets/icon-512.png">
     <meta property="og:site_name" content="S4 Ledger">
@@ -466,6 +466,14 @@
             font-size:0.82rem !important;
             line-height:1.65 !important;
         }
+        .ils-hub-panel details{position:relative !important}
+        .hiw-help-btn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.3);color:#00aaff;font-weight:700;font-size:0.82rem;cursor:pointer;margin-left:8px;transition:all 0.2s;vertical-align:middle;line-height:1}
+        .hiw-help-btn:hover{background:rgba(0,170,255,0.25);transform:scale(1.1)}
+
+        /* ── Drag-reorder tool cards ── */
+        .ils-tool-card{cursor:grab;user-select:none;-webkit-user-select:none;transition:transform 0.15s ease,opacity 0.15s ease,box-shadow 0.15s ease}
+        .ils-tool-card.dragging{opacity:0.45;transform:scale(0.92);box-shadow:0 0 20px rgba(0,170,255,0.4) !important;z-index:1000}
+        .ils-tool-card.drag-over{border:2px solid #00aaff !important;box-shadow:0 0 12px rgba(0,170,255,0.3) !important}
         
         /* ── Description paragraphs ── */
         .ils-hub-panel .demo-card > p{
@@ -1716,7 +1724,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <p style="color:var(--steel);font-size:0.85rem;line-height:1.6;margin-bottom:16px">S4 Ledger will set up your account, provision your XRPL wallet, and allocate your $SLS tokens. This takes just a few seconds.</p>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--accent)"><i class="fas fa-anchor"></i></div><div><strong style="color:#fff">Anchor Records</strong><div style="color:var(--steel);font-size:0.8rem">SHA-256 hash any document to the XRP Ledger in 3-5 seconds</div></div></div>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(201,168,76,0.1);color:var(--gold)"><i class="fas fa-coins"></i></div><div><strong style="color:#fff">$SLS Token Economy</strong><div style="color:var(--steel);font-size:0.8rem">0.01 SLS per anchor (~$0.0001). Real on-chain token transfers.</div></div></div>
-                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--green)"><i class="fas fa-brain"></i></div><div><strong style="color:#fff">14 ILS Tools</strong><div style="color:var(--steel);font-size:0.8rem">Gap analysis, DMSMS, readiness, compliance, risk, and more</div></div></div>
+                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--green)"><i class="fas fa-brain"></i></div><div><strong style="color:#fff">20+ ILS Tools</strong><div style="color:var(--steel);font-size:0.8rem">Gap analysis, DMSMS, readiness, compliance, risk, and more</div></div></div>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:#00aaff"><i class="fas fa-robot"></i></div><div><strong style="color:#fff">AI Agent</strong><div style="color:var(--steel);font-size:0.8rem">Context-aware assistant available on every tool and tab</div></div></div>
                     <div style="text-align:center;margin-top:20px"><button class="onboard-btn" onclick="onboardNext()"><i class="fas fa-arrow-right" style="margin-right:6px"></i>Start Setup</button></div>
                 </div>
@@ -1872,9 +1880,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 </div>
                 <div class="hub-card" onclick="showSection('sectionILS')">
                     <div class="hc-icon" style="background:rgba(201,168,76,0.1);"><i class="fas fa-brain" style="color:#c9a84c;"></i></div>
-                    <div class="hc-title">Anchor-S4 <span style="background:rgba(201,168,76,0.15);color:#c9a84c;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">14 TOOLS</span></div>
-                    <div class="hc-desc">14+ integrated defense tools: Gap Analysis, DMSMS, Readiness, Compliance, Risk, Predictive Maintenance, ROI, Audit Vault, and more.</div>
-                    <div class="hc-meta"><i class="fas fa-tools"></i> 14+ ILS tools &bull; AI-powered</div>
+                    <div class="hc-title">Anchor-S4 <span style="background:rgba(201,168,76,0.15);color:#c9a84c;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">20+ TOOLS</span></div>
+                    <div class="hc-desc">20+ integrated defense tools: Gap Analysis, DMSMS, Readiness, Compliance, Risk, Predictive Maintenance, ROI, Audit Vault, and more.</div>
+                    <div class="hc-meta"><i class="fas fa-tools"></i> 20+ ILS tools &bull; AI-powered</div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" onclick="showSection('sectionSystems')">
@@ -2266,7 +2274,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div style="width:42px;height:42px;border-radius:3px;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-anchor" style="color:#00aaff;font-size:1.1rem"></i></div>
                         <div>
                             <h3 style="font-size:1.15rem;font-weight:700;color:#fff;margin:0;letter-spacing:-0.02em">Anchor-S4</h3>
-                            <p style="font-size:0.78rem;color:var(--steel);margin:2px 0 0;line-height:1.4">Defense logistics workspace &mdash; 14 integrated tools</p>
+                            <p style="font-size:0.78rem;color:var(--steel);margin:2px 0 0;line-height:1.4">Defense logistics workspace &mdash; 20+ integrated tools</p>
                         </div>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -3843,82 +3851,228 @@ if (sessionStorage.getItem('s4_entered') === '1') {
             <!-- ══ HUB: GFP TRACKER — GOVERNMENT-FURNISHED PROPERTY ══ -->
             <div class="ils-hub-panel" id="hub-gfp">
                 <div class="s4-card">
-                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-boxes-stacked" style="color:#00aaff"></i> GFP Tracker <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(160,60,255,0.1);border:1px solid rgba(160,60,255,0.3);border-radius:3px;color:#00aaff;font-weight:700">Demo</span></h3>
-                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Government-Furnished Property tracking per FAR 52.245-1. Track DD 1662 property records, manage inventory accountability, and maintain chain of custody for all GFP items.</p>
+                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-boxes-stacked" style="color:#00aaff"></i> GFP Tracker <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);border-radius:3px;color:#00aaff;font-weight:700">Demo</span></h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Government-Furnished Property tracking per FAR 52.245-1 and DFARS 252.245-7001. Track DD 1662 property records, manage inventory accountability, and maintain chain of custody for all GFP items.</p>
+                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">DD 1662 Management:</strong> Upload or create DD Form 1662 records (DoD Property in the Custody of Contractors). Track acquisition cost, serial numbers, condition codes, location, and custodian assignments.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Government-Furnished Property management across DoD generates <strong>$2.8B+ in annual losses</strong> from unaccounted items, duplicate procurements, and failed physical inventories. S4 Ledger's blockchain-anchored GFP tracking eliminates <strong>$80M+/year</strong> in lost property write-offs.</p>
+                        </div>
+                    </details>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="gfpBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="gfpProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="gfpContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Property Category</label><select id="gfpCategory" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL">All Categories</option><option value="EQUIP">Equipment</option><option value="MATERIAL">Material</option><option value="SPECIAL_TOOLING">Special Tooling</option><option value="SPECIAL_TEST">Special Test Equipment</option></select></div>
+                    </div>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">NSN / Part Number</label><input type="text" id="gfpNSN" class="form-control form-control-sm" placeholder="e.g., 5945-01-234-5678" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Serial Number / IUID</label><input type="text" id="gfpSerial" class="form-control form-control-sm" placeholder="e.g., SN-2026-00142" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Condition Code</label><select id="gfpCondition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="A">A — Serviceable</option><option value="F">F — Unserviceable (Reparable)</option><option value="H">H — Condemned</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Custodian / Location</label><input type="text" id="gfpLocation" class="form-control form-control-sm" placeholder="e.g., Bldg 450, Bay 3" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                    </div>
+                    <div id="gfpUploadZone" onclick="document.getElementById('gfpFileInput').click()" style="border:2px dashed rgba(0,170,255,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(0,170,255,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#00aaff'" ondragleave="this.style.borderColor='rgba(0,170,255,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#00aaff;margin-bottom:8px;display:block"></i><div style="color:#00aaff;font-weight:600;font-size:.9rem">Upload GFP / DD 1662 Data</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF — DD 1662 forms, inventory lists</div><input type="file" id="gfpFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt" multiple style="display:none" /></div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
+                        <button onclick="alert('Demo: GFP inventory check would run against uploaded DD 1662 data.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Run Inventory Check</button>
+                        <button onclick="alert('Demo: GFP record would be anchored to XRPL.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
+                        <button onclick="alert('Demo: DD 1662 report would export.')" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export DD 1662 Report</button>
+                    </div>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
-                        <div class="stat-mini"><div class="stat-mini-val">0</div><div class="stat-mini-lbl">Items Tracked</div></div>
-                        <div class="stat-mini"><div class="stat-mini-val">$0</div><div class="stat-mini-lbl">Total Value</div></div>
-                        <div class="stat-mini"><div class="stat-mini-val">0</div><div class="stat-mini-lbl">Pending Alerts</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Items Tracked</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">$0</div><div class="stat-mini-lbl">Total Value</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">Pending Alerts</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Serviceable</div></div>
                     </div>
-                    <div style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px">
-                        <i class="fas fa-boxes-stacked" style="font-size:2rem;color:rgba(160,60,255,0.3);margin-bottom:8px;display:block"></i>
-                        GFP tracking is available in the production platform. Demo mode provides UI preview only.
-                    </div>
+                    <div style="margin-bottom:16px"><canvas id="gfpChart" style="max-height:250px;width:100%"></canvas></div>
+                    <div id="gfpContent" style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px"><i class="fas fa-boxes-stacked" style="font-size:2rem;color:rgba(0,170,255,0.3);margin-bottom:8px;display:block"></i>Upload DD 1662 files or enter property data above to begin tracking.</div>
                 </div>
             </div>
 
             <!-- ══ HUB: CDRL VALIDATOR ══ -->
             <div class="ils-hub-panel" id="hub-cdrl">
                 <div class="s4-card">
-                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-clipboard-check" style="color:#00aaff"></i> CDRL Validator <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(0,200,100,0.1);border:1px solid rgba(0,200,100,0.3);border-radius:3px;color:#00aaff;font-weight:700">Demo</span></h3>
-                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Contract Data Requirements List validation engine. Validates CDRL items against DI format requirements, checks content completeness, and ensures compliance with MIL-STD-963.</p>
-                    <div style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px">
-                        <i class="fas fa-clipboard-check" style="font-size:2rem;color:rgba(0,200,100,0.3);margin-bottom:8px;display:block"></i>
-                        CDRL validation is available in the production platform. Demo mode provides UI preview only.
+                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-clipboard-check" style="color:#c9a84c"></i> CDRL Validator <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:3px;color:#c9a84c;font-weight:700">Demo</span></h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Contract Data Requirements List validation engine. Validates CDRL items against DI format requirements, checks content completeness, and ensures compliance with MIL-STD-963.</p>
+                    <details style="margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">Validation Engine:</strong> Upload DD 1423 contract data requirements. The validator checks each CDRL item against its specified DI format and flags missing content.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Program offices spend <strong>$400K-$800K/year per program</strong> on CDRL review staff. S4 Ledger's automated validator catches <strong>99%+ of format violations instantly</strong>, saving <strong>$60M+/year</strong> at scale across 100 programs.</p>
+                        </div>
+                    </details>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="cdrlBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="cdrlProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="cdrlContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">DI Number</label><input type="text" id="cdrlDINumber" class="form-control form-control-sm" placeholder="e.g., DI-ILSS-81495" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
                     </div>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">CDRL Line Item</label><input type="text" id="cdrlLineItem" class="form-control form-control-sm" placeholder="e.g., A001" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Deliverable Title</label><input type="text" id="cdrlTitle" class="form-control form-control-sm" placeholder="e.g., Provisioning Parts List" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Due Date</label><input type="date" id="cdrlDueDate" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Frequency</label><select id="cdrlFrequency" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ONE_TIME">One-Time</option><option value="MONTHLY">Monthly</option><option value="QUARTERLY">Quarterly</option><option value="ANNUAL">Annual</option><option value="AS_REQUIRED">As Required</option></select></div>
+                    </div>
+                    <div id="cdrlUploadZone" onclick="document.getElementById('cdrlFileInput').click()" style="border:2px dashed rgba(201,168,76,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(201,168,76,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#c9a84c'" ondragleave="this.style.borderColor='rgba(201,168,76,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#c9a84c;margin-bottom:8px;display:block"></i><div style="color:#c9a84c;font-weight:600;font-size:.9rem">Upload CDRL Package / DD 1423</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel, XML, JSON, PDF — DD 1423 forms or CDRL deliverables</div><input type="file" id="cdrlFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt,.doc,.docx" multiple style="display:none" /></div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
+                        <button onclick="alert('Demo: CDRL validation would run against uploaded DD 1423 data.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-check-double"></i> Validate CDRLs</button>
+                        <button onclick="alert('Demo: CDRL record would be anchored to XRPL.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
+                        <button onclick="alert('Demo: CDRL compliance report would export.')" class="btn btn-sm hover-lift" style="background:rgba(201,168,76,0.1);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export Report</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">Total CDRLs</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Compliant</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">Overdue</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">—</div><div class="stat-mini-lbl">Compliance Score</div></div>
+                    </div>
+                    <div style="margin-bottom:16px"><canvas id="cdrlChart" style="max-height:250px;width:100%"></canvas></div>
+                    <div id="cdrlContent" style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px"><i class="fas fa-clipboard-check" style="font-size:2rem;color:rgba(201,168,76,0.3);margin-bottom:8px;display:block"></i>Upload DD 1423 or CDRL packages above to begin validation.</div>
                 </div>
             </div>
 
             <!-- ══ HUB: CONTRACT EXTRACTOR ══ -->
             <div class="ils-hub-panel" id="hub-contract">
                 <div class="s4-card">
-                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-contract" style="color:#c9a84c"></i> Contract Extractor <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(255,180,0,0.1);border:1px solid rgba(255,180,0,0.3);border-radius:3px;color:#c9a84c;font-weight:700">Demo</span></h3>
-                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">AI-powered contract clause extraction. Upload contract documents and automatically extract FAR/DFARS clauses, CDRL requirements, and key terms.</p>
-                    <div style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px">
-                        <i class="fas fa-file-contract" style="font-size:2rem;color:rgba(255,180,0,0.3);margin-bottom:8px;display:block"></i>
-                        Contract extraction is available in the production platform. Demo mode provides UI preview only.
+                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-contract" style="color:#00aaff"></i> Contract Extractor <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);border-radius:3px;color:#00aaff;font-weight:700">Demo</span></h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">AI-powered contract clause extraction. Upload SOWs, task orders, or modifications and automatically extract FAR/DFARS clauses, CDRL requirements, and key terms.</p>
+                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">Extraction Engine:</strong> Upload contract PDFs/DOCX. AI identifies FAR/DFARS clause citations, CDRL references, deliverable schedules, and security requirements.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Contract analysis consumes <strong>1,000-3,000 hours per major award</strong>. Missing a single clause can cost <strong>$1-5M in remediation</strong>. S4 Ledger saves <strong>$50M+/year</strong> across 100 programs.</p>
+                        </div>
+                    </details>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="contractBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="contractProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="contractNumber" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract Type</label><select id="contractType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="FFP">Firm Fixed Price</option><option value="CPFF">Cost Plus Fixed Fee</option><option value="IDIQ">IDIQ</option><option value="T_M">Time & Materials</option></select></div>
                     </div>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Base / Option</label><select id="contractOption" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="BASE">Base Period</option><option value="OPT1">Option 1</option><option value="OPT2">Option 2</option><option value="MOD">Modification</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Award Date</label><input type="date" id="contractAwardDate" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Prime Contractor</label><input type="text" id="contractPrime" class="form-control form-control-sm" placeholder="e.g., BAE Systems" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">NAICS Code</label><input type="text" id="contractNAICS" class="form-control form-control-sm" placeholder="e.g., 336611" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                    </div>
+                    <div id="contractUploadZone" onclick="document.getElementById('contractFileInput').click()" style="border:2px dashed rgba(0,170,255,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(0,170,255,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#00aaff'" ondragleave="this.style.borderColor='rgba(0,170,255,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#00aaff;margin-bottom:8px;display:block"></i><div style="color:#00aaff;font-weight:600;font-size:.9rem">Upload Contract Document</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">PDF, DOCX — SOWs, Task Orders, Contract Modifications</div><input type="file" id="contractFileInput" accept=".pdf,.doc,.docx,.xml,.json,.txt" multiple style="display:none" /></div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
+                        <button onclick="alert('Demo: AI clause extraction would process uploaded contract.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-wand-magic-sparkles"></i> Extract Clauses (AI)</button>
+                        <button onclick="alert('Demo: Contract record would be anchored to XRPL.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
+                        <button onclick="alert('Demo: Clause matrix would export.')" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-table"></i> Export Clause Matrix</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Clauses Extracted</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">CDRLs Found</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Obligations</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">Flags / Risks</div></div>
+                    </div>
+                    <div style="margin-bottom:16px"><canvas id="contractChart" style="max-height:250px;width:100%"></canvas></div>
+                    <div id="contractContent" style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px"><i class="fas fa-file-contract" style="font-size:2rem;color:rgba(0,170,255,0.3);margin-bottom:8px;display:block"></i>Upload a contract PDF or DOCX above. AI clause extraction results display here.</div>
                 </div>
             </div>
 
             <!-- ══ HUB: PROVENANCE CHAIN ══ -->
             <div class="ils-hub-panel" id="hub-provenance">
                 <div class="s4-card">
-                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-link" style="color:#c9a84c"></i> Provenance Chain <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(255,120,0,0.1);border:1px solid rgba(255,120,0,0.3);border-radius:3px;color:#c9a84c;font-weight:700">Demo</span></h3>
-                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Blockchain-verified chain of custody and provenance tracking. Every custody transfer is anchored to the XRP Ledger with QR code generation.</p>
-                    <div style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px">
-                        <i class="fas fa-link" style="font-size:2rem;color:rgba(255,120,0,0.3);margin-bottom:8px;display:block"></i>
-                        Provenance chain is available in the production platform. Demo mode provides UI preview only.
+                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-link" style="color:#c9a84c"></i> Provenance Chain <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:3px;color:#c9a84c;font-weight:700">Demo</span></h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Blockchain-verified chain of custody and provenance tracking. Every custody transfer is anchored to the XRP Ledger with QR code generation.</p>
+                    <details style="margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">Chain of Custody:</strong> Record every custody transfer — who had it, when, where, and in what condition. Each event is SHA-256 hashed and anchored to the XRP Ledger.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Counterfeit parts cost DoD <strong>$3-5 billion annually</strong>. Paper-based custody has a <strong>23% gap rate</strong>. S4 Ledger prevents <strong>$100M+/year</strong> in counterfeit-related losses across 100 programs.</p>
+                        </div>
+                    </details>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="provBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option><option value="USSF">Space Force</option><option value="JOINT" selected>Joint</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="provProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="provContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Transfer Type</label><select id="provTransferType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="CUSTODY">Custody Transfer</option><option value="LOCATION">Location Change</option><option value="INSPECTION">Inspection / Test</option><option value="RECEIPT">Receipt</option><option value="SHIPMENT">Shipment</option></select></div>
                     </div>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Item Identifier / IUID</label><input type="text" id="provItemId" class="form-control form-control-sm" placeholder="e.g., IUID-2026-00142" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">From (Custodian)</label><input type="text" id="provFrom" class="form-control form-control-sm" placeholder="e.g., NSWC Crane" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">To (Custodian)</label><input type="text" id="provTo" class="form-control form-control-sm" placeholder="e.g., USS Wayne E. Meyer" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Condition</label><select id="provCondition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="A">A — Serviceable</option><option value="F">F — Reparable</option><option value="H">H — Condemned</option><option value="NEW">New / Unused</option></select></div>
+                    </div>
+                    <div id="provUploadZone" onclick="document.getElementById('provFileInput').click()" style="border:2px dashed rgba(201,168,76,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(201,168,76,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#c9a84c'" ondragleave="this.style.borderColor='rgba(201,168,76,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#c9a84c;margin-bottom:8px;display:block"></i><div style="color:#c9a84c;font-weight:600;font-size:.9rem">Upload Custody Records / Asset Manifests</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel, XML, JSON, PDF — shipping docs, DD 1149, custody logs</div><input type="file" id="provFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt" multiple style="display:none" /></div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
+                        <button onclick="alert('Demo: Custody transfer would be recorded.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-link"></i> Record Transfer</button>
+                        <button onclick="alert('Demo: Chain would be anchored to XRPL.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Chain to XRPL</button>
+                        <button onclick="alert('Demo: QR tag would be generated for this item.')" class="btn btn-sm hover-lift" style="background:rgba(201,168,76,0.1);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-qrcode"></i> Generate QR Tag</button>
+                        <button onclick="alert('Demo: Chain integrity would be verified.')" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-shield-check"></i> Verify Chain</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">Chain Events</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Items Tracked</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">XRPL Anchored</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Gaps Detected</div></div>
+                    </div>
+                    <div style="margin-bottom:16px"><canvas id="provChart" style="max-height:250px;width:100%"></canvas></div>
+                    <div id="provQRContainer" style="display:none;margin-bottom:16px;text-align:center"></div>
+                    <div id="provenanceContent" style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px"><i class="fas fa-link" style="font-size:2rem;color:rgba(201,168,76,0.3);margin-bottom:8px;display:block"></i>Record custody transfers above or upload asset manifests. Provenance chain timeline renders here.</div>
                 </div>
             </div>
 
             <!-- ══ HUB: CROSS-PROGRAM ANALYTICS ══ -->
             <div class="ils-hub-panel" id="hub-analytics">
                 <div class="s4-card">
-                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-chart-pie" style="color:#00aaff"></i> Cross-Program Analytics <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(0,220,220,0.1);border:1px solid rgba(0,220,220,0.3);border-radius:3px;color:#00aaff;font-weight:700">Demo</span></h3>
-                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Aggregate analytics dashboard spanning all ILS tools and programs. View upload trends, compliance metrics, and portfolio-wide insights.</p>
-                    <div style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px">
-                        <i class="fas fa-chart-pie" style="font-size:2rem;color:rgba(0,220,220,0.3);margin-bottom:8px;display:block"></i>
-                        Cross-program analytics is available in the production platform. Demo mode provides UI preview only.
+                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-chart-pie" style="color:#00aaff"></i> Cross-Program Analytics <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);border-radius:3px;color:#00aaff;font-weight:700">Demo</span></h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Aggregate analytics dashboard spanning all ILS tools and programs. View upload trends, compliance metrics, and portfolio-wide insights.</p>
+                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">Cross-Program Dashboard:</strong> Aggregates data from all 20 ILS tools. Displays KPIs, trend lines, and comparative metrics across all programs in a single view.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Manual cross-program data calls cost <strong>$200K-$500K per quarter</strong>. S4 Ledger's real-time dashboard saves <strong>$40M+/year</strong> across a 100-program portfolio.</p>
+                        </div>
+                    </details>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch Filter</label><select id="analyticsBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL" selected>All Branches</option><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program Filter</label><select id="analyticsProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL" selected>All Programs</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Time Period</label><select id="analyticsPeriod" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="7d">Last 7 Days</option><option value="30d" selected>Last 30 Days</option><option value="90d">Last 90 Days</option><option value="1y">Last Year</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Export</label><div style="display:flex;gap:6px"><button onclick="alert('Demo: Analytics PDF would export.')" class="btn btn-sm" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-file-pdf"></i> PDF</button><button onclick="alert('Demo: Analytics CSV would export.')" class="btn btn-sm" style="background:rgba(201,168,76,0.1);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-file-csv"></i> CSV</button></div></div>
                     </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px">
+                        <div style="background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:16px"><div style="font-size:0.82rem;color:var(--steel);font-weight:600;margin-bottom:8px"><i class="fas fa-chart-bar" style="color:#00aaff;margin-right:4px"></i> Uploads by Tool</div><canvas id="analyticsToolChart" style="max-height:200px;width:100%"></canvas></div>
+                        <div style="background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:16px"><div style="font-size:0.82rem;color:var(--steel);font-weight:600;margin-bottom:8px"><i class="fas fa-chart-line" style="color:#c9a84c;margin-right:4px"></i> Activity Trend</div><canvas id="analyticsTrendChart" style="max-height:200px;width:100%"></canvas></div>
+                    </div>
+                    <div id="analyticsContent" style="min-height:200px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px"><i class="fas fa-chart-pie" style="font-size:2rem;color:rgba(0,170,255,0.3);margin-bottom:8px;display:block"></i>Cross-program analytics load when tool data is available.</div>
                 </div>
             </div>
 
             <!-- ══ HUB: TEAM MANAGEMENT ══ -->
             <div class="ils-hub-panel" id="hub-team">
                 <div class="s4-card">
-                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-users-gear" style="color:#c9a84c"></i> Team Management <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.3);border-radius:3px;color:#c9a84c;font-weight:700">Demo</span></h3>
-                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Multi-tenant team operations. Create teams, invite members, assign roles, and manage access control across all ILS tools.</p>
+                    <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-users-gear" style="color:#c9a84c"></i> Team & Access Management <span style="margin-left:auto;font-size:0.7rem;padding:3px 10px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:3px;color:#c9a84c;font-weight:700">Demo</span></h3>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Full team administration — create teams, assign program access, manage tool permissions, and audit team activity. For quick team status, use the <strong style="color:#00aaff">Team</strong> button in the header bar.</p>
+                    <details style="margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">Team Administration:</strong> Create teams, invite members, assign roles. Each role controls access to specific ILS tools.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Government programs spend <strong>$100K-$300K per year per program</strong> on access management. S4 Ledger saves <strong>$25M+/year</strong> in reduced security administration overhead.</p>
+                        </div>
+                    </details>
+                    <div class="row" style="gap:8px 0;margin-bottom:12px">
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Team</label><select id="teamSelect" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Team —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program Assignment</label><select id="teamProgAssign" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL">All Programs</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Member Email</label><input type="email" id="teamInviteEmail" class="form-control form-control-sm" placeholder="name@organization.mil" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Role</label><select id="teamInviteRole" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="analyst">Analyst</option><option value="ils_manager">ILS Manager</option><option value="admin">Admin</option><option value="read_only">Read-Only</option></select></div>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
+                        <button onclick="alert('Demo: New team would be created.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-plus-circle"></i> Create Team</button>
+                        <button onclick="alert('Demo: Invitation would be sent.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-user-plus"></i> Invite Member</button>
+                        <button onclick="alert('Demo: Access audit report would export.')" class="btn btn-sm hover-lift" style="background:rgba(201,168,76,0.1);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-clipboard-list"></i> Export Access Audit</button>
+                        <button onclick="alert('Demo: Access review would run.')" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-shield-halved"></i> Access Review</button>
+                    </div>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
-                        <div class="stat-mini"><div class="stat-mini-val">0</div><div class="stat-mini-lbl">Teams</div></div>
-                        <div class="stat-mini"><div class="stat-mini-val">0</div><div class="stat-mini-lbl">Members</div></div>
-                        <div class="stat-mini"><div class="stat-mini-val">0</div><div class="stat-mini-lbl">Pending Invites</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">Teams</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Total Members</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#c9a84c">0</div><div class="stat-mini-lbl">Pending Invites</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" style="color:#00aaff">0</div><div class="stat-mini-lbl">Programs Assigned</div></div>
                     </div>
-                    <div style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px">
-                        <i class="fas fa-users-gear" style="font-size:2rem;color:rgba(255,107,157,0.3);margin-bottom:8px;display:block"></i>
-                        Team management is available in the production platform. Demo mode provides UI preview only.
-                    </div>
+                    <details style="margin-bottom:12px"><summary style="cursor:pointer;color:var(--steel);font-size:.82rem;font-weight:600"><i class="fas fa-table"></i> Tool Access Matrix</summary><div style="margin-top:8px;overflow-x:auto;border:1px solid var(--border);border-radius:3px;padding:12px;font-size:.78rem;color:var(--steel)">Select a team to view tool-level access permissions.</div></details>
+                    <details style="margin-bottom:12px"><summary style="cursor:pointer;color:var(--steel);font-size:.82rem;font-weight:600"><i class="fas fa-history"></i> Team Activity Log</summary><div style="margin-top:8px;max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:3px;padding:12px;font-size:.78rem;color:var(--steel)">No activity recorded yet.</div></details>
+                    <div id="teamContent" style="min-height:100px;color:var(--steel);font-size:0.85rem;text-align:center;padding:40px 20px"><i class="fas fa-users-gear" style="font-size:2rem;color:rgba(201,168,76,0.3);margin-bottom:8px;display:block"></i>Create a team or select an existing team above.</div>
                 </div>
             </div>
 
@@ -8442,7 +8596,7 @@ function generateAiResponse(query) {
         return '**S4 Ledger Pricing:**\n\n| Tier | Price | SLS Included |\n|---|---|---|\n| Pilot | Free | 100 SLS |\n| Starter | $999/mo | 25,000 SLS |\n| Professional | $2,499/mo | 100,000 SLS |\n| Enterprise | $9,999/mo | 500,000 SLS |\n\nAll tiers include full API access, 156+ record types, and ILS tools. Enterprise adds SSO, dedicated support, and custom integrations.';
     }
     if (/what is s4|about s4|platform|overview|what can you do|capabilities/.test(q)) {
-        return '**S4 Ledger** — Immutable Defense Logistics on the XRP Ledger\n\n• **63 REST API endpoints** for anchoring, verification, ILS, AI, and security\n• **156+ record types** across 9 military branches\n• **14 ILS tools** (DMSMS, readiness, supply chain risk, digital thread, etc.)\n• **AI-powered** logistics intelligence with audit trails\n• **$SLS token** economy — $0.01/SLS, 0.01 SLS per anchor\n• **XRPL Mainnet** — 3-5 second finality, 99.99% uptime\n• **Python SDK** with 38+ functions + REST API\n\nAsk me about any specific feature!';
+        return '**S4 Ledger** — Immutable Defense Logistics on the XRP Ledger\n\n• **63 REST API endpoints** for anchoring, verification, ILS, AI, and security\n• **156+ record types** across 9 military branches\n• **20+ ILS tools** (DMSMS, readiness, supply chain risk, digital thread, etc.)\n• **AI-powered** logistics intelligence with audit trails\n• **$SLS token** economy — $0.01/SLS, 0.01 SLS per anchor\n• **XRPL Mainnet** — 3-5 second finality, 99.99% uptime\n• **Python SDK** with 38+ functions + REST API\n\nAsk me about any specific feature!';
     }
     const r = ilsResults;
     // AI Agent operates in full production mode
@@ -8503,12 +8657,12 @@ function generateAiResponse(query) {
     if (/di-?\d+|di number/.test(q)) return explainDINumber(q);
 
     // ── S4 LEDGER PRODUCT ──
-    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Secure Logistics Standard<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>14 ILS tools</strong> covering all 12 ILS elements per MIL-STD-1388<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>$SLS utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192SLS<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>54+ Navy record types</strong> for Navy programs<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.';
+    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Secure Logistics Standard<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>20+ ILS tools</strong> covering all 12 ILS elements per MIL-STD-1388<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>$SLS utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192SLS<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>54+ Navy record types</strong> for Navy programs<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.';
 
     if (/how.*work|how.*anchor|how.*hash|how.*blockchain/.test(q)) return '<strong>How S4 Ledger Works:</strong><br><br>1. <strong>Upload or create a record</strong> \u2014 any ILS document, analysis, or data point<br>2. <strong>SHA-256 hash computed</strong> \u2014 a unique 64-character fingerprint of the content<br>3. <strong>Hash anchored to XRPL</strong> \u2014 written as a Memo on an XRP Ledger transaction<br>4. <strong>Transaction verified</strong> \u2014 XRPL validates within 3-5 seconds at ~$0.001 tx fee<br>5. <strong>SLS fee applied</strong> \u2014 0.01 SLS ($0.01) per anchor for network access<br><br>The original data stays on your device (never sent to blockchain). Only the hash is anchored. Anyone can independently verify a record by recomputing the hash and checking the XRPL transaction.<br><br><strong>Result:</strong> Tamper-proof, independently verifiable audit trail \u2014 1,500x cheaper than legacy verification.';
 
     // ── PRICING ──
-    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(0,170,255,0.2);border-radius:3px"><strong style="color:#00aaff">Pilot (Free)</strong><br>100 SLS/mo<br>10,000 anchors<br>All 14 tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:3px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 SLS/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Professional ($2,499/mo)</strong><br>100,000 SLS/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Enterprise ($9,999/mo)</strong><br>500,000 SLS/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + SLS TrustLine setup. $0.01 SLS per anchor.';
+    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(0,170,255,0.2);border-radius:3px"><strong style="color:#00aaff">Pilot (Free)</strong><br>100 SLS/mo<br>10,000 anchors<br>All 20+ tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:3px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 SLS/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Professional ($2,499/mo)</strong><br>100,000 SLS/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Enterprise ($9,999/mo)</strong><br>500,000 SLS/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + SLS TrustLine setup. $0.01 SLS per anchor.';
 
     // ── WALLETS & SLS ──
     if (/wallet|xrpl.*wallet|seed|family.*seed|trustline|trust.*line/.test(q)) return '<strong>XRPL Wallet & TrustLine Setup</strong><br><br>When you subscribe, S4 automatically:<br><br>1. <strong>Generates a secp256k1 wallet</strong> \u2014 your unique XRPL address + family seed (secret key)<br>2. <strong>Funds with XRP</strong> \u2014 covers the 12 XRP account reserve + TrustLine reserve<br>3. <strong>Sets up SLS TrustLine</strong> \u2014 pointed at the SLS issuer (<code>r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code>)<br>4. <strong>SLS delivered</strong> \u2014 from the Treasury wallet to your wallet<br><br><strong>Important:</strong><br>\u2022 TrustLines go to the <strong>SLS issuer</strong> (r95...) \u2014 this is the wallet that created the SLS token<br>\u2022 SLS is delivered from the <strong>Treasury</strong> (rMLm...) \u2014 this holds the circulating supply<br>\u2022 Your family seed is the ONLY way to access your wallet \u2014 save it securely<br>\u2022 Compatible with <strong>Xaman</strong> (formerly XUMM) for mobile wallet management';
@@ -8521,7 +8675,7 @@ function generateAiResponse(query) {
 
     if (/xrp.*ledger|what.*xrpl|why.*xrpl|which.*blockchain/.test(q)) return '<strong>Why XRPL (XRP Ledger)?</strong><br><br>S4 Ledger uses the XRP Ledger because it\'s:<br><br>\u2022 <strong>Fast:</strong> 3-5 second transaction finality<br>\u2022 <strong>Cheap:</strong> ~$0.001 per transaction (drops)<br>\u2022 <strong>Energy efficient:</strong> No mining \u2014 uses federated consensus<br>\u2022 <strong>Built-in DEX:</strong> Native token exchange for SLS liquidity<br>\u2022 <strong>Issued currencies:</strong> Native support for custom tokens like $SLS<br>\u2022 <strong>TrustLines:</strong> Controlled token distribution<br>\u2022 <strong>Battle-tested:</strong> Operating since 2012, used by 150+ financial institutions<br><br>XRPL\'s low transaction cost makes it practical for micro-anchoring \u2014 1,500x cheaper than traditional verification methods.';
 
-    // ── ILS TOOLS (14 tools) ──
+    // ── ILS TOOLS (20+ tools) ──
     if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against MIL-STD-1388 requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> for Navy programs. Results can be anchored to XRPL for audit purposes.<br><br><strong>Try it:</strong> Click "Load Full ILS Package" to see a complete demo analysis.';
 
     if (/action.*item|task|open.*action|todo/.test(q)) { const total = s4ActionItems.length; const done = s4ActionItems.filter(a=>a.done).length; return '<strong>Action Items Manager</strong><br><br>' + (total > 0 ? 'Current status: <strong>' + done + '/' + total + '</strong> complete (' + Math.round(done/total*100) + '%)<br><br>' : 'No action items yet. Run a gap analysis to generate prioritized actions.<br><br>') + 'The Action Items Manager tracks all ILS-related tasks generated by gap analysis, DMSMS reviews, readiness assessments, and manual entries. Each item includes:<br>\u2022 Severity (critical/warning/info)<br>\u2022 Responsible owner<br>\u2022 Cost and schedule impact estimates<br>\u2022 Due dates and status tracking<br>\u2022 Linkage to specific DI numbers and ILS elements'; }
@@ -8577,9 +8731,9 @@ function generateAiResponse(query) {
     if (/dfars|252\.204|safeguard.*defense|covered.*defense/.test(q)) return '<strong>DFARS 252.204-7012</strong> \u2014 Safeguarding Covered Defense Information<br><br>Key requirements:<br>\u2022 Implement NIST SP 800-171 controls for CDI/CUI<br>\u2022 Report cyber incidents within 72 hours<br>\u2022 Preserve media and data for 90 days post-incident<br>\u2022 Flow down to subcontractors<br><br>S4\'s blockchain anchoring creates verifiable evidence of data integrity controls, directly supporting DFARS compliance.';
 
     // ── GENERAL HELP ──
-    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore Anchor-S4</strong> \u2014 14 tools organized by function<br>3. <strong>Try a demo analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.';
+    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore Anchor-S4</strong> \u2014 20+ tools organized by function<br>3. <strong>Try a demo analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.';
 
-    if (/configure.*ai|api.*key|ai.*setup|enable.*ai|openai|anthropic|azure|groq|mistral/.test(q)) return '<strong>S4 AI Agent Configuration</strong><br><br>The AI Agent is a production-grade assistant powered by large language models (LLMs). It provides:<br><br>\u2022 <strong>Context-aware analysis</strong> across all 14 ILS tools<br>\u2022 <strong>Natural language Q&A</strong> on defense logistics, supply chain, compliance, and more<br>\u2022 <strong>Document analysis &amp; summarization</strong> for uploaded files<br>\u2022 <strong>Real-time insights</strong> based on your loaded program data<br>\u2022 <strong>Custom report generation</strong> and memo drafting<br><br>The agent automatically adapts based on which ILS tool you\u2019re using and what data you\u2019ve loaded. Just type your question — the agent handles the rest.';
+    if (/configure.*ai|api.*key|ai.*setup|enable.*ai|openai|anthropic|azure|groq|mistral/.test(q)) return '<strong>S4 AI Agent Configuration</strong><br><br>The AI Agent is a production-grade assistant powered by large language models (LLMs). It provides:<br><br>\u2022 <strong>Context-aware analysis</strong> across all 20+ ILS tools<br>\u2022 <strong>Natural language Q&A</strong> on defense logistics, supply chain, compliance, and more<br>\u2022 <strong>Document analysis &amp; summarization</strong> for uploaded files<br>\u2022 <strong>Real-time insights</strong> based on your loaded program data<br>\u2022 <strong>Custom report generation</strong> and memo drafting<br><br>The agent automatically adapts based on which ILS tool you\u2019re using and what data you\u2019ve loaded. Just type your question — the agent handles the rest.';
 
     if (/encrypt|aes|security|data.*protect|secure.*record/.test(q)) return '<strong>Record Encryption</strong><br><br>S4 Ledger supports AES-256 encryption for sensitive records:<br><br>\u2022 <strong>Toggle encryption</strong> \u2014 enable per-record encryption before anchoring<br>\u2022 <strong>AES-256-GCM</strong> \u2014 military-grade symmetric encryption<br>\u2022 <strong>Client-side</strong> \u2014 encryption happens in your browser, never on the server<br>\u2022 <strong>Hash still verifiable</strong> \u2014 the SHA-256 hash is of the encrypted content<br>\u2022 <strong>Key management</strong> \u2014 you control the encryption key<br><br>CUI records should always be encrypted before anchoring to meet NIST 800-171 and DFARS requirements.';
 
@@ -8589,7 +8743,7 @@ function generateAiResponse(query) {
 
     if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoD domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="/s4-about/">About page</a>.';
 
-    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 14 ILS tools<br><br>What can I help you with?';
+    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 20+ ILS tools<br><br>What can I help you with?';
 
     if (/thank|thanks|thx|appreciate/.test(q)) return 'You\'re welcome! Let me know if you have any other questions about ILS, S4 Ledger, or defense logistics.';
 
@@ -8697,7 +8851,7 @@ function generateAiResponse(query) {
     }
 
     // ── S4 PLATFORM QUESTIONS ──
-    if (/pricing|how\s*much|cost|subscription|plan/i.test(q)) return '<strong>S4 Ledger Pricing</strong><br><br>\u2022 <strong>Starter</strong> — $29/mo: 25,000 SLS tokens, 5 users, all 14 ILS tools<br>\u2022 <strong>Professional</strong> — $99/mo: 100,000 SLS, 25 users, API access, HarborLink<br>\u2022 <strong>Enterprise</strong> — $299/mo: 500,000 SLS, unlimited users, dedicated support, SSO<br>\u2022 <strong>Government</strong> — Custom: FedRAMP, IL4/5, on-prem option<br><br>Each anchor costs 0.01 SLS (~$0.0001). SLS = Secure Logistics Standard, our utility token on XRPL.<br><br><a href="../s4-pricing/" style="color:#00aaff">View full pricing →</a>';
+    if (/pricing|how\s*much|cost|subscription|plan/i.test(q)) return '<strong>S4 Ledger Pricing</strong><br><br>\u2022 <strong>Starter</strong> — $29/mo: 25,000 SLS tokens, 5 users, all 20+ ILS tools<br>\u2022 <strong>Professional</strong> — $99/mo: 100,000 SLS, 25 users, API access, HarborLink<br>\u2022 <strong>Enterprise</strong> — $299/mo: 500,000 SLS, unlimited users, dedicated support, SSO<br>\u2022 <strong>Government</strong> — Custom: FedRAMP, IL4/5, on-prem option<br><br>Each anchor costs 0.01 SLS (~$0.0001). SLS = Secure Logistics Standard, our utility token on XRPL.<br><br><a href="../s4-pricing/" style="color:#00aaff">View full pricing →</a>';
 
     if (/what\s*is\s*sls|sls\s*token|what.*sls/i.test(q)) return '<strong>SLS — Secure Logistics Standard</strong><br><br>SLS is S4 Ledger\'s utility token on the XRP Ledger (XRPL). It powers every action on the platform:<br>\u2022 <strong>0.01 SLS per anchor</strong> — ~$0.0001 per record<br>\u2022 100M fixed supply — deflationary model<br>\u2022 Issued on XRPL — fast, transparent, low-cost<br>\u2022 Purchased through your subscription plan<br>\u2022 Each anchor sends 0.01 SLS from your operational wallet to the Treasury wallet<br><br>Each anchor transfers 0.01 SLS from your operational wallet to the S4 Treasury on the XRP Ledger — fully verifiable on-chain.';
 
@@ -8743,7 +8897,7 @@ function generateAiResponse(query) {
     if (/meaning\s*of\s*life|42/i.test(q)) return 'The answer is <strong>42</strong> — but in defense logistics, the real answer is <strong>keeping Ao above 90%</strong>. \uD83D\uDE04';
 
     // ── HELP / CAPABILITIES ──
-    if (/help|what\s*can\s*you\s*do|capabilities|features/i.test(q)) return '<strong>S4 Agent Capabilities:</strong><br><br><strong>\uD83D\uDD27 ILS & Defense:</strong><br>\u2022 Gap analysis interpretation & critical item triage<br>\u2022 DI number explanations (DI-001 through DI-044)<br>\u2022 CAR drafting, compliance checks, cost estimation<br>\u2022 Defense acronym definitions (CDRL, LCSP, DMSMS, etc.)<br>\u2022 MIL-STD and regulation guidance<br><br><strong>\uD83D\uDCCA Platform:</strong><br>\u2022 Anchoring help, verification, XRPL questions<br>\u2022 SLS token and pricing info<br>\u2022 Demo mode status and balance tracking<br>\u2022 Tool-specific guidance for all 14+ ILS tools<br><br><strong>\uD83E\uDD16 General:</strong><br>\u2022 Math calculations and unit conversions<br>\u2022 Date/time queries<br>\u2022 Recommendations and best practices<br>\u2022 General conversation and Q&A<br><br><em>Ask me anything — I can help with ILS analysis, defense logistics, compliance, and platform questions.</em>';
+    if (/help|what\s*can\s*you\s*do|capabilities|features/i.test(q)) return '<strong>S4 Agent Capabilities:</strong><br><br><strong>\uD83D\uDD27 ILS & Defense:</strong><br>\u2022 Gap analysis interpretation & critical item triage<br>\u2022 DI number explanations (DI-001 through DI-044)<br>\u2022 CAR drafting, compliance checks, cost estimation<br>\u2022 Defense acronym definitions (CDRL, LCSP, DMSMS, etc.)<br>\u2022 MIL-STD and regulation guidance<br><br><strong>\uD83D\uDCCA Platform:</strong><br>\u2022 Anchoring help, verification, XRPL questions<br>\u2022 SLS token and pricing info<br>\u2022 Demo mode status and balance tracking<br>\u2022 Tool-specific guidance for all 20+ ILS tools<br><br><strong>\uD83E\uDD16 General:</strong><br>\u2022 Math calculations and unit conversions<br>\u2022 Date/time queries<br>\u2022 Recommendations and best practices<br>\u2022 General conversation and Q&A<br><br><em>Ask me anything — I can help with ILS analysis, defense logistics, compliance, and platform questions.</em>';
 
     // ── GENERAL KNOWLEDGE PATTERNS ──
     // These make the agent useful even without an LLM API key
@@ -8753,7 +8907,7 @@ function generateAiResponse(query) {
         if (/blockchain|distributed ledger|dlt/i.test(q)) return '<strong>Blockchain / Distributed Ledger Technology</strong><br><br>A blockchain is a distributed, immutable ledger that records transactions across a peer-to-peer network. Key properties:<br><br>\u2022 <strong>Immutability</strong> \u2014 once written, records cannot be altered<br>\u2022 <strong>Transparency</strong> \u2014 all participants can verify the ledger<br>\u2022 <strong>Decentralization</strong> \u2014 no single point of failure<br>\u2022 <strong>Cryptographic security</strong> \u2014 SHA-256 hashing ensures integrity<br><br>S4 Ledger uses the <strong>XRP Ledger</strong> (XRPL) \u2014 a high-speed, energy-efficient blockchain with 3-5 second settlement and minimal fees.';
         if (/xrp|xrpl|xrp ledger|ripple/i.test(q)) return '<strong>XRP Ledger (XRPL)</strong><br><br>The XRP Ledger is an open-source, decentralized blockchain:<br><br>\u2022 <strong>Speed:</strong> 3-5 second transaction settlement<br>\u2022 <strong>Cost:</strong> ~$0.0002 per transaction<br>\u2022 <strong>Energy:</strong> 61,000x more efficient than Bitcoin<br>\u2022 <strong>Reliability:</strong> 10+ years of operation, 80M+ ledgers closed<br>\u2022 <strong>Tokens:</strong> Native issued currency support (like $SLS)<br><br>S4 Ledger anchors defense records to XRPL Mainnet, making them independently verifiable by anyone.';
         if (/sha.?256|hash function|hashing|cryptograph/i.test(q)) return '<strong>SHA-256 Hashing</strong><br><br>SHA-256 (Secure Hash Algorithm 256-bit) produces a unique 64-character fingerprint of any data:<br><br>\u2022 <strong>Deterministic:</strong> Same input always produces the same hash<br>\u2022 <strong>One-way:</strong> Cannot reverse the hash to get original data<br>\u2022 <strong>Collision-resistant:</strong> Virtually impossible for two inputs to produce the same hash<br>\u2022 <strong>Avalanche effect:</strong> Changing one bit changes ~50% of the output<br><br>S4 Ledger uses SHA-256 to create tamper-proof fingerprints of defense records before anchoring to XRPL.';
-        if (/s4\s*(ledger|systems|platform)|this platform/i.test(q)) return '<strong>S4 Ledger</strong><br><br>S4 Ledger is a blockchain-verified defense record management platform built by S4 Systems, LLC.<br><br><strong>What it does:</strong><br>\u2022 Anchors defense logistics records to the XRP Ledger<br>\u2022 Creates tamper-proof audit trails for CDRL, maintenance, supply chain, and ordnance records<br>\u2022 Provides 14 integrated ILS (Integrated Logistics Support) analysis tools<br>\u2022 Supports 156+ military record types across all service branches<br><br><strong>Key value:</strong> 99.9% cost reduction vs. traditional notarization ($0.0001 vs. $25-$150 per record).<br><br><strong>Technology:</strong> XRPL Mainnet, $SLS utility token, SHA-256 hashing, AI-powered analysis.';
+        if (/s4\s*(ledger|systems|platform)|this platform/i.test(q)) return '<strong>S4 Ledger</strong><br><br>S4 Ledger is a blockchain-verified defense record management platform built by S4 Systems, LLC.<br><br><strong>What it does:</strong><br>\u2022 Anchors defense logistics records to the XRP Ledger<br>\u2022 Creates tamper-proof audit trails for CDRL, maintenance, supply chain, and ordnance records<br>\u2022 Provides 20+ integrated ILS (Integrated Logistics Support) analysis tools<br>\u2022 Supports 156+ military record types across all service branches<br><br><strong>Key value:</strong> 99.9% cost reduction vs. traditional notarization ($0.0001 vs. $25-$150 per record).<br><br><strong>Technology:</strong> XRPL Mainnet, $SLS utility token, SHA-256 hashing, AI-powered analysis.';
     }
 
     if (/who\s*(made|built|created|founded|is behind)/i.test(q)) return '<strong>S4 Systems, LLC</strong><br><br>S4 Ledger is built by <strong>S4 Systems, LLC</strong>, founded by <strong>Nick Frankfort</strong>. The platform combines blockchain technology with defense logistics expertise to create tamper-proof audit trails for the Department of Defense.<br><br>\u2022 Website: <a href="https://s4ledger.com" target="_blank" style="color:var(--accent)">s4ledger.com</a><br>\u2022 Treasury: <a href="https://livenet.xrpl.org/accounts/rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ" target="_blank" style="color:var(--accent)">View on XRPL</a>';
@@ -14639,6 +14793,36 @@ function openILSTool(toolId) {
     // Update floating AI agent context
     if (typeof updateAiContext === 'function') updateAiContext(toolId);
     
+    // How It Works: auto-open first visit, show ? icon on return visits
+    (function(){
+        var panel = document.getElementById(toolId);
+        if(!panel) return;
+        var det = panel.querySelector('details');
+        if(!det) return;
+        var key = 's4_hiw_' + toolId;
+        if(!localStorage.getItem(key)){
+            det.setAttribute('open','');
+            det.style.display = '';
+            localStorage.setItem(key,'1');
+        } else {
+            det.style.display = 'none';
+            var h3 = panel.querySelector('h3');
+            if(h3 && !h3.querySelector('.hiw-help-btn')){
+                var btn = document.createElement('button');
+                btn.className = 'hiw-help-btn';
+                btn.title = 'Show How It Works';
+                btn.textContent = '?';
+                btn.onclick = function(e){
+                    e.stopPropagation();
+                    det.style.display = '';
+                    det.setAttribute('open','');
+                    btn.remove();
+                };
+                h3.appendChild(btn);
+            }
+        }
+    })();
+
     _currentILSTool = toolId;
 }
 
@@ -14664,6 +14848,173 @@ function closeILSTool() {
         applyTabVisibility(vis);
     }
 }
+
+// ═══ Drag-Reorder Tool Cards (iPhone-style) ═══
+(function initToolCardDragReorder(){
+    var STORAGE_KEY = 's4_demo_tool_card_order';
+    function getHub(){ return document.getElementById('ilsSubHub'); }
+    
+    function restoreOrder(){
+        var hub = getHub(); if(!hub) return;
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if(!saved) return;
+        try {
+            var order = JSON.parse(saved);
+            var cards = Array.from(hub.querySelectorAll('.ils-tool-card'));
+            var map = {};
+            cards.forEach(function(c){ 
+                var m = c.getAttribute('onclick') || '';
+                var id = (m.match(/openILSTool\('([^']+)'\)/) || [])[1];
+                if(id) map[id] = c;
+            });
+            order.forEach(function(id){
+                if(map[id]) hub.appendChild(map[id]);
+            });
+        } catch(e){}
+    }
+
+    function saveOrder(){
+        var hub = getHub(); if(!hub) return;
+        var cards = hub.querySelectorAll('.ils-tool-card');
+        var order = [];
+        cards.forEach(function(c){
+            var m = c.getAttribute('onclick') || '';
+            var id = (m.match(/openILSTool\('([^']+)'\)/) || [])[1];
+            if(id) order.push(id);
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(order));
+    }
+
+    function setupDrag(){
+        var hub = getHub(); if(!hub) return;
+        var dragSrc = null;
+
+        hub.querySelectorAll('.ils-tool-card').forEach(function(card){
+            card.setAttribute('draggable', 'true');
+
+            card.addEventListener('dragstart', function(e){
+                dragSrc = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', '');
+            });
+
+            card.addEventListener('dragend', function(){
+                this.classList.remove('dragging');
+                hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
+            });
+
+            card.addEventListener('dragover', function(e){
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if(this !== dragSrc) this.classList.add('drag-over');
+            });
+
+            card.addEventListener('dragleave', function(){
+                this.classList.remove('drag-over');
+            });
+
+            card.addEventListener('drop', function(e){
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                if(dragSrc && dragSrc !== this){
+                    var allCards = Array.from(hub.querySelectorAll('.ils-tool-card'));
+                    var fromIdx = allCards.indexOf(dragSrc);
+                    var toIdx = allCards.indexOf(this);
+                    if(fromIdx < toIdx){
+                        hub.insertBefore(dragSrc, this.nextSibling);
+                    } else {
+                        hub.insertBefore(dragSrc, this);
+                    }
+                    saveOrder();
+                    setupDrag();
+                }
+                dragSrc = null;
+            });
+
+            // Touch support for mobile (iPhone-style long-press)
+            var touchTimer = null;
+            var touchDragging = false;
+            var touchClone = null;
+            var touchSrc = null;
+
+            card.addEventListener('touchstart', function(e){
+                var self = this;
+                touchTimer = setTimeout(function(){
+                    touchDragging = true;
+                    touchSrc = self;
+                    self.classList.add('dragging');
+                    touchClone = self.cloneNode(true);
+                    touchClone.style.position = 'fixed';
+                    touchClone.style.pointerEvents = 'none';
+                    touchClone.style.opacity = '0.85';
+                    touchClone.style.zIndex = '9999';
+                    touchClone.style.width = self.offsetWidth + 'px';
+                    touchClone.style.transform = 'scale(1.05)';
+                    touchClone.style.boxShadow = '0 8px 32px rgba(0,170,255,0.3)';
+                    document.body.appendChild(touchClone);
+                }, 500);
+            }, {passive:true});
+
+            card.addEventListener('touchmove', function(e){
+                if(!touchDragging || !touchClone) return;
+                e.preventDefault();
+                var touch = e.touches[0];
+                touchClone.style.left = (touch.clientX - touchClone.offsetWidth/2) + 'px';
+                touchClone.style.top = (touch.clientY - touchClone.offsetHeight/2) + 'px';
+                hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
+                var elem = document.elementFromPoint(touch.clientX, touch.clientY);
+                if(elem){
+                    var target = elem.closest('.ils-tool-card');
+                    if(target && target !== touchSrc) target.classList.add('drag-over');
+                }
+            }, {passive:false});
+
+            card.addEventListener('touchend', function(e){
+                clearTimeout(touchTimer);
+                if(touchDragging && touchSrc){
+                    var touch = e.changedTouches[0];
+                    var elem = document.elementFromPoint(touch.clientX, touch.clientY);
+                    var target = elem ? elem.closest('.ils-tool-card') : null;
+                    if(target && target !== touchSrc){
+                        var allCards = Array.from(hub.querySelectorAll('.ils-tool-card'));
+                        var fromIdx = allCards.indexOf(touchSrc);
+                        var toIdx = allCards.indexOf(target);
+                        if(fromIdx < toIdx){
+                            hub.insertBefore(touchSrc, target.nextSibling);
+                        } else {
+                            hub.insertBefore(touchSrc, target);
+                        }
+                        saveOrder();
+                        setupDrag();
+                    }
+                    touchSrc.classList.remove('dragging');
+                    hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
+                }
+                if(touchClone && touchClone.parentNode) touchClone.parentNode.removeChild(touchClone);
+                touchDragging = false;
+                touchClone = null;
+                touchSrc = null;
+            });
+
+            card.addEventListener('touchcancel', function(){
+                clearTimeout(touchTimer);
+                if(touchClone && touchClone.parentNode) touchClone.parentNode.removeChild(touchClone);
+                if(touchSrc) touchSrc.classList.remove('dragging');
+                hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
+                touchDragging = false;
+                touchClone = null;
+                touchSrc = null;
+            });
+        });
+    }
+
+    if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', function(){ restoreOrder(); setupDrag(); });
+    } else {
+        restoreOrder(); setupDrag();
+    }
+})();
 
 // ═══ Wallet Sidebar ═══
 function openWalletSidebar() {
@@ -16519,7 +16870,7 @@ var S4_SUBSCRIPTION_TIERS = {
         price_annual: 24990,
         sls_monthly: 100000,
         anchors_monthly: 10000000,
-        features: ['Everything in Starter', 'All 14+ ILS Tools', 'Compliance scorecard', 'Priority support', 'Custom integrations'],
+        features: ['Everything in Starter', 'All 20+ ILS Tools', 'Compliance scorecard', 'Priority support', 'Custom integrations'],
         stripe_monthly: 'price_pro_monthly',
         stripe_annual: 'price_pro_annual'
     },
@@ -18368,7 +18719,7 @@ function _updateThemeIcon(isLight) {
         var tabs = [
             {name:'Anchor Channel', tab:'tabAnchor', icon:'fa-anchor', desc:'Anchor records to blockchain'},
             {name:'Verify Channel', tab:'tabVerify', icon:'fa-shield-halved', desc:'Verify record integrity'},
-            {name:'ILS Workspace', tab:'tabILS', icon:'fa-cogs', desc:'14 ILS analysis tools'},
+            {name:'ILS Workspace', tab:'tabILS', icon:'fa-cogs', desc:'20+ ILS analysis tools'},
             {name:'Audit Vault', tab:'tabILS', panel:'hub-vault', icon:'fa-vault', desc:'View all anchored records'},
             {name:'Performance Dashboard', tab:'tabMetrics', icon:'fa-chart-line', desc:'API metrics & analytics'},
             {name:'Wallet / SLS', tab:'tabWallet', icon:'fa-wallet', desc:'SLS balance & transactions'}

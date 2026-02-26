@@ -451,7 +451,25 @@
             border-radius:3px !important;
             padding:0 16px !important;
             transition:all 0.3s !important;
+            position:relative !important;
         }
+        /* ── How It Works ? help icon (shows on return visits when details collapsed) ── */
+        .hiw-help-btn{
+            width:26px !important;height:26px !important;border-radius:50% !important;
+            background:rgba(0,170,255,0.12) !important;border:1px solid rgba(0,170,255,0.25) !important;
+            color:#00aaff !important;font-size:0.75rem !important;font-weight:700 !important;
+            cursor:pointer !important;display:inline-flex !important;align-items:center !important;
+            justify-content:center !important;transition:all 0.2s !important;
+            line-height:1 !important;padding:0 !important;margin-left:8px !important;
+            vertical-align:middle !important;
+        }
+        .hiw-help-btn:hover{background:rgba(0,170,255,0.25) !important;transform:scale(1.1) !important}
+
+        /* ── Drag-reorder tool cards ── */
+        .ils-tool-card{cursor:grab;user-select:none;-webkit-user-select:none;transition:transform 0.15s ease,opacity 0.15s ease,box-shadow 0.15s ease}
+        .ils-tool-card.dragging{opacity:0.45;transform:scale(0.92);box-shadow:0 0 20px rgba(0,170,255,0.4) !important;z-index:1000}
+        .ils-tool-card.drag-over{border:2px solid #00aaff !important;box-shadow:0 0 12px rgba(0,170,255,0.3) !important}
+
         .ils-hub-panel details[open]{
             background:rgba(0,170,255,0.05) !important;
             border-color:rgba(0,170,255,0.15) !important;
@@ -1888,7 +1906,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <p style="color:var(--steel);font-size:0.85rem;line-height:1.6;margin-bottom:16px">S4 Ledger will set up your account, provision your XRPL wallet, and allocate your $SLS tokens. This takes just a few seconds.</p>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--accent)"><i class="fas fa-anchor"></i></div><div><strong style="color:#fff">Anchor Records</strong><div style="color:var(--steel);font-size:0.8rem">SHA-256 hash any document to the XRP Ledger in 3-5 seconds</div></div></div>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(201,168,76,0.1);color:var(--gold)"><i class="fas fa-coins"></i></div><div><strong style="color:#fff">$SLS Token Economy</strong><div style="color:var(--steel);font-size:0.8rem">0.01 SLS per anchor (~$0.0001). Real on-chain token transfers.</div></div></div>
-                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--green)"><i class="fas fa-brain"></i></div><div><strong style="color:#fff">14 ILS Tools</strong><div style="color:var(--steel);font-size:0.8rem">Gap analysis, DMSMS, readiness, compliance, risk, and more</div></div></div>
+                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--green)"><i class="fas fa-brain"></i></div><div><strong style="color:#fff">20+ ILS Tools</strong><div style="color:var(--steel);font-size:0.8rem">Gap analysis, DMSMS, readiness, compliance, risk, and more</div></div></div>
                     <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:#00aaff"><i class="fas fa-robot"></i></div><div><strong style="color:#fff">AI Agent</strong><div style="color:var(--steel);font-size:0.8rem">Context-aware assistant available on every tool and tab</div></div></div>
                     <div style="text-align:center;margin-top:20px"><button class="onboard-btn" onclick="onboardNext()"><i class="fas fa-arrow-right" style="margin-right:6px"></i>Start Setup</button></div>
                 </div>
@@ -2016,9 +2034,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 </div>
                 <div class="hub-card" onclick="showSection('sectionILS')">
                     <div class="hc-icon" style="background:rgba(201,168,76,0.1);"><i class="fas fa-brain" style="color:#c9a84c;"></i></div>
-                    <div class="hc-title">Anchor-S4 <span style="background:rgba(201,168,76,0.15);color:#c9a84c;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">14 TOOLS</span></div>
-                    <div class="hc-desc">14+ integrated defense tools: Gap Analysis, DMSMS, Readiness, Compliance, Risk, Predictive Maintenance, ROI, Audit Vault, and more.</div>
-                    <div class="hc-meta"><i class="fas fa-tools"></i> 14+ ILS tools &bull; AI-powered</div>
+                    <div class="hc-title">Anchor-S4 <span style="background:rgba(201,168,76,0.15);color:#c9a84c;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">20+ TOOLS</span></div>
+                    <div class="hc-desc">20+ integrated defense tools: Gap Analysis, DMSMS, Readiness, Compliance, Risk, Predictive Maintenance, ROI, Audit Vault, and more.</div>
+                    <div class="hc-meta"><i class="fas fa-tools"></i> 20+ ILS tools &bull; AI-powered</div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" onclick="showSection('sectionSystems')">
@@ -2384,7 +2402,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div style="width:42px;height:42px;border-radius:3px;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-anchor" style="color:#00aaff;font-size:1.1rem"></i></div>
                         <div>
                             <h3 style="font-size:1.15rem;font-weight:700;color:#fff;margin:0;letter-spacing:-0.02em">Anchor-S4</h3>
-                            <p style="font-size:0.78rem;color:var(--steel);margin:2px 0 0;line-height:1.4">Defense logistics workspace &mdash; 14 integrated tools</p>
+                            <p style="font-size:0.78rem;color:var(--steel);margin:2px 0 0;line-height:1.4">Defense logistics workspace &mdash; 20+ integrated tools</p>
                         </div>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -2878,6 +2896,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                     <li><strong>Audit cost reduction (70%):</strong> Instead of gathering evidence for weeks before a DCMA or DLA audit, S4 Ledger provides instant proof via XRPL hashes. The auditor can verify any record's integrity in seconds.</li>
                                     <li><strong>Compliance acceleration:</strong> Per-program value of faster CDRL delivery, reduced contract risk, and avoided schedule delays from documentation gaps.</li>
                                 </ul>
+                                <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> ILS program offices spend <strong>$500K–$2M per year per program</strong> on manual record-keeping, audit preparation, and error remediation. S4 Ledger automates 65–85% of that labor, reduces error-driven rework by 90%, and cuts audit preparation costs by 70%. Across a 10-program portfolio, annual savings typically reach <strong>$3M–$8M</strong> — a 5–15x return on platform investment.</p>
                                 <p><strong style="color:#00aaff;">All inputs are editable.</strong> Change them to match your actual program. The output updates in real time. Use it in proposals or briefings to show the business case for S4 Ledger.</p>
                             </div>
                         </details>
@@ -3724,6 +3743,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The SBOM Viewer catalogs all embedded software components across weapon systems — firmware, RTOS, middleware, drivers, and third-party libraries. Each component is tracked with version, CVE status, license type, and supply chain provenance. S4 Ledger hashes each SBOM snapshot to XRPL for tamper-proof versioning.</p>
                             <p><strong style="color:#00aaff;">Why it matters:</strong> CMMC Level 2+ requires SBOM management. Executive Order 14028 mandates SBOMs for all federal software. No competitor ties SBOM tracking to blockchain verification — this is a first.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> A single undetected software vulnerability in a weapon system costs <strong>$5M–$25M</strong> in emergency patching, re-certification, and operational downtime. Manual SBOM tracking across 50+ embedded components per platform misses 30–40% of CVEs. S4 Ledger’s automated NVD scanning catches vulnerabilities in real-time, and blockchain-anchored SBOM snapshots prove compliance for EO 14028 and CMMC audits — eliminating <strong>$200K–$500K per program per year</strong> in manual SBOM compilation and audit preparation costs.</p>
                             <p><strong style="color:#00aaff;">Production mode:</strong> Ingests CycloneDX and SPDX formats from CI/CD pipelines. Integrates with NVD for real-time CVE matching. Auto-generates SBOM attestation documents for DCMA/DCAA auditors.</p>
                         </div>
                     </details>
@@ -8847,7 +8867,7 @@ function generateAiResponse(query) {
         return '**S4 Ledger Pricing:**\n\n| Tier | Price | SLS Included |\n|---|---|---|\n| Pilot | Free | 100 SLS |\n| Starter | $999/mo | 25,000 SLS |\n| Professional | $2,499/mo | 100,000 SLS |\n| Enterprise | $9,999/mo | 500,000 SLS |\n\nAll tiers include full API access, 156+ record types, and ILS tools. Enterprise adds SSO, dedicated support, and custom integrations.';
     }
     if (/what is s4|about s4|platform|overview|what can you do|capabilities/.test(q)) {
-        return '**S4 Ledger** — Immutable Defense Logistics on the XRP Ledger\n\n• **63 REST API endpoints** for anchoring, verification, ILS, AI, and security\n• **156+ record types** across 9 military branches\n• **14 ILS tools** (DMSMS, readiness, supply chain risk, digital thread, etc.)\n• **AI-powered** logistics intelligence with audit trails\n• **$SLS token** economy — $0.01/SLS, 0.01 SLS per anchor\n• **XRPL Mainnet** — 3-5 second finality, 99.99% uptime\n• **Python SDK** with 38+ functions + REST API\n\nAsk me about any specific feature!';
+        return '**S4 Ledger** — Immutable Defense Logistics on the XRP Ledger\n\n• **63 REST API endpoints** for anchoring, verification, ILS, AI, and security\n• **156+ record types** across 9 military branches\n• **20+ ILS tools** (DMSMS, readiness, supply chain risk, digital thread, etc.)\n• **AI-powered** logistics intelligence with audit trails\n• **$SLS token** economy — $0.01/SLS, 0.01 SLS per anchor\n• **XRPL Mainnet** — 3-5 second finality, 99.99% uptime\n• **Python SDK** with 38+ functions + REST API\n\nAsk me about any specific feature!';
     }
     const r = ilsResults;
     // AI Agent operates in full production mode
@@ -8908,12 +8928,12 @@ function generateAiResponse(query) {
     if (/di-?\d+|di number/.test(q)) return explainDINumber(q);
 
     // ── S4 LEDGER PRODUCT ──
-    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Secure Logistics Standard<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>14 ILS tools</strong> covering all 12 ILS elements per MIL-STD-1388<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>$SLS utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192SLS<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>54+ Navy record types</strong> for Navy programs<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.';
+    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Secure Logistics Standard<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>20+ ILS tools</strong> covering all 12 ILS elements per MIL-STD-1388<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>$SLS utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192SLS<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>54+ Navy record types</strong> for Navy programs<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.';
 
     if (/how.*work|how.*anchor|how.*hash|how.*blockchain/.test(q)) return '<strong>How S4 Ledger Works:</strong><br><br>1. <strong>Upload or create a record</strong> \u2014 any ILS document, analysis, or data point<br>2. <strong>SHA-256 hash computed</strong> \u2014 a unique 64-character fingerprint of the content<br>3. <strong>Hash anchored to XRPL</strong> \u2014 written as a Memo on an XRP Ledger transaction<br>4. <strong>Transaction verified</strong> \u2014 XRPL validates within 3-5 seconds at ~$0.001 tx fee<br>5. <strong>SLS fee applied</strong> \u2014 0.01 SLS ($0.01) per anchor for network access<br><br>The original data stays on your device (never sent to blockchain). Only the hash is anchored. Anyone can independently verify a record by recomputing the hash and checking the XRPL transaction.<br><br><strong>Result:</strong> Tamper-proof, independently verifiable audit trail \u2014 1,500x cheaper than legacy verification.';
 
     // ── PRICING ──
-    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(0,170,255,0.2);border-radius:3px"><strong style="color:#00aaff">Pilot (Free)</strong><br>100 SLS/mo<br>10,000 anchors<br>All 14 tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:3px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 SLS/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Professional ($2,499/mo)</strong><br>100,000 SLS/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Enterprise ($9,999/mo)</strong><br>500,000 SLS/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + SLS TrustLine setup. $0.01 SLS per anchor.';
+    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(0,170,255,0.2);border-radius:3px"><strong style="color:#00aaff">Pilot (Free)</strong><br>100 SLS/mo<br>10,000 anchors<br>All 20+ tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:3px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 SLS/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Professional ($2,499/mo)</strong><br>100,000 SLS/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Enterprise ($9,999/mo)</strong><br>500,000 SLS/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + SLS TrustLine setup. $0.01 SLS per anchor.';
 
     // ── WALLETS & SLS ──
     if (/wallet|xrpl.*wallet|seed|family.*seed|trustline|trust.*line/.test(q)) return '<strong>XRPL Wallet & TrustLine Setup</strong><br><br>When you subscribe, S4 automatically:<br><br>1. <strong>Generates a secp256k1 wallet</strong> \u2014 your unique XRPL address + family seed (secret key)<br>2. <strong>Funds with XRP</strong> \u2014 covers the 12 XRP account reserve + TrustLine reserve<br>3. <strong>Sets up SLS TrustLine</strong> \u2014 pointed at the SLS issuer (<code>r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code>)<br>4. <strong>SLS delivered</strong> \u2014 from the Treasury wallet to your wallet<br><br><strong>Important:</strong><br>\u2022 TrustLines go to the <strong>SLS issuer</strong> (r95...) \u2014 this is the wallet that created the SLS token<br>\u2022 SLS is delivered from the <strong>Treasury</strong> (rMLm...) \u2014 this holds the circulating supply<br>\u2022 Your family seed is the ONLY way to access your wallet \u2014 save it securely<br>\u2022 Compatible with <strong>Xaman</strong> (formerly XUMM) for mobile wallet management';
@@ -8926,7 +8946,7 @@ function generateAiResponse(query) {
 
     if (/xrp.*ledger|what.*xrpl|why.*xrpl|which.*blockchain/.test(q)) return '<strong>Why XRPL (XRP Ledger)?</strong><br><br>S4 Ledger uses the XRP Ledger because it\'s:<br><br>\u2022 <strong>Fast:</strong> 3-5 second transaction finality<br>\u2022 <strong>Cheap:</strong> ~$0.001 per transaction (drops)<br>\u2022 <strong>Energy efficient:</strong> No mining \u2014 uses federated consensus<br>\u2022 <strong>Built-in DEX:</strong> Native token exchange for SLS liquidity<br>\u2022 <strong>Issued currencies:</strong> Native support for custom tokens like $SLS<br>\u2022 <strong>TrustLines:</strong> Controlled token distribution<br>\u2022 <strong>Battle-tested:</strong> Operating since 2012, used by 150+ financial institutions<br><br>XRPL\'s low transaction cost makes it practical for micro-anchoring \u2014 1,500x cheaper than traditional verification methods.';
 
-    // ── ILS TOOLS (14 tools) ──
+    // ── ILS TOOLS (20+ tools) ──
     if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against MIL-STD-1388 requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> for Navy programs. Results can be anchored to XRPL for audit purposes.<br><br><strong>Try it:</strong> Click "Load Full ILS Package" to see a complete analysis.';
 
     if (/action.*item|task|open.*action|todo/.test(q)) { const total = s4ActionItems.length; const done = s4ActionItems.filter(a=>a.done).length; return '<strong>Action Items Manager</strong><br><br>' + (total > 0 ? 'Current status: <strong>' + done + '/' + total + '</strong> complete (' + Math.round(done/total*100) + '%)<br><br>' : 'No action items yet. Run a gap analysis to generate prioritized actions.<br><br>') + 'The Action Items Manager tracks all ILS-related tasks generated by gap analysis, DMSMS reviews, readiness assessments, and manual entries. Each item includes:<br>\u2022 Severity (critical/warning/info)<br>\u2022 Responsible owner<br>\u2022 Cost and schedule impact estimates<br>\u2022 Due dates and status tracking<br>\u2022 Linkage to specific DI numbers and ILS elements'; }
@@ -8982,9 +9002,9 @@ function generateAiResponse(query) {
     if (/dfars|252\.204|safeguard.*defense|covered.*defense/.test(q)) return '<strong>DFARS 252.204-7012</strong> \u2014 Safeguarding Covered Defense Information<br><br>Key requirements:<br>\u2022 Implement NIST SP 800-171 controls for CDI/CUI<br>\u2022 Report cyber incidents within 72 hours<br>\u2022 Preserve media and data for 90 days post-incident<br>\u2022 Flow down to subcontractors<br><br>S4\'s blockchain anchoring creates verifiable evidence of data integrity controls, directly supporting DFARS compliance.';
 
     // ── GENERAL HELP ──
-    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore Anchor-S4</strong> \u2014 14 tools organized by function<br>3. <strong>Try a sample analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.';
+    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore Anchor-S4</strong> \u2014 20+ tools organized by function<br>3. <strong>Try a sample analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.';
 
-    if (/configure.*ai|api.*key|ai.*setup|enable.*ai|openai|anthropic|azure|groq|mistral/.test(q)) return '<strong>S4 AI Agent Configuration</strong><br><br>The AI Agent is a production-grade assistant powered by large language models (LLMs). It provides:<br><br>\u2022 <strong>Context-aware analysis</strong> across all 14 ILS tools<br>\u2022 <strong>Natural language Q&A</strong> on defense logistics, supply chain, compliance, and more<br>\u2022 <strong>Document analysis &amp; summarization</strong> for uploaded files<br>\u2022 <strong>Real-time insights</strong> based on your loaded program data<br>\u2022 <strong>Custom report generation</strong> and memo drafting<br><br>The agent automatically adapts based on which ILS tool you\u2019re using and what data you\u2019ve loaded. Just type your question — the agent handles the rest.';
+    if (/configure.*ai|api.*key|ai.*setup|enable.*ai|openai|anthropic|azure|groq|mistral/.test(q)) return '<strong>S4 AI Agent Configuration</strong><br><br>The AI Agent is a production-grade assistant powered by large language models (LLMs). It provides:<br><br>\u2022 <strong>Context-aware analysis</strong> across all 20+ ILS tools<br>\u2022 <strong>Natural language Q&A</strong> on defense logistics, supply chain, compliance, and more<br>\u2022 <strong>Document analysis &amp; summarization</strong> for uploaded files<br>\u2022 <strong>Real-time insights</strong> based on your loaded program data<br>\u2022 <strong>Custom report generation</strong> and memo drafting<br><br>The agent automatically adapts based on which ILS tool you\u2019re using and what data you\u2019ve loaded. Just type your question — the agent handles the rest.';
 
     if (/encrypt|aes|security|data.*protect|secure.*record/.test(q)) return '<strong>Record Encryption</strong><br><br>S4 Ledger supports AES-256 encryption for sensitive records:<br><br>\u2022 <strong>Toggle encryption</strong> \u2014 enable per-record encryption before anchoring<br>\u2022 <strong>AES-256-GCM</strong> \u2014 military-grade symmetric encryption<br>\u2022 <strong>Client-side</strong> \u2014 encryption happens in your browser, never on the server<br>\u2022 <strong>Hash still verifiable</strong> \u2014 the SHA-256 hash is of the encrypted content<br>\u2022 <strong>Key management</strong> \u2014 you control the encryption key<br><br>CUI records should always be encrypted before anchoring to meet NIST 800-171 and DFARS requirements.';
 
@@ -8994,7 +9014,7 @@ function generateAiResponse(query) {
 
     if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoD domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="/s4-about/">About page</a>.';
 
-    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 14 ILS tools<br><br>What can I help you with?';
+    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 20+ ILS tools<br><br>What can I help you with?';
 
     if (/thank|thanks|thx|appreciate/.test(q)) return 'You\'re welcome! Let me know if you have any other questions about ILS, S4 Ledger, or defense logistics.';
 
@@ -9102,7 +9122,7 @@ function generateAiResponse(query) {
     }
 
     // ── S4 PLATFORM QUESTIONS ──
-    if (/pricing|how\s*much|cost|subscription|plan/i.test(q)) return '<strong>S4 Ledger Pricing</strong><br><br>\u2022 <strong>Starter</strong> — $29/mo: 25,000 SLS tokens, 5 users, all 14 ILS tools<br>\u2022 <strong>Professional</strong> — $99/mo: 100,000 SLS, 25 users, API access, HarborLink<br>\u2022 <strong>Enterprise</strong> — $299/mo: 500,000 SLS, unlimited users, dedicated support, SSO<br>\u2022 <strong>Government</strong> — Custom: FedRAMP, IL4/5, on-prem option<br><br>Each anchor costs 0.01 SLS (~$0.0001). SLS = Secure Logistics Standard, our utility token on XRPL.<br><br><a href="../s4-pricing/" style="color:#00aaff">View full pricing →</a>';
+    if (/pricing|how\s*much|cost|subscription|plan/i.test(q)) return '<strong>S4 Ledger Pricing</strong><br><br>\u2022 <strong>Starter</strong> — $29/mo: 25,000 SLS tokens, 5 users, all 20+ ILS tools<br>\u2022 <strong>Professional</strong> — $99/mo: 100,000 SLS, 25 users, API access, HarborLink<br>\u2022 <strong>Enterprise</strong> — $299/mo: 500,000 SLS, unlimited users, dedicated support, SSO<br>\u2022 <strong>Government</strong> — Custom: FedRAMP, IL4/5, on-prem option<br><br>Each anchor costs 0.01 SLS (~$0.0001). SLS = Secure Logistics Standard, our utility token on XRPL.<br><br><a href="../s4-pricing/" style="color:#00aaff">View full pricing →</a>';
 
     if (/what\s*is\s*sls|sls\s*token|what.*sls/i.test(q)) return '<strong>SLS — Secure Logistics Standard</strong><br><br>SLS is S4 Ledger\'s utility token on the XRP Ledger (XRPL). It powers every action on the platform:<br>\u2022 <strong>0.01 SLS per anchor</strong> — ~$0.0001 per record<br>\u2022 100M fixed supply — deflationary model<br>\u2022 Issued on XRPL — fast, transparent, low-cost<br>\u2022 Purchased through your subscription plan<br>\u2022 Each anchor sends 0.01 SLS from your operational wallet to the Treasury wallet<br><br>Each anchor transfers 0.01 SLS from your operational wallet to the S4 Treasury on the XRP Ledger — fully verifiable on-chain.';
 
@@ -9132,7 +9152,7 @@ function generateAiResponse(query) {
     if (/meaning\s*of\s*life|42/i.test(q)) return 'The answer is <strong>42</strong> — but in defense logistics, the real answer is <strong>keeping Ao above 90%</strong>. \uD83D\uDE04';
 
     // ── HELP / CAPABILITIES ──
-    if (/help|what\s*can\s*you\s*do|capabilities|features/i.test(q)) return '<strong>S4 Agent Capabilities:</strong><br><br><strong>\uD83D\uDD27 ILS & Defense:</strong><br>\u2022 Gap analysis interpretation & critical item triage<br>\u2022 DI number explanations (DI-001 through DI-044)<br>\u2022 CAR drafting, compliance checks, cost estimation<br>\u2022 Defense acronym definitions (CDRL, LCSP, DMSMS, etc.)<br>\u2022 MIL-STD and regulation guidance<br><br><strong>\uD83D\uDCCA Platform:</strong><br>\u2022 Anchoring help, verification, XRPL questions<br>\u2022 SLS token and pricing info<br>\u2022 Session status and balance tracking<br>\u2022 Tool-specific guidance for all 14+ ILS tools<br><br><strong>\uD83E\uDD16 General:</strong><br>\u2022 Math calculations and unit conversions<br>\u2022 Date/time queries<br>\u2022 Recommendations and best practices<br>\u2022 General conversation and Q&A<br><br><em>Ask me anything — I can help with ILS analysis, defense logistics, compliance, and platform questions.</em>';
+    if (/help|what\s*can\s*you\s*do|capabilities|features/i.test(q)) return '<strong>S4 Agent Capabilities:</strong><br><br><strong>\uD83D\uDD27 ILS & Defense:</strong><br>\u2022 Gap analysis interpretation & critical item triage<br>\u2022 DI number explanations (DI-001 through DI-044)<br>\u2022 CAR drafting, compliance checks, cost estimation<br>\u2022 Defense acronym definitions (CDRL, LCSP, DMSMS, etc.)<br>\u2022 MIL-STD and regulation guidance<br><br><strong>\uD83D\uDCCA Platform:</strong><br>\u2022 Anchoring help, verification, XRPL questions<br>\u2022 SLS token and pricing info<br>\u2022 Session status and balance tracking<br>\u2022 Tool-specific guidance for all 20+ ILS tools<br><br><strong>\uD83E\uDD16 General:</strong><br>\u2022 Math calculations and unit conversions<br>\u2022 Date/time queries<br>\u2022 Recommendations and best practices<br>\u2022 General conversation and Q&A<br><br><em>Ask me anything — I can help with ILS analysis, defense logistics, compliance, and platform questions.</em>';
 
     // ── GENERAL KNOWLEDGE PATTERNS ──
     // These make the agent useful even without an LLM API key
@@ -9142,7 +9162,7 @@ function generateAiResponse(query) {
         if (/blockchain|distributed ledger|dlt/i.test(q)) return '<strong>Blockchain / Distributed Ledger Technology</strong><br><br>A blockchain is a distributed, immutable ledger that records transactions across a peer-to-peer network. Key properties:<br><br>\u2022 <strong>Immutability</strong> \u2014 once written, records cannot be altered<br>\u2022 <strong>Transparency</strong> \u2014 all participants can verify the ledger<br>\u2022 <strong>Decentralization</strong> \u2014 no single point of failure<br>\u2022 <strong>Cryptographic security</strong> \u2014 SHA-256 hashing ensures integrity<br><br>S4 Ledger uses the <strong>XRP Ledger</strong> (XRPL) \u2014 a high-speed, energy-efficient blockchain with 3-5 second settlement and minimal fees.';
         if (/xrp|xrpl|xrp ledger|ripple/i.test(q)) return '<strong>XRP Ledger (XRPL)</strong><br><br>The XRP Ledger is an open-source, decentralized blockchain:<br><br>\u2022 <strong>Speed:</strong> 3-5 second transaction settlement<br>\u2022 <strong>Cost:</strong> ~$0.0002 per transaction<br>\u2022 <strong>Energy:</strong> 61,000x more efficient than Bitcoin<br>\u2022 <strong>Reliability:</strong> 10+ years of operation, 80M+ ledgers closed<br>\u2022 <strong>Tokens:</strong> Native issued currency support (like $SLS)<br><br>S4 Ledger anchors defense records to XRPL Mainnet, making them independently verifiable by anyone.';
         if (/sha.?256|hash function|hashing|cryptograph/i.test(q)) return '<strong>SHA-256 Hashing</strong><br><br>SHA-256 (Secure Hash Algorithm 256-bit) produces a unique 64-character fingerprint of any data:<br><br>\u2022 <strong>Deterministic:</strong> Same input always produces the same hash<br>\u2022 <strong>One-way:</strong> Cannot reverse the hash to get original data<br>\u2022 <strong>Collision-resistant:</strong> Virtually impossible for two inputs to produce the same hash<br>\u2022 <strong>Avalanche effect:</strong> Changing one bit changes ~50% of the output<br><br>S4 Ledger uses SHA-256 to create tamper-proof fingerprints of defense records before anchoring to XRPL.';
-        if (/s4\s*(ledger|systems|platform)|this platform/i.test(q)) return '<strong>S4 Ledger</strong><br><br>S4 Ledger is a blockchain-verified defense record management platform built by S4 Systems, LLC.<br><br><strong>What it does:</strong><br>\u2022 Anchors defense logistics records to the XRP Ledger<br>\u2022 Creates tamper-proof audit trails for CDRL, maintenance, supply chain, and ordnance records<br>\u2022 Provides 14 integrated ILS (Integrated Logistics Support) analysis tools<br>\u2022 Supports 156+ military record types across all service branches<br><br><strong>Key value:</strong> 99.9% cost reduction vs. traditional notarization ($0.0001 vs. $25-$150 per record).<br><br><strong>Technology:</strong> XRPL Mainnet, $SLS utility token, SHA-256 hashing, AI-powered analysis.';
+        if (/s4\s*(ledger|systems|platform)|this platform/i.test(q)) return '<strong>S4 Ledger</strong><br><br>S4 Ledger is a blockchain-verified defense record management platform built by S4 Systems, LLC.<br><br><strong>What it does:</strong><br>\u2022 Anchors defense logistics records to the XRP Ledger<br>\u2022 Creates tamper-proof audit trails for CDRL, maintenance, supply chain, and ordnance records<br>\u2022 Provides 20+ integrated ILS (Integrated Logistics Support) analysis tools<br>\u2022 Supports 156+ military record types across all service branches<br><br><strong>Key value:</strong> 99.9% cost reduction vs. traditional notarization ($0.0001 vs. $25-$150 per record).<br><br><strong>Technology:</strong> XRPL Mainnet, $SLS utility token, SHA-256 hashing, AI-powered analysis.';
     }
 
     if (/who\s*(made|built|created|founded|is behind)/i.test(q)) return '<strong>S4 Systems, LLC</strong><br><br>S4 Ledger is built by <strong>S4 Systems, LLC</strong>, founded by <strong>Nick Frankfort</strong>. The platform combines blockchain technology with defense logistics expertise to create tamper-proof audit trails for the Department of Defense.<br><br>\u2022 Website: <a href="https://s4ledger.com" target="_blank" style="color:var(--accent)">s4ledger.com</a><br>\u2022 Treasury: <a href="https://livenet.xrpl.org/accounts/rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ" target="_blank" style="color:var(--accent)">View on XRPL</a>';
@@ -11736,7 +11756,7 @@ var _templates = [
       desc:'Maintenance plan template per MIL-STD-3034 for defining the maintenance concept, tasks, intervals, and resources for a weapon system across its lifecycle.',
       fields:['System / Equipment Name','Maintenance Concept (2-Level, 3-Level)','Maintenance Level Definitions','Scheduled Maintenance Tasks — Task ID, Description, Interval, Man-Hours, Skill Level','Condition-Based Maintenance Tasks','Corrective Maintenance Tasks','Support Equipment Required','Special Tools Required','Consumable Materials','Personnel & Training Requirements','Technical Data / Publication References','Maintenance Manhour Forecast Ratio (MMH/FH)','Depot Repair Cycle Time','Supply Support Concept','Facilities Requirements'] },
     { id:'TPL-019', name:'Cybersecurity Assessment Report', category:'compliance', icon:'fa-user-shield',
-      desc:'Cybersecurity assessment template aligned with NIST SP 800-171A / CMMC Assessment Guide for evaluating CUI protection practices across all 14 control families (110 practices).',
+      desc:'Cybersecurity assessment template aligned with NIST SP 800-171A / CMMC Assessment Guide for evaluating CUI protection practices across all 20+ control families (110 practices).',
       fields:['Assessment Date','Assessor Name / Organization','Assessment Scope / Boundary','CMMC Target Level','3.1 Access Control — Finding per practice','3.2 Awareness & Training — Finding per practice','3.3 Audit & Accountability — Finding per practice','3.4 Configuration Management — Finding per practice','3.5 Identification & Authentication — Finding per practice','3.6 Incident Response — Finding per practice','3.7 Maintenance — Finding per practice','3.8 Media Protection — Finding per practice','3.9 Personnel Security — Finding per practice','3.10 Physical Protection — Finding per practice','3.11 Risk Assessment — Finding per practice','3.12 Security Assessment — Finding per practice','3.13 System & Comms Protection — Finding per practice','3.14 System & Info Integrity — Finding per practice','Overall Score (Met / Not Met / N/A per practice)','POA&M Items Generated','Executive Summary'] },
     { id:'TPL-020', name:'Technical Data Package (TDP) Checklist', category:'engineering', icon:'fa-folder-open',
       desc:'TDP adequacy checklist per MIL-DTL-31000B for verifying that a technical data package contains sufficient engineering data (drawings, specs, processes) for competitive procurement or organic manufacture.',
@@ -14806,6 +14826,41 @@ function openILSTool(toolId) {
     // Update floating AI agent context
     if (typeof updateAiContext === 'function') updateAiContext(toolId);
     
+    // ── How It Works: first-visit auto-open, return-visit collapsed + ? icon ──
+    if (panel) {
+        var det = panel.querySelector('details');
+        var h3 = panel.querySelector('h3');
+        if (det && h3) {
+            var storageKey = 's4_hiw_' + toolId;
+            var visited = false;
+            try { visited = localStorage.getItem(storageKey) === '1'; } catch(e) {}
+            // Remove any existing ? button
+            var existingBtn = h3.querySelector('.hiw-help-btn');
+            if (existingBtn) existingBtn.remove();
+            if (!visited) {
+                // First visit: open details, mark as visited
+                det.setAttribute('open', '');
+                det.style.display = '';
+                try { localStorage.setItem(storageKey, '1'); } catch(e) {}
+            } else {
+                // Return visit: collapse details, show ? icon in header
+                det.removeAttribute('open');
+                det.style.display = 'none';
+                var qBtn = document.createElement('button');
+                qBtn.className = 'hiw-help-btn';
+                qBtn.innerHTML = '?';
+                qBtn.title = 'Show How It Works';
+                qBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    det.style.display = '';
+                    det.setAttribute('open', '');
+                    qBtn.style.display = 'none';
+                };
+                h3.appendChild(qBtn);
+            }
+        }
+    }
+    
     _currentILSTool = toolId;
 }
 
@@ -14831,6 +14886,180 @@ function closeILSTool() {
         applyTabVisibility(vis);
     }
 }
+
+// ═══ Drag-Reorder Tool Cards (iPhone-style) ═══
+(function initToolCardDragReorder(){
+    var STORAGE_KEY = 's4_tool_card_order';
+    function getHub(){ return document.getElementById('ilsSubHub'); }
+    
+    // Restore saved order on load
+    function restoreOrder(){
+        var hub = getHub(); if(!hub) return;
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if(!saved) return;
+        try {
+            var order = JSON.parse(saved);
+            var cards = Array.from(hub.querySelectorAll('.ils-tool-card'));
+            var map = {};
+            cards.forEach(function(c){ 
+                var m = c.getAttribute('onclick') || '';
+                var id = (m.match(/openILSTool\('([^']+)'\)/) || [])[1];
+                if(id) map[id] = c;
+            });
+            order.forEach(function(id){
+                if(map[id]) hub.appendChild(map[id]);
+            });
+        } catch(e){}
+    }
+
+    // Save current order
+    function saveOrder(){
+        var hub = getHub(); if(!hub) return;
+        var cards = hub.querySelectorAll('.ils-tool-card');
+        var order = [];
+        cards.forEach(function(c){
+            var m = c.getAttribute('onclick') || '';
+            var id = (m.match(/openILSTool\('([^']+)'\)/) || [])[1];
+            if(id) order.push(id);
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(order));
+    }
+
+    // Setup drag handlers
+    function setupDrag(){
+        var hub = getHub(); if(!hub) return;
+        var dragSrc = null;
+
+        hub.querySelectorAll('.ils-tool-card').forEach(function(card){
+            card.setAttribute('draggable', 'true');
+
+            card.addEventListener('dragstart', function(e){
+                dragSrc = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', '');
+            });
+
+            card.addEventListener('dragend', function(){
+                this.classList.remove('dragging');
+                hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
+            });
+
+            card.addEventListener('dragover', function(e){
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if(this !== dragSrc) this.classList.add('drag-over');
+            });
+
+            card.addEventListener('dragleave', function(){
+                this.classList.remove('drag-over');
+            });
+
+            card.addEventListener('drop', function(e){
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                if(dragSrc && dragSrc !== this){
+                    var allCards = Array.from(hub.querySelectorAll('.ils-tool-card'));
+                    var fromIdx = allCards.indexOf(dragSrc);
+                    var toIdx = allCards.indexOf(this);
+                    if(fromIdx < toIdx){
+                        hub.insertBefore(dragSrc, this.nextSibling);
+                    } else {
+                        hub.insertBefore(dragSrc, this);
+                    }
+                    saveOrder();
+                    // Re-attach drag handlers after reorder
+                    setupDrag();
+                }
+                dragSrc = null;
+            });
+
+            // Touch support for mobile (iPhone-style long-press)
+            var touchTimer = null;
+            var touchDragging = false;
+            var touchClone = null;
+            var touchSrc = null;
+
+            card.addEventListener('touchstart', function(e){
+                var self = this;
+                touchTimer = setTimeout(function(){
+                    touchDragging = true;
+                    touchSrc = self;
+                    self.classList.add('dragging');
+                    // Create visual clone
+                    touchClone = self.cloneNode(true);
+                    touchClone.style.position = 'fixed';
+                    touchClone.style.pointerEvents = 'none';
+                    touchClone.style.opacity = '0.85';
+                    touchClone.style.zIndex = '9999';
+                    touchClone.style.width = self.offsetWidth + 'px';
+                    touchClone.style.transform = 'scale(1.05)';
+                    touchClone.style.boxShadow = '0 8px 32px rgba(0,170,255,0.3)';
+                    document.body.appendChild(touchClone);
+                }, 500);
+            }, {passive:true});
+
+            card.addEventListener('touchmove', function(e){
+                if(!touchDragging || !touchClone) return;
+                e.preventDefault();
+                var touch = e.touches[0];
+                touchClone.style.left = (touch.clientX - touchClone.offsetWidth/2) + 'px';
+                touchClone.style.top = (touch.clientY - touchClone.offsetHeight/2) + 'px';
+                // Highlight card under finger
+                hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
+                var elem = document.elementFromPoint(touch.clientX, touch.clientY);
+                if(elem){
+                    var target = elem.closest('.ils-tool-card');
+                    if(target && target !== touchSrc) target.classList.add('drag-over');
+                }
+            }, {passive:false});
+
+            card.addEventListener('touchend', function(e){
+                clearTimeout(touchTimer);
+                if(touchDragging && touchSrc){
+                    var touch = e.changedTouches[0];
+                    var elem = document.elementFromPoint(touch.clientX, touch.clientY);
+                    var target = elem ? elem.closest('.ils-tool-card') : null;
+                    if(target && target !== touchSrc){
+                        var allCards = Array.from(hub.querySelectorAll('.ils-tool-card'));
+                        var fromIdx = allCards.indexOf(touchSrc);
+                        var toIdx = allCards.indexOf(target);
+                        if(fromIdx < toIdx){
+                            hub.insertBefore(touchSrc, target.nextSibling);
+                        } else {
+                            hub.insertBefore(touchSrc, target);
+                        }
+                        saveOrder();
+                        setupDrag();
+                    }
+                    touchSrc.classList.remove('dragging');
+                    hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
+                }
+                if(touchClone && touchClone.parentNode) touchClone.parentNode.removeChild(touchClone);
+                touchDragging = false;
+                touchClone = null;
+                touchSrc = null;
+            });
+
+            card.addEventListener('touchcancel', function(){
+                clearTimeout(touchTimer);
+                if(touchClone && touchClone.parentNode) touchClone.parentNode.removeChild(touchClone);
+                if(touchSrc) touchSrc.classList.remove('dragging');
+                hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
+                touchDragging = false;
+                touchClone = null;
+                touchSrc = null;
+            });
+        });
+    }
+
+    // Init after DOM ready
+    if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', function(){ restoreOrder(); setupDrag(); });
+    } else {
+        restoreOrder(); setupDrag();
+    }
+})();
 
 // ═══ Wallet Sidebar ═══
 function openWalletSidebar() {
@@ -16682,7 +16911,7 @@ var S4_SUBSCRIPTION_TIERS = {
         price_annual: 24990,
         sls_monthly: 100000,
         anchors_monthly: 10000000,
-        features: ['Everything in Starter', 'All 14+ ILS Tools', 'Compliance scorecard', 'Priority support', 'Custom integrations'],
+        features: ['Everything in Starter', 'All 20+ ILS Tools', 'Compliance scorecard', 'Priority support', 'Custom integrations'],
         stripe_monthly: 'price_pro_monthly',
         stripe_annual: 'price_pro_annual'
     },
@@ -18522,7 +18751,7 @@ function _updateThemeIcon(isLight) {
         var tabs = [
             {name:'Anchor Channel', tab:'tabAnchor', icon:'fa-anchor', desc:'Anchor records to blockchain'},
             {name:'Verify Channel', tab:'tabVerify', icon:'fa-shield-halved', desc:'Verify record integrity'},
-            {name:'ILS Workspace', tab:'tabILS', icon:'fa-cogs', desc:'14 ILS analysis tools'},
+            {name:'ILS Workspace', tab:'tabILS', icon:'fa-cogs', desc:'20+ ILS analysis tools'},
             {name:'Audit Vault', tab:'tabILS', panel:'hub-vault', icon:'fa-vault', desc:'View all anchored records'},
             {name:'Performance Dashboard', tab:'tabMetrics', icon:'fa-chart-line', desc:'API metrics & analytics'},
             {name:'Wallet / SLS', tab:'tabWallet', icon:'fa-wallet', desc:'SLS balance & transactions'}
