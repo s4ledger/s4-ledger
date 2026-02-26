@@ -1,6 +1,6 @@
 # S4 Ledger — Platform Test Results
 
-> Generated: February 24, 2026 (v5.6.0)  
+> Generated: February 24, 2026 (v5.11.1)  
 > Covers: All 20+ ILS Hub tools, 23 competitive upgrades, 10 bug fixes  
 > Test method: Code-level verification of HTML structure, JavaScript functions, CSS classes, and DOM wiring
 

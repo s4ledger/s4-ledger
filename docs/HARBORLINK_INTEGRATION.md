@@ -649,7 +649,7 @@ Response: A portable package containing:
     "program": "DDG-51 Flight III",
     "period": { "start": "2025-01-01", "end": "2026-02-18" },
     "generated_at": "2026-02-18T15:00:00Z",
-    "generated_by": "S4 Ledger v5.2.0",
+    "generated_by": "S4 Ledger v5.11.2",
 
     "summary": {
         "total_records": 1247,

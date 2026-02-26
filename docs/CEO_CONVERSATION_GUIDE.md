@@ -25,7 +25,7 @@ Don't schedule a "meeting about blockchain." Schedule a "meeting about a new rev
 
 > "I built something that saves the government $1.02M–$2.6M per program per year in logistics labor — and it costs them $6K–$60K/year. I want to show you how it works and what it means for S4 Systems."
 
-That gets attention. Then you open the demo app at s4ledger.com/prod-app and walk through 2-3 tools live. Let them see it working. Don't explain the technology — explain the outcome.
+That gets attention. Then you open the demo app at s4ledger.com/demo-app and walk through 2-3 tools live. Let them see it working. Don't explain the technology — explain the outcome.
 
 ---
 
@@ -116,7 +116,7 @@ Keep these in your back pocket. Use them in order.
 
 If you get 10 minutes with a screen, here's the flow:
 
-1. **Open s4ledger.com/prod-app** — Show the ILS Workspace
+1. **Open s4ledger.com/demo-app** — Show the ILS Workspace
 2. **Pick a real platform** (DDG-51, F-35, CVN-78) — "These are real program entities"
 3. **Run the DMSMS Tracker** — Show how it flags obsolescence in seconds vs. days of manual GIDEP searching
 4. **Run the Readiness Calculator** — Show real Ao/Ai/MTBF numbers generating instantly

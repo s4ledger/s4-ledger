@@ -20,7 +20,7 @@ The platform uses a **Hub → Section → Tab** navigation model:
 
 ---
 
-## LANDING PAGE (`s4ledger.com/prod-app/`)
+## LANDING PAGE (`s4ledger.com/demo-app/`)
 
 ### What you should see:
 - **ZERO notifications, toasts, or error popups** — completely clean landing

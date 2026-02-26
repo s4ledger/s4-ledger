@@ -1,4 +1,4 @@
-# S4 Ledger — Full Product Audit (v5.2.0)
+# S4 Ledger — Full Product Audit (v5.11.1)
 
 **Date**: February 2026
 **Auditor**: Automated code review

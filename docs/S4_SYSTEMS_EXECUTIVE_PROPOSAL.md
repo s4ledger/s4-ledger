@@ -473,7 +473,7 @@ Defense SaaS companies are valued at 12–20× revenue (Palantir: 27×, Anduril:
 The entire prototype is live right now:
 
 - **Website:** [https://s4ledger.com](https://s4ledger.com)
-- **Demo App (ILS Workspace):** [https://s4ledger.com/prod-app](https://s4ledger.com/prod-app)
+- **Demo App (ILS Workspace):** [https://s4ledger.com/demo-app](https://s4ledger.com/demo-app)
 - **SDK Playground:** [https://s4ledger.com/sdk-playground](https://s4ledger.com/sdk-playground)
 - **Live Metrics:** [https://s4ledger.com/metrics](https://s4ledger.com/metrics)
 - **Transactions:** [https://s4ledger.com/transactions](https://s4ledger.com/transactions)

@@ -1703,6 +1703,8 @@ class handler(BaseHTTPRequestHandler):
             return "state_save"
         if path == "/api/state/load":
             return "state_load"
+        if path == "/api/errors/report":
+            return "errors_report"
         return None
 
     def _check_rate_limit(self):
@@ -5031,6 +5033,37 @@ class handler(BaseHTTPRequestHandler):
         elif route == "state_save":
             self._log_request("state-save")
             self._save_user_state(data)
+
+        elif route == "errors_report":
+            # Client-side error reporting — stores to Supabase for monitoring
+            self._log_request("errors-report")
+            try:
+                session_id = data.get("session_id", "unknown")
+                errors = data.get("errors", [])
+                if not errors:
+                    self._send_json({"status": "ok", "stored": 0})
+                    return
+                stored = 0
+                for err in errors[:20]:  # Max 20 errors per batch
+                    row = {
+                        "session_id": session_id,
+                        "error_type": str(err.get("type", "unknown"))[:50],
+                        "message": str(err.get("msg", ""))[:500],
+                        "source": str(err.get("source", ""))[:300],
+                        "line": err.get("line"),
+                        "col": err.get("col"),
+                        "url": str(err.get("url", ""))[:300],
+                        "tag": str(err.get("tag", ""))[:50],
+                        "client_ts": err.get("ts"),
+                        "created_at": datetime.utcnow().isoformat() + "Z",
+                    }
+                    result = _sb_insert("client_errors", row)
+                    if result:
+                        stored += 1
+                self._send_json({"status": "ok", "stored": stored})
+            except Exception as e:
+                # Never fail on error reporting — just acknowledge
+                self._send_json({"status": "ok", "stored": 0, "note": str(e)[:200]})
 
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)

@@ -13,7 +13,7 @@ No sensitive data touches the blockchain — ever. Only cryptographic hashes.
 ---
 
 
-## Platform Features (v5.6.0)
+## Platform Features (v5.11.1)
 
 ### Core Anchoring
 - **SHA-256 + XRPL Anchoring** — Every record gets a cryptographic fingerprint stored on the XRP Ledger

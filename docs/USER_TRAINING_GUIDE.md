@@ -236,7 +236,7 @@ NSERC-IDE, MERLIN, NAVAIR AMS-PMT, COMPASS, CDMD-OA, NDE, MBPS, PEO-MLB, CSPT, G
 
 ---
 
-*S4 Ledger v5.2.0 | S4 Systems, LLC. SLS (Secure Logistics Standard) is a utility token delivered as part of your subscription — not equity or an investment.*
+*S4 Ledger v5.11.1 | S4 Systems, LLC. SLS (Secure Logistics Standard) is a utility token delivered as part of your subscription — not equity or an investment.*
 
 
 ---

@@ -98,7 +98,7 @@ S4 Ledger is designed to be compatible with CMMC Level 2-ready environments. The
 
 ### 3.4 ILS Workspace Tools
 
-S4 Ledger v5.2.0 includes a comprehensive ILS Workspace with 20+ integrated tools:
+S4 Ledger v5.11.1 includes a comprehensive ILS Workspace with 20+ integrated tools:
 
 1. **Gap Analysis** — MIL-STD-1388 compliance checklists for 500+ defense platforms for Navy, USMC, and USCG
 2. **Action Items** — Task tracking with priority, assignment, and deadline management

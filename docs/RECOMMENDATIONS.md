@@ -1,6 +1,6 @@
 # Recommendations for S4 Ledger
 
-*Updated v5.2.0 — February 2026*
+*Updated v5.11.1 — February 2026*
 
 ## Near-Term (Phase 2-3)
 
@@ -26,7 +26,7 @@
 14. Add post-quantum hash migration support (SHA-3)
 15. Build cross-system correlation engine
 
-## New Priorities (v5.2.0+)
+## New Priorities (v5.11.1+)
 
 16. **Stripe integration** — Set up Stripe under S4 Systems, LLC for subscription billing (pending CEO approval)
 17. **Persistent database** — Migrate from in-memory to Supabase/PostgreSQL for production wallet storage

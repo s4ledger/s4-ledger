@@ -190,7 +190,7 @@ See [SEC_COMPLIANCE.md](SEC_COMPLIANCE.md) for full analysis under the Howey tes
 ### 5.2 REST API (63+ endpoints — Live)
 
 - REST API with API key authentication (master + org keys)
-- 63+ production endpoints: anchor, verify, hash, categorize, status, health, metrics, transactions, record-types, xrpl-status, auth, infrastructure, and 15 ILS tool endpoints
+- 63+ production endpoints: anchor, verify, hash, categorize, status, health, metrics, transactions, record-types, xrpl-status, auth, infrastructure, and 20+ ILS tool endpoints
 - Rate limits per tier (1K/10K/100K anchors per month)
 - Webhook notifications for anchor confirmations
 - Batch endpoints for high-volume operations
@@ -231,7 +231,7 @@ S4 Ledger is the only solution purpose-built for defense logistics that keeps ze
 | **Phase 4 — Partner & SaaS** | Q1 – Q2 2027 | REST API, SaaS dashboard, DIU / NavalX engagement, Merkle tree batch anchoring |
 | **Phase 5 — Scale & Certify** | Q3 2027+ | NIST/CMMC, FedRAMP, CDN/edge caching, microservices, production deployments |
 
-### Current Toolset (v5.2)
+### Current Toolset (v5.11.1)
 
 | Tool | Description |
 |---|---|

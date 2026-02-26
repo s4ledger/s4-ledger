@@ -74,7 +74,7 @@
             <span>S4 Ledger</span>
         </a>
         <ul class="nav-links" id="navLinks">
-            <li><a href="/prod-app/">Platform</a></li>
+            <li><a href="/demo-app/">Platform</a></li>
             <li><a href="/s4-use-cases/">Use Cases</a></li>
             <li><a href="/s4-pricing/">Pricing</a></li>
             <li><a href="/s4-investors/">Company</a></li>
@@ -164,7 +164,7 @@
             <h3 style="margin-bottom:8px;"><i class="fas fa-brain" style="color:var(--accent);margin-right:8px;"></i> Anchor-S4</h3>
             <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:16px;">Anchored records feed directly into ILS tools — track obsolescence, readiness, lifecycle costs, and generate action items from your transaction data.</p>
             <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
-                <a href="/prod-app/#tabILS" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;padding:10px 22px;border-radius:3px;text-decoration:none;font-weight:700;font-size:0.9rem;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-brain"></i> Open Anchor-S4</a>
+                <a href="/demo-app/#tabILS" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;padding:10px 22px;border-radius:3px;text-decoration:none;font-weight:700;font-size:0.9rem;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-brain"></i> Open Anchor-S4</a>
                 <a href="/metrics.html" style="background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,170,255,0.2);padding:10px 22px;border-radius:3px;text-decoration:none;font-weight:700;font-size:0.9rem;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-chart-bar"></i> Live Metrics</a>
             </div>
         </div>
@@ -184,7 +184,7 @@
             <div class="footer-links">
                 <div class="footer-col">
                     <h5>Product</h5>
-                    <a href="/prod-app/">Anchor-S4</a>
+                    <a href="/demo-app/">Anchor-S4</a>
                     <a href="/sdk-playground/">SDK Playground</a>
                     <a href="/s4-marketplace/">Marketplace</a>
                     <a href="/s4-pricing/">Pricing</a>
@@ -304,7 +304,7 @@
                 populateFilters(branches, types);
                 applyFilters();
             } else {
-                document.getElementById('txBody').innerHTML = '<tr><td colspan="8" class="no-data"><i class="fas fa-info-circle" style="color:var(--accent);"></i> No transactions yet. Anchor records in <a href="/prod-app/" style="color:var(--accent);">Anchor-S4</a> to see them here.</td></tr>';
+                document.getElementById('txBody').innerHTML = '<tr><td colspan="8" class="no-data"><i class="fas fa-info-circle" style="color:var(--accent);"></i> No transactions yet. Anchor records in <a href="/demo-app/" style="color:var(--accent);">Anchor-S4</a> to see them here.</td></tr>';
                 document.getElementById('totalTx').textContent = '0';
                 document.getElementById('totalFees').textContent = '$0.00';
                 document.getElementById('branchCount').textContent = '0';

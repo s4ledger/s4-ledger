@@ -122,9 +122,9 @@ Everything described above is **live and working right now** at [s4ledger.com](h
 ### Revenue
 - **Subscription fees:** $999–$9,999/month per customer
 - **Per-record fees:** $0.01 per anchored record (tiny per record, massive at scale)
-- **Year 1 projection:** ~$15K (pilot phase)
-- **Year 3 projection:** ~$900K
-- **Year 5 projection:** $3M–$5M+
+- **Year 1 projection:** ~$192K (50 Starter + 10 Professional + 2 Enterprise)
+- **Year 3 projection:** ~$3.6M
+- **Year 5 projection:** $12M–$25M+
 
 ### Cost Savings for Government Customers
 These are realistic, defensible numbers based on ~$1.02M–$2.6M per-program annual savings:
@@ -168,7 +168,7 @@ The Navy, and Defense Innovation Unit all solicit proposals for exactly this typ
 ## Try It Right Now
 
 - **Main site:** [s4ledger.com](https://s4ledger.com)
-- **ILS Workspace:** [s4ledger.com/prod-app](https://s4ledger.com/prod-app) — click the "ILS Workspace" tab
+- **ILS Workspace:** [s4ledger.com/demo-app](https://s4ledger.com/demo-app) — click the "ILS Workspace" tab
 - **SDK Playground:** [s4ledger.com/sdk-playground](https://s4ledger.com/sdk-playground) — try the API live in your browser
 
 No login required. Nothing to install. It just works.
