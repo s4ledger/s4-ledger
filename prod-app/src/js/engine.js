@@ -935,6 +935,9 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
     }
     if (feeError) {
         console.warn('SLS fee deduction failed:', feeError);
+        if (typeof _showNotif === 'function') _showNotif('SLS fee issue: ' + feeError, 'warning');
+    } else if (feeTxHash) {
+        if (typeof _showNotif === 'function') _showNotif('0.01 SLS fee paid \u2714 TX: ' + feeTxHash.substring(0,16) + '\u2026', 'success');
     }
     return { txHash, network, explorerUrl, feeTxHash, feeError };
 }
@@ -1054,7 +1057,7 @@ function refreshVerifyRecents() {
             ago = diff < 60 ? diff + 's ago' : diff < 3600 ? Math.floor(diff/60) + 'm ago' : diff < 86400 ? Math.floor(diff/3600) + 'h ago' : Math.floor(diff/86400) + 'd ago';
         } catch(e) { ago = ''; }
         return '<div onclick="loadRecordToVerify(\'' + r.hash + '\',\'' + (r.content||'').replace(/'/g,"\\'").replace(/\n/g,' ').substring(0,80) + '\')" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:3px;margin-bottom:4px;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.02);" onmouseover="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.05)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.05)\';this.style.background=\'rgba(255,255,255,0.02)\'">'
-            + '<i class="fas ' + r.icon + '" style="color:var(--accent);font-size:0.8rem;width:20px;text-align:center;"></i>'
+            + '<span style="color:var(--accent);font-size:0.8rem;width:20px;text-align:center;display:inline-block">' + _renderIcon(r.icon) + '</span>'
             + '<div style="flex:1;min-width:0;">'
             + '<div style="font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.label + '</div>'
             + '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.hash.substring(0,24) + '...</div>'
@@ -1125,7 +1128,7 @@ async function verifyRecord() {
     let sessionHtml = '';
     if (sessionMatch) {
         sessionHtml = '<div class="result-label" style="margin-top:0.8rem">SESSION MATCH</div>'
-            + '<div style="color:var(--accent)"><i class="fas fa-check-circle"></i> Found in session \u2014 ' + sessionMatch.icon + ' ' + sessionMatch.label + ' anchored at ' + new Date(sessionMatch.timestamp).toLocaleTimeString() + '</div>';
+            + '<div style="color:var(--accent)"><i class="fas fa-check-circle"></i> Found in session \u2014 ' + _renderIcon(sessionMatch.icon) + ' ' + sessionMatch.label + ' anchored at ' + new Date(sessionMatch.timestamp).toLocaleTimeString() + '</div>';
     }
     panel.innerHTML = '<div class="result-label">COMPUTED SHA-256 <button class="copy-btn" onclick="copyHash(\'' + effectiveHash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + effectiveHash + '</div>' + matchHtml + sessionHtml
         + '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)">To verify on-chain: compare this hash with the MemoData field of the anchor transaction.</div>'
@@ -6420,8 +6423,8 @@ async function anchorCompliance() {
     const grade = document.getElementById('complianceGrade')?.textContent || '?';
     const content = 'S4 Ledger Compliance Scorecard | Overall: ' + score + ' (' + grade + ') | CMMC: ' + (document.getElementById('pctCMMC')?.textContent||'') + ' | NIST: ' + (document.getElementById('pctNIST')?.textContent||'') + ' | Records: ' + s4Vault.length + ' | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'compliance_scorecard', content.substring(0,100));
     showAnchorAnimation(hash, 'Compliance Scorecard', 'CUI');
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'compliance_scorecard', content.substring(0,100));
 
     addToVault({hash, txHash, type:'compliance_scorecard', label:'Compliance Scorecard', branch:'JOINT', icon:'<i class="fas fa-shield-alt"></i>', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Compliance Scorecard', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; stats.types.add('compliance_scorecard'); updateStats(); saveStats();
@@ -6429,6 +6432,7 @@ async function anchorCompliance() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'compliance_scorecard', record_label:'Compliance Scorecard', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Compliance Scorecard', explorer_url: explorerUrl, network});
     updateTxLog();
+    setTimeout(()=>{ var st = document.getElementById('animStatus'); if(st) { st.innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Compliance scorecard anchored!'; st.style.color = '#00aaff'; } }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7426,8 +7430,8 @@ async function anchorRisk() {
     const high = items.filter(i=>i.level==='high').length;
     const content = 'S4 Ledger Supply Chain Risk Report | Program: ' + prog.toUpperCase() + ' | Total Parts: ' + items.length + ' | Critical: ' + crit + ' | High: ' + high + ' | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'risk_report', content.substring(0,100));
     showAnchorAnimation(hash, 'Supply Chain Risk Report', 'CUI');
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'risk_report', content.substring(0,100));
 
     addToVault({hash, txHash, type:'risk_report', label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'AI Supply Chain Risk Engine', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; stats.types.add('risk_report'); updateStats(); saveStats();
@@ -7537,8 +7541,8 @@ async function anchorReport() {
     const r = _lastReport || {type:'full_audit',title:'Full Audit Package',records:0,score:'95.0'};
     const content = 'S4 Ledger Audit Report | Type: ' + r.title + ' | Records: ' + r.records + ' | Compliance Score: ' + r.score + '% | Generated: ' + new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'audit_report', content.substring(0,100));
     showAnchorAnimation(hash, 'Audit Report Hash', 'CUI');
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'audit_report', content.substring(0,100));
 
     addToVault({hash, txHash, type:'audit_report', label:r.title+' — Score: '+r.score+'%', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Audit Report Generator', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; stats.types.add('audit_report'); updateStats(); saveStats();
@@ -7766,8 +7770,8 @@ async function anchorPredictive() {
     const totalCost = items.reduce((s,i)=>s+i.cost,0);
     const content = 'S4 Ledger Predictive Maintenance Report | Platform: '+platform.toUpperCase()+' | Predictions: '+items.length+' | Urgent: '+urgent+' | Total Risk: $'+totalCost+'K | Generated: '+new Date().toISOString();
     const hash = await sha256(content);
-    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'predictive_maintenance', content.substring(0,100));
     showAnchorAnimation(hash, 'Predictive Maintenance Report', 'CUI');
+    const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'predictive_maintenance', content.substring(0,100));
 
     addToVault({hash, txHash, type:'predictive_maintenance', label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Predictive Maintenance AI', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; stats.types.add('predictive_maintenance'); updateStats(); saveStats();
