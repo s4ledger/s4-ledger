@@ -970,10 +970,11 @@ _xrpl_client = None
 _xrpl_wallet = None       # Issuer wallet — signs anchor transactions
 _xrpl_treasury_wallet = None  # Treasury wallet — holds XRP + SLS, funds users, collects anchor fees
 _xrpl_demo_wallet = None  # Demo/Ops wallet — used for demo anchor fee deduction until Stripe is live
+_xrpl_init_error = None   # Store init error for diagnostics
 
 def _init_xrpl():
     """Initialize XRPL client, Issuer wallet, Treasury wallet, and Demo wallet."""
-    global _xrpl_client, _xrpl_wallet, _xrpl_treasury_wallet, _xrpl_demo_wallet
+    global _xrpl_client, _xrpl_wallet, _xrpl_treasury_wallet, _xrpl_demo_wallet, _xrpl_init_error
     if not XRPL_AVAILABLE or _xrpl_client is not None:
         return
     try:
@@ -982,28 +983,46 @@ def _init_xrpl():
         # Issuer wallet — signs anchor AccountSet transactions (XRPL_WALLET_SEED)
         seed = os.environ.get("XRPL_WALLET_SEED")
         if seed:
-            _xrpl_wallet = Wallet.from_seed(seed, algorithm=CryptoAlgorithm.SECP256K1)
+            try:
+                _xrpl_wallet = Wallet.from_seed(seed, algorithm=CryptoAlgorithm.SECP256K1)
+                print(f"Issuer wallet loaded: {_xrpl_wallet.address}")
+            except Exception as ew:
+                print(f"Issuer wallet load failed: {ew}")
+                _xrpl_init_error = f"Issuer wallet: {ew}"
         elif XRPL_NETWORK != "mainnet":
             _xrpl_wallet = generate_faucet_wallet(_xrpl_client, debug=False)
         else:
-            print("XRPL mainnet requires XRPL_WALLET_SEED env var")
-            _xrpl_client = None
+            print("WARNING: XRPL_WALLET_SEED not set — anchor AccountSet disabled, SLS fee still active")
+            _xrpl_init_error = "XRPL_WALLET_SEED not set"
         # Treasury wallet — holds XRP (for wallet activation) + SLS (subscription allocations)
         # Sends XRP to activate new user wallets, sends SLS to subscribers,
         # receives 0.01 SLS back per anchor. The SLS circulation engine.
         treasury_seed = os.environ.get("XRPL_TREASURY_SEED")
         if treasury_seed:
-            _xrpl_treasury_wallet = Wallet.from_seed(treasury_seed, algorithm=CryptoAlgorithm.SECP256K1)
+            try:
+                _xrpl_treasury_wallet = Wallet.from_seed(treasury_seed, algorithm=CryptoAlgorithm.SECP256K1)
+                print(f"Treasury wallet loaded: {_xrpl_treasury_wallet.address}")
+            except Exception as et:
+                print(f"Treasury wallet load failed: {et}")
+                _xrpl_init_error = (_xrpl_init_error or "") + f" | Treasury: {et}"
         elif XRPL_NETWORK == "mainnet":
             print("WARNING: XRPL_TREASURY_SEED not set — wallet provisioning and SLS delivery disabled")
         # Demo/Ops wallet — used as the demo custodial wallet for showcasing anchor fees
         # Remove after Stripe is live and real custodial wallets are provisioned
         demo_seed = os.environ.get("XRPL_DEMO_SEED")
         if demo_seed:
-            _xrpl_demo_wallet = Wallet.from_seed(demo_seed, algorithm=CryptoAlgorithm.SECP256K1)
-            print(f"Demo wallet loaded: {_xrpl_demo_wallet.address}")
+            try:
+                _xrpl_demo_wallet = Wallet.from_seed(demo_seed, algorithm=CryptoAlgorithm.SECP256K1)
+                print(f"Demo wallet loaded: {_xrpl_demo_wallet.address}")
+            except Exception as ed:
+                print(f"Demo wallet load failed: {ed}")
+                _xrpl_init_error = (_xrpl_init_error or "") + f" | Demo: {ed}"
+        else:
+            print("WARNING: XRPL_DEMO_SEED not set — demo SLS fees disabled")
+            _xrpl_init_error = (_xrpl_init_error or "") + " | XRPL_DEMO_SEED not set"
     except Exception as e:
         print(f"XRPL init failed: {e}")
+        _xrpl_init_error = f"Init exception: {e}"
         _xrpl_client = None
         _xrpl_wallet = None
 
@@ -1932,9 +1951,18 @@ class handler(BaseHTTPRequestHandler):
                 "xrpl_available": XRPL_AVAILABLE,
                 "connected": _xrpl_client is not None,
                 "wallet": _xrpl_wallet.address if _xrpl_wallet else None,
+                "treasury": _xrpl_treasury_wallet.address if _xrpl_treasury_wallet else None,
+                "demo_wallet": _xrpl_demo_wallet.address if _xrpl_demo_wallet else None,
                 "network": XRPL_NETWORK,
                 "endpoint": endpoint,
                 "explorer": explorer_base,
+                "env_vars": {
+                    "XRPL_WALLET_SEED": bool(os.environ.get("XRPL_WALLET_SEED")),
+                    "XRPL_TREASURY_SEED": bool(os.environ.get("XRPL_TREASURY_SEED")),
+                    "XRPL_DEMO_SEED": bool(os.environ.get("XRPL_DEMO_SEED")),
+                    "XRPL_NETWORK": os.environ.get("XRPL_NETWORK", "(default: testnet)"),
+                },
+                "init_error": _xrpl_init_error,
                 "note": f"Real XRPL {XRPL_NETWORK.capitalize()} transactions. Verify at {'livenet' if XRPL_NETWORK == 'mainnet' else 'testnet'}.xrpl.org"
             })
         elif route == "infrastructure":
