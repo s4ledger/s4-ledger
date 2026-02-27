@@ -8205,6 +8205,15 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNotifBadge();
     // Initialize workspace
     initHub();
+    // Auto-enter platform for returning users
+    if (sessionStorage.getItem('s4_entered') === '1') {
+        var ws = document.getElementById('platformWorkspace');
+        var hero = document.querySelector('.hero');
+        var landing = document.getElementById('platformLanding');
+        if (ws) ws.style.display = 'block';
+        if (hero) hero.style.display = 'none';
+        if (landing) landing.style.display = 'none';
+    }
     // Set default calendar date
     const calDate = document.getElementById('calEventDate');
     if (calDate) calDate.value = new Date().toISOString().split('T')[0];

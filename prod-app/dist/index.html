@@ -66,8 +66,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-IEb4QpEq.js"></script>
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-DacqdRc5.js">
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-CtQYK41A.js"></script>
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-CK_6Y-Ap.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-Vf24Vz5M.js">
   <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-C30rCU8w.css">
 </head>
@@ -755,7 +755,7 @@
                         <span class="r16-hdr-btn" onclick="exportPDF()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:3px;font-size:0.72rem;font-weight:600;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);color:#c9a84c;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.15)'" onmouseout="this.style.background='rgba(201,168,76,0.06)'"><i class="fas fa-file-pdf"></i> PDF Export</span>
                     </div>
                 </div>
-                <div class="ils-hub-tabs" id="ilsHubTabs" style="display:none !important;">
+                <div class="ils-hub-tabs" id="ilsHubTabs" style="display:flex;">
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-analysis',this)"><i class="fas fa-chart-line"></i> Gap Analysis</button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-dmsms',this)"><i class="fas fa-exclamation-triangle"></i> DMSMS Tracker</button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-readiness',this)"><i class="fas fa-chart-line"></i> Readiness Calculator</button>
@@ -779,7 +779,7 @@
                 </div>
 
                 <!-- ILS Tool Cards Sub-Hub -->
-                <div class="ils-sub-hub" id="ilsSubHub">
+                <div class="ils-sub-hub" id="ilsSubHub" style="display:grid !important;">
                     <div class="ils-tool-card" onclick="openILSTool('hub-analysis')">
                         <span class="itc-icon"><i class="fas fa-chart-line" style="color:var(--accent);"></i></span>
                         <div class="itc-title">Gap Analysis</div>
