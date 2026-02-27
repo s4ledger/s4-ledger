@@ -7014,28 +7014,28 @@ function handleToolFileDrop(e, toolName, containerId, fileInputId) {
 function handleGfpFileUpload(e) { handleToolFileUpload(e, 'GFP Tracker', 'gfpContent'); }
 function handleGfpFileDrop(e) { handleToolFileDrop(e, 'GFP Tracker', 'gfpContent', 'gfpFileInput'); }
 function runGfpInventory() { if (typeof _showNotif === 'function') _showNotif('Running GFP inventory check... Upload DD 1662 data to analyze.', 'info'); }
-function anchorGfpRecord() { if (typeof anchorToXRPL === 'function') anchorToXRPL('GFP Property Record', 'gfp_record'); else if (typeof _showNotif === 'function') _showNotif('GFP record prepared for XRPL anchoring.', 'info'); }
+function anchorGfpRecord() { if (typeof _anchorToXRPL === 'function') { if (typeof showAnchorAnimation === 'function') showAnchorAnimation(); _anchorToXRPL('GFP Property Record', 'gfp_record').finally(function() { if (typeof hideAnchorAnimation === 'function') hideAnchorAnimation(); }); } else if (typeof _showNotif === 'function') _showNotif('GFP record prepared for XRPL anchoring.', 'info'); }
 function exportGfpReport() { if (typeof _showNotif === 'function') _showNotif('DD 1662 report export initiated.', 'info'); }
 
 // CDRL handlers
 function handleCdrlFileUpload(e) { handleToolFileUpload(e, 'CDRL Validator', 'cdrlContent'); }
 function handleCdrlFileDrop(e) { handleToolFileDrop(e, 'CDRL Validator', 'cdrlContent', 'cdrlFileInput'); }
 function runCdrlValidation() { if (typeof _showNotif === 'function') _showNotif('Running CDRL validation... Upload DD 1423 data to validate.', 'info'); }
-function anchorCdrlRecord() { if (typeof anchorToXRPL === 'function') anchorToXRPL('CDRL Validation Record', 'cdrl_record'); else if (typeof _showNotif === 'function') _showNotif('CDRL validation anchored.', 'info'); }
+function anchorCdrlRecord() { if (typeof _anchorToXRPL === 'function') { if (typeof showAnchorAnimation === 'function') showAnchorAnimation(); _anchorToXRPL('CDRL Validation Record', 'cdrl_record').finally(function() { if (typeof hideAnchorAnimation === 'function') hideAnchorAnimation(); }); } else if (typeof _showNotif === 'function') _showNotif('CDRL validation anchored.', 'info'); }
 function exportCdrlReport() { if (typeof _showNotif === 'function') _showNotif('CDRL compliance report export initiated.', 'info'); }
 
 // Contract handlers
 function handleContractFileUpload(e) { handleToolFileUpload(e, 'Contract Extractor', 'contractContent'); }
 function handleContractFileDrop(e) { handleToolFileDrop(e, 'Contract Extractor', 'contractContent', 'contractFileInput'); }
 function runContractExtraction() { if (typeof _showNotif === 'function') _showNotif('Running AI clause extraction... Upload a contract document to analyze.', 'info'); }
-function anchorContractRecord() { if (typeof anchorToXRPL === 'function') anchorToXRPL('Contract Extraction Record', 'contract_record'); else if (typeof _showNotif === 'function') _showNotif('Contract extraction anchored.', 'info'); }
+function anchorContractRecord() { if (typeof _anchorToXRPL === 'function') { if (typeof showAnchorAnimation === 'function') showAnchorAnimation(); _anchorToXRPL('Contract Extraction Record', 'contract_record').finally(function() { if (typeof hideAnchorAnimation === 'function') hideAnchorAnimation(); }); } else if (typeof _showNotif === 'function') _showNotif('Contract extraction anchored.', 'info'); }
 function exportContractMatrix() { if (typeof _showNotif === 'function') _showNotif('Clause matrix export initiated.', 'info'); }
 
 // Provenance handlers
 function handleProvFileUpload(e) { handleToolFileUpload(e, 'Provenance Chain', 'provenanceContent'); }
 function handleProvFileDrop(e) { handleToolFileDrop(e, 'Provenance Chain', 'provenanceContent', 'provFileInput'); }
 function recordProvenanceEvent() { if (typeof _showNotif === 'function') _showNotif('Recording custody transfer event... Fill in transfer details above.', 'info'); }
-function anchorProvenanceChain() { if (typeof anchorToXRPL === 'function') anchorToXRPL('Provenance Chain', 'provenance_chain'); else if (typeof _showNotif === 'function') _showNotif('Provenance chain anchored to XRPL.', 'info'); }
+function anchorProvenanceChain() { if (typeof _anchorToXRPL === 'function') { if (typeof showAnchorAnimation === 'function') showAnchorAnimation(); _anchorToXRPL('Provenance Chain', 'provenance_chain').finally(function() { if (typeof hideAnchorAnimation === 'function') hideAnchorAnimation(); }); } else if (typeof _showNotif === 'function') _showNotif('Provenance chain anchored to XRPL.', 'info'); }
 function generateProvenanceQR() {
     var container = document.getElementById('provQRContainer');
     if (container && typeof QRCode !== 'undefined') {
