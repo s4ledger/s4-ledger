@@ -467,7 +467,7 @@ function showSampleDigitalThread() {
     // Otherwise show a sample provenance chain
     var steps = [
         {icon:'fa-tools', label:'Source Tool', value:'ILS Gap Analysis', color:'#9b59b6'},
-        {icon:'fa-file-alt', label:'Content', value:'MIL-STD-1388-2B compliance assessment — DDG-51 FLT III...', color:'#3498db'},
+        {icon:'fa-file-alt', label:'Content', value:'GEIA-STD-0007 compliance assessment — DDG-51 FLT III...', color:'#3498db'},
         {icon:'fa-fingerprint', label:'SHA-256 Hash', value:'a3f8c7e2b1d4f6a8...', color:'#e67e22', mono:true},
         {icon:'fa-lock', label:'Encryption', value:'AES-256-GCM Encrypted', color:'#2ecc71'},
         {icon:'fa-anchor', label:'XRPL Anchor', value:'TX: 8F2A1B3C4D5E6F...', color:'#00aaff', mono:true, link:'https://livenet.xrpl.org'},

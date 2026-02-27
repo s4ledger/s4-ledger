@@ -1,20 +1,6 @@
-WCAG 2.1 AA compliance + DOM consistency + runtime safety -> 100%
+MIL-STD-1388 to GEIA-STD-0007 + HIW popup + SLS balance + calendar actions
 
-Phase 1: Runtime Safety (95% -> 100%)
-- Null-guard 3 modal .remove() calls in both apps
-- Null-guard sampleDocSelect access in prod-app
-
-Phase 2: DOM ID Consistency (94% -> 100%)
-- demo-app: Added 11 missing DOM IDs
-- prod-app: Added 16 missing DOM IDs
-
-Phase 3: Accessibility (8% -> 100%)
-- aria-live regions on dynamic content containers
-- role=dialog + aria-modal=true on modal overlays
-- 23/23 icon-only buttons have aria-label (both apps)
-- 168/168 form inputs have aria-label (both apps)
-- Focus trap JS for modal Tab key cycling
-- MutationObserver auto-applies role=dialog to dynamic modals
-- Scroll progress bar added to both apps
-
-Zero functional changes. Both apps build clean.
+Standards: 144 refs updated, GEIA-STD-0007/S3000L/MIL-HDBK-502 agent responses added
+HIW popup: fix 3 tools using h4 instead of h3 (querySelector now matches both)
+SLS balance: all displays in sync with tier allocation minus spent fees
+Calendar: demo action items now seed s4ActionItems for action item list

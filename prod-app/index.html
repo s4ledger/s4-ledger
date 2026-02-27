@@ -2609,11 +2609,11 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                                 <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Gap Analysis Works</summary>
                                     <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                        <p><strong style="color:#fff;">What this tool does:</strong> The ILS Gap Analysis Engine evaluates your program’s compliance with <strong>MIL-STD-1388-1A/2B</strong> Integrated Logistics Support requirements. It scores 10 ILS element areas — Supply Support, Maintenance Planning, Technical Data, Training, Configuration Management, DMSMS, PHS&amp;T, Reliability, Support Equipment, and Manpower — to identify gaps, missing deliverables, and corrective actions.</p>
+                                        <p><strong style="color:#fff;">What this tool does:</strong> The ILS Gap Analysis Engine evaluates your program’s compliance with <strong>GEIA-STD-0007</strong> (formerly GEIA-STD-0007 (formerly MIL-STD-1388-1A/2B)) Integrated Logistics Support requirements. It scores 10 ILS element areas — Supply Support, Maintenance Planning, Technical Data, Training, Configuration Management, DMSMS, PHS&amp;T, Reliability, Support Equipment, and Manpower — to identify gaps, missing deliverables, and corrective actions.</p>
                                         <p><strong style="color:#00aaff;">Step-by-step:</strong> (1) Select your program and hull/tail number. (2) Review the generated ILS checklist and mark items as complete. (3) Upload DRL spreadsheets, CDRLs, or ILS documents for automated cross-reference. (4) Click “Run Full Analysis” — the engine scores your checklist (weighted: critical items ×2), cross-references uploaded documents against DRL requirements using fuzzy matching, and outputs a combined coverage score (60% checklist + 40% DRL). (5) Review critical gaps, action items, estimated remediation costs, and recommended owners.</p>
                                         <p><strong style="color:#c9a84c;">Action output:</strong> Gap Analysis generates a prioritized corrective action register (CAR) with severity ratings, cost estimates ($K), schedule targets, and assigned owners (government + contractor). Critical gaps are flagged for immediate attention. Every analysis result can be anchored to the XRP Ledger for tamper-proof audit trail.</p>
                                         <p><strong style="color:#00aaff;">Charts:</strong> After analysis, a radar chart shows ILS element coverage and a horizontal bar chart shows individual element scores color-coded (green ≥80%, amber ≥50%, red &lt;50%). Charts update automatically when you re-run with different parameters.</p>
-                                        <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense programs routinely spend $150K–$500K per ILS review cycle hiring contractors to manually compile gap analyses across dozens of spreadsheets, CDRLs, and DRL trackers. The S4 Gap Analysis Engine automates the entire cross-reference process — parsing uploaded documents against MIL-STD-1388 requirements in seconds instead of weeks. This eliminates 70-85% of the labor cost associated with ILS reviews, catches gaps that manual processes miss, and produces audit-ready output that can be anchored to XRPL for tamper-proof compliance evidence. Programs typically recover the annual platform cost in a single review cycle.</p>
+                                        <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense programs routinely spend $150K–$500K per ILS review cycle hiring contractors to manually compile gap analyses across dozens of spreadsheets, CDRLs, and DRL trackers. The S4 Gap Analysis Engine automates the entire cross-reference process — parsing uploaded documents against GEIA-STD-0007 requirements in seconds instead of weeks. This eliminates 70-85% of the labor cost associated with ILS reviews, catches gaps that manual processes miss, and produces audit-ready output that can be anchored to XRPL for tamper-proof compliance evidence. Programs typically recover the annual platform cost in a single review cycle.</p>
                                     </div>
                             </details>
                             <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload your DRLs, spreadsheets, checklists, and documents. The analyzer will parse them, cross-reference against program requirements, and identify gaps, missing deliverables, and actionable items.</p>
@@ -2856,7 +2856,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                 <div class="ils-hub-panel" id="hub-readiness">
                     <div class="s4-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-chart-line" style="color:var(--accent)"></i> Operational Readiness Calculator <button onclick="showAddActionModal('readiness')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                        <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Calculate Operational Availability (Ao), Mean Time Between Failures (MTBF), Mean Time To Repair (MTTR), and Mean Logistics Delay Time (MLDT). Per MIL-STD-1388-2B and DoDI 5000.02.</p>
+                        <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Calculate Operational Availability (Ao), Mean Time Between Failures (MTBF), Mean Time To Repair (MTTR), and Mean Logistics Delay Time (MLDT). Per GEIA-STD-0007 (formerly MIL-STD-1388-2B) and DoDI 5000.02.</p>
                         <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
@@ -3178,7 +3178,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#fff;">What's real:</strong> All 100+ documents are <strong>real defense standards and regulations</strong> — MIL-STD-1388, MIL-HDBK-502, OPNAVINST 4790.16, COMDTINST M4000.13, Army AR 700-127, AFI 63-101, MCO 4105.2, DFARS 252.204-7012, NIST SP 800-171, and more. Links go to official DoD, NAVSEA, DLA, and NIST sources.</p>
+                            <p><strong style="color:#fff;">What's real:</strong> All 100+ documents are <strong>real defense standards and regulations</strong> — GEIA-STD-0007, MIL-HDBK-502, S3000L, OPNAVINST 4790.16, COMDTINST M4000.13, Army AR 700-127, AFI 63-101, MCO 4105.2, DFARS 252.204-7012, NIST SP 800-171, and more. Links go to official DoD, NAVSEA, DLA, and NIST sources.</p>
                             <p><strong style="color:#ffa500;">Data source note:</strong> The document library itself is fully real — these are the actual standards ILS managers reference daily. No simulated content. The library is currently static; production mode adds your organization's internal documents, SOPs, and program-specific references.</p>
                             <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> ILS managers waste 15-30 minutes per reference lookup, switching between tabs, Googling document numbers, and tracking down the latest revision. With 100+ standards pre-loaded and searchable by category, branch, keywords, and document ID, you find the right standard in seconds — while working in the same tool where you're running analysis. Across a program office, this saves 200+ hours/year in reference lookup time.</p>
                             <p><strong style="color:#00aaff;">Production mode:</strong> Add your organization's internal documents via the S4 API. Create custom categories. Upload program-specific SOPs, instructions, and contract documents. The library becomes your program's searchable knowledge base — always available, always current.</p>
@@ -3187,7 +3187,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 
                     <!-- Search & Filters -->
                     <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-                        <input type="text" id="docSearch" class="form-control" aria-label="Search document library" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search by ID, title, keywords... (e.g., MIL-STD-1388, DMSMS, OPNAVINST)" oninput="renderDocLibrary()">
+                        <input type="text" id="docSearch" class="form-control" aria-label="Search document library" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search by ID, title, keywords... (e.g., GEIA-STD-0007, DMSMS, OPNAVINST)" oninput="renderDocLibrary()">
                         <button onclick="showDocUpload()" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-plus"></i> Add Document</button>
                         <button onclick="showDocVersionUpload()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-brain"></i> Analyze Revision</button>
                         <select aria-label="Doc Branch Filter" id="docBranchFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
@@ -3241,7 +3241,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#fff;">What's real:</strong> The compliance frameworks (CMMC Level 2, NIST SP 800-171, DFARS 252.204-7012, FAR 46, MIL-STD-1388 ILS, DoDI 4245.15 DMSMS) are real regulatory requirements that every defense contractor and program office must meet. Your compliance score is calculated from <strong>actual workspace activity</strong> — records anchored, DMSMS items tracked, readiness calculated, warranties monitored, and more.</p>
+                            <p><strong style="color:#fff;">What's real:</strong> The compliance frameworks (CMMC Level 2, NIST SP 800-171, DFARS 252.204-7012, FAR 46, GEIA-STD-0007 ILS, DoDI 4245.15 DMSMS) are real regulatory requirements that every defense contractor and program office must meet. Your compliance score is calculated from <strong>actual workspace activity</strong> — records anchored, DMSMS items tracked, readiness calculated, warranties monitored, and more.</p>
                             <p><strong style="color:#ffa500;">Data source note:</strong> The scoring algorithm uses representative weights and thresholds. In production, weights are calibrated to your organization's specific compliance requirements, C3PAO audit criteria, and program-specific CDRL obligations. The score formula is transparent and adjustable.</p>
                             <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> CMMC assessments alone cost $50K-$200K per assessment. Failed assessments cost 6-12 months of schedule delay plus reassessment fees. This scorecard lets you track compliance posture <em>continuously</em> instead of discovering gaps during the assessment. Each compliance data point is blockchain-anchored, so you can prove to auditors exactly when you achieved each milestone — something SAP, Oracle, and Microsoft cannot offer.</p>
                             <p><strong style="color:#00aaff;">Production mode:</strong> Connect your compliance data sources via the S4 API. Map your SPRS score, eMASS data, and internal audit findings to the scorecard. Export compliance snapshots as PDF-ready reports for C3PAOs, DCMA, or IG inspections. Anchor each compliance snapshot to XRPL for immutable proof of your compliance posture at any point in time.</p>
@@ -3279,7 +3279,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="compliance-row"><span class="compliance-label"><i class="fas fa-lock" style="color:#3498db;margin-right:8px"></i>NIST 800-171</span><div class="compliance-bar"><div class="fill" id="barNIST" style="width:0%;background:linear-gradient(90deg,#3498db,#00aaff)"></div></div><span class="compliance-pct" id="pctNIST">—</span></div>
                         <div class="compliance-row"><span class="compliance-label"><i class="fas fa-file-contract" style="color:#00aaff;margin-right:8px"></i>DFARS 252.204</span><div class="compliance-bar"><div class="fill" id="barDFARS" style="width:0%;background:linear-gradient(90deg,#00aaff,#f1c40f)"></div></div><span class="compliance-pct" id="pctDFARS">—</span></div>
                         <div class="compliance-row"><span class="compliance-label"><i class="fas fa-certificate" style="color:#00aaff;margin-right:8px"></i>FAR 46 Quality</span><div class="compliance-bar"><div class="fill" id="barFAR" style="width:0%;background:linear-gradient(90deg,#00aaff,#0088cc)"></div></div><span class="compliance-pct" id="pctFAR">—</span></div>
-                        <div class="compliance-row"><span class="compliance-label"><i class="fas fa-cubes" style="color:#9b59b6;margin-right:8px"></i>MIL-STD-1388 ILS</span><div class="compliance-bar"><div class="fill" id="barILS" style="width:0%;background:linear-gradient(90deg,#9b59b6,#c39bd3)"></div></div><span class="compliance-pct" id="pctILS">—</span></div>
+                        <div class="compliance-row"><span class="compliance-label"><i class="fas fa-cubes" style="color:#9b59b6;margin-right:8px"></i>GEIA-STD-0007 ILS</span><div class="compliance-bar"><div class="fill" id="barILS" style="width:0%;background:linear-gradient(90deg,#9b59b6,#c39bd3)"></div></div><span class="compliance-pct" id="pctILS">—</span></div>
                         <div class="compliance-row"><span class="compliance-label"><i class="fas fa-exclamation-triangle" style="color:#ff6b6b;margin-right:8px"></i>DMSMS (DoDI 4245.15)</span><div class="compliance-bar"><div class="fill" id="barDMSMSmgmt" style="width:0%;background:linear-gradient(90deg,#ff6b6b,#ff3333)"></div></div><span class="compliance-pct" id="pctDMSMSmgmt">—</span></div>
                     </div>
 
@@ -9080,7 +9080,7 @@ const AI_TOOL_CONTEXT = {
     'hub-roi':          {label:'ROI Calculator',   icon:'fa-dollar-sign',       buttons:[['Calculate ROI for my program','Calc ROI'],['What are the labor savings?','Labor Savings'],['Show 5-year projection','5-Year Projection'],['Compare vs legacy systems','Legacy Comparison'],['Draft an ROI brief','ROI Brief']]},
     'hub-lifecycle':    {label:'Lifecycle Cost',   icon:'fa-clock',             buttons:[['Estimate total ownership cost','TOC Estimate'],['Break down sustainment costs','Sustainment Breakdown'],['What drives lifecycle cost?','Cost Drivers'],['Compare to similar platforms','Platform Comparison'],['Draft lifecycle memo','Lifecycle Memo']]},
     'hub-vault':        {label:'Audit Vault',      icon:'fa-vault',             buttons:[['How many records in the vault?','Vault Stats'],['Search for a record','Search Vault'],['What is the audit trail?','Explain Vault'],['How is data secured?','Vault Security'],['Export vault to CSV','Export CSV'],['Re-verify a hash','Verify Hash']]},
-    'hub-docs':         {label:'Doc Library',      icon:'fa-book',              buttons:[['Find MIL-STD-1388','Find Doc'],['What documents cover ILS?','ILS Documents'],['Show NAVSEA standards','NAVSEA Docs'],['Browse NIST frameworks','NIST Frameworks'],['What is a DI number?','Explain DIs']]},
+    'hub-docs':         {label:'Doc Library',      icon:'fa-book',              buttons:[['Find GEIA-STD-0007','Find Doc'],['What documents cover ILS?','ILS Documents'],['Show NAVSEA standards','NAVSEA Docs'],['Browse NIST frameworks','NIST Frameworks'],['What is a DI number?','Explain DIs']]},
     'hub-compliance':   {label:'Compliance',       icon:'fa-shield-halved',     buttons:[['Calculate my compliance score','Calc Score'],['What is CMMC Level 2?','Explain CMMC'],['Show NIST 800-171 controls','NIST Controls'],['What DFARS clauses apply?','DFARS Clauses'],['How do I improve my score?','Improve Score'],['Draft compliance memo','Compliance Memo']]},
     'hub-risk':         {label:'Risk Engine',      icon:'fa-triangle-exclamation',buttons:[['What are the highest risk parts?','Top Risks'],['Show single-source dependencies','Single Source'],['Any GIDEP alerts?','GIDEP Alerts'],['Estimate risk cost impact','Cost Impact'],['What is supply chain risk?','Explain Risk'],['Draft risk mitigation plan','Risk Plan']]},
     'hub-reports':      {label:'Report Generator', icon:'fa-file-pdf',           buttons:[['Generate a full audit package','Full Audit'],['What compliance score do I have?','Compliance Score'],['Create a DCMA-ready report','DCMA Report'],['How are reports verified?','Report Verification'],['What report types are available?','Report Types']]},
@@ -9321,7 +9321,7 @@ function generateAiResponse(query) {
     if (/di-?\d+|di number/.test(q)) return explainDINumber(q);
 
     // ── S4 LEDGER PRODUCT ──
-    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Secure Logistics Standard<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>20+ ILS tools</strong> covering all 12 ILS elements per MIL-STD-1388<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>$SLS utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192SLS<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>54+ Navy record types</strong> for Navy programs<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.';
+    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Secure Logistics Standard<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>20+ ILS tools</strong> covering all 12 ILS elements per GEIA-STD-0007 / MIL-HDBK-502<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>$SLS utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192SLS<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>54+ Navy record types</strong> for Navy programs<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.';
 
     if (/how.*work|how.*anchor|how.*hash|how.*blockchain/.test(q)) return '<strong>How S4 Ledger Works:</strong><br><br>1. <strong>Upload or create a record</strong> \u2014 any ILS document, analysis, or data point<br>2. <strong>SHA-256 hash computed</strong> \u2014 a unique 64-character fingerprint of the content<br>3. <strong>Hash anchored to XRPL</strong> \u2014 written as a Memo on an XRP Ledger transaction<br>4. <strong>Transaction verified</strong> \u2014 XRPL validates within 3-5 seconds at ~$0.001 tx fee<br>5. <strong>SLS fee applied</strong> \u2014 0.01 SLS ($0.01) per anchor for network access<br><br>The original data stays on your device (never sent to blockchain). Only the hash is anchored. Anyone can independently verify a record by recomputing the hash and checking the XRPL transaction.<br><br><strong>Result:</strong> Tamper-proof, independently verifiable audit trail \u2014 1,500x cheaper than legacy verification.';
 
@@ -9340,7 +9340,7 @@ function generateAiResponse(query) {
     if (/xrp.*ledger|what.*xrpl|why.*xrpl|which.*blockchain/.test(q)) return '<strong>Why XRPL (XRP Ledger)?</strong><br><br>S4 Ledger uses the XRP Ledger because it\'s:<br><br>\u2022 <strong>Fast:</strong> 3-5 second transaction finality<br>\u2022 <strong>Cheap:</strong> ~$0.001 per transaction (drops)<br>\u2022 <strong>Energy efficient:</strong> No mining \u2014 uses federated consensus<br>\u2022 <strong>Built-in DEX:</strong> Native token exchange for SLS liquidity<br>\u2022 <strong>Issued currencies:</strong> Native support for custom tokens like $SLS<br>\u2022 <strong>TrustLines:</strong> Controlled token distribution<br>\u2022 <strong>Battle-tested:</strong> Operating since 2012, used by 150+ financial institutions<br><br>XRPL\'s low transaction cost makes it practical for micro-anchoring \u2014 1,500x cheaper than traditional verification methods.';
 
     // ── ILS TOOLS (20+ tools) ──
-    if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against MIL-STD-1388 requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> for Navy programs. Results can be anchored to XRPL for audit purposes.<br><br><strong>Try it:</strong> Upload your program documents to run a full analysis.';
+    if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against GEIA-STD-0007 (formerly MIL-STD-1388) requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> for Navy programs. Results can be anchored to XRPL for audit purposes.<br><br><strong>Try it:</strong> Upload your program documents to run a full analysis.';
 
     if (/action.*item|task|open.*action|todo/.test(q)) { const total = s4ActionItems.length; const done = s4ActionItems.filter(a=>a.done).length; return '<strong>Action Items Manager</strong><br><br>' + (total > 0 ? 'Current status: <strong>' + done + '/' + total + '</strong> complete (' + Math.round(done/total*100) + '%)<br><br>' : 'No action items yet. Run a gap analysis to generate prioritized actions.<br><br>') + 'The Action Items Manager tracks all ILS-related tasks generated by gap analysis, DMSMS reviews, readiness assessments, and manual entries. Each item includes:<br>\u2022 Severity (critical/warning/info)<br>\u2022 Responsible owner<br>\u2022 Cost and schedule impact estimates<br>\u2022 Due dates and status tracking<br>\u2022 Linkage to specific DI numbers and ILS elements'; }
 
@@ -9362,7 +9362,7 @@ function generateAiResponse(query) {
 
     if (/doc.*library|defense.*doc|mil-std|opnavinst|regulation|standard|reference|mil-hdbk/.test(q)) return '<strong>Defense Document Library</strong><br><br>Searchable reference of <strong>100+ real defense documents</strong>:<br><br>\u2022 MIL-STDs, MIL-HDBKs, MIL-PRFs<br>\u2022 OPNAVINSTs, MIL-PRFs<br>\u2022 NAVSEA/NAVAIR Technical Publications<br>\u2022 DFARS clauses, NIST standards<br>\u2022 NATO STANAGs<br><br>Filter by category (ILS, Readiness, DMSMS, Cybersecurity) or branch (Navy / Joint). Direct links to official sources.';
 
-    if (/compliance.*score|cmmc|nist.*800|dfars.*252|compliance.*posture|compliance.*card/.test(q)) return '<strong>Compliance Scorecard</strong><br><br>Auto-calculates compliance across 6 frameworks:<br><br>\u2022 <strong>CMMC Level 2</strong> \u2014 Cybersecurity Maturity Model<br>\u2022 <strong>NIST SP 800-171</strong> \u2014 CUI Protection (110 controls)<br>\u2022 <strong>DFARS 252.204-7012</strong> \u2014 Safeguarding CDI<br>\u2022 <strong>FAR 46 Quality</strong> \u2014 Federal quality clauses<br>\u2022 <strong>MIL-STD-1388 ILS</strong> \u2014 Logistics compliance<br>\u2022 <strong>DoDI 4245.15 DMSMS</strong> \u2014 Obsolescence management<br><br>Score is calculated from <strong>real workspace activity</strong> \u2014 every anchor, DMSMS case, and readiness calculation contributes. Aggregated into a letter grade (A+ through F).';
+    if (/compliance.*score|cmmc|nist.*800|dfars.*252|compliance.*posture|compliance.*card/.test(q)) return '<strong>Compliance Scorecard</strong><br><br>Auto-calculates compliance across 6 frameworks:<br><br>\u2022 <strong>CMMC Level 2</strong> \u2014 Cybersecurity Maturity Model<br>\u2022 <strong>NIST SP 800-171</strong> \u2014 CUI Protection (110 controls)<br>\u2022 <strong>DFARS 252.204-7012</strong> \u2014 Safeguarding CDI<br>\u2022 <strong>FAR 46 Quality</strong> \u2014 Federal quality clauses<br>\u2022 <strong>GEIA-STD-0007 ILS</strong> \u2014 Logistics compliance<br>\u2022 <strong>DoDI 4245.15 DMSMS</strong> \u2014 Obsolescence management<br><br>Score is calculated from <strong>real workspace activity</strong> \u2014 every anchor, DMSMS case, and readiness calculation contributes. Aggregated into a letter grade (A+ through F).';
 
 
     if (/risk.*engine|supply.*chain.*risk|single.*source|gidep|risk.*assessment/.test(q)) return '<strong>Supply Chain Risk Engine</strong><br><br>Automated risk assessment for defense supply chains:<br><br>\u2022 <strong>Single-source analysis</strong> \u2014 identify components with only one supplier<br>\u2022 <strong>GIDEP alert monitoring</strong> \u2014 Government-Industry Data Exchange Program<br>\u2022 <strong>Foreign dependency flags</strong> \u2014 ITAR/EAR compliance risk<br>\u2022 <strong>Lead time risk</strong> \u2014 procurement timeline analysis<br>\u2022 <strong>Cost impact scoring</strong> \u2014 financial exposure per risk item<br>\u2022 <strong>Mitigation recommendations</strong> \u2014 second source, redesign, strategic buy<br><br>Risk scores are color-coded and exportable. All risk assessments can be anchored to XRPL.';
@@ -9386,7 +9386,9 @@ function generateAiResponse(query) {
     }
 
     // ── DEFENSE STANDARDS ──
-    if (/mil.*std.*1388|ils.*element|12.*element|what.*ils/.test(q)) return '<strong>MIL-STD-1388 \u2014 12 ILS Elements</strong><br><br>Integrated Logistics Support covers these 12 elements:<br><br>1. <strong>Maintenance Planning</strong> \u2014 preventive/corrective maintenance strategies<br>2. <strong>Manpower & Personnel</strong> \u2014 staffing requirements<br>3. <strong>Supply Support</strong> \u2014 spares, repair parts, consumables<br>4. <strong>Support Equipment</strong> \u2014 tools, test equipment, TMDE<br>5. <strong>Technical Data</strong> \u2014 manuals, drawings, specifications<br>6. <strong>Training & Training Support</strong> \u2014 courses, devices, materials<br>7. <strong>Computer Resources Support</strong> \u2014 software, firmware<br>8. <strong>Facilities</strong> \u2014 maintenance shops, storage, training<br>9. <strong>Packaging, Handling, Storage & Transportation</strong> \u2014 PHS&T<br>10. <strong>Design Interface</strong> \u2014 R&M, human factors, safety<br>11. <strong>Standardization</strong> \u2014 interoperability, commonality<br>12. <strong>Product Support Management</strong> \u2014 PSM oversight';
+    if (/geia.*0007|geia.*std|s3000l|product.*support.*analysis|psa.*standard/.test(q)) return '<strong>GEIA-STD-0007 \u2014 Logistics Product Data</strong><br><br>GEIA-STD-0007 replaced the cancelled MIL-STD-1388-1A/2B (cancelled 1996) as the primary standard for logistics product data in defense acquisitions.<br><br>\u2022 <strong>GEIA-STD-0007</strong> \u2014 Logistics Product Data (direct replacement for MIL-STD-1388-2B LSAR)<br>\u2022 <strong>MIL-HDBK-502</strong> \u2014 Product Support Analysis (PSA) handbook (replaces LSA guidance from MIL-STD-1388-1A)<br>\u2022 <strong>S3000L</strong> \u2014 International LSA/PSA standard (ASD/AIA S-Series, NATO-adopted)<br>\u2022 <strong>S1000D</strong> \u2014 International specification for technical publications<br>\u2022 <strong>S2000M</strong> \u2014 International specification for material management<br><br><strong>Key change:</strong> "Logistics Support Analysis (LSA)" is now called "Product Support Analysis (PSA)" under DoD\'s product support framework. S4 Ledger aligns with GEIA-STD-0007 and supports both legacy LSA and modern PSA workflows.';
+
+    if (/mil.*std.*1388|ils.*element|12.*element|what.*ils/.test(q)) return '<strong>GEIA-STD-0007 / MIL-HDBK-502 \u2014 12 ILS Elements (Product Support)</strong><br><br>Integrated Logistics Support covers these 12 elements:<br><br>1. <strong>Maintenance Planning</strong> \u2014 preventive/corrective maintenance strategies<br>2. <strong>Manpower & Personnel</strong> \u2014 staffing requirements<br>3. <strong>Supply Support</strong> \u2014 spares, repair parts, consumables<br>4. <strong>Support Equipment</strong> \u2014 tools, test equipment, TMDE<br>5. <strong>Technical Data</strong> \u2014 manuals, drawings, specifications<br>6. <strong>Training & Training Support</strong> \u2014 courses, devices, materials<br>7. <strong>Computer Resources Support</strong> \u2014 software, firmware<br>8. <strong>Facilities</strong> \u2014 maintenance shops, storage, training<br>9. <strong>Packaging, Handling, Storage & Transportation</strong> \u2014 PHS&T<br>10. <strong>Design Interface</strong> \u2014 R&M, human factors, safety<br>11. <strong>Standardization</strong> \u2014 interoperability, commonality<br>12. <strong>Product Support Management</strong> \u2014 PSM oversight<br><br><em>Note: MIL-STD-1388-1A/2B was cancelled in 1996 and superseded by GEIA-STD-0007 and MIL-HDBK-502. The 12 ILS elements remain the standard framework. Internationally, S3000L provides equivalent guidance.</em>';
 
     if (/nist|800.171|cui.*protect|controlled.*unclass/.test(q)) return '<strong>NIST SP 800-171</strong> \u2014 Protecting Controlled Unclassified Information (CUI)<br><br>110 security controls across 14 families:<br><br>\u2022 Access Control (AC) \u2014 22 controls<br>\u2022 Awareness & Training (AT) \u2014 3 controls<br>\u2022 Audit & Accountability (AU) \u2014 9 controls<br>\u2022 Configuration Management (CM) \u2014 9 controls<br>\u2022 Identification & Authentication (IA) \u2014 11 controls<br>\u2022 Incident Response (IR) \u2014 3 controls<br>\u2022 Maintenance (MA) \u2014 6 controls<br>\u2022 Media Protection (MP) \u2014 9 controls<br>\u2022 Personnel Security (PS) \u2014 2 controls<br>\u2022 Physical Protection (PE) \u2014 6 controls<br>\u2022 Risk Assessment (RA) \u2014 3 controls<br>\u2022 Security Assessment (CA) \u2014 4 controls<br>\u2022 System & Communications Protection (SC) \u2014 16 controls<br>\u2022 System & Information Integrity (SI) \u2014 7 controls<br><br>S4 Ledger\'s blockchain anchoring directly supports AU (audit trail), SI (integrity), and SC (communications protection) controls.';
 
@@ -9407,11 +9409,11 @@ function generateAiResponse(query) {
 
     if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoD domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="/s4-about/">About page</a>.';
 
-    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 MIL-STD-1388, NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 20+ ILS tools<br><br>What can I help you with?';
+    if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 GEIA-STD-0007 (ILS), NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, SLS token, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 20+ ILS tools<br><br>What can I help you with?';
 
     if (/thank|thanks|thx|appreciate/.test(q)) return 'You\'re welcome! Let me know if you have any other questions about ILS, S4 Ledger, or defense logistics.';
 
-    if (/help|what.*can.*do|capabilities|feature/.test(q)) return '<strong>S4 Agent Capabilities</strong><br><br>I can answer questions about:<br><br><strong>ILS Tools (20):</strong><br>\u2022 Gap Analysis, Action Items, ILS Calendar, DMSMS Tracker<br>\u2022 Readiness/RAM Calculator, Parts Cross-Reference, ROI Calculator<br>\u2022 Lifecycle Cost Estimator, Warranty Tracker, Audit Vault<br>\u2022 Doc Library, Compliance Scorecard, Provisioning/PTD<br>\u2022 Risk Engine, Report Generator, Contract Management<br>\u2022 Digital Thread, Predictive Maintenance, Database Import, Submissions & PTD<br><br><strong>Product & Platform:</strong><br>\u2022 S4 Ledger overview, pricing, how anchoring works<br>\u2022 XRPL wallets, SLS token, TrustLines<br>\u2022 Treasury vs. Issuer wallets<br>\u2022 SDK, API, integration guides<br><br><strong>Defense Standards:</strong><br>\u2022 MIL-STD-1388 (12 ILS elements), NIST 800-171, CMMC, DFARS<br>\u2022 DI numbers (DI-001 through DI-050+)<br>\u2022 FAR/DFARS clauses, DoD 5000 series<br><br><strong>Context-Aware:</strong><br>\u2022 When analysis is loaded, I provide data-driven answers about gaps, costs, and recommendations<br>\u2022 When documents are uploaded, I reference analysis findings and discrepancies';
+    if (/help|what.*can.*do|capabilities|feature/.test(q)) return '<strong>S4 Agent Capabilities</strong><br><br>I can answer questions about:<br><br><strong>ILS Tools (20):</strong><br>\u2022 Gap Analysis, Action Items, ILS Calendar, DMSMS Tracker<br>\u2022 Readiness/RAM Calculator, Parts Cross-Reference, ROI Calculator<br>\u2022 Lifecycle Cost Estimator, Warranty Tracker, Audit Vault<br>\u2022 Doc Library, Compliance Scorecard, Provisioning/PTD<br>\u2022 Risk Engine, Report Generator, Contract Management<br>\u2022 Digital Thread, Predictive Maintenance, Database Import, Submissions & PTD<br><br><strong>Product & Platform:</strong><br>\u2022 S4 Ledger overview, pricing, how anchoring works<br>\u2022 XRPL wallets, SLS token, TrustLines<br>\u2022 Treasury vs. Issuer wallets<br>\u2022 SDK, API, integration guides<br><br><strong>Defense Standards:</strong><br>\u2022 GEIA-STD-0007 / MIL-HDBK-502 (12 ILS elements), NIST 800-171, CMMC, DFARS<br>\u2022 DI numbers (DI-001 through DI-050+)<br>\u2022 FAR/DFARS clauses, DoD 5000 series<br><br><strong>Context-Aware:</strong><br>\u2022 When analysis is loaded, I provide data-driven answers about gaps, costs, and recommendations<br>\u2022 When documents are uploaded, I reference analysis findings and discrepancies';
 
     // ── WORKSPACE STATS ──
     if (/stats|statistic|how.*many.*record|how.*many.*anchor|my.*data|workspace.*status/.test(q)) {
@@ -9421,9 +9423,9 @@ function generateAiResponse(query) {
     // ── ACRONYMS & TERMS ──
     if (/what.*lcsp|lcsp|life.*cycle.*sustain.*plan/.test(q)) return '<strong>Life Cycle Sustainment Plan (LCSP)</strong> \u2014 DI-ILSS-81490<br><br>The LCSP is the top-level ILS planning document that defines the sustainment strategy for the entire program lifecycle. It addresses all 12 ILS elements, establishes performance metrics (Ao, MTBF, MTTR), and is required per DoD Instruction 5000.02.<br><br>Upload your LCSP document in Gap Analysis for full element-by-element analysis.';
 
-    if (/what.*lsar|lsar|logistics.*support.*analysis.*record/.test(q)) return '<strong>Logistics Support Analysis Record (LSAR)</strong><br><br>The LSAR is the central database for logistics data generated during the Logistics Support Analysis (LSA) process. It captures task analysis, failure modes, repair levels, support equipment requirements, and spares data per MIL-STD-1388-2B.';
+    if (/what.*lsar|lsar|logistics.*support.*analysis.*record/.test(q)) return '<strong>Logistics Support Analysis Record (LSAR)</strong><br><br>The LSAR is the central database for logistics data generated during the Logistics Support Analysis (LSA) process. It captures task analysis, failure modes, repair levels, support equipment requirements, and spares data per GEIA-STD-0007 (formerly MIL-STD-1388-2B).';
 
-    if (/what.*phs.*t|phs&t|packaging.*handling|mil.*std.*2073/.test(q)) return '<strong>PHS&T \u2014 Packaging, Handling, Storage & Transportation</strong><br><br>ILS Element #9 per MIL-STD-1388. Covers MIL-STD-2073 (packaging requirements), MIL-STD-129 (marking), and transportation planning. Ensures items arrive at the right place, undamaged, properly identified.';
+    if (/what.*phs.*t|phs&t|packaging.*handling|mil.*std.*2073/.test(q)) return '<strong>PHS&T \u2014 Packaging, Handling, Storage & Transportation</strong><br><br>ILS Element #9 per GEIA-STD-0007 (formerly MIL-STD-1388). Covers MIL-STD-2073 (packaging requirements), MIL-STD-129 (marking), and transportation planning. Ensures items arrive at the right place, undamaged, properly identified.';
 
     if (/what.*cbm|cbm\+|condition.*based/.test(q)) return '<strong>CBM+ (Condition-Based Maintenance Plus)</strong><br><br>DoD maintenance strategy that uses real-time data and analytics to determine maintenance needs based on actual equipment condition rather than fixed schedules. CBM+ integrates with predictive maintenance to reduce unplanned downtime and optimize maintenance intervals.';
 
@@ -9933,7 +9935,7 @@ function showCustomProgramInput() {
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 8px"><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>Custom Program / Platform</h3>'
-        + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Enter your program details. A generic MIL-STD-1388 ILS template will be applied.</p>'
+        + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Enter your program details. A GEIA-STD-0007 ILS template will be applied.</p>'
         + '<div style="display:grid;gap:12px">'
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" aria-label="Custom program name" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" aria-label="Hull or platform designation" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
@@ -9960,7 +9962,7 @@ function applyCustomProgram() {
         PROGS['custom_' + name.replace(/\s+/g,'_')] = {
             name: name, hull: hull || 'N/A', ofc: office || 'N/A',
             branchTag: branch, desc: 'Custom program: ' + name,
-            systems: ['MIL-STD-1388-1A ILS Elements', 'MIL-STD-1388-2B LSAR', 'MIL-HDBK-502 Acquisition Logistics'],
+            systems: ['GEIA-STD-0007 ILS Elements', 'GEIA-STD-0007 Logistics Product Data', 'MIL-HDBK-502 Acquisition Logistics'],
             nsns: [], contracts: []
         };
     }
@@ -9978,11 +9980,11 @@ function applyCustomProgram() {
     var officeEl = document.getElementById('ilsOffice');
     if (officeEl) officeEl.value = office;
     document.getElementById('customProgramModal').remove();
-    // Initialize with generic MIL-STD-1388 checklist
+    // Initialize with GEIA-STD-0007 ILS checklist
     initILSChecklist('custom_' + name.replace(/\s+/g,'_'));
     // Persist custom program to localStorage + Supabase
     if (typeof _saveCustomPrograms === 'function') _saveCustomPrograms();
-    s4Notify('Custom Program', name + ' loaded with MIL-STD-1388 ILS template', 'success');
+    s4Notify('Custom Program', name + ' loaded with GEIA-STD-0007 ILS template', 'success');
 }
 
 
@@ -10903,7 +10905,7 @@ function runVaultStressTest() {
     setTimeout(function() {
         var t0 = performance.now();
         var types = ['ILS Record','BOM Extract','Technical Manual','SBOM Component','Provisioning Item','Maintenance Task','Failure Report','Supply Chain Entry','Logistics Audit','Compliance Check','DPAS Priority','Configuration Item','Warranty Record','Repair Order','Inspection Report'];
-        var branches = ['MIL-STD-1388','IEC-62264','AS9100','ISO-27001','DPAS-DO','DPAS-DX','SOC2','NIST-800','SAE-AS6500','DFARS-252','ITAR-EAR'];
+        var branches = ['GEIA-STD-0007','IEC-62264','AS9100','ISO-27001','DPAS-DO','DPAS-DX','SOC2','NIST-800','SAE-AS6500','DFARS-252','ITAR-EAR'];
         var tools = ['Manual Anchor','SBOM Generator','TA Assist AI','ILS Suite','BOM Ingestion','PDF Parser','Compliance Engine','Supply Chain Monitor','Batch Import','API Ingest'];
         var networks = ['Polygon Amoy','Ethereum Sepolia','Base Goerli','Arbitrum Sepolia','Solana Devnet'];
         var generated = [];
@@ -11018,7 +11020,7 @@ function showDocUpload() {
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:560px;width:90%">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-file-upload" style="color:var(--accent);margin-right:8px"></i>Add New Document</h3>'
         + '<div style="display:grid;gap:12px">'
-        + '<input aria-label="Document ID (e.g., MIL-STD-1388-2B)" id="newDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Document ID (e.g., MIL-STD-1388-2B)">'
+        + '<input aria-label="Document ID (e.g., MIL-STD-1388-2B)" id="newDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Document ID (e.g., GEIA-STD-0007, MIL-STD-1388-2B)">'
         + '<input aria-label="Title" id="newDocTitle" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Title">'
         + '<textarea aria-label="Paste document content or notes..." id="newDocContent" rows="6" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
         + '<select aria-label="New Doc Cat" id="newDocCat" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
@@ -11252,7 +11254,7 @@ function calcCompliance() {
     const dfars = Math.min(100, Math.round(vault >= 10 ? 88 : vault >= 3 ? 65 : vault >= 1 ? 40 : 12));
     // FAR 46 Quality: Based on warranty tracking and action items
     const far = Math.min(100, Math.round(actions > 0 ? 70 + Math.min(30, actionsDone/Math.max(actions,1)*30) : 15));
-    // ILS (MIL-STD-1388): Based on tools used
+    // ILS (GEIA-STD-0007, formerly MIL-STD-1388): Based on tools used
     const toolsUsed = new Set(s4Vault.map(v => v.source).filter(Boolean)).size;
     const ils = Math.min(100, Math.round(toolsUsed >= 6 ? 92 : toolsUsed >= 3 ? 70 : toolsUsed >= 1 ? 45 : 10));
     // DMSMS: Based on DMSMS records anchored
@@ -11298,7 +11300,7 @@ function calcCompliance() {
     if (vault === 0) recs.push('<i class="fas fa-arrow-right" style="color:var(--accent);margin-right:6px"></i> <strong>Anchor your first record</strong> to establish a tamper-proof audit trail and start building your compliance posture.');
     if (cmmc < 80) recs.push('<i class="fas fa-arrow-right" style="color:#e74c3c;margin-right:6px"></i> <strong>Increase anchored records</strong> — CMMC Level 2 requires demonstrable data integrity controls. Anchor 20+ records to reach 80%+ coverage.');
     if (encryptedCount < vault * 0.5 && vault > 0) recs.push('<i class="fas fa-arrow-right" style="color:#3498db;margin-right:6px"></i> <strong>Enable encryption</strong> on more records — over 50% of your records are unencrypted. CUI requires protection per NIST 800-171.');
-    if (ils < 70) recs.push('<i class="fas fa-arrow-right" style="color:#9b59b6;margin-right:6px"></i> <strong>Use more ILS tools</strong> — run DMSMS checks, readiness calculations, and lifecycle estimates to improve MIL-STD-1388 compliance.');
+    if (ils < 70) recs.push('<i class="fas fa-arrow-right" style="color:#9b59b6;margin-right:6px"></i> <strong>Use more ILS tools</strong> — run DMSMS checks, readiness calculations, and lifecycle estimates to improve GEIA-STD-0007 ILS compliance.');
     if (actions > 0 && actionsDone / actions < 0.5) recs.push('<i class="fas fa-arrow-right" style="color:var(--accent);margin-right:6px"></i> <strong>Resolve open action items</strong> — ' + (actions - actionsDone) + ' of ' + actions + ' items are still open. Completing these improves FAR 46 quality scores.');
     if (dmsmsRecords === 0) recs.push('<i class="fas fa-arrow-right" style="color:#ff6b6b;margin-right:6px"></i> <strong>Run a DMSMS analysis</strong> and anchor the results to demonstrate proactive obsolescence management per DoDI 4245.15.');
     if (recs.length === 0) recs.push('<i class="fas fa-check-circle" style="color:var(--accent);margin-right:6px"></i> <strong>Excellent compliance posture!</strong> Continue anchoring records and monitoring DMSMS, readiness, and warranty status.');
@@ -11323,7 +11325,7 @@ function exportCompliance() {
         'NIST 800-171': document.getElementById('pctNIST')?.textContent || '',
         'DFARS 252.204': document.getElementById('pctDFARS')?.textContent || '',
         'FAR 46 Quality': document.getElementById('pctFAR')?.textContent || '',
-        'MIL-STD-1388 ILS': document.getElementById('pctILS')?.textContent || '',
+        'GEIA-STD-0007 ILS': document.getElementById('pctILS')?.textContent || '',
         'DMSMS Management': document.getElementById('pctDMSMSmgmt')?.textContent || '',
         'Records Anchored': s4Vault.length,
         'Action Items': s4ActionItems.length,
@@ -12114,7 +12116,7 @@ var _templates = [
       desc:'SOW template structured per MIL-HDBK-245D with standard DoD sections (1.0–6.0). Defines all contractor tasks, deliverables, acceptance criteria, and performance standards.',
       fields:['Contract Number','Program Name','Contractor Name / CAGE Code','1.0 Scope — System Overview','1.1 Scope — Program Background','2.0 Applicable Documents — Government (MIL-STDs, specs)','2.1 Applicable Documents — Non-Government (SAE, IEEE)','3.0 Requirements — General','3.x Task Descriptions (one per task: Task Title, Description, Inputs, Outputs, Acceptance Criteria, Performance Std)','4.0 Deliverables — CDRL Cross-Reference Table','5.0 Period of Performance — Start/End Dates','5.1 Milestone Schedule','6.0 Place of Performance — Primary / Alternate Sites','Government-Furnished Property','Security Requirements (CUI, classified, NIST 800-171)','Quality Assurance Surveillance Plan (QASP) Reference','Key Personnel Requirements'] },
     { id:'TPL-005', name:'Provisioning Parts List (PPL)', category:'logistics', icon:'fa-boxes-stacked',
-      desc:'PPL template per MIL-STD-1388-2B / GEIA-STD-0007 for initial provisioning of repair parts, special tools, and test equipment. Includes Source, Maintenance & Recoverability (SMR) coding.',
+      desc:'PPL template per GEIA-STD-0007 for initial provisioning of repair parts, special tools, and test equipment. Includes Source, Maintenance & Recoverability (SMR) coding.',
       fields:['PPL Line Item Number','NSN (National Stock Number)','Reference Designation','Part Number','CAGE Code','Nomenclature','Quantity Per Assembly (QPA)','Qty Per End Item','Unit of Issue','Unit Price','SMR Code (Source / Maintenance / Recoverability)','Essentiality Code (XA1, XB2, XD2, etc.)','Technical Manual Reference','Failure Rate (MTBF hours)','Recommended Initial Buy Qty','Shelf Life Code','Hazardous Material Code','Special Handling / Storage','Interchangeability / Substitutability'] },
     { id:'TPL-006', name:'DMSMS Obsolescence Case Report', category:'engineering', icon:'fa-triangle-exclamation',
       desc:'Obsolescence case report per SD-22 (DMSMS Management Guidance). Documents diminishing manufacturing sources, evaluates resolution alternatives, and tracks implementation through production/fielded systems.',
@@ -13507,13 +13509,19 @@ function selectOnboardTier(el, tier) {
     var anchorsEl = document.getElementById('onboardSlsAnchors');
     if (balEl) balEl.textContent = info.sls.toLocaleString();
     if (anchorsEl) anchorsEl.textContent = (info.sls * 100).toLocaleString();
-    // Sync ALL SLS balance displays to selected tier
+    // Sync ALL SLS balance displays to selected tier (deduct any spent fees)
+    var _spent = (typeof stats !== 'undefined') ? (stats.slsFees || 0) : 0;
+    var _remaining = Math.round((info.sls - _spent) * 100) / 100;
     var mainBal = document.getElementById('slsBarBalance');
-    if (mainBal) mainBal.textContent = info.sls.toLocaleString() + ' SLS';
+    if (mainBal) mainBal.textContent = _remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' SLS';
     var toolBal = document.getElementById('toolSlsBal');
-    if (toolBal) toolBal.textContent = info.sls.toLocaleString();
+    if (toolBal) toolBal.textContent = _remaining.toLocaleString(undefined,{maximumFractionDigits:2});
     var sidebarBal = document.getElementById('sidebarSlsBal');
-    if (sidebarBal) sidebarBal.textContent = info.sls.toLocaleString() + ' SLS';
+    if (sidebarBal) sidebarBal.textContent = _remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' SLS';
+    var walletBal = document.getElementById('walletSLSBalance');
+    if (walletBal) walletBal.textContent = _remaining.toLocaleString(undefined,{maximumFractionDigits:2});
+    var trigBal = document.getElementById('walletTriggerBal');
+    if (trigBal) trigBal.textContent = _remaining.toLocaleString(undefined,{maximumFractionDigits:2});
 }
 
 // Auto-show onboarding on first visit — ONLY after entering platform (DOM check, not sessionStorage)
@@ -13721,8 +13729,13 @@ setInterval(function() {
         if (balEl) {
             var spent = s.slsFees || 0;
             var tierAlloc = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined' && _onboardTiers[_onboardTier]) ? _onboardTiers[_onboardTier].sls : 25000;
-            var bal = tierAlloc - spent;
-            balEl.textContent = bal.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0});
+            var bal = Math.round((tierAlloc - spent) * 100) / 100;
+            balEl.textContent = bal.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:2}) + ' SLS';
+            // Keep walletSLSBalance and walletTriggerBal in sync
+            var wBal = document.getElementById('walletSLSBalance');
+            if (wBal) wBal.textContent = bal.toLocaleString(undefined, {maximumFractionDigits:2});
+            var wTrig = document.getElementById('walletTriggerBal');
+            if (wTrig) wTrig.textContent = bal.toLocaleString(undefined, {maximumFractionDigits:2});
         }
         var anchEl = document.getElementById('slsBarAnchors');
         if (anchEl) anchEl.textContent = s.anchored || 0;
@@ -14955,6 +14968,35 @@ function renderActionCalendar() {
         });
     } catch(e) {}
 
+    // Generate demo action items when no real data exists
+    if (Object.keys(actionDates).length === 0) {
+        var demoActions = [
+            {day:3, title:'DMSMS Review — AN/SPS-49 Radar', severity:'critical', source:'dmsms', detail:'Obsolete component detected on AN/SPS-49 radar system. Bridge buy or alternate source required per GIDEP advisory.'},
+            {day:7, title:'ILS Gap Analysis — DDG-51 FY25', severity:'warning', source:'ils', detail:'FY25 ILS review cycle due. Upload latest DRLs and run full gap analysis per GEIA-STD-0007.'},
+            {day:10, title:'Parts Order Deadline — CVN-78', severity:'critical', source:'parts', detail:'Long-lead parts order cutoff for CVN-78 FY25 availability period. 26-week lead time items must order now.'},
+            {day:12, title:'Compliance Audit Prep', severity:'info', source:'compliance', detail:'Prepare compliance evidence package for upcoming C3PAO CMMC Level 2 assessment.'},
+            {day:15, title:'Warranty Expiry — GE LM2500', severity:'warning', source:'warranty', detail:'GE LM2500 gas turbine warranty expires in 30 days. Initiate renewal or re-compete per FAR 46.7.'},
+            {day:18, title:'Lifecycle Cost Review', severity:'info', source:'lifecycle', detail:'Quarterly lifecycle cost estimate update for DDG-51 class. Review sustainment vs. acquisition ratio.'},
+            {day:21, title:'Risk Assessment Update', severity:'warning', source:'risk', detail:'Refresh supply chain risk matrix. 3 vendors flagged for financial instability in last quarter.'},
+            {day:24, title:'Readiness Report Due', severity:'critical', source:'readiness', detail:'Ao/MTBF/MTTR metrics report due to NAVSEA 04. Current Ao trending below 80% threshold.'},
+            {day:27, title:'Obsolescence Check — MIL-STD-1553', severity:'info', source:'dmsms', detail:'Periodic technology refresh review for MIL-STD-1553 data bus components across fleet platforms.'}
+        ];
+        var _needsSeed = typeof s4ActionItems !== 'undefined' && s4ActionItems.length === 0;
+        demoActions.forEach(function(a) {
+            if (a.day <= daysInMonth) {
+                var dueDate = new Date(_calYear, _calMonth, a.day);
+                var dueStr = dueDate.toISOString().split('T')[0];
+                if (!actionDates[a.day]) actionDates[a.day] = [];
+                actionDates[a.day].push(a);
+                if (_needsSeed && typeof addActionItem === 'function') {
+                    addActionItem({id:'CAL-DEMO-' + a.day + '-' + a.source, title:a.title, detail:a.detail, severity:a.severity, source:a.source, owner:'', due:dueStr, cost:'', schedule:dueStr});
+                }
+            }
+        });
+        if (_needsSeed && typeof renderHubActions === 'function') {
+            setTimeout(renderHubActions, 50);
+        }
+    }
 
     var html = '';
     // Day headers
@@ -15230,8 +15272,8 @@ function openILSTool(toolId) {
     // ── How It Works: modal popup on first visit, ? icon on return visits ──
     if (panel) {
         var det = panel.querySelector('details');
-        var h3 = panel.querySelector('h3');
-        if (det && h3) {
+        var h3 = panel.querySelector('h3, h4');
+        if (det) {
             // Always hide the <details> element — we use modal popups now
             det.style.display = 'none';
             det.removeAttribute('open');
@@ -15239,7 +15281,7 @@ function openILSTool(toolId) {
             var visited = false;
             try { visited = localStorage.getItem(storageKey) === '1'; } catch(e) {}
             // Remove any existing ? button
-            var existingBtn = h3.querySelector('.hiw-help-btn');
+            var existingBtn = h3 ? h3.querySelector('.hiw-help-btn') : null;
             if (existingBtn) existingBtn.remove();
 
             function showHIWModal() {
@@ -15258,12 +15300,14 @@ function openILSTool(toolId) {
                 setTimeout(showHIWModal, 300);
             }
             // Always add ? icon for manual access
+            if (h3 && !h3.querySelector('.hiw-help-btn')) {
             var qBtn = document.createElement('button');
             qBtn.className = 'hiw-help-btn';
             qBtn.innerHTML = '?';
             qBtn.title = 'Show How It Works';
             qBtn.onclick = function(e) { e.stopPropagation(); showHIWModal(); };
             h3.appendChild(qBtn);
+            }
         }
     }
     
