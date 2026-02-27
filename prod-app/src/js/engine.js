@@ -915,7 +915,8 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
     let anchorError = null;
     try {
         // NETWORK_DEPENDENT: Production anchor — interceptor queues offline
-        const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview})});
+        var _userEmail = localStorage.getItem('s4_user_email') || '';
+        const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview, user_email: _userEmail})});
         if (resp.ok) {
             const result = await resp.json();
             if (result.record) {

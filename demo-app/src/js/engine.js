@@ -887,8 +887,8 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
     let anchorError = null;
     try {
         if (_demoMode && _demoSession) {
-            // NETWORK_DEPENDENT: Anchor — interceptor queues offline
-            const resp = await fetch('/api/demo/anchor', {
+            // NETWORK_DEPENDENT: Demo anchor — uses same API as prod, passes user_email for fee deduction
+            const resp = await fetch('/api/anchor', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
