@@ -3840,6 +3840,8 @@ async function anchorROI() {
     // Update SLS display
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Report anchored!'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
 }
 
 async function anchorILSReport() {
@@ -4751,6 +4753,8 @@ async function anchorDMSMS() {
     updateTxLog();
     addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS report anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
 }
 
 // ═══ OPERATIONAL READINESS CALCULATOR ═══
@@ -4868,6 +4872,8 @@ async function anchorReadiness() {
     updateTxLog();
     addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> RAM report anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
 }
 
 
@@ -8099,6 +8105,8 @@ async function anchorSubmissionReview() {
     updateTxLog();
     addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Submissions & PTD', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').textContent = 'Submissions & PTD analysis anchored — ' + _subCache.discrepancies.length + ' discrepancies recorded on-chain'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
 }
 
 function exportDiscrepancyReport() {

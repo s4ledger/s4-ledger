@@ -66,10 +66,10 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-CZMHyGow.js"></script>
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-D-Df50JA.js">
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-Vf24Vz5M.js">
-  <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-C30rCU8w.css">
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-CpWH30_D.js"></script>
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-5qwSGtfw.js">
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-CyQBn0yZ.js">
+  <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-BDV2-iZN.css">
 </head>
 <body>
 <!-- Skip Navigation Link (Section 508 / a11y) -->
@@ -3002,15 +3002,14 @@
     </div>
 </section>
 
-<div id="anchorOverlay" class="anchor-overlay">
-    <div class="anchor-anim-box">
-        <div class="chain-segment"></div>
-        <div class="anchor-drop-icon"><i class="fas fa-anchor"></i></div>
-        <div class="anim-status" id="animStatus">Anchoring to XRPL...</div>
-        <div class="anim-hash" id="animHash"></div>
-        <div id="animClf" style="margin-top:0.6rem"></div>
-        <div class="anim-fee" id="animFee">0.01 $SLS &rarr; Treasury</div>
-        <div class="anim-success" id="animSuccess"></div>
+<div id="anchorOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center" onclick="if(event.target===this)hideAnchorAnimation()">
+    <div id="s4ResultPopup" style="background:linear-gradient(135deg,rgba(12,16,28,0.98),rgba(18,22,38,0.98));border:1px solid rgba(0,170,255,0.25);border-radius:6px;padding:2rem 2.5rem;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(0,170,255,0.08);position:relative;">
+        <button onclick="hideAnchorAnimation()" style="position:absolute;top:10px;right:14px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1">&times;</button>
+        <div id="animStatus" style="font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:0.8rem;display:flex;align-items:center;gap:8px"><i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to XRPL...</div>
+        <div id="animHash" style="font-family:monospace;font-size:0.72rem;color:var(--muted);word-break:break-all;background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:3px;margin-bottom:0.6rem"></div>
+        <div id="animClf" style="margin-bottom:0.6rem"></div>
+        <div id="animFee" style="font-size:0.82rem;color:var(--gold)">0.01 $SLS &rarr; Treasury</div>
+        <div id="animSuccess" style="margin-top:0.6rem;font-size:0.9rem;font-weight:600"></div>
     </div>
 </div>
 

@@ -143,19 +143,6 @@
         .g-orb{display:none!important}
         
         
-        .anchor-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,8,16,0.92);display:none;align-items:center;justify-content:center;z-index:9990;backdrop-filter:blur(8px)}.anchor-overlay.active{display:flex!important}
-        
-        .anchor-anim-box{text-align:center;max-width:500px;padding:2rem}
-        .chain-segment{width:3px;height:0;background:linear-gradient(to bottom,#00aaff,rgba(0,170,255,0.2));margin:0 auto;animation:chainGrow 0.5s ease-out 0.15s forwards}
-        @keyframes chainGrow{to{height:50px}}
-        .anchor-drop-icon{font-size:5rem;color:var(--accent);animation:anchorDrop 1.2s ease-in-out;filter:drop-shadow(0 0 25px rgba(0,170,255,0.5))}
-        @keyframes anchorDrop{0%{transform:translateY(-80px) scale(0.5);opacity:0}40%{transform:translateY(10px) scale(1.15);opacity:1}60%{transform:translateY(-8px) scale(0.95)}80%{transform:translateY(3px) scale(1.02)}100%{transform:translateY(0) scale(1)}}
-        .anim-status{font-size:1.15rem;font-weight:700;color:var(--accent);margin-top:1rem;animation:fadeUp 0.5s ease-out 0.5s both}
-        .anim-hash{font-family:monospace;color:var(--accent);font-size:0.8rem;margin-top:0.8rem;word-break:break-all;opacity:0;animation:fadeUp 0.5s ease-out 1s both;background:rgba(0,170,255,0.08);padding:10px;border-radius:3px;border:1px solid rgba(0,170,255,0.2)}
-        .anim-fee{font-size:0.9rem;color:var(--accent);margin-top:0.5rem;opacity:0;animation:fadeUp 0.5s ease-out 1.3s both}
-        .anim-success{font-size:1.3rem;font-weight:800;color:var(--accent);margin-top:1rem;opacity:0;animation:scaleIn 0.4s ease-out 2s both}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes scaleIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
         .branch-count{font-size:0.8rem;color:var(--muted);margin-bottom:6px}
         ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
         @media(max-width:768px){.hero h1{font-size:1.6rem}.record-type-grid{grid-template-columns:repeat(2,1fr)}.branch-tabs{gap:4px}.branch-tab{font-size:0.75rem;padding:5px 10px}}
@@ -1099,7 +1086,7 @@
         body.light-mode .vault-meta{color:#555!important}
         body.light-mode .vault-meta span{color:#555!important}
         body.light-mode .vault-badge{color:#1d1d1f}
-        body.light-mode .anchor-overlay{background:rgba(240,240,245,0.95)!important}
+        body.light-mode #anchorOverlay{background:rgba(240,240,245,0.95)!important}
         body.light-mode .onboard-overlay{background:rgba(240,240,245,0.97)!important}
         body.light-mode .modal-overlay{background:rgba(240,240,245,0.92)!important}
         body.light-mode .brand-text{color:#1d1d1f!important}

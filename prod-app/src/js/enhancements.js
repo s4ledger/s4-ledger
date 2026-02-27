@@ -650,6 +650,8 @@ async function anchorSBOM() {
     if (typeof sessionRecords !== 'undefined') sessionRecords.push({hash:hash, type:'SBOM_ATTESTATION', branch:'JOINT', timestamp:new Date().toISOString(), label:'SBOM Attestation', txHash:tx.txHash||''});
     if (typeof updateTxLog === 'function') updateTxLog();
     setTimeout(function(){ var s = document.getElementById('animStatus'); if(s){s.innerHTML='<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM attestation anchored!'; s.style.color='#00aaff';} }, 2200);
+    await new Promise(function(r){ setTimeout(r, 3500); });
+    if (typeof hideAnchorAnimation === 'function') hideAnchorAnimation();
 }
 
 // Also populate SBOM dropdown
