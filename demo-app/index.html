@@ -1314,6 +1314,7 @@
     </style>
 </head>
 <body>
+<div id="scrollProgress" style="position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#00aaff,#c9a84c);width:0;z-index:10002;transition:width 0.15s;pointer-events:none"></div>
 <!-- Skip Navigation Link (Section 508 / a11y) -->
 <a href="#mainContent" class="sr-only" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:99999;background:#00aaff;color:#fff;padding:12px 24px;font-weight:700;text-decoration:none;border-radius:0 0 3px 0" onfocus="this.style.position='fixed';this.style.left='0';this.style.top='0';this.style.width='auto';this.style.height='auto';this.style.overflow='visible'" onblur="this.style.position='absolute';this.style.left='-9999px';this.style.width='1px';this.style.height='1px';this.style.overflow='hidden'">Skip to main content</a>
 <script>
@@ -1577,7 +1578,7 @@ window.addEventListener('unhandledrejection', function(e) {
             <li><a href="../s4-investors/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:3px;">Company</a></li>
             <li><a href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:3px;">Docs</a></li>
             <li><a href="../s4-contact/" style="background:#00aaff;color:#fff;padding:0.5rem 1.25rem;font-size:0.875rem;font-weight:600;text-decoration:none;border-radius:3px;margin-left:0.5rem;">Request Demo</a></li>
-            <li><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode" id="themeToggleBtn"><i class="fas fa-sun"></i></button></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode" id="themeToggleBtn" aria-label="Toggle theme"><i class="fas fa-sun"></i></button></li>
         </ul>
         <button onclick="var nl=document.getElementById('navLinks');nl.style.display=nl.style.display==='flex'?'none':'flex';nl.style.flexDirection=nl.style.display==='flex'?'column':'row';nl.style.position=nl.style.display==='flex'&&window.innerWidth<768?'absolute':'static';nl.style.top='64px';nl.style.left='0';nl.style.right='0';nl.style.background=document.body.classList.contains('light-mode')?'rgba(255,255,255,0.98)':'rgba(5,8,16,0.98)';nl.style.padding='1rem';nl.style.borderBottom=document.body.classList.contains('light-mode')?'1px solid rgba(0,0,0,0.06)':'1px solid rgba(255,255,255,0.06)';" aria-label="Menu" style="display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:0.5rem;">
             <i class="fas fa-bars"></i>
@@ -1587,7 +1588,7 @@ window.addEventListener('unhandledrejection', function(e) {
 
 
 <!-- ═══ S4 UX ELEMENTS ═══ -->
-<div class="s4-toast-container" id="s4ToastContainer"></div>
+<div class="s4-toast-container" id="s4ToastContainer" aria-live="assertive" role="alert"></div>
 
 <div class="s4-tour-overlay" id="s4TourOverlay">
     <div class="s4-tour-highlight" id="s4TourHighlight"></div>
@@ -1595,7 +1596,7 @@ window.addEventListener('unhandledrejection', function(e) {
 </div>
 
 <div class="s4-command-palette" id="s4CommandPalette">
-    <input type="text" id="s4CommandInput" placeholder="Type a command or search..." autocomplete="off" spellcheck="false">
+    <input aria-label="Type a command or search..." type="text" id="s4CommandInput" placeholder="Type a command or search..." autocomplete="off" spellcheck="false">
     <div class="s4-command-list" id="s4CommandList"></div>
 </div>
 
@@ -1649,8 +1650,8 @@ window.addEventListener('unhandledrejection', function(e) {
             <button onclick="simulateCacLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:3px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC</button>
         </div>
         <div id="acctLoginPane" style="display:none;">
-            <div style="margin-bottom:12px;text-align:left;"><label style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email / User ID</label><input type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
-            <div style="margin-bottom:16px;text-align:left;"><label style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input type="password" id="loginPassword" placeholder="••••••••" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
+            <div style="margin-bottom:12px;text-align:left;"><label style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email / User ID</label><input aria-label="user@agency.mil" type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
+            <div style="margin-bottom:16px;text-align:left;"><label style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input aria-label="••••••••" type="password" id="loginPassword" placeholder="••••••••" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
             <button onclick="simulateAccountLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:3px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In</button>
             <div style="margin-top:12px;font-size:0.78rem;"><a href="#" onclick="event.preventDefault();if(typeof _showNotif==='function')_showNotif('Password reset link sent to your .mil email.','info');" style="color:var(--accent);text-decoration:none;">Forgot password?</a></div>
         </div>
@@ -1723,13 +1724,14 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 </script>
 <section class="tab-section">
     <div class="container">
-        <div class="stat-strip" id="statsRow">
+        <div class="stat-strip" id="statsRow" aria-live="polite" role="status">
             <div class="ss-item"><span class="ss-val" id="statVerified">0</span> <span class="ss-label">Verified</span></div>
             <div class="ss-item"><span class="ss-val" id="statTypes">0</span> <span class="ss-label">Types</span></div>
             <div class="ss-item"><span class="ss-val" id="statSlsFees">0.000</span> <span class="ss-label">$SLS Fees</span></div>
+            <div class="ss-item"><span class="ss-val" id="platformCount">&mdash;</span> <span class="ss-label">Platforms</span></div>
         </div>
     <!-- ═══ DEMO ONBOARDING WIZARD ═══ -->
-    <div class="onboard-overlay" id="onboardOverlay" style="display:none">
+    <div class="onboard-overlay" role="dialog" aria-modal="true" id="onboardOverlay" style="display:none">
         <div class="onboard-modal">
             <div class="onboard-header">
                 <div style="font-size:2rem;margin-bottom:8px"><i class="fas fa-shield-halved" style="color:var(--accent)"></i></div>
@@ -1850,6 +1852,8 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div><span style="color:#8ea4b8;">Wallet:</span> <span style="color:#00aaff;font-family:monospace;" id="demoWalletAddr">&mdash;</span></div>
                         <div><span style="color:#8ea4b8;">Plan:</span> <span style="color:#c9a84c;font-weight:600;" id="demoPlanLabel">&mdash;</span></div>
                         <div><span style="color:#8ea4b8;">SLS Balance:</span> <span style="color:#c9a84c;font-weight:700;" id="demoSlsBalance">&mdash;</span></div>
+                        <div><span style="color:#8ea4b8;">XRP:</span> <span style="color:var(--green,#00cc88);font-family:monospace;" id="demoXrp">&mdash;</span></div>
+                        <span id="demoSls" style="display:none"></span>
                     </div>
                     <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
                         <button onclick="document.querySelector('a[href=&quot;#tabAnchor&quot;]').click();" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:6px 16px;border-radius:3px;font-size:0.76rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;"><i class="fas fa-anchor"></i> Anchor a Record</button>
@@ -1987,7 +1991,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <div class="clf-banner" id="clfBanner"><span class="clf-icon"></span><span class="clf-badge" id="clfBadge"></span><span class="clf-text" id="clfText"></span></div>
 
                             <label>3. Upload file or enter record content</label>
-                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:3px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;"><i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--accent);margin-bottom:6px;display:block;"></i><div style="color:var(--steel);font-size:0.82rem;">Drag &amp; drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div><div style="color:var(--muted);font-size:0.72rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, TXT &mdash; any file type</div><input type="file" id="fileUploadInput" style="display:none" onchange="handleFileSelect(event)"><div id="dropFileName" style="display:none;margin-top:8px;color:var(--accent);font-weight:600;font-size:0.82rem;"></div></div>
+                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:3px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;"><i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--accent);margin-bottom:6px;display:block;"></i><div style="color:var(--steel);font-size:0.82rem;">Drag &amp; drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div><div style="color:var(--muted);font-size:0.72rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, TXT &mdash; any file type</div><input aria-label="Drop Zone" type="file" id="fileUploadInput" style="display:none" onchange="handleFileSelect(event)"><div id="dropFileName" style="display:none;margin-top:8px;color:var(--accent);font-weight:600;font-size:0.82rem;"></div></div>
                             <textarea id="recordInput" aria-label="Record content to anchor" placeholder="Or paste/type your defense logistics record here..." oninput="this.dataset.autoFilled='false'"></textarea>
                             <div class="mt-2 mb-3">
                                 <span style="color:var(--muted);font-size:0.8rem">Try a sample:</span>
@@ -2007,7 +2011,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             </div>
                             <div class="d-flex gap-2 align-items-center">
                                 <label class="form-check-label" style="font-size:0.85rem">
-                                    <input type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px"> Encrypt before hashing (CUI protection)
+                                    <input aria-label="Encrypt Check" type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px"> Encrypt before hashing (CUI protection)
                                 </label>
                             </div>
                             <button class="btn-accent mt-3" onclick="anchorRecord()" id="anchorBtn"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
@@ -2069,7 +2073,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 <div style="color:var(--accent);font-weight:600;font-size:0.88rem;">Drop file(s) here to verify integrity</div>
                                 <div style="color:var(--steel);font-size:0.78rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, images, contracts &mdash; any file type</div>
                                 <div style="color:var(--muted);font-size:0.72rem;margin-top:6px;">The file is hashed locally &mdash; <strong>never uploaded to any server</strong></div>
-                                <input type="file" id="verifyFileInput" style="display:none" onchange="handleVerifyFileSelect(event)" multiple>
+                                <input aria-label="Verify File Input" type="file" id="verifyFileInput" style="display:none" onchange="handleVerifyFileSelect(event)" multiple>
                             </div>
                             <div id="verifyFileResults" style="display:none;margin-bottom:16px;"></div>
 
@@ -2318,7 +2322,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-readiness',this)"><i class="fas fa-chart-line"></i> Readiness Calculator</button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-compliance',this)"><i class="fas fa-shield-halved"></i> Compliance Scorecard</button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-risk',this)"><i class="fas fa-triangle-exclamation"></i> Supply Chain Risk</button>
-                    <button class="ils-hub-tab" onclick="switchHubTab('hub-actions',this)"><i class="fas fa-tasks"></i> Action Items <span id="hubActionBadge" style="background:#ff6b6b;color:#fff;font-size:0.6rem;padding:1px 6px;border-radius:3px;margin-left:4px;font-weight:700;display:none"></span></button>
+                    <button class="ils-hub-tab" onclick="switchHubTab('hub-actions',this)"><i class="fas fa-tasks"></i> Action Items <span id="hubActionBadge" style="background:#ff6b6b;color:#fff;font-size:0.6rem;padding:1px 6px;border-radius:3px;margin-left:4px;font-weight:700;display:none"></span><span id="actionTabCount" style="background:rgba(0,170,255,0.15);color:#00aaff;font-size:0.6rem;padding:1px 5px;border-radius:3px;margin-left:2px;font-weight:700"></span></button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-predictive',this)"><i class="fas fa-brain"></i> Predictive Maintenance</button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-lifecycle',this)"><i class="fas fa-clock"></i> Lifecycle Cost</button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-roi',this)"><i class="fas fa-dollar-sign"></i> ROI Calculator</button>
@@ -2462,21 +2466,21 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <label>1. Select Program / Platform Type</label>
                             <div class="row mb-3">
                                 <div class="col-7">
-                                    <select id="ilsProgram" onchange="onILSProgramChange()">
+                                    <select aria-label="Ils Program" id="ilsProgram" onchange="onILSProgramChange()">
                                     </select>
                                 </div>
                                 <div class="col-5">
-                                    <input type="text" id="ilsHull" placeholder="Hull # / Designation" style="font-size:0.88rem">
+                                    <input aria-label="Hull # / Designation" type="text" id="ilsHull" placeholder="Hull # / Designation" style="font-size:0.88rem">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-6">
                                     <label style="font-size:0.82rem">Program Office</label>
-                                    <input type="text" id="ilsOffice" placeholder="e.g. PMS 300" style="font-size:0.88rem">
+                                    <input aria-label="e.g. PMS 300" type="text" id="ilsOffice" placeholder="e.g. PMS 300" style="font-size:0.88rem">
                                 </div>
                                 <div class="col-6">
                                     <label style="font-size:0.82rem">Acquisition Phase</label>
-                                    <select id="ilsPhase" style="font-size:0.88rem">
+                                    <select aria-label="Ils Phase" id="ilsPhase" style="font-size:0.88rem">
                                         <option value="pre_award">Pre-Award</option>
                                         <option value="design" selected>Design</option>
                                         <option value="construction">Construction</option>
@@ -2493,10 +2497,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 <div style="font-weight:600;color:#fff;margin-bottom:4px">Drag & drop files here or click to browse</div>
                                 <div style="font-size:0.82rem;color:var(--muted)">Accepts .csv, .xlsx, .xls, .pdf, .docx, .txt — all processing done locally in your browser</div>
                             </div>
-                            <input type="file" id="ilsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx,.doc" style="display:none" onchange="handleILSFiles(this.files)">
+                            <input aria-label="Ils File Input" type="file" id="ilsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx,.doc" style="display:none" onchange="handleILSFiles(this.files)">
                             <div style="margin:8px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                                 <div style="position:relative;display:inline-block">
-                                    <select id="sampleDocSelect" onchange="loadSelectedSampleDoc(this.value)" style="font-weight:600;min-width:260px;border-color:rgba(0,170,255,0.25) !important;color:var(--accent) !important">
+                                    <select aria-label="Sample Doc Select" id="sampleDocSelect" onchange="loadSelectedSampleDoc(this.value)" style="font-weight:600;min-width:260px;border-color:rgba(0,170,255,0.25) !important;color:var(--accent) !important">
                                         <option value="" disabled selected>Load Sample Document...</option>
                                         <optgroup label="Data Requirements">
                                             <option value="drl">DRL Tracker (CDRL Status Log)</option>
@@ -2628,7 +2632,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 </div>
                                 <!-- Bulk Action Bar -->
                                 <div id="actionBulkBar" style="display:none;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:8px 14px;margin-bottom:10px;align-items:center;gap:10px;font-size:0.82rem">
-                                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--accent);font-weight:600"><input type="checkbox" id="actionSelectAll" onchange="toggleActionSelectAll(this.checked)"> Select All</label>
+                                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--accent);font-weight:600"><input aria-label="Action Select All" type="checkbox" id="actionSelectAll" onchange="toggleActionSelectAll(this.checked)"> Select All</label>
                                     <span id="actionSelectedCount" style="color:var(--steel)">0 selected</span>
                                     <span style="flex:1"></span>
                                     <button class="ai-quick-btn" onclick="bulkActionSetSeverity('critical')" style="font-size:0.72rem"><span style="color:#c9a84c">●</span> Set Critical</button>
@@ -2646,9 +2650,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
                                         <h4 style="font-size:0.9rem;font-weight:700;color:#fff;margin:0"><i class="fas fa-calendar-alt" style="color:var(--accent);margin-right:6px"></i>Action Calendar</h4>
                                         <div style="display:flex;gap:6px">
-                                            <button onclick="changeCalMonth(-1)" class="ai-quick-btn" style="padding:4px 10px;font-size:0.75rem"><i class="fas fa-chevron-left"></i></button>
+                                            <button onclick="changeCalMonth(-1)" class="ai-quick-btn" style="padding:4px 10px;font-size:0.75rem" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
                                             <span id="calMonthLabel" style="font-size:0.82rem;color:var(--steel);font-weight:600;min-width:120px;text-align:center;line-height:28px"></span>
-                                            <button onclick="changeCalMonth(1)" class="ai-quick-btn" style="padding:4px 10px;font-size:0.75rem"><i class="fas fa-chevron-right"></i></button>
+                                            <button onclick="changeCalMonth(1)" class="ai-quick-btn" style="padding:4px 10px;font-size:0.75rem" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
                                         </div>
                                     </div>
                                     <div id="actionCalendarGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:0.72rem;text-align:center"></div>
@@ -2687,6 +2691,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </div>
                 </div><!-- /hub-actions -->
+                <!-- Hidden DOM ID placeholders for JS feature stubs -->
+                <div id="partsResults" style="display:none"></div>
+                <input type="date" id="calEventDate" aria-label="Calendar event date" style="display:none">
+                <span id="notifBadge" style="display:none"></span>
 
 
                 <!-- ══ WORKSPACE TOOLS (full embedded) ══ -->
@@ -2704,10 +2712,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             </div>
                         </details>
                         <label>Select Program</label>
-                        <select id="dmsmsProgram" class="form-select mb-2"  onchange="loadDMSMSData()"></select>
+                        <select aria-label="Dmsms Program" id="dmsmsProgram" class="form-select mb-2"  onchange="loadDMSMSData()"></select>
                         <div class="row mb-3">
-                            <div class="col-6"><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
-                            <div class="col-6"><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input aria-label="Hull # / Tail # / Designation" type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input aria-label="Program Office (e.g. PMS 300)" type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                         </div>
                                                 <label style="font-size:0.82rem;margin-top:0.5rem">Upload DMSMS Data <span style="color:var(--muted);font-weight:400">(parts lists, GIDEP notices, vendor EOL notices)</span></label>
                         <div class="ils-dropzone" id="dmsmsDropzone" onclick="document.getElementById('dmsmsFileInput').click()" style="border-color:rgba(0,170,255,0.15)">
@@ -2715,7 +2723,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <div style="font-weight:600;color:#fff;margin-bottom:4px">Drag & drop DMSMS files or click to browse</div>
                             <div style="font-size:0.82rem;color:var(--muted)">Accepts .csv, .xlsx, .xls, .pdf, .docx, .txt — identifies NSNs, CAGE codes, part statuses</div>
                         </div>
-                        <input type="file" id="dmsmsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx" style="display:none" onchange="handleToolUpload(this.files,'dmsms')">
+                        <input aria-label="Dmsms File Input" type="file" id="dmsmsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx" style="display:none" onchange="handleToolUpload(this.files,'dmsms')">
                         <div class="ils-file-list" id="dmsmsFileList"></div>
                         <div id="dmsmsResults" style="margin-top:1rem"></div>
                         <div class="row mt-3">
@@ -2747,26 +2755,26 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Select Program</label>
-                                <select id="readinessProgram" class="form-select mb-2"  onchange="loadReadinessData()"></select>
+                                <select aria-label="Readiness Program" id="readinessProgram" class="form-select mb-2"  onchange="loadReadinessData()"></select>
                                 <div class="row mb-2">
-                                    <div class="col-6"><input type="text" id="readinessHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
-                                    <div class="col-6"><input type="text" id="readinessOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input aria-label="Hull # / Tail #" type="text" id="readinessHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input aria-label="Program Office" type="text" id="readinessOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                                 </div>
                                 <label>Select System / Subsystem</label>
-                                <select id="readinessSystem" class="form-select mb-2"  onchange="calcReadiness()"></select>
+                                <select aria-label="Readiness System" id="readinessSystem" class="form-select mb-2"  onchange="calcReadiness()"></select>
                             </div>
                             <div class="col-md-6">
                                 <label>MTBF (hours) — Mean Time Between Failures</label>
-                                <input type="number" id="inputMTBF" class="form-control mb-2"  placeholder="e.g., 2400" oninput="calcReadiness()">
+                                <input aria-label="e.g., 2400" type="number" id="inputMTBF" class="form-control mb-2"  placeholder="e.g., 2400" oninput="calcReadiness()">
                                 <label>MTTR (hours) — Mean Time To Repair</label>
-                                <input type="number" id="inputMTTR" class="form-control mb-2"  placeholder="e.g., 4.5" oninput="calcReadiness()">
+                                <input aria-label="e.g., 4.5" type="number" id="inputMTTR" class="form-control mb-2"  placeholder="e.g., 4.5" oninput="calcReadiness()">
                                 <label>MLDT (hours) — Mean Logistics Delay Time</label>
-                                <input type="number" id="inputMLDT" class="form-control mb-2"  placeholder="e.g., 24" oninput="calcReadiness()">
+                                <input aria-label="e.g., 24" type="number" id="inputMLDT" class="form-control mb-2"  placeholder="e.g., 24" oninput="calcReadiness()">
                             </div>
                         </div>
                         <div id="readinessOutput" style="margin-top:1rem"></div>
                         <div class="row mt-3">
-                            <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statAo" style="color:#00aaff">—</div><div class="stat-mini-label">Ao (Operational Avail.)</div></div></div>
+                            <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statAo" style="color:#00aaff">—</div><span id="readinessAo" style="display:none"></span><div class="stat-mini-label">Ao (Operational Avail.)</div></div></div>
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statAi">—</div><div class="stat-mini-label">Ai (Inherent Avail.)</div></div></div>
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statFailRate">—</div><div class="stat-mini-label">Failure Rate (λ)</div></div></div>
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statMissReady">—</div><div class="stat-mini-label">Mission Readiness</div></div></div>
@@ -2800,23 +2808,23 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Number of Programs Managed</label>
-                                <input type="number" id="roiPrograms" class="form-control mb-2"  placeholder="e.g., 5" value="5" oninput="calcROI()">
+                                <input aria-label="e.g., 5" type="number" id="roiPrograms" class="form-control mb-2"  placeholder="e.g., 5" value="5" oninput="calcROI()">
                                 <label>Average Records / Month (per program)</label>
-                                <input type="number" id="roiRecords" class="form-control mb-2"  placeholder="e.g., 200" value="200" oninput="calcROI()">
+                                <input aria-label="e.g., 200" type="number" id="roiRecords" class="form-control mb-2"  placeholder="e.g., 200" value="200" oninput="calcROI()">
                                 <label>ILS Staff (FTEs doing manual work)</label>
-                                <input type="number" id="roiFTEs" class="form-control mb-2"  placeholder="e.g., 8" value="8" oninput="calcROI()">
+                                <input aria-label="e.g., 8" type="number" id="roiFTEs" class="form-control mb-2"  placeholder="e.g., 8" value="8" oninput="calcROI()">
                                 <label>Average Fully-Burdened Labor Rate ($/hr)</label>
-                                <input type="number" id="roiRate" class="form-control mb-2"  placeholder="e.g., 145" value="145" oninput="calcROI()">
+                                <input aria-label="e.g., 145" type="number" id="roiRate" class="form-control mb-2"  placeholder="e.g., 145" value="145" oninput="calcROI()">
                             </div>
                             <div class="col-md-6">
                                 <label>Current Annual Audit Cost ($)</label>
-                                <input type="number" id="roiAudit" class="form-control mb-2"  placeholder="e.g., 250000" value="250000" oninput="calcROI()">
+                                <input aria-label="e.g., 250000" type="number" id="roiAudit" class="form-control mb-2"  placeholder="e.g., 250000" value="250000" oninput="calcROI()">
                                 <label>Average Rework/Error Cost per Incident ($)</label>
-                                <input type="number" id="roiError" class="form-control mb-2"  placeholder="e.g., 8500" value="8500" oninput="calcROI()">
+                                <input aria-label="e.g., 8500" type="number" id="roiError" class="form-control mb-2"  placeholder="e.g., 8500" value="8500" oninput="calcROI()">
                                 <label>Estimated Error Incidents / Year</label>
-                                <input type="number" id="roiIncidents" class="form-control mb-2"  placeholder="e.g., 35" value="35" oninput="calcROI()">
+                                <input aria-label="e.g., 35" type="number" id="roiIncidents" class="form-control mb-2"  placeholder="e.g., 35" value="35" oninput="calcROI()">
                                 <label>S4 Ledger Annual License Cost ($)</label>
-                                <input type="number" id="roiLicense" class="form-control mb-2"  placeholder="e.g., 120000" value="120000" oninput="calcROI()">
+                                <input aria-label="e.g., 120000" type="number" id="roiLicense" class="form-control mb-2"  placeholder="e.g., 120000" value="120000" oninput="calcROI()">
                             </div>
                         </div>
                         <div id="roiOutput" style="margin-top:1rem"></div>
@@ -2856,23 +2864,23 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Select Program</label>
-                                <select id="lifecycleProgram" class="form-select mb-2"  onchange="calcLifecycle()"></select>
+                                <select aria-label="Lifecycle Program" id="lifecycleProgram" class="form-select mb-2"  onchange="calcLifecycle()"></select>
                                 <div class="row mb-2">
-                                    <div class="col-6"><input type="text" id="lifecycleHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
-                                    <div class="col-6"><input type="text" id="lifecycleOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input aria-label="Hull # / Tail #" type="text" id="lifecycleHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input aria-label="Program Office" type="text" id="lifecycleOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                                 </div>
                                 <label>Planned Service Life (years)</label>
-                                <input type="number" id="lcServiceLife" class="form-control mb-2"  placeholder="30" value="30" oninput="calcLifecycle()">
+                                <input aria-label="30" type="number" id="lcServiceLife" class="form-control mb-2"  placeholder="30" value="30" oninput="calcLifecycle()">
                                 <label>Annual Operating Hours</label>
-                                <input type="number" id="lcOpHours" class="form-control mb-2"  placeholder="2500" value="2500" oninput="calcLifecycle()">
+                                <input aria-label="2500" type="number" id="lcOpHours" class="form-control mb-2"  placeholder="2500" value="2500" oninput="calcLifecycle()">
                             </div>
                             <div class="col-md-6">
                                 <label>Acquisition Unit Cost ($M)</label>
-                                <input type="number" id="lcAcqCost" class="form-control mb-2"  placeholder="85" value="85" oninput="calcLifecycle()" step="0.1">
+                                <input aria-label="85" type="number" id="lcAcqCost" class="form-control mb-2"  placeholder="85" value="85" oninput="calcLifecycle()" step="0.1">
                                 <label>Fleet Size (number of units)</label>
-                                <input type="number" id="lcFleetSize" class="form-control mb-2"  placeholder="20" value="20" oninput="calcLifecycle()">
+                                <input aria-label="20" type="number" id="lcFleetSize" class="form-control mb-2"  placeholder="20" value="20" oninput="calcLifecycle()">
                                 <label>Annual Sustainment Rate (% of acquisition)</label>
-                                <input type="number" id="lcSustRate" class="form-control mb-2"  placeholder="8" value="8" oninput="calcLifecycle()" step="0.1">
+                                <input aria-label="8" type="number" id="lcSustRate" class="form-control mb-2"  placeholder="8" value="8" oninput="calcLifecycle()" step="0.1">
                             </div>
                         </div>
                         <div id="lifecycleOutput" style="margin-top:1rem"></div>
@@ -2897,10 +2905,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                         <div style="font-size:0.82rem;font-weight:700;color:#9b59b6;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-project-diagram"></i> Digital Thread — Full Provenance Chain</div>
                         <div style="display:flex;align-items:center;gap:8px;">
-                            <select id="digitalThreadRecordSelect" onchange="showDigitalThreadFromSelect()" style="background:#0a0e1a;color:#fff;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:4px 10px;font-size:0.75rem;max-width:240px;">
+                            <select aria-label="Digital Thread Record Select" id="digitalThreadRecordSelect" onchange="showDigitalThreadFromSelect()" style="background:#0a0e1a;color:#fff;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:4px 10px;font-size:0.75rem;max-width:240px;">
                                 <option value="">— Select a vault record —</option>
                             </select>
-                            <button onclick="closeDigitalThread()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:0.8rem;"><i class="fas fa-times"></i></button>
+                            <button onclick="closeDigitalThread()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:0.8rem;" aria-label="Close"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
                     <div id="digitalThreadContent" style="font-size:0.82rem;"></div>
@@ -2935,7 +2943,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <!-- Search & Filter -->
                     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
                         <input type="text" id="vaultSearch" class="form-control" aria-label="Search vault records" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search records by type, hash, content..." oninput="_vaultPage=1;renderVault()">
-                        <select id="vaultFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="_vaultPage=1;renderVault()">
+                        <select aria-label="Vault Filter" id="vaultFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="_vaultPage=1;renderVault()">
                             <option value="all">All Records</option>
                             <option value="today">Today</option>
                             <option value="week">This Week</option>
@@ -2950,7 +2958,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <!-- Bulk Selection Bar -->
                     <div id="vaultBulkBar" style="display:none;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:8px 14px;margin-bottom:10px;align-items:center;gap:10px;flex-wrap:wrap">
                         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;color:#ccc;margin:0">
-                            <input type="checkbox" id="vaultSelectAll" onchange="toggleVaultSelectAll(this.checked)" style="accent-color:#00aaff"> <span id="vaultSelectedCount">0</span> selected
+                            <input aria-label="Vault Select All" type="checkbox" id="vaultSelectAll" onchange="toggleVaultSelectAll(this.checked)" style="accent-color:#00aaff"> <span id="vaultSelectedCount">0</span> selected
                         </label>
                         <div style="margin-left:auto;display:flex;gap:6px">
                             <button onclick="bulkVaultExport('csv')" class="btn btn-sm" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:4px 10px;font-size:0.75rem"><i class="fas fa-file-csv"></i> Export Selected</button>
@@ -2961,7 +2969,8 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     </div>
 
                     <!-- Record List -->
-                    <div id="vaultRecords" style="max-height:500px;overflow-y:auto;padding-right:4px">
+                    <div id="vaultRecords" aria-live="polite" role="region" aria-label="Anchor records" style="max-height:500px;overflow-y:auto;padding-right:4px">
+                        <div id="vaultList"></div>
                         <div style="text-align:center;padding:40px 20px;color:var(--muted)">
                             <i class="fas fa-vault" style="font-size:2.5rem;margin-bottom:12px;opacity:0.3"></i>
                             <p>No anchored records yet. Records will appear here automatically as you anchor them.</p>
@@ -3023,7 +3032,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div style="padding:0 0 14px">
                             <p style="color:var(--steel);font-size:0.78rem;margin-bottom:12px">Generate synthetic records to test vault performance at scale. Records are generated locally and stored in localStorage. Useful for benchmarking query speed, rendering performance, and export capability with large datasets.</p>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
-                                <select id="stressTestCount" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 12px;font-size:0.82rem">
+                                <select aria-label="Stress Test Count" id="stressTestCount" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 12px;font-size:0.82rem">
                                     <option value="100">100 Records</option>
                                     <option value="500">500 Records</option>
                                     <option value="1000" selected>1,000 Records</option>
@@ -3066,7 +3075,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <input type="text" id="docSearch" class="form-control" aria-label="Search document library" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search by ID, title, keywords... (e.g., MIL-STD-1388, DMSMS, OPNAVINST)" oninput="renderDocLibrary()">
                         <button onclick="showDocUpload()" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-plus"></i> Add Document</button>
                         <button onclick="showDocVersionUpload()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-brain"></i> Analyze Revision</button>
-                        <select id="docBranchFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
+                        <select aria-label="Doc Branch Filter" id="docBranchFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
                             <option value="all">All Branches</option>
                             <option value="USN">U.S. Navy</option>
                             <option value="USMC">U.S. Marine Corps</option>
@@ -3127,10 +3136,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <!-- Program Selector -->
                     <div style="margin-bottom:16px">
                         <label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label>
-                        <select id="complianceProgram" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select>
+                        <select aria-label="Compliance Program" id="complianceProgram" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select>
                         <div class="row" style="margin-top:6px">
-                            <div class="col-6"><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
-                            <div class="col-6"><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input aria-label="Hull # / Tail #" type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input aria-label="Program Office" type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                         </div>
                     </div>
 
@@ -3212,7 +3221,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div id="evidenceSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Attach evidence artifacts (screenshots, documents, scan reports) to compliance controls. Evidence is hashed and anchored for audit-ready proof.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-                                <select id="evidenceControl" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:220px">
+                                <select aria-label="Evidence Control" id="evidenceControl" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:220px">
                                     <option value="AC-1">AC-1 Access Control Policy</option>
                                     <option value="AC-2">AC-2 Account Management</option>
                                     <option value="AU-2">AU-2 Audit Events</option>
@@ -3226,7 +3235,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 </select>
                                 <label class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a8893d);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem;cursor:pointer;margin:0">
                                     <i class="fas fa-upload"></i> Attach Evidence
-                                    <input type="file" id="evidenceFileInput" onchange="attachEvidence(this)" accept=".pdf,.png,.jpg,.jpeg,.csv,.xlsx,.docx,.txt" style="display:none" multiple>
+                                    <input aria-label="Upload evidence file" type="file" id="evidenceFileInput" onchange="attachEvidence(this)" accept=".pdf,.png,.jpg,.jpeg,.csv,.xlsx,.docx,.txt" style="display:none" multiple>
                                 </label>
                                 <button onclick="exportEvidenceLog()" class="btn btn-sm hover-lift" style="background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-download"></i> Export Log</button>
                             </div>
@@ -3266,7 +3275,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div id="fedrampSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">FedRAMP impact-level mapping across 325 controls (Low/Moderate/High). Shows which NIST 800-53 controls your workspace satisfies.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
-                                <select id="fedrampImpact" class="form-control form-control-sm" onchange="calcFedRAMP()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:180px">
+                                <select aria-label="Fedramp Impact" id="fedrampImpact" class="form-control form-control-sm" onchange="calcFedRAMP()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:180px">
                                     <option value="low">Low Impact</option>
                                     <option value="moderate" selected>Moderate Impact</option>
                                     <option value="high">High Impact</option>
@@ -3312,15 +3321,15 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>Select Program</label>
-                            <select id="riskProgram" onchange="loadRiskData()" style="font-size:0.88rem"></select>
+                            <select aria-label="Risk Program" id="riskProgram" onchange="loadRiskData()" style="font-size:0.88rem"></select>
                             <div class="row" style="margin-top:6px">
-                                <div class="col-6"><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
-                                <div class="col-6"><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input aria-label="Hull # / Tail #" type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input aria-label="Program Office" type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label>Risk Threshold</label>
-                            <select id="riskThreshold" onchange="loadRiskData()" style="font-size:0.88rem"><option value="all">All Risk Levels</option><option value="critical">Critical Only</option><option value="high">High & Critical</option><option value="medium">Medium & Above</option></select>
+                            <select aria-label="Risk Threshold" id="riskThreshold" onchange="loadRiskData()" style="font-size:0.88rem"><option value="all">All Risk Levels</option><option value="critical">Critical Only</option><option value="high">High & Critical</option><option value="medium">Medium & Above</option></select>
                         </div>
                     </div>
                     <!-- Risk Summary Stats -->
@@ -3408,7 +3417,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div id="budgetForecastSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">AI-driven budget forecasting based on historical procurement data, obsolescence trends, and maintenance cost trajectories.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
-                                <select id="budgetForecastYears" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:140px">
+                                <select aria-label="Budget Forecast Years" id="budgetForecastYears" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:140px">
                                     <option value="3">3-Year Forecast</option>
                                     <option value="5" selected>5-Year Forecast</option>
                                     <option value="10">10-Year Forecast</option>
@@ -3432,7 +3441,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
                                 <label class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#8b5cf6);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.82rem;cursor:pointer;margin:0">
                                     <i class="fas fa-upload"></i> Upload Document
-                                    <input type="file" id="docAIFileInput" onchange="runDocAIExtraction(this)" accept=".txt,.csv,.json,.xml" style="display:none">
+                                    <input aria-label="Upload document for AI extraction" type="file" id="docAIFileInput" onchange="runDocAIExtraction(this)" accept=".txt,.csv,.json,.xml" style="display:none">
                                 </label>
                                 <button onclick="runDocAIDemoExtraction()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.12);color:#00aaff;border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:6px 14px;font-size:0.82rem"><i class="fas fa-play"></i> Demo Extract</button>
                             </div>
@@ -3459,15 +3468,15 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Report Type</label>
-                            <select id="reportType" style="font-size:0.88rem"><option value="full_audit">Full Audit Package</option><option value="supply_chain">Supply Chain Verification</option><option value="maintenance">Maintenance Records</option><option value="compliance">Compliance Summary</option><option value="custody">Chain of Custody</option><option value="contract">Contract Deliverables</option></select>
+                            <select aria-label="Report Type" id="reportType" style="font-size:0.88rem"><option value="full_audit">Full Audit Package</option><option value="supply_chain">Supply Chain Verification</option><option value="maintenance">Maintenance Records</option><option value="compliance">Compliance Summary</option><option value="custody">Chain of Custody</option><option value="contract">Contract Deliverables</option></select>
                         </div>
                         <div class="col-md-4">
                             <label>Time Period</label>
-                            <select id="reportPeriod" style="font-size:0.88rem"><option value="30">Last 30 Days</option><option value="90">Last 90 Days</option><option value="180">Last 6 Months</option><option value="365">Last 12 Months</option><option value="all">All Time</option></select>
+                            <select aria-label="Report Period" id="reportPeriod" style="font-size:0.88rem"><option value="30">Last 30 Days</option><option value="90">Last 90 Days</option><option value="180">Last 6 Months</option><option value="365">Last 12 Months</option><option value="all">All Time</option></select>
                         </div>
                         <div class="col-md-4">
                             <label>Format</label>
-                            <select id="reportFormat" style="font-size:0.88rem"><option value="pdf">PDF Report</option><option value="csv">CSV Data Export</option><option value="json">JSON Package</option></select>
+                            <select aria-label="Report Format" id="reportFormat" style="font-size:0.88rem"><option value="pdf">PDF Report</option><option value="csv">CSV Data Export</option><option value="json">JSON Package</option></select>
                         </div>
                     </div>
                     <!-- Report Preview -->
@@ -3513,13 +3522,13 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div id="schedReportsSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Schedule automatic report generation on a recurring cadence. Reports auto-generate and are ready for download.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-                                <select id="schedReportType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:180px">
+                                <select aria-label="Sched Report Type" id="schedReportType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:180px">
                                     <option value="full_audit">Full Audit Package</option>
                                     <option value="compliance">Compliance Summary</option>
                                     <option value="supply_chain">Supply Chain</option>
                                     <option value="executive">Executive Summary</option>
                                 </select>
-                                <select id="schedReportFreq" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:140px">
+                                <select aria-label="Sched Report Freq" id="schedReportFreq" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:140px">
                                     <option value="daily">Daily</option>
                                     <option value="weekly" selected>Weekly</option>
                                     <option value="monthly">Monthly</option>
@@ -3581,19 +3590,19 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Select Fleet / Platform</label>
-                            <select id="pdmPlatform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select>
+                            <select aria-label="Pdm Platform" id="pdmPlatform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select>
                             <div class="row" style="margin-top:6px">
-                                <div class="col-6"><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
-                                <div class="col-6"><input type="text" id="pdmOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input aria-label="Hull # / Tail # / Fleet" type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input aria-label="Program Office" type="text" id="pdmOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <label>Prediction Window</label>
-                            <select id="pdmWindow" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="30">Next 30 Days</option><option value="60">Next 60 Days</option><option value="90" selected>Next 90 Days</option><option value="180">Next 6 Months</option><option value="365">Next 12 Months</option></select>
+                            <select aria-label="Pdm Window" id="pdmWindow" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="30">Next 30 Days</option><option value="60">Next 60 Days</option><option value="90" selected>Next 90 Days</option><option value="180">Next 6 Months</option><option value="365">Next 12 Months</option></select>
                         </div>
                         <div class="col-md-4">
                             <label>Confidence Threshold</label>
-                            <select id="pdmConfidence" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="50">50%+ (Show All)</option><option value="70">70%+ (Likely)</option><option value="85" selected>85%+ (High Confidence)</option><option value="95">95%+ (Near Certain)</option></select>
+                            <select aria-label="Pdm Confidence" id="pdmConfidence" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="50">50%+ (Show All)</option><option value="70">70%+ (Likely)</option><option value="85" selected>85%+ (High Confidence)</option><option value="95">95%+ (Near Certain)</option></select>
                         </div>
                     </div>
                     <!-- Predictive Stats -->
@@ -3648,11 +3657,11 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>Select Platform</label>
-                            <select id="sbomProgram" onchange="loadSBOMData()" style="font-size:0.88rem"></select>
+                            <select aria-label="Sbom Program" id="sbomProgram" onchange="loadSBOMData()" style="font-size:0.88rem"></select>
                         </div>
                         <div class="col-md-6">
                             <label>SBOM Format</label>
-                            <select id="sbomFormat" style="font-size:0.88rem"><option value="cyclonedx">CycloneDX 1.5</option><option value="spdx">SPDX 2.3</option><option value="s4native">S4 Native</option></select>
+                            <select aria-label="Sbom Format" id="sbomFormat" style="font-size:0.88rem"><option value="cyclonedx">CycloneDX 1.5</option><option value="spdx">SPDX 2.3</option><option value="s4native">S4 Native</option></select>
                         </div>
                     </div>
                     <!-- SBOM Stats -->
@@ -3698,7 +3707,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="subBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select aria-label="Sub Branch" id="subBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option>
                                 <option value="USMC">Marine Corps</option>
                                 <option value="USCG">Coast Guard</option>
@@ -3706,11 +3715,11 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="subProgram" class="form-control form-control-sm" onchange="onSubProgramChange()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"></select>
+                            <select aria-label="Sub Program" id="subProgram" class="form-control form-control-sm" onchange="onSubProgramChange()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"></select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Submission Type</label>
-                            <select id="subDocType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select aria-label="Sub Doc Type" id="subDocType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="VRSL">Vendor Recommended Spares List (VRS)</option>
                                 <option value="IUID">IUID Registry / Serialized List</option>
                                 <option value="CONFIG_DWG">Configuration Drawing / Baseline</option>
@@ -3739,7 +3748,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Submitter (OEM / Vendor)</label>
-                            <input type="text" id="subVendor" class="form-control form-control-sm" placeholder="e.g., Huntington Ingalls, Lockheed Martin" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
+                            <input aria-label="e.g., Huntington Ingalls, Lockheed Martin" type="text" id="subVendor" class="form-control form-control-sm" placeholder="e.g., Huntington Ingalls, Lockheed Martin" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
                     </div>
 
@@ -3747,15 +3756,15 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-4 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Custom Platform Name <span style="color:var(--steel);font-size:.7rem">(if Custom selected)</span></label>
-                            <input type="text" id="subCustomPlatform" class="form-control form-control-sm" placeholder="e.g., DDG-1000 Zumwalt" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
+                            <input aria-label="e.g., DDG-1000 Zumwalt" type="text" id="subCustomPlatform" class="form-control form-control-sm" placeholder="e.g., DDG-1000 Zumwalt" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
                         <div class="col-md-4 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Custom Document Type <span style="color:var(--steel);font-size:.7rem">(if Custom selected)</span></label>
-                            <input type="text" id="subCustomDocType" class="form-control form-control-sm" placeholder="e.g., Hull Survey Report" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
+                            <input aria-label="e.g., Hull Survey Report" type="text" id="subCustomDocType" class="form-control form-control-sm" placeholder="e.g., Hull Survey Report" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
                         <div class="col-md-4 col-12">
                             <label style="font-size:.78rem;color:var(--steel)">Submission Reference / Contract #</label>
-                            <input type="text" id="subContractRef" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
+                            <input aria-label="e.g., N00024-22-C-5312" type="text" id="subContractRef" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
                     </div>
 
@@ -3776,19 +3785,19 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div style="color:#c9a84c;font-weight:600;font-size:.9rem">Upload Submission Data</div>
                         <div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF, or paste data below</div>
                         <div style="color:var(--steel);font-size:.72rem;margin-top:2px">Drag & drop or click to browse</div>
-                        <input type="file" id="subFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt" multiple style="display:none" onchange="handleSubFileUpload(event)" />
+                        <input aria-label="Sub File Input" type="file" id="subFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt" multiple style="display:none" onchange="handleSubFileUpload(event)" />
                     </div>
 
                     <!-- Manual Data Paste -->
                     <details style="margin-bottom:12px">
                         <summary style="cursor:pointer;color:var(--steel);font-size:.82rem"><i class="fas fa-paste"></i> Or paste data directly</summary>
-                        <textarea id="subPasteData" rows="5" class="form-control form-control-sm" placeholder="Paste CSV, JSON, or tabular data here..." style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem;margin-top:8px;font-family:monospace"></textarea>
+                        <textarea aria-label="Paste CSV, JSON, or tabular data here..." id="subPasteData" rows="5" class="form-control form-control-sm" placeholder="Paste CSV, JSON, or tabular data here..." style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem;margin-top:8px;font-family:monospace"></textarea>
                     </details>
 
                     <!-- Submission Notes -->
                     <div style="margin-bottom:12px">
                         <label style="font-size:.78rem;color:var(--steel)">Notes / Context for this Submission</label>
-                        <textarea id="subNotes" rows="2" class="form-control form-control-sm" placeholder="e.g., Revised spares list per ECN-2026-0042, adds new LRU for radar upgrade..." style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"></textarea>
+                        <textarea aria-label="e.g., Revised spares list per ECN-2026-0042, adds new LRU for radar upgrade..." id="subNotes" rows="2" class="form-control form-control-sm" placeholder="e.g., Revised spares list per ECN-2026-0042, adds new LRU for radar upgrade..." style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"></textarea>
                     </div>
 
                     <!-- Analysis Controls -->
@@ -3854,11 +3863,11 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         <div id="versionDiffSection" style="display:none;padding:12px 14px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:10px">Compare two submission versions side-by-side to see added, removed, and changed fields.</p>
                             <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
-                                <select id="diffVersionA" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
+                                <select aria-label="Diff Version A" id="diffVersionA" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
                                     <option value="">Version A (Base)</option>
                                 </select>
                                 <span style="color:var(--steel);font-size:0.82rem">vs</span>
-                                <select id="diffVersionB" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
+                                <select aria-label="Diff Version B" id="diffVersionB" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
                                     <option value="">Version B (New)</option>
                                 </select>
                                 <button onclick="runVersionDiff()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a8893d);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-code-compare"></i> Compare</button>
@@ -3889,18 +3898,18 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="gfpBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="gfpProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="gfpContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Property Category</label><select id="gfpCategory" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL">All Categories</option><option value="EQUIP">Equipment</option><option value="MATERIAL">Material</option><option value="SPECIAL_TOOLING">Special Tooling</option><option value="SPECIAL_TEST">Special Test Equipment</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="gfpBranch" aria-label="GFP Branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="gfpProgram" aria-label="GFP Program" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input aria-label="e.g., N00024-22-C-5312" type="text" id="gfpContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Property Category</label><select id="gfpCategory" aria-label="GFP Category" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL">All Categories</option><option value="EQUIP">Equipment</option><option value="MATERIAL">Material</option><option value="SPECIAL_TOOLING">Special Tooling</option><option value="SPECIAL_TEST">Special Test Equipment</option></select></div>
                     </div>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">NSN / Part Number</label><input type="text" id="gfpNSN" class="form-control form-control-sm" placeholder="e.g., 5945-01-234-5678" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Serial Number / IUID</label><input type="text" id="gfpSerial" class="form-control form-control-sm" placeholder="e.g., SN-2026-00142" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Condition Code</label><select id="gfpCondition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="A">A — Serviceable</option><option value="F">F — Unserviceable (Reparable)</option><option value="H">H — Condemned</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Custodian / Location</label><input type="text" id="gfpLocation" class="form-control form-control-sm" placeholder="e.g., Bldg 450, Bay 3" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">NSN / Part Number</label><input aria-label="e.g., 5945-01-234-5678" type="text" id="gfpNSN" class="form-control form-control-sm" placeholder="e.g., 5945-01-234-5678" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Serial Number / IUID</label><input aria-label="e.g., SN-2026-00142" type="text" id="gfpSerial" class="form-control form-control-sm" placeholder="e.g., SN-2026-00142" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Condition Code</label><select id="gfpCondition" aria-label="Equipment condition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="A">A — Serviceable</option><option value="F">F — Unserviceable (Reparable)</option><option value="H">H — Condemned</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Custodian / Location</label><input aria-label="e.g., Bldg 450, Bay 3" type="text" id="gfpLocation" class="form-control form-control-sm" placeholder="e.g., Bldg 450, Bay 3" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
                     </div>
-                    <div id="gfpUploadZone" onclick="document.getElementById('gfpFileInput').click()" style="border:2px dashed rgba(0,170,255,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(0,170,255,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#00aaff'" ondragleave="this.style.borderColor='rgba(0,170,255,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#00aaff;margin-bottom:8px;display:block"></i><div style="color:#00aaff;font-weight:600;font-size:.9rem">Upload GFP / DD 1662 Data</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF — DD 1662 forms, inventory lists</div><input type="file" id="gfpFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt" multiple style="display:none" /></div>
+                    <div id="gfpUploadZone" onclick="document.getElementById('gfpFileInput').click()" style="border:2px dashed rgba(0,170,255,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(0,170,255,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#00aaff'" ondragleave="this.style.borderColor='rgba(0,170,255,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#00aaff;margin-bottom:8px;display:block"></i><div style="color:#00aaff;font-weight:600;font-size:.9rem">Upload GFP / DD 1662 Data</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF — DD 1662 forms, inventory lists</div><input aria-label="Gfp Upload Zone" type="file" id="gfpFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt" multiple style="display:none" /></div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
                         <button onclick="alert('Demo: GFP inventory check would run against uploaded DD 1662 data.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Run Inventory Check</button>
                         <button onclick="alert('Demo: GFP record would be anchored to XRPL.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
@@ -3930,18 +3939,18 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="cdrlBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="cdrlProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="cdrlContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">DI Number</label><input type="text" id="cdrlDINumber" class="form-control form-control-sm" placeholder="e.g., DI-ILSS-81495" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="cdrlBranch" aria-label="CDRL Branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="cdrlProgram" aria-label="CDRL Program" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input aria-label="e.g., N00024-22-C-5312" type="text" id="cdrlContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">DI Number</label><input aria-label="e.g., DI-ILSS-81495" type="text" id="cdrlDINumber" class="form-control form-control-sm" placeholder="e.g., DI-ILSS-81495" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
                     </div>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">CDRL Line Item</label><input type="text" id="cdrlLineItem" class="form-control form-control-sm" placeholder="e.g., A001" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Deliverable Title</label><input type="text" id="cdrlTitle" class="form-control form-control-sm" placeholder="e.g., Provisioning Parts List" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Due Date</label><input type="date" id="cdrlDueDate" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Frequency</label><select id="cdrlFrequency" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ONE_TIME">One-Time</option><option value="MONTHLY">Monthly</option><option value="QUARTERLY">Quarterly</option><option value="ANNUAL">Annual</option><option value="AS_REQUIRED">As Required</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">CDRL Line Item</label><input aria-label="e.g., A001" type="text" id="cdrlLineItem" class="form-control form-control-sm" placeholder="e.g., A001" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Deliverable Title</label><input aria-label="e.g., Provisioning Parts List" type="text" id="cdrlTitle" class="form-control form-control-sm" placeholder="e.g., Provisioning Parts List" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Due Date</label><input aria-label="Cdrl Due Date" type="date" id="cdrlDueDate" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Frequency</label><select id="cdrlFrequency" aria-label="Delivery frequency" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ONE_TIME">One-Time</option><option value="MONTHLY">Monthly</option><option value="QUARTERLY">Quarterly</option><option value="ANNUAL">Annual</option><option value="AS_REQUIRED">As Required</option></select></div>
                     </div>
-                    <div id="cdrlUploadZone" onclick="document.getElementById('cdrlFileInput').click()" style="border:2px dashed rgba(201,168,76,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(201,168,76,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#c9a84c'" ondragleave="this.style.borderColor='rgba(201,168,76,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#c9a84c;margin-bottom:8px;display:block"></i><div style="color:#c9a84c;font-weight:600;font-size:.9rem">Upload CDRL Package / DD 1423</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel, XML, JSON, PDF — DD 1423 forms or CDRL deliverables</div><input type="file" id="cdrlFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt,.doc,.docx" multiple style="display:none" /></div>
+                    <div id="cdrlUploadZone" onclick="document.getElementById('cdrlFileInput').click()" style="border:2px dashed rgba(201,168,76,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(201,168,76,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#c9a84c'" ondragleave="this.style.borderColor='rgba(201,168,76,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#c9a84c;margin-bottom:8px;display:block"></i><div style="color:#c9a84c;font-weight:600;font-size:.9rem">Upload CDRL Package / DD 1423</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel, XML, JSON, PDF — DD 1423 forms or CDRL deliverables</div><input aria-label="Cdrl Upload Zone" type="file" id="cdrlFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt,.doc,.docx" multiple style="display:none" /></div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
                         <button onclick="alert('Demo: CDRL validation would run against uploaded DD 1423 data.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-check-double"></i> Validate CDRLs</button>
                         <button onclick="alert('Demo: CDRL record would be anchored to XRPL.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
@@ -3971,18 +3980,18 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="contractBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="contractProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="contractNumber" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract Type</label><select id="contractType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="FFP">Firm Fixed Price</option><option value="CPFF">Cost Plus Fixed Fee</option><option value="IDIQ">IDIQ</option><option value="T_M">Time & Materials</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="contractBranch" aria-label="Contract Branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="contractProgram" aria-label="Contract Program" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input aria-label="e.g., N00024-22-C-5312" type="text" id="contractNumber" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract Type</label><select id="contractType" aria-label="Contract type" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="FFP">Firm Fixed Price</option><option value="CPFF">Cost Plus Fixed Fee</option><option value="IDIQ">IDIQ</option><option value="T_M">Time & Materials</option></select></div>
                     </div>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Base / Option</label><select id="contractOption" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="BASE">Base Period</option><option value="OPT1">Option 1</option><option value="OPT2">Option 2</option><option value="MOD">Modification</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Award Date</label><input type="date" id="contractAwardDate" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Prime Contractor</label><input type="text" id="contractPrime" class="form-control form-control-sm" placeholder="e.g., BAE Systems" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">NAICS Code</label><input type="text" id="contractNAICS" class="form-control form-control-sm" placeholder="e.g., 336611" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Base / Option</label><select aria-label="Contract Option" id="contractOption" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="BASE">Base Period</option><option value="OPT1">Option 1</option><option value="OPT2">Option 2</option><option value="MOD">Modification</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Award Date</label><input aria-label="Award date" type="date" id="contractAwardDate" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Prime Contractor</label><input aria-label="e.g., BAE Systems" type="text" id="contractPrime" class="form-control form-control-sm" placeholder="e.g., BAE Systems" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">NAICS Code</label><input aria-label="e.g., 336611" type="text" id="contractNAICS" class="form-control form-control-sm" placeholder="e.g., 336611" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
                     </div>
-                    <div id="contractUploadZone" onclick="document.getElementById('contractFileInput').click()" style="border:2px dashed rgba(0,170,255,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(0,170,255,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#00aaff'" ondragleave="this.style.borderColor='rgba(0,170,255,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#00aaff;margin-bottom:8px;display:block"></i><div style="color:#00aaff;font-weight:600;font-size:.9rem">Upload Contract Document</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">PDF, DOCX — SOWs, Task Orders, Contract Modifications</div><input type="file" id="contractFileInput" accept=".pdf,.doc,.docx,.xml,.json,.txt" multiple style="display:none" /></div>
+                    <div id="contractUploadZone" onclick="document.getElementById('contractFileInput').click()" style="border:2px dashed rgba(0,170,255,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(0,170,255,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#00aaff'" ondragleave="this.style.borderColor='rgba(0,170,255,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#00aaff;margin-bottom:8px;display:block"></i><div style="color:#00aaff;font-weight:600;font-size:.9rem">Upload Contract Document</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">PDF, DOCX — SOWs, Task Orders, Contract Modifications</div><input aria-label="Contract Upload Zone" type="file" id="contractFileInput" accept=".pdf,.doc,.docx,.xml,.json,.txt" multiple style="display:none" /></div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
                         <button onclick="alert('Demo: AI clause extraction would process uploaded contract.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-wand-magic-sparkles"></i> Extract Clauses (AI)</button>
                         <button onclick="alert('Demo: Contract record would be anchored to XRPL.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
@@ -4012,18 +4021,18 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="provBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="provProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input type="text" id="provContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Transfer Type</label><select id="provTransferType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="CUSTODY">Custody Transfer</option><option value="LOCATION">Location Change</option><option value="INSPECTION">Inspection / Test</option><option value="RECEIPT">Receipt</option><option value="SHIPMENT">Shipment</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch</label><select id="provBranch" aria-label="Provenance Branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program / Platform</label><select id="provProgram" aria-label="Provenance Program" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Program —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Contract #</label><input aria-label="e.g., N00024-22-C-5312" type="text" id="provContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Transfer Type</label><select aria-label="Prov Transfer Type" id="provTransferType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="CUSTODY">Custody Transfer</option><option value="LOCATION">Location Change</option><option value="INSPECTION">Inspection / Test</option><option value="RECEIPT">Receipt</option><option value="SHIPMENT">Shipment</option></select></div>
                     </div>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Item Identifier / IUID</label><input type="text" id="provItemId" class="form-control form-control-sm" placeholder="e.g., IUID-2026-00142" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">From (Custodian)</label><input type="text" id="provFrom" class="form-control form-control-sm" placeholder="e.g., NSWC Crane" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">To (Custodian)</label><input type="text" id="provTo" class="form-control form-control-sm" placeholder="e.g., USS Wayne E. Meyer" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Condition</label><select id="provCondition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="A">A — Serviceable</option><option value="F">F — Reparable</option><option value="H">H — Condemned</option><option value="NEW">New / Unused</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Item Identifier / IUID</label><input aria-label="e.g., IUID-2026-00142" type="text" id="provItemId" class="form-control form-control-sm" placeholder="e.g., IUID-2026-00142" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">From (Custodian)</label><input aria-label="e.g., NSWC Crane" type="text" id="provFrom" class="form-control form-control-sm" placeholder="e.g., NSWC Crane" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">To (Custodian)</label><input aria-label="e.g., USS Wayne E. Meyer" type="text" id="provTo" class="form-control form-control-sm" placeholder="e.g., USS Wayne E. Meyer" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Condition</label><select aria-label="Prov Condition" id="provCondition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="A">A — Serviceable</option><option value="F">F — Reparable</option><option value="H">H — Condemned</option><option value="NEW">New / Unused</option></select></div>
                     </div>
-                    <div id="provUploadZone" onclick="document.getElementById('provFileInput').click()" style="border:2px dashed rgba(201,168,76,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(201,168,76,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#c9a84c'" ondragleave="this.style.borderColor='rgba(201,168,76,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#c9a84c;margin-bottom:8px;display:block"></i><div style="color:#c9a84c;font-weight:600;font-size:.9rem">Upload Custody Records / Asset Manifests</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel, XML, JSON, PDF — shipping docs, DD 1149, custody logs</div><input type="file" id="provFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt" multiple style="display:none" /></div>
+                    <div id="provUploadZone" onclick="document.getElementById('provFileInput').click()" style="border:2px dashed rgba(201,168,76,0.35);border-radius:3px;padding:28px;text-align:center;cursor:pointer;margin-bottom:12px;background:rgba(201,168,76,0.04);transition:all 0.3s" ondragover="event.preventDefault();this.style.borderColor='#c9a84c'" ondragleave="this.style.borderColor='rgba(201,168,76,0.35)'"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#c9a84c;margin-bottom:8px;display:block"></i><div style="color:#c9a84c;font-weight:600;font-size:.9rem">Upload Custody Records / Asset Manifests</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel, XML, JSON, PDF — shipping docs, DD 1149, custody logs</div><input aria-label="Prov Upload Zone" type="file" id="provFileInput" accept=".csv,.xlsx,.xls,.xml,.json,.pdf,.txt" multiple style="display:none" /></div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
                         <button onclick="alert('Demo: Custody transfer would be recorded.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-link"></i> Record Transfer</button>
                         <button onclick="alert('Demo: Chain would be anchored to XRPL.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Chain to XRPL</button>
@@ -4055,9 +4064,9 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch Filter</label><select id="analyticsBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL" selected>All Branches</option><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program Filter</label><select id="analyticsProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL" selected>All Programs</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Time Period</label><select id="analyticsPeriod" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="7d">Last 7 Days</option><option value="30d" selected>Last 30 Days</option><option value="90d">Last 90 Days</option><option value="1y">Last Year</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Branch Filter</label><select aria-label="Analytics Branch" id="analyticsBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL" selected>All Branches</option><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USA">Army</option><option value="USAF">Air Force</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program Filter</label><select aria-label="Analytics Program" id="analyticsProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL" selected>All Programs</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Time Period</label><select aria-label="Analytics Period" id="analyticsPeriod" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="7d">Last 7 Days</option><option value="30d" selected>Last 30 Days</option><option value="90d">Last 90 Days</option><option value="1y">Last Year</option></select></div>
                         <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Export</label><div style="display:flex;gap:6px"><button onclick="alert('Demo: Analytics PDF would export.')" class="btn btn-sm" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-file-pdf"></i> PDF</button><button onclick="alert('Demo: Analytics CSV would export.')" class="btn btn-sm" style="background:rgba(201,168,76,0.1);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-file-csv"></i> CSV</button></div></div>
                     </div>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px">
@@ -4081,10 +4090,10 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                         </div>
                     </details>
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Team</label><select id="teamSelect" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Team —</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program Assignment</label><select id="teamProgAssign" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL">All Programs</option></select></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Member Email</label><input type="email" id="teamInviteEmail" class="form-control form-control-sm" placeholder="name@organization.mil" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
-                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Role</label><select id="teamInviteRole" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="analyst">Analyst</option><option value="ils_manager">ILS Manager</option><option value="admin">Admin</option><option value="read_only">Read-Only</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Team</label><select aria-label="Team Select" id="teamSelect" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="">— Select Team —</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Program Assignment</label><select aria-label="Team Prog Assign" id="teamProgAssign" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="ALL">All Programs</option></select></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Member Email</label><input aria-label="name@organization.mil" type="email" id="teamInviteEmail" class="form-control form-control-sm" placeholder="name@organization.mil" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem" /></div>
+                        <div class="col-md-3 col-6"><label style="font-size:.78rem;color:var(--steel)">Role</label><select aria-label="Team Invite Role" id="teamInviteRole" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"><option value="analyst">Analyst</option><option value="ils_manager">ILS Manager</option><option value="admin">Admin</option><option value="read_only">Read-Only</option></select></div>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
                         <button onclick="alert('Demo: New team would be created.')" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-plus-circle"></i> Create Team</button>
@@ -4105,6 +4114,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
             </div>
 
             <!-- ══ FLOATING AI AGENT (accessible from all tools) ══ -->
+            <div id="aiAgentWidget" style="display:none"></div>
             <div class="ai-float-wrapper" id="aiFloatWrapper">
                 <div class="ai-float-panel" id="aiFloatPanel">
                     <div class="ai-chat-header">
@@ -4112,7 +4122,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                             <div class="ai-dot"></div>
                             <div><span style="font-weight:700;color:#fff;font-size:0.92rem"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i>S4 Anchor Agent</span></div>
                         </div>
-                        <button class="ai-close-btn" onclick="toggleAiAgent()" title="Minimize"><i class="fas fa-chevron-down"></i></button>
+                        <button class="ai-close-btn" onclick="toggleAiAgent()" title="Minimize" aria-label="Expand"><i class="fas fa-chevron-down"></i></button>
                     </div>
                     <div class="ai-context-label" id="aiContextLabel"><i class="fas fa-crosshairs"></i> Context: <span id="aiContextTool">Gap Analysis</span></div>
                     <div class="ai-chat-messages" id="aiChatMessages">
@@ -4120,11 +4130,11 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                     </div>
                     <div class="ai-quick-btns" id="aiQuickBtns"></div>
                     <div class="ai-chat-input">
-                        <input type="text" id="aiChatInput" placeholder="Ask the ILS Agent..." onkeydown="if(event.key==='Enter')aiSend()">
+                        <input aria-label="Ask the ILS Agent..." type="text" id="aiChatInput" placeholder="Ask the ILS Agent..." onkeydown="if(event.key==='Enter')aiSend()">
                         <button onclick="aiSend()"><i class="fas fa-paper-plane"></i> Send</button>
                     </div>
                 </div>
-                <button class="ai-float-toggle" onclick="toggleAiAgent()" title="S4 ILS Agent">
+                <button class="ai-float-toggle" onclick="toggleAiAgent()" title="S4 ILS Agent" aria-label="Toggle S4 AI Agent">
                     <i class="fas fa-robot"></i>
                     <span class="ai-float-dot"></span>
                 </button>
@@ -4193,7 +4203,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 <div style="margin-bottom:10px;padding:10px;background:var(--surface);border-radius:3px;border:1px solid var(--border);position:relative">
                                     <div style="font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:3px">Wallet Address</div>
                                     <div id="walletAddress" style="font-size:0.78rem;font-family:'Fira Code',monospace;color:#fff;word-break:break-all;cursor:text;user-select:all">--</div>
-                                    <button onclick="copyWalletField('walletAddress')" style="position:absolute;top:8px;right:8px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:3px 8px;font-size:0.65rem;cursor:pointer"><i class="fas fa-copy"></i></button>
+                                    <button onclick="copyWalletField('walletAddress')" style="position:absolute;top:8px;right:8px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:3px 8px;font-size:0.65rem;cursor:pointer" aria-label="Copy to clipboard"><i class="fas fa-copy"></i></button>
                                 </div>
 
                                 <div style="margin-bottom:10px;padding:10px;background:rgba(255,170,0,0.03);border-radius:3px;border:1px solid rgba(255,170,0,0.2);position:relative">
@@ -4238,7 +4248,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                     <button class="sls-amt-btn" onclick="setSLSAmount(100,this)" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--accent);font-weight:700;font-size:0.85rem">$100</button>
                                     <button class="sls-amt-btn" onclick="setSLSAmount(500,this)" style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$500</button>
                                 </div>
-                                <input type="number" id="slsUsdInput" value="100" min="1" step="1" onchange="updateSLSPreview()" oninput="updateSLSPreview()" style="width:100%;background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.92rem">
+                                <input aria-label="Sls Usd Input" type="number" id="slsUsdInput" value="100" min="1" step="1" onchange="updateSLSPreview()" oninput="updateSLSPreview()" style="width:100%;background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.92rem">
                             </div>
 
                             <div style="padding:14px;background:var(--surface);border-radius:3px;border:1px solid var(--border);margin-bottom:14px">
@@ -4313,7 +4323,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 <div id="anchorOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center" onclick="if(event.target===this)hideAnchorAnimation()">
     <div id="s4ResultPopup" style="background:linear-gradient(135deg,rgba(12,16,28,0.98),rgba(18,22,38,0.98));border:1px solid rgba(0,170,255,0.25);border-radius:6px;padding:2rem 2.5rem;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(0,170,255,0.08);position:relative;">
         <button onclick="hideAnchorAnimation()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1" title="Close">&times;</button>
-        <div id="animStatus" style="font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:0.8rem;display:flex;align-items:center;gap:8px"><i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to XRPL...</div>
+        <div id="animStatus" aria-live="assertive" role="status" style="font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:0.8rem;display:flex;align-items:center;gap:8px"><i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to XRPL...</div>
         <div id="animHash" style="font-family:monospace;font-size:0.72rem;color:var(--muted);word-break:break-all;background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:3px;margin-bottom:0.6rem"></div>
         <div id="animClf" style="margin-bottom:0.6rem"></div>
         <div id="animFee" style="font-size:0.82rem;color:var(--gold)">0.01 $SLS &rarr; Treasury</div>
@@ -4321,21 +4331,21 @@ if (sessionStorage.getItem('s4_entered') === '1') {
     </div>
 </div>
 
-<div id="sendModal" class="modal-overlay" onclick="if(event.target===this)closeSendModal()">
+<div id="sendModal" class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeSendModal()">
     <div class="modal-box" style="position:relative">
         <button onclick="closeSendModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button>
         <h4><i class="fas fa-paper-plane" style="color:var(--accent);margin-right:8px"></i>Send ILS Analysis</h4>
         <div style="margin-bottom:12px">
             <label style="font-size:0.82rem">Recipient Email(s)</label>
-            <input type="text" id="sendEmail" placeholder="email@navy.mil, pm@contractor.com" style="font-size:0.85rem!important">
+            <input aria-label="email@navy.mil, pm@contractor.com" type="text" id="sendEmail" placeholder="email@navy.mil, pm@contractor.com" style="font-size:0.85rem!important">
         </div>
         <div style="margin-bottom:12px">
             <label style="font-size:0.82rem">Subject</label>
-            <input type="text" id="sendSubject" value="" style="font-size:0.85rem!important">
+            <input aria-label="Send Subject" type="text" id="sendSubject" value="" style="font-size:0.85rem!important">
         </div>
         <div style="margin-bottom:12px">
             <label style="font-size:0.82rem">Message (optional)</label>
-            <textarea id="sendMessage" rows="3" placeholder="Please review the attached ILS gap analysis..." style="min-height:70px!important;font-family:'Inter',sans-serif!important;font-size:0.85rem!important"></textarea>
+            <textarea aria-label="Please review the attached ILS gap analysis..." id="sendMessage" rows="3" placeholder="Please review the attached ILS gap analysis..." style="min-height:70px!important;font-family:'Inter',sans-serif!important;font-size:0.85rem!important"></textarea>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn-accent" onclick="executeSend()"><i class="fas fa-paper-plane"></i> Send via Email Client</button>
@@ -4344,27 +4354,27 @@ if (sessionStorage.getItem('s4_entered') === '1') {
     </div>
 </div>
 
-<div id="meetingModal" class="modal-overlay" onclick="if(event.target===this)closeMeetingModal()">
+<div id="meetingModal" class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeMeetingModal()">
     <div class="modal-box" style="position:relative">
         <button onclick="closeMeetingModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button>
         <h4><i class="fas fa-calendar-plus" style="color:var(--accent);margin-right:8px"></i>Schedule ILS Review Meeting</h4>
         <div style="margin-bottom:12px">
             <label style="font-size:0.82rem">Meeting Title</label>
-            <input type="text" id="meetTitle" value="" style="font-size:0.85rem!important">
+            <input aria-label="Meet Title" type="text" id="meetTitle" value="" style="font-size:0.85rem!important">
         </div>
         <div class="row mb-3">
             <div class="col-6">
                 <label style="font-size:0.82rem">Date</label>
-                <input type="date" id="meetDate" style="font-size:0.85rem!important">
+                <input aria-label="Meet Date" type="date" id="meetDate" style="font-size:0.85rem!important">
             </div>
             <div class="col-6">
                 <label style="font-size:0.82rem">Time</label>
-                <input type="time" id="meetTime" value="10:00" style="font-size:0.85rem!important">
+                <input aria-label="Meet Time" type="time" id="meetTime" value="10:00" style="font-size:0.85rem!important">
             </div>
         </div>
         <div style="margin-bottom:12px">
             <label style="font-size:0.82rem">Attendees (emails)</label>
-            <input type="text" id="meetAttendees" placeholder="pm@navy.mil, ils@contractor.com" style="font-size:0.85rem!important">
+            <input aria-label="pm@navy.mil, ils@contractor.com" type="text" id="meetAttendees" placeholder="pm@navy.mil, ils@contractor.com" style="font-size:0.85rem!important">
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn-accent" onclick="createTeamsMeeting()"><i class="fab fa-microsoft"></i> Open Teams</button>
@@ -4374,23 +4384,23 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 </div>
 
 <!-- ══ ACTION ITEM ADD / EDIT MODAL ══ -->
-<div id="actionItemModal" class="modal-overlay" onclick="if(event.target===this)closeActionModal()">
+<div id="actionItemModal" class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeActionModal()">
     <div class="modal-box" style="position:relative;max-width:540px">
         <button onclick="closeActionModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button>
         <h4 id="actionModalTitle"><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>New Action Item</h4>
         <input type="hidden" id="actionModalEditId" value="">
         <div style="margin-bottom:10px">
             <label style="font-size:0.82rem">Title <span style="color:#c9a84c">*</span></label>
-            <input type="text" id="actionModalItemTitle" placeholder="e.g., Resolve obsolete part AN/SPY-6 radar module" style="font-size:0.85rem!important">
+            <input aria-label="e.g., Resolve obsolete part AN/SPY-6 radar module" type="text" id="actionModalItemTitle" placeholder="e.g., Resolve obsolete part AN/SPY-6 radar module" style="font-size:0.85rem!important">
         </div>
         <div style="margin-bottom:10px">
             <label style="font-size:0.82rem">Description</label>
-            <textarea id="actionModalDetail" rows="3" placeholder="Details, context, recommended actions..." style="min-height:60px!important;font-family:'Inter',sans-serif!important;font-size:0.85rem!important"></textarea>
+            <textarea aria-label="Details, context, recommended actions..." id="actionModalDetail" rows="3" placeholder="Details, context, recommended actions..." style="min-height:60px!important;font-family:'Inter',sans-serif!important;font-size:0.85rem!important"></textarea>
         </div>
         <div class="row mb-2">
             <div class="col-6" style="margin-bottom:10px">
                 <label style="font-size:0.82rem">Severity <span style="color:#c9a84c">*</span></label>
-                <select id="actionModalSeverity" style="font-size:0.85rem">
+                <select aria-label="Action Modal Severity" id="actionModalSeverity" style="font-size:0.85rem">
                     <option value="critical">Critical</option>
                     <option value="warning">Warning</option>
                     <option value="info" selected>Info</option>
@@ -4398,7 +4408,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
             </div>
             <div class="col-6" style="margin-bottom:10px">
                 <label style="font-size:0.82rem">Source Tool</label>
-                <select id="actionModalSource" style="font-size:0.85rem">
+                <select aria-label="Action Modal Source" id="actionModalSource" style="font-size:0.85rem">
                     <option value="manual">Manual</option>
                     <option value="dmsms">DMSMS Tracker</option>
                     <option value="readiness">Readiness</option>
@@ -4419,21 +4429,21 @@ if (sessionStorage.getItem('s4_entered') === '1') {
         <div class="row mb-2">
             <div class="col-6" style="margin-bottom:10px">
                 <label style="font-size:0.82rem">Owner / Assignee</label>
-                <input type="text" id="actionModalOwner" placeholder="e.g., Program Manager" style="font-size:0.85rem!important">
+                <input aria-label="e.g., Program Manager" type="text" id="actionModalOwner" placeholder="e.g., Program Manager" style="font-size:0.85rem!important">
             </div>
             <div class="col-6" style="margin-bottom:10px">
                 <label style="font-size:0.82rem">Due Date</label>
-                <input type="date" id="actionModalDue" style="font-size:0.85rem!important">
+                <input aria-label="Action Modal Due" type="date" id="actionModalDue" style="font-size:0.85rem!important">
             </div>
         </div>
         <div class="row mb-2">
             <div class="col-6" style="margin-bottom:10px">
                 <label style="font-size:0.82rem">Cost Impact ($K)</label>
-                <input type="number" id="actionModalCost" placeholder="e.g., 250" min="0" style="font-size:0.85rem!important">
+                <input aria-label="e.g., 250" type="number" id="actionModalCost" placeholder="e.g., 250" min="0" style="font-size:0.85rem!important">
             </div>
             <div class="col-6" style="margin-bottom:10px">
                 <label style="font-size:0.82rem">Schedule / Timeline</label>
-                <input type="text" id="actionModalSchedule" placeholder="e.g., 2-4 months" style="font-size:0.85rem!important">
+                <input aria-label="e.g., 2-4 months" type="text" id="actionModalSchedule" placeholder="e.g., 2-4 months" style="font-size:0.85rem!important">
             </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:8px">
@@ -4444,7 +4454,7 @@ if (sessionStorage.getItem('s4_entered') === '1') {
 </div>
 
 <!-- ══ PRODUCTION FEATURES MODAL ══ -->
-<div id="prodFeaturesModal" class="modal-overlay" onclick="if(event.target===this)closeProdFeatures()">
+<div id="prodFeaturesModal" class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeProdFeatures()">
     <div class="modal-box" style="position:relative;max-width:720px;max-height:85vh;overflow-y:auto">
         <button onclick="closeProdFeatures()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button>
         <h4 style="margin-bottom:4px"><i class="fas fa-rocket" style="color:#00aaff;margin-right:8px"></i>S4 Ledger Roadmap</h4>
@@ -7839,7 +7849,7 @@ function initILSChecklist(progKey) {
     const cl = getCL(progKey || document.getElementById('ilsProgram').value);
     container.innerHTML = cl.map(el =>
         '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 6px;border-radius:3px;transition:background 0.2s;'+(el.c?'font-weight:600':'')+'" onmouseover="this.style.background=\'rgba(0,170,255,0.05)\'" onmouseout="this.style.background=\'transparent\'">'
-        + '<input type="checkbox" id="ils_'+el.id+'" style="width:auto!important;accent-color:var(--accent)">'
+        + '<input aria-label="Ils '+El.Id+'" type="checkbox" id="ils_'+el.id+'" style="width:auto!important;accent-color:var(--accent)">'
         + '<span>' + el.l + (el.c?' <span style="color:var(--red);font-size:0.7rem">CRITICAL</span>':'') + '</span></label>'
     ).join('');
 }
@@ -9380,10 +9390,10 @@ function showCustomProgramInput() {
         + '<h3 style="color:#fff;margin:0 0 8px"><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>Custom Program / Platform</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Enter your program details. A generic MIL-STD-1388 ILS template will be applied.</p>'
         + '<div style="display:grid;gap:12px">'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Acquiring Office</label><input id="customProgOffice" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., PMS 400D, PMA-299"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" aria-label="Custom program name" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" aria-label="Hull or platform designation" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Acquiring Office</label><input id="customProgOffice" aria-label="Program office" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., PMS 400D, PMA-299"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" aria-label="Service branch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">'
         + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Cancel</button>'
@@ -10018,12 +10028,12 @@ function renderHubActions(filter) {
         var eid = (item.id || '').replace(/'/g, "\\'");
         var isSelected = _actionSelected.has(item.id);
         html += '<div class="action-item'+(item.done?' completed':'')+'" style="position:relative">';
-        html += '<input type="checkbox" '+(isSelected?'checked ':'')+' onchange="toggleActionSelect(\''+eid+'\',this.checked)" style="margin-right:6px;cursor:pointer;accent-color:#00aaff">';
+        html += '<input aria-label="Checkbox input" type="checkbox" '+(isSelected?'checked ':'')+' onchange="toggleActionSelect(\''+eid+'\',this.checked)" style="margin-right:6px;cursor:pointer;accent-color:#00aaff">';
         html += '<div class="ai-check'+(item.done?' done':'')+'" onclick="toggleActionDone(\''+eid+'\');renderHubActions()"></div>';
         html += '<div class="ai-body">';
         html += '<div class="ai-title" style="display:flex;align-items:center;gap:6px">'+(sourceIcons[item.source]||'<i class="fas fa-thumbtack" style="color:var(--accent)"></i>')+' <span style="flex:1;cursor:text" ondblclick="inlineEditActionTitle(\''+eid+'\',this)" title="Double-click to edit title">'+item.title+'</span>';
-        html += '<button onclick="editActionItem(\''+eid+'\')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:2px 5px;opacity:0.5" title="Edit" onmouseover="this.style.opacity=1;this.style.color=\'#00aaff\'" onmouseout="this.style.opacity=0.5;this.style.color=\'var(--muted)\'"><i class="fas fa-pen-to-square"></i></button>';
-        html += '<button onclick="deleteActionItem(\''+eid+'\')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:2px 5px;opacity:0.5" title="Delete" onmouseover="this.style.opacity=1;this.style.color=\'#c9a84c\'" onmouseout="this.style.opacity=0.5;this.style.color=\'var(--muted)\'"><i class="fas fa-trash"></i></button>';
+        html += '<button onclick="editActionItem(\''+eid+'\')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:2px 5px;opacity:0.5" title="Edit" onmouseover="this.style.opacity=1;this.style.color=\'#00aaff\'" onmouseout="this.style.opacity=0.5;this.style.color=\'var(--muted)\'" aria-label="Edit"><i class="fas fa-pen-to-square"></i></button>';
+        html += '<button onclick="deleteActionItem(\''+eid+'\')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:2px 5px;opacity:0.5" title="Delete" onmouseover="this.style.opacity=1;this.style.color=\'#c9a84c\'" onmouseout="this.style.opacity=0.5;this.style.color=\'var(--muted)\'" aria-label="Delete"><i class="fas fa-trash"></i></button>';
         html += '</div>';
         html += '<div class="ai-meta"><span class="ai-tag '+(item.severity||'info')+'">'+(item.severity||'info').toUpperCase()+'</span><span>'+(item.source||'').toUpperCase()+'</span>';
         if (item.owner) html += '<span><i class="fas fa-user" style="margin-right:3px"></i>'+item.owner+'</span>';
@@ -10168,7 +10178,7 @@ function renderVault() {
         <div class="vault-record"${useAnim ? ' style="animation:slideUp 0.3s ease"' : ''}>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
                 <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden">
-                    <input type="checkbox" class="vault-cb" data-hash="${v.hash}" onchange="_updateBulkBar()" style="accent-color:#00aaff;cursor:pointer;flex-shrink:0">
+                    <input aria-label="Checkbox input" type="checkbox" class="vault-cb" data-hash="${v.hash}" onchange="_updateBulkBar()" style="accent-color:#00aaff;cursor:pointer;flex-shrink:0">
                     <span style="font-size:0.95rem;flex-shrink:0;width:20px;text-align:center;line-height:1">${v.icon || '<i class="fas fa-clipboard-list"></i>'}</span>
                     <strong style="color:#fff;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.label || v.type}</strong>
                     <span style="font-size:0.72rem;color:var(--muted);flex-shrink:0;white-space:nowrap">${v.branch || ''}</span>
@@ -10454,11 +10464,11 @@ function showDocUpload() {
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:560px;width:90%">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-file-upload" style="color:var(--accent);margin-right:8px"></i>Add New Document</h3>'
         + '<div style="display:grid;gap:12px">'
-        + '<input id="newDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Document ID (e.g., MIL-STD-1388-2B)">'
-        + '<input id="newDocTitle" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Title">'
-        + '<textarea id="newDocContent" rows="6" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
-        + '<select id="newDocCat" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
-        + '<div id="docUploadDropzone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(0,170,255,0.08)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\'" ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\';if(event.dataTransfer.files.length){var inp=document.getElementById(\'newDocFile\');inp.files=event.dataTransfer.files;handleDocFileSelect(inp)}" onclick="document.getElementById(\'newDocFile\').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:3px;padding:28px 20px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(0,170,255,0.02);transition:all 0.3s"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;display:block;color:var(--accent)"></i><div style=\'font-size:0.9rem;color:var(--steel);font-weight:600;margin-bottom:6px\'>Drag & drop your file here</div><div style=\'font-size:0.78rem;color:var(--muted)\'>or <span style=\'color:var(--accent);text-decoration:underline\'>click to browse</span></div><div style=\'font-size:0.72rem;color:var(--muted);margin-top:8px\'>PDF, Word, Excel, CSV, TXT — any document type</div><input type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv,.json" onchange="handleDocFileSelect(this)"></div>'
+        + '<input aria-label="Document ID (e.g., MIL-STD-1388-2B)" id="newDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Document ID (e.g., MIL-STD-1388-2B)">'
+        + '<input aria-label="Title" id="newDocTitle" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Title">'
+        + '<textarea aria-label="Paste document content or notes..." id="newDocContent" rows="6" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
+        + '<select aria-label="New Doc Cat" id="newDocCat" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
+        + '<div id="docUploadDropzone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(0,170,255,0.08)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\'" ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\';if(event.dataTransfer.files.length){var inp=document.getElementById(\'newDocFile\');inp.files=event.dataTransfer.files;handleDocFileSelect(inp)}" onclick="document.getElementById(\'newDocFile\').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:3px;padding:28px 20px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(0,170,255,0.02);transition:all 0.3s"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;display:block;color:var(--accent)"></i><div style=\'font-size:0.9rem;color:var(--steel);font-weight:600;margin-bottom:6px\'>Drag & drop your file here</div><div style=\'font-size:0.78rem;color:var(--muted)\'>or <span style=\'color:var(--accent);text-decoration:underline\'>click to browse</span></div><div style=\'font-size:0.72rem;color:var(--muted);margin-top:8px\'>PDF, Word, Excel, CSV, TXT — any document type</div><input aria-label="Doc Upload Dropzone" type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv,.json" onchange="handleDocFileSelect(this)"></div>'
         + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:10px 14px;margin-top:12px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong style="color:#00aaff">S4 AI Agent</strong> will automatically scan uploads for discrepancies, compliance gaps, unauthorized changes, and red flags.</div>'
         + '<div id="newDocFileInfo" style="display:none;padding:8px;background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:3px;font-size:0.82rem;color:#00cc66"></div>'
         + '</div>'
@@ -10508,9 +10518,9 @@ function showDocVersionUpload() {
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:8px"></i>Upload New Version</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Upload a revised version of an existing document. Our AI agent will analyze it for discrepancies, changes, errors, omissions, and cost modifications — then flag anything that needs attention.</p>'
-        + '<select id="versionDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
-        + '<textarea id="versionContent" rows="8" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;font-family:monospace;font-size:0.82rem;margin-bottom:12px" placeholder="Paste updated document content..."></textarea>'
-        + '<input id="versionNote" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-bottom:12px" placeholder="Change notes (optional)">'
+        + '<select aria-label="Version Doc Id" id="versionDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
+        + '<textarea aria-label="Paste updated document content..." id="versionContent" rows="8" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;font-family:monospace;font-size:0.82rem;margin-bottom:12px" placeholder="Paste updated document content..."></textarea>'
+        + '<input aria-label="Change notes (optional)" id="versionNote" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-bottom:12px" placeholder="Change notes (optional)">'
         + '<div style="display:flex;gap:10px;justify-content:flex-end">'
         + '<button onclick="document.getElementById(\'docVersionModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
         + '<button onclick="uploadDocVersion()" style="background:#c9a84c;color:#000;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Upload & Analyze</button>'
@@ -10864,7 +10874,7 @@ function renderPOAM() {
             + '<td style="padding:6px 8px;color:' + (overdue ? '#ff6b6b' : 'var(--steel)') + ';font-weight:' + (overdue ? '700' : '400') + '">' + (p.due||'') + (overdue ? ' <i class="fas fa-exclamation-triangle" style="color:#ff6b6b;font-size:0.7rem"></i>' : '') + '</td>'
             + '<td style="padding:6px 8px;color:var(--steel)">' + (p.owner||'') + '</td>'
             + '<td style="padding:6px 8px"><span style="color:' + statusColor + ';font-weight:600;font-size:0.78rem">' + (p.status||'Open') + '</span></td>'
-            + '<td style="padding:6px 8px;text-align:center"><button onclick="editPOAM(' + i + ')" style="background:none;border:none;color:#00aaff;cursor:pointer;font-size:0.78rem;margin-right:4px" title="Edit"><i class="fas fa-pen"></i></button><button onclick="deletePOAM(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Delete"><i class="fas fa-trash"></i></button></td>'
+            + '<td style="padding:6px 8px;text-align:center"><button onclick="editPOAM(' + i + ')" style="background:none;border:none;color:#00aaff;cursor:pointer;font-size:0.78rem;margin-right:4px" title="Edit" aria-label="Edit"><i class="fas fa-pen"></i></button><button onclick="deletePOAM(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button></td>'
             + '</tr>';
     }).join('');
 }
@@ -10942,7 +10952,7 @@ function renderEvidence() {
             + '<i class="fas ' + icon + '" style="color:#c9a84c;font-size:1rem;width:20px;text-align:center"></i>'
             + '<div style="flex:1;min-width:0"><div style="color:#fff;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + e.filename + '</div><div style="font-size:0.72rem;color:var(--steel)">' + e.control + ' | ' + e.size + ' | ' + new Date(e.timestamp).toLocaleDateString() + (e.hash ? ' | <span style="color:#00aaff">Hash: ' + e.hash + '</span>' : '') + '</div></div>'
             + '<span style="font-size:0.72rem;color:#00aaff;background:#00aaff11;padding:2px 6px;border-radius:3px">' + e.status + '</span>'
-            + '<button onclick="removeEvidence(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Remove"><i class="fas fa-times"></i></button>'
+            + '<button onclick="removeEvidence(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Remove" aria-label="Close"><i class="fas fa-times"></i></button>'
             + '</div>';
     }).join('');
 }
@@ -11279,8 +11289,8 @@ function renderScheduledReports() {
         return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid ' + statusColor + '">'
             + '<i class="fas fa-calendar-check" style="color:' + statusColor + '"></i>'
             + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem">' + r.label + ' <span style="color:var(--steel);font-size:0.72rem">(' + r.frequency + ')</span></div><div style="font-size:0.72rem;color:var(--steel)">Next: ' + r.nextRun + '</div></div>'
-            + '<button onclick="toggleScheduledReport(' + i + ')" style="background:none;border:none;color:' + (r.active ? '#00aaff' : 'var(--steel)') + ';cursor:pointer;font-size:0.78rem" title="Toggle"><i class="fas fa-' + (r.active ? 'toggle-on' : 'toggle-off') + '"></i></button>'
-            + '<button onclick="removeScheduledReport(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Delete"><i class="fas fa-trash"></i></button>'
+            + '<button onclick="toggleScheduledReport(' + i + ')" style="background:none;border:none;color:' + (r.active ? '#00aaff' : 'var(--steel)') + ';cursor:pointer;font-size:0.78rem" title="Toggle" aria-label="Action"><i class="fas fa-' + (r.active ? 'toggle-on' : 'toggle-off') + '"></i></button>'
+            + '<button onclick="removeScheduledReport(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>'
             + '</div>';
     }).join('');
 }
@@ -13482,7 +13492,7 @@ function refreshOfflineQueueUI() {
     if (statusEl) { var on = navigator.onLine; statusEl.innerHTML = on ? '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--green)"></i> Online' : '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--red)"></i> Offline'; statusEl.style.color = on ? 'var(--green)' : 'var(--red)'; }
     if (listEl) {
         if (!queue.length) { listEl.innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">Queue is empty. Hashes are queued automatically when offline.</div>'; }
-        else { listEl.innerHTML = queue.map(function(item, i) { return '<div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:var(--accent);font-weight:700;width:24px">' + (i+1) + '</span><span style="flex:1;color:var(--text);font-family:monospace;font-size:0.72rem">' + (item.hash ? item.hash.substring(0,24)+'...' : 'N/A') + '</span><span style="color:var(--steel);font-size:0.7rem;width:80px">' + (item.record_type||'GENERAL') + '</span><span style="color:' + (item.synced ? 'var(--green)' : 'var(--gold)') + ';font-size:0.72rem">' + (item.synced ? '✓ Synced' : '⏳ Pending') + '</span><button onclick="offlineRemoveItem(' + i + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.75rem" title="Remove"><i class="fas fa-times"></i></button></div>'; }).join(''); }
+        else { listEl.innerHTML = queue.map(function(item, i) { return '<div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:var(--accent);font-weight:700;width:24px">' + (i+1) + '</span><span style="flex:1;color:var(--text);font-family:monospace;font-size:0.72rem">' + (item.hash ? item.hash.substring(0,24)+'...' : 'N/A') + '</span><span style="color:var(--steel);font-size:0.7rem;width:80px">' + (item.record_type||'GENERAL') + '</span><span style="color:' + (item.synced ? 'var(--green)' : 'var(--gold)') + ';font-size:0.72rem">' + (item.synced ? '✓ Synced' : '⏳ Pending') + '</span><button onclick="offlineRemoveItem(' + i + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.75rem" title="Remove" aria-label="Close"><i class="fas fa-times"></i></button></div>'; }).join(''); }
     }
 }
 
@@ -15358,7 +15368,7 @@ function showRoleSelector() {
     var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 4px"><i class="fas fa-user-cog" style="color:var(--accent);margin-right:8px"></i>Configure Your Role</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Select your role to see relevant tools. You can customize visible tools and your displayed title.</p>'
-        + '<div style="margin-bottom:16px"><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" value="'+(_currentTitle||'')+'" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-top:4px" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>'
+        + '<div style="margin-bottom:16px"><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" aria-label="Role title" value="'+(_currentTitle||'')+'" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-top:4px" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">';
     Object.keys(_s4Roles).forEach(function(key) {
         var r = _s4Roles[key];
@@ -15374,7 +15384,7 @@ function showRoleSelector() {
         + '<div id="roleToolChecks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 16px">';
     _allHubTabs.forEach(function(tab) {
         var vis = _customVisibleTabs ? _customVisibleTabs.indexOf(tab)>=0 : (_currentRole ? (_s4Roles[_currentRole]?.tabs||[]).indexOf(tab)>=0 : true);
-        html += '<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--steel);cursor:pointer;padding:6px 10px;border-radius:3px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s"><input type="checkbox" data-tab="'+tab+'" '+(vis?'checked':'')+' onchange="onRoleToolToggle()" style="accent-color:#00aaff;width:16px;height:16px;flex-shrink:0"> <span>' + (_allHubLabels[tab]||tab) + '</span></label>';
+        html += '<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--steel);cursor:pointer;padding:6px 10px;border-radius:3px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s"><input aria-label="Toggle option" type="checkbox" data-tab="'+tab+'" '+(vis?'checked':'')+' onchange="onRoleToolToggle()" style="accent-color:#00aaff;width:16px;height:16px;flex-shrink:0"> <span>' + (_allHubLabels[tab]||tab) + '</span></label>';
     });
     html += '</div></details>'
         + '<div style="display:flex;gap:10px;justify-content:flex-end">'
@@ -17292,7 +17302,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-users" style="color:var(--accent);margin-right:8px"></i>Team Workspace</h3>';
-        html += '<button onclick="var p=document.getElementById(\'teamManagePanel\');var o=document.getElementById(\'teamManageOverlay\');if(p)p.remove();if(o)o.remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
+        html += '<button onclick="var p=document.getElementById(\'teamManagePanel\');var o=document.getElementById(\'teamManageOverlay\');if(p)p.remove();if(o)o.remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;" aria-label="Close"><i class="fas fa-times"></i></button>';
         html += '</div>';
         html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:16px;">Manage team roles and access. Changes sync across all workspace sessions.</div>';
         html += '<table style="width:100%;border-collapse:collapse;">';
@@ -17306,7 +17316,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             html += '<td style="padding:10px 8px;"><span style="background:' + role.color + '22;color:' + role.color + ';padding:3px 10px;border-radius:3px;font-size:0.72rem;font-weight:700;">' + role.label + '</span></td>';
             html += '<td style="padding:10px 8px;text-align:center;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:' + statusColor + ';"><span style="width:6px;height:6px;border-radius:50%;background:' + statusColor + ';display:inline-block;"></span>' + m.status + '</span></td>';
             html += '<td style="padding:10px 8px;text-align:center;">';
-            if (i > 0) html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Role change requires Admin approval in production.\',\'info\')" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-pen"></i></button>';
+            if (i > 0) html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Role change requires Admin approval in production.\',\'info\')" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;" aria-label="Edit"><i class="fas fa-pen"></i></button>';
             else html += '<span style="font-size:0.7rem;color:var(--steel);">—</span>';
             html += '</td></tr>';
         });
@@ -17366,7 +17376,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-history" style="color:var(--accent);margin-right:8px"></i>Saved Analyses</h3>';
-        html += '<button onclick="document.getElementById(\'savedAnalysesPanel\').remove();document.getElementById(\'savedAnalysesOverlay\').remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
+        html += '<button onclick="document.getElementById(\'savedAnalysesPanel\').remove();document.getElementById(\'savedAnalysesOverlay\').remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;" aria-label="Close"><i class="fas fa-times"></i></button>';
         html += '</div>';
 
         if (_savedAnalyses.length === 0) {
@@ -17380,7 +17390,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
                 html += '<div><div style="color:#fff;font-weight:700;font-size:0.88rem;">' + a.title + '</div><div style="color:var(--steel);font-size:0.72rem;">' + a.type + ' — ' + new Date(a.timestamp).toLocaleString() + '</div></div>';
                 html += '<div style="display:flex;align-items:center;gap:12px;">';
                 html += '<div style="text-align:center;"><div style="font-size:1.2rem;font-weight:800;color:' + scoreColor + ';">' + Math.round(a.score) + '%</div><div style="font-size:0.6rem;color:var(--steel);">Score</div></div>';
-                html += '<button onclick="_savedAnalyses.splice(' + i + ',1);localStorage.setItem(\'s4_saved_analyses\',JSON.stringify(_savedAnalyses));document.getElementById(\'savedAnalysesPanel\').remove();document.getElementById(\'savedAnalysesOverlay\').remove();showSavedAnalyses();" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:3px;padding:4px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-trash"></i></button>';
+                html += '<button onclick="_savedAnalyses.splice(' + i + ',1);localStorage.setItem(\'s4_saved_analyses\',JSON.stringify(_savedAnalyses));document.getElementById(\'savedAnalysesPanel\').remove();document.getElementById(\'savedAnalysesOverlay\').remove();showSavedAnalyses();" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:3px;padding:4px 8px;font-size:0.7rem;cursor:pointer;" aria-label="Delete"><i class="fas fa-trash"></i></button>';
                 html += '</div></div>';
                 if (a.data) {
                     html += '<div style="display:flex;gap:12px;margin-top:8px;font-size:0.72rem;color:var(--steel);">';
@@ -17517,20 +17527,20 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-plug" style="color:var(--accent);margin-right:8px"></i>Webhook Configuration</h3>';
-        html += '<button onclick="document.getElementById(\'webhookPanel\').remove();document.getElementById(\'webhookOverlay\').remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
+        html += '<button onclick="document.getElementById(\'webhookPanel\').remove();document.getElementById(\'webhookOverlay\').remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;" aria-label="Close"><i class="fas fa-times"></i></button>';
         html += '</div>';
         html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:16px;">Configure webhook URLs to receive real-time notifications when records are anchored, verified, or exported.</div>';
 
         // Add webhook form
         html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:16px;">';
         html += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;">';
-        html += '<input type="url" id="webhookUrlInput" placeholder="https://your-system.mil/api/webhooks/s4" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:0.82rem;font-family:monospace;width:100%;">';
+        html += '<input aria-label="https://your-system.mil/api/webhooks/s4" type="url" id="webhookUrlInput" placeholder="https://your-system.mil/api/webhooks/s4" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:0.82rem;font-family:monospace;width:100%;">';
         html += '<button onclick="addWebhook()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;white-space:nowrap;"><i class="fas fa-plus" style="margin-right:4px"></i> Add</button>';
         html += '</div>';
         html += '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
         var events = ['anchor.confirmed','anchor.failed','record.verified','export.completed','vault.cleared','analysis.saved'];
         events.forEach(function(evt) {
-            html += '<label style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--steel);cursor:pointer;padding:3px 8px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:3px;"><input type="checkbox" class="webhook-event-cb" value="' + evt + '" checked style="width:auto;accent-color:var(--accent);"> ' + evt + '</label>';
+            html += '<label style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--steel);cursor:pointer;padding:3px 8px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:3px;"><input aria-label="Toggle option" type="checkbox" class="webhook-event-cb" value="' + evt + '" checked style="width:auto;accent-color:var(--accent);"> ' + evt + '</label>';
         });
         html += '</div></div>';
 
@@ -17542,7 +17552,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
                 html += '<div><div style="color:#fff;font-family:monospace;font-size:0.78rem;">' + wh.url + '</div><div style="color:var(--steel);font-size:0.68rem;">Events: ' + wh.events.join(', ') + ' | Added: ' + new Date(wh.created).toLocaleDateString() + '</div></div>';
                 html += '<div style="display:flex;gap:6px;">';
                 html += '<button onclick="testWebhook(' + i + ')" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.2);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-paper-plane"></i> Test</button>';
-                html += '<button onclick="removeWebhook(' + i + ')" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-trash"></i></button>';
+                html += '<button onclick="removeWebhook(' + i + ')" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;" aria-label="Delete"><i class="fas fa-trash"></i></button>';
                 html += '</div></div>';
             });
         } else {
@@ -18743,7 +18753,7 @@ function _updateThemeIcon(isLight) {
     searchOverlay.innerHTML = '<div style="background:var(--card,#111);border:1px solid rgba(255,255,255,0.1);border-radius:3px;width:90%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,0.5)">' +
         '<div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06)">' +
         '<i class="fas fa-search" style="color:#00aaff;margin-right:12px;font-size:1rem"></i>' +
-        '<input id="globalSearchInput" type="text" placeholder="Search records, vault, tools, documents..." style="flex:1;background:transparent;border:none;color:#fff;font-size:1rem;outline:none;font-family:Inter,sans-serif" autocomplete="off">' +
+        '<input aria-label="Search records, vault, tools, documents..." id="globalSearchInput" type="text" placeholder="Search records, vault, tools, documents..." style="flex:1;background:transparent;border:none;color:#fff;font-size:1rem;outline:none;font-family:Inter,sans-serif" autocomplete="off">' +
         '<kbd style="background:rgba(255,255,255,0.08);color:#666;padding:3px 8px;border-radius:3px;font-size:0.7rem;margin-left:8px">ESC</kbd>' +
         '</div>' +
         '<div id="globalSearchResults" style="max-height:50vh;overflow-y:auto;padding:8px"></div>' +
@@ -22243,6 +22253,38 @@ function _updateThemeIcon(isLight) {
     console.log('[S4 Integrity] ' + integrity.loaded + '/' + integrity.expected + ' modules loaded' + (integrity.healthy ? ' ✓' : ' — Missing: ' + integrity.missing.join(', ')));
 })();
 
+</script>
+
+<!-- S4 Accessibility: Focus trap + dynamic modal a11y -->
+<script>
+(function(){
+    // S4_FOCUS_TRAP: Trap focus inside modal overlays
+    document.addEventListener('keydown', function(e) {
+        if (e.key !== 'Tab') return;
+        var modals = document.querySelectorAll('[role="dialog"]:not([style*="display:none"]):not([style*="display: none"])');
+        if (!modals.length) return;
+        var modal = modals[modals.length - 1]; // topmost
+        var focusable = modal.querySelectorAll('button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (!focusable.length) return;
+        var first = focusable[0], last = focusable[focusable.length - 1];
+        if (e.shiftKey) { if (document.activeElement === first) { last.focus(); e.preventDefault(); } }
+        else { if (document.activeElement === last) { first.focus(); e.preventDefault(); } }
+    });
+    // Auto-apply role=dialog to dynamically created modals
+    var obs = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            m.addedNodes.forEach(function(n) {
+                if (n.nodeType !== 1) return;
+                var s = n.style;
+                if (s && s.position === 'fixed' && parseInt(s.zIndex) >= 10000 && !n.getAttribute('role')) {
+                    n.setAttribute('role', 'dialog');
+                    n.setAttribute('aria-modal', 'true');
+                }
+            });
+        });
+    });
+    obs.observe(document.body, { childList: true });
+})();
 </script>
 </body>
 </html>

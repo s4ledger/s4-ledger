@@ -2564,7 +2564,7 @@ function loadSelectedSampleDoc(docType) {
     const progKey = document.getElementById('ilsProgram').value;
     const prog = PROGS[progKey];
     if (!prog) { s4Notify('No Program Selected','Please select a program first.','warning'); return; }
-    document.getElementById('sampleDocSelect').selectedIndex = 0; // reset dropdown
+    var _sds = document.getElementById('sampleDocSelect'); if (_sds) _sds.selectedIndex = 0; // reset dropdown
 
     const statuses = ['Approved','Submitted','In Review','Overdue','Approved','Approved','Submitted','Approved'];
     const dates = ['2025-10-15','2025-12-01','2026-01-15','2026-02-01','2026-03-15','2025-11-20','2026-05-01','2025-09-01'];
@@ -5060,7 +5060,7 @@ function applyCustomProgram() {
     if (hullEl) hullEl.value = hull;
     var officeEl = document.getElementById('ilsOffice');
     if (officeEl) officeEl.value = office;
-    document.getElementById('customProgramModal').remove();
+    var _cpm = document.getElementById('customProgramModal'); if (_cpm) _cpm.remove();
     // Initialize with generic MIL-STD-1388 checklist
     initILSChecklist('custom_' + name.replace(/\s+/g,'_'));
     // Persist custom program to localStorage + Supabase
@@ -6141,7 +6141,7 @@ function addNewDoc() {
     var notif = { id: id, title: title, type: 'new', timestamp: new Date().toISOString(), flags: flags };
     _docNotifications.unshift(notif);
     localStorage.setItem('s4_doc_notifications', JSON.stringify(_docNotifications));
-    document.getElementById('docUploadModal').remove();
+    var _dum = document.getElementById('docUploadModal'); if (_dum) _dum.remove();
     s4Notify('Document Added', id + ' — ' + title + (flags.length > 0 ? ' — AI Agent detected '+flags.length+' issue'+(flags.length>1?'s':'') : ' — AI Agent scan complete, no issues found'), flags.length > 0 ? 'warning' : 'success');
     if (flags.length > 0) showRedFlagAlert(id, flags);
     renderDocLibrary();
@@ -6179,7 +6179,7 @@ function uploadDocVersion() {
     localStorage.setItem('s4_doc_versions', JSON.stringify(_docVersions));
     _docNotifications.unshift({ id: docId, type:'version', version: newVer.version, timestamp: new Date().toISOString(), flags: flags, diff: diff, note: note });
     localStorage.setItem('s4_doc_notifications', JSON.stringify(_docNotifications));
-    document.getElementById('docVersionModal').remove();
+    var _dvm = document.getElementById('docVersionModal'); if (_dvm) _dvm.remove();
     showDiffResult(docId, diff, flags);
     s4Notify('AI Analysis Complete', docId + ' v' + newVer.version + ' — ' + diff.added + ' additions, ' + diff.removed + ' removals, ' + diff.changed + ' modifications' + (flags.length>0 ? ' | '+flags.length+' red flag'+(flags.length>1?'s':'')+' detected' : ' | No issues found'), flags.length>0?'warning':'success');
 }
