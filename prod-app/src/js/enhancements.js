@@ -5362,7 +5362,7 @@ function _updateThemeIcon(isLight) {
             var earned = stake.amount * (stake.apy / 100) * (stake.duration / 365);
             this._totalStaked -= stake.amount;
             this._save();
-            if (S4.toast) S4.toast('Unstaked ' + stake.amount + ' SLS + ' + earned.toFixed(2) + ' earned', 'success');
+            if (S4.toast) S4.toast('Unstaked ' + stake.amount + ' Credits + ' + earned.toFixed(2) + ' earned', 'success');
             return {principal:stake.amount, earned:earned};
         },
         getStakes: function() { return this._stakes; },

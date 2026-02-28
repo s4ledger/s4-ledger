@@ -595,3 +595,26 @@ window.openWalletSidebar = openWalletSidebar;
 window.showHub = showHub;
 window.showSection = showSection;
 window.showSystemsSub = showSystemsSub;
+
+// === Programmatic click handlers for hub cards ===
+// Fallback for environments where inline onclick is blocked (e.g. VS Code Simple Browser CSP)
+(function _bindHubCardClicks() {
+    function attach() {
+        document.querySelectorAll('.hub-card[data-section]').forEach(function(card) {
+            if (card._s4bound) return; // don't double-bind
+            card._s4bound = true;
+            card.addEventListener('click', function(e) {
+                var sec = this.getAttribute('data-section');
+                if (sec && typeof showSection === 'function') {
+                    showSection(sec);
+                }
+            });
+        });
+    }
+    // Bind now (DOM should be ready since module is deferred)
+    attach();
+    // Also bind after DOMContentLoaded in case DOM wasn't ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attach);
+    }
+})();

@@ -114,7 +114,7 @@ function setSLSAmount(usd, btn) {
 function updateSLSPreview() {
     const usd = parseFloat(document.getElementById('slsUsdInput').value) || 0;
     const slsTokens = Math.round(usd / 0.01);
-    document.getElementById('slsPreviewTokens').textContent = slsTokens.toLocaleString() + ' SLS';
+    document.getElementById('slsPreviewTokens').textContent = slsTokens.toLocaleString() + ' Credits';
     document.getElementById('slsPreviewAnchors').textContent = (slsTokens * 100).toLocaleString();
 }
 
@@ -170,7 +170,7 @@ async function handleBuySLS() {
             resultEl.style.background = 'rgba(0,170,255,0.2)';
             resultEl.style.border = '1px solid rgba(0,170,255,0.2)';
             resultEl.style.color = '#00aaff';
-            resultEl.innerHTML = '<i class="fas fa-check-circle" style="margin-right:6px"></i>Purchased ' + parseFloat(data.purchase.sls_received).toLocaleString() + ' SLS for $' + data.purchase.usd_paid.toFixed(2) + '! <a href="' + data.explorer_url + '" target="_blank" style="color:var(--accent);margin-left:8px">View TX <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>';
+            resultEl.innerHTML = '<i class="fas fa-check-circle" style="margin-right:6px"></i>Purchased ' + parseFloat(data.purchase.sls_received).toLocaleString() + ' Credits for $' + data.purchase.usd_paid.toFixed(2) + '! <a href="' + data.explorer_url + '" target="_blank" style="color:var(--accent);margin-left:8px">View TX <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>';
             // Refresh balance
             fetchWalletBalance(walletData.wallet.address);
         }
