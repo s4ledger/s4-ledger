@@ -2,9 +2,9 @@
    Extracted from monolith lines 69-1342
    1272 lines */
 
-        :root{--bg:#000000;--surface:#0a0a0a;--card:#111111;--border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.15);--accent:#00aaff;--gold:#c9a84c;--steel:#86868b;--green:#30d158;--red:#ff453a;--text:#f5f5f7;--muted:#6e6e73;--text-muted:#6e6e73;--radius:3px;--radius-lg:4px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1)}
+        :root{--bg:#000000;--surface:#0a0a0a;--card:#111111;--border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.15);--accent:#00aaff;--gold:#c9a84c;--steel:#86868b;--green:#30d158;--red:#ff453a;--text:#f5f5f7;--muted:#6e6e73;--text-muted:#6e6e73;--radius:3px;--radius-lg:4px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1);--chart-text:#ccc;--chart-grid:rgba(255,255,255,0.08);--chart-bg:rgba(10,10,10,0.95);--chart-title:#e0e0e0}
         /* ── Light Mode Theme ── */
-        body.light-mode{--bg:#f5f5f7;--surface:#ffffff;--card:#ffffff;--border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);--accent:#0077cc;--steel:#555555;--text:#1d1d1f;--muted:#86868b;--text-muted:#86868b}
+        body.light-mode{--bg:#f5f5f7;--surface:#ffffff;--card:#ffffff;--border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);--accent:#0077cc;--steel:#555555;--text:#1d1d1f;--muted:#86868b;--text-muted:#86868b;--chart-text:#333;--chart-grid:rgba(0,0,0,0.1);--chart-bg:#fff;--chart-title:#333}
         body.light-mode .navbar-custom,body.light-mode nav{background:rgba(255,255,255,0.92)!important;backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.06)!important}
         body.light-mode .s4-card,body.light-mode .stat-card{background:#fff;border-color:rgba(0,0,0,0.08);box-shadow:0 1px 3px rgba(0,0,0,0.06)}
         body.light-mode .dropdown-menu{background:rgba(255,255,255,0.98)!important;border-color:rgba(0,0,0,0.08)!important}

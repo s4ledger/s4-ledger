@@ -66,10 +66,10 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-BCzaCH3i.js"></script>
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-DsKtMBAJ.js"></script>
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-BjG9HHxX.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-BaPcmpDQ.js">
-  <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-BSC-WWaA.css">
+  <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-DPlSJ-gN.css">
 </head>
 <body>
 <!-- Early theme restore + failsafe toggle (non-module, runs immediately) -->
@@ -114,7 +114,7 @@
             <li><a href="/s4-investors/" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:3px;">Company</a></li>
             <li><a href="https://github.com/s4ledger/s4-ledger" target="_blank" style="color:rgba(255,255,255,0.7);padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;text-decoration:none;border-radius:3px;">Docs</a></li>
             <li><a href="/s4-contact/" style="background:#00aaff;color:#fff;padding:0.5rem 1.25rem;font-size:0.875rem;font-weight:600;text-decoration:none;border-radius:3px;margin-left:0.5rem;">Contact Us</a></li>
-            <li><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode" id="themeToggleBtn"><i class="fas fa-sun"></i></button></li>
+            <li><button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode" aria-label="Toggle Light/Dark Mode" id="themeToggleBtn"><i class="fas fa-sun"></i></button></li>
         </ul>
         <button onclick="toggleMobileNav(this)" aria-label="Menu" aria-expanded="false" aria-controls="navLinks" style="display:none;background:none;border:none;color:var(--text);font-size:1.25rem;cursor:pointer;padding:0.5rem;">
             <i class="fas fa-bars"></i>
@@ -3317,6 +3317,7 @@
             if (pane) { pane.style.display='block'; pane.classList.add('show','active'); pane.style.animation='fadeIn 0.3s ease'; }
         };
 
+        if (!window.openILSTool) {
         window.openILSTool = function openILSTool(toolId) {
             var subHub = document.getElementById('ilsSubHub');
             if (subHub) subHub.style.display = 'none';
@@ -3327,6 +3328,7 @@
             if (panel) { panel.style.display='block'; panel.classList.add('active'); panel.style.animation='fadeIn 0.3s ease'; }
             _currentILSTool = toolId;
         };
+        }
 
         window.closeILSTool = function closeILSTool() {
             document.querySelectorAll('.ils-hub-panel').forEach(function(p){ p.classList.remove('active'); p.style.display='none'; });
