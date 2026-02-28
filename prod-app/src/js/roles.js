@@ -22,63 +22,122 @@ var _currentTitle = sessionStorage.getItem('s4_user_title') || '';
 var _customVisibleTabs = JSON.parse(sessionStorage.getItem('s4_visible_tabs') || 'null');
 
 function showRoleSelector() {
+    // Remove any existing modal first
+    var existing = document.getElementById('roleModal');
+    if (existing) existing.remove();
+
     var modal = document.createElement('div');
     modal.id = 'roleModal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
-    var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto">'
-        + '<h3 style="color:#fff;margin:0 0 4px"><i class="fas fa-user-cog" style="color:var(--accent);margin-right:8px"></i>Configure Your Role</h3>'
-        + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Select your role to see relevant tools. You can customize visible tools and your displayed title.</p>'
-        + '<div style="margin-bottom:16px"><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" value="'+(_currentTitle||'')+'" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-top:4px" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>'
-        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">';
-    Object.keys(_s4Roles).forEach(function(key) {
-        var r = _s4Roles[key];
-        var sel = _currentRole === key ? 'border-color:var(--accent);background:rgba(0,170,255,0.08)' : '';
-        html += '<div class="role-card" onclick="selectRolePreset(\'' + key + '\')" style="border:2px solid '+(sel?'var(--accent)':'var(--border)')+';border-radius:3px;padding:14px;cursor:pointer;transition:all 0.2s;'+(sel?'background:rgba(0,170,255,0.08)':'')+'" data-role="'+key+'">'
-            + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i class="fas '+r.icon+'" style="color:var(--accent);font-size:1.1rem"></i><strong style="color:#fff;font-size:0.9rem">'+r.label+'</strong></div>'
-            + '<div style="color:var(--steel);font-size:0.78rem">'+r.desc+'</div>'
-            + '<div style="color:var(--muted);font-size:0.72rem;margin-top:4px">'+r.tabs.length+' tools</div>'
-            + '</div>';
-    });
-    html += '</div>'
-        + '<details style="margin-bottom:20px;background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.12);border-radius:3px;padding:0 16px"><summary style="cursor:pointer;color:var(--accent);font-weight:600;font-size:0.85rem;padding:12px 0;list-style:none;display:flex;align-items:center;gap:8px"><i class="fas fa-sliders-h"></i> Customize Visible Tools <i class="fas fa-chevron-down" style="font-size:0.7rem;margin-left:auto;opacity:0.5"></i></summary>'
-        + '<div id="roleToolChecks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 16px">';
-    _allHubTabs.forEach(function(tab) {
-        var vis = _customVisibleTabs ? _customVisibleTabs.indexOf(tab)>=0 : (_currentRole ? (_s4Roles[_currentRole]?.tabs||[]).indexOf(tab)>=0 : true);
-        html += '<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--steel);cursor:pointer;padding:6px 10px;border-radius:3px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s"><input type="checkbox" data-tab="'+tab+'" '+(vis?'checked':'')+' onchange="onRoleToolToggle()" style="accent-color:#00aaff;width:16px;height:16px;flex-shrink:0"> <span>' + (_allHubLabels[tab]||tab) + '</span></label>';
-    });
-    html += '</div></details>'
-        + '<div style="display:flex;gap:10px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'roleModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
-        + '<button onclick="applyRole()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 24px;cursor:pointer;font-weight:600">Apply Role</button>'
-        + '</div></div>';
-    modal.innerHTML = html;
-    document.body.appendChild(modal);
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
 
-    // ── Direct event binding (belt-and-suspenders alongside delegation handler) ──
-    modal.querySelectorAll('.role-card[data-role]').forEach(function(card) {
-        card.addEventListener('click', function() {
-            selectRolePreset(card.getAttribute('data-role'));
-        });
+    var contentDiv = document.createElement('div');
+    contentDiv.style.cssText = 'background:#0d1117;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto';
+
+    // Header
+    contentDiv.innerHTML = '<h3 style="color:#fff;margin:0 0 4px"><i class="fas fa-user-cog" style="color:#00aaff;margin-right:8px"></i>Configure Your Role</h3>'
+        + '<p style="color:#8b949e;font-size:0.85rem;margin-bottom:20px">Select your role to see relevant tools. You can customize visible tools and your displayed title.</p>'
+        + '<div style="margin-bottom:16px"><label style="color:#8b949e;font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" value="'+(_currentTitle||'')+'" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-top:4px;box-sizing:border-box" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>';
+
+    // Build role cards grid using DOM (not innerHTML) for reliable event binding
+    var grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px';
+
+    var roleKeys = Object.keys(_s4Roles);
+    for (var i = 0; i < roleKeys.length; i++) {
+        (function(key) {
+            var r = _s4Roles[key];
+            var isSelected = (_currentRole === key);
+            var card = document.createElement('div');
+            card.className = 'role-card';
+            card.setAttribute('data-role', key);
+            card.style.cssText = 'border:2px solid '+(isSelected ? '#00aaff' : 'rgba(255,255,255,0.12)')+';border-radius:3px;padding:14px;cursor:pointer;transition:all 0.2s;user-select:none;'+(isSelected ? 'background:rgba(0,170,255,0.15);box-shadow:0 0 12px rgba(0,170,255,0.2)' : '');
+            card.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;pointer-events:none"><i class="fas '+r.icon+'" style="color:#00aaff;font-size:1.1rem"></i><strong style="color:#fff;font-size:0.9rem">'+r.label+'</strong></div>'
+                + '<div style="color:#8b949e;font-size:0.78rem;pointer-events:none">'+r.desc+'</div>'
+                + '<div style="color:#6e7681;font-size:0.72rem;margin-top:4px;pointer-events:none">'+r.tabs.length+' tools</div>';
+
+            // Direct click handler per card — no onclick attribute, no delegation needed
+            card.addEventListener('click', function(evt) {
+                evt.stopPropagation();
+                selectRolePreset(key);
+            });
+
+            grid.appendChild(card);
+        })(roleKeys[i]);
+    }
+    contentDiv.appendChild(grid);
+
+    // Customize tools section
+    var detailsHtml = '<details style="margin-bottom:20px;background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.12);border-radius:3px;padding:0 16px"><summary style="cursor:pointer;color:#00aaff;font-weight:600;font-size:0.85rem;padding:12px 0;list-style:none;display:flex;align-items:center;gap:8px"><i class="fas fa-sliders-h"></i> Customize Visible Tools <i class="fas fa-chevron-down" style="font-size:0.7rem;margin-left:auto;opacity:0.5"></i></summary>'
+        + '<div id="roleToolChecks" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 16px">';
+    for (var t = 0; t < _allHubTabs.length; t++) {
+        var tab = _allHubTabs[t];
+        var vis = _customVisibleTabs ? _customVisibleTabs.indexOf(tab)>=0 : (_currentRole ? (_s4Roles[_currentRole]?.tabs||[]).indexOf(tab)>=0 : true);
+        detailsHtml += '<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#8b949e;cursor:pointer;padding:6px 10px;border-radius:3px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s"><input type="checkbox" data-tab="'+tab+'" '+(vis?'checked':'')+' style="accent-color:#00aaff;width:16px;height:16px;flex-shrink:0"> <span>' + (_allHubLabels[tab]||tab) + '</span></label>';
+    }
+    detailsHtml += '</div></details>';
+
+    var detailsContainer = document.createElement('div');
+    detailsContainer.innerHTML = detailsHtml;
+    contentDiv.appendChild(detailsContainer.firstElementChild);
+
+    // Buttons
+    var btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:10px;justify-content:flex-end';
+
+    var cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText = 'background:rgba(255,255,255,0.06);color:#8b949e;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 20px;cursor:pointer';
+    cancelBtn.addEventListener('click', function(evt) {
+        evt.stopPropagation();
+        modal.remove();
     });
-    modal.querySelectorAll('#roleToolChecks input[type="checkbox"]').forEach(function(cb) {
-        cb.addEventListener('change', function() { onRoleToolToggle(); });
+
+    var applyBtn = document.createElement('button');
+    applyBtn.textContent = 'Apply Role';
+    applyBtn.style.cssText = 'background:#00aaff;color:#fff;border:none;border-radius:3px;padding:8px 24px;cursor:pointer;font-weight:600';
+    applyBtn.addEventListener('click', function(evt) {
+        evt.stopPropagation();
+        applyRole();
     });
-    var cancelBtn = modal.querySelector('button[style*="rgba(255,255,255,0.06)"]');
-    if (cancelBtn) cancelBtn.addEventListener('click', function() { modal.remove(); });
-    var applyBtn = modal.querySelector('button[style*="var(--accent)"]');
-    if (applyBtn) applyBtn.addEventListener('click', function() { applyRole(); });
+
+    btnRow.appendChild(cancelBtn);
+    btnRow.appendChild(applyBtn);
+    contentDiv.appendChild(btnRow);
+
+    modal.appendChild(contentDiv);
+
+    // Change listener for tool checkboxes (delegated on modal)
+    modal.addEventListener('change', function(evt) {
+        if (evt.target && evt.target.matches && evt.target.matches('#roleToolChecks input[type="checkbox"]')) {
+            onRoleToolToggle();
+        }
+    });
+
+    document.body.appendChild(modal);
 }
 
 function selectRolePreset(roleKey) {
     _currentRole = roleKey;
-    document.querySelectorAll('.role-card').forEach(function(c){ c.style.borderColor='var(--border)'; c.style.background=''; });
-    var card = document.querySelector('.role-card[data-role="'+roleKey+'"]');
-    if (card) { card.style.borderColor='var(--accent)'; card.style.background='rgba(0,170,255,0.08)'; }
+    // Reset all cards
+    var allCards = document.querySelectorAll('#roleModal .role-card');
+    for (var i = 0; i < allCards.length; i++) {
+        allCards[i].style.borderColor = 'rgba(255,255,255,0.12)';
+        allCards[i].style.background = '';
+        allCards[i].style.boxShadow = '';
+    }
+    // Highlight selected card
+    var card = document.querySelector('#roleModal .role-card[data-role="'+roleKey+'"]');
+    if (card) {
+        card.style.borderColor = '#00aaff';
+        card.style.background = 'rgba(0,170,255,0.15)';
+        card.style.boxShadow = '0 0 12px rgba(0,170,255,0.2)';
+    }
     // Update tool checkboxes to match preset
     var tabs = _s4Roles[roleKey].tabs;
-    document.querySelectorAll('#roleToolChecks input[type="checkbox"]').forEach(function(cb) {
-        cb.checked = tabs.indexOf(cb.dataset.tab) >= 0;
-    });
+    var checks = document.querySelectorAll('#roleToolChecks input[type="checkbox"]');
+    for (var j = 0; j < checks.length; j++) {
+        checks[j].checked = tabs.indexOf(checks[j].dataset.tab) >= 0;
+    }
     // Auto-fill title if empty
     var titleEl = document.getElementById('roleTitle');
     if (titleEl && !titleEl.value) titleEl.value = _s4Roles[roleKey].label;
