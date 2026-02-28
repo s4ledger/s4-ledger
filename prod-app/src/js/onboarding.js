@@ -89,10 +89,14 @@ function animateWalletFunding() {
 
 function selectOnboardTier(el, tier) {
     _onboardTier = tier;
-    var _tierAlloc = (_onboardTiers[tier] || _onboardTiers['starter']).credits;
+    var info = _onboardTiers[tier] || _onboardTiers['starter'];
+    // Publish tier data to window so engine chunk can read it
+    window._s4TierAllocation = info.credits;
+    window._s4TierLabel = info.label;
+    localStorage.setItem('s4_tier_allocation', String(info.credits));
+    localStorage.setItem('s4_tier_label', info.label);
     document.querySelectorAll('.onboard-tier').forEach(function(t) { t.classList.remove('selected'); });
     el.classList.add('selected');
-    var info = _onboardTiers[tier];
     var balEl = document.getElementById('onboardSlsBal');
     var anchorsEl = document.getElementById('onboardSlsAnchors');
     if (balEl) balEl.textContent = info.credits.toLocaleString();
@@ -104,10 +108,33 @@ function selectOnboardTier(el, tier) {
     if (toolBal) toolBal.textContent = info.credits.toLocaleString();
     var sidebarBal = document.getElementById('sidebarSlsBal');
     if (sidebarBal) sidebarBal.textContent = info.credits.toLocaleString() + ' Credits';
+    var walletBal = document.getElementById('walletSLSBalance');
+    if (walletBal) walletBal.textContent = info.credits.toLocaleString();
+    var planEl = document.getElementById('slsBarPlan');
+    if (planEl) planEl.textContent = info.label.replace(/\s*\(.*\)/, '');
+    // Update wallet trigger balance
+    var triggerBal = document.getElementById('walletTriggerBal');
+    if (triggerBal) triggerBal.textContent = info.credits.toLocaleString() + ' Credits';
 }
 
 // Onboarding is triggered by enterPlatformAfterAuth() in engine.js
 // No DOMContentLoaded auto-show needed — the auth flow handles it
+
+// Publish initial tier data to window so engine chunk can read it on load
+(function() {
+    var initTier = _onboardTiers[_onboardTier] || _onboardTiers['starter'];
+    window._s4TierAllocation = initTier.credits;
+    window._s4TierLabel = initTier.label;
+    // Also store in localStorage for cross-session persistence
+    if (!localStorage.getItem('s4_tier_allocation')) {
+        localStorage.setItem('s4_tier_allocation', String(initTier.credits));
+        localStorage.setItem('s4_tier_label', initTier.label);
+    } else {
+        // Restore from localStorage if already set
+        window._s4TierAllocation = parseInt(localStorage.getItem('s4_tier_allocation')) || initTier.credits;
+        window._s4TierLabel = localStorage.getItem('s4_tier_label') || initTier.label;
+    }
+})();
 
 // === Window exports for inline event handlers ===
 window.showOnboarding = showOnboarding;

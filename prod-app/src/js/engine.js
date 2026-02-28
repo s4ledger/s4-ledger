@@ -197,10 +197,11 @@ function toggleFlowBox() {
 }
 
 function _syncSlsBar() {
-    var _tFallback = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined') ? (_onboardTiers[_onboardTier]?.sls || 25000) : 25000; var allocation = _tFallback;
+    var allocation = window._s4TierAllocation || parseInt(localStorage.getItem('s4_tier_allocation')) || 25000;
     var spent = stats.slsFees || 0;
     var remaining = Math.round((allocation - spent) * 100) / 100;
-    var plan = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined') ? (_onboardTiers[_onboardTier]?.label || 'Starter') : 'Starter';
+    var plan = window._s4TierLabel || localStorage.getItem('s4_tier_label') || 'Starter';
+    plan = plan.replace(/\s*\(.*\)/, '');
     
     var balEl = document.getElementById('slsBarBalance');
     var anchorsEl = document.getElementById('slsBarAnchors');
@@ -1020,7 +1021,7 @@ async function anchorRecord() {
     // Auto-update SLS balance display
     _updateSlsBalance();
     // Flash visible toast showing new balance
-    var _tF = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined') ? (_onboardTiers[_onboardTier]?.sls || 25000) : 25000; var _flAlloc = _tF;
+    var _flAlloc = window._s4TierAllocation || parseInt(localStorage.getItem('s4_tier_allocation')) || 25000;
     var _flRemaining = Math.round((_flAlloc - stats.slsFees) * 100) / 100;
     _flashSlsBalance(_flRemaining.toLocaleString(undefined,{maximumFractionDigits:2}), 0.01);
 
