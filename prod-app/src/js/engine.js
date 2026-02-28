@@ -447,7 +447,6 @@ function enterPlatformAfterAuth() {
 
 // ═══ Logout / Reset Session ═══
 function logout() {
-    if (!confirm('End your session? This will sign you out and return to the landing page.')) return;
     // Sign out of Supabase (invalidates JWT)
     if (window._sbClient) {
         window._sbClient.auth.signOut().catch(function(e) { console.warn('[S4 Auth] Sign out error:', e); });

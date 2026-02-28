@@ -66,8 +66,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-CRdj2Ddl.js"></script>
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-CcJ_v0t5.js">
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-C6W3SN1t.js"></script>
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-PXq-qvQq.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-g1GvesQV.js">
   <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-BDV2-iZN.css">
 </head>
@@ -175,7 +175,8 @@
     </div>
 </div>
 
-<main id="mainContent" role="main" style="margin-top:92px;">\n<section class="hero" style="padding:2rem 0 2rem;text-align:center;">
+<main id="mainContent" role="main" style="margin-top:92px;">
+<section class="hero" style="padding:2rem 0 2rem;text-align:center;">
     <div class="container">
         <h1 style="font-size:2.4rem;font-weight:800;margin-bottom:0.75rem;color:#fff;letter-spacing:-0.035em;line-height:1.1;">S4 Ledger <span style="color:var(--accent);">Platform</span></h1>
         <p style="color:var(--steel);font-size:1.05rem;">Anchor, verify, and track Navy logistics records on the XRP Ledger with blockchain-grade integrity.</p>
@@ -3338,6 +3339,46 @@
             if (sidebar) sidebar.classList.remove('open');
             if (overlay) overlay.classList.remove('open');
         };
+
+        // Standalone startAuthFlow — enters the platform immediately
+        if (!window.startAuthFlow) {
+            window.startAuthFlow = function startAuthFlow() {
+                var landing = document.getElementById('platformLanding');
+                var hero = document.querySelector('.hero');
+                var ws = document.getElementById('platformWorkspace');
+                if (landing) landing.style.display = 'none';
+                if (hero) hero.style.display = 'none';
+                if (ws) ws.style.display = 'block';
+                sessionStorage.setItem('s4_entered', '1');
+                sessionStorage.setItem('s4_onboard_done', '1');
+            };
+        }
+
+        // Standalone logout — clears session and returns to landing page
+        if (!window.logout) {
+            window.logout = function logout() {
+                if (typeof closeWalletSidebar === 'function') closeWalletSidebar();
+                localStorage.removeItem('s4_stats');
+                localStorage.removeItem('s4_anchored_records');
+                localStorage.removeItem('s4_wallet');
+                localStorage.removeItem('s4_selected_tier');
+                Object.keys(localStorage).filter(function(k){ return k.startsWith('s4Vault'); }).forEach(function(k){ localStorage.removeItem(k); });
+                sessionStorage.removeItem('s4_user_role');
+                sessionStorage.removeItem('s4_user_title');
+                sessionStorage.removeItem('s4_visible_tabs');
+                sessionStorage.removeItem('s4_entered');
+                sessionStorage.removeItem('s4_authenticated');
+                sessionStorage.removeItem('s4_onboard_done');
+                var workspace = document.getElementById('platformWorkspace');
+                var landing = document.getElementById('platformLanding');
+                var hero = document.querySelector('.hero');
+                if (workspace) workspace.style.display = 'none';
+                if (landing) landing.style.display = '';
+                if (hero) hero.style.display = '';
+                document.querySelectorAll('.ils-hub-panel').forEach(function(p) { p.classList.remove('active'); });
+                window.scrollTo(0, 0);
+            };
+        }
 
         // ══════ 3. DIRECT HUB CARD CLICK HANDLERS ══════
         document.querySelectorAll('.hub-card[data-section]').forEach(function(card) {
