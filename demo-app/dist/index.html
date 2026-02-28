@@ -353,7 +353,7 @@
         <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
             <button onclick="resetDemoSession()" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:#c9a84c;border-radius:3px;padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.15)'" onmouseout="this.style.background='rgba(201,168,76,0.08)'"><i class="fas fa-right-from-bracket"></i><span class="d-none d-md-inline">Logout</span></button>
                         <button class="wallet-trigger" onclick="openWalletSidebar()" id="walletTriggerBtn">
-                <i class="fas fa-wallet"></i> My Wallet <span class="wt-bal" id="walletTriggerBal">--</span>
+                <i class="fas fa-wallet"></i> Usage <span class="wt-bal" id="walletTriggerBal">--</span>
             </button>
         </div>
 
@@ -417,7 +417,7 @@
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabILS" role="tab"><i class="fas fa-brain"></i> Anchor-S4</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabMetrics" role="tab"><i class="fas fa-chart-line"></i> Metrics</a></li>
             <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabOffline" role="tab"><i class="fas fa-wifi" id="offlineTabIcon"></i> Offline Queue</a></li>
-            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabWallet" role="tab"><i class="fas fa-wallet"></i> My Wallet</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tabWallet" role="tab"><i class="fas fa-wallet"></i> Usage</a></li>
         </ul>
 
         
@@ -2599,7 +2599,7 @@
             </div><!-- /tabILS -->
 
             <!-- ═══════════════════════════════════════════════════════════ -->
-            <!--  MY WALLET TAB                                             -->
+            <!--  USAGE TAB                                                 -->
             <!-- ═══════════════════════════════════════════════════════════ -->
             <div class="tab-pane fade" id="tabWallet" role="tabpanel">
                 <!-- SLS Balance & Usage Bar (moved here from floating position) -->
@@ -2616,7 +2616,7 @@
                     </div>
                 </div>
                 <div style="max-width:900px;margin:0 auto;padding:1rem 0">
-                    <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:4px"><i class="fas fa-wallet" style="color:#00aaff;margin-right:8px"></i>My Wallet & SLS</h3>
+                    <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:4px"><i class="fas fa-wallet" style="color:#00aaff;margin-right:8px"></i>Usage & Credits</h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:4px"><strong style="color:#00aaff">SLS</strong> = <strong>Secure Logistics Standard</strong> — the utility token that powers every action on S4 Ledger.</p>
                     <p style="color:var(--muted);font-size:0.82rem;margin-bottom:20px">Manage your XRPL wallet, purchase SLS through your subscription, and track anchor usage. Each anchor costs 0.01 SLS (~$0.0001).</p>
 
@@ -2985,7 +2985,7 @@
 <div class="wallet-overlay" id="walletOverlay" onclick="closeWalletSidebar()"></div>
 <div class="wallet-sidebar" id="walletSidebar">
     <div class="wallet-sidebar-header">
-        <h3><i class="fas fa-wallet" style="color:var(--accent);"></i> My Wallet</h3>
+        <h3><i class="fas fa-wallet" style="color:var(--accent);"></i> Usage</h3>
         <button class="wallet-sidebar-close" onclick="closeWalletSidebar()"><i class="fas fa-times"></i> Close</button>
     </div>
     <div class="wallet-sidebar-body" id="walletSidebarBody">

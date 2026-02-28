@@ -18,7 +18,7 @@ var revealObserver = new IntersectionObserver(function(entries) {
 document.querySelectorAll('.reveal-anim').forEach(function(el) { revealObserver.observe(el); });
 
 // ═══════════════════════════════════════════════════════════════════
-//  MY WALLET — Balance, Credentials, Buy SLS
+//  USAGE — Balance, Credentials, Buy Credits
 // ═══════════════════════════════════════════════════════════════════
 
 function loadWalletData() {
