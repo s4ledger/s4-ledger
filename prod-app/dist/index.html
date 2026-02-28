@@ -66,8 +66,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-DrZrsbPQ.js"></script>
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-PXq-qvQq.js">
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-DsGcE81r.js"></script>
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-C9gp5Riy.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-g1GvesQV.js">
   <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-BDV2-iZN.css">
 </head>
@@ -3232,13 +3232,10 @@
     <!-- This runs SYNCHRONOUSLY before modules load, so all functions are available immediately -->
     <script>
     (function(){
-        // ══════ 1. AUTO-ENTER WORKSPACE ══════
-        var ws=document.getElementById('platformWorkspace');
-        if(ws&&ws.style.display==='none'){
-            var l=document.getElementById('platformLanding'),h=document.querySelector('.hero');
-            if(l)l.style.display='none';if(h)h.style.display='none';ws.style.display='block';
-            sessionStorage.setItem('s4_entered','1');sessionStorage.setItem('s4_onboard_done','1');
-        }
+        // ══════ 1. LANDING PAGE ALWAYS SHOWS FIRST ══════
+        // Do NOT auto-enter workspace. Landing page is always visible by default.
+        // User must click "Enter Platform" to proceed.
+        sessionStorage.removeItem('s4_entered');
 
         // ══════ 2. STANDALONE NAVIGATION FUNCTIONS ══════
         // These work immediately — modules will overwrite them later if they load

@@ -1,5 +1,5 @@
 // S4 Ledger Service Worker v6.0.0 — Production / Full Offline / Air-Gapped Support
-const CACHE_VERSION = 's4-prod-v600';
+const CACHE_VERSION = 's4-prod-v700';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const DYNAMIC_CACHE = CACHE_VERSION + '-dynamic';
 const API_CACHE = CACHE_VERSION + '-api';

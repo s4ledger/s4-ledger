@@ -3229,13 +3229,10 @@
     <!-- This runs SYNCHRONOUSLY before modules load, so all functions are available immediately -->
     <script>
     (function(){
-        // ══════ 1. AUTO-ENTER WORKSPACE ══════
-        var ws=document.getElementById('platformWorkspace');
-        if(ws&&ws.style.display==='none'){
-            var l=document.getElementById('platformLanding'),h=document.querySelector('.hero');
-            if(l)l.style.display='none';if(h)h.style.display='none';ws.style.display='block';
-            sessionStorage.setItem('s4_entered','1');sessionStorage.setItem('s4_onboard_done','1');
-        }
+        // ══════ 1. LANDING PAGE ALWAYS SHOWS FIRST ══════
+        // Do NOT auto-enter workspace. Landing page is always visible by default.
+        // User must click "Enter Platform" to proceed.
+        sessionStorage.removeItem('s4_entered');
 
         // ══════ 2. STANDALONE NAVIGATION FUNCTIONS ══════
         // These work immediately — modules will overwrite them later if they load
