@@ -594,6 +594,45 @@ window.showHub = showHub;
 window.showSection = showSection;
 window.showSystemsSub = showSystemsSub;
 
+// === HIW "?" popup for Anchor and Verify tabs ===
+(function _initAnchorVerifyHIW() {
+    function setupHIW(tabId) {
+        var panel = document.getElementById(tabId);
+        if (!panel) return;
+        var det = panel.querySelector('details');
+        if (!det) return;
+        det.style.display = 'none';
+        var key = 's4_hiw_' + tabId;
+        function showModal() {
+            var ex = document.querySelector('.hiw-modal-overlay');
+            if (ex) ex.remove();
+            var title = det.querySelector('summary') ? det.querySelector('summary').textContent.replace(/[▸▾]/g,'').trim() : 'How It Works';
+            var body = '';
+            det.querySelectorAll('p,ol,ul,li').forEach(function(el){ body += el.outerHTML; });
+            if (!body) body = det.innerHTML.replace(/<summary[^>]*>.*?<\/summary>/i,'');
+            var overlay = document.createElement('div');
+            overlay.className = 'hiw-modal-overlay';
+            overlay.innerHTML = '<div class="hiw-modal-box"><button class="hiw-close" title="Close">&times;</button><h4><i class="fas fa-info-circle" style="margin-right:6px"></i>' + title + '</h4><div class="hiw-body">' + body + '</div></div>';
+            overlay.querySelector('.hiw-close').onclick = function(){ overlay.remove(); };
+            overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
+            document.body.appendChild(overlay);
+        }
+        var h3 = panel.querySelector('h3');
+        if (h3 && !h3.querySelector('.hiw-help-btn')) {
+            var btn = document.createElement('button');
+            btn.className = 'hiw-help-btn';
+            btn.title = 'How It Works';
+            btn.textContent = '?';
+            btn.style.cssText = 'margin-left:8px;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:50%;width:22px;height:22px;font-size:0.72rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;';
+            btn.onclick = function(e){ e.stopPropagation(); showModal(); };
+            h3.appendChild(btn);
+        }
+    }
+    function init() { setupHIW('tabAnchor'); setupHIW('tabVerify'); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+
 // === Programmatic click handlers for hub cards ===
 // Fallback for environments where inline onclick is blocked (e.g. VS Code Simple Browser CSP)
 (function _bindHubCardClicks() {

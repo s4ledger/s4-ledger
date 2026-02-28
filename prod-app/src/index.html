@@ -257,7 +257,7 @@
         <div class="stat-strip" id="statsRow">
             <div class="ss-item"><span class="ss-val" id="statVerified">0</span> <span class="ss-label">Verified</span></div>
             <div class="ss-item"><span class="ss-val" id="statTypes">0</span> <span class="ss-label">Types</span></div>
-            <div class="ss-item"><span class="ss-val" id="statSlsFees">0.000</span> <span class="ss-label">Credit Fees</span></div>
+            <div class="ss-item"><span class="ss-val" id="statSlsFees">0.000</span> <span class="ss-label">SLS Fees</span></div>
         </div>
     <!-- ═══ ONBOARDING WIZARD ═══ -->
     <div class="onboard-overlay" id="onboardOverlay" style="display:none">
@@ -330,7 +330,7 @@
                     <div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px;text-align:center">
                         <div style="color:var(--steel);font-size:0.78rem;margin-bottom:4px">Your Credit Balance</div>
                         <div style="font-size:1.6rem;font-weight:800;color:var(--gold)" id="onboardSlsBal">25,000</div>
-                        <div style="color:var(--steel);font-size:0.72rem">= <span id="onboardSlsAnchors">2,500,000</span> anchors at 0.01 Credits each</div>
+                        <div style="color:var(--steel);font-size:0.72rem">= <span id="onboardSlsAnchors">2,500,000</span> anchors at 0.01 SLS each</div>
                     </div>
                     <div style="text-align:center;margin-top:16px"><button class="onboard-btn" onclick="onboardNext()">Continue <i class="fas fa-arrow-right" style="margin-left:6px"></i></button></div>
                 </div>
@@ -903,7 +903,7 @@
                     </div>
 
                 </div>
-                <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>Credits: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> Credits</span><span style="color:#00aaff;margin-left:8px"><i class="fas fa-robot" style="margin-right:4px"></i>AI Agent Active</span></div></div></div>
+                <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>SLS: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> SLS</span><span style="color:#00aaff;margin-left:8px"><i class="fas fa-robot" style="margin-right:4px"></i>AI Agent Active</span></div></div></div>
 
                 <!-- ══ HUB: GAP ANALYSIS (original ILS content) ══ -->
                 <div class="ils-hub-panel" id="hub-analysis">
@@ -2852,9 +2852,9 @@
                 <!-- Credits Balance & Usage Bar (moved here from floating position) -->
                 <div id="slsBalanceBar">
                     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-                        <div class="sls-stat"><i class="fas fa-coins" style="color:#c9a84c"></i> <span class="sls-stat-label">Credits Balance:</span> <span class="sls-stat-val" id="slsBarBalance">25,000 Credits</span></div>
+                        <div class="sls-stat"><i class="fas fa-coins" style="color:#c9a84c"></i> <span class="sls-stat-label">SLS Balance:</span> <span class="sls-stat-val" id="slsBarBalance">25,000 SLS</span></div>
                         <div class="sls-stat"><i class="fas fa-anchor" style="color:var(--accent)"></i> <span class="sls-stat-label">Anchors:</span> <span class="sls-stat-val" id="slsBarAnchors" style="color:#00aaff">0</span></div>
-                        <div class="sls-stat"><i class="fas fa-bolt" style="color:var(--accent)"></i> <span class="sls-stat-label">Credits Spent:</span> <span class="sls-stat-val" id="slsBarSpent">0.00 Credits</span></div>
+                        <div class="sls-stat"><i class="fas fa-bolt" style="color:var(--accent)"></i> <span class="sls-stat-label">SLS Spent:</span> <span class="sls-stat-val" id="slsBarSpent">0.00 SLS</span></div>
                         <div class="sls-stat"><i class="fas fa-layer-group" style="color:var(--accent)"></i> <span class="sls-stat-label">Plan:</span> <span class="sls-stat-val" id="slsBarPlan" style="color:#fff">Starter</span></div>
                     </div>
                     <div style="display:flex;gap:8px;align-items:center">
@@ -2864,20 +2864,20 @@
                 </div>
                 <div style="max-width:900px;margin:0 auto;padding:1rem 0">
                     <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:4px"><i class="fas fa-wallet" style="color:#00aaff;margin-right:8px"></i>Ledger Account & Usage</h3>
-                    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:4px"><strong style="color:#00aaff">Credits</strong> = <strong>S4 Credits</strong> — the utility token that powers every action on S4 Ledger.</p>
-                    <p style="color:var(--muted);font-size:0.82rem;margin-bottom:20px">Manage your XRPL wallet, purchase Credits through your subscription, and track anchor usage. Each anchor costs 0.01 Credits (~$0.0001).</p>
+                    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:4px"><strong style="color:#00aaff">SLS</strong> = <strong>Secure Logistics Standard</strong> — the utility token that powers every action on S4 Ledger.</p>
+                    <p style="color:var(--muted);font-size:0.82rem;margin-bottom:20px">Manage your XRPL wallet, purchase SLS through your subscription, and track anchor usage. Each anchor costs 0.01 SLS (~$0.0001).</p>
 
                     <!-- Wallet Overview Cards -->
                     <div id="walletOverview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px">
                         <div style="background:linear-gradient(135deg,rgba(26,58,92,0.15),rgba(201,168,76,0.05));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:20px;text-align:center">
-                            <div style="font-size:0.75rem;color:#00aaff;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Credits Balance</div>
+                            <div style="font-size:0.75rem;color:#00aaff;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">SLS Balance</div>
                             <div id="walletSLSBalance" style="font-size:2rem;font-weight:800;color:#00aaff">--</div>
                             <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">$<span id="walletSLSUSD">0.00</span> USD</div>
                         </div>
                         <div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:20px;text-align:center">
                             <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Anchors Available</div>
                             <div id="walletAnchors" style="font-size:2rem;font-weight:800;color:#1a3a5c">--</div>
-                            <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">@ 0.01 Credits each</div>
+                            <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">@ 0.01 SLS each</div>
                         </div>
                         <div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:20px;text-align:center">
                             <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">XRP Reserve</div>
@@ -2933,14 +2933,14 @@
 
                         <!-- RIGHT: Buy Credits -->
                         <div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:20px">
-                            <h4 style="font-size:1rem;font-weight:700;margin-bottom:14px"><i class="fas fa-shopping-cart" style="color:#00aaff;margin-right:6px"></i>Purchase Credits</h4>
+                            <h4 style="font-size:1rem;font-weight:700;margin-bottom:14px"><i class="fas fa-shopping-cart" style="color:#00aaff;margin-right:6px"></i>Purchase SLS</h4>
 
                             <div style="padding:14px;background:rgba(26,58,92,0.12);border:1px solid rgba(201,168,76,0.2);border-radius:3px;margin-bottom:16px">
                                 <div style="display:flex;justify-content:space-between;align-items:center">
                                     <span style="font-size:0.82rem;color:var(--steel)">Current Price</span>
-                                    <span style="font-size:1.1rem;font-weight:800;color:#00aaff">$0.01 / Credit</span>
+                                    <span style="font-size:1.1rem;font-weight:800;color:#00aaff">$0.01 / SLS</span>
                                 </div>
-                                <div style="font-size:0.72rem;color:var(--muted);margin-top:4px">Each anchor costs 0.01 Credits = $0.0001 per record</div>
+                                <div style="font-size:0.72rem;color:var(--muted);margin-top:4px">Each anchor costs 0.01 SLS = $0.0001 per record</div>
                             </div>
 
                             <div style="margin-bottom:14px">
@@ -2957,7 +2957,7 @@
                             <div style="padding:14px;background:var(--surface);border-radius:3px;border:1px solid var(--border);margin-bottom:14px">
                                 <div style="display:flex;justify-content:space-between;margin-bottom:6px">
                                     <span style="font-size:0.82rem;color:var(--muted)">Credits</span>
-                                    <span id="slsPreviewTokens" style="font-size:0.92rem;font-weight:700;color:#00aaff">10,000 Credits</span>
+                                    <span id="slsPreviewTokens" style="font-size:0.92rem;font-weight:700;color:#00aaff">10,000 SLS</span>
                                 </div>
                                 <div style="display:flex;justify-content:space-between">
                                     <span style="font-size:0.82rem;color:var(--muted)">Anchors Available</span>

@@ -1318,3 +1318,37 @@
 .hiw-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--steel,#8a94a6);font-size:1.3rem;cursor:pointer;padding:4px 8px;line-height:1}
 .hiw-close:hover{color:#fff}
 
+/* ═══ Role Selector Modal — Light Mode ═══ */
+body.light-mode #roleModal{background:rgba(240,240,245,0.92)!important}
+body.light-mode #roleModal > div{background:#fff!important;border-color:rgba(0,0,0,0.12)!important;box-shadow:0 12px 40px rgba(0,0,0,0.15)!important}
+body.light-mode #roleModal h3{color:#1d1d1f!important}
+body.light-mode #roleModal p{color:#555!important}
+body.light-mode #roleModal label{color:#555!important}
+body.light-mode #roleModal input{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.15)!important}
+body.light-mode #roleModal .role-card{border-color:rgba(0,0,0,0.12)!important;background:rgba(0,0,0,0.02)!important}
+body.light-mode #roleModal .role-card:hover{border-color:rgba(0,170,255,0.3)!important;background:rgba(0,170,255,0.04)!important}
+body.light-mode #roleModal .role-card[style*="border-color: rgb(0, 170, 255)"]{background:rgba(0,170,255,0.08)!important}
+body.light-mode #roleModal .role-card strong{color:#1d1d1f!important}
+body.light-mode #roleModal .role-card div{color:#555!important}
+body.light-mode #roleModal .role-card div:last-child{color:#86868b!important}
+body.light-mode #roleModal details{background:rgba(0,170,255,0.04)!important;border-color:rgba(0,170,255,0.15)!important}
+body.light-mode #roleModal details label{color:#3a3a3c!important}
+body.light-mode #roleModal details label span{color:#3a3a3c!important}
+body.light-mode #roleModal details input[type="checkbox"]{accent-color:#0077cc!important}
+body.light-mode #roleModal button[style*="color:#8b949e"]{color:#555!important;background:rgba(0,0,0,0.04)!important;border-color:rgba(0,0,0,0.12)!important}
+
+/* ═══ Hide <details> "How It Works" dropdowns — replaced by ? popup ═══ */
+.ils-hub-panel details,#tabAnchor details,#tabVerify details{display:none!important}
+
+/* ═══ Light-mode: HIW modal ═══ */
+body.light-mode .hiw-modal-overlay{background:rgba(240,240,245,0.88)!important}
+body.light-mode .hiw-modal-box{background:#fff!important;border-color:rgba(0,0,0,0.12)!important;box-shadow:0 12px 40px rgba(0,0,0,0.12)!important}
+body.light-mode .hiw-modal-box .hiw-body{color:#555!important}
+body.light-mode .hiw-modal-box .hiw-body strong{color:#1d1d1f!important}
+body.light-mode .hiw-close{color:#86868b!important}
+body.light-mode .hiw-close:hover{color:#1d1d1f!important}
+
+/* ═══ Light-mode: Charts (duplicate [data-theme] rules with body.light-mode) ═══ */
+body.light-mode canvas{background:rgba(255,255,255,0.95)!important;border-radius:3px}
+body.light-mode .chart-container{background:#fff!important;border-color:rgba(0,0,0,0.08)!important}
+body.light-mode .chart-title{color:#555!important}
