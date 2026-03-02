@@ -546,6 +546,7 @@ function initRoleSystem() {
 })();
 
 // === Window exports for inline event handlers ===
+window.showRoleSelector = showRoleSelector;
 window.applyRole = applyRole;
 window.onRoleToolToggle = onRoleToolToggle;
 window.selectRolePreset = selectRolePreset;

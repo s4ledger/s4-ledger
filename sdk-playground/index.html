@@ -254,7 +254,7 @@
                         </div>
                         <div class="ref-items">
                             <div class="ref-item"><span class="ri-name">check_dmsms()</span><span class="ri-desc">Obsolescence risk analysis</span></div>
-                            <div class="ref-item"><span class="ri-name">calculate_readiness()</span><span class="ri-desc">Ao/Ai per MIL-STD-1388-2B</span></div>
+                            <div class="ref-item"><span class="ri-name">calculate_readiness()</span><span class="ri-desc">Ao/Ai per MIL-STD-1390D</span></div>
                             <div class="ref-item"><span class="ri-name">calculate_compliance()</span><span class="ri-desc">MIL-STD / FAR scoring</span></div>
                             <div class="ref-item"><span class="ri-name">get_action_items()</span><span class="ri-desc">Task queue with severity</span></div>
                         </div>
@@ -908,7 +908,7 @@
         list_records: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# List all anchored records\nrecords = ledger.list_records()\n\nfor rec in records:\n    print(f"{rec[\'type\']} — {rec[\'hash\'][:16]}...")',
         record_types: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Browse all defense record types\ntypes = ledger.get_record_types()\n\nfor branch, data in types.items():\n    print(f"\\n{branch}: {len(data)} types")\n    for t in data:\n        print(f"  {t[\'icon\']} {t[\'label\']}")',
         dmsms: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Check DMSMS obsolescence risk for a weapon system\nresult = ledger.check_dmsms(\n    program="F-15E Strike Eagle",\n    system="AN/APG-82(V)1 AESA Radar"\n)\n\nprint(f"Parts analyzed: {result[\'total_parts\']}")\nprint(f"At-risk: {result[\'at_risk\']}")\nprint(f"Risk cost: ${result[\'risk_cost\']}K")',
-        readiness: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate operational availability per MIL-STD-1388-2B\nresult = ledger.calculate_readiness(\n    program="DDG-51 Flight III",\n    system="AN/SPY-6(V)1 AMDR",\n    mtbf=850,    # Mean Time Between Failures (hrs)\n    mttr=4.2,    # Mean Time To Repair (hrs)\n    mldt=6.5     # Mean Logistics Delay Time (hrs)\n)\n\nprint(f"Ao (Operational): {result[\'ao\']}%")\nprint(f"Ai (Inherent):    {result[\'ai\']}%")',
+        readiness: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate operational availability per MIL-STD-1390D\nresult = ledger.calculate_readiness(\n    program="DDG-51 Flight III",\n    system="AN/SPY-6(V)1 AMDR",\n    mtbf=850,    # Mean Time Between Failures (hrs)\n    mttr=4.2,    # Mean Time To Repair (hrs)\n    mldt=6.5     # Mean Logistics Delay Time (hrs)\n)\n\nprint(f"Ao (Operational): {result[\'ao\']}%")\nprint(f"Ai (Inherent):    {result[\'ai\']}%")',
         roi: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate ROI from S4 Ledger adoption\nresult = ledger.calculate_roi(\n    programs=12,\n    records_per_month=5000,\n    fte_rate=95\n)\n\nprint(f"Monthly savings: ${result[\'monthly_savings\']}K")\nprint(f"Annual savings:  ${result[\'annual_savings\']}K")\nprint(f"ROI:             {result[\'roi_percent\']}%")',
         lifecycle: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Estimate lifecycle cost per DoD 5000.73\nresult = ledger.estimate_lifecycle_cost(\n    program="DDG-51 Flight III",\n    fleet_size=20,\n    service_life_years=35\n)\n\nprint(f"Total ownership: {result[\'total_cost\']}")\nprint(f"Sustainment:     {result[\'sustainment_cost\']}")\nprint(f"S4 savings:      {result[\'s4_savings\']}")',
         action_items: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Get action items across all ILS tools\nitems = ledger.get_action_items(\n    program="DDG-51 Flight III",\n    severity="critical"\n)\n\nfor item in items:\n    print(f"[{item[\'severity\'].upper()}] {item[\'title\']}")\n    print(f"  Source: {item[\'source\']} | Cost: ${item[\'cost\']}K")\n    print(f"  Schedule: {item[\'schedule\']}")',
@@ -916,7 +916,7 @@
         audit_reports: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Generate a compliance audit report\nreport = ledger.generate_audit_report(\n    report_type="Full Audit",\n    program="F-35A Lightning II",\n    time_period="last_90_days"\n)\n\nprint(f"Report: {report[\'title\']}")\nprint(f"Sections: {report[\'section_count\']}")\nprint(f"Compliance Score: {report[\'compliance_score\']}%")\nprint(f"Hash: {report[\'report_hash\'][:32]}...")\nprint(f"Anchored: {report[\'anchored\']}")',
         predictive_maintenance: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Predict maintenance failures for a fleet\nresult = ledger.predict_maintenance(\n    platform="F-35A Lightning II",\n    fleet_size=450\n)\n\nprint(f"Platform: {result[\'platform\']}")\nprint(f"Fleet Size: {result[\'fleet_size\']}")\nfor pred in result[\'predictions\']:\n    print(f"  {pred[\'system\']} — {pred[\'failure_mode\']}")\n    print(f"    Confidence: {pred[\'confidence\']}% | Window: {pred[\'prediction_window\']}")\n    print(f"    Cost if Unplanned: ${pred[\'cost_unplanned\']}K")',
         ilie: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Analyze a vendor submission for discrepancies\nresult = ledger.analyze_submission(\n    program="DDG-51 Arleigh Burke",\n    branch="USN",\n    doc_type="VRS",\n    current_file="current_vrs_submission.csv",\n    baseline_file="previous_vrs_accepted.csv"\n)\n\nprint(f"Total discrepancies: {result[\'total_discrepancies\']}")\nprint(f"Critical: {result[\'criticals\']}")\nprint(f"Warnings: {result[\'warnings\']}")\nprint(f"Cost delta: ${result[\'cost_delta\']}K")\nprint(f"Hash: {result[\'hash\'][:32]}...")',
-        compliance: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate compliance scorecard\nresult = ledger.calculate_compliance(\n    program="CVN-78 Gerald R. Ford",\n    standards=["MIL-STD-1388-2B", "MIL-STD-1390D"]\n)\n\nprint(f"Overall Score: {result[\'overall_score\']}%")\nprint(f"Standards Met: {result[\'met\']}/{result[\'total\']}")',
+        compliance: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Calculate compliance scorecard\nresult = ledger.calculate_compliance(\n    program="CVN-78 Gerald R. Ford",\n    standards=["GEIA-STD-0007", "MIL-STD-1390D"]\n)\n\nprint(f"Overall Score: {result[\'overall_score\']}%")\nprint(f"Standards Met: {result[\'met\']}/{result[\'total\']}")',
         doc_library: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Search defense standards library\nresults = ledger.search_documents(\n    query="logistics support analysis",\n    categories=["MIL-STD", "MIL-HDBK"]\n)\n\nfor doc in results:\n    print(f"{doc[\'id\']} — {doc[\'title\']} ({doc[\'status\']})")',
         audit_vault: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Store a record in the encrypted audit vault\nresult = ledger.store_in_vault(\n    record_type="USN_CDRL",\n    content="CDRL A001 — ILSP submitted for DDG-137",\n    encrypt=True\n)\n\nprint(f"Vault ID: {result[\'vault_id\']}")\nprint(f"Hash: {result[\'hash\'][:32]}...")\nprint(f"XRPL TX: {result[\'tx_hash\']}")',
         sbom: 'from s4_sdk import S4Ledger\n\nledger = S4Ledger(api_key="demo")\n\n# Scan a Software Bill of Materials for risk\nresult = ledger.scan_sbom(\n    program="F-35A Lightning II",\n    sbom_format="CycloneDX",\n    sbom_file="f35_avionics_sbom.json"\n)\n\nprint(f"Components: {result[\'total_components\']}")\nprint(f"Vulnerabilities: {result[\'total_vulns\']}")\nprint(f"Critical CVEs: {result[\'critical_cves\']}")\nfor comp in result[\'flagged_components\']:\n    print(f"  {comp[\'name\']} v{comp[\'version\']} — {comp[\'cve_id\']} ({comp[\'severity\']})\\n    Fix: {comp[\'remediation\']}")'
@@ -1006,7 +1006,7 @@
         output += '  READINESS CALCULATION \u2014 DDG-51 Flight III\n';
         output += '\u2550'.repeat(55) + '\n\n';
         output += 'System: AN/SPY-6(V)1 AMDR\n';
-        output += 'Standard: MIL-STD-1388-2B\n\n';
+        output += 'Standard: MIL-STD-1390D\n\n';
         output += '  MTBF (Mean Time Between Failures):  850.0 hrs\n';
         output += '  MTTR (Mean Time To Repair):         4.2 hrs\n';
         output += '  MLDT (Mean Logistics Delay Time):   6.5 hrs\n\n';
@@ -1247,7 +1247,7 @@
         output += '  Overall Score: 87%\n';
         output += '  Standards Met: 14/16\n\n';
         output += '  Gaps:\n';
-        output += '    MIL-STD-1388-2B \u2014 LSAR data incomplete\n';
+        output += '    GEIA-STD-0007  \u2014 LSAR data incomplete\n';
         output += '    MIL-HDBK-502  \u2014  Missing RCM section\n\n';
         output += '\u2500'.repeat(55) + '\n';
         output += '  \u2713 Scorecard anchored to XRPL';
@@ -1261,7 +1261,7 @@
         output += '\u2550'.repeat(55) + '\n';
         output += '  DEFENSE STANDARDS DOCUMENT LIBRARY\n';
         output += '\u2550'.repeat(55) + '\n\n';
-        output += '  MIL-STD-1388-2B \u2014 DoD Requirements for LSAR (Active)\n';
+        output += '  GEIA-STD-0007  \u2014 DoD Requirements for LSAR (Active)\n';
         output += '  MIL-HDBK-502   \u2014 Acquisition Logistics (Active)\n';
         output += '  DoDI 5000.02   \u2014 ACAT Defense Acquisition (Active)\n';
         output += '  MIL-STD-1390D  \u2014 Level of Repair Analysis (Active)\n';

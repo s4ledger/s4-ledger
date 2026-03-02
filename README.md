@@ -24,7 +24,7 @@ No sensitive data touches the blockchain — ever. Only cryptographic hashes.
 ### Anchor-S4 ILS Suite (20+ Tools)
 | Tool | Description |
 |------|-------------|
-| Gap Analysis | MIL-STD-1388 ILS element scoring with radar + bar charts |
+| Gap Analysis | GEIA-STD-0007 ILS element scoring with radar + bar charts |
 | DMSMS Tracker | Obsolescence risk detection with doughnut visualization |
 | Readiness Calculator | RAM analysis (Ao, Ai, MTBF/MTTR/MLDT) with gauge chart |
 | Compliance Scorecard | CMMC, NIST 800-171, DFARS, FAR 46, ITAR scoring |
