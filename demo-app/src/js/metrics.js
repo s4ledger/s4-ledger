@@ -1584,6 +1584,7 @@ if (document.readyState === 'loading') {
 })();
 
 // === Window exports for inline event handlers ===
+window._showNotif = _showNotif;
 window.anchorLifecycle = anchorLifecycle;
 window.calcLifecycle = calcLifecycle;
 window.changeCalMonth = changeCalMonth;
