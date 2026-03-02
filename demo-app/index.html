@@ -285,10 +285,10 @@
                     <h4 style="color:#fff;margin:0 0 12px;font-size:1rem"><i class="fas fa-coins" style="color:var(--gold);margin-right:8px"></i>Step 3: Credit Allocation</h4>
                     <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">Your Credit allocation is based on your subscription tier. Select a plan:</p>
                     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">
-                        <div class="onboard-tier" data-tier="pilot"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Pilot</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">Free</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100 Credits</div></div>
-                        <div class="onboard-tier selected" data-tier="starter"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Starter</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">$999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">25,000 Credits</div></div>
-                        <div class="onboard-tier" data-tier="professional"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Professional</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">$2,499/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100,000 Credits</div></div>
-                        <div class="onboard-tier" data-tier="enterprise"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Enterprise</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">$9,999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">500,000 Credits</div></div>
+                        <div class="onboard-tier" data-tier="pilot" onclick="selectOnboardTier(this,'pilot')"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Pilot</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">Free</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100 Credits</div></div>
+                        <div class="onboard-tier selected" data-tier="starter" onclick="selectOnboardTier(this,'starter')"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Starter</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">$999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">25,000 Credits</div></div>
+                        <div class="onboard-tier" data-tier="professional" onclick="selectOnboardTier(this,'professional')"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Professional</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">$2,499/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100,000 Credits</div></div>
+                        <div class="onboard-tier" data-tier="enterprise" onclick="selectOnboardTier(this,'enterprise')"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Enterprise</div><div style="font-size:1.1rem;font-weight:800;color:#fff;margin:4px 0">$9,999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">500,000 Credits</div></div>
                     </div>
                     <div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px;text-align:center">
                         <div style="color:var(--steel);font-size:0.78rem;margin-bottom:4px">Your Credit Balance</div>
@@ -439,7 +439,7 @@
                     <div class="col-lg-7">
                         <div class="demo-card">
                             <h3><i class="fas fa-anchor"></i> Anchor a Defense Record</h3>
-                            <details style="margin-top:8px;margin-bottom:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                            <details style="display:none;margin-top:8px;margin-bottom:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                                 <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Anchoring Works</summary>
                                 <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                     <p><strong style="color:#fff;">What's real:</strong> Every anchor creates an actual XRPL transaction with your record's SHA-256 hash stored in the memo field. The hash, transaction ID, timestamp, and XRPL explorer link are all genuine blockchain data you can independently verify.</p>
@@ -523,7 +523,7 @@
                     <div class="col-lg-7">
                         <div class="demo-card">
                             <h3><i class="fas fa-check-circle"></i> Verify a Defense Record</h3>
-                            <details style="margin-top:8px;margin-bottom:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                            <details style="display:none;margin-top:8px;margin-bottom:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                                 <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Verification Works</summary>
                                 <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                     <p><strong style="color:#fff;">What's real:</strong> Verification computes the SHA-256 hash of your uploaded file or pasted content and compares it against the hash that was previously anchored on the XRPL. If they match, the record is proven unaltered since the anchor date — the blockchain itself is the proof. <strong>Files are hashed locally in your browser — nothing is uploaded to any server.</strong></p>
@@ -919,7 +919,7 @@
                     <div class="col-lg-7">
                         <div class="demo-card">
                             <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-brain"></i> ILS Gap Analysis <button onclick="showAddActionModal('ils')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                            <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                            <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                                 <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Gap Analysis Works</summary>
                                     <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                         <p><strong style="color:#fff;">What this tool does:</strong> The ILS Gap Analysis Engine evaluates your program’s compliance with <strong>MIL-STD-1388-1A/2B</strong> Integrated Logistics Support requirements. It scores 10 ILS element areas — Supply Support, Maintenance Planning, Technical Data, Training, Configuration Management, DMSMS, PHS&amp;T, Reliability, Support Equipment, and Manpower — to identify gaps, missing deliverables, and corrective actions.</p>
@@ -1076,7 +1076,7 @@
                         <div class="col-lg-12">
                             <div class="demo-card">
                                 <h3><i class="fas fa-tasks" style="color:var(--accent)"></i> Unified Action Items & Alerts</h3>
-                                <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                                <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                                     <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Unified Action Tracking</summary>
                                     <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                         <p><strong style="color:#fff;">What this tool does:</strong> Every tool in the S4 Ledger suite generates actionable recommendations — DMSMS obsolescence alerts, readiness failures, warranty expirations, lifecycle cost opportunities, parts shortages, and ILS gap analysis items. This panel <strong>consolidates all of them</strong> into one unified tracker so nothing falls through the cracks.</p>
@@ -1166,7 +1166,7 @@
                     <div class="demo-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-exclamation-triangle" style="color:var(--accent)"></i> DMSMS / Obsolescence Tracker <button onclick="showAddActionModal('dmsms')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Track Diminishing Manufacturing Sources and Material Shortages (DMSMS). Identify parts at risk of obsolescence, find alternates, and estimate resolution costs. Per DoDI 4245.14.</p>
-                        <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(255,153,0,0.15);border-radius:3px;padding:0 12px;">
+                        <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(255,153,0,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                 <p><strong style="color:#fff;">What's real:</strong> Platform names, system names, manufacturers, CAGE codes, and FSC groups are all real. The systems shown (AN/SPY-6, Mk 41 VLS, LM2500, etc.) are the actual systems installed on these platforms.</p>
@@ -1207,7 +1207,7 @@
                     <div class="demo-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-chart-line" style="color:var(--accent)"></i> Operational Readiness Calculator <button onclick="showAddActionModal('readiness')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Calculate Operational Availability (Ao), Mean Time Between Failures (MTBF), Mean Time To Repair (MTTR), and Mean Logistics Delay Time (MLDT). Per MIL-STD-1388-2B and DoDI 5000.02.</p>
-                        <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                        <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                 <p><strong style="color:#fff;">What's real:</strong> The formula <code style='color:#00aaff'>Ao = MTBF / (MTBF + MTTR + MLDT)</code> is the actual DoD standard calculation. The MTBF/MTTR/MLDT values pre-loaded for each system are <em>representative ranges</em> based on published data for those system types (e.g., gas turbines average 2000-5000 hr MTBF, radar systems 600-1800 hr).</p>
@@ -1255,7 +1255,7 @@
                     <div class="demo-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-dollar-sign" style="color:var(--accent)"></i> S4 Ledger ROI Calculator <button onclick="showAddActionModal('roi')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Calculate the return on investment from implementing S4 Ledger across your ILS, DMSMS, and readiness programs. Compare manual processes vs. automated blockchain-backed document management.</p>
-                        <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                        <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — What These Numbers Mean</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                 <p><strong style="color:#fff;">This calculator is a sales tool.</strong> Input YOUR program's real numbers (how many programs, how many staff, what you pay them) and it shows the cost savings from automating manual ILS work with S4 Ledger.</p>
@@ -1309,7 +1309,7 @@
                     <div class="demo-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-clock" style="color:var(--accent)"></i> Lifecycle Cost Estimator <button onclick="showAddActionModal('lifecycle')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Project total ownership cost (TOC) over a weapon system's lifecycle. Factors in sustainment, DMSMS resolution, tech refresh, and depot maintenance per DoD 5000.73 and MIL-STD-881F.</p>
-                        <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                        <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Understanding Total Ownership Cost</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                                 <p><strong style="color:#fff;">What this tool does:</strong> It calculates how much a weapon system costs over its ENTIRE life — not just the sticker price. The DoD famously spends 60-70% of a system's total cost AFTER it's built, on sustainment, repairs, and obsolescence. This tool breaks that down.</p>
@@ -1381,7 +1381,7 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-vault" style="color:var(--accent)"></i> Audit Record Vault <span style="background:rgba(0,170,255,0.15);color:#00aaff;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">LIVE</span> <button onclick="showAddActionModal('vault')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Every record you anchor is stored here with its hash, original content preview, timestamp, and verification status — your single source of auditing proof. No more searching the XRPL manually.</p>
 
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> Every record you anchor from any tool (Anchor tab, DMSMS, Readiness, Lifecycle, Warranty, ROI, Parts, Gap Analysis) is automatically saved here with its SHA-256 hash, content preview, timestamp, record type, and XRPL transaction ID. This is your <strong>permanent audit trail</strong> — like a filing cabinet that's also blockchain-verified.</p>
@@ -1516,7 +1516,7 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-book-open" style="color:var(--accent)"></i> Defense Document Library <span id="docCount" style="font-size:0.78rem;color:var(--muted)"></span><button onclick="showAddActionModal('docs')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Searchable reference library of MIL-STDs, OPNAVINSTs, DoD Directives, DFARS clauses, NIST standards, and service-specific regulations. Quick-reference while you work — no tab-switching needed.</p>
 
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> All 100+ documents are <strong>real defense standards and regulations</strong> — MIL-STD-1388, MIL-HDBK-502, OPNAVINST 4790.16, COMDTINST M4000.13, Army AR 700-127, AFI 63-101, MCO 4105.2, DFARS 252.204-7012, NIST SP 800-171, and more. Links go to official DoD, NAVSEA, DLA, and NIST sources.</p>
@@ -1575,7 +1575,7 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-shield-halved" style="color:var(--accent)"></i> Compliance Scorecard <span style="background:rgba(0,170,255,0.15);color:#00aaff;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">REAL-TIME</span> <button onclick="showAddActionModal('compliance')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Live compliance posture across CMMC, NIST SP 800-171, DFARS, and program-specific requirements. Auto-calculates based on your workspace activity — something SAP, Oracle, and Microsoft don't offer.</p>
 
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The compliance frameworks (CMMC Level 2, NIST SP 800-171, DFARS 252.204-7012, FAR 46, MIL-STD-1388 ILS, DoDI 4245.15 DMSMS) are real regulatory requirements that every defense contractor and program office must meet. Your compliance score is calculated from <strong>actual workspace activity</strong> — records anchored, DMSMS items tracked, readiness calculated, warranties monitored, and more.</p>
@@ -1761,7 +1761,7 @@
             <div class="ils-hub-panel" id="hub-risk">
                 <div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-triangle-exclamation" style="color:#c9a84c"></i> AI Supply Chain Risk Engine <button onclick="showAddActionModal('risk')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                    <details style="margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — AI Risk Prediction</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The risk engine analyzes supplier health indicators — GIDEP alerts, CAGE code changes, DLA lead time spikes, financial distress signals, and single-source dependencies — to generate risk scores for every part in your supply chain. Alerts are timestamped and can be anchored to XRPL for audit trail.</p>
@@ -1908,7 +1908,7 @@
             <div class="ils-hub-panel" id="hub-reports">
                 <div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-pdf" style="color:var(--accent)"></i> Automated Audit Report Generator <button onclick="showAddActionModal('reports')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — One-Click Audit Packages</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The report generator compiles all anchored records, verification timestamps, chain-of-custody proof, and compliance scores into audit-ready packages. Every data point is backed by an XRPL transaction hash for independent verification.</p>
@@ -2030,7 +2030,7 @@
             <div class="ils-hub-panel" id="hub-predictive">
                 <div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-brain" style="color:var(--accent)"></i> Predictive Maintenance AI <button onclick="showAddActionModal('predictive')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — AI-Powered Failure Prediction</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The Predictive Maintenance engine analyzes maintenance history patterns across the S4 Ledger network — MTBF trends, failure mode clustering, component age curves, and environmental stress factors — to predict which systems will require maintenance before unplanned failures occur.</p>
@@ -2098,7 +2098,7 @@
             <div class="ils-hub-panel" id="hub-sbom">
                 <div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-microchip" style="color:#00aaff"></i> Software Bill of Materials (SBOM) <button onclick="showAddActionModal('sbom')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Blockchain-Verified SBOM</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The SBOM Viewer catalogs all embedded software components across weapon systems — firmware, RTOS, middleware, drivers, and third-party libraries. Each component is tracked with version, CVE status, license type, and supply chain provenance. S4 Ledger hashes each SBOM snapshot to XRPL for tamper-proof versioning.</p>
@@ -2143,7 +2143,7 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-circle-check" style="color:#c9a84c"></i> Submissions &amp; PTD <button onclick="showAddActionModal('submissions')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Upload and compare ILS data submissions from OEMs, shipbuilders, vendors, and contractors for Navy programs and programs. Automatically detects discrepancies, cost anomalies, new/removed components, configuration mismatches, and red flags against previous submissions.</p>
 
-                    <details style="margin-bottom:1rem;background:rgba(224,108,117,0.04);border:1px solid rgba(224,108,117,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(224,108,117,0.04);border:1px solid rgba(224,108,117,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;">
                             <i class="fas fa-info-circle"></i> How It Works — Submissions &amp; PTD — Submission Intelligence &amp; Discrepancy Detection
                         </summary>
@@ -2342,7 +2342,7 @@
                 <div class="row"><div class="col-lg-12"><div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-boxes-stacked" style="color:#00aaff"></i> GFP Tracker <button onclick="showAddActionModal('gfp')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Government-Furnished Property tracking per FAR 52.245-1 and DFARS 252.245-7001. Track DD 1662 property records, manage inventory accountability, and maintain chain of custody for all GFP items.</p>
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">DD 1662 Management:</strong> Upload or create DD Form 1662 records (DoD Property in the Custody of Contractors). Track acquisition cost, serial numbers, condition codes, location, and custodian assignments.</p>
@@ -2383,7 +2383,7 @@
                 <div class="row"><div class="col-lg-12"><div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-clipboard-check" style="color:#c9a84c"></i> CDRL Validator <button onclick="showAddActionModal('cdrl')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Contract Data Requirements List validation engine. Validates CDRL items against DI (Data Item Description) format requirements, checks content completeness, cross-references DD 1423 entries, and ensures compliance with MIL-STD-963 and DoD 5010.12-M.</p>
-                    <details style="margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">Validation Engine:</strong> Upload DD 1423 contract data requirements and associated deliverables. The validator checks each CDRL item against its specified DI format, verifies required sections are present, flags missing content, and scores overall compliance. Supports all DI prefixes (DI-MGMT, DI-SESS, DI-ILSS, DI-MCCR, etc.).</p>
@@ -2425,7 +2425,7 @@
                 <div class="row"><div class="col-lg-12"><div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-contract" style="color:#00aaff"></i> Contract Extractor <button onclick="showAddActionModal('contract')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">AI-powered contract clause extraction. Upload SOWs, task orders, or modifications and automatically extract FAR/DFARS clauses, CDRL requirements, and key terms.</p>
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">Extraction Engine:</strong> Upload contract PDFs/DOCX. AI identifies FAR/DFARS clause citations, CDRL references, deliverable schedules, and security requirements.</p>
@@ -2466,7 +2466,7 @@
                 <div class="row"><div class="col-lg-12"><div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-link" style="color:#c9a84c"></i> Provenance Chain <button onclick="showAddActionModal('provenance')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Blockchain-verified chain of custody and provenance tracking. Every custody transfer is anchored to the XRP Ledger with QR code generation.</p>
-                    <details style="margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">Chain of Custody:</strong> Record every custody transfer — who had it, when, where, and in what condition. Each event is SHA-256 hashed and anchored to the XRP Ledger.</p>
@@ -2509,7 +2509,7 @@
                 <div class="row"><div class="col-lg-12"><div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-chart-pie" style="color:#00aaff"></i> Cross-Program Analytics <button onclick="showAddActionModal('analytics')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Aggregate analytics dashboard spanning all ILS tools and programs. View upload trends, compliance metrics, and portfolio-wide insights.</p>
-                    <details style="margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">Cross-Program Dashboard:</strong> Aggregates data from all 20 ILS tools. Displays KPIs, trend lines, and comparative metrics across all programs in a single view.</p>
@@ -2535,7 +2535,7 @@
                 <div class="row"><div class="col-lg-12"><div class="demo-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-users-gear" style="color:#c9a84c"></i> Team & Access Management <button onclick="showAddActionModal('team')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Full team administration — create teams, assign program access, manage tool permissions, and audit team activity. For quick team status, use the <strong style="color:#00aaff">Team</strong> button in the header bar.</p>
-                    <details style="margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
+                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">Team Administration:</strong> Create teams, invite members, assign roles. Each role controls access to specific ILS tools.</p>
