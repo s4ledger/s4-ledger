@@ -541,10 +541,8 @@ function logout() {
     sessionRecords = [];
     if (typeof s4Vault !== 'undefined') s4Vault = [];
     if (typeof s4ActionItems !== 'undefined') s4ActionItems = [];
-    // Clear role state (may be in separate chunk — use try-catch)
-    try { _currentRole = ''; } catch(e) {}
-    try { _currentTitle = ''; } catch(e) {}
-    try { _customVisibleTabs = null; } catch(e) {}
+    // Clear role state (shared via window across chunks)
+    window._currentRole = ''; window._currentTitle = ''; window._customVisibleTabs = null;
     // Return to landing page WITHOUT reload (no popup)
     var workspace = document.getElementById('platformWorkspace');
     var landing = document.getElementById('platformLanding');
@@ -565,9 +563,7 @@ function logout() {
     var badge = document.getElementById('roleBadge');
     if (badge) badge.remove();
     // Reset all tab visibility to full
-    try {
-        if (typeof applyTabVisibility === 'function') applyTabVisibility(typeof _allHubTabs !== 'undefined' ? _allHubTabs : []);
-    } catch(e) {}
+    if (typeof window.applyTabVisibility === 'function') window.applyTabVisibility(window._allHubTabs || []);
     // Scroll to top
     window.scrollTo(0, 0);
 }
@@ -5788,7 +5784,7 @@ function renderHubActions(filter) {
 // ═══ AUDIT RECORD VAULT ═══
 // Vault key is scoped by role — each role sees only its own records
 function _vaultKey() {
-    return 's4Vault' + (typeof _currentRole !== 'undefined' && _currentRole ? '_' + _currentRole : '');
+    return 's4Vault' + (window._currentRole ? '_' + window._currentRole : '');
 }
 let s4Vault;
 try { s4Vault = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(_e) { s4Vault = []; }

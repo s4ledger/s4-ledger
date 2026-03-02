@@ -190,7 +190,7 @@ setInterval(function() {
         var balEl = document.getElementById('slsBarBalance');
         if (balEl) {
             var spent = s.slsFees || 0;
-            var tierAlloc = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined' && _onboardTiers[_onboardTier]) ? _onboardTiers[_onboardTier].sls : ((typeof _demoSession !== 'undefined' && _demoSession.subscription) ? (_demoSession.subscription.sls_allocation || 25000) : 25000);
+            var tierAlloc = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined' && _onboardTiers[_onboardTier]) ? _onboardTiers[_onboardTier].sls : ((window._demoSession && window._demoSession.subscription) ? (window._demoSession.subscription.sls_allocation || 25000) : 25000);
             var bal = tierAlloc - spent;
             balEl.textContent = bal.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0});
         }
@@ -200,7 +200,7 @@ setInterval(function() {
         if (spentEl) spentEl.textContent = (s.slsFees || 0).toFixed(2);
         
         // Sync tool SLS strip — use actual tier allocation
-        var tierAllocTool = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined' && _onboardTiers[_onboardTier]) ? _onboardTiers[_onboardTier].sls : ((typeof _demoSession !== 'undefined' && _demoSession.subscription) ? (_demoSession.subscription.sls_allocation || 25000) : 25000);
+        var tierAllocTool = (typeof _onboardTiers !== 'undefined' && typeof _onboardTier !== 'undefined' && _onboardTiers[_onboardTier]) ? _onboardTiers[_onboardTier].sls : ((window._demoSession && window._demoSession.subscription) ? (window._demoSession.subscription.sls_allocation || 25000) : 25000);
         var toolBal = document.getElementById('toolSlsBal');
         if (toolBal) toolBal.textContent = (tierAllocTool - (s.slsFees||0)).toLocaleString();
         var toolAnch = document.getElementById('toolSlsAnch');

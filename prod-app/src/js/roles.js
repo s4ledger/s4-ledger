@@ -15,11 +15,15 @@ var _s4Roles = {
     'admin': { label:'Full Access Admin', icon:'fa-user-shield', desc:'All tools visible — unrestricted access', tabs:['hub-analysis','hub-dmsms','hub-readiness','hub-compliance','hub-risk','hub-actions','hub-predictive','hub-lifecycle','hub-roi','hub-vault','hub-docs','hub-reports','hub-submissions','hub-sbom','hub-gfp','hub-cdrl','hub-contract','hub-provenance','hub-analytics','hub-team'] }
 };
 var _allHubTabs = ['hub-analysis','hub-dmsms','hub-readiness','hub-compliance','hub-risk','hub-actions','hub-predictive','hub-lifecycle','hub-roi','hub-vault','hub-docs','hub-reports','hub-submissions','hub-sbom','hub-gfp','hub-cdrl','hub-contract','hub-provenance','hub-analytics','hub-team'];
+window._allHubTabs = _allHubTabs;
 var _allHubLabels = {'hub-analysis':'Gap Analysis','hub-dmsms':'DMSMS Tracker','hub-readiness':'Readiness Calc','hub-compliance':'Compliance','hub-risk':'Supply Chain Risk','hub-actions':'Action Items','hub-predictive':'Predictive Maint','hub-lifecycle':'Lifecycle Cost','hub-roi':'ROI Calculator','hub-vault':'Audit Vault','hub-docs':'Document Library','hub-reports':'Report Gen','hub-submissions':'Submissions & PTD','hub-sbom':'SBOM Viewer','hub-gfp':'GFP Tracker','hub-cdrl':'CDRL Validator','hub-contract':'Contract Extractor','hub-provenance':'Provenance Chain','hub-analytics':'Cross-Program Analytics','hub-team':'Team Management'};
 
 var _currentRole = sessionStorage.getItem('s4_user_role') || '';
+window._currentRole = _currentRole;
 var _currentTitle = sessionStorage.getItem('s4_user_title') || '';
+window._currentTitle = _currentTitle;
 var _customVisibleTabs = JSON.parse(sessionStorage.getItem('s4_visible_tabs') || 'null');
+window._customVisibleTabs = _customVisibleTabs;
 
 function showRoleSelector() {
     // Remove any existing modal first
@@ -118,6 +122,7 @@ function showRoleSelector() {
 
 function selectRolePreset(roleKey) {
     _currentRole = roleKey;
+    window._currentRole = roleKey;
     // Reset all cards
     var allCards = document.querySelectorAll('#roleModal .role-card');
     for (var i = 0; i < allCards.length; i++) {
@@ -149,12 +154,15 @@ function onRoleToolToggle() {
     document.querySelectorAll('#roleToolChecks input[type="checkbox"]').forEach(function(cb) {
         if (cb.checked) _customVisibleTabs.push(cb.dataset.tab);
     });
+    window._customVisibleTabs = _customVisibleTabs;
 }
 
 function applyRole() {
     var title = document.getElementById('roleTitle')?.value?.trim() || '';
     _currentTitle = title;
+    window._currentTitle = title;
     sessionStorage.setItem('s4_user_role', _currentRole);
+    window._currentRole = _currentRole;
     sessionStorage.setItem('s4_user_title', _currentTitle);
     // Determine visible tabs
     var visibleTabs;
@@ -718,3 +726,4 @@ window.showRoleSelector = showRoleSelector;
 window.applyRole = applyRole;
 window.onRoleToolToggle = onRoleToolToggle;
 window.selectRolePreset = selectRolePreset;
+window.applyTabVisibility = applyTabVisibility;

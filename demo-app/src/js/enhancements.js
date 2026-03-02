@@ -2038,7 +2038,7 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
                     // Send authentication
                     S4Realtime.send('auth', {
                         session: S4Realtime.sessionId,
-                        user: (typeof _demoSession !== 'undefined' && _demoSession) ? _demoSession.name : 'Demo User',
+                        user: (window._demoSession) ? window._demoSession.name : 'Demo User',
                         tier: (typeof _onboardTier !== 'undefined') ? _onboardTier : 'starter'
                     });
 

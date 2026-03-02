@@ -51,17 +51,17 @@ function closeOnboarding() {
     sessionStorage.setItem('s4_onboard_done', '1');
     // After onboarding, show role selector if no role set
     setTimeout(function() {
-        if (typeof _currentRole !== 'undefined' && !_currentRole && typeof showRoleSelector === 'function') {
-            showRoleSelector();
+        if (!window._currentRole && typeof window.showRoleSelector === 'function') {
+            window.showRoleSelector();
         }
     }, 500);
     // Store selected tier in localStorage so it persists across reloads
     var tierInfo = _onboardTiers[_onboardTier] || _onboardTiers['starter'];
     localStorage.setItem('s4_selected_tier', _onboardTier);
     // Clear any existing session so init uses the new tier
-    _demoSession = null;
+    window._demoSession = null;
     // Trigger demo session init with selected tier
-    if (typeof _initDemoSession === 'function') _initDemoSession();
+    if (typeof window._initDemoSession === 'function') window._initDemoSession();
 }
 
 function onboardNext() {
@@ -129,9 +129,9 @@ function selectOnboardTier(el, tier) {
     var _balEl = document.getElementById('demoSlsBalance');
     if (_balEl) _balEl.textContent = _tierAlloc.toLocaleString() + ' Credits';
     // Also update the session object
-    if (_demoSession && _demoSession.subscription) {
-        _demoSession.subscription.sls_allocation = _tierAlloc;
-        _demoSession.subscription.label = (_onboardTiers[tier] || _onboardTiers['starter']).label;
+    if (window._demoSession && window._demoSession.subscription) {
+        window._demoSession.subscription.sls_allocation = _tierAlloc;
+        window._demoSession.subscription.label = (_onboardTiers[tier] || _onboardTiers['starter']).label;
     }
     document.querySelectorAll('.onboard-tier').forEach(function(t) { t.classList.remove('selected'); });
     el.classList.add('selected');

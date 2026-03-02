@@ -387,12 +387,12 @@ function resetDemoSession() {
     // Clear onboarding so full flow re-triggers on next "Enter Platform"
     sessionStorage.removeItem('s4_onboard_done');
     // Reset in-memory state
-    _demoSession = null;
+    _demoSession = null; window._demoSession = null;
     stats = {anchored:0, verified:0, types:new Set(), slsFees:0};
     sessionRecords = [];
     if (typeof s4Vault !== 'undefined') s4Vault = [];
     if (typeof s4ActionItems !== 'undefined') s4ActionItems = [];
-    _currentRole = ''; _currentTitle = ''; _customVisibleTabs = null;
+    window._currentRole = ''; window._currentTitle = ''; window._customVisibleTabs = null;
     // Return to landing page WITHOUT reload (no popup)
     var workspace = document.getElementById('platformWorkspace');
     var landing = document.getElementById('platformLanding');
@@ -410,7 +410,7 @@ function resetDemoSession() {
     var badge = document.getElementById('roleBadge');
     if (badge) badge.remove();
     // Reset all tab visibility to full
-    if (typeof applyTabVisibility === 'function') applyTabVisibility(_allHubTabs || []);
+    if (typeof window.applyTabVisibility === 'function') window.applyTabVisibility(window._allHubTabs || []);
     // Scroll to top
     window.scrollTo(0, 0);
 }
@@ -740,6 +740,7 @@ function hideAnchorAnimation() {
 //    4. Optionally remove: #demoPanel HTML block, #demoBanner div
 // ══════════════════════════════════════════════════════════════
 let _demoSession = null;
+window._demoSession = null;
 let _demoMode = true;  // SET TO false WHEN STRIPE IS LIVE
 
 async function _initDemoSession() {
@@ -758,6 +759,7 @@ async function _initDemoSession() {
         if (resp.ok) {
             const data = await resp.json();
             _demoSession = data;
+            window._demoSession = data;
             console.log('Demo session:', data.session_id);
             const banner = document.getElementById('demoBanner');
             if (banner) {
@@ -785,10 +787,12 @@ async function _initDemoSession() {
 function _showDemoOffline() {
     // Ensure allocation is set even in offline mode
     if (!_demoSession) _demoSession = {};
+    window._demoSession = _demoSession;
     var _savedTier = localStorage.getItem('s4_selected_tier') || (typeof _onboardTier !== 'undefined' ? _onboardTier : 'starter');
     var _tierLookup = (typeof _onboardTiers !== 'undefined') ? _onboardTiers : {pilot:{label:'Pilot',sls:100},starter:{label:'Starter',sls:25000},professional:{label:'Professional',sls:100000},enterprise:{label:'Enterprise',sls:500000}};
     var _tierData = _tierLookup[_savedTier] || _tierLookup['starter'];
     if (!_demoSession.subscription) _demoSession.subscription = {label:_tierData.label,sls_allocation:_tierData.sls};
+    window._demoSession = _demoSession;
     document.getElementById('demoBanner').style.display = 'none';
     document.getElementById('demoBanner').innerHTML = '<i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong style="color:#fff;">S4 Ledger</strong> &mdash; Offline mode. Anchors are queued locally and will sync when connected.';
     var panel = document.getElementById('demoPanel');
@@ -5573,7 +5577,7 @@ function renderHubActions(filter) {
 // ═══ AUDIT RECORD VAULT ═══
 // Vault key is scoped by role — each role sees only its own records
 function _vaultKey() {
-    return 's4Vault' + (typeof _currentRole !== 'undefined' && _currentRole ? '_' + _currentRole : '');
+    return 's4Vault' + (window._currentRole ? '_' + window._currentRole : '');
 }
 let s4Vault;
 try { s4Vault = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(_e) { s4Vault = []; }
@@ -8460,3 +8464,4 @@ window.verifyAllVault = verifyAllVault;
 window.verifyRecord = verifyRecord;
 window.generateAiResponse = generateAiResponse;
 window.refreshVerifyRecents = refreshVerifyRecents;
+window._initDemoSession = _initDemoSession;
