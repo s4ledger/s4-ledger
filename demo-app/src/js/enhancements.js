@@ -2814,9 +2814,8 @@ function _updateThemeIcon(isLight) {
     }
     // Override the inline failsafe with the full version (includes Chart.js)
     window.toggleTheme = toggleTheme;
-    // Bind to button via addEventListener as backup for onclick
-    var btn = document.getElementById('themeToggleBtn');
-    if (btn) btn.addEventListener('click', function(e) { e.preventDefault(); toggleTheme(); });
+    // NOTE: Do NOT add addEventListener here — the button already has onclick="toggleTheme()"
+    // Adding both causes double-fire: classList.toggle ON then immediately OFF = no visible change
 })();
 
 // ═══════════════════════════════════════════════════════════════

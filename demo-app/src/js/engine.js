@@ -743,6 +743,12 @@ let _demoSession = null;
 window._demoSession = null;
 let _demoMode = true;  // SET TO false WHEN STRIPE IS LIVE
 
+// Allow cross-chunk code (onboarding.js) to reset the module-scoped _demoSession
+window._resetDemoSession = function() {
+    _demoSession = null;
+    window._demoSession = null;
+};
+
 async function _initDemoSession() {
     if (_demoSession) return _demoSession;
     const panel = document.getElementById('demoPanel');
@@ -1003,7 +1009,8 @@ async function anchorRecord() {
     // Auto-update demo SLS balance display
     _updateDemoSlsBalance();
     // Flash visible toast showing new balance
-    var _flAlloc = _demoSession ? (_demoSession.subscription?.sls_allocation || 25000) : 25000;
+    var _tFlFallback = (window._onboardTiers && window._onboardTier) ? (window._onboardTiers[window._onboardTier]?.sls || 25000) : (parseInt(localStorage.getItem('s4_tier_allocation')) || 25000);
+    var _flAlloc = _demoSession ? (_demoSession.subscription?.sls_allocation || _tFlFallback) : _tFlFallback;
     var _flRemaining = Math.round((_flAlloc - stats.slsFees) * 100) / 100;
     _flashSlsBalance(_flRemaining.toLocaleString(undefined,{maximumFractionDigits:2}), 0.01);
 

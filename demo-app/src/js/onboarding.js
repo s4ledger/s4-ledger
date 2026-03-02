@@ -60,8 +60,9 @@ function closeOnboarding() {
     // Store selected tier in localStorage so it persists across reloads
     var tierInfo = _onboardTiers[_onboardTier] || _onboardTiers['starter'];
     localStorage.setItem('s4_selected_tier', _onboardTier);
-    // Clear any existing session so init uses the new tier
-    window._demoSession = null;
+    // Clear BOTH module-scoped and window session so init uses the new tier
+    if (typeof window._resetDemoSession === 'function') window._resetDemoSession();
+    else window._demoSession = null;
     // Trigger demo session init with selected tier
     if (typeof window._initDemoSession === 'function') window._initDemoSession();
 }
