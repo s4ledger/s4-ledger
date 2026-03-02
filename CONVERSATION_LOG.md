@@ -191,4 +191,42 @@
 - Conversation log updated
 
 ---
+
+### Session — 2025-07-28 — Root Cause Fixes (commit faaf4a2)
+
+**Problem:** Previous session's "11-point fix" did not actually resolve dark/light mode toggle or credit balance tier switching. User reported both still broken.
+
+**Root Cause Analysis:**
+
+1. **Theme Toggle Double-Fire (both apps):**
+   - `index.html` button has `onclick="toggleTheme()"`
+   - `enhancements.js` ALSO added `btn.addEventListener('click', toggleTheme)`
+   - Result: `classList.toggle('light-mode')` fired twice per click → ON then OFF = no visible change
+   - Fix: Removed the `addEventListener`, kept only the `onclick` handler
+
+2. **Credit Balance Module-Scope Leak (demo-app):**
+   - `let _demoSession` in engine.js is module-scoped (Vite chunk boundary)
+   - `closeOnboarding()` in onboarding.js could only clear `window._demoSession` — NOT the module-scoped variable
+   - `_initDemoSession()` checked `if (_demoSession) return _demoSession` → returned stale 25,000 Starter data
+   - `_updateDemoSlsBalance()` (runs every 15s) overwrote UI with stale allocation
+   - Fix: Added `window._resetDemoSession()` bridge function in engine.js that mutates the module-scoped variable; `closeOnboarding()` now calls it
+
+3. **Anchor Flash Toast Allocation (demo-app):**
+   - Flash toast after anchoring hardcoded `25000` fallback
+   - Fix: Now uses proper tier lookup chain: `onboardTiers → localStorage → 25000 default`
+
+**Files Changed:**
+- `demo-app/src/js/enhancements.js` — removed addEventListener double-bind
+- `demo-app/src/js/engine.js` — added `_resetDemoSession()` bridge + fixed flash toast allocation
+- `demo-app/src/js/onboarding.js` — `closeOnboarding()` calls `_resetDemoSession()`
+- `prod-app/src/js/enhancements.js` — removed addEventListener double-bind
+- SW versions: demo s4-v334→s4-v335, prod s4-prod-v704→s4-prod-v705
+
+**Production Readiness Assessment:**
+- Prod-app: **68%** — strong deployment/security headers (82%), held back by innerHTML XSS surface, low test enforcement (55%), monolithic engine, sparse dev docs
+- Demo-app: **64%** — inherits all prod issues plus code duplication tax and dead Supabase sync code
+- Neither reaches 85% "production ready" threshold
+- Highest-leverage improvement: extract shared JS into common package + add DOMPurify (~+8-10 points each)
+
+---
 *This log is updated every session. Reference before making changes.*
