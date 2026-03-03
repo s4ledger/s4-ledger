@@ -26,6 +26,19 @@ function closeOnboarding() {
     // Store selected tier in localStorage so it persists across reloads
     var tierInfo = _onboardTiers[_onboardTier] || _onboardTiers['starter'];
     localStorage.setItem('s4_selected_tier', _onboardTier);
+    // Propagate tier data to engine chunk (window globals + localStorage)
+    window._s4TierAllocation = tierInfo.credits;
+    window._s4TierLabel = tierInfo.label;
+    localStorage.setItem('s4_tier_allocation', String(tierInfo.credits));
+    localStorage.setItem('s4_tier_label', tierInfo.label);
+    // Force immediate balance refresh across all displays
+    if (typeof window._updateSlsBalance === 'function') {
+        window._updateSlsBalance();
+        setTimeout(function() { if (typeof window._updateSlsBalance === 'function') window._updateSlsBalance(); }, 500);
+        setTimeout(function() { if (typeof window._updateSlsBalance === 'function') window._updateSlsBalance(); }, 2000);
+    } else if (typeof window._syncSlsBar === 'function') {
+        window._syncSlsBar();
+    }
     // After onboarding, show role selector so user can configure their view
     if (typeof showRoleSelector === 'function') {
         showRoleSelector();

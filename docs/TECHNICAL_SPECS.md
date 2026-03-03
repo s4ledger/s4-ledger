@@ -135,9 +135,9 @@ Private blockchains (Hyperledger, Guardtime KSI) defeat the purpose of independe
 | FedRAMP / IL4 | Planned — targeting FedRAMP authorization and IL4-ready hosting for CUI environments |
 | FIPS 180-4 | SHA-256 compliant |
 
-## DoD / DoN Database Integration
+## DoW / DoN Database Integration
 
-S4 Ledger provides native import adapters for 13+ DoD and DoN logistics information systems. Data exported from these systems can be ingested in CSV, XML, or JSON format, automatically mapped to S4 Ledger record types, hashed with SHA-256, and optionally anchored to the XRPL blockchain.
+S4 Ledger provides native import adapters for 13+ DoW and DoN logistics information systems. Data exported from these systems can be ingested in CSV, XML, or JSON format, automatically mapped to S4 Ledger record types, hashed with SHA-256, and optionally anchored to the XRPL blockchain.
 
 ### Supported Systems
 
@@ -146,7 +146,7 @@ S4 Ledger provides native import adapters for 13+ DoD and DoN logistics informat
 | NSERC / SE IDE | NAVSEA | CSV, XML, JSON | Configuration, TDPs, DRLs |
 | MERLIN | NAVSEA | CSV, XML | Maintenance, PMS, Depot Repair, Calibration |
 | NAVAIR AMS PMT | NAVAIR | CSV, XML, JSON | Aviation Maintenance, Flight Ops, Supply |
-| COMPASS | DoD | CSV, Fixed-Width | Personnel, Training, Readiness |
+| COMPASS | DoW | CSV, Fixed-Width | Personnel, Training, Readiness |
 | CDMD-OA | NAVSEA/PMS | XML, JSON | Config Baselines, CDRLs, Ship Alterations |
 | NDE | Navy | JSON, XML, CSV | Supply Chain, Custody, Quality, Fielding |
 | MBPS | OSD/DSPO | XML, JSON | Sustainment, Parts, Readiness Metrics |
@@ -159,8 +159,8 @@ S4 Ledger provides native import adapters for 13+ DoD and DoN logistics informat
 
 ### Import Workflow
 
-1. **Export** — Extract data from the DoD system in CSV, XML, or JSON
-2. **Upload** — Load the file into S4 Ledger via the ILS Workspace "DoD Import" tool or the SDK `import_and_anchor()` method
+1. **Export** — Extract data from the DoW system in CSV, XML, or JSON
+2. **Upload** — Load the file into S4 Ledger via the ILS Workspace "DoW Import" tool or the SDK `import_and_anchor()` method
 3. **Parse & Map** — S4 automatically detects the format and maps fields to the appropriate record types
 4. **Hash** — Each record is individually hashed with SHA-256
 5. **Anchor** — Optionally anchor each hash to the XRPL blockchain for immutable verification

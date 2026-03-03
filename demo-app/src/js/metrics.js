@@ -182,7 +182,7 @@ setInterval(function() {
 // Keeps all tool displays in sync with real user activity
 (function() {
     function syncSessionToTools() {
-        var s = window._s4Stats || (function() { try { var _ls=JSON.parse(localStorage.getItem('s4_stats')||'{}'); return {anchored:_ls.anchored||0,verified:_ls.verified||0,types:new Set(_ls.types||[]),slsFees:_ls.slsFees||0}; } catch(e) { return {anchored:0,verified:0,types:new Set(),slsFees:0}; } })();
+        var s = window._s4Stats || (function() { try { var _ls=JSON.parse(localStorage.getItem('s4_demo_stats')||'{}'); return {anchored:_ls.anchored||0,verified:_ls.verified||0,types:new Set(_ls.types||[]),slsFees:_ls.slsFees||0}; } catch(e) { return {anchored:0,verified:0,types:new Set(),slsFees:0}; } })();
         var _glr2 = typeof getLocalRecords === 'function' ? getLocalRecords : function() { try { return JSON.parse(localStorage.getItem('s4_anchored_records') || '[]'); } catch(e) { return []; } };
         var records = _glr2();
         
@@ -192,7 +192,7 @@ setInterval(function() {
             var spent = s.slsFees || 0;
             var tierAlloc = (window._onboardTiers && window._onboardTier && window._onboardTiers[window._onboardTier]) ? window._onboardTiers[window._onboardTier].sls : ((window._demoSession && window._demoSession.subscription) ? (window._demoSession.subscription.sls_allocation || 25000) : 25000);
             var bal = tierAlloc - spent;
-            balEl.textContent = bal.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0});
+            balEl.textContent = bal.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0}) + ' Credits';
         }
         var anchEl = document.getElementById('slsBarAnchors');
         if (anchEl) anchEl.textContent = s.anchored || 0;

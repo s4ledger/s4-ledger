@@ -25,7 +25,7 @@ A SHA-256 hash is a one-way mathematical fingerprint. It **cannot be reversed** 
 - **Collision resistance:** No two different inputs have ever been found to produce the same SHA-256 hash. The probability is approximately 1 in 2^128 — computationally infeasible.
 - **Pre-image resistance:** Given a hash, it is computationally infeasible to find the original input.
 - **NIST approved:** SHA-256 is approved by NIST (FIPS 180-4) for federal information processing.
-- **Industry standard:** Used by Bitcoin, TLS certificates, code signing, and DoD systems.
+- **Industry standard:** Used by Bitcoin, TLS certificates, code signing, and DoW systems.
 
 ---
 

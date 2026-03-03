@@ -9,7 +9,7 @@
 
 ## Bottom Line Up Front
 
-S4 Ledger is a **working platform** — live at [s4ledger.com](https://s4ledger.com) — built at **$0 cost to the company**. Production launch requires **$12K–$35K** and 60–90 days. The addressable market is **$170B+/year** in DoD sustainment spending. No competitor combines tamper-proof blockchain anchoring with a full ILS management workspace. We would be **category creators**.
+S4 Ledger is a **working platform** — live at [s4ledger.com](https://s4ledger.com) — built at **$0 cost to the company**. Production launch requires **$12K–$35K** and 60–90 days. The addressable market is **$170B+/year** in DoW sustainment spending. No competitor combines tamper-proof blockchain anchoring with a full ILS management workspace. We would be **category creators**.
 
 **$SLS is a utility token — not a security.** It fails all four prongs of the SEC Howey Test. No ICO, no exchange listing, no securities registration required. A formal legal opinion costs $5K–$15K and documents what already exists: $SLS is a pre-paid service credit consumed for anchoring operations.
 
@@ -120,7 +120,7 @@ S4 Ledger is a **working platform** — live at [s4ledger.com](https://s4ledger.
 | Pilot | Free | Free | Evaluators |
 | Starter | $999 | $12K | Contractor teams |
 | Professional | $2,499 | $30K | Program offices |
-| Enterprise | $9,999 | $120K | DoD agencies, OEMs |
+| Enterprise | $9,999 | $120K | DoW agencies, OEMs |
 
 ### Conservative Revenue Projections
 
@@ -185,7 +185,7 @@ S4 Ledger's working prototype is essentially a **completed SBIR Phase I delivera
 | Risk | Likelihood | Mitigation |
 |------|-----------|------------|
 | SEC classifies $SLS as security | **Very Low** | Fails all 4 Howey prongs. Legal opinion ($5K–$15K) documents this. |
-| DoD slow to adopt | Medium | Start with non-classified records. SBIR de-risks financially. |
+| DoW slow to adopt | Medium | Start with non-classified records. SBIR de-risks financially. |
 | Competitor enters market | Medium | 12–18 month head start. ILS tool depth is the moat. Defense relationships compound. |
 | XRPL disruption | Very Low | 99.99%+ uptime since 2012. Fallback architecture designed. |
 | CMMC requirements evolve | Low | Hash-only approach is compliance-agnostic. No sensitive data on-chain. |

@@ -191,7 +191,7 @@ setInterval(function() {
             var spent = s.slsFees || 0;
             var tierAlloc = window._s4TierAllocation || parseInt(localStorage.getItem('s4_tier_allocation')) || 25000;
             var bal = tierAlloc - spent;
-            balEl.textContent = bal.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0});
+            balEl.textContent = bal.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0}) + ' Credits';
         }
         var anchEl = document.getElementById('slsBarAnchors');
         if (anchEl) anchEl.textContent = s.anchored || 0;

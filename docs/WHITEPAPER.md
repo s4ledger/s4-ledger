@@ -15,9 +15,9 @@ S4 Ledger provides tamper-proof audit trails for defense supply chains, technica
 
 ### 1.1 Defense Logistics Is Broken
 
-The U.S. Department of Defense manages supply chains spanning thousands of vendors, millions of parts, and decades of lifecycle support. The consequences of record integrity failures are severe:
+The U.S. Department of War manages supply chains spanning thousands of vendors, millions of parts, and decades of lifecycle support. The consequences of record integrity failures are severe:
 
-- **$1.2 billion+** in counterfeit electronic parts detected in DoD supply chains (SASC Report, 2012)
+- **$1.2 billion+** in counterfeit electronic parts detected in DoW supply chains (SASC Report, 2012)
 - **Gundecking** — falsification of maintenance records — undermines readiness and puts lives at risk
 - **CDRL delivery disputes** costing months of contract resolution
 - **Configuration management failures** causing interoperability breakdowns during deployment
@@ -206,7 +206,7 @@ SHA-256 is not directly vulnerable to Grover's algorithm. Grover's algorithm red
 
 | Solution | Approach | Cost | Data Exposure | Defense Focus |
 |---|---|---|---|---|
-| **S4 Ledger** | Hash anchoring on XRPL | 0.01 SLS/anchor | Zero | Built for DoD ILS — 20+ tools, U.S. Navy |
+| **S4 Ledger** | Hash anchoring on XRPL | 0.01 SLS/anchor | Zero | Built for DoW ILS — 20+ tools, U.S. Navy |
 | **ICAPS** (DAU) | Mainframe + PC provisioning | Free (gov only) | Internal database | Navy/USMC only, Supply Support only |
 | SAP S/4HANA | ERP platform | $1M+ | Full database | Commercial, adapted for defense |
 | Oracle Cloud | ERP platform | $500K+ | Cloud-hosted | Commercial, adapted for defense |
@@ -265,7 +265,7 @@ S4 Ledger delivers measurable cost savings at every implementation tier:
 
 ### Economic Impact & Job Creation
 
-At scale (Year 5, $3–5M ARR), S4 Ledger is projected to create 340+ jobs (30–45 direct, 100–200 indirect at integrators and contractors) with a total economic impact of $8M–$17M based on the DoD's 3.4× economic multiplier. By lowering compliance barriers for Tier 2–4 suppliers, the platform expands the defense industrial base and enables small businesses to compete for contracts that were previously cost-prohibitive.
+At scale (Year 5, $3–5M ARR), S4 Ledger is projected to create 340+ jobs (30–45 direct, 100–200 indirect at integrators and contractors) with a total economic impact of $8M–$17M based on the DoW's 3.4× economic multiplier. By lowering compliance barriers for Tier 2–4 suppliers, the platform expands the defense industrial base and enables small businesses to compete for contracts that were previously cost-prohibitive.
 
 **Key Government Savings Drivers:**
 - **65% labor reduction** in manual ILS documentation and verification ($85K/FTE × 2080 hrs × 0.65)
@@ -297,7 +297,7 @@ Infrastructure costs scale with revenue and never exceed 6% of ARR at any phase.
 
 ## 8. Team
 
-S4 Ledger is a product line of **S4 Systems, LLC**, created and built entirely by **Nick Frankfort** — ILS contractor and founder and CEO. Nick built the entire platform (20+ ILS tools, 37 Python SDK methods, 90+ REST API endpoints, $SLS token, 25+ page website, 500+ pre-loaded military entities) at zero cost to the company, on his own time, drawing on years of hands-on ILS experience across Navy and DoD programs.
+S4 Ledger is a product line of **S4 Systems, LLC**, created and built entirely by **Nick Frankfort** — ILS contractor and founder and CEO. Nick built the entire platform (20+ ILS tools, 37 Python SDK methods, 90+ REST API endpoints, $SLS token, 25+ page website, 500+ pre-loaded military entities) at zero cost to the company, on his own time, drawing on years of hands-on ILS experience across Navy and DoW programs.
 
 Based in Charleston, SC.
 
@@ -311,9 +311,9 @@ The math is the proof.
 
 ---
 
-## DoD Database Compatibility
+## DoW Database Compatibility
 
-S4 Ledger is designed for seamless integration with existing DoD and DoN logistics information systems. Rather than replacing these systems, S4 Ledger acts as the cryptographic verification layer that ensures data integrity across all of them.
+S4 Ledger is designed for seamless integration with existing DoW and DoN logistics information systems. Rather than replacing these systems, S4 Ledger acts as the cryptographic verification layer that ensures data integrity across all of them.
 
 **13 Supported Systems:** NSERC/SE IDE, MERLIN, NAVAIR AMS PMT, COMPASS, CDMD-OA, NDE, MBPS, PEO MLB, CSPT, GCSS, DPAS, DLA FLIS/WebFLIS, and NAVSUP OneTouch.
 
@@ -346,7 +346,7 @@ The ILS Analysis Engine is an 18-function real-time document analysis system bui
 
 | Feature | Description |
 |---------|-------------|
-| **Document Type Detection** | Automatically identifies 30+ DoD document types (DRL, LSAR, PHS&T, FRACAS, DMSMS, LORA, etc.) |
+| **Document Type Detection** | Automatically identifies 30+ DoW document types (DRL, LSAR, PHS&T, FRACAS, DMSMS, LORA, etc.) |
 | **Data Quality Checks** | Validates NSN/NIIN formats, CAGE codes, date consistency, duplicate detection, status fields |
 | **Type-Specific Analysis** | 20+ specialized analyzers tuned to each document type's requirements |
 | **Cross-Reference Engine** | Detects DI number conflicts, NSN discrepancies, and CAGE code mismatches across all uploaded documents |

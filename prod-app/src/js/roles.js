@@ -180,6 +180,9 @@ function applyRole() {
     // Reload vault for this role so each user sees only their own records
     if (typeof reloadVaultForRole === 'function') reloadVaultForRole();
     document.getElementById('roleModal')?.remove();
+    // Now show the AI agent — user is fully on the 4 Channel Hub
+    var aiWrap = document.getElementById('aiFloatWrapper');
+    if (aiWrap) aiWrap.style.display = 'flex';
     if (typeof s4Notify === 'function') s4Notify('Role Applied', (title || _s4Roles[_currentRole]?.label || 'Custom') + ' — ' + visibleTabs.length + ' tools active', 'success');
 }
 

@@ -27,7 +27,7 @@ Before we start, here's every acronym, buzzword, and piece of jargon in this doc
 | **DIU** | Defense Innovation Unit — a Pentagon office that finds and funds startups building cool tech for the military |
 | **DLA** | Defense Logistics Agency — the government organization that manages the military supply chain (food, fuel, spare parts, etc.) |
 | **DMSMS** | Diminishing Manufacturing Sources and Material Shortages — when the company that makes a critical part stops making it, and you need to find a replacement before you run out. This is a HUGE expensive problem in defense |
-| **DoD** | Department of Defense — the U.S. military (Navy, USMC, Coast Guard, and all their agencies) |
+| **DoW** | Department of War — the U.S. military (Navy, USMC, Coast Guard, and all their agencies) |
 | **FedRAMP** | Federal Risk and Authorization Management Program — a security certification that cloud software must pass before the government will use it. Think of it as the government's seal of approval for cloud services |
 | **FTE** | Full-Time Equivalent — one person working full-time (40 hours/week) |
 | **GIDEP** | Government-Industry Data Exchange Program — a database where government and industry share information about parts that are defective or becoming obsolete |
@@ -44,7 +44,7 @@ Before we start, here's every acronym, buzzword, and piece of jargon in this doc
 | **NATO** | North Atlantic Treaty Organization — a military alliance of 31 countries (US, UK, Canada, France, Germany, etc.) that work together for defense |
 | **NavalX** | The Navy's innovation hub that connects startups with Navy problems to solve |
 | **NIST** | National Institute of Standards and Technology — the government agency that writes cybersecurity standards everyone has to follow |
-| **NSN** | National Stock Number — a 13-digit code that identifies every item the military buys. Like a barcode, but for the entire Department of Defense |
+| **NSN** | National Stock Number — a 13-digit code that identifies every item the military buys. Like a barcode, but for the entire Department of War |
 | **PdM** | Predictive Maintenance — using data and AI to predict when equipment will break so you can fix it before it fails |
 | **PTD** | Provisioning Technical Documentation — the paperwork that lists every part, tool, and supply needed to support a piece of military equipment |
 | **REST API** | A way for software programs to talk to each other over the internet — like how your weather app gets data from a weather service |
@@ -72,7 +72,7 @@ Think of it like this:
 
 - **The military** maintains thousands of weapon systems — jets, ships, tanks, missiles. Each one has thousands of parts, hundreds of documents, and years of maintenance history.
 - **Right now**, most of this tracking is done with spreadsheets, PDFs, and 20-year-old software systems that don't talk to each other. It's slow, expensive, error-prone, and easy to fake.
-- **S4 Ledger** replaces all of that with one modern platform. It has 20+ built-in tools that handle everything from tracking parts to predicting when something will break, plus a defense database import tool that connects to 24 DoD/DoN systems. And it stamps every record onto a blockchain — which means no one can secretly change the records after the fact.
+- **S4 Ledger** replaces all of that with one modern platform. It has 20+ built-in tools that handle everything from tracking parts to predicting when something will break, plus a defense database import tool that connects to 24 DoW/DoN systems. And it stamps every record onto a blockchain — which means no one can secretly change the records after the fact.
 
 **The bottom line:** S4 Ledger saves the government a LOT of money and makes defense logistics dramatically better. And that means S4 Systems (the company) can grow from a small consulting firm into a billion-dollar technology company.
 
@@ -109,7 +109,7 @@ Here's a simple breakdown of the 20+ tools and what they replace:
 | **Stores reference documents** (Document Library) | Hunting down MIL-STD documents | $5K–$15K |
 | **AI Assistant** (AI Agent) | Nothing — this capability didn't exist | Brand new capability |
 | **Reviews vendor submissions for errors** (ILIE) | Contractors manually compare new submissions line-by-line against previous versions (40–120 hours each) | $120K–$500K |
-| **Imports data from 24 DoD systems** (Defense Database Import) | Manual data reconciliation across GCSS, DPAS, MERLIN, and 21 more | $300K–$500K |
+| **Imports data from 24 DoW systems** (Defense Database Import) | Manual data reconciliation across GCSS, DPAS, MERLIN, and 21 more | $300K–$500K |
 | **TOTAL** | | **~$1.02M–$2.6M / year** |
 
 ### What Happens When You Multiply That
@@ -119,7 +119,7 @@ Here's a simple breakdown of the 20+ tools and what they replace:
 | 5 programs (pilot phase) | $5.1M–$13.0M |
 | 50 programs (growth phase) | $51M–$130M |
 | 500 programs (at scale) | $510M–$1.3B |
-| 5,000 programs (entire DoD) | **$5.1B–$13.0B** |
+| 5,000 programs (entire DoW) | **$5.1B–$13.0B** |
 
 **The key point:** The government gets back $15 to $100 for every $1 they spend on S4 Ledger. That's an insanely good deal — and the kind of math that makes government decision-makers say yes very quickly.
 
@@ -201,7 +201,7 @@ This is the "go big" phase:
 ### Phase 4: Dominate the Market (Year 6–10) — Goal: $70M–$200M/year → **$1 Billion+ Company**
 
 This is the "category leader" phase:
-- Win a **DoD-wide contract** (an IDIQ worth $20M–$50M over several years)
+- Win a **DoW-wide contract** (an IDIQ worth $20M–$50M over several years)
 - Expand internationally to Japan, South Korea, Israel, and more
 - Acquire 2–3 smaller competitors ($5M–$20M each)
 - Reach a point where S4 Ledger is the industry standard for defense logistics

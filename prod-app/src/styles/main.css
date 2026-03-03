@@ -779,7 +779,7 @@
         .compliance-pct{min-width:50px;text-align:right;font-size:0.85rem;font-weight:700}
         body.light-mode .score-ring .score-val{color:#1d1d1f}
         body.light-mode .compliance-label{color:#1d1d1f}
-        body.light-mode .compliance-pct{color:#1d1d1f !important}
+        body.light-mode .compliance-pct{font-weight:800}
         /* ═══ ENHANCED UX — GLASSMORPHISM, MICRO-ANIMATIONS ═══ */
         @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}

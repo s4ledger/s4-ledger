@@ -48,7 +48,7 @@ S4 Ledger occupies a unique niche at the intersection of **blockchain-anchored a
 | **ILS Capabilities** | **Closest competitor to S4 Ledger's value proposition.** Ark's Logistics Application targets logistics officers for "battlefield awareness, maximize lethality, and operational effectiveness." Sustainment application covers maintenance/support. Supply Chain application covers supplier risk. However: no blockchain anchoring, no CDRL management, no DMSMS-specific tooling, no provisioning calculations per MIL-STD-1561. |
 | **Security** | FedRAMP High + IL5 PA (DISA) — highest security clearances for cloud services |
 | **Pricing Model** | Enterprise SaaS sold to program offices and acquisition commands. Likely $500K–$5M annual contracts based on comparable defense SaaS. |
-| **At Pre-Pilot Stage** | ~2011–2014: Started as a defense data analytics consultancy, then productized into a platform. Early traction came through relationships with DoD acquisition leaders and policy wonks. Built credibility through "Scorecard" reports analyzing defense supply chain health. |
+| **At Pre-Pilot Stage** | ~2011–2014: Started as a defense data analytics consultancy, then productized into a platform. Early traction came through relationships with DoW acquisition leaders and policy wonks. Built credibility through "Scorecard" reports analyzing defense supply chain health. |
 
 **S4 Ledger Differentiation vs. Govini:**
 - Govini focuses on *acquisition decisions* (what to buy, from whom); S4 Ledger focuses on *ILS execution* (managing logistics data once systems are fielded)
@@ -106,9 +106,9 @@ S4 Ledger occupies a unique niche at the intersection of **blockchain-anchored a
 |---|---|
 | **Stage** | Public company (NYSE: SAP). ~€250B+ market cap. Founded 1972. |
 | **Revenue** | **~€31B** (FY2024 total SAP revenue) |
-| **Key Customers** | U.S. Department of Defense (massive ERP modernization), U.S. Navy, multiple NATO allies |
+| **Key Customers** | U.S. Department of War (massive ERP modernization), U.S. Navy, multiple NATO allies |
 | **Key Product** | **S/4HANA** with defense industry modules. Capabilities: financial management, defense force management, supply chain management, human resources, procurement, maintenance scheduling. |
-| **ILS Capabilities** | SAP covers maintenance/repair (PM module), materials management, supply chain. The DoD has spent **$billions** on SAP implementations (often troubled). SAP addresses *enterprise resource planning* — not ILS-specific tools. No DMSMS, no CDRL management, no Ao calculations, no provisioning formulas, no blockchain. |
+| **ILS Capabilities** | SAP covers maintenance/repair (PM module), materials management, supply chain. The DoW has spent **$billions** on SAP implementations (often troubled). SAP addresses *enterprise resource planning* — not ILS-specific tools. No DMSMS, no CDRL management, no Ao calculations, no provisioning formulas, no blockchain. |
 | **Pricing Model** | Enterprise licensing: $1M–$100M+/year depending on user count and modules. Defense implementations commonly $50M–$500M+ programs. |
 | **At Pre-Pilot Stage** | SAP was founded in 1972 by IBM engineers. Built R/2 for mainframes, then R/3 for client-server. Growth was entirely enterprise sales — never a startup in the modern sense. |
 
@@ -127,7 +127,7 @@ S4 Ledger occupies a unique niche at the intersection of **blockchain-anchored a
 |---|---|
 | **Stage** | Public company (NYSE: ORCL). ~$400B+ market cap. |
 | **Revenue** | **~$53B** (FY2024 total Oracle revenue). Federal/defense is a growing segment. |
-| **Key Customers** | U.S. Navy, DHS, DoD agencies. Won major cloud infrastructure contracts (JWCC). |
+| **Key Customers** | U.S. Navy, DHS, DoW agencies. Won major cloud infrastructure contracts (JWCC). |
 | **Key Product** | Oracle Cloud ERP, Oracle Cloud SCM (Supply Chain Management), Oracle Fusion. FedRAMP authorized. |
 | **ILS Capabilities** | Enterprise ERP/SCM, not ILS-specific. Maintenance management modules exist but are generic. No DMSMS, CDRLs, provisioning, or blockchain. |
 | **Pricing Model** | Enterprise SaaS licensing, comparable to SAP pricing ranges. |
@@ -142,7 +142,7 @@ S4 Ledger occupies a unique niche at the intersection of **blockchain-anchored a
 |---|---|
 | **Stage** | Product line within **RTX Corporation** (formerly Raytheon Technologies). Public company, ~$150B market cap. |
 | **Revenue** | RTX total: **~$69B** (FY2024). PRISM is a tiny fraction — an internal tool productized for government use. |
-| **Key Customers** | U.S. DoD programs (internal Raytheon programs + external government customers) |
+| **Key Customers** | U.S. DoW programs (internal Raytheon programs + external government customers) |
 | **Key Product** | **PRISM** — ILS Management software. Covers some ILS elements: reliability/maintainability analysis, logistics support analysis (LSA), LCC modeling. |
 | **ILS Capabilities** | **Most directly competitive with S4 Ledger's ILS tools.** PRISM covers reliability prediction (MIL-HDBK-217), maintainability, spares optimization, LCC analysis. However: it's legacy client-server software, not cloud-native. No blockchain. No web workspace. No CDRL management. No DMSMS tracking. Limited to R&M and LCC calculations. |
 | **Pricing Model** | Per-seat licensing, typically sold through defense program budgets. Estimated $10K–$50K/seat/year. |
@@ -221,7 +221,7 @@ The intersection of "blockchain" + "defense integrated logistics support" is ess
 | Company/Project | What They Do | Threat Level |
 |---|---|---|
 | **Rune Technologies** | Military logistics software. Founded by Anduril alumni, backed by Andreessen Horowitz. Raised $24M Series A (July 2025). Part of Palantir's Startup Fellowship. | **Medium-High** — could add blockchain features, focused on military logistics |
-| **SIMBA Chain** | Blockchain-as-a-service for government/defense. DoD contracts for supply chain provenance. | **Medium** — blockchain + defense, but not ILS-specific |
+| **SIMBA Chain** | Blockchain-as-a-service for government/defense. DoW contracts for supply chain provenance. | **Medium** — blockchain + defense, but not ILS-specific |
 | **SecureMarking / Guardtime** | Blockchain for defense supply chain authentication and anti-counterfeiting. | **Low-Medium** — supply chain authentication, not ILS management |
 | **IBM Food Trust (now discontinued)** | Was blockchain supply chain tracking. Concept applicable to defense but IBM exited. | **None** — discontinued |
 | **Constellation Network** | U.S. Air Force contract for blockchain data authentication. | **Low** — data layer, not ILS tools |
@@ -305,18 +305,18 @@ The defense tech funding environment is **historically strong**:
 
 **Key benefits:**
 - **Non-dilutive** — no equity given up
-- 11 federal agencies participate (DoD is the largest)
+- 11 federal agencies participate (DoW is the largest)
 - Competitive but accessible to small businesses
 - Phase I proposals are typically 15–25 pages
 - **No prior government contracting experience required**
 - Topics are published in open solicitations
-- S4 Ledger should target **DoD SBIR topics** related to: logistics data management, supply chain traceability, blockchain/DLT applications, ILS automation, maintenance data analytics
+- S4 Ledger should target **DoW SBIR topics** related to: logistics data management, supply chain traceability, blockchain/DLT applications, ILS automation, maintenance data analytics
 
 ### 5.2 OTA (Other Transaction Authority)
 
 **Medium-term target for S4 Ledger.**
 
-- Allows DoD to prototype new technologies outside traditional FAR-based contracting
+- Allows DoW to prototype new technologies outside traditional FAR-based contracting
 - Awards can be $100K to $100M+
 - Faster contracting timeline (weeks to months vs. years)
 - Key OTA consortia for defense tech:
@@ -354,14 +354,14 @@ MONTH 6-12:   SBIR Phase I application → Award (~40% win rate for good proposa
 MONTH 12-18:  SBIR Phase I execution → Feasibility validation with government users
 MONTH 18-24:  SBIR Phase II application → Deeper prototype development
 MONTH 18-30:  OTA prototype opportunity → Parallel path to SBIR
-MONTH 24-36:  First pilot with a specific DoD program office
+MONTH 24-36:  First pilot with a specific DoW program office
 MONTH 30-42:  Authority to Operate (ATO) process → Can take 6-12 months alone
 MONTH 36-48:  First production contract / Phase III commercialization
 ```
 
 **Reference points:**
 - **Palantir:** ~4 years from founding (2003) to meaningful revenue (~2007). Spent 2 years embedded with CIA analysts iterating the product.
-- **Anduril:** ~2 years from founding (2017) to first major DoD contract (~2019). Benefited enormously from founder (Palmer Luckey) reputation + Founders Fund backing.
+- **Anduril:** ~2 years from founding (2017) to first major DoW contract (~2019). Benefited enormously from founder (Palmer Luckey) reputation + Founders Fund backing.
 - **Govini:** ~3 years from founding (~2011) to first meaningful government traction (~2014). Started with research reports to build credibility before productizing.
 - **Rune Technologies:** Founded by Anduril alumni, raised $24M Series A within ~1 year. Accelerated by Palantir Startup Fellowship and existing defense network.
 
@@ -385,7 +385,7 @@ MONTH 36-48:  First production contract / Phase III commercialization
 ### Govini at Pre-Pilot (~2011–2013)
 - Started as defense data analysis consultancy, not a product company
 - Published "Scorecard" research reports on defense supply chain health → established credibility
-- Used consulting engagements to understand DoD acquisition pain points
+- Used consulting engagements to understand DoW acquisition pain points
 - Productized the platform once they understood the workflows
 - Key lesson: **Thought leadership and domain expertise** → build trust before selling software
 
@@ -401,7 +401,7 @@ MONTH 36-48:  First production contract / Phase III commercialization
 ## 8. STRATEGIC RECOMMENDATIONS FOR S4 LEDGER
 
 ### 8.1 Immediate Actions (Next 90 Days)
-1. **Apply for DoD SBIR Phase I** targeting blockchain/logistics topics
+1. **Apply for DoW SBIR Phase I** targeting blockchain/logistics topics
 2. **Join NSTXL consortium** for OTA access ($1K, immediate)
 3. **Register on SAM.gov** if not already done (required for all federal contracts)
 4. **Identify 2–3 specific weapons system programs** with active ILS challenges (e.g., a legacy aircraft with DMSMS headaches)
@@ -424,7 +424,7 @@ S4 Ledger's defensible advantages:
 
 ### 8.4 Key Risks
 1. **ATO/FedRAMP timeline** — can take 12-18 months and $200K-$500K+
-2. **Blockchain skepticism in DoD** — "crypto" has negative connotations; frame as "distributed ledger for data integrity"
+2. **Blockchain skepticism in DoW** — "crypto" has negative connotations; frame as "distributed ledger for data integrity"
 3. **Long sales cycles** — defense procurement is measured in years, not months
 4. **Prime contractor crowdout** — Raytheon/Lockheed could build competing tools (but historically haven't invested in ILS software)
 5. **Funding gap** — Need bridge capital between pre-pilot and SBIR Phase I award

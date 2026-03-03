@@ -8,7 +8,7 @@ Nick built the entire platform — 20+ ILS tools, 37 Python SDK methods, 90+ RES
 
 ### Background
 
-- Active ILS contractor with years of hands-on experience across Navy and DoD programs
+- Active ILS contractor with years of hands-on experience across Navy and DoW programs
 - Proposed Product Lead / CTO for S4 Systems, LLC
 - Expertise in Python, cryptography, distributed systems, and defense logistics workflows
 - Deep understanding of defense supply chain challenges, maintenance record integrity, and configuration management

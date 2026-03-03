@@ -33,7 +33,7 @@
     <meta name="application-name" content="S4 Ledger">
     <meta name="msapplication-TileColor" content="#000000">
     <meta name="msapplication-config" content="none">
-    <!-- Flankspeed / Nautilus VDI / DoD Network Compatibility -->
+    <!-- Flankspeed / Nautilus VDI / DoW Network Compatibility -->
     <meta name="format-detection" content="telephone=no">
     <!-- Content Security Policy (Production) -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;">
@@ -74,6 +74,7 @@
   var saved=localStorage.getItem('s4-theme');
   if(saved==='light'){document.body.classList.add('light-mode');document.body.setAttribute('data-theme','light');}
   window.toggleTheme=function(){
+    if(window._themeToggling)return;window._themeToggling=true;setTimeout(function(){window._themeToggling=false;},0);
     var b=document.body,isL=b.classList.toggle('light-mode');
     if(isL)b.setAttribute('data-theme','light');else b.removeAttribute('data-theme');
     localStorage.setItem('s4-theme',isL?'light':'dark');
@@ -144,11 +145,11 @@
     </div>
 </div>
 
-<!-- ═══ DoD CONSENT BANNER ═══ -->
+<!-- ═══ DoW CONSENT BANNER ═══ -->
 <div id="dodConsentBanner" role="dialog" aria-modal="true" aria-labelledby="dodConsentHeading" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;">
     <div style="background:#0a0e1a;border:2px solid rgba(0,170,255,0.5);border-radius:3px;padding:40px;max-width:680px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
         <div style="margin-bottom:20px;"><i class="fas fa-shield-halved" style="font-size:3rem;color:#00aaff;"></i></div>
-        <h2 id="dodConsentHeading" style="color:#00aaff;font-size:1.3rem;font-weight:800;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">U.S. Department of Defense Information System</h2>
+        <h2 id="dodConsentHeading" style="color:#00aaff;font-size:1.3rem;font-weight:800;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">U.S. Department of War Information System</h2>
         <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:20px;margin-bottom:20px;text-align:left;">
             <p style="color:var(--steel);font-size:0.82rem;line-height:1.7;margin:0 0 12px;">You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.</p>
             <p style="color:var(--steel);font-size:0.82rem;line-height:1.7;margin:0 0 12px;">By using this IS (which includes any device attached to this IS), you consent to the following conditions:</p>
@@ -246,7 +247,7 @@
         </div>
         <div style="text-align:center;">
             <button onclick="startAuthFlow()" style="background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
-            <a href="/demo-app" style="display:inline-block;margin-left:12px;background:transparent;color:var(--accent);border:1px solid rgba(0,170,255,0.4);padding:14px 28px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;text-decoration:none;letter-spacing:-0.01em;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See a Demo</a>
+            <a href="/prod-app/demo" style="display:inline-block;margin-left:12px;background:transparent;color:var(--accent);border:1px solid rgba(0,170,255,0.4);padding:14px 28px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;text-decoration:none;letter-spacing:-0.01em;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See a Demo</a>
         </div>
     </div>
 </section>
@@ -1160,7 +1161,7 @@
                         <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                <p><strong style="color:#fff;">What's real:</strong> The formula <code style='color:#00aaff'>Ao = MTBF / (MTBF + MTTR + MLDT)</code> is the actual DoD standard calculation. The MTBF/MTTR/MLDT values pre-loaded for each system are <em>representative ranges</em> based on published data for those system types (e.g., gas turbines average 2000-5000 hr MTBF, radar systems 600-1800 hr).</p>
+                                <p><strong style="color:#fff;">What's real:</strong> The formula <code style='color:#00aaff'>Ao = MTBF / (MTBF + MTTR + MLDT)</code> is the actual DoW standard calculation. The MTBF/MTTR/MLDT values pre-loaded for each system are <em>representative ranges</em> based on published data for those system types (e.g., gas turbines average 2000-5000 hr MTBF, radar systems 600-1800 hr).</p>
                                 <p><strong style="color:#ffa500;">Data source note:</strong> The specific MTBF/MTTR/MLDT numbers are representative but NOT from actual FRACAS (Failure Reporting, Analysis and Corrective Action System) databases. Real values come from fleet maintenance data (3-M system for Navy).</p>
                                 <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Readiness calculations drive billions in sustainment spending. When you compute an Ao and anchor it to the XRP Ledger, you create a <em>timestamped, tamper-proof record</em> that this system had X% availability on this date. This matters for: (1) Contract performance metrics — proving a system met its KPP/KSA readiness threshold, (2) Milestone decision briefings — anchored readiness reports can't be retroactively altered, (3) DMSMS correlation — linking obsolescence events to readiness drops to justify resolution funding.</p>
                                 <p><strong style="color:#00aaff;">Production mode:</strong> Input your actual FRACAS/3-M data. The fields are editable — type in real MTBF/MTTR/MLDT values from your program's RAM analysis. Export the report, anchor the hash. That hash becomes permanent proof of the calculation.</p>
@@ -1263,7 +1264,7 @@
                         <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                             <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Understanding Total Ownership Cost</summary>
                             <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                <p><strong style="color:#fff;">What this tool does:</strong> It calculates how much a weapon system costs over its ENTIRE life — not just the sticker price. The DoD famously spends 60-70% of a system's total cost AFTER it's built, on sustainment, repairs, and obsolescence. This tool breaks that down.</p>
+                                <p><strong style="color:#fff;">What this tool does:</strong> It calculates how much a weapon system costs over its ENTIRE life — not just the sticker price. The DoW famously spends 60-70% of a system's total cost AFTER it's built, on sustainment, repairs, and obsolescence. This tool breaks that down.</p>
                                 <p><strong style="color:#00aaff;">What the numbers mean:</strong></p>
                                 <ul style="margin:4px 0 8px 16px;">
                                     <li><strong>Acquisition:</strong> What you pay upfront — unit cost × fleet size. For a DDG-51 Flight III, that's roughly $2.2B per ship × 20 ships = ~$44B.</li>
@@ -1469,7 +1470,7 @@
                     <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#fff;">What's real:</strong> All 100+ documents are <strong>real defense standards and regulations</strong> — GEIA-STD-0007 (MIL-STD-1388), MIL-HDBK-502, OPNAVINST 4790.16, COMDTINST M4000.13, Army AR 700-127, AFI 63-101, MCO 4105.2, DFARS 252.204-7012, NIST SP 800-171, and more. Links go to official DoD, NAVSEA, DLA, and NIST sources.</p>
+                            <p><strong style="color:#fff;">What's real:</strong> All 100+ documents are <strong>real defense standards and regulations</strong> — GEIA-STD-0007 (MIL-STD-1388), MIL-HDBK-502, OPNAVINST 4790.16, COMDTINST M4000.13, Army AR 700-127, AFI 63-101, MCO 4105.2, DFARS 252.204-7012, NIST SP 800-171, and more. Links go to official DoW, NAVSEA, DLA, and NIST sources.</p>
                             <p><strong style="color:#ffa500;">Data source note:</strong> The document library itself is fully real — these are the actual standards ILS managers reference daily. No simulated content. The library is currently static; production mode adds your organization's internal documents, SOPs, and program-specific references.</p>
                             <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> ILS managers waste 15-30 minutes per reference lookup, switching between tabs, Googling document numbers, and tracking down the latest revision. With 100+ standards pre-loaded and searchable by category, branch, keywords, and document ID, you find the right standard in seconds — while working in the same tool where you're running analysis. Across a program office, this saves 200+ hours/year in reference lookup time.</p>
                             <p><strong style="color:#00aaff;">Production mode:</strong> Add your organization's internal documents via the S4 API. Create custom categories. Upload program-specific SOPs, instructions, and contract documents. The library becomes your program's searchable knowledge base — always available, always current.</p>
@@ -1715,7 +1716,7 @@
                         <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — AI Risk Prediction</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The risk engine analyzes supplier health indicators — GIDEP alerts, CAGE code changes, DLA lead time spikes, financial distress signals, and single-source dependencies — to generate risk scores for every part in your supply chain. Alerts are timestamped and can be anchored to XRPL for audit trail.</p>
-                            <p><strong style="color:#fff;">Data source note:</strong> Risk scores and supplier data are generated from realistic DoD supply chain patterns. In production, this connects to live GIDEP, DLA, SAM.gov, and commercial financial data feeds via API.</p>
+                            <p><strong style="color:#fff;">Data source note:</strong> Risk scores and supplier data are generated from realistic DoW supply chain patterns. In production, this connects to live GIDEP, DLA, SAM.gov, and commercial financial data feeds via API.</p>
                             <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> A single undetected supplier failure costs $2M–$8M in emergency redesign. Predictive risk detection 18–24 months ahead reduces emergency procurement by <strong>60–80%</strong>. Across 50 programs: <strong>$15M–$100M in avoided costs over 5 years</strong>.</p>
                             <p><strong style="color:#00aaff;">Production mode:</strong> Connects to GIDEP API, DLA FLIS, SAM.gov entity data, Dun & Bradstreet financial health scores, and XRPL anchor history for continuous monitoring.</p>
                         </div>
@@ -1863,7 +1864,7 @@
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The report generator compiles all anchored records, verification timestamps, chain-of-custody proof, and compliance scores into audit-ready packages. Every data point is backed by an XRPL transaction hash for independent verification.</p>
                             <p><strong style="color:#fff;">Data sources:</strong> Reports pull from your anchoring history, compliance scorecard, and ILS analysis results stored in your S4 Ledger database.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Average DoD contract audit costs $45K–$150K in preparation labor alone (2–6 weeks of staff time). S4 Ledger generates a complete, verifiable audit package in <strong>under 60 seconds</strong> — a <strong>95–99% cost reduction</strong>.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Average DoW contract audit costs $45K–$150K in preparation labor alone (2–6 weeks of staff time). S4 Ledger generates a complete, verifiable audit package in <strong>under 60 seconds</strong> — a <strong>95–99% cost reduction</strong>.</p>
                             <p><strong style="color:#00aaff;">Production mode:</strong> DCMA-ready (Defense Contract Management Agency), DCAA-ready (Defense Contract Audit Agency), and IG-ready (Inspector General) report templates with full chain-of-custody visualization and compliance gap analysis.</p>
                         </div>
                     </details>
@@ -1983,7 +1984,7 @@
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — AI-Powered Failure Prediction</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">What's real:</strong> The Predictive Maintenance engine analyzes maintenance history patterns across the S4 Ledger network — MTBF trends, failure mode clustering, component age curves, and environmental stress factors — to predict which systems will require maintenance before unplanned failures occur.</p>
-                            <p><strong style="color:#fff;">How predictions improve:</strong> The AI model starts with fleet maintenance patterns from publicly available DoD reliability data, then trains on your actual anchored maintenance records for increasingly accurate predictions over time.</p>
+                            <p><strong style="color:#fff;">How predictions improve:</strong> The AI model starts with fleet maintenance patterns from publicly available DoW reliability data, then trains on your actual anchored maintenance records for increasingly accurate predictions over time.</p>
                             <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Unplanned maintenance costs 3–10× more than planned maintenance. A single unplanned engine failure on a DDG-51 costs $500K–$2M including parts, labor, and lost operational time. Predictive maintenance reduces unplanned failures by <strong>40–60%</strong>, saving <strong>$2M–$10M per fleet per year</strong>.</p>
                             <p><strong style="color:#00aaff;">Production mode:</strong> Connects to 3-M maintenance databases, OARS, NTCSS, and sensor data feeds. Uses anonymized/aggregated fleet-wide patterns (like Google Maps traffic) while keeping individual records private.</p>
                         </div>
@@ -2284,9 +2285,9 @@
                     <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
                         <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#fff;">DD 1662 Management:</strong> Upload or create DD Form 1662 records (DoD Property in the Custody of Contractors). Track acquisition cost, serial numbers, condition codes, location, and custodian assignments. Automated alerts for annual physical inventory requirements.</p>
+                            <p><strong style="color:#fff;">DD 1662 Management:</strong> Upload or create DD Form 1662 records (DoW Property in the Custody of Contractors). Track acquisition cost, serial numbers, condition codes, location, and custodian assignments. Automated alerts for annual physical inventory requirements.</p>
                             <p><strong style="color:#00aaff;">Production capabilities:</strong> API-backed inventory with Supabase persistence, blockchain-anchored custody transfers, automated DD 1662 generation, and IUID registry integration. Connects to DPAS (Defense Property Accountability System) and PIEE for government property records.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Government-Furnished Property management across DoD generates <strong>$2.8B+ in annual losses</strong> from unaccounted items, duplicate procurements, and failed physical inventories. Contractors spend 200-400 hours per program per year manually reconciling DD 1662 records, conducting wall-to-wall inventories, and resolving discrepancies with DCMA property administrators. S4 Ledger's blockchain-anchored GFP tracking provides <strong>real-time accountability</strong>, automated condition code updates, custody transfer verification, and instant audit-ready reports. At scale across 100 programs, this eliminates <strong>$80M+/year</strong> in lost property write-offs, audit remediation costs, and duplicate procurement of items already in government inventory.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Government-Furnished Property management across DoW generates <strong>$2.8B+ in annual losses</strong> from unaccounted items, duplicate procurements, and failed physical inventories. Contractors spend 200-400 hours per program per year manually reconciling DD 1662 records, conducting wall-to-wall inventories, and resolving discrepancies with DCMA property administrators. S4 Ledger's blockchain-anchored GFP tracking provides <strong>real-time accountability</strong>, automated condition code updates, custody transfer verification, and instant audit-ready reports. At scale across 100 programs, this eliminates <strong>$80M+/year</strong> in lost property write-offs, audit remediation costs, and duplicate procurement of items already in government inventory.</p>
                         </div>
                     </details>
 
@@ -2575,7 +2576,7 @@
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">Chain of Custody:</strong> Record every custody transfer event — who had it, when, where, and in what condition. Each event is SHA-256 hashed and anchored to the XRP Ledger, creating an immutable provenance chain. QR codes are generated for scanning at physical custody handoff points.</p>
                             <p><strong style="color:#00aaff;">Production capabilities:</strong> Full Supabase-backed provenance database, QR code generation for physical tagging, XRPL memo-anchored verification, IUID integration, and chain visualization timeline. Supports counterfeit detection through provenance gap analysis.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Counterfeit and suspect parts cost the DoD an estimated <strong>$3-5 billion annually</strong> through mission failures, rework, accident investigations, and emergency procurements. Even non-counterfeit provenance failures — lost custody records, missing inspection certificates, unverifiable sourcing — add <strong>$500M+ in annual remediation costs</strong> across the defense industrial base. Traditional paper-based chain-of-custody systems have a <strong>23% gap rate</strong> (GIDEP data), meaning nearly 1 in 4 parts has an incomplete provenance trail. S4 Ledger's blockchain-anchored provenance chain creates an <strong>immutable, verifiable custody record</strong> for every handoff, inspection, and location change. QR codes enable instant field verification. At scale across 100 programs, this prevents <strong>$100M+/year</strong> in counterfeit-related losses, reduces GIDEP reporting overhead, and eliminates custody dispute resolution costs.</p>
+                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Counterfeit and suspect parts cost the DoW an estimated <strong>$3-5 billion annually</strong> through mission failures, rework, accident investigations, and emergency procurements. Even non-counterfeit provenance failures — lost custody records, missing inspection certificates, unverifiable sourcing — add <strong>$500M+ in annual remediation costs</strong> across the defense industrial base. Traditional paper-based chain-of-custody systems have a <strong>23% gap rate</strong> (GIDEP data), meaning nearly 1 in 4 parts has an incomplete provenance trail. S4 Ledger's blockchain-anchored provenance chain creates an <strong>immutable, verifiable custody record</strong> for every handoff, inspection, and location change. QR codes enable instant field verification. At scale across 100 programs, this prevents <strong>$100M+/year</strong> in counterfeit-related losses, reduces GIDEP reporting overhead, and eliminates custody dispute resolution costs.</p>
                         </div>
                     </details>
 
@@ -2735,7 +2736,7 @@
                         <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
                             <p><strong style="color:#fff;">Team Administration:</strong> Create organizational teams, invite members via email, and assign granular roles (Admin, ILS Manager, Analyst, Read-Only). Each role controls access to specific ILS tools and actions. Program-level access control ensures team members only see data for their assigned programs.</p>
-                            <p><strong style="color:#00aaff;">Production capabilities:</strong> Supabase-backed multi-tenant team system, SSO/CAC integration ready, audit log of all team actions, program-to-team assignment matrix, and automated access reviews with expiration alerts. Integrates with DoD identity providers (DMDC, DS Logon).</p>
+                            <p><strong style="color:#00aaff;">Production capabilities:</strong> Supabase-backed multi-tenant team system, SSO/CAC integration ready, audit log of all team actions, program-to-team assignment matrix, and automated access reviews with expiration alerts. Integrates with DoW identity providers (DMDC, DS Logon).</p>
                             <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Managing team access across multiple ILS tools and programs is currently handled through <strong>ad-hoc spreadsheets and email chains</strong>, leading to access control drift, unauthorized data exposure, and failed security audits. Government programs spend <strong>$100K-$300K per year per program</strong> on access management, security review boards, and account administration. S4 Ledger's centralized RBAC system eliminates manual access tracking, provides instant audit reports for CMMC/NIST compliance reviews, and reduces account provisioning from days to seconds. At scale, this saves <strong>$25M+/year</strong> in reduced security administration overhead and avoided audit findings.</p>
                         </div>
                     </details>
@@ -3359,7 +3360,7 @@
             if (overlay) overlay.classList.remove('open');
         };
 
-        // Standalone startAuthFlow — shows DoD consent → CAC login → onboarding → role
+        // Standalone startAuthFlow — shows DoW consent → CAC login → onboarding → role
         if (!window.startAuthFlow) {
             window.startAuthFlow = function startAuthFlow() {
                 var consent = document.getElementById('dodConsentBanner');

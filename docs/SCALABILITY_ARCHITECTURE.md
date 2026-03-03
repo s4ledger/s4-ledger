@@ -232,7 +232,7 @@ SHA-256 hashing, batch record processing, and XRPL transaction building are CPU-
 | Operation | Current Thread | New Thread | UI Impact |
 |---|---|---|---|
 | **SHA-256 hashing** | Main (blocks UI) | Hash Worker | UI stays responsive |
-| **Batch import (24 DoD systems)** | Main (freezes 5-30s) | Hash Worker | Progress bar, no freeze |
+| **Batch import (24 DoW systems)** | Main (freezes 5-30s) | Hash Worker | Progress bar, no freeze |
 | **XRPL transaction building** | Main (blocks 3-5s) | XRPL Worker | Spinner, no freeze |
 | **CSV/XML parsing** | Main (freezes) | Hash Worker | Streaming progress |
 | **Supply chain risk calculation** | Main (blocks 1-3s) | Compute Worker | Instant UI response |
@@ -389,7 +389,7 @@ Record 8 ──► Hash H ─┘
 | **Anchor Service** | XRPL transaction management | Yes (I/O-bound) |
 | **Audit Service** | Audit trail queries, compliance reports | Yes |
 | **Analytics Service** | AI/ML predictions, risk scoring | Yes (GPU-optional) |
-| **Import Service** | DoD database ingestion (24 systems) | Yes (burst workloads) |
+| **Import Service** | DoW database ingestion (24 systems) | Yes (burst workloads) |
 | **Notification Service** | Webhooks, email alerts, action items | Yes |
 
 ### FedRAMP Requirements Addressed

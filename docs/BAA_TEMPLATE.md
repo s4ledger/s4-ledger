@@ -107,7 +107,7 @@ S4 Ledger v5.11.1 includes a comprehensive ILS Workspace with 20+ integrated too
 5. **ROI Calculator** — Cost-benefit analysis with 5-year projections
 6. **Lifecycle Estimator** — Total ownership cost modeling
 7. **Audit Record Vault** — Searchable archive of all anchored records with hash verification
-8. **Defense Document Library** — 100+ real MIL-STDs, OPNAVINSTs, and DoD references
+8. **Defense Document Library** — 100+ real MIL-STDs, OPNAVINSTs, and DoW references
 9. **Compliance Scorecard** — Multi-framework compliance posture assessment
 10. **Supply Chain Risk Engine** — Automated supply chain risk scoring and mitigation recommendations
 11. **Audit Report Generator** — One-click audit report generation with blockchain-verified evidence packages
@@ -148,7 +148,7 @@ S4 Ledger is designed for **unclassified** defense logistics data only. This ser
 
 - Classified information at any level (CONFIDENTIAL, SECRET, TOP SECRET, SCI)
 - Classified system configurations or architectures
-- Any data requiring protection under DoD 5200.01
+- Any data requiring protection under DoW 5200.01
 
 ### 6.2 Customer Obligation
 

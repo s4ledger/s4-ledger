@@ -83,7 +83,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 1. ~~**Deploy persistent storage** (Supabase/PostgreSQL)~~ — ✅ **COMPLETE (v5.11.0)** Supabase PostgreSQL with 43+ tables, user state sync engine, 100% localStorage coverage, automated backups, encryption at rest
 2. **Security audit** — penetration test + SOC 2 Type I
 3. **Monitoring stack** — APM + error tracking + alerting
-4. **CMMC/FedRAMP/IL4 assessment** — required for DoD contracts
+4. **CMMC/FedRAMP/IL4 assessment** — required for DoW contracts
 
 ---
 
@@ -296,7 +296,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Transaction browser | ✅ Active | **High** | Filters, pagination, CSV export, platform filter |
 | Investor portal | ✅ Active | **High** | Market opportunity, tokenomics |
 | Audit Record Vault | ✅ Active | **High** | Auto-saves all anchored records for audit |
-| Defense Doc Library | ✅ Active | **High** | 100+ real MIL-STDs, OPNAVINSTs, DoD refs |
+| Defense Doc Library | ✅ Active | **High** | 100+ real MIL-STDs, OPNAVINSTs, DoW refs |
 | Compliance Scorecard | ✅ Active | **High** | CMMC/NIST/DFARS/FAR/ILS/DMSMS scoring |
 | Terms of Service page | ✅ Active | **Critical** | s4-terms/ |
 | Privacy Policy page | ✅ Active | **Critical** | s4-privacy/ |
@@ -391,8 +391,8 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 ## 11. v3.8.x Changelog (Latest)
 
 ### v3.8.6 — Polish, Real Data, Financial Math
-- [x] **5 New ILS Tools Integrated** — AI Supply Chain Risk Engine (35+ platforms, 37 suppliers), Automated Audit Report Generator (6 report types), Contract Lifecycle Management (25 real DoD contracts), Digital Thread / Config Bridge (32 platform configs), Predictive Maintenance AI (40+ platforms with fleet sizes)
-- [x] **Real DoD Dropdown Data** — All tool dropdowns populated with researched real platforms, contract numbers (N00024, FA8615, W58RGZ formats), platform variants (Flight IIA/III, Block IV/V, SEPv3/v4), fleet sizes, and 37 real defense suppliers
+- [x] **5 New ILS Tools Integrated** — AI Supply Chain Risk Engine (35+ platforms, 37 suppliers), Automated Audit Report Generator (6 report types), Contract Lifecycle Management (25 real DoW contracts), Digital Thread / Config Bridge (32 platform configs), Predictive Maintenance AI (40+ platforms with fleet sizes)
+- [x] **Real DoW Dropdown Data** — All tool dropdowns populated with researched real platforms, contract numbers (N00024, FA8615, W58RGZ formats), platform variants (Flight IIA/III, Block IV/V, SEPv3/v4), fleet sizes, and 37 real defense suppliers
 - [x] **Custom Nautical Animation** — Replaced particles.js with zero-dependency canvas animation (floating anchors, chain links, hex hash fragments, wave lines)
 - [x] **Financial Math Updated** — 20+ tool savings recalculated: ~$1.02M–$2.6M per program/year, 15–100x ROI, ~$1.02B–$2.6B at 1,000 programs
 - [x] **API v3.8.6** — 90+ endpoints, 20+ tool handlers, health endpoint updated
@@ -477,7 +477,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 - [x] **Health Check API** — `/api/health` endpoint with uptime, request count, and version info
 
 ### Improvements
-- [x] **DoD Rebrand** — 44 replacements across 20 files: "DoD" → "DoD", "Department of Defense" → "Department of Defense" (DODIC identifiers preserved)
+- [x] **DoW Rebrand** — 44 replacements across 20 files: "DoW" → "DoW", "Department of War" → "Department of War" (DODIC identifiers preserved)
 - [x] **Cost Formatting** — Smart `formatCost()` function converts raw K values to `$485K` or `$2.2M` across all displays (12 locations updated)
 - [x] **ILS Showcase Text** — Universal language: "compatible with any defense program" instead of specific numbers
 - [x] **Mobile Responsive** — Full mobile/tablet support with breakpoints at 768px, 576px, and 480px; stacking ILS grids, AI chat, post-actions, and dropdowns

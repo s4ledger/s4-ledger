@@ -29,7 +29,7 @@ Every tool in S4 Ledger's current platform eliminates quantifiable labor, error,
 **At scale:**
 - Single program (10,000 records/year): **$250K–$1.5M saved/year**
 - 100 programs: **$25M–$150M saved/year**
-- 1,000 programs (DoD-wide): **$250M–$1.5B saved/year**
+- 1,000 programs (DoW-wide): **$250M–$1.5B saved/year**
 
 #### 2. ILS Workspace (20+ Tools Replacing Manual Processes)
 
@@ -63,7 +63,7 @@ Every tool in S4 Ledger's current platform eliminates quantifiable labor, error,
 | **Pilot** | 5 | 50K | $1.4M–$4.6M | $70K–$230K |
 | **Growth** | 50 | 500K | $14M–$46M | $1.4M–$4.6M |
 | **Scale** | 500 | 5M | $140M–$460M | $14M–$46M |
-| **DoD-Wide** | 5,000 | 50M | $1.4B–$4.6B | $140M–$460M |
+| **DoW-Wide** | 5,000 | 50M | $1.4B–$4.6B | $140M–$460M |
 
 > **Key insight:** S4 Ledger charges 5–10% of the savings it delivers. The government gets $15–$35 back for every $1 they spend on S4 Ledger. That's a 1,500–3,500% ROI — the kind of number that makes appropriations committees enthusiastic.
 
@@ -171,7 +171,7 @@ S4 Systems currently provides defense logistics consulting/contracting services.
 | Capability Addition | TAM Unlocked | Revenue Impact |
 |---|---|---|
 | **Cross-domain analytics (unclass ↔ classified)** | Unique capability | $2M–$10M per major program |
-| **DoD enterprise-wide contract (IDIQ)** | All DoD | $20M–$50M ceiling value |
+| **DoW enterprise-wide contract (IDIQ)** | All DoW | $20M–$50M ceiling value |
 | **Acquisition of complementary tools** | Market consolidation | 2–3 acquisitions ($5M–$20M each) |
 | **International defense expansion (Japan, Korea, Israel)** | $15B+ | 30%+ revenue from international |
 | **Public offering or strategic acquisition** | — | $1B–$3B valuation event |
@@ -231,7 +231,7 @@ At 12–15x revenue multiple: **$1.07B–$1.34B valuation**
 
 ### The 5-Minute Pitch
 
-1. **The market is massive.** DoD spends $150B+/year on logistics. The software tools serving this market are fragmented, overpriced, and 10–20 years behind commercial tech. No one has built a unified ILS platform with blockchain-verified records.
+1. **The market is massive.** DoW spends $150B+/year on logistics. The software tools serving this market are fragmented, overpriced, and 10–20 years behind commercial tech. No one has built a unified ILS platform with blockchain-verified records.
 
 2. **We have a working prototype.** Not a slide deck. Not a concept. A live, functional platform with 20+ ILS tools, a Python SDK, REST API, and real XRPL blockchain integration. Zero cost to the company so far.
 
@@ -303,7 +303,7 @@ S4 Ledger isn't just a product for S4 Systems — it has the potential to reshap
 
 #### Congressional & Budget Impact
 
-Congress appropriates **$850B+ annually** to the Department of Defense. A significant portion — estimated at **$150B+ for logistics alone** — is spent maintaining, tracking, and verifying the readiness of military equipment.
+Congress appropriates **$850B+ annually** to the Department of War. A significant portion — estimated at **$150B+ for logistics alone** — is spent maintaining, tracking, and verifying the readiness of military equipment.
 
 The Government Accountability Office (GAO) and DoD Inspector General repeatedly identify **billions in waste** caused by:
 - Duplicate purchases from unreliable inventory data
@@ -315,7 +315,7 @@ The Government Accountability Office (GAO) and DoD Inspector General repeatedly 
 
 #### Taxpayer Value
 
-Every dollar the DoD saves on manual record-keeping can be redirected to:
+Every dollar the DoW saves on manual record-keeping can be redirected to:
 - **Better equipment** for servicemembers
 - **More training hours** for operational units
 - **Faster procurement** of critical capabilities
@@ -346,7 +346,7 @@ S4 Ledger doesn't just serve large prime contractors — it lowers the barrier f
 - New small businesses to join the defense market with audit-ready documentation from Day 1
 - A more diverse, resilient supply chain — reducing single-source dependencies that threaten national security
 
-The DoD's own industrial base strategy calls for exactly this kind of small business enablement. S4 Ledger delivers it.
+The DoW's own industrial base strategy calls for exactly this kind of small business enablement. S4 Ledger delivers it.
 
 ---
 
@@ -390,7 +390,7 @@ The DoD's own industrial base strategy calls for exactly this kind of small busi
 |---|---|---|---|---|
 | **Palantir** | Data analytics for defense/intel | $2.2B | $60B+ | 27x |
 | **Anduril** | Autonomous defense systems | ~$800M | $14B | 17x |
-| **Rebellion Defense** | AI/ML for DoD | ~$50M | $500M+ | 10x+ |
+| **Rebellion Defense** | AI/ML for DoW | ~$50M | $500M+ | 10x+ |
 | **Second Front Systems** | Defense SaaS platform accreditation | ~$20M | $200M+ | 10x |
 | **Govini** | Defense analytics platform | ~$30M | $300M+ | 10x |
 | **Qlik (Thales defense)** | Supply chain analytics | ~$100M defense | $1B+ defense unit | 10x+ |

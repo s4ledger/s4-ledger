@@ -1156,7 +1156,7 @@ verification = ledger.verify_against_chain(
 # --- Import and anchor bulk records ---
 results = ledger.import_and_anchor(
     file_text=csv_content,
-    source_system="nserc_ide",          # One of 24+ DoD systems
+    source_system="nserc_ide",          # One of 24+ DoW systems
     wallet_seed="sEdXXXX...",
     anchor_to_xrpl=True
 )

@@ -2631,6 +2631,10 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
 // ── LIGHT/DARK MODE TOGGLE ──
 // Platform-only theme switcher with localStorage persistence
 function toggleTheme() {
+    // Re-entrancy guard: capture-phase delegated handler + native onclick both fire
+    if (window._themeToggling) return;
+    window._themeToggling = true;
+    setTimeout(function(){ window._themeToggling = false; }, 0);
     var body = document.body;
     var isLight = body.classList.toggle('light-mode');
     // Sync data-theme attribute for [data-theme="light"] CSS selectors

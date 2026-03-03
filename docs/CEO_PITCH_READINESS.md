@@ -92,7 +92,7 @@ The defense logistics software market has no direct competitor doing what S4 Led
 #### Govini — Private, ~$50M ARR
 - **Stage**: Growth-stage startup, FedRAMP High + IL5 authorized
 - **What they do**: Defense supply chain analytics. Analyzes FPDS (procurement data), maps supply chains, identifies China/Russia sourcing risks.
-- **Defense customers**: DoD Comptroller, DLA, Service acquisition commands
+- **Defense customers**: DoW Comptroller, DLA, Service acquisition commands
 - **ILS overlap**: Supply chain risk assessment, parts analysis
 - **Key fact**: Govini spent 5+ years building before getting FedRAMP authorization. **At your stage, they were scraping public procurement data and building dashboards.**
 - **S4 Ledger advantage**: Govini focuses on acquisition decisions (upstream). S4 Ledger focuses on ILS execution (downstream). Different use cases. Govini doesn't anchor records to blockchain.
@@ -120,7 +120,7 @@ The defense logistics software market has no direct competitor doing what S4 Led
 #### Raytheon PRISM — Most Direct ILS Competitor
 - **Stage**: Legacy desktop software, originally developed in the 1990s
 - **What they do**: ILS management — provisioning, maintenance planning, LSA (Logistic Support Analysis). The closest functional competitor to S4 Ledger.
-- **Defense customers**: Multiple DoD programs (used by ILS managers at primes)
+- **Defense customers**: Multiple DoW programs (used by ILS managers at primes)
 - **ILS overlap**: HIGH — PRISM does provisioning, LSA, maintenance task analysis, spares computation
 - **Key fact**: PRISM is aging. Desktop-only. No cloud. No blockchain. No modern UI. Raytheon hasn't invested significantly in modernizing it. **This is S4 Ledger's primary competitive opportunity.**
 - **S4 Ledger advantage**: Web-based vs desktop. Blockchain anchoring (no equivalent in PRISM). Modern UI. SaaS pricing vs enterprise licensing. AI agent. Multi-platform workspace.
@@ -218,7 +218,7 @@ Every successful defense tech company spent **2-4 years in prototype/demo mode**
 
 1. **Apply for SBIR Phase I** — $100K-$314K non-dilutive funding for prototype development. Target Navy SBIR topics related to ILS, logistics digitization, or supply chain transparency.
 
-2. **Join NSTXL consortium** — $1,000 membership fee. Gives access to DoD OTA (Other Transaction Authority) contracts — faster procurement than traditional FAR-based contracts.
+2. **Join NSTXL consortium** — $1,000 membership fee. Gives access to DoW OTA (Other Transaction Authority) contracts — faster procurement than traditional FAR-based contracts.
 
 3. **Target one pilot program office** — Recommend PMS 300 (LPD/LHA) or PMS 400 (DDG-51) at NAVSEA. These are high-visibility shipbuilding programs with massive ILS requirements.
 
@@ -232,7 +232,7 @@ Every successful defense tech company spent **2-4 years in prototype/demo mode**
 
 7. **Build 2-3 case studies** — Even if informal. "We ran S4 Ledger on Program X's CDRL data and reduced audit prep from 3 weeks to 2 hours."
 
-8. **Consider AFWERX / NavalX** — Innovation organizations specifically designed to bring new tech into DoD.
+8. **Consider AFWERX / NavalX** — Innovation organizations specifically designed to bring new tech into DoW.
 
 ### Revenue Timeline (Realistic)
 

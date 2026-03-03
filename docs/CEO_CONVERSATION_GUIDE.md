@@ -35,7 +35,7 @@ Keep these in your back pocket. Use them in order.
 
 ### 1. The Problem Is Real and Expensive
 
-> "Defense programs waste $600K–$2M+ per year per program on manual logistics tracking — spreadsheets, SharePoint, email chains, paper audit trails. Every major DoD program has this problem. The GAO flags billions in waste every year because of it."
+> "Defense programs waste $600K–$2M+ per year per program on manual logistics tracking — spreadsheets, SharePoint, email chains, paper audit trails. Every major DoW program has this problem. The GAO flags billions in waste every year because of it."
 
 **Why this works:** Your CEO knows this. They see it every day on their own contracts. You're not telling them something new — you're validating what they already suspect.
 

@@ -90,7 +90,7 @@ The only real cost is the 12 XRP activation per new user. Everything else is pur
 | Pilot | Free | 100 | 10,000 | Evaluators, small teams |
 | Starter | $999/mo | 25,000 | 2,500,000 | Contractors, depot maintenance |
 | Professional | $2,499/mo | 100,000 | 10,000,000 | Program offices, fleet sustainment |
-| Enterprise | $9,999/mo | 500,000 | 50,000,000 | DoD agencies, OEMs |
+| Enterprise | $9,999/mo | 500,000 | 50,000,000 | DoW agencies, OEMs |
 
 ---
 

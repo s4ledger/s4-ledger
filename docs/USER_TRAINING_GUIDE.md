@@ -111,7 +111,7 @@ This is the powerhouse of S4 Ledger. It contains **20+ specialized tools** desig
 | 1 | **Gap Analysis** | Upload your program documents (DRL spreadsheets, PDFs, Word docs). The system checks them against what's required and scores your coverage. It tells you exactly what's missing, what's critical, and what to fix first. |
 | 2 | **Action Items** | Shows all the things that need attention — sorted by urgency (critical, warning, info) with cost estimates. |
 | 3 | **DMSMS Checker** | Enter part numbers (NSNs) and find out if they're still being manufactured, at risk, or obsolete. Helps prevent supply problems. |
-| 4 | **Readiness Calculator** | Plug in equipment reliability numbers and calculate how "available" your system will be. Uses standard DoD formulas. |
+| 4 | **Readiness Calculator** | Plug in equipment reliability numbers and calculate how "available" your system will be. Uses standard DoW formulas. |
 | 5 | **ROI Calculator** | Calculate how much money and time S4 Ledger saves your organization. Generates briefing-ready numbers. |
 | 6 | **Lifecycle Cost** | Estimate the total cost of owning and maintaining a system over its entire life — from purchase through sustainment. |
 | 7 | **Audit Vault** | Every record you stamp is saved here with its blockchain verification. Export for audits anytime. |
@@ -223,7 +223,7 @@ Ask your Admin or Program Manager to request additional allocation through the W
 **Q: Can other people see my records?**
 They can see that a transaction happened and see the fingerprint, but the fingerprint reveals nothing about the original content. Only someone with the original text can verify it.
 
-**Q: What are the 24+ supported DoD databases?**
+**Q: What are the 24+ supported DoW databases?**
 NSERC-IDE, MERLIN, NAVAIR AMS-PMT, COMPASS, CDMD-OA, NDE, MBPS, PEO-MLB, CSPT, GCSS, DPAS, DLA/FLIS, NAVSUP, GCSS-Army, LMP, AESIP, REMIS, LIMS-EV, D200A, GCSS-MC, ATLASS, ALMIS, CG-ONE, USSF-LMS, PIEE.
 
 ---

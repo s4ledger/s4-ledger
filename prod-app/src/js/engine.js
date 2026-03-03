@@ -220,14 +220,14 @@ function _syncSlsBar() {
     if (walletAnchorsEl && (stats.anchored || 0) > 0) walletAnchorsEl.textContent = (Math.floor(remaining / 0.01)).toLocaleString();
 }
 
-// ═══ Authentication Flow: DoD Consent → CAC/Login → Platform ═══
+// ═══ Authentication Flow: DoW Consent → CAC/Login → Platform ═══
 function startAuthFlow() {
     // If user already authenticated this session, skip straight through
     if (sessionStorage.getItem('s4_authenticated') === '1') {
         enterPlatformAfterAuth();
         return;
     }
-    // Show DoD consent banner → CAC login → onboarding → role selector
+    // Show DoW consent banner → CAC login → onboarding → role selector
     var consent = document.getElementById('dodConsentBanner');
     if (consent) {
         consent.style.display = 'flex';
@@ -281,13 +281,13 @@ function switchLoginTab(tab) {
 
 function simulateCacLogin() {
     // CAC/PIV — Use Supabase magic link as a secure passwordless alternative
-    // In production with real DoD PKI, this would validate the X.509 certificate
+    // In production with real DoW PKI, this would validate the X.509 certificate
     var modal = document.getElementById('cacLoginModal');
     var btn = modal.querySelector('button[onclick*="simulateCacLogin"]');
     if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Reading CAC certificate...'; btn.disabled = true; }
     // For now: simulate CAC auth (real CAC requires server-side PKI validation)
     setTimeout(function() {
-        if (btn) { btn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i>Authenticated — DoD PKI Verified'; }
+        if (btn) { btn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i>Authenticated — DoW PKI Verified'; }
         setTimeout(function() {
             if (modal) modal.style.display = 'none';
             if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
@@ -465,9 +465,9 @@ function enterPlatformAfterAuth() {
         if (landing) landing.style.display = 'none';
         if (hero) hero.style.display = 'none';
         if (workspace) workspace.style.display = 'block';
-        // Show AI agent only after entering the platform
+        // AI agent stays hidden until role selector closes (applyRole in roles.js shows it)
         var aiWrap = document.getElementById('aiFloatWrapper');
-        if (aiWrap) aiWrap.style.display = '';
+        if (aiWrap) aiWrap.style.display = 'none';
         sessionStorage.setItem('s4_entered', '1');
         // Show onboarding wizard (which chains to role selector on close)
         var onboardDone = sessionStorage.getItem('s4_onboard_done');
@@ -516,6 +516,11 @@ function logout() {
     localStorage.removeItem('s4_anchored_records');
     localStorage.removeItem('s4_wallet');
     localStorage.removeItem('s4_selected_tier');
+    localStorage.removeItem('s4_tier_allocation');
+    localStorage.removeItem('s4_tier_label');
+    // Reset in-memory tier state so timers don't show stale values
+    window._s4TierAllocation = 0;
+    window._s4TierLabel = '';
     // Clear ALL role-scoped vaults (s4Vault, s4Vault_admin, s4Vault_auditor, etc.)
     Object.keys(localStorage).filter(function(k){ return k.startsWith('s4Vault'); }).forEach(function(k){ localStorage.removeItem(k); });
     localStorage.removeItem('s4_action_items');
@@ -538,6 +543,7 @@ function logout() {
     sessionStorage.removeItem('s4_onboard_done');
     // Reset in-memory state
     stats = {anchored:0, verified:0, types:new Set(), slsFees:0};
+    window._s4Stats = stats; // Keep window ref in sync so metrics.js reads fresh stats
     sessionRecords = [];
     if (typeof s4Vault !== 'undefined') s4Vault = [];
     if (typeof s4ActionItems !== 'undefined') s4ActionItems = [];
@@ -3828,7 +3834,7 @@ function renderILSResult() {
         + (r.critGaps > 0
             ? '<div style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:3px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-exclamation-triangle" style="color:#ff3333"></i> <strong style="color:#ff3333">'+r.critGaps+' critical gap'+(r.critGaps>1?'s':'')+' found</strong> \u2014 Est. risk: <strong>'+formatCost(r.totalCost)+'</strong>. See Action Items.</div>'
             : '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-check-circle" style="color:var(--accent)"></i> <strong style="color:var(--accent)">All critical items accounted for.</strong> Package appears ready for review.</div>')
-        + '<div style="margin-top:1rem;font-size:0.78rem;color:var(--muted)">Analysis based on DoW 5000 series ILS requirements per program type. Always verify against your contract-specific DRL.</div>';
+        + '<div style="margin-top:1rem;font-size:0.78rem;color:var(--muted)">Analysis based on DoD 5000 series ILS requirements per program type. Always verify against your contract-specific DRL.</div>';
     panel.classList.add('show');
     showPostActions();
     // Notify AI agent that analysis is available
@@ -4572,13 +4578,13 @@ function generateAiResponse(query) {
     }
 
     // ── DEFENSE STANDARDS ──
-    if (/geia.*0007|geia.*std|s3000l|product.*support.*analysis|psa.*standard/.test(q)) return '<strong>GEIA-STD-0007 \u2014 Logistics Product Data</strong><br><br>GEIA-STD-0007 replaced the cancelled MIL-STD-1388-1A/2B (cancelled 1996) as the primary standard for logistics product data in defense acquisitions.<br><br>\u2022 <strong>GEIA-STD-0007</strong> \u2014 Logistics Product Data (direct replacement for MIL-STD-1388-2B LSAR)<br>\u2022 <strong>MIL-HDBK-502</strong> \u2014 Product Support Analysis (PSA) handbook (replaces LSA guidance from MIL-STD-1388-1A)<br>\u2022 <strong>S3000L</strong> \u2014 International LSA/PSA standard (ASD/AIA S-Series, NATO-adopted)<br>\u2022 <strong>S1000D</strong> \u2014 International specification for technical publications<br>\u2022 <strong>S2000M</strong> \u2014 International specification for material management<br><br><strong>Key change:</strong> "Logistics Support Analysis (LSA)" is now called "Product Support Analysis (PSA)" under DoD\'s product support framework. S4 Ledger aligns with GEIA-STD-0007 and supports both legacy LSA and modern PSA workflows.';
+    if (/geia.*0007|geia.*std|s3000l|product.*support.*analysis|psa.*standard/.test(q)) return '<strong>GEIA-STD-0007 \u2014 Logistics Product Data</strong><br><br>GEIA-STD-0007 replaced the cancelled MIL-STD-1388-1A/2B (cancelled 1996) as the primary standard for logistics product data in defense acquisitions.<br><br>\u2022 <strong>GEIA-STD-0007</strong> \u2014 Logistics Product Data (direct replacement for MIL-STD-1388-2B LSAR)<br>\u2022 <strong>MIL-HDBK-502</strong> \u2014 Product Support Analysis (PSA) handbook (replaces LSA guidance from MIL-STD-1388-1A)<br>\u2022 <strong>S3000L</strong> \u2014 International LSA/PSA standard (ASD/AIA S-Series, NATO-adopted)<br>\u2022 <strong>S1000D</strong> \u2014 International specification for technical publications<br>\u2022 <strong>S2000M</strong> \u2014 International specification for material management<br><br><strong>Key change:</strong> "Logistics Support Analysis (LSA)" is now called "Product Support Analysis (PSA)" under DoW\'s product support framework. S4 Ledger aligns with GEIA-STD-0007 and supports both legacy LSA and modern PSA workflows.';
 
     if (/mil.*std.*1388|ils.*element|12.*element|what.*ils/.test(q)) return '<strong>GEIA-STD-0007 / MIL-HDBK-502 \u2014 12 ILS Elements (Product Support)</strong><br><br>Integrated Logistics Support covers these 12 elements:<br><br>1. <strong>Maintenance Planning</strong> \u2014 preventive/corrective maintenance strategies<br>2. <strong>Manpower & Personnel</strong> \u2014 staffing requirements<br>3. <strong>Supply Support</strong> \u2014 spares, repair parts, consumables<br>4. <strong>Support Equipment</strong> \u2014 tools, test equipment, TMDE<br>5. <strong>Technical Data</strong> \u2014 manuals, drawings, specifications<br>6. <strong>Training & Training Support</strong> \u2014 courses, devices, materials<br>7. <strong>Computer Resources Support</strong> \u2014 software, firmware<br>8. <strong>Facilities</strong> \u2014 maintenance shops, storage, training<br>9. <strong>Packaging, Handling, Storage & Transportation</strong> \u2014 PHS&T<br>10. <strong>Design Interface</strong> \u2014 R&M, human factors, safety<br>11. <strong>Standardization</strong> \u2014 interoperability, commonality<br>12. <strong>Product Support Management</strong> \u2014 PSM oversight<br><br><em>Note: MIL-STD-1388-1A/2B was cancelled in 1996 and superseded by GEIA-STD-0007 and MIL-HDBK-502. The 12 ILS elements remain the standard framework. Internationally, S3000L provides equivalent guidance.</em>';
 
     if (/nist|800.171|cui.*protect|controlled.*unclass/.test(q)) return '<strong>NIST SP 800-171</strong> \u2014 Protecting Controlled Unclassified Information (CUI)<br><br>110 security controls across 14 families:<br><br>\u2022 Access Control (AC) \u2014 22 controls<br>\u2022 Awareness & Training (AT) \u2014 3 controls<br>\u2022 Audit & Accountability (AU) \u2014 9 controls<br>\u2022 Configuration Management (CM) \u2014 9 controls<br>\u2022 Identification & Authentication (IA) \u2014 11 controls<br>\u2022 Incident Response (IR) \u2014 3 controls<br>\u2022 Maintenance (MA) \u2014 6 controls<br>\u2022 Media Protection (MP) \u2014 9 controls<br>\u2022 Personnel Security (PS) \u2014 2 controls<br>\u2022 Physical Protection (PE) \u2014 6 controls<br>\u2022 Risk Assessment (RA) \u2014 3 controls<br>\u2022 Security Assessment (CA) \u2014 4 controls<br>\u2022 System & Communications Protection (SC) \u2014 16 controls<br>\u2022 System & Information Integrity (SI) \u2014 7 controls<br><br>S4 Ledger\'s blockchain anchoring directly supports AU (audit trail), SI (integrity), and SC (communications protection) controls.';
 
-    if (/cmmc.*level|cmmc.*2|cmmc.*certif|cybersecurity.*maturity/.test(q)) return '<strong>CMMC Level 2</strong> \u2014 Cybersecurity Maturity Model Certification<br><br>CMMC Level 2 requires implementation of all 110 NIST SP 800-171 controls:<br><br>\u2022 <strong>Assessment:</strong> Third-party C3PAO assessment required<br>\u2022 <strong>Scope:</strong> All systems processing, storing, or transmitting CUI<br>\u2022 <strong>Timeline:</strong> Required for all DoD contracts handling CUI (phased rollout 2025+)<br>\u2022 <strong>Validity:</strong> 3-year certification cycle<br><br><strong>How S4 helps:</strong><br>\u2022 Blockchain anchoring provides immutable audit trails (AU controls)<br>\u2022 SHA-256 hashing ensures data integrity (SI controls)<br>\u2022 AES encryption option for CUI records (SC controls)<br>\u2022 Compliance Scorecard auto-calculates CMMC readiness<br><br><em>Note: S4 Ledger\'s CMMC certification is In Progress (not yet certified).</em>';
+    if (/cmmc.*level|cmmc.*2|cmmc.*certif|cybersecurity.*maturity/.test(q)) return '<strong>CMMC Level 2</strong> \u2014 Cybersecurity Maturity Model Certification<br><br>CMMC Level 2 requires implementation of all 110 NIST SP 800-171 controls:<br><br>\u2022 <strong>Assessment:</strong> Third-party C3PAO assessment required<br>\u2022 <strong>Scope:</strong> All systems processing, storing, or transmitting CUI<br>\u2022 <strong>Timeline:</strong> Required for all DoW contracts handling CUI (phased rollout 2025+)<br>\u2022 <strong>Validity:</strong> 3-year certification cycle<br><br><strong>How S4 helps:</strong><br>\u2022 Blockchain anchoring provides immutable audit trails (AU controls)<br>\u2022 SHA-256 hashing ensures data integrity (SI controls)<br>\u2022 AES encryption option for CUI records (SC controls)<br>\u2022 Compliance Scorecard auto-calculates CMMC readiness<br><br><em>Note: S4 Ledger\'s CMMC certification is In Progress (not yet certified).</em>';
 
     if (/dfars|252\.204|safeguard.*defense|covered.*defense/.test(q)) return '<strong>DFARS 252.204-7012</strong> \u2014 Safeguarding Covered Defense Information<br><br>Key requirements:<br>\u2022 Implement NIST SP 800-171 controls for CDI/CUI<br>\u2022 Report cyber incidents within 72 hours<br>\u2022 Preserve media and data for 90 days post-incident<br>\u2022 Flow down to subcontractors<br><br>S4\'s blockchain anchoring creates verifiable evidence of data integrity controls, directly supporting DFARS compliance.';
 
@@ -4593,7 +4599,7 @@ function generateAiResponse(query) {
 
     if (/sdk|api|developer|integrate|rest.*api|python.*sdk/.test(q)) return '<strong>S4 Ledger SDK & API</strong><br><br><strong>REST API:</strong><br>\u2022 29 endpoints covering all platform functionality<br>\u2022 JSON request/response format<br>\u2022 API key authentication<br>\u2022 Rate limiting per subscription tier<br><br><strong>Python SDK:</strong><br>\u2022 27 functions wrapping all API endpoints<br>\u2022 <code>pip install s4-sdk</code> (PyPI)<br>\u2022 Async support, retry logic, error handling<br>\u2022 Full documentation at <a href="../sdk/">sdk/</a><br><br><strong>Key endpoints:</strong><br>\u2022 <code>POST /api/anchor</code> \u2014 anchor a hash to XRPL<br>\u2022 <code>GET /api/verify/{hash}</code> \u2014 verify a record<br>\u2022 <code>POST /api/wallet/provision</code> \u2014 create a new wallet<br>\u2022 <code>GET /api/metrics</code> \u2014 platform metrics';
 
-    if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoD domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="/s4-about/">About page</a>.';
+    if (/who.*built|who.*created|team|founder|nick|developer/.test(q)) return '<strong>S4 Ledger Team</strong><br><br>S4 Ledger was created by defense logistics professionals who experienced firsthand the limitations of legacy ILS tools. The platform combines deep DoW domain expertise with blockchain technology to solve the data integrity problem in defense supply chains.<br><br>For more information, visit the <a href="/s4-about/">About page</a>.';
 
     if (/hello|hi|hey|good morning|good afternoon|good evening/.test(q)) return 'Hello! I\'m the S4 Agent \u2014 your defense logistics assistant. I can help with:<br><br>\u2022 <strong>ILS analysis</strong> \u2014 gap analysis, DMSMS, readiness, lifecycle cost<br>\u2022 <strong>Defense standards</strong> \u2014 GEIA-STD-0007 (ILS), NIST 800-171, CMMC, DFARS<br>\u2022 <strong>S4 platform</strong> \u2014 pricing, wallets, Credits, how anchoring works<br>\u2022 <strong>Tool guidance</strong> \u2014 how to use any of the 20+ ILS tools<br><br>What can I help you with?';
 
@@ -4613,9 +4619,9 @@ function generateAiResponse(query) {
 
     if (/what.*phs.*t|phs&t|packaging.*handling|mil.*std.*2073/.test(q)) return '<strong>PHS&T \u2014 Packaging, Handling, Storage & Transportation</strong><br><br>ILS Element #9 per GEIA-STD-0007 (formerly MIL-STD-1388). Covers MIL-STD-2073 (packaging requirements), MIL-STD-129 (marking), and transportation planning. Ensures items arrive at the right place, undamaged, properly identified.';
 
-    if (/what.*cbm|cbm\+|condition.*based/.test(q)) return '<strong>CBM+ (Condition-Based Maintenance Plus)</strong><br><br>DoD maintenance strategy that uses real-time data and analytics to determine maintenance needs based on actual equipment condition rather than fixed schedules. CBM+ integrates with predictive maintenance to reduce unplanned downtime and optimize maintenance intervals.';
+    if (/what.*cbm|cbm\+|condition.*based/.test(q)) return '<strong>CBM+ (Condition-Based Maintenance Plus)</strong><br><br>DoW maintenance strategy that uses real-time data and analytics to determine maintenance needs based on actual equipment condition rather than fixed schedules. CBM+ integrates with predictive maintenance to reduce unplanned downtime and optimize maintenance intervals.';
 
-    if (/what.*flis|flis|federal.*logistics/.test(q)) return '<strong>FLIS \u2014 Federal Logistics Information System</strong><br><br>The FLIS is the DoD\'s central database for logistics data, managed by DLA (Defense Logistics Agency). It contains NSN (National Stock Number) data, item descriptions, management codes, and sourcing information for millions of items. HarborLink\'s Parts Cross-Reference tool provides a simplified interface to this type of data, with S4 Ledger providing blockchain verification for all parts records.';
+    if (/what.*flis|flis|federal.*logistics/.test(q)) return '<strong>FLIS \u2014 Federal Logistics Information System</strong><br><br>The FLIS is the DoW\'s central database for logistics data, managed by DLA (Defense Logistics Agency). It contains NSN (National Stock Number) data, item descriptions, management codes, and sourcing information for millions of items. HarborLink\'s Parts Cross-Reference tool provides a simplified interface to this type of data, with S4 Ledger providing blockchain verification for all parts records.';
 
     if (/what.*cdrl|cdrl/.test(q)) return '<strong>CDRL \u2014 Contract Data Requirements List</strong><br><br>The CDRL (DD Form 1423) specifies all data deliverables required under a defense contract. Each CDRL item has:<br>\u2022 DI number (Data Item Description)<br>\u2022 Frequency of submission<br>\u2022 Distribution requirements<br>\u2022 Government review/approval authority<br><br>S4 tracks CDRL status in the Contract Management tool.';
 
@@ -4746,7 +4752,7 @@ function generateAiResponse(query) {
         if (/s4\s*(ledger|systems|platform)|this platform/i.test(q)) return '<strong>S4 Ledger</strong><br><br>S4 Ledger is a blockchain-verified defense record management platform built by S4 Systems, LLC.<br><br><strong>What it does:</strong><br>\u2022 Anchors defense logistics records to the XRP Ledger<br>\u2022 Creates tamper-proof audit trails for CDRL, maintenance, supply chain, and ordnance records<br>\u2022 Provides 20+ integrated ILS (Integrated Logistics Support) analysis tools<br>\u2022 Supports 156+ military record types across all service branches<br><br><strong>Key value:</strong> 99.9% cost reduction vs. traditional notarization ($0.0001 vs. $25-$150 per record).<br><br><strong>Technology:</strong> XRPL Mainnet, Credits utility token, SHA-256 hashing, AI-powered analysis.';
     }
 
-    if (/who\s*(made|built|created|founded|is behind)/i.test(q)) return '<strong>S4 Systems, LLC</strong><br><br>S4 Ledger is built by <strong>S4 Systems, LLC</strong>, founded by <strong>Nick Frankfort</strong>. The platform combines blockchain technology with defense logistics expertise to create tamper-proof audit trails for the Department of Defense.<br><br>\u2022 Website: <a href="https://s4ledger.com" target="_blank" style="color:var(--accent)">s4ledger.com</a><br>\u2022 Treasury: <a href="https://livenet.xrpl.org/accounts/rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ" target="_blank" style="color:var(--accent)">View on XRPL</a>';
+    if (/who\s*(made|built|created|founded|is behind)/i.test(q)) return '<strong>S4 Systems, LLC</strong><br><br>S4 Ledger is built by <strong>S4 Systems, LLC</strong>, founded by <strong>Nick Frankfort</strong>. The platform combines blockchain technology with defense logistics expertise to create tamper-proof audit trails for the Department of War.<br><br>\u2022 Website: <a href="https://s4ledger.com" target="_blank" style="color:var(--accent)">s4ledger.com</a><br>\u2022 Treasury: <a href="https://livenet.xrpl.org/accounts/rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ" target="_blank" style="color:var(--accent)">View on XRPL</a>';
 
     if (/thank|thanks|appreciate|great job|nice work|good bot/i.test(q)) return 'You\u2019re welcome! I\u2019m here to help with anything \u2014 defense logistics, platform questions, or general inquiries. Just ask!';
 
@@ -5444,7 +5450,7 @@ var _prodFeatures = [
     {name:'SAM.gov Entity Connector',desc:'System for Award Management integration for vendor verification, exclusion checks, and entity validation.'}
   ]},
   { cat:'Authentication & Access', icon:'fa-id-badge', items:[
-    {name:'SSO / CAC Authentication',desc:'Single Sign-On with DoD Common Access Card (CAC) and PIV support via SAML 2.0 and OpenID Connect.'},
+    {name:'SSO / CAC Authentication',desc:'Single Sign-On with DoW Common Access Card (CAC) and PIV support via SAML 2.0 and OpenID Connect.'},
     {name:'Multi-Tenant Org Management',desc:'Hierarchical organization management with cross-tenant data isolation and federated admin controls.'}
   ]},
   { cat:'Real-Time Collaboration', icon:'fa-users', items:[
@@ -5455,7 +5461,7 @@ var _prodFeatures = [
     {name:'Change Tracking',desc:'Full change log with diff views, rollback capability, and approval workflows for critical modifications.'}
   ]},
   { cat:'Security & Compliance', icon:'fa-shield-alt', items:[
-    {name:'Digital Signatures (PKI/CAC)',desc:'Cryptographic document signing using DoD PKI certificates and CAC-based non-repudiation.'},
+    {name:'Digital Signatures (PKI/CAC)',desc:'Cryptographic document signing using DoW PKI certificates and CAC-based non-repudiation.'},
     {name:'Server-Side Encryption',desc:'AES-256-GCM encryption at rest with FIPS 140-2 validated key management and HSM integration.'}
   ]},
   { cat:'Document Processing', icon:'fa-file-alt', items:[
@@ -7305,7 +7311,7 @@ var _templates = [
       desc:'Contract Data Requirements List tracker per DI-MGMT-80004A. Maps each CDRL exhibit line item to its Data Item Description (DID), tracks submission status, government review cycle, and acceptance.',
       fields:['CDRL Exhibit Line Item (e.g., A001)','DID Number (e.g., DI-ILSS-81495A)','Title','Frequency (One Time / Monthly / Quarterly / As Required)','First Submission Due Date','Contractor Submission Date','Distribution Statement','Government Reviewer','Review Status (Under Review / Approved / Rejected / Approved-as-Noted)','Government Action Due Date','Rejection Reason / Comments','Resubmission Date','Final Acceptance Date','Pages / File Size','Anchored to XRPL (Y/N)','TX Hash'] },
     { id:'TPL-004', name:'Statement of Work (SOW)', category:'contract', icon:'fa-file-contract',
-      desc:'SOW template structured per MIL-HDBK-245D with standard DoD sections (1.0–6.0). Defines all contractor tasks, deliverables, acceptance criteria, and performance standards.',
+      desc:'SOW template structured per MIL-HDBK-245D with standard DoW sections (1.0–6.0). Defines all contractor tasks, deliverables, acceptance criteria, and performance standards.',
       fields:['Contract Number','Program Name','Contractor Name / CAGE Code','1.0 Scope — System Overview','1.1 Scope — Program Background','2.0 Applicable Documents — Government (MIL-STDs, specs)','2.1 Applicable Documents — Non-Government (SAE, IEEE)','3.0 Requirements — General','3.x Task Descriptions (one per task: Task Title, Description, Inputs, Outputs, Acceptance Criteria, Performance Std)','4.0 Deliverables — CDRL Cross-Reference Table','5.0 Period of Performance — Start/End Dates','5.1 Milestone Schedule','6.0 Place of Performance — Primary / Alternate Sites','Government-Furnished Property','Security Requirements (CUI, classified, NIST 800-171)','Quality Assurance Surveillance Plan (QASP) Reference','Key Personnel Requirements'] },
     { id:'TPL-005', name:'Provisioning Parts List (PPL)', category:'logistics', icon:'fa-boxes-stacked',
       desc:'PPL template per GEIA-STD-0007 for initial provisioning of repair parts, special tools, and test equipment. Includes Source, Maintenance & Recoverability (SMR) coding.',
@@ -7326,13 +7332,13 @@ var _templates = [
       desc:'TEMP template per DoDI 5000.89 / DoD 5000 series for developmental and operational test planning. Covers critical technical parameters, test design, resources, and exit criteria.',
       fields:['Program Name','TEMP Version / Date','System Description','Critical Technical Parameters (CTPs) — Threshold & Objective','Critical Operational Issues (COIs)','Test Phases (DT&E, OT&E, LUT, IOT&E, FOT&E)','DT&E Test Events — Objectives, Resources, Schedule','OT&E Test Events — Objectives, Resources, Schedule','Live Fire Test & Evaluation (if applicable)','Test Limitations / Constraints','Modeling & Simulation Plan','Data Collection / Reduction / Analysis Plan','Success Criteria per Phase','Deficiency Severity Categories','Resources Required — Personnel, Ranges, Targets, Instrumentation','Schedule (months with milestones)','Risk Areas','Cybersecurity T&E Requirements','Interoperability Test Plan Reference','Evaluation Framework'] },
     { id:'TPL-011', name:'Failure Review Board (FRB) Report', category:'engineering', icon:'fa-bug',
-      desc:'FRB report template per MIL-STD-1629A / DoD reliability practices for convening a formal review of mission-critical or safety-critical failures, determining root cause, and mandating corrective actions.',
+      desc:'FRB report template per MIL-STD-1629A / DoW reliability practices for convening a formal review of mission-critical or safety-critical failures, determining root cause, and mandating corrective actions.',
       fields:['FRB Report Number','Date of FRB Convening','FRB Chairperson / Members','System / Subsystem Affected','Serial Number / Lot','Failure Date / Time','Operating Hours at Failure','Failure Description (symptom, mode, effect)','Failure Environment (temp, humidity, vibration, sea state)','Visual / Physical Inspection Findings','Lab Analysis Results','Contributing Factors','Root Cause Determination','Failure Category (design, manufacturing, workmanship, wear-out, NFF)','Corrective Actions Required','Preventive Actions Required','Fleet / Lot Applicability','Retrofit / Inspection Screening Required','Target Implementation Date','Effectiveness Review Date'] },
     { id:'TPL-012', name:'Warranty Claim & Tracking Form', category:'contract', icon:'fa-certificate',
       desc:'Warranty claim template per FAR 46.7 / DFARS 246.7 for exercising contractor warranty provisions. Tracks claim from defect discovery through contractor disposition and credit/replacement.',
       fields:['Claim Number','Contract Number','Contractor Name / CAGE Code','Contract Warranty Clause Reference','Item NSN','Item Part Number','Item Serial Number / Lot Number','Item Nomenclature','Warranty Start Date','Warranty Expiration Date','Date Defect Discovered','Defect Description','Mission Impact (Critical / Degraded / None)','Reporting Activity / UIC','Contractor Notified Date','Claim Type (Repair / Replace / Credit)','Estimated Claim Value','Government Shipping Date','Contractor Acknowledgment Date','Contractor Disposition Date','Resolution Description','Credit Amount / Replacement Tracking','Warranty Administrator Notes'] },
     { id:'TPL-013', name:'Risk Assessment Matrix (5×5)', category:'compliance', icon:'fa-table-cells',
-      desc:'5×5 risk matrix template per DoD Risk, Issue, and Opportunity (RIO) Management Guide / MIL-STD-882E for scoring likelihood × consequence across cost, schedule, performance, and safety dimensions.',
+      desc:'5×5 risk matrix template per DoW Risk, Issue, and Opportunity (RIO) Management Guide / MIL-STD-882E for scoring likelihood × consequence across cost, schedule, performance, and safety dimensions.',
       fields:['Risk ID','Risk Title','Risk Description','Risk Category (Technical / Schedule / Cost / Programmatic)','Likelihood Score (1-5: Rare, Unlikely, Possible, Likely, Near Certain)','Cost Consequence Score (1-5)','Schedule Consequence Score (1-5)','Performance Consequence Score (1-5)','Safety Consequence Score (1-5)','Overall Risk Score (L × max C)','Risk Level (Low / Moderate / High / Very High)','Risk Trigger / Watch Items','Mitigation Strategy','Mitigation Owner','Mitigation Start Date','Mitigation Actions / Status','Residual Likelihood','Residual Consequence','Residual Risk Level','Risk Burn-Down Reference','Last Updated','Next Review Date'] },
     { id:'TPL-014', name:'FRACAS Report', category:'engineering', icon:'fa-chart-bar',
       desc:'Failure Reporting, Analysis & Corrective Action System (FRACAS) report template per MIL-STD-2155 / MIL-HDBK-2155. Provides closed-loop tracking from failure occurrence through corrective action verification.',
@@ -7345,7 +7351,7 @@ var _templates = [
       desc:'LORA template per MIL-STD-1390D for determining the economically optimal repair level (discard, organizational, intermediate, depot) for each repairable component.',
       fields:['LORA Case ID','End Item / System','Indenture Level','NSN / Part Number / Nomenclature','Failure Rate (λ)','MTBF (hours)','Discard Cost','Organizational Repair Cost','Intermediate Repair Cost','Depot Repair Cost','Repair Turnaround Time per Level','Support Equipment Required per Level','Personnel Skill Required per Level','Recommended Maintenance Level','Cost-Benefit Summary','LSA Control Number','Approved By'] },
     { id:'TPL-017', name:'DD Form 1423 — CDRL', category:'contract', icon:'fa-file-lines',
-      desc:'DD Form 1423-1 (Contract Data Requirements List) template. The official DoD form for specifying data deliverables, DIDs, distribution, and frequency required under contract.',
+      desc:'DD Form 1423-1 (Contract Data Requirements List) template. The official DoW form for specifying data deliverables, DIDs, distribution, and frequency required under contract.',
       fields:['Block 1 — Contract Line Item No.','Block 2 — Title of Data Item','Block 3 — Subtitle','Block 4 — Authority (DID Number)','Block 5 — Contract Reference (SOW paragraph)','Block 6 — Requiring Office','Block 7 — DD 250 Req (inspection/acceptance)','Block 8 — APP Code','Block 9 — Distribution Statement','Block 10 — Frequency','Block 11 — As-of Date','Block 12 — Date of First Submission','Block 13 — Date of Subsequent Submissions','Block 14 — Distribution — Addressee, Copies','Block 15 — Total','Block 16 — Remarks','Tailoring Instructions'] },
     { id:'TPL-018', name:'Maintenance Plan (MIL-STD-3034)', category:'logistics', icon:'fa-tools',
       desc:'Maintenance plan template per MIL-STD-3034 for defining the maintenance concept, tasks, intervals, and resources for a weapon system across its lifecycle.',
@@ -8350,7 +8356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-bs-toggle="pill"]').forEach(tab => {
         tab.addEventListener('shown.bs.tab', e => {
             const target = e.target.getAttribute('href');
-            if (aiWrapper) {
+            if (aiWrapper && sessionStorage.getItem('s4_entered') === '1' && sessionStorage.getItem('s4_user_role')) {
                 aiWrapper.style.display = 'flex';
                 // Update context label per tab
                 var ctxEl = document.getElementById('aiContextLabel');
@@ -8480,6 +8486,8 @@ window.loadRecordToVerify = loadRecordToVerify;
 window.loadRiskData = loadRiskData;
 window.loadSamplePackage = loadSamplePackage;
 window.logout = logout;
+window._updateSlsBalance = _updateSlsBalance;
+window._syncSlsBar = _syncSlsBar;
 window.onILSProgramChange = onILSProgramChange;
 window.onSubProgramChange = onSubProgramChange;
 window.openProdFeatures = openProdFeatures;

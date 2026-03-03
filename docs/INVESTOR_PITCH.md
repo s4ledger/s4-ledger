@@ -7,7 +7,7 @@ S4 Ledger is building the integrity layer for defense logistics — immutable ve
 
 ## Problem & Opportunity
 
-- Counterfeit parts in DoD supply chains cost billions and endanger warfighters
+- Counterfeit parts in DoW supply chains cost billions and endanger warfighters
 - Gundecked maintenance records undermine readiness across all service branches
 - CDRL delivery disputes consume months of contract resolution time
 - No common integrity layer exists across GCSS, DPAS, 3-M, and contractor ERPs
@@ -45,7 +45,7 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 - **20+ interactive defense tools** live at s4ledger.com/demo-app — not mockups, real working interfaces
 - **37 Python SDK methods** for defense-grade hash anchoring, verification, and batch operations
 - **90+ REST API endpoints** for enterprise integration
-- **500+ pre-loaded military entities** — 500+ defense platforms across the U.S. Navy, USMC, and USCG, 37 real defense suppliers, 25 real DoD contracts
+- **500+ pre-loaded military entities** — 500+ defense platforms across the U.S. Navy, USMC, and USCG, 37 real defense suppliers, 25 real DoW contracts
 - **156+ pre-built record types across Navy, USMC, and USCG** mapped to real-world logistics workflows (supports any defense record type)
 - **100+ real defense documents** in searchable reference library (MIL-STDs, OPNAVINSTs, DoD Directives)
 - **Audit Record Vault** — automatic audit trail storage for every anchored record
@@ -69,14 +69,14 @@ Think of S4 Ledger like a notary for defense records. When an ILS manager comple
 ## National Impact
 
 - **$150B+ defense logistics market** directly addressable
-- **Saves $900M–$2.1B/year at scale** across all DoD programs
+- **Saves $900M–$2.1B/year at scale** across all DoW programs
 - **340+ jobs created by Year 5** (30–45 direct + 100–200 indirect at integrators/contractors)
-- **$8M–$17M economic impact** based on DoD's 3.4× economic multiplier
+- **$8M–$17M economic impact** based on DoW's 3.4× economic multiplier
 - Lowers compliance barriers for Tier 2–4 suppliers, expanding the defense industrial base
 
 ## Market
 
-- $850B+ annual DoD budget
+- $850B+ annual DoW budget
 - 12 ILS elements (MIL-STD-1388) — each an addressable market
 - No competitor combines hash-only architecture + public ledger + defense focus
 - Adjacent markets: NATO allies, defense contractors, shipbuilding, aviation MRO

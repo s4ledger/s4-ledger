@@ -10,7 +10,7 @@ S4 Ledger: Immutable logistics verification for the defense industry, anchored o
 
 ## Problem
 - Counterfeit parts, falsified maintenance records, unverifiable supply chains
-- No common integrity layer across DoD logistics systems
+- No common integrity layer across DoW logistics systems
 - Siloed data, audit failures, delivery disputes
 - CMMC 2.0 enforcement begins 2025–2026 — every contractor must comply
 - FedRAMP needed for 80% of federal software market
@@ -65,9 +65,9 @@ Key: 65% labor reduction • 90% error savings • 70% audit reduction • 15-25
 
 ## National Impact
 - **$150B+ defense logistics market** directly addressable
-- **Saves $900M–$2.1B/year at scale** across all DoD programs
+- **Saves $900M–$2.1B/year at scale** across all DoW programs
 - **340+ jobs created by Year 5** (30–45 direct + 100–200 indirect)
-- **$8M–$17M economic impact** per DoD's 3.4× multiplier
+- **$8M–$17M economic impact** per DoW's 3.4× multiplier
 - Expands defense industrial base for Tier 2–4 small businesses
 
 ---
@@ -94,7 +94,7 @@ Key: 65% labor reduction • 90% error savings • 70% audit reduction • 15-25
 ---
 
 ## Market
-- $850B+ annual DoD budget
+- $850B+ annual DoW budget
 - 12 ILS elements = 12 addressable verticals
 - No competitor combines hash-only + public ledger + defense focus
 
@@ -134,7 +134,7 @@ Key: 65% labor reduction • 90% error savings • 70% audit reduction • 15-25
 
 ## Team
 - Created and built entirely by **Nick Frankfort**, ILS contractor and founder and CEO
-- Years of hands-on Navy and DoD program experience
+- Years of hands-on Navy and DoW program experience
 - S4 Systems, LLC — Charleston, SC
 
 ---
@@ -158,7 +158,7 @@ info@s4ledger.com | s4ledger.com
 
 ### Technology Differentiator: ILS Analysis Engine
 
-- **18-function real-time document analysis** — auto-detects 30+ DoD document types on upload
+- **18-function real-time document analysis** — auto-detects 30+ DoW document types on upload
 - **Cross-reference engine** — catches DI conflicts, NSN discrepancies, and CAGE mismatches across documents
 - **Milestone readiness assessment** — MS A/B/C, IOC, FOC scoring based on document completeness
 - **AI Agent** — hybrid local (115+ defense patterns) + cloud AI (OpenAI/Anthropic/Mistral/Groq) for context-aware analysis

@@ -112,7 +112,7 @@ XRPL uptime: **99.99%**
 ### Added in v5.1.0 (Round 16)
 
 - **🔧 Role Popup Fix** — Role selector now reliably appears after onboarding (removed broken `offsetParent` check on hidden element)
-- **🛡️ DoD Consent Banner** — Recolored from orange to S4 brand blue (#00aaff) for visual consistency
+- **🛡️ DoW Consent Banner** — Recolored from orange to S4 brand blue (#00aaff) for visual consistency
 - **📊 SLS Balance Stability** — Debounced balance updates via `requestAnimationFrame`; reduced polling interval from 3s to 15s to eliminate DOM flicker
 - **🔗 Digital Thread Linkage** — Vault dropdown now auto-populates after every anchor, not just when Vault panel opens
 - **🏷️ Anchor-S4 Header Buttons** — My Analyses, Team, Webhooks, PDF Export now appear as compact badge-style buttons in the Anchor-S4 header alongside Live/IL4-IL5 badges (visible on all workspace views, not just inside tools)
