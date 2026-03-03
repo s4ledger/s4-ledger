@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.12.1] — 2026-02-26
+### Fixed
+- Theme toggle (prod-app): re-entrancy guard prevents double-fire from capture-phase delegated click handler
+- Credits balance: 6 bugs — window exports, tier propagation in closeOnboarding, logout clears localStorage/memory, stale stats pointer, metrics timer restores Credits suffix
+- AI agent: hidden until role selection completes (enterPlatformAfterAuth hides, applyRole shows); tab handler gated on s4_entered + s4_user_role
+- DoW terminology: "Department of Defense" → "Department of War" everywhere except document references (DoDI, DoD 5000, DoD Directive, etc.)
+- Compliance % in light mode: removed color override that stripped color-coded meaning
+- "See a Demo" link: /demo-app → /prod-app/demo (standalone walkthrough page)
+- SW versions: demo s4-v338, prod s4-prod-v708
+
 ## [5.12.0] — 2026-02-26
 ### Added
 - Real Supabase Auth — sign in, sign up, password reset, session restore
