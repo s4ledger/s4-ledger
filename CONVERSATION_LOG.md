@@ -1,5 +1,5 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: March 2, 2026 — Session 4 (11-Point Fix)
+## Last Updated: March 2, 2026 — Session 5 (6-Bug Fix + DoW Revert)
 
 ---
 
@@ -9,12 +9,18 @@
 | Vite 5-chunk build (engine, enhancements, navigation, metrics, index) | ✅ | Both apps |
 | Vercel routing: / → prod-app/dist, /demo-app → demo-app/dist | ✅ | vercel.json |
 | demo-app/index.html = copy of demo-app/dist/index.html (post-build) | ✅ | buildCommand in vercel.json |
-| AI agent hidden on prod-app landing, shown after auth | ✅ | Commit 811a138 |
+| AI agent hidden on prod-app landing, shown after auth | ✅ | Commit 811a138, refined a45e26d (hidden until applyRole) |
 | No fake API hashes (sha256:a1b2c3d4) in metrics fallback | ✅ | Both apps cleaned |
 | SAMPLES in engine.js use bracket placeholders in prod ([Inspector Name]) | ✅ | Intentional template data |
 | Web Vitals (LCP, FID, CLS, INP, TTFB) module in both apps | ✅ | S4.vitals namespace |
 | showRoleSelector exported to window (demo-app) | ✅ | Fixed in commit 8e8aa3e |
 | MIL-STD references updated to current standards | ✅ | GEIA-STD-0007 + MIL-STD-1390D |
+| Theme toggle works (prod-app re-entrancy guard) | ✅ | Commit a45e26d |
+| Credits balance updates on tier switch, persists across logout/login | ✅ | 6 bugs fixed, commit a45e26d |
+| DoW terminology correct (Department of War everywhere except doc refs) | ✅ | Commit a45e26d |
+| See a Demo → /prod-app/demo (standalone walkthrough) | ✅ | Commit a45e26d |
+| Compliance % visible in light mode | ✅ | CSS vars, commit a45e26d |
+| SW versions: demo s4-v338, prod s4-prod-v708 | ✅ | Current |
 
 ## ISSUES REPORTED & FIX STATUS
 | # | Issue | Reported | Status | Fix Details |
@@ -256,7 +262,7 @@
 
 Audited every markdown file in the repo. Systemic issues found and fixed:
 
-- **DoW → DoD:** "Department of War" replaced with "Department of Defense" in 15 files (~60+ occurrences). DoW hasn't existed since 1947.
+- **DoW → DoD:** "Department of War" replaced with "Department of Defense" in 15 files (~60+ occurrences). **⚠️ THIS WAS WRONG — reverted in Session 5.** In this timeline (2026), the Department of Defense IS called the Department of War. Only document identifiers (DoDI, DoD 5000, DoD Directive, etc.) keep "DoD".
 - **Pricing $6K-$60K → $12K-$120K:** Annual pricing didn't match actual tiers ($999×12=$12K to $9,999×12=$120K). Fixed in 9 files.
 - **API endpoints 65 → 90+:** Outdated "65 endpoints" count unified to "90+" across 8+ files including WHITEPAPER (which had "63+").
 - **Rate limit 120 → 30 req/min:** TECHNICAL_SPECS and PUBLIC_FEATURES had stale rate limit. Fixed to 30 req/min.
@@ -279,6 +285,48 @@ Audited every markdown file in the repo. Systemic issues found and fixed:
 
 **Files Changed (docs — 27 files):**
 CHANGELOG.md, README.md, SECURITY.md, docs/BAA_TEMPLATE.md, docs/BILLION_DOLLAR_ROADMAP.md, docs/BILLION_DOLLAR_ROADMAP_SIMPLE.md, docs/CEO_CONVERSATION_GUIDE.md, docs/DEPLOYMENT_GUIDE.md, docs/DEVELOPER_BIO.md, docs/INTEGRATIONS.md, docs/INVESTOR_OVERVIEW.md, docs/INVESTOR_PITCH.md, docs/INVESTOR_RELATIONS.md, docs/INVESTOR_SLIDE_DECK.md, docs/PRODUCTION_READINESS.md, docs/PUBLIC_FEATURES.md, docs/RECOMMENDATIONS.md, docs/ROADMAP.md, docs/S4_LEDGER_INTERNAL_PITCH.md, docs/S4_SYSTEMS_EXECUTIVE_PROPOSAL.md, docs/SCALABILITY_ARCHITECTURE.md, docs/SLS_ECONOMY_CEO_EXPLAINER.md, docs/SUBSCRIPTION_GUIDE.md, docs/TECHNICAL_SPECS.md, docs/USER_TRAINING_GUIDE.md, docs/WHITEPAPER.md, prod-app/TEST_REPORT.md
+
+---
+
+### Session 5 — March 2, 2026 (6-Bug Fix + DoW Revert)
+
+**Commits: a45e26d, fdd1644**
+
+**Bugs Fixed:**
+
+| # | Issue | Root Cause | Fix |
+|---|-------|-----------|-----|
+| 1 | Dark/light mode toggle broken (prod-app) | Capture-phase delegated click handler at index.html L3903-3910 walks up DOM, finds `onclick="toggleTheme()"`, executes it manually, then native onclick fires again = 2 toggles = no visible change | Added `window._themeToggling` re-entrancy guard in enhancements.js + inline failsafe. Demo-app unaffected (no capture handler). |
+| 2 | Credits balance doesn't update on tier switch or persist across logout/login | 6 separate bugs: (a) `_updateSlsBalance`/`_syncSlsBar` not exported to window, (b) `closeOnboarding()` never set tier globals or called balance refresh, (c-d) logout didn't clear `s4_tier_allocation`/`s4_tier_label` from localStorage or memory, (e) `window._s4Stats` stale pointer after logout, (f) metrics timer stripped " Credits" suffix every 3s | All 6 fixed in both apps. |
+| 3 | AI agent shows before user fully on 4 Channel Hub | `enterPlatformAfterAuth()` showed AI immediately, before onboarding/role selector completed | Hidden in `enterPlatformAfterAuth()`, shown only in `applyRole()` after roleModal removed. Tab handler gated on `s4_entered + s4_user_role`. |
+| 4 | Light mode compliance % too light | `color:#1d1d1f !important` override on `.compliance-pct` was stripping color-coded meaning (green/gold/red) | Removed the override; CSS vars already provide dark enough colors in light mode. Changed to `font-weight:800`. |
+| 5 | "See a Demo" button 404 | Href pointed to `/demo-app` (full platform) instead of standalone demo walkthrough | Changed to `/prod-app/demo` (serves `prod-app/demo.html` via Vercel's `cleanUrls: true`). Fixed in root `index.html` and `prod-app/src/index.html`. |
+| 6 | DoW terminology reversed (last session changed DoW→DoD incorrectly) | In this timeline (2026), Department of Defense = Department of War. Only document identifiers keep "DoD". | Reverted across 27+ docs, both engine.js files, both index.html files using `perl -pe 's/\bDoD\b/DoW/g'` with document reference restoration. |
+
+**DoW Rule (PERMANENT):**
+- "Department of War" and "DoW" are correct EVERYWHERE
+- EXCEPT official document identifiers: DoDI, DoDD, DODIC, DoD Directives, DoD 5000.xx, DoD Inspector General
+- Element IDs like `dodConsentBanner` kept unchanged (breaking IDs would break HTML refs)
+
+**Files Changed (source):**
+- `prod-app/src/js/engine.js` — credits exports, tier propagation, logout cleanup, stats reset, DoW text
+- `prod-app/src/js/enhancements.js` — theme toggle re-entrancy guard
+- `prod-app/src/js/onboarding.js` — closeOnboarding tier propagation + balance refresh
+- `prod-app/src/js/roles.js` — AI agent show in applyRole()
+- `prod-app/src/js/metrics.js` — Credits suffix restoration in syncSessionToTools
+- `prod-app/src/js/scroll.js` — offline fallback fix
+- `prod-app/src/index.html` — theme guard inline, See a Demo link, DoW consent banner text, AI agent hide
+- `prod-app/src/styles/main.css` — compliance-pct CSS fix
+- `demo-app/src/js/engine.js` — same credits/logout/stats/DoW fixes
+- `demo-app/src/js/roles.js` — AI agent show in applyRole()
+- `demo-app/src/js/metrics.js` — Credits suffix + localStorage key fix
+- `demo-app/src/index.html` — AI agent hide, DoW consent banner text
+- `index.html` — See a Demo link
+
+**Files Changed (docs — 27+ files):**
+All markdown files: "Department of Defense" → "Department of War", standalone "DoD" → "DoW". Document references preserved.
+
+**SW Versions:** demo s4-v337→s4-v338, prod s4-prod-v707→s4-prod-v708
 
 ---
 *This log is updated every session. Reference before making changes.*
