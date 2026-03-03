@@ -374,8 +374,10 @@ function enterPlatformAfterAuth() {
 
 // ═══ Logout / Reset Demo Session ═══
 function resetDemoSession() {
-    // Close wallet sidebar if open
+    // Close wallet sidebar if open and clear cached content so re-open gets fresh data
     if (typeof closeWalletSidebar === 'function') closeWalletSidebar();
+    var _wsBody = document.getElementById('walletSidebarBody');
+    if (_wsBody) { _wsBody.innerHTML = ''; delete _wsBody.dataset.loaded; }
     // Close AI agent if open
     var aiPanel = document.getElementById('aiAgentWidget');
     if (aiPanel && aiPanel.style.display !== 'none') {

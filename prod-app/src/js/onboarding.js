@@ -35,6 +35,9 @@ function closeOnboarding() {
     if (overlay) overlay.style.display = 'none';
     if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
     sessionStorage.setItem('s4_onboard_done', '1');
+    // Clear wallet sidebar cached content so next open gets fresh tier data
+    var _wsBody = document.getElementById('walletSidebarBody');
+    if (_wsBody) { _wsBody.innerHTML = ''; delete _wsBody.dataset.loaded; }
     // Store selected tier in localStorage so it persists across reloads
     var tierInfo = _onboardTiers[_onboardTier] || _onboardTiers['starter'];
     localStorage.setItem('s4_selected_tier', _onboardTier);
@@ -141,6 +144,9 @@ function selectOnboardTier(el, tier) {
     // Update wallet trigger balance
     var triggerBal = document.getElementById('walletTriggerBal');
     if (triggerBal) triggerBal.textContent = info.credits.toLocaleString() + ' Credits';
+    // Update anchors available (credits * 100 at 0.01 per anchor)
+    var walletAnchors = document.getElementById('walletAnchors');
+    if (walletAnchors) walletAnchors.textContent = (info.credits * 100).toLocaleString();
 }
 
 // Onboarding is triggered by enterPlatformAfterAuth() in engine.js

@@ -520,8 +520,10 @@ function logout() {
     if (window._sbClient) {
         window._sbClient.auth.signOut().catch(function(e) { console.warn('[S4 Auth] Sign out error:', e); });
     }
-    // Close wallet sidebar if open
+    // Close wallet sidebar if open and clear cached content so re-open gets fresh data
     if (typeof closeWalletSidebar === 'function') closeWalletSidebar();
+    var _wsBody = document.getElementById('walletSidebarBody');
+    if (_wsBody) { _wsBody.innerHTML = ''; delete _wsBody.dataset.loaded; }
     // Close AI agent if open
     var aiPanel = document.getElementById('aiFloatPanel');
     if (aiPanel && aiPanel.classList.contains('open')) {

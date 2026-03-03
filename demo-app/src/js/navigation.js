@@ -388,16 +388,16 @@ function openWalletSidebar() {
     if (sidebar) sidebar.classList.add('open');
     if (overlay) overlay.classList.add('show');
     
-    // Move wallet content into sidebar on first open
+    // Always re-copy wallet content into sidebar for fresh data on every open
     var body = document.getElementById('walletSidebarBody');
     var walletPane = document.getElementById('tabWallet');
-    if (body && walletPane && !body.dataset.loaded) {
+    if (body && walletPane) {
         body.innerHTML = walletPane.innerHTML;
         body.dataset.loaded = 'true';
         // Trigger wallet data load
         if (typeof loadWalletData === 'function') loadWalletData();
         
-        // Fix: Rewire flow details button to show INSIDE the sidebar
+        // Rewire flow details button to show INSIDE the sidebar
         _rewireWalletFlowDetails(body);
     }
     

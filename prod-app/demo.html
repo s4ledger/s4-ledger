@@ -25,13 +25,21 @@
             --demo-text: #c8d6e5;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; padding-top:64px; }
         
-        /* ═══ HEADER ═══ */
+        /* ═══ HEADER — matches main site nav ═══ */
         .demo-header {
-            background:linear-gradient(180deg,rgba(0,170,255,0.06) 0%,transparent 100%);
-            border-bottom:1px solid var(--border);
-            padding:20px 32px;
+            position:fixed;
+            top:0;
+            left:0;
+            right:0;
+            z-index:1000;
+            background:rgba(5,8,16,0.95);
+            backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid rgba(255,255,255,0.06);
+            padding:0 2rem;
+            height:64px;
             display:flex;
             align-items:center;
             justify-content:space-between;
@@ -441,11 +449,13 @@
 <!-- ═══ HEADER ═══ -->
 <div class="demo-header">
     <a href="/demo-app/" class="demo-logo">
-        <i class="fas fa-shield-halved" style="font-size:1.5rem;color:var(--accent)"></i>
+        <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:32px;width:32px;">
         <span>S4 Ledger <span class="sub">Interactive Demo</span></span>
     </a>
     <div class="demo-nav">
-        <a href="/demo-app/">Back to Home</a>
+        <a href="/prod-app/" style="color:rgba(255,255,255,0.7);border:none;padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;">Platform</a>
+        <a href="/s4-use-cases/" style="color:rgba(255,255,255,0.7);border:none;padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;">Use Cases</a>
+        <a href="/s4-pricing/" style="color:rgba(255,255,255,0.7);border:none;padding:0.5rem 0.75rem;font-size:0.875rem;font-weight:500;">Pricing</a>
         <a href="/demo-app/" class="primary"><i class="fas fa-rocket"></i> Enter Platform</a>
     </div>
 </div>

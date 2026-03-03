@@ -54,12 +54,12 @@
     <script src="/s4-assets/defense-docs.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-kTfBrbUL.js"></script>
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-CwSotpOg.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-DYWOiFSR.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-BwBhiTxn.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-C3tyNcC6.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-Cmr5CMeM.css">
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-CUcLISJb.js"></script>
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-CI48UywY.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-Cab8LHqB.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-DqjqtAx8.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-Dtb5sF17.js">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-CtN52t4V.css">
 </head>
 <body>
 <!-- Early theme restore + failsafe toggle (non-module, runs immediately) -->
@@ -3047,6 +3047,257 @@
             clear: function() { errors.length = 0; },
             report: function(err) { _capture('manual', err.message || String(err), '', 0, 0, err.stack); }
         };
+    })();
+    </script>
+
+    <!-- Failsafe: Standalone auth chain + universal delegated onclick handler -->
+    <!-- Runs SYNCHRONOUSLY before modules load — all functions available immediately -->
+    <script>
+    (function(){
+        // ══════ 1. SESSION RESTORE ══════
+        if (sessionStorage.getItem('s4_entered') === '1') {
+            var _l = document.getElementById('platformLanding');
+            var _h = document.querySelector('.hero');
+            var _w = document.getElementById('platformWorkspace');
+            if (_l) _l.style.display = 'none';
+            if (_h) _h.style.display = 'none';
+            if (_w) _w.style.display = 'block';
+        }
+
+        // ══════ 2. FAILSAFE AUTH CHAIN ══════
+        // Overwritten by modules when they load, but serve as fallbacks.
+
+        if (!window.startAuthFlow) {
+            window.startAuthFlow = function() {
+                if (sessionStorage.getItem('s4_authenticated') === '1') {
+                    if (typeof window.enterPlatformAfterAuth === 'function') window.enterPlatformAfterAuth();
+                    return;
+                }
+                var consent = document.getElementById('dodConsentBanner');
+                if (consent) { consent.style.display = 'flex'; }
+                else if (typeof window.acceptDodConsent === 'function') { window.acceptDodConsent(); }
+            };
+        }
+
+        if (!window.acceptDodConsent) {
+            window.acceptDodConsent = function() {
+                var b = document.getElementById('dodConsentBanner');
+                if (b) b.style.display = 'none';
+                var m = document.getElementById('cacLoginModal');
+                if (m) m.style.display = 'flex';
+            };
+        }
+
+        if (!window.simulateCacLogin) {
+            window.simulateCacLogin = function() {
+                var modal = document.getElementById('cacLoginModal');
+                var btn = modal && modal.querySelector('button[onclick*="simulateCacLogin"]');
+                if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Reading CAC...'; btn.disabled = true; }
+                setTimeout(function() {
+                    if (btn) btn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i>Authenticated';
+                    setTimeout(function() {
+                        if (modal) modal.style.display = 'none';
+                        sessionStorage.setItem('s4_authenticated', '1');
+                        sessionStorage.setItem('s4_auth_method', 'cac');
+                        if (typeof window.enterPlatformAfterAuth === 'function') {
+                            window.enterPlatformAfterAuth();
+                        } else {
+                            var l = document.getElementById('platformLanding');
+                            var h = document.querySelector('.hero');
+                            var w = document.getElementById('platformWorkspace');
+                            if (l) l.style.display = 'none';
+                            if (h) h.style.display = 'none';
+                            if (w) w.style.display = 'block';
+                            var ov = document.getElementById('onboardOverlay');
+                            if (ov) ov.style.display = 'flex';
+                        }
+                    }, 800);
+                }, 1500);
+            };
+        }
+
+        if (!window.enterPlatformAfterAuth) {
+            window.enterPlatformAfterAuth = function() {
+                var l = document.getElementById('platformLanding');
+                var h = document.querySelector('.hero');
+                var w = document.getElementById('platformWorkspace');
+                if (l) l.style.display = 'none';
+                if (h) h.style.display = 'none';
+                if (w) w.style.display = 'block';
+                var _aiW = document.getElementById('aiFloatWrapper');
+                if (_aiW) _aiW.style.display = '';
+                sessionStorage.setItem('s4_entered', '1');
+                if (!sessionStorage.getItem('s4_onboard_done')) {
+                    var ov = document.getElementById('onboardOverlay');
+                    if (ov) ov.style.display = 'flex';
+                }
+            };
+        }
+
+        if (!window.closeWalletSidebar) {
+            window.closeWalletSidebar = function() {
+                var sidebar = document.getElementById('walletSidebar');
+                var overlay = document.getElementById('walletOverlay');
+                if (sidebar) sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('open');
+            };
+        }
+
+        if (!window.openWalletSidebar) {
+            window.openWalletSidebar = function() {
+                var sidebar = document.getElementById('walletSidebar');
+                var overlay = document.getElementById('walletOverlay');
+                if (sidebar) sidebar.classList.add('open');
+                if (overlay) overlay.classList.add('open');
+            };
+        }
+
+        if (!window.resetDemoSession) {
+            window.resetDemoSession = function() {
+                if (typeof window.closeWalletSidebar === 'function') window.closeWalletSidebar();
+                localStorage.removeItem('s4_demo_stats');
+                localStorage.removeItem('s4_anchored_records');
+                localStorage.removeItem('s4_wallet');
+                localStorage.removeItem('s4_selected_tier');
+                sessionStorage.removeItem('s4_entered');
+                sessionStorage.removeItem('s4_authenticated');
+                sessionStorage.removeItem('s4_onboard_done');
+                var ws = document.getElementById('platformWorkspace');
+                var ld = document.getElementById('platformLanding');
+                var hr = document.querySelector('.hero');
+                if (ws) ws.style.display = 'none';
+                if (ld) ld.style.display = '';
+                if (hr) hr.style.display = '';
+                window.scrollTo(0, 0);
+            };
+        }
+
+        // ══════ 3. DIRECT BUTTON BINDINGS ══════
+        document.querySelectorAll('[onclick*="logout()"], [onclick*="resetDemoSession()"]').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (typeof window.resetDemoSession === 'function') window.resetDemoSession();
+                else if (typeof window.logout === 'function') window.logout();
+            });
+        });
+
+        document.querySelectorAll('.hub-card[data-section]').forEach(function(card) {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function() {
+                var sec = this.getAttribute('data-section');
+                if (sec && typeof window.showSection === 'function') window.showSection(sec);
+            });
+        });
+
+        document.querySelectorAll('.ils-tool-card[onclick]').forEach(function(card) {
+            var oc = card.getAttribute('onclick') || '';
+            var m = oc.match(/openILSTool\(['"]([^'"]+)['"]\)/);
+            if (m) {
+                card.addEventListener('click', function() {
+                    if (typeof window.openILSTool === 'function') window.openILSTool(m[1]);
+                });
+            }
+        });
+
+        // ══════ 4. UNIVERSAL DELEGATED ONCLICK HANDLER ══════
+        function execHandler(str, el, evt) {
+            if (!str) return;
+            str.split(';').map(function(s){return s.trim();}).filter(Boolean).forEach(function(s){ _execSingle(s, el, evt); });
+        }
+
+        function _execSingle(s, el, evt) {
+            if (/^event\.preventDefault\(\)$/.test(s)) { if(evt)evt.preventDefault(); return; }
+            if (/^event\.stopPropagation\(\)$/.test(s)) { if(evt)evt.stopPropagation(); return; }
+            if (s === 'return false') return;
+            var ifTarget = s.match(/^if\(event\.target===this\)\s*([a-zA-Z_$][\w.$]*\(.*\))$/);
+            if (ifTarget) { if (evt && evt.target === el) _execSingle(ifTarget[1], el, evt); return; }
+            var ifTypeof = s.match(/^if\(typeof\s+([a-zA-Z_$][\w.$]*)===?'function'\)\s*([a-zA-Z_$][\w.$]*\(.*\))$/);
+            if (ifTypeof) { var gf = _resolveFn(ifTypeof[1]); if (typeof gf === 'function') _execSingle(ifTypeof[2], el, evt); return; }
+            var ifKey = s.match(/^if\(event\.key===?['"]([^'"]+)['"]\)\s*([a-zA-Z_$][\w.$]*\(.*\))$/);
+            if (ifKey) { if (evt && evt.key === ifKey[1]) _execSingle(ifKey[2], el, evt); return; }
+            if (/^window\.scrollTo\(/.test(s)) { try { window.scrollTo({top:0,behavior:'smooth'}); } catch(e){} return; }
+            var locMatch = s.match(/^window\.location\.href\s*=\s*['"]([^'"]+)['"]$/);
+            if (locMatch) { window.location.href = locMatch[1]; return; }
+            var storageMatch = s.match(/^(sessionStorage|localStorage)\.(setItem|removeItem|getItem)\((.+)\)$/);
+            if (storageMatch) { var st = storageMatch[1]==='sessionStorage'?sessionStorage:localStorage; st[storageMatch[2]].apply(st, _parseArgs(storageMatch[3], el)); return; }
+            var domChain = s.match(/^document\.getElementById\(['"]([^'"]+)['"]\)\.(click|remove|focus)\(\)$/);
+            if (domChain) { var e2=document.getElementById(domChain[1]); if(e2)e2[domChain[2]](); return; }
+            if (s === 'this.remove()') { if(el)el.remove(); return; }
+            if (s === 'this.parentElement.remove()') { if(el&&el.parentElement)el.parentElement.remove(); return; }
+            var closestRemove = s.match(/^this\.closest\(['"]([^'"]+)['"]\)\.remove\(\)$/);
+            if (closestRemove && el) { var c=el.closest(closestRemove[1]); if(c)c.remove(); return; }
+            var domStyle = s.match(/^document\.getElementById\(['"]([^'"]+)['"]\)\.style\.(\w+)\s*=\s*['"]([^'"]*)['"]$/);
+            if (domStyle) { var _el=document.getElementById(domStyle[1]); if(_el)_el.style[domStyle[2]]=domStyle[3]; return; }
+            var styleMatch = s.match(/^this\.style\.(\w+)\s*=\s*['"](.*)['"]$/);
+            if (styleMatch && el) { el.style[styleMatch[1]] = styleMatch[2]; return; }
+            var clMatch = s.match(/^this\.classList\.(add|remove|toggle)\(['"]([^'"]+)['"]\)$/);
+            if (clMatch && el) { el.classList[clMatch[1]](clMatch[2]); return; }
+            if (/^var\s/.test(s)) return;
+            var bareAssign = s.match(/^([a-zA-Z_$][\w]*)\s*=\s*(.+)$/);
+            if (bareAssign) {
+                var aVal = bareAssign[2].trim();
+                if (aVal[0]==="'"||aVal[0]==='"') aVal=aVal.slice(1,-1);
+                else if (aVal==='true') aVal=true;
+                else if (aVal==='false') aVal=false;
+                else if (!isNaN(aVal)&&aVal!=='') aVal=Number(aVal);
+                window[bareAssign[1]] = aVal; return;
+            }
+            var fnMatch = s.match(/^([a-zA-Z_$][\w.$]*)(\(.*\))$/);
+            if (fnMatch) {
+                var fn = _resolveFn(fnMatch[1]);
+                if (typeof fn === 'function') {
+                    var argStr = fnMatch[2].slice(1,-1).trim();
+                    try { fn.apply(null, argStr ? _parseArgs(argStr, el) : []); } catch(e3){}
+                }
+            }
+        }
+
+        function _resolveFn(name) {
+            var parts = name.split('.'), obj = window;
+            for (var i = 0; i < parts.length; i++) { obj = obj[parts[i]]; if (obj == null) return undefined; }
+            return obj;
+        }
+
+        function _parseArgs(argStr, el) {
+            var args = [], cur = '', inStr = false, strCh = '', depth = 0;
+            for (var i = 0; i < argStr.length; i++) {
+                var c = argStr[i];
+                if (inStr) { if (c === strCh && argStr[i-1] !== '\\') inStr = false; cur += c; }
+                else if (c === "'" || c === '"') { inStr = true; strCh = c; cur += c; }
+                else if (c === '(' || c === '[') { depth++; cur += c; }
+                else if (c === ')' || c === ']') { depth--; cur += c; }
+                else if (c === ',' && depth === 0) { args.push(cur.trim()); cur = ''; }
+                else { cur += c; }
+            }
+            if (cur.trim()) args.push(cur.trim());
+            return args.map(function(a) {
+                a = a.trim();
+                if (a === 'this') return el;
+                if (a === 'event') return null;
+                if (a === 'true') return true;
+                if (a === 'false') return false;
+                if ((a[0]==="'" && a[a.length-1]==="'") || (a[0]==='"' && a[a.length-1]==='"')) return a.slice(1,-1);
+                if (!isNaN(a) && a !== '') return Number(a);
+                return a;
+            });
+        }
+
+        document.addEventListener('click', function(evt) {
+            var el = evt.target;
+            for (var d = 0; el && d < 15; d++) {
+                var oc = el.getAttribute && el.getAttribute('onclick');
+                if (oc) { execHandler(oc, el, evt); return; }
+                el = el.parentElement;
+            }
+        }, true);
+
+        ['change','input','keydown','mouseover','mouseout','focus','blur'].forEach(function(evtType) {
+            document.addEventListener(evtType, function(evt) {
+                var el = evt.target;
+                var oc = el && el.getAttribute && el.getAttribute('on' + evtType);
+                if (oc) execHandler(oc, el, evt);
+            }, true);
+        });
     })();
     </script>
 

@@ -64,6 +64,9 @@ function closeOnboarding() {
     if (overlay) overlay.style.display = 'none';
     if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
     sessionStorage.setItem('s4_onboard_done', '1');
+    // Clear wallet sidebar cached content so next open gets fresh tier data
+    var _wsBody = document.getElementById('walletSidebarBody');
+    if (_wsBody) { _wsBody.innerHTML = ''; delete _wsBody.dataset.loaded; }
     // After onboarding, show role selector if no role set
     setTimeout(function() {
         if (!window._currentRole && typeof window.showRoleSelector === 'function') {
