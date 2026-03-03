@@ -8285,6 +8285,245 @@ async function anchorSubmissionReview() {
     setTimeout(() => { document.getElementById('animStatus').textContent = 'Submissions & PTD analysis anchored — ' + _subCache.discrepancies.length + ' discrepancies recorded on-chain'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
+}
+
+// ═══ LIFECYCLE COST ESTIMATOR ═══
+function calcLifecycle() {
+    var serviceLife = parseFloat(document.getElementById('lcServiceLife')?.value) || 30;
+    var opHours = parseFloat(document.getElementById('lcOpHours')?.value) || 2500;
+    var acqCost = parseFloat(document.getElementById('lcAcqCost')?.value) || 85;
+    var fleetSize = parseFloat(document.getElementById('lcFleetSize')?.value) || 20;
+    var sustRate = parseFloat(document.getElementById('lcSustRate')?.value) || 8;
+    
+    var totalAcq = acqCost * fleetSize;
+    var annualSust = totalAcq * (sustRate / 100);
+    var totalSust = annualSust * serviceLife;
+    var dmsmsCost = totalAcq * 0.04 * serviceLife;
+    var techRefresh = totalAcq * 0.02 * Math.floor(serviceLife / 5);
+    var totalCost = totalAcq + totalSust + dmsmsCost + techRefresh;
+    var totalOpHours = opHours * fleetSize * serviceLife;
+    var costPerHour = totalOpHours > 0 ? (totalCost * 1000000) / totalOpHours : 0;
+    
+    var fmt = function(n) { return n >= 1000 ? '$' + (n/1000).toFixed(1) + 'B' : '$' + n.toFixed(0) + 'M'; };
+    
+    document.getElementById('lcTotalCost').textContent = fmt(totalCost);
+    document.getElementById('lcSustCost').textContent = fmt(totalSust);
+    document.getElementById('lcDmsmsCost').textContent = fmt(dmsmsCost);
+    document.getElementById('lcCostPerHr').textContent = '$' + Math.round(costPerHour).toLocaleString() + '/hr';
+    
+    var output = document.getElementById('lifecycleOutput');
+    if (output) {
+        output.innerHTML = '<div style="padding:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;font-size:0.82rem;color:var(--steel);">' +
+            '<strong style="color:#fff">Cost Breakdown:</strong><br>' +
+            'Acquisition: ' + fmt(totalAcq) + ' (' + fleetSize + ' units @ $' + acqCost + 'M each)<br>' +
+            'Sustainment (O&S): ' + fmt(totalSust) + ' (' + sustRate + '% annually over ' + serviceLife + ' years)<br>' +
+            'DMSMS/Obsolescence: ' + fmt(dmsmsCost) + ' (est. 4% annually)<br>' +
+            'Tech Refresh: ' + fmt(techRefresh) + ' (2% every 5 years)<br><br>' +
+            '<strong style="color:#00aaff">S4 Ledger Savings Potential:</strong> ' + fmt(dmsmsCost * 0.2) + ' (20% DMSMS reduction through proactive tracking)' +
+            '</div>';
+    }
+}
+
+async function anchorLifecycle() {
+    var serviceLife = document.getElementById('lcServiceLife')?.value || '30';
+    var fleetSize = document.getElementById('lcFleetSize')?.value || '20';
+    var totalCost = document.getElementById('lcTotalCost')?.textContent || '--';
+    var program = document.getElementById('lifecycleProgram')?.options[document.getElementById('lifecycleProgram')?.selectedIndex]?.text || 'Unknown Program';
+    
+    var text = 'Lifecycle Cost Analysis | Program: ' + program + ' | Fleet Size: ' + fleetSize + ' | Service Life: ' + serviceLife + ' years | Total Ownership Cost: ' + totalCost + ' | Date: ' + new Date().toISOString();
+    var hash = await sha256(text);
+    showAnchorAnimation(hash, 'Lifecycle Cost Analysis', 'CUI');
+    
+    var result = await _anchorToXRPL(hash, 'LIFECYCLE_COST', text.substring(0,100));
+    stats.anchored++; stats.types.add('LIFECYCLE_COST'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
+    
+    sessionRecords.push({hash:hash, type:'LIFECYCLE_COST', branch:'JOINT', timestamp:new Date().toISOString(), label:'Lifecycle Cost Analysis: ' + program, txHash:result.txHash});
+    saveLocalRecord({hash:hash, record_type:'LIFECYCLE_COST', record_label:'Lifecycle Cost Analysis: ' + program, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'Lifecycle Cost', explorer_url:result.explorerUrl, network:result.network});
+    updateTxLog();
+    addToVault({hash:hash, txHash:result.txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost Analysis: ' + program, branch:'JOINT', icon:'fa-clock', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Cost Estimator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
+    if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
+    if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis anchored!'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
+}
+
+function exportLifecycle() {
+    var program = document.getElementById('lifecycleProgram')?.options[document.getElementById('lifecycleProgram')?.selectedIndex]?.text || 'Program';
+    var csv = 'Lifecycle Cost Analysis Report\n' +
+        'Program,' + program + '\n' +
+        'Service Life (years),' + (document.getElementById('lcServiceLife')?.value || '30') + '\n' +
+        'Fleet Size,' + (document.getElementById('lcFleetSize')?.value || '20') + '\n' +
+        'Acquisition Cost ($M),' + (document.getElementById('lcAcqCost')?.value || '85') + '\n' +
+        'Sustainment Rate (%),' + (document.getElementById('lcSustRate')?.value || '8') + '\n' +
+        'Total Ownership Cost,' + (document.getElementById('lcTotalCost')?.textContent || '--') + '\n' +
+        'Sustainment Cost,' + (document.getElementById('lcSustCost')?.textContent || '--') + '\n' +
+        'DMSMS Cost,' + (document.getElementById('lcDmsmsCost')?.textContent || '--') + '\n' +
+        'Cost per Op Hour,' + (document.getElementById('lcCostPerHr')?.textContent || '--') + '\n' +
+        'Generated,' + new Date().toISOString() + '\n';
+    var blob = new Blob([csv], {type:'text/csv'});
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 's4_lifecycle_cost_' + new Date().toISOString().split('T')[0] + '.csv'; a.click();
+}
+
+// ═══ SBOM VIEWER ═══
+var _sbomData = [];
+function loadSBOMData() {
+    var program = document.getElementById('sbomProgram')?.value || 'DDG-51';
+    _sbomData = [
+        {name:'VxWorks RTOS',version:'7.0.1',type:'RTOS',cves:0,license:'Commercial',status:'verified'},
+        {name:'OpenSSL',version:'3.0.12',type:'Library',cves:2,license:'Apache-2.0',status:'verified'},
+        {name:'SQLite',version:'3.44.0',type:'Database',cves:0,license:'Public Domain',status:'verified'},
+        {name:'FreeRTOS',version:'10.5.1',type:'RTOS',cves:1,license:'MIT',status:'pending'},
+        {name:'LWIP TCP Stack',version:'2.1.3',type:'Network',cves:3,license:'BSD-3',status:'flagged'},
+        {name:'Zlib',version:'1.3',type:'Compression',cves:0,license:'Zlib',status:'verified'},
+        {name:'CMSIS-DSP',version:'5.9.0',type:'Signal Processing',cves:0,license:'Apache-2.0',status:'verified'},
+        {name:'mbedTLS',version:'3.5.0',type:'Crypto',cves:1,license:'Apache-2.0',status:'pending'},
+        {name:'CAN Protocol Stack',version:'4.2.1',type:'Protocol',cves:0,license:'Commercial',status:'verified'},
+        {name:'MIL-STD-1553 Driver',version:'2.8.0',type:'Bus Driver',cves:0,license:'COTS',status:'verified'}
+    ];
+    
+    var table = document.getElementById('sbomTableBody');
+    if (table) {
+        table.innerHTML = _sbomData.map(function(c) {
+            var statusColor = c.status === 'verified' ? '#00cc66' : c.status === 'flagged' ? '#ff3b30' : '#ffa500';
+            var cveColor = c.cves > 0 ? '#ff3b30' : '#00cc66';
+            return '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">' +
+                '<td style="padding:8px;font-size:0.82rem;color:#fff">' + c.name + '</td>' +
+                '<td style="padding:8px;font-size:0.82rem;color:var(--steel);font-family:monospace">' + c.version + '</td>' +
+                '<td style="padding:8px;font-size:0.78rem;color:var(--steel);text-align:center">' + c.type + '</td>' +
+                '<td style="padding:8px;font-size:0.82rem;text-align:center;color:' + cveColor + ';font-weight:600">' + c.cves + '</td>' +
+                '<td style="padding:8px;font-size:0.78rem;color:var(--steel);text-align:center">' + c.license + '</td>' +
+                '<td style="padding:8px;text-align:center"><span style="padding:2px 8px;border-radius:3px;font-size:0.7rem;font-weight:700;background:' + statusColor + '20;color:' + statusColor + '">' + c.status.toUpperCase() + '</span></td>' +
+                '</tr>';
+        }).join('');
+    }
+    
+    document.getElementById('sbomTotal').textContent = _sbomData.length;
+    document.getElementById('sbomCVE').textContent = _sbomData.reduce(function(sum, c){ return sum + c.cves; }, 0);
+    document.getElementById('sbomVerified').textContent = _sbomData.filter(function(c){ return c.status === 'verified'; }).length;
+    document.getElementById('sbomAnchored').textContent = Math.floor(_sbomData.length * 0.6);
+}
+
+function exportSBOM() {
+    if (!_sbomData.length) { loadSBOMData(); }
+    var csv = 'Component,Version,Type,CVEs,License,Status\n';
+    _sbomData.forEach(function(c) { csv += '"' + c.name + '","' + c.version + '","' + c.type + '",' + c.cves + ',"' + c.license + '","' + c.status + '"\n'; });
+    var blob = new Blob([csv], {type:'text/csv'});
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 's4_sbom_' + new Date().toISOString().split('T')[0] + '.csv'; a.click();
+}
+
+async function anchorSBOM() {
+    if (!_sbomData.length) { loadSBOMData(); }
+    var program = document.getElementById('sbomProgram')?.options[document.getElementById('sbomProgram')?.selectedIndex]?.text || 'Unknown Platform';
+    var totalCVEs = _sbomData.reduce(function(sum, c){ return sum + c.cves; }, 0);
+    
+    var text = 'SBOM Snapshot | Platform: ' + program + ' | Components: ' + _sbomData.length + ' | Total CVEs: ' + totalCVEs + ' | Format: CycloneDX 1.5 | Date: ' + new Date().toISOString();
+    var hash = await sha256(text);
+    showAnchorAnimation(hash, 'Software Bill of Materials', 'CUI');
+    
+    var result = await _anchorToXRPL(hash, 'SBOM_SNAPSHOT', text.substring(0,100));
+    stats.anchored++; stats.types.add('SBOM_SNAPSHOT'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
+    
+    sessionRecords.push({hash:hash, type:'SBOM_SNAPSHOT', branch:'JOINT', timestamp:new Date().toISOString(), label:'SBOM: ' + program, txHash:result.txHash});
+    saveLocalRecord({hash:hash, record_type:'SBOM_SNAPSHOT', record_label:'SBOM: ' + program, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'SBOM Viewer', explorer_url:result.explorerUrl, network:result.network});
+    updateTxLog();
+    addToVault({hash:hash, txHash:result.txHash, type:'SBOM_SNAPSHOT', label:'SBOM: ' + program, branch:'JOINT', icon:'fa-microchip', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'SBOM Viewer', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    
+    document.getElementById('sbomAnchored').textContent = _sbomData.length;
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
+    if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
+    if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM anchored!'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
+}
+
+// ═══ ADDITIONAL ILS ANCHOR FUNCTIONS ═══
+async function anchorGFP() {
+    var text = 'Government Furnished Property Record | Status: Tracked | Condition: Serviceable | Date: ' + new Date().toISOString();
+    var hash = await sha256(text);
+    showAnchorAnimation(hash, 'GFP Record', 'CUI');
+    
+    var result = await _anchorToXRPL(hash, 'GFP_RECORD', text.substring(0,100));
+    stats.anchored++; stats.types.add('GFP_RECORD'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
+    
+    sessionRecords.push({hash:hash, type:'GFP_RECORD', branch:'JOINT', timestamp:new Date().toISOString(), label:'GFP Record', txHash:result.txHash});
+    saveLocalRecord({hash:hash, record_type:'GFP_RECORD', record_label:'GFP Record', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'GFP Tracker', explorer_url:result.explorerUrl, network:result.network});
+    updateTxLog();
+    addToVault({hash:hash, txHash:result.txHash, type:'GFP_RECORD', label:'GFP Record', branch:'JOINT', icon:'fa-box', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'GFP Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
+    if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
+    if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record anchored!'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
+}
+
+async function anchorCDRL() {
+    var text = 'CDRL Deliverable Record | Document: Technical Manual | Status: Submitted | Date: ' + new Date().toISOString();
+    var hash = await sha256(text);
+    showAnchorAnimation(hash, 'CDRL Deliverable', 'CUI');
+    
+    var result = await _anchorToXRPL(hash, 'CDRL_RECORD', text.substring(0,100));
+    stats.anchored++; stats.types.add('CDRL_RECORD'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
+    
+    sessionRecords.push({hash:hash, type:'CDRL_RECORD', branch:'JOINT', timestamp:new Date().toISOString(), label:'CDRL Deliverable', txHash:result.txHash});
+    saveLocalRecord({hash:hash, record_type:'CDRL_RECORD', record_label:'CDRL Deliverable', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'CDRL Tracker', explorer_url:result.explorerUrl, network:result.network});
+    updateTxLog();
+    addToVault({hash:hash, txHash:result.txHash, type:'CDRL_RECORD', label:'CDRL Deliverable', branch:'JOINT', icon:'fa-file-contract', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'CDRL Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
+    if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
+    if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable anchored!'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
+}
+
+async function anchorContract() {
+    var text = 'Contract Record | Type: FFP | Status: Active | Value: Classified | Date: ' + new Date().toISOString();
+    var hash = await sha256(text);
+    showAnchorAnimation(hash, 'Contract Record', 'CUI');
+    
+    var result = await _anchorToXRPL(hash, 'CONTRACT_RECORD', text.substring(0,100));
+    stats.anchored++; stats.types.add('CONTRACT_RECORD'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
+    
+    sessionRecords.push({hash:hash, type:'CONTRACT_RECORD', branch:'JOINT', timestamp:new Date().toISOString(), label:'Contract Record', txHash:result.txHash});
+    saveLocalRecord({hash:hash, record_type:'CONTRACT_RECORD', record_label:'Contract Record', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'Contract Admin', explorer_url:result.explorerUrl, network:result.network});
+    updateTxLog();
+    addToVault({hash:hash, txHash:result.txHash, type:'CONTRACT_RECORD', label:'Contract Record', branch:'JOINT', icon:'fa-file-signature', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Contract Admin', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
+    if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
+    if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record anchored!'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
+}
+
+async function anchorChain() {
+    var text = 'Supply Chain Record | Type: Custody Transfer | Status: Verified | Date: ' + new Date().toISOString();
+    var hash = await sha256(text);
+    showAnchorAnimation(hash, 'Supply Chain Record', 'CUI');
+    
+    var result = await _anchorToXRPL(hash, 'SUPPLY_CHAIN', text.substring(0,100));
+    stats.anchored++; stats.types.add('SUPPLY_CHAIN'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
+    
+    sessionRecords.push({hash:hash, type:'SUPPLY_CHAIN', branch:'JOINT', timestamp:new Date().toISOString(), label:'Supply Chain Record', txHash:result.txHash});
+    saveLocalRecord({hash:hash, record_type:'SUPPLY_CHAIN', record_label:'Supply Chain Record', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'Supply Chain', explorer_url:result.explorerUrl, network:result.network});
+    updateTxLog();
+    addToVault({hash:hash, txHash:result.txHash, type:'SUPPLY_CHAIN', label:'Supply Chain Record', branch:'JOINT', icon:'fa-link', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Supply Chain Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
+    if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
+    if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain record anchored!'; }, 2200);
+    await new Promise(r => setTimeout(r, 3500));
+    hideAnchorAnimation();
 }
 
 function exportDiscrepancyReport() {
@@ -8444,6 +8683,16 @@ window.anchorRecord = anchorRecord;
 window.anchorReport = anchorReport;
 window.anchorRisk = anchorRisk;
 window.anchorSubmissionReview = anchorSubmissionReview;
+window.anchorLifecycle = anchorLifecycle;
+window.anchorSBOM = anchorSBOM;
+window.anchorGFP = anchorGFP;
+window.anchorCDRL = anchorCDRL;
+window.anchorContract = anchorContract;
+window.anchorChain = anchorChain;
+window.calcLifecycle = calcLifecycle;
+window.exportLifecycle = exportLifecycle;
+window.loadSBOMData = loadSBOMData;
+window.exportSBOM = exportSBOM;
 window.applyCustomProgram = applyCustomProgram;
 window.attachEvidence = attachEvidence;
 window.bulkActionDelete = bulkActionDelete;

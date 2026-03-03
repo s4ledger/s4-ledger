@@ -131,6 +131,12 @@ function openILSTool(toolId) {
     var toolBack = document.getElementById('ilsToolBackBar');
     if (toolBack) toolBack.style.display = 'block';
     
+    // Hide landing page when opening a tool
+    var landing = document.getElementById('platformLanding');
+    if (landing) landing.style.display = 'none';
+    var hero = document.querySelector('.hero');
+    if (hero) hero.style.display = 'none';
+    
     // Activate the tool panel (hide all, then show target)
     document.querySelectorAll('.ils-hub-panel').forEach(function(p) { p.classList.remove('active'); p.style.display = 'none'; });
     var panel = document.getElementById(toolId);
