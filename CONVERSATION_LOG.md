@@ -634,4 +634,40 @@ This meant EVERY onclick handler rendered through `window._s4Safe()` was silentl
 - Stores records in `window._verifyRecentRecords` BEFORE checking DOM container (deferred rendering)
 
 ---
+
+## Session 11b — Sidebar Duplicate ID Fix, Audit Vault Re-render
+
+**Date:** 2025-01-XX (continued)
+
+### Problem Statement
+1. Gold sidebar balance still shows 500,000 instead of 499,999.99 after anchoring
+2. Verify tool still not showing records (user tested Vercel deploy of Session 11 fixes)
+3. Audit vault doesn't update after anchoring a record
+
+### Root Cause: `getElementById` vs Duplicate DOM IDs
+
+`openWalletSidebar()` in navigation.js copies `tabWallet.innerHTML` into `walletSidebarBody`, creating **duplicate DOM elements** with identical IDs (`slsBarBalance`, `walletSLSBalance`, `slsBarAnchors`, `slsBarSpent`, etc.).
+
+- `tabWallet` appears at line ~2618 in index.html
+- `walletSidebar` appears at line ~3000 (AFTER tabWallet)
+- `document.getElementById()` returns the **FIRST** match in DOM order → the hidden original inside `tabWallet`
+- `_syncSlsBar()` updated the hidden original, leaving the visible sidebar copy stale at 500,000
+
+### Fixes Applied
+
+| File | Change |
+|------|--------|
+| Both `engine.js` | `_syncSlsBar()` rewritten to use `querySelectorAll('[id="slsBarBalance"]')` etc. — updates ALL instances including sidebar clones |
+| Both `engine.js` | `anchorRecord()` now calls `renderVault()` + `refreshVaultMetrics()` after `addToVault()` |
+| Both `navigation.js` | `openWalletSidebar()` now calls `window._syncSlsBar()` after cloning `tabWallet` content |
+| demo-app `engine.js` | Exposed `_syncSlsBar` on `window` for cross-chunk access |
+
+### Build Output
+- **prod-app:** `engine-BOTKyYiE.js` (502.88 KB), `navigation-DGGare-o.js` (51.21 KB)
+- **demo-app:** `engine-BsslW_BI.js` (505.18 KB), `navigation-CbyXV3qs.js` (51.97 KB)
+
+### Deployment
+- Commit: `3d9d646` — pushed to `main`
+
+---
 *This log is updated every session. Reference before making changes.*
