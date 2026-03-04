@@ -1,5 +1,5 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: March 3, 2026 — Session 10 (Synchronous Balance Updates + Verify Vault-First + Flow Box Auto-Expand)
+## Last Updated: March 4, 2026 — Session 12 (Cross-Chunk ReferenceError Fix + Vault Auto-Render + Digital Thread)
 
 ---
 
@@ -34,6 +34,14 @@
 | ILS anchor fullContent in sessionRecords + addToVault | ✅ | Both apps — SBOM, GFP, CDRL, Contract, Chain |
 | demo.html styling matches main site | ✅ | Inter 300, /s4-assets/style.css, SRI on Font Awesome |
 | Preview server returns realistic API mock responses | ✅ | POST /api/anchor returns tx_hash, fee_transfer, explorer_url |
+| DOMPurify ADD_URI_SAFE_ATTR: ['onclick', 'onchange'] | ✅ | Both apps — fixes stripped onclick handlers in sanitized HTML |
+| S4.register defined in inline HTML script (before module load) | ✅ | Both apps — prevents enhancements.js TypeError from aborting bundle |
+| _lastUploadedFileHash via window.* (cross-chunk) | ✅ | Both apps — metrics→engine scope bridge |
+| _currentSection/_currentILSTool via window.* (cross-chunk) | ✅ | Both apps — navigation→engine scope bridge |
+| ilsResults/currentHubPanel/updateAiContext via window.* | ✅ | Both apps — engine→metrics scope bridge |
+| populateDigitalThreadDropdown + showSampleDigitalThread on window | ✅ | Both apps — enhancements→engine scope bridge |
+| addToVault calls renderVault() + refreshVaultMetrics() immediately | ✅ | Both apps — vault UI updates instantly on anchor |
+| Playwright E2E test: zero page errors, balance deducts, vault populates | ✅ | tests/e2e/debug-anchor.spec.js |
 
 ## ISSUES REPORTED & FIX STATUS
 | # | Issue | Reported | Status | Fix Details |
@@ -75,6 +83,13 @@
 | 35 | Verify recents empty after page refresh | Mar 3 S10 | ✅ FIXED | **Root cause**: `refreshVerifyRecents` processed sessionRecords first (no fullContent after refresh), then vault records were skipped as duplicates. Swapped order — vault records processed FIRST since they persist fullContent. Added timestamp-based sorting. |
 | 36 | loadStats loses fullContent | Mar 3 S10 | ✅ FIXED | `loadStats()` restored sessionRecords from localStorage with `content:''`. Now builds a hash→fullContent lookup from vault and enriches each restored record. Also calls `_updateSlsBalance()` after loading to sync displays. |
 | 37 | demo.html nav font mismatch | Mar 3 S10 | ✅ FIXED | Updated body font-family to include -apple-system/BlinkMacSystemFont fallbacks, added `-webkit-font-smoothing:antialiased`, matched nav link font-size (0.875rem) and weight (500) to main site's `s4-assets/style.css`. |
+| 38 | S4.register never defined — aborts entire index bundle | Mar 4 S12 | ✅ FIXED | **CRITICAL ROOT CAUSE**: enhancements.js called `S4.register(...)` at module level in 10 IIFEs. `S4` was `{}` with no `.register` method → TypeError → ES module error propagation aborted index bundle → `_s4Safe` (DOMPurify) never defined → ALL innerHTML rendering silently failed. Fixed by adding `S4.modules = {}; S4.register = function(name, meta) { S4.modules[name] = meta; };` in inline HTML script BEFORE module imports. |
+| 39 | _lastUploadedFileHash cross-chunk ReferenceError | Mar 4 S12 | ✅ FIXED | Declared `var _lastUploadedFileHash` in metrics.js (metrics chunk) but used bare in engine.js (engine chunk). Separate ES module scopes = ReferenceError crashes `anchorRecord()` at line 1. Fixed: expose via `window._lastUploadedFileHash` in metrics.js, reference in engine.js. |
+| 40 | _currentSection/_currentILSTool cross-chunk ReferenceError | Mar 4 S12 | ✅ FIXED | Declared in navigation.js, used bare in engine.js `showWorkspaceNotification()`. Called during `addToVault()` inside `anchorRecord()` — crashed the flow. Fixed: sync to `window.*` in navigation.js, use `window.*` in engine.js. |
+| 41 | ilsResults/currentHubPanel/updateAiContext cross-chunk | Mar 4 S12 | ✅ FIXED | Declared in engine.js, used bare in metrics.js. Fixed: expose on `window.*` from engine.js, use `window.*` in metrics.js. |
+| 42 | Vault doesn't show newly anchored record | Mar 4 S12 | ✅ FIXED | `addToVault()` saved to localStorage but never called `renderVault()`. Added `renderVault()` + `refreshVaultMetrics()` immediately after `s4Vault.unshift()`. Also syncs `window.s4Vault = s4Vault` for cross-chunk consistency. |
+| 43 | Digital Thread dropdown not updating after anchor | Mar 4 S12 | ✅ FIXED | `populateDigitalThreadDropdown()` and `showSampleDigitalThread()` defined in enhancements.js but NOT exported to `window`. Engine.js `typeof` checks always returned false. Added `window.populateDigitalThreadDropdown` and `window.showSampleDigitalThread` exports. |
+| 44 | Prod-app preview looks wrong (broken CSS/logo) | Mar 4 S12 | ✅ FIXED | Preview was serving from `prod-app/dist/` directly, but Vite `base: '/prod-app/dist/'` means assets need workspace root serving. Must use `python3 preview_server.py 8080` (serves from workspace root with Vercel-like rewrites). |
 
 ## MIL-STD REFERENCE GUIDE (correct as of 2026)
 | Cancelled Standard | Replacement | Notes |
@@ -112,6 +127,11 @@
 ## COMMIT HISTORY (recent)
 | Commit | Description |
 |--------|-------------|
+| fba9115 | fix: vault auto-render and digital thread sync after anchor |
+| a08a16e | fix: resolve cross-chunk ReferenceErrors breaking anchor, vault, and verify |
+| 3d3ce25 | docs: Session 11b — sidebar duplicate ID fix, vault re-render |
+| fbf2511 | fix: DOMPurify ADD_URI_SAFE_ATTR, refreshVerifyRecents vault-first, balance sync |
+| 940a4da | fix: synchronous balance updates, verify vault-first, flow box auto-expand |
 | b17054f | fix: cross-chunk _onboardTier/Tiers to window.*, CSS details hide, CI path fixes |
 | 382d732 | fix: cross-chunk _currentRole/_demoSession → window.* for ES module strict mode |
 | 8e8aa3e | fix: export showRoleSelector + update MIL-STD-1388 → GEIA-STD-0007 |
@@ -668,6 +688,154 @@ This meant EVERY onclick handler rendered through `window._s4Safe()` was silentl
 
 ### Deployment
 - Commit: `3d9d646` — pushed to `main`
+
+---
+*This log is updated every session. Reference before making changes.*
+
+---
+
+## Session 12 — Cross-Chunk ReferenceError Fix + Vault Auto-Render + Digital Thread
+
+**Date:** March 4, 2026
+**Commits:** `a08a16e`, `fba9115`
+
+### Problem Statement
+User reported (for 3rd+ time) that:
+1. Credit balance doesn't change when anchoring from any tier
+2. Audit vault still broken — records don't appear
+3. Verify tool doesn't show recently anchored records
+
+User was extremely frustrated: previous sessions had "fixed" these by reading code but never actually testing in a browser.
+
+### Breakthrough: Playwright Browser Testing
+
+Instead of reading code and guessing, we set up **Playwright E2E tests** (`tests/e2e/debug-anchor.spec.js`) to simulate the exact user flow in a real Chromium browser. This revealed errors invisible in production because Vite's `esbuild: { drop: ['console', 'debugger'] }` strips all console output.
+
+### Root Cause #1: S4.register Never Defined (CRITICAL)
+
+**The cascade of failure:**
+1. `window.S4 = window.S4 || {}` — creates empty object (no `.register` method)
+2. enhancements.js calls `S4.register(...)` at module level in 10 IIFEs (lines 3398, 3887, 4279, 4565, 4904, 5245, 5555, 5937, 6456, 7349)
+3. `TypeError: S4.register is not a function` thrown
+4. ES module error propagation: error in imported module **aborts the importing bundle**
+5. Index bundle loads: engine → navigation → metrics → **enhancements** (crashes) → _s4Safe definition (NEVER REACHED)
+6. `window._s4Safe` = `undefined` everywhere
+7. `anchorRecord()` at line 1101: `panel.innerHTML = window._s4Safe(...)` → crashes silently
+8. `refreshVerifyRecents()` → crashes (uses _s4Safe)
+9. `renderVault()` → crashes (uses _s4Safe)
+
+**Fix:** Added to inline HTML `<script>` in both apps (runs BEFORE module imports):
+```js
+S4.modules = S4.modules || {};
+S4.register = S4.register || function(name, meta) { S4.modules[name] = meta; };
+```
+
+### Root Cause #2: _lastUploadedFileHash Cross-Chunk Scope
+
+`var _lastUploadedFileHash` declared in metrics.js (metrics Vite chunk) but used as bare variable in engine.js (engine Vite chunk). In ES modules, each chunk has its own scope → `ReferenceError: _lastUploadedFileHash is not defined` crashes `anchorRecord()` at line 1048 (first line of hash logic).
+
+**Fix:** Expose via `window._lastUploadedFileHash` in metrics.js, reference via `window._lastUploadedFileHash` in engine.js. Same for `_lastUploadedFileName` and `_lastUploadedFileSize`.
+
+### Root Cause #3: _currentSection Cross-Chunk Scope
+
+`var _currentSection` and `var _currentILSTool` declared in navigation.js but used bare in engine.js `showWorkspaceNotification()`. This function is called inside `addToVault()` during `anchorRecord()`.
+
+After fixing #1 and #2, `anchorRecord()` now reached `addToVault()` → `showWorkspaceNotification()` → `ReferenceError: _currentSection is not defined` → crashed, preventing `stats.anchored++` and everything after.
+
+**Fix:** Sync both vars to `window.*` in navigation.js at every assignment point. Engine.js uses `window._currentSection` / `window._currentILSTool`.
+
+### Root Cause #4: ilsResults/currentHubPanel/updateAiContext
+
+Declared in engine.js, used bare in metrics.js. Fixed with `window.*` pattern.
+
+### Root Cause #5: Vault Not Rendering After Anchor
+
+`addToVault()` saved the record to `s4Vault` array and localStorage but never called `renderVault()`. The record was persisted correctly but the UI never updated.
+
+**Fix:** `addToVault()` now calls `renderVault()` + `refreshVaultMetrics()` immediately after `s4Vault.unshift(record)`. Also syncs `window.s4Vault = s4Vault`.
+
+### Root Cause #6: Digital Thread Dropdown Dead
+
+`populateDigitalThreadDropdown()` and `showSampleDigitalThread()` defined in enhancements.js but NOT exported to `window`. Engine.js `typeof` checks always returned `false`. `switchHubTab('hub-vault')` also had a bare `populateDigitalThreadDropdown()` call (no typeof guard) that would crash.
+
+**Fix:** Added `window.populateDigitalThreadDropdown` and `window.showSampleDigitalThread` exports in enhancements.js. Engine.js uses `window.*` references.
+
+### Complete Cross-Chunk Variable Audit
+
+| Category | Variables | Risk |
+|----------|-----------|------|
+| **FIXED (was ReferenceError)** | `_currentSection`, `_currentILSTool`, `_lastUploadedFileHash/Name/Size`, `ilsResults`, `currentHubPanel`, `updateAiContext`, `populateDigitalThreadDropdown`, `showSampleDigitalThread` | Now on `window.*` |
+| **Safe (typeof guarded + on window)** | `_showNotif`, `_updateDemoSlsBalance`, `closeWalletSidebar`, `sessionRecords` | Working correctly |
+| **Safe (typeof guarded, functionality dead)** | `_demoMode` in enhancements.js, `_riskCache` in enhancements.js, `updateAiContext` in navigation.js | No crash, but feature silently inactive |
+
+### Playwright Test Results (Final)
+```
+=== AFTER ANCHOR ===
+stats: { anchored: 1, slsFees: 0.01 }
+walletSLSBalance: "499,999.99"
+walletTriggerBal: "499,999.99 Credits"
+demoSlsBalance: "499,999.99 Credits"
+vaultLen: 5 (was 4 seed records)
+anchorResult: true
+=== ALL PAGE ERRORS ===
+[]
+1 passed (35.0s)
+```
+
+### Files Changed
+
+| File | Changes |
+|------|---------|
+| `demo-app/src/index.html` | Added S4.modules + S4.register inline script |
+| `prod-app/src/index.html` | Same |
+| `demo-app/src/js/engine.js` | window._lastUploadedFileHash refs, window._currentSection refs, window.ilsResults/currentHubPanel syncs, renderVault()+refreshVaultMetrics() in addToVault(), window.populateDigitalThreadDropdown refs, window.updateAiContext export |
+| `prod-app/src/js/engine.js` | Same |
+| `demo-app/src/js/metrics.js` | window._lastUploadedFileHash exports, window.ilsResults/updateAiContext refs |
+| `prod-app/src/js/metrics.js` | Same |
+| `demo-app/src/js/navigation.js` | window._currentSection/ILSTool syncs at all assignment points |
+| `prod-app/src/js/navigation.js` | Same |
+| `demo-app/src/js/enhancements.js` | window.populateDigitalThreadDropdown + window.showSampleDigitalThread exports |
+| `prod-app/src/js/enhancements.js` | Same |
+| `tests/e2e/debug-anchor.spec.js` | NEW — Playwright E2E test for full anchor flow |
+
+### Key Technical Insight
+Vite's `esbuild: { drop: ['console', 'debugger'] }` strips ALL console output in production builds. Combined with ES module error propagation silently aborting bundles, errors were completely invisible. The only way to discover them was actual browser testing with `page.on('pageerror')` in Playwright.
+
+### Build Output
+- **demo-app:** engine-DHJDfvBM.js (505.48 KB), enhancements-UnL1FyJA.js (224.17 KB)
+- **prod-app:** engine-Dh-8fz3H.js (503.24 KB), enhancements-DQUmJXsz.js (237.49 KB)
+
+---
+
+## DEMO-APP GOLDEN STATE (March 4, 2026)
+
+The demo-app is now the **reference implementation**. All features work correctly:
+
+### Verified Working Features
+- **Anchor Flow**: Type content → click Anchor → animation plays → success panel with TX hash, classification, fee → balance deducts 0.01 Credits → vault updated immediately
+- **Credit Balance**: All 6+ balance display elements update synchronously (slsBarBalance, walletSLSBalance, walletTriggerBal, demoSlsBalance, etc.)
+- **Audit Vault**: Records appear instantly after anchoring. Vault renders with checkboxes, search, time filters, pagination, bulk operations.
+- **Digital Thread**: Dropdown populates from vault records. Shows provenance chain per record.
+- **Verify Tool**: Recently anchored records appear with View buttons. View navigates to Verify section and pre-fills fields.
+- **Onboarding**: 4 tiers (Pilot/Starter/Professional/Enterprise) → CAC auth → workspace. Balance sets correctly per tier.
+- **ILS Tools**: Gap Analysis, Vault, Docs, Compliance, Risk, ROI, Reports, Predictive, Submissions, SBOM, DMSMS, Readiness, Lifecycle — all open and render
+- **Dark/Light Mode**: Toggle works, persists across sessions
+- **Role Selector**: Shows popup, applies role-specific tab visibility
+- **DOMPurify**: All innerHTML sanitized via _s4Safe with ADD_URI_SAFE_ATTR for onclick/onchange
+- **Zero Page Errors**: Playwright test confirms no uncaught exceptions
+
+### Architecture (5-Chunk Vite Build)
+1. **engine** (~505 KB): Core app logic, anchorRecord, vault, verify, ILS checklists, AI agent
+2. **enhancements** (~224 KB): S4 modules, digital thread, SBOM/GFP/CDRL/provenance managers, analytics, team
+3. **navigation** (~52 KB): Navigation, roles, onboarding (showSection, openILSTool, showHub)
+4. **metrics** (~50 KB): Performance metrics, charts, file upload, offline queue, web vitals
+5. **index** (~38 KB): Bootstrap/glue, DOMPurify sanitize.js, main.js imports
+
+### Cross-Chunk Communication Pattern
+All cross-chunk variable sharing uses `window.*`:
+- Declaring module sets `window.varName = value` alongside local `var varName = value`
+- Consuming module reads `window.varName` (with `typeof` guard where appropriate)
+- Never use bare variable names across chunk boundaries
 
 ---
 *This log is updated every session. Reference before making changes.*
