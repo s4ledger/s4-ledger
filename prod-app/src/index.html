@@ -364,8 +364,6 @@
         </div>
     </div>
 
-        </div>
-
         <!-- ═══ WALLET TRIGGER (Top Right) ═══ -->
         <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
             <button onclick="logout()" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:#c9a84c;border-radius:3px;padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.15)'" onmouseout="this.style.background='rgba(201,168,76,0.08)'"><i class="fas fa-right-from-bracket"></i><span class="d-none d-md-inline">Logout</span></button>
@@ -2807,6 +2805,32 @@
 
 
 
+            <!-- ══ FLOATING AI AGENT (accessible from all tools) ══ -->
+            <div class="ai-float-wrapper" id="aiFloatWrapper" style="display:none;">
+                <div class="ai-float-panel" id="aiFloatPanel">
+                    <div class="ai-chat-header">
+                        <div style="display:flex;align-items:center;gap:10px">
+                            <div class="ai-dot"></div>
+                            <div><span style="font-weight:700;color:#fff;font-size:0.92rem"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i>S4 Anchor Agent</span></div>
+                        </div>
+                        <button class="ai-close-btn" onclick="toggleAiAgent()" title="Minimize"><i class="fas fa-chevron-down"></i></button>
+                    </div>
+                    <div class="ai-context-label" id="aiContextLabel"><i class="fas fa-crosshairs"></i> Context: <span id="aiContextTool">Gap Analysis</span></div>
+                    <div class="ai-chat-messages" id="aiChatMessages">
+                        <div class="ai-msg bot"><div class="ai-label"><i class="fas fa-robot"></i> S4 Agent</div>Hello! I'm your Anchor-S4 Agent. I'm available on every tool — ask me anything about:<br>• Gap analysis &amp; DI requirements<br>• DMSMS obsolescence &amp; readiness<br>• ROI, lifecycle cost &amp; readiness scoring<br>• Audit vault &amp; compliance scoring<br>• Supply chain risk &amp; predictive maintenance<br>• Defense documents &amp; standards<br>• Submission review &amp; discrepancy analysis<br><br>Switch tools — I'll follow along with contextual suggestions!</div>
+                    </div>
+                    <div class="ai-quick-btns" id="aiQuickBtns"></div>
+                    <div class="ai-chat-input">
+                        <input type="text" id="aiChatInput" placeholder="Ask the ILS Agent..." onkeydown="if(event.key==='Enter')aiSend()">
+                        <button onclick="aiSend()"><i class="fas fa-paper-plane"></i> Send</button>
+                    </div>
+                </div>
+                <button class="ai-float-toggle" onclick="toggleAiAgent()" title="S4 ILS Agent">
+                    <i class="fas fa-robot"></i>
+                    <span class="ai-float-dot"></span>
+                </button>
+            </div>
+
             </div><!-- /tabILS -->
 
             <!-- ═══════════════════════════════════════════════════════════ -->
@@ -3941,32 +3965,6 @@
 
     })();
     </script>
-
-<!-- ══ FLOATING AI AGENT (accessible from all tabs/sections) ══ -->
-<div class="ai-float-wrapper" id="aiFloatWrapper" style="display:none;">
-    <div class="ai-float-panel" id="aiFloatPanel">
-        <div class="ai-chat-header">
-            <div style="display:flex;align-items:center;gap:10px">
-                <div class="ai-dot"></div>
-                <div><span style="font-weight:700;color:#fff;font-size:0.92rem"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i>S4 Anchor Agent</span></div>
-            </div>
-            <button class="ai-close-btn" onclick="toggleAiAgent()" title="Minimize"><i class="fas fa-chevron-down"></i></button>
-        </div>
-        <div class="ai-context-label" id="aiContextLabel"><i class="fas fa-crosshairs"></i> Context: <span id="aiContextTool">Gap Analysis</span></div>
-        <div class="ai-chat-messages" id="aiChatMessages">
-            <div class="ai-msg bot"><div class="ai-label"><i class="fas fa-robot"></i> S4 Agent</div>Hello! I'm your Anchor-S4 Agent. I'm available on every tool — ask me anything about:<br>• Gap analysis &amp; DI requirements<br>• DMSMS obsolescence &amp; readiness<br>• ROI, lifecycle cost &amp; readiness scoring<br>• Audit vault &amp; compliance scoring<br>• Supply chain risk &amp; predictive maintenance<br>• Defense documents &amp; standards<br>• Submission review &amp; discrepancy analysis<br><br>Switch tools — I'll follow along with contextual suggestions!</div>
-        </div>
-        <div class="ai-quick-btns" id="aiQuickBtns"></div>
-        <div class="ai-chat-input">
-            <input type="text" id="aiChatInput" placeholder="Ask the ILS Agent..." onkeydown="if(event.key==='Enter')aiSend()">
-            <button onclick="aiSend()"><i class="fas fa-paper-plane"></i> Send</button>
-        </div>
-    </div>
-    <button class="ai-float-toggle" onclick="toggleAiAgent()" title="S4 ILS Agent">
-        <i class="fas fa-robot"></i>
-        <span class="ai-float-dot"></span>
-    </button>
-</div>
 
 </body>
 </html>
