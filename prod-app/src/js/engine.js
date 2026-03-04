@@ -1048,11 +1048,11 @@ async function anchorRecord() {
 
     const encrypt = document.getElementById('encryptCheck').checked;
     // Use binary file hash if a file was uploaded, otherwise hash the text input
-    const hash = _lastUploadedFileHash ? _lastUploadedFileHash : await sha256(input);
+    const hash = window._lastUploadedFileHash ? window._lastUploadedFileHash : await sha256(input);
     // Clear file hash after use so next manual paste doesn't reuse it
-    var _anchoredFileName = _lastUploadedFileName;
-    var _anchoredFileSize = _lastUploadedFileSize;
-    _lastUploadedFileHash = null; _lastUploadedFileName = null; _lastUploadedFileSize = 0;
+    var _anchoredFileName = window._lastUploadedFileName;
+    var _anchoredFileSize = window._lastUploadedFileSize;
+    window._lastUploadedFileHash = null; window._lastUploadedFileName = null; window._lastUploadedFileSize = 0;
     const typeInfo = RECORD_TYPES[selectedType] || {label:selectedType,icon:'fa-clipboard-list',color:'var(--accent)',branch:'JOINT'};
 
     const clfLevel = getClassification(selectedType);
@@ -1486,6 +1486,7 @@ function updateTxLog() {
 // ═══ Anchor-S4 Engine v3 — Program-Specific Checklists & Document Analysis ═══
 let ilsFiles = [];
 let ilsResults = null;
+window.ilsResults = null;
 
 // ── Per-Program ILS Checklists ──
 // Each program has its own real-world checklist. Items: [id, label, critical(1/0), keyword_regex_string]
@@ -3653,6 +3654,7 @@ function onILSProgramChange() {
     updateChecklistFromUploads();
     // Reset ILS results
     ilsResults = null;
+    window.ilsResults = null;
     document.getElementById('ilsScore').textContent = '--';
     document.getElementById('ilsScore').style.color = 'var(--muted)';
     document.getElementById('ilsScoreLabel').textContent = 'Upload documents & run analysis';
@@ -3804,6 +3806,7 @@ function runFullILSAnalysis() {
     });
 
     ilsResults = { clItems, clPct, drlResults, drlPct, drlFound, drlTotal, pct, actions, critGaps, totalCost, prog, hull, phase, progKey, cl, elements: _ilsElementMap };
+    window.ilsResults = ilsResults;
 
     renderILSScore(pct, critGaps);
     renderILSCoverage(clItems, drlResults);
@@ -4340,9 +4343,11 @@ const AI_TOOL_CONTEXT = {
     'hub-sbom':         {label:'SBOM Viewer',      icon:'fa-cubes',             buttons:[['Scan for CVEs','CVE Scan'],['Show risk summary','Risk Summary'],['Check EO 14028 compliance','EO 14028'],['List all licenses','Licenses'],['Identify firmware components','Firmware'],['What is an SBOM?','Explain SBOM'],['Draft SBOM attestation','SBOM Attestation'],['Show supply chain risks','Supply Chain Risk']]}
 };
 let currentHubPanel = 'hub-analysis';
+window.currentHubPanel = 'hub-analysis';
 
 function updateAiContext(panelId) {
     currentHubPanel = panelId;
+    window.currentHubPanel = panelId;
     const ctx = AI_TOOL_CONTEXT[panelId];
     if (!ctx) return;
     const toolLabel = document.getElementById('aiContextTool');
@@ -6258,7 +6263,7 @@ function clearStressTestRecords() {
 // Workspace notification system
 function showWorkspaceNotification(title, detail) {
     // Don't show notifications until user has navigated to a tool
-    if (!_currentSection && !_currentILSTool) return;
+    if (!window._currentSection && !window._currentILSTool) return;
 
     const existing = document.querySelectorAll('.workspace-notification');
     existing.forEach(n => n.remove());
@@ -8874,3 +8879,4 @@ window.sha256 = sha256;
 window.sha256Binary = sha256Binary;
 window._renderIcon = _renderIcon;
 window.stats = stats;
+window.updateAiContext = updateAiContext;

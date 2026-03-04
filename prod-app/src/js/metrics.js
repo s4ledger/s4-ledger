@@ -489,6 +489,10 @@ function handleFileSelect(e) {
 var _lastUploadedFileHash = null;
 var _lastUploadedFileName = null;
 var _lastUploadedFileSize = 0;
+// Expose to window so engine.js (separate chunk) can access them
+window._lastUploadedFileHash = null;
+window._lastUploadedFileName = null;
+window._lastUploadedFileSize = 0;
 
 function processUploadedFile(file) {
     var nameEl = document.getElementById('dropFileName');
@@ -498,12 +502,15 @@ function processUploadedFile(file) {
     }
     _lastUploadedFileName = file.name;
     _lastUploadedFileSize = file.size;
+    window._lastUploadedFileName = file.name;
+    window._lastUploadedFileSize = file.size;
 
     // Always read binary for hashing (this gives us the true file hash)
     var binaryReader = new FileReader();
     binaryReader.onload = function(ev) {
         window.sha256Binary(ev.target.result).then(function(hash) {
             _lastUploadedFileHash = hash;
+            window._lastUploadedFileHash = hash;
             if (nameEl) {
                 nameEl.innerHTML = window._s4Safe('<i class="fas fa-file" style="margin-right:6px;"></i>' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)'
                     + '<div style="font-size:0.7rem;color:var(--muted);font-family:monospace;margin-top:4px;">SHA-256: ' + hash.substring(0,32) + '...</div>');
@@ -980,7 +987,7 @@ openILSTool = function(toolId) {
     _origOpenILSTool(toolId);
     injectChartContainers();
     setTimeout(function() {
-        if (toolId === 'hub-analysis' && ilsResults) renderGapAnalysisCharts();
+        if (toolId === 'hub-analysis' && window.ilsResults) renderGapAnalysisCharts();
         if (toolId === 'hub-dmsms') renderDMSMSCharts();
         if (toolId === 'hub-readiness') renderReadinessCharts();
         if (toolId === 'hub-compliance') renderComplianceCharts();
@@ -1374,7 +1381,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var ilsTabLink = document.querySelector('a[href="#tabILS"]');
     if (ilsTabLink) {
         ilsTabLink.addEventListener('shown.bs.tab', function() {
-            updateAiContext(currentHubPanel || 'hub-analysis');
+            if (typeof window.updateAiContext === 'function') window.updateAiContext(window.currentHubPanel || 'hub-analysis');
         });
     }
 });

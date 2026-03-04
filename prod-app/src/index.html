@@ -3232,6 +3232,8 @@
         });
         // S4.errorMonitor API — queryable from console or code
         var S4 = window.S4 = window.S4 || {};
+        S4.modules = S4.modules || {};
+        S4.register = S4.register || function(name, meta) { S4.modules[name] = meta; };
         S4.errorMonitor = {
             errors: errors,
             count: function() { return errors.length; },

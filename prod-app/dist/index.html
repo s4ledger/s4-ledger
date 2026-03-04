@@ -66,10 +66,10 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-DMCHFu8J.js"></script>
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-BOTKyYiE.js">
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/navigation-DGGare-o.js">
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/metrics-DwW-Eg6z.js">
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-CrrFwcU8.js"></script>
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-fI0HrlGK.js">
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/navigation-DaZH_6BO.js">
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/metrics-lnNr4VBV.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-DgEz6fzr.js">
   <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-DkeYqvMt.css">
 </head>
@@ -3237,6 +3237,8 @@
         });
         // S4.errorMonitor API — queryable from console or code
         var S4 = window.S4 = window.S4 || {};
+        S4.modules = S4.modules || {};
+        S4.register = S4.register || function(name, meta) { S4.modules[name] = meta; };
         S4.errorMonitor = {
             errors: errors,
             count: function() { return errors.length; },

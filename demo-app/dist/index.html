@@ -54,10 +54,10 @@
     <script src="/s4-assets/defense-docs.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-BbCALfTK.js"></script>
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-BsslW_BI.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-CbyXV3qs.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-kXlwbBvc.js">
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-BgwkL0Cp.js"></script>
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-DQ5j-Cot.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-CMSC95gP.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-fb4Rg0jP.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-CzLYjbLs.js">
   <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-BL9iJk2c.css">
 </head>
@@ -3040,6 +3040,8 @@
             _capture('rejection', reason.message || String(reason).slice(0, 512), '', 0, 0, reason.stack);
         });
         var S4 = window.S4 = window.S4 || {};
+        S4.modules = S4.modules || {};
+        S4.register = S4.register || function(name, meta) { S4.modules[name] = meta; };
         S4.errorMonitor = {
             errors: errors,
             count: function() { return errors.length; },

@@ -5,6 +5,8 @@
 // ═══ Platform Hub Navigation ═══
 var _currentSection = null;
 var _currentILSTool = null;
+window._currentSection = null;
+window._currentILSTool = null;
 
 function showHub() {
     // Hide all tab panes
@@ -21,6 +23,7 @@ function showHub() {
     var hubTabs = document.querySelector('.ils-hub-tabs');
     if (hubTabs) hubTabs.style.display = 'none';
     _currentILSTool = null;
+    window._currentILSTool = null;
     // Show hub
     var hub = document.getElementById('platformHub');
     if (hub) { hub.style.display = 'block'; hub.style.animation = 'fadeIn 0.3s ease'; }
@@ -35,6 +38,7 @@ function showHub() {
         if (landing) landing.style.display = 'block';
     }
     _currentSection = null;
+    window._currentSection = null;
     // Update URL
     history.replaceState(null, '', window.location.pathname);
 }
@@ -83,6 +87,7 @@ function showSection(sectionId) {
     }
     
     _currentSection = sectionId;
+    window._currentSection = sectionId;
     
     // Auto-refresh data when entering specific sections
     if (sectionId === 'sectionVerify' && typeof window.refreshVerifyRecents === 'function') {
@@ -172,6 +177,7 @@ function openILSTool(toolId) {
     _ensureHIWButton(toolId);
 
     _currentILSTool = toolId;
+    window._currentILSTool = toolId;
 }
 
 function closeILSTool() {
@@ -190,6 +196,7 @@ function closeILSTool() {
     var hubTabs = document.querySelector('.ils-hub-tabs');
     if (hubTabs) hubTabs.style.display = 'none';
     _currentILSTool = null;
+    window._currentILSTool = null;
     // Re-apply role visibility on tool cards
     if (_currentRole && typeof applyTabVisibility === 'function') {
         var vis = _customVisibleTabs || (_s4Roles[_currentRole] ? _s4Roles[_currentRole].tabs : _allHubTabs);
