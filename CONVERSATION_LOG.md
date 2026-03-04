@@ -579,4 +579,59 @@ Real XRPL payment transactions happen server-side in `api/index.py` via `xrpl-py
 7. Metrics dashboard auto-refreshes via `window.loadPerformanceMetrics()`
 
 ---
+
+## Session 11 — DOMPurify Root Cause Discovery, Balance & Verify Tool Fix
+
+**Date:** 2025-01-XX (continued)
+
+### Problem Statement
+User reported (again) that:
+1. Credit balance in sidebar box shows INCORRECT amount after anchoring
+2. Unwanted auto-expand of the economic flow box ("I didn't ask for that")
+3. Verify tool STILL doesn't show recently anchored records or allow viewing full document content
+4. None of the Session 10 fixes actually resolved the verify tool
+
+### Root Cause Analysis
+
+**THE CRITICAL DISCOVERY: DOMPurify 3.3.1 silently strips onclick attribute VALUES**
+
+The entire verify tool failure was caused by DOMPurify's `_isValidAttribute()` function (purify.cjs.js line 1022-1050):
+1. `ALLOWED_ATTR['onclick']` → passes (onclick IS in allowed list)
+2. `URI_SAFE_ATTRIBUTES['onclick']` → FAILS (default list: alt, class, for, id, label, name, pattern, placeholder, role, summary, title, value, style, xmlns — **onclick NOT included**)
+3. Tests VALUE against `IS_ALLOWED_URI` regex → `"loadRecordToVerify(0)"` is NOT a URI → FAILS
+4. `ALLOW_UNKNOWN_PROTOCOLS` → false by default → FAILS
+5. `if (value) return false;` → value is truthy → **ATTRIBUTE REMOVED**
+
+This meant EVERY onclick handler rendered through `window._s4Safe()` was silently stripped across the entire application — verify tool View buttons, vault actions, AI chat buttons, DMSMS reports, etc.
+
+**Balance display bugs:**
+- `_animateDemoSteps` (2200ms setTimeout) set `demoSlsBalance` to raw `sls_allocation` (no fees deducted)
+- `_showDemoOffline` also created `demoSlsBalance` with raw allocation
+- Both now use `allocation - stats.slsFees` for correct remaining balance
+
+### Fixes Applied
+
+| File | Change |
+|------|--------|
+| `demo-app/src/js/sanitize.js` | Added `ADD_URI_SAFE_ATTR: ['onclick', 'onchange']` to DOMPurify.setConfig() |
+| `prod-app/src/js/sanitize.js` | Same ADD_URI_SAFE_ATTR fix |
+| `demo-app/src/js/engine.js` | Removed auto-expand of demoPanel; Fixed _animateDemoSteps & _showDemoOffline balance; Added content_preview to saveLocalRecord; Rewrote refreshVerifyRecents for direct localStorage reads |
+| `prod-app/src/js/engine.js` | Added content_preview to saveLocalRecord; Same refreshVerifyRecents rewrite |
+
+### Build Output
+- **prod-app:** `engine-xJNt77wy.js` (502.81 KB) — replaces engine-B6GaWwSO.js
+- **demo-app:** `engine-wIeDAuC0.js` (505.06 KB) — replaces engine-Ch4p1clU.js
+
+### Deployment
+- Commit: `fbf2511` — pushed to `main`
+- Vercel auto-deploys from GitHub main branch
+- Previous commit was `940a4da` (Session 10)
+
+### Key Technical Details
+- `ADD_URI_SAFE_ATTR` tells DOMPurify to SKIP URI validation for specified attributes
+- `refreshVerifyRecents` now reads vault directly from `localStorage.getItem()` for maximum freshness (bypasses stale in-memory `s4Vault` array)
+- Falls back to un-scoped vault key `'s4Vault'` if role-scoped vault is empty
+- Stores records in `window._verifyRecentRecords` BEFORE checking DOM container (deferred rendering)
+
+---
 *This log is updated every session. Reference before making changes.*
