@@ -1078,7 +1078,8 @@ async function anchorRecord() {
         hash, record_type: selectedType, record_label: typeInfo.label, branch: typeInfo.branch,
         icon: typeInfo.icon, timestamp: new Date().toISOString(),
         timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19) + ' UTC',
-        fee: 0.01, tx_hash: txHash, system: typeInfo.system || 'N/A', explorer_url: explorerUrl, network
+        fee: 0.01, tx_hash: txHash, system: typeInfo.system || 'N/A', explorer_url: explorerUrl, network,
+        content_preview: input.substring(0, 200) + (input.length > 200 ? '...' : '')
     });
     // Auto-save to Audit Vault
     addToVault({hash, txHash, type:selectedType, label:typeInfo.label, branch:typeInfo.branch, icon:typeInfo.icon, content:input.substring(0,100)+(input.length>100?'...':''), fullContent:input, encrypted:encrypt, timestamp:new Date().toISOString(), source:'Manual Anchor', fee:0.01, explorerUrl, network});
@@ -1129,20 +1130,20 @@ async function anchorRecord() {
 // ── Verify Tab: Recently Anchored Records ──
 function refreshVerifyRecents() {
     var container = document.getElementById('verifyRecentAnchors');
-    if (!container) return;
     // Combine vault + session records, deduplicate by hash
-    // Vault records processed FIRST because they persist fullContent across page reloads
-    // Session records from localStorage (via loadStats) lose fullContent, so vault takes priority
     var seen = {};
     var records = [];
-    // Vault records first (persisted — includes fullContent)
-    if (typeof s4Vault !== 'undefined' && Array.isArray(s4Vault)) {
-        for (var j = 0; j < Math.min(s4Vault.length, 30); j++) {
-            var vr = s4Vault[j];
-            if (vr.hash && !seen[vr.hash]) {
-                seen[vr.hash] = true;
-                records.push({hash:vr.hash, label:vr.label||vr.type||'Record', icon:vr.icon||'fa-file', branch:vr.branch||'JOINT', timestamp:vr.timestamp, txHash:vr.txHash||'', content:vr.content||'', fullContent:vr.fullContent||''});
-            }
+    // Read vault directly from localStorage for maximum freshness (role-scoped)
+    var _vk = 's4Vault' + (window._currentRole ? '_' + window._currentRole : '');
+    var _freshVault = [];
+    try { _freshVault = JSON.parse(localStorage.getItem(_vk) || '[]'); } catch(e) {}
+    // Also check in-memory s4Vault as a second source
+    var vaultSource = _freshVault.length > 0 ? _freshVault : (typeof s4Vault !== 'undefined' && Array.isArray(s4Vault) ? s4Vault : []);
+    for (var j = 0; j < Math.min(vaultSource.length, 30); j++) {
+        var vr = vaultSource[j];
+        if (vr.hash && !seen[vr.hash]) {
+            seen[vr.hash] = true;
+            records.push({hash:vr.hash, label:vr.label||vr.type||'Record', icon:vr.icon||'fa-file', branch:vr.branch||'JOINT', timestamp:vr.timestamp, txHash:vr.txHash||'', content:vr.content||'', fullContent:vr.fullContent||''});
         }
     }
     // Session records second (current session — adds any not yet in vault)
@@ -1155,14 +1156,29 @@ function refreshVerifyRecents() {
             }
         }
     }
+    // Also try un-scoped vault key if no records found (covers role-change edge case)
+    if (records.length === 0 && window._currentRole) {
+        try {
+            var _unscopedVault = JSON.parse(localStorage.getItem('s4Vault') || '[]');
+            for (var u = 0; u < Math.min(_unscopedVault.length, 30); u++) {
+                var ur = _unscopedVault[u];
+                if (ur.hash && !seen[ur.hash]) {
+                    seen[ur.hash] = true;
+                    records.push({hash:ur.hash, label:ur.label||ur.type||'Record', icon:ur.icon||'fa-file', branch:ur.branch||'JOINT', timestamp:ur.timestamp, txHash:ur.txHash||'', content:ur.content||'', fullContent:ur.fullContent||''});
+                }
+            }
+        } catch(e) {}
+    }
     // Sort records by timestamp, newest first
     records.sort(function(a,b) { return (b.timestamp||'').localeCompare(a.timestamp||''); });
+    // ALWAYS store records in window so loadRecordToVerify can access them
+    window._verifyRecentRecords = records;
+    // If container isn't in the DOM yet, just store and return
+    if (!container) return;
     if (records.length === 0) {
         container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">No anchored records yet. Anchor a record first to see it here.</div>';
         return;
     }
-    // Store records in window so loadRecordToVerify can access full content
-    window._verifyRecentRecords = records;
     container.innerHTML = window._s4Safe(records.slice(0, 20).map(function(r, idx) {
         var ago = '';
         try {

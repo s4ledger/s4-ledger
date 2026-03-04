@@ -20,6 +20,7 @@ DOMPurify.setConfig({
     ],
     ALLOW_DATA_ATTR: true,
     ADD_ATTR: ['target'],
+    ADD_URI_SAFE_ATTR: ['onclick', 'onchange'],
     RETURN_DOM: false,
     RETURN_DOM_FRAGMENT: false,
 });
