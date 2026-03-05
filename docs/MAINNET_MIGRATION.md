@@ -289,7 +289,7 @@ def anchor_record():
             "account": "rXXX...",
             "explorer_url": "https://livenet.xrpl.org/transactions/...",
             "network": "mainnet",
-            "timestamp": "2025-01-15T10:30:00Z"
+            "timestamp": "2026-01-15T10:30:00Z"
         }
     """
     import xrpl

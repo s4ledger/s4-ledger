@@ -8,7 +8,7 @@ OPENAPI_SPEC = {
     "openapi": "3.1.0",
     "info": {
         "title": "S4 Ledger API",
-        "version": "5.2.0",
+        "version": "5.12.1",
         "description": "Defense record anchoring, verification, and ILS management API. "
                        "Anchors SHA-256 hashes to the XRP Ledger for immutable audit trails.",
         "contact": {
@@ -56,7 +56,7 @@ OPENAPI_SPEC = {
                                     "type": "object",
                                     "properties": {
                                         "status": {"type": "string", "example": "ok"},
-                                        "version": {"type": "string", "example": "5.2.0"},
+                                        "version": {"type": "string", "example": "5.12.1"},
                                         "xrpl_connected": {"type": "boolean"},
                                         "uptime_seconds": {"type": "number"},
                                     },

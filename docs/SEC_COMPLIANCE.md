@@ -117,4 +117,4 @@ $SLS follows the same consumption-based model: pay for service, consume token, r
 
 For legal or regulatory inquiries: **info@s4ledger.com**
 
-*Last updated: v5.12.0 — March 2026*
+*Last updated: v5.12.1 — March 2026*

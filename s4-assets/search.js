@@ -38,7 +38,7 @@ const searchIndex = [
     { title: '$SLS Token Details', tags: 'SLS token XRPL utility tokenomics governance fiat conversion staking treasury allocation circulating supply', page: 'Pricing', url: 'pricing-token' },
 
     // ═══ ROADMAP ═══
-    { title: 'Phase 1 — Foundation (Complete)', tags: 'roadmap phase 1 foundation SDK hashing XRPL anchoring token website CLI complete done Q4 2025', page: 'Roadmap', url: 'roadmap' },
+    { title: 'Phase 1 — Foundation (Complete)', tags: 'roadmap phase 1 foundation SDK hashing XRPL anchoring token website CLI complete done Q4 2025 Q1 2026', page: 'Roadmap', url: 'roadmap' },
     { title: 'Phase 2 — Defense Platform (In Progress)', tags: 'roadmap phase 2 defense ILS CDRL pitch IRAD use case library partner DDIA Q1 Q2 2026', page: 'Roadmap', url: 'roadmap' },
     { title: 'Phase 3 — MVP & Pilot', tags: 'roadmap phase 3 MVP pilot NAVSEA SBIR STTR real contract data multi-language SDK Q3 Q4 2026', page: 'Roadmap', url: 'roadmap' },
     { title: 'Phase 4 — Partner Onboarding & SaaS', tags: 'roadmap phase 4 SaaS DIU NavalX partner REST API tiered dashboard webhook Q1 Q2 2027', page: 'Roadmap', url: 'roadmap' },
@@ -73,7 +73,7 @@ const searchIndex = [
     { title: 'Partner Program — Benefits & Integration', tags: 'partner benefits early access co-marketing volume pricing Python REST API SDK integration reseller', page: 'Partners', url: 'partners' },
 
     // ═══ DEMO APP — ILS WORKSPACE (20 Tools) ═══
-    { title: 'Anchor-S4 — Unified Command Center', tags: 'ILS workspace command center dashboard unified interface all tools 14 tools defense logistics management platform', page: 'Demo App', url: 'demo-app' },
+    { title: 'Anchor-S4 — Unified Command Center', tags: 'ILS workspace command center dashboard unified interface all tools 20+ tools defense logistics management platform', page: 'Demo App', url: 'demo-app' },
     { title: 'Gap Analysis Engine', tags: 'gap analysis ILS data package completeness DRL data item J-attachment buylist vendor spares transfer book tech manual MIL-STD-1388 deficiency what is missing', page: 'Demo App', url: 'demo-app' },
     { title: 'DMSMS Tracker — Obsolescence Risk', tags: 'DMSMS diminishing manufacturing sources material shortages obsolescence end of life EOL alternate sources redesign risk parts going away discontinued', page: 'Demo App', url: 'demo-app' },
     { title: 'Readiness Calculator — Ao & Ai', tags: 'readiness availability operational Ao inherent Ai MTBF mean time between failures MTTR mean time to repair MLDT mean logistics delay time RAM reliability', page: 'Demo App', url: 'demo-app' },

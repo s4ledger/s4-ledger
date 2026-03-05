@@ -3,7 +3,7 @@
 ## [5.12.1] — 2026-02-26
 ### Fixed
 - Theme toggle (prod-app): re-entrancy guard prevents double-fire from capture-phase delegated click handler
-- Credits balance: 6 bugs — window exports, tier propagation in closeOnboarding, logout clears localStorage/memory, stale stats pointer, metrics timer restores Credits suffix
+- $SLS balance: 6 bugs — window exports, tier propagation in closeOnboarding, logout clears localStorage/memory, stale stats pointer, metrics timer restores $SLS suffix
 - AI agent: hidden until role selection completes (enterPlatformAfterAuth hides, applyRole shows); tab handler gated on s4_entered + s4_user_role
 - DoW terminology: "Department of Defense" → "Department of War" everywhere except document references (DoDI, DoD 5000, DoD Directive, etc.)
 - Compliance % in light mode: removed color override that stripped color-coded meaning

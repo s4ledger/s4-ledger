@@ -106,7 +106,7 @@ Most blockchain companies focus on cryptocurrency or consumer supply chains (tra
 Everything described above is **live and working right now** at [s4ledger.com](https://s4ledger.com). It was built by Nick Frankfort on his own time at zero cost to the company. The tech stack:
 
 - **Website:** 25+ pages, fully branded
-- **Demo App:** All 20+ ILS Workspace tools working, 156+ pre-built record types across Navy, USMC, and USCG (supports any defense record type), 500+ pre-loaded military platforms, real DoW data in all dropdowns (35+ platforms, 25 contracts, 37 suppliers)
+- **Demo App:** All 20+ ILS Workspace tools working, 156+ pre-built record types across 9 branches (USN, USA, USAF, USMC, USCG, DLA, Joint, SOCOM, USSF) (supports any defense record type), 500+ pre-loaded military platforms, real DoW data in all dropdowns (35+ platforms, 25 contracts, 37 suppliers)
 - **Audit Record Vault:** Automatically stores every anchored record with content + hash for instant auditing
 - **Defense Document Library:** 100+ real MIL-STDs, OPNAVINSTs, DoD Directives searchable by branch and category
 - **Compliance Scorecard:** Real-time CMMC/NIST/DFARS compliance calculator with letter grades

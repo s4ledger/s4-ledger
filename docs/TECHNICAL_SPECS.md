@@ -45,7 +45,7 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 | `batch_coc` | Batch certificate of conformance | 24x transmission assemblies |
 | `audit_artifact` | Audit evidence / inspection report | INSURV finding |
 
-*S4 Ledger supports **156+ pre-built record types across Navy, USMC, and USCG** mapped to real-world defense logistics workflows. The table above shows core examples — any defense record type can be anchored.*
+*S4 Ledger supports **156+ pre-built record types across 9 branches (USN, USA, USAF, USMC, USCG, DLA, Joint, SOCOM, USSF)** mapped to real-world defense logistics workflows. The table above shows core examples — any defense record type can be anchored.*
 
 ## 4. SDK Specifications
 
@@ -58,7 +58,7 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 | **Transport** | WebSocket (wss://) to XRPL nodes |
 | **Encryption** | TLS 1.3 |
 | **Batch Size** | Up to 1,000 records |
-| **SDK Functions** | 37 (anchor, verify, batch, status, readiness, dmsms, roi, lifecycle, warranty, supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance, compliance, ILIE, defense-db-import, custody-transfer, proof-chain, webhook, composite-anchor, ai-query, offline-sync, and more) |
+| **SDK Functions** | 21 (anchor, verify, batch, status, readiness, dmsms, roi, lifecycle, warranty, supply-chain-risk, audit-reports, contracts, digital-thread, predictive-maintenance, compliance, ILIE, defense-db-import, custody-transfer, proof-chain, webhook, composite-anchor) |
 
 ## 5. REST API
 
@@ -76,7 +76,7 @@ S4 Ledger utilizes the `Memos` field in a standard XRPL transaction to anchor da
 |---|---|
 | **Tools** | 20+ interactive ILS management tools |
 | **Platforms** | 500+ pre-loaded (500+ platforms, 37 suppliers, 25 contracts) |
-| **Record Types** | 156+ pre-built record types across Navy, USMC, and USCG |
+| **Record Types** | 156+ pre-built record types across 9 defense branches |
 | **Standards** | MIL-STD-1388, DoDI 4245.15, DoD 5000.73, FAR 46.7, MIL-STD-1390D |
 
 ## 7. XRPL Network

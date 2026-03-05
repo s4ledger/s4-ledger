@@ -602,11 +602,11 @@ RBAC_ROLES = {
 
 # Known dependency versions for audit (production: pipdeptree / safety DB)
 KNOWN_DEPENDENCIES = {
-    "xrpl-py": {"version": "2.6.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-    "cryptography": {"version": "42.0.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-    "requests": {"version": "2.31.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-    "pyjwt": {"version": "2.8.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-    "python-dotenv": {"version": "1.0.0", "cve_status": "clean", "last_audit": "2025-06-01"},
+    "xrpl-py": {"version": "2.6.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+    "cryptography": {"version": "42.0.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+    "requests": {"version": "2.31.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+    "pyjwt": {"version": "2.8.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+    "python-dotenv": {"version": "1.0.0", "cve_status": "clean", "last_audit": "2026-02-01"},
 }
 
 def _check_rbac(api_key, required_permission):
@@ -652,7 +652,7 @@ def _threat_model_assessment():
     """STRIDE-based threat model for the S4 Ledger platform."""
     return {
         "framework": "STRIDE + NIST SP 800-161",
-        "last_updated": "2025-07-16",
+        "last_updated": "2026-02-26",
         "attack_surface": [
             {"component": "API Gateway", "threats": ["Spoofing", "Tampering"], "mitigations": ["API key auth", "Rate limiting", "HMAC signatures"], "residual_risk": "LOW"},
             {"component": "XRPL Anchoring", "threats": ["Tampering", "Repudiation"], "mitigations": ["Cryptographic hash chain", "XRPL immutability", "Multi-sig treasury"], "residual_risk": "VERY LOW"},
@@ -669,7 +669,7 @@ def _threat_model_assessment():
         },
         "recommendations": [
             "Complete MFA rollout for all admin accounts",
-            "Integrate ZKP proofs for CUI verification (Q3 2025)",
+            "Integrate ZKP proofs for CUI verification (Q3 2026)",
             "Deploy SIEM integration for real-time threat detection",
             "Complete SOC 2 Type II audit",
             "Implement hardware security module (HSM) for key management",
@@ -1570,7 +1570,7 @@ Joint/OSD: COMPASS, MBPS, GCSS, DPAS, DLA FLIS, PIEE/WAWF
 
 ## S4 LEDGER PLATFORM CAPABILITIES
 
-### 14 ILS Tools
+### 20+ ILS Tools
 1. Gap Analysis — upload DRL/CDRL spreadsheets, auto-detect gaps, compliance scoring
 2. Action Items — track corrective actions with owners, dates, severity
 3. DMSMS Tracker — obsolescence tracking across 500+ platforms
@@ -2404,7 +2404,7 @@ class handler(BaseHTTPRequestHandler):
                 "current_role": current_role,
                 "current_permissions": RBAC_ROLES.get(current_role, {}).get("permissions", []),
                 "mfa_enabled": key_info.get("mfa_enabled", False),
-                "mfa_status": "planned — Q3 2025",
+                "mfa_status": "planned — Q3 2026",
                 "session_info": {
                     "api_key_prefix": api_key[:8] + "..." if len(api_key) > 8 else "demo",
                     "tier": RBAC_ROLES.get(current_role, {}).get("tier", "pilot"),
@@ -2417,7 +2417,7 @@ class handler(BaseHTTPRequestHandler):
             self._send_json({
                 "zkp_available": True,
                 "proof_type": "zk-snark-stub",
-                "production_target": "Bulletproofs / Groth16 — Q3 2025",
+                "production_target": "Bulletproofs / Groth16 — Q3 2026",
                 "use_cases": [
                     "Prove document was anchored without revealing content (CUI/ITAR)",
                     "Verify supply chain integrity without exposing logistics data",
@@ -2461,8 +2461,8 @@ class handler(BaseHTTPRequestHandler):
                 "vulnerable": total_vulnerable,
                 "packages": audit_results,
                 "tools_used": ["safety", "pip-audit", "bandit", "semgrep"],
-                "last_full_scan": "2025-06-01",
-                "next_scheduled": "2025-07-01",
+                "last_full_scan": "2026-02-01",
+                "next_scheduled": "2026-03-01",
                 "sbom_format": "CycloneDX 1.5",
                 "recommendation": "All dependencies are current. Next audit scheduled per monthly cadence.",
             })

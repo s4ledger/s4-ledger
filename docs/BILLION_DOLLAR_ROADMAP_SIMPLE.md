@@ -27,7 +27,7 @@ Before we start, here's every acronym, buzzword, and piece of jargon in this doc
 | **DIU** | Defense Innovation Unit — a Pentagon office that finds and funds startups building cool tech for the military |
 | **DLA** | Defense Logistics Agency — the government organization that manages the military supply chain (food, fuel, spare parts, etc.) |
 | **DMSMS** | Diminishing Manufacturing Sources and Material Shortages — when the company that makes a critical part stops making it, and you need to find a replacement before you run out. This is a HUGE expensive problem in defense |
-| **DoW** | Department of War — the U.S. military (Navy, USMC, Coast Guard, and all their agencies) |
+| **DoW** | Department of War — the U.S. military (all branches and their agencies) |
 | **FedRAMP** | Federal Risk and Authorization Management Program — a security certification that cloud software must pass before the government will use it. Think of it as the government's seal of approval for cloud services |
 | **FTE** | Full-Time Equivalent — one person working full-time (40 hours/week) |
 | **GIDEP** | Government-Industry Data Exchange Program — a database where government and industry share information about parts that are defective or becoming obsolete |

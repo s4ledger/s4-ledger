@@ -291,12 +291,12 @@ class DependencyAuditor:
 
     # Known safe versions (production: queries Snyk/safety API)
     KNOWN_DEPS = {
-        "xrpl-py": {"version": "2.6.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-        "cryptography": {"version": "42.0.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-        "requests": {"version": "2.31.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-        "pyjwt": {"version": "2.8.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-        "python-dotenv": {"version": "1.0.0", "cve_status": "clean", "last_audit": "2025-06-01"},
-        "supabase": {"version": "2.3.0", "cve_status": "clean", "last_audit": "2025-06-01"},
+        "xrpl-py": {"version": "2.6.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+        "cryptography": {"version": "42.0.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+        "requests": {"version": "2.31.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+        "pyjwt": {"version": "2.8.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+        "python-dotenv": {"version": "1.0.0", "cve_status": "clean", "last_audit": "2026-02-01"},
+        "supabase": {"version": "2.3.0", "cve_status": "clean", "last_audit": "2026-02-01"},
     }
 
     def audit_all(self) -> dict:

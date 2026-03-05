@@ -1,7 +1,7 @@
 # S4 Ledger — Architecture Guide
 
 > **Version:** 6.0 (Session 6)
-> **Updated:** 2025-07-17
+> **Updated:** 2026-02-26
 > **Maintainer:** Nick Frankfort
 
 ## Overview
@@ -119,7 +119,7 @@ engine.js exports **~151 functions** to `window.*` for use by inline
 User Input → SHA-256 Hash → _anchorToXRPL(payload)
   → XRP Ledger Memo (testnet/mainnet)
   → Save to localStorage + IndexedDB
-  → Update SLS balance (credits deducted)
+  → Update SLS balance ($SLS deducted)
   → Refresh charts & transaction log
 ```
 

@@ -96,7 +96,7 @@ This document maps the exact technical integration surface — every API call, e
 | **Hash any data** | `POST /api/hash` | Live | SHA-256, returns 64-char hex |
 | **Anchor to XRPL** | `POST /api/anchor` | Live | Hash + `AccountSet` memo + SLS fee |
 | **Verify integrity** | `POST /api/verify` | Live | Recompute hash vs. chain, returns `tamper_detected` |
-| **Record categorization** | `POST /api/categorize` | Live | 156+ pre-built record types across Navy, USMC, and USCG |
+| **Record categorization** | `POST /api/categorize` | Live | 156+ pre-built record types across 9 defense branches |
 | **AI analysis** | `POST /api/ai-chat` | Live | Azure OpenAI → GPT-4o → Claude fallback |
 | **Wallet provisioning** | `POST /api/wallet/provision` | Live | Creates XRPL wallet, funds XRP + SLS |
 | **SLS balance check** | `GET /api/wallet/balance` | Live | Query wallet SLS/XRP balance |
@@ -108,7 +108,7 @@ This document maps the exact technical integration surface — every API call, e
 | **Supply chain risk** | `GET /api/supply-chain-risk` | Live | Multi-factor risk scoring |
 | **Digital thread** | `GET /api/digital-thread` | Live | ECP tracking, BOM revisions |
 | **Audit reports** | `GET /api/audit-reports` | Live | 6 report types (full, supply, maintenance, compliance, custody, contract) |
-| **SDK (Python)** | `pip install` / `s4-anchor` CLI | Live | 37 methods, CLI tool |
+| **SDK (Python)** | `pip install` / `s4-anchor` CLI | Live | 21 functions, CLI tool |
 | **Webhook registration** | `POST /api/webhooks/register` | Live | Register webhook URL with HMAC secret |
 | **Webhook deliveries** | `GET /api/webhooks/deliveries` | Live | View webhook delivery history |
 | **File-level hashing** | `POST /api/hash/file` | Live | Binary hash of uploaded file |
@@ -237,7 +237,7 @@ X-API-Key: harborlink-org-key
 
 ### Record Type Mapping
 
-HarborLink artifact types should map to S4 Ledger's 156+ pre-built record types across Navy, USMC, and USCG:
+HarborLink artifact types should map to S4 Ledger's 156+ pre-built record types across 9 branches (USN, USA, USAF, USMC, USCG, DLA, Joint, SOCOM, USSF):
 
 | HarborLink Artifact | S4 Record Type | Branch |
 |---|---|---|
@@ -636,7 +636,7 @@ For IG reviews, GAO investigations, FOIA, or congressional scrutiny, HarborLink 
 GET https://s4ledger.com/api/audit-reports/export    # NEW ENDPOINT
 ?type=full_audit
 &program=DDG-51
-&start=2025-01-01
+&start=2026-01-01
 &end=2026-02-18
 &format=json
 ```
@@ -647,9 +647,9 @@ Response: A portable package containing:
 {
     "report_type": "full_audit",
     "program": "DDG-51 Flight III",
-    "period": { "start": "2025-01-01", "end": "2026-02-18" },
+    "period": { "start": "2026-01-01", "end": "2026-02-18" },
     "generated_at": "2026-02-18T15:00:00Z",
-    "generated_by": "S4 Ledger v5.12.0",
+    "generated_by": "S4 Ledger v5.12.1",
 
     "summary": {
         "total_records": 1247,
@@ -1265,7 +1265,7 @@ prediction = ledger.calculate_readiness(
 
 ## Appendix A — Record Type Catalog
 
-S4 Ledger supports 156+ pre-built record types focused on U.S. Navy, USMC, and USCG. Key categories for HarborLink:
+S4 Ledger supports 156+ pre-built record types across 9 branches (USN, USA, USAF, USMC, USCG, DLA, Joint, SOCOM, USSF). Key categories for HarborLink:
 
 | Branch | Types | Examples |
 |---|---|---|

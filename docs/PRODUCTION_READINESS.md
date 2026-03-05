@@ -1,14 +1,14 @@
 # S4 Ledger — Production Readiness Checklist
 
 > **Status:** Production ($SLS LIVE on XRPL Mainnet) — **Estimated ~96% MVP/Pilot Ready | ~85% Enterprise Production Ready**  
-> **Last Updated:** February 2026 (v5.12.0)  
+> **Last Updated:** February 2026 (v5.12.1)  
 > **Target:** First enterprise pilot — $SLS LIVE on Mainnet
 
 > **Note:** S4 Ledger operates as a product line of S4 Systems, LLC. Many corporate infrastructure items below (CAGE Code, SAM.gov, EIN, D-U-N-S, legal counsel, compliance posture) may already be in place through S4 Systems. Items marked 🟡 should be verified with S4 Systems leadership rather than obtained from scratch. Nick Frankfort leads product/technology; S4 Systems provides business development, legal, compliance, hiring, and corporate infrastructure.
 
 ---
 
-## Technical Code-Level Readiness (v5.12.0)
+## Technical Code-Level Readiness (v5.12.1)
 
 > These scores measure **code-level production quality** — distinct from the enterprise/business readiness below.
 
@@ -65,13 +65,13 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 
 | Area | Status | MVP Score | Enterprise Score |
 |------|--------|-----------|-----------------|
-| **Frontend / Demo** | ILS Workspace (unified command center with 20+ ILS tools (hub/card layout)), 20+ ILS tools + action items + AI Agent, universal program support, 156+ pre-built record types across Navy/USMC/USCG, PDF/DOCX document parsing, cross-document discrepancy detection, ITAR warning banner, login portal, SDK Playground with 20 interactive function boxes, Metrics dashboard auto-refresh (5s), Transactions page with filters, Treasury Wallet widget, classification banners, dark/light mode, S4 color palette (PMS 325/385), drag-reorder tool cards, first-visit How It Works UX, real QR codes | **98%** | **95%** |
-| **API / Backend** | Serverless API v5.12.0, 90+ endpoints including 12 HarborLink integration endpoints, subscription-based SLS provisioning, Stripe payment verification, AI cascade (Azure OpenAI → OpenAI GPT-4o → Anthropic Claude Sonnet → client-side fallback), RAG endpoint, /api/state/save + /api/state/load for Supabase persistence, /api/demo/provision for demo SLS flow, rate limiting, security headers, health check, OpenAPI 3.0 spec, server-side JWT validation | **92%** | **85%** |
+| **Frontend / Demo** | ILS Workspace (unified command center with 20+ ILS tools (hub/card layout)), 20+ ILS tools + action items + AI Agent, universal program support, 156+ pre-built record types across 9 defense branches, PDF/DOCX document parsing, cross-document discrepancy detection, ITAR warning banner, login portal, SDK Playground with 20 interactive function boxes, Metrics dashboard auto-refresh (5s), Transactions page with filters, Treasury Wallet widget, classification banners, dark/light mode, S4 color palette (PMS 325/385), drag-reorder tool cards, first-visit How It Works UX, real QR codes | **98%** | **95%** |
+| **API / Backend** | Serverless API v5.12.1, 90+ endpoints including 12 HarborLink integration endpoints, subscription-based SLS provisioning, Stripe payment verification, AI cascade (Azure OpenAI → OpenAI GPT-4o → Anthropic Claude Sonnet → client-side fallback), RAG endpoint, /api/state/save + /api/state/load for Supabase persistence, /api/demo/provision for demo SLS flow, rate limiting, security headers, health check, OpenAPI 3.0 spec, server-side JWT validation | **92%** | **85%** |
 | **XRPL Integration** | $SLS LIVE on XRPL Mainnet (100M total). Full mainnet anchoring live — all 20+ ILS tools anchor to mainnet with explorer links. 3-wallet architecture (Issuer, Treasury, Ops). secp256k1 (Xaman-compatible). 0.01 SLS fee per anchor. | **100%** | **98%** |
-| **SDK** | Python SDK with 37 methods including 11 new HarborLink methods (webhooks, composite, batch, custody, proof chain, file hash, bulk verify, org records), CLI tool, CSV/XML/JSON import, encryption, SDK Playground with 20 clickable function boxes | **92%** | **90%** |
+| **SDK** | Python SDK with 21 functions including 11 new HarborLink methods (webhooks, composite, batch, custody, proof chain, file hash, bulk verify, org records), CLI tool, CSV/XML/JSON import, encryption, SDK Playground with 20 clickable function boxes | **92%** | **90%** |
 | **Infrastructure** | Vercel deployment, SSL, CDN, PWA manifest, custom 404, security headers, **Supabase PostgreSQL persistence** (43+ tables, user state sync, 100% localStorage coverage), automated database backups, encryption at rest (AES-256 via Supabase), offline queue with client-side encryption — no GovCloud, no multi-region, no external monitoring/APM | **85%** | **70%** |
 | **Authentication** | Real Supabase Auth (sign in, sign up, password reset, session restore), JWT token issuance + server-side JWT validation (_validate_supabase_jwt, _get_auth_user), login portal, API key system, wallet provisioning, subscription-gated SLS delivery, role-based access controls (UI), session state persistence via Supabase, SSO scaffolding (CAC/PIV, Microsoft) — no MFA enforcement, no key rotation | **80%** | **65%** |
-| **Documentation** | OpenAPI 3.0 spec (90+ endpoints), SDK reference (37 methods), whitepaper, technical specs, security policy, investor docs, deployment guide, User Training Guide, HarborLink Integration doc v2.0, SEC Compliance / Howey Test analysis, CEO Launch Costs, Executive Proposal, Internal Pitch — all synced to v5.12.0 | **98%** | **98%** |
+| **Documentation** | OpenAPI 3.0 spec (90+ endpoints), SDK reference (21 functions), whitepaper, technical specs, security policy, investor docs, deployment guide, User Training Guide, HarborLink Integration doc v2.0, SEC Compliance / Howey Test analysis, CEO Launch Costs, Executive Proposal, Internal Pitch — all synced to v5.12.1 | **98%** | **98%** |
 | **Compliance** | NIST 800-171 architecture aligned, ITAR warnings, security headers — practically CMMC Level 2-ready, FedRAMP/IL4 hosting planned, SEC utility token Howey Test analysis complete, no SOC 2 | **45%** | **42%** |
 | **Legal / Business** | S4 Systems LLC exists, TOS + Privacy Policy published, SEC Howey Test analysis documented — token legal opinion, EULA, DPA, SLA pending | **45%** | **40%** |
 | **Security** | Zero-data-on-chain, HMAC-SHA256 webhook signing, rate limiting, HSTS, security headers, client-side encryption for offline queue, NVD vulnerability scanning, server-side JWT validation (_validate_supabase_jwt + _get_auth_user), 20 pytest security/validation tests passing — no pen test, no SOC 2, no WAF | **48%** | **42%** |
@@ -242,13 +242,13 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | API reference (interactive) | ✅ Complete | **Critical** | OpenAPI 3.0 spec at /api/openapi.json, api_examples.md, SDK Playground |
-| SDK documentation | ✅ Complete | **High** | Full SDK reference at /sdk/ — 37 functions, 15 CLI commands, REST API, code examples |
+| SDK documentation | ✅ Complete | **High** | Full SDK reference at /sdk/ — 21 functions, 15 CLI commands, REST API, code examples |
 | Integration guide | ✅ Published | **High** | INTEGRATIONS.md |
 | Deployment guide | ✅ Published | **High** | DEPLOYMENT_GUIDE.md |
 | Technical specifications | ✅ Published | **High** | TECHNICAL_SPECS.md |
 | Whitepaper | ✅ Published | **Critical** | WHITEPAPER.md |
 | Security audit report | 🟡 Draft | **Critical** | SECURITY_AUDIT.md — needs formal third-party audit |
-| Changelog / Release notes | ✅ Published | Medium | CHANGELOG.md with semantic versioning (v1.0.0 through v5.12.0) |
+| Changelog / Release notes | ✅ Published | Medium | CHANGELOG.md with semantic versioning (v1.0.0 through v5.12.1) |
 
 ### 5.2 Internal Documentation
 | Item | Status | Priority | Notes |
@@ -290,7 +290,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 | Item | Status | Priority | Notes |
 |------|--------|----------|-------|
 | Landing page | ✅ Active | **Critical** | Trust signals, compliance badges, CTA |
-| Demo App | ✅ Active | **Critical** | 20+ ILS tools, 156+ pre-built record types across Navy, USMC, and USCG, 20+ ILS tools in hub/card workspace |
+| Demo App | ✅ Active | **Critical** | 20+ ILS tools, 156+ pre-built record types across 9 defense branches, 20+ ILS tools in hub/card workspace |
 | SDK Playground | ✅ Active | **Critical** | Interactive with live API, 500+ platform selector, hull/designation + program office input |
 | Live Metrics dashboard | ✅ Active | **High** | Real-time with Chart.js, platform filter |
 | Transaction browser | ✅ Active | **High** | Filters, pagination, CSV export, platform filter |
@@ -372,7 +372,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 - [x] Add ITAR/export control warning to all data input forms ✅ (v3.2 — ITAR banner on landing page + demo app)
 - [ ] Commission penetration test (budget: $5K-$15K)
 - [ ] Begin CMMC Level 1 self-assessment (verify S4 Systems' existing CMMC posture first)
-- [x] Create CHANGELOG.md with version history ✅ (v5.12.0 — complete changelog from v1.0 to v5.12.0)
+- [x] Create CHANGELOG.md with version history ✅ (v5.12.1 — complete changelog from v1.0 to v5.12.1)
 - [ ] Produce 2-minute demo video
 - [x] Database integration ✅ (Supabase PostgreSQL — 43+ tables, user state sync, /api/state/save + /api/state/load, 100% localStorage persistence, automated backups, encryption at rest)
 - [x] ILS Workspace v3 with AI Agent ✅ (26 programs, 44+ DI numbers)
@@ -410,7 +410,7 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 
 ### New ILS Workspace Tools
 - [x] **Audit Record Vault** — Client-side audit trail store. Every record anchored via any workspace tool is automatically saved with content + SHA-256 hash + TX hash. Search, filter by date, re-verify, export CSV/XLSX, and clear. Zero server-side storage — all data in browser localStorage.
-- [x] **Defense Document Reference Library** — Searchable database of 100+ real defense documents loaded from `s4-assets/defense-docs.js`: MIL-STDs (810H, 882E, 881F, 1388-2B, 461G, etc.), OPNAVINSTs (4790.4F, 4441.12G, 5100.23H), DoD Directives (5000.01, 5000.02, 4140.01), NAVSEA/NAVAIR/NAVSUP manuals, FAR/DFARS clauses, NIST frameworks (800-171, 800-53, CMMC v2.0), Navy/USMC/USCG regulations, DMSMS standards, CDRLs, and ILS element references. Filterable by branch and category with full-text search.
+- [x] **Defense Document Reference Library** — Searchable database of 100+ real defense documents loaded from `s4-assets/defense-docs.js`: MIL-STDs (810H, 882E, 881F, 1388-2B, 461G, etc.), OPNAVINSTs (4790.4F, 4441.12G, 5100.23H), DoD Directives (5000.01, 5000.02, 4140.01), NAVSEA/NAVAIR/NAVSUP manuals, FAR/DFARS clauses, NIST frameworks (800-171, 800-53, CMMC v2.0), all 9 branch regulations, DMSMS standards, CDRLs, and ILS element references. Filterable by branch and category with full-text search.
 - [x] **Compliance Scorecard** — Real-time multi-framework compliance calculator scoring CMMC Level 2 (25%), NIST 800-171 (20%), DFARS 252.204 (15%), FAR 46 Quality (15%), MIL-STD-1388 ILS (15%), DoDI 4245.15 DMSMS (10%). SVG ring chart with animated arc, letter grades (A+ through F), actionable recommendations, export to XLSX, and anchor scorecard to XRPL.
 
 ### Vault Integration
@@ -523,4 +523,4 @@ This document tracks every requirement for taking S4 Ledger to a fully productio
 - [x] **Custom program persistence** (localStorage)
 - [x] **/api/state/save and /api/state/load** endpoints added
 - [x] **user_state migration SQL** (supabase/migrations/005_user_state_table.sql)
-- [x] **50+ markdown docs audited** — tool counts (20+), branches (Navy/USMC/USCG), CMMC L2-ready, FedRAMP/IL4
+- [x] **50+ markdown docs audited** — tool counts (20+), branches (9 defense branches), CMMC L2-ready, FedRAMP/IL4

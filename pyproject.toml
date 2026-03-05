@@ -4,20 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "s4-ledger-sdk"
-version = "5.12.0"
+version = "5.12.1"
 description = "S4 Ledger — Immutable defense logistics verification SDK. Anchor, verify, and track records on the XRP Ledger."
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 requires-python = ">=3.9"
 authors = [
-    {name = "S4 Ledger", email = "dev@s4ledger.com"}
+    {name = "S4 Systems, LLC", email = "dev@s4ledger.com"}
 ]
 keywords = ["defense", "logistics", "xrpl", "blockchain", "ils", "supply-chain", "verification", "military"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",

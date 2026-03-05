@@ -155,9 +155,9 @@ If the CEO says no:
 | S4 Ledger cost | $12K–$120K/year |
 | ROI for government | 15–100x |
 | ILS tools built | 20+ |
-| SDK functions | 37 |
+| SDK functions | 21 |
 | API endpoints | 90+ |
-| Pre-loaded platforms | 500+ across Navy, USMC, and USCG |
+| Pre-loaded platforms | 500+ across 9 defense branches |
 | Cost to build so far | $0 to the company |
 | Cost to go production | $12K–$35K |
 | SBIR Phase I funding | $50K–$250K (free, no equity) |

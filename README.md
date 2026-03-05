@@ -13,7 +13,7 @@ No sensitive data touches the blockchain — ever. Only cryptographic hashes.
 ---
 
 
-## Platform Features (v5.12.0)
+## Platform Features (v5.12.1)
 
 ### Core Anchoring
 - **SHA-256 + XRPL Anchoring** — Every record gets a cryptographic fingerprint stored on the XRP Ledger
@@ -252,7 +252,7 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 | Phase | Status | Focus |
 |---|---|---|
 | Phase 1 — Foundation | ✅ Complete | SDK, hashing, XRPL anchoring, $SLS token live |
-| Phase 2 — Defense Platform | ✅ Complete | 20+ ILS tools, 500+ platforms, 90+ API routes, 37 SDK methods, AI/RAG, Supabase persistence (43 tables), IndexedDB offline-first, PWA |
+| Phase 2 — Defense Platform | ✅ Complete | 20+ ILS tools, 500+ platforms, 90+ API routes, 21 SDK functions, AI/RAG, Supabase persistence (43 tables), IndexedDB offline-first, PWA |
 | Phase 3 — MVP & Pilot | **In Progress** | Internal pilot on real contract data, HarborLink integration |
 | Phase 4 — Partner Onboarding | Planned | SaaS launch, DIU/NavalX engagement |
 | Phase 5 — Scale & Certification | Planned | NIST, FedRAMP, SBIR/STTR |
@@ -261,7 +261,7 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 | Document | Description |
 |---|---|
-| [SDK Documentation](sdk/) | Full Python SDK reference — 37 functions, 15 CLI commands, REST API |
+| [SDK Documentation](sdk/) | Full Python SDK reference — 21 functions, 15 CLI commands, REST API |
 | [User Training Guide](docs/USER_TRAINING_GUIDE.md) | Step-by-step guide for every tool, feature, and workflow |
 | [API Examples](docs/api_examples.md) | Python, cURL, JavaScript code samples |
 | [Technical Specifications](docs/TECHNICAL_SPECS.md) | Architecture, security, and performance |
@@ -276,6 +276,6 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 Apache License 2.0 — see [LICENSE](LICENSE)
 
-**Version:** 5.12.0 — XRPL Mainnet Live | 20+ ILS Tools | 90+ API Routes | 43 Supabase Tables | HarborLink Integration (Coming) | Offline-First PWA | Flankspeed/VDI Compatible
+**Version:** 5.12.1 — XRPL Mainnet Live | 20+ ILS Tools | 90+ API Routes | 43 Supabase Tables | HarborLink Integration (Coming) | Offline-First PWA | Flankspeed/VDI Compatible
 
 © 2026 S4 Systems, LLC. Charleston, SC.

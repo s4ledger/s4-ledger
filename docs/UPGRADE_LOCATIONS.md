@@ -1,4 +1,4 @@
-# S4 Ledger — Upgrade Locations Guide (v5.12.0)
+# S4 Ledger — Upgrade Locations Guide (v5.12.1)
 
 > Use this document to visually verify every upgrade on the live site.  
 > Last updated: February 24, 2026 (afternoon session included)

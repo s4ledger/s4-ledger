@@ -48,7 +48,7 @@ Every day, the U.S. Department of War (DoW) processes millions of logistics reco
 |-----------|-------------|--------|
 | **Live Website** | 25+ pages at [s4ledger.com](https://s4ledger.com) with full branding | ✅ Deployed |
 | **Python API** | 90+ REST endpoints, zero external dependencies | ✅ Live |
-| **Demo Application** | Interactive platform — the U.S. Navy, 156+ pre-built record types across Navy, USMC, and USCG (any defense record type supported) | ✅ Live |
+| **Demo Application** | Interactive platform — the U.S. Navy, 156+ pre-built record types across 9 defense branches (any defense record type supported) | ✅ Live |
 | **SDK Playground** | Browser-based Python SDK sandbox with live API | ✅ Live |
 | **$SLS Utility Token** | LIVE on XRPL Mainnet — 100M supply, ~15M circulating, AMM (Automated Market Maker) pools active | ✅ Live |
 

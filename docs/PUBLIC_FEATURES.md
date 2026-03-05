@@ -13,7 +13,7 @@ S4 Ledger is a defense-grade record integrity platform that anchors SHA-256 hash
 ### 1. Record Anchoring
 Hash any data and anchor it to the XRP Ledger. Zero data on-chain — only the cryptographic fingerprint is stored.
 
-- **156+ defense record types** — Navy, Joint, custom
+- **156+ defense record types** — 9 branches (USN, USA, USAF, USMC, USCG, DLA, Joint, SOCOM, USSF)
 - **0.01 SLS per anchor** ($0.01 equivalent)
 - **Batch anchoring** with Merkle tree compression
 - **File-based anchoring** — Upload PDFs, XLSX, contracts for binary hashing
@@ -44,6 +44,12 @@ Full Integrated Logistics Support workspace:
 | Audit Report Generator | DCMA-ready compliance packages |
 | Submission Review (ILIE) | Line-by-line discrepancy detection |
 | SBOM Viewer | Software Bill of Materials analysis and vulnerability tracking |
+| GFP Tracker | Government Furnished Property accountability |
+| CDRL Validator | Contract Data Requirements List compliance checking |
+| Contract Extractor | AI-powered contract clause extraction |
+| Provenance Chain | End-to-end supply chain provenance tracking |
+| Cross-Program Analytics | Multi-program trend analysis and benchmarking |
+| Team Management | Role-based access and team collaboration |
 
 ### 4. AI Agent (S4 Agent)
 Full-featured AI assistant specializing in defense logistics:

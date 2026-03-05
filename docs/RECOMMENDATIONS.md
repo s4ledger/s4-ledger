@@ -1,6 +1,6 @@
 # Recommendations for S4 Ledger
 
-*Updated v5.12.0 — March 2026*
+*Updated v5.12.1 — March 2026*
 
 ## Near-Term (Phase 2-3)
 

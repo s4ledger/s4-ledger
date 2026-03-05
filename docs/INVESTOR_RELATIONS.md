@@ -49,10 +49,10 @@ Treasury address: `rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ`
 - Established NIST 800-171 and CMMC compliance alignment documentation (CMMC 2.0 enforcement begins 2025–2026)
 - Created Defense Data Integrity Agreement (DDIA) template v2.0
 - Expanded ILS Workspace to **20+ tools** including Integrated Logistics Insights Engine (ILIE), Audit Record Vault, Defense Document Library, Compliance Scorecard, Supply Chain Risk Engine, Audit Report Generator, Predictive Maintenance AI, and Conversational AI Agent
-- **37 Python SDK methods** for defense-grade hash anchoring and verification
+- **21 Python SDK functions** for defense-grade hash anchoring and verification
 - **90+ REST API endpoints** for enterprise integration
-- **500+ pre-loaded military entities** — 500+ platforms, 37 suppliers, 25 contracts across U.S. Navy
-- **156+ pre-built record types across Navy, USMC, and USCG** mapped to real-world logistics workflows
+- **500+ pre-loaded military entities** — 500+ platforms, 37 suppliers, 25 contracts across 9 defense branches
+- **156+ pre-built record types across 9 branches (USN, USA, USAF, USMC, USCG, DLA, Joint, SOCOM, USSF)** mapped to real-world logistics workflows
 - Added 100+ real defense document references (MIL-STDs, OPNAVINSTs, DoD Directives, NIST frameworks)
 - Developed realistic cost savings model: ~$1.02M–$2.6M per program per year, $180K–$48M government savings, $48K–$3.6M S4 revenue per tier
 - **15–100x ROI for government** at every implementation tier
@@ -65,7 +65,7 @@ Treasury address: `rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ`
 | Metric | Value |
 |---|---|
 | ILS Tools | 20+ interactive workspace tools |
-| SDK Functions | 37 Python methods |
+| SDK Functions | 21 Python functions |
 | API Endpoints | 90+ REST endpoints |
 | Pre-loaded Entities | 500+ (500+ platforms + 37 suppliers + 25 contracts) |
 | Record Types | 156+ pre-built ILS categories |

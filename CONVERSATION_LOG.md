@@ -1398,4 +1398,25 @@ Complete all remaining P1-P2 items to bring production readiness from ~97% towar
 | P3 | Production WebSocket deployment | +0.5% | Deploy `collab/ws_server.py` on Fly.io or use Supabase Realtime |
 
 ---
+
+## Session 20 — March 5, 2026
+
+### Local Preview Verification ✅
+
+Both applications visually verified in local preview (via `preview_server.py` on port 8080):
+
+| App | Status | Verification Method |
+|-----|--------|---------------------|
+| **Prod-App** | ✅ Perfect | Playwright headless Chromium + manual Chrome confirmation |
+| **Demo-App** | ✅ Perfect | Manual Chrome confirmation |
+
+**Details:**
+- All local assets (CSS, JS, images, fonts) serve with correct MIME types
+- Logo (`/s4-assets/S4Ledger_logo.png`) loads at 512×512, fully visible
+- All 5 stylesheets load: `style.css`, Bootstrap 5.3.3, Font Awesome 6.4, Google Fonts (Inter), Vite-built `index-DkeYqvMt.css`
+- All 5 Vite JS chunks load successfully
+- API mock endpoints respond correctly
+- Service worker cleanup active (unregisters stale SWs, clears caches)
+
+---
 *This log is updated every session. Reference before making changes.*

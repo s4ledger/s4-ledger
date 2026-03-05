@@ -1,9 +1,9 @@
 Metadata-Version: 2.4
 Name: s4-ledger-sdk
-Version: 5.2.0
+Version: 5.12.1
 Summary: S4 Ledger — Immutable defense logistics verification SDK. Anchor, verify, and track records on the XRP Ledger.
-Author-email: S4 Ledger <dev@s4ledger.com>
-License: MIT
+Author-email: S4 Systems, LLC <dev@s4ledger.com>
+License: Apache-2.0
 Project-URL: Homepage, https://s4ledger.com
 Project-URL: Documentation, https://s4ledger.com/sdk
 Project-URL: Repository, https://github.com/s4ledger/s4-ledger
@@ -259,7 +259,7 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 | Phase | Status | Focus |
 |---|---|---|
 | Phase 1 — Foundation | ✅ Complete | SDK, hashing, XRPL anchoring, $SLS token live |
-| Phase 2 — Defense Platform | ✅ Complete | 14-tool ILS Workspace, 500+ platforms, 37 SDK methods (incl. 11 HarborLink), 65 REST API endpoints, 156+ record types, AI agent, audit vault, SDK Playground with 21 function boxes |
+| Phase 2 — Defense Platform | ✅ Complete | 20+ ILS tools, 500+ platforms, 90+ API routes, 21 SDK functions, AI/RAG, Supabase persistence (43 tables), IndexedDB offline-first, PWA |
 | Phase 3 — MVP & Pilot | Upcoming | Internal pilot on real contract data |
 | Phase 4 — Partner Onboarding | Planned | SaaS launch, DIU/NavalX engagement |
 | Phase 5 — Scale & Certification | Planned | NIST, FedRAMP, SBIR/STTR |
@@ -268,7 +268,7 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 | Document | Description |
 |---|---|
-| [SDK Documentation](sdk/) | Full Python SDK reference — 37 functions, 15 CLI commands, REST API |
+| [SDK Documentation](sdk/) | Full Python SDK reference — 21 functions, 15 CLI commands, REST API |
 | [User Training Guide](USER_TRAINING_GUIDE.md) | Step-by-step guide for every tool, feature, and workflow |
 | [API Examples](api_examples.md) | Python, cURL, JavaScript code samples |
 | [Technical Specifications](TECHNICAL_SPECS.md) | Architecture, security, and performance |
@@ -283,6 +283,6 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 Apache License 2.0 — see [LICENSE](LICENSE)
 
-**Version:** 5.2.0 — XRPL Mainnet Live | HarborLink Integration | 65 REST API endpoints | 37 SDK Methods | Flankspeed/VDI Compatible
+**Version:** 5.12.1 — XRPL Mainnet Live | 20+ ILS Tools | 90+ API Routes | 43 Supabase Tables | HarborLink Integration (Coming) | Offline-First PWA | Flankspeed/VDI Compatible
 
 © 2026 S4 Systems, LLC. Charleston, SC.

@@ -1,6 +1,6 @@
 # S4 Ledger — Platform Test Results
 
-> Generated: March 2, 2026 (v5.12.0)  
+> Generated: March 2, 2026 (v5.12.1)  
 > Covers: All 20+ ILS Hub tools, 23 competitive upgrades, 10 bug fixes  
 > Test method: Code-level verification of HTML structure, JavaScript functions, CSS classes, and DOM wiring
 
@@ -26,6 +26,12 @@ Every tool panel must: (a) exist in HTML with correct ID, (b) be reachable via s
 | 12 | Cost Tracking | `hub-cost` | `tabHubCost` | ✅ Yes — `renderCostDash()` | ✅ PASS |
 | 13 | Submissions | `hub-submissions` | `tabHubSubmissions` | ✅ Yes — `renderSubmissionsPanel()` | ✅ PASS |
 | 14 | Sustainment | `hub-sustainment` | `tabHubSustainment` | ✅ Yes — `renderSustainmentPanel()` | ✅ PASS |
+| 15 | GFP Tracker | `hub-gfp` | `tabHubGfp` | ✅ Yes — `renderGfpTracker()` | ✅ PASS |
+| 16 | CDRL Validator | `hub-cdrl` | `tabHubCdrl` | ✅ Yes — `renderCdrlValidator()` | ✅ PASS |
+| 17 | Contract Extractor | `hub-contract` | `tabHubContract` | ✅ Yes — `renderContractExtractor()` | ✅ PASS |
+| 18 | Provenance Chain | `hub-provenance` | `tabHubProvenance` | ✅ Yes — `renderProvenanceChain()` | ✅ PASS |
+| 19 | Cross-Program Analytics | `hub-analytics` | `tabHubAnalytics` | ✅ Yes — `renderCrossProgram()` | ✅ PASS |
+| 20 | Team Management | `hub-team` | `tabHubTeam` | ✅ Yes — `renderTeamPanel()` | ✅ PASS |
 
 **Result: All 20+ tools pass.**
 
@@ -139,7 +145,7 @@ Every tool panel must: (a) exist in HTML with correct ID, (b) be reachable via s
 | 4 Structural Checks | 4 | 0 | 4 |
 | **TOTAL** | **53** | **0** | **53** |
 
-> **Note:** Full automated test suite (Vitest + Playwright + pytest) now includes **121 tests** as of v5.12.0.
+> **Note:** Full automated test suite (Vitest + Playwright + pytest) now includes **121 tests** as of v5.12.1.
 
 ---
 

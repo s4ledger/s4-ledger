@@ -1,6 +1,6 @@
 # XRP Treasury Top-Off Forecast
 
-**S4 Systems, LLC | S4 Ledger v5.12.0**
+**S4 Systems, LLC | S4 Ledger v5.12.1**
 **For: Finance, Operations, Leadership**
 
 ---
