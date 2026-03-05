@@ -3897,11 +3897,7 @@ function _updateThemeIcon(isLight) {
 
     // ── 1. Toast Notification System ──
     S4.toast = function(message, type, duration) {
-        type = type || 'info';
-        duration = duration || 4000;
-        /* Only show toasts when user is inside the platform workspace */
-        var ws = document.getElementById('platformWorkspace');
-        if (!ws || ws.style.display !== 'block') return;
+        return; // Notifications disabled in demo-app
         var container = document.getElementById('s4ToastContainer');
         if (!container) return;
         var toast = document.createElement('div');

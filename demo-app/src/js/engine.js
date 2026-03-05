@@ -184,8 +184,7 @@ function _updateDemoSlsBalance() {
 
 // Flash toast showing SLS balance update
 function _flashSlsBalance(newBalance, fee) {
-    var existing = document.getElementById('slsFlashToast');
-    if (existing) existing.remove();
+    return; // Notifications disabled in demo-app
     var toast = document.createElement('div');
     toast.id = 'slsFlashToast';
     toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:3px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
@@ -5199,10 +5198,7 @@ function initILSEngine() {
 // ── Toast Notifications ──
 let s4ToastQueue = [];
 function s4Notify(title, msg, type, actions, duration) {
-    type = type || 'info'; duration = duration || 8000;
-    /* Only show notifications when user is inside the platform workspace */
-    var ws = document.getElementById('platformWorkspace');
-    if (!ws || ws.style.display !== 'block') return;
+    return; // Notifications disabled in demo-app
     const container = document.getElementById('s4ToastContainer');
     if (!container) return;
     if (!container.getAttribute('aria-live')) { container.setAttribute('aria-live', 'polite'); container.setAttribute('role', 'status'); }
@@ -6096,8 +6092,7 @@ function clearStressTestRecords() {
 
 // Workspace notification system
 function showWorkspaceNotification(title, detail) {
-    // Don't show notifications until user has navigated to a tool
-    if (!window._currentSection && !window._currentILSTool) return;
+    return; // Notifications disabled in demo-app
 
     const existing = document.querySelectorAll('.workspace-notification');
     existing.forEach(n => n.remove());
