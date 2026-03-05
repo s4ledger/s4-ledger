@@ -37,12 +37,11 @@ var _steps = [
         },
         onEnter: function(done) {
             var target = document.getElementById('wtTypeTarget');
-            if (target) _typeWriter(target, 'Supply Chain Receipt: NSN 5340-01-587-2963, Qty 200, MIL-STD-1388-2B compliant, received from DLA Philadelphia for USS Arleigh Burke (DDG-51). Inspector: J. Martinez, Lot #AAE-2026-0847.', 28, function() {
+            if (target) _mockTypeWriter(target, 'Supply Chain Receipt: NSN 5340-01-587-2963, Qty 200, MIL-STD-1388-2B compliant, received from DLA Philadelphia for USS Arleigh Burke (DDG-51). Inspector: J. Martinez, Lot #AAE-2026-0847.', 28, function() {
                 var btn = document.getElementById('wtAnchorBtn');
                 if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; btn.classList.add('wt-pulse'); }
-                done();
             });
-            return true; // signals that done() will be called by the animation
+            done();
         }
     },
     {
@@ -63,9 +62,8 @@ var _steps = [
         },
         onEnter: function(done) {
             var el = document.getElementById('wtHashReveal');
-            if (el) _typeWriter(el, 'e3b0c44298fc1c149afb...b855b4e04f1dceef71e23f0c208', 18, function() { done(); });
-            else done();
-            return true;
+            if (el) _mockTypeWriter(el, 'e3b0c44298fc1c149afb...b855b4e04f1dceef71e23f0c208', 18);
+            done();
         }
     },
     {
@@ -452,7 +450,8 @@ var _steps = [
 var _wtIdx = -1;
 var _wtVoice = false;
 var _wtStepDone = false;
-var _wtTypeWriterTimer = null;
+var _wtNarrTimer = null;
+var _mockTimers = [];
 var _preferredVoice = null;
 
 // ═══ Voice Selection ═══
@@ -514,7 +513,7 @@ function _showWTStep() {
     if (!overlay) return;
 
     _wtStepDone = false;
-    _clearTypeWriter();
+    _clearAllTimers();
 
     // Update narrator panel
     var counter = overlay.querySelector('.wt-step-counter');
@@ -540,7 +539,7 @@ function _showWTStep() {
     // Typewriter narrator text — mark step done when finished
     if (desc) {
         desc.textContent = '';
-        _typeWriter(desc, step.narr, 18, function() {
+        _narrTypeWriter(desc, step.narr, 18, function() {
             _onNarrDone();
         });
     }
@@ -595,7 +594,7 @@ function _onNarrDone() {
 function _wtNext() {
     _wtIdx++;
     if (_wtIdx >= _steps.length) { endWalkthrough(); return; }
-    _clearTypeWriter();
+    _clearAllTimers();
     if ('speechSynthesis' in window) speechSynthesis.cancel();
     _showWTStep();
 }
@@ -603,7 +602,7 @@ function _wtNext() {
 function _wtPrev() {
     if (_wtIdx > 0) {
         _wtIdx--;
-        _clearTypeWriter();
+        _clearAllTimers();
         if ('speechSynthesis' in window) speechSynthesis.cancel();
         _showWTStep();
     }
@@ -634,30 +633,48 @@ function _wtToggleVoice() {
 function endWalkthrough() {
     _wtIdx = -1;
     _wtStepDone = false;
-    _clearTypeWriter();
+    _clearAllTimers();
     if ('speechSynthesis' in window) speechSynthesis.cancel();
     var overlay = document.getElementById('s4WalkthroughOverlay');
     if (overlay) overlay.style.display = 'none';
 }
 
 // ═══ Helpers ═══
-function _clearTypeWriter() {
-    if (_wtTypeWriterTimer) { clearTimeout(_wtTypeWriterTimer); _wtTypeWriterTimer = null; }
+function _clearAllTimers() {
+    if (_wtNarrTimer) { clearTimeout(_wtNarrTimer); _wtNarrTimer = null; }
+    _mockTimers.forEach(function(t) { clearTimeout(t); });
+    _mockTimers = [];
 }
 
-function _typeWriter(el, text, speed, cb) {
-    _clearTypeWriter();
+// Narrator typewriter — dedicated timer, completion enables Next
+function _narrTypeWriter(el, text, speed, cb) {
+    if (_wtNarrTimer) { clearTimeout(_wtNarrTimer); _wtNarrTimer = null; }
     var i = 0;
     el.textContent = '';
     function tick() {
         if (i < text.length) {
             el.textContent += text.charAt(i);
             i++;
-            _wtTypeWriterTimer = setTimeout(tick, speed || 30);
+            _wtNarrTimer = setTimeout(tick, speed || 30);
         } else {
-            _wtTypeWriterTimer = null;
+            _wtNarrTimer = null;
             if (cb) cb();
         }
+    }
+    tick();
+}
+
+// Mock display typewriter — independent timer, never touches narrator
+function _mockTypeWriter(el, text, speed, cb) {
+    var i = 0;
+    el.textContent = '';
+    function tick() {
+        if (i < text.length) {
+            el.textContent += text.charAt(i);
+            i++;
+            var tid = setTimeout(tick, speed || 30);
+            _mockTimers.push(tid);
+        } else if (cb) { cb(); }
     }
     tick();
 }
