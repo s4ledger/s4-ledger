@@ -107,7 +107,7 @@
 <nav id="mainNav" role="navigation" aria-label="Main navigation" style="position:fixed;top:28px;left:0;right:0;z-index:1000;background:rgba(5,8,16,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);height:64px;">
     <div style="max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:100%;">
         <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-weight:700;font-size:1rem;">
-            <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:32px;width:32px;">
+            <img src="/s4-assets/S4Ledger_logo.png" alt="" style="height:32px;width:32px;">
             <span>S4 Ledger</span>
         </a>
         <ul id="navLinks" style="display:flex;align-items:center;gap:0.5rem;list-style:none;margin:0;padding:0;">
@@ -175,7 +175,7 @@
 <!-- ═══ CAC / LOGIN POPUP ═══ -->
 <div id="cacLoginModal" role="dialog" aria-modal="true" aria-labelledby="cacLoginHeading" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.88);z-index:99998;align-items:center;justify-content:center;">
     <div style="background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
-        <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:48px;width:48px;margin-bottom:8px;"><h3 id="cacLoginHeading" style="color:#fff;font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the Anchor-S4 workspace</p></div>
+        <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="" style="height:48px;width:48px;margin-bottom:8px;"><h3 id="cacLoginHeading" style="color:#fff;font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the Anchor-S4 workspace</p></div>
         <div id="cacLoginTabs" style="display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
             <button onclick="switchLoginTab('cac')" id="loginTabCac" style="flex:1;padding:10px;background:rgba(0,170,255,0.1);color:var(--accent);border:none;font-weight:700;font-size:0.82rem;cursor:pointer;"><i class="fas fa-id-card" style="margin-right:6px;"></i>CAC / PIV</button>
             <button onclick="switchLoginTab('account')" id="loginTabAcct" style="flex:1;padding:10px;background:transparent;color:var(--steel);border:none;font-weight:600;font-size:0.82rem;cursor:pointer;"><i class="fas fa-user" style="margin-right:6px;"></i>Account</button>
@@ -931,7 +931,7 @@
                             <label>1. Select Program / Platform Type</label>
                             <div class="row mb-3">
                                 <div class="col-7">
-                                    <select id="ilsProgram" onchange="onILSProgramChange()">
+                                    <select id="ilsProgram" aria-label="Select program" onchange="onILSProgramChange()">
                                     </select>
                                 </div>
                                 <div class="col-5">
@@ -945,7 +945,7 @@
                                 </div>
                                 <div class="col-6">
                                     <label style="font-size:0.82rem">Acquisition Phase</label>
-                                    <select id="ilsPhase" style="font-size:0.88rem">
+                                    <select id="ilsPhase" aria-label="Select acquisition phase" style="font-size:0.88rem">
                                         <option value="pre_award">Pre-Award</option>
                                         <option value="design" selected>Design</option>
                                         <option value="construction">Construction</option>
@@ -1131,7 +1131,7 @@
                             </div>
                         </details>
                         <label>Select Program</label>
-                        <select id="dmsmsProgram" class="form-select mb-2"  onchange="loadDMSMSData()"></select>
+                        <select id="dmsmsProgram" aria-label="Select DMSMS program" class="form-select mb-2"  onchange="loadDMSMSData()"></select>
                         <div class="row mb-3">
                             <div class="col-6"><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                             <div class="col-6"><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
@@ -1174,13 +1174,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Select Program</label>
-                                <select id="readinessProgram" class="form-select mb-2"  onchange="loadReadinessData()"></select>
+                                <select id="readinessProgram" aria-label="Select readiness program" class="form-select mb-2"  onchange="loadReadinessData()"></select>
                                 <div class="row mb-2">
                                     <div class="col-6"><input type="text" id="readinessHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                                     <div class="col-6"><input type="text" id="readinessOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                                 </div>
                                 <label>Select System / Subsystem</label>
-                                <select id="readinessSystem" class="form-select mb-2"  onchange="calcReadiness()"></select>
+                                <select id="readinessSystem" aria-label="Select system" class="form-select mb-2"  onchange="calcReadiness()"></select>
                             </div>
                             <div class="col-md-6">
                                 <label>MTBF (hours) — Mean Time Between Failures</label>
@@ -1284,7 +1284,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Select Program</label>
-                                <select id="lifecycleProgram" class="form-select mb-2"  onchange="calcLifecycle()"></select>
+                                <select id="lifecycleProgram" aria-label="Select lifecycle program" class="form-select mb-2"  onchange="calcLifecycle()"></select>
                                 <div class="row mb-2">
                                     <div class="col-6"><input type="text" id="lifecycleHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                                     <div class="col-6"><input type="text" id="lifecycleOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
@@ -1325,7 +1325,7 @@
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                         <div style="font-size:0.82rem;font-weight:700;color:#9b59b6;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-project-diagram"></i> Digital Thread — Full Provenance Chain</div>
                         <div style="display:flex;align-items:center;gap:8px;">
-                            <select id="digitalThreadRecordSelect" onchange="showDigitalThreadFromSelect()" style="background:#0a0e1a;color:#fff;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:4px 10px;font-size:0.75rem;max-width:240px;">
+                            <select id="digitalThreadRecordSelect" aria-label="Select digital thread record" onchange="showDigitalThreadFromSelect()" style="background:#0a0e1a;color:#fff;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:4px 10px;font-size:0.75rem;max-width:240px;">
                                 <option value="">— Select a vault record —</option>
                             </select>
                             <button onclick="closeDigitalThread()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:0.8rem;"><i class="fas fa-times"></i></button>
@@ -1359,7 +1359,7 @@
                     <!-- Search & Filter -->
                     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
                         <input type="text" id="vaultSearch" class="form-control" aria-label="Search vault records" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search records by type, hash, content..." oninput="_vaultPage=1;renderVault()">
-                        <select id="vaultFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="_vaultPage=1;renderVault()">
+                        <select id="vaultFilter" aria-label="Filter vault records" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="_vaultPage=1;renderVault()">
                             <option value="all">All Records</option>
                             <option value="today">Today</option>
                             <option value="week">This Week</option>
@@ -1447,7 +1447,7 @@
                         <div style="padding:0 0 14px">
                             <p style="color:var(--steel);font-size:0.78rem;margin-bottom:12px">Generate synthetic records to test vault performance at scale. Records are generated locally and stored in localStorage. Useful for benchmarking query speed, rendering performance, and export capability with large datasets.</p>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
-                                <select id="stressTestCount" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 12px;font-size:0.82rem">
+                                <select id="stressTestCount" aria-label="Select stress test count" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 12px;font-size:0.82rem">
                                     <option value="100">100 Records</option>
                                     <option value="500">500 Records</option>
                                     <option value="1000" selected>1,000 Records</option>
@@ -1486,7 +1486,7 @@
                         <input type="text" id="docSearch" class="form-control" aria-label="Search document library" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search by ID, title, keywords... (e.g., MIL-STD-1388, DMSMS, OPNAVINST)" oninput="renderDocLibrary()">
                         <button onclick="showDocUpload()" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-plus"></i> Add Document</button>
                         <button onclick="showDocVersionUpload()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-brain"></i> Analyze Revision</button>
-                        <select id="docBranchFilter" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
+                        <select id="docBranchFilter" aria-label="Filter documents by branch" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
                             <option value="all">All Branches</option>
                             <option value="USN">U.S. Navy</option>
                             <option value="USMC">U.S. Marine Corps</option>
@@ -1543,7 +1543,7 @@
                     <!-- Program Selector -->
                     <div style="margin-bottom:16px">
                         <label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label>
-                        <select id="complianceProgram" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select>
+                        <select id="complianceProgram" aria-label="Select compliance program" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select>
                         <div class="row" style="margin-top:6px">
                             <div class="col-6"><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                             <div class="col-6"><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
@@ -1628,7 +1628,7 @@
                         <div id="evidenceSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Attach evidence artifacts (screenshots, documents, scan reports) to compliance controls. Evidence is hashed and anchored for audit-ready proof.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-                                <select id="evidenceControl" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:220px">
+                                <select id="evidenceControl" aria-label="Select evidence control" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:220px">
                                     <option value="AC-1">AC-1 Access Control Policy</option>
                                     <option value="AC-2">AC-2 Account Management</option>
                                     <option value="AU-2">AU-2 Audit Events</option>
@@ -1682,7 +1682,7 @@
                         <div id="fedrampSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">FedRAMP impact-level mapping across 325 controls (Low/Moderate/High). Shows which NIST 800-53 controls your workspace satisfies.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
-                                <select id="fedrampImpact" class="form-control form-control-sm" onchange="calcFedRAMP()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:180px">
+                                <select id="fedrampImpact" aria-label="Select FedRAMP impact level" class="form-control form-control-sm" onchange="calcFedRAMP()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:180px">
                                     <option value="low">Low Impact</option>
                                     <option value="moderate" selected>Moderate Impact</option>
                                     <option value="high">High Impact</option>
@@ -1728,7 +1728,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>Select Program</label>
-                            <select id="riskProgram" onchange="loadRiskData()" style="font-size:0.88rem"></select>
+                            <select id="riskProgram" aria-label="Select risk program" onchange="loadRiskData()" style="font-size:0.88rem"></select>
                             <div class="row" style="margin-top:6px">
                                 <div class="col-6"><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
                                 <div class="col-6"><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
@@ -1736,7 +1736,7 @@
                         </div>
                         <div class="col-md-6">
                             <label>Risk Threshold</label>
-                            <select id="riskThreshold" onchange="loadRiskData()" style="font-size:0.88rem"><option value="all">All Risk Levels</option><option value="critical">Critical Only</option><option value="high">High & Critical</option><option value="medium">Medium & Above</option></select>
+                            <select id="riskThreshold" aria-label="Select risk threshold" onchange="loadRiskData()" style="font-size:0.88rem"><option value="all">All Risk Levels</option><option value="critical">Critical Only</option><option value="high">High & Critical</option><option value="medium">Medium & Above</option></select>
                         </div>
                     </div>
                     <!-- Risk Summary Stats -->
@@ -1824,7 +1824,7 @@
                         <div id="budgetForecastSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">AI-driven budget forecasting based on historical procurement data, obsolescence trends, and maintenance cost trajectories.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
-                                <select id="budgetForecastYears" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:140px">
+                                <select id="budgetForecastYears" aria-label="Select forecast years" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:140px">
                                     <option value="3">3-Year Forecast</option>
                                     <option value="5" selected>5-Year Forecast</option>
                                     <option value="10">10-Year Forecast</option>
@@ -1875,15 +1875,15 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Report Type</label>
-                            <select id="reportType" style="font-size:0.88rem"><option value="full_audit">Full Audit Package</option><option value="supply_chain">Supply Chain Verification</option><option value="maintenance">Maintenance Records</option><option value="compliance">Compliance Summary</option><option value="custody">Chain of Custody</option><option value="contract">Contract Deliverables</option></select>
+                            <select id="reportType" aria-label="Select report type" style="font-size:0.88rem"><option value="full_audit">Full Audit Package</option><option value="supply_chain">Supply Chain Verification</option><option value="maintenance">Maintenance Records</option><option value="compliance">Compliance Summary</option><option value="custody">Chain of Custody</option><option value="contract">Contract Deliverables</option></select>
                         </div>
                         <div class="col-md-4">
                             <label>Time Period</label>
-                            <select id="reportPeriod" style="font-size:0.88rem"><option value="30">Last 30 Days</option><option value="90">Last 90 Days</option><option value="180">Last 6 Months</option><option value="365">Last 12 Months</option><option value="all">All Time</option></select>
+                            <select id="reportPeriod" aria-label="Select report period" style="font-size:0.88rem"><option value="30">Last 30 Days</option><option value="90">Last 90 Days</option><option value="180">Last 6 Months</option><option value="365">Last 12 Months</option><option value="all">All Time</option></select>
                         </div>
                         <div class="col-md-4">
                             <label>Format</label>
-                            <select id="reportFormat" style="font-size:0.88rem"><option value="pdf">PDF Report</option><option value="csv">CSV Data Export</option><option value="json">JSON Package</option></select>
+                            <select id="reportFormat" aria-label="Select report format" style="font-size:0.88rem"><option value="pdf">PDF Report</option><option value="csv">CSV Data Export</option><option value="json">JSON Package</option></select>
                         </div>
                     </div>
                     <!-- Report Preview -->
@@ -1929,13 +1929,13 @@
                         <div id="schedReportsSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Schedule automatic report generation on a recurring cadence. Reports auto-generate and are ready for download.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-                                <select id="schedReportType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:180px">
+                                <select id="schedReportType" aria-label="Select scheduled report type" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:180px">
                                     <option value="full_audit">Full Audit Package</option>
                                     <option value="compliance">Compliance Summary</option>
                                     <option value="supply_chain">Supply Chain</option>
                                     <option value="executive">Executive Summary</option>
                                 </select>
-                                <select id="schedReportFreq" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:140px">
+                                <select id="schedReportFreq" aria-label="Select report frequency" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:140px">
                                     <option value="daily">Daily</option>
                                     <option value="weekly" selected>Weekly</option>
                                     <option value="monthly">Monthly</option>
@@ -1996,7 +1996,7 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Select Fleet / Platform</label>
-                            <select id="pdmPlatform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select>
+                            <select id="pdmPlatform" aria-label="Select predictive maintenance platform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select>
                             <div class="row" style="margin-top:6px">
                                 <div class="col-6"><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
                                 <div class="col-6"><input type="text" id="pdmOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
@@ -2004,11 +2004,11 @@
                         </div>
                         <div class="col-md-4">
                             <label>Prediction Window</label>
-                            <select id="pdmWindow" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="30">Next 30 Days</option><option value="60">Next 60 Days</option><option value="90" selected>Next 90 Days</option><option value="180">Next 6 Months</option><option value="365">Next 12 Months</option></select>
+                            <select id="pdmWindow" aria-label="Select prediction time window" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="30">Next 30 Days</option><option value="60">Next 60 Days</option><option value="90" selected>Next 90 Days</option><option value="180">Next 6 Months</option><option value="365">Next 12 Months</option></select>
                         </div>
                         <div class="col-md-4">
                             <label>Confidence Threshold</label>
-                            <select id="pdmConfidence" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="50">50%+ (Show All)</option><option value="70">70%+ (Likely)</option><option value="85" selected>85%+ (High Confidence)</option><option value="95">95%+ (Near Certain)</option></select>
+                            <select id="pdmConfidence" aria-label="Select confidence threshold" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="50">50%+ (Show All)</option><option value="70">70%+ (Likely)</option><option value="85" selected>85%+ (High Confidence)</option><option value="95">95%+ (Near Certain)</option></select>
                         </div>
                     </div>
                     <!-- Predictive Stats -->
@@ -2064,11 +2064,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>Select Platform</label>
-                            <select id="sbomProgram" onchange="loadSBOMData()" style="font-size:0.88rem"></select>
+                            <select id="sbomProgram" aria-label="Select SBOM program" onchange="loadSBOMData()" style="font-size:0.88rem"></select>
                         </div>
                         <div class="col-md-6">
                             <label>SBOM Format</label>
-                            <select id="sbomFormat" style="font-size:0.88rem"><option value="cyclonedx">CycloneDX 1.5</option><option value="spdx">SPDX 2.3</option><option value="s4native">S4 Native</option></select>
+                            <select id="sbomFormat" aria-label="Select SBOM format" style="font-size:0.88rem"><option value="cyclonedx">CycloneDX 1.5</option><option value="spdx">SPDX 2.3</option><option value="s4native">S4 Native</option></select>
                         </div>
                     </div>
                     <!-- SBOM Stats -->
@@ -2114,7 +2114,7 @@
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="subBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="subBranch" aria-label="Select branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option>
                                 <option value="USMC">Marine Corps</option>
                                 <option value="USCG">Coast Guard</option>
@@ -2122,11 +2122,11 @@
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="subProgram" class="form-control form-control-sm" onchange="onSubProgramChange()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"></select>
+                            <select id="subProgram" aria-label="Select submissions program" class="form-control form-control-sm" onchange="onSubProgramChange()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem"></select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Submission Type</label>
-                            <select id="subDocType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="subDocType" aria-label="Select document type" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="VRSL">Vendor Recommended Spares List (VRS)</option>
                                 <option value="IUID">IUID Registry / Serialized List</option>
                                 <option value="CONFIG_DWG">Configuration Drawing / Baseline</option>
@@ -2260,11 +2260,11 @@
                         <div id="versionDiffSection" style="display:none;padding:12px 14px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:10px">Compare two submission versions side-by-side to see added, removed, and changed fields.</p>
                             <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
-                                <select id="diffVersionA" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
+                                <select id="diffVersionA" aria-label="Select version A for comparison" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
                                     <option value="">Version A (Base)</option>
                                 </select>
                                 <span style="color:var(--steel);font-size:0.82rem">vs</span>
-                                <select id="diffVersionB" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
+                                <select id="diffVersionB" aria-label="Select version B for comparison" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
                                     <option value="">Version B (New)</option>
                                 </select>
                                 <button onclick="runVersionDiff()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a8893d);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-code-compare"></i> Compare</button>
@@ -2299,13 +2299,13 @@
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="gfpBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="gfpBranch" aria-label="Select GFP branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="gfpProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="gfpProgram" aria-label="Select GFP program" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
@@ -2315,7 +2315,7 @@
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Property Category</label>
-                            <select id="gfpCategory" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="gfpCategory" aria-label="Select GFP category" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ALL">All Categories</option><option value="EQUIP">Equipment</option><option value="MATERIAL">Material</option><option value="SPECIAL_TOOLING">Special Tooling</option><option value="SPECIAL_TEST">Special Test Equipment</option><option value="REAL_PROP">Real Property</option><option value="AGENCY_PECULIAR">Agency-Peculiar</option>
                             </select>
                         </div>
@@ -2333,7 +2333,7 @@
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Condition Code</label>
-                            <select id="gfpCondition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="gfpCondition" aria-label="Select GFP condition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="A">A — Serviceable (Issuable)</option><option value="B">B — Serviceable (Restricted)</option><option value="C">C — Serviceable (Priority)</option><option value="D">D — Serviceable (Test/Modification)</option><option value="E">E — Unserviceable (Limited Restoration)</option><option value="F">F — Unserviceable (Reparable)</option><option value="G">G — Unserviceable (Incomplete)</option><option value="H">H — Unserviceable (Condemned)</option>
                             </select>
                         </div>
@@ -2396,13 +2396,13 @@
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="cdrlBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="cdrlBranch" aria-label="Select CDRL branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="cdrlProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="cdrlProgram" aria-label="Select CDRL program" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
@@ -2432,7 +2432,7 @@
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Frequency</label>
-                            <select id="cdrlFrequency" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="cdrlFrequency" aria-label="Select CDRL frequency" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ONE_TIME">One-Time</option><option value="MONTHLY">Monthly</option><option value="QUARTERLY">Quarterly</option><option value="SEMI_ANNUAL">Semi-Annual</option><option value="ANNUAL">Annual</option><option value="AS_REQUIRED">As Required</option><option value="EVENT_DRIVEN">Event-Driven</option>
                             </select>
                         </div>
@@ -2491,13 +2491,13 @@
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="contractBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="contractBranch" aria-label="Select contract branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="contractProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="contractProgram" aria-label="Select contract program" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
@@ -2507,7 +2507,7 @@
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Contract Type</label>
-                            <select id="contractType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="contractType" aria-label="Select contract type" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="FFP">Firm Fixed Price (FFP)</option><option value="CPFF">Cost Plus Fixed Fee (CPFF)</option><option value="CPAF">Cost Plus Award Fee (CPAF)</option><option value="CPIF">Cost Plus Incentive Fee (CPIF)</option><option value="T_M">Time & Materials (T&M)</option><option value="IDIQ">IDIQ</option><option value="BPA">BPA</option><option value="BOA">Basic Ordering Agreement</option>
                             </select>
                         </div>
@@ -2517,7 +2517,7 @@
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Base / Option</label>
-                            <select id="contractOption" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="contractOption" aria-label="Select contract option" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="BASE">Base Period</option><option value="OPT1">Option 1</option><option value="OPT2">Option 2</option><option value="OPT3">Option 3</option><option value="OPT4">Option 4</option><option value="MOD">Modification</option>
                             </select>
                         </div>
@@ -2588,13 +2588,13 @@
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="provBranch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="provBranch" aria-label="Select provenance branch" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="provProgram" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="provProgram" aria-label="Select provenance program" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
@@ -2604,7 +2604,7 @@
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Transfer Type</label>
-                            <select id="provTransferType" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="provTransferType" aria-label="Select transfer type" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="CUSTODY">Custody Transfer</option><option value="LOCATION">Location Change</option><option value="CONDITION">Condition Assessment</option><option value="INSPECTION">Inspection / Test</option><option value="RECEIPT">Receipt</option><option value="SHIPMENT">Shipment</option><option value="INSTALLATION">Installation</option><option value="REMOVAL">Removal / Turn-in</option>
                             </select>
                         </div>
@@ -2626,7 +2626,7 @@
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Condition at Transfer</label>
-                            <select id="provCondition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="provCondition" aria-label="Select provenance condition" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="A">A — Serviceable (Issuable)</option><option value="B">B — Serviceable (Restricted)</option><option value="F">F — Unserviceable (Reparable)</option><option value="H">H — Unserviceable (Condemned)</option><option value="NEW">New / Unused</option>
                             </select>
                         </div>
@@ -2687,19 +2687,19 @@
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch Filter</label>
-                            <select id="analyticsBranch" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="analyticsBranch" aria-label="Select analytics branch" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ALL" selected>All Branches</option><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Program Filter</label>
-                            <select id="analyticsProgram" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="analyticsProgram" aria-label="Select analytics program" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ALL" selected>All Programs</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Time Period</label>
-                            <select id="analyticsPeriod" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="analyticsPeriod" aria-label="Select analytics period" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="7d">Last 7 Days</option><option value="30d" selected>Last 30 Days</option><option value="90d">Last 90 Days</option><option value="1y">Last Year</option><option value="ALL">All Time</option>
                             </select>
                         </div>
@@ -2749,13 +2749,13 @@
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Team</label>
-                            <select id="teamSelect" class="form-control form-control-sm" onchange="loadTeamDetails()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="teamSelect" aria-label="Select team member" class="form-control form-control-sm" onchange="loadTeamDetails()" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Team —</option>
                             </select>
                         </div>
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Program Assignment</label>
-                            <select id="teamProgAssign" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                            <select id="teamProgAssign" aria-label="Select program assignment" class="form-control form-control-sm" style="background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ALL">All Programs</option>
                             </select>
                         </div>

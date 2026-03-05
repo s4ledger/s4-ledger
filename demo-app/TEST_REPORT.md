@@ -1,8 +1,9 @@
 # S4 Ledger Demo App — Comprehensive Test Report
 
-**File**: `demo-app/index.html` (21,700 lines)  
-**Date**: Generated from static code analysis  
-**Method**: Full JavaScript execution-path trace of every tool, tab, button, and feature
+**File**: `demo-app/index.html` (3,293 lines) + 14 JS source files (~29,249 lines)  
+**Date**: Last updated March 5, 2026  
+**Method**: Static code analysis + Playwright E2E browser testing  
+**Playwright Specs**: `tests/e2e/demo-app-dedicated.spec.js`, `tests/e2e/debug-anchor.spec.js`
 
 ---
 
@@ -619,3 +620,53 @@ If `index.html` is opened via `file://` protocol, the script tags loading `/s4-a
 | **TOTALS** | **68** | **55 (81%)** | **9 (13%)** | **2 (3%)** | **2 (3%)** |
 
 ### Overall Verdict: **All major execution paths are wired and functional.** The 20+ ILS tools, core anchor/verify/log system, wallet, theme, command palette, security module, and notification system all have complete HTML→JS→data pipelines. The 5 bugs found are low-to-medium severity (missing shortcut, tab map typo, prompt-based POA&M, file:// protocol issue). No critical bugs or broken execution paths were found.
+
+---
+
+## 17. PLAYWRIGHT E2E TEST COVERAGE
+
+### Test Suites
+
+| Suite | File | Tests | Focus |
+|-------|------|-------|-------|
+| Dedicated | `tests/e2e/demo-app-dedicated.spec.js` | 10 | Zero errors, demo features, anchor flow, theme, tiers, exports, logout |
+| Anchor Debug | `tests/e2e/debug-anchor.spec.js` | 1 | Deep trace of entire anchor lifecycle |
+| Accessibility | `tests/e2e/a11y.spec.js` | 2 | axe-core WCAG 2.1 AA: landing page, image alt text |
+
+### Playwright-Verified Features
+
+| Feature | Playwright Test | Status |
+|---------|----------------|--------|
+| Full flow with zero critical errors | dedicated/zero-errors | ✅ PASS |
+| Demo session initializes with tier balance | dedicated/tier-balance | ✅ PASS |
+| Anchor deducts credits and updates vault | dedicated/anchor-flow | ✅ PASS |
+| ILS tool anchor (SBOM) accessible | dedicated/sbom-anchor | ✅ PASS |
+| Theme toggle switches and persists | dedicated/theme-toggle | ✅ PASS |
+| All 4 tiers selectable in onboarding | dedicated/tier-selection | ✅ PASS |
+| Critical window exports exist | dedicated/exports | ✅ PASS |
+| Logout clears session | dedicated/logout | ✅ PASS |
+| No critical a11y violations (axe) | a11y/demo-landing | ✅ PASS |
+| Images have alt text | a11y/demo-images | ✅ PASS |
+| Anchor debug trace: balance deducts, vault populates, zero errors | debug-anchor/full-flow | ✅ PASS |
+
+### Running the Tests
+
+```bash
+# From workspace root — start a static file server
+npx serve -l 9999 -s .
+
+# In another terminal — run demo-app E2E tests
+npx playwright test tests/e2e/demo-app-dedicated.spec.js tests/e2e/debug-anchor.spec.js tests/e2e/a11y.spec.js
+```
+
+### Unit Test Coverage (Vitest)
+
+| Metric | Coverage |
+|--------|----------|
+| Statements | 61.03% |
+| Branches | 50%+ |
+| Functions | 55%+ |
+| Lines | 61.03% |
+| Test Files | 24 |
+| Total Tests | 1,582 |
+| Threshold | 60% statements/lines enforced |
