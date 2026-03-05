@@ -54,12 +54,12 @@
     <script defer src="/s4-assets/defense-docs.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-Dpcj2oTx.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-C9Z6QSRK.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-CtFcP8Fq.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-D8gB7BbZ.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-fb4Rg0jP.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-DqAJD6nX.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-BSeQ9kWF.css">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-BPGyerER.css">
 </head>
 <body>
 <!-- Early theme restore + failsafe toggle (non-module, runs immediately) -->
@@ -187,7 +187,7 @@
 <main id="mainContent" role="main">\n<section class="hero" aria-label="Platform overview" style="padding:4rem 0 2rem;text-align:center;">
     <div class="container">
         <h1 style="font-size:2.4rem;font-weight:800;margin-bottom:0.75rem;color:#fff;letter-spacing:-0.035em;line-height:1.1;">S4 Ledger <span style="color:var(--accent);">Platform</span></h1>
-        <p style="color:var(--steel);font-size:1.05rem;">Anchor, verify, and track Navy logistics records on the XRP Ledger with blockchain-grade integrity.</p>
+        <p style="color:var(--steel);font-size:1.05rem;">The integrity layer for defense logistics. Track every part, verify every handoff, and prove compliance &mdash; instantly.</p>
         <div class="badge-live" style="display:inline-block;margin-top:12px;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.25);color:var(--accent);padding:6px 16px;border-radius:3px;font-size:0.8rem;font-weight:600;">XRPL Mainnet Connected &mdash; Navy Record Types &bull; 54+ Pre-Built Templates</div>
     </div>
 </section>
@@ -250,7 +250,10 @@
         <!-- Demo Mode Banner (hidden by default, shown by enterDemoMode) -->
         <div class="demo-mode-banner" id="demoModeBanner" style="display:none;">
             <span class="dmb-text"><i class="fas fa-eye" style="color:#c9a84c;margin-right:6px;"></i><strong>Demo Mode</strong> — Exploring with sample data. Sign in for full access and real blockchain anchoring.</span>
-            <button class="dmb-signin" onclick="exitDemoMode()"><i class="fas fa-right-to-bracket" style="margin-right:4px;"></i>Sign In</button>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <button class="dmb-tour" onclick="startWalkthrough()"><i class="fas fa-play-circle" style="margin-right:4px;"></i>Watch Demo</button>
+                <button class="dmb-signin" onclick="exitDemoMode()"><i class="fas fa-right-to-bracket" style="margin-right:4px;"></i>Sign In</button>
+            </div>
         </div>
     <!-- ═══ DEMO ONBOARDING WIZARD ═══ -->
     <div class="onboard-overlay" id="onboardOverlay" style="display:none">
@@ -953,7 +956,7 @@
                     </div>
 
                 </div>
-                <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>Credits: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> Credits</span><span style="color:#00aaff;margin-left:8px"><i class="fas fa-robot" style="margin-right:4px"></i>AI Agent Active</span></div></div></div>
+                <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>Credits: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> Credits</span><span style="color:#00aaff;margin-left:8px"><i class="fas fa-robot" style="margin-right:4px"></i>AI Agent Active</span></div><div class="s4-thumbs" id="toolThumbsFeedback"><span>Helpful?</span><button class="s4-thumb" data-positive="true" onclick="thumbFeedback(window._currentILSTool||'',true)" title="Yes"><i class="fas fa-thumbs-up"></i></button><button class="s4-thumb" data-positive="false" onclick="thumbFeedback(window._currentILSTool||'',false)" title="No"><i class="fas fa-thumbs-down"></i></button></div></div></div>
 
                 <!-- ══ HUB: GAP ANALYSIS (original ILS content) ══ -->
                 <div class="ils-hub-panel" id="hub-analysis">
@@ -3310,6 +3313,88 @@
     </script>
 
     <!-- S4 Ledger Demo — Modular JS (extracted from monolith) -->
+
+<!-- ═══ PLATFORM WALKTHROUGH OVERLAY ═══ -->
+<div id="s4WalkthroughOverlay" style="display:none;" role="dialog" aria-label="Platform walkthrough" aria-modal="true">
+    <div class="wt-container">
+        <div class="wt-narrator">
+            <div class="wt-narrator-header">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-shield-halved" style="color:var(--accent);font-size:1.1rem;"></i>
+                    <span style="color:#fff;font-weight:700;font-size:0.88rem;">S4 Ledger Platform Tour</span>
+                </div>
+                <button class="wt-close" onclick="endWalkthrough()" aria-label="Close walkthrough"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="wt-step-progress"><div class="wt-step-progress-fill"></div></div>
+            <div class="wt-step-header">
+                <span class="wt-step-counter">Step 1 of 26</span>
+                <span class="wt-step-cat">Overview</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <i class="wt-step-icon fas fa-shield-halved" style="color:var(--accent);font-size:1.2rem;"></i>
+                <h3 class="wt-step-title">Welcome</h3>
+            </div>
+            <p class="wt-step-desc"></p>
+            <div class="wt-controls">
+                <button class="wt-btn" onclick="_wtPrev()" title="Previous step"><i class="fas fa-backward-step"></i></button>
+                <button class="wt-btn wt-btn-play" onclick="_wtTogglePlay()" title="Play / Pause"><i class="fas fa-pause"></i></button>
+                <button class="wt-btn" onclick="_wtNext()" title="Next step"><i class="fas fa-forward-step"></i></button>
+                <button class="wt-btn wt-btn-voice" onclick="_wtToggleVoice()" title="Toggle narration voice"><i class="fas fa-volume-mute"></i></button>
+                <div class="wt-spacer"></div>
+                <button class="wt-btn wt-btn-skip" onclick="endWalkthrough()" title="End walkthrough">Skip <i class="fas fa-forward"></i></button>
+            </div>
+            <div class="wt-progress">
+                <div class="wt-progress-track"><div class="wt-progress-fill"></div></div>
+                <span class="wt-progress-text">1 / 26</span>
+            </div>
+        </div>
+        <div class="wt-display"></div>
+    </div>
+</div>
+
+<!-- ═══ FEEDBACK DRAWER ═══ -->
+<div id="s4FeedbackTab" class="fb-tab" onclick="openFeedbackDrawer()" title="Send feedback">
+    <i class="fas fa-comment-dots"></i> Feedback
+</div>
+<div id="s4FeedbackDrawer" class="fb-drawer" aria-hidden="true">
+    <div class="fb-header">
+        <span style="font-weight:700;color:#fff;font-size:0.88rem;"><i class="fas fa-comment-dots" style="color:var(--accent);margin-right:6px;"></i>Send Feedback</span>
+        <button class="fb-close" onclick="closeFeedbackDrawer()" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="fb-body">
+        <div class="fb-field"><label class="fb-label">Rating</label>
+            <div class="fb-stars" data-rating="0">
+                <i class="far fa-star" data-star="1"></i>
+                <i class="far fa-star" data-star="2"></i>
+                <i class="far fa-star" data-star="3"></i>
+                <i class="far fa-star" data-star="4"></i>
+                <i class="far fa-star" data-star="5"></i>
+            </div>
+        </div>
+        <div class="fb-field"><label class="fb-label">Category</label>
+            <select class="fb-category">
+                <option value="general">General</option>
+                <option value="bug">Bug Report</option>
+                <option value="feature">Feature Request</option>
+                <option value="praise">Praise</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="fb-field"><label class="fb-label">Comment <span style="color:var(--muted);">(optional)</span></label>
+            <textarea class="fb-comment" rows="3" placeholder="Tell us more..."></textarea>
+        </div>
+        <div class="fb-error" style="display:none;color:var(--red);font-size:0.75rem;margin-bottom:8px;"></div>
+        <button class="fb-submit" onclick="submitFeedback()">Submit Feedback</button>
+    </div>
+</div>
+
+<style>
+.s4-thumbs{display:inline-flex;gap:6px;margin-left:auto;align-items:center;font-size:0.72rem;color:var(--steel);}
+.s4-thumb{background:transparent;border:1px solid var(--border);color:var(--steel);border-radius:3px;padding:3px 8px;font-size:0.72rem;cursor:pointer;transition:all 0.2s;font-family:inherit;}
+.s4-thumb:hover{border-color:var(--accent);color:var(--accent);}
+.s4-thumb.thumb-selected{background:rgba(0,170,255,0.1);border-color:var(--accent);color:var(--accent);}
+.s4-thumb.thumb-selected[data-positive="false"]{background:rgba(255,69,58,0.1);border-color:var(--red);color:var(--red);}
+</style>
 
 </body>
 </html>
