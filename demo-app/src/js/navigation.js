@@ -829,51 +829,6 @@ function exitDemoMode() {
     }
 })();
 
-// ═══ Cross-Tool Action Buttons (HarborLink Hooks) ═══
-function toolActionAnchor() {
-    var toolName = '';
-    if (_currentILSTool) {
-        var panel = document.getElementById(_currentILSTool);
-        if (panel) {
-            var h = panel.querySelector('h3') || panel.querySelector('h4');
-            if (h) toolName = h.textContent.replace(/[?]/g, '').trim();
-        }
-    }
-    showHub();
-    setTimeout(function() {
-        showSection('sectionAnchor');
-        var input = document.getElementById('recordInput');
-        if (input && toolName) {
-            input.value = '[Auto-generated from ' + toolName + '] — Data exported at ' + new Date().toLocaleString();
-            input.dataset.autoFilled = 'true';
-        }
-    }, 100);
-    if (typeof s4Notify === 'function') s4Notify('Navigate', 'Switched to Anchor — paste or review data to anchor.', 'info');
-}
-
-function toolActionItem() {
-    var toolName = 'Platform';
-    if (_currentILSTool) {
-        var panel = document.getElementById(_currentILSTool);
-        if (panel) {
-            var h = panel.querySelector('h3') || panel.querySelector('h4');
-            if (h) toolName = h.textContent.replace(/[?]/g, '').trim();
-        }
-    }
-    if (typeof s4ActionItems !== 'undefined' && Array.isArray(s4ActionItems)) {
-        s4ActionItems.unshift({
-            id: Date.now(),
-            title: 'Follow-up from ' + toolName,
-            desc: 'Review output and take action — created ' + new Date().toLocaleString(),
-            priority: 'medium',
-            due: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
-            done: false,
-            source: _currentILSTool || 'manual'
-        });
-    }
-    if (typeof s4Notify === 'function') s4Notify('Action Item Created', 'Added follow-up from ' + toolName + ' to Action Items.', 'success');
-}
-
 // ═══ Quick Tour ═══
 var _tourSteps = [
     { target: '#platformHub', title: 'Platform Hub', desc: 'Your command center. Select a module to begin — Anchor-S4 has 20+ defense tools.', position: 'bottom' },
@@ -938,7 +893,5 @@ window.showHub = showHub;
 window.showSection = showSection;
 window.showSystemsSub = showSystemsSub;
 window.startQuickTour = startQuickTour;
-window.toolActionAnchor = toolActionAnchor;
-window.toolActionItem = toolActionItem;
 window._tourNext = _tourNext;
 window._tourPrev = _tourPrev;

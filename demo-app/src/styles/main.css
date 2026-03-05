@@ -429,13 +429,6 @@
         .demo-mode-banner .dmb-signin{background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);color:var(--accent);border-radius:3px;padding:4px 14px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;white-space:nowrap}
         .demo-mode-banner .dmb-signin:hover{background:rgba(0,170,255,0.2);border-color:var(--accent)}
         body.light-mode .demo-mode-banner{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(0,119,204,0.04));border-color:rgba(201,168,76,0.2)}
-        /* ═══ Cross-Tool Action Buttons (HarborLink hooks) ═══ */
-        .tool-action-btns{display:flex;gap:6px;margin-left:auto}
-        .tool-action-btn{background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:var(--steel);border-radius:3px;padding:4px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;display:flex;align-items:center;gap:4px;white-space:nowrap}
-        .tool-action-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,170,255,0.1)}
-        .tool-action-btn i{font-size:0.6rem}
-        body.light-mode .tool-action-btn{background:rgba(0,119,204,0.05);border-color:rgba(0,0,0,0.08);color:#555}
-        body.light-mode .tool-action-btn:hover{border-color:rgba(0,119,204,0.3);color:#0077cc}
         /* ═══ Hide <details> "How It Works" dropdowns — replaced by ? popup ═══ */
         .ils-hub-panel details,#tabAnchor details,#tabVerify details{display:none!important}
         .hiw-help-btn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.3);color:#00aaff;font-weight:700;font-size:0.82rem;cursor:pointer;margin-left:8px;transition:all 0.2s;vertical-align:middle;line-height:1}
