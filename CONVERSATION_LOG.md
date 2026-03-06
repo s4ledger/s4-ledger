@@ -1544,6 +1544,56 @@ Hull Type, Hull #, Need (Replacement/Disposal/Addition/SLE/Transfer), Requestor,
 - `src/styles/main.css` — `.acq-*` grid/badge/summary styles + light mode
 - `supabase/migrations/008_acquisition_plan.sql` — table + indexes + RLS
 
+### Acquisition Planner — Phase 1 Enhancements (Session 20 continued)
+
+**Commits:** `bdfab3e` (features), `e686661` (roles fix + 21+ counts)
+
+**eNVCR / Database Import:**
+- `acqImportDatabase()` — file picker for CSV, JSON, XML, XLS/XLSX
+- `_parseAndImportTabular()` — auto-delimiter detection (comma, tab, pipe, semicolon)
+- `_fuzzyMatch()` — alias map for eNVCR/NVSRP field names (hull_class→hull_type, mat_cond→material_condition, vessel_no→hull_number, etc.)
+- `_importJSON()` — parses JSON arrays/objects, supports .records/.data/.vessels/.items keys
+- `_importXML()` — tries record/vessel/row/item/entry/craft/hull/Row tags
+
+**Gantt Chart Visualization:**
+- `_renderGantt()` — full interactive Gantt chart with year grid, current-year highlight
+- Lifecycle span bars (green) from date_requested to needed_completion
+- Milestone markers: blue (requested), yellow (planned ROH), red (needed by), purple (planned MI)
+- Condition badges on each row, color legend
+- `acqToggleView('gantt')` — purple Gantt Chart button in toolbar
+
+**Multi-Program Switcher:**
+- `_rebuildProgramList()` — extracts unique programs from program_name/custodian_activity fields
+- `_renderProgramSwitcher()` — filter buttons above toolbar
+- `acqSwitchProgram()` — switches active program filter
+- Integrated into `_getFilteredData()` — applies before text filter
+
+**HIW / Cost Savings Update:**
+- 7-step guide (import, track, monitor, switch programs, Gantt, export, anchor)
+- Cost savings paragraph: $200K–$800K annually, 60–80% tracking labor reduction
+- Production mode paragraph: eNVCR/NVSRP file import, Supabase persistence, multi-program
+
+**Role Registration Fix:**
+- Added `hub-acquisition` to `_allHubTabs` and `_allHubLabels` in `roles.js` (both apps)
+- Added to `ils_manager` (21 tools), `admin` (21 tools), `supply_chain` (8 tools) role tabs
+- Updated all "20+ tools" references → "21+" in engine.js, navigation.js, enhancements.js (both apps)
+
+**New CSS (both apps' main.css):**
+- `.acq-prog-btn`, `.acq-prog-active` — program switcher button styles
+- `.acq-gantt-wrap`, `.acq-gantt-header`, `.acq-gantt-legend`, `.acq-gantt-dot` — Gantt container
+- `.acq-gantt-grid`, `.acq-gantt-label-col`, `.acq-gantt-timeline-col` — Gantt grid layout
+- `.acq-gantt-year`, `.acq-gantt-year-now`, `.acq-gantt-bar`, `.acq-gantt-marker`, `.acq-gantt-cond` — Gantt elements
+- Light mode overrides for all Gantt and program switcher classes
+
+**Files changed (both apps):**
+- `src/js/acquisition.js` — major expansion (~875 lines, up from ~450)
+- `src/js/roles.js` — hub-acquisition added to tabs/labels/roles
+- `src/js/engine.js` — 20+ → 21+ (9 occurrences)
+- `src/js/navigation.js` — 20+ → 21+ (1 occurrence)
+- `src/js/enhancements.js` — 20+ → 21+ (2 occurrences)
+- `src/index.html` — HIW rewrite, toolbar buttons, program switcher div, Gantt div
+- `src/styles/main.css` — Gantt + program switcher CSS + light mode
+
 **Phases 2 & 3 (planned, not yet built):**
 - Phase 2: Program Milestone Tracker (one-slider PowerPoint replacement — timeline/Gantt for vessel acquisition milestones)
 - Phase 3: POM/PB Brief Generator (auto-generated Gantt charts, pivot tables, budget exhibits, PPTX/PDF export)
