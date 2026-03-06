@@ -194,10 +194,10 @@
         // Status + Condition row as clean compact dropdowns
         html += '<div style="display:flex;gap:10px;margin-bottom:16px">';
         // Status breakdown dropdown
-        html += '<div class="stat-mini" style="flex:1;position:relative;cursor:pointer" onclick="this.querySelector(\'.acq-dd-panel\').style.display=this.querySelector(\'.acq-dd-panel\').style.display===\'block\'?\'none\':\'block\'">';
+        html += '<div class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible" onclick="acqToggleDashDD(event,\'acqDDStatus\')">'; 
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#00aaff;font-weight:700;font-size:1rem">' + totalVessels + '</span> <span style="color:var(--steel);font-size:0.82rem">across ' + Object.keys(statusCounts).length + ' statuses</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Status Breakdown</div>';
-        html += '<div class="acq-dd-panel" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)" onclick="event.stopPropagation()">';
         ACQ_STATUSES.forEach(function(s) {
             var cnt = statusCounts[s] || 0;
             var sc = ACQ_STATUS_COLORS[s] || '#8b949e';
@@ -209,11 +209,11 @@
         // Material condition dropdown
         var condColors = {Excellent:'#4ecb71',Good:'#00aaff',Fair:'#c9a84c',Poor:'#ff9500',Critical:'#ff3333',Unknown:'#555'};
         var condOrder = ['Excellent','Good','Fair','Poor','Critical'];
-        html += '<div class="stat-mini" style="flex:1;position:relative;cursor:pointer" onclick="this.querySelector(\'.acq-dd-panel\').style.display=this.querySelector(\'.acq-dd-panel\').style.display===\'block\'?\'none\':\'block\'">';
+        html += '<div class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible" onclick="acqToggleDashDD(event,\'acqDDCond\')">'; 
         var topCond = Object.keys(condCounts).sort(function(a,b){ return condCounts[b]-condCounts[a]; })[0] || '-';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:' + (condColors[topCond]||'#555') + ';font-weight:700;font-size:1rem">' + topCond + '</span> <span style="color:var(--muted);font-size:0.82rem">most common (' + (condCounts[topCond]||0) + ')</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Material Condition</div>';
-        html += '<div class="acq-dd-panel" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)" onclick="event.stopPropagation()">';
         condOrder.forEach(function(c) {
             var cnt = condCounts[c] || 0;
             var cc = condColors[c] || '#555';
@@ -888,6 +888,19 @@
     }
     window.acqToggleGantt = acqToggleGantt;
 
+    window.acqToggleDashDD = function(e, id) {
+        e.stopPropagation();
+        var panel = document.getElementById(id);
+        if (!panel) return;
+        var show = panel.style.display !== 'block';
+        // close all open panels first
+        document.querySelectorAll('#acqDDStatus,#acqDDCond').forEach(function(p) { p.style.display = 'none'; });
+        if (show) panel.style.display = 'block';
+    };
+    document.addEventListener('click', function() {
+        document.querySelectorAll('#acqDDStatus,#acqDDCond').forEach(function(p) { p.style.display = 'none'; });
+    });
+
     function _renderGantt() {
         var el = document.getElementById('acqGanttView');
         if (!el) return;
@@ -899,7 +912,7 @@
         var now = new Date();
         var allDates = [];
         data.forEach(function (r) {
-            ['date_requested','needed_completion','planned_roh','planned_mi','last_roh','last_dry_dock'].forEach(function (k) {
+            ['date_requested','needed_completion','planned_roh','planned_mi'].forEach(function (k) {
                 if (r[k]) { var d = new Date(r[k]); if (!isNaN(d.getTime())) allDates.push(d); }
             });
         });
@@ -907,8 +920,10 @@
             el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)">No dates found in vessel records.</div>';
             return;
         }
+        var minDate = new Date(Math.min.apply(null, allDates));
         var maxDate = new Date(Math.max.apply(null, allDates));
-        var yearStart = now.getFullYear();
+        var yearStart = minDate.getFullYear() - 1;
+        if (yearStart > now.getFullYear()) yearStart = now.getFullYear();
         var yearEnd = maxDate.getFullYear() + 2;
         if (yearEnd <= yearStart) yearEnd = yearStart + 3;
         var totalMonths = (yearEnd - yearStart) * 12;
@@ -965,7 +980,7 @@
             var condCls = { Excellent: '#4ecb71', Good: '#00aaff', Fair: '#c9a84c', Poor: '#ff9500', Critical: '#ff3333' };
             var risk = _calculateRiskScore(r);
             var bgAlt = idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.03)';
-            html += '<div style="display:flex;border-bottom:1px solid rgba(255,255,255,0.04);background:' + bgAlt + '">';
+            html += '<div style="display:flex;min-width:' + (labelW + totalWidth) + 'px;border-bottom:1px solid rgba(255,255,255,0.04);background:' + bgAlt + '">';
             // Label column
             html += '<div style="flex:0 0 ' + labelW + 'px;padding:10px 8px;font-size:0.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:rgba(0,0,0,0.1)">';
             html += '<strong style="color:#fff">' + (r.hull_number || '-') + '</strong>';
@@ -981,11 +996,12 @@
             }
             // Today line in row
             if (todayPx >= 0) html += '<div style="position:absolute;left:' + todayPx + 'px;top:0;bottom:0;border-left:2px dashed rgba(0,170,255,0.15);z-index:2"></div>';
-            // Lifecycle span bar
+            // Lifecycle span bar (clamp start to 0 if before chart range)
             if (r.date_requested && r.needed_completion) {
                 var startPx = dateToPx(new Date(r.date_requested));
                 var endPx = dateToPx(new Date(r.needed_completion));
-                if (startPx >= 0 && endPx >= 0 && endPx > startPx) {
+                if (startPx < 0) startPx = 0;
+                if (endPx > 0 && endPx > startPx) {
                     html += '<div style="position:absolute;left:' + startPx + 'px;width:' + (endPx - startPx) + 'px;top:12px;height:10px;background:rgba(78,203,113,0.2);border:1px solid rgba(78,203,113,0.4);border-radius:3px" title="' + _fmtDate(r.date_requested) + ' to ' + _fmtDate(r.needed_completion) + '"></div>';
                 }
             }

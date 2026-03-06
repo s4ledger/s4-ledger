@@ -1668,4 +1668,26 @@ Hull Type, Hull #, Need (Replacement/Disposal/Addition/SLE/Transfer), Requestor,
 - `src/js/acquisition.js` — `_renderDashboardCards()` rewritten, `_renderGantt()` timeline start fix
 
 ---
+
+### Enhancement Round 4b: Dropdown Fix + Gantt Bars & Row Backgrounds
+
+**Dashboard Dropdown Fix:**
+- Replaced broken inline `onclick` with `querySelector` (quote-escaping issues after minification) with clean global `window.acqToggleDashDD(event, id)` function
+- Each dropdown panel now has a unique ID (`acqDDStatus`, `acqDDCond`) instead of class-based querySelector
+- Added `event.stopPropagation()` on panels so clicking inside doesn't close them
+- Added document-level click listener to close dropdowns when clicking outside
+- Added `overflow:visible` on `.stat-mini` dropdown cards to prevent clipping
+
+**Gantt Chart — Full Lifecycle Bars Restored:**
+- Removed `last_roh` and `last_dry_dock` from date range calculation — only forward-looking dates (`date_requested`, `needed_completion`, `planned_roh`, `planned_mi`) set the timeline range
+- Restored `minDate` calculation so chart starts from earliest relevant date (~2022 for demo data) not just current year
+- Added safety: `if (yearStart > now.getFullYear()) yearStart = now.getFullYear()` ensures chart always includes current year
+- Lifecycle span bars: clamped `startPx` to 0 for dates before `yearStart` so bars render from left edge instead of being skipped entirely
+- Row backgrounds: added `min-width:' + (labelW + totalWidth) + 'px` to each vessel row so alternating gray shading extends across full scrollable width
+- "Today" dashed blue line marker preserved in both ruler and vessel rows
+
+**Files changed (both apps):**
+- `src/js/acquisition.js` — dropdown toggle function, Gantt date range, bar clamping, row min-width
+
+---
 *This log is updated every session. Reference before making changes.*
