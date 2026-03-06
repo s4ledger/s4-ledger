@@ -1147,7 +1147,7 @@ var S4_SUBSCRIPTION_TIERS = {
         price_annual: 24990,
         sls_monthly: 100000,
         anchors_monthly: 10000000,
-        features: ['Everything in Starter', 'All 20+ ILS Tools', 'Compliance scorecard', 'Priority support', 'Custom integrations'],
+        features: ['Everything in Starter', 'All 21+ ILS Tools', 'Compliance scorecard', 'Priority support', 'Custom integrations'],
         stripe_monthly: 'price_pro_monthly',
         stripe_annual: 'price_pro_annual'
     },
@@ -2986,7 +2986,7 @@ function _updateThemeIcon(isLight) {
         var tabs = [
             {name:'Anchor Channel', tab:'tabAnchor', icon:'fa-anchor', desc:'Anchor records to blockchain'},
             {name:'Verify Channel', tab:'tabVerify', icon:'fa-shield-halved', desc:'Verify record integrity'},
-            {name:'ILS Workspace', tab:'tabILS', icon:'fa-cogs', desc:'20+ ILS analysis tools'},
+            {name:'ILS Workspace', tab:'tabILS', icon:'fa-cogs', desc:'21+ ILS analysis tools'},
             {name:'Audit Vault', tab:'tabILS', panel:'hub-vault', icon:'fa-vault', desc:'View all anchored records'},
             {name:'Performance Dashboard', tab:'tabMetrics', icon:'fa-chart-line', desc:'API metrics & analytics'},
             {name:'Wallet / Credits', tab:'tabWallet', icon:'fa-wallet', desc:'Credit balance & transactions'}

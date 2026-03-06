@@ -815,7 +815,7 @@ function exitDemoMode() {
     }
 })();
 var _tourSteps = [
-    { target: '#platformHub', title: 'Platform Hub', desc: 'Your command center. Select a module to begin — Anchor-S4 has 20+ defense tools.', position: 'bottom' },
+    { target: '#platformHub', title: 'Platform Hub', desc: 'Your command center. Select a module to begin — Anchor-S4 has 21+ defense tools.', position: 'bottom' },
     { target: '#ilsSubHub', title: 'Tool Grid', desc: 'Filter by category or search to find the right tool. Drag cards to reorder.', position: 'top' },
     { target: '.hub-card[data-section="sectionILS"]', title: 'Anchor-S4 Suite', desc: 'Gap analysis, compliance, risk, predictive maintenance, and 15+ more ILS tools.', position: 'right' },
     { target: '#walletTriggerBtn', title: 'Ledger Account', desc: 'Your XRPL wallet, Credit balance, and transaction history — all on-chain.', position: 'left' }
