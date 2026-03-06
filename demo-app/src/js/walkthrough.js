@@ -444,9 +444,9 @@ var _steps = [
             return '<div class="wt-mock-welcome">'
                 + '<div class="wt-mock-logo"><i class="fas fa-rocket" style="font-size:3rem;color:var(--accent);"></i></div>'
                 + '<h2 style="color:#fff;font-size:1.3rem;font-weight:700;margin:16px 0 8px;">Platform Tour Complete</h2>'
-                + '<p style="color:var(--steel);font-size:0.88rem;margin-bottom:20px;max-width:400px;">S4 Ledger gives your team 20 purpose-built defense logistics tools with tamper-proof verification. Every record. Every handoff. Proven.</p>'
+                + '<p style="color:var(--steel);font-size:0.88rem;margin-bottom:20px;max-width:400px;">S4 Ledger gives your team 21 purpose-built defense logistics tools with tamper-proof verification. Every record. Every handoff. Proven.</p>'
                 + '<div class="wt-stat-grid">'
-                + '<div class="wt-stat"><span class="wt-stat-num">20</span><span class="wt-stat-label">ILS Tools</span></div>'
+                + '<div class="wt-stat"><span class="wt-stat-num">21</span><span class="wt-stat-label">ILS Tools</span></div>'
                 + '<div class="wt-stat"><span class="wt-stat-num">3 sec</span><span class="wt-stat-label">To Anchor</span></div>'
                 + '<div class="wt-stat"><span class="wt-stat-num">42x</span><span class="wt-stat-label">ROI</span></div>'
                 + '<div class="wt-stat"><span class="wt-stat-num">$1M+</span><span class="wt-stat-label">Savings/yr</span></div>'
@@ -850,6 +850,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ═══ Exports ═══
 window.startWalkthrough = startWalkthrough;
+window.startQuickTour = startWalkthrough;
 window.endWalkthrough = endWalkthrough;
 window._wtNext = _wtNext;
 window._wtPrev = _wtPrev;
