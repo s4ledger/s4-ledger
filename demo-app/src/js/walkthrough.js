@@ -438,15 +438,28 @@ var _steps = [
         }
     },
     {
+        id: 'milestones', title: 'Program Milestones', icon: 'fas fa-flag-checkered', cat: 'Operations',
+        narr: 'Track every vessel from contract award through delivery with the Program Milestone Tracker. Monitor construction starts, builder trials, acceptance trials, sail-away dates, and Obligation Work Limiting Dates across PMS 300, PMS 325, PMS 501, and Strategic Programs. Filter by program or status, view the Gantt timeline, and export to Excel.',
+        mock: function() {
+            return '<div class="wt-mock-tool"><div class="wt-mock-tool-head"><i class="fas fa-flag-checkered"></i> Program Milestones \u2014 10 Vessels</div>'
+                + '<table class="wt-mock-table"><thead><tr><th>Hull #</th><th>Type</th><th>Program</th><th>Status</th><th>Contract Delivery</th><th>OWLD Date</th></tr></thead><tbody>'
+                + '<tr><td>YRBM-44</td><td>YRBM</td><td>PMS 300</td><td><span class="wt-mock-badge-green">On Track</span></td><td>Mar 30, 2025</td><td>Feb 28, 2026</td></tr>'
+                + '<tr><td>DDG-140</td><td>DDG</td><td>PMS 325</td><td><span class="wt-mock-badge-green">On Track</span></td><td>Dec 31, 2028</td><td>Nov 30, 2029</td></tr>'
+                + '<tr><td>LCS-38</td><td>LCS</td><td>PMS 501</td><td><span class="wt-mock-badge-red">Delayed</span></td><td>Sep 30, 2025</td><td>Aug 30, 2026</td></tr>'
+                + '<tr><td>YTB-830</td><td>YTB</td><td>PMS 300</td><td><span class="wt-mock-badge-red">Delayed</span></td><td>Jun 30, 2024</td><td>May 30, 2025</td></tr>'
+                + '</tbody></table></div>';
+        }
+    },
+    {
         id: 'summary', title: 'Ready to Get Started?', icon: 'fas fa-rocket', cat: 'Summary',
         narr: 'That completes your tour of S4 Ledger \u2014 22 integrated tools purpose-built for defense logistics. Every record is permanently verified, every action is auditable, and every handoff is proven. Whether you are tracking a single part or managing an entire fleet, the platform scales with your mission. Sign in to get started.',
         mock: function() {
             return '<div class="wt-mock-welcome">'
                 + '<div class="wt-mock-logo"><i class="fas fa-rocket" style="font-size:3rem;color:var(--accent);"></i></div>'
                 + '<h2 style="color:#fff;font-size:1.3rem;font-weight:700;margin:16px 0 8px;">Platform Tour Complete</h2>'
-                + '<p style="color:var(--steel);font-size:0.88rem;margin-bottom:20px;max-width:400px;">S4 Ledger gives your team 21 purpose-built defense logistics tools with tamper-proof verification. Every record. Every handoff. Proven.</p>'
+                + '<p style="color:var(--steel);font-size:0.88rem;margin-bottom:20px;max-width:400px;">S4 Ledger gives your team 22 purpose-built defense logistics tools with tamper-proof verification. Every record. Every handoff. Proven.</p>'
                 + '<div class="wt-stat-grid">'
-                + '<div class="wt-stat"><span class="wt-stat-num">21</span><span class="wt-stat-label">ILS Tools</span></div>'
+                + '<div class="wt-stat"><span class="wt-stat-num">22</span><span class="wt-stat-label">ILS Tools</span></div>'
                 + '<div class="wt-stat"><span class="wt-stat-num">3 sec</span><span class="wt-stat-label">To Anchor</span></div>'
                 + '<div class="wt-stat"><span class="wt-stat-num">42x</span><span class="wt-stat-label">ROI</span></div>'
                 + '<div class="wt-stat"><span class="wt-stat-num">$1M+</span><span class="wt-stat-label">Savings/yr</span></div>'

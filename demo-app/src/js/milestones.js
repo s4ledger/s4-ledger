@@ -34,7 +34,7 @@
         { key: 'pm_estimated_delivery',    label: 'PM Est Delivery',     type: 'date',     width: '130px' },
         { key: 'sail_away_date',           label: 'Sail Away',           type: 'date',     width: '110px' },
         { key: 'arrival_date',             label: 'Arrival',             type: 'date',     width: '110px' },
-        { key: 'owld_days',                label: 'OWLD (Days)',         type: 'number',   width: '90px' },
+        { key: 'owld_date',                label: 'OWLD Date',           type: 'date',     width: '120px' },
         { key: 'notes',                    label: 'Notes',               type: 'textarea', width: '200px' }
     ];
 
@@ -74,13 +74,13 @@
         if (el) el.textContent = val;
     }
 
-    // -- OWLD calculation (days from contract delivery to planned/PM est) --
+    // -- OWLD calculation (Obligation Work Limiting Date — ~11 months after contract delivery) --
     function _calcOWLD(row) {
         var cd = row.contract_delivery_date ? new Date(row.contract_delivery_date) : null;
-        var pd = row.pm_estimated_delivery ? new Date(row.pm_estimated_delivery) :
-                 row.planned_delivery_date ? new Date(row.planned_delivery_date) : null;
-        if (!cd || !pd || isNaN(cd.getTime()) || isNaN(pd.getTime())) return 0;
-        return Math.round((pd - cd) / 86400000);
+        if (!cd || isNaN(cd.getTime())) return '';
+        var owld = new Date(cd);
+        owld.setMonth(owld.getMonth() + 11);
+        return owld.toISOString().slice(0, 10);
     }
 
     // -- Audit Trail --
@@ -138,16 +138,24 @@
 
     function _getMilDemoRecords() {
         return [
-            { _localId: 1, delivery_status:'On Track', program_name:'PMS 300', vessel_type:'YRBM', hull_number:'YRBM-44', contract_number:'N00024-22-C-4400', ship_builder:'Colonna Shipyard', fy_appropriation:'FY22', uic_code:'09561', contract_award_date:'2022-03-15', construction_start_date:'2022-09-01', launch_date:'2024-06-15', builders_trials_date:'2024-09-01', acceptance_trials_date:'2024-11-15', contract_delivery_date:'2025-03-30', planned_delivery_date:'2025-04-15', pm_estimated_delivery:'2025-04-15', sail_away_date:'2025-05-01', arrival_date:'2025-05-15', owld_days:16, notes:'SLE underway — hull coating ahead of schedule.' },
-            { _localId: 2, delivery_status:'At Risk', program_name:'PMS 300', vessel_type:'APL', hull_number:'APL-67', contract_number:'N00024-23-C-6700', ship_builder:'BAE Systems Norfolk', fy_appropriation:'FY23', uic_code:'09562', contract_award_date:'2023-01-10', construction_start_date:'2023-07-15', launch_date:'2025-02-01', builders_trials_date:'2025-06-01', acceptance_trials_date:'2025-08-15', contract_delivery_date:'2025-12-15', planned_delivery_date:'2026-03-01', pm_estimated_delivery:'2026-03-01', sail_away_date:'2026-04-01', arrival_date:'2026-04-20', owld_days:76, notes:'Supply chain delay on HVAC components — 76 day slip projected.' },
-            { _localId: 3, delivery_status:'On Track', program_name:'PMS 300', vessel_type:'YP', hull_number:'YP-703', contract_number:'N00024-24-C-7030', ship_builder:'Marinette Marine', fy_appropriation:'FY24', uic_code:'63826', contract_award_date:'2024-02-01', construction_start_date:'2024-08-01', launch_date:'2025-11-01', builders_trials_date:'2026-02-01', acceptance_trials_date:'2026-04-01', contract_delivery_date:'2026-06-30', planned_delivery_date:'2026-06-30', pm_estimated_delivery:'2026-06-15', sail_away_date:'2026-07-15', arrival_date:'2026-08-01', owld_days:0, notes:'Yard Patrol craft for USNA — on schedule.' },
-            { _localId: 4, delivery_status:'Delayed', program_name:'PMS 300', vessel_type:'YTB', hull_number:'YTB-830', contract_number:'N00024-21-C-8300', ship_builder:'Dakota Creek Industries', fy_appropriation:'FY21', uic_code:'09563', contract_award_date:'2021-06-01', construction_start_date:'2021-12-15', launch_date:'2023-04-01', builders_trials_date:'2023-09-15', acceptance_trials_date:'2024-01-15', contract_delivery_date:'2024-06-30', planned_delivery_date:'2025-06-30', pm_estimated_delivery:'2025-09-01', sail_away_date:'2025-10-01', arrival_date:'2025-10-20', owld_days:365, notes:'Propulsion system rework required — 12 month delay. ECP submitted.' },
-            { _localId: 5, delivery_status:'Complete', program_name:'PMS 300', vessel_type:'AFDM', hull_number:'AFDM-14', contract_number:'N00024-19-C-1400', ship_builder:'Vigor Industrial', fy_appropriation:'FY19', uic_code:'09564', contract_award_date:'2019-09-01', construction_start_date:'2020-03-15', launch_date:'2022-01-20', builders_trials_date:'2022-06-01', acceptance_trials_date:'2022-09-15', contract_delivery_date:'2023-01-31', planned_delivery_date:'2023-01-31', pm_estimated_delivery:'2023-01-15', sail_away_date:'2023-02-15', arrival_date:'2023-03-01', owld_days:0, notes:'Medium auxiliary floating dry dock delivered on time. Operational at PSNS.' },
-            { _localId: 6, delivery_status:'On Track', program_name:'PMS 300', vessel_type:'YON', hull_number:'YON-330', contract_number:'N00024-24-C-3300', ship_builder:'Conrad Shipyard', fy_appropriation:'FY24', uic_code:'09565', contract_award_date:'2024-04-01', construction_start_date:'2024-10-01', launch_date:'2025-08-01', builders_trials_date:'2025-11-01', acceptance_trials_date:'2026-01-15', contract_delivery_date:'2026-04-30', planned_delivery_date:'2026-04-30', pm_estimated_delivery:'2026-04-30', sail_away_date:'2026-05-15', arrival_date:'2026-06-01', owld_days:0, notes:'Non-self-propelled lighter — steel cutting commenced on schedule.' },
-            { _localId: 7, delivery_status:'At Risk', program_name:'PMS 300', vessel_type:'YC', hull_number:'YC-18', contract_number:'N00024-23-C-0180', ship_builder:'Eastern Shipbuilding', fy_appropriation:'FY23', uic_code:'09566', contract_award_date:'2023-05-15', construction_start_date:'2023-11-01', launch_date:'2025-03-15', builders_trials_date:'2025-07-01', acceptance_trials_date:'2025-09-15', contract_delivery_date:'2025-12-31', planned_delivery_date:'2026-02-15', pm_estimated_delivery:'2026-02-15', sail_away_date:'2026-03-15', arrival_date:'2026-04-01', owld_days:46, notes:'Open lighter — weather delays at yard. 46-day slip.' },
-            { _localId: 8, delivery_status:'Cancelled', program_name:'PMS 300', vessel_type:'YTL', hull_number:'YTL-456', contract_number:'N00024-20-C-4560', ship_builder:'Bollinger Shipyards', fy_appropriation:'FY20', uic_code:'09567', contract_award_date:'2020-08-01', construction_start_date:'', launch_date:'', builders_trials_date:'', acceptance_trials_date:'', contract_delivery_date:'2023-06-30', planned_delivery_date:'', pm_estimated_delivery:'', sail_away_date:'', arrival_date:'', owld_days:0, notes:'Small harbor tug contract terminated for convenience. Requirement absorbed by YTB program.' },
-            { _localId: 9, delivery_status:'On Track', program_name:'PMS 325', vessel_type:'DDG', hull_number:'DDG-140', contract_number:'N00024-24-C-1400', ship_builder:'HII Ingalls', fy_appropriation:'FY24', uic_code:'22180', contract_award_date:'2024-01-15', construction_start_date:'2024-09-01', launch_date:'2027-06-01', builders_trials_date:'2028-01-15', acceptance_trials_date:'2028-06-01', contract_delivery_date:'2028-12-31', planned_delivery_date:'2028-12-31', pm_estimated_delivery:'2028-12-15', sail_away_date:'2029-02-01', arrival_date:'2029-03-01', owld_days:0, notes:'Flight III destroyer — on track for FY29 delivery.' },
-            { _localId: 10, delivery_status:'Delayed', program_name:'PMS 501', vessel_type:'LCS', hull_number:'LCS-38', contract_number:'N00024-22-C-3800', ship_builder:'Austal USA', fy_appropriation:'FY22', uic_code:'23001', contract_award_date:'2022-05-01', construction_start_date:'2022-11-15', launch_date:'2024-08-01', builders_trials_date:'2025-01-15', acceptance_trials_date:'2025-05-01', contract_delivery_date:'2025-09-30', planned_delivery_date:'2026-06-30', pm_estimated_delivery:'2026-08-01', sail_away_date:'2026-09-15', arrival_date:'2026-10-01', owld_days:274, notes:'Combining gear defect — major rework in progress. 9-month delay projected.' }
+            { _localId: 1, delivery_status:'On Track', program_name:'PMS 300', vessel_type:'YRBM', hull_number:'YRBM-44', contract_number:'N00024-22-C-4400', ship_builder:'Colonna Shipyard', fy_appropriation:'FY22', uic_code:'09561', contract_award_date:'2022-03-15', construction_start_date:'2022-09-01', launch_date:'2024-06-15', builders_trials_date:'2024-09-01', acceptance_trials_date:'2024-11-15', contract_delivery_date:'2025-03-30', planned_delivery_date:'2025-04-15', pm_estimated_delivery:'2025-04-15', sail_away_date:'2025-05-01', arrival_date:'2025-05-15', owld_date:'2026-02-28', notes:'SLE underway — hull coating ahead of schedule.' },
+            { _localId: 2, delivery_status:'At Risk', program_name:'PMS 300', vessel_type:'APL', hull_number:'APL-67', contract_number:'N00024-23-C-6700', ship_builder:'BAE Systems Norfolk', fy_appropriation:'FY23', uic_code:'09562', contract_award_date:'2023-01-10', construction_start_date:'2023-07-15', launch_date:'2025-02-01', builders_trials_date:'2025-06-01', acceptance_trials_date:'2025-08-15', contract_delivery_date:'2025-12-15', planned_delivery_date:'2026-03-01', pm_estimated_delivery:'2026-03-01', sail_away_date:'2026-04-01', arrival_date:'2026-04-20', owld_date:'2026-11-15', notes:'Supply chain delay on HVAC components — 76 day slip projected.' },
+            { _localId: 3, delivery_status:'On Track', program_name:'PMS 300', vessel_type:'YP', hull_number:'YP-703', contract_number:'N00024-24-C-7030', ship_builder:'Marinette Marine', fy_appropriation:'FY24', uic_code:'63826', contract_award_date:'2024-02-01', construction_start_date:'2024-08-01', launch_date:'2025-11-01', builders_trials_date:'2026-02-01', acceptance_trials_date:'2026-04-01', contract_delivery_date:'2026-06-30', planned_delivery_date:'2026-06-30', pm_estimated_delivery:'2026-06-15', sail_away_date:'2026-07-15', arrival_date:'2026-08-01', owld_date:'2027-05-30', notes:'Yard Patrol craft for USNA — on schedule.' },
+            { _localId: 4, delivery_status:'Delayed', program_name:'PMS 300', vessel_type:'YTB', hull_number:'YTB-830', contract_number:'N00024-21-C-8300', ship_builder:'Dakota Creek Industries', fy_appropriation:'FY21', uic_code:'09563', contract_award_date:'2021-06-01', construction_start_date:'2021-12-15', launch_date:'2023-04-01', builders_trials_date:'2023-09-15', acceptance_trials_date:'2024-01-15', contract_delivery_date:'2024-06-30', planned_delivery_date:'2025-06-30', pm_estimated_delivery:'2025-09-01', sail_away_date:'2025-10-01', arrival_date:'2025-10-20', owld_date:'2025-05-30', notes:'Propulsion system rework required — 12 month delay. ECP submitted.' },
+            { _localId: 5, delivery_status:'Complete', program_name:'PMS 300', vessel_type:'AFDM', hull_number:'AFDM-14', contract_number:'N00024-19-C-1400', ship_builder:'Vigor Industrial', fy_appropriation:'FY19', uic_code:'09564', contract_award_date:'2019-09-01', construction_start_date:'2020-03-15', launch_date:'2022-01-20', builders_trials_date:'2022-06-01', acceptance_trials_date:'2022-09-15', contract_delivery_date:'2023-01-31', planned_delivery_date:'2023-01-31', pm_estimated_delivery:'2023-01-15', sail_away_date:'2023-02-15', arrival_date:'2023-03-01', owld_date:'2023-12-31', notes:'Medium auxiliary floating dry dock delivered on time. Operational at PSNS.' },
+            { _localId: 6, delivery_status:'On Track', program_name:'PMS 300', vessel_type:'YON', hull_number:'YON-330', contract_number:'N00024-24-C-3300', ship_builder:'Conrad Shipyard', fy_appropriation:'FY24', uic_code:'09565', contract_award_date:'2024-04-01', construction_start_date:'2024-10-01', launch_date:'2025-08-01', builders_trials_date:'2025-11-01', acceptance_trials_date:'2026-01-15', contract_delivery_date:'2026-04-30', planned_delivery_date:'2026-04-30', pm_estimated_delivery:'2026-04-30', sail_away_date:'2026-05-15', arrival_date:'2026-06-01', owld_date:'2027-03-30', notes:'Non-self-propelled lighter — steel cutting commenced on schedule.' },
+            { _localId: 7, delivery_status:'At Risk', program_name:'PMS 300', vessel_type:'YC', hull_number:'YC-18', contract_number:'N00024-23-C-0180', ship_builder:'Eastern Shipbuilding', fy_appropriation:'FY23', uic_code:'09566', contract_award_date:'2023-05-15', construction_start_date:'2023-11-01', launch_date:'2025-03-15', builders_trials_date:'2025-07-01', acceptance_trials_date:'2025-09-15', contract_delivery_date:'2025-12-31', planned_delivery_date:'2026-02-15', pm_estimated_delivery:'2026-02-15', sail_away_date:'2026-03-15', arrival_date:'2026-04-01', owld_date:'2026-11-30', notes:'Open lighter — weather delays at yard. 46-day slip.' },
+            { _localId: 8, delivery_status:'Cancelled', program_name:'PMS 300', vessel_type:'YTL', hull_number:'YTL-456', contract_number:'N00024-20-C-4560', ship_builder:'Bollinger Shipyards', fy_appropriation:'FY20', uic_code:'09567', contract_award_date:'2020-08-01', construction_start_date:'', launch_date:'', builders_trials_date:'', acceptance_trials_date:'', contract_delivery_date:'2023-06-30', planned_delivery_date:'', pm_estimated_delivery:'', sail_away_date:'', arrival_date:'', owld_date:'', notes:'Small harbor tug contract terminated for convenience. Requirement absorbed by YTB program.' },
+            { _localId: 9, delivery_status:'On Track', program_name:'PMS 325', vessel_type:'DDG', hull_number:'DDG-140', contract_number:'N00024-24-C-1400', ship_builder:'HII Ingalls', fy_appropriation:'FY24', uic_code:'22180', contract_award_date:'2024-01-15', construction_start_date:'2024-09-01', launch_date:'2027-06-01', builders_trials_date:'2028-01-15', acceptance_trials_date:'2028-06-01', contract_delivery_date:'2028-12-31', planned_delivery_date:'2028-12-31', pm_estimated_delivery:'2028-12-15', sail_away_date:'2029-02-01', arrival_date:'2029-03-01', owld_date:'2029-11-30', notes:'Flight III destroyer — on track for FY29 delivery.' },
+            { _localId: 10, delivery_status:'Delayed', program_name:'PMS 501', vessel_type:'LCS', hull_number:'LCS-38', contract_number:'N00024-22-C-3800', ship_builder:'Austal USA', fy_appropriation:'FY22', uic_code:'23001', contract_award_date:'2022-05-01', construction_start_date:'2022-11-15', launch_date:'2024-08-01', builders_trials_date:'2025-01-15', acceptance_trials_date:'2025-05-01', contract_delivery_date:'2025-09-30', planned_delivery_date:'2026-06-30', pm_estimated_delivery:'2026-08-01', sail_away_date:'2026-09-15', arrival_date:'2026-10-01', owld_date:'2026-08-30', notes:'Combining gear defect — major rework in progress. 9-month delay projected.' },
+            { _localId: 11, delivery_status:'On Track', program_name:'PMS 325', vessel_type:'DDG', hull_number:'DDG-136', contract_number:'N00024-22-C-1360', ship_builder:'Bath Iron Works', fy_appropriation:'FY22', uic_code:'22176', contract_award_date:'2022-06-01', construction_start_date:'2023-01-15', launch_date:'2025-10-01', builders_trials_date:'2026-04-01', acceptance_trials_date:'2026-08-15', contract_delivery_date:'2027-02-28', planned_delivery_date:'2027-02-28', pm_estimated_delivery:'2027-02-15', sail_away_date:'2027-04-01', arrival_date:'2027-04-20', owld_date:'2028-01-28', notes:'Flight III DDG — BIW lead ship. All major equipment on hand.' },
+            { _localId: 12, delivery_status:'At Risk', program_name:'PMS 325', vessel_type:'FFG', hull_number:'FFG-65', contract_number:'N00024-23-C-6500', ship_builder:'Fincantieri Marinette', fy_appropriation:'FY23', uic_code:'22200', contract_award_date:'2023-03-15', construction_start_date:'2023-11-01', launch_date:'2025-12-01', builders_trials_date:'2026-05-15', acceptance_trials_date:'2026-09-01', contract_delivery_date:'2027-03-31', planned_delivery_date:'2027-06-30', pm_estimated_delivery:'2027-07-15', sail_away_date:'2027-08-15', arrival_date:'2027-09-01', owld_date:'2028-02-28', notes:'Constellation-class frigate — combat system integration 45 days behind.' },
+            { _localId: 13, delivery_status:'On Track', program_name:'PMS 325', vessel_type:'CG', hull_number:'CG-80', contract_number:'N00024-25-C-8000', ship_builder:'HII Ingalls', fy_appropriation:'FY25', uic_code:'22210', contract_award_date:'2025-02-01', construction_start_date:'2025-10-01', launch_date:'2028-06-01', builders_trials_date:'2029-01-15', acceptance_trials_date:'2029-06-01', contract_delivery_date:'2029-12-31', planned_delivery_date:'2029-12-31', pm_estimated_delivery:'2029-12-15', sail_away_date:'2030-02-01', arrival_date:'2030-03-01', owld_date:'2030-11-30', notes:'Next-gen cruiser — design phase complete, long lead materials ordered.' },
+            { _localId: 14, delivery_status:'On Track', program_name:'PMS 501', vessel_type:'LPD', hull_number:'LPD-33', contract_number:'N00024-23-C-3300', ship_builder:'HII Ingalls', fy_appropriation:'FY23', uic_code:'24010', contract_award_date:'2023-09-01', construction_start_date:'2024-04-15', launch_date:'2026-12-01', builders_trials_date:'2027-06-01', acceptance_trials_date:'2027-10-15', contract_delivery_date:'2028-03-31', planned_delivery_date:'2028-03-31', pm_estimated_delivery:'2028-03-15', sail_away_date:'2028-05-01', arrival_date:'2028-05-20', owld_date:'2029-02-28', notes:'Flight II LPD — on schedule. AEGIS integration proceeding.' },
+            { _localId: 15, delivery_status:'Delayed', program_name:'PMS 501', vessel_type:'LHA', hull_number:'LHA-9', contract_number:'N00024-21-C-0900', ship_builder:'HII Ingalls', fy_appropriation:'FY21', uic_code:'24020', contract_award_date:'2021-10-01', construction_start_date:'2022-05-15', launch_date:'2025-03-01', builders_trials_date:'2025-10-01', acceptance_trials_date:'2026-03-15', contract_delivery_date:'2026-09-30', planned_delivery_date:'2027-06-30', pm_estimated_delivery:'2027-09-01', sail_away_date:'2027-10-15', arrival_date:'2027-11-01', owld_date:'2027-08-30', notes:'America-class amphib — propulsion shaft rework. 9-month slip.' },
+            { _localId: 16, delivery_status:'On Track', program_name:'Strategic Programs', vessel_type:'SSBN', hull_number:'SSBN-826', contract_number:'N00024-21-C-8260', ship_builder:'General Dynamics EB', fy_appropriation:'FY21', uic_code:'30100', contract_award_date:'2021-01-15', construction_start_date:'2022-06-01', launch_date:'2028-01-01', builders_trials_date:'2028-09-01', acceptance_trials_date:'2029-03-01', contract_delivery_date:'2029-09-30', planned_delivery_date:'2029-09-30', pm_estimated_delivery:'2029-09-15', sail_away_date:'2029-11-01', arrival_date:'2029-12-01', owld_date:'2030-08-30', notes:'Columbia-class lead boat — on schedule per GAO milestone review.' },
+            { _localId: 17, delivery_status:'At Risk', program_name:'Strategic Programs', vessel_type:'SSN', hull_number:'SSN-814', contract_number:'N00024-23-C-8140', ship_builder:'General Dynamics EB', fy_appropriation:'FY23', uic_code:'30200', contract_award_date:'2023-04-01', construction_start_date:'2024-01-15', launch_date:'2027-06-01', builders_trials_date:'2028-01-01', acceptance_trials_date:'2028-06-15', contract_delivery_date:'2028-12-31', planned_delivery_date:'2029-04-30', pm_estimated_delivery:'2029-06-01', sail_away_date:'2029-07-15', arrival_date:'2029-08-01', owld_date:'2029-11-30', notes:'Virginia-class Block VI — workforce constraints at EB. 5-month slip.' },
+            { _localId: 18, delivery_status:'On Track', program_name:'PMS 300', vessel_type:'YR', hull_number:'YR-96', contract_number:'N00024-24-C-9600', ship_builder:'Vigor Industrial', fy_appropriation:'FY24', uic_code:'09570', contract_award_date:'2024-06-01', construction_start_date:'2024-12-15', launch_date:'2026-04-01', builders_trials_date:'2026-08-01', acceptance_trials_date:'2026-10-15', contract_delivery_date:'2027-01-31', planned_delivery_date:'2027-01-31', pm_estimated_delivery:'2027-01-15', sail_away_date:'2027-03-01', arrival_date:'2027-03-15', owld_date:'2027-12-31', notes:'Floating workshop replacement for YR-92. Steel cutting on schedule.' }
         ];
     }
 
@@ -288,7 +296,12 @@
         var atRisk = statusCounts['At Risk'] || 0;
         var delayed = statusCounts['Delayed'] || 0;
         var complete = statusCounts['Complete'] || 0;
-        var avgOWLD = Math.round(data.reduce(function(s,r){ return s + (Number(r.owld_days) || 0); }, 0) / total);
+        var avgOWLD = '';
+        var owldDates = data.map(function(r){ return r.owld_date; }).filter(function(d){ return d; });
+        if (owldDates.length) {
+            var nextOwld = owldDates.filter(function(d){ return new Date(d) > new Date(); }).sort();
+            avgOWLD = nextOwld.length ? _fmtDate(nextOwld[0]) : _fmtDate(owldDates.sort().pop());
+        }
         var activeData = data.filter(function(r){ return r.delivery_status !== 'Complete' && r.delivery_status !== 'Cancelled'; });
         var programs = {};
         data.forEach(function(r) { programs[r.program_name] = true; });
@@ -299,7 +312,7 @@
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#4ecb71;font-size:1.4rem">' + onTrack + '</div><div class="stat-mini-lbl">On Track</div></div>';
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#c9a84c;font-size:1.4rem">' + atRisk + '</div><div class="stat-mini-lbl">At Risk</div></div>';
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#ff4444;font-size:1.4rem">' + delayed + '</div><div class="stat-mini-lbl">Delayed</div></div>';
-        html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:' + (avgOWLD > 60 ? '#ff4444' : avgOWLD > 30 ? '#c9a84c' : '#4ecb71') + ';font-size:1.4rem">' + avgOWLD + 'd</div><div class="stat-mini-lbl">Avg OWLD</div></div>';
+        html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#c9a84c;font-size:1.1rem">' + (avgOWLD || '—') + '</div><div class="stat-mini-lbl">Next OWLD</div></div>';
         html += '</div>';
 
         // Status + Program row with dropdowns
@@ -367,8 +380,13 @@
         _setTxt('milStatOnTrack', data.filter(function(r){ return r.delivery_status === 'On Track'; }).length);
         _setTxt('milStatAtRisk', data.filter(function(r){ return r.delivery_status === 'At Risk'; }).length);
         _setTxt('milStatDelayed', data.filter(function(r){ return r.delivery_status === 'Delayed'; }).length);
-        var avgOWLD = data.length ? Math.round(data.reduce(function(s,r){ return s + (Number(r.owld_days) || 0); }, 0) / data.length) : 0;
-        _setTxt('milStatOWLD', avgOWLD + 'd');
+        var avgOWLD = data.length ? (function(){
+            var owlds = data.map(function(r){ return r.owld_date; }).filter(function(d){ return d; });
+            if (!owlds.length) return '—';
+            var next = owlds.filter(function(d){ return new Date(d) > new Date(); }).sort();
+            return next.length ? _fmtDate(next[0]) : _fmtDate(owlds.sort().pop());
+        })() : '—';
+        _setTxt('milStatOWLD', avgOWLD);
     }
 
     // ============================================================
@@ -430,9 +448,11 @@
                     if (c.key === 'delivery_status') {
                         display = '<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:' + sc + ';display:inline-block"></span>' + val + '</span>';
                     }
-                    if (c.key === 'owld_days' && val) {
-                        var owldColor = Math.abs(val) > 60 ? '#ff4444' : Math.abs(val) > 30 ? '#c9a84c' : '#4ecb71';
-                        display = '<span style="color:' + owldColor + ';font-weight:600">' + val + '</span>';
+                    if (c.key === 'owld_date' && val) {
+                        var owldD = new Date(val);
+                        var now = new Date();
+                        var owldColor = owldD < now ? '#ff4444' : '#c9a84c';
+                        display = '<span style="color:' + owldColor + ';font-weight:600">' + _fmtDate(val) + '</span>';
                     }
                     html += '<td style="padding:6px 4px;color:var(--steel);white-space:nowrap;max-width:' + c.width + ';overflow:hidden;text-overflow:ellipsis" title="' + String(val).replace(/"/g,'&quot;') + '">' + display + '</td>';
                 }
@@ -527,7 +547,7 @@
                     row[key] = field.value;
                 });
                 // Auto-calc OWLD
-                row.owld_days = _calcOWLD(row);
+                row.owld_date = _calcOWLD(row);
                 _logMilAudit('EDIT', rid, 'Updated milestone for ' + row.hull_number);
                 _milEditingId = null;
                 _saveMilRow(row);
@@ -596,7 +616,7 @@
         var payload = {};
         MIL_COLUMNS.forEach(function(c) { if (row[c.key] !== undefined) payload[c.key] = row[c.key]; });
         payload.program_name = row.program_name;
-        payload.owld_days = row.owld_days;
+        payload.owld_date = row.owld_date;
         payload.org_id = row.org_id || sessionStorage.getItem('s4_org_id') || '';
         payload.user_email = row.user_email || sessionStorage.getItem('s4_user_email') || '';
         if (row.acquisition_plan_id) payload.acquisition_plan_id = row.acquisition_plan_id;
@@ -637,7 +657,7 @@
             pm_estimated_delivery: '',
             sail_away_date: '',
             arrival_date: '',
-            owld_days: 0,
+            owld_date: '',
             notes: ''
         };
         _milData.push(newRow);
@@ -1026,7 +1046,7 @@
         if (!ids.length) return;
         ids.forEach(function(rid) {
             var row = _findRow(rid);
-            if (row) { row.delivery_status = status; row.owld_days = _calcOWLD(row); _saveMilRow(row); _logMilAudit('BULK_STATUS', rid, status); }
+            if (row) { row.delivery_status = status; row.owld_date = _calcOWLD(row); _saveMilRow(row); _logMilAudit('BULK_STATUS', rid, status); }
         });
         _milBulkSelected = {};
         _renderMilGrid(); _renderMilDashboard(); _updateMilStats();
@@ -1099,10 +1119,7 @@
         if (!colDef) return false;
         var oldVal = row[fieldKey];
         row[fieldKey] = newValue;
-        row.owld_days = _calcOWLD(row);
-        // Auto-set status based on OWLD
-        if (Math.abs(row.owld_days) > 60) row.delivery_status = 'Delayed';
-        else if (Math.abs(row.owld_days) > 30) row.delivery_status = 'At Risk';
+        row.owld_date = _calcOWLD(row);
         _logMilAudit('AI_UPDATE', row.id || row._localId, 'AI changed ' + colDef.label + ' from "' + (oldVal || '') + '" to "' + newValue + '" — ' + (reason || 'auto-detected'));
         _saveMilRow(row);
         _renderMilGrid(); _renderMilDashboard(); _updateMilStats();
@@ -1166,7 +1183,7 @@
                 var clean = {};
                 MIL_COLUMNS.forEach(function(c) { clean[c.key] = r[c.key] || ''; });
                 clean.program_name = r.program_name;
-                clean.owld_days = r.owld_days;
+                clean.owld_date = r.owld_date;
                 return clean;
             }));
             anchorToXRPL(payload, 'Program Milestones');

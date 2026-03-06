@@ -644,7 +644,9 @@ body.light-mode .wt-mock-table td,body.light-mode .wt-mock-action-head,body.ligh
             overflow:hidden !important;
         }
         .ils-hub-panel #acqDDStatusTrigger,
-        .ils-hub-panel #acqDDCondTrigger{
+        .ils-hub-panel #acqDDCondTrigger,
+        .ils-hub-panel #milDDStatusTrigger,
+        .ils-hub-panel #milDDProgTrigger{
             overflow:visible !important;
         }
         .ils-hub-panel .stat-mini::before{

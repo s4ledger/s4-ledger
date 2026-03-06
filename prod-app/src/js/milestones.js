@@ -34,7 +34,7 @@
         { key: 'pm_estimated_delivery',    label: 'PM Est Delivery',     type: 'date',     width: '130px' },
         { key: 'sail_away_date',           label: 'Sail Away',           type: 'date',     width: '110px' },
         { key: 'arrival_date',             label: 'Arrival',             type: 'date',     width: '110px' },
-        { key: 'owld_days',                label: 'OWLD (Days)',         type: 'number',   width: '90px' },
+        { key: 'owld_date',                label: 'OWLD Date',           type: 'date',     width: '120px' },
         { key: 'notes',                    label: 'Notes',               type: 'textarea', width: '200px' }
     ];
 
@@ -74,13 +74,13 @@
         if (el) el.textContent = val;
     }
 
-    // -- OWLD calculation (days from contract delivery to planned/PM est) --
+    // -- OWLD calculation (Obligation Work Limiting Date — ~11 months after contract delivery) --
     function _calcOWLD(row) {
         var cd = row.contract_delivery_date ? new Date(row.contract_delivery_date) : null;
-        var pd = row.pm_estimated_delivery ? new Date(row.pm_estimated_delivery) :
-                 row.planned_delivery_date ? new Date(row.planned_delivery_date) : null;
-        if (!cd || !pd || isNaN(cd.getTime()) || isNaN(pd.getTime())) return 0;
-        return Math.round((pd - cd) / 86400000);
+        if (!cd || isNaN(cd.getTime())) return '';
+        var owld = new Date(cd);
+        owld.setMonth(owld.getMonth() + 11);
+        return owld.toISOString().slice(0, 10);
     }
 
     // -- Audit Trail --
@@ -278,7 +278,12 @@
         var atRisk = statusCounts['At Risk'] || 0;
         var delayed = statusCounts['Delayed'] || 0;
         var complete = statusCounts['Complete'] || 0;
-        var avgOWLD = Math.round(data.reduce(function(s,r){ return s + (Number(r.owld_days) || 0); }, 0) / total);
+        var avgOWLD = '';
+        var owldDates = data.map(function(r){ return r.owld_date; }).filter(function(d){ return d; });
+        if (owldDates.length) {
+            var nextOwld = owldDates.filter(function(d){ return new Date(d) > new Date(); }).sort();
+            avgOWLD = nextOwld.length ? _fmtDate(nextOwld[0]) : _fmtDate(owldDates.sort().pop());
+        }
         var activeData = data.filter(function(r){ return r.delivery_status !== 'Complete' && r.delivery_status !== 'Cancelled'; });
         var programs = {};
         data.forEach(function(r) { programs[r.program_name] = true; });
@@ -289,7 +294,7 @@
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#4ecb71;font-size:1.4rem">' + onTrack + '</div><div class="stat-mini-lbl">On Track</div></div>';
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#c9a84c;font-size:1.4rem">' + atRisk + '</div><div class="stat-mini-lbl">At Risk</div></div>';
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#ff4444;font-size:1.4rem">' + delayed + '</div><div class="stat-mini-lbl">Delayed</div></div>';
-        html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:' + (avgOWLD > 60 ? '#ff4444' : avgOWLD > 30 ? '#c9a84c' : '#4ecb71') + ';font-size:1.4rem">' + avgOWLD + 'd</div><div class="stat-mini-lbl">Avg OWLD</div></div>';
+        html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#c9a84c;font-size:1.1rem">' + (avgOWLD || '—') + '</div><div class="stat-mini-lbl">Next OWLD</div></div>';
         html += '</div>';
 
         // Status + Program row with dropdowns
@@ -357,8 +362,13 @@
         _setTxt('milStatOnTrack', data.filter(function(r){ return r.delivery_status === 'On Track'; }).length);
         _setTxt('milStatAtRisk', data.filter(function(r){ return r.delivery_status === 'At Risk'; }).length);
         _setTxt('milStatDelayed', data.filter(function(r){ return r.delivery_status === 'Delayed'; }).length);
-        var avgOWLD = data.length ? Math.round(data.reduce(function(s,r){ return s + (Number(r.owld_days) || 0); }, 0) / data.length) : 0;
-        _setTxt('milStatOWLD', avgOWLD + 'd');
+        var avgOWLD = data.length ? (function(){
+            var owlds = data.map(function(r){ return r.owld_date; }).filter(function(d){ return d; });
+            if (!owlds.length) return '—';
+            var next = owlds.filter(function(d){ return new Date(d) > new Date(); }).sort();
+            return next.length ? _fmtDate(next[0]) : _fmtDate(owlds.sort().pop());
+        })() : '—';
+        _setTxt('milStatOWLD', avgOWLD);
     }
 
     // ============================================================
@@ -420,9 +430,11 @@
                     if (c.key === 'delivery_status') {
                         display = '<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:' + sc + ';display:inline-block"></span>' + val + '</span>';
                     }
-                    if (c.key === 'owld_days' && val) {
-                        var owldColor = Math.abs(val) > 60 ? '#ff4444' : Math.abs(val) > 30 ? '#c9a84c' : '#4ecb71';
-                        display = '<span style="color:' + owldColor + ';font-weight:600">' + val + '</span>';
+                    if (c.key === 'owld_date' && val) {
+                        var owldD = new Date(val);
+                        var now = new Date();
+                        var owldColor = owldD < now ? '#ff4444' : '#c9a84c';
+                        display = '<span style="color:' + owldColor + ';font-weight:600">' + _fmtDate(val) + '</span>';
                     }
                     html += '<td style="padding:6px 4px;color:var(--steel);white-space:nowrap;max-width:' + c.width + ';overflow:hidden;text-overflow:ellipsis" title="' + String(val).replace(/"/g,'&quot;') + '">' + display + '</td>';
                 }
@@ -517,7 +529,7 @@
                     row[key] = field.value;
                 });
                 // Auto-calc OWLD
-                row.owld_days = _calcOWLD(row);
+                row.owld_date = _calcOWLD(row);
                 _logMilAudit('EDIT', rid, 'Updated milestone for ' + row.hull_number);
                 _milEditingId = null;
                 _saveMilRow(row);
@@ -586,7 +598,7 @@
         var payload = {};
         MIL_COLUMNS.forEach(function(c) { if (row[c.key] !== undefined) payload[c.key] = row[c.key]; });
         payload.program_name = row.program_name;
-        payload.owld_days = row.owld_days;
+        payload.owld_date = row.owld_date;
         payload.org_id = row.org_id || sessionStorage.getItem('s4_org_id') || '';
         payload.user_email = row.user_email || sessionStorage.getItem('s4_user_email') || '';
         if (row.acquisition_plan_id) payload.acquisition_plan_id = row.acquisition_plan_id;
@@ -627,7 +639,7 @@
             pm_estimated_delivery: '',
             sail_away_date: '',
             arrival_date: '',
-            owld_days: 0,
+            owld_date: '',
             notes: ''
         };
         _milData.push(newRow);
@@ -1016,7 +1028,7 @@
         if (!ids.length) return;
         ids.forEach(function(rid) {
             var row = _findRow(rid);
-            if (row) { row.delivery_status = status; row.owld_days = _calcOWLD(row); _saveMilRow(row); _logMilAudit('BULK_STATUS', rid, status); }
+            if (row) { row.delivery_status = status; row.owld_date = _calcOWLD(row); _saveMilRow(row); _logMilAudit('BULK_STATUS', rid, status); }
         });
         _milBulkSelected = {};
         _renderMilGrid(); _renderMilDashboard(); _updateMilStats();
@@ -1089,10 +1101,7 @@
         if (!colDef) return false;
         var oldVal = row[fieldKey];
         row[fieldKey] = newValue;
-        row.owld_days = _calcOWLD(row);
-        // Auto-set status based on OWLD
-        if (Math.abs(row.owld_days) > 60) row.delivery_status = 'Delayed';
-        else if (Math.abs(row.owld_days) > 30) row.delivery_status = 'At Risk';
+        row.owld_date = _calcOWLD(row);
         _logMilAudit('AI_UPDATE', row.id || row._localId, 'AI changed ' + colDef.label + ' from "' + (oldVal || '') + '" to "' + newValue + '" — ' + (reason || 'auto-detected'));
         _saveMilRow(row);
         _renderMilGrid(); _renderMilDashboard(); _updateMilStats();
@@ -1156,7 +1165,7 @@
                 var clean = {};
                 MIL_COLUMNS.forEach(function(c) { clean[c.key] = r[c.key] || ''; });
                 clean.program_name = r.program_name;
-                clean.owld_days = r.owld_days;
+                clean.owld_date = r.owld_date;
                 return clean;
             }));
             anchorToXRPL(payload, 'Program Milestones');
