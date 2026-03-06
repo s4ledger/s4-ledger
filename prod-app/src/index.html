@@ -925,6 +925,11 @@
                         <div class="itc-title">Acquisition Planner</div>
                         <div class="itc-desc">Multi-year service craft acquisition tracker — hull lifecycle, POM funding, ROH, and material condition.</div>
                     </div>
+                    <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-milestones')">
+                        <span class="itc-icon"><i class="fas fa-flag-checkered" style="color:#a855f7;"></i></span>
+                        <div class="itc-title">Program Milestones</div>
+                        <div class="itc-desc">Track vessel construction milestones — contract award through delivery, OWLD variance, and Gantt timeline.</div>
+                    </div>
 
                 </div>
                 <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>Credits: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> Credits</span><span style="color:#00aaff;margin-left:8px"><i class="fas fa-robot" style="margin-right:4px"></i>AI Agent Active</span></div><div class="s4-thumbs" id="toolThumbsFeedback"><span>Helpful?</span><button class="s4-thumb" data-positive="true" onclick="thumbFeedback(window._currentILSTool||'',true)" title="Yes"><i class="fas fa-thumbs-up"></i></button><button class="s4-thumb" data-positive="false" onclick="thumbFeedback(window._currentILSTool||'',false)" title="No"><i class="fas fa-thumbs-down"></i></button></div></div></div>
@@ -2945,6 +2950,112 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- ══ HUB: PROGRAM MILESTONE TRACKER (Phase 2) ══ -->
+            <div class="ils-hub-panel" id="hub-milestones">
+                <div class="row"><div class="col-lg-12"><div class="demo-card">
+                    <h3 style="display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-flag-checkered" style="color:#a855f7"></i> Program Milestone Tracker
+                        <button onclick="showAddActionModal('milestones')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button>
+                    </h3>
+
+                    <details style="display:none;margin-bottom:1rem;background:rgba(168,85,247,0.04);border:1px solid rgba(168,85,247,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#a855f7;font-weight:600;font-size:0.85rem;">
+                            <i class="fas fa-info-circle"></i> How Program Milestones Works
+                        </summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">What this tool does:</strong> The Program Milestone Tracker replaces legacy spreadsheets and NAVSEA milestone tracking systems for managing vessel construction lifecycle events — from contract award through delivery. Track OWLD (Over/Under Working Level Days) variance, builders trials, acceptance trials, and delivery status across all programs.</p>
+                            <p><strong style="color:#a855f7;">Step-by-step:</strong></p>
+                            <ol style="margin:0 0 8px 16px;padding:0;">
+                                <li>Add vessel milestones manually or import from CSV/Excel</li>
+                                <li>Track each vessel through contract award → construction → trials → delivery</li>
+                                <li>Monitor OWLD variance — days ahead or behind contract delivery date</li>
+                                <li>Switch between programs (PMS 300, PMS 325, PMS 501, etc.)</li>
+                                <li>View the interactive Gantt chart with diamond milestone markers</li>
+                                <li>Edit vessel types per program via the Vessel Type Editor</li>
+                                <li>AI auto-update: when comms mention date changes, milestones update automatically</li>
+                                <li>Anchor milestone data to XRPL for tamper-proof verification</li>
+                            </ol>
+                            <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense shipbuilding programs spend significant resources manually tracking milestone dates across dozens of contractors and stakeholders. Version conflicts, missed OWLD alerts, and manual Gantt creation waste thousands of staff-hours. S4 Ledger consolidates all milestone data with AI-powered auto-updates from communications, ensuring PMs are always working with current data.</p>
+                        </div>
+                    </details>
+
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Track vessel construction milestones from contract award through delivery. Monitor OWLD variance, builders/acceptance trials, and delivery status across all programs.</p>
+
+                    <!-- Dashboard Summary Cards -->
+                    <div id="milDashboardCards"></div>
+
+                    <!-- Program Switcher -->
+                    <div id="milProgramSwitcher" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:8px 0;border-bottom:1px solid var(--border)"></div>
+
+                    <!-- Toolbar -->
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center">
+                        <button class="ai-quick-btn" onclick="milAddRow()" style="background:rgba(168,85,247,0.2);border-color:rgba(168,85,247,0.4);color:#a855f7;font-weight:700"><i class="fas fa-plus"></i> Add Milestone</button>
+                        <button class="ai-quick-btn" onclick="milShowVesselTypeEditor()"><i class="fas fa-ship"></i> Vessel Types</button>
+                        <button class="ai-quick-btn" onclick="milImportCSV()"><i class="fas fa-upload"></i> Import CSV</button>
+                        <button class="ai-quick-btn" onclick="milExportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+                        <button class="ai-quick-btn" onclick="milExportXLSX()"><i class="fas fa-file-excel"></i> Export Excel</button>
+                        <button class="ai-quick-btn" onclick="milToggleView('gantt')" style="background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.3);color:#a855f7"><i class="fas fa-chart-gantt"></i> Gantt Chart</button>
+                        <button class="ai-quick-btn" onclick="milToggleView('grid')"><i class="fas fa-table"></i> Grid</button>
+                        <button class="ai-quick-btn" onclick="milPrintReport()" style="background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.25);color:#c9a84c"><i class="fas fa-print"></i> Print Report</button>
+                        <button class="ai-quick-btn" onclick="milShowAuditLog()" style="background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.25);color:#c9a84c"><i class="fas fa-history"></i> Audit Log</button>
+                        <span style="flex:1"></span>
+                        <input type="text" id="milSearchInput" placeholder="Search hull, builder, program..." oninput="milFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:#fff;border-radius:3px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
+                        <button onclick="anchorMilestones()" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;border-radius:3px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to XRPL</button>
+                    </div>
+
+                    <!-- Bulk Actions Bar -->
+                    <div id="milBulkBar" style="display:none;align-items:center;gap:8px;padding:8px 12px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);border-radius:3px;margin-bottom:12px;flex-wrap:wrap">
+                        <span id="milBulkCount" style="color:#a855f7;font-weight:600;font-size:0.82rem">0 selected</span>
+                        <button class="ai-quick-btn" onclick="milBulkSetStatus('On Track')" style="font-size:0.75rem;padding:4px 8px"><i class="fas fa-check"></i> On Track</button>
+                        <button class="ai-quick-btn" onclick="milBulkSetStatus('Complete')" style="font-size:0.75rem;padding:4px 8px"><i class="fas fa-flag-checkered"></i> Complete</button>
+                        <button class="ai-quick-btn" onclick="milBulkSetStatus('Delayed')" style="font-size:0.75rem;padding:4px 8px;background:rgba(255,51,51,0.1);border-color:rgba(255,51,51,0.2);color:#ff3333"><i class="fas fa-clock"></i> Delayed</button>
+                        <button class="ai-quick-btn" onclick="milBulkDelete()" style="font-size:0.75rem;padding:4px 8px;background:rgba(255,51,51,0.15);border-color:rgba(255,51,51,0.3);color:#ff3333"><i class="fas fa-trash"></i> Delete Selected</button>
+                    </div>
+
+                    <!-- Status Filter Bar -->
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">
+                        <button class="ai-quick-btn mil-status-filter-btn" data-status="On Track" onclick="milFilterByStatus('On Track')" style="font-size:0.7rem;padding:3px 8px;background:rgba(78,203,113,0.1);border-color:rgba(78,203,113,0.2);color:#4ecb71">On Track</button>
+                        <button class="ai-quick-btn mil-status-filter-btn" data-status="At Risk" onclick="milFilterByStatus('At Risk')" style="font-size:0.7rem;padding:3px 8px;background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.2);color:#c9a84c">At Risk</button>
+                        <button class="ai-quick-btn mil-status-filter-btn" data-status="Delayed" onclick="milFilterByStatus('Delayed')" style="font-size:0.7rem;padding:3px 8px;background:rgba(255,68,68,0.1);border-color:rgba(255,68,68,0.2);color:#ff4444">Delayed</button>
+                        <button class="ai-quick-btn mil-status-filter-btn" data-status="Complete" onclick="milFilterByStatus('Complete')" style="font-size:0.7rem;padding:3px 8px;background:rgba(0,204,136,0.1);border-color:rgba(0,204,136,0.2);color:#00cc88">Complete</button>
+                        <button class="ai-quick-btn mil-status-filter-btn" data-status="Cancelled" onclick="milFilterByStatus('Cancelled')" style="font-size:0.7rem;padding:3px 8px;background:rgba(139,148,158,0.1);border-color:rgba(139,148,158,0.2);color:#8b949e">Cancelled</button>
+                    </div>
+
+                    <!-- Stats Bar -->
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:16px">
+                        <div class="stat-mini"><div class="stat-mini-val" id="milStatTotal" style="color:#a855f7">0</div><div class="stat-mini-lbl">Total Milestones</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" id="milStatOnTrack" style="color:#4ecb71">0</div><div class="stat-mini-lbl">On Track</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" id="milStatAtRisk" style="color:#c9a84c">0</div><div class="stat-mini-lbl">At Risk</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" id="milStatDelayed" style="color:#ff4444">0</div><div class="stat-mini-lbl">Delayed</div></div>
+                        <div class="stat-mini"><div class="stat-mini-val" id="milStatOWLD" style="color:#c9a84c">0d</div><div class="stat-mini-lbl">Avg OWLD</div></div>
+                    </div>
+
+                    <!-- Data Grid -->
+                    <div id="milGridContainer" style="max-height:600px;overflow:auto;">
+                        <div style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem">
+                            <i class="fas fa-flag-checkered" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>
+                            Loading milestone data...
+                        </div>
+                    </div>
+
+                    <!-- Gantt Chart View (hidden by default) -->
+                    <div id="milGanttView" style="display:none;"></div>
+
+                    <!-- AI Quick Buttons -->
+                    <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:3px">
+                        <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:#a855f7;margin-right:6px"></i><strong>AI Assistant</strong> — Ask about your milestones</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px">
+                            <button class="ai-quick-btn" onclick="aiAsk('Summarize my milestone status')">Milestone Summary</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Which vessels are delayed?')">Delayed Vessels</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Show vessels at risk of OWLD')">OWLD Risk</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('What trials are upcoming?')">Upcoming Trials</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Draft a milestone status brief')">Status Brief</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Compare planned vs actual delivery dates')">Delivery Variance</button>
+                        </div>
+                    </div>
+                </div></div></div>
             </div>
 
 

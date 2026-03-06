@@ -42,6 +42,9 @@ import './js/enhancements.js'
 // ── Acquisition Planner ─────────────────────────────────────────
 import './js/acquisition.js'
 
+// ── Program Milestone Tracker (Phase 2) ─────────────────────────
+import './js/milestones.js'
+
 // ── Platform Walkthrough & Feedback ─────────────────────────────
 import './js/walkthrough.js'
 

@@ -170,6 +170,7 @@ function openILSTool(toolId) {
     if (toolId === 'hub-lifecycle') { if (typeof calcLifecycle === 'function') calcLifecycle(); }
     if (toolId === 'hub-analysis') { if (typeof initILSChecklist === 'function') initILSChecklist(); }
     if (toolId === 'hub-acquisition') { if (typeof initAcquisitionPlanner === 'function') initAcquisitionPlanner(); }
+    if (toolId === 'hub-milestones') { if (typeof initMilestoneTracker === 'function') initMilestoneTracker(); }
     
     // Update floating AI agent context
     if (typeof updateAiContext === 'function') updateAiContext(toolId);
