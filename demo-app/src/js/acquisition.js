@@ -194,10 +194,10 @@
         // Status + Condition row as clean compact dropdowns
         html += '<div style="display:flex;gap:10px;margin-bottom:16px">';
         // Status breakdown dropdown
-        html += '<div class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible" onclick="acqToggleDashDD(event,\'acqDDStatus\')">'; 
+        html += '<div id="acqDDStatusTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#00aaff;font-weight:700;font-size:1rem">' + totalVessels + '</span> <span style="color:var(--steel);font-size:0.82rem">across ' + Object.keys(statusCounts).length + ' statuses</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Status Breakdown</div>';
-        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)" onclick="event.stopPropagation()">';
+        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         ACQ_STATUSES.forEach(function(s) {
             var cnt = statusCounts[s] || 0;
             var sc = ACQ_STATUS_COLORS[s] || '#8b949e';
@@ -209,11 +209,11 @@
         // Material condition dropdown
         var condColors = {Excellent:'#4ecb71',Good:'#00aaff',Fair:'#c9a84c',Poor:'#ff9500',Critical:'#ff3333',Unknown:'#555'};
         var condOrder = ['Excellent','Good','Fair','Poor','Critical'];
-        html += '<div class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible" onclick="acqToggleDashDD(event,\'acqDDCond\')">'; 
+        html += '<div id="acqDDCondTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
         var topCond = Object.keys(condCounts).sort(function(a,b){ return condCounts[b]-condCounts[a]; })[0] || '-';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:' + (condColors[topCond]||'#555') + ';font-weight:700;font-size:1rem">' + topCond + '</span> <span style="color:var(--muted);font-size:0.82rem">most common (' + (condCounts[topCond]||0) + ')</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Material Condition</div>';
-        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)" onclick="event.stopPropagation()">';
+        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         condOrder.forEach(function(c) {
             var cnt = condCounts[c] || 0;
             var cc = condColors[c] || '#555';
@@ -226,6 +226,31 @@
         html += '</div></div>';
         html += '</div>';
         el.innerHTML = html;
+        // Attach dropdown click handlers via DOM (no inline onclick)
+        var statusTrigger = document.getElementById('acqDDStatusTrigger');
+        var condTrigger = document.getElementById('acqDDCondTrigger');
+        var statusPanel = document.getElementById('acqDDStatus');
+        var condPanel = document.getElementById('acqDDCond');
+        function closeAll() { if (statusPanel) statusPanel.style.display = 'none'; if (condPanel) condPanel.style.display = 'none'; }
+        if (statusTrigger && statusPanel) {
+            statusTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var show = statusPanel.style.display !== 'block';
+                closeAll();
+                if (show) statusPanel.style.display = 'block';
+            });
+            statusPanel.addEventListener('click', function(e) { e.stopPropagation(); });
+        }
+        if (condTrigger && condPanel) {
+            condTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var show = condPanel.style.display !== 'block';
+                closeAll();
+                if (show) condPanel.style.display = 'block';
+            });
+            condPanel.addEventListener('click', function(e) { e.stopPropagation(); });
+        }
+        document.addEventListener('click', function() { closeAll(); });
     }
 
     // -- Grid Rendering --
@@ -887,19 +912,6 @@
         _renderGantt();
     }
     window.acqToggleGantt = acqToggleGantt;
-
-    window.acqToggleDashDD = function(e, id) {
-        e.stopPropagation();
-        var panel = document.getElementById(id);
-        if (!panel) return;
-        var show = panel.style.display !== 'block';
-        // close all open panels first
-        document.querySelectorAll('#acqDDStatus,#acqDDCond').forEach(function(p) { p.style.display = 'none'; });
-        if (show) panel.style.display = 'block';
-    };
-    document.addEventListener('click', function() {
-        document.querySelectorAll('#acqDDStatus,#acqDDCond').forEach(function(p) { p.style.display = 'none'; });
-    });
 
     function _renderGantt() {
         var el = document.getElementById('acqGanttView');
