@@ -196,10 +196,7 @@ function openILSTool(toolId) {
             overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
             document.body.appendChild(overlay);
         }
-        if(!localStorage.getItem(key)){
-            localStorage.setItem(key,'1');
-            setTimeout(showHIWModal, 300);
-        }
+        // ? button always available — no auto-popup
         var h3 = panel.querySelector('h3') || panel.querySelector('h4') || panel.querySelector('.hub-tool-header h4') || panel.querySelector('h5');
         if(h3 && !h3.querySelector('.hiw-help-btn')){
             var btn = document.createElement('button');
@@ -734,14 +731,14 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.onclick = function(e){ e.stopPropagation(); showHIWModal(); };
             h3.appendChild(btn);
         }
-        // On first visit to these tabs, auto-show
-        document.addEventListener('shown.bs.tab', function(e) {
-            var target = e.target.getAttribute('href') || e.target.getAttribute('data-bs-target');
-            if (target === '#' + tabId && !localStorage.getItem(key)) {
-                localStorage.setItem(key, '1');
-                setTimeout(showHIWModal, 300);
-            }
-        });
+        // On first visit to these tabs, auto-show — DISABLED (? button always available)
+        // document.addEventListener('shown.bs.tab', function(e) {
+        //     var target = e.target.getAttribute('href') || e.target.getAttribute('data-bs-target');
+        //     if (target === '#' + tabId && !localStorage.getItem(key)) {
+        //         localStorage.setItem(key, '1');
+        //         setTimeout(showHIWModal, 300);
+        //     }
+        // });
     });
 });
 
