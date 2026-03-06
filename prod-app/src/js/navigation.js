@@ -171,6 +171,7 @@ function openILSTool(toolId) {
     if (toolId === 'hub-analysis') { if (typeof initILSChecklist === 'function') initILSChecklist(); }
     if (toolId === 'hub-acquisition') { if (typeof initAcquisitionPlanner === 'function') initAcquisitionPlanner(); }
     if (toolId === 'hub-milestones') { if (typeof initMilestoneTracker === 'function') initMilestoneTracker(); }
+    if (toolId === 'hub-brief') { if (typeof initBriefEngine === 'function') initBriefEngine(); }
     
     // Update floating AI agent context
     if (typeof updateAiContext === 'function') updateAiContext(toolId);

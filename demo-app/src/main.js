@@ -43,6 +43,9 @@ import './js/acquisition.js'
 // ── Program Milestone Tracker (Phase 2) ─────────────────────────
 import './js/milestones.js'
 
+// ── Program Brief Engine (Phase 3) ──────────────────────────────
+import './js/brief.js'
+
 // ── Platform Walkthrough & Feedback ─────────────────────────────
 import './js/walkthrough.js'
 

@@ -960,6 +960,12 @@
                         <div class="itc-desc">Track vessel construction milestones — contract award through delivery, OWLD variance, and Gantt timeline.</div>
                     </div>
 
+                    <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-brief')">
+                        <span class="itc-icon"><i class="fas fa-briefcase" style="color:#00aaff;"></i></span>
+                        <div class="itc-title">Program Brief Engine</div>
+                        <div class="itc-desc">Create slide-based briefs — POM, PB, ILSMT, ILSMP, IPR, Milestone Review — with templates, editing, and PPTX import.</div>
+                    </div>
+
                 </div>
                 <div id="ilsToolBackBar" style="display:none;margin-bottom:12px;"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><button class="back-btn" onclick="closeILSTool()" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:6px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back to Tools</button><div id="toolSlsStrip" style="display:flex;align-items:center;gap:14px;padding:6px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;font-size:0.78rem"><span style="color:var(--steel)"><i class="fas fa-coins" style="color:#c9a84c;margin-right:4px"></i>Credits: <strong id="toolSlsBal" style="color:#c9a84c">--</strong></span><span style="color:var(--steel)"><i class="fas fa-anchor" style="color:var(--accent);margin-right:4px"></i>Anchors: <strong id="toolSlsAnch" style="color:var(--accent)">0</strong></span><span style="color:var(--steel)"><i class="fas fa-bolt" style="color:var(--accent);margin-right:4px"></i>Spent: <strong id="toolSlsSpent" style="color:var(--accent)">0.00</strong> Credits</span><span style="color:#00aaff;margin-left:8px"><i class="fas fa-robot" style="margin-right:4px"></i>AI Agent Active</span></div><div class="s4-thumbs" id="toolThumbsFeedback"><span>Helpful?</span><button class="s4-thumb" data-positive="true" onclick="thumbFeedback(window._currentILSTool||'',true)" title="Yes"><i class="fas fa-thumbs-up"></i></button><button class="s4-thumb" data-positive="false" onclick="thumbFeedback(window._currentILSTool||'',false)" title="No"><i class="fas fa-thumbs-down"></i></button></div></div></div>
 
@@ -2830,6 +2836,60 @@
                             <button class="ai-quick-btn" onclick="aiAsk('What trials are upcoming?')">Upcoming Trials</button>
                             <button class="ai-quick-btn" onclick="aiAsk('Draft a milestone status brief')">Status Brief</button>
                             <button class="ai-quick-btn" onclick="aiAsk('Compare planned vs actual delivery dates')">Delivery Variance</button>
+                        </div>
+                    </div>
+                </div></div></div>
+            </div>
+
+            <!-- ══ HUB: PROGRAM BRIEF ENGINE (Phase 3) ══ -->
+            <div class="ils-hub-panel" id="hub-brief">
+                <div class="row"><div class="col-lg-12"><div class="demo-card">
+                    <h3 style="display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-briefcase" style="color:#00aaff"></i> Program Brief Engine
+                        <button onclick="showAddActionModal('brief')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button>
+                    </h3>
+
+                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
+                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;">
+                            <i class="fas fa-info-circle"></i> How Program Brief Engine Works
+                        </summary>
+                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
+                            <p><strong style="color:#fff;">What this tool does:</strong> The Program Brief Engine replaces manual PowerPoint creation for defense program briefs. Create professional slide-based briefs from templates — Program Status, Milestone Review, POM, President's Budget, ILSMT, ILSMP, and IPR — with auto-populated data from your platform.</p>
+                            <p><strong style="color:#00aaff;">Step-by-step:</strong></p>
+                            <ol style="margin:0 0 8px 16px;padding:0;">
+                                <li>Choose a brief template (POM, PB, ILSMT, ILSMP, IPR, Status, or Milestone Review)</li>
+                                <li>Platform data auto-populates into slide content</li>
+                                <li>Edit slides with the formatting toolbar — font, size, color, alignment, images</li>
+                                <li>Add, delete, duplicate, and reorder slides</li>
+                                <li>Customize the Slide Master for consistent branding</li>
+                                <li>Set permissions — private, team, org, or public sharing</li>
+                                <li>Export to printable HTML or anchor to the Ledger for tamper-proof verification</li>
+                                <li>Import existing PPTX files to continue editing in-platform</li>
+                            </ol>
+                            <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense programs spend hundreds of staff-hours per year creating, updating, and distributing briefs across PowerPoint, email, and SharePoint. Version conflicts, classification marking errors, and lost context waste resources. S4 Ledger consolidates brief creation with auto-populated program data, permission-based access, and immutable audit trail via Ledger anchoring.</p>
+                        </div>
+                    </details>
+
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Create, edit, and share slide-based program briefs. Choose from 7 DoD brief templates with auto-populated data, formatting tools, and Ledger anchoring.</p>
+
+                    <!-- Brief Engine Container -->
+                    <div id="briefContainer">
+                        <div style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem">
+                            <i class="fas fa-briefcase" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>
+                            Loading brief engine...
+                        </div>
+                    </div>
+
+                    <!-- AI Quick Buttons -->
+                    <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:3px">
+                        <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong>AI Assistant</strong> — Ask about your briefs</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px">
+                            <button class="ai-quick-btn" onclick="aiAsk('Draft a program status brief')">Status Brief</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Create a POM brief for my program')">POM Brief</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Generate an ILSMT meeting brief')">ILSMT Brief</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Draft an IPR update brief')">IPR Brief</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Summarize milestone status for a brief')">Milestone Summary</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Help me write executive summary content')">Executive Summary</button>
                         </div>
                     </div>
                 </div></div></div>
