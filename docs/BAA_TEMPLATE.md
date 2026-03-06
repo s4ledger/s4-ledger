@@ -98,7 +98,7 @@ S4 Ledger is designed to be compatible with CMMC Level 2-ready environments. The
 
 ### 3.4 ILS Workspace Tools
 
-S4 Ledger v5.11.1 includes a comprehensive ILS Workspace with 20+ integrated tools:
+S4 Ledger v5.11.1 includes a comprehensive ILS Workspace with 24+ integrated tools:
 
 1. **Gap Analysis** — MIL-STD-1388 compliance checklists for 500+ defense platforms across 9 branches
 2. **Action Items** — Task tracking with priority, assignment, and deadline management
@@ -113,6 +113,17 @@ S4 Ledger v5.11.1 includes a comprehensive ILS Workspace with 20+ integrated too
 11. **Audit Report Generator** — One-click audit report generation with blockchain-verified evidence packages
 12. **Predictive Maintenance AI** — AI-driven failure prediction and maintenance scheduling optimization
 13. **Submission Review & Discrepancy Analyzer (ILIE)** — AI-powered submission review with severity-rated discrepancy reports
+14. **SBOM Viewer** — Software Bill of Materials tracking with CVE monitoring and EO 14028 compliance
+15. **GFP Tracker** — Government-furnished property accountability and DPAS compliance
+16. **CDRL Validator** — DD-1423 specification validation with automated compliance checks
+17. **Contract Extractor** — AI-powered extraction of key terms, CLINs, and deliverables
+18. **Provenance Chain** — End-to-end supply chain provenance with blockchain-verified custody
+19. **Cross-Program Analytics** — Aggregate ILS metrics across programs for fleet-wide trends
+20. **Team Management** — Role-based access control, task assignment, and collaboration
+21. **Acquisition Planner** — Multi-year service craft acquisition tracker with POM funding and ROH scheduling
+22. **Program Milestone Tracker** — Vessel construction milestones with OWLD variance and Gantt timeline
+23. **Program Brief Engine** — Slide-based brief generator with DoD templates, program/vessel selectors, and collaborative comments
+24. **Verify Records** — Independent hash verification of any anchored record
 
 > **Companion Product:** S4 Systems also offers **HarborLink**, a collaboration portal providing parts cross-reference, contract lifecycle management, provisioning (ICAPS replacement), warranty tracking, configuration management, scheduling, and defense database import/export.
 

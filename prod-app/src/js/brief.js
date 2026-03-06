@@ -13,7 +13,7 @@
     // ================================================================
     var BRIEF_TYPES = {
         STATUS:    { label: 'Program Status Brief', icon: 'fa-chart-bar', color: '#00aaff' },
-        MILESTONE: { label: 'Milestone Review', icon: 'fa-flag-checkered', color: '#a855f7' },
+        MILESTONE: { label: 'Milestone Review', icon: 'fa-flag-checkered', color: '#00aaff' },
         POM:       { label: 'POM Brief', icon: 'fa-file-invoice-dollar', color: '#4ecb71' },
         PB:        { label: "President's Budget Brief", icon: 'fa-landmark', color: '#c9a84c' },
         ILSMT:     { label: 'ILSMT Brief', icon: 'fa-users-cog', color: '#00cc88' },
@@ -38,6 +38,24 @@
     var FONT_OPTIONS = ['Inter','Arial','Helvetica','Georgia','Times New Roman','Courier New','Verdana','Trebuchet MS','Tahoma'];
     var FONT_SIZES = [10,12,14,16,18,20,24,28,32,36,42,48,60,72];
 
+    var DEFAULT_PROGRAMS = [
+        'PMS 300 \u2014 DDG 51 Class',
+        'PMS 325 \u2014 LCS',
+        'PMS 377 \u2014 Mine Countermeasures',
+        'PMS 400 \u2014 VIRGINIA Class',
+        'PMS 501 \u2014 Columbia Class',
+        'Strategic Programs'
+    ];
+
+    var DEFAULT_VESSELS = {
+        'PMS 300 \u2014 DDG 51 Class': ['DDG 125 Jack H. Lucas', 'DDG 126 Sam Nunn', 'DDG 127 Patrick Gallagher', 'DDG 128 Ted Stevens'],
+        'PMS 325 \u2014 LCS': ['LCS 31 Cleveland', 'LCS 32 Santa Barbara', 'LCS 33 Williamsport'],
+        'PMS 377 \u2014 Mine Countermeasures': ['MCM 14 Chief', 'MCM Avenger Class'],
+        'PMS 400 \u2014 VIRGINIA Class': ['SSN 800 Arkansas', 'SSN 801 Utah', 'SSN 802 Oklahoma'],
+        'PMS 501 \u2014 Columbia Class': ['SSBN 826 District of Columbia', 'SSBN 827 Wisconsin'],
+        'Strategic Programs': ['Fleet-wide', 'Shore-based Systems']
+    };
+
     // ================================================================
     //  STATE
     // ================================================================
@@ -50,11 +68,17 @@
     var _redoStack = [];
     var _isDirty = false;
     var _currentView = 'list';  // 'list' | 'editor'
+    var _programs = [];
+    var _vessels = {};
+    var _selectedProgram = '';
+    var _selectedVessel = '';
+    var _showComments = false;
 
     // ================================================================
     //  INIT
     // ================================================================
     function initBriefEngine() {
+        _loadProgramsAndVessels();
         _loadBriefs(function () {
             _renderBriefList();
         });
@@ -82,10 +106,17 @@
 
     function _saveBrief(brief, cb) {
         if (!window._sbClient) { if (cb) cb(); return; }
+        var userEmail = brief.user_email || sessionStorage.getItem('s4_user_email') || '';
+        // Track edit history
+        if (!brief.edit_history) brief.edit_history = [];
+        brief.edit_history.push({ user: userEmail, action: 'saved', timestamp: new Date().toISOString() });
+        if (brief.edit_history.length > 200) brief.edit_history = brief.edit_history.slice(-200);
+
         var payload = {
             title: brief.title,
             brief_type: brief.brief_type,
             program_name: brief.program_name || '',
+            vessel_name: brief.vessel_name || '',
             slides_json: JSON.stringify(brief.slides),
             slide_master: JSON.stringify(brief.master || DEFAULT_MASTER),
             access_level: brief.access_level || 'private',
@@ -95,11 +126,14 @@
             anchor_hash: brief.anchor_hash || '',
             anchor_tx: brief.anchor_tx || '',
             org_id: brief.org_id || sessionStorage.getItem('s4_org_id') || '',
-            user_email: brief.user_email || sessionStorage.getItem('s4_user_email') || '',
+            user_email: userEmail,
             updated_at: new Date().toISOString()
         };
         if (brief.id) {
-            window._sbClient.from('program_briefs').update(payload).eq('id', brief.id).then(function () { if (cb) cb(); });
+            window._sbClient.from('program_briefs').update(payload).eq('id', brief.id).then(function () {
+                _notifyProgramUsers(brief, userEmail);
+                if (cb) cb();
+            });
         } else {
             window._sbClient.from('program_briefs').insert(payload).select().then(function (res) {
                 if (res.data && res.data[0]) { brief.id = res.data[0].id; }
@@ -184,7 +218,7 @@
                 ]),
                 _makeSlide('Milestone Status', [
                     _makeText(40, 40, 880, 40, 'Milestone Status Overview', { fontSize: 28, bold: true, color: '#ffffff' }),
-                    _makeShape(40, 88, 880, 2, { fill: '#a855f7', stroke: 'transparent' }),
+                    _makeShape(40, 88, 880, 2, { fill: '#00aaff', stroke: 'transparent' }),
                     _makeText(40, 110, 420, 160, '{{milestone_summary}}', { fontSize: 15, color: '#c9d1d9' }),
                     _makeText(480, 110, 440, 160, '{{schedule_variance}}', { fontSize: 15, color: '#c9d1d9' }),
                     _makeText(40, 290, 880, 200, '{{milestone_table}}', { fontSize: 14, color: '#c9d1d9' })
@@ -208,21 +242,21 @@
         return {
             brief_type: 'MILESTONE',
             title: 'Milestone Review Brief',
-            master: Object.assign({}, DEFAULT_MASTER, { accentColor: '#a855f7' }),
+            master: Object.assign({}, DEFAULT_MASTER, { accentColor: '#00aaff' }),
             slides: [
                 _makeSlide('Title Slide', [
                     _makeText(40, 40, 880, 60, 'Milestone Review', { fontSize: 36, bold: true, color: '#ffffff', align: 'center' }),
-                    _makeText(40, 120, 880, 30, '{{program_name}}', { fontSize: 20, color: '#a855f7', align: 'center' }),
+                    _makeText(40, 120, 880, 30, '{{program_name}}', { fontSize: 20, color: '#00aaff', align: 'center' }),
                     _makeText(40, 170, 880, 24, '{{date}}', { fontSize: 16, color: '#8b949e', align: 'center' })
                 ]),
                 _makeSlide('Delivery Timeline', [
                     _makeText(40, 40, 880, 40, 'Delivery Timeline', { fontSize: 28, bold: true, color: '#ffffff' }),
-                    _makeShape(40, 88, 880, 2, { fill: '#a855f7', stroke: 'transparent' }),
+                    _makeShape(40, 88, 880, 2, { fill: '#00aaff', stroke: 'transparent' }),
                     _makeText(40, 110, 880, 380, '{{milestone_gantt}}', { fontSize: 14, color: '#c9d1d9' })
                 ]),
                 _makeSlide('Status by Vessel', [
                     _makeText(40, 40, 880, 40, 'Status by Vessel', { fontSize: 28, bold: true, color: '#ffffff' }),
-                    _makeShape(40, 88, 880, 2, { fill: '#a855f7', stroke: 'transparent' }),
+                    _makeShape(40, 88, 880, 2, { fill: '#00aaff', stroke: 'transparent' }),
                     _makeText(40, 110, 880, 380, '{{vessel_status_table}}', { fontSize: 14, color: '#c9d1d9' })
                 ]),
                 _makeSlide('Schedule Variance', [
@@ -410,7 +444,7 @@
 
         var html = '';
         // Header toolbar
-        html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">';
+        html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">';
         html += '<div style="display:flex;align-items:center;gap:8px">';
         html += '<span style="color:var(--steel);font-size:0.85rem">' + _briefs.length + ' brief' + (_briefs.length !== 1 ? 's' : '') + '</span>';
         html += '</div>';
@@ -419,15 +453,52 @@
         html += '<button class="ai-quick-btn" onclick="briefImportPPTX()" style="background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.25);color:#a855f7"><i class="fas fa-file-powerpoint"></i> Import PPTX</button>';
         html += '</div></div>';
 
-        if (!_briefs.length) {
+        // ── Program & Vessel selectors ──
+        html += '<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;padding:10px 12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:6px">';
+        html += '<div style="display:flex;align-items:center;gap:6px">';
+        html += '<label style="color:var(--muted);font-size:0.78rem;white-space:nowrap"><i class="fas fa-project-diagram" style="color:#00aaff;margin-right:4px"></i>Program</label>';
+        html += '<select id="briefProgramSelect" onchange="briefSelectProgram(this.value)" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:5px 10px;font-size:0.8rem;min-width:200px">';
+        html += '<option value="">All Programs</option>';
+        _programs.forEach(function (p) {
+            html += '<option value="' + _esc(p) + '"' + (p === _selectedProgram ? ' selected' : '') + '>' + _esc(p) + '</option>';
+        });
+        html += '</select>';
+        html += '<button class="ai-quick-btn" onclick="briefAddProgram()" title="Add Custom Program" style="min-width:28px;padding:4px 6px"><i class="fas fa-plus"></i></button>';
+        html += '</div>';
+        if (_selectedProgram) {
+            var vessels = _vessels[_selectedProgram] || [];
+            html += '<div style="display:flex;align-items:center;gap:6px">';
+            html += '<label style="color:var(--muted);font-size:0.78rem;white-space:nowrap"><i class="fas fa-ship" style="color:#00cc88;margin-right:4px"></i>Vessel / Craft</label>';
+            html += '<select id="briefVesselSelect" onchange="briefSelectVessel(this.value)" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:5px 10px;font-size:0.8rem;min-width:200px">';
+            html += '<option value="">All Vessels</option>';
+            vessels.forEach(function (v) {
+                html += '<option value="' + _esc(v) + '"' + (v === _selectedVessel ? ' selected' : '') + '>' + _esc(v) + '</option>';
+            });
+            html += '</select>';
+            html += '<button class="ai-quick-btn" onclick="briefAddVessel()" title="Add Custom Vessel" style="min-width:28px;padding:4px 6px"><i class="fas fa-plus"></i></button>';
+            html += '</div>';
+        }
+        html += '</div>';
+
+        // Filter briefs by selected program/vessel
+        var filteredBriefs = _briefs;
+        if (_selectedProgram) {
+            filteredBriefs = filteredBriefs.filter(function (b) { return b.program_name === _selectedProgram; });
+        }
+        if (_selectedVessel) {
+            filteredBriefs = filteredBriefs.filter(function (b) { return b.vessel_name === _selectedVessel; });
+        }
+
+        if (!filteredBriefs.length) {
             html += '<div style="text-align:center;padding:60px 20px;color:var(--muted)">';
             html += '<i class="fas fa-briefcase" style="font-size:3rem;margin-bottom:16px;opacity:0.3"></i>';
-            html += '<p style="font-size:1.1rem;margin-bottom:8px">No briefs yet</p>';
+            html += '<p style="font-size:1.1rem;margin-bottom:8px">' + (_briefs.length ? 'No briefs match this filter' : 'No briefs yet') + '</p>';
             html += '<p style="font-size:0.85rem">Click "New Brief" to create from a template, or import an existing PPTX.</p>';
             html += '</div>';
         } else {
             html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">';
-            _briefs.forEach(function (b, idx) {
+            filteredBriefs.forEach(function (b) {
+                var idx = _briefs.indexOf(b);
                 var bt = BRIEF_TYPES[b.brief_type] || BRIEF_TYPES.STATUS;
                 var slides = [];
                 try { slides = typeof b.slides_json === 'string' ? JSON.parse(b.slides_json) : (b.slides_json || []); } catch (e) { slides = []; }
@@ -441,6 +512,12 @@
                 html += '<span>' + bt.label + '</span>';
                 html += '<span>' + slides.length + ' slide' + (slides.length !== 1 ? 's' : '') + '</span>';
                 html += '</div>';
+                if (b.program_name || b.vessel_name) {
+                    html += '<div style="font-size:0.7rem;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">';
+                    if (b.program_name) html += '<i class="fas fa-project-diagram" style="margin-right:3px"></i>' + _esc(b.program_name);
+                    if (b.vessel_name) html += ' &bull; <i class="fas fa-ship" style="margin-right:3px"></i>' + _esc(b.vessel_name);
+                    html += '</div>';
+                }
                 html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:0.72rem;color:var(--muted)">';
                 html += '<span>' + updStr + '</span>';
                 html += '<span style="padding:2px 6px;border-radius:3px;background:rgba(255,255,255,0.05)">' + (b.access_level || 'private') + '</span>';
@@ -481,13 +558,16 @@
         var brief = {
             title: tpl.title + ' — ' + new Date().toLocaleDateString(),
             brief_type: tpl.brief_type,
-            program_name: '',
+            program_name: _selectedProgram || '',
+            vessel_name: _selectedVessel || '',
             slides: JSON.parse(JSON.stringify(tpl.slides)),
             master: JSON.parse(JSON.stringify(tpl.master)),
             access_level: 'private',
             editors: [],
             viewers: [],
-            version: 1
+            version: 1,
+            comments: {},
+            edit_history: [{ user: sessionStorage.getItem('s4_user_email') || 'unknown', action: 'created', timestamp: new Date().toISOString() }]
         };
 
         // Auto-populate template variables from platform data
@@ -586,11 +666,14 @@
         _activeBrief = b;
         try { _activeBrief.slides = typeof b.slides_json === 'string' ? JSON.parse(b.slides_json) : (b.slides_json || []); } catch (e) { _activeBrief.slides = []; }
         try { _activeBrief.master = typeof b.slide_master === 'string' ? JSON.parse(b.slide_master) : (b.slide_master || Object.assign({}, DEFAULT_MASTER)); } catch (e) { _activeBrief.master = Object.assign({}, DEFAULT_MASTER); }
+        if (!_activeBrief.comments) _activeBrief.comments = {};
+        if (!_activeBrief.edit_history) _activeBrief.edit_history = [];
         _activeSlideIdx = 0;
         _selectedElement = null;
         _undoStack = [];
         _redoStack = [];
         _isDirty = false;
+        _showComments = false;
         _renderEditor();
     }
     window.briefOpen = briefOpen;
@@ -637,6 +720,8 @@
         html += '<button class="ai-quick-btn" onclick="briefShareSettings()" title="Share"><i class="fas fa-share-alt"></i></button>';
         html += '<button class="ai-quick-btn" onclick="briefExportHTML()" title="Export HTML"><i class="fas fa-print"></i></button>';
         html += '<button class="ai-quick-btn" onclick="briefAnchor()" title="Anchor to Ledger" style="background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.25);color:#c9a84c"><i class="fas fa-link"></i> Anchor</button>';
+        html += '<button class="ai-quick-btn" onclick="briefToggleComments()" title="Comments" style="' + (_showComments ? 'background:rgba(0,170,255,0.15);border-color:rgba(0,170,255,0.3);color:#00aaff' : '') + '"><i class="fas fa-comments"></i></button>';
+        html += '<button class="ai-quick-btn" onclick="briefShowHistory()" title="Edit History"><i class="fas fa-history"></i></button>';
         html += '<button class="ai-quick-btn" onclick="briefSaveNow()" title="Save" style="background:rgba(0,204,136,0.12);border-color:rgba(0,204,136,0.25);color:#00cc88"><i class="fas fa-save"></i></button>';
         html += '</div></div>';
 
@@ -708,6 +793,35 @@
         // Slide notes
         html += '<textarea id="briefSlideNotes" placeholder="Speaker notes..." style="width:100%;max-width:' + sw + 'px;height:60px;margin-top:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:3px;color:var(--steel);padding:6px 10px;font-size:0.78rem;resize:vertical" onchange="briefUpdateNotes(this.value)">' + _esc((slide && slide.notes) || '') + '</textarea>';
         html += '</div>';
+
+        // ── Comments panel (collapsible right side) ──
+        if (_showComments) {
+            html += '<div id="briefCommentsPanel" style="width:260px;min-width:220px;border:1px solid rgba(255,255,255,0.06);border-radius:4px;padding:10px;background:rgba(255,255,255,0.02);overflow-y:auto;max-height:620px">';
+            html += '<div style="font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:10px"><i class="fas fa-comments" style="color:#00aaff;margin-right:6px"></i>Slide Comments</div>';
+            var slideComments = (brief.comments && brief.comments[_activeSlideIdx]) || [];
+            if (slideComments.length) {
+                slideComments.forEach(function (c, ci) {
+                    var timeStr = c.timestamp ? new Date(c.timestamp).toLocaleString() : '';
+                    html += '<div style="padding:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:4px;margin-bottom:6px;font-size:0.78rem">';
+                    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+                    html += '<span style="color:#00aaff;font-weight:600;font-size:0.72rem">' + _esc(c.user || 'Unknown') + '</span>';
+                    html += '<span style="color:var(--muted);font-size:0.65rem">' + timeStr + '</span>';
+                    html += '</div>';
+                    html += '<div style="color:var(--steel);line-height:1.4">' + _esc(c.text) + '</div>';
+                    if (c.edited) html += '<div style="color:var(--muted);font-size:0.62rem;margin-top:2px;font-style:italic">(edited)</div>';
+                    html += '<div style="display:flex;gap:4px;margin-top:4px">';
+                    html += '<button class="ai-quick-btn" onclick="briefEditComment(' + _activeSlideIdx + ',' + ci + ')" style="font-size:0.65rem;padding:2px 6px"><i class="fas fa-pen"></i></button>';
+                    html += '<button class="ai-quick-btn" onclick="briefDeleteComment(' + _activeSlideIdx + ',' + ci + ')" style="font-size:0.65rem;padding:2px 6px;color:#ff4444"><i class="fas fa-trash"></i></button>';
+                    html += '</div></div>';
+                });
+            } else {
+                html += '<div style="text-align:center;padding:20px 8px;color:var(--muted);font-size:0.78rem">No comments on this slide</div>';
+            }
+            html += '<div style="margin-top:8px">';
+            html += '<textarea id="briefNewComment" placeholder="Add a comment..." style="width:100%;height:50px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:3px;color:var(--steel);padding:6px 8px;font-size:0.78rem;resize:vertical"></textarea>';
+            html += '<button class="ai-quick-btn" onclick="briefAddComment()" style="width:100%;margin-top:4px;background:rgba(0,170,255,0.12);border-color:rgba(0,170,255,0.25);color:#00aaff"><i class="fas fa-paper-plane"></i> Post Comment</button>';
+            html += '</div></div>';
+        }
 
         html += '</div>'; // end main layout
 
@@ -1251,6 +1365,207 @@
         }
     }
     window.briefAIGenerate = briefAIGenerate;
+
+    // ================================================================
+    //  PROGRAM & VESSEL MANAGEMENT
+    // ================================================================
+    function _loadProgramsAndVessels() {
+        try {
+            var stored = localStorage.getItem('s4_brief_programs');
+            _programs = stored ? JSON.parse(stored) : DEFAULT_PROGRAMS.slice();
+        } catch (e) { _programs = DEFAULT_PROGRAMS.slice(); }
+        try {
+            var storedV = localStorage.getItem('s4_brief_vessels');
+            _vessels = storedV ? JSON.parse(storedV) : JSON.parse(JSON.stringify(DEFAULT_VESSELS));
+        } catch (e) { _vessels = JSON.parse(JSON.stringify(DEFAULT_VESSELS)); }
+    }
+
+    function _saveProgramsAndVessels() {
+        try {
+            localStorage.setItem('s4_brief_programs', JSON.stringify(_programs));
+            localStorage.setItem('s4_brief_vessels', JSON.stringify(_vessels));
+        } catch (e) { /* storage full */ }
+    }
+
+    function briefSelectProgram(val) {
+        _selectedProgram = val;
+        _selectedVessel = '';
+        _renderBriefList();
+    }
+    window.briefSelectProgram = briefSelectProgram;
+
+    function briefSelectVessel(val) {
+        _selectedVessel = val;
+        _renderBriefList();
+    }
+    window.briefSelectVessel = briefSelectVessel;
+
+    function briefAddProgram() {
+        var html = '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:12px">Add a custom program to the dropdown.</div>';
+        html += '<input id="briefNewProgramInput" placeholder="e.g. PMS 500 — ZUMWALT Class" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.88rem;margin-bottom:12px">';
+        html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
+        html += '<button class="ai-quick-btn" onclick="briefConfirmAddProgram()"><i class="fas fa-check"></i> Add</button>';
+        html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
+        html += '</div>';
+        _showModal('Add Custom Program', html);
+        setTimeout(function () { var inp = document.getElementById('briefNewProgramInput'); if (inp) inp.focus(); }, 100);
+    }
+    window.briefAddProgram = briefAddProgram;
+
+    function briefConfirmAddProgram() {
+        var inp = document.getElementById('briefNewProgramInput');
+        var val = inp ? inp.value.trim() : '';
+        if (!val) { _toast('Enter a program name', 'warning'); return; }
+        if (_programs.indexOf(val) !== -1) { _toast('Program already exists', 'warning'); return; }
+        _programs.push(val);
+        _vessels[val] = [];
+        _saveProgramsAndVessels();
+        _closeModal();
+        _selectedProgram = val;
+        _selectedVessel = '';
+        _renderBriefList();
+        _toast('Program added', 'success');
+    }
+    window.briefConfirmAddProgram = briefConfirmAddProgram;
+
+    function briefAddVessel() {
+        if (!_selectedProgram) { _toast('Select a program first', 'warning'); return; }
+        var html = '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:12px">Add a vessel / craft to <strong style="color:#fff">' + _esc(_selectedProgram) + '</strong>.</div>';
+        html += '<input id="briefNewVesselInput" placeholder="e.g. DDG 129 Jeremiah Denton" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.88rem;margin-bottom:12px">';
+        html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
+        html += '<button class="ai-quick-btn" onclick="briefConfirmAddVessel()"><i class="fas fa-check"></i> Add</button>';
+        html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
+        html += '</div>';
+        _showModal('Add Custom Vessel / Craft', html);
+        setTimeout(function () { var inp = document.getElementById('briefNewVesselInput'); if (inp) inp.focus(); }, 100);
+    }
+    window.briefAddVessel = briefAddVessel;
+
+    function briefConfirmAddVessel() {
+        var inp = document.getElementById('briefNewVesselInput');
+        var val = inp ? inp.value.trim() : '';
+        if (!val) { _toast('Enter a vessel name', 'warning'); return; }
+        if (!_vessels[_selectedProgram]) _vessels[_selectedProgram] = [];
+        if (_vessels[_selectedProgram].indexOf(val) !== -1) { _toast('Vessel already exists', 'warning'); return; }
+        _vessels[_selectedProgram].push(val);
+        _saveProgramsAndVessels();
+        _closeModal();
+        _selectedVessel = val;
+        _renderBriefList();
+        _toast('Vessel added', 'success');
+    }
+    window.briefConfirmAddVessel = briefConfirmAddVessel;
+
+    // ================================================================
+    //  COMMENTS
+    // ================================================================
+    function briefToggleComments() {
+        _showComments = !_showComments;
+        _renderEditor();
+    }
+    window.briefToggleComments = briefToggleComments;
+
+    function briefAddComment() {
+        if (!_activeBrief) return;
+        var textarea = document.getElementById('briefNewComment');
+        var text = textarea ? textarea.value.trim() : '';
+        if (!text) { _toast('Enter a comment', 'warning'); return; }
+        if (!_activeBrief.comments) _activeBrief.comments = {};
+        if (!_activeBrief.comments[_activeSlideIdx]) _activeBrief.comments[_activeSlideIdx] = [];
+        var user = sessionStorage.getItem('s4_user_email') || 'Unknown User';
+        _activeBrief.comments[_activeSlideIdx].push({
+            id: _uid(),
+            user: user,
+            text: text,
+            timestamp: new Date().toISOString(),
+            edited: false
+        });
+        _isDirty = true;
+        // Auto-save to persist comment
+        _saveBrief(_activeBrief, function () {
+            _renderEditor();
+            _toast('Comment added', 'success');
+        });
+    }
+    window.briefAddComment = briefAddComment;
+
+    function briefEditComment(slideIdx, commentIdx) {
+        if (!_activeBrief || !_activeBrief.comments || !_activeBrief.comments[slideIdx]) return;
+        var comment = _activeBrief.comments[slideIdx][commentIdx];
+        if (!comment) return;
+        var html = '<textarea id="briefEditCommentText" style="width:100%;height:80px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.85rem;resize:vertical;margin-bottom:12px">' + _esc(comment.text) + '</textarea>';
+        html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
+        html += '<button class="ai-quick-btn" onclick="briefConfirmEditComment(' + slideIdx + ',' + commentIdx + ')"><i class="fas fa-check"></i> Save</button>';
+        html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
+        html += '</div>';
+        _showModal('Edit Comment', html);
+    }
+    window.briefEditComment = briefEditComment;
+
+    function briefConfirmEditComment(slideIdx, commentIdx) {
+        var textarea = document.getElementById('briefEditCommentText');
+        var text = textarea ? textarea.value.trim() : '';
+        if (!text) { _toast('Comment cannot be empty', 'warning'); return; }
+        var comment = _activeBrief.comments[slideIdx][commentIdx];
+        comment.text = text;
+        comment.edited = true;
+        comment.editedAt = new Date().toISOString();
+        _isDirty = true;
+        _closeModal();
+        _saveBrief(_activeBrief, function () {
+            _renderEditor();
+            _toast('Comment updated', 'success');
+        });
+    }
+    window.briefConfirmEditComment = briefConfirmEditComment;
+
+    function briefDeleteComment(slideIdx, commentIdx) {
+        if (!_activeBrief || !_activeBrief.comments || !_activeBrief.comments[slideIdx]) return;
+        _activeBrief.comments[slideIdx].splice(commentIdx, 1);
+        _isDirty = true;
+        _saveBrief(_activeBrief, function () {
+            _renderEditor();
+            _toast('Comment removed', 'info');
+        });
+    }
+    window.briefDeleteComment = briefDeleteComment;
+
+    // ================================================================
+    //  EDIT HISTORY
+    // ================================================================
+    function briefShowHistory() {
+        if (!_activeBrief) return;
+        var history = _activeBrief.edit_history || [];
+        var html = '';
+        if (!history.length) {
+            html += '<div style="text-align:center;padding:20px;color:var(--muted)">No edit history yet</div>';
+        } else {
+            html += '<div style="max-height:350px;overflow-y:auto">';
+            // Show most recent first
+            var recent = history.slice().reverse().slice(0, 50);
+            recent.forEach(function (entry) {
+                var timeStr = entry.timestamp ? new Date(entry.timestamp).toLocaleString() : '';
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.8rem">';
+                html += '<div><span style="color:#00aaff;font-weight:600">' + _esc(entry.user || 'Unknown') + '</span> <span style="color:var(--muted)">' + _esc(entry.action || '') + '</span></div>';
+                html += '<span style="color:var(--muted);font-size:0.72rem;white-space:nowrap">' + timeStr + '</span>';
+                html += '</div>';
+            });
+            html += '</div>';
+        }
+        _showModal('Edit History', html);
+    }
+    window.briefShowHistory = briefShowHistory;
+
+    // ================================================================
+    //  NOTIFICATIONS
+    // ================================================================
+    function _notifyProgramUsers(brief, currentUser) {
+        var recipients = [];
+        (brief.editors || []).forEach(function (e) { if (e && e !== currentUser) recipients.push(e); });
+        (brief.viewers || []).forEach(function (v) { if (v && v !== currentUser && recipients.indexOf(v) === -1) recipients.push(v); });
+        if (!recipients.length) return;
+        _toast('Notified ' + recipients.length + ' collaborator' + (recipients.length !== 1 ? 's' : '') + ' of your changes', 'info');
+    }
 
     // ================================================================
     //  UTILITIES
