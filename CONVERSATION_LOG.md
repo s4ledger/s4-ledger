@@ -1710,4 +1710,33 @@ Hull Type, Hull #, Need (Replacement/Disposal/Addition/SLE/Transfer), Requestor,
 - `src/js/acquisition.js` — `_renderDashboardCards()` dropdown section rewritten, old global toggle removed
 
 ---
+
+### Session 23: Anchor to Ledger Rename, Dashboard KPI Fix, PPTX Upload (commit `f572ac3`)
+
+**1. Rename "Anchor to XRPL" → "Anchor to Ledger" (platform-wide)**
+- User selected "Anchor to Ledger" from 6 rename options previously presented
+- Replaced all button text, animation labels, AI agent response strings, and descriptive text across both apps
+- 13 button instances per app (including variants: "Anchor SBOM to Ledger", "Anchor Review to Ledger", "Anchor Chain to Ledger", etc.)
+- Engine.js: animation status, button restore text, ILS report label, ~10 AI response strings
+- Engine.ts: button restore text
+- prod-app demo.html and public/demo.html updated
+
+**2. Milestone Dashboard KPI Overhaul**
+- **Next OWLD → Next Milestone:** Replaced single-field OWLD card with multi-field scan across 9 date types (construction_start, launch, builders_trials, acceptance_trials, contract_delivery, planned_delivery, pm_estimated_delivery, sail_away, arrival) for all active milestones. Shows nearest future date as "hull_number — date" with tooltip for overflow.
+- **Avg OWLD → Avg Days Behind:** Stats bar now shows average schedule slippage — calculated as mean of (pm_estimated_delivery − planned_delivery_date) in days for active milestones where PM estimate is later than planned. Display format: "Xd". Element ID changed from `milStatOWLD` to `milStatAvgBehind`.
+
+**3. PPTX Upload Feature (Upload Brief)**
+- Added JSZip 3.10.1 CDN script (cdnjs.cloudflare.com, already in CSP whitelist)
+- Added "Upload Brief" button with PowerPoint icon in milestone toolbar (after Import CSV)
+- `milUploadPPTX()` function: reads .pptx as ArrayBuffer → JSZip extracts ppt/slides/slide*.xml → strips XML tags for plain text → shows confirmation modal with text preview (3000 char truncation) → "Send to AI Agent" button populates AI chat with structured prompt (8000 char limit) and triggers send
+- Error handling via S4.toast notifications
+
+**Files changed (both apps):**
+- `src/index.html` — button text rename (13 instances), stats bar ID, JSZip CDN script, Upload Brief button
+- `src/js/engine.js` — anchor text rename (~10 instances: animation, button restore, AI responses)
+- `src/js/engine.ts` — button restore text rename
+- `src/js/milestones.js` — Next Milestone KPI card, Avg Days Behind stats, milUploadPPTX() function, anchor comment
+- `prod-app/demo.html`, `prod-app/public/demo.html` — button text rename
+
+---
 *This log is updated every session. Reference before making changes.*
