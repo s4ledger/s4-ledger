@@ -54,12 +54,12 @@
     <script defer src="/s4-assets/defense-docs.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-Dpbf6CLU.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-BZebSwGy.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-C7o_711T.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-BIh6UKiD.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-fb4Rg0jP.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-DqAJD6nX.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-BNdeV8Dd.css">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-WOrPWErj.css">
 </head>
 <body>
 <!-- Early theme restore + failsafe toggle (non-module, runs immediately) -->
@@ -2629,29 +2629,36 @@
                             <i class="fas fa-info-circle"></i> How Acquisition Planner Works
                         </summary>
                         <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#fff;">What this tool does:</strong> The Acquisition Planner replaces legacy spreadsheets for tracking 30+ year service craft and vessel acquisition lifecycles. Every hull type, hull number, POM funding status, material condition, ROH schedule, and justification is managed in a single auditable grid.</p>
+                            <p><strong style="color:#fff;">What this tool does:</strong> The Acquisition Planner replaces legacy spreadsheets for tracking 30+ year service craft and vessel acquisition lifecycles. Every hull type, hull number, POM funding status, material condition, ROH schedule, and justification is managed in a single auditable grid. Import directly from eNVCR, NVSRP, or any registry database.</p>
                             <p><strong style="color:#00aaff;">Step-by-step:</strong></p>
                             <ol style="margin:0 0 8px 16px;padding:0;">
-                                <li>Add vessel records with hull type, number, action need, and requestor</li>
+                                <li>Import existing data from eNVCR, CSV, JSON, or XML registries — or add records manually</li>
                                 <li>Track POM funded status, Navy region, custodian activity, and resource sponsors</li>
                                 <li>Monitor material condition, ROH costs, planned maintenance, and dry dock history</li>
-                                <li>Sort, filter, and search across all columns</li>
-                                <li>Export to CSV or Excel for briefs and reporting</li>
+                                <li>Switch between programs if your organization manages multiple vessel portfolios</li>
+                                <li>Visualize the acquisition timeline on the interactive Gantt chart</li>
+                                <li>Sort, filter, search, and export to CSV or Excel for briefs</li>
                                 <li>Anchor the full plan hash to XRPL for tamper-proof verification</li>
                             </ol>
-                            <p><strong style="color:#c9a84c;">Key benefit:</strong> Eliminates fragile spreadsheets. Every edit is tracked, every version is verifiable, and the entire acquisition plan is audit-proof on a secure verification ledger.</p>
+                            <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense programs spend $200K–$800K annually maintaining ad-hoc acquisition tracking spreadsheets across dozens of stakeholders. Version conflicts, lost data, and manual Gantt chart creation waste 500+ staff-hours per cycle. S4 Ledger’s Acquisition Planner consolidates all vessel lifecycle data into one auditable grid with auto-generated Gantt timelines, direct registry imports, and multi-program switching — eliminating 60–80% of tracking labor. Programs with 50+ vessels typically recover the full platform cost within a single POM cycle.</p>
+                            <p><strong style="color:#00aaff;">Production mode:</strong> Connects to eNVCR, NVSRP, and other vessel registries via file import (CSV, JSON, XML). Supabase-backed persistence ensures all edits are tracked, versioned, and available for audit. Multi-program support lets contractors and PMs manage multiple vessel portfolios from one workspace.</p>
                         </div>
                     </details>
 
-                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">30+ year service craft/vessel acquisition lifecycle tracker. Manage hull types, POM funding, ROH schedules, material condition, and full audit trails across all Navy programs.</p>
+                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">30+ year service craft/vessel acquisition lifecycle tracker. Import from eNVCR or other registries, manage hull types, POM funding, ROH schedules, and material condition across all your programs.</p>
+
+                    <!-- Program Switcher -->
+                    <div id="acqProgramSwitcher" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:8px 0;border-bottom:1px solid var(--border)"></div>
 
                     <!-- Toolbar -->
                     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center">
                         <button class="ai-quick-btn" onclick="acqAddRow()" style="background:rgba(0,170,255,0.2);border-color:var(--accent);font-weight:700"><i class="fas fa-plus"></i> Add Vessel</button>
+                        <button class="ai-quick-btn" onclick="acqImportDatabase()" title="Import from eNVCR, NVSRP, or other registry (CSV, JSON, XML)"><i class="fas fa-database"></i> Import Registry</button>
                         <button class="ai-quick-btn" onclick="acqImportCSV()"><i class="fas fa-upload"></i> Import CSV</button>
                         <button class="ai-quick-btn" onclick="acqExportCSV()"><i class="fas fa-download"></i> Export CSV</button>
                         <button class="ai-quick-btn" onclick="acqExportXLSX()"><i class="fas fa-file-excel"></i> Export Excel</button>
                         <button class="ai-quick-btn" onclick="acqToggleView('summary')"><i class="fas fa-chart-pie"></i> Summary</button>
+                        <button class="ai-quick-btn" onclick="acqToggleView('gantt')" style="background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.3);color:#a855f7"><i class="fas fa-chart-gantt"></i> Gantt Chart</button>
                         <button class="ai-quick-btn" onclick="acqToggleView('grid')"><i class="fas fa-table"></i> Grid</button>
                         <span style="flex:1"></span>
                         <input type="text" id="acqSearchInput" placeholder="Search hull, region, builder..." oninput="acqFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:#fff;border-radius:3px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
@@ -2677,6 +2684,9 @@
 
                     <!-- Summary View (hidden by default) -->
                     <div id="acqSummaryView" style="display:none;"></div>
+
+                    <!-- Gantt Chart View (hidden by default) -->
+                    <div id="acqGanttView" style="display:none;"></div>
 
                     <!-- AI Quick Buttons -->
                     <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:3px">

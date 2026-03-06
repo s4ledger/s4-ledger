@@ -1564,3 +1564,32 @@ body.light-mode .acq-row:hover{background:rgba(0,100,200,0.02)}
 body.light-mode .acq-summary-card{background:#fff;border-color:rgba(0,0,0,0.08)}
 body.light-mode .acq-summary-type{color:#333}
 body.light-mode .acq-summary-item{color:#555;border-bottom-color:rgba(0,0,0,0.04)}
+
+/* ── Acquisition Planner: Program Switcher ── */
+.acq-prog-btn{padding:4px 12px;border-radius:3px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--steel);font-size:0.78rem;cursor:pointer;transition:all .15s}
+.acq-prog-btn:hover{border-color:var(--accent);color:var(--accent)}
+.acq-prog-active{background:rgba(0,170,255,0.15);border-color:var(--accent);color:#fff;font-weight:600}
+body.light-mode .acq-prog-btn{background:#f5f7fa;color:#555;border-color:#dde}
+body.light-mode .acq-prog-active{background:rgba(0,100,200,0.1);color:#0066cc;border-color:#0066cc}
+
+/* ── Acquisition Planner: Gantt Chart ── */
+.acq-gantt-wrap{background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:4px;padding:16px;overflow-x:auto}
+.acq-gantt-header{font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:12px}
+.acq-gantt-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-size:0.75rem;color:var(--steel)}
+.acq-gantt-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.acq-gantt-grid{display:grid;grid-template-columns:200px 1fr;row-gap:0;border-top:1px solid var(--border)}
+.acq-gantt-label-col{padding:6px 8px;font-size:0.75rem;color:var(--steel);border-bottom:1px solid rgba(255,255,255,0.04);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acq-gantt-timeline-col{position:relative;border-bottom:1px solid rgba(255,255,255,0.04);min-height:28px}
+.acq-gantt-year{position:absolute;top:0;bottom:0;border-left:1px solid rgba(255,255,255,0.06)}
+.acq-gantt-year span{position:absolute;top:-18px;left:2px;font-size:0.6rem;color:rgba(255,255,255,0.25)}
+.acq-gantt-year-now{border-left:2px solid rgba(0,170,255,0.4)}
+.acq-gantt-bar{position:absolute;height:10px;top:50%;transform:translateY(-50%);border-radius:2px;opacity:0.85}
+.acq-gantt-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;z-index:2}
+.acq-gantt-cond{position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:0.6rem;padding:1px 5px;border-radius:2px;font-weight:600}
+body.light-mode .acq-gantt-wrap{background:#f8f9fb;border-color:#dde}
+body.light-mode .acq-gantt-header{color:#333}
+body.light-mode .acq-gantt-label-col{color:#555;border-bottom-color:rgba(0,0,0,0.04)}
+body.light-mode .acq-gantt-timeline-col{border-bottom-color:rgba(0,0,0,0.04)}
+body.light-mode .acq-gantt-year{border-left-color:rgba(0,0,0,0.06)}
+body.light-mode .acq-gantt-year span{color:rgba(0,0,0,0.25)}
+body.light-mode .acq-gantt-year-now{border-left-color:rgba(0,100,200,0.3)}

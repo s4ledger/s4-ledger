@@ -42,10 +42,13 @@
     var _acqFilterText = '';
     var _acqEditingId = null;
     var _acqNextLocalId = 1;
+    var _acqCurrentProgram = 'all';
+    var _acqPrograms = ['All Programs'];
 
     // ── Public: Initialize / Render ────────────────────────────────
     function initAcquisitionPlanner() {
         _loadAcqData(function () {
+            _rebuildProgramList();
             _renderAcqGrid();
             _updateAcqStats();
         });
@@ -191,6 +194,13 @@
     // ── Filtering ──────────────────────────────────────────────────
     function _getFilteredData() {
         var data = _acqData.slice();
+
+        // Program filter
+        if (_acqCurrentProgram && _acqCurrentProgram !== 'all') {
+            data = data.filter(function (r) {
+                return (r.program_name || r.custodian_activity || 'Default Program') === _acqCurrentProgram;
+            });
+        }
 
         // Text filter
         if (_acqFilterText) {
@@ -466,33 +476,7 @@
             if (!file) return;
             var reader = new FileReader();
             reader.onload = function (ev) {
-                var text = ev.target.result;
-                var lines = text.split('\n').filter(function (l) { return l.trim(); });
-                if (lines.length < 2) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('File appears empty.', 'warning'); return; }
-
-                var headers = lines[0].split(',').map(function (h) { return h.trim().replace(/^"|"$/g, ''); });
-                var imported = 0;
-
-                for (var i = 1; i < lines.length; i++) {
-                    var vals = lines[i].match(/("([^"]|"")*"|[^,]*)/g) || [];
-                    var newRow = { _localId: _acqNextLocalId++ };
-                    ACQ_COLUMNS.forEach(function (col, idx) {
-                        var hIdx = headers.findIndex(function (h) { return h.toLowerCase() === col.label.toLowerCase() || h.toLowerCase() === col.key.toLowerCase(); });
-                        if (hIdx >= 0 && vals[hIdx]) {
-                            newRow[col.key] = vals[hIdx].replace(/^"|"$/g, '').replace(/""/g, '"').trim();
-                        } else {
-                            newRow[col.key] = '';
-                        }
-                    });
-                    if (newRow.hull_type || newRow.hull_number) {
-                        _acqData.push(newRow);
-                        imported++;
-                    }
-                }
-
-                _renderAcqGrid();
-                _updateAcqStats();
-                if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Imported ' + imported + ' records from CSV.', 'success');
+                _parseAndImportTabular(ev.target.result, file.name);
             };
             reader.readAsText(file);
         };
@@ -500,22 +484,185 @@
     }
     window.acqImportCSV = acqImportCSV;
 
-    // ── View Toggle: Grid vs Summary ────────────────────────────────
-    function acqToggleView(view) {
-        var grid = document.getElementById('acqGridContainer');
-        var summary = document.getElementById('acqSummaryView');
-        if (!grid || !summary) return;
+    // ── Import eNVCR / Database File (JSON, XML, XLS) ──────────────
+    function acqImportDatabase() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.csv,.tsv,.json,.xml,.xls,.xlsx,.txt';
+        input.onchange = function (e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+                var content = ev.target.result;
+                var ext = file.name.split('.').pop().toLowerCase();
 
-        if (view === 'summary') {
-            grid.style.display = 'none';
-            summary.style.display = 'block';
-            _renderAcqSummary();
-        } else {
-            grid.style.display = 'block';
-            summary.style.display = 'none';
+                if (ext === 'json') {
+                    _importJSON(content, file.name);
+                } else if (ext === 'xml') {
+                    _importXML(content, file.name);
+                } else {
+                    // CSV/TSV/TXT fallback
+                    _parseAndImportTabular(content, file.name);
+                }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+    window.acqImportDatabase = acqImportDatabase;
+
+    function _parseAndImportTabular(text, filename) {
+        var lines = text.split('\n').filter(function (l) { return l.trim(); });
+        if (lines.length < 2) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('File appears empty.', 'warning'); return; }
+
+        // Auto-detect delimiter
+        var delim = ',';
+        if (lines[0].indexOf('\t') >= 0) delim = '\t';
+        else if (lines[0].indexOf(';') >= 0) delim = ';';
+
+        var headers = _splitRow(lines[0], delim);
+        var imported = 0;
+
+        // Build column map — fuzzy match header names to ACQ_COLUMNS
+        var colMap = {};
+        ACQ_COLUMNS.forEach(function (col) {
+            var idx = headers.findIndex(function (h) {
+                var hn = h.toLowerCase().replace(/[_\-\s]+/g, '');
+                return hn === col.label.toLowerCase().replace(/[_\-\s]+/g, '')
+                    || hn === col.key.toLowerCase().replace(/[_\-\s]+/g, '')
+                    || _fuzzyMatch(hn, col);
+            });
+            if (idx >= 0) colMap[col.key] = idx;
+        });
+
+        for (var i = 1; i < lines.length; i++) {
+            var vals = _splitRow(lines[i], delim);
+            var newRow = { _localId: _acqNextLocalId++ };
+            ACQ_COLUMNS.forEach(function (col) {
+                if (colMap[col.key] !== undefined && vals[colMap[col.key]]) {
+                    newRow[col.key] = vals[colMap[col.key]].replace(/^"|"$/g, '').replace(/""/g, '"').trim();
+                } else {
+                    newRow[col.key] = '';
+                }
+            });
+            // Try to extract program name from file or data for multi-program support
+            if (!newRow.program_name && filename) {
+                var prog = filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+                newRow.program_name = prog;
+            }
+            if (newRow.hull_type || newRow.hull_number) {
+                _acqData.push(newRow);
+                imported++;
+            }
+        }
+
+        _rebuildProgramList();
+        _renderAcqGrid();
+        _updateAcqStats();
+        if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Imported ' + imported + ' records from ' + (filename || 'file') + '.', 'success');
+    }
+
+    function _splitRow(line, delim) {
+        if (delim === ',') {
+            return (line.match(/("([^"]|"")*"|[^,]*)/g) || []).map(function(v) { return v.replace(/^"|"$/g,'').replace(/""/g,'"').trim(); });
+        }
+        return line.split(delim).map(function(v) { return v.replace(/^"|"$/g,'').trim(); });
+    }
+
+    function _fuzzyMatch(headerNorm, col) {
+        // Map common eNVCR / registry field names to our columns
+        var aliases = {
+            hull_type: ['hullclass','vesseltype','craftclass','hulltype','class','type'],
+            hull_number: ['hullno','hullnum','hullnumber','vesselno','designation','hull'],
+            action_need: ['actionneed','acquisitionneed','need','action','requirement'],
+            material_condition: ['matcond','materialcond','condition','readiness','status'],
+            pom_funded: ['pomfunded','funded','pomstatus','fundingstatus','pom'],
+            craft_age_years: ['age','ageyrs','ageyears','vesselage','craftage'],
+            total_cost_k: ['totalcost','cost','estimatedcost','programcost','totalcostk'],
+            ship_builder: ['builder','shipyard','contractor','shipbuilder','vendor'],
+            navy_region: ['region','navyregion','homeport','aor'],
+            custodian_activity: ['custodian','activity','custodianactivity','command','uic'],
+            last_roh: ['lastroh','lastoverhaul','lastmaint','lastrefit'],
+            planned_roh: ['plannedroh','nextroh','scheduledoverhaul','nextroh'],
+            lifecycle_years: ['lifecycle','servicelife','designlife','usefullife'],
+            requestor: ['requestor','requester','pointofcontact','poc','submittedby']
+        };
+        var list = aliases[col.key] || [];
+        return list.indexOf(headerNorm) >= 0;
+    }
+
+    function _importJSON(content, filename) {
+        try {
+            var parsed = JSON.parse(content);
+            var records = Array.isArray(parsed) ? parsed : (parsed.records || parsed.data || parsed.vessels || parsed.items || [parsed]);
+            var imported = 0;
+
+            records.forEach(function (rec) {
+                var newRow = { _localId: _acqNextLocalId++ };
+                ACQ_COLUMNS.forEach(function (col) {
+                    // Try exact key, then common aliases
+                    newRow[col.key] = rec[col.key] || rec[col.label] || rec[col.label.replace(/\s/g,'_').toLowerCase()] || '';
+                });
+                if (!newRow.program_name && filename) newRow.program_name = filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+                if (newRow.hull_type || newRow.hull_number || rec.hull || rec.vessel) {
+                    if (!newRow.hull_number && rec.hull) newRow.hull_number = rec.hull;
+                    if (!newRow.hull_number && rec.vessel) newRow.hull_number = rec.vessel;
+                    _acqData.push(newRow);
+                    imported++;
+                }
+            });
+
+            _rebuildProgramList();
+            _renderAcqGrid();
+            _updateAcqStats();
+            if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Imported ' + imported + ' records from JSON.', 'success');
+        } catch (e) {
+            if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Error parsing JSON: ' + e.message, 'error');
         }
     }
-    window.acqToggleView = acqToggleView;
+
+    function _importXML(content, filename) {
+        try {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(content, 'text/xml');
+            // Try common XML structures: <record>, <vessel>, <row>, <item>, <entry>
+            var tags = ['record','vessel','row','item','entry','craft','hull','Row'];
+            var nodes = [];
+            for (var t = 0; t < tags.length; t++) {
+                nodes = doc.getElementsByTagName(tags[t]);
+                if (nodes.length > 0) break;
+            }
+            if (!nodes.length) {
+                // Fallback: try Worksheet > Row (Excel XML)
+                nodes = doc.getElementsByTagName('Row');
+            }
+            var imported = 0;
+
+            for (var i = 0; i < nodes.length; i++) {
+                var newRow = { _localId: _acqNextLocalId++ };
+                ACQ_COLUMNS.forEach(function (col) {
+                    var el = nodes[i].getElementsByTagName(col.key)[0]
+                          || nodes[i].getElementsByTagName(col.label.replace(/\s/g,'_'))[0]
+                          || nodes[i].getElementsByTagName(col.label.replace(/\s/g,''))[0];
+                    newRow[col.key] = el ? (el.textContent || '').trim() : '';
+                });
+                if (!newRow.program_name && filename) newRow.program_name = filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+                if (newRow.hull_type || newRow.hull_number) {
+                    _acqData.push(newRow);
+                    imported++;
+                }
+            }
+
+            _rebuildProgramList();
+            _renderAcqGrid();
+            _updateAcqStats();
+            if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Imported ' + imported + ' records from XML.', 'success');
+        } catch (e) {
+            if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Error parsing XML: ' + e.message, 'error');
+        }
+    }
+    window.acqImportCSV = acqImportCSV;
 
     function _renderAcqSummary() {
         var el = document.getElementById('acqSummaryView');
@@ -523,7 +670,7 @@
 
         // Group by action_need
         var groups = {};
-        _acqData.forEach(function (r) {
+        _getFilteredData().forEach(function (r) {
             var k = r.action_need || 'Unspecified';
             if (!groups[k]) groups[k] = [];
             groups[k].push(r);
@@ -546,5 +693,184 @@
         html += '</div>';
         el.innerHTML = html;
     }
+
+    // ── Gantt Chart Visualization ───────────────────────────────────
+    function acqToggleGantt() {
+        var grid = document.getElementById('acqGridContainer');
+        var summary = document.getElementById('acqSummaryView');
+        var gantt = document.getElementById('acqGanttView');
+        if (!gantt) return;
+
+        if (gantt.style.display === 'block') {
+            gantt.style.display = 'none';
+            if (grid) grid.style.display = 'block';
+            return;
+        }
+
+        if (grid) grid.style.display = 'none';
+        if (summary) summary.style.display = 'none';
+        gantt.style.display = 'block';
+        _renderGantt();
+    }
+    window.acqToggleGantt = acqToggleGantt;
+
+    function _renderGantt() {
+        var el = document.getElementById('acqGanttView');
+        if (!el) return;
+
+        var data = _getFilteredData();
+        if (!data.length) {
+            el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-chart-gantt" style="font-size:2rem;display:block;margin-bottom:12px;opacity:0.3"></i>No vessel data to chart. Add records or import data first.</div>';
+            return;
+        }
+
+        // Determine timeline range
+        var now = new Date();
+        var yearStart = now.getFullYear() - 2;
+        var yearEnd = now.getFullYear() + 12;
+
+        // Extract milestone dates per vessel
+        data.forEach(function (r) {
+            // Ensure date_requested and needed_completion exist for timeline
+            if (r.needed_completion) {
+                var nc = new Date(r.needed_completion);
+                if (nc.getFullYear() > yearEnd) yearEnd = nc.getFullYear() + 1;
+            }
+            if (r.date_requested) {
+                var dr = new Date(r.date_requested);
+                if (dr.getFullYear() < yearStart) yearStart = dr.getFullYear();
+            }
+        });
+
+        var totalYears = yearEnd - yearStart + 1;
+        var html = '<div class="acq-gantt-wrap">';
+
+        // Header: title
+        html += '<div class="acq-gantt-header"><i class="fas fa-chart-gantt"></i> Acquisition Timeline — ' + yearStart + ' to ' + yearEnd + '</div>';
+
+        // Legend
+        html += '<div class="acq-gantt-legend">';
+        html += '<span><span class="acq-gantt-dot" style="background:#00aaff"></span> Date Requested</span>';
+        html += '<span><span class="acq-gantt-dot" style="background:#c9a84c"></span> Planned ROH</span>';
+        html += '<span><span class="acq-gantt-dot" style="background:#ff4444"></span> Needed By</span>';
+        html += '<span><span class="acq-gantt-dot" style="background:#4ecb71"></span> Lifecycle Span</span>';
+        html += '<span><span class="acq-gantt-dot" style="background:#a855f7"></span> Planned MI</span>';
+        html += '</div>';
+
+        // Timeline grid
+        html += '<div class="acq-gantt-grid" style="--gantt-cols:' + totalYears + '">';
+
+        // Year headers
+        html += '<div class="acq-gantt-label-col" style="border-bottom:1px solid var(--border)"><strong style="color:var(--steel);font-size:0.75rem">Vessel</strong></div>';
+        html += '<div class="acq-gantt-timeline-col" style="border-bottom:1px solid var(--border)">';
+        for (var y = yearStart; y <= yearEnd; y++) {
+            var isNow = y === now.getFullYear();
+            html += '<div class="acq-gantt-year' + (isNow ? ' acq-gantt-year-now' : '') + '">' + y + '</div>';
+        }
+        html += '</div>';
+
+        // Rows per vessel
+        data.forEach(function (r) {
+            var condCls = { Excellent: 'acq-badge-green', Good: 'acq-badge-blue', Fair: 'acq-badge-yellow', Poor: 'acq-badge-red', Critical: 'acq-badge-critical' };
+            var condBadge = r.material_condition ? '<span class="acq-badge ' + (condCls[r.material_condition] || '') + '" style="font-size:0.65rem;padding:1px 5px;margin-left:4px">' + r.material_condition + '</span>' : '';
+
+            html += '<div class="acq-gantt-label-col"><strong>' + (r.hull_number || '—') + '</strong>' + condBadge + '</div>';
+            html += '<div class="acq-gantt-timeline-col">';
+
+            // Background year columns
+            for (var y2 = yearStart; y2 <= yearEnd; y2++) {
+                var isNow2 = y2 === now.getFullYear();
+                html += '<div class="acq-gantt-cell' + (isNow2 ? ' acq-gantt-cell-now' : '') + '"></div>';
+            }
+
+            // Overlay: lifecycle span bar
+            if (r.date_requested && r.needed_completion) {
+                var startDate = new Date(r.date_requested);
+                var endDate = new Date(r.needed_completion);
+                var leftPct = ((startDate.getFullYear() + startDate.getMonth() / 12) - yearStart) / totalYears * 100;
+                var widthPct = ((endDate.getFullYear() + endDate.getMonth() / 12) - (startDate.getFullYear() + startDate.getMonth() / 12)) / totalYears * 100;
+                if (leftPct < 0) { widthPct += leftPct; leftPct = 0; }
+                if (widthPct > 0) {
+                    html += '<div class="acq-gantt-bar" style="left:' + leftPct + '%;width:' + widthPct + '%;background:rgba(78,203,113,0.25);border:1px solid rgba(78,203,113,0.5)" title="Lifecycle: ' + r.date_requested + ' → ' + r.needed_completion + '"></div>';
+                }
+            }
+
+            // Milestone markers
+            _ganttMarker(r.date_requested, yearStart, totalYears, '#00aaff', 'Requested').forEach(function(m) { html += m; });
+            _ganttMarker(r.planned_roh, yearStart, totalYears, '#c9a84c', 'Planned ROH').forEach(function(m) { html += m; });
+            _ganttMarker(r.needed_completion, yearStart, totalYears, '#ff4444', 'Needed By').forEach(function(m) { html += m; });
+            _ganttMarker(r.planned_mi, yearStart, totalYears, '#a855f7', 'Planned MI').forEach(function(m) { html += m; });
+
+            html += '</div>';
+        });
+
+        html += '</div></div>';
+        el.innerHTML = html;
+    }
+
+    function _ganttMarker(dateStr, yearStart, totalYears, color, label) {
+        if (!dateStr) return [];
+        var d = new Date(dateStr);
+        if (isNaN(d.getTime())) return [];
+        var pct = ((d.getFullYear() + d.getMonth() / 12) - yearStart) / totalYears * 100;
+        if (pct < 0 || pct > 100) return [];
+        return ['<div class="acq-gantt-marker" style="left:' + pct + '%;background:' + color + '" title="' + label + ': ' + dateStr + '"></div>'];
+    }
+
+    // ── Multi-Program Switcher ──────────────────────────────────────
+    function _rebuildProgramList() {
+        var progs = {};
+        _acqData.forEach(function (r) {
+            var p = r.program_name || r.custodian_activity || 'Default Program';
+            progs[p] = true;
+        });
+        _acqPrograms = ['All Programs'].concat(Object.keys(progs).sort());
+        _renderProgramSwitcher();
+    }
+
+    function _renderProgramSwitcher() {
+        var el = document.getElementById('acqProgramSwitcher');
+        if (!el) return;
+        var html = '';
+        _acqPrograms.forEach(function (p) {
+            var active = (_acqCurrentProgram === 'all' && p === 'All Programs') || _acqCurrentProgram === p;
+            html += '<button class="acq-prog-btn' + (active ? ' acq-prog-active' : '') + '" onclick="acqSwitchProgram(\'' + p.replace(/'/g, "\\'") + '\')">' + p + '</button>';
+        });
+        el.innerHTML = html;
+    }
+
+    function acqSwitchProgram(prog) {
+        _acqCurrentProgram = prog === 'All Programs' ? 'all' : prog;
+        _renderProgramSwitcher();
+        _renderAcqGrid();
+        _updateAcqStats();
+        if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Switched to: ' + prog, 'info');
+    }
+    window.acqSwitchProgram = acqSwitchProgram;
+
+    // ── View Toggle: Grid vs Summary vs Gantt ───────────────────────
+    function acqToggleView(view) {
+        var grid = document.getElementById('acqGridContainer');
+        var summary = document.getElementById('acqSummaryView');
+        var gantt = document.getElementById('acqGanttView');
+        if (!grid || !summary) return;
+
+        if (view === 'summary') {
+            grid.style.display = 'none';
+            if (gantt) gantt.style.display = 'none';
+            summary.style.display = 'block';
+            _renderAcqSummary();
+        } else if (view === 'gantt') {
+            grid.style.display = 'none';
+            summary.style.display = 'none';
+            if (gantt) gantt.style.display = 'block';
+            _renderGantt();
+        } else {
+            grid.style.display = 'block';
+            summary.style.display = 'none';
+            if (gantt) gantt.style.display = 'none';
+        }
+    }
+    window.acqToggleView = acqToggleView;
 
 })();
