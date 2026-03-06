@@ -1690,4 +1690,24 @@ Hull Type, Hull #, Need (Replacement/Disposal/Addition/SLE/Transfer), Requestor,
 - `src/js/acquisition.js` — dropdown toggle function, Gantt date range, bar clamping, row min-width
 
 ---
+
+### Enhancement Round 4c: DOM-Based Dropdown Fix (commit `07333c8`)
+
+**Problem:** The `window.acqToggleDashDD` global-function approach from Round 4b still didn't work after Vite/terser minification. The inline `onclick="acqToggleDashDD(event,'acqDDStatus')"` handlers in the HTML string failed silently in the built output despite correct CSP settings and verified function exports.
+
+**Root Cause:** Inline onclick handlers built via JS string concatenation with escaped quotes are unreliable after terser minification — the escaped quotes and string rewriting interact unpredictably.
+
+**Fix — DOM addEventListener Approach:**
+- Completely removed all inline `onclick` and `event.stopPropagation()` from the HTML string
+- Added trigger element IDs: `acqDDStatusTrigger`, `acqDDCondTrigger` on the clickable card divs
+- After `el.innerHTML = html`, used `document.getElementById()` to get trigger and panel elements
+- Attached click handlers via `addEventListener('click', ...)` — no string escaping, bulletproof after minification
+- Panel `stopPropagation()` prevents clicks inside dropdown from closing it
+- Document-level `addEventListener('click', closeAll)` closes dropdowns when clicking outside
+- Removed the now-unnecessary `window.acqToggleDashDD` function and its document click listener
+
+**Files changed (both apps):**
+- `src/js/acquisition.js` — `_renderDashboardCards()` dropdown section rewritten, old global toggle removed
+
+---
 *This log is updated every session. Reference before making changes.*
