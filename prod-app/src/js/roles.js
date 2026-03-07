@@ -50,12 +50,13 @@ function showRecommendedTools() {
         var label = _allHubLabels[toolId] || toolId;
         var icon = _toolIcons[toolId] || 'fa-wrench';
         var card = document.createElement('div');
-        card.style.cssText = 'background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.02));border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:14px 16px;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;gap:10px;';
+        card.className = 'ils-tool-card';
+        card.style.cssText = 'border-left:3px solid rgba(201,168,76,0.4);';
         card.setAttribute('data-tool', toolId);
-        card.onmouseover = function(){ this.style.borderColor='rgba(201,168,76,0.45)';this.style.transform='translateY(-1px)'; };
-        card.onmouseout = function(){ this.style.borderColor='rgba(201,168,76,0.2)';this.style.transform='translateY(0)'; };
+        card.onmouseover = function(){ this.style.borderColor='rgba(201,168,76,0.6)';this.style.transform='translateY(-2px)'; };
+        card.onmouseout = function(){ this.style.borderColor='';this.style.borderLeftColor='rgba(201,168,76,0.4)';this.style.transform='translateY(0)'; };
         card.onclick = (function(id){ return function(){ if(typeof openILSTool==='function') openILSTool(id); }; })(toolId);
-        card.innerHTML = '<i class="fas '+icon+'" style="color:#c9a84c;font-size:0.9rem;flex-shrink:0;"></i><span style="color:#fff;font-size:0.82rem;font-weight:600;">'+label+'</span>';
+        card.innerHTML = '<div class="itc-icon" style="background:rgba(201,168,76,0.10);"><i class="fas '+icon+'" style="color:#c9a84c;"></i></div><div><div class="itc-title">'+label+'</div><div class="itc-desc">Recommended for your role</div></div>';
         grid.appendChild(card);
     }
     row.style.display = 'block';
@@ -71,12 +72,12 @@ function showRoleSelector() {
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
 
     var contentDiv = document.createElement('div');
-    contentDiv.style.cssText = 'background:#0d1117;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto';
+    contentDiv.style.cssText = 'background:#2c2c2e;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto';
 
     // Header
     contentDiv.innerHTML = '<h3 style="color:#fff;margin:0 0 4px"><i class="fas fa-user-cog" style="color:#00aaff;margin-right:8px"></i>Configure Your Role</h3>'
         + '<p style="color:#8b949e;font-size:0.85rem;margin-bottom:20px">Select your role to see relevant tools. You can customize visible tools and your displayed title.</p>'
-        + '<div style="margin-bottom:16px"><label style="color:#8b949e;font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" value="'+(_currentTitle||'')+'" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-top:4px;box-sizing:border-box" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>';
+        + '<div style="margin-bottom:16px"><label style="color:#8b949e;font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" value="'+(_currentTitle||'')+'" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-top:4px;box-sizing:border-box" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>';
 
     // Build role cards grid using DOM (not innerHTML) for reliable event binding
     var grid = document.createElement('div');

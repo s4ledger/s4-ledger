@@ -99,7 +99,7 @@
         html += '</table></div>';
         var overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center';
-        overlay.innerHTML = '<div style="background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:700px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Milestone Audit Log</h4><button style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
+        overlay.innerHTML = '<div style="background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:700px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Milestone Audit Log</h4><button style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
         overlay.querySelector('button').addEventListener('click', function() { overlay.remove(); });
         overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
         document.body.appendChild(overlay);
@@ -193,7 +193,7 @@
     function milShowVesselTypeEditor() {
         var selectedProg = (_milSelectedPrograms && _milSelectedPrograms.length === 1) ? _milSelectedPrograms[0] : (_milPrograms[0] || 'PMS 300');
         var types = _getVesselTypesForProgram(selectedProg);
-        var html = '<div style="margin-bottom:12px"><label style="color:var(--steel);font-size:0.82rem">Program: <select id="milVTEProgSelect" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:4px 8px;font-size:0.8rem;margin-left:6px">';
+        var html = '<div style="margin-bottom:12px"><label style="color:var(--steel);font-size:0.82rem">Program: <select id="milVTEProgSelect" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:4px 8px;font-size:0.8rem;margin-left:6px">';
         _milPrograms.forEach(function(p) {
             html += '<option value="' + p.replace(/"/g,'&quot;') + '"' + (p === selectedProg ? ' selected' : '') + '>' + p + '</option>';
         });
@@ -206,11 +206,11 @@
             html += '</div>';
         });
         html += '</div>';
-        html += '<div style="display:flex;gap:6px"><input id="milVTENewInput" type="text" placeholder="New vessel type..." style="flex:1;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.8rem"><button id="milVTEAddBtn" style="background:rgba(0,170,255,0.2);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:3px;padding:5px 12px;cursor:pointer;font-size:0.8rem;font-weight:600"><i class="fas fa-plus"></i> Add</button></div>';
+        html += '<div style="display:flex;gap:6px"><input id="milVTENewInput" type="text" placeholder="New vessel type..." style="flex:1;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.8rem"><button id="milVTEAddBtn" style="background:rgba(0,170,255,0.2);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:3px;padding:5px 12px;cursor:pointer;font-size:0.8rem;font-weight:600"><i class="fas fa-plus"></i> Add</button></div>';
 
         var overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center';
-        overlay.innerHTML = '<div style="background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:500px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>Vessel Type Editor</h4><button class="milVTEClose" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
+        overlay.innerHTML = '<div style="background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:500px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>Vessel Type Editor</h4><button class="milVTEClose" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
         document.body.appendChild(overlay);
 
         // Wire events
@@ -333,7 +333,7 @@
         html += '<div id="milDDStatusTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#00aaff;font-weight:700;font-size:1rem">' + total + '</span> <span style="color:var(--steel);font-size:0.82rem">across ' + MIL_STATUSES.length + ' statuses</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Delivery Status</div>';
-        html += '<div id="milDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="milDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         MIL_STATUSES.forEach(function(s) {
             var cnt = statusCounts[s] || 0;
             var sc = MIL_STATUS_COLORS[s] || '#8b949e';
@@ -347,7 +347,7 @@
         html += '<div id="milDDProgTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#c9a84c;font-weight:700;font-size:1rem">' + progCount + '</span> <span style="color:var(--steel);font-size:0.82rem">active programs</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Programs</div>';
-        html += '<div id="milDDProg" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="milDDProg" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         Object.keys(programs).sort().forEach(function(p) {
             var cnt = data.filter(function(r){ return r.program_name === p; }).length;
             html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(255,255,255,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
@@ -453,15 +453,15 @@
                 if (isEditing) {
                     if (c.type === 'select') {
                         var opts = c.dynamic ? _getVesselTypesForProgram(row.program_name || 'PMS 300') : (c.options || []);
-                        html += '<td style="padding:4px 2px"><select class="milEditField" data-key="' + c.key + '" style="background:#0a0e1a;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem">';
+                        html += '<td style="padding:4px 2px"><select class="milEditField" data-key="' + c.key + '" style="background:#2c2c2e;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem">';
                         opts.forEach(function(o) {
                             html += '<option value="' + o + '"' + (val === o ? ' selected' : '') + '>' + o + '</option>';
                         });
                         html += '</select></td>';
                     } else if (c.type === 'textarea') {
-                        html += '<td style="padding:4px 2px"><textarea class="milEditField" data-key="' + c.key + '" rows="2" style="background:#0a0e1a;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem;resize:vertical">' + val + '</textarea></td>';
+                        html += '<td style="padding:4px 2px"><textarea class="milEditField" data-key="' + c.key + '" rows="2" style="background:#2c2c2e;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem;resize:vertical">' + val + '</textarea></td>';
                     } else {
-                        html += '<td style="padding:4px 2px"><input type="' + (c.type === 'date' ? 'date' : c.type === 'number' ? 'number' : 'text') + '" class="milEditField" data-key="' + c.key + '" value="' + val + '" style="background:#0a0e1a;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem"></td>';
+                        html += '<td style="padding:4px 2px"><input type="' + (c.type === 'date' ? 'date' : c.type === 'number' ? 'number' : 'text') + '" class="milEditField" data-key="' + c.key + '" value="' + val + '" style="background:#2c2c2e;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem"></td>';
                     }
                 } else {
                     var display = val;
@@ -866,7 +866,7 @@
 
         // Year/month ruler
         html += '<div style="display:flex">';
-        html += '<div style="flex:0 0 ' + labelW + 'px;padding:6px 8px;font-size:0.72rem;color:var(--muted);background:#0d1117;border-bottom:2px solid var(--border);position:sticky;left:0;z-index:10">Vessel</div>';
+        html += '<div style="flex:0 0 ' + labelW + 'px;padding:6px 8px;font-size:0.72rem;color:var(--muted);background:#2c2c2e;border-bottom:2px solid var(--border);position:sticky;left:0;z-index:10">Vessel</div>';
         html += '<div style="width:' + totalWidth + 'px;position:relative;height:40px;background:rgba(0,0,0,0.15);border-bottom:2px solid var(--border)">';
         for (var y = yearStart; y <= yearEnd; y++) {
             var xYear = (y - yearStart) * 12 * MONTH_PX;
@@ -891,7 +891,7 @@
             var bgAlt = idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.03)';
             html += '<div style="display:flex;min-width:' + (labelW + totalWidth) + 'px;border-bottom:1px solid rgba(255,255,255,0.04);background:' + bgAlt + '">';
             // Label
-            var stickyBg = idx % 2 === 0 ? '#0d1117' : '#111820';
+            var stickyBg = idx % 2 === 0 ? '#2c2c2e' : '#3a3a3c';
             html += '<div style="flex:0 0 ' + labelW + 'px;padding:10px 8px;font-size:0.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:' + stickyBg + ';position:sticky;left:0;z-index:10;border-right:1px solid rgba(255,255,255,0.06)">';
             html += '<strong style="color:#fff">' + (r.hull_number || '-') + '</strong>';
             html += ' <span style="font-size:0.6rem;padding:1px 4px;border-radius:2px;background:' + sc + '22;color:' + sc + '">' + (r.delivery_status || '') + '</span>';
@@ -949,14 +949,14 @@
         html += '<button class="acq-prog-btn acq-prog-active" id="milProgDDBtnTrigger" style="min-width:200px;text-align:left;display:flex;justify-content:space-between;align-items:center">';
         var selLabel = !selectedSet ? 'All Programs (' + _milPrograms.length + ')' : selectedSet.length + ' of ' + _milPrograms.length + ' selected';
         html += '<span>' + selLabel + '</span> <i class="fas fa-chevron-down" style="font-size:0.65rem;margin-left:8px;opacity:0.6"></i></button>';
-        html += '<div id="milProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="milProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:0.82rem;color:#8b949e;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:4px"><input type="checkbox" id="milProgAll"' + (!selectedSet ? ' checked' : '') + ' style="accent-color:#00aaff;width:15px;height:15px"> <strong style="color:#fff">All Programs</strong></label>';
         _milPrograms.forEach(function(p) {
             var checked = !selectedSet || selectedSet.indexOf(p) >= 0;
             html += '<label style="display:flex;align-items:center;gap:8px;padding:4px 12px;cursor:pointer;font-size:0.82rem;color:var(--steel)" data-prog="' + p.replace(/"/g, '&quot;') + '" onmouseover="this.style.background=\'rgba(0,170,255,0.06)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<input type="checkbox" class="milProgCb" data-prog="' + p.replace(/"/g, '&quot;') + '"' + (checked ? ' checked' : '') + ' style="accent-color:#00aaff;width:15px;height:15px"> ' + p + '</label>';
         });
-        html += '<div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:4px;padding:6px 12px"><div style="display:flex;gap:6px"><input id="milNewProgInput" type="text" placeholder="Add new program..." style="flex:1;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.8rem">';
+        html += '<div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:4px;padding:6px 12px"><div style="display:flex;gap:6px"><input id="milNewProgInput" type="text" placeholder="Add new program..." style="flex:1;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.8rem">';
         html += '<button id="milAddProgBtn" class="acq-prog-btn" style="padding:4px 10px;font-size:0.78rem"><i class="fas fa-plus"></i></button></div></div>';
         html += '</div></div>';
         if (selectedSet && selectedSet.length < _milPrograms.length) {
@@ -1254,7 +1254,7 @@
                 var overlay = document.createElement('div');
                 overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10001;display:flex;align-items:center;justify-content:center';
                 var modal = document.createElement('div');
-                modal.style.cssText = 'background:#0d1117;border:1px solid rgba(168,85,247,0.3);border-radius:6px;padding:24px;max-width:700px;width:90%;max-height:80vh;display:flex;flex-direction:column';
+                modal.style.cssText = 'background:#2c2c2e;border:1px solid rgba(168,85,247,0.3);border-radius:6px;padding:24px;max-width:700px;width:90%;max-height:80vh;display:flex;flex-direction:column';
                 modal.innerHTML = '<div style="color:#a855f7;font-weight:700;font-size:1.1rem;margin-bottom:12px"><i class="fas fa-file-powerpoint" style="margin-right:8px"></i>Brief Extracted: ' + file.name + '</div>'
                     + '<div style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">' + slideFiles.length + ' slides extracted (' + briefText.length + ' characters). The AI agent will scan this content for vessel names, milestone dates, and schedule updates.</div>'
                     + '<div style="flex:1;overflow:auto;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;padding:12px;margin-bottom:16px;font-size:0.78rem;color:var(--muted);white-space:pre-wrap;max-height:300px">' + briefText.substring(0, 3000).replace(/</g, '&lt;') + (briefText.length > 3000 ? '\n\n[... truncated for preview ...]' : '') + '</div>'

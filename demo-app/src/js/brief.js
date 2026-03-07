@@ -37,7 +37,7 @@
         bodySize: 16,
         headerBg: '#0a1628',
         headerColor: '#ffffff',
-        bodyBg: '#0d1117',
+        bodyBg: '#2c2c2e',
         bodyColor: '#c9d1d9',
         accentColor: '#00aaff',
         footerText: 'S4 Ledger — UNCLASSIFIED',
@@ -1267,7 +1267,7 @@
             if (sel) html += '<button onclick="event.stopPropagation();briefDeleteSlide()" class="brief-fmt-btn" style="width:20px;height:20px;font-size:0.6rem;color:#ff6b6b" title="Delete"><i class="fas fa-times"></i></button>';
             html += '</div>';
             // Thumbnail preview
-            html += '<div style="background:' + (master.bodyBg || '#0d1117') + ';height:80px;margin:0 6px 6px 6px;border-radius:6px;overflow:hidden;position:relative">';
+            html += '<div style="background:' + (master.bodyBg || '#2c2c2e') + ';height:80px;margin:0 6px 6px 6px;border-radius:6px;overflow:hidden;position:relative">';
             var firstText = '';
             (s.elements || []).forEach(function (e) { if (e.type === 'text' && !firstText) firstText = (e.text || '').substring(0, 50); });
             html += '<div style="padding:6px;font-size:0.45rem;color:' + (master.bodyColor || '#c9d1d9') + ';overflow:hidden;line-height:1.3;opacity:0.7">' + _esc(firstText) + '</div>';
@@ -1304,7 +1304,7 @@
         html += '<button class="brief-fmt-btn" onclick="briefSetAlign(\'right\')" title="Align Right"><i class="fas fa-align-right"></i></button>';
         html += '<div class="brief-fmt-divider"></div>';
         html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.7rem;color:#6e7681;cursor:pointer" title="Text Color">A <input type="color" id="briefColorPick" value="#ffffff" onchange="briefSetColor(this.value)" style="width:22px;height:22px;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:0;cursor:pointer;background:transparent"></label>';
-        html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.7rem;color:#6e7681;cursor:pointer" title="Fill"><i class="fas fa-fill-drip"></i> <input type="color" id="briefBgPick" value="#0d1117" onchange="briefSetBg(this.value)" style="width:22px;height:22px;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:0;cursor:pointer;background:transparent"></label>';
+        html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.7rem;color:#6e7681;cursor:pointer" title="Fill"><i class="fas fa-fill-drip"></i> <input type="color" id="briefBgPick" value="#2c2c2e" onchange="briefSetBg(this.value)" style="width:22px;height:22px;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:0;cursor:pointer;background:transparent"></label>';
         html += '<div class="brief-fmt-divider"></div>';
         html += '<button class="brief-fmt-btn" onclick="briefBringToFront()" title="Bring to Front"><i class="fas fa-layer-group"></i></button>';
         html += '<button class="brief-fmt-btn" onclick="briefSendToBack()" title="Send to Back"><i class="fas fa-level-down-alt"></i></button>';
@@ -1313,7 +1313,7 @@
         html += '</div>'; // end format bar
 
         // Canvas
-        html += '<div id="briefCanvas" class="brief-canvas" style="width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#0d1117') + ';transform:scale(' + scale.toFixed(3) + ');transform-origin:top center;cursor:' + (_annotationMode ? 'crosshair' : 'default') + '" onclick="briefCanvasClick(event)" onmousedown="briefCanvasMouseDown(event)" onmousemove="briefCanvasMouseMove(event)" onmouseup="briefCanvasMouseUp(event)">';
+        html += '<div id="briefCanvas" class="brief-canvas" style="width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#2c2c2e') + ';transform:scale(' + scale.toFixed(3) + ');transform-origin:top center;cursor:' + (_annotationMode ? 'crosshair' : 'default') + '" onclick="briefCanvasClick(event)" onmousedown="briefCanvasMouseDown(event)" onmousemove="briefCanvasMouseMove(event)" onmouseup="briefCanvasMouseUp(event)">';
         // Grid overlay
         if (_snapToGrid) {
             html += '<div style="position:absolute;top:0;left:0;right:0;bottom:24px;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);background-size:' + _gridSize + 'px ' + _gridSize + 'px;z-index:0"></div>';
@@ -1419,7 +1419,7 @@
         // Appearance
         h += '<div class="brief-prop-group"><div class="brief-prop-label">Appearance</div>';
         h += '<div class="brief-prop-row"><label style="color:#6e7681;font-size:0.72rem;width:50px">Color</label><input type="color" value="' + (elem.color || '#ffffff') + '" onchange="briefSetProp(\'color\',this.value)" style="width:32px;height:24px;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:0;cursor:pointer"></div>';
-        h += '<div class="brief-prop-row"><label style="color:#6e7681;font-size:0.72rem;width:50px">Fill</label><input type="color" value="' + (elem.bg || elem.fill || '#0d1117') + '" onchange="briefSetProp(\'bg\',this.value)" style="width:32px;height:24px;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:0;cursor:pointer"></div>';
+        h += '<div class="brief-prop-row"><label style="color:#6e7681;font-size:0.72rem;width:50px">Fill</label><input type="color" value="' + (elem.bg || elem.fill || '#2c2c2e') + '" onchange="briefSetProp(\'bg\',this.value)" style="width:32px;height:24px;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:0;cursor:pointer"></div>';
         h += '<div class="brief-prop-row"><label style="color:#6e7681;font-size:0.72rem;width:50px">Z-Index</label><input type="number" class="brief-prop-input" value="' + (elem.zIndex || 1) + '" onchange="briefSetProp(\'zIndex\',parseInt(this.value))" style="width:60px"></div>';
         h += '</div>';
         // Type-specific
@@ -1560,7 +1560,7 @@
                 svg += '<text x="' + lx + '" y="' + ly + '" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">' + _esc(labels[i] || '') + '</text>';
                 startAngle += angle;
             });
-            if (ct === 'donut') svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * 0.5) + '" fill="' + ((_theme === 'dark') ? '#0d1117' : '#ffffff') + '"/>';
+            if (ct === 'donut') svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * 0.5) + '" fill="' + ((_theme === 'dark') ? '#2c2c2e' : '#ffffff') + '"/>';
         }
         // Axes for bar/line
         if (ct === 'bar' || ct === 'line') {
@@ -1726,7 +1726,7 @@
         slide.elements.forEach(function (el) { if (el.id === eid) elem = el; });
         if (!elem || elem.type !== 'text') return;
 
-        var html = '<textarea id="briefEditTextArea" style="width:100%;height:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical">' + _esc(elem.text || '') + '</textarea>';
+        var html = '<textarea id="briefEditTextArea" style="width:100%;height:200px;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical">' + _esc(elem.text || '') + '</textarea>';
         html += '<div style="margin-top:10px;display:flex;justify-content:flex-end;gap:6px">';
         html += '<button class="ai-quick-btn" onclick="briefApplyTextEdit(\'' + eid + '\')"><i class="fas fa-check"></i> Apply</button>';
         html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
@@ -1907,11 +1907,11 @@
         html += _masterField('Body Size', 'masterBodySize', m.bodySize || 16);
         html += _masterColorField('Header BG', 'masterHeaderBg', m.headerBg || '#0a1628');
         html += _masterColorField('Header Color', 'masterHeaderColor', m.headerColor || '#ffffff');
-        html += _masterColorField('Body BG', 'masterBodyBg', m.bodyBg || '#0d1117');
+        html += _masterColorField('Body BG', 'masterBodyBg', m.bodyBg || '#2c2c2e');
         html += _masterColorField('Body Color', 'masterBodyColor', m.bodyColor || '#c9d1d9');
         html += _masterColorField('Accent', 'masterAccent', m.accentColor || '#00aaff');
         html += '</div>';
-        html += '<div style="margin-top:10px"><label style="color:var(--steel);font-size:0.8rem">Footer Text</label><input id="masterFooter" value="' + _esc(m.footerText || '') + '" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.82rem;margin-top:4px"></div>';
+        html += '<div style="margin-top:10px"><label style="color:var(--steel);font-size:0.8rem">Footer Text</label><input id="masterFooter" value="' + _esc(m.footerText || '') + '" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.82rem;margin-top:4px"></div>';
         html += '<div style="margin-top:12px;display:flex;justify-content:flex-end;gap:6px">';
         html += '<button class="ai-quick-btn" onclick="briefApplyMaster()"><i class="fas fa-check"></i> Apply</button>';
         html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
@@ -1921,10 +1921,10 @@
     window.briefSlideMaster = briefSlideMaster;
 
     function _masterField(label, id, val) {
-        return '<div><label style="color:var(--steel)">' + label + '</label><input id="' + id + '" value="' + _esc('' + val) + '" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:4px 8px;font-size:0.8rem;margin-top:2px"></div>';
+        return '<div><label style="color:var(--steel)">' + label + '</label><input id="' + id + '" value="' + _esc('' + val) + '" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:4px 8px;font-size:0.8rem;margin-top:2px"></div>';
     }
     function _masterColorField(label, id, val) {
-        return '<div><label style="color:var(--steel)">' + label + '</label><div style="display:flex;gap:4px;margin-top:2px"><input type="color" id="' + id + '" value="' + val + '" style="width:36px;height:28px;border:none;cursor:pointer"><input id="' + id + 'Text" value="' + val + '" style="flex:1;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:4px;font-size:0.78rem" onchange="document.getElementById(\'' + id + '\').value=this.value"></div></div>';
+        return '<div><label style="color:var(--steel)">' + label + '</label><div style="display:flex;gap:4px;margin-top:2px"><input type="color" id="' + id + '" value="' + val + '" style="width:36px;height:28px;border:none;cursor:pointer"><input id="' + id + 'Text" value="' + val + '" style="flex:1;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:4px;font-size:0.78rem" onchange="document.getElementById(\'' + id + '\').value=this.value"></div></div>';
     }
 
     function briefApplyMaster() {
@@ -1954,15 +1954,15 @@
         var b = _activeBrief;
         var html = '<div style="font-size:0.82rem">';
         html += '<label style="color:var(--steel)">Access Level</label>';
-        html += '<select id="briefAccessLevel" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.82rem;margin:4px 0 12px">';
+        html += '<select id="briefAccessLevel" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.82rem;margin:4px 0 12px">';
         ['private','team','org','public'].forEach(function (lv) {
             html += '<option value="' + lv + '"' + (b.access_level === lv ? ' selected' : '') + '>' + lv.charAt(0).toUpperCase() + lv.slice(1) + '</option>';
         });
         html += '</select>';
         html += '<label style="color:var(--steel)">Editors (comma-separated emails)</label>';
-        html += '<input id="briefEditors" value="' + _esc((b.editors || []).join(', ')) + '" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.82rem;margin:4px 0 12px">';
+        html += '<input id="briefEditors" value="' + _esc((b.editors || []).join(', ')) + '" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.82rem;margin:4px 0 12px">';
         html += '<label style="color:var(--steel)">Viewers (comma-separated emails)</label>';
-        html += '<input id="briefViewers" value="' + _esc((b.viewers || []).join(', ')) + '" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.82rem;margin:4px 0 12px">';
+        html += '<input id="briefViewers" value="' + _esc((b.viewers || []).join(', ')) + '" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.82rem;margin:4px 0 12px">';
         html += '</div>';
         html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
         html += '<button class="ai-quick-btn" onclick="briefApplyShare()"><i class="fas fa-check"></i> Apply</button>';
@@ -2022,7 +2022,7 @@
         var doc = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + _esc(brief.title) + '</title>';
         doc += '<style>@media print{.slide{page-break-after:always}.slide:last-child{page-break-after:auto}}';
         doc += 'body{margin:0;padding:20px;background:#1a1a2e;font-family:' + (master.fontFamily || 'sans-serif') + '}';
-        doc += '.slide{position:relative;width:' + sw + 'px;height:' + sh + 'px;margin:0 auto 20px;background:' + (master.bodyBg || '#0d1117') + ';border-radius:4px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.4)}';
+        doc += '.slide{position:relative;width:' + sw + 'px;height:' + sh + 'px;margin:0 auto 20px;background:' + (master.bodyBg || '#2c2c2e') + ';border-radius:4px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.4)}';
         doc += '.el{position:absolute;box-sizing:border-box;overflow:hidden;white-space:pre-wrap;word-wrap:break-word}';
         doc += '</style></head><body>';
 
@@ -2279,7 +2279,7 @@
 
     function briefAddProgram() {
         var html = '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:12px">Add a custom program to the dropdown.</div>';
-        html += '<input id="briefNewProgramInput" placeholder="e.g. PMS 500 — ZUMWALT Class" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.88rem;margin-bottom:12px">';
+        html += '<input id="briefNewProgramInput" placeholder="e.g. PMS 500 — ZUMWALT Class" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.88rem;margin-bottom:12px">';
         html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
         html += '<button class="ai-quick-btn" onclick="briefConfirmAddProgram()"><i class="fas fa-check"></i> Add</button>';
         html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
@@ -2308,7 +2308,7 @@
     function briefAddVessel() {
         if (!_selectedProgram) { _toast('Select a program first', 'warning'); return; }
         var html = '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:12px">Add a vessel / craft to <strong style="color:#fff">' + _esc(_selectedProgram) + '</strong>.</div>';
-        html += '<input id="briefNewVesselInput" placeholder="e.g. DDG 129 Jeremiah Denton" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.88rem;margin-bottom:12px">';
+        html += '<input id="briefNewVesselInput" placeholder="e.g. DDG 129 Jeremiah Denton" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.88rem;margin-bottom:12px">';
         html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
         html += '<button class="ai-quick-btn" onclick="briefConfirmAddVessel()"><i class="fas fa-check"></i> Add</button>';
         html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
@@ -2370,7 +2370,7 @@
         if (!_activeBrief || !_activeBrief.comments || !_activeBrief.comments[slideIdx]) return;
         var comment = _activeBrief.comments[slideIdx][commentIdx];
         if (!comment) return;
-        var html = '<textarea id="briefEditCommentText" style="width:100%;height:80px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.85rem;resize:vertical;margin-bottom:12px">' + _esc(comment.text) + '</textarea>';
+        var html = '<textarea id="briefEditCommentText" style="width:100%;height:80px;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.85rem;resize:vertical;margin-bottom:12px">' + _esc(comment.text) + '</textarea>';
         html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
         html += '<button class="ai-quick-btn" onclick="briefConfirmEditComment(' + slideIdx + ',' + commentIdx + ')"><i class="fas fa-check"></i> Save</button>';
         html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
@@ -2486,14 +2486,14 @@
         var history = _activeBrief.approval_history || [];
         var html = '<div style="margin-bottom:16px">';
         html += '<label style="color:var(--steel);font-size:0.82rem;display:block;margin-bottom:6px">Current Status</label>';
-        html += '<select id="briefApprovalStatus" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:6px 12px;font-size:0.85rem;width:100%">';
+        html += '<select id="briefApprovalStatus" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:6px 12px;font-size:0.85rem;width:100%">';
         ['draft','in_review','approved','rejected','locked'].forEach(function (s) {
             var label = { draft: 'Draft', in_review: 'In Review', approved: 'Approved', rejected: 'Rejected — Changes Requested', locked: 'Locked (Final)' }[s] || s;
             html += '<option value="' + s + '"' + (s === status ? ' selected' : '') + '>' + label + '</option>';
         });
         html += '</select></div>';
         html += '<div style="margin-bottom:12px"><label style="color:var(--steel);font-size:0.82rem;display:block;margin-bottom:4px">Reviewer Note</label>';
-        html += '<textarea id="briefApprovalNote" placeholder="Add a note..." style="width:100%;height:60px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px;font-size:0.82rem;resize:vertical"></textarea></div>';
+        html += '<textarea id="briefApprovalNote" placeholder="Add a note..." style="width:100%;height:60px;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px;font-size:0.82rem;resize:vertical"></textarea></div>';
         if (history.length) {
             html += '<div style="max-height:160px;overflow-y:auto;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;margin-bottom:12px">';
             html += '<div style="font-size:0.75rem;color:var(--muted);margin-bottom:6px;font-weight:600">History</div>';
@@ -2591,7 +2591,7 @@
             // Classification banner top
             html += '<div style="position:fixed;top:0;left:0;right:0;height:28px;background:' + cls.bg + ';display:flex;align-items:center;justify-content:center;z-index:100000;font-size:0.75rem;font-weight:700;letter-spacing:2px;color:' + cls.color + '">' + cls.label + '</div>';
             // Slide
-            html += '<div style="position:relative;width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#0d1117') + ';border-radius:4px;transform:scale(' + scale.toFixed(3) + ');box-shadow:0 8px 48px rgba(0,0,0,0.8);overflow:hidden;margin-top:30px">';
+            html += '<div style="position:relative;width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#2c2c2e') + ';border-radius:4px;transform:scale(' + scale.toFixed(3) + ');box-shadow:0 8px 48px rgba(0,0,0,0.8);overflow:hidden;margin-top:30px">';
             (slide.elements || []).forEach(function (el) {
                 var s = 'position:absolute;left:' + el.x + 'px;top:' + el.y + 'px;width:' + el.w + 'px;height:' + el.h + 'px;';
                 if (el.type === 'text') {
@@ -2772,7 +2772,7 @@
         var doc = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + _esc(brief.title) + '</title>';
         doc += '<style>@page{margin:0;size:' + sw + 'px ' + (sh + 40) + 'px}@media print{.slide{page-break-after:always;break-after:page}.slide:last-child{page-break-after:auto}}';
         doc += '*{box-sizing:border-box;margin:0;padding:0}body{background:#fff;font-family:' + (master.fontFamily || 'sans-serif') + '}';
-        doc += '.slide{position:relative;width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#0d1117') + ';overflow:hidden}';
+        doc += '.slide{position:relative;width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#2c2c2e') + ';overflow:hidden}';
         doc += '.el{position:absolute;overflow:hidden;white-space:pre-wrap;word-wrap:break-word}';
         doc += '.cls-banner{width:100%;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:2px}';
         doc += '</style></head><body>';
@@ -2813,7 +2813,7 @@
     function briefSaveAsTemplate() {
         if (!_activeBrief) return;
         var html = '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:12px">Save this brief as a reusable template in your slide library.</div>';
-        html += '<input id="briefTplName" value="' + _esc(_activeBrief.title || 'Custom Template') + '" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.88rem;margin-bottom:12px">';
+        html += '<input id="briefTplName" value="' + _esc(_activeBrief.title || 'Custom Template') + '" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.88rem;margin-bottom:12px">';
         html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
         html += '<button class="ai-quick-btn" onclick="briefConfirmSaveTemplate()" style="background:rgba(0,204,136,0.12);color:#00cc88"><i class="fas fa-check"></i> Save</button>';
         html += '<button class="ai-quick-btn" onclick="briefCloseModal()">Cancel</button>';
@@ -3359,11 +3359,11 @@
         var sched = _activeBrief.schedule || {};
         var html = '<div style="margin-bottom:12px">';
         html += '<label style="color:var(--steel);font-size:0.82rem;display:block;margin-bottom:4px">Briefing Date & Time</label>';
-        html += '<input type="datetime-local" id="briefSchedDate" value="' + (sched.datetime || '') + '" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.85rem;margin-bottom:10px">';
+        html += '<input type="datetime-local" id="briefSchedDate" value="' + (sched.datetime || '') + '" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.85rem;margin-bottom:10px">';
         html += '<label style="color:var(--steel);font-size:0.82rem;display:block;margin-bottom:4px">Location / Meeting Link</label>';
-        html += '<input id="briefSchedLocation" value="' + _esc(sched.location || '') + '" placeholder="e.g. Conference Room 3A / Teams Link" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.85rem;margin-bottom:10px">';
+        html += '<input id="briefSchedLocation" value="' + _esc(sched.location || '') + '" placeholder="e.g. Conference Room 3A / Teams Link" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px 12px;font-size:0.85rem;margin-bottom:10px">';
         html += '<label style="color:var(--steel);font-size:0.82rem;display:block;margin-bottom:4px">Attendees (comma-separated emails)</label>';
-        html += '<textarea id="briefSchedAttendees" style="width:100%;height:50px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px;font-size:0.82rem;resize:vertical">' + _esc((sched.attendees || []).join(', ')) + '</textarea>';
+        html += '<textarea id="briefSchedAttendees" style="width:100%;height:50px;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:8px;font-size:0.82rem;resize:vertical">' + _esc((sched.attendees || []).join(', ')) + '</textarea>';
         html += '</div>';
         html += '<div style="display:flex;justify-content:flex-end;gap:6px">';
         html += '<button class="ai-quick-btn" onclick="briefApplySchedule()" style="background:rgba(0,204,136,0.12);color:#00cc88"><i class="fas fa-check"></i> Save Schedule</button>';
@@ -3532,7 +3532,7 @@
             master.headerBg = '#e2e4e8';
             master.headerColor = '#000000';
         } else {
-            master.bodyBg = '#0d1117';
+            master.bodyBg = '#2c2c2e';
             master.bodyColor = '#c9d1d9';
             master.headerBg = '#0a1628';
             master.headerColor = '#ffffff';
@@ -3696,7 +3696,7 @@
         data.forEach(function (row, ri) {
             html += '<tr>';
             (row || []).forEach(function (cell, ci) {
-                html += '<td style="padding:2px"><input value="' + _esc(cell) + '" data-r="' + ri + '" data-c="' + ci + '" class="briefTableCell" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:2px;padding:4px 6px;font-size:0.8rem" onchange="briefUpdateTableCell(\'' + eid + '\',' + ri + ',' + ci + ',this.value)"></td>';
+                html += '<td style="padding:2px"><input value="' + _esc(cell) + '" data-r="' + ri + '" data-c="' + ci + '" class="briefTableCell" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:2px;padding:4px 6px;font-size:0.8rem" onchange="briefUpdateTableCell(\'' + eid + '\',' + ri + ',' + ci + ',this.value)"></td>';
             });
             html += '</tr>';
         });
@@ -3787,19 +3787,19 @@
         if (!el || el.type !== 'chart') return;
         var html = '<div style="margin-bottom:10px">';
         html += '<label style="color:var(--steel);font-size:0.82rem;display:block;margin-bottom:4px">Chart Title</label>';
-        html += '<input id="briefChartTitle" value="' + _esc(el.title || '') + '" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:6px 10px;font-size:0.85rem;margin-bottom:8px">';
+        html += '<input id="briefChartTitle" value="' + _esc(el.title || '') + '" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:6px 10px;font-size:0.85rem;margin-bottom:8px">';
         html += '<label style="color:var(--steel);font-size:0.82rem;display:block;margin-bottom:4px">Chart Type</label>';
-        html += '<select id="briefChartType" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:6px 10px;font-size:0.85rem;margin-bottom:8px">';
+        html += '<select id="briefChartType" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:6px 10px;font-size:0.85rem;margin-bottom:8px">';
         ['bar','line','pie','donut','stacked','horizontal'].forEach(function (t) {
             html += '<option value="' + t + '"' + (t === (el.chartType || 'bar') ? ' selected' : '') + '>' + t.charAt(0).toUpperCase() + t.slice(1) + '</option>';
         });
         html += '</select>';
         html += '<label style="color:var(--steel);font-size:0.82rem;display:block;margin-bottom:4px">Labels (comma-separated)</label>';
-        html += '<input id="briefChartLabels" value="' + _esc((el.labels || []).join(', ')) + '" style="width:100%;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:6px 10px;font-size:0.85rem;margin-bottom:8px">';
+        html += '<input id="briefChartLabels" value="' + _esc((el.labels || []).join(', ')) + '" style="width:100%;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:6px 10px;font-size:0.85rem;margin-bottom:8px">';
         (el.datasets || []).forEach(function (ds, di) {
             html += '<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">';
-            html += '<input value="' + _esc(ds.label || '') + '" placeholder="Series name" class="briefChartDS" data-di="' + di + '" data-field="label" style="flex:1;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem">';
-            html += '<input value="' + _esc((ds.values || []).join(', ')) + '" placeholder="Values" class="briefChartDS" data-di="' + di + '" data-field="values" style="flex:2;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem">';
+            html += '<input value="' + _esc(ds.label || '') + '" placeholder="Series name" class="briefChartDS" data-di="' + di + '" data-field="label" style="flex:1;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem">';
+            html += '<input value="' + _esc((ds.values || []).join(', ')) + '" placeholder="Values" class="briefChartDS" data-di="' + di + '" data-field="values" style="flex:2;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem">';
             html += '<input type="color" value="' + (ds.color || '#00aaff') + '" class="briefChartDS" data-di="' + di + '" data-field="color" style="width:28px;height:28px;border:none;padding:0;cursor:pointer">';
             html += '</div>';
         });
@@ -3901,9 +3901,9 @@
         html += '<div style="max-height:280px;overflow-y:auto;margin-bottom:10px">';
         items.forEach(function (item, i) {
             html += '<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">';
-            html += '<input value="' + _esc(item.label) + '" placeholder="Risk name" class="briefRMItem" data-i="' + i + '" data-f="label" style="flex:2;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem">';
-            html += '<input type="number" min="1" max="5" value="' + (item.likelihood || 1) + '" class="briefRMItem" data-i="' + i + '" data-f="likelihood" style="width:50px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem;text-align:center" title="Likelihood">';
-            html += '<input type="number" min="1" max="5" value="' + (item.consequence || 1) + '" class="briefRMItem" data-i="' + i + '" data-f="consequence" style="width:50px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem;text-align:center" title="Consequence">';
+            html += '<input value="' + _esc(item.label) + '" placeholder="Risk name" class="briefRMItem" data-i="' + i + '" data-f="label" style="flex:2;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem">';
+            html += '<input type="number" min="1" max="5" value="' + (item.likelihood || 1) + '" class="briefRMItem" data-i="' + i + '" data-f="likelihood" style="width:50px;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem;text-align:center" title="Likelihood">';
+            html += '<input type="number" min="1" max="5" value="' + (item.consequence || 1) + '" class="briefRMItem" data-i="' + i + '" data-f="consequence" style="width:50px;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:4px 6px;font-size:0.8rem;text-align:center" title="Consequence">';
             html += '<button class="ai-quick-btn" onclick="briefRMRemoveItem(\'' + eid + '\',' + i + ')" style="color:#ff4444;padding:2px 6px"><i class="fas fa-times"></i></button>';
             html += '</div>';
         });
@@ -4358,8 +4358,8 @@
     // ── Custom Color Themes ──
     function briefCustomTheme() {
         var themes = [
-            { name: 'Default Dark', bg: '#0d1117', text: '#c9d1d9', accent: '#00aaff', headerBg: '#161b22' },
-            { name: 'Navy Command', bg: '#0a0e1a', text: '#d0d7de', accent: '#4a90d9', headerBg: '#141b2d' },
+            { name: 'Default Dark', bg: '#2c2c2e', text: '#c9d1d9', accent: '#00aaff', headerBg: '#161b22' },
+            { name: 'Navy Command', bg: '#2c2c2e', text: '#d0d7de', accent: '#4a90d9', headerBg: '#141b2d' },
             { name: 'Tactical Green', bg: '#0a1a0a', text: '#b0d0b0', accent: '#00cc88', headerBg: '#122212' },
             { name: 'Crimson Alert', bg: '#1a0a0a', text: '#d0b0b0', accent: '#ff4444', headerBg: '#221212' },
             { name: 'Arctic White', bg: '#f0f2f5', text: '#24292f', accent: '#0969da', headerBg: '#ffffff' },
@@ -4491,7 +4491,7 @@
         var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
         html += '<div><label class="brief-prop-label">Slide Width</label><input type="number" class="brief-prop-input" value="' + (m.slideWidth || 960) + '" onchange="briefSetMaster(\'slideWidth\',this.value)"></div>';
         html += '<div><label class="brief-prop-label">Slide Height</label><input type="number" class="brief-prop-input" value="' + (m.slideHeight || 540) + '" onchange="briefSetMaster(\'slideHeight\',this.value)"></div>';
-        html += '<div><label class="brief-prop-label">Background Color</label><input type="color" value="' + (m.bgColor || '#0d1117') + '" onchange="briefSetMaster(\'bgColor\',this.value)" style="width:100%;height:32px;border:none;cursor:pointer;border-radius:6px"></div>';
+        html += '<div><label class="brief-prop-label">Background Color</label><input type="color" value="' + (m.bgColor || '#2c2c2e') + '" onchange="briefSetMaster(\'bgColor\',this.value)" style="width:100%;height:32px;border:none;cursor:pointer;border-radius:6px"></div>';
         html += '<div><label class="brief-prop-label">Title Color</label><input type="color" value="' + (m.titleColor || '#e6edf3') + '" onchange="briefSetMaster(\'titleColor\',this.value)" style="width:100%;height:32px;border:none;cursor:pointer;border-radius:6px"></div>';
         html += '<div><label class="brief-prop-label">Body Color</label><input type="color" value="' + (m.bodyColor || '#c9d1d9') + '" onchange="briefSetMaster(\'bodyColor\',this.value)" style="width:100%;height:32px;border:none;cursor:pointer;border-radius:6px"></div>';
         html += '<div><label class="brief-prop-label">Font Family</label><input type="text" class="brief-prop-input" value="' + _esc(m.fontFamily || 'Inter, sans-serif') + '" onchange="briefSetMaster(\'fontFamily\',this.value)"></div>';

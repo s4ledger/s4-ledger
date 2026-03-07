@@ -2,7 +2,7 @@
    Extracted from monolith lines 51-1314
    1262 lines */
 
-        :root{--bg:#000000;--surface:#0a0a0a;--card:#111111;--border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.15);--accent:#00aaff;--gold:#c9a84c;--steel:#86868b;--green:#30d158;--red:#ff453a;--text:#f5f5f7;--muted:#6e6e73;--text-muted:#6e6e73;--radius:3px;--radius-lg:4px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1);--chart-text:#ccc;--chart-grid:rgba(255,255,255,0.08);--chart-bg:rgba(10,10,10,0.95);--chart-title:#e0e0e0}
+        :root{--bg:#1c1c1e;--surface:#2c2c2e;--card:#2c2c2e;--border:rgba(255,255,255,0.10);--border-hover:rgba(255,255,255,0.18);--accent:#00aaff;--gold:#c9a84c;--steel:#98989d;--green:#30d158;--red:#ff453a;--text:#f5f5f7;--muted:#8e8e93;--text-muted:#8e8e93;--radius:3px;--radius-lg:4px;--transition:0.3s cubic-bezier(0.25,0.1,0.25,1);--chart-text:#ccc;--chart-grid:rgba(255,255,255,0.10);--chart-bg:rgba(28,28,30,0.95);--chart-title:#e0e0e0}
         /* ── Light Mode Theme ── */
         body.light-mode{--bg:#f5f5f7;--surface:#ffffff;--card:#ffffff;--border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);--accent:#0077cc;--steel:#555555;--green:#1a8a3e;--gold:#8a6b1a;--red:#cc3333;--text:#1d1d1f;--muted:#86868b;--text-muted:#86868b;--chart-text:#333;--chart-grid:rgba(0,0,0,0.1);--chart-bg:#fff;--chart-title:#333}
         body.light-mode .navbar-custom,body.light-mode nav{background:rgba(255,255,255,0.92)!important;backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.06)!important}
@@ -74,7 +74,7 @@
         .brand-text{color:#fff;font-size:1.2rem;letter-spacing:0.5px;font-weight:700}
         .nav-link{color:#fff!important;padding:8px 12px!important;font-size:0.9rem!important;font-weight:500;transition:color 0.2s}
         .nav-link:hover,.nav-link.active{color:var(--accent)!important}
-        .dropdown-menu{background:rgba(10,10,15,0.98)!important;border:1px solid rgba(255,255,255,0.08)!important;border-radius:3px;padding:8px 0}
+        .dropdown-menu{background:rgba(28,28,30,0.98)!important;border:1px solid rgba(255,255,255,0.10)!important;border-radius:3px;padding:8px 0}
         .dropdown-item{color:var(--steel)!important;padding:8px 18px;font-size:0.875rem;transition:all 0.2s}
         .dropdown-item:hover,.dropdown-item:focus{background:rgba(0,170,255,0.08)!important;color:var(--accent)!important}
         .dropdown-item i{width:18px;margin-right:6px;display:inline-block;text-align:center}
@@ -192,7 +192,7 @@
         .ils-action-item .action-title{font-weight:700;color:#fff}
         .ils-action-item .action-owner{font-size:0.78rem;padding:2px 8px;border-radius:4px;background:rgba(0,170,255,0.1);color:var(--accent)}
         .ils-action-item .action-detail{color:var(--steel);font-size:0.82rem}
-        @media(max-width:991px){.navbar-collapse{background:rgba(5,8,16,0.98);padding:15px;border-radius:3px;margin-top:10px;border:1px solid var(--border);max-height:85vh;overflow-y:auto}.navbar-nav{gap:5px}.nav-link{padding:10px 15px!important;border-radius:3px}.nav-link:hover{background:rgba(0,170,255,0.1)}}
+        @media(max-width:991px){.navbar-collapse{background:rgba(28,28,30,0.98);padding:15px;border-radius:3px;margin-top:10px;border:1px solid var(--border);max-height:85vh;overflow-y:auto}.navbar-nav{gap:5px}.nav-link{padding:10px 15px!important;border-radius:3px}.nav-link:hover{background:rgba(0,170,255,0.1)}}
         /* AI Agent Chat */
         .ai-chat-container{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;height:420px}
         .ai-chat-header{background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -213,7 +213,7 @@
         .ai-float-wrapper{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:12px;pointer-events:none}
         .ai-float-toggle{pointer-events:all;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 20px rgba(0,170,255,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;position:relative}
         .ai-float-toggle:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,170,255,0.5)}
-        .ai-float-toggle .ai-float-dot{position:absolute;top:4px;right:4px;width:12px;height:12px;background:#00aaff;border-radius:50%;border:2px solid #0a0e1a;animation:pulse 2s infinite}
+        .ai-float-toggle .ai-float-dot{position:absolute;top:4px;right:4px;width:12px;height:12px;background:#00aaff;border-radius:50%;border:2px solid #1c1c1e;animation:pulse 2s infinite}
         .ai-float-panel{pointer-events:all;width:380px;max-height:520px;background:var(--card);border:1px solid var(--border);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,0.5);transform:translateY(20px) scale(0.95);opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);visibility:hidden}
         .ai-float-panel.open{transform:translateY(0) scale(1);opacity:1;visibility:visible;background:var(--card)}
         .ai-float-panel .ai-chat-header{border-radius:0;display:flex;justify-content:space-between}
@@ -223,7 +223,7 @@
         .ai-float-panel .ai-context-label{font-size:0.68rem;padding:4px 12px;background:rgba(0,170,255,0.06);border-bottom:1px solid rgba(201,168,76,0.1);color:var(--accent);font-weight:600;display:flex;align-items:center;gap:6px}
 
         /* ── Demo Onboarding Wizard ── */
-        .onboard-overlay{position:fixed;inset:0;background:rgba(5,8,16,0.97);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.4s ease;backdrop-filter:blur(12px)}
+        .onboard-overlay{position:fixed;inset:0;background:rgba(28,28,30,0.97);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.4s ease;backdrop-filter:blur(12px)}
         .onboard-modal{background:var(--card);border:1px solid var(--border);border-radius:3px;width:560px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:0 12px 60px rgba(0,0,0,0.6);animation:slideUp 0.4s ease}
         @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
         .onboard-header{background:linear-gradient(135deg,rgba(0,170,255,0.12),rgba(201,168,76,0.08));padding:24px 28px 16px;border-bottom:1px solid var(--border);text-align:center}
@@ -255,7 +255,7 @@
         .sample-pkg-item{display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:3px;font-size:0.78rem;color:var(--steel);cursor:default}
         .sample-pkg-item i{color:var(--accent);font-size:0.75rem;min-width:14px}
         /* Send Modal */
-        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,8,16,0.9);display:flex;align-items:center;justify-content:center;z-index:9998;opacity:0;pointer-events:none;transition:opacity 0.3s}
+        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(28,28,30,0.9);display:flex;align-items:center;justify-content:center;z-index:9998;opacity:0;pointer-events:none;transition:opacity 0.3s}
         .modal-overlay.active{opacity:1;pointer-events:all}
         .modal-box{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:2rem;max-width:480px;width:90%;animation:fadeIn 0.3s ease}
         .modal-box h4{color:var(--accent);margin-bottom:1rem}
@@ -945,16 +945,16 @@ body.light-mode .wt-mock-table td,body.light-mode .wt-mock-action-head,body.ligh
         @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
         @keyframes pulseGlow{0%,100%{box-shadow:0 0 5px rgba(0,170,255,0.2)}50%{box-shadow:0 0 20px rgba(0,170,255,0.4)}}
         @keyframes countUp{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
-        .glass-card{background:rgba(15,22,48,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:20px;transition:all 0.4s cubic-bezier(.4,0,.2,1)}
+        .glass-card{background:rgba(44,44,46,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:20px;transition:all 0.4s cubic-bezier(.4,0,.2,1)}
         .glass-card:hover{border-color:rgba(0,170,255,0.4);box-shadow:0 8px 32px rgba(0,170,255,0.15)}
         .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulseGlow 2s infinite;margin-right:6px}
         .shimmer-text{color:var(--accent);font-weight:700}
         .stat-animate{animation:countUp 0.6s cubic-bezier(.4,0,.2,1) forwards}
         .hover-lift{transition:all 0.3s cubic-bezier(.4,0,.2,1)}.hover-lift:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(0,0,0,0.3)}
         .gradient-border{border:1px solid var(--border)!important}
-        .workspace-notification{position:fixed;bottom:20px;right:20px;background:rgba(15,22,48,0.95);backdrop-filter:blur(12px);border:1px solid var(--accent);border-radius:3px;padding:14px 20px;color:#fff;font-size:0.85rem;z-index:10000;animation:slideUp 0.4s ease;box-shadow:0 8px 30px rgba(0,170,255,0.2);max-width:360px}
+        .workspace-notification{position:fixed;bottom:20px;right:20px;background:rgba(44,44,46,0.95);backdrop-filter:blur(12px);border:1px solid var(--accent);border-radius:3px;padding:14px 20px;color:#fff;font-size:0.85rem;z-index:10000;animation:slideUp 0.4s ease;box-shadow:0 8px 30px rgba(0,170,255,0.2);max-width:360px}
         .workspace-notification .notif-close{position:absolute;top:6px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem}
-        .tooltip-enhanced{position:relative}.tooltip-enhanced::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(0.8);opacity:0;background:rgba(15,22,48,0.95);border:1px solid var(--accent);color:#fff;padding:6px 12px;border-radius:3px;font-size:0.72rem;white-space:nowrap;pointer-events:none;transition:all 0.2s;z-index:999}
+        .tooltip-enhanced{position:relative}.tooltip-enhanced::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(0.8);opacity:0;background:rgba(44,44,46,0.95);border:1px solid var(--accent);color:#fff;padding:6px 12px;border-radius:3px;font-size:0.72rem;white-space:nowrap;pointer-events:none;transition:all 0.2s;z-index:999}
         .tooltip-enhanced:hover::after{opacity:1;transform:translateX(-50%) scale(1)}
         @media(max-width:768px){.ils-hub-tabs{gap:2px}.ils-hub-tab{padding:6px 10px;font-size:0.72rem}.cal-day{min-height:50px}.vault-stats{grid-template-columns:repeat(2,1fr)}.compliance-label{min-width:100px;font-size:0.75rem}#demoSteps{grid-template-columns:repeat(2,1fr)!important}}
     .active-link{color:#00aaff !important;font-weight:600 !important;}
@@ -1019,7 +1019,7 @@ body.light-mode .wt-mock-table td,body.light-mode .wt-mock-action-head,body.ligh
         @keyframes slsToastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
 
         /* ═══ Platform Hub ═══ */
-        .platform-hub { max-width:1100px; margin:0 auto; padding:0 20px; }
+        .platform-hub { max-width:1400px; margin:0 auto; padding:0 32px; }
         .hub-header { text-align:center; margin-bottom:32px; padding-top:8px; }
         .hub-header h2 { font-size:1.5rem; font-weight:800; color:#fff; margin-bottom:6px; }
         .hub-header p { color:var(--steel); font-size:0.88rem; max-width:600px; margin:0 auto; }
@@ -1071,24 +1071,24 @@ body.light-mode .wt-mock-table td,body.light-mode .wt-mock-action-head,body.ligh
         .ils-tool-card .itc-icon { font-size:1.1rem; flex-shrink:0; width:36px; height:36px; border-radius:3px; background:rgba(0,170,255,0.06); display:flex; align-items:center; justify-content:center; }
         .ils-tool-card .itc-title { font-size:0.85rem; font-weight:700; color:#fff; margin-bottom:3px; }
         .ils-tool-card .itc-desc { font-size:0.73rem; color:var(--steel); line-height:1.5; }
-        .ils-sub-hub { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:10px; }
+        .ils-sub-hub { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:14px; }
 
         /* ═══ APPLE-STYLE UI MODERNIZATION ═══ */
         /* Pure black canvas, cleaner surfaces, refined typography */
-        body { background:var(--bg,#000); letter-spacing:-0.01em; }
+        body { background:var(--bg,#1c1c1e); letter-spacing:-0.01em; }
         
         /* Refined card/panel surfaces — subtle glass effect */
         .demo-card, .glass-card { 
-            background:rgba(18,18,18,0.8) !important; 
+            background:rgba(44,44,46,0.8) !important; 
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); 
-            border:1px solid rgba(255,255,255,0.06) !important; 
+            border:1px solid rgba(255,255,255,0.10) !important; 
             border-radius:3px !important;
         }
         
         /* Hub cards — cleaner, more spacious */
         .hub-card { 
-            background:rgba(18,18,18,0.6); 
-            border:1px solid rgba(255,255,255,0.06); 
+            background:rgba(44,44,46,0.6); 
+            border:1px solid rgba(255,255,255,0.10); 
             border-radius:3px; 
             padding:28px 26px; 
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
@@ -1101,8 +1101,8 @@ body.light-mode .wt-mock-table td,body.light-mode .wt-mock-action-head,body.ligh
         
         /* Tool cards — subtler surfaces */
         .ils-tool-card {
-            background:rgba(18,18,18,0.6);
-            border:1px solid rgba(255,255,255,0.05);
+            background:rgba(44,44,46,0.6);
+            border:1px solid rgba(255,255,255,0.10);
             border-radius:3px;
             backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
         }
@@ -1199,8 +1199,8 @@ body.light-mode .wt-mock-table td,body.light-mode .wt-mock-action-head,body.ligh
         
         /* Landing feature cards — Apple grid style */
         #platformLanding .col-md-4 > div {
-            background:rgba(18,18,18,0.6) !important;
-            border:1px solid rgba(255,255,255,0.06) !important;
+            background:rgba(44,44,46,0.6) !important;
+            border:1px solid rgba(255,255,255,0.10) !important;
             border-radius:3px !important;
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
             transition:all 0.3s;
@@ -1423,7 +1423,7 @@ body.light-mode .wt-mock-table td,body.light-mode .wt-mock-action-head,body.ligh
 
         /* ── How It Works Modal Popup ── */
         .hiw-modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;animation:fadeIn .25s ease}
-        .hiw-modal-box{background:#111;border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:28px 32px 24px;max-width:560px;width:92%;max-height:80vh;overflow-y:auto;position:relative;box-shadow:0 12px 48px rgba(0,0,0,0.5);animation:scaleIn .3s ease}
+        .hiw-modal-box{background:#2c2c2e;border:1px solid rgba(0,170,255,0.2);border-radius:6px;padding:28px 32px 24px;max-width:560px;width:92%;max-height:80vh;overflow-y:auto;position:relative;box-shadow:0 12px 48px rgba(0,0,0,0.5);animation:scaleIn .3s ease}
         .hiw-modal-box .hiw-close{position:absolute;top:10px;right:14px;background:none;border:none;color:#888;font-size:1.4rem;cursor:pointer;line-height:1}
         .hiw-modal-box .hiw-close:hover{color:#fff}
         .hiw-modal-box h4{color:#00aaff;font-size:1rem;margin-bottom:12px}

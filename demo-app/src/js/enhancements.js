@@ -383,7 +383,7 @@ function renderFailureTimeline() {
         countEl.textContent = analysts.length + ' analyst' + (analysts.length > 1 ? 's' : '');
         var html = '';
         analysts.forEach(function(a, i) {
-            html += '<div title="' + a.name + '" style="width:26px;height:26px;border-radius:50%;background:' + a.color + ';display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#fff;border:2px solid #0a0e1a;margin-left:' + (i > 0 ? '-6px' : '0') + ';z-index:' + (10-i) + ';position:relative;cursor:default;">' + a.initials + '</div>';
+            html += '<div title="' + a.name + '" style="width:26px;height:26px;border-radius:50%;background:' + a.color + ';display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#fff;border:2px solid #2c2c2e;margin-left:' + (i > 0 ? '-6px' : '0') + ';z-index:' + (10-i) + ';position:relative;cursor:default;">' + a.initials + '</div>';
         });
         avatarsEl.innerHTML = html;
 
@@ -454,7 +454,7 @@ function showDigitalThread(hash) {
         // Vertical line
         if (!isLast) html += '<div style="position:absolute;left:-16px;top:10px;bottom:0;width:2px;background:linear-gradient(180deg,' + step.color + ',' + (steps[i+1]?steps[i+1].color:'transparent') + ');"></div>';
         // Dot
-        html += '<div style="position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:' + step.color + ';border:2px solid #0a0e1a;"></div>';
+        html += '<div style="position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:' + step.color + ';border:2px solid #2c2c2e;"></div>';
         // Content
         html += '<div style="display:flex;align-items:flex-start;gap:8px;">';
         html += '<i class="fas ' + step.icon + '" style="color:' + step.color + ';font-size:0.75rem;margin-top:2px;width:14px;text-align:center;"></i>';
@@ -522,7 +522,7 @@ function showSampleDigitalThread() {
         var isLast = i === steps.length - 1;
         html += '<div style="position:relative;padding-bottom:' + (isLast ? '0' : '16px') + ';">';
         if (!isLast) html += '<div style="position:absolute;left:-16px;top:10px;bottom:0;width:2px;background:linear-gradient(180deg,' + step.color + ',' + (steps[i+1]?steps[i+1].color:'transparent') + ');"></div>';
-        html += '<div style="position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:' + step.color + ';border:2px solid #0a0e1a;"></div>';
+        html += '<div style="position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:' + step.color + ';border:2px solid #2c2c2e;"></div>';
         html += '<div style="display:flex;align-items:flex-start;gap:8px;">';
         html += '<i class="fas ' + step.icon + '" style="color:' + step.color + ';font-size:0.75rem;margin-top:2px;width:14px;text-align:center;"></i>';
         html += '<div><div style="font-size:0.7rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;">' + step.label + '</div>';
@@ -1459,7 +1459,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         if (existing) { existing.remove(); return; }
 
         var statusColors = { online: '#34c759', away: '#ff9500', offline: '#8ea4b8' };
-        var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#2c2c2e;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-users" style="color:var(--accent);margin-right:8px"></i>Team Workspace</h3>';
         html += '<button onclick="var p=document.getElementById(\'teamManagePanel\');var o=document.getElementById(\'teamManageOverlay\');if(p)p.remove();if(o)o.remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -1533,7 +1533,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var existing = document.getElementById('savedAnalysesPanel');
         if (existing) { existing.remove(); return; }
 
-        var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#2c2c2e;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-history" style="color:var(--accent);margin-right:8px"></i>Saved Analyses</h3>';
         html += '<button onclick="_closeSavedAnalyses()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -1700,7 +1700,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var existing = document.getElementById('webhookPanel');
         if (existing) { existing.remove(); return; }
 
-        var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#2c2c2e;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-plug" style="color:var(--accent);margin-right:8px"></i>Webhook Configuration</h3>';
         html += '<button onclick="_closeWebhooks()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -5353,7 +5353,7 @@ function _updateThemeIcon(isLight) {
                 metadata: {
                     name: 'S4 Verification Certificate #' + tokenId,
                     description: 'Immutable verification certificate for record: ' + (record.name || record.id || 'Unknown'),
-                    image: 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a0e1a"/><text x="200" y="180" text-anchor="middle" fill="#00aaff" font-size="60" font-weight="bold">S4</text><text x="200" y="230" text-anchor="middle" fill="#c9a84c" font-size="16">VERIFICATION CERT</text><text x="200" y="260" text-anchor="middle" fill="#666" font-size="10">#' + tokenId + '</text></svg>'),
+                    image: 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#2c2c2e"/><text x="200" y="180" text-anchor="middle" fill="#00aaff" font-size="60" font-weight="bold">S4</text><text x="200" y="230" text-anchor="middle" fill="#c9a84c" font-size="16">VERIFICATION CERT</text><text x="200" y="260" text-anchor="middle" fill="#666" font-size="10">#' + tokenId + '</text></svg>'),
                     attributes: [
                         {trait_type:'Platform',value:'S4 Ledger'},
                         {trait_type:'Type',value:'Verification Certificate'},
@@ -7242,7 +7242,7 @@ function generateProvenanceQR() {
     if (container && typeof QRCode !== 'undefined') {
         container.style.display = 'block';
         container.innerHTML = '<div style="font-size:.82rem;color:var(--steel);margin-bottom:8px;font-weight:600">Provenance QR Code</div><div id="provQRCanvas"></div>';
-        new QRCode(document.getElementById('provQRCanvas'), { text: 'S4-PROV-' + Date.now().toString(36).toUpperCase(), width: 160, height: 160, colorDark: '#c9a84c', colorLight: '#0a0e1a' });
+        new QRCode(document.getElementById('provQRCanvas'), { text: 'S4-PROV-' + Date.now().toString(36).toUpperCase(), width: 160, height: 160, colorDark: '#c9a84c', colorLight: '#2c2c2e' });
     } else if (typeof S4 !== 'undefined' && S4.toast) S4.toast('QR code generated for asset tagging.', 'info');
 }
 function verifyProvenanceChain() {

@@ -135,7 +135,7 @@
 
 <!-- ═══ DoW CONSENT BANNER ═══ -->
 <div id="dodConsentBanner" role="dialog" aria-modal="true" aria-labelledby="dodConsentHeading" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;">
-    <div style="background:#0a0e1a;border:2px solid rgba(0,170,255,0.5);border-radius:3px;padding:40px;max-width:680px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+    <div style="background:#2c2c2e;border:2px solid rgba(0,170,255,0.5);border-radius:3px;padding:40px;max-width:680px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
         <div style="margin-bottom:20px;"><i class="fas fa-shield-halved" style="font-size:3rem;color:#00aaff;"></i></div>
         <h2 id="dodConsentHeading" style="color:#00aaff;font-size:1.3rem;font-weight:800;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">U.S. Department of War Information System</h2>
         <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:20px;margin-bottom:20px;text-align:left;">
@@ -156,7 +156,7 @@
 
 <!-- ═══ CAC / LOGIN POPUP ═══ -->
 <div id="cacLoginModal" role="dialog" aria-modal="true" aria-labelledby="cacLoginHeading" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.88);z-index:99998;align-items:center;justify-content:center;">
-    <div style="background:#0a0e1a;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+    <div style="background:#2c2c2e;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
         <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="" style="height:48px;width:48px;margin-bottom:8px;"><h3 id="cacLoginHeading" style="color:#fff;font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the Anchor-S4 workspace</p></div>
         <div id="cacLoginTabs" style="display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
             <button onclick="switchLoginTab('cac')" id="loginTabCac" style="flex:1;padding:10px;background:rgba(0,170,255,0.1);color:var(--accent);border:none;font-weight:700;font-size:0.82rem;cursor:pointer;"><i class="fas fa-id-card" style="margin-right:6px;"></i>CAC / PIV</button>
@@ -171,8 +171,8 @@
             <button onclick="simulateCacLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:3px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC</button>
         </div>
         <div id="acctLoginPane" style="display:none;">
-            <div style="margin-bottom:12px;text-align:left;"><label for="loginEmail" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email / User ID</label><input type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
-            <div style="margin-bottom:16px;text-align:left;"><label for="loginPassword" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input type="password" id="loginPassword" placeholder="••••••••" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
+            <div style="margin-bottom:12px;text-align:left;"><label for="loginEmail" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email / User ID</label><input type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#2c2c2e;color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
+            <div style="margin-bottom:16px;text-align:left;"><label for="loginPassword" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input type="password" id="loginPassword" placeholder="••••••••" style="background:#2c2c2e;color:#fff;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;"></div>
             <button onclick="simulateAccountLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:3px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In</button>
             <div style="margin-top:12px;font-size:0.78rem;"><a href="#" onclick="event.preventDefault();if(typeof _showNotif==='function')_showNotif('Password reset link sent to your .mil email.','info');" style="color:var(--accent);text-decoration:none;">Forgot password?</a></div>
         </div>
@@ -357,7 +357,7 @@
         <!-- Credit Economic Flow — Account Setup -->
         <div id="demoPanel" class="reveal-demo" style="margin-bottom:16px;display:none;">
             <div style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:20px 24px;position:relative;overflow:hidden;">
-                <div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:4px 16px;border-radius:0 14px 0 10px;font-size:0.68rem;font-weight:700;color:#050810;letter-spacing:0.5px;">LIVE PREVIEW</div>
+                <div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:4px 16px;border-radius:0 14px 0 10px;font-size:0.68rem;font-weight:700;color:#2c2c2e;letter-spacing:0.5px;">LIVE PREVIEW</div>
                 <h3 style="margin:0 0 4px;font-size:1.1rem;color:#fff;"><i class="fas fa-flask" style="color:#00aaff;margin-right:8px;"></i> Credit Economic Flow</h3>
                 <p style="color:#8ea4b8;font-size:0.8rem;margin:0 0 16px;">See how the credit economy works. Your account is provisioned, your wallet funded, and credits allocated. <strong style="color:#c9a84c;">Every anchor costs 0.01 Credits.</strong></p>
                 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;" id="demoSteps">
@@ -1281,8 +1281,8 @@
                         <label>Select Program</label>
                         <select id="dmsmsProgram" aria-label="Select DMSMS program" class="form-select mb-2"  onchange="loadDMSMSData()"></select>
                         <div class="row mb-3">
-                            <div class="col-6"><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
-                            <div class="col-6"><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                         </div>
                                                 <label style="font-size:0.82rem;margin-top:0.5rem">Upload DMSMS Data <span style="color:var(--muted);font-weight:400">(parts lists, GIDEP notices, vendor EOL notices)</span></label>
                         <div class="ils-dropzone" id="dmsmsDropzone" onclick="document.getElementById('dmsmsFileInput').click()" style="border-color:rgba(0,170,255,0.15)">
@@ -1324,8 +1324,8 @@
                                 <label>Select Program</label>
                                 <select id="readinessProgram" aria-label="Select readiness program" class="form-select mb-2"  onchange="loadReadinessData()"></select>
                                 <div class="row mb-2">
-                                    <div class="col-6"><input type="text" id="readinessHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
-                                    <div class="col-6"><input type="text" id="readinessOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input type="text" id="readinessHull" class="form-control" placeholder="Hull # / Tail #" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input type="text" id="readinessOffice" class="form-control" placeholder="Program Office" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                                 </div>
                                 <label>Select System / Subsystem</label>
                                 <select id="readinessSystem" aria-label="Select system" class="form-select mb-2"  onchange="calcReadiness()"></select>
@@ -1433,8 +1433,8 @@
                                 <label>Select Program</label>
                                 <select id="lifecycleProgram" aria-label="Select lifecycle program" class="form-select mb-2"  onchange="calcLifecycle()"></select>
                                 <div class="row mb-2">
-                                    <div class="col-6"><input type="text" id="lifecycleHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
-                                    <div class="col-6"><input type="text" id="lifecycleOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input type="text" id="lifecycleHull" class="form-control" placeholder="Hull # / Tail #" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                                    <div class="col-6"><input type="text" id="lifecycleOffice" class="form-control" placeholder="Program Office" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                                 </div>
                                 <label>Planned Service Life (years)</label>
                                 <input type="number" id="lcServiceLife" class="form-control mb-2"  placeholder="30" value="30" oninput="calcLifecycle()">
@@ -1472,7 +1472,7 @@
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                         <div style="font-size:0.82rem;font-weight:700;color:#9b59b6;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-project-diagram"></i> Digital Thread — Full Provenance Chain</div>
                         <div style="display:flex;align-items:center;gap:8px;">
-                            <select id="digitalThreadRecordSelect" aria-label="Select digital thread record" onchange="showDigitalThreadFromSelect()" style="background:#0a0e1a;color:#fff;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:4px 10px;font-size:0.75rem;max-width:240px;">
+                            <select id="digitalThreadRecordSelect" aria-label="Select digital thread record" onchange="showDigitalThreadFromSelect()" style="background:#2c2c2e;color:#fff;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:4px 10px;font-size:0.75rem;max-width:240px;">
                                 <option value="">— Select a vault record —</option>
                             </select>
                             <button onclick="closeDigitalThread()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:0.8rem;"><i class="fas fa-times"></i></button>
@@ -1505,8 +1505,8 @@
 
                     <!-- Search & Filter -->
                     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-                        <input type="text" id="vaultSearch" class="form-control" aria-label="Search vault records" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search records by type, hash, content..." oninput="_vaultPage=1;renderVault()">
-                        <select id="vaultFilter" aria-label="Filter vault records" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="_vaultPage=1;renderVault()">
+                        <input type="text" id="vaultSearch" class="form-control" aria-label="Search vault records" style="flex:1;min-width:200px;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search records by type, hash, content..." oninput="_vaultPage=1;renderVault()">
+                        <select id="vaultFilter" aria-label="Filter vault records" class="form-select" style="width:auto;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="_vaultPage=1;renderVault()">
                             <option value="all">All Records</option>
                             <option value="today">Today</option>
                             <option value="week">This Week</option>
@@ -1594,7 +1594,7 @@
                         <div style="padding:0 0 14px">
                             <p style="color:var(--steel);font-size:0.78rem;margin-bottom:12px">Generate synthetic records to test vault performance at scale. Records are generated locally and stored in localStorage. Useful for benchmarking query speed, rendering performance, and export capability with large datasets.</p>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
-                                <select id="stressTestCount" aria-label="Select stress test count" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 12px;font-size:0.82rem">
+                                <select id="stressTestCount" aria-label="Select stress test count" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 12px;font-size:0.82rem">
                                     <option value="100">100 Records</option>
                                     <option value="500">500 Records</option>
                                     <option value="1000" selected>1,000 Records</option>
@@ -1631,10 +1631,10 @@
 
                     <!-- Search & Filters -->
                     <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-                        <input type="text" id="docSearch" class="form-control" aria-label="Search document library" style="flex:1;min-width:200px;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search by ID, title, keywords... (e.g., MIL-STD-1388, DMSMS, OPNAVINST)" oninput="renderDocLibrary()">
+                        <input type="text" id="docSearch" class="form-control" aria-label="Search document library" style="flex:1;min-width:200px;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search by ID, title, keywords... (e.g., MIL-STD-1388, DMSMS, OPNAVINST)" oninput="renderDocLibrary()">
                         <button onclick="showDocUpload()" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-plus"></i> Add Document</button>
                         <button onclick="showDocVersionUpload()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-brain"></i> Analyze Revision</button>
-                        <select id="docBranchFilter" aria-label="Filter documents by branch" class="form-select" style="width:auto;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
+                        <select id="docBranchFilter" aria-label="Filter documents by branch" class="form-select" style="width:auto;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 14px;font-size:0.85rem" onchange="renderDocLibrary()">
                             <option value="all">All Branches</option>
                             <option value="USN">U.S. Navy</option>
                             <option value="USMC">U.S. Marine Corps</option>
@@ -1691,10 +1691,10 @@
                     <!-- Program Selector -->
                     <div style="margin-bottom:16px">
                         <label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label>
-                        <select id="complianceProgram" aria-label="Select compliance program" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select>
+                        <select id="complianceProgram" aria-label="Select compliance program" class="form-select" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select>
                         <div class="row" style="margin-top:6px">
-                            <div class="col-6"><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
-                            <div class="col-6"><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
+                            <div class="col-6"><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);font-size:0.85rem"></div>
                         </div>
                     </div>
 
@@ -1878,8 +1878,8 @@
                             <label>Select Program</label>
                             <select id="riskProgram" aria-label="Select risk program" onchange="loadRiskData()" style="font-size:0.88rem"></select>
                             <div class="row" style="margin-top:6px">
-                                <div class="col-6"><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
-                                <div class="col-6"><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -1922,7 +1922,7 @@
                     <!-- Risk Table -->
                     <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(201,168,76,0.2);border-radius:3px;">
                         <table style="width:100%;border-collapse:collapse;">
-                            <thead style="position:sticky;top:0;background:#0a0e1a;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:left;">Part / NSN</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:left;">Supplier</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:center;">Risk Score</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:left;">Risk Factors</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:center;">ETA Impact</th></tr></thead>
+                            <thead style="position:sticky;top:0;background:#2c2c2e;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:left;">Part / NSN</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:left;">Supplier</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:center;">Risk Score</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:left;">Risk Factors</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid rgba(201,168,76,0.2);text-align:center;">ETA Impact</th></tr></thead>
                             <tbody id="riskTableBody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">Click a program to load risk analysis...</td></tr></tbody>
                         </table>
                     </div>
@@ -2147,8 +2147,8 @@
                             <label>Select Fleet / Platform</label>
                             <select id="pdmPlatform" aria-label="Select predictive maintenance platform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select>
                             <div class="row" style="margin-top:6px">
-                                <div class="col-6"><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
-                                <div class="col-6"><input type="text" id="pdmOffice" placeholder="Program Office" style="font-size:0.82rem;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
+                                <div class="col-6"><input type="text" id="pdmOffice" placeholder="Program Office" style="font-size:0.82rem;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:5px 8px;width:100%"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -2170,7 +2170,7 @@
                     <!-- Predictions Table -->
                     <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(0,170,255,0.15);border-radius:3px;">
                         <table style="width:100%;border-collapse:collapse;">
-                            <thead style="position:sticky;top:0;background:#0a0e1a;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:left;">System / Component</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:left;">Failure Mode</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:center;">Confidence</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:center;">ETA</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:right;">Cost if Unplanned</th></tr></thead>
+                            <thead style="position:sticky;top:0;background:#2c2c2e;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:left;">System / Component</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:left;">Failure Mode</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:center;">Confidence</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:center;">ETA</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:right;">Cost if Unplanned</th></tr></thead>
                             <tbody id="pdmTableBody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">Select a fleet to load predictive analysis...</td></tr></tbody>
                         </table>
                     </div>
@@ -2188,7 +2188,7 @@
                         </div>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                        <button onclick="loadPredictiveData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#0a0e1a;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Run Predictions</button>
+                        <button onclick="loadPredictiveData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#2c2c2e;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Run Predictions</button>
                         <button onclick="exportPredictive()" class="btn btn-sm hover-lift" style="background:rgba(255,255,255,0.08);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Report</button>
                         <button onclick="anchorPredictive()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
@@ -2229,7 +2229,7 @@
                     <!-- SBOM Table -->
                     <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(0,170,255,0.2);border-radius:3px;">
                         <table style="width:100%;border-collapse:collapse;">
-                            <thead style="position:sticky;top:0;background:#0a0e1a;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:left;">Component</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:left;">Version</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">Type</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">CVEs</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">License</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">Status</th></tr></thead>
+                            <thead style="position:sticky;top:0;background:#2c2c2e;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:left;">Component</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:left;">Version</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">Type</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">CVEs</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">License</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">Status</th></tr></thead>
                             <tbody id="sbomTableBody"><tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Select a platform to load SBOM data...</td></tr></tbody>
                         </table>
                     </div>
