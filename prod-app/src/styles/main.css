@@ -1307,35 +1307,7 @@
         .demo-mode-banner .dmb-signin:hover{background:rgba(0,170,255,0.2);border-color:var(--accent)}
         .demo-mode-banner{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(0,119,204,0.04));border-color:rgba(201,168,76,0.2)}
 
-/* ═══ C1: UNHIDE "How It Works" sections — Steve Jobs: educate users inline ═══ */
-/* Override inline display:none on <details> so users can discover help content */
-.ils-hub-panel details,#tabAnchor details,#tabVerify details,
-details[style*="display:none"]{display:block!important}
-/* Style the How It Works sections as clean Apple-like info cards */
-details[style*="display:none"] summary,
-.ils-hub-panel details summary,
-#tabAnchor details summary,
-#tabVerify details summary{font-weight:600;font-size:0.82rem;color:#0077cc;cursor:pointer;padding:10px 0 6px;list-style:none}
-details[style*="display:none"] summary::before,
-.ils-hub-panel details summary::before,
-#tabAnchor details summary::before,
-#tabVerify details summary::before{content:'ℹ️ ';margin-right:4px}
-details[style*="display:none"] summary::-webkit-details-marker,
-.ils-hub-panel details summary::-webkit-details-marker,
-#tabAnchor details summary::-webkit-details-marker,
-#tabVerify details summary::-webkit-details-marker{display:none}
-details[style*="display:none"][open] summary::after,
-.ils-hub-panel details[open] summary::after,
-#tabAnchor details[open] summary::after,
-#tabVerify details[open] summary::after{content:' ▾';font-size:0.7rem}
-details[style*="display:none"]:not([open]) summary::after,
-.ils-hub-panel details:not([open]) summary::after,
-#tabAnchor details:not([open]) summary::after,
-#tabVerify details:not([open]) summary::after{content:' ▸';font-size:0.7rem}
-/* Details content styling */
-details[style*="display:none"] > :not(summary),
-.ils-hub-panel details > :not(summary){color:#555;font-size:0.82rem;line-height:1.6}
-details[style*="display:none"]{background:rgba(0,119,204,0.03)!important;border:1px solid rgba(0,119,204,0.1)!important;border-radius:6px!important;padding:0 14px 8px!important;margin-bottom:14px!important}
+/* C1 removed — user prefers the existing ? help buttons in tools */
 
 /* ═══ Platform Walkthrough ═══ */
 #s4WalkthroughOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.4s ease}
@@ -1860,24 +1832,24 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none!imp
 [style*="border:1px solid #ccc"],[style*="border: 1px solid #ccc"]{border-color:rgba(0,0,0,0.12)!important}
 [style*="border-color:rgba(255,255,255"]{border-color:rgba(0,0,0,0.08)!important}
 
-/* ── Ensure all tool-panel text is dark (catches JS-generated content) ── */
-.tool-panel,.tool-panel *,.ils-hub-panel,.ils-hub-panel *{color:#1d1d1f!important}
-.tool-panel [style*="background:linear"] *,.tool-panel [style*="background:#00aaff"] *,
-.tool-panel [style*="background:var(--accent)"] *,.tool-panel [style*="background:#0077cc"] *,
-.ils-hub-panel [style*="background:linear"] *,.ils-hub-panel [style*="background:#00aaff"] *{color:#fff!important}
-.tool-panel p,.tool-panel li,.ils-hub-panel p,.ils-hub-panel li{color:#333!important}
-.tool-panel .text-muted,.ils-hub-panel .text-muted,
-.tool-panel [style*="color:#888"],.tool-panel [style*="color:#8b949e"],
-.tool-panel [style*="color:#ccc"]{color:#444!important}
+/* ── Tool-panel text: dark base, preserving accent colors ── */
+.tool-panel,.ils-hub-panel{color:#1d1d1f}
+.tool-panel h1,.tool-panel h2,.tool-panel h3,.tool-panel h4,.tool-panel h5,
+.ils-hub-panel h1,.ils-hub-panel h2,.ils-hub-panel h3,.ils-hub-panel h4,.ils-hub-panel h5{color:#1d1d1f!important}
+.tool-panel p,.tool-panel li,.ils-hub-panel p,.ils-hub-panel li{color:#333}
+.tool-panel span:not([style*="color:"]),
+.tool-panel div:not([style*="color:"]),
+.ils-hub-panel span:not([style*="color:"]),
+.ils-hub-panel div:not([style*="color:"]){color:#1d1d1f}
 
 /* ═══════════════════════════════════════════════════════════════════════ */
 /* ═══ ROUND 4: FINAL DARK-MODE ELIMINATION + VISUAL SOPHISTICATION ═══ */
 /* ═══════════════════════════════════════════════════════════════════════ */
 
-/* ━━━ 4A: NUCLEAR TEXT COLOR ENFORCEMENT ━━━ */
-/* Force dark text everywhere except on colored/gradient backgrounds */
-body,body *{color:#1d1d1f}
-/* All common dark-theme text colors from JS inline styles */
+/* ━━━ 4A: TARGETED TEXT COLOR FIXES (preserves accent/status colors) ━━━ */
+/* Override ONLY dark-theme white/near-white text → dark */
+[style*="color:#fff"]:not([style*="background:linear"]):not([style*="background:#00"]):not([style*="background:var(--accent)"]):not([style*="background:#c9"]):not([style*="background:#ff"]):not([style*="background:#da"]),
+[style*="color: #fff"]:not([style*="background:linear"]):not([style*="background:#00"]):not([style*="background:var(--accent)"]){color:#1d1d1f!important}
 [style*="color:#f0f0f5"],[style*="color: #f0f0f5"],
 [style*="color:#f5f5f7"],[style*="color: #f5f5f7"],
 [style*="color:#e5e5e5"],[style*="color: #e5e5e5"],
@@ -1886,26 +1858,34 @@ body,body *{color:#1d1d1f}
 [style*="color:#c8c8c8"],[style*="color: #c8c8c8"],
 [style*="color:#bbb"],[style*="color: #bbb"],
 [style*="color:white"],[style*="color: white"],
-[style*="color:#fafafa"],[style*="color: #fafafa"]{color:#1d1d1f!important}
-/* Muted text: not-quite-white dark theme colors → medium gray */
+[style*="color:#fafafa"],[style*="color: #fafafa"],
+[style*="color:#e6edf3"],[style*="color: #e6edf3"]{color:#1d1d1f!important}
+/* Near-white / dark-theme muted → readable gray */
 [style*="color:#86868b"],[style*="color: #86868b"],
 [style*="color:#6e6e73"],[style*="color: #6e6e73"],
+[style*="color:#6e7681"],[style*="color: #6e7681"],
+[style*="color:#484f58"],[style*="color: #484f58"],
 [style*="color:#999"],[style*="color: #999"],
 [style*="color:rgb(134,134,139)"]{color:#555!important}
-/* Protect white text on colored backgrounds */
-[style*="background:linear"][style*="color:#fff"],
-[style*="background:linear"][style*="color: #fff"],
+/* rgba(255,255,255,...) text → dark (only for text, not on colored bg) */
+*[style*="color:rgba(255,255,255"]:not([style*="background:linear"]):not([style*="background:#00"]):not([style*="background:var(--accent)"]),
+*[style*="color: rgba(255,255,255"]:not([style*="background:linear"]):not([style*="background:#00"]):not([style*="background:var(--accent)"]){color:#1d1d1f!important}
+/* RESTORE white text on colored backgrounds */
+[style*="background:linear-gradient"][style*="color:#fff"],
+[style*="background:linear-gradient"][style*="color: #fff"]{color:#fff!important}
 [style*="background:#00aaff"] *,[style*="background:#0077cc"] *,
+[style*="background: #00aaff"] *,[style*="background: #0077cc"] *,
 [style*="background:var(--accent)"] *,
 [style*="background:#ff3333"] *,[style*="background:#cc3333"] *,
 [style*="background:#c9a84c"] *,[style*="background:#daa520"] *,
 [style*="background:#1a8a3e"] *,[style*="background:#34c759"] *,
+[style*="background:linear-gradient(135deg,#a855f7"] *,
+[style*="background:linear-gradient(135deg,#00aaff"] *,
 .btn-accent,.btn-accent *,.onboard-btn,.onboard-btn *,
 .nav-pills .nav-link.active{color:#fff!important}
 /* Form select/option fix */
 select option,.form-select option{background:#fff!important;color:#1d1d1f!important}
 input::placeholder,textarea::placeholder,select::placeholder,.form-control::placeholder{color:rgba(0,0,0,0.38)!important}
-/* .form-select and .form-control TEXT color fix */
 .form-select,.form-control{color:#1d1d1f!important}
 
 /* ━━━ 4B: COMPREHENSIVE BACKGROUND CLEANUP ━━━ */
@@ -1926,38 +1906,68 @@ input::placeholder,textarea::placeholder,select::placeholder,.form-control::plac
 #platformWorkspace,#platformWorkspace > *{background:transparent}
 #platformHub,#tabILS{background:transparent}
 
-/* ━━━ 4C: BRIEF & TOOL PANEL NUCLEAR OVERRIDES ━━━ */
-/* Program Brief — EVERY child element forced light */
-#hub-brief,#hub-brief *{color:#1d1d1f!important}
-#hub-brief [style*="background:linear"] *,
-#hub-brief [style*="background:#00aaff"] *,
-#hub-brief [style*="background:#0077cc"] *,
-#hub-brief [style*="background:var(--accent)"] *{color:#fff!important}
+/* ━━━ 4C: BRIEF LIGHT-MODE OVERRIDES ━━━ */
+/* Brief dark injected styles → light via CSS class overrides */
+.brief-sidebar{background:rgba(245,245,247,0.98)!important;border-right-color:rgba(0,0,0,0.08)!important}
+.brief-sidebar-btn{color:#555!important}
+.brief-sidebar-btn:hover{background:rgba(0,0,0,0.04)!important;color:#1d1d1f!important}
+.brief-sidebar-btn.active{background:rgba(0,119,204,0.1)!important;color:#0077cc!important;box-shadow:none!important}
+.brief-sidebar-label{color:#86868b!important}
+.brief-sidebar-divider{background:rgba(0,0,0,0.08)!important}
+.brief-header{background:rgba(255,255,255,0.95)!important;border-bottom-color:rgba(0,0,0,0.08)!important;backdrop-filter:blur(16px)!important}
+.brief-action-btn{background:rgba(0,0,0,0.03)!important;border-color:rgba(0,0,0,0.1)!important;color:#555!important}
+.brief-action-btn:hover{background:rgba(0,0,0,0.06)!important;border-color:rgba(0,0,0,0.15)!important;color:#1d1d1f!important}
+.brief-action-btn.primary{background:rgba(0,119,204,0.08)!important;border-color:rgba(0,119,204,0.2)!important;color:#0077cc!important}
+.brief-action-btn.primary:hover{background:rgba(0,119,204,0.15)!important}
+.brief-action-btn.danger{color:#cc3333!important}
+/* Brief action buttons with inline colored styles — preserve those colors */
+.brief-action-btn[style*="color:#a855f7"]{color:#a855f7!important}
+.brief-action-btn[style*="color:#f97316"]{color:#f97316!important}
+.brief-action-btn[style*="color:#c9a84c"]{color:#c9a84c!important}
+/* Brief format bar */
+.brief-format-bar{background:rgba(255,255,255,0.98)!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 4px 20px rgba(0,0,0,0.08)!important}
+/* Brief modal */
+.brief-modal-overlay{background:rgba(240,240,245,0.85)!important}
+.brief-modal{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 24px 64px rgba(0,0,0,0.12)!important}
+.brief-modal h4{color:#1d1d1f!important}
+.brief-modal-close{border-color:rgba(0,0,0,0.1)!important;color:#86868b!important}
+.brief-modal-close:hover{background:rgba(0,0,0,0.04)!important;color:#1d1d1f!important}
+/* Brief list page */
+.brief-modal [style*="color:#e6edf3"]{color:#1d1d1f!important}
+.brief-modal [style*="color:#6e7681"]{color:#555!important}
+.brief-modal [style*="color:#484f58"]{color:#86868b!important}
+/* Brief editor panels */
 #hub-brief input,#hub-brief select,#hub-brief textarea{background:#fff!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.15)!important}
+/* Brief dark background catches */
 #hub-brief [style*="background:#2c2c2e"],#hub-brief [style*="background:#0a0e1a"],
 #hub-brief [style*="background:#0d1117"],#hub-brief [style*="background:#050810"],
 #hub-brief [style*="background:#1c1c1e"],#hub-brief [style*="background:#111820"],
-#hub-brief [style*="background:#3a3a3c"]{background:#fff!important}
+#hub-brief [style*="background:#3a3a3c"],
+#hub-brief [style*="background:rgba(10,14,26"],
+#hub-brief [style*="background:rgba(13,17,23"]{background:#fff!important}
 
-/* All 23 tool panels text color enforcement */
-#hub-analysis *,#hub-actions *,#hub-comms *,#hub-compliance *,
-#hub-cost *,#hub-data *,#hub-health *,#hub-lifecycle *,
-#hub-logistics *,#hub-maint *,#hub-metrics *,#hub-mission *,
-#hub-ops *,#hub-planning *,#hub-readiness *,#hub-reports *,
-#hub-risk *,#hub-supply *,#hub-systems *,#hub-training *,
-#hub-acquisitions *,#hub-milestones *,#hub-brief *{color:#1d1d1f!important}
-/* Protect white text inside colored action buttons in tool panels */
-.ils-hub-panel [style*="background:linear"] *,
-.ils-hub-panel [style*="background:#00aaff"] *,
-.ils-hub-panel [style*="background:#0077cc"] *,
-.ils-hub-panel [style*="background:var(--accent)"] *,
-.ils-hub-panel .btn-accent *,.ils-hub-panel .acq-badge *,
-.ils-hub-panel .wt-mock-btn-primary *{color:#fff!important}
-/* Tool panel secondary/muted text */
-.ils-hub-panel [style*="color:#8b8fa3"],.ils-hub-panel [style*="color:#86868b"],
-.ils-hub-panel [style*="color:#8b949e"],.ils-hub-panel [style*="color:#888"],
-.ils-hub-panel [style*="color:#aaa"],.ils-hub-panel [style*="color:#999"],
-.ils-hub-panel [style*="color:#ccc"]{color:#555!important}
+/* ILS tool panel muted text fixes */
+.ils-hub-panel [style*="color:#8b8fa3"],.ils-hub-panel [style*="color:#8b949e"]{color:#555!important}
+
+/* ━━━ 4C-2: ANCHOR OVERLAY + LEDGER ACCOUNT LIGHT FIXES ━━━ */
+/* Anchor result popup: dark gradient bg → light */
+#s4ResultPopup{background:linear-gradient(135deg,rgba(245,245,247,0.98),rgba(255,255,255,0.98))!important;
+  border-color:rgba(0,119,204,0.2)!important;box-shadow:0 20px 60px rgba(0,0,0,0.12)!important}
+#s4ResultPopup *:not([style*="color:#00aaff"]):not([style*="color:var(--green)"]):not([style*="color:var(--gold)"]):not([style*="color:var(--red)"]){color:#1d1d1f}
+#animHash{background:rgba(0,0,0,0.03)!important;border-color:rgba(0,0,0,0.08)!important}
+/* Ledger: Buy Credits / Create Account dark navy gradient buttons → accent blue */
+#tabWallet [style*="background:linear-gradient(135deg,#1a3a5c"]{background:var(--accent-gradient,linear-gradient(135deg,#0077cc,#00aaff))!important;color:#fff!important}
+#tabWallet [style*="background:linear-gradient(135deg,#1a3a5c"] *{color:#fff!important}
+/* SLS stat labels and values */
+.sls-stat-label{color:#86868b!important}
+.sls-stat-val{color:#1d1d1f!important}
+.sls-expand-btn{color:#555!important;border-color:rgba(0,0,0,0.1)!important;background:rgba(0,0,0,0.02)!important}
+.sls-expand-btn:hover{background:rgba(0,0,0,0.05)!important;color:#1d1d1f!important}
+.sls-amt-btn{color:#555!important;border-color:rgba(0,0,0,0.1)!important;background:rgba(0,0,0,0.02)!important}
+.sls-amt-btn:hover,.sls-amt-btn.active{background:rgba(0,119,204,0.08)!important;border-color:rgba(0,119,204,0.2)!important;color:#0077cc!important}
+.chart-range-btn{color:#555!important;border-color:rgba(0,0,0,0.08)!important;background:transparent!important}
+.chart-range-btn:hover,.chart-range-btn.active{background:rgba(0,119,204,0.08)!important;color:#0077cc!important}
+#slsBalanceBar{background:rgba(0,0,0,0.04)!important}
 
 /* ━━━ 4D: VISUAL SOPHISTICATION — Apple-Quality Design System ━━━ */
 
@@ -2157,10 +2167,10 @@ button:disabled,button[disabled],.btn:disabled{opacity:0.45!important;cursor:not
 /* Box-shadow dark mode catches */
 [style*="box-shadow:0 0 0 9999px rgba(0,0,0"]{box-shadow:none!important}
 
-/* ━━━ 4G: ENSURE ALL DETAILS/SUMMARY SECTIONS READABLE ━━━ */
-details{background:rgba(0,119,204,0.02)!important;border:1px solid rgba(0,119,204,0.08)!important;border-radius:6px!important;padding:0 14px 8px!important;margin-bottom:14px!important;color:#1d1d1f!important}
-details summary{color:#0077cc!important;font-weight:600!important;font-size:0.84rem!important;padding:10px 0 6px!important;cursor:pointer}
-details > *:not(summary){color:#444!important;font-size:0.84rem!important;line-height:1.7!important}
+/* ━━━ 4G: DETAILS/SUMMARY — only style visible ones, don't force-show hidden ━━━ */
+details:not([style*="display:none"]){background:rgba(0,119,204,0.02);border:1px solid rgba(0,119,204,0.08);border-radius:6px;padding:0 14px 8px;margin-bottom:14px;color:#1d1d1f}
+details:not([style*="display:none"]) summary{color:#0077cc;font-weight:600;font-size:0.84rem;padding:10px 0 6px;cursor:pointer}
+details:not([style*="display:none"]) > *:not(summary){color:#444;font-size:0.84rem;line-height:1.7}
 
 /* ━━━ 4H: MOBILE RESPONSIVE POLISH ━━━ */
 @media(max-width:768px){
