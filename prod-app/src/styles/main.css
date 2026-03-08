@@ -1580,3 +1580,101 @@ body.light-mode #mainNav button[aria-label="Menu"],#mainNav button[aria-label="M
 
 /* Chart.js light mode defaults via CSS custom properties */
 body.light-mode{--chart-text:#333;--chart-grid:rgba(0,0,0,0.1);--chart-bg:#fff}
+
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/* ═══ STEVE JOBS UX ENHANCEMENTS + LIGHT-MODE FONT VISIBILITY FIXES ═══ */
+/* ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── CRITICAL: Fix white text that's invisible on light backgrounds ── */
+/* Headings — always dark in light mode */
+h1[style*="color:#fff"],h1[style*="color: #fff"],
+h2[style*="color:#fff"],h2[style*="color: #fff"],
+h3[style*="color:#fff"],h3[style*="color: #fff"],
+h4[style*="color:#fff"],h4[style*="color: #fff"],
+h5[style*="color:#fff"],h5[style*="color: #fff"],
+h6[style*="color:#fff"],h6[style*="color: #fff"]{color:#1d1d1f!important}
+/* Bold/strong text — always dark */
+strong[style*="color:#fff"],strong[style*="color: #fff"],
+b[style*="color:#fff"],b[style*="color: #fff"]{color:#1d1d1f!important}
+/* Paragraphs, labels, list items, table cells — always dark */
+p[style*="color:#fff"],p[style*="color: #fff"],
+label[style*="color:#fff"],label[style*="color: #fff"],
+li[style*="color:#fff"],li[style*="color: #fff"],
+td[style*="color:#fff"],td[style*="color: #fff"],
+th[style*="color:#fff"],th[style*="color: #fff"]{color:#1d1d1f!important}
+/* Divs/spans — dark UNLESS they have a gradient bg (avatars, badges) */
+div[style*="color:#fff"]:not([style*="background:linear"]):not([style*="background: linear"]),
+div[style*="color: #fff"]:not([style*="background:linear"]):not([style*="background: linear"]),
+span[style*="color:#fff"]:not([style*="background:linear"]):not([style*="background: linear"]),
+span[style*="color: #fff"]:not([style*="background:linear"]):not([style*="background: linear"]){color:#1d1d1f!important}
+/* Near-white colors from dark theme */
+[style*="color:#f0f0f5"],[style*="color: #f0f0f5"]{color:#1d1d1f!important}
+/* Preserve white text on gradient buttons and CTA links */
+button[style*="color:#fff"],button[style*="color: #fff"],
+a[style*="background:#00aaff"][style*="color:#fff"],
+a[style*="background: #00aaff"][style*="color:#fff"],
+a[style*="background:linear"][style*="color:#fff"],
+a[style*="background: linear"][style*="color:#fff"],
+a[style*="background:var(--accent)"][style*="color:#fff"],
+a[style*="background: var(--accent)"][style*="color:#fff"]{color:#fff!important}
+/* Fix select dropdown option white-on-white */
+select option,.form-select option{background:#fff!important;color:#1d1d1f!important}
+/* Fix invisible placeholders */
+input::placeholder,textarea::placeholder,.form-control::placeholder,.form-select::placeholder{color:rgba(0,0,0,0.35)!important}
+
+/* ── #1: Hero — confident Apple-level typography ── */
+.hero h1{font-weight:700!important;letter-spacing:-0.04em!important}
+
+/* ── #2: Generous vertical rhythm (Apple uses 1.7) ── */
+body{line-height:1.7}
+
+/* ── #3: Apple's exact secondary grays ── */
+:root{--steel:#6e6e73;--text-secondary:#6e6e73}
+
+/* ── #4: Modern monospace for hashes and code ── */
+textarea,.result-panel,.tx-hash,.vault-hash,.wt-mock-hash,.hash-display,code,pre,.acq-input{font-family:'SF Mono','JetBrains Mono','Fira Code','Courier New',monospace!important}
+
+/* ── #5: Spacious hub cards — "white space is not empty space" ── */
+.hub-card{padding:32px 28px!important}
+
+/* ── #7: 8px grid spacing normalization ── */
+.tab-content{margin-top:16px}
+.ils-hub-panel .s4-card > *:last-child{margin-bottom:0!important}
+
+/* ── #9: Sticky back-button bar when scrolling inside tools ── */
+.subpage-back{position:sticky!important;top:28px!important;z-index:100!important;background:var(--bg)!important;padding:12px 0!important;margin-bottom:16px!important}
+
+/* ── #11: Flat primary buttons — solid confident fills, no gradients ── */
+.btn-accent,.btn-anchor,.onboard-btn{background:#0077cc!important}
+.btn-accent:hover,.btn-anchor:hover,.onboard-btn:hover{background:#005fa3!important}
+
+/* ── #12: 44px minimum touch targets (Apple HIG) ── */
+.btn-accent,.btn-gold,.onboard-btn,.onboard-btn-outline,.back-btn,.btn-anchor,.btn-export{min-height:44px}
+
+/* ── #13: Refined hover — subtle scale instead of bounce ── */
+.btn-accent:hover,.onboard-btn:hover{transform:scale(1.02)!important;box-shadow:0 4px 12px rgba(0,119,204,0.15)!important}
+.hub-card:hover{transform:translateY(-3px) scale(1.005)!important}
+.ils-tool-card:hover{transform:translateY(-2px) scale(1.005)!important}
+
+/* ── #14: ITAR banner — subtle grey Apple-style notice bar ── */
+#itarBanner{background:#f5f5f7!important;color:#86868b!important;font-size:0.75rem!important;border-bottom:1px solid rgba(0,0,0,0.04)!important}
+#itarBanner span,#itarBanner div{color:inherit!important}
+#itarBanner a{color:#0077cc!important}
+
+/* ── #15: Border-radius hierarchy — creates visual hierarchy ── */
+/* Cards & panels — 6px */
+.hub-card,.ils-tool-card,.s4-card,.glass-card,.stat-card,.cal-container,
+.action-tracker,.chart-container,.result-panel,.vault-record,.doc-card,
+.tx-entry,.ai-float-panel{border-radius:6px!important}
+/* Modals — 8px */
+.modal-box,.onboard-modal,.hiw-modal-box,.wt-container,
+#dodConsentBanner > div,#cacLoginModal > div,#roleModal > div,
+.s4-command-palette{border-radius:8px!important}
+/* Buttons & interactive controls — 4px */
+.btn-accent,.btn-gold,.onboard-btn,.onboard-btn-outline,
+.btn-anchor,.btn-export,.back-btn,.branch-tab,.record-type-btn,
+.nav-pills .nav-link,.ils-hub-tab,.ai-quick-btn,
+.post-action-btn,.sample-btn{border-radius:4px!important}
+/* Inputs — 4px */
+input,select,textarea,.form-control,.form-select,.type-search{border-radius:4px!important}
