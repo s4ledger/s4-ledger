@@ -852,44 +852,48 @@
         .ils-sub-hub { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:14px; }
 
         /* ═══ APPLE-STYLE UI MODERNIZATION ═══ */
-        /* Pure black canvas, cleaner surfaces, refined typography */
+        /* Clean light canvas, refined surfaces, Apple typography */
         body { background:var(--bg,#f5f5f7); letter-spacing:-0.01em; }
-        /* Refined card/panel surfaces — subtle glass effect */
+        /* Refined card/panel surfaces — clean white with subtle shadow */
         .s4-card, .glass-card { 
-            background:rgba(44,44,46,0.8) !important; 
+            background:rgba(255,255,255,0.95) !important; 
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); 
-            border:1px solid rgba(255,255,255,0.10) !important; 
-            border-radius:3px !important;
+            border:1px solid rgba(0,0,0,0.08) !important; 
+            border-radius:6px !important;
+            box-shadow:0 1px 3px rgba(0,0,0,0.06);
         }
         /* Hub cards — cleaner, more spacious */
         .hub-card { 
-            background:rgba(44,44,46,0.6); 
-            border:1px solid rgba(255,255,255,0.10); 
-            border-radius:3px; 
+            background:rgba(255,255,255,0.92) !important; 
+            border:1px solid rgba(0,0,0,0.08) !important; 
+            border-radius:6px; 
             padding:28px 26px; 
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+            box-shadow:0 1px 4px rgba(0,0,0,0.05);
         }
         .hub-card:hover { 
-            border-color:rgba(0,170,255,0.25); 
-            background:rgba(0,170,255,0.04); 
-            box-shadow:0 12px 40px rgba(0,170,255,0.08);
+            border-color:rgba(0,119,204,0.3) !important; 
+            background:rgba(0,119,204,0.04) !important; 
+            box-shadow:0 12px 40px rgba(0,119,204,0.1);
         }
-        /* Tool cards — subtler surfaces */
+        /* Tool cards — clean white surfaces */
         .ils-tool-card {
-            background:rgba(44,44,46,0.6);
-            border:1px solid rgba(255,255,255,0.10);
-            border-radius:3px;
+            background:rgba(255,255,255,0.92) !important;
+            border:1px solid rgba(0,0,0,0.06) !important;
+            border-radius:6px;
             backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+            box-shadow:0 1px 2px rgba(0,0,0,0.04);
         }
         .ils-tool-card:hover {
-            border-color:rgba(0,170,255,0.2);
-            box-shadow:0 8px 24px rgba(0,170,255,0.06);
+            border-color:rgba(0,119,204,0.25) !important;
+            box-shadow:0 8px 24px rgba(0,119,204,0.08);
         }
         /* Nav pills — cleaner active states */
         .nav-pills .nav-link {
-            background:rgba(255,255,255,0.04);
-            border:1px solid rgba(0,0,0,0.06);
-            border-radius:3px;
+            background:rgba(0,0,0,0.04) !important;
+            border:1px solid rgba(0,0,0,0.08) !important;
+            color:#555 !important;
+            border-radius:4px;
             font-weight:500;
             font-size:0.84rem;
             letter-spacing:-0.005em;
@@ -915,24 +919,25 @@
             transform:translateY(-1px);
             box-shadow:0 6px 20px rgba(0,170,255,0.25);
         }
-        /* Inputs — refined, subtle */
+        /* Inputs — refined, light mode */
         select, input, textarea {
-            background:rgba(255,255,255,0.04) !important;
-            border:1px solid rgba(255,255,255,0.08) !important;
-            border-radius:3px !important;
+            background:#f8f8fa !important;
+            color:#1d1d1f !important;
+            border:1px solid rgba(0,0,0,0.12) !important;
+            border-radius:4px !important;
             font-size:0.88rem !important;
             transition:border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
         select:focus, input:focus, textarea:focus {
-            background:rgba(255,255,255,0.06) !important;
-            border-color:rgba(0,170,255,0.4) !important;
-            box-shadow:0 0 0 4px rgba(0,170,255,0.08) !important;
+            background:#fff !important;
+            border-color:rgba(0,119,204,0.4) !important;
+            box-shadow:0 0 0 4px rgba(0,119,204,0.08) !important;
         }
         /* Stat strip — cleaner */
         .stat-strip {
-            background:rgba(255,255,255,0.02);
-            border:1px solid rgba(255,255,255,0.05);
-            border-radius:3px;
+            background:rgba(0,0,0,0.02) !important;
+            border:1px solid rgba(0,0,0,0.06) !important;
+            border-radius:4px;
             backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
         }
         /* Section headings — Apple-level typography */
@@ -966,22 +971,23 @@
         }
         /* Landing feature cards — Apple grid style */
         #platformLanding .col-md-4 > div {
-            background:rgba(44,44,46,0.6) !important;
-            border:1px solid rgba(255,255,255,0.10) !important;
-            border-radius:3px !important;
+            background:rgba(255,255,255,0.92) !important;
+            border:1px solid rgba(0,0,0,0.08) !important;
+            border-radius:6px !important;
             backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
             transition:all 0.3s;
+            box-shadow:0 1px 3px rgba(0,0,0,0.04);
         }
         #platformLanding .col-md-4 > div:hover {
-            border-color:rgba(0,170,255,0.2) !important;
+            border-color:rgba(0,119,204,0.25) !important;
             transform:translateY(-4px);
-            box-shadow:0 12px 40px rgba(0,170,255,0.08);
+            box-shadow:0 12px 40px rgba(0,119,204,0.08);
         }
         /* Scrollbars — minimal */
         ::-webkit-scrollbar { width:6px; }
         ::-webkit-scrollbar-track { background:transparent; }
-        ::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.06); border-radius:3px; }
-        ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
+        ::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.12); border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background:rgba(0,0,0,0.25); }
         /* Details/summary — cleaner toggles */
         details { border-radius:3px !important; }
         details summary { font-size:0.84rem; }
@@ -991,11 +997,12 @@
             font-size:0.78rem;
             letter-spacing:-0.005em;
         }
-        /* Result panels — subtle */
+        /* Result panels — clean light background */
         .result-panel {
-            background:rgba(255,255,255,0.02);
-            border:1px solid rgba(0,0,0,0.06);
-            border-radius:3px;
+            background:#f8f8fa !important;
+            border:1px solid rgba(0,0,0,0.08) !important;
+            border-radius:6px;
+            color:#1d1d1f !important;
         }
 
         /* ═══ LIGHT MODE — Apple-style component overrides ═══ */
@@ -1854,11 +1861,321 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none!imp
 [style*="border-color:rgba(255,255,255"]{border-color:rgba(0,0,0,0.08)!important}
 
 /* ── Ensure all tool-panel text is dark (catches JS-generated content) ── */
-.tool-panel,.tool-panel *,.ils-hub-panel,.ils-hub-panel *{color:#1d1d1f}
+.tool-panel,.tool-panel *,.ils-hub-panel,.ils-hub-panel *{color:#1d1d1f!important}
 .tool-panel [style*="background:linear"] *,.tool-panel [style*="background:#00aaff"] *,
 .tool-panel [style*="background:var(--accent)"] *,.tool-panel [style*="background:#0077cc"] *,
-.ils-hub-panel [style*="background:linear"] *,.ils-hub-panel [style*="background:#00aaff"] *{color:#fff}
-.tool-panel p,.tool-panel li,.ils-hub-panel p,.ils-hub-panel li{color:#333}
+.ils-hub-panel [style*="background:linear"] *,.ils-hub-panel [style*="background:#00aaff"] *{color:#fff!important}
+.tool-panel p,.tool-panel li,.ils-hub-panel p,.ils-hub-panel li{color:#333!important}
 .tool-panel .text-muted,.ils-hub-panel .text-muted,
 .tool-panel [style*="color:#888"],.tool-panel [style*="color:#8b949e"],
 .tool-panel [style*="color:#ccc"]{color:#444!important}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/* ═══ ROUND 4: FINAL DARK-MODE ELIMINATION + VISUAL SOPHISTICATION ═══ */
+/* ═══════════════════════════════════════════════════════════════════════ */
+
+/* ━━━ 4A: NUCLEAR TEXT COLOR ENFORCEMENT ━━━ */
+/* Force dark text everywhere except on colored/gradient backgrounds */
+body,body *{color:#1d1d1f}
+/* All common dark-theme text colors from JS inline styles */
+[style*="color:#f0f0f5"],[style*="color: #f0f0f5"],
+[style*="color:#f5f5f7"],[style*="color: #f5f5f7"],
+[style*="color:#e5e5e5"],[style*="color: #e5e5e5"],
+[style*="color:#eee"],[style*="color: #eee"],
+[style*="color:#ddd"],[style*="color: #ddd"],
+[style*="color:#c8c8c8"],[style*="color: #c8c8c8"],
+[style*="color:#bbb"],[style*="color: #bbb"],
+[style*="color:white"],[style*="color: white"],
+[style*="color:#fafafa"],[style*="color: #fafafa"]{color:#1d1d1f!important}
+/* Muted text: not-quite-white dark theme colors → medium gray */
+[style*="color:#86868b"],[style*="color: #86868b"],
+[style*="color:#6e6e73"],[style*="color: #6e6e73"],
+[style*="color:#999"],[style*="color: #999"],
+[style*="color:rgb(134,134,139)"]{color:#555!important}
+/* Protect white text on colored backgrounds */
+[style*="background:linear"][style*="color:#fff"],
+[style*="background:linear"][style*="color: #fff"],
+[style*="background:#00aaff"] *,[style*="background:#0077cc"] *,
+[style*="background:var(--accent)"] *,
+[style*="background:#ff3333"] *,[style*="background:#cc3333"] *,
+[style*="background:#c9a84c"] *,[style*="background:#daa520"] *,
+[style*="background:#1a8a3e"] *,[style*="background:#34c759"] *,
+.btn-accent,.btn-accent *,.onboard-btn,.onboard-btn *,
+.nav-pills .nav-link.active{color:#fff!important}
+/* Form select/option fix */
+select option,.form-select option{background:#fff!important;color:#1d1d1f!important}
+input::placeholder,textarea::placeholder,select::placeholder,.form-control::placeholder{color:rgba(0,0,0,0.38)!important}
+/* .form-select and .form-control TEXT color fix */
+.form-select,.form-control{color:#1d1d1f!important}
+
+/* ━━━ 4B: COMPREHENSIVE BACKGROUND CLEANUP ━━━ */
+/* Dark panel/container backgrounds from JS */
+[style*="background:#1d1d1f"],[style*="background: #1d1d1f"],
+[style*="background:#121212"],[style*="background: #121212"],
+[style*="background:#1e1e1e"],[style*="background: #1e1e1e"],
+[style*="background:#252525"],[style*="background: #252525"],
+[style*="background:#333"],[style*="background: #333"],
+[style*="background:#2a2a2e"],[style*="background: #2a2a2e"],
+[style*="background:#161b22"],[style*="background: #161b22"]{background:#f5f5f7!important}
+/* Semi-transparent dark backgrounds */
+[style*="background:rgba(28,"],[style*="background: rgba(28,"],
+[style*="background:rgba(29,"],[style*="background: rgba(29,"],
+[style*="background:rgba(30,"],[style*="background: rgba(30,"],
+[style*="background:rgba(44,44,46"],[style*="background: rgba(44,44,46"]{background:rgba(255,255,255,0.95)!important}
+/* Force main workspace area light */
+#platformWorkspace,#platformWorkspace > *{background:transparent}
+#platformHub,#tabILS{background:transparent}
+
+/* ━━━ 4C: BRIEF & TOOL PANEL NUCLEAR OVERRIDES ━━━ */
+/* Program Brief — EVERY child element forced light */
+#hub-brief,#hub-brief *{color:#1d1d1f!important}
+#hub-brief [style*="background:linear"] *,
+#hub-brief [style*="background:#00aaff"] *,
+#hub-brief [style*="background:#0077cc"] *,
+#hub-brief [style*="background:var(--accent)"] *{color:#fff!important}
+#hub-brief input,#hub-brief select,#hub-brief textarea{background:#fff!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.15)!important}
+#hub-brief [style*="background:#2c2c2e"],#hub-brief [style*="background:#0a0e1a"],
+#hub-brief [style*="background:#0d1117"],#hub-brief [style*="background:#050810"],
+#hub-brief [style*="background:#1c1c1e"],#hub-brief [style*="background:#111820"],
+#hub-brief [style*="background:#3a3a3c"]{background:#fff!important}
+
+/* All 23 tool panels text color enforcement */
+#hub-analysis *,#hub-actions *,#hub-comms *,#hub-compliance *,
+#hub-cost *,#hub-data *,#hub-health *,#hub-lifecycle *,
+#hub-logistics *,#hub-maint *,#hub-metrics *,#hub-mission *,
+#hub-ops *,#hub-planning *,#hub-readiness *,#hub-reports *,
+#hub-risk *,#hub-supply *,#hub-systems *,#hub-training *,
+#hub-acquisitions *,#hub-milestones *,#hub-brief *{color:#1d1d1f!important}
+/* Protect white text inside colored action buttons in tool panels */
+.ils-hub-panel [style*="background:linear"] *,
+.ils-hub-panel [style*="background:#00aaff"] *,
+.ils-hub-panel [style*="background:#0077cc"] *,
+.ils-hub-panel [style*="background:var(--accent)"] *,
+.ils-hub-panel .btn-accent *,.ils-hub-panel .acq-badge *,
+.ils-hub-panel .wt-mock-btn-primary *{color:#fff!important}
+/* Tool panel secondary/muted text */
+.ils-hub-panel [style*="color:#8b8fa3"],.ils-hub-panel [style*="color:#86868b"],
+.ils-hub-panel [style*="color:#8b949e"],.ils-hub-panel [style*="color:#888"],
+.ils-hub-panel [style*="color:#aaa"],.ils-hub-panel [style*="color:#999"],
+.ils-hub-panel [style*="color:#ccc"]{color:#555!important}
+
+/* ━━━ 4D: VISUAL SOPHISTICATION — Apple-Quality Design System ━━━ */
+
+/* Premium color palette accents */
+:root{
+    --bg-primary:#f5f5f7;--bg-secondary:#ffffff;
+    --surface-elevated:rgba(255,255,255,0.98);
+    --surface-overlay:rgba(255,255,255,0.92);
+    --accent-gradient:linear-gradient(135deg,#0077cc 0%,#00aaff 100%);
+    --gold-gradient:linear-gradient(135deg,#8a6b1a 0%,#c9a84c 100%);
+    --shadow-sm:0 1px 3px rgba(0,0,0,0.04);
+    --shadow-md:0 4px 12px rgba(0,0,0,0.06);
+    --shadow-lg:0 12px 40px rgba(0,0,0,0.1);
+    --shadow-xl:0 24px 60px rgba(0,0,0,0.12);
+}
+
+/* Premium card hover micro-interactions */
+.hub-card{transition:all 0.35s cubic-bezier(0.25,0.1,0.25,1)!important}
+.ils-tool-card{transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1)!important}
+.s4-card,.glass-card{transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1)!important}
+
+/* Hub card — premium numbered indicators */
+.hub-card .hc-icon{font-size:1.5rem!important;margin-bottom:8px}
+.hub-card .hc-title{font-size:1rem!important;font-weight:700!important;color:#1d1d1f!important;letter-spacing:-0.02em}
+.hub-card .hc-desc{font-size:0.82rem!important;color:#555!important;line-height:1.6!important}
+.hub-card .hc-arrow{transition:all 0.3s!important;color:#0077cc!important}
+
+/* D1: Enhanced breadcrumbs with better visibility */
+.s4-breadcrumbs{background:rgba(255,255,255,0.95)!important;border-bottom:1px solid rgba(0,0,0,0.06)!important;padding:10px 20px!important;font-size:13px!important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.s4-breadcrumbs a{color:#0077cc!important;font-weight:500!important}
+.s4-breadcrumbs .bc-sep{color:#bbb!important}
+.s4-breadcrumbs .bc-current{color:#1d1d1f!important;font-weight:700!important}
+
+/* D3: Prominent tool search */
+.ils-filter-bar .ils-search{background:#fff!important;border:1.5px solid rgba(0,0,0,0.12)!important;border-radius:6px!important;padding:8px 14px 8px 36px!important;font-size:0.82rem!important;box-shadow:0 1px 4px rgba(0,0,0,0.04)!important;transition:all 0.25s!important;color:#1d1d1f!important}
+.ils-filter-bar .ils-search:focus{border-color:#0077cc!important;box-shadow:0 0 0 3px rgba(0,119,204,0.1),0 1px 4px rgba(0,0,0,0.04)!important}
+.ils-filter-bar .filter-tab{border-radius:20px!important;padding:6px 16px!important;font-size:0.76rem!important;transition:all 0.2s!important}
+
+/* D4: Keyboard shortcut indicator badges */
+.s4-command-item .cmd-shortcut{background:rgba(0,0,0,0.04)!important;border:1px solid rgba(0,0,0,0.08)!important;border-radius:3px!important;padding:2px 6px!important;font-size:10px!important;color:#86868b!important}
+
+/* E6: Progress indicators — app-wide consistent styling */
+progress,meter{appearance:none;-webkit-appearance:none;width:100%;height:6px;border-radius:3px;overflow:hidden;background:rgba(0,0,0,0.06)}
+progress::-webkit-progress-bar{background:rgba(0,0,0,0.06);border-radius:3px}
+progress::-webkit-progress-value{background:var(--accent-gradient);border-radius:3px}
+
+/* E7: Status badges — refined Apple style */
+.badge,.status-badge,[class*="badge"]{font-weight:600!important;font-size:0.72rem!important;letter-spacing:0.02em!important;border-radius:20px!important;padding:3px 10px!important}
+
+/* F3: Destructive action button styling */
+button[style*="color:#ff"]:not([style*="background"]),
+button[style*="color:red"],
+[onclick*="delete" i] button,[onclick*="remove" i] button{color:#cc3333!important;border-color:rgba(204,51,51,0.2)!important}
+button[style*="color:#ff"]:hover,[onclick*="delete" i] button:hover{background:rgba(204,51,51,0.06)!important}
+
+/* F4: Disabled button states */
+button:disabled,button[disabled],.btn:disabled{opacity:0.45!important;cursor:not-allowed!important;filter:grayscale(0.3)}
+
+/* G1-G8: Tool-specific visual improvements */
+/* Tool panel sections — clear hierarchy */
+.ils-hub-panel h3,.ils-hub-panel h4{color:#1d1d1f!important;font-weight:700!important;letter-spacing:-0.02em!important}
+.ils-hub-panel h3{font-size:1.1rem!important;border-bottom:2px solid rgba(0,119,204,0.1)!important;padding-bottom:10px!important;margin-bottom:16px!important}
+/* Tool panel data display */
+.ils-hub-panel pre,.ils-hub-panel code{background:#f0f2f5!important;color:#1d1d1f!important;border:1px solid rgba(0,0,0,0.06)!important;border-radius:6px!important;padding:12px 14px!important;font-size:0.82rem!important;overflow-x:auto}
+/* Tool panel result containers */
+.ils-hub-panel .result-panel,.ils-hub-panel [id$="Results"],
+.ils-hub-panel [id$="results"],.ils-hub-panel [id$="Grid"]{background:#fafbfc!important;border:1px solid rgba(0,0,0,0.06)!important;border-radius:6px!important;padding:16px!important}
+
+/* H1: Version / build info footer styling */
+.build-info,.version-badge,footer [style*="font-size:0.6"],footer [style*="font-size:0.7"]{color:#86868b!important;font-size:0.72rem!important;opacity:0.6}
+
+/* H2: Loading state skeleton pulse */
+@keyframes skeletonPulse{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton,.loading-placeholder{background:linear-gradient(90deg,#f0f0f5 25%,#e8e8ed 50%,#f0f0f5 75%)!important;background-size:200% 100%;animation:skeletonPulse 1.5s ease-in-out infinite;border-radius:4px;color:transparent!important}
+
+/* H3: Success state animation */
+@keyframes successFlash{0%{background:rgba(26,138,62,0.08)}100%{background:transparent}}
+.success-flash{animation:successFlash 1s ease-out}
+
+/* H4: Error state styling */
+.error-state,.error-message,[style*="color:#ff3b30"]{color:#cc3333!important;font-weight:500}
+.error-container{background:rgba(204,51,51,0.04)!important;border:1px solid rgba(204,51,51,0.15)!important;border-radius:6px;padding:12px 16px}
+
+/* I2: Reduced motion preference */
+@media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+}
+
+/* ━━━ 4E: SOPHISTICATED VISUAL POLISH ━━━ */
+
+/* Premium landing page hero */
+.hero{padding:80px 0 60px!important}
+.hero h1{font-size:2.8rem!important;line-height:1.08!important;background:linear-gradient(135deg,#1d1d1f 0%,#333 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.1rem!important;color:#555!important;max-width:580px!important;margin:0 auto}
+
+/* Landing feature cards — premium presentation */
+#platformLanding .col-md-4 > div{padding:28px 24px!important}
+#platformLanding .col-md-4 > div h4{font-size:1rem!important;font-weight:700!important;color:#1d1d1f!important;margin-bottom:8px}
+#platformLanding .col-md-4 > div p{font-size:0.85rem!important;color:#555!important;line-height:1.6}
+
+/* Stat cards — premium number display */
+.stat-card,.stat-mini{border-radius:8px!important;overflow:hidden;position:relative}
+.stat-card::before,.stat-mini::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-gradient);opacity:0.7}
+
+/* Hub hub-grid premium spacing */
+.hub-grid{gap:16px!important}
+
+/* ILS hub tabs — refined pill style */
+.ils-hub-tab{font-size:0.76rem!important;padding:7px 16px!important;border-radius:20px!important;transition:all 0.25s!important;font-weight:600!important}
+.ils-hub-tab:hover{background:rgba(0,119,204,0.06)!important;color:#0077cc!important}
+.ils-hub-tab.active{background:#0077cc!important;color:#fff!important;box-shadow:0 2px 8px rgba(0,119,204,0.2)!important}
+
+/* Premium modals */
+.modal-box,.hiw-modal-box,.onboard-modal{background:#fff!important;border:1px solid rgba(0,0,0,0.08)!important;border-radius:12px!important}
+#dodConsentBanner > div,#cacLoginModal > div{border-radius:12px!important}
+
+/* Premium toast notifications */
+.s4-toast{border-radius:8px!important;box-shadow:0 4px 20px rgba(0,0,0,0.1)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* Tab content area — subtle inset */
+.tab-content{background:transparent;padding:0;margin-top:16px}
+.tab-pane{animation:fadeSlideIn 0.25s ease-out}
+
+/* Refined data tables */
+.tool-panel table{border-radius:8px!important;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.tool-panel table th{background:rgba(0,119,204,0.03)!important;font-size:0.74rem!important;letter-spacing:0.5px!important}
+.tool-panel table tr:nth-child(even) td{background:rgba(0,0,0,0.015)}
+
+/* Refined form inputs */
+.tool-panel input,.tool-panel select,.tool-panel textarea{border-radius:6px!important;background:#fff!important;border:1.5px solid rgba(0,0,0,0.1)!important;box-shadow:inset 0 1px 2px rgba(0,0,0,0.03)!important}
+.tool-panel input:focus,.tool-panel select:focus,.tool-panel textarea:focus{border-color:#0077cc!important;box-shadow:0 0 0 3px rgba(0,119,204,0.08),inset 0 1px 2px rgba(0,0,0,0.03)!important}
+.tool-panel label{color:#444!important;font-size:0.78rem!important;font-weight:600!important;letter-spacing:0.3px!important}
+
+/* Premium action buttons */
+.btn-accent{background:linear-gradient(135deg,#0077cc,#0088e0)!important;color:#fff!important;border:none!important;font-weight:600!important;box-shadow:0 2px 8px rgba(0,119,204,0.2)!important}
+.btn-accent:hover{background:linear-gradient(135deg,#006bb3,#0077cc)!important;box-shadow:0 4px 16px rgba(0,119,204,0.25)!important;transform:translateY(-1px) scale(1.01)!important}
+.btn-accent:active{transform:translateY(0) scale(0.99)!important;box-shadow:0 1px 4px rgba(0,119,204,0.15)!important}
+
+/* Gold/export buttons — premium */
+.btn-gold,.btn-export{background:linear-gradient(135deg,#8a6b1a,#c9a84c)!important;color:#fff!important;border:none!important;box-shadow:0 2px 8px rgba(138,107,26,0.2)!important}
+
+/* Premium vault records */
+.vault-record{background:#fff!important;border:1px solid rgba(0,0,0,0.06)!important;border-radius:8px!important;box-shadow:0 1px 3px rgba(0,0,0,0.04)!important;transition:all 0.25s!important;margin-bottom:10px!important;padding:16px!important}
+.vault-record:hover{border-color:rgba(0,119,204,0.2)!important;box-shadow:0 4px 12px rgba(0,0,0,0.06)!important}
+.vault-hash{background:#f0f2f5!important;border-radius:4px!important;padding:6px 10px!important;font-family:'SF Mono','JetBrains Mono',monospace!important;font-size:0.78rem!important;color:#0077cc!important;word-break:break-all}
+.vault-badge{border-radius:20px!important;font-size:0.7rem!important;font-weight:600!important;padding:2px 10px!important}
+.vault-meta,.vault-meta *{color:#555!important;font-size:0.78rem!important}
+
+/* Onboarding overlay — premium glass */
+.onboard-overlay{background:rgba(245,245,247,0.95)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
+.onboard-modal{max-width:460px!important;padding:40px 36px!important;box-shadow:0 24px 60px rgba(0,0,0,0.12)!important}
+
+/* Consent banner — premium styling */
+#dodConsentBanner > div{padding:32px 36px!important;max-width:540px!important}
+#dodConsentBanner h2{font-weight:700!important;letter-spacing:-0.03em!important}
+
+/* WAL sidebar — premium */
+.wallet-sidebar{box-shadow:-8px 0 40px rgba(0,0,0,0.08)!important;border-left:1px solid rgba(0,0,0,0.06)!important}
+
+/* Walkthrough overlay — premium glass */
+.wt-container{border-radius:12px!important;box-shadow:0 24px 80px rgba(0,0,0,0.12)!important;border:1px solid rgba(0,0,0,0.08)!important}
+.wt-narrator{background:#f8f9fb!important;border-right:1px solid rgba(0,0,0,0.06)!important}
+.wt-display{background:#fff!important}
+
+/* Command palette — premium search */
+.s4-command-palette{border-radius:12px!important;box-shadow:0 16px 60px rgba(0,0,0,0.15)!important;overflow:hidden}
+.s4-command-palette input{padding:16px 24px!important;font-size:16px!important;background:#fff!important;color:#1d1d1f!important;border-bottom:1px solid rgba(0,0,0,0.06)!important}
+.s4-command-item{padding:10px 24px!important;color:#1d1d1f!important}
+.s4-command-item:hover,.s4-command-item.selected{background:rgba(0,119,204,0.06)!important}
+
+/* AI float panel — premium */
+.ai-float-panel{background:#fff!important;border:1px solid rgba(0,0,0,0.08)!important;border-radius:12px!important;box-shadow:0 12px 40px rgba(0,0,0,0.12)!important}
+.ai-float-btn{background:linear-gradient(135deg,#0077cc,#00aaff)!important;box-shadow:0 4px 16px rgba(0,119,204,0.3)!important;border-radius:50%!important}
+
+/* ━━━ 4F: REMAINING INLINE STYLE DARK-MODE CATCHES ━━━ */
+/* Additional dark hex backgrounds from JS that may have been missed */
+[style*="background:#181818"],[style*="background: #181818"],
+[style*="background:#141414"],[style*="background: #141414"],
+[style*="background:#1a1a1a"],[style*="background: #1a1a1a"],
+[style*="background:#222"],[style*="background: #222"],
+[style*="background:#2d2d2d"],[style*="background: #2d2d2d"],
+[style*="background:#1f1f1f"],[style*="background: #1f1f1f"],
+[style*="background:#0f0f0f"],[style*="background: #0f0f0f"],
+[style*="background:#111"],[style*="background: #111"],
+[style*="background:#000"],[style*="background: #000"]{background:#f5f5f7!important}
+/* Dark RGB backgrounds */
+[style*="background:rgb(0,"],[style*="background: rgb(0,"],
+[style*="background:rgb(10,"],[style*="background: rgb(10,"],
+[style*="background:rgb(18,"],[style*="background: rgb(18,"],
+[style*="background:rgb(28,"],[style*="background: rgb(28,"],
+[style*="background:rgb(29,"],[style*="background: rgb(29,"],
+[style*="background:rgb(44,"],[style*="background: rgb(44,"]{background:#f5f5f7!important}
+/* Dark border catches */
+[style*="border-color:#333"],[style*="border-color: #333"],
+[style*="border-color:#2c2c2e"],[style*="border-color: #2c2c2e"],
+[style*="border-color:#444"],[style*="border-color: #444"]{border-color:rgba(0,0,0,0.08)!important}
+/* Box-shadow dark mode catches */
+[style*="box-shadow:0 0 0 9999px rgba(0,0,0"]{box-shadow:none!important}
+
+/* ━━━ 4G: ENSURE ALL DETAILS/SUMMARY SECTIONS READABLE ━━━ */
+details{background:rgba(0,119,204,0.02)!important;border:1px solid rgba(0,119,204,0.08)!important;border-radius:6px!important;padding:0 14px 8px!important;margin-bottom:14px!important;color:#1d1d1f!important}
+details summary{color:#0077cc!important;font-weight:600!important;font-size:0.84rem!important;padding:10px 0 6px!important;cursor:pointer}
+details > *:not(summary){color:#444!important;font-size:0.84rem!important;line-height:1.7!important}
+
+/* ━━━ 4H: MOBILE RESPONSIVE POLISH ━━━ */
+@media(max-width:768px){
+    .hero h1{font-size:1.8rem!important}
+    .hero p{font-size:0.95rem!important}
+    .hub-card{padding:20px 18px!important}
+    .hub-grid{gap:10px!important}
+    .ils-sub-hub{grid-template-columns:1fr!important;gap:8px!important}
+    .tool-panel h3{font-size:0.95rem!important}
+    .stat-strip{flex-direction:column!important;gap:8px!important}
+    .subpage-back{top:8px!important}
+}
+@media(max-width:480px){
+    .hero{padding:40px 0 30px!important}
+    .hero h1{font-size:1.5rem!important}
+    #platformLanding .col-md-4 > div{padding:18px 16px!important}
+    .tool-panel input,.tool-panel select,.tool-panel textarea{font-size:16px!important}
+}
