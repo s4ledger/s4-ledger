@@ -50,7 +50,7 @@ async function loadPerformanceMetrics() {
             _metricsChartTimes = new Chart(timeCtx, {
                 type: 'line',
                 data: { labels: times.map(function(_, i) { return '#' + (i+1); }), datasets: [{ label: 'Anchor Time (s)', data: times, borderColor: '#00aaff', backgroundColor: 'rgba(0,170,255,0.1)', fill: true, tension: 0.3, pointRadius: 2, pointBackgroundColor: '#00aaff' }] },
-                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#555', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.03)' } }, y: { ticks: { color: '#555', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.03)' }, beginAtZero: true } } }
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#6b7d93', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: '#6b7d93', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true } } }
             });
         }
 
@@ -62,7 +62,7 @@ async function loadPerformanceMetrics() {
             _metricsChartTypes = new Chart(typesCtx, {
                 type: 'doughnut',
                 data: { labels: Object.keys(types), datasets: [{ data: Object.values(types), backgroundColor: ['#00aaff','#c9a84c','#38bdf8','#ff6b6b','#00aaff','#fb923c','#06b6d4'], borderWidth: 0 }] },
-                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#555', font: { size: 10 }, padding: 8 } } } }
+                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#8ea4b8', font: { size: 10 }, padding: 8 } } } }
             });
         }
 
@@ -71,7 +71,7 @@ async function loadPerformanceMetrics() {
         if (reqEl && data.recent_requests && data.recent_requests.length) {
             reqEl.innerHTML = window._s4Safe(data.recent_requests.map(function(r) {
                 var methodColor = (r.method||'GET') === 'POST' ? '#00cc66' : '#00aaff';
-                return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(0,0,0,0.03)">'
+                return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.03)">'
                     + '<span style="background:' + methodColor + '22;color:' + methodColor + ';font-weight:700;font-size:0.7rem;padding:2px 8px;border-radius:4px;min-width:42px;text-align:center">' + (r.method||'GET') + '</span>'
                     + '<span style="color:var(--text);flex:1;font-family:monospace;font-size:0.72rem">' + (r.path||r.endpoint||'/api/anchor') + '</span>'
                     + '<span style="color:var(--accent);font-size:0.68rem;font-weight:600">' + (r.time||r.duration||r.latency||'—') + '</span>'
@@ -111,7 +111,7 @@ async function loadPerformanceMetrics() {
             _metricsChartTimes = new Chart(timeCtx, {
                 type: 'line',
                 data: { labels: times.map(function(_, i) { return '#' + (i+1); }), datasets: [{ label: 'Anchor Time (s)', data: times, borderColor: '#00aaff', backgroundColor: 'rgba(0,170,255,0.1)', fill: true, tension: 0.3, pointRadius: 2, pointBackgroundColor: '#00aaff' }] },
-                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#555', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.03)' } }, y: { ticks: { color: '#555', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.03)' }, beginAtZero: true } } }
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#6b7d93', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: '#6b7d93', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true } } }
             });
         }
 
@@ -122,7 +122,7 @@ async function loadPerformanceMetrics() {
             _metricsChartTypes = new Chart(typesCtx, {
                 type: 'doughnut',
                 data: { labels: Object.keys(types), datasets: [{ data: Object.values(types), backgroundColor: ['#00aaff','#c9a84c','#38bdf8','#ff6b6b','#00aaff','#fb923c','#06b6d4'], borderWidth: 0 }] },
-                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#555', font: { size: 10 }, padding: 8 } } } }
+                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#8ea4b8', font: { size: 10 }, padding: 8 } } } }
             });
         }
 
@@ -150,7 +150,7 @@ async function loadPerformanceMetrics() {
             ];
             var allRequests = sessionRequests.length > 0 ? sessionRequests.concat(baselineRequests) : baselineRequests;
             reqEl.innerHTML = window._s4Safe(allRequests.slice(0, 12).map(function(r) {
-                return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(0,0,0,0.03)">'
+                return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.03)">'
                     + '<span style="background:' + r.color + '22;color:' + r.color + ';font-weight:700;font-size:0.7rem;padding:2px 8px;border-radius:4px;min-width:42px;text-align:center">' + r.method + '</span>'
                     + '<span style="color:var(--text);flex:1;font-family:monospace;font-size:0.72rem">' + r.path + '</span>'
                     + '<span style="color:var(--steel);font-size:0.65rem;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + r.detail + '</span>'
@@ -340,7 +340,7 @@ function refreshOfflineQueueUI() {
     if (statusEl) { var on = navigator.onLine; statusEl.innerHTML = on ? '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--green)"></i> Online' : '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--red)"></i> Offline'; statusEl.style.color = on ? 'var(--green)' : 'var(--red)'; }
     if (listEl) {
         if (!queue.length) { listEl.innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">Queue is empty. Hashes are queued automatically when offline.</div>'; }
-        else { listEl.innerHTML = window._s4Safe(queue.map(function(item, i) { return '<div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid rgba(0,0,0,0.03)"><span style="color:var(--accent);font-weight:700;width:24px">' + (i+1) + '</span><span style="flex:1;color:var(--text);font-family:monospace;font-size:0.72rem">' + (item.hash ? item.hash.substring(0,24)+'...' : 'N/A') + '</span><span style="color:var(--steel);font-size:0.7rem;width:80px">' + (item.record_type||'GENERAL') + '</span><span style="color:' + (item.synced ? 'var(--green)' : 'var(--gold)') + ';font-size:0.72rem">' + (item.synced ? '✓ Synced' : '⏳ Pending') + '</span><button onclick="offlineRemoveItem(' + i + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.75rem" title="Remove"><i class="fas fa-times"></i></button></div>'; }).join('')); }
+        else { listEl.innerHTML = window._s4Safe(queue.map(function(item, i) { return '<div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:var(--accent);font-weight:700;width:24px">' + (i+1) + '</span><span style="flex:1;color:var(--text);font-family:monospace;font-size:0.72rem">' + (item.hash ? item.hash.substring(0,24)+'...' : 'N/A') + '</span><span style="color:var(--steel);font-size:0.7rem;width:80px">' + (item.record_type||'GENERAL') + '</span><span style="color:' + (item.synced ? 'var(--green)' : 'var(--gold)') + ';font-size:0.72rem">' + (item.synced ? '✓ Synced' : '⏳ Pending') + '</span><button onclick="offlineRemoveItem(' + i + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.75rem" title="Remove"><i class="fas fa-times"></i></button></div>'; }).join('')); }
     }
 }
 
@@ -548,15 +548,15 @@ function createS4Chart(canvasId, config) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: { labels: { color: '#555', font: { family: 'Inter', size: 11, weight: '600' }, padding: 16, usePointStyle: true, pointStyle: 'circle' } },
-            tooltip: { backgroundColor: '#ffffff', titleColor: '#1d1d1f', bodyColor: '#8ea4b8', borderColor: 'rgba(0,102,204,0.15)', borderWidth: 1, padding: 12, cornerRadius: 8, titleFont: { weight: '700' }, bodyFont: { size: 12 } }
+            legend: { labels: { color: '#8ea4b8', font: { family: 'Inter', size: 11, weight: '600' }, padding: 16, usePointStyle: true, pointStyle: 'circle' } },
+            tooltip: { backgroundColor: '#16161f', titleColor: '#fff', bodyColor: '#8ea4b8', borderColor: 'rgba(0,170,255,0.2)', borderWidth: 1, padding: 12, cornerRadius: 8, titleFont: { weight: '700' }, bodyFont: { size: 12 } }
         },
         scales: {}
     };
     if (config.type === 'bar' || config.type === 'line') {
         defaults.scales = {
-            x: { grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false }, ticks: { color: '#555', font: { size: 10 } } },
-            y: { grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false }, ticks: { color: '#555', font: { size: 10 } } }
+            x: { grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false }, ticks: { color: '#8ea4b8', font: { size: 10 } } },
+            y: { grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false }, ticks: { color: '#8ea4b8', font: { size: 10 } } }
         };
     }
     // Merge defaults
@@ -642,7 +642,7 @@ function renderGapAnalysisCharts() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(0,0,0,0.06)' }, angleLines: { color: 'rgba(0,0,0,0.06)' }, pointLabels: { color: '#555', font: { size: 10 } } } },
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.06)' }, angleLines: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#8ea4b8', font: { size: 10 } } } },
             plugins: { legend: { display: false } }
         }
     });
@@ -666,7 +666,7 @@ function renderGapAnalysisCharts() {
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
-            scales: { x: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { color: '#555' } }, y: { ticks: { color: '#555', font: { size: 10 } }, grid: { display: false } } },
+            scales: { x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8' } }, y: { ticks: { color: '#8ea4b8', font: { size: 10 } }, grid: { display: false } } },
             plugins: { legend: { display: false } }
         }
     });
@@ -695,7 +695,7 @@ function renderDMSMSCharts() {
             maintainAspectRatio: false,
             cutout: '55%',
             plugins: {
-                legend: { position: 'bottom', labels: { color: '#555', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
+                legend: { position: 'bottom', labels: { color: '#8ea4b8', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
             }
         }
     });
@@ -749,8 +749,8 @@ function renderReadinessCharts() {
                 tooltip: { callbacks: { label: function(ctx) { return ctx.parsed.y + '%'; } } }
             },
             scales: {
-                x: { ticks: { color: '#555', font: { size: 11 } }, grid: { display: false } },
-                y: { ticks: { color: '#555', font: { size: 10 }, callback: function(v) { return v + '%'; } }, grid: { color: 'rgba(0,0,0,0.03)' }, beginAtZero: true, max: 100 }
+                x: { ticks: { color: '#8ea4b8', font: { size: 11 } }, grid: { display: false } },
+                y: { ticks: { color: '#6b7d93', font: { size: 10 }, callback: function(v) { return v + '%'; } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true, max: 100 }
             }
         }
     });
@@ -787,8 +787,8 @@ function renderComplianceCharts() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(0,0,0,0.06)' }, angleLines: { color: 'rgba(0,0,0,0.06)' }, pointLabels: { color: '#555', font: { size: 10 } } } },
-            plugins: { legend: { labels: { color: '#555', usePointStyle: true, font: { size: 11 } } } }
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.06)' }, angleLines: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#8ea4b8', font: { size: 10 } } } },
+            plugins: { legend: { labels: { color: '#8ea4b8', usePointStyle: true, font: { size: 11 } } } }
         }
     });
 }
@@ -852,7 +852,7 @@ function renderROICharts() {
             },{
                 label: 'Break-Even Line',
                 data: new Array(20).fill(0),
-                borderColor: 'rgba(0,0,0,0.12)',
+                borderColor: 'rgba(255,255,255,0.2)',
                 borderDash: [5, 5],
                 borderWidth: 1,
                 pointRadius: 0,
@@ -863,10 +863,10 @@ function renderROICharts() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { color: '#555', callback: function(v) { return '$' + (v/1000).toFixed(0) + 'K'; } } },
-                x: { grid: { display: false }, ticks: { color: '#555' } }
+                y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8', callback: function(v) { return '$' + (v/1000).toFixed(0) + 'K'; } } },
+                x: { grid: { display: false }, ticks: { color: '#8ea4b8' } }
             },
-            plugins: { legend: { labels: { color: '#555', usePointStyle: true, font: { size: 11 } } } }
+            plugins: { legend: { labels: { color: '#8ea4b8', usePointStyle: true, font: { size: 11 } } } }
         }
     });
 }
@@ -897,8 +897,8 @@ function renderRiskCharts() {
             maintainAspectRatio: false,
             indexAxis: 'y',
             scales: {
-                x: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { color: '#555' } },
-                y: { ticks: { color: '#555', font: { size: 11 } }, grid: { display: false } }
+                x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8' } },
+                y: { ticks: { color: '#8ea4b8', font: { size: 11 } }, grid: { display: false } }
             },
             plugins: { legend: { display: false } }
         }
@@ -927,7 +927,7 @@ function renderLifecycleCharts() {
             maintainAspectRatio: false,
             cutout: '50%',
             plugins: {
-                legend: { position: 'bottom', labels: { color: '#555', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
+                legend: { position: 'bottom', labels: { color: '#8ea4b8', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
             }
         }
     });
@@ -1073,7 +1073,7 @@ function calcLifecycle() {
             + '<div><span style="color:var(--steel)">Acquisition (' + acqPct + '%)</span><br><strong style="color:#00aaff">' + fmtM(acqTotal) + '</strong></div>'
             + '<div><span style="color:var(--steel)">Sustainment (' + sustPct + '%)</span><br><strong style="color:#c9a84c">' + fmtM(sustTotal) + '</strong></div>'
             + '<div><span style="color:var(--steel)">DMSMS/Obsol (' + dmsmsPct + '%)</span><br><strong style="color:#ff4444">' + fmtM(dmsmsCost) + '</strong></div>'
-            + '<div><span style="color:var(--steel)">Disposal (' + disposalPct + '%)</span><br><strong style="color:#555">' + fmtM(disposalCost) + '</strong></div>'
+            + '<div><span style="color:var(--steel)">Disposal (' + disposalPct + '%)</span><br><strong style="color:#8ea4b8">' + fmtM(disposalCost) + '</strong></div>'
             + '<div><span style="color:var(--steel)">Personnel (' + personnelPct + '%)</span><br><strong style="color:#00cc66">' + fmtM(personnelCost) + '</strong></div>'
             + '<div><span style="color:var(--steel)">Training (' + trainingPct + '%)</span><br><strong style="color:#9b59b6">' + fmtM(trainingCost) + '</strong></div>'
             + '</div>'
@@ -1081,7 +1081,7 @@ function calcLifecycle() {
             + '<div style="display:flex;justify-content:space-between;align-items:center">'
             + '<div><span style="color:var(--steel);font-size:0.82rem">Total Ownership Cost</span><br><span style="font-size:1.5rem;font-weight:800;color:#00aaff">' + fmtM(totalCost) + '</span></div>'
             + '<div><span style="color:var(--steel);font-size:0.82rem">Cost per Op Hour</span><br><span style="font-size:1.1rem;font-weight:700;color:var(--accent)">$' + costPerHour.toFixed(0) + '/hr</span></div>'
-            + '<div><span style="color:var(--steel);font-size:0.82rem">Fleet Size</span><br><span style="font-size:1.1rem;font-weight:700;color:#1d1d1f">' + fleetSize + ' units \u00d7 ' + serviceLife + ' yrs</span></div>'
+            + '<div><span style="color:var(--steel);font-size:0.82rem">Fleet Size</span><br><span style="font-size:1.1rem;font-weight:700;color:#fff">' + fleetSize + ' units \u00d7 ' + serviceLife + ' yrs</span></div>'
             + '</div>'
             + '</div>';
     }
@@ -1492,11 +1492,11 @@ function showCalDay(day) {
     var items = actionDates[day] || [];
     if (items.length === 0) { detail.style.display = 'none'; return; }
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var html = '<div style="font-weight:700;color:#1d1d1f;margin-bottom:6px"><i class="fas fa-calendar-day" style="color:var(--accent);margin-right:4px"></i>' + months[_calMonth] + ' ' + day + ', ' + _calYear + '</div>';
+    var html = '<div style="font-weight:700;color:#fff;margin-bottom:6px"><i class="fas fa-calendar-day" style="color:var(--accent);margin-right:4px"></i>' + months[_calMonth] + ' ' + day + ', ' + _calYear + '</div>';
     items.forEach(function(item) {
         var col = item.severity === 'critical' ? '#ff3333' : (item.severity === 'warning' ? '#ffa500' : '#00aaff');
         html += '<div style="padding:6px 8px;background:rgba(0,0,0,0.2);border-left:3px solid ' + col + ';border-radius:4px;margin-bottom:4px">'
-            + '<div style="font-weight:600;color:#1d1d1f;font-size:0.8rem">' + (item.title || 'Action Item') + '</div>'
+            + '<div style="font-weight:600;color:#fff;font-size:0.8rem">' + (item.title || 'Action Item') + '</div>'
             + (item.owner ? '<div style="font-size:0.72rem;color:var(--steel)">Owner: ' + item.owner + '</div>' : '')
             + '</div>';
     });

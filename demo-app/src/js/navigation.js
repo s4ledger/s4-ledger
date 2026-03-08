@@ -1,10 +1,11 @@
-// S4 Ledger — navigation
-// Extracted from monolith lines 15066-15652
-// 585 lines
+// S4 Ledger Demo — navigation
+// Extracted from monolith lines 14750-15331
+// 580 lines
 
 // ═══ Platform Hub Navigation ═══
 var _currentSection = null;
 var _currentILSTool = null;
+// Expose to window so engine.js (separate chunk) can access
 window._currentSection = null;
 window._currentILSTool = null;
 
@@ -37,13 +38,39 @@ function showHub() {
         var landing = document.getElementById('platformLanding');
         if (landing) landing.style.display = 'block';
     }
-    // Show Getting Started for first-time users
-    _showGettingStartedIfNew();
     _currentSection = null;
     window._currentSection = null;
     // Update URL
     history.replaceState(null, '', window.location.pathname);
+    // Show Getting Started for first-time users
+    _showGettingStartedIfNew();
 }
+
+// ── Getting Started Day-One Flow ──
+function _showGettingStartedIfNew() {
+    var sec = document.getElementById('gettingStartedSection');
+    if (!sec) return;
+    if (localStorage.getItem('s4_getting_started_dismissed')) { sec.style.display = 'none'; return; }
+    if (!sessionStorage.getItem('s4_entered')) { sec.style.display = 'none'; return; }
+    sec.style.display = 'block';
+    // In demo mode, prompt first-time visitors to take the tour
+    if (!sessionStorage.getItem('s4_tour_prompted') && !localStorage.getItem('s4_tour_completed')) {
+        sessionStorage.setItem('s4_tour_prompted', '1');
+        setTimeout(function() {
+            if (typeof _toast === 'function') {
+                _toast('New here? Try the Guided Tour to see everything the platform can do.', 'info');
+            } else if (typeof window._toast === 'function') {
+                window._toast('New here? Try the Guided Tour to see everything the platform can do.', 'info');
+            }
+        }, 1500);
+    }
+}
+function dismissGettingStarted() {
+    localStorage.setItem('s4_getting_started_dismissed', '1');
+    var sec = document.getElementById('gettingStartedSection');
+    if (sec) { sec.style.transition = 'opacity 0.3s'; sec.style.opacity = '0'; setTimeout(function(){ sec.style.display = 'none'; sec.style.opacity = '1'; }, 300); }
+}
+window.dismissGettingStarted = dismissGettingStarted;
 
 function showSection(sectionId) {
     var hub = document.getElementById('platformHub');
@@ -135,10 +162,6 @@ function showSystemsSub(tabId) {
 function openILSTool(toolId) {
     var subHub = document.getElementById('ilsSubHub');
     if (subHub) subHub.style.display = 'none';
-    var showMore = document.getElementById('showMoreToolsBtn');
-    if (showMore) showMore.style.display = 'none';
-    var filterBar = document.querySelector('.ils-filter-bar');
-    if (filterBar) filterBar.style.display = 'none';
     var toolBack = document.getElementById('ilsToolBackBar');
     if (toolBack) toolBack.style.display = 'block';
     
@@ -182,8 +205,40 @@ function openILSTool(toolId) {
     // Update floating AI agent context
     if (typeof updateAiContext === 'function') updateAiContext(toolId);
     
-    // Ensure HIW ? button exists on this panel (re-inject if destroyed by re-render)
-    _ensureHIWButton(toolId);
+    // How It Works: modal popup — first visit auto-shows, ? icon on return visits
+    (function(){
+        var panel = document.getElementById(toolId);
+        if(!panel) return;
+        var det = panel.querySelector('details');
+        if(!det) return;
+        det.style.display = 'none';
+        var key = 's4_hiw_' + toolId;
+        function showHIWModal(){
+            var existing = document.querySelector('.hiw-modal-overlay');
+            if(existing) existing.remove();
+            var title = det.querySelector('summary') ? det.querySelector('summary').textContent.replace(/[▸▾▾]/g,'').trim() : 'How It Works';
+            var body = '';
+            det.querySelectorAll('p,ol,ul,li').forEach(function(el){ body += el.outerHTML; });
+            if(!body) body = det.innerHTML.replace(/<summary[^>]*>.*?<\/summary>/i,'');
+            var overlay = document.createElement('div');
+            overlay.className = 'hiw-modal-overlay';
+            overlay.innerHTML = '<div class="hiw-modal-box"><button class="hiw-close" title="Close">&times;</button><h4><i class="fas fa-info-circle" style="margin-right:6px"></i>' + title + '</h4><div class="hiw-body">' + body + '</div></div>';
+            overlay.querySelector('.hiw-close').onclick = function(){ overlay.remove(); };
+            overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
+            document.body.appendChild(overlay);
+        }
+        // ? button always available — no auto-popup
+        var h3 = panel.querySelector('h3') || panel.querySelector('h4') || panel.querySelector('.hub-tool-header h4') || panel.querySelector('h5');
+        if(h3 && !h3.querySelector('.hiw-help-btn')){
+            var btn = document.createElement('button');
+            btn.className = 'hiw-help-btn';
+            btn.title = 'How It Works';
+            btn.textContent = '?';
+            btn.style.cssText = 'margin-left:8px;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:50%;width:22px;height:22px;font-size:0.72rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;';
+            btn.onclick = function(e){ e.stopPropagation(); showHIWModal(); };
+            h3.appendChild(btn);
+        }
+    })();
 
     _currentILSTool = toolId;
     window._currentILSTool = toolId;
@@ -198,12 +253,6 @@ function closeILSTool() {
     // Show tool grid
     var subHub = document.getElementById('ilsSubHub');
     if (subHub) { subHub.style.display = 'grid'; subHub.style.animation = 'fadeIn 0.3s ease'; }
-    // Show "Show More" button if grid is collapsed
-    var showMore = document.getElementById('showMoreToolsBtn');
-    if (showMore && subHub && subHub.classList.contains('collapsed')) showMore.style.display = 'block';
-    // Show filter bar
-    var filterBar = document.querySelector('.ils-filter-bar');
-    if (filterBar) filterBar.style.display = '';
     // Hide back bar
     var toolBack = document.getElementById('ilsToolBackBar');
     if (toolBack) toolBack.style.display = 'none';
@@ -221,10 +270,9 @@ function closeILSTool() {
 
 // ═══ Drag-Reorder Tool Cards (iPhone-style) ═══
 (function initToolCardDragReorder(){
-    var STORAGE_KEY = 's4_tool_card_order';
+    var STORAGE_KEY = 's4_demo_tool_card_order';
     function getHub(){ return document.getElementById('ilsSubHub'); }
     
-    // Restore saved order on load
     function restoreOrder(){
         var hub = getHub(); if(!hub) return;
         var saved = localStorage.getItem(STORAGE_KEY);
@@ -244,7 +292,6 @@ function closeILSTool() {
         } catch(e){}
     }
 
-    // Save current order
     function saveOrder(){
         var hub = getHub(); if(!hub) return;
         var cards = hub.querySelectorAll('.ils-tool-card');
@@ -257,7 +304,6 @@ function closeILSTool() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(order));
     }
 
-    // Setup drag handlers
     function setupDrag(){
         var hub = getHub(); if(!hub) return;
         var dragSrc = null;
@@ -300,7 +346,6 @@ function closeILSTool() {
                         hub.insertBefore(dragSrc, this);
                     }
                     saveOrder();
-                    // Re-attach drag handlers after reorder
                     setupDrag();
                 }
                 dragSrc = null;
@@ -318,7 +363,6 @@ function closeILSTool() {
                     touchDragging = true;
                     touchSrc = self;
                     self.classList.add('dragging');
-                    // Create visual clone
                     touchClone = self.cloneNode(true);
                     touchClone.style.position = 'fixed';
                     touchClone.style.pointerEvents = 'none';
@@ -337,7 +381,6 @@ function closeILSTool() {
                 var touch = e.touches[0];
                 touchClone.style.left = (touch.clientX - touchClone.offsetWidth/2) + 'px';
                 touchClone.style.top = (touch.clientY - touchClone.offsetHeight/2) + 'px';
-                // Highlight card under finger
                 hub.querySelectorAll('.ils-tool-card').forEach(function(c){ c.classList.remove('drag-over'); });
                 var elem = document.elementFromPoint(touch.clientX, touch.clientY);
                 if(elem){
@@ -385,7 +428,6 @@ function closeILSTool() {
         });
     }
 
-    // Init after DOM ready
     if(document.readyState === 'loading'){
         document.addEventListener('DOMContentLoaded', function(){ restoreOrder(); setupDrag(); });
     } else {
@@ -426,7 +468,7 @@ function _rewireWalletFlowDetails(sidebarBody) {
     var flowBtn = sidebarBody.querySelector('#slsToggleBtn');
     if (!flowBtn) return;
     
-    // Remove the original onclick toggle
+    // Remove the original onclick which toggles external demoPanel
     flowBtn.removeAttribute('onclick');
     
     // Create inline flow details panel for the sidebar
@@ -434,19 +476,19 @@ function _rewireWalletFlowDetails(sidebarBody) {
     flowPanel.id = 'sidebarFlowPanel';
     flowPanel.style.cssText = 'display:none;margin-top:12px;background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:16px 18px;';
     flowPanel.innerHTML = '<div style="position:relative">'
-        + '<div style="position:absolute;top:-4px;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:3px 12px;border-radius:0 10px 0 8px;font-size:0.62rem;font-weight:700;color:#fff;letter-spacing:0.5px">LIVE PREVIEW</div>'
-        + '<h4 style="margin:0 0 4px;font-size:0.95rem;color:#1d1d1f"><i class="fas fa-flask" style="color:#00aaff;margin-right:6px"></i>Credit Economic Flow</h4>'
-        + '<p style="color:#555;font-size:0.72rem;margin:0 0 12px">See how the Credit economy works. <strong style="color:#c9a84c">Every anchor costs 0.01 Credits.</strong></p>'
+        + '<div style="position:absolute;top:-4px;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:3px 12px;border-radius:0 10px 0 8px;font-size:0.62rem;font-weight:700;color:#050810;letter-spacing:0.5px">LIVE PREVIEW</div>'
+        + '<h4 style="margin:0 0 4px;font-size:0.95rem;color:#fff"><i class="fas fa-flask" style="color:#00aaff;margin-right:6px"></i>Credit Economic Flow</h4>'
+        + '<p style="color:#8ea4b8;font-size:0.72rem;margin:0 0 12px">See how the Credits token economy works. <strong style="color:#c9a84c">Every anchor costs 0.01 Credits.</strong></p>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-user-plus" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#1d1d1f">1. Account</div><div style="font-size:0.62rem;color:#555">Created &amp; provisioned</div></div>'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-wallet" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#1d1d1f">2. Wallet Funded</div><div style="font-size:0.62rem;color:#555">12 XRP reserve</div></div>'
-        + '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#1d1d1f">3. Credits Allocated</div><div style="font-size:0.62rem;color:#555">Based on plan tier</div></div>'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-arrow-right" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#1d1d1f">4. 0.01 Credits &rarr; Treasury</div><div style="font-size:0.62rem;color:#555">Per anchor fee</div></div>'
+        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-user-plus" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#fff">1. Account</div><div style="font-size:0.62rem;color:#8ea4b8">Created &amp; provisioned</div></div>'
+        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-wallet" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#fff">2. Wallet Funded</div><div style="font-size:0.62rem;color:#8ea4b8">12 XRP reserve</div></div>'
+        + '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#fff">3. Credits Allocated</div><div style="font-size:0.62rem;color:#8ea4b8">Based on plan tier</div></div>'
+        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-arrow-right" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#fff">4. 0.01 Credits &rarr; Treasury</div><div style="font-size:0.62rem;color:#8ea4b8">Per anchor fee</div></div>'
         + '</div>'
         + '<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,0.25);border-radius:3px;font-size:0.7rem">'
         + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">'
-        + '<div><span style="color:#555">Wallet:</span> <span style="color:#00aaff;font-family:monospace" id="sidebarWalletAddr">rMLmk...f1KLqJ</span></div>'
-        + '<div><span style="color:#555">Balance:</span> <span style="color:#c9a84c;font-weight:700" id="sidebarSlsBal">' + (document.getElementById('slsBarBalance') ? document.getElementById('slsBarBalance').textContent : '25,000') + ' Credits</span></div>'
+        + '<div><span style="color:#8ea4b8">Wallet:</span> <span style="color:#00aaff;font-family:monospace" id="sidebarWalletAddr">rMLmk...f1KLqJ</span></div>'
+        + '<div><span style="color:#8ea4b8">Balance:</span> <span style="color:#c9a84c;font-weight:700" id="sidebarSlsBal">' + (document.getElementById('slsBarBalance') ? document.getElementById('slsBarBalance').textContent : '25,000') + ' Credits</span></div>'
         + '</div></div>'
         + '</div>';
     
@@ -495,7 +537,9 @@ document.addEventListener('DOMContentLoaded', function() {
             p.classList.remove('show','active');
             p.style.display = 'none';
         });
-
+        // Hide demoPanel (SLS flow) — merged into wallet sidebar
+        var dp = document.getElementById('demoPanel');
+        if (dp) dp.style.display = 'none';
     }, 100);
 });
 
@@ -537,7 +581,8 @@ document.addEventListener('shown.bs.tab', function(e) {
 })();
 
 
-// ═══ Tool Credit Balance Sync ═══
+
+// ═══ Tool SLS Balance Sync ═══
 (function() {
     function syncToolSls() {
         var mainBal = document.getElementById('slsBarBalance');
@@ -560,6 +605,7 @@ document.addEventListener('shown.bs.tab', function(e) {
 })();
 
 
+
 // ═══ Post-Anchor Confirmation Display ═══
 (function() {
     var _origHideAnchor = hideAnchorAnimation;
@@ -580,7 +626,7 @@ document.addEventListener('shown.bs.tab', function(e) {
             banner.className = 'anchor-confirm-banner';
             banner.style.cssText = 'background:linear-gradient(135deg,rgba(0,204,102,0.08),rgba(0,170,255,0.06));border:1px solid rgba(0,204,102,0.2);border-radius:3px;padding:16px 20px;margin-bottom:16px;animation:panelSlideIn 0.4s ease;position:relative';
             banner.innerHTML = '<button onclick="this.parentElement.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem">&times;</button>'
-                + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-check-circle" style="color:#00cc66;font-size:1.1rem"></i><strong style="color:#1d1d1f;font-size:0.9rem">Record Anchored Successfully</strong></div>'
+                + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-check-circle" style="color:#00cc66;font-size:1.1rem"></i><strong style="color:#fff;font-size:0.9rem">Record Anchored Successfully</strong></div>'
                 + '<div style="font-size:0.78rem;color:var(--steel);display:grid;grid-template-columns:80px 1fr;gap:4px 12px">'
                 + '<span style="color:var(--muted)">Type:</span><span>' + (lastRec.label || lastRec.type) + '</span>'
                 + '<span style="color:var(--muted)">Hash:</span><span style="font-family:monospace;color:var(--accent);font-size:0.72rem;word-break:break-all">' + (lastRec.hash || '').substring(0,32) + '...</span>'
@@ -589,7 +635,7 @@ document.addEventListener('shown.bs.tab', function(e) {
                 + '<span style="color:var(--muted)">Time:</span><span>' + new Date().toLocaleTimeString() + '</span>'
                 + '</div>';
             
-            var firstCard = panel.querySelector('.s4-card');
+            var firstCard = panel.querySelector('.demo-card');
             if (firstCard) {
                 firstCard.insertBefore(banner, firstCard.firstChild);
             }
@@ -600,19 +646,9 @@ document.addEventListener('shown.bs.tab', function(e) {
     };
 })();
 
-// === Window exports for inline event handlers ===
-window.closeILSTool = closeILSTool;
-window.closeWalletSidebar = closeWalletSidebar;
-window.openILSTool = openILSTool;
-window.openWalletSidebar = openWalletSidebar;
-window.showHub = showHub;
-window.showSection = showSection;
-window.showSystemsSub = showSystemsSub;
-
 // === HIW "?" popup — universal init for ALL panels ===
-// Decoupled from openILSTool to avoid triple-fire / re-render destruction issues.
-// Runs once at module init, with MutationObserver resilience.
-
+// Runs at module init to hide <details> and inject ? buttons for ALL tool panels,
+// not just the one currently opened via openILSTool(). With MutationObserver resilience.
 var _hiwPanelIds = [
     'hub-analysis','hub-dmsms','hub-readiness','hub-compliance',
     'hub-risk','hub-actions','hub-predictive','hub-lifecycle',
@@ -622,11 +658,11 @@ var _hiwPanelIds = [
     'tabAnchor','tabVerify'
 ];
 
-function _showHIWModal(det) {
+function _showHIWModalUniv(det) {
     var existing = document.querySelector('.hiw-modal-overlay');
     if (existing) existing.remove();
     var title = det.querySelector('summary')
-        ? det.querySelector('summary').textContent.replace(/[▸▾▾]/g,'').trim()
+        ? det.querySelector('summary').textContent.replace(/[\u25B8\u25BE\u25BE]/g,'').trim()
         : 'How It Works';
     var body = '';
     det.querySelectorAll('p,ol,ul,li').forEach(function(el){ body += el.outerHTML; });
@@ -647,37 +683,28 @@ function _ensureHIWButton(panelId) {
     var det = panel.querySelector('details');
     if (!det) return;
     det.style.display = 'none';
-    // Find best heading
     var heading = panel.querySelector('h3')
         || panel.querySelector('h4')
         || panel.querySelector('.hub-tool-header h4')
         || panel.querySelector('h5');
     if (!heading) return;
-    // Already has button? Skip.
     if (heading.querySelector('.hiw-help-btn')) return;
     var btn = document.createElement('button');
     btn.className = 'hiw-help-btn';
     btn.title = 'How It Works';
     btn.textContent = '?';
     btn.style.cssText = 'margin-left:8px;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:50%;width:24px;height:24px;font-size:0.75rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0;';
-    btn.onclick = function(e){ e.stopPropagation(); _showHIWModal(det); };
+    btn.onclick = function(e){ e.stopPropagation(); _showHIWModalUniv(det); };
     heading.appendChild(btn);
 }
 
 (function _initAllHIWButtons() {
     function initAll() {
         _hiwPanelIds.forEach(function(id) { _ensureHIWButton(id); });
-        console.log('[S4-HIW] Initialized ? buttons for ' + _hiwPanelIds.length + ' panels');
     }
-
-    // Run immediately (module is deferred, DOM should be ready)
     initAll();
-
-    // Also run after brief delays to catch panels rendered late
     setTimeout(initAll, 500);
     setTimeout(initAll, 2000);
-
-    // MutationObserver: re-inject if heading gets destroyed by re-render
     if (typeof MutationObserver !== 'undefined') {
         var observer = new MutationObserver(function(mutations) {
             var needsReinject = false;
@@ -700,28 +727,51 @@ function _ensureHIWButton(panelId) {
     }
 })();
 
-// === Programmatic click handlers for hub cards ===
-// Fallback for environments where inline onclick is blocked (e.g. VS Code Simple Browser CSP)
-(function _bindHubCardClicks() {
-    function attach() {
-        document.querySelectorAll('.hub-card[data-section]').forEach(function(card) {
-            if (card._s4bound) return; // don't double-bind
-            card._s4bound = true;
-            card.addEventListener('click', function(e) {
-                var sec = this.getAttribute('data-section');
-                if (sec && typeof showSection === 'function') {
-                    showSection(sec);
-                }
-            });
-        });
-    }
-    // Bind now (DOM should be ready since module is deferred)
-    attach();
-    // Also bind after DOMContentLoaded in case DOM wasn't ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', attach);
-    }
-})();
+// === HIW ? Button for Anchor and Verify tabs ===
+// These tabs aren't opened via openILSTool(), so add ? buttons manually
+document.addEventListener('DOMContentLoaded', function() {
+    ['tabAnchor','tabVerify'].forEach(function(tabId) {
+        var tab = document.getElementById(tabId);
+        if (!tab) return;
+        var det = tab.querySelector('details');
+        if (!det) return;
+        det.style.display = 'none';
+        var key = 's4_hiw_' + tabId;
+        function showHIWModal() {
+            var existing = document.querySelector('.hiw-modal-overlay');
+            if (existing) existing.remove();
+            var title = det.querySelector('summary') ? det.querySelector('summary').textContent.replace(/[▸▾]/g,'').trim() : 'How It Works';
+            var body = '';
+            det.querySelectorAll('p,ol,ul,li').forEach(function(el){ body += el.outerHTML; });
+            if (!body) body = det.innerHTML.replace(/<summary[^>]*>.*?<\/summary>/i,'');
+            var overlay = document.createElement('div');
+            overlay.className = 'hiw-modal-overlay';
+            overlay.innerHTML = '<div class="hiw-modal-box"><button class="hiw-close" title="Close">&times;</button><h4><i class="fas fa-info-circle" style="margin-right:6px"></i>' + title + '</h4><div class="hiw-body">' + body + '</div></div>';
+            overlay.querySelector('.hiw-close').onclick = function(){ overlay.remove(); };
+            overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
+            document.body.appendChild(overlay);
+        }
+        // Add ? button to the h3
+        var h3 = tab.querySelector('h3');
+        if (h3 && !h3.querySelector('.hiw-help-btn')) {
+            var btn = document.createElement('button');
+            btn.className = 'hiw-help-btn';
+            btn.title = 'How It Works';
+            btn.textContent = '?';
+            btn.style.cssText = 'margin-left:8px;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:50%;width:22px;height:22px;font-size:0.72rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;';
+            btn.onclick = function(e){ e.stopPropagation(); showHIWModal(); };
+            h3.appendChild(btn);
+        }
+        // On first visit to these tabs, auto-show — DISABLED (? button always available)
+        // document.addEventListener('shown.bs.tab', function(e) {
+        //     var target = e.target.getAttribute('href') || e.target.getAttribute('data-bs-target');
+        //     if (target === '#' + tabId && !localStorage.getItem(key)) {
+        //         localStorage.setItem(key, '1');
+        //         setTimeout(showHIWModal, 300);
+        //     }
+        // });
+    });
+});
 
 // ═══ ILS Tool Category Filter & Search ═══
 var _activeFilter = 'all';
@@ -737,7 +787,6 @@ function filterILSTools(category, btn) {
         var matchSearch = !search || _cardMatchesSearch(card, search);
         card.setAttribute('data-hidden', (roleHidden || !matchCat || !matchSearch) ? 'true' : 'false');
     });
-    // Update active tab
     document.querySelectorAll('#ilsFilterTabs .filter-tab').forEach(function(t) { t.classList.remove('active'); });
     if (btn) btn.classList.add('active');
 }
@@ -767,7 +816,6 @@ function enterDemoMode() {
     if (typeof window.enterPlatformAfterAuth === 'function') {
         window.enterPlatformAfterAuth();
     } else {
-        // Fallback: directly show workspace
         var landing = document.getElementById('platformLanding');
         var hero = document.querySelector('.hero');
         var workspace = document.getElementById('platformWorkspace');
@@ -776,12 +824,31 @@ function enterDemoMode() {
         if (workspace) workspace.style.display = 'block';
         sessionStorage.setItem('s4_entered', '1');
     }
-    // Show demo banner
     var banner = document.getElementById('demoModeBanner');
     if (banner) banner.style.display = 'flex';
-    // Show AI agent
     var aiWrap = document.getElementById('aiFloatWrapper');
     if (aiWrap) aiWrap.style.display = 'flex';
+    // Seed demo stats so the stats strip shows meaningful data on first visit
+    _seedDemoStats();
+}
+
+function _seedDemoStats() {
+    try {
+        var existing = JSON.parse(localStorage.getItem('s4_demo_stats') || 'null');
+        if (existing && existing.anchored > 0) return; // already has data
+    } catch(e) {}
+    var seed = { anchored:4, verified:3, types:['DD1149','DD250','USN_SUPPLY_RECEIPT','CONTAINER_MANIFEST'], slsFees:0.04 };
+    localStorage.setItem('s4_demo_stats', JSON.stringify(seed));
+    // Also seed a few sample tx-log records
+    var sampleRecords = [
+        { record_type:'DD1149', record_label:'DD Form 1149 (Requisition)', branch:'USN', icon:'fa-file-alt', hash:'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2', tx_hash:'TX8A3F29C1D4E507B612F84A9D03C71E562B8F6AD09E147C3850B2D6A7F91E043C', timestamp:new Date(Date.now()-86400000*3).toISOString(), content_preview:'NAVSEA PMS 400D — DDG-51 Flight III spare parts requisition' },
+        { record_type:'DD250', record_label:'DD Form 250 (MIRR)', branch:'USN', icon:'fa-clipboard-check', hash:'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3', tx_hash:'TX7B4E38D2C5F608A723G95B0E14D82F673C9G7BE10F258D4961C3E7B8G02F154D', timestamp:new Date(Date.now()-86400000*2).toISOString(), content_preview:'Material Inspection & Receiving Report — LCS-19 hull components' },
+        { record_type:'USN_SUPPLY_RECEIPT', record_label:'Supply Receipt', branch:'USN', icon:'fa-box-open', hash:'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4', tx_hash:'TX6C5F47E3D6G719B834H06C1F25E93G784D0H8CF21G369E5072D4F8C9H13G265E', timestamp:new Date(Date.now()-86400000*1).toISOString(), content_preview:'CVN-78 AIMD supply receipt — APU turbine blade set' },
+        { record_type:'CONTAINER_MANIFEST', record_label:'Container Manifest', branch:'JOINT', icon:'fa-ship', hash:'d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5', tx_hash:'TX5D6G56F4E7H820C945I17D2G36F04H895E1I9DG32H470F6183E5G9D0I24H376F', timestamp:new Date(Date.now()-86400000*0.5).toISOString(), content_preview:'Joint Logistics Over-the-Shore container manifest — USNS Watkins' }
+    ];
+    localStorage.setItem('s4_anchored_records', JSON.stringify(sampleRecords));
+    // Reload stats/log after seeding (engine.js loadStats will pick these up)
+    setTimeout(function() { if (typeof loadStats === 'function') loadStats(); }, 500);
 }
 
 function exitDemoMode() {
@@ -790,16 +857,13 @@ function exitDemoMode() {
     sessionStorage.removeItem('s4_auth_method');
     sessionStorage.removeItem('s4_onboard_done');
     sessionStorage.removeItem('s4_entered');
-    // Hide banner
     var banner = document.getElementById('demoModeBanner');
     if (banner) banner.style.display = 'none';
-    // Trigger real auth flow
     if (typeof window.startAuthFlow === 'function') {
         window.startAuthFlow();
     }
 }
 
-// Restore demo banner on page load if demo mode active
 (function _restoreDemoMode() {
     function check() {
         if (sessionStorage.getItem('s4_demo_mode') === '1') {
@@ -842,10 +906,7 @@ function startQuickTour() {
 }
 
 function _showTourStep() {
-    if (_tourIdx < 0 || _tourIdx >= _tourSteps.length) {
-        _endTour();
-        return;
-    }
+    if (_tourIdx < 0 || _tourIdx >= _tourSteps.length) { _endTour(); return; }
     var step = _tourSteps[_tourIdx];
     var el = document.querySelector(step.target);
     var overlay = document.getElementById('s4TourOverlay');
@@ -861,7 +922,7 @@ function _showTourStep() {
         tooltip.style.cssText = 'position:fixed;top:' + tipTop + 'px;left:' + tipLeft + 'px;z-index:100002;background:var(--card);border:1px solid var(--accent);border-radius:3px;padding:16px 20px;max-width:320px;box-shadow:0 12px 40px rgba(0,0,0,0.4);';
     }
     tooltip.innerHTML = '<div style="font-size:0.72rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Step ' + (_tourIdx + 1) + ' of ' + _tourSteps.length + '</div>'
-        + '<h4 style="color:#1d1d1f;font-size:0.95rem;font-weight:700;margin:0 0 6px;">' + step.title + '</h4>'
+        + '<h4 style="color:#fff;font-size:0.95rem;font-weight:700;margin:0 0 6px;">' + step.title + '</h4>'
         + '<p style="color:var(--steel);font-size:0.82rem;line-height:1.5;margin:0 0 12px;">' + step.desc + '</p>'
         + '<div style="display:flex;gap:8px;justify-content:flex-end;">'
         + (_tourIdx > 0 ? '<button onclick="_tourPrev()" style="background:transparent;border:1px solid var(--border);color:var(--steel);border-radius:3px;padding:4px 12px;font-size:0.75rem;cursor:pointer;font-family:inherit;">Back</button>' : '')
@@ -881,29 +942,18 @@ function _endTour() {
     if (tooltip) tooltip.innerHTML = '';
 }
 
-// ═══ Getting Started — Day One Flow ═══
-function _showGettingStartedIfNew() {
-    var gs = document.getElementById('gettingStartedSection');
-    if (!gs) return;
-    // Show only if user hasn't dismissed it and has completed onboarding
-    var dismissed = localStorage.getItem('s4_getting_started_dismissed');
-    var entered = sessionStorage.getItem('s4_entered');
-    if (dismissed) { gs.style.display = 'none'; return; }
-    if (entered) { gs.style.display = 'block'; }
-}
-
-function dismissGettingStarted() {
-    localStorage.setItem('s4_getting_started_dismissed', '1');
-    var gs = document.getElementById('gettingStartedSection');
-    if (gs) { gs.style.opacity = '0'; gs.style.transition = 'opacity 0.3s ease'; setTimeout(function(){ gs.style.display = 'none'; }, 300); }
-}
-
-// Export new functions
+// === Window exports for inline event handlers ===
+window.closeILSTool = closeILSTool;
+window.closeWalletSidebar = closeWalletSidebar;
 window.enterDemoMode = enterDemoMode;
 window.exitDemoMode = exitDemoMode;
 window.filterILSTools = filterILSTools;
+window.openILSTool = openILSTool;
+window.openWalletSidebar = openWalletSidebar;
 window.searchILSTools = searchILSTools;
+window.showHub = showHub;
+window.showSection = showSection;
+window.showSystemsSub = showSystemsSub;
 window.startQuickTour = startQuickTour;
 window._tourNext = _tourNext;
 window._tourPrev = _tourPrev;
-window.dismissGettingStarted = dismissGettingStarted;

@@ -135,10 +135,6 @@ function showSystemsSub(tabId) {
 function openILSTool(toolId) {
     var subHub = document.getElementById('ilsSubHub');
     if (subHub) subHub.style.display = 'none';
-    var showMore = document.getElementById('showMoreToolsBtn');
-    if (showMore) showMore.style.display = 'none';
-    var filterBar = document.querySelector('.ils-filter-bar');
-    if (filterBar) filterBar.style.display = 'none';
     var toolBack = document.getElementById('ilsToolBackBar');
     if (toolBack) toolBack.style.display = 'block';
     
@@ -198,12 +194,6 @@ function closeILSTool() {
     // Show tool grid
     var subHub = document.getElementById('ilsSubHub');
     if (subHub) { subHub.style.display = 'grid'; subHub.style.animation = 'fadeIn 0.3s ease'; }
-    // Show "Show More" button if grid is collapsed
-    var showMore = document.getElementById('showMoreToolsBtn');
-    if (showMore && subHub && subHub.classList.contains('collapsed')) showMore.style.display = 'block';
-    // Show filter bar
-    var filterBar = document.querySelector('.ils-filter-bar');
-    if (filterBar) filterBar.style.display = '';
     // Hide back bar
     var toolBack = document.getElementById('ilsToolBackBar');
     if (toolBack) toolBack.style.display = 'none';
@@ -434,19 +424,19 @@ function _rewireWalletFlowDetails(sidebarBody) {
     flowPanel.id = 'sidebarFlowPanel';
     flowPanel.style.cssText = 'display:none;margin-top:12px;background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:16px 18px;';
     flowPanel.innerHTML = '<div style="position:relative">'
-        + '<div style="position:absolute;top:-4px;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:3px 12px;border-radius:0 10px 0 8px;font-size:0.62rem;font-weight:700;color:#fff;letter-spacing:0.5px">LIVE PREVIEW</div>'
-        + '<h4 style="margin:0 0 4px;font-size:0.95rem;color:#1d1d1f"><i class="fas fa-flask" style="color:#00aaff;margin-right:6px"></i>Credit Economic Flow</h4>'
-        + '<p style="color:#555;font-size:0.72rem;margin:0 0 12px">See how the Credit economy works. <strong style="color:#c9a84c">Every anchor costs 0.01 Credits.</strong></p>'
+        + '<div style="position:absolute;top:-4px;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:3px 12px;border-radius:0 10px 0 8px;font-size:0.62rem;font-weight:700;color:#050810;letter-spacing:0.5px">LIVE PREVIEW</div>'
+        + '<h4 style="margin:0 0 4px;font-size:0.95rem;color:#fff"><i class="fas fa-flask" style="color:#00aaff;margin-right:6px"></i>Credit Economic Flow</h4>'
+        + '<p style="color:#8ea4b8;font-size:0.72rem;margin:0 0 12px">See how the Credit economy works. <strong style="color:#c9a84c">Every anchor costs 0.01 Credits.</strong></p>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-user-plus" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#1d1d1f">1. Account</div><div style="font-size:0.62rem;color:#555">Created &amp; provisioned</div></div>'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-wallet" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#1d1d1f">2. Wallet Funded</div><div style="font-size:0.62rem;color:#555">12 XRP reserve</div></div>'
-        + '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#1d1d1f">3. Credits Allocated</div><div style="font-size:0.62rem;color:#555">Based on plan tier</div></div>'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-arrow-right" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#1d1d1f">4. 0.01 Credits &rarr; Treasury</div><div style="font-size:0.62rem;color:#555">Per anchor fee</div></div>'
+        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-user-plus" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#fff">1. Account</div><div style="font-size:0.62rem;color:#8ea4b8">Created &amp; provisioned</div></div>'
+        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-wallet" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#fff">2. Wallet Funded</div><div style="font-size:0.62rem;color:#8ea4b8">12 XRP reserve</div></div>'
+        + '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#fff">3. Credits Allocated</div><div style="font-size:0.62rem;color:#8ea4b8">Based on plan tier</div></div>'
+        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-arrow-right" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:#fff">4. 0.01 Credits &rarr; Treasury</div><div style="font-size:0.62rem;color:#8ea4b8">Per anchor fee</div></div>'
         + '</div>'
         + '<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,0.25);border-radius:3px;font-size:0.7rem">'
         + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">'
-        + '<div><span style="color:#555">Wallet:</span> <span style="color:#00aaff;font-family:monospace" id="sidebarWalletAddr">rMLmk...f1KLqJ</span></div>'
-        + '<div><span style="color:#555">Balance:</span> <span style="color:#c9a84c;font-weight:700" id="sidebarSlsBal">' + (document.getElementById('slsBarBalance') ? document.getElementById('slsBarBalance').textContent : '25,000') + ' Credits</span></div>'
+        + '<div><span style="color:#8ea4b8">Wallet:</span> <span style="color:#00aaff;font-family:monospace" id="sidebarWalletAddr">rMLmk...f1KLqJ</span></div>'
+        + '<div><span style="color:#8ea4b8">Balance:</span> <span style="color:#c9a84c;font-weight:700" id="sidebarSlsBal">' + (document.getElementById('slsBarBalance') ? document.getElementById('slsBarBalance').textContent : '25,000') + ' Credits</span></div>'
         + '</div></div>'
         + '</div>';
     
@@ -580,7 +570,7 @@ document.addEventListener('shown.bs.tab', function(e) {
             banner.className = 'anchor-confirm-banner';
             banner.style.cssText = 'background:linear-gradient(135deg,rgba(0,204,102,0.08),rgba(0,170,255,0.06));border:1px solid rgba(0,204,102,0.2);border-radius:3px;padding:16px 20px;margin-bottom:16px;animation:panelSlideIn 0.4s ease;position:relative';
             banner.innerHTML = '<button onclick="this.parentElement.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem">&times;</button>'
-                + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-check-circle" style="color:#00cc66;font-size:1.1rem"></i><strong style="color:#1d1d1f;font-size:0.9rem">Record Anchored Successfully</strong></div>'
+                + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-check-circle" style="color:#00cc66;font-size:1.1rem"></i><strong style="color:#fff;font-size:0.9rem">Record Anchored Successfully</strong></div>'
                 + '<div style="font-size:0.78rem;color:var(--steel);display:grid;grid-template-columns:80px 1fr;gap:4px 12px">'
                 + '<span style="color:var(--muted)">Type:</span><span>' + (lastRec.label || lastRec.type) + '</span>'
                 + '<span style="color:var(--muted)">Hash:</span><span style="font-family:monospace;color:var(--accent);font-size:0.72rem;word-break:break-all">' + (lastRec.hash || '').substring(0,32) + '...</span>'
@@ -861,7 +851,7 @@ function _showTourStep() {
         tooltip.style.cssText = 'position:fixed;top:' + tipTop + 'px;left:' + tipLeft + 'px;z-index:100002;background:var(--card);border:1px solid var(--accent);border-radius:3px;padding:16px 20px;max-width:320px;box-shadow:0 12px 40px rgba(0,0,0,0.4);';
     }
     tooltip.innerHTML = '<div style="font-size:0.72rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Step ' + (_tourIdx + 1) + ' of ' + _tourSteps.length + '</div>'
-        + '<h4 style="color:#1d1d1f;font-size:0.95rem;font-weight:700;margin:0 0 6px;">' + step.title + '</h4>'
+        + '<h4 style="color:#fff;font-size:0.95rem;font-weight:700;margin:0 0 6px;">' + step.title + '</h4>'
         + '<p style="color:var(--steel);font-size:0.82rem;line-height:1.5;margin:0 0 12px;">' + step.desc + '</p>'
         + '<div style="display:flex;gap:8px;justify-content:flex-end;">'
         + (_tourIdx > 0 ? '<button onclick="_tourPrev()" style="background:transparent;border:1px solid var(--border);color:var(--steel);border-radius:3px;padding:4px 12px;font-size:0.75rem;cursor:pointer;font-family:inherit;">Back</button>' : '')

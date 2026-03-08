@@ -1,16 +1,16 @@
-// S4 Ledger — metrics
-// Extracted from monolith lines 13508-15048
-// 1539 lines
+// S4 Ledger Demo — metrics
+// Extracted from monolith lines 13144-14732
+// 1587 lines
 
 // ── Performance Metrics Dashboard ──
 var _metricsChartTimes = null;
 var _metricsChartTypes = null;
 
 async function loadPerformanceMetrics() {
-    // Read stats from window (cross-chunk) or localStorage fallback
-    var _statsObj = window._s4Stats || (function() { try { return JSON.parse(localStorage.getItem('s4_stats') || '{}'); } catch(e) { return {}; } })();
-    var localAnchors = _statsObj.anchored || 0;
-    var localFees = _statsObj.slsFees || 0;
+    // Merge API data with local session data for real-time accuracy
+    var _st = window._s4Stats; if(!_st){try{var _ls=JSON.parse(localStorage.getItem('s4_stats')||'{}');_st={anchored:_ls.anchored||0,slsFees:_ls.slsFees||0};}catch(e){_st={anchored:0,slsFees:0};}}
+    var localAnchors = _st.anchored || 0;
+    var localFees = _st.slsFees || 0;
     var _glr = typeof window.getLocalRecords === 'function' ? window.getLocalRecords : function() { try { return JSON.parse(localStorage.getItem('s4_anchored_records') || '[]'); } catch(e) { return []; } };
     var localRecords = _glr();
     var localTypes = {};
@@ -45,24 +45,24 @@ async function loadPerformanceMetrics() {
         // Anchor times chart
         var timeCtx = document.getElementById('chartAnchorTimes');
         if (timeCtx && typeof Chart !== 'undefined') {
-            var times = data.recent_anchor_times || [];
+            var times = data.recent_anchor_times || Array.from({length:20}, function() { return (2.8 + Math.random()*1.5).toFixed(2); });
             if (_metricsChartTimes) _metricsChartTimes.destroy();
             _metricsChartTimes = new Chart(timeCtx, {
                 type: 'line',
                 data: { labels: times.map(function(_, i) { return '#' + (i+1); }), datasets: [{ label: 'Anchor Time (s)', data: times, borderColor: '#00aaff', backgroundColor: 'rgba(0,170,255,0.1)', fill: true, tension: 0.3, pointRadius: 2, pointBackgroundColor: '#00aaff' }] },
-                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#555', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.03)' } }, y: { ticks: { color: '#555', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.03)' }, beginAtZero: true } } }
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#6b7d93', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: '#6b7d93', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true } } }
             });
         }
 
         // Record types doughnut
         var typesCtx = document.getElementById('chartRecordTypes');
         if (typesCtx && typeof Chart !== 'undefined') {
-            var types = data.record_type_counts || (Object.keys(localTypes).length > 0 ? localTypes : {});
+            var types = data.record_type_counts || (Object.keys(localTypes).length > 0 ? localTypes : { 'DD1149': 12, 'DD250': 8, 'WAWF': 5, 'Container': 14, 'Supply Chain': 9, 'Custody': 7, 'Maintenance': 6 });
             if (_metricsChartTypes) _metricsChartTypes.destroy();
             _metricsChartTypes = new Chart(typesCtx, {
                 type: 'doughnut',
                 data: { labels: Object.keys(types), datasets: [{ data: Object.values(types), backgroundColor: ['#00aaff','#c9a84c','#38bdf8','#ff6b6b','#00aaff','#fb923c','#06b6d4'], borderWidth: 0 }] },
-                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#555', font: { size: 10 }, padding: 8 } } } }
+                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#8ea4b8', font: { size: 10 }, padding: 8 } } } }
             });
         }
 
@@ -71,7 +71,7 @@ async function loadPerformanceMetrics() {
         if (reqEl && data.recent_requests && data.recent_requests.length) {
             reqEl.innerHTML = window._s4Safe(data.recent_requests.map(function(r) {
                 var methodColor = (r.method||'GET') === 'POST' ? '#00cc66' : '#00aaff';
-                return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(0,0,0,0.03)">'
+                return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.03)">'
                     + '<span style="background:' + methodColor + '22;color:' + methodColor + ';font-weight:700;font-size:0.7rem;padding:2px 8px;border-radius:4px;min-width:42px;text-align:center">' + (r.method||'GET') + '</span>'
                     + '<span style="color:var(--text);flex:1;font-family:monospace;font-size:0.72rem">' + (r.path||r.endpoint||'/api/anchor') + '</span>'
                     + '<span style="color:var(--accent);font-size:0.68rem;font-weight:600">' + (r.time||r.duration||r.latency||'—') + '</span>'
@@ -111,7 +111,7 @@ async function loadPerformanceMetrics() {
             _metricsChartTimes = new Chart(timeCtx, {
                 type: 'line',
                 data: { labels: times.map(function(_, i) { return '#' + (i+1); }), datasets: [{ label: 'Anchor Time (s)', data: times, borderColor: '#00aaff', backgroundColor: 'rgba(0,170,255,0.1)', fill: true, tension: 0.3, pointRadius: 2, pointBackgroundColor: '#00aaff' }] },
-                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#555', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.03)' } }, y: { ticks: { color: '#555', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.03)' }, beginAtZero: true } } }
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#6b7d93', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: '#6b7d93', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true } } }
             });
         }
 
@@ -122,7 +122,7 @@ async function loadPerformanceMetrics() {
             _metricsChartTypes = new Chart(typesCtx, {
                 type: 'doughnut',
                 data: { labels: Object.keys(types), datasets: [{ data: Object.values(types), backgroundColor: ['#00aaff','#c9a84c','#38bdf8','#ff6b6b','#00aaff','#fb923c','#06b6d4'], borderWidth: 0 }] },
-                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#555', font: { size: 10 }, padding: 8 } } } }
+                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#8ea4b8', font: { size: 10 }, padding: 8 } } } }
             });
         }
 
@@ -150,7 +150,7 @@ async function loadPerformanceMetrics() {
             ];
             var allRequests = sessionRequests.length > 0 ? sessionRequests.concat(baselineRequests) : baselineRequests;
             reqEl.innerHTML = window._s4Safe(allRequests.slice(0, 12).map(function(r) {
-                return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(0,0,0,0.03)">'
+                return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.03)">'
                     + '<span style="background:' + r.color + '22;color:' + r.color + ';font-weight:700;font-size:0.7rem;padding:2px 8px;border-radius:4px;min-width:42px;text-align:center">' + r.method + '</span>'
                     + '<span style="color:var(--text);flex:1;font-family:monospace;font-size:0.72rem">' + r.path + '</span>'
                     + '<span style="color:var(--steel);font-size:0.65rem;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + r.detail + '</span>'
@@ -177,6 +177,7 @@ setInterval(function() {
 }, 30000);
 
 
+
 // ═══ DYNAMIC SESSION DATA ENGINE ═══
 // Keeps all tool displays in sync with real user activity
 (function() {
@@ -185,7 +186,7 @@ setInterval(function() {
         var _onboardOv = document.getElementById('onboardOverlay');
         if (_onboardOv && _onboardOv.style.display === 'flex') return;
 
-        var s = window._s4Stats || (function() { try { var _ls=JSON.parse(localStorage.getItem('s4_stats')||'{}'); return {anchored:_ls.anchored||0,verified:_ls.verified||0,types:new Set(_ls.types||[]),slsFees:_ls.slsFees||0}; } catch(e) { return {anchored:0,verified:0,types:new Set(),slsFees:0}; } })();
+        var s = window._s4Stats || (function() { try { var _ls=JSON.parse(localStorage.getItem('s4_demo_stats')||'{}'); return {anchored:_ls.anchored||0,verified:_ls.verified||0,types:new Set(_ls.types||[]),slsFees:_ls.slsFees||0}; } catch(e) { return {anchored:0,verified:0,types:new Set(),slsFees:0}; } })();
         var _glr2 = typeof window.getLocalRecords === 'function' ? window.getLocalRecords : function() { try { return JSON.parse(localStorage.getItem('s4_anchored_records') || '[]'); } catch(e) { return []; } };
         var records = _glr2();
         
@@ -193,7 +194,7 @@ setInterval(function() {
         var balEl = document.getElementById('slsBarBalance');
         if (balEl) {
             var spent = s.slsFees || 0;
-            var tierAlloc = window._s4TierAllocation || parseInt(localStorage.getItem('s4_tier_allocation')) || 25000;
+            var tierAlloc = (window._onboardTiers && window._onboardTier && window._onboardTiers[window._onboardTier]) ? window._onboardTiers[window._onboardTier].sls : ((window._demoSession && window._demoSession.subscription) ? (window._demoSession.subscription.sls_allocation || 25000) : 25000);
             var bal = tierAlloc - spent;
             balEl.textContent = bal.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0}) + ' Credits';
         }
@@ -203,7 +204,7 @@ setInterval(function() {
         if (spentEl) spentEl.textContent = (s.slsFees || 0).toFixed(2);
         
         // Sync tool SLS strip — use actual tier allocation
-        var tierAllocTool = window._s4TierAllocation || parseInt(localStorage.getItem('s4_tier_allocation')) || 25000;
+        var tierAllocTool = (window._onboardTiers && window._onboardTier && window._onboardTiers[window._onboardTier]) ? window._onboardTiers[window._onboardTier].sls : ((window._demoSession && window._demoSession.subscription) ? (window._demoSession.subscription.sls_allocation || 25000) : 25000);
         var toolBal = document.getElementById('toolSlsBal');
         if (toolBal) toolBal.textContent = (tierAllocTool - (s.slsFees||0)).toLocaleString();
         var toolAnch = document.getElementById('toolSlsAnch');
@@ -340,7 +341,7 @@ function refreshOfflineQueueUI() {
     if (statusEl) { var on = navigator.onLine; statusEl.innerHTML = on ? '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--green)"></i> Online' : '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--red)"></i> Offline'; statusEl.style.color = on ? 'var(--green)' : 'var(--red)'; }
     if (listEl) {
         if (!queue.length) { listEl.innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">Queue is empty. Hashes are queued automatically when offline.</div>'; }
-        else { listEl.innerHTML = window._s4Safe(queue.map(function(item, i) { return '<div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid rgba(0,0,0,0.03)"><span style="color:var(--accent);font-weight:700;width:24px">' + (i+1) + '</span><span style="flex:1;color:var(--text);font-family:monospace;font-size:0.72rem">' + (item.hash ? item.hash.substring(0,24)+'...' : 'N/A') + '</span><span style="color:var(--steel);font-size:0.7rem;width:80px">' + (item.record_type||'GENERAL') + '</span><span style="color:' + (item.synced ? 'var(--green)' : 'var(--gold)') + ';font-size:0.72rem">' + (item.synced ? '✓ Synced' : '⏳ Pending') + '</span><button onclick="offlineRemoveItem(' + i + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.75rem" title="Remove"><i class="fas fa-times"></i></button></div>'; }).join('')); }
+        else { listEl.innerHTML = window._s4Safe(queue.map(function(item, i) { return '<div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:var(--accent);font-weight:700;width:24px">' + (i+1) + '</span><span style="flex:1;color:var(--text);font-family:monospace;font-size:0.72rem">' + (item.hash ? item.hash.substring(0,24)+'...' : 'N/A') + '</span><span style="color:var(--steel);font-size:0.7rem;width:80px">' + (item.record_type||'GENERAL') + '</span><span style="color:' + (item.synced ? 'var(--green)' : 'var(--gold)') + ';font-size:0.72rem">' + (item.synced ? '✓ Synced' : '⏳ Pending') + '</span><button onclick="offlineRemoveItem(' + i + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.75rem" title="Remove"><i class="fas fa-times"></i></button></div>'; }).join('')); }
     }
 }
 
@@ -431,8 +432,9 @@ window.fetch = function(url, opts) {
     if (!navigator.onLine && typeof url === 'string') {
         // NETWORK_DEPENDENT: All anchor-related endpoints must be queued offline
         var isAnchorRoute = url.indexOf('/api/anchor') !== -1
-;
-
+            || url.indexOf('/api/demo/anchor') !== -1;
+        // NETWORK_DEPENDENT: Provision can't work offline — return cached/mock session
+        var isProvisionRoute = url.indexOf('/api/demo/provision') !== -1;
         if (isAnchorRoute) {
             try {
                 var body = opts && opts.body ? JSON.parse(opts.body) : {};
@@ -443,21 +445,42 @@ window.fetch = function(url, opts) {
             } catch(e) { console.warn('Offline queue error:', e); }
             return Promise.resolve(new Response(JSON.stringify({ status: 'queued_offline', message: 'Hash queued for offline sync.', record: { tx_hash: 'OFFLINE_' + Date.now().toString(36).toUpperCase(), network: 'Queued Offline' } }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
         }
+        if (isProvisionRoute) {
+            // NETWORK_DEPENDENT: Return a mock offline provision response
+            var _offTier = localStorage.getItem('s4_selected_tier') || 'starter';
+            var _offTiers = {pilot:{label:'Pilot',sls:100},starter:{label:'Starter',sls:25000},professional:{label:'Professional',sls:100000},enterprise:{label:'Enterprise',sls:500000}};
+            var _offT = _offTiers[_offTier] || _offTiers['starter'];
+            return Promise.resolve(new Response(JSON.stringify({ session_id: 'offline_' + Date.now(), subscription: { label: _offT.label, sls_allocation: _offT.sls }, wallet: { address: 'rOfflineMode' }, xrp_balance: 12, sls_balance: _offT.sls }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+        }
     }
     return _origFetch.apply(this, arguments);
 };
 
+var _onlineDebounce = null;
+var _offlineDebounce = null;
 window.addEventListener('online', function() {
     refreshOfflineQueueUI();
-    _showNotif('Connection restored. Auto-syncing offline queue...', 'success');
-    // Auto-sync after a 2-second delay to allow network stabilization
-    setTimeout(function() {
+    // Debounce to prevent rapid fire on WiFi fluctuations
+    clearTimeout(_onlineDebounce);
+    _onlineDebounce = setTimeout(function() {
         var q = getOfflineQueue();
         var pending = q.filter(function(i){ return !i.synced; });
-        if (pending.length > 0) { offlineSyncWithBackoff(); }
+        if (pending.length > 0) {
+            _showNotif('Connection restored. Syncing ' + pending.length + ' queued anchors...', 'success');
+            offlineSyncWithBackoff();
+        }
+    }, 3000);
+});
+window.addEventListener('offline', function() {
+    refreshOfflineQueueUI();
+    clearTimeout(_offlineDebounce);
+    _offlineDebounce = setTimeout(function() {
+        // Only show if still offline after 2s (filters brief blips)
+        if (!navigator.onLine) {
+            _showNotif('Connection lost. Anchors will be queued locally.', 'warning');
+        }
     }, 2000);
 });
-window.addEventListener('offline', function() { refreshOfflineQueueUI(); _showNotif('Connection lost. Anchors will be queued locally.', 'warning'); });
 
 function _showNotif(msg, type) {
     var old = document.querySelector('.workspace-notification'); if (old) old.remove();
@@ -532,6 +555,7 @@ function processUploadedFile(file) {
 }
 
 
+
 // ═══ ANCHOR-S4 — Chart.js & KPI Enhancement Engine ═══
 var _s4Charts = {};
 
@@ -548,15 +572,15 @@ function createS4Chart(canvasId, config) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: { labels: { color: '#555', font: { family: 'Inter', size: 11, weight: '600' }, padding: 16, usePointStyle: true, pointStyle: 'circle' } },
-            tooltip: { backgroundColor: '#ffffff', titleColor: '#1d1d1f', bodyColor: '#8ea4b8', borderColor: 'rgba(0,102,204,0.15)', borderWidth: 1, padding: 12, cornerRadius: 8, titleFont: { weight: '700' }, bodyFont: { size: 12 } }
+            legend: { labels: { color: '#8ea4b8', font: { family: 'Inter', size: 11, weight: '600' }, padding: 16, usePointStyle: true, pointStyle: 'circle' } },
+            tooltip: { backgroundColor: '#16161f', titleColor: '#fff', bodyColor: '#8ea4b8', borderColor: 'rgba(0,170,255,0.2)', borderWidth: 1, padding: 12, cornerRadius: 8, titleFont: { weight: '700' }, bodyFont: { size: 12 } }
         },
         scales: {}
     };
     if (config.type === 'bar' || config.type === 'line') {
         defaults.scales = {
-            x: { grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false }, ticks: { color: '#555', font: { size: 10 } } },
-            y: { grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false }, ticks: { color: '#555', font: { size: 10 } } }
+            x: { grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false }, ticks: { color: '#8ea4b8', font: { size: 10 } } },
+            y: { grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false }, ticks: { color: '#8ea4b8', font: { size: 10 } } }
         };
     }
     // Merge defaults
@@ -565,8 +589,6 @@ function createS4Chart(canvasId, config) {
     config.options.maintainAspectRatio = defaults.maintainAspectRatio;
     config.options.plugins = Object.assign({}, defaults.plugins, config.options.plugins || {});
     if (defaults.scales.x && !config.options.scales) config.options.scales = defaults.scales;
-    // Apply light-mode theme patch if available
-    if (typeof _s4PatchChartTheme === 'function') config = _s4PatchChartTheme(config);
     _s4Charts[canvasId] = new Chart(ctx.getContext('2d'), config);
     return _s4Charts[canvasId];
 }
@@ -604,7 +626,7 @@ function animateKPI(el, target, prefix, suffix, duration) {
 
 // ═══ Chart rendering for Gap Analysis ═══
 function renderGapAnalysisCharts() {
-    // Show sample data if no real analysis has been run
+    // Show demo data if no real analysis has been run
     var radarCanvas = document.getElementById('gapRadarChart');
     var barCanvas = document.getElementById('gapBarChart');
     if (!radarCanvas || !barCanvas) return;
@@ -612,7 +634,7 @@ function renderGapAnalysisCharts() {
     var chartsRow = document.getElementById('gapChartsRow');
     if (chartsRow) chartsRow.style.display = 'flex';
     
-    // Use real data if available, otherwise use sample baseline
+    // Use real data if available, otherwise use demo baseline
     var labels, scores;
     if (typeof ilsResults !== 'undefined' && ilsResults && ilsResults.elements && Object.keys(ilsResults.elements).length > 0) {
         labels = Object.keys(ilsResults.elements);
@@ -642,7 +664,7 @@ function renderGapAnalysisCharts() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(0,0,0,0.06)' }, angleLines: { color: 'rgba(0,0,0,0.06)' }, pointLabels: { color: '#555', font: { size: 10 } } } },
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.06)' }, angleLines: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#8ea4b8', font: { size: 10 } } } },
             plugins: { legend: { display: false } }
         }
     });
@@ -666,7 +688,7 @@ function renderGapAnalysisCharts() {
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
-            scales: { x: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { color: '#555' } }, y: { ticks: { color: '#555', font: { size: 10 } }, grid: { display: false } } },
+            scales: { x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8' } }, y: { ticks: { color: '#8ea4b8', font: { size: 10 } }, grid: { display: false } } },
             plugins: { legend: { display: false } }
         }
     });
@@ -695,11 +717,12 @@ function renderDMSMSCharts() {
             maintainAspectRatio: false,
             cutout: '55%',
             plugins: {
-                legend: { position: 'bottom', labels: { color: '#555', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
+                legend: { position: 'bottom', labels: { color: '#8ea4b8', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
             }
         }
     });
 }
+
 
 
 // ═══ Chart rendering for Readiness ═══
@@ -749,12 +772,13 @@ function renderReadinessCharts() {
                 tooltip: { callbacks: { label: function(ctx) { return ctx.parsed.y + '%'; } } }
             },
             scales: {
-                x: { ticks: { color: '#555', font: { size: 11 } }, grid: { display: false } },
-                y: { ticks: { color: '#555', font: { size: 10 }, callback: function(v) { return v + '%'; } }, grid: { color: 'rgba(0,0,0,0.03)' }, beginAtZero: true, max: 100 }
+                x: { ticks: { color: '#8ea4b8', font: { size: 11 } }, grid: { display: false } },
+                y: { ticks: { color: '#6b7d93', font: { size: 10 }, callback: function(v) { return v + '%'; } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true, max: 100 }
             }
         }
     });
 }
+
 
 
 // ═══ Chart rendering for Compliance ═══
@@ -787,11 +811,12 @@ function renderComplianceCharts() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(0,0,0,0.06)' }, angleLines: { color: 'rgba(0,0,0,0.06)' }, pointLabels: { color: '#555', font: { size: 10 } } } },
-            plugins: { legend: { labels: { color: '#555', usePointStyle: true, font: { size: 11 } } } }
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.06)' }, angleLines: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#8ea4b8', font: { size: 10 } } } },
+            plugins: { legend: { labels: { color: '#8ea4b8', usePointStyle: true, font: { size: 11 } } } }
         }
     });
 }
+
 
 
 // ═══ Chart rendering for ROI ═══
@@ -852,7 +877,7 @@ function renderROICharts() {
             },{
                 label: 'Break-Even Line',
                 data: new Array(20).fill(0),
-                borderColor: 'rgba(0,0,0,0.12)',
+                borderColor: 'rgba(255,255,255,0.2)',
                 borderDash: [5, 5],
                 borderWidth: 1,
                 pointRadius: 0,
@@ -863,13 +888,14 @@ function renderROICharts() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { color: '#555', callback: function(v) { return '$' + (v/1000).toFixed(0) + 'K'; } } },
-                x: { grid: { display: false }, ticks: { color: '#555' } }
+                y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8', callback: function(v) { return '$' + (v/1000).toFixed(0) + 'K'; } } },
+                x: { grid: { display: false }, ticks: { color: '#8ea4b8' } }
             },
-            plugins: { legend: { labels: { color: '#555', usePointStyle: true, font: { size: 11 } } } }
+            plugins: { legend: { labels: { color: '#8ea4b8', usePointStyle: true, font: { size: 11 } } } }
         }
     });
 }
+
 
 
 // ═══ Chart rendering for Risk Engine ═══
@@ -897,13 +923,14 @@ function renderRiskCharts() {
             maintainAspectRatio: false,
             indexAxis: 'y',
             scales: {
-                x: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { color: '#555' } },
-                y: { ticks: { color: '#555', font: { size: 11 } }, grid: { display: false } }
+                x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8ea4b8' } },
+                y: { ticks: { color: '#8ea4b8', font: { size: 11 } }, grid: { display: false } }
             },
             plugins: { legend: { display: false } }
         }
     });
 }
+
 
 
 // ═══ Chart rendering for Lifecycle Cost ═══
@@ -927,11 +954,12 @@ function renderLifecycleCharts() {
             maintainAspectRatio: false,
             cutout: '50%',
             plugins: {
-                legend: { position: 'bottom', labels: { color: '#555', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
+                legend: { position: 'bottom', labels: { color: '#8ea4b8', padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } }
             }
         }
     });
 }
+
 
 
 // ═══ Inject Chart Canvases into Panels ═══
@@ -957,7 +985,7 @@ function injectChartContainers() {
         var firstCanvasId = conf.charts.match(/id="([^"]+)"/);
         if (firstCanvasId && document.getElementById(firstCanvasId[1])) { panel.setAttribute('data-charts-injected','1'); return; }
         
-        var card = panel.querySelector('.s4-card');
+        var card = panel.querySelector('.demo-card');
         if (!card) return;
         
         // For gap analysis, insert after the result panel
@@ -972,7 +1000,7 @@ function injectChartContainers() {
             }
         }
         
-        // For others, append to the first s4-card
+        // For others, append to the first demo-card
         var wrapper = document.createElement('div');
         wrapper.innerHTML = conf.charts;
         card.appendChild(wrapper.firstElementChild);
@@ -1073,7 +1101,7 @@ function calcLifecycle() {
             + '<div><span style="color:var(--steel)">Acquisition (' + acqPct + '%)</span><br><strong style="color:#00aaff">' + fmtM(acqTotal) + '</strong></div>'
             + '<div><span style="color:var(--steel)">Sustainment (' + sustPct + '%)</span><br><strong style="color:#c9a84c">' + fmtM(sustTotal) + '</strong></div>'
             + '<div><span style="color:var(--steel)">DMSMS/Obsol (' + dmsmsPct + '%)</span><br><strong style="color:#ff4444">' + fmtM(dmsmsCost) + '</strong></div>'
-            + '<div><span style="color:var(--steel)">Disposal (' + disposalPct + '%)</span><br><strong style="color:#555">' + fmtM(disposalCost) + '</strong></div>'
+            + '<div><span style="color:var(--steel)">Disposal (' + disposalPct + '%)</span><br><strong style="color:#8ea4b8">' + fmtM(disposalCost) + '</strong></div>'
             + '<div><span style="color:var(--steel)">Personnel (' + personnelPct + '%)</span><br><strong style="color:#00cc66">' + fmtM(personnelCost) + '</strong></div>'
             + '<div><span style="color:var(--steel)">Training (' + trainingPct + '%)</span><br><strong style="color:#9b59b6">' + fmtM(trainingCost) + '</strong></div>'
             + '</div>'
@@ -1081,14 +1109,14 @@ function calcLifecycle() {
             + '<div style="display:flex;justify-content:space-between;align-items:center">'
             + '<div><span style="color:var(--steel);font-size:0.82rem">Total Ownership Cost</span><br><span style="font-size:1.5rem;font-weight:800;color:#00aaff">' + fmtM(totalCost) + '</span></div>'
             + '<div><span style="color:var(--steel);font-size:0.82rem">Cost per Op Hour</span><br><span style="font-size:1.1rem;font-weight:700;color:var(--accent)">$' + costPerHour.toFixed(0) + '/hr</span></div>'
-            + '<div><span style="color:var(--steel);font-size:0.82rem">Fleet Size</span><br><span style="font-size:1.1rem;font-weight:700;color:#1d1d1f">' + fleetSize + ' units \u00d7 ' + serviceLife + ' yrs</span></div>'
+            + '<div><span style="color:var(--steel);font-size:0.82rem">Fleet Size</span><br><span style="font-size:1.1rem;font-weight:700;color:#fff">' + fleetSize + ' units \u00d7 ' + serviceLife + ' yrs</span></div>'
             + '</div>'
             + '</div>';
     }
     // Trigger chart update
     if (typeof renderLifecycleCharts === 'function') setTimeout(renderLifecycleCharts, 300);
-    // Action items disabled for prod — simulated data should not generate alerts
-    // if (typeof generateLifecycleActions === 'function') generateLifecycleActions(progKey, totalCost, dmsmsCost, sustTotal);
+    // Generate action items
+    if (typeof generateLifecycleActions === 'function') generateLifecycleActions(progKey, totalCost, dmsmsCost, sustTotal);
 }
 
 function exportLifecycle() {
@@ -1143,7 +1171,7 @@ async function anchorLifecycle() {
     if (typeof window.saveLocalRecord === 'function') window.saveLocalRecord({hash:hash, record_type:'LIFECYCLE_COST', record_label:'Lifecycle Cost — '+platName, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'Lifecycle Cost Estimator', explorer_url:result.explorerUrl, network:result.network});
     if (typeof window.addToVault === 'function') window.addToVault({hash:hash, txHash:result.txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost — '+platName, branch:'JOINT', icon:'<i class="fas fa-clock"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Cost Estimator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     if (typeof window.updateTxLog === 'function') window.updateTxLog();
-    if (typeof window._updateSlsBalance === 'function') window._updateSlsBalance();
+    if (typeof window._updateDemoSlsBalance === 'function') window._updateDemoSlsBalance();
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle report anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(function(r){ setTimeout(r, 3200); });
     if (typeof window.hideAnchorAnimation === 'function') window.hideAnchorAnimation();
@@ -1181,7 +1209,7 @@ async function anchorLifecycle() {
             el.removeAttribute('style');
         });
         // Strip inline style from first description paragraph
-        var cards = panel.querySelectorAll('.s4-card');
+        var cards = panel.querySelectorAll('.demo-card');
         cards.forEach(function(card) {
             var h = card.querySelector('h3, h4');
             if (h) {
@@ -1273,7 +1301,7 @@ async function anchorLifecycle() {
         });
         
         // ── Phase 5: Move stat-mini rows to top (dashboard KPI strip) ──
-        var firstCard = panel.querySelector('.s4-card');
+        var firstCard = panel.querySelector('.demo-card');
         if (!firstCard) return;
         
         // For panels with a two-column layout (hub-analysis, hub-actions), 
@@ -1310,7 +1338,7 @@ async function anchorLifecycle() {
         if (panelId === 'hub-actions') {
             var leftCol = firstCard.querySelector('.col-lg-8');
             if (leftCol) {
-                var innerCard = leftCol.querySelector('.s4-card');
+                var innerCard = leftCol.querySelector('.demo-card');
                 if (innerCard) {
                     var statsInActions = null;
                     var rows = innerCard.querySelectorAll(':scope > .row');
@@ -1437,6 +1465,26 @@ function renderActionCalendar() {
         });
     } catch(e) {}
 
+    // Also generate some demo action dates for visual appeal
+    if (Object.keys(actionDates).length === 0) {
+        var demoActions = [
+            {day:3, title:'DMSMS Review — AN/SPS-49 Radar', severity:'critical'},
+            {day:7, title:'ILS Gap Analysis — DDG-51 FY25', severity:'warning'},
+            {day:10, title:'Parts Order Deadline — CVN-78', severity:'critical'},
+            {day:12, title:'Compliance Audit Prep', severity:'info'},
+            {day:15, title:'Warranty Expiry — GE LM2500', severity:'warning'},
+            {day:18, title:'Lifecycle Cost Review', severity:'info'},
+            {day:21, title:'Risk Assessment Update', severity:'warning'},
+            {day:24, title:'Readiness Report Due', severity:'critical'},
+            {day:27, title:'Obsolescence Check — MIL-STD-1553', severity:'info'}
+        ];
+        demoActions.forEach(function(a) {
+            if (a.day <= daysInMonth) {
+                if (!actionDates[a.day]) actionDates[a.day] = [];
+                actionDates[a.day].push(a);
+            }
+        });
+    }
 
     var html = '';
     // Day headers
@@ -1489,14 +1537,26 @@ function showCalDay(day) {
             }
         });
     } catch(e) {}
-    var items = actionDates[day] || [];
+    // Demo data fallback
+    var demoActions = {
+        3: [{title:'DMSMS Review — AN/SPS-49 Radar', severity:'critical', owner:'NAVSEA 04'}],
+        7: [{title:'ILS Gap Analysis — DDG-51 FY25', severity:'warning', owner:'PMS 400'}],
+        10: [{title:'Parts Order Deadline — CVN-78', severity:'critical', owner:'PMS 312'}],
+        12: [{title:'Compliance Audit Prep', severity:'info', owner:'ILS Manager'}],
+        15: [{title:'Warranty Expiry — GE LM2500', severity:'warning', owner:'PMS 300'}],
+        18: [{title:'Lifecycle Cost Review', severity:'info', owner:'CAPE'}],
+        21: [{title:'Risk Assessment Update', severity:'warning', owner:'PMS 400'}],
+        24: [{title:'Readiness Report Due', severity:'critical', owner:'TYCOM'}],
+        27: [{title:'Obsolescence Check — MIL-STD-1553', severity:'info', owner:'NAVSEA 04'}]
+    };
+    var items = actionDates[day] || demoActions[day] || [];
     if (items.length === 0) { detail.style.display = 'none'; return; }
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var html = '<div style="font-weight:700;color:#1d1d1f;margin-bottom:6px"><i class="fas fa-calendar-day" style="color:var(--accent);margin-right:4px"></i>' + months[_calMonth] + ' ' + day + ', ' + _calYear + '</div>';
+    var html = '<div style="font-weight:700;color:#fff;margin-bottom:6px"><i class="fas fa-calendar-day" style="color:var(--accent);margin-right:4px"></i>' + months[_calMonth] + ' ' + day + ', ' + _calYear + '</div>';
     items.forEach(function(item) {
         var col = item.severity === 'critical' ? '#ff3333' : (item.severity === 'warning' ? '#ffa500' : '#00aaff');
         html += '<div style="padding:6px 8px;background:rgba(0,0,0,0.2);border-left:3px solid ' + col + ';border-radius:4px;margin-bottom:4px">'
-            + '<div style="font-weight:600;color:#1d1d1f;font-size:0.8rem">' + (item.title || 'Action Item') + '</div>'
+            + '<div style="font-weight:600;color:#fff;font-size:0.8rem">' + (item.title || 'Action Item') + '</div>'
             + (item.owner ? '<div style="font-size:0.72rem;color:var(--steel)">Owner: ' + item.owner + '</div>' : '')
             + '</div>';
     });
@@ -1549,24 +1609,16 @@ if (document.readyState === 'loading') {
 })();
 
 // === Window exports for inline event handlers ===
+window._showNotif = _showNotif;
 window.anchorLifecycle = anchorLifecycle;
 window.calcLifecycle = calcLifecycle;
 window.changeCalMonth = changeCalMonth;
 window.exportLifecycle = exportLifecycle;
 window.handleFileSelect = handleFileSelect;
-window.injectChartContainers = injectChartContainers;
 window.loadPerformanceMetrics = loadPerformanceMetrics;
 window.offlineClearQueue = offlineClearQueue;
 window.offlineQueueHash = offlineQueueHash;
 window.offlineRemoveItem = offlineRemoveItem;
 window.handleFileDrop = handleFileDrop;
 window.offlineSyncAll = offlineSyncAll;
-window.renderGapAnalysisCharts = renderGapAnalysisCharts;
-window.renderDMSMSCharts = renderDMSMSCharts;
-window.renderReadinessCharts = renderReadinessCharts;
-window.renderComplianceCharts = renderComplianceCharts;
-window.renderROICharts = renderROICharts;
-window.renderRiskCharts = renderRiskCharts;
-window.renderLifecycleCharts = renderLifecycleCharts;
 window.showCalDay = showCalDay;
-window._showNotif = _showNotif;

@@ -1,9 +1,6 @@
-// S4 Ledger — enhancements
-// Extracted from monolith lines 16201-23380
-// 7178 lines
-
-// Ensure S4 global namespace is available in module scope
-var S4 = window.S4 = window.S4 || { version: '5.12.0', modules: {}, register: function(n,m){this.modules[n]=m;}, getModule: function(n){return this.modules[n]||null;} };
+// S4 Ledger Demo — enhancements
+// Extracted from monolith lines 15880-22247
+// 6366 lines
 
 (function() {
     'use strict';
@@ -354,8 +351,8 @@ function renderFailureTimeline() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: {stacked:true,grid:{display:false},ticks:{color:'#555',font:{size:10}}},
-                y: {stacked:true,grid:{color:'rgba(0,0,0,0.03)'},ticks:{color:'#555',stepSize:1}}
+                x: {stacked:true,grid:{display:false},ticks:{color:'#8ea4b8',font:{size:10}}},
+                y: {stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#8ea4b8',stepSize:1}}
             },
             plugins: {legend:{display:false},tooltip:{mode:'index',intersect:false}}
         }
@@ -371,10 +368,10 @@ function renderFailureTimeline() {
     ];
     // Simulate additional analysts joining over time
     var potentialAnalysts = [
-        {name:'Analyst 1 (PMS 400D)', initials:'A1', color:'#2ecc71'},
-        {name:'Analyst 2 (NAVAIR)', initials:'A2', color:'#9b59b6'},
-        {name:'Analyst 3 (PMS 317)', initials:'A3', color:'#e67e22'},
-        {name:'Analyst 4 (NAVSEA)', initials:'A4', color:'#e74c3c'}
+        {name:'J. Martinez (PMS 400D)', initials:'JM', color:'#2ecc71'},
+        {name:'K. Thompson (NAVAIR)', initials:'KT', color:'#9b59b6'},
+        {name:'R. Chen (PMS 317)', initials:'RC', color:'#e67e22'},
+        {name:'S. Williams (NAVSEA)', initials:'SW', color:'#e74c3c'}
     ];
 
     function updateCollabUI() {
@@ -386,7 +383,7 @@ function renderFailureTimeline() {
         countEl.textContent = analysts.length + ' analyst' + (analysts.length > 1 ? 's' : '');
         var html = '';
         analysts.forEach(function(a, i) {
-            html += '<div title="' + a.name + '" style="width:26px;height:26px;border-radius:50%;background:' + a.color + ';display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#1d1d1f;border:2px solid #fff;margin-left:' + (i > 0 ? '-6px' : '0') + ';z-index:' + (10-i) + ';position:relative;cursor:default;">' + a.initials + '</div>';
+            html += '<div title="' + a.name + '" style="width:26px;height:26px;border-radius:50%;background:' + a.color + ';display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#fff;border:2px solid #2c2c2e;margin-left:' + (i > 0 ? '-6px' : '0') + ';z-index:' + (10-i) + ';position:relative;cursor:default;">' + a.initials + '</div>';
         });
         avatarsEl.innerHTML = html;
 
@@ -457,12 +454,12 @@ function showDigitalThread(hash) {
         // Vertical line
         if (!isLast) html += '<div style="position:absolute;left:-16px;top:10px;bottom:0;width:2px;background:linear-gradient(180deg,' + step.color + ',' + (steps[i+1]?steps[i+1].color:'transparent') + ');"></div>';
         // Dot
-        html += '<div style="position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:' + step.color + ';border:2px solid #fff;"></div>';
+        html += '<div style="position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:' + step.color + ';border:2px solid #2c2c2e;"></div>';
         // Content
         html += '<div style="display:flex;align-items:flex-start;gap:8px;">';
         html += '<i class="fas ' + step.icon + '" style="color:' + step.color + ';font-size:0.75rem;margin-top:2px;width:14px;text-align:center;"></i>';
         html += '<div><div style="font-size:0.7rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;">' + step.label + '</div>';
-        html += '<div style="font-size:0.82rem;color:#1d1d1f;' + (step.mono ? 'font-family:monospace;font-size:0.78rem;' : '') + '">';
+        html += '<div style="font-size:0.82rem;color:#fff;' + (step.mono ? 'font-family:monospace;font-size:0.78rem;' : '') + '">';
         if (step.link) html += '<a href="' + step.link + '" target="_blank" style="color:' + step.color + ';text-decoration:none;">' + step.value + ' <i class="fas fa-external-link-alt" style="font-size:0.6rem;"></i></a>';
         else html += step.value;
         html += '</div></div></div></div>';
@@ -525,11 +522,11 @@ function showSampleDigitalThread() {
         var isLast = i === steps.length - 1;
         html += '<div style="position:relative;padding-bottom:' + (isLast ? '0' : '16px') + ';">';
         if (!isLast) html += '<div style="position:absolute;left:-16px;top:10px;bottom:0;width:2px;background:linear-gradient(180deg,' + step.color + ',' + (steps[i+1]?steps[i+1].color:'transparent') + ');"></div>';
-        html += '<div style="position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:' + step.color + ';border:2px solid #fff;"></div>';
+        html += '<div style="position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:' + step.color + ';border:2px solid #2c2c2e;"></div>';
         html += '<div style="display:flex;align-items:flex-start;gap:8px;">';
         html += '<i class="fas ' + step.icon + '" style="color:' + step.color + ';font-size:0.75rem;margin-top:2px;width:14px;text-align:center;"></i>';
         html += '<div><div style="font-size:0.7rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;">' + step.label + '</div>';
-        html += '<div style="font-size:0.82rem;color:#1d1d1f;' + (step.mono ? 'font-family:monospace;font-size:0.78rem;' : '') + '">';
+        html += '<div style="font-size:0.82rem;color:#fff;' + (step.mono ? 'font-family:monospace;font-size:0.78rem;' : '') + '">';
         if (step.link) html += '<a href="' + step.link + '" target="_blank" style="color:' + step.color + ';text-decoration:none;">' + step.value + ' <i class="fas fa-external-link-alt" style="font-size:0.6rem;"></i></a>';
         else html += step.value;
         html += '</div></div></div></div>';
@@ -655,8 +652,8 @@ function loadSBOMData() {
     var sevColors = {None:'#34c759', Low:'#ffcc00', Medium:'#ff9500', High:'#ff3b30', Critical:'#ff3b30'};
     var html = '';
     components.forEach(function(c) {
-       html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);">';
-       html += '<td style="padding:10px 8px;color:#1d1d1f;font-weight:600;font-size:0.85rem;">' + c.name + '<div style="color:var(--steel);font-size:0.72rem;">' + c.supplier + '</div></td>';
+       html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
+       html += '<td style="padding:10px 8px;color:#fff;font-weight:600;font-size:0.85rem;">' + c.name + '<div style="color:var(--steel);font-size:0.72rem;">' + c.supplier + '</div></td>';
        html += '<td style="padding:10px 8px;color:var(--steel);font-family:monospace;font-size:0.78rem;">' + c.version + '</td>';
        html += '<td style="padding:10px 8px;text-align:center;"><span style="background:rgba(0,170,255,0.1);color:#00aaff;padding:2px 8px;border-radius:3px;font-size:0.75rem;font-weight:600;">' + c.type + '</span></td>';
        html += '<td style="padding:10px 8px;text-align:center;color:' + (c.cves > 0 ? '#ff3b30' : '#34c759') + ';font-weight:700;">' + (c.cves > 0 ? c.cves + ' <i class="fas fa-exclamation-triangle" style="font-size:0.7rem"></i>' : '<i class="fas fa-check-circle"></i>') + '</td>';
@@ -982,7 +979,7 @@ console.log('[Round-12b] Competitive Enhancement Suite loaded: AI Threat Scoring
         // Render charts for whichever panel is visible
         var visible = document.querySelector('.ils-hub-panel[style*="display: block"], .ils-hub-panel[style*="display:block"], .ils-hub-panel.active');
         if (!visible) {
-            // Default: render DMSMS, Readiness, Compliance, Risk, Lifecycle, ROI with sample data
+            // Default: render DMSMS, Readiness, Compliance, Risk, Lifecycle, ROI with demo data
             ['renderDMSMSCharts','renderReadinessCharts','renderComplianceCharts','renderRiskCharts','renderLifecycleCharts','renderROICharts'].forEach(function(fn) {
                 if (typeof window[fn] === 'function') {
                     try { window[fn](); } catch(e) { console.warn('[R13] Chart render error:', fn, e); }
@@ -1127,7 +1124,7 @@ var S4_SUBSCRIPTION_TIERS = {
         price_annual: 0,
         sls_monthly: 100,
         anchors_monthly: 10000,
-        features: ['Full SDK access', 'XRPL Mainnet anchoring', 'Anchor-S4 workspace', 'Community support'],
+        features: ['Full SDK access', 'XRPL Mainnet anchoring', 'Anchor-S4 demo', 'Community support'],
         stripe_monthly: null,
         stripe_annual: null
     },
@@ -1165,7 +1162,10 @@ var S4_SUBSCRIPTION_TIERS = {
 
 // Create Stripe Checkout Session
 async function createCheckoutSession(tierKey, billingCycle) {
-
+    if (typeof _demoMode !== 'undefined' && _demoMode) {
+        if (typeof _showNotif === 'function') _showNotif('Demo mode active — Stripe checkout disabled. Set _demoMode = false when ready for production.', 'warning');
+        return null;
+    }
     var tier = S4_SUBSCRIPTION_TIERS[tierKey];
     if (!tier) { console.error('Invalid tier:', tierKey); return null; }
 
@@ -1179,8 +1179,8 @@ async function createCheckoutSession(tierKey, billingCycle) {
                 price_id: priceId,
                 tier: tierKey,
                 billing_cycle: billingCycle,
-                success_url: window.location.origin + '/prod-app/?session_id={CHECKOUT_SESSION_ID}&sub=success',
-                cancel_url: window.location.origin + '/prod-app/?sub=cancelled'
+                success_url: window.location.origin + '/demo-app/?session_id={CHECKOUT_SESSION_ID}&sub=success',
+                cancel_url: window.location.origin + '/demo-app/?sub=cancelled'
             })
         });
         var data = await resp.json();
@@ -1257,7 +1257,10 @@ async function verifySubscription() {
 
 // SLS top-up (additional SLS purchase)
 async function purchaseAdditionalSLS(amount, stripePaymentId) {
-
+    if (typeof _demoMode !== 'undefined' && _demoMode) {
+        if (typeof _showNotif === 'function') _showNotif('Demo mode — Credits purchase disabled.', 'warning');
+        return;
+    }
     var sub = getActiveSubscription();
     if (!sub || !sub.wallet) {
         if (typeof _showNotif === 'function') _showNotif('No active subscription. Please subscribe first.', 'error');
@@ -1277,7 +1280,7 @@ async function purchaseAdditionalSLS(amount, stripePaymentId) {
         if (data.new_balance) {
             sub.sls_balance = data.new_balance;
             localStorage.setItem('s4_subscription', JSON.stringify(sub));
-            if (typeof _showNotif === 'function') _showNotif('Credit top-up complete! New balance: ' + data.new_balance.toLocaleString() + ' Credits', 'success');
+            if (typeof _showNotif === 'function') _showNotif('Credits top-up complete! New balance: ' + data.new_balance.toLocaleString() + ' Credits', 'success');
         }
         return data;
     } catch(err) {
@@ -1285,11 +1288,11 @@ async function purchaseAdditionalSLS(amount, stripePaymentId) {
     }
 }
 
-// Production anchor call (uses real wallet)
+// Production anchor call (uses real wallet instead of demo)
 async function productionAnchor(hash, recordType, memoContent) {
     var sub = getActiveSubscription();
     if (!sub || !sub.wallet) {
-        // Fall back to offline anchor
+        // Fall back to demo mode
         if (typeof _anchorToXRPL === 'function') return _anchorToXRPL(hash, recordType, memoContent);
         return {};
     }
@@ -1307,7 +1310,7 @@ async function productionAnchor(hash, recordType, memoContent) {
         return await resp.json();
     } catch(err) {
         console.error('Anchor error:', err);
-        // Fall back to offline anchor
+        // Fall back to demo
         if (typeof _anchorToXRPL === 'function') return _anchorToXRPL(hash, recordType, memoContent);
         return {};
     }
@@ -1377,7 +1380,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         // Find the ILS hub tool grid to insert before it
         var hubPanel = document.querySelector('.ils-hub-panel#hub-compliance');
         if (!hubPanel) return;
-        var firstCard = hubPanel.querySelector('.s4-card');
+        var firstCard = hubPanel.querySelector('.demo-card');
         if (!firstCard) return;
 
         var badgeHTML = '<div id="fedRampBadgePanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(0,100,0,0.06),rgba(0,170,255,0.04));border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:16px;">'
@@ -1434,11 +1437,17 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         admin:       { label: 'Admin',       color: '#ff3b30', icon: 'fa-user-shield',       permissions: ['read','write','export','anchor','manage_users','settings','delete'] },
         ils_manager: { label: 'ILS Manager', color: '#ff9500', icon: 'fa-user-tie',          permissions: ['read','write','export','anchor','manage_analyses'] },
         analyst:     { label: 'Analyst',     color: '#00aaff', icon: 'fa-user-graduate',     permissions: ['read','write','export','anchor'] },
-        read_only:   { label: 'Read-Only',   color: '#555', icon: 'fa-user-lock',         permissions: ['read'] }
+        read_only:   { label: 'Read-Only',   color: '#8ea4b8', icon: 'fa-user-lock',         permissions: ['read'] }
     };
 
-    // Team members loaded from Supabase — starts empty
-    var _teamMembers = [];
+    // Simulated team members
+    var _teamMembers = [
+        { name: 'You (Demo User)', email: 'demo@s4ledger.com', role: 'admin', status: 'online', lastActive: new Date().toISOString() },
+        { name: 'J. Martinez', email: 'j.martinez@navy.mil', role: 'ils_manager', status: 'online', lastActive: new Date(Date.now() - 300000).toISOString() },
+        { name: 'K. Thompson', email: 'k.thompson@navair.navy.mil', role: 'analyst', status: 'away', lastActive: new Date(Date.now() - 1800000).toISOString() },
+        { name: 'R. Chen', email: 'r.chen@pms317.navy.mil', role: 'analyst', status: 'offline', lastActive: new Date(Date.now() - 86400000).toISOString() },
+        { name: 'S. Williams', email: 's.williams@navsea.navy.mil', role: 'read_only', status: 'offline', lastActive: new Date(Date.now() - 172800000).toISOString() }
+    ];
 
     window._s4TeamMembers = _teamMembers;
     window._s4TeamRoles = ROLES;
@@ -1450,10 +1459,10 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         if (existing) { existing.remove(); return; }
 
         var statusColors = { online: '#34c759', away: '#ff9500', offline: '#8ea4b8' };
-        var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#2c2c2e;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
-        html += '<h3 style="margin:0;color:#1d1d1f;font-size:1.1rem;"><i class="fas fa-users" style="color:var(--accent);margin-right:8px"></i>Team Workspace</h3>';
-        html += '<button onclick="document.getElementById(\'teamManagePanel\').remove();document.getElementById(\'teamManageOverlay\').remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
+        html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-users" style="color:var(--accent);margin-right:8px"></i>Team Workspace</h3>';
+        html += '<button onclick="var p=document.getElementById(\'teamManagePanel\');var o=document.getElementById(\'teamManageOverlay\');if(p)p.remove();if(o)o.remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
         html += '</div>';
         html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:16px;">Manage team roles and access. Changes sync across all workspace sessions.</div>';
         html += '<table style="width:100%;border-collapse:collapse;">';
@@ -1462,8 +1471,8 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         _teamMembers.forEach(function(m, i) {
             var role = ROLES[m.role];
             var statusColor = statusColors[m.status] || '#8ea4b8';
-            html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);">';
-            html += '<td style="padding:10px 8px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;border-radius:50%;background:' + role.color + '22;display:flex;align-items:center;justify-content:center;"><i class="fas ' + role.icon + '" style="color:' + role.color + ';font-size:0.7rem;"></i></div><div><div style="color:#1d1d1f;font-weight:600;font-size:0.82rem;">' + m.name + '</div><div style="color:var(--steel);font-size:0.7rem;">' + m.email + '</div></div></div></td>';
+            html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
+            html += '<td style="padding:10px 8px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;border-radius:50%;background:' + role.color + '22;display:flex;align-items:center;justify-content:center;"><i class="fas ' + role.icon + '" style="color:' + role.color + ';font-size:0.7rem;"></i></div><div><div style="color:#fff;font-weight:600;font-size:0.82rem;">' + m.name + '</div><div style="color:var(--steel);font-size:0.7rem;">' + m.email + '</div></div></div></td>';
             html += '<td style="padding:10px 8px;"><span style="background:' + role.color + '22;color:' + role.color + ';padding:3px 10px;border-radius:3px;font-size:0.72rem;font-weight:700;">' + role.label + '</span></td>';
             html += '<td style="padding:10px 8px;text-align:center;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:' + statusColor + ';"><span style="width:6px;height:6px;border-radius:50%;background:' + statusColor + ';display:inline-block;"></span>' + m.status + '</span></td>';
             html += '<td style="padding:10px 8px;text-align:center;">';
@@ -1524,9 +1533,9 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var existing = document.getElementById('savedAnalysesPanel');
         if (existing) { existing.remove(); return; }
 
-        var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#2c2c2e;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
-        html += '<h3 style="margin:0;color:#1d1d1f;font-size:1.1rem;"><i class="fas fa-history" style="color:var(--accent);margin-right:8px"></i>Saved Analyses</h3>';
+        html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-history" style="color:var(--accent);margin-right:8px"></i>Saved Analyses</h3>';
         html += '<button onclick="_closeSavedAnalyses()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
         html += '</div>';
 
@@ -1538,7 +1547,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
                 var scoreColor = a.score >= 80 ? '#34c759' : a.score >= 50 ? '#ff9500' : '#ff3b30';
                 html += '<div style="padding:14px;margin-bottom:8px;background:var(--surface);border:1px solid var(--border);border-radius:3px;">';
                 html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-                html += '<div><div style="color:#1d1d1f;font-weight:700;font-size:0.88rem;">' + a.title + '</div><div style="color:var(--steel);font-size:0.72rem;">' + a.type + ' — ' + new Date(a.timestamp).toLocaleString() + '</div></div>';
+                html += '<div><div style="color:#fff;font-weight:700;font-size:0.88rem;">' + a.title + '</div><div style="color:var(--steel);font-size:0.72rem;">' + a.type + ' — ' + new Date(a.timestamp).toLocaleString() + '</div></div>';
                 html += '<div style="display:flex;align-items:center;gap:12px;">';
                 html += '<div style="text-align:center;"><div style="font-size:1.2rem;font-weight:800;color:' + scoreColor + ';">' + Math.round(a.score) + '%</div><div style="font-size:0.6rem;color:var(--steel);">Score</div></div>';
                 html += '<button onclick="_deleteSavedAnalysis(' + i + ')" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:3px;padding:4px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-trash"></i></button>';
@@ -1691,9 +1700,9 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var existing = document.getElementById('webhookPanel');
         if (existing) { existing.remove(); return; }
 
-        var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
+        var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#2c2c2e;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
-        html += '<h3 style="margin:0;color:#1d1d1f;font-size:1.1rem;"><i class="fas fa-plug" style="color:var(--accent);margin-right:8px"></i>Webhook Configuration</h3>';
+        html += '<h3 style="margin:0;color:#fff;font-size:1.1rem;"><i class="fas fa-plug" style="color:var(--accent);margin-right:8px"></i>Webhook Configuration</h3>';
         html += '<button onclick="_closeWebhooks()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
         html += '</div>';
         html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:16px;">Configure webhook URLs to receive real-time notifications when records are anchored, verified, or exported.</div>';
@@ -1701,7 +1710,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         // Add webhook form
         html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:16px;">';
         html += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;">';
-        html += '<input type="url" id="webhookUrlInput" placeholder="https://your-system.mil/api/webhooks/s4" style="background:#f5f5f7;color:#1d1d1f;border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:0.82rem;font-family:monospace;width:100%;">';
+        html += '<input type="url" id="webhookUrlInput" placeholder="https://your-system.mil/api/webhooks/s4" style="background:#050810;color:#fff;border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:0.82rem;font-family:monospace;width:100%;">';
         html += '<button onclick="addWebhook()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;white-space:nowrap;"><i class="fas fa-plus" style="margin-right:4px"></i> Add</button>';
         html += '</div>';
         html += '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
@@ -1716,7 +1725,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             html += '<div style="font-size:0.78rem;color:var(--accent);font-weight:600;margin-bottom:8px;">Active Webhooks</div>';
             _localWebhooks.forEach(function(wh, i) {
                 html += '<div style="padding:10px;margin-bottom:6px;background:var(--surface);border:1px solid var(--border);border-radius:3px;display:flex;justify-content:space-between;align-items:center;">';
-                html += '<div><div style="color:#1d1d1f;font-family:monospace;font-size:0.78rem;">' + wh.url + '</div><div style="color:var(--steel);font-size:0.68rem;">Events: ' + wh.events.join(', ') + ' | Added: ' + new Date(wh.created).toLocaleDateString() + '</div></div>';
+                html += '<div><div style="color:#fff;font-family:monospace;font-size:0.78rem;">' + wh.url + '</div><div style="color:var(--steel);font-size:0.68rem;">Events: ' + wh.events.join(', ') + ' | Added: ' + new Date(wh.created).toLocaleDateString() + '</div></div>';
                 html += '<div style="display:flex;gap:6px;">';
                 html += '<button onclick="testWebhook(' + i + ')" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.2);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-paper-plane"></i> Test</button>';
                 html += '<button onclick="removeWebhook(' + i + ')" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-trash"></i></button>';
@@ -1726,7 +1735,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             html += '<div style="text-align:center;padding:20px;color:var(--muted);font-size:0.82rem;"><i class="fas fa-plug" style="font-size:1.5rem;margin-bottom:8px;opacity:0.3;display:block;"></i>No webhooks configured. Add a URL above to receive real-time notifications.</div>';
         }
         html += '</div>';
-        html = '<div id="webhookOverlay" onclick="_closeWebhooks()" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10000;"></div>' + html;
+        html = '<div id="webhookOverlay" onclick="document.getElementById(\'webhookPanel\').remove();this.remove();" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10000;"></div>' + html;
         document.body.insertAdjacentHTML('beforeend', html);
     };
 
@@ -1746,14 +1755,16 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             body: JSON.stringify({ url: url, events: events })
         }).catch(function(){});
         if (typeof _showNotif === 'function') _showNotif('Webhook registered: ' + url, 'success');
-        window._closeWebhooks();
+        document.getElementById('webhookPanel').remove();
+        document.getElementById('webhookOverlay').remove();
         showWebhookSettings();
     };
 
     window.removeWebhook = function(idx) {
         _localWebhooks.splice(idx, 1);
         localStorage.setItem('s4_webhooks', JSON.stringify(_localWebhooks));
-        window._closeWebhooks();
+        document.getElementById('webhookPanel').remove();
+        document.getElementById('webhookOverlay').remove();
         showWebhookSettings();
         if (typeof _showNotif === 'function') _showNotif('Webhook removed.', 'info');
     };
@@ -1872,7 +1883,7 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
                 { lsKey: 's4Vault', store: 'vault', isArray: true },
                 { lsKey: 's4ActionItems', store: 'action_items', isArray: true },
                 { lsKey: 's4_submission_history', store: 'submissions', isArray: true },
-                { lsKey: 's4_stats', store: 'stats', isObject: true, wrapKey: 'platform_stats' },
+                { lsKey: 's4_demo_stats', store: 'stats', isObject: true, wrapKey: 'demo_stats' },
                 { lsKey: 's4_selected_tier', store: 'settings', isScalar: true, wrapKey: 'selected_tier' },
                 { lsKey: 's4_doc_versions', store: 'documents', isObject: true, wrapKey: 'doc_versions' },
                 { lsKey: 's4_doc_notifications', store: 'documents', isObject: true, wrapKey: 'doc_notifications' }
@@ -2061,8 +2072,8 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
                     // Send authentication
                     S4Realtime.send('auth', {
                         session: S4Realtime.sessionId,
-                        user: (typeof _currentUser !== 'undefined' && _currentUser?.name) ? _currentUser.name : 'Operator',
-                        tier: (typeof _onboardTier !== 'undefined') ? _onboardTier : 'starter'
+                        user: (window._demoSession) ? window._demoSession.name : 'Demo User',
+                        tier: window._onboardTier || 'starter'
                     });
 
                     // Flush queued messages
@@ -2441,11 +2452,11 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
                 '.tool-title { color: var(--text, #f5f5f7); font-weight: 700; font-size: 0.95rem; flex: 1; }' +
                 '.tool-badge { background: rgba(0,170,255,0.12); color: #00aaff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 3px; text-transform: uppercase; }' +
                 '.tool-body { padding: 18px; }' +
-                '.tool-loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--muted, #86868b); }' +
+                '.tool-loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: #86868b; }' +
                 '.tool-loading .spinner { width: 24px; height: 24px; border: 2px solid rgba(0,170,255,0.2); border-top-color: #00aaff; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; }' +
                 '@keyframes spin { to { transform: rotate(360deg); } }' +
                 '.tool-error { padding: 20px; background: rgba(255,59,48,0.08); border: 1px solid rgba(255,59,48,0.2); border-radius: 3px; color: #ff3b30; margin: 12px; font-size: 0.85rem; }' +
-                '::slotted(*) { color: var(--text, #f5f5f7); }' +
+                '::slotted(*) { color: #f5f5f7; }' +
             '</style>' +
             '<div class="tool-wrapper">' +
                 '<div class="tool-header">' +
@@ -2557,30 +2568,98 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
 
 
 // ── 5. SERVICE WORKER ACTIVATION ────────────────────────────
-// Disabled during development to prevent caching issues in VS Code Simple Browser.
-// Re-enable for production deployment.
+// Full offline/air-gapped support. Activates the sw.js precacher,
+// registers background sync for offline-queued anchors, and listens
+// for SW messages (sync-complete, data-refresh).
 (function() {
     'use strict';
-    // Unregister any existing service workers to clear stale caches
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            registrations.forEach(function(reg) {
-                reg.unregister();
-                console.log('[SW] Unregistered stale service worker:', reg.scope);
+        // Register on page load (works on HTTPS and localhost)
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/demo-app/sw.js', { scope: '/demo-app/' })
+                .then(function(reg) {
+                    console.log('[SW] Registered — scope:', reg.scope);
+
+                    // Check for updates periodically
+                    setInterval(function() { reg.update(); }, 60 * 60 * 1000); // hourly
+
+                    // Register periodic background sync if supported
+                    if (reg.periodicSync) {
+                        reg.periodicSync.register('s4-periodic-refresh', {
+                            minInterval: 12 * 60 * 60 * 1000 // 12 hours
+                        }).catch(function() {});
+                    }
+
+                    // Listen for update available
+                    reg.addEventListener('updatefound', function() {
+                        var newWorker = reg.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                    // New version available
+                                    if (typeof _showNotif === 'function') {
+                                        _showNotif('S4 Ledger updated — refresh for latest version', 'info');
+                                    }
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch(function(err) {
+                    console.log('[SW] Registration failed:', err);
+                });
+
+            // Listen for messages from service worker
+            navigator.serviceWorker.addEventListener('message', function(e) {
+                if (!e.data || !e.data.type) return;
+
+                if (e.data.type === 's4-sync-complete') {
+                    // Offline anchors were synced
+                    if (typeof _showNotif === 'function') {
+                        _showNotif(e.data.synced + ' offline anchor' + (e.data.synced > 1 ? 's' : '') + ' synced to XRPL', 'success');
+                    }
+                    // Refresh stats
+                    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
+                    if (typeof loadDashboardStats === 'function') loadDashboardStats();
+                }
+
+                if (e.data.type === 's4-data-refresh') {
+                    // Background data refresh triggered
+                    if (typeof loadDashboardStats === 'function') loadDashboardStats();
+                }
             });
         });
-        // Also clear all caches
-        if (window.caches) {
-            caches.keys().then(function(names) {
-                names.forEach(function(name) {
-                    caches.delete(name);
-                    console.log('[SW] Cleared cache:', name);
-                });
-            });
-        }
+
+        // Queue offline anchors for background sync
+        window.S4OfflineSync = {
+            queueAnchor: function(data) {
+                if (!navigator.serviceWorker.controller) return Promise.resolve(false);
+
+                // Store in IndexedDB via S4Store
+                if (window.S4Store && S4Store.ready) {
+                    return S4Store.put('offline_queue', {
+                        data: data,
+                        queued_at: new Date().toISOString()
+                    }).then(function() {
+                        // Request background sync
+                        return navigator.serviceWorker.ready.then(function(reg) {
+                            if (reg.sync) return reg.sync.register('s4-anchor-sync');
+                        });
+                    }).then(function() {
+                        return true;
+                    });
+                }
+                return Promise.resolve(false);
+            },
+
+            getQueueSize: function() {
+                if (window.S4Store) return S4Store.count('offline_queue');
+                return Promise.resolve(0);
+            }
+        };
     }
 
-    // Offline detection UI (works without SW)
+    // Offline detection UI
     window.addEventListener('offline', function() {
         if (typeof _showNotif === 'function') {
             _showNotif('Network disconnected — S4 Ledger running in air-gapped mode. All data is cached locally.', 'warning');
@@ -2590,12 +2669,19 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
 
     window.addEventListener('online', function() {
         if (typeof _showNotif === 'function') {
-            _showNotif('Network restored.', 'success');
+            _showNotif('Network restored — syncing offline data...', 'success');
         }
         document.body.classList.remove('s4-offline');
+        // Trigger sync
+        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+            navigator.serviceWorker.ready.then(function(reg) {
+                if (reg.sync) reg.sync.register('s4-anchor-sync');
+                if (reg.sync) reg.sync.register('s4-data-sync');
+            });
+        }
     });
 
-    console.log('[S4] Service worker disabled for dev — caches cleared');
+    console.log('[Round-16c] Service worker + offline sync activated');
 })();
 
 console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, Lazy-Loading, Web Components, Service Worker');
@@ -2641,10 +2727,6 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
 // ── LIGHT/DARK MODE TOGGLE ──
 // Platform-only theme switcher with localStorage persistence
 function toggleTheme() {
-    // Re-entrancy guard: capture-phase delegated handler + native onclick both fire
-    if (window._themeToggling) return;
-    window._themeToggling = true;
-    setTimeout(function(){ window._themeToggling = false; }, 0);
     var body = document.body;
     var isLight = body.classList.toggle('light-mode');
     // Sync data-theme attribute for [data-theme="light"] CSS selectors
@@ -2656,9 +2738,9 @@ function toggleTheme() {
     navLinks.forEach(function(a) {
         if (a.classList.contains('theme-toggle')) return;
         if (isLight) {
-            a.style.color = a.getAttribute('href') === '/prod-app/' ? '#0077cc' : 'rgba(0,0,0,0.6)';
+            a.style.color = a.getAttribute('href') === '../demo-app/' ? '#0077cc' : 'rgba(0,0,0,0.6)';
         } else {
-            a.style.color = a.getAttribute('href') === '/prod-app/' ? '#00aaff' : 'rgba(0,0,0,0.5)';
+            a.style.color = a.getAttribute('href') === '../demo-app/' ? '#00aaff' : 'rgba(255,255,255,0.7)';
         }
     });
     // Update the main nav bar background
@@ -2669,9 +2751,9 @@ function toggleTheme() {
             nav.style.backdropFilter = 'blur(20px)';
             nav.style.borderBottomColor = 'rgba(0,0,0,0.06)';
         } else {
-            nav.style.background = 'rgba(255,255,255,0.95)';
+            nav.style.background = 'rgba(5,8,16,0.92)';
             nav.style.backdropFilter = 'blur(20px)';
-            nav.style.borderBottomColor = 'rgba(0,0,0,0.06)';
+            nav.style.borderBottomColor = 'rgba(255,255,255,0.06)';
         }
     }
     // Update logo brand text
@@ -2682,9 +2764,8 @@ function toggleTheme() {
     if (hamburger) hamburger.style.color = isLight ? '#1d1d1f' : '#fff';
     // Update Chart.js chart colors for theme
     if (typeof Chart !== 'undefined') {
-        var textColor = isLight ? '#3a4a5c' : '#333';
-        var gridColor = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.06)';
-        var labelColor = isLight ? '#2c3e50' : '#333';
+        var textColor = isLight ? '#333' : '#ccc';
+        var gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.06)';
         Chart.defaults.color = textColor;
         Chart.defaults.borderColor = gridColor;
         Object.values(Chart.instances || {}).forEach(function(c) {
@@ -2694,18 +2775,11 @@ function toggleTheme() {
                     Object.values(c.options.scales).forEach(function(s) {
                         if (s.ticks) s.ticks.color = textColor;
                         if (s.grid) s.grid.color = gridColor;
-                        if (s.title) s.title.color = labelColor;
-                        if (s.angleLines) s.angleLines.color = gridColor;
-                        if (s.pointLabels) s.pointLabels.color = textColor;
+                        if (s.title) s.title.color = textColor;
                     });
                 }
-                if (c.options.plugins) {
-                    if (c.options.plugins.legend && c.options.plugins.legend.labels) {
-                        c.options.plugins.legend.labels.color = labelColor;
-                    }
-                    if (c.options.plugins.title) {
-                        c.options.plugins.title.color = labelColor;
-                    }
+                if (c.options.plugins && c.options.plugins.legend && c.options.plugins.legend.labels) {
+                    c.options.plugins.legend.labels.color = textColor;
                 }
                 c.update('none');
             } catch(e) {}
@@ -2728,8 +2802,9 @@ function _updateThemeIcon(isLight) {
         document.body.classList.add('light-mode');
         document.body.setAttribute('data-theme', 'light');
         _updateThemeIcon(true);
-        // Modules run after DOMContentLoaded, so apply nav colors directly
+        // Defer nav color updates until DOM is ready
         setTimeout(function() {
+            var isL = true;
             var nav = document.querySelector('nav');
             if (nav) {
                 nav.style.background = 'rgba(255,255,255,0.92)';
@@ -2743,7 +2818,7 @@ function _updateThemeIcon(isLight) {
             var navLinks = document.querySelectorAll('#navLinks a:not([style*="background:#00aaff"]):not([style*="background:var(--accent)"])');
             navLinks.forEach(function(a) {
                 if (a.classList.contains('theme-toggle')) return;
-                a.style.color = a.getAttribute('href') === '/prod-app/' ? '#0077cc' : 'rgba(0,0,0,0.6)';
+                a.style.color = a.getAttribute('href') === '/demo-app/' ? '#0077cc' : 'rgba(0,0,0,0.6)';
             });
         }, 50);
     }
@@ -2778,7 +2853,7 @@ function _updateThemeIcon(isLight) {
 
         var overlay = document.createElement('div');
         overlay.id = 's4CompareOverlay';
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.35);z-index:99996;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:24px';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:99996;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:24px';
         overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
 
         var fields = [
@@ -2803,10 +2878,10 @@ function _updateThemeIcon(isLight) {
             var bg = match ? 'transparent' : 'rgba(255,165,0,0.04)';
             var icon = match ? '<i class="fas fa-equals" style="color:#30d158;font-size:0.65rem"></i>' : '<i class="fas fa-not-equal" style="color:#ffa500;font-size:0.65rem"></i>';
             return '<tr style="background:' + bg + '">' +
-                '<td style="padding:8px 12px;font-weight:600;color:#555;font-size:0.78rem;white-space:nowrap;border-bottom:1px solid rgba(0,0,0,0.04)">' + f.label + '</td>' +
-                '<td style="padding:8px 12px;color:#555;font-size:0.78rem;word-break:break-all;border-bottom:1px solid rgba(0,0,0,0.04);max-width:300px">' + va + '</td>' +
-                '<td style="padding:8px 12px;text-align:center;border-bottom:1px solid rgba(0,0,0,0.04)">' + icon + '</td>' +
-                '<td style="padding:8px 12px;color:#555;font-size:0.78rem;word-break:break-all;border-bottom:1px solid rgba(0,0,0,0.04);max-width:300px">' + vb + '</td>' +
+                '<td style="padding:8px 12px;font-weight:600;color:#888;font-size:0.78rem;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,0.04)">' + f.label + '</td>' +
+                '<td style="padding:8px 12px;color:#ccc;font-size:0.78rem;word-break:break-all;border-bottom:1px solid rgba(255,255,255,0.04);max-width:300px">' + va + '</td>' +
+                '<td style="padding:8px 12px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.04)">' + icon + '</td>' +
+                '<td style="padding:8px 12px;color:#ccc;font-size:0.78rem;word-break:break-all;border-bottom:1px solid rgba(255,255,255,0.04);max-width:300px">' + vb + '</td>' +
                 '</tr>';
         }).join('');
 
@@ -2816,16 +2891,16 @@ function _updateThemeIcon(isLight) {
             return va === vb;
         }).length;
 
-        overlay.innerHTML = '<div style="background:var(--card,#111);border:1px solid rgba(0,0,0,0.08);border-radius:3px;width:95%;max-width:900px;max-height:85vh;overflow-y:auto">' +
-            '<div style="padding:20px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center">' +
-            '<div><h3 style="color:#1d1d1f;margin:0;font-size:1rem"><i class="fas fa-code-compare" style="margin-right:8px;color:#00aaff"></i>Record Comparison</h3>' +
-            '<p style="color:#555;font-size:0.75rem;margin:4px 0 0">' + matchCount + '/' + fields.length + ' fields match</p></div>' +
-            '<button onclick="this.closest(\'#s4CompareOverlay\').remove()" style="background:none;border:none;color:#555;font-size:1.3rem;cursor:pointer">&times;</button></div>' +
+        overlay.innerHTML = '<div style="background:var(--card,#111);border:1px solid rgba(255,255,255,0.1);border-radius:3px;width:95%;max-width:900px;max-height:85vh;overflow-y:auto">' +
+            '<div style="padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center">' +
+            '<div><h3 style="color:#fff;margin:0;font-size:1rem"><i class="fas fa-code-compare" style="margin-right:8px;color:#00aaff"></i>Record Comparison</h3>' +
+            '<p style="color:#888;font-size:0.75rem;margin:4px 0 0">' + matchCount + '/' + fields.length + ' fields match</p></div>' +
+            '<button onclick="this.closest(\'#s4CompareOverlay\').remove()" style="background:none;border:none;color:#888;font-size:1.3rem;cursor:pointer">&times;</button></div>' +
             '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">' +
-            '<thead><tr><th style="padding:10px 12px;color:#555;font-size:0.72rem;text-transform:uppercase;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)">Field</th>' +
-            '<th style="padding:10px 12px;color:#00aaff;font-size:0.78rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)">' + (a.label||a.type||'Record A') + '</th>' +
-            '<th style="padding:10px 12px;width:40px;border-bottom:1px solid rgba(0,0,0,0.08)"></th>' +
-            '<th style="padding:10px 12px;color:#c9a84c;font-size:0.78rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)">' + (b.label||b.type||'Record B') + '</th></tr></thead>' +
+            '<thead><tr><th style="padding:10px 12px;color:#555;font-size:0.72rem;text-transform:uppercase;text-align:left;border-bottom:1px solid rgba(255,255,255,0.08)">Field</th>' +
+            '<th style="padding:10px 12px;color:#00aaff;font-size:0.78rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.08)">' + (a.label||a.type||'Record A') + '</th>' +
+            '<th style="padding:10px 12px;width:40px;border-bottom:1px solid rgba(255,255,255,0.08)"></th>' +
+            '<th style="padding:10px 12px;color:#c9a84c;font-size:0.78rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.08)">' + (b.label||b.type||'Record B') + '</th></tr></thead>' +
             '<tbody>' + rowsHtml + '</tbody></table></div></div>';
 
         document.body.appendChild(overlay);
@@ -2843,9 +2918,9 @@ function _updateThemeIcon(isLight) {
     // Create shortcuts help overlay
     var shortcutsOverlay = document.createElement('div');
     shortcutsOverlay.id = 's4ShortcutsOverlay';
-    shortcutsOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:99999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
-    shortcutsOverlay.innerHTML = '<div style="background:var(--card,#111);border:1px solid rgba(0,0,0,0.08);border-radius:3px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><h3 style="color:#1d1d1f;font-size:1.1rem;margin:0"><i class="fas fa-keyboard" style="margin-right:8px;color:#00aaff"></i>Keyboard Shortcuts</h3><button onclick="toggleShortcuts()" style="background:none;border:none;color:#555;font-size:1.2rem;cursor:pointer">&times;</button></div>' +
+    shortcutsOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
+    shortcutsOverlay.innerHTML = '<div style="background:var(--card,#111);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><h3 style="color:#fff;font-size:1.1rem;margin:0"><i class="fas fa-keyboard" style="margin-right:8px;color:#00aaff"></i>Keyboard Shortcuts</h3><button onclick="toggleShortcuts()" style="background:none;border:none;color:#888;font-size:1.2rem;cursor:pointer">&times;</button></div>' +
         '<div style="display:grid;gap:8px">' +
         _shortcutRow('⌘/Ctrl + K', 'Open Global Search') +
         _shortcutRow('⌘/Ctrl + 1-6', 'Switch Platform Tabs') +
@@ -2863,7 +2938,7 @@ function _updateThemeIcon(isLight) {
 
     function _shortcutRow(key, desc) {
         return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:3px">' +
-            '<span style="color:#555;font-size:0.85rem">' + desc + '</span>' +
+            '<span style="color:#ccc;font-size:0.85rem">' + desc + '</span>' +
             '<kbd style="background:rgba(0,170,255,0.1);color:#00aaff;padding:4px 10px;border-radius:3px;font-size:0.78rem;font-family:\'Inter\',monospace;font-weight:600;border:1px solid rgba(0,170,255,0.2)">' + key + '</kbd>' +
             '</div>';
     }
@@ -2876,11 +2951,11 @@ function _updateThemeIcon(isLight) {
     // Create global search overlay
     var searchOverlay = document.createElement('div');
     searchOverlay.id = 's4GlobalSearch';
-    searchOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:99998;display:none;align-items:flex-start;justify-content:center;padding-top:15vh;backdrop-filter:blur(8px)';
-    searchOverlay.innerHTML = '<div style="background:var(--card,#111);border:1px solid rgba(0,0,0,0.08);border-radius:3px;width:90%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,0.5)">' +
-        '<div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,0.06)">' +
+    searchOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99998;display:none;align-items:flex-start;justify-content:center;padding-top:15vh;backdrop-filter:blur(8px)';
+    searchOverlay.innerHTML = '<div style="background:var(--card,#111);border:1px solid rgba(255,255,255,0.1);border-radius:3px;width:90%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,0.5)">' +
+        '<div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06)">' +
         '<i class="fas fa-search" style="color:#00aaff;margin-right:12px;font-size:1rem"></i>' +
-        '<input id="globalSearchInput" type="text" placeholder="Search records, vault, tools, documents..." style="flex:1;background:transparent;border:none;color:#1d1d1f;font-size:1rem;outline:none;font-family:Inter,sans-serif" autocomplete="off">' +
+        '<input id="globalSearchInput" type="text" placeholder="Search records, vault, tools, documents..." style="flex:1;background:transparent;border:none;color:#fff;font-size:1rem;outline:none;font-family:Inter,sans-serif" autocomplete="off">' +
         '<kbd style="background:rgba(255,255,255,0.08);color:#666;padding:3px 8px;border-radius:3px;font-size:0.7rem;margin-left:8px">ESC</kbd>' +
         '</div>' +
         '<div id="globalSearchResults" style="max-height:50vh;overflow-y:auto;padding:8px"></div>' +
@@ -2905,10 +2980,10 @@ function _updateThemeIcon(isLight) {
     var notifDrawer = document.createElement('div');
     notifDrawer.id = 's4NotifHistory';
     notifDrawer.style.cssText = 'position:fixed;top:0;right:-420px;width:400px;max-width:90vw;height:100vh;background:var(--card,#111);border-left:1px solid rgba(255,255,255,0.08);z-index:99997;transition:right 0.3s ease;overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,0.4)';
-    notifDrawer.innerHTML = '<div style="padding:20px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card,#111);z-index:1">' +
-        '<h4 style="color:#1d1d1f;margin:0;font-size:0.95rem"><i class="fas fa-bell" style="margin-right:8px;color:#00aaff"></i>Notification History</h4>' +
-        '<div style="display:flex;gap:8px"><button onclick="clearNotifHistory()" style="background:none;border:1px solid rgba(0,0,0,0.08);color:#555;padding:4px 10px;border-radius:3px;font-size:0.72rem;cursor:pointer">Clear</button>' +
-        '<button onclick="toggleNotifHistory()" style="background:none;border:none;color:#555;font-size:1.2rem;cursor:pointer">&times;</button></div>' +
+    notifDrawer.innerHTML = '<div style="padding:20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card,#111);z-index:1">' +
+        '<h4 style="color:#fff;margin:0;font-size:0.95rem"><i class="fas fa-bell" style="margin-right:8px;color:#00aaff"></i>Notification History</h4>' +
+        '<div style="display:flex;gap:8px"><button onclick="clearNotifHistory()" style="background:none;border:1px solid rgba(255,255,255,0.1);color:#888;padding:4px 10px;border-radius:3px;font-size:0.72rem;cursor:pointer">Clear</button>' +
+        '<button onclick="toggleNotifHistory()" style="background:none;border:none;color:#888;font-size:1.2rem;cursor:pointer">&times;</button></div>' +
         '</div>' +
         '<div id="notifHistoryList" style="padding:12px"></div>';
     document.body.appendChild(notifDrawer);
@@ -2938,10 +3013,10 @@ function _updateThemeIcon(isLight) {
             var icons = {info:'fa-info-circle',warning:'fa-exclamation-triangle',danger:'fa-times-circle',success:'fa-check-circle'};
             var colors = {info:'#00aaff',warning:'#ffa500',danger:'#ff3333',success:'#00aaff'};
             var ago = _timeAgo(n.time);
-            return '<div style="padding:10px 12px;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;gap:10px;align-items:flex-start">' +
+            return '<div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:10px;align-items:flex-start">' +
                 '<i class="fas ' + (icons[n.type]||icons.info) + '" style="color:' + (colors[n.type]||colors.info) + ';margin-top:3px;font-size:0.85rem"></i>' +
-                '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:0.82rem;color:#555">' + (n.title||'Notification') + '</div>' +
-                '<div style="font-size:0.75rem;color:#555;margin-top:2px">' + (n.msg||'') + '</div>' +
+                '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:0.82rem;color:#ccc">' + (n.title||'Notification') + '</div>' +
+                '<div style="font-size:0.75rem;color:#888;margin-top:2px">' + (n.msg||'') + '</div>' +
                 '<div style="font-size:0.68rem;color:#555;margin-top:4px">' + ago + '</div></div></div>';
         }).join(''));
     }
@@ -3035,7 +3110,7 @@ function _updateThemeIcon(isLight) {
                 'onmouseover="this.style.background=\'rgba(0,170,255,0.06)\'" onmouseout="this.style.background=\'transparent\'" ' +
                 'onclick="' + (r.action || (r.hash ? 'loadRecordToVerify(\''+r.hash+'\')' : '')) + ';toggleGlobalSearch()">' +
                 '<i class="fas ' + (r.icon||'fa-file') + '" style="color:#00aaff;width:20px;text-align:center"></i>' +
-                '<div style="flex:1;min-width:0"><div style="font-size:0.85rem;color:#555;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + r.name + '</div>' +
+                '<div style="flex:1;min-width:0"><div style="font-size:0.85rem;color:#ccc;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + r.name + '</div>' +
                 '<div style="font-size:0.72rem;color:#666">' + r.desc + '</div></div>' +
                 '<span style="font-size:0.65rem;padding:2px 6px;border-radius:3px;background:' + (typeColors[r.type]||'#555') + '22;color:' + (typeColors[r.type]||'#555') + ';font-weight:600;text-transform:uppercase">' + (typeLabels[r.type]||r.type) + '</span>' +
                 '</div>';
@@ -3073,11 +3148,7 @@ function _updateThemeIcon(isLight) {
             if (_notifHistoryVisible) { toggleNotifHistory(); return; }
             // Close AI panel if open
             var aiPanel = document.querySelector('.ai-float-panel');
-            if (aiPanel && aiPanel.classList.contains('open')) {
-                if (typeof window.toggleAiAgent === 'function') { window.toggleAiAgent(); }
-                else { aiPanel.classList.remove('open'); }
-                return;
-            }
+            if (aiPanel && aiPanel.style.display !== 'none') { aiPanel.style.display = 'none'; return; }
             // Close wallet sidebar if open
             var walletSidebar = document.getElementById('walletSidebar');
             if (walletSidebar && walletSidebar.classList.contains('open')) { if (typeof closeWalletSidebar === 'function') closeWalletSidebar(); return; }
@@ -3826,11 +3897,7 @@ function _updateThemeIcon(isLight) {
 
     // ── 1. Toast Notification System ──
     S4.toast = function(message, type, duration) {
-        type = type || 'info';
-        duration = duration || 4000;
-        /* Only show toasts when user is inside the platform workspace */
-        var ws = document.getElementById('platformWorkspace');
-        if (!ws || ws.style.display !== 'block') return;
+        return; // Notifications disabled in demo-app
         var container = document.getElementById('s4ToastContainer');
         if (!container) return;
         var toast = document.createElement('div');
@@ -3923,7 +3990,7 @@ function _updateThemeIcon(isLight) {
         {selector:'.sidebar',title:'Navigation Sidebar',description:'Browse 30+ DoD logistics tools organized by category. Click any tool to open it.',position:'right'},
         {selector:'#searchInput',title:'Global Search',description:'Search across all tools, vault records, and documentation with Cmd+K.',position:'bottom'},
         {selector:'.vault-section',title:'Audit Vault',description:'Your blockchain-anchored audit trail. Every record is hashed and verifiable.',position:'left'},
-        {selector:'.sls-fee-section',title:'Credit Balance',description:'Track your S4 Ledger Service Credit fees for anchoring and verification operations.',position:'bottom'},
+        {selector:'.sls-fee-section',title:'Credit Balance',description:'Track your S4 Ledger Credit fees for anchoring and verification operations.',position:'bottom'},
         {selector:'.quick-stats',title:'Quick Stats',description:'Real-time overview of your session records, vault size, and verification status.',position:'bottom'}
     ]);
 
@@ -4851,7 +4918,7 @@ function _updateThemeIcon(isLight) {
             'guest': {level:0, permissions:['dashboard:view']}
         },
         _currentRole: localStorage.getItem('s4_user_role') || 'operator',
-        _currentUser: JSON.parse(localStorage.getItem('s4_user_profile') || '{"name":"Operator","email":"user@agency.mil","org":"S4 Ledger Production"}'),
+        _currentUser: JSON.parse(localStorage.getItem('s4_user_profile') || '{"name":"Demo User","email":"user@s4ledger.mil","org":"S4 Ledger Demo"}'),
         setRole: function(role) {
             if (!this._roles[role]) { console.warn('[S4 RBAC] Unknown role:', role); return; }
             this._currentRole = role;
@@ -5286,7 +5353,7 @@ function _updateThemeIcon(isLight) {
                 metadata: {
                     name: 'S4 Verification Certificate #' + tokenId,
                     description: 'Immutable verification certificate for record: ' + (record.name || record.id || 'Unknown'),
-                    image: 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#f5f5f7"/><text x="200" y="180" text-anchor="middle" fill="#00aaff" font-size="60" font-weight="bold">S4</text><text x="200" y="230" text-anchor="middle" fill="#c9a84c" font-size="16">VERIFICATION CERT</text><text x="200" y="260" text-anchor="middle" fill="#666" font-size="10">#' + tokenId + '</text></svg>'),
+                    image: 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#2c2c2e"/><text x="200" y="180" text-anchor="middle" fill="#00aaff" font-size="60" font-weight="bold">S4</text><text x="200" y="230" text-anchor="middle" fill="#c9a84c" font-size="16">VERIFICATION CERT</text><text x="200" y="260" text-anchor="middle" fill="#666" font-size="10">#' + tokenId + '</text></svg>'),
                     attributes: [
                         {trait_type:'Platform',value:'S4 Ledger'},
                         {trait_type:'Type',value:'Verification Certificate'},
@@ -6314,6 +6381,37 @@ function _updateThemeIcon(isLight) {
         { name: 'i18n translate works', fn: function() { var v = S4.i18n.t('app.title'); if (!v) throw new Error('i18n returned empty'); } }
     ]);
 
+    // ── API Mock / Sandbox Mode ──
+    S4.apiMock = {
+        _enabled: false,
+        _handlers: {},
+        enable: function() { this._enabled = true; console.log('[S4 API Mock] Sandbox mode enabled'); },
+        disable: function() { this._enabled = false; },
+        isEnabled: function() { return this._enabled; },
+        register: function(endpoint, method, handler) {
+            var key = method.toUpperCase() + ':' + endpoint;
+            this._handlers[key] = handler;
+        },
+        request: function(endpoint, method, body) {
+            method = (method || 'GET').toUpperCase();
+            var key = method + ':' + endpoint;
+            if (this._handlers[key]) {
+                return Promise.resolve(this._handlers[key](body));
+            }
+            return Promise.resolve({ status: 404, body: { error: 'Mock endpoint not registered: ' + key } });
+        }
+    };
+    // Register default mocks
+    S4.apiMock.register('/api/anchor', 'POST', function(body) {
+        return { status: 200, body: { hash: 'mock_' + Date.now().toString(16), tx: 'MOCK_TX_' + Math.random().toString(36).substr(2,8).toUpperCase(), timestamp: new Date().toISOString() } };
+    });
+    S4.apiMock.register('/api/verify', 'POST', function(body) {
+        return { status: 200, body: { verified: true, anchored: true, chain: 'xrpl-testnet', confidence: 1.0 } };
+    });
+    S4.apiMock.register('/api/health', 'GET', function() {
+        return { status: 200, body: { status: 'healthy', uptime: Math.floor(performance.now() / 1000), version: '5.12.0' } };
+    });
+
     // ── Test Coverage Reporter ──
     S4.coverage = {
         report: function() {
@@ -6332,8 +6430,8 @@ function _updateThemeIcon(isLight) {
         }
     };
 
-    // ── ML / Model Training Stub ──
-    S4.ml = {
+    // ── ML Pipeline Stub ──
+    S4.mlPipeline = {
         _models: {},
         train: function(name, data, options) {
             options = options || {};
@@ -6351,13 +6449,15 @@ function _updateThemeIcon(isLight) {
         remove: function(name) { delete this._models[name]; }
     };
 
-    S4.register('testing', {version:'1.0.0', features:['test-runner','unit-tests','perf-benchmarks','a11y-audit','integrity-check','load-test','regression-tests','coverage-reporter']});
+    S4.register('testing', {version:'1.0.0', features:['test-runner','unit-tests','perf-benchmarks','a11y-audit','integrity-check','load-test','regression-tests','api-mock','coverage-reporter','ml-pipeline']});
     console.log('[S4 Testing] Module loaded — 5 features active');
 
     // Auto-run integrity check
     var integrity = S4.integrityCheck();
     console.log('[S4 Integrity] ' + integrity.loaded + '/' + integrity.expected + ' modules loaded' + (integrity.healthy ? ' ✓' : ' — Missing: ' + integrity.missing.join(', ')));
 })();
+
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  S4 LEDGER — FULL PERSISTENCE + SUPERIOR PLATFORM FEATURES
@@ -6987,7 +7087,7 @@ window.s4Analytics = {
             // Upload trend by tool
             var toolCounts = metrics.upload_counts_by_tool || {};
             if (Object.keys(toolCounts).length > 0) {
-                html += '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(0,0,0,0.08);border-radius:3px;padding:20px;grid-column:span 2">'
+                html += '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:20px;grid-column:span 2">'
                     + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:12px">Uploads by ILS Tool</div>'
                     + '<div style="display:flex;gap:8px;flex-wrap:wrap">';
                 var toolIdx = 0;
@@ -6995,7 +7095,7 @@ window.s4Analytics = {
                     var tColor = toolIdx % 2 === 0 ? '#00aaff' : '#c9a84c';
                     var tBg = toolIdx % 2 === 0 ? 'rgba(0,170,255,0.15)' : 'rgba(201,168,76,0.15)';
                     html += '<div style="background:' + tBg + ';border-radius:3px;padding:8px 14px;font-size:0.8rem">'
-                        + '<span style="color:#1d1d1f;font-weight:600">' + tool + '</span> '
+                        + '<span style="color:#fff;font-weight:600">' + tool + '</span> '
                         + '<span style="color:' + tColor + ';font-weight:700">' + toolCounts[tool] + '</span></div>';
                     toolIdx++;
                 });
@@ -7142,7 +7242,7 @@ function generateProvenanceQR() {
     if (container && typeof QRCode !== 'undefined') {
         container.style.display = 'block';
         container.innerHTML = '<div style="font-size:.82rem;color:var(--steel);margin-bottom:8px;font-weight:600">Provenance QR Code</div><div id="provQRCanvas"></div>';
-        new QRCode(document.getElementById('provQRCanvas'), { text: 'S4-PROV-' + Date.now().toString(36).toUpperCase(), width: 160, height: 160, colorDark: '#c9a84c', colorLight: '#ffffff' });
+        new QRCode(document.getElementById('provQRCanvas'), { text: 'S4-PROV-' + Date.now().toString(36).toUpperCase(), width: 160, height: 160, colorDark: '#c9a84c', colorLight: '#2c2c2e' });
     } else if (typeof S4 !== 'undefined' && S4.toast) S4.toast('QR code generated for asset tagging.', 'info');
 }
 function verifyProvenanceChain() {
