@@ -1,5 +1,5 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 18 — Developer Documentation, Accessibility & Env Var Verification
+## Last Updated: Session 25 — Restore + Light Mode Font Fixes + Steve Jobs UX Enhancements
 
 ---
 
@@ -1737,6 +1737,74 @@ Hull Type, Hull #, Need (Replacement/Disposal/Addition/SLE/Transfer), Requestor,
 - `src/js/engine.ts` — button restore text rename
 - `src/js/milestones.js` — Next Milestone KPI card, Avg Days Behind stats, milUploadPPTX() function, anchor comment
 - `prod-app/demo.html`, `prod-app/public/demo.html` — button text rename
+
+---
+
+### Session 24: Light Mode Deep Clean (commit `35d08b5`)
+- Aggressive regex color replacements across all JS files (1755+ changed lines in engine.js alone)
+- **PROBLEM:** Broke charts, demo data, tool interiors, and core functionality
+- This approach was REVERTED in Session 25
+
+---
+
+### Session 25: Full Restore + CSS-Only Light Mode + Steve Jobs UX (commits `3377227`, `78b3ba0`)
+
+**CRITICAL RESTORE (commit `3377227`):**
+- Diagnosed that Sessions 23-24 regex JS edits broke core functionality
+- Restored ALL 18 JS files (9 per app) to commit `aecff72` (last fully working state)
+- Restored both index.html files to `aecff72` with only 2 surgical changes:
+  1. Theme toggle script replaced with light-mode-only script (12 lines)
+  2. Anchor button text: removed "(0.01 Credits)" / "($0.01 Credits)" via sed
+- CSS attribute selectors override dark inline styles without touching JS
+- **RULE: NEVER modify JS files for visual/color changes — CSS-only approach**
+
+**STEVE JOBS UX ENHANCEMENTS + FONT FIXES (commit `78b3ba0`):**
+- CSS-only — zero JS modifications, zero HTML modifications
+- Added 98 lines of CSS to end of main.css (both apps)
+
+Font Visibility Fixes:
+- Override 239 instances of `color:#fff` on text elements (h1-h6, strong, p, div, span, label, li, td)
+- Smart exclusion: buttons and gradient-bg elements keep white text (CTA links, avatar circles)
+- Fix select option white-on-white, invisible placeholders
+- Override `color:#f0f0f5` (near-white from dark theme)
+
+20 Steve Jobs UX Recommendations Implemented:
+| # | Enhancement | Type |
+|---|-------------|------|
+| 1 | Hero: weight 700, tracking -0.04em (not ultra-bold) | CSS |
+| 2 | Body line-height: 1.7 (generous vertical rhythm) | CSS |
+| 3 | Secondary text: Apple gray `#6e6e73` (`--steel`, `--text-secondary`) | CSS |
+| 4 | Modern monospace: SF Mono, JetBrains Mono, Fira Code | CSS |
+| 5 | Hub card padding: 32px ("white space is not empty space") | CSS |
+| 6 | Max-width: kept at 1400px (tools need room) | No change |
+| 7 | 8px grid spacing normalization | CSS |
+| 8 | Breadcrumbs: already exist (`.subpage-back` pattern) | Already done |
+| 9 | Sticky back-button bar when scrolling in tools | CSS |
+| 10 | Auth gates: not changed (too risky for JS) | Skipped |
+| 11 | Flat buttons: solid `#0077cc` fills, no gradients | CSS |
+| 12 | 44px minimum touch targets (Apple HIG) | CSS |
+| 13 | Refined hover: `scale(1.02)` instead of `translateY` bounce | CSS |
+| 14 | ITAR banner: subtle grey Apple-style notice bar | CSS |
+| 15 | Border-radius hierarchy: cards 6px, modals 8px, buttons 4px | CSS |
+| 16 | Unified accent: already `#0077cc` | No change |
+| 17 | Tool descriptions on hub cards: already have `.hc-desc` | Already done |
+| 18 | Progress indicators: already have onboarding dots | Already done |
+| 19 | Theme toggle hidden by CSS (`.theme-toggle{display:none!important}`) | CSS |
+| 20 | Command palette: 8px border-radius | CSS |
+
+**Architecture after Session 25:**
+| Metric | Value |
+|--------|-------|
+| CSS bundle (both apps) | 111KB (was 89KB) |
+| CSS source lines | 1,680 |
+| JS files | Identical to commit `aecff72` (zero modifications) |
+| HTML changes from `aecff72` | Theme script (12 lines) + anchor button text only |
+| Commits | `3377227` (restore) → `78b3ba0` (enhancements) |
+
+**Files changed:**
+- `prod-app/src/styles/main.css` — +98 lines of enhancements at end
+- `demo-app/src/styles/main.css` — exact copy of prod-app CSS
+- Both `dist/` folders rebuilt with Vite
 
 ---
 *This log is updated every session. Reference before making changes.*
