@@ -2648,7 +2648,7 @@ function toggleTheme() {
     var body = document.body;
     var isLight = body.classList.toggle('light-mode');
     // Sync data-theme attribute for [data-theme="light"] CSS selectors
-    if (isLight) { body.setAttribute('data-theme', 'light'); } else { body.removeAttribute('data-theme'); }
+    if (isLight) { body.setAttribute('data-theme', 'light'); document.documentElement.setAttribute('data-theme', 'light'); } else { body.removeAttribute('data-theme'); document.documentElement.removeAttribute('data-theme'); }
     localStorage.setItem('s4-theme', isLight ? 'light' : 'dark');
     _updateThemeIcon(isLight);
     // Update nav link colors for light mode
@@ -2724,9 +2724,11 @@ function _updateThemeIcon(isLight) {
 // Apply saved theme on load (user-controlled only — no OS auto-detection)
 (function() {
     var saved = localStorage.getItem('s4-theme');
-    if (saved === 'light') {
+    // Default to light mode when no preference is saved
+    if (saved !== 'dark') {
         document.body.classList.add('light-mode');
         document.body.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme', 'light');
         _updateThemeIcon(true);
         // Modules run after DOMContentLoaded, so apply nav colors directly
         setTimeout(function() {

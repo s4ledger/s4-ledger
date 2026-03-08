@@ -359,7 +359,7 @@
         .hiw-modal-box .hiw-body p{margin:0 0 10px}
         .hiw-modal-box .hiw-body strong{color:#1d1d1f}
         .hiw-modal-box{background:#fff;border-color:rgba(0,170,255,0.2);box-shadow:0 12px 40px rgba(0,0,0,0.15)}
-        .hiw-modal-box .hiw-body strong{color:#1a1a2e}
+        .hiw-modal-box .hiw-body strong{color:#1d1d1f}
         .hiw-modal-box .hiw-close{color:#999}
 
         /* ── Drag-reorder tool cards ── */
@@ -1252,13 +1252,13 @@
         .chart-container,[id*="Chart"]{background:#fff;border-radius:8px;padding:4px}
         canvas{background:rgba(255,255,255,0.95) !important;border-radius:8px}
         .chart-container,[id*="Chart"]{background:#fff !important;border-radius:8px;padding:4px;border:1px solid rgba(0,0,0,0.06)}
-        .chart-title{color:#1a1a2e !important}
+        .chart-title{color:#1d1d1f !important}
         .tool-panel table,.tool-panel table th,.tool-panel table td{color:#1d1d1f;border-color:rgba(0,0,0,0.12)}
-        .tool-panel table th{background:rgba(0,170,255,0.06);color:#1a1a2e}
+        .tool-panel table th{background:rgba(0,170,255,0.06);color:#1d1d1f}
         .tool-panel table td{background:#fff}
         .tool-panel .form-control,.tool-panel .form-select,.tool-panel select,.tool-panel input[type="text"],.tool-panel input[type="number"],.tool-panel textarea{background:#fff !important;color:#1d1d1f !important;border-color:rgba(0,0,0,0.15) !important}
         .tool-panel{color:#1d1d1f}
-        .tool-panel h3,.tool-panel h4,.tool-panel strong{color:#1a1a2e}
+        .tool-panel h3,.tool-panel h4,.tool-panel strong{color:#1d1d1f}
         .tool-panel p,.tool-panel span,.tool-panel label,.tool-panel li{color:#333}
         .tool-panel .card,.tool-panel [style*="background:#0a0e1a"],.tool-panel [style*="background:var(--surface)"]{background:#fff !important;border-color:rgba(0,0,0,0.1) !important}
 
@@ -1833,7 +1833,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none!imp
 /* ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Missing dark backgrounds from JS ── */
-[style*="background:#1a1a2e"],[style*="background: #1a1a2e"]{background:#f5f5f7!important}
+[style*="background:#1d1d1f"],[style*="background: #1d1d1f"]{background:#f5f5f7!important}
 /* White-alpha backgrounds at 0.1+ (0.0x already caught on line 24) */
 [style*="background:rgba(255,255,255,0.1"],[style*="background: rgba(255,255,255,0.1"]{background:rgba(0,0,0,0.03)!important}
 [style*="background:rgba(255,255,255,0.2"],[style*="background: rgba(255,255,255,0.2"]{background:rgba(0,0,0,0.04)!important}
@@ -2844,7 +2844,7 @@ details:not([style*="display:none"]) > *:not(summary){color:#444;font-size:0.84r
 .ils-hub-panel [style*="color:#777"]:not(button){color:#6e6e73!important}
 /* Dark backgrounds on inner divs */
 .ils-hub-panel [style*="background:#2c2c2e"]{background:#f8f9fb!important}
-.ils-hub-panel [style*="background:#1a1a2e"]{background:#f8f9fb!important}
+.ils-hub-panel [style*="background:#1d1d1f"]{background:#f8f9fb!important}
 .ils-hub-panel [style*="background:var(--surface)"]:not(.stat-mini):not(.vault-stat):not(.kpi-card){
     background:#f8f9fb!important;
 }
@@ -4300,32 +4300,32 @@ a[href="#mainContent"]:focus{
 @keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
 /* ━━━ ROUND 11: LIGHT MODE OVERRIDES ━━━ */
-:root[data-theme="light"] .s4-command-dashboard,
-:root[data-theme="light"] .s4-health-map{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.08)}
-:root[data-theme="light"] .s4-dash-kpi{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.06)}
-:root[data-theme="light"] .s4-notif-panel{background:#fff;border-color:rgba(0,0,0,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.15)}
-:root[data-theme="light"] .s4-notif-item{border-color:rgba(0,0,0,0.04)}
-:root[data-theme="light"] .s4-notif-item.unread{background:rgba(0,170,255,0.04)}
-:root[data-theme="light"] .s4-playbook-menu{background:#fff;border-color:rgba(0,0,0,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.15)}
-:root[data-theme="light"] .s4-playbook-card{background:rgba(0,0,0,0.02);border-color:rgba(0,0,0,0.06)}
-:root[data-theme="light"] .s4-playbook-panel{background:#fff;border-color:rgba(0,0,0,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.15)}
-:root[data-theme="light"] .s4-fab-item{background:#fff;border-color:rgba(0,0,0,0.1);color:#1a1a2e;box-shadow:0 4px 16px rgba(0,0,0,0.12)}
-:root[data-theme="light"] .s4-fab-item:hover{background:rgba(0,113,227,0.06);border-color:rgba(0,113,227,0.3);color:#0071e3}
-:root[data-theme="light"] .s4-fab-item span{color:#1a1a2e}
-:root[data-theme="light"] .s4-fab-item i{color:#0071e3}
-:root[data-theme="light"] .s4-cross-links{background:rgba(0,113,227,0.03);border-color:rgba(0,113,227,0.08)}
-:root[data-theme="light"] .s4-cross-link-chip{color:#0071e3;background:rgba(0,113,227,0.06);border-color:rgba(0,113,227,0.15)}
-:root[data-theme="light"] .s4-cross-link-chip:hover{background:rgba(0,113,227,0.12);border-color:rgba(0,113,227,0.3)}
-:root[data-theme="light"] .s4-ai-suggestions{background:rgba(168,85,247,0.03);border-color:rgba(168,85,247,0.08)}
-:root[data-theme="light"] .s4-ai-prompt-chip{color:#7c3aed;background:rgba(168,85,247,0.06);border-color:rgba(168,85,247,0.12)}
-:root[data-theme="light"] .s4-ai-prompt-chip:hover{background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.25)}
-:root[data-theme="light"] .s4-health-cell.health-green{background:rgba(52,199,89,0.06);border-color:rgba(52,199,89,0.15)}
-:root[data-theme="light"] .s4-health-cell.health-yellow{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.15)}
-:root[data-theme="light"] .s4-health-cell.health-red{background:rgba(255,59,48,0.06);border-color:rgba(255,59,48,0.15)}
-:root[data-theme="light"] .s4-playbook-card{color:#1a1a2e}
-:root[data-theme="light"] .s4-playbook-step-label{color:#1a1a2e}
-:root[data-theme="light"] .s4-notif-panel-header{color:#1a1a2e}
-:root[data-theme="light"] .s4-notif-item.unread{color:#1a1a2e}
+body.light-mode .s4-command-dashboard,
+body.light-mode .s4-health-map{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.08)}
+body.light-mode .s4-dash-kpi{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.06)}
+body.light-mode .s4-notif-panel{background:#fff;border-color:rgba(0,0,0,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.15)}
+body.light-mode .s4-notif-item{border-color:rgba(0,0,0,0.04)}
+body.light-mode .s4-notif-item.unread{background:rgba(0,170,255,0.04)}
+body.light-mode .s4-playbook-menu{background:#fff;border-color:rgba(0,0,0,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.15)}
+body.light-mode .s4-playbook-card{background:rgba(0,0,0,0.02);border-color:rgba(0,0,0,0.06)}
+body.light-mode .s4-playbook-panel{background:#fff;border-color:rgba(0,0,0,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.15)}
+body.light-mode .s4-fab-item{background:#fff;border-color:rgba(0,0,0,0.1);color:#1d1d1f;box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+body.light-mode .s4-fab-item:hover{background:rgba(0,113,227,0.06);border-color:rgba(0,113,227,0.3);color:#0071e3}
+body.light-mode .s4-fab-item span{color:#1d1d1f}
+body.light-mode .s4-fab-item i{color:#0071e3}
+body.light-mode .s4-cross-links{background:rgba(0,113,227,0.03);border-color:rgba(0,113,227,0.08)}
+body.light-mode .s4-cross-link-chip{color:#0071e3;background:rgba(0,113,227,0.06);border-color:rgba(0,113,227,0.15)}
+body.light-mode .s4-cross-link-chip:hover{background:rgba(0,113,227,0.12);border-color:rgba(0,113,227,0.3)}
+body.light-mode .s4-ai-suggestions{background:rgba(168,85,247,0.03);border-color:rgba(168,85,247,0.08)}
+body.light-mode .s4-ai-prompt-chip{color:#7c3aed;background:rgba(168,85,247,0.06);border-color:rgba(168,85,247,0.12)}
+body.light-mode .s4-ai-prompt-chip:hover{background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.25)}
+body.light-mode .s4-health-cell.health-green{background:rgba(52,199,89,0.06);border-color:rgba(52,199,89,0.15)}
+body.light-mode .s4-health-cell.health-yellow{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.15)}
+body.light-mode .s4-health-cell.health-red{background:rgba(255,59,48,0.06);border-color:rgba(255,59,48,0.15)}
+body.light-mode .s4-playbook-card{color:#1d1d1f}
+body.light-mode .s4-playbook-step-label{color:#1d1d1f}
+body.light-mode .s4-notif-panel-header{color:#1d1d1f}
+body.light-mode .s4-notif-item.unread{color:#1d1d1f}
 
 /* ─── R11 FIX: Force-hide HIW details elements ─── */
 .ils-hub-panel details[style*="display"],
@@ -4336,7 +4336,7 @@ a[href="#mainContent"]:focus{
 .s4-show-more-wrap{max-height:200px;overflow:hidden;position:relative;transition:max-height 0.4s ease}
 .s4-show-more-wrap.expanded{max-height:none}
 .s4-show-more-wrap:not(.expanded)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,var(--card-bg,#fff));pointer-events:none}
-:root[data-theme="light"] .s4-show-more-wrap:not(.expanded)::after{background:linear-gradient(transparent,#fff)}
+body.light-mode .s4-show-more-wrap:not(.expanded)::after{background:linear-gradient(transparent,#fff)}
 .s4-show-more-btn{display:block;margin:8px auto 0;padding:4px 16px;font-size:0.72rem;font-weight:600;color:var(--accent,#0071e3);background:rgba(0,113,227,0.06);border:1px solid rgba(0,113,227,0.15);border-radius:3px;cursor:pointer;font-family:inherit;transition:all 0.2s}
 .s4-show-more-btn:hover{background:rgba(0,113,227,0.12);border-color:rgba(0,113,227,0.25)}
 
@@ -4350,11 +4350,11 @@ a[href="#mainContent"]:focus{
 #hub-analysis .col-lg-5 #ilsCostSchedule > div{padding:0.5rem;font-size:0.8rem}
 
 /* ─── R12: Provenance light-mode form label fixes ─── */
-:root[data-theme="light"] #hub-provenance label{color:#6e6e73!important}
-:root[data-theme="light"] #hub-provenance .stat-mini-lbl{color:#6e6e73!important}
-:root[data-theme="light"] #hub-provenance .stat-mini-val{font-weight:700}
-:root[data-theme="light"] #hub-provenance p{color:#6e6e73!important}
-:root[data-theme="light"] .ils-hub-panel [style*="color:#c9a84c"]{color:#8b6914!important}
+body.light-mode #hub-provenance label{color:#6e6e73!important}
+body.light-mode #hub-provenance .stat-mini-lbl{color:#6e6e73!important}
+body.light-mode #hub-provenance .stat-mini-val{font-weight:700}
+body.light-mode #hub-provenance p{color:#6e6e73!important}
+body.light-mode .ils-hub-panel [style*="color:#c9a84c"]{color:#8b6914!important}
 
 /* ─── R12: Button ordering within tool panels — primary actions first ─── */
 .ils-hub-panel .d-flex.gap-2{display:flex!important;flex-wrap:wrap!important}
@@ -4423,77 +4423,77 @@ a[href="#mainContent"]:focus{
 #briefContainer .stat-mini{min-width:0!important;padding:10px 12px!important}
 
 /* ─── R13-L: Light mode final cleanup ─── */
-:root[data-theme="light"] .ils-hub-panel{color:#1d1d1f}
-:root[data-theme="light"] .ils-hub-panel h3,:root[data-theme="light"] .ils-hub-panel h4,:root[data-theme="light"] .ils-hub-panel strong{color:#1d1d1f!important}
-:root[data-theme="light"] .ils-hub-panel p{color:#6e6e73!important}
-:root[data-theme="light"] .ils-hub-panel label{color:#3a3a3c!important}
-:root[data-theme="light"] .ils-hub-panel select,:root[data-theme="light"] .ils-hub-panel input,:root[data-theme="light"] .ils-hub-panel textarea{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.12)!important}
-:root[data-theme="light"] .ils-hub-panel select:focus,:root[data-theme="light"] .ils-hub-panel input:focus,:root[data-theme="light"] .ils-hub-panel textarea:focus{border-color:rgba(0,113,227,0.4)!important;box-shadow:0 0 0 3px rgba(0,113,227,0.1)!important}
-:root[data-theme="light"] .ils-hub-panel table th{background:#f5f5f7!important;color:#1d1d1f!important}
-:root[data-theme="light"] .ils-hub-panel table td{color:#1d1d1f!important;border-color:rgba(0,0,0,0.06)!important}
-:root[data-theme="light"] .s4-card{background:#fff!important;border-color:rgba(0,0,0,0.08)!important}
-:root[data-theme="light"] .demo-card{background:#fff!important;border-color:rgba(0,0,0,0.08)!important;color:#1d1d1f!important}
-:root[data-theme="light"] .stat-mini{background:#f5f5f7!important;border-color:rgba(0,0,0,0.06)!important}
-:root[data-theme="light"] .stat-mini-val{color:#1d1d1f!important}
-:root[data-theme="light"] .stat-mini-lbl{color:#6e6e73!important}
+body.light-mode .ils-hub-panel{color:#1d1d1f}
+body.light-mode .ils-hub-panel h3,body.light-mode .ils-hub-panel h4,body.light-mode .ils-hub-panel strong{color:#1d1d1f!important}
+body.light-mode .ils-hub-panel p{color:#6e6e73!important}
+body.light-mode .ils-hub-panel label{color:#3a3a3c!important}
+body.light-mode .ils-hub-panel select,body.light-mode .ils-hub-panel input,body.light-mode .ils-hub-panel textarea{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.12)!important}
+body.light-mode .ils-hub-panel select:focus,body.light-mode .ils-hub-panel input:focus,body.light-mode .ils-hub-panel textarea:focus{border-color:rgba(0,113,227,0.4)!important;box-shadow:0 0 0 3px rgba(0,113,227,0.1)!important}
+body.light-mode .ils-hub-panel table th{background:#f5f5f7!important;color:#1d1d1f!important}
+body.light-mode .ils-hub-panel table td{color:#1d1d1f!important;border-color:rgba(0,0,0,0.06)!important}
+body.light-mode .s4-card{background:#fff!important;border-color:rgba(0,0,0,0.08)!important}
+body.light-mode .demo-card{background:#fff!important;border-color:rgba(0,0,0,0.08)!important;color:#1d1d1f!important}
+body.light-mode .stat-mini{background:#f5f5f7!important;border-color:rgba(0,0,0,0.06)!important}
+body.light-mode .stat-mini-val{color:#1d1d1f!important}
+body.light-mode .stat-mini-lbl{color:#6e6e73!important}
 
 /* ─── R13-M: Toast/notification light mode ─── */
-:root[data-theme="light"] .s4-toast{background:#fff!important;color:#1d1d1f!important;border:1px solid rgba(0,0,0,0.1)!important;box-shadow:0 4px 16px rgba(0,0,0,0.1)!important}
+body.light-mode .s4-toast{background:#fff!important;color:#1d1d1f!important;border:1px solid rgba(0,0,0,0.1)!important;box-shadow:0 4px 16px rgba(0,0,0,0.1)!important}
 
 /* ─── R13-N: Command palette + FAB light mode cleanup ─── */
-:root[data-theme="light"] .s4-command-palette{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
-:root[data-theme="light"] .s4-command-palette input{color:#1d1d1f!important;border-color:rgba(0,0,0,0.08)!important}
-:root[data-theme="light"] .s4-command-palette input::placeholder{color:rgba(0,0,0,0.35)!important}
-:root[data-theme="light"] .s4-command-item{color:#1d1d1f!important}
-:root[data-theme="light"] .s4-command-item:hover,:root[data-theme="light"] .s4-command-item.active{background:rgba(0,113,227,0.06)!important}
-:root[data-theme="light"] .s4-quick-fab{background:#fff!important;border-color:rgba(0,0,0,0.12)!important;box-shadow:0 4px 16px rgba(0,0,0,0.12)!important;color:#0071e3!important}
-:root[data-theme="light"] .s4-quick-fab:hover{background:#f5f5f7!important;border-color:rgba(0,113,227,0.3)!important}
+body.light-mode .s4-command-palette{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
+body.light-mode .s4-command-palette input{color:#1d1d1f!important;border-color:rgba(0,0,0,0.08)!important}
+body.light-mode .s4-command-palette input::placeholder{color:rgba(0,0,0,0.35)!important}
+body.light-mode .s4-command-item{color:#1d1d1f!important}
+body.light-mode .s4-command-item:hover,body.light-mode .s4-command-item.active{background:rgba(0,113,227,0.06)!important}
+body.light-mode .s4-quick-fab{background:#fff!important;border-color:rgba(0,0,0,0.12)!important;box-shadow:0 4px 16px rgba(0,0,0,0.12)!important;color:#0071e3!important}
+body.light-mode .s4-quick-fab:hover{background:#f5f5f7!important;border-color:rgba(0,113,227,0.3)!important}
 
 /* ─── R13-O: Session lock / consent / login light mode ─── */
-:root[data-theme="light"] #sessionLock{background:rgba(245,245,247,0.95)!important}
-:root[data-theme="light"] #sessionLock *{color:#1d1d1f!important}
-:root[data-theme="light"] #dodConsent{background:rgba(245,245,247,0.92)!important}
-:root[data-theme="light"] #dodConsent > div{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
-:root[data-theme="light"] #dodConsent *{color:#1d1d1f!important}
-:root[data-theme="light"] #cacLogin{background:rgba(245,245,247,0.88)!important}
-:root[data-theme="light"] #cacLogin > div{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
-:root[data-theme="light"] #cacLogin input{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.12)!important}
-:root[data-theme="light"] #cacLogin h2,:root[data-theme="light"] #cacLogin label,:root[data-theme="light"] #cacLogin p{color:#1d1d1f!important}
+body.light-mode #sessionLock{background:rgba(245,245,247,0.95)!important}
+body.light-mode #sessionLock *{color:#1d1d1f!important}
+body.light-mode #dodConsent{background:rgba(245,245,247,0.92)!important}
+body.light-mode #dodConsent > div{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
+body.light-mode #dodConsent *{color:#1d1d1f!important}
+body.light-mode #cacLogin{background:rgba(245,245,247,0.88)!important}
+body.light-mode #cacLogin > div{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
+body.light-mode #cacLogin input{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.12)!important}
+body.light-mode #cacLogin h2,body.light-mode #cacLogin label,body.light-mode #cacLogin p{color:#1d1d1f!important}
 
 /* ─── R13-P: Hero section light mode ─── */
-:root[data-theme="light"] .hero h1,:root[data-theme="light"] .hero h2{color:#1d1d1f!important}
-:root[data-theme="light"] .hero p{color:#6e6e73!important}
-:root[data-theme="light"] .hero [style*="color:#fff"]{color:#1d1d1f!important}
-:root[data-theme="light"] #onboarding [style*="color:#fff"]{color:#1d1d1f!important}
-:root[data-theme="light"] #onboarding strong[style*="color:#fff"]{color:#1d1d1f!important}
+body.light-mode .hero h1,body.light-mode .hero h2{color:#1d1d1f!important}
+body.light-mode .hero p{color:#6e6e73!important}
+body.light-mode .hero [style*="color:#fff"]{color:#1d1d1f!important}
+body.light-mode #onboarding [style*="color:#fff"]{color:#1d1d1f!important}
+body.light-mode #onboarding strong[style*="color:#fff"]{color:#1d1d1f!important}
 
 /* ─── R13-Q: Modals / overlays light mode ─── */
-:root[data-theme="light"] .hiw-modal-overlay{background:rgba(245,245,247,0.88)!important}
-:root[data-theme="light"] .hiw-modal-box{background:#fff!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
-:root[data-theme="light"] .hiw-modal-box *{color:#1d1d1f}
-:root[data-theme="light"] .hiw-modal-box .hiw-body p{color:#6e6e73!important}
+body.light-mode .hiw-modal-overlay{background:rgba(245,245,247,0.88)!important}
+body.light-mode .hiw-modal-box{background:#fff!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
+body.light-mode .hiw-modal-box *{color:#1d1d1f}
+body.light-mode .hiw-modal-box .hiw-body p{color:#6e6e73!important}
 
 /* ─── R13-R: Brief engine — dark remnant overrides ─── */
-:root[data-theme="light"] #briefContainer{color:#1d1d1f!important}
-:root[data-theme="light"] #briefContainer *:not(button):not(.brief-badge):not([style*="background:linear-gradient"]):not([style*="background:var(--accent"]){color:inherit}
-:root[data-theme="light"] .brief-list-card{background:#fff!important;border-color:rgba(0,0,0,0.08)!important}
-:root[data-theme="light"] .brief-list-card:hover{border-color:rgba(0,113,227,0.3)!important;box-shadow:0 2px 8px rgba(0,0,0,0.06)!important}
-:root[data-theme="light"] .brief-action-btn{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.1)!important}
-:root[data-theme="light"] .brief-action-btn.primary{background:#0071e3!important;color:#fff!important;border-color:#0071e3!important}
-:root[data-theme="light"] .brief-select{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.12)!important}
-:root[data-theme="light"] .brief-empty{color:#6e6e73!important}
+body.light-mode #briefContainer{color:#1d1d1f!important}
+body.light-mode #briefContainer *:not(button):not(.brief-badge):not([style*="background:linear-gradient"]):not([style*="background:var(--accent"]){color:inherit}
+body.light-mode .brief-list-card{background:#fff!important;border-color:rgba(0,0,0,0.08)!important}
+body.light-mode .brief-list-card:hover{border-color:rgba(0,113,227,0.3)!important;box-shadow:0 2px 8px rgba(0,0,0,0.06)!important}
+body.light-mode .brief-action-btn{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.1)!important}
+body.light-mode .brief-action-btn.primary{background:#0071e3!important;color:#fff!important;border-color:#0071e3!important}
+body.light-mode .brief-select{background:#f5f5f7!important;color:#1d1d1f!important;border-color:rgba(0,0,0,0.12)!important}
+body.light-mode .brief-empty{color:#6e6e73!important}
 
 /* ─── R13-S: Acquisition planner light mode ─── */
-:root[data-theme="light"] .acq-card,:root[data-theme="light"] .acq-item{background:#fff!important;border-color:rgba(0,0,0,0.08)!important;color:#1d1d1f!important}
+body.light-mode .acq-card,body.light-mode .acq-item{background:#fff!important;border-color:rgba(0,0,0,0.08)!important;color:#1d1d1f!important}
 
 /* ─── R13-T: Milestones light mode ─── */
-:root[data-theme="light"] .ms-card,:root[data-theme="light"] .ms-item,:root[data-theme="light"] .ms-event{background:#fff!important;border-color:rgba(0,0,0,0.08)!important;color:#1d1d1f!important}
+body.light-mode .ms-card,body.light-mode .ms-item,body.light-mode .ms-event{background:#fff!important;border-color:rgba(0,0,0,0.08)!important;color:#1d1d1f!important}
 
 /* ─── R13-U: Roles modal light mode ─── */
-:root[data-theme="light"] #s4RoleModal{background:rgba(245,245,247,0.88)!important}
-:root[data-theme="light"] #s4RoleModal > div{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
-:root[data-theme="light"] #s4RoleModal *{color:#1d1d1f!important}
-:root[data-theme="light"] #s4RoleModal input{background:#f5f5f7!important;color:#1d1d1f!important}
+body.light-mode #s4RoleModal{background:rgba(245,245,247,0.88)!important}
+body.light-mode #s4RoleModal > div{background:#fff!important;border-color:rgba(0,0,0,0.1)!important;box-shadow:0 16px 48px rgba(0,0,0,0.15)!important}
+body.light-mode #s4RoleModal *{color:#1d1d1f!important}
+body.light-mode #s4RoleModal input{background:#f5f5f7!important;color:#1d1d1f!important}
 
 /* ━━━ END ROUND 13 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 

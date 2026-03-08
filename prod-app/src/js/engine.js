@@ -974,7 +974,7 @@ function showAnchorAnimation(hash, typeLabel, clfLevel) {
     const overlay = document.getElementById('anchorOverlay');
     const meta = CLF_META[clfLevel] || CLF_META['CUI'];
     document.getElementById('animStatus').innerHTML = '<i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to Ledger...';
-    document.getElementById('animStatus').style.color = '#fff';
+    document.getElementById('animStatus').style.color = document.body.classList.contains('light-mode') ? '#1d1d1f' : '#fff';
     document.getElementById('animHash').textContent = hash;
     document.getElementById('animSuccess').textContent = '';
     const clfDiv = document.getElementById('animClf');
@@ -6867,7 +6867,7 @@ function _getControlScore(c, vault, encrypted, actions, done) {
 function toggleAutoMonitor() {
     _autoMonitor = !_autoMonitor;
     var btn = document.getElementById('autoMonitorBtn');
-    if (btn) { btn.innerHTML = '<i class="fas fa-sync' + (_autoMonitor ? ' fa-spin' : '') + '"></i> Auto-Monitor: ' + (_autoMonitor ? 'ON' : 'OFF'); btn.style.background = _autoMonitor ? 'rgba(0,170,255,0.15)' : 'rgba(0,0,0,0.06)'; btn.style.color = _autoMonitor ? '#00aaff' : '#fff'; }
+    if (btn) { btn.innerHTML = '<i class="fas fa-sync' + (_autoMonitor ? ' fa-spin' : '') + '"></i> Auto-Monitor: ' + (_autoMonitor ? 'ON' : 'OFF'); btn.style.background = _autoMonitor ? 'rgba(0,170,255,0.15)' : 'rgba(0,0,0,0.06)'; btn.style.color = _autoMonitor ? '#00aaff' : (document.body.classList.contains('light-mode') ? '#1d1d1f' : '#6e6e73'); }
     if (_autoMonitor) { _autoMonitorTimer = setInterval(runMonitoringScan, 30000); showWorkspaceNotification('Auto-monitoring enabled — scanning every 30s'); }
     else { clearInterval(_autoMonitorTimer); _autoMonitorTimer = null; showWorkspaceNotification('Auto-monitoring disabled'); }
 }
