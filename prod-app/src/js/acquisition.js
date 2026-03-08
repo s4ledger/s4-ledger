@@ -111,17 +111,17 @@
         var logs = rowId ? _acqAuditLog.filter(function(l) { return l.rowId === String(rowId); }) : _acqAuditLog;
         if (!logs.length) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('No audit history available.', 'info'); return; }
         var html = '<div style="max-height:400px;overflow:auto;font-size:0.8rem"><table style="width:100%;border-collapse:collapse">';
-        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:var(--steel)"><th style="padding:6px;text-align:left">Time</th><th style="padding:6px;text-align:left">Action</th><th style="padding:6px;text-align:left">Details</th><th style="padding:6px;text-align:left">User</th></tr>';
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.1);color:var(--steel)"><th style="padding:6px;text-align:left">Time</th><th style="padding:6px;text-align:left">Action</th><th style="padding:6px;text-align:left">Details</th><th style="padding:6px;text-align:left">User</th></tr>';
         logs.slice().reverse().forEach(function(l) {
-            html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:4px 6px;color:var(--muted);white-space:nowrap">' + new Date(l.timestamp).toLocaleString() + '</td><td style="padding:4px 6px;color:#00aaff;font-weight:600">' + l.action + '</td><td style="padding:4px 6px;color:var(--steel)">' + (l.details || '').substring(0,80) + '</td><td style="padding:4px 6px;color:var(--muted)">' + l.user + '</td></tr>';
+            html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04)"><td style="padding:4px 6px;color:var(--muted);white-space:nowrap">' + new Date(l.timestamp).toLocaleString() + '</td><td style="padding:4px 6px;color:#00aaff;font-weight:600">' + l.action + '</td><td style="padding:4px 6px;color:var(--steel)">' + (l.details || '').substring(0,80) + '</td><td style="padding:4px 6px;color:var(--muted)">' + l.user + '</td></tr>';
         });
         html += '</table></div>';
         var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:9999;display:flex;align-items:center;justify-content:center';
         overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
         var inner = document.createElement('div');
-        inner.style.cssText = 'background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:20px;max-width:800px;width:90%;max-height:80vh;overflow:auto';
-        inner.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:12px"><h3 style="color:#fff;margin:0"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Audit Log' + (rowId ? ' - Row ' + rowId : '') + '</h3></div>' + html;
+        inner.style.cssText = 'background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:6px;padding:20px;max-width:800px;width:90%;max-height:80vh;overflow:auto';
+        inner.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:12px"><h3 style="color:#1d1d1f;margin:0"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Audit Log' + (rowId ? ' - Row ' + rowId : '') + '</h3></div>' + html;
         overlay.appendChild(inner);
         document.body.appendChild(overlay);
     }
@@ -191,11 +191,11 @@
         html += '<div id="acqDDStatusTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#00aaff;font-weight:700;font-size:1rem">' + totalVessels + '</span> <span style="color:var(--steel);font-size:0.82rem">across ' + Object.keys(statusCounts).length + ' statuses</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Status Breakdown</div>';
-        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         ACQ_STATUSES.forEach(function(s) {
             var cnt = statusCounts[s] || 0;
             var sc = ACQ_STATUS_COLORS[s] || '#8b949e';
-            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(255,255,255,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
+            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(0,0,0,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<span style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:' + sc + ';display:inline-block"></span><span style="color:var(--steel)">' + s + '</span></span>';
             html += '<span style="color:' + sc + ';font-weight:700">' + cnt + '</span></div>';
         });
@@ -207,14 +207,14 @@
         var topCond = Object.keys(condCounts).sort(function(a,b){ return condCounts[b]-condCounts[a]; })[0] || '-';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:' + (condColors[topCond]||'#555') + ';font-weight:700;font-size:1rem">' + topCond + '</span> <span style="color:var(--muted);font-size:0.82rem">most common (' + (condCounts[topCond]||0) + ')</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Material Condition</div>';
-        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         condOrder.forEach(function(c) {
             var cnt = condCounts[c] || 0;
             var cc = condColors[c] || '#555';
             var pct = totalVessels > 0 ? Math.round(cnt / totalVessels * 100) : 0;
-            html += '<div style="padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(255,255,255,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
+            html += '<div style="padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(0,0,0,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px"><span style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:' + cc + ';display:inline-block"></span><span style="color:var(--steel)">' + c + '</span></span><span style="color:' + cc + ';font-weight:700">' + cnt + '</span></div>';
-            html += '<div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px"><div style="height:100%;width:' + pct + '%;background:' + cc + ';border-radius:2px"></div></div>';
+            html += '<div style="height:3px;background:rgba(0,0,0,0.035);border-radius:2px"><div style="height:100%;width:' + pct + '%;background:' + cc + ';border-radius:2px"></div></div>';
             html += '</div>';
         });
         html += '</div></div>';
@@ -376,7 +376,7 @@
         var rColor = _riskColor(risk);
         var html = '<div style="background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.12);border-radius:3px;padding:16px;margin:4px 0 8px">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
-        html += '<h4 style="margin:0;color:#fff"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>' + (row.hull_number || 'Unknown') + ' - ' + (row.hull_type || '') + '</h4>';
+        html += '<h4 style="margin:0;color:#1d1d1f"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>' + (row.hull_number || 'Unknown') + ' - ' + (row.hull_type || '') + '</h4>';
         html += '<div style="display:inline-block;padding:4px 12px;border-radius:3px;font-weight:700;font-size:0.88rem;background:' + rColor + '22;color:' + rColor + ';border:1px solid ' + rColor + '44">Risk: ' + risk + '/100</div>';
         html += '</div>';
         html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;font-size:0.82rem">';
@@ -385,12 +385,12 @@
             if (col.type === 'number' && col.key.indexOf('cost') >= 0 && val !== '-') val = _formatDollar(val);
             else if (col.type === 'date' && val !== '-') val = _fmtDate(val);
             else if (col.type === 'number' && val !== '-') val = Number(val).toLocaleString();
-            html += '<div><span style="color:var(--muted);font-size:0.72rem;display:block">' + col.label + '</span><span style="color:#fff">' + val + '</span></div>';
+            html += '<div><span style="color:var(--muted);font-size:0.72rem;display:block">' + col.label + '</span><span style="color:#1d1d1f">' + val + '</span></div>';
         });
         html += '</div>';
         // Mini Gantt for this vessel
         if (row.date_requested && row.needed_completion) {
-            html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06)">';
+            html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.06)">';
             html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:6px"><i class="fas fa-chart-gantt" style="margin-right:6px;color:#a855f7"></i>Timeline: ' + _fmtDate(row.date_requested) + ' - ' + _fmtDate(row.needed_completion) + '</div>';
             html += '<div style="height:8px;background:rgba(78,203,113,0.2);border-radius:4px;border:1px solid rgba(78,203,113,0.4);position:relative">';
             var now = new Date();
@@ -962,21 +962,21 @@
         html += '</div>';
 
         // Scrollable container
-        html += '<div style="overflow-x:auto;border:1px solid rgba(255,255,255,0.08);border-radius:3px">';
+        html += '<div style="overflow-x:auto;border:1px solid rgba(0,0,0,0.06);border-radius:3px">';
 
         // Year/month ruler
         html += '<div style="display:flex">';
-        html += '<div style="flex:0 0 ' + labelW + 'px;padding:6px 8px;font-size:0.72rem;color:var(--muted);background:#0d1117;border-bottom:2px solid var(--border);position:sticky;left:0;z-index:10">Vessel</div>';
+        html += '<div style="flex:0 0 ' + labelW + 'px;padding:6px 8px;font-size:0.72rem;color:var(--muted);background:#fff;border-bottom:2px solid var(--border);position:sticky;left:0;z-index:10">Vessel</div>';
         html += '<div style="width:' + totalWidth + 'px;position:relative;height:40px;background:rgba(0,0,0,0.15);border-bottom:2px solid var(--border)">';
         for (var y = yearStart; y <= yearEnd; y++) {
             var xYear = (y - yearStart) * 12 * MONTH_PX;
             var isNowYear = y === now.getFullYear();
-            html += '<div style="position:absolute;left:' + xYear + 'px;top:0;height:100%;border-left:1px solid ' + (isNowYear ? 'rgba(0,170,255,0.4)' : 'rgba(255,255,255,0.1)') + '">';
-            html += '<span style="position:absolute;top:2px;left:4px;font-size:0.78rem;font-weight:' + (isNowYear ? '700' : '400') + ';color:' + (isNowYear ? '#00aaff' : 'rgba(255,255,255,0.35)') + '">' + y + '</span></div>';
+            html += '<div style="position:absolute;left:' + xYear + 'px;top:0;height:100%;border-left:1px solid ' + (isNowYear ? 'rgba(0,170,255,0.4)' : 'rgba(0,0,0,0.1)') + '">';
+            html += '<span style="position:absolute;top:2px;left:4px;font-size:0.78rem;font-weight:' + (isNowYear ? '700' : '400') + ';color:' + (isNowYear ? '#00aaff' : 'rgba(0,0,0,0.35)') + '">' + y + '</span></div>';
             // Month ticks
             for (var m = 0; m < 12; m++) {
                 var xMonth = xYear + m * MONTH_PX;
-                if (m > 0) html += '<div style="position:absolute;left:' + xMonth + 'px;top:24px;height:16px;border-left:1px solid rgba(255,255,255,0.04)"></div>';
+                if (m > 0) html += '<div style="position:absolute;left:' + xMonth + 'px;top:24px;height:16px;border-left:1px solid rgba(0,0,0,0.04)"></div>';
             }
         }
         // Today marker
@@ -990,12 +990,12 @@
         data.forEach(function (r, idx) {
             var condCls = { Excellent: '#4ecb71', Good: '#00aaff', Fair: '#c9a84c', Poor: '#ff9500', Critical: '#ff3333' };
             var risk = _calculateRiskScore(r);
-            var bgAlt = idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.03)';
-            html += '<div style="display:flex;min-width:' + (labelW + totalWidth) + 'px;border-bottom:1px solid rgba(255,255,255,0.04);background:' + bgAlt + '">';
+            var bgAlt = idx % 2 === 0 ? 'rgba(0,0,0,0.01)' : 'rgba(0,0,0,0.03)';
+            html += '<div style="display:flex;min-width:' + (labelW + totalWidth) + 'px;border-bottom:1px solid rgba(0,0,0,0.04);background:' + bgAlt + '">';
             // Label column
-            var stickyBg = idx % 2 === 0 ? '#0d1117' : '#111820';
-            html += '<div style="flex:0 0 ' + labelW + 'px;padding:10px 8px;font-size:0.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:' + stickyBg + ';position:sticky;left:0;z-index:10;border-right:1px solid rgba(255,255,255,0.06)">';
-            html += '<strong style="color:#fff">' + (r.hull_number || '-') + '</strong>';
+            var stickyBg = idx % 2 === 0 ? '#f5f5f7' : '#eef0f4';
+            html += '<div style="flex:0 0 ' + labelW + 'px;padding:10px 8px;font-size:0.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:' + stickyBg + ';position:sticky;left:0;z-index:10;border-right:1px solid rgba(0,0,0,0.06)">';
+            html += '<strong style="color:#1d1d1f">' + (r.hull_number || '-') + '</strong>';
             if (r.material_condition) html += ' <span style="font-size:0.6rem;padding:1px 4px;border-radius:2px;background:' + (condCls[r.material_condition]||'#555') + '22;color:' + (condCls[r.material_condition]||'#555') + '">' + r.material_condition + '</span>';
             html += '<div style="font-size:0.65rem;color:var(--muted)">' + (r.hull_type || '') + ' | Risk: <span style="color:' + _riskColor(risk) + '">' + risk + '</span></div>';
             html += '</div>';
@@ -1004,7 +1004,7 @@
             // Year grid lines
             for (var y2 = yearStart; y2 <= yearEnd; y2++) {
                 var xY2 = (y2 - yearStart) * 12 * MONTH_PX;
-                html += '<div style="position:absolute;left:' + xY2 + 'px;top:0;bottom:0;border-left:1px solid rgba(255,255,255,0.03)"></div>';
+                html += '<div style="position:absolute;left:' + xY2 + 'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.03)"></div>';
             }
             // Today line in row
             if (todayPx >= 0) html += '<div style="position:absolute;left:' + todayPx + 'px;top:0;bottom:0;border-left:2px dashed rgba(0,170,255,0.15);z-index:2"></div>';
@@ -1056,15 +1056,15 @@
         html += '<button class="acq-prog-btn acq-prog-active" onclick="acqToggleProgramDropdown()" style="min-width:200px;text-align:left;display:flex;justify-content:space-between;align-items:center">';
         var selLabel = !selectedSet ? 'All Programs (' + _acqPrograms.length + ')' : selectedSet.length + ' of ' + _acqPrograms.length + ' selected';
         html += '<span>' + selLabel + '</span> <i class="fas fa-chevron-down" style="font-size:0.65rem;margin-left:8px;opacity:0.6"></i></button>';
-        html += '<div id="acqProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
-        html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:0.82rem;color:#8b949e;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:4px"><input type="checkbox" ' + (!selectedSet ? 'checked' : '') + ' onchange="acqSelectAllPrograms(this.checked)" style="accent-color:#00aaff;width:15px;height:15px"> <strong style="color:#fff">All Programs</strong></label>';
+        html += '<div id="acqProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:0.82rem;color:#86868b;border-bottom:1px solid rgba(0,0,0,0.06);margin-bottom:4px"><input type="checkbox" ' + (!selectedSet ? 'checked' : '') + ' onchange="acqSelectAllPrograms(this.checked)" style="accent-color:#00aaff;width:15px;height:15px"> <strong style="color:#1d1d1f">All Programs</strong></label>';
         _acqPrograms.forEach(function (p) {
             var checked = !selectedSet || selectedSet.indexOf(p) >= 0;
             var safeP = p.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             html += '<label style="display:flex;align-items:center;gap:8px;padding:4px 12px;cursor:pointer;font-size:0.82rem;color:var(--steel)" onmouseover="this.style.background=\'rgba(0,170,255,0.06)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<input type="checkbox" ' + (checked ? 'checked' : '') + ' onchange="acqToggleProgram(\'' + safeP + '\',this.checked)" style="accent-color:#00aaff;width:15px;height:15px"> ' + p + '</label>';
         });
-        html += '<div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:4px;padding:6px 12px"><div style="display:flex;gap:6px"><input id="acqNewProgInput" type="text" placeholder="Add new program..." style="flex:1;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.8rem" onkeydown="if(event.key===\'Enter\')acqAddProgram()">';
+        html += '<div style="border-top:1px solid rgba(0,0,0,0.06);margin-top:4px;padding:6px 12px"><div style="display:flex;gap:6px"><input id="acqNewProgInput" type="text" placeholder="Add new program..." style="flex:1;background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:5px 8px;font-size:0.8rem" onkeydown="if(event.key===\'Enter\')acqAddProgram()">';
         html += '<button class="acq-prog-btn" onclick="acqAddProgram()" style="padding:4px 10px;font-size:0.78rem"><i class="fas fa-plus"></i></button></div></div>';
         html += '</div></div>';
         if (selectedSet && selectedSet.length < _acqPrograms.length) {

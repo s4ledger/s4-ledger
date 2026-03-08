@@ -1,6 +1,6 @@
-// S4 Ledger Demo — scroll
-// Extracted from monolith lines 12769-13006
-// 236 lines
+// S4 Ledger — scroll
+// Extracted from monolith lines 13162-13386
+// 223 lines
 
 // Scroll progress bar
 window.addEventListener('scroll', function() {
@@ -15,7 +15,7 @@ window.addEventListener('scroll', function() {
 var revealObserver = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, { threshold: 0.1 });
-document.querySelectorAll('.reveal-demo').forEach(function(el) { revealObserver.observe(el); });
+document.querySelectorAll('.reveal-anim').forEach(function(el) { revealObserver.observe(el); });
 
 // ═══════════════════════════════════════════════════════════════════
 //  USAGE — Balance, Credentials, Buy Credits
@@ -42,7 +42,7 @@ function loadWalletData() {
     const explorerBase = (walletData.wallet.network === 'mainnet')
         ? 'https://livenet.xrpl.org/accounts/'
         : 'https://testnet.xrpl.org/accounts/';
-    document.getElementById('demoWalletExplorer').href = explorerBase + walletData.wallet.address;
+    document.getElementById('walletExplorer').href = explorerBase + walletData.wallet.address;
 
     // Fetch live balance
     fetchWalletBalance(walletData.wallet.address);
@@ -66,20 +66,18 @@ async function fetchWalletBalance(address) {
         document.getElementById('walletNetwork').textContent = 'XRPL ' + data.network.charAt(0).toUpperCase() + data.network.slice(1);
     } catch (e) {
         console.log('Balance fetch error:', e);
-        // In demo mode, populate wallet from session state
-        if (_demoSession && _demoSession.subscription) {
-            var _alloc = _demoSession.subscription.sls_allocation || 25000;
-            var _spent = (typeof stats !== 'undefined') ? (stats.slsFees || 0) : 0;
-            var _rem = Math.round((_alloc - _spent) * 100) / 100;
-            var wBal = document.getElementById('walletSLSBalance');
-            if (wBal) wBal.textContent = _rem.toLocaleString(undefined,{maximumFractionDigits:2});
-            var wAnch = document.getElementById('walletAnchors');
-            if (wAnch) wAnch.textContent = Math.floor(_rem / 0.01).toLocaleString();
-            var wXrp = document.getElementById('walletXRP');
-            if (wXrp) wXrp.textContent = '12.00';
-            var wNet = document.getElementById('walletNetwork');
-            if (wNet) wNet.textContent = 'XRPL Mainnet (Demo)';
-        }
+        // Populate wallet from tier allocation when offline
+        var _alloc = window._s4TierAllocation || parseInt(localStorage.getItem('s4_tier_allocation')) || 25000;
+        var _spent = (window._s4Stats) ? (window._s4Stats.slsFees || 0) : 0;
+        var _rem = Math.round((_alloc - _spent) * 100) / 100;
+        var wBal = document.getElementById('walletSLSBalance');
+        if (wBal) wBal.textContent = _rem.toLocaleString(undefined,{maximumFractionDigits:2});
+        var wAnch = document.getElementById('walletAnchors');
+        if (wAnch) wAnch.textContent = Math.floor(_rem / 0.01).toLocaleString();
+        var wXrp = document.getElementById('walletXRP');
+        if (wXrp) wXrp.textContent = '12.00';
+        var wNet = document.getElementById('walletNetwork');
+        if (wNet) wNet.textContent = 'XRPL Mainnet';
     }
 }
 

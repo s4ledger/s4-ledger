@@ -111,17 +111,17 @@
         var logs = rowId ? _acqAuditLog.filter(function(l) { return l.rowId === String(rowId); }) : _acqAuditLog;
         if (!logs.length) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('No audit history available.', 'info'); return; }
         var html = '<div style="max-height:400px;overflow:auto;font-size:0.8rem"><table style="width:100%;border-collapse:collapse">';
-        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:var(--steel)"><th style="padding:6px;text-align:left">Time</th><th style="padding:6px;text-align:left">Action</th><th style="padding:6px;text-align:left">Details</th><th style="padding:6px;text-align:left">User</th></tr>';
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.1);color:var(--steel)"><th style="padding:6px;text-align:left">Time</th><th style="padding:6px;text-align:left">Action</th><th style="padding:6px;text-align:left">Details</th><th style="padding:6px;text-align:left">User</th></tr>';
         logs.slice().reverse().forEach(function(l) {
-            html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:4px 6px;color:var(--muted);white-space:nowrap">' + new Date(l.timestamp).toLocaleString() + '</td><td style="padding:4px 6px;color:#00aaff;font-weight:600">' + l.action + '</td><td style="padding:4px 6px;color:var(--steel)">' + (l.details || '').substring(0,80) + '</td><td style="padding:4px 6px;color:var(--muted)">' + l.user + '</td></tr>';
+            html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04)"><td style="padding:4px 6px;color:var(--muted);white-space:nowrap">' + new Date(l.timestamp).toLocaleString() + '</td><td style="padding:4px 6px;color:#00aaff;font-weight:600">' + l.action + '</td><td style="padding:4px 6px;color:var(--steel)">' + (l.details || '').substring(0,80) + '</td><td style="padding:4px 6px;color:var(--muted)">' + l.user + '</td></tr>';
         });
         html += '</table></div>';
         var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:9999;display:flex;align-items:center;justify-content:center';
         overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
         var inner = document.createElement('div');
-        inner.style.cssText = 'background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:20px;max-width:800px;width:90%;max-height:80vh;overflow:auto';
-        inner.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:12px"><h3 style="color:#fff;margin:0"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Audit Log' + (rowId ? ' - Row ' + rowId : '') + '</h3></div>' + html;
+        inner.style.cssText = 'background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:6px;padding:20px;max-width:800px;width:90%;max-height:80vh;overflow:auto';
+        inner.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:12px"><h3 style="color:#1d1d1f;margin:0"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Audit Log' + (rowId ? ' - Row ' + rowId : '') + '</h3></div>' + html;
         overlay.appendChild(inner);
         document.body.appendChild(overlay);
     }
@@ -157,20 +157,8 @@
     }
 
     function _getDemoRecords() {
-        return [
-            { _localId: 1, status: 'In Execution', hull_type: 'YRBM', hull_number: 'YRBM-44', action_need: 'Service Life Extension', requestor: 'PMS 300', date_requested: '2023-01-15', needed_completion: '2027-06-30', lifecycle_years: 40, justification: 'Hull approaching end of service life. Extension required to maintain berthing capacity at NOB Norfolk pending new construction delivery.', pom_funded: 'Yes', navy_region: 'Mid-Atlantic', custodian_activity: 'NAVSTA Norfolk', resource_sponsor: 'OPNAV N95', sponsor_contact: 'CAPT Rodriguez', ship_builder: 'Colonna Shipyard', last_roh_cost_k: 2850000, est_next_fy_cost_k: 3200000, total_cost_k: 45000000, craft_age_years: 32, last_roh: '2021-03-15', planned_roh: '2025-09-01', planned_mi: '2024-06-15', material_condition: 'Fair', last_dry_dock: '2022-08-20', program_name: 'PMS 300 Service Craft' },
-            { _localId: 2, status: 'Approved', hull_type: 'YR', hull_number: 'YR-92', action_need: 'Replacement', requestor: 'SURFMEPP', date_requested: '2023-06-01', needed_completion: '2028-12-31', lifecycle_years: 35, justification: 'Floating workshop beyond economical repair. Replacement needed to support CVN maintenance availabilities at PSNS.', pom_funded: 'Partial', navy_region: 'Pacific Northwest', custodian_activity: 'PSNS & IMF', resource_sponsor: 'OPNAV N95', sponsor_contact: 'LCDR Kim', ship_builder: 'Vigor Industrial', last_roh_cost_k: 1200000, est_next_fy_cost_k: 0, total_cost_k: 28000000, craft_age_years: 38, last_roh: '2019-11-10', planned_roh: '', planned_mi: '2024-03-01', material_condition: 'Poor', last_dry_dock: '2020-05-15', program_name: 'PMS 300 Service Craft' },
-            { _localId: 3, status: 'Draft', hull_type: 'YFB', hull_number: 'YFB-89', action_need: 'Addition/New Build', requestor: 'CNRJ', date_requested: '2024-02-20', needed_completion: '2029-06-30', lifecycle_years: 30, justification: 'Additional ferry required for Yokosuka fleet activities. Current 2-boat rotation insufficient for increased FDNF manning.', pom_funded: 'No', navy_region: 'CNRJ', custodian_activity: 'CFAY Yokosuka', resource_sponsor: 'OPNAV N4', sponsor_contact: 'CDR Tanaka', ship_builder: 'TBD', last_roh_cost_k: 0, est_next_fy_cost_k: 5400000, total_cost_k: 18000000, craft_age_years: 0, last_roh: '', planned_roh: '', planned_mi: '', material_condition: 'Excellent', last_dry_dock: '', program_name: 'CNRJ Fleet Activities' },
-            { _localId: 4, status: 'Submitted', hull_type: 'YTB', hull_number: 'YTB-814', action_need: 'Service Life Extension', requestor: 'PMS 300', date_requested: '2023-09-10', needed_completion: '2026-03-31', lifecycle_years: 45, justification: 'Large harbor tug in good condition. SLE more economical than replacement given current hull condition and propulsion status.', pom_funded: 'Yes', navy_region: 'Southeast', custodian_activity: 'NAVSTA Mayport', resource_sponsor: 'OPNAV N95', sponsor_contact: 'CAPT Miller', ship_builder: 'BAE Systems Jacksonville', last_roh_cost_k: 4100000, est_next_fy_cost_k: 2800000, total_cost_k: 52000000, craft_age_years: 28, last_roh: '2022-01-20', planned_roh: '2026-01-15', planned_mi: '2024-09-01', material_condition: 'Good', last_dry_dock: '2023-02-28', program_name: 'PMS 300 Service Craft' },
-            { _localId: 5, status: 'Under Review', hull_type: 'YRBM', hull_number: 'YRBM-46', action_need: 'Disposal/Disposition', requestor: 'NAVSEA 04', date_requested: '2024-01-05', needed_completion: '2025-09-30', lifecycle_years: 40, justification: 'Hull failed MI. Repair costs exceed replacement value. DRMO disposal recommended per NAVSEA technical assessment.', pom_funded: 'Pending', navy_region: 'Gulf Coast', custodian_activity: 'NSA Panama City', resource_sponsor: 'OPNAV N95', sponsor_contact: 'LCDR Davis', ship_builder: 'N/A', last_roh_cost_k: 950000, est_next_fy_cost_k: 0, total_cost_k: 8500000, craft_age_years: 42, last_roh: '2015-06-30', planned_roh: '', planned_mi: '', material_condition: 'Critical', last_dry_dock: '2016-12-10', program_name: 'PMS 300 Service Craft' },
-            { _localId: 6, status: 'Complete', hull_type: 'YFNB', hull_number: 'YFNB-44', action_need: 'Transfer', requestor: 'CNRSE', date_requested: '2022-11-15', needed_completion: '2024-06-30', lifecycle_years: 50, justification: 'Covered lighter being transferred from Kings Bay to Norfolk to support SSBN maintenance capacity realignment.', pom_funded: 'Yes', navy_region: 'Southeast', custodian_activity: 'NSB Kings Bay', resource_sponsor: 'OPNAV N87', sponsor_contact: 'CAPT Johnson', ship_builder: 'N/A', last_roh_cost_k: 780000, est_next_fy_cost_k: 1100000, total_cost_k: 15000000, craft_age_years: 22, last_roh: '2023-04-15', planned_roh: '2027-04-01', planned_mi: '2025-10-01', material_condition: 'Good', last_dry_dock: '2023-08-30', program_name: 'Strategic Programs' },
-            { _localId: 7, status: 'In Execution', hull_type: 'YP', hull_number: 'YP-703', action_need: 'Addition/New Build', requestor: 'USNA', date_requested: '2023-08-01', needed_completion: '2026-06-30', lifecycle_years: 30, justification: 'Yard Patrol craft replacement for aging YP fleet. Required for midshipman navigation training. Current boats exceed 30-year service life.', pom_funded: 'Yes', navy_region: 'Mid-Atlantic', custodian_activity: 'USNA Annapolis', resource_sponsor: 'OPNAV N95', sponsor_contact: 'LCDR Patterson', ship_builder: 'Marinette Marine', last_roh_cost_k: 0, est_next_fy_cost_k: 4800000, total_cost_k: 22000000, craft_age_years: 0, last_roh: '', planned_roh: '', planned_mi: '', material_condition: 'Excellent', last_dry_dock: '', program_name: 'PMS 300 Service Craft' },
-            { _localId: 8, status: 'Submitted', hull_type: 'AFDM', hull_number: 'AFDM-14', action_need: 'Service Life Extension', requestor: 'PMS 300', date_requested: '2024-03-15', needed_completion: '2027-12-31', lifecycle_years: 50, justification: 'Medium auxiliary floating dry dock at PSNS. SLE to add 15 years of service — critical to SSN maintenance availability throughput.', pom_funded: 'Partial', navy_region: 'Pacific Northwest', custodian_activity: 'PSNS & IMF', resource_sponsor: 'OPNAV N95', sponsor_contact: 'CAPT Brooks', ship_builder: 'Vigor Industrial', last_roh_cost_k: 6200000, est_next_fy_cost_k: 7500000, total_cost_k: 85000000, craft_age_years: 35, last_roh: '2021-09-15', planned_roh: '2026-03-01', planned_mi: '2025-06-01', material_condition: 'Fair', last_dry_dock: '2022-01-20', program_name: 'PMS 300 Service Craft' },
-            { _localId: 9, status: 'Draft', hull_type: 'YTB', hull_number: 'YTB-835', action_need: 'Addition/New Build', requestor: 'CNRH', date_requested: '2024-06-10', needed_completion: '2029-03-31', lifecycle_years: 45, justification: 'New harbor tug to replace aging YTB at Pearl Harbor. Required for DDG/CG maneuvering ops in restricted harbor channels.', pom_funded: 'No', navy_region: 'Hawaii', custodian_activity: 'JBPHH Pearl Harbor', resource_sponsor: 'OPNAV N95', sponsor_contact: 'CDR Nakamura', ship_builder: 'TBD', last_roh_cost_k: 0, est_next_fy_cost_k: 6000000, total_cost_k: 35000000, craft_age_years: 0, last_roh: '', planned_roh: '', planned_mi: '', material_condition: 'Excellent', last_dry_dock: '', program_name: 'PMS 300 Service Craft' },
-            { _localId: 10, status: 'Approved', hull_type: 'YON', hull_number: 'YON-330', action_need: 'Addition/New Build', requestor: 'PMS 300', date_requested: '2023-11-20', needed_completion: '2026-04-30', lifecycle_years: 40, justification: 'Non-self-propelled fuel oil lighter required for fleet oiler support at Norfolk anchorage. Replaces scrapped YON-270.', pom_funded: 'Yes', navy_region: 'Mid-Atlantic', custodian_activity: 'NAVSTA Norfolk', resource_sponsor: 'OPNAV N95', sponsor_contact: 'CAPT Rivera', ship_builder: 'Conrad Shipyard', last_roh_cost_k: 0, est_next_fy_cost_k: 3400000, total_cost_k: 18500000, craft_age_years: 0, last_roh: '', planned_roh: '', planned_mi: '', material_condition: 'Excellent', last_dry_dock: '', program_name: 'PMS 300 Service Craft' },
-            { _localId: 11, status: 'Under Review', hull_type: 'APL', hull_number: 'APL-67', action_need: 'Replacement', requestor: 'CNRMA', date_requested: '2024-01-30', needed_completion: '2028-06-30', lifecycle_years: 40, justification: 'Berthing barge beyond economical repair at Norfolk. Required for forward-deployed DDG crews during extended maintenance availabilities.', pom_funded: 'Pending', navy_region: 'Mid-Atlantic', custodian_activity: 'NAVSTA Norfolk', resource_sponsor: 'OPNAV N95', sponsor_contact: 'LCDR Watson', ship_builder: 'BAE Systems Norfolk', last_roh_cost_k: 3100000, est_next_fy_cost_k: 0, total_cost_k: 42000000, craft_age_years: 36, last_roh: '2020-04-15', planned_roh: '', planned_mi: '2025-02-01', material_condition: 'Poor', last_dry_dock: '2021-06-10', program_name: 'PMS 300 Service Craft' },
-            { _localId: 12, status: 'In Execution', hull_type: 'DDG', hull_number: 'DDG-140', action_need: 'Addition/New Build', requestor: 'PMS 325', date_requested: '2023-05-15', needed_completion: '2028-12-31', lifecycle_years: 35, justification: 'Flight III Arleigh Burke-class destroyer. Awarded under multi-year procurement. SPY-6 radar integration on track.', pom_funded: 'Yes', navy_region: 'Gulf Coast', custodian_activity: 'HII Ingalls', resource_sponsor: 'OPNAV N96', sponsor_contact: 'CAPT Henderson', ship_builder: 'HII Ingalls', last_roh_cost_k: 0, est_next_fy_cost_k: 285000000, total_cost_k: 2200000000, craft_age_years: 0, last_roh: '', planned_roh: '', planned_mi: '', material_condition: 'Excellent', last_dry_dock: '', program_name: 'PMS 325 Surface Combatants' }
-        ];
+        // Production: no demo data - users import or create their own
+        return [];
     }
 
     // -- Dashboard Summary Cards --
@@ -203,11 +191,11 @@
         html += '<div id="acqDDStatusTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#00aaff;font-weight:700;font-size:1rem">' + totalVessels + '</span> <span style="color:var(--steel);font-size:0.82rem">across ' + Object.keys(statusCounts).length + ' statuses</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Status Breakdown</div>';
-        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         ACQ_STATUSES.forEach(function(s) {
             var cnt = statusCounts[s] || 0;
             var sc = ACQ_STATUS_COLORS[s] || '#8b949e';
-            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(255,255,255,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
+            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(0,0,0,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<span style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:' + sc + ';display:inline-block"></span><span style="color:var(--steel)">' + s + '</span></span>';
             html += '<span style="color:' + sc + ';font-weight:700">' + cnt + '</span></div>';
         });
@@ -219,14 +207,14 @@
         var topCond = Object.keys(condCounts).sort(function(a,b){ return condCounts[b]-condCounts[a]; })[0] || '-';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:' + (condColors[topCond]||'#555') + ';font-weight:700;font-size:1rem">' + topCond + '</span> <span style="color:var(--muted);font-size:0.82rem">most common (' + (condCounts[topCond]||0) + ')</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Material Condition</div>';
-        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         condOrder.forEach(function(c) {
             var cnt = condCounts[c] || 0;
             var cc = condColors[c] || '#555';
             var pct = totalVessels > 0 ? Math.round(cnt / totalVessels * 100) : 0;
-            html += '<div style="padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(255,255,255,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
+            html += '<div style="padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(0,0,0,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px"><span style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:' + cc + ';display:inline-block"></span><span style="color:var(--steel)">' + c + '</span></span><span style="color:' + cc + ';font-weight:700">' + cnt + '</span></div>';
-            html += '<div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px"><div style="height:100%;width:' + pct + '%;background:' + cc + ';border-radius:2px"></div></div>';
+            html += '<div style="height:3px;background:rgba(0,0,0,0.035);border-radius:2px"><div style="height:100%;width:' + pct + '%;background:' + cc + ';border-radius:2px"></div></div>';
             html += '</div>';
         });
         html += '</div></div>';
@@ -388,7 +376,7 @@
         var rColor = _riskColor(risk);
         var html = '<div style="background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.12);border-radius:3px;padding:16px;margin:4px 0 8px">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
-        html += '<h4 style="margin:0;color:#fff"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>' + (row.hull_number || 'Unknown') + ' - ' + (row.hull_type || '') + '</h4>';
+        html += '<h4 style="margin:0;color:#1d1d1f"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>' + (row.hull_number || 'Unknown') + ' - ' + (row.hull_type || '') + '</h4>';
         html += '<div style="display:inline-block;padding:4px 12px;border-radius:3px;font-weight:700;font-size:0.88rem;background:' + rColor + '22;color:' + rColor + ';border:1px solid ' + rColor + '44">Risk: ' + risk + '/100</div>';
         html += '</div>';
         html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;font-size:0.82rem">';
@@ -397,12 +385,12 @@
             if (col.type === 'number' && col.key.indexOf('cost') >= 0 && val !== '-') val = _formatDollar(val);
             else if (col.type === 'date' && val !== '-') val = _fmtDate(val);
             else if (col.type === 'number' && val !== '-') val = Number(val).toLocaleString();
-            html += '<div><span style="color:var(--muted);font-size:0.72rem;display:block">' + col.label + '</span><span style="color:#fff">' + val + '</span></div>';
+            html += '<div><span style="color:var(--muted);font-size:0.72rem;display:block">' + col.label + '</span><span style="color:#1d1d1f">' + val + '</span></div>';
         });
         html += '</div>';
         // Mini Gantt for this vessel
         if (row.date_requested && row.needed_completion) {
-            html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06)">';
+            html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.06)">';
             html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:6px"><i class="fas fa-chart-gantt" style="margin-right:6px;color:#a855f7"></i>Timeline: ' + _fmtDate(row.date_requested) + ' - ' + _fmtDate(row.needed_completion) + '</div>';
             html += '<div style="height:8px;background:rgba(78,203,113,0.2);border-radius:4px;border:1px solid rgba(78,203,113,0.4);position:relative">';
             var now = new Date();
@@ -974,21 +962,21 @@
         html += '</div>';
 
         // Scrollable container
-        html += '<div style="overflow-x:auto;border:1px solid rgba(255,255,255,0.08);border-radius:3px">';
+        html += '<div style="overflow-x:auto;border:1px solid rgba(0,0,0,0.06);border-radius:3px">';
 
         // Year/month ruler
         html += '<div style="display:flex">';
-        html += '<div style="flex:0 0 ' + labelW + 'px;padding:6px 8px;font-size:0.72rem;color:var(--muted);background:#0d1117;border-bottom:2px solid var(--border);position:sticky;left:0;z-index:10">Vessel</div>';
+        html += '<div style="flex:0 0 ' + labelW + 'px;padding:6px 8px;font-size:0.72rem;color:var(--muted);background:#fff;border-bottom:2px solid var(--border);position:sticky;left:0;z-index:10">Vessel</div>';
         html += '<div style="width:' + totalWidth + 'px;position:relative;height:40px;background:rgba(0,0,0,0.15);border-bottom:2px solid var(--border)">';
         for (var y = yearStart; y <= yearEnd; y++) {
             var xYear = (y - yearStart) * 12 * MONTH_PX;
             var isNowYear = y === now.getFullYear();
-            html += '<div style="position:absolute;left:' + xYear + 'px;top:0;height:100%;border-left:1px solid ' + (isNowYear ? 'rgba(0,170,255,0.4)' : 'rgba(255,255,255,0.1)') + '">';
-            html += '<span style="position:absolute;top:2px;left:4px;font-size:0.78rem;font-weight:' + (isNowYear ? '700' : '400') + ';color:' + (isNowYear ? '#00aaff' : 'rgba(255,255,255,0.35)') + '">' + y + '</span></div>';
+            html += '<div style="position:absolute;left:' + xYear + 'px;top:0;height:100%;border-left:1px solid ' + (isNowYear ? 'rgba(0,170,255,0.4)' : 'rgba(0,0,0,0.1)') + '">';
+            html += '<span style="position:absolute;top:2px;left:4px;font-size:0.78rem;font-weight:' + (isNowYear ? '700' : '400') + ';color:' + (isNowYear ? '#00aaff' : 'rgba(0,0,0,0.35)') + '">' + y + '</span></div>';
             // Month ticks
             for (var m = 0; m < 12; m++) {
                 var xMonth = xYear + m * MONTH_PX;
-                if (m > 0) html += '<div style="position:absolute;left:' + xMonth + 'px;top:24px;height:16px;border-left:1px solid rgba(255,255,255,0.04)"></div>';
+                if (m > 0) html += '<div style="position:absolute;left:' + xMonth + 'px;top:24px;height:16px;border-left:1px solid rgba(0,0,0,0.04)"></div>';
             }
         }
         // Today marker
@@ -1002,12 +990,12 @@
         data.forEach(function (r, idx) {
             var condCls = { Excellent: '#4ecb71', Good: '#00aaff', Fair: '#c9a84c', Poor: '#ff9500', Critical: '#ff3333' };
             var risk = _calculateRiskScore(r);
-            var bgAlt = idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.03)';
-            html += '<div style="display:flex;min-width:' + (labelW + totalWidth) + 'px;border-bottom:1px solid rgba(255,255,255,0.04);background:' + bgAlt + '">';
+            var bgAlt = idx % 2 === 0 ? 'rgba(0,0,0,0.01)' : 'rgba(0,0,0,0.03)';
+            html += '<div style="display:flex;min-width:' + (labelW + totalWidth) + 'px;border-bottom:1px solid rgba(0,0,0,0.04);background:' + bgAlt + '">';
             // Label column
-            var stickyBg = idx % 2 === 0 ? '#0d1117' : '#111820';
-            html += '<div style="flex:0 0 ' + labelW + 'px;padding:10px 8px;font-size:0.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:' + stickyBg + ';position:sticky;left:0;z-index:10;border-right:1px solid rgba(255,255,255,0.06)">';
-            html += '<strong style="color:#fff">' + (r.hull_number || '-') + '</strong>';
+            var stickyBg = idx % 2 === 0 ? '#f5f5f7' : '#eef0f4';
+            html += '<div style="flex:0 0 ' + labelW + 'px;padding:10px 8px;font-size:0.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:' + stickyBg + ';position:sticky;left:0;z-index:10;border-right:1px solid rgba(0,0,0,0.06)">';
+            html += '<strong style="color:#1d1d1f">' + (r.hull_number || '-') + '</strong>';
             if (r.material_condition) html += ' <span style="font-size:0.6rem;padding:1px 4px;border-radius:2px;background:' + (condCls[r.material_condition]||'#555') + '22;color:' + (condCls[r.material_condition]||'#555') + '">' + r.material_condition + '</span>';
             html += '<div style="font-size:0.65rem;color:var(--muted)">' + (r.hull_type || '') + ' | Risk: <span style="color:' + _riskColor(risk) + '">' + risk + '</span></div>';
             html += '</div>';
@@ -1016,7 +1004,7 @@
             // Year grid lines
             for (var y2 = yearStart; y2 <= yearEnd; y2++) {
                 var xY2 = (y2 - yearStart) * 12 * MONTH_PX;
-                html += '<div style="position:absolute;left:' + xY2 + 'px;top:0;bottom:0;border-left:1px solid rgba(255,255,255,0.03)"></div>';
+                html += '<div style="position:absolute;left:' + xY2 + 'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.03)"></div>';
             }
             // Today line in row
             if (todayPx >= 0) html += '<div style="position:absolute;left:' + todayPx + 'px;top:0;bottom:0;border-left:2px dashed rgba(0,170,255,0.15);z-index:2"></div>';
@@ -1068,15 +1056,15 @@
         html += '<button class="acq-prog-btn acq-prog-active" onclick="acqToggleProgramDropdown()" style="min-width:200px;text-align:left;display:flex;justify-content:space-between;align-items:center">';
         var selLabel = !selectedSet ? 'All Programs (' + _acqPrograms.length + ')' : selectedSet.length + ' of ' + _acqPrograms.length + ' selected';
         html += '<span>' + selLabel + '</span> <i class="fas fa-chevron-down" style="font-size:0.65rem;margin-left:8px;opacity:0.6"></i></button>';
-        html += '<div id="acqProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
-        html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:0.82rem;color:#8b949e;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:4px"><input type="checkbox" ' + (!selectedSet ? 'checked' : '') + ' onchange="acqSelectAllPrograms(this.checked)" style="accent-color:#00aaff;width:15px;height:15px"> <strong style="color:#fff">All Programs</strong></label>';
+        html += '<div id="acqProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:0.82rem;color:#86868b;border-bottom:1px solid rgba(0,0,0,0.06);margin-bottom:4px"><input type="checkbox" ' + (!selectedSet ? 'checked' : '') + ' onchange="acqSelectAllPrograms(this.checked)" style="accent-color:#00aaff;width:15px;height:15px"> <strong style="color:#1d1d1f">All Programs</strong></label>';
         _acqPrograms.forEach(function (p) {
             var checked = !selectedSet || selectedSet.indexOf(p) >= 0;
             var safeP = p.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             html += '<label style="display:flex;align-items:center;gap:8px;padding:4px 12px;cursor:pointer;font-size:0.82rem;color:var(--steel)" onmouseover="this.style.background=\'rgba(0,170,255,0.06)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<input type="checkbox" ' + (checked ? 'checked' : '') + ' onchange="acqToggleProgram(\'' + safeP + '\',this.checked)" style="accent-color:#00aaff;width:15px;height:15px"> ' + p + '</label>';
         });
-        html += '<div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:4px;padding:6px 12px"><div style="display:flex;gap:6px"><input id="acqNewProgInput" type="text" placeholder="Add new program..." style="flex:1;background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.8rem" onkeydown="if(event.key===\'Enter\')acqAddProgram()">';
+        html += '<div style="border-top:1px solid rgba(0,0,0,0.06);margin-top:4px;padding:6px 12px"><div style="display:flex;gap:6px"><input id="acqNewProgInput" type="text" placeholder="Add new program..." style="flex:1;background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:5px 8px;font-size:0.8rem" onkeydown="if(event.key===\'Enter\')acqAddProgram()">';
         html += '<button class="acq-prog-btn" onclick="acqAddProgram()" style="padding:4px 10px;font-size:0.78rem"><i class="fas fa-plus"></i></button></div></div>';
         html += '</div></div>';
         if (selectedSet && selectedSet.length < _acqPrograms.length) {

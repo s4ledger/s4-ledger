@@ -69,15 +69,15 @@ function showRoleSelector() {
 
     var modal = document.createElement('div');
     modal.id = 'roleModal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
 
     var contentDiv = document.createElement('div');
-    contentDiv.style.cssText = 'background:#2c2c2e;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto';
+    contentDiv.style.cssText = 'background:#fff;border:1px solid rgba(0,0,0,0.1);border-radius:3px;padding:32px;max-width:620px;width:95%;max-height:85vh;overflow-y:auto';
 
     // Header
-    contentDiv.innerHTML = '<h3 style="color:#fff;margin:0 0 4px"><i class="fas fa-user-cog" style="color:#00aaff;margin-right:8px"></i>Configure Your Role</h3>'
-        + '<p style="color:#8b949e;font-size:0.85rem;margin-bottom:20px">Select your role to see relevant tools. You can customize visible tools and your displayed title.</p>'
-        + '<div style="margin-bottom:16px"><label style="color:#8b949e;font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" value="'+(_currentTitle||'')+'" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-top:4px;box-sizing:border-box" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>';
+    contentDiv.innerHTML = '<h3 style="color:#1d1d1f;margin:0 0 4px"><i class="fas fa-user-cog" style="color:#00aaff;margin-right:8px"></i>Configure Your Role</h3>'
+        + '<p style="color:#86868b;font-size:0.85rem;margin-bottom:20px">Select your role to see relevant tools. You can customize visible tools and your displayed title.</p>'
+        + '<div style="margin-bottom:16px"><label style="color:#86868b;font-size:0.8rem;font-weight:600">Your Display Title</label><input id="roleTitle" value="'+(_currentTitle||'')+'" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px;width:100%;margin-top:4px;box-sizing:border-box" placeholder="e.g., ILS Analyst, Logistics Specialist, Contract Manager"></div>';
 
     // Build role cards grid using DOM (not innerHTML) for reliable event binding
     var grid = document.createElement('div');
@@ -91,10 +91,10 @@ function showRoleSelector() {
             var card = document.createElement('div');
             card.className = 'role-card';
             card.setAttribute('data-role', key);
-            card.style.cssText = 'border:2px solid '+(isSelected ? '#00aaff' : 'rgba(255,255,255,0.12)')+';border-radius:3px;padding:14px;cursor:pointer;transition:all 0.2s;user-select:none;'+(isSelected ? 'background:rgba(0,170,255,0.15);box-shadow:0 0 12px rgba(0,170,255,0.2)' : '');
-            card.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;pointer-events:none"><i class="fas '+r.icon+'" style="color:#00aaff;font-size:1.1rem"></i><strong style="color:#fff;font-size:0.9rem">'+r.label+'</strong></div>'
-                + '<div style="color:#8b949e;font-size:0.78rem;pointer-events:none">'+r.desc+'</div>'
-                + '<div style="color:#6e7681;font-size:0.72rem;margin-top:4px;pointer-events:none">'+r.tabs.length+' tools</div>';
+            card.style.cssText = 'border:2px solid '+(isSelected ? '#00aaff' : 'rgba(0,0,0,0.1)')+';border-radius:3px;padding:14px;cursor:pointer;transition:all 0.2s;user-select:none;'+(isSelected ? 'background:rgba(0,170,255,0.15);box-shadow:0 0 12px rgba(0,170,255,0.2)' : '');
+            card.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;pointer-events:none"><i class="fas '+r.icon+'" style="color:#00aaff;font-size:1.1rem"></i><strong style="color:#1d1d1f;font-size:0.9rem">'+r.label+'</strong></div>'
+                + '<div style="color:#86868b;font-size:0.78rem;pointer-events:none">'+r.desc+'</div>'
+                + '<div style="color:#6e6e73;font-size:0.72rem;margin-top:4px;pointer-events:none">'+r.tabs.length+' tools</div>';
 
             // Direct click handler per card — no onclick attribute, no delegation needed
             card.addEventListener('click', function(evt) {
@@ -113,7 +113,7 @@ function showRoleSelector() {
     for (var t = 0; t < _allHubTabs.length; t++) {
         var tab = _allHubTabs[t];
         var vis = _customVisibleTabs ? _customVisibleTabs.indexOf(tab)>=0 : (_currentRole ? (_s4Roles[_currentRole]?.tabs||[]).indexOf(tab)>=0 : true);
-        detailsHtml += '<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#8b949e;cursor:pointer;padding:6px 10px;border-radius:3px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s"><input type="checkbox" data-tab="'+tab+'" '+(vis?'checked':'')+' style="accent-color:#00aaff;width:16px;height:16px;flex-shrink:0"> <span>' + (_allHubLabels[tab]||tab) + '</span></label>';
+        detailsHtml += '<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#86868b;cursor:pointer;padding:6px 10px;border-radius:3px;background:rgba(0,0,0,0.015);border:1px solid rgba(0,0,0,0.05);transition:all 0.2s"><input type="checkbox" data-tab="'+tab+'" '+(vis?'checked':'')+' style="accent-color:#00aaff;width:16px;height:16px;flex-shrink:0"> <span>' + (_allHubLabels[tab]||tab) + '</span></label>';
     }
     detailsHtml += '</div></details>';
 
@@ -127,7 +127,7 @@ function showRoleSelector() {
 
     var cancelBtn = document.createElement('button');
     cancelBtn.textContent = 'Cancel';
-    cancelBtn.style.cssText = 'background:rgba(255,255,255,0.06);color:#8b949e;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 20px;cursor:pointer';
+    cancelBtn.style.cssText = 'background:rgba(0,0,0,0.03);color:#86868b;border:1px solid rgba(0,0,0,0.1);border-radius:3px;padding:8px 20px;cursor:pointer';
     cancelBtn.addEventListener('click', function(evt) {
         evt.stopPropagation();
         modal.remove();
@@ -166,7 +166,7 @@ function selectRolePreset(roleKey) {
     // Reset all cards
     var allCards = document.querySelectorAll('#roleModal .role-card');
     for (var i = 0; i < allCards.length; i++) {
-        allCards[i].style.borderColor = 'rgba(255,255,255,0.12)';
+        allCards[i].style.borderColor = 'rgba(0,0,0,0.1)';
         allCards[i].style.background = '';
         allCards[i].style.boxShadow = '';
     }
@@ -469,8 +469,8 @@ function initRoleSystem() {
         // Patch dataset borderColor for baseline/invisible items
         if (config.data && config.data.datasets) {
             config.data.datasets.forEach(function(ds) {
-                if (ds.borderColor === 'rgba(255,255,255,0.2)') {
-                    ds.borderColor = 'rgba(0,0,0,0.2)';
+                if (ds.borderColor === 'rgba(0,0,0,0.15)') {
+                    ds.borderColor = 'rgba(0,0,0,0.15)';
                 }
             });
         }
@@ -493,18 +493,18 @@ function initRoleSystem() {
                     if (chart.options && chart.options.scales) {
                         Object.keys(chart.options.scales).forEach(function(key) {
                             var s = chart.options.scales[key];
-                            if (s.ticks && s.ticks.color && (s.ticks.color === '#8ea4b8' || s.ticks.color === '#6b7d93')) s.ticks.color = tickColor;
+                            if (s.ticks && s.ticks.color && (s.ticks.color === '#6e6e73' || s.ticks.color === '#6e6e73')) s.ticks.color = tickColor;
                             if (s.grid && s.grid.color && typeof s.grid.color === 'string' && s.grid.color.indexOf('255,255,255') >= 0) s.grid.color = gridColor;
                             if (s.angleLines && s.angleLines.color && s.angleLines.color.indexOf('255,255,255') >= 0) s.angleLines.color = gridColor;
-                            if (s.pointLabels && s.pointLabels.color && (s.pointLabels.color === '#8ea4b8' || s.pointLabels.color === '#6b7d93')) s.pointLabels.color = tickColor;
-                            if (s.title && s.title.color && (s.title.color === '#8ea4b8')) s.title.color = labelColor;
+                            if (s.pointLabels && s.pointLabels.color && (s.pointLabels.color === '#6e6e73' || s.pointLabels.color === '#6e6e73')) s.pointLabels.color = tickColor;
+                            if (s.title && s.title.color && (s.title.color === '#6e6e73')) s.title.color = labelColor;
                         });
                     }
                     // Patch plugins
                     if (chart.options && chart.options.plugins) {
                         var p = chart.options.plugins;
-                        if (p.legend && p.legend.labels && p.legend.labels.color && (p.legend.labels.color === '#8ea4b8' || p.legend.labels.color === '#6b7d93')) p.legend.labels.color = labelColor;
-                        if (p.title && p.title.color === '#8ea4b8') p.title.color = labelColor;
+                        if (p.legend && p.legend.labels && p.legend.labels.color && (p.legend.labels.color === '#6e6e73' || p.legend.labels.color === '#6e6e73')) p.legend.labels.color = labelColor;
+                        if (p.title && p.title.color === '#6e6e73') p.title.color = labelColor;
                     }
                 }
             });
@@ -524,7 +524,7 @@ function initRoleSystem() {
             var risk = Math.min(100, 15 + (s.riskItems.length || 0) * 5);
             var budget = Math.min(100, 20 + s.ilsPct * 0.6);
             var withS4 = [tracking,audit,compliance,obsol,risk,budget].map(function(v){ return Math.min(100, v + 30 + Math.random()*5|0); });
-            return { type:'radar', data:{ labels:['Tracking','Audit','Compliance','Obsolescence','Risk','Budget'], datasets:[{label:'Current (Manual)',data:[tracking,audit,compliance,obsol,risk,budget],borderColor:'#ff6b6b',backgroundColor:'rgba(255,107,107,0.1)',pointBackgroundColor:'#ff6b6b'},{label:'With S4 Ledger',data:withS4,borderColor:'#00aaff',backgroundColor:'rgba(0,170,255,0.1)',pointBackgroundColor:'#00aaff'}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8ea4b8',font:{size:10}}}},scales:{r:{grid:{color:'rgba(255,255,255,0.06)'},angleLines:{color:'rgba(255,255,255,0.06)'},pointLabels:{color:'#8ea4b8',font:{size:9}},ticks:{display:false}}}}};
+            return { type:'radar', data:{ labels:['Tracking','Audit','Compliance','Obsolescence','Risk','Budget'], datasets:[{label:'Current (Manual)',data:[tracking,audit,compliance,obsol,risk,budget],borderColor:'#ff6b6b',backgroundColor:'rgba(255,107,107,0.1)',pointBackgroundColor:'#ff6b6b'},{label:'With S4 Ledger',data:withS4,borderColor:'#00aaff',backgroundColor:'rgba(0,170,255,0.1)',pointBackgroundColor:'#00aaff'}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#6e6e73',font:{size:10}}}},scales:{r:{grid:{color:'rgba(0,0,0,0.06)'},angleLines:{color:'rgba(0,0,0,0.06)'},pointLabels:{color:'#6e6e73',font:{size:9}},ticks:{display:false}}}}};
         },
         gapBarChart: function() {
             var s = _getToolState();
@@ -534,7 +534,7 @@ function initRoleSystem() {
             var obsol = Math.max(0, 100 - (10 + (s.dmsmsItems.length||0)*8));
             var risk = Math.max(0, 100 - (15 + (s.riskItems.length||0)*5));
             var budget = Math.max(0, 100 - (20 + s.ilsPct * 0.6));
-            return { type:'bar', data:{ labels:['Tracking','Audit','Compliance','Obsolescence','Risk','Budget'], datasets:[{label:'Gap %',data:[tracking,audit,compliance,obsol,risk,budget],backgroundColor:['#ff6b6b','#fb923c','#c9a84c','#00aaff','#38bdf8','#06b6d4'],borderWidth:0,borderRadius:4}]}, options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6b7d93',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'},max:100},y:{ticks:{color:'#8ea4b8',font:{size:9}},grid:{display:false}}}}};
+            return { type:'bar', data:{ labels:['Tracking','Audit','Compliance','Obsolescence','Risk','Budget'], datasets:[{label:'Gap %',data:[tracking,audit,compliance,obsol,risk,budget],backgroundColor:['#ff6b6b','#fb923c','#c9a84c','#00aaff','#38bdf8','#06b6d4'],borderWidth:0,borderRadius:4}]}, options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6e6e73',font:{size:9}},grid:{color:'rgba(0,0,0,0.04)'},max:100},y:{ticks:{color:'#6e6e73',font:{size:9}},grid:{display:false}}}}};
         },
         dmsmsPieChart: function() {
             var s = _getToolState();
@@ -543,7 +543,7 @@ function initRoleSystem() {
             if (items.length > 0) {
                 items.forEach(function(it){ var st=(it.status||'').toLowerCase(); if(st.indexOf('obsolete')>=0) obsolete++; else if(st.indexOf('risk')>=0||st.indexOf('diminish')>=0) atRisk++; else if(st.indexOf('discontin')>=0) discontinued++; else if(st.indexOf('eol')>=0||st.indexOf('last')>=0) eol++; else active++; });
             } else { active=45; atRisk=20; obsolete=15; discontinued=10; eol=10; }
-            return { type:'doughnut', data:{ labels:['Active','At Risk','Obsolete','Discontinued','EOL Planned'], datasets:[{data:[active,atRisk,obsolete,discontinued,eol],backgroundColor:['#00aaff','#c9a84c','#ff6b6b','#00aaff','#6b7d93'],borderWidth:0}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#8ea4b8',font:{size:9},padding:6}}}}};
+            return { type:'doughnut', data:{ labels:['Active','At Risk','Obsolete','Discontinued','EOL Planned'], datasets:[{data:[active,atRisk,obsolete,discontinued,eol],backgroundColor:['#00aaff','#c9a84c','#ff6b6b','#00aaff','#6e6e73'],borderWidth:0}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#6e6e73',font:{size:9},padding:6}}}}};
         },
         readinessGauge: function() {
             var s = _getToolState();
@@ -554,7 +554,7 @@ function initRoleSystem() {
             var training = Math.min(100, base + 20);
             var maintenance = Math.min(100, base + 6 + (s.actionsDone * 3));
             var c4isr = Math.min(100, base + 12);
-            return { type:'bar', data:{ labels:['Personnel','Equipment','Supply','Training','Maintenance','C4ISR'], datasets:[{label:'Readiness %',data:[personnel,equipment,supply,training,maintenance,c4isr],backgroundColor:'rgba(0,170,255,0.6)',borderColor:'#00aaff',borderWidth:1,borderRadius:4}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8ea4b8',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#6b7d93',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true,max:100}}}};
+            return { type:'bar', data:{ labels:['Personnel','Equipment','Supply','Training','Maintenance','C4ISR'], datasets:[{label:'Readiness %',data:[personnel,equipment,supply,training,maintenance,c4isr],backgroundColor:'rgba(0,170,255,0.6)',borderColor:'#00aaff',borderWidth:1,borderRadius:4}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6e6e73',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#6e6e73',font:{size:9}},grid:{color:'rgba(0,0,0,0.04)'},beginAtZero:true,max:100}}}};
         },
         complianceRadarChart: function() {
             var s = _getToolState();
@@ -564,7 +564,7 @@ function initRoleSystem() {
             var cmmc = s.comp[0] || 20;
             var iso = Math.min(100, 30 + s.ilsPct * 0.5);
             var sox = Math.min(100, 35 + s.vault * 3);
-            return { type:'polarArea', data:{ labels:['DFARS','ITAR','NIST 800-171','CMMC','ISO 27001','SOX'], datasets:[{data:[dfars,itar,nist,cmmc,iso,sox],backgroundColor:['rgba(0,170,255,0.5)','rgba(201,168,76,0.5)','rgba(56,189,248,0.5)','rgba(255,107,107,0.5)','rgba(0,170,255,0.5)','rgba(6,182,212,0.5)'],borderWidth:0}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#8ea4b8',font:{size:9},padding:6}}},scales:{r:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{display:false}}}}};
+            return { type:'polarArea', data:{ labels:['DFARS','ITAR','NIST 800-171','CMMC','ISO 27001','SOX'], datasets:[{data:[dfars,itar,nist,cmmc,iso,sox],backgroundColor:['rgba(0,170,255,0.5)','rgba(201,168,76,0.5)','rgba(56,189,248,0.5)','rgba(255,107,107,0.5)','rgba(0,170,255,0.5)','rgba(6,182,212,0.5)'],borderWidth:0}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#6e6e73',font:{size:9},padding:6}}},scales:{r:{grid:{color:'rgba(0,0,0,0.06)'},ticks:{display:false}}}}};
         },
         roiLineChart: function() {
             var s = _getToolState();
@@ -592,7 +592,7 @@ function initRoleSystem() {
                     data.push(Math.round(-15 + 3.5 * qtr + 0.8 * Math.pow(qtr, 1.45)));
                 }}
             }
-            return { type:'line', data:{ labels:labels, datasets:[{label:'Cumulative ROI %',data:data,borderColor:'#00cc66',backgroundColor:'rgba(0,204,102,0.1)',fill:true,tension:0.3,pointRadius:2,pointBackgroundColor:'#00cc66'}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'5-Year Cumulative ROI',color:'#8ea4b8',font:{size:11}}},scales:{x:{ticks:{color:'#8ea4b8',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#6b7d93',font:{size:9},callback:function(v){return v+'%'}},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}};
+            return { type:'line', data:{ labels:labels, datasets:[{label:'Cumulative ROI %',data:data,borderColor:'#00cc66',backgroundColor:'rgba(0,204,102,0.1)',fill:true,tension:0.3,pointRadius:2,pointBackgroundColor:'#00cc66'}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'5-Year Cumulative ROI',color:'#6e6e73',font:{size:11}}},scales:{x:{ticks:{color:'#6e6e73',font:{size:8},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#6e6e73',font:{size:9},callback:function(v){return v+'%'}},grid:{color:'rgba(0,0,0,0.04)'},beginAtZero:true}}}};
         },
         riskHeatChart: function() {
             var s = _getToolState();
@@ -605,14 +605,14 @@ function initRoleSystem() {
                 for (var i=0; i<nRisks; i++) { points.push({x: 1+Math.floor(Math.random()*9), y: 1+Math.floor(Math.random()*9)}); }
             }
             var colors = points.map(function(p){ var score=p.x*p.y; return score>=50?'rgba(255,70,70,0.8)':score>=25?'rgba(255,165,0,0.7)':score>=10?'rgba(201,168,76,0.6)':'rgba(0,170,255,0.5)'; });
-            return { type:'scatter', data:{ datasets:[{label:'Risk Items',data:points,backgroundColor:colors,borderColor:colors,pointRadius:7}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:points.length+' Risk Items Mapped',color:'#8ea4b8',font:{size:11}}},scales:{x:{title:{display:true,text:'Likelihood →',color:'#8ea4b8',font:{size:9}},ticks:{color:'#6b7d93',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'},min:0,max:10},y:{title:{display:true,text:'Impact →',color:'#8ea4b8',font:{size:9}},ticks:{color:'#6b7d93',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'},min:0,max:10}}}};
+            return { type:'scatter', data:{ datasets:[{label:'Risk Items',data:points,backgroundColor:colors,borderColor:colors,pointRadius:7}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:points.length+' Risk Items Mapped',color:'#6e6e73',font:{size:11}}},scales:{x:{title:{display:true,text:'Likelihood →',color:'#6e6e73',font:{size:9}},ticks:{color:'#6e6e73',font:{size:9}},grid:{color:'rgba(0,0,0,0.04)'},min:0,max:10},y:{title:{display:true,text:'Impact →',color:'#6e6e73',font:{size:9}},ticks:{color:'#6e6e73',font:{size:9}},grid:{color:'rgba(0,0,0,0.04)'},min:0,max:10}}}};
         },
         lifecyclePieChart: function() {
             var s = _getToolState();
             // Adjust curves based on DMSMS alerts and ILS completeness
             var dmsmsRisk = Math.min(30, (s.dmsmsItems.length || 0) * 5);
             var ilsBoost = Math.min(15, s.ilsPct * 0.15);
-            return { type:'line', data:{ labels:['Intro','Growth','Maturity','Sustain','Phase Out','Disposal'], datasets:[{label:'Availability %',data:[95-dmsmsRisk*0.1, 92-dmsmsRisk*0.2+ilsBoost, 88-dmsmsRisk*0.4+ilsBoost, 75-dmsmsRisk*0.6+ilsBoost*2, 50-dmsmsRisk*0.3+ilsBoost, 20+ilsBoost*0.5].map(function(v){return Math.round(Math.max(5,Math.min(100,v)));}),borderColor:'#00aaff',backgroundColor:'rgba(0,170,255,0.1)',fill:true,tension:0.3},{label:'Cost Index',data:[30,25+dmsmsRisk*0.3,35+dmsmsRisk*0.5,55+dmsmsRisk*0.8-ilsBoost,70+dmsmsRisk-ilsBoost*2,90+dmsmsRisk*0.5-ilsBoost].map(function(v){return Math.round(Math.max(5,Math.min(100,v)));}),borderColor:'#ff6b6b',backgroundColor:'rgba(255,107,107,0.05)',fill:true,tension:0.3}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8ea4b8',font:{size:10}}}},scales:{x:{ticks:{color:'#8ea4b8',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#6b7d93',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}};
+            return { type:'line', data:{ labels:['Intro','Growth','Maturity','Sustain','Phase Out','Disposal'], datasets:[{label:'Availability %',data:[95-dmsmsRisk*0.1, 92-dmsmsRisk*0.2+ilsBoost, 88-dmsmsRisk*0.4+ilsBoost, 75-dmsmsRisk*0.6+ilsBoost*2, 50-dmsmsRisk*0.3+ilsBoost, 20+ilsBoost*0.5].map(function(v){return Math.round(Math.max(5,Math.min(100,v)));}),borderColor:'#00aaff',backgroundColor:'rgba(0,170,255,0.1)',fill:true,tension:0.3},{label:'Cost Index',data:[30,25+dmsmsRisk*0.3,35+dmsmsRisk*0.5,55+dmsmsRisk*0.8-ilsBoost,70+dmsmsRisk-ilsBoost*2,90+dmsmsRisk*0.5-ilsBoost].map(function(v){return Math.round(Math.max(5,Math.min(100,v)));}),borderColor:'#ff6b6b',backgroundColor:'rgba(255,107,107,0.05)',fill:true,tension:0.3}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#6e6e73',font:{size:10}}}},scales:{x:{ticks:{color:'#6e6e73',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#6e6e73',font:{size:9}},grid:{color:'rgba(0,0,0,0.04)'},beginAtZero:true}}}};
         }
     };
 

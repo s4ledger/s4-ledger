@@ -1,6 +1,6 @@
-// S4 Ledger Demo — registry
-// Extracted from monolith lines 1319-1563
-// 243 lines
+// S4 Ledger — registry
+// Extracted from monolith lines 1347-1782
+// 434 lines
 
 /* Global drag/drop prevention — stops browser from navigating away on stray drops */
 document.addEventListener('dragover', function(e) { e.preventDefault(); e.stopPropagation(); }, false);
@@ -10,10 +10,168 @@ document.addEventListener('drop', function(e) { e.preventDefault(); e.stopPropag
 /* Provides a namespace for future modularization and global error boundaries */
 window.S4 = window.S4 || {
     version: '5.12.0',
+    env: 'production',
+    buildDate: '2026-02-26',
     modules: {},
     register: function(name, mod) { this.modules[name] = mod; },
     getModule: function(name) { return this.modules[name] || null; }
 };
+
+/* ═══ PRODUCTION MONITORING & ERROR REPORTING ═══ */
+(function() {
+    'use strict';
+
+    // ── 1. Performance Observer — tracks LCP, FID, CLS, TTFB ──
+    S4.metrics = {
+        _data: { lcp: null, fid: null, cls: 0, ttfb: null, fcp: null, errors: [], apiLatency: [] },
+        _startTime: performance.now(),
+        record: function(name, value) { this._data[name] = value; },
+        addApiLatency: function(endpoint, ms) {
+            this._data.apiLatency.push({ endpoint: endpoint, ms: ms, ts: Date.now() });
+            if (this._data.apiLatency.length > 200) this._data.apiLatency.shift();
+        },
+        getReport: function() {
+            return Object.assign({}, this._data, {
+                uptime: Math.round((performance.now() - this._startTime) / 1000),
+                memoryMB: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null,
+                version: S4.version,
+                env: S4.env,
+                timestamp: new Date().toISOString()
+            });
+        }
+    };
+
+    // Web Vitals collection
+    try {
+        if (typeof PerformanceObserver !== 'undefined') {
+            // Largest Contentful Paint
+            new PerformanceObserver(function(list) {
+                var entries = list.getEntries();
+                if (entries.length > 0) S4.metrics.record('lcp', Math.round(entries[entries.length - 1].startTime));
+            }).observe({ type: 'largest-contentful-paint', buffered: true });
+
+            // First Input Delay
+            new PerformanceObserver(function(list) {
+                var entries = list.getEntries();
+                if (entries.length > 0) S4.metrics.record('fid', Math.round(entries[0].processingStart - entries[0].startTime));
+            }).observe({ type: 'first-input', buffered: true });
+
+            // Cumulative Layout Shift
+            new PerformanceObserver(function(list) {
+                var entries = list.getEntries();
+                entries.forEach(function(e) { if (!e.hadRecentInput) S4.metrics._data.cls += e.value; });
+                S4.metrics._data.cls = Math.round(S4.metrics._data.cls * 1000) / 1000;
+            }).observe({ type: 'layout-shift', buffered: true });
+
+            // First Contentful Paint
+            new PerformanceObserver(function(list) {
+                var entries = list.getEntries();
+                entries.forEach(function(e) { if (e.name === 'first-contentful-paint') S4.metrics.record('fcp', Math.round(e.startTime)); });
+            }).observe({ type: 'paint', buffered: true });
+        }
+    } catch(e) { /* Graceful degradation for older browsers */ }
+
+    // TTFB
+    window.addEventListener('load', function() {
+        try {
+            var nav = performance.getEntriesByType('navigation')[0];
+            if (nav) S4.metrics.record('ttfb', Math.round(nav.responseStart - nav.requestStart));
+        } catch(e) {}
+    });
+
+    // ── 2. Production Error Reporter ──
+    S4.errorReporter = {
+        _queue: [],
+        _maxQueue: 50,
+        report: function(error) {
+            var entry = {
+                message: typeof error === 'string' ? error : (error.message || 'Unknown error'),
+                stack: error.stack || null,
+                url: window.location.href,
+                timestamp: new Date().toISOString(),
+                version: S4.version,
+                userAgent: navigator.userAgent.substring(0, 200)
+            };
+            this._queue.push(entry);
+            if (this._queue.length > this._maxQueue) this._queue.shift();
+            console.error('[S4 Error]', entry.message);
+            // Batch send to error reporting endpoint every 60s
+        },
+        flush: async function() {
+            if (this._queue.length === 0) return;
+            var batch = this._queue.splice(0);
+            try {
+                await fetch('/api/errors/report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ errors: batch, session: sessionStorage.getItem('s4_session_id') || 'unknown' })
+                });
+            } catch(e) {
+                // Re-queue on failure — will retry next flush
+                this._queue = batch.concat(this._queue);
+            }
+        }
+    };
+
+    // Flush errors every 60 seconds
+    setInterval(function() { S4.errorReporter.flush(); }, 60000);
+    // Flush on page unload
+    window.addEventListener('beforeunload', function() { S4.errorReporter.flush(); });
+
+    // ── 3. API Interceptor — adds auth headers + latency tracking ──
+    var _originalFetch = window.fetch;
+    window.fetch = function(url, options) {
+        var start = performance.now();
+        var urlStr = typeof url === 'string' ? url : (url.url || '');
+
+        // Inject auth token for S4 API calls
+        if (urlStr.startsWith('/api/')) {
+            options = options || {};
+            options.headers = options.headers || {};
+            if (typeof options.headers.set === 'function') {
+                // Headers object
+            } else {
+                var token = sessionStorage.getItem('s4_auth_token');
+                if (token) options.headers['Authorization'] = 'Bearer ' + token;
+                var csrf = S4.csrf ? S4.csrf.getToken() : null;
+                if (csrf) options.headers['X-CSRF-Token'] = csrf;
+                options.headers['X-S4-Version'] = S4.version;
+                options.headers['X-S4-Client'] = 'web-prod';
+            }
+        }
+
+        return _originalFetch.call(window, url, options).then(function(response) {
+            if (urlStr.startsWith('/api/')) {
+                S4.metrics.addApiLatency(urlStr.split('?')[0], Math.round(performance.now() - start));
+            }
+            return response;
+        }).catch(function(error) {
+            if (urlStr.startsWith('/api/')) {
+                S4.metrics.addApiLatency(urlStr.split('?')[0], -1); // -1 indicates failure
+            }
+            throw error;
+        });
+    };
+
+    // ── 4. Health Check — periodic self-diagnosis ──
+    S4.healthCheck = function() {
+        var checks = {
+            serviceWorker: 'serviceWorker' in navigator,
+            crypto: typeof crypto !== 'undefined' && typeof crypto.subtle !== 'undefined',
+            indexedDB: typeof indexedDB !== 'undefined',
+            localStorage: (function() { try { localStorage.setItem('_hc','1'); localStorage.removeItem('_hc'); return true; } catch(e) { return false; } })(),
+            webSocket: typeof WebSocket !== 'undefined',
+            fetchAPI: typeof fetch !== 'undefined',
+            webCrypto: typeof crypto !== 'undefined' && typeof crypto.subtle !== 'undefined' && typeof crypto.subtle.digest === 'function',
+            performance: typeof PerformanceObserver !== 'undefined'
+        };
+        checks.allPassing = Object.values(checks).every(function(v) { return v === true; });
+        return checks;
+    };
+
+    S4.register('monitoring', { version: '1.0.0', features: ['web-vitals', 'error-reporter', 'api-interceptor', 'health-check'] });
+    console.log('[S4 Production] Monitoring module loaded \u2014 v' + S4.version + ' (' + S4.env + ')');
+})();
 
 /* ═══ i18n PREPARATION — Internationalization Framework ═══ */
 /* Lightweight message catalog for future translation support. */
@@ -28,7 +186,7 @@ S4.i18n = {
             'nav.pricing': 'Pricing',
             'nav.company': 'Company',
             'nav.docs': 'Docs',
-            'nav.requestDemo': 'Request Demo',
+            'nav.contact': 'Contact Us',
             'anchor.title': 'Anchor Channel',
             'anchor.placeholder': 'Or paste/type your defense logistics record here...',
             'anchor.button': 'Anchor Record',
@@ -61,14 +219,38 @@ S4.i18n = {
 };
 window.S4.t = S4.i18n.t.bind(S4.i18n);
 
-/* Global error boundary — log to console only, never show user-facing toasts */
+/* Global error boundary — log + report to Supabase for production monitoring */
+var _errorQueue = [];
+var _errorFlushTimer = null;
+function _reportErrors() {
+    if (_errorQueue.length === 0) return;
+    var batch = _errorQueue.splice(0, 20);
+    try {
+        var sid = localStorage.getItem('s4_session_id') || 'unknown';
+        navigator.sendBeacon('/api/errors/report', JSON.stringify({ session_id: sid, errors: batch }));
+    } catch(e) { /* silent */ }
+}
 window.onerror = function(msg, source, line, col, error) {
     console.error('[S4 Error]', msg, 'at', source, line + ':' + col);
-    return true; /* Suppress from browser console noise */
+    _errorQueue.push({ type: 'js', msg: String(msg).substring(0, 500), source: source, line: line, col: col, ts: Date.now() });
+    clearTimeout(_errorFlushTimer);
+    _errorFlushTimer = setTimeout(_reportErrors, 5000);
+    return true;
 };
 window.addEventListener('unhandledrejection', function(e) {
     console.warn('[S4 Unhandled Promise]', e.reason);
+    _errorQueue.push({ type: 'promise', msg: String(e.reason).substring(0, 500), ts: Date.now() });
+    clearTimeout(_errorFlushTimer);
+    _errorFlushTimer = setTimeout(_reportErrors, 5000);
 });
+window.addEventListener('error', function(e) {
+    if (e.target && e.target !== window) {
+        console.warn('[S4 Resource Error]', e.target.tagName, e.target.src || e.target.href);
+        _errorQueue.push({ type: 'resource', tag: e.target.tagName, url: (e.target.src || e.target.href || '').substring(0, 300), ts: Date.now() });
+        clearTimeout(_errorFlushTimer);
+        _errorFlushTimer = setTimeout(_reportErrors, 5000);
+    }
+}, true);
 
 /* ═══ S4 SECURITY MODULE ═══ */
 /* Provides XSS sanitization, session timeout, encrypted storage, audit chain, rate limiting */
@@ -103,15 +285,24 @@ window.addEventListener('unhandledrejection', function(e) {
         return temp.innerHTML;
     };
 
-    // ── 2. Session Timeout — auto-lock after inactivity ──
+    // ── 2. Session Timeout — auto-lock after inactivity with warning ──
     var _sessionTimeout = 30 * 60 * 1000; // 30 minutes
+    var _sessionWarnTimeout = 28 * 60 * 1000; // Warn at 28 minutes (2 min before lock)
     var _sessionTimer = null;
+    var _sessionWarnTimer = null;
     var _sessionLocked = false;
     S4.sessionTimeout = _sessionTimeout;
 
     function _resetSessionTimer() {
         if (_sessionLocked) return;
         clearTimeout(_sessionTimer);
+        clearTimeout(_sessionWarnTimer);
+        // Warning toast 2 minutes before lock
+        _sessionWarnTimer = setTimeout(function() {
+            if (!_sessionLocked && typeof s4Notify === 'function') {
+                s4Notify('Session Expiring', 'Your session will lock in 2 minutes due to inactivity. Move your mouse or press a key to stay active.', 'warning');
+            }
+        }, _sessionWarnTimeout);
         _sessionTimer = setTimeout(function() {
             _sessionLocked = true;
             S4.sessionLocked = true;

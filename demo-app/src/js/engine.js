@@ -63,7 +63,7 @@ const _RT = {
 USN_SUPPLY_RECEIPT:["Supply Chain Receipt","fa-box","#00aaff","USN","NAVSUP OneTouch"],
 USN_3M_MAINTENANCE:["3-M Maintenance Action","fa-wrench","#ffd700","USN","SKED/OARS"],
 USN_CASREP:["Casualty Report (CASREP)","fa-exclamation-triangle","#ff3333","USN","TYCOM"],
-USN_CDRL:["CDRL Delivery","fa-file-alt","#8ea4b8","USN","CDMD-OA"],
+USN_CDRL:["CDRL Delivery","fa-file-alt","#6e6e73","USN","CDMD-OA"],
 USN_ORDNANCE:["Ordnance Lot Tracking","fa-bomb","#ff6b6b","USN","AESIP"],
 USN_DEPOT_REPAIR:["Depot Repair Record","fa-industry","#ff9933","USN","CNRMF"],
 USN_INSURV:["INSURV Inspection","fa-search","#66ccff","USN","NRCC"],
@@ -161,7 +161,7 @@ function _flashSlsBalance(newBalance, fee) {
     if (existing) existing.remove();
     var toast = document.createElement('div');
     toast.id = 'slsFlashToast';
-    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:3px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
+    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:3px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.12);backdrop-filter:blur(6px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
     toast.innerHTML = '<div style="font-weight:700;color:#c9a84c;margin-bottom:6px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-coins" style="margin-right:6px"></i>Credit Balance Updated</div>'
         + '<div style="font-size:1.4rem;font-weight:800;color:#c9a84c;">' + newBalance + ' <span style="font-size:0.8rem;font-weight:600;">Credits</span></div>'
         + '<div style="font-size:0.78rem;color:#ff6b6b;margin-top:4px;">-' + fee.toFixed(2) + ' Credits (anchor fee)</div>';
@@ -1191,14 +1191,14 @@ function refreshVerifyRecents() {
             ago = diff < 60 ? diff + 's ago' : diff < 3600 ? Math.floor(diff/60) + 'm ago' : diff < 86400 ? Math.floor(diff/3600) + 'h ago' : Math.floor(diff/86400) + 'd ago';
         } catch(e) { ago = ''; }
         var hasFullContent = r.fullContent && r.fullContent.length > 0;
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:3px;margin-bottom:4px;transition:all 0.2s;background:rgba(255,255,255,0.02);">'
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(0,0,0,0.05);border-radius:3px;margin-bottom:4px;transition:all 0.2s;background:rgba(0,0,0,0.015);">'
             + '<span style="color:var(--accent);font-size:0.8rem;width:20px;text-align:center;display:inline-block">' + _renderIcon(r.icon) + '</span>'
             + '<div style="flex:1;min-width:0;cursor:pointer" onclick="loadRecordToVerify(' + idx + ')">'
-            + '<div style="font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.label + '</div>'
+            + '<div style="font-size:0.78rem;font-weight:600;color:#1d1d1f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.label + '</div>'
             + '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.hash.substring(0,24) + '...</div>'
             + '</div>'
             + '<span style="font-size:0.65rem;color:var(--steel);white-space:nowrap;">' + ago + '</span>'
-            + '<button onclick="loadRecordToVerify(' + idx + ')" style="background:' + (hasFullContent ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.05)') + ';border:1px solid ' + (hasFullContent ? 'rgba(0,170,255,0.3)' : 'rgba(255,255,255,0.1)') + ';color:' + (hasFullContent ? 'var(--accent)' : 'var(--steel)') + ';border-radius:3px;padding:3px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="fas fa-eye" style="margin-right:3px"></i>View</button>'
+            + '<button onclick="loadRecordToVerify(' + idx + ')" style="background:' + (hasFullContent ? 'rgba(0,170,255,0.15)' : 'rgba(0,0,0,0.05)') + ';border:1px solid ' + (hasFullContent ? 'rgba(0,170,255,0.3)' : 'rgba(0,0,0,0.1)') + ';color:' + (hasFullContent ? 'var(--accent)' : 'var(--steel)') + ';border-radius:3px;padding:3px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="fas fa-eye" style="margin-right:3px"></i>View</button>'
             + '</div>';
     }).join(''));
 }
@@ -1327,7 +1327,7 @@ async function verifyFiles(fileList) {
     // Render results
     var html = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;">';
     html += '<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">';
-    html += '<span style="color:#fff;font-weight:700;font-size:0.88rem;"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:6px;"></i>File Verification Results</span>';
+    html += '<span style="color:#1d1d1f;font-weight:700;font-size:0.88rem;"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:6px;"></i>File Verification Results</span>';
     var matched = results.filter(function(r) { return r.matched; }).length;
     var failed = results.filter(function(r) { return !r.matched && !r.noAnchor; }).length;
     var notFound = results.filter(function(r) { return r.noAnchor; }).length;
@@ -1343,10 +1343,10 @@ async function verifyFiles(fileList) {
         var statusIcon = r.matched ? 'fa-check-circle' : (r.noAnchor ? 'fa-question-circle' : 'fa-times-circle');
         var statusText = r.matched ? 'VERIFIED \u2014 Integrity confirmed' : (r.noAnchor ? 'NOT FOUND \u2014 No matching anchor in session' : 'MISMATCH \u2014 File may have been tampered with');
 
-        html += '<div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;gap:12px;align-items:flex-start;">';
+        html += '<div style="padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.03);display:flex;gap:12px;align-items:flex-start;">';
         html += '<div style="width:32px;height:32px;border-radius:3px;background:rgba(0,170,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-file" style="color:var(--accent);font-size:0.85rem;"></i></div>';
         html += '<div style="flex:1;min-width:0;">';
-        html += '<div style="color:#fff;font-weight:600;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.fileName + ' <span style="color:var(--muted);font-weight:400;">(' + r.fileSize + ')</span></div>';
+        html += '<div style="color:#1d1d1f;font-weight:600;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.fileName + ' <span style="color:var(--muted);font-weight:400;">(' + r.fileSize + ')</span></div>';
         html += '<div style="font-family:monospace;font-size:0.7rem;color:var(--muted);margin:3px 0;word-break:break-all;">SHA-256: ' + r.hash + '</div>';
         html += '<div style="color:' + statusColor + ';font-size:0.78rem;font-weight:600;"><i class="fas ' + statusIcon + '" style="margin-right:4px;"></i>' + statusText + '</div>';
         if (r.matchedRecord) {
@@ -1358,7 +1358,7 @@ async function verifyFiles(fileList) {
 
     // Batch controls
     html += '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">';
-    html += '<button onclick="document.getElementById(\'verifyFileInput\').value=\'\';document.getElementById(\'verifyFileResults\').style.display=\'none\';" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);padding:6px 14px;border-radius:3px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-redo"></i> Verify More Files</button>';
+    html += '<button onclick="document.getElementById(\'verifyFileInput\').value=\'\';document.getElementById(\'verifyFileResults\').style.display=\'none\';" style="background:rgba(0,0,0,0.03);color:var(--steel);border:1px solid var(--border);padding:6px 14px;border-radius:3px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-redo"></i> Verify More Files</button>';
     if (matched > 0) {
         html += '<button onclick="exportVerificationReport()" style="background:rgba(0,170,255,0.12);color:var(--accent);border:1px solid rgba(0,170,255,0.3);padding:6px 14px;border-radius:3px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-download"></i> Export Report</button>';
     }
@@ -3134,7 +3134,7 @@ function renderToolFileList(toolId) {
         const sz = f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB';
         const icon = /\.xlsx?$/i.test(f.name) ? 'fa-file-excel' : /\.csv$/i.test(f.name) ? 'fa-file-csv' : /\.pdf$/i.test(f.name) ? 'fa-file-pdf' : /\.docx$/i.test(f.name) ? 'fa-file-word' : 'fa-file-alt';
         return '<div class="ils-file-item"><div class="file-info"><i class="fas '+icon+'" style="color:var(--accent);margin-right:8px"></i>'
-            + '<span style="font-weight:600;color:#fff">'+f.name+'</span></div>'
+            + '<span style="font-weight:600;color:#1d1d1f">'+f.name+'</span></div>'
             + '<div class="file-stats">'+f.rows+' rows detected \u00b7 '+sz+'</div>'
             + "<button class=\"file-remove\" onclick=\"removeToolFile('"+toolId+"','"+f.id+"')\">\u00d7</button></div>";
     }).join('');
@@ -3253,7 +3253,7 @@ function renderFileList() {
         const sz = f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB';
         const icon = /\.xlsx?$/i.test(f.name) ? 'fa-file-excel' : /\.csv$/i.test(f.name) ? 'fa-file-csv' : /\.pdf$/i.test(f.name) ? 'fa-file-pdf' : /\.docx$/i.test(f.name) ? 'fa-file-word' : 'fa-file-alt';
         return '<div class="ils-file-item"><div class="file-info"><i class="fas '+icon+'" style="color:var(--accent);margin-right:8px"></i>'
-            + '<span style="font-weight:600;color:#fff">'+f.name+'</span></div>'
+            + '<span style="font-weight:600;color:#1d1d1f">'+f.name+'</span></div>'
             + '<div class="file-stats">'+f.records.length+' DRL items detected from '+f.totalRows+' rows \u00b7 '+sz+'</div>'
             + '<button class="file-remove" onclick="removeILSFile(\''+f.id+'\')">\u00d7</button></div>';
     }).join('');
@@ -3833,7 +3833,7 @@ function renderILSCoverage(clItems, drlResults) {
     clItems.forEach(item => {
         const icon = item.checked ? 'fa-check-circle' : 'fa-times-circle';
         const color = item.checked ? '#00aaff' : (item.c ? '#ff3333' : 'var(--muted)');
-        html += '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.03)">'
+        html += '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:0.82rem;border-bottom:1px solid rgba(0,0,0,0.03)">'
             + '<i class="fas '+icon+'" style="color:'+color+';font-size:0.75rem;min-width:14px"></i>'
             + '<span style="color:'+(item.checked?'var(--steel)':'var(--muted)')+'">'+item.l+'</span>'
             + (item.c&&!item.checked?'<span style="color:#ff3333;font-size:0.65rem;font-weight:700;margin-left:auto">GAP</span>':'')
@@ -5015,11 +5015,11 @@ function loadDMSMSData() {
 
     const statusColors = {Active:'#00aaff','At Risk':'#ffa500',Obsolete:'#ff3333','End of Life':'#ff6666',Watch:'#ffcc00'};
     let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
-    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:var(--steel);"><th style="padding:8px;text-align:left;">System</th><th>NSN</th><th>Manufacturer</th><th>Status</th><th>Severity</th><th>Lead Time</th><th>Est. Cost</th><th>Alternate</th><th>End of Support</th></tr>';
+    html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.1);color:var(--steel);"><th style="padding:8px;text-align:left;">System</th><th>NSN</th><th>Manufacturer</th><th>Status</th><th>Severity</th><th>Lead Time</th><th>Est. Cost</th><th>Alternate</th><th>End of Support</th></tr>';
     data.forEach(d => {
         const color = statusColors[d.status] || '#fff';
-        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">';
-        html += '<td style="padding:8px;color:#fff;font-weight:600;">' + d.system + '</td>';
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.05);">';
+        html += '<td style="padding:8px;color:#1d1d1f;font-weight:600;">' + d.system + '</td>';
         html += '<td style="padding:8px;color:var(--steel);font-family:monospace;font-size:0.78rem;">' + d.nsn + '</td>';
         html += '<td style="padding:8px;color:var(--steel);">' + d.manufacturer + '</td>';
         html += '<td style="padding:8px;"><span style="color:' + color + ';font-weight:600;">' + d.status + '</span></td>';
@@ -5127,16 +5127,16 @@ function calcReadiness() {
     html += '<div style="font-weight:700;color:#00aaff;margin-bottom:10px;font-size:1rem;">RAM Analysis: ' + sysName + '</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
     html += '<div><strong>Operational Availability (Ao):</strong></div><div style="color:' + (ao>=0.9?'#00aaff':ao>=0.75?'#ffa500':'#ff3333') + ';font-weight:700;">' + (ao*100).toFixed(2) + '%</div>';
-    html += '<div><strong>Inherent Availability (Ai):</strong></div><div style="color:#fff;">' + (ai*100).toFixed(2) + '%</div>';
-    html += '<div><strong>Failure Rate (λ):</strong></div><div style="color:#fff;">' + lambda.toFixed(6) + ' failures/hr</div>';
+    html += '<div><strong>Inherent Availability (Ai):</strong></div><div style="color:#1d1d1f;">' + (ai*100).toFixed(2) + '%</div>';
+    html += '<div><strong>Failure Rate (λ):</strong></div><div style="color:#1d1d1f;">' + lambda.toFixed(6) + ' failures/hr</div>';
     html += '<div><strong>30-Day Mission Reliability:</strong></div><div style="color:' + (missionReliability>=0.8?'#00aaff':'#ffa500') + ';">' + (missionReliability*100).toFixed(1) + '%</div>';
-    html += '<div><strong>Est. Annual Failures:</strong></div><div style="color:#fff;">' + annualFailures.toFixed(1) + '</div>';
+    html += '<div><strong>Est. Annual Failures:</strong></div><div style="color:#1d1d1f;">' + annualFailures.toFixed(1) + '</div>';
     html += '<div><strong>Est. Annual Downtime:</strong></div><div style="color:' + (annualDowntime<500?'#00aaff':'#00aaff') + ';">' + annualDowntime.toFixed(0) + ' hrs (' + (annualDowntime/24).toFixed(1) + ' days)</div>';
     html += '<div><strong>Est. Annual Uptime:</strong></div><div style="color:#00aaff;">' + annualUptime.toFixed(0) + ' hrs</div>';
     html += '</div>';
 
     // Assessment
-    html += '<div style="margin-top:12px;padding:10px;border-radius:3px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">';
+    html += '<div style="margin-top:12px;padding:10px;border-radius:3px;background:rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.05);">';
     if (ao >= 0.95) html += '<span style="color:#00aaff;font-weight:700;">EXCELLENT</span> — System exceeds readiness requirements. Ao > 95% meets most high-priority program thresholds.';
     else if (ao >= 0.90) html += '<span style="color:#00aaff;font-weight:700;">MEETS REQUIREMENTS</span> — Ao > 90% is acceptable for most defense programs. Monitor MLDT for improvement opportunities.';
     else if (ao >= 0.80) html += '<span style="color:#ffa500;font-weight:700;">MARGINAL</span> — Ao between 80-90%. Consider reducing MLDT through pre-positioned spares or improving MTTR via better training/tools.';
@@ -5196,18 +5196,18 @@ var _customProgramData = null;
 function showCustomProgramInput() {
     var modal = document.createElement('div');
     modal.id = 'customProgramModal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto">'
-        + '<h3 style="color:#fff;margin:0 0 8px"><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>Custom Program / Platform</h3>'
+        + '<h3 style="color:#1d1d1f;margin:0 0 8px"><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>Custom Program / Platform</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Enter your program details. A GEIA-STD-0007 ILS template will be applied.</p>'
         + '<div style="display:grid;gap:12px">'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Acquiring Office</label><input id="customProgOffice" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., PMS 400D, PMA-299"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" class="form-control" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" class="form-control" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Acquiring Office</label><input id="customProgOffice" class="form-control" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., PMS 400D, PMA-299"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Cancel</button>'
+        + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(0,0,0,0.03);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Cancel</button>'
         + '<button onclick="applyCustomProgram()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Apply Program</button>'
         + '</div></div>';
     document.body.appendChild(modal);
@@ -5650,7 +5650,7 @@ function renderActionTimeline() {
         var dateLabel = item.due ? item.due : (item.schedule || 'No date');
         html += '<div style="position:relative;margin-bottom:16px;padding:10px 14px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:3px;border-left:3px solid ' + color + '">';
         html += '<div style="position:absolute;left:-24px;top:14px;width:12px;height:12px;border-radius:50%;background:' + color + ';border:2px solid var(--bg)"></div>';
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><strong style="color:#fff;font-size:0.85rem">' + item.title + '</strong>';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><strong style="color:#1d1d1f;font-size:0.85rem">' + item.title + '</strong>';
         html += '<span style="font-size:0.72rem;color:' + color + ';font-weight:600">' + dateLabel + '</span></div>';
         html += '<div style="font-size:0.75rem;color:var(--steel)">';
         html += '<span class="ai-tag ' + (item.severity || 'info') + '" style="font-size:0.68rem;margin-right:6px">' + (item.severity || 'info').toUpperCase() + '</span>';
@@ -5834,7 +5834,7 @@ function renderHubActions(filter) {
         const srcIcons = {dmsms:'<i class="fas fa-exclamation-triangle"></i>',readiness:'<i class="fas fa-chart-line"></i>',parts:'<i class="fas fa-cog"></i>',warranty:'<i class="fas fa-clipboard-list"></i>',roi:'<i class="fas fa-dollar-sign"></i>',lifecycle:'<i class="fas fa-hourglass-half"></i>',ils:'<i class="fas fa-brain"></i>',checklist:'<i class="fas fa-check-circle" style="color:var(--accent)"></i>',drl:'<i class="fas fa-file-alt"></i>'};
         let sHtml = '';
         Object.entries(sources).sort((a,b)=>b[1]-a[1]).forEach(([src,cnt]) => {
-            sHtml += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03)"><span>'+(srcIcons[src]||'<i class="fas fa-thumbtack"></i>')+' '+src.toUpperCase()+'</span><span style="font-weight:700;color:var(--accent)">'+cnt+'</span></div>';
+            sHtml += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.03)"><span>'+(srcIcons[src]||'<i class="fas fa-thumbtack"></i>')+' '+src.toUpperCase()+'</span><span style="font-weight:700;color:var(--accent)">'+cnt+'</span></div>';
         });
         srcEl.innerHTML = window._s4Safe(sHtml);
     }
@@ -5946,7 +5946,7 @@ function refreshVaultMetrics() {
         breakdownEl.innerHTML = '<div style="margin-top:6px;font-weight:700;color:#00aaff;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Type Distribution</div>' +
             top.map(function(e) {
                 var pct = count > 0 ? ((e[1] / count) * 100).toFixed(0) : 0;
-                return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + e[0] + '</div><div style="width:80px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:#00aaff;border-radius:3px"></div></div><div style="min-width:36px;text-align:right;color:#ccc">' + e[1] + '</div></div>';
+                return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + e[0] + '</div><div style="width:80px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:#00aaff;border-radius:3px"></div></div><div style="min-width:36px;text-align:right;color:#6e6e73">' + e[1] + '</div></div>';
             }).join('') +
             (sorted.length > 8 ? '<div style="color:var(--muted);font-size:0.7rem;margin-top:4px">+' + (sorted.length - 8) + ' more types</div>' : '');
     } else if (breakdownEl) {
@@ -6004,7 +6004,7 @@ function renderVault() {
                 <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden">
                     <input type="checkbox" class="vault-cb" data-hash="${v.hash}" onchange="_updateBulkBar()" style="accent-color:#00aaff;cursor:pointer;flex-shrink:0">
                     <span style="font-size:0.95rem;flex-shrink:0;width:20px;text-align:center;line-height:1">${_renderIcon(v.icon)}</span>
-                    <strong style="color:#fff;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.label || v.type}</strong>
+                    <strong style="color:#1d1d1f;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.label || v.type}</strong>
                     <span style="font-size:0.72rem;color:var(--muted);flex-shrink:0;white-space:nowrap">${v.branch || ''}</span>
                 </div>
                 <div style="display:flex;gap:6px;flex-shrink:0">
@@ -6229,16 +6229,16 @@ function runVaultStressTest() {
         if (resultsDiv) {
             var sizeEstimate = (new Blob([JSON.stringify(s4Vault)]).size / 1024).toFixed(1);
             resultsDiv.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px">'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + count.toLocaleString() + '</div><div style="color:#888;font-size:0.72rem">Records Generated</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + s4Vault.length.toLocaleString() + '</div><div style="color:#888;font-size:0.72rem">Total Vault Records</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + sizeEstimate + ' KB</div><div style="color:#888;font-size:0.72rem">Storage Used</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + totalMs.toFixed(0) + ' ms</div><div style="color:#888;font-size:0.72rem">Total Time</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + count.toLocaleString() + '</div><div style="color:#6e6e73;font-size:0.72rem">Records Generated</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + s4Vault.length.toLocaleString() + '</div><div style="color:#6e6e73;font-size:0.72rem">Total Vault Records</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + sizeEstimate + ' KB</div><div style="color:#6e6e73;font-size:0.72rem">Storage Used</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + totalMs.toFixed(0) + ' ms</div><div style="color:#6e6e73;font-size:0.72rem">Total Time</div></div>'
                 + '</div>'
                 + '<table style="width:100%;font-size:0.75rem;border-collapse:collapse">'
-                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#888">Record Generation</td><td style="padding:4px 8px;color:#fff;text-align:right">' + genMs.toFixed(1) + ' ms</td></tr>'
-                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#888">Array Merge</td><td style="padding:4px 8px;color:#fff;text-align:right">' + mergeMs.toFixed(1) + ' ms</td></tr>'
-                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#888">localStorage Save</td><td style="padding:4px 8px;color:#fff;text-align:right">' + saveMs.toFixed(1) + ' ms</td></tr>'
-                + '<tr><td style="padding:4px 8px;color:#888">DOM Render (page)</td><td style="padding:4px 8px;color:#fff;text-align:right">' + renderMs.toFixed(1) + ' ms</td></tr>'
+                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#6e6e73">Record Generation</td><td style="padding:4px 8px;color:#1d1d1f;text-align:right">' + genMs.toFixed(1) + ' ms</td></tr>'
+                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#6e6e73">Array Merge</td><td style="padding:4px 8px;color:#1d1d1f;text-align:right">' + mergeMs.toFixed(1) + ' ms</td></tr>'
+                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#6e6e73">localStorage Save</td><td style="padding:4px 8px;color:#1d1d1f;text-align:right">' + saveMs.toFixed(1) + ' ms</td></tr>'
+                + '<tr><td style="padding:4px 8px;color:#6e6e73">DOM Render (page)</td><td style="padding:4px 8px;color:#1d1d1f;text-align:right">' + renderMs.toFixed(1) + ' ms</td></tr>'
                 + '</table>';
         }
         s4Notify('Stress Test Complete', count.toLocaleString() + ' records generated in ' + totalMs.toFixed(0) + 'ms. Total vault: ' + s4Vault.length.toLocaleString(), 'success');
@@ -6284,20 +6284,20 @@ try { _docNotifications = JSON.parse(localStorage.getItem('s4_doc_notifications'
 function showDocUpload() {
     var modal = document.createElement('div');
     modal.id = 'docUploadModal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:10000;display:flex;align-items:center;justify-content:center';
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:560px;width:90%">'
-        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-file-upload" style="color:var(--accent);margin-right:8px"></i>Add New Document</h3>'
+        + '<h3 style="color:#1d1d1f;margin:0 0 16px"><i class="fas fa-file-upload" style="color:var(--accent);margin-right:8px"></i>Add New Document</h3>'
         + '<div style="display:grid;gap:12px">'
-        + '<input id="newDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Document ID (e.g., GEIA-STD-0007, MIL-STD-1388-2B)">'
-        + '<input id="newDocTitle" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Title">'
-        + '<textarea id="newDocContent" rows="6" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
-        + '<select id="newDocCat" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
+        + '<input id="newDocId" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px" placeholder="Document ID (e.g., GEIA-STD-0007, MIL-STD-1388-2B)">'
+        + '<input id="newDocTitle" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px" placeholder="Title">'
+        + '<textarea id="newDocContent" rows="6" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
+        + '<select id="newDocCat" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
         + '<div id="docUploadDropzone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(0,170,255,0.08)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\'" ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\';if(event.dataTransfer.files.length){var inp=document.getElementById(\'newDocFile\');inp.files=event.dataTransfer.files;handleDocFileSelect(inp)}" onclick="document.getElementById(\'newDocFile\').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:3px;padding:28px 20px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(0,170,255,0.02);transition:all 0.3s"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;display:block;color:var(--accent)"></i><div style=\'font-size:0.9rem;color:var(--steel);font-weight:600;margin-bottom:6px\'>Drag & drop your file here</div><div style=\'font-size:0.78rem;color:var(--muted)\'>or <span style=\'color:var(--accent);text-decoration:underline\'>click to browse</span></div><div style=\'font-size:0.72rem;color:var(--muted);margin-top:8px\'>PDF, Word, Excel, CSV, TXT — any document type</div><input type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv,.json" onchange="handleDocFileSelect(this)"></div>'
         + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:10px 14px;margin-top:12px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong style="color:#00aaff">S4 AI Agent</strong> will automatically scan uploads for discrepancies, compliance gaps, unauthorized changes, and red flags.</div>'
         + '<div id="newDocFileInfo" style="display:none;padding:8px;background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:3px;font-size:0.82rem;color:#00cc66"></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'docUploadModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
+        + '<button onclick="document.getElementById(\'docUploadModal\').remove()" style="background:rgba(0,0,0,0.03);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
         + '<button onclick="addNewDoc()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Add Document</button>'
         + '</div></div>';
     document.body.appendChild(modal);
@@ -6338,15 +6338,15 @@ function showDocVersionUpload() {
     var ids = Object.keys(_docVersions);
     var modal = document.createElement('div');
     modal.id = 'docVersionModal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:10000;display:flex;align-items:center;justify-content:center';
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">'
-        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:8px"></i>Upload New Version</h3>'
+        + '<h3 style="color:#1d1d1f;margin:0 0 16px"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:8px"></i>Upload New Version</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Upload a revised version of an existing document. Our AI agent will analyze it for discrepancies, changes, errors, omissions, and cost modifications — then flag anything that needs attention.</p>'
-        + '<select id="versionDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
-        + '<textarea id="versionContent" rows="8" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;font-family:monospace;font-size:0.82rem;margin-bottom:12px" placeholder="Paste updated document content..."></textarea>'
-        + '<input id="versionNote" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-bottom:12px" placeholder="Change notes (optional)">'
+        + '<select id="versionDocId" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
+        + '<textarea id="versionContent" rows="8" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px;width:100%;font-family:monospace;font-size:0.82rem;margin-bottom:12px" placeholder="Paste updated document content..."></textarea>'
+        + '<input id="versionNote" style="background:#f5f5f7;color:#1d1d1f;border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:10px;width:100%;margin-bottom:12px" placeholder="Change notes (optional)">'
         + '<div style="display:flex;gap:10px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'docVersionModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
+        + '<button onclick="document.getElementById(\'docVersionModal\').remove()" style="background:rgba(0,0,0,0.03);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
         + '<button onclick="uploadDocVersion()" style="background:#c9a84c;color:#000;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Upload & Analyze</button>'
         + '</div></div>';
     document.body.appendChild(modal);
@@ -6405,7 +6405,7 @@ function scanForRedFlags(content, docId) {
 }
 
 function showRedFlagAlert(docId, flags) {
-    var html = '<div style="position:fixed;top:80px;right:20px;background:#1a0a0a;border:2px solid #ff4444;border-radius:3px;padding:20px;max-width:400px;z-index:10001;animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(255,0,0,0.2)">'
+    var html = '<div style="position:fixed;top:80px;right:20px;background:#fff5f5;border:2px solid #ff4444;border-radius:3px;padding:20px;max-width:400px;z-index:10001;animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(255,0,0,0.2)">'
         + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h4 style="color:#ff4444;margin:0"><i class="fas fa-flag"></i> Red Flags: '+docId+'</h4><button onclick="this.closest(\'div\').parentElement.remove()" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:1.2rem">&times;</button></div>';
     flags.forEach(function(f) {
         var col = f.severity === 'critical' ? '#ff0000' : f.severity === 'high' ? '#ff4444' : f.severity === 'medium' ? '#ff8800' : '#c9a84c';
@@ -6420,9 +6420,9 @@ function showRedFlagAlert(docId, flags) {
 
 function showDiffResult(docId, diff, flags) {
     var modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:10000;display:flex;align-items:center;justify-content:center';
     var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto">'
-        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-brain" style="color:#c9a84c;margin-right:8px"></i>Document Intelligence Analysis: '+docId+'</h3>'
+        + '<h3 style="color:#1d1d1f;margin:0 0 16px"><i class="fas fa-brain" style="color:#c9a84c;margin-right:8px"></i>Document Intelligence Analysis: '+docId+'</h3>'
                 + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;color:var(--steel)"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong style="color:#00aaff">S4 AI Agent:</strong> Analyzed document for discrepancies, unauthorized changes, errors, omissions, and cost modifications.</div>'
         + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">'
         + '<div style="background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:3px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#00cc66">+'+diff.added+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Added</div></div>'
@@ -6435,7 +6435,7 @@ function showDiffResult(docId, diff, flags) {
         html += '</div>';
     }
     if (diff.details.length > 0) {
-        html += '<div style="background:#050810;border-radius:3px;padding:12px;font-family:monospace;font-size:0.78rem;max-height:250px;overflow-y:auto">';
+        html += '<div style="background:#f5f5f7;border-radius:3px;padding:12px;font-family:monospace;font-size:0.78rem;max-height:250px;overflow-y:auto">';
         diff.details.forEach(function(d) {
             if (d.type==='add') html += '<div style="color:#00cc66">+ L'+d.line+': '+d.text.substring(0,80)+'</div>';
             else if (d.type==='del') html += '<div style="color:#ff4444">- L'+d.line+': '+d.text.substring(0,80)+'</div>';
@@ -6690,9 +6690,9 @@ function renderPOAM() {
         var riskColor = p.risk === 'High' ? '#ff6b6b' : p.risk === 'Moderate' ? '#c9a84c' : '#00aaff';
         var statusColor = p.status === 'Closed' ? 'var(--green)' : p.status === 'In Progress' ? '#00aaff' : p.status === 'Accepted Risk' ? '#c9a84c' : '#ff6b6b';
         var overdue = p.due && new Date(p.due) < new Date() && p.status !== 'Closed';
-        return '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">'
+        return '<tr style="border-bottom:1px solid rgba(0,0,0,0.04)">'
             + '<td style="padding:6px 8px;color:#00aaff;font-weight:600;font-size:0.78rem">' + p.id + '</td>'
-            + '<td style="padding:6px 8px;color:#fff;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (p.weakness||'').replace(/"/g,'&quot;') + '">' + (p.weakness||'') + '</td>'
+            + '<td style="padding:6px 8px;color:#1d1d1f;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (p.weakness||'').replace(/"/g,'&quot;') + '">' + (p.weakness||'') + '</td>'
             + '<td style="padding:6px 8px;color:var(--steel)">' + (p.control||'') + '</td>'
             + '<td style="padding:6px 8px"><span style="color:' + riskColor + ';font-weight:600">' + (p.risk||'') + '</span></td>'
             + '<td style="padding:6px 8px;color:var(--steel);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (p.milestone||'') + '</td>'
@@ -6773,9 +6773,9 @@ function renderEvidence() {
     if (empty) empty.style.display = 'none';
     list.innerHTML = window._s4Safe(_evidenceItems.map(function(e, i) {
         var icon = e.type.indexOf('pdf') >= 0 ? 'fa-file-pdf' : e.type.indexOf('image') >= 0 ? 'fa-file-image' : e.type.indexOf('sheet') >= 0 || e.filename.match(/\.xlsx?$/i) ? 'fa-file-excel' : 'fa-file';
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid #c9a84c">'
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(0,0,0,0.015);border-radius:3px;border-left:3px solid #c9a84c">'
             + '<i class="fas ' + icon + '" style="color:#c9a84c;font-size:1rem;width:20px;text-align:center"></i>'
-            + '<div style="flex:1;min-width:0"><div style="color:#fff;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + e.filename + '</div><div style="font-size:0.72rem;color:var(--steel)">' + e.control + ' | ' + e.size + ' | ' + new Date(e.timestamp).toLocaleDateString() + (e.hash ? ' | <span style="color:#00aaff">Hash: ' + e.hash + '</span>' : '') + '</div></div>'
+            + '<div style="flex:1;min-width:0"><div style="color:#1d1d1f;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + e.filename + '</div><div style="font-size:0.72rem;color:var(--steel)">' + e.control + ' | ' + e.size + ' | ' + new Date(e.timestamp).toLocaleDateString() + (e.hash ? ' | <span style="color:#00aaff">Hash: ' + e.hash + '</span>' : '') + '</div></div>'
             + '<span style="font-size:0.72rem;color:#00aaff;background:#00aaff11;padding:2px 6px;border-radius:3px">' + e.status + '</span>'
             + '<button onclick="removeEvidence(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Remove"><i class="fas fa-times"></i></button>'
             + '</div>';
@@ -6836,16 +6836,16 @@ function runMonitoringScan() {
         var status = score >= 80 ? 'Operational' : score >= 50 ? 'Degraded' : 'At Risk';
         var color = score >= 80 ? '#00cc88' : score >= 50 ? '#c9a84c' : '#ff6b6b';
         var icon = score >= 80 ? 'fa-check-circle' : score >= 50 ? 'fa-exclamation-circle' : 'fa-times-circle';
-        return '<div style="background:rgba(255,255,255,0.02);border:1px solid ' + color + '33;border-radius:3px;padding:10px;text-align:center">'
+        return '<div style="background:rgba(0,0,0,0.015);border:1px solid ' + color + '33;border-radius:3px;padding:10px;text-align:center">'
             + '<i class="fas ' + icon + '" style="color:' + color + ';font-size:1.1rem;margin-bottom:4px;display:block"></i>'
-            + '<div style="color:#fff;font-size:0.78rem;font-weight:600">' + c.id + '</div>'
+            + '<div style="color:#1d1d1f;font-size:0.78rem;font-weight:600">' + c.id + '</div>'
             + '<div style="color:var(--steel);font-size:0.7rem;margin-bottom:4px">' + c.name + '</div>'
             + '<span style="font-size:0.68rem;padding:2px 6px;border-radius:3px;background:' + color + '22;color:' + color + ';font-weight:600">' + status + ' (' + score + '%)</span>'
             + '</div>';
     }).join('');
 
     if (log) {
-        var logEntry = '<div style="border-bottom:1px solid rgba(255,255,255,0.04);padding:4px 0"><span style="color:#00aaff">[' + new Date().toLocaleTimeString() + ']</span> Scan complete — ' + _monitorControls.filter(function(c,i){ return _getControlScore(c,vault,encrypted,actions,done) >= 80; }).length + '/' + _monitorControls.length + ' controls operational. Vault: ' + vault + ' records, ' + encrypted + ' encrypted. POA&M open: ' + poamOpen + '</div>';
+        var logEntry = '<div style="border-bottom:1px solid rgba(0,0,0,0.04);padding:4px 0"><span style="color:#00aaff">[' + new Date().toLocaleTimeString() + ']</span> Scan complete — ' + _monitorControls.filter(function(c,i){ return _getControlScore(c,vault,encrypted,actions,done) >= 80; }).length + '/' + _monitorControls.length + ' controls operational. Vault: ' + vault + ' records, ' + encrypted + ' encrypted. POA&M open: ' + poamOpen + '</div>';
         log.innerHTML = logEntry + log.innerHTML;
         if (log.children.length > 20) log.removeChild(log.lastChild);
     }
@@ -6867,7 +6867,7 @@ function _getControlScore(c, vault, encrypted, actions, done) {
 function toggleAutoMonitor() {
     _autoMonitor = !_autoMonitor;
     var btn = document.getElementById('autoMonitorBtn');
-    if (btn) { btn.innerHTML = '<i class="fas fa-sync' + (_autoMonitor ? ' fa-spin' : '') + '"></i> Auto-Monitor: ' + (_autoMonitor ? 'ON' : 'OFF'); btn.style.background = _autoMonitor ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.06)'; btn.style.color = _autoMonitor ? '#00aaff' : '#fff'; }
+    if (btn) { btn.innerHTML = '<i class="fas fa-sync' + (_autoMonitor ? ' fa-spin' : '') + '"></i> Auto-Monitor: ' + (_autoMonitor ? 'ON' : 'OFF'); btn.style.background = _autoMonitor ? 'rgba(0,170,255,0.15)' : 'rgba(0,0,0,0.06)'; btn.style.color = _autoMonitor ? '#00aaff' : '#fff'; }
     if (_autoMonitor) { _autoMonitorTimer = setInterval(runMonitoringScan, 30000); showWorkspaceNotification('Auto-monitoring enabled — scanning every 30s'); }
     else { clearInterval(_autoMonitorTimer); _autoMonitorTimer = null; showWorkspaceNotification('Auto-monitoring disabled'); }
 }
@@ -7013,15 +7013,15 @@ function generateExecSummary() {
 
     var html = '<div style="border:1px solid rgba(0,170,255,0.2);border-radius:3px;overflow:hidden">';
     html += '<div style="background:rgba(0,170,255,0.08);padding:16px;border-bottom:1px solid rgba(0,170,255,0.15)">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center"><strong style="color:#fff;font-size:1.05rem"><i class="fas fa-file-lines" style="color:#00aaff;margin-right:8px"></i>S4 Ledger — Executive Summary</strong><span style="color:var(--steel);font-size:0.78rem">' + now.toLocaleDateString() + '</span></div></div>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center"><strong style="color:#1d1d1f;font-size:1.05rem"><i class="fas fa-file-lines" style="color:#00aaff;margin-right:8px"></i>S4 Ledger — Executive Summary</strong><span style="color:var(--steel);font-size:0.78rem">' + now.toLocaleDateString() + '</span></div></div>';
     html += '<div style="padding:16px">';
 
-    html += '<div style="margin-bottom:16px"><strong style="color:#00aaff;font-size:0.88rem">1. Compliance Posture</strong><div style="margin-top:6px">Overall compliance score: <strong style="color:#fff">' + compScore + ' (Grade ' + grade + ')</strong>. ';
+    html += '<div style="margin-bottom:16px"><strong style="color:#00aaff;font-size:0.88rem">1. Compliance Posture</strong><div style="margin-top:6px">Overall compliance score: <strong style="color:#1d1d1f">' + compScore + ' (Grade ' + grade + ')</strong>. ';
     html += vault > 0 ? vault + ' records blockchain-anchored with ' + encrypted + ' encrypted.' : 'No records anchored yet — initial baseline pending.';
     html += poamOpen > 0 ? ' <span style="color:#c9a84c">' + poamOpen + ' open POA&M items require attention.</span>' : ' All POA&M items resolved.';
     html += '</div></div>';
 
-    html += '<div style="margin-bottom:16px"><strong style="color:#00aaff;font-size:0.88rem">2. Action Item Status</strong><div style="margin-top:6px">' + actions + ' total action items tracked. <strong style="color:#fff">' + done + ' completed</strong>' + (actions > 0 ? ' (' + Math.round(done/actions*100) + '% completion rate)' : '') + '.';
+    html += '<div style="margin-bottom:16px"><strong style="color:#00aaff;font-size:0.88rem">2. Action Item Status</strong><div style="margin-top:6px">' + actions + ' total action items tracked. <strong style="color:#1d1d1f">' + done + ' completed</strong>' + (actions > 0 ? ' (' + Math.round(done/actions*100) + '% completion rate)' : '') + '.';
     if (actions - done > 0) html += ' <span style="color:#c9a84c">' + (actions - done) + ' items still open.</span>';
     html += '</div></div>';
 
@@ -7029,7 +7029,7 @@ function generateExecSummary() {
     html += evCount >= 5 ? '<span style="color:var(--green)">Audit package is well-documented.</span>' : '<span style="color:#c9a84c">Additional evidence artifacts recommended for audit readiness.</span>';
     html += '</div></div>';
 
-    html += '<div style="margin-bottom:16px"><strong style="color:#00aaff;font-size:0.88rem">4. Financial Impact</strong><div style="margin-top:6px">Estimated cost avoidance: <strong style="color:#fff">$' + estSavings + 'K</strong> through automated compliance tracking, blockchain-anchored records, and reduced audit preparation labor. Traditional manual processes would require 3-5x more FTE hours.</div></div>';
+    html += '<div style="margin-bottom:16px"><strong style="color:#00aaff;font-size:0.88rem">4. Financial Impact</strong><div style="margin-top:6px">Estimated cost avoidance: <strong style="color:#1d1d1f">$' + estSavings + 'K</strong> through automated compliance tracking, blockchain-anchored records, and reduced audit preparation labor. Traditional manual processes would require 3-5x more FTE hours.</div></div>';
 
     html += '<div style="padding:10px;background:rgba(0,170,255,0.06);border-radius:3px;border-left:3px solid #00aaff"><strong style="color:#00aaff">Recommendation:</strong> ';
     if (vault < 5) html += 'Increase record anchoring activity to establish a stronger compliance baseline.';
@@ -7102,9 +7102,9 @@ function renderScheduledReports() {
     if (empty) empty.style.display = 'none';
     list.innerHTML = _scheduledReports.map(function(r, i) {
         var statusColor = r.active ? '#00aaff' : 'var(--steel)';
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid ' + statusColor + '">'
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(0,0,0,0.015);border-radius:3px;border-left:3px solid ' + statusColor + '">'
             + '<i class="fas fa-calendar-check" style="color:' + statusColor + '"></i>'
-            + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem">' + r.label + ' <span style="color:var(--steel);font-size:0.72rem">(' + r.frequency + ')</span></div><div style="font-size:0.72rem;color:var(--steel)">Next: ' + r.nextRun + '</div></div>'
+            + '<div style="flex:1"><div style="color:#1d1d1f;font-size:0.82rem">' + r.label + ' <span style="color:var(--steel);font-size:0.72rem">(' + r.frequency + ')</span></div><div style="font-size:0.72rem;color:var(--steel)">Next: ' + r.nextRun + '</div></div>'
             + '<button onclick="toggleScheduledReport(' + i + ')" style="background:none;border:none;color:' + (r.active ? '#00aaff' : 'var(--steel)') + ';cursor:pointer;font-size:0.78rem" title="Toggle"><i class="fas fa-' + (r.active ? 'toggle-on' : 'toggle-off') + '"></i></button>'
             + '<button onclick="removeScheduledReport(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Delete"><i class="fas fa-trash"></i></button>'
             + '</div>';
@@ -7141,8 +7141,8 @@ function generateFleetComparison() {
         var compColor = p.compliance >= 85 ? '#00cc88' : p.compliance >= 70 ? '#c9a84c' : '#ff6b6b';
         var readColor = p.readiness >= 80 ? '#00cc88' : p.readiness >= 60 ? '#c9a84c' : '#ff6b6b';
         var riskColor = p.risk === 'Low' ? '#00cc88' : p.risk === 'Moderate' ? '#c9a84c' : '#ff6b6b';
-        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">';
-        html += '<td style="padding:8px;color:#fff;font-weight:600">' + p.name + '</td>';
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04)">';
+        html += '<td style="padding:8px;color:#1d1d1f;font-weight:600">' + p.name + '</td>';
         html += '<td style="padding:8px;text-align:center;color:' + compColor + ';font-weight:600">' + p.compliance + '%</td>';
         html += '<td style="padding:8px;text-align:center;color:' + readColor + '">' + p.readiness + '%</td>';
         html += '<td style="padding:8px;text-align:center"><span style="padding:2px 8px;border-radius:3px;background:' + riskColor + '22;color:' + riskColor + ';font-size:0.72rem;font-weight:600">' + p.risk + '</span></td>';
@@ -7180,7 +7180,7 @@ function generateHeatMap() {
         var label = c.risk >= 80 ? 'CRITICAL' : c.risk >= 60 ? 'HIGH' : c.risk >= 40 ? 'MODERATE' : 'LOW';
         html += '<div style="background:' + bg + ';border:1px solid ' + color + '33;border-radius:3px;padding:12px;text-align:center">';
         html += '<div style="font-size:1.4rem;font-weight:800;color:' + color + '">' + c.risk + '</div>';
-        html += '<div style="color:#fff;font-size:0.8rem;font-weight:600;margin:4px 0">' + c.name + '</div>';
+        html += '<div style="color:#1d1d1f;font-size:0.8rem;font-weight:600;margin:4px 0">' + c.name + '</div>';
         html += '<div style="font-size:0.68rem;color:' + color + ';font-weight:700;margin-bottom:6px">' + label + '</div>';
         html += '<div style="font-size:0.68rem;color:var(--steel);line-height:1.4">' + c.suppliers.slice(0,3).join(', ') + '</div>';
         html += '</div>';
@@ -7209,7 +7209,7 @@ function generateRemediationPlans() {
         return '<div style="margin-bottom:10px;border:1px solid ' + sColor + '33;border-radius:3px;overflow:hidden">'
             + '<div style="padding:10px 14px;background:' + sColor + '08;display:flex;align-items:center;gap:8px">'
             + '<span style="background:' + sColor + '22;color:' + sColor + ';padding:2px 8px;border-radius:3px;font-size:0.7rem;font-weight:700">' + p.severity + '</span>'
-            + '<strong style="color:#fff;font-size:0.82rem">' + p.risk + '</strong>'
+            + '<strong style="color:#1d1d1f;font-size:0.82rem">' + p.risk + '</strong>'
             + '<span style="margin-left:auto;color:var(--steel);font-size:0.72rem">' + p.timeline + ' | ' + p.cost + '</span></div>'
             + '<div style="padding:10px 14px">'
             + p.steps.map(function(s, i) { return '<div style="padding:3px 0;color:var(--steel);font-size:0.78rem"><span style="color:#00aaff;margin-right:6px;font-weight:700">' + (i+1) + '.</span>' + s + '</div>'; }).join('')
@@ -7259,7 +7259,7 @@ function runAnomalyDetection() {
     html += anomalies.map(function(a) {
         return '<div style="display:flex;gap:10px;padding:8px;margin-bottom:4px;background:' + a.color + '08;border-left:3px solid ' + a.color + ';border-radius:0 3px 3px 0">'
             + '<i class="fas ' + a.icon + '" style="color:' + a.color + ';font-size:1rem;margin-top:2px"></i>'
-            + '<div><div style="color:#fff;font-size:0.82rem;font-weight:600">' + a.type + ' <span style="color:' + a.color + ';font-size:0.7rem;font-weight:400">' + a.severity + '</span></div><div style="color:var(--steel);font-size:0.78rem;margin-top:2px">' + a.desc + '</div></div></div>';
+            + '<div><div style="color:#1d1d1f;font-size:0.82rem;font-weight:600">' + a.type + ' <span style="color:' + a.color + ';font-size:0.7rem;font-weight:400">' + a.severity + '</span></div><div style="color:var(--steel);font-size:0.78rem;margin-top:2px">' + a.desc + '</div></div></div>';
     }).join('');
     out.innerHTML = html;
     showWorkspaceNotification('Anomaly scan complete — ' + anomalies.length + ' findings');
@@ -7280,7 +7280,7 @@ function generateBudgetForecast() {
 
     var html = '<table style="width:100%;border-collapse:collapse;font-size:0.78rem">';
     html += '<thead><tr style="background:rgba(201,168,76,0.08);color:#c9a84c">';
-    html += '<th style="padding:8px;text-align:left">Year</th><th style="padding:8px;text-align:right">Procurement</th><th style="padding:8px;text-align:right">Sustainment</th><th style="padding:8px;text-align:right">DMSMS/Obsol.</th><th style="padding:8px;text-align:right">S4 Savings</th><th style="padding:8px;text-align:right;color:#fff">Net Forecast</th>';
+    html += '<th style="padding:8px;text-align:left">Year</th><th style="padding:8px;text-align:right">Procurement</th><th style="padding:8px;text-align:right">Sustainment</th><th style="padding:8px;text-align:right">DMSMS/Obsol.</th><th style="padding:8px;text-align:right">S4 Savings</th><th style="padding:8px;text-align:right;color:#1d1d1f">Net Forecast</th>';
     html += '</tr></thead><tbody>';
 
     var totalNet = 0, totalSavings = 0;
@@ -7292,19 +7292,19 @@ function generateBudgetForecast() {
         var saved = gross * s4Savings * (1 + vault * 0.005);
         var net = gross - saved;
         totalNet += net; totalSavings += saved;
-        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">';
-        html += '<td style="padding:6px 8px;color:#fff;font-weight:600">FY' + (new Date().getFullYear() + y).toString().slice(-2) + '</td>';
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04)">';
+        html += '<td style="padding:6px 8px;color:#1d1d1f;font-weight:600">FY' + (new Date().getFullYear() + y).toString().slice(-2) + '</td>';
         html += '<td style="padding:6px 8px;text-align:right;color:var(--steel)">$' + Math.round(proc * 1000000).toLocaleString() + '</td>';
         html += '<td style="padding:6px 8px;text-align:right;color:var(--steel)">$' + Math.round(sust * 1000000).toLocaleString() + '</td>';
         html += '<td style="padding:6px 8px;text-align:right;color:#ff6b6b">$' + Math.round(obsol * 1000000).toLocaleString() + '</td>';
         html += '<td style="padding:6px 8px;text-align:right;color:#00cc88">-$' + Math.round(saved * 1000000).toLocaleString() + '</td>';
-        html += '<td style="padding:6px 8px;text-align:right;color:#fff;font-weight:600">$' + Math.round(net * 1000000).toLocaleString() + '</td>';
+        html += '<td style="padding:6px 8px;text-align:right;color:#1d1d1f;font-weight:600">$' + Math.round(net * 1000000).toLocaleString() + '</td>';
         html += '</tr>';
     }
     html += '<tr style="border-top:2px solid rgba(201,168,76,0.3);font-weight:700">';
     html += '<td style="padding:8px;color:#c9a84c">' + years + '-Year Total</td><td colspan="3"></td>';
     html += '<td style="padding:8px;text-align:right;color:#00cc88">-$' + Math.round(totalSavings * 1000000).toLocaleString() + '</td>';
-    html += '<td style="padding:8px;text-align:right;color:#fff;font-size:0.88rem">$' + Math.round(totalNet * 1000000).toLocaleString() + '</td>';
+    html += '<td style="padding:8px;text-align:right;color:#1d1d1f;font-size:0.88rem">$' + Math.round(totalNet * 1000000).toLocaleString() + '</td>';
     html += '</tr></tbody></table>';
     html += '<div style="margin-top:8px;font-size:0.72rem;color:var(--steel)">Forecast assumes ' + (inflationRate*100).toFixed(1) + '% annual inflation, ' + (obsolescenceGrowth*100).toFixed(1) + '% obsolescence growth, and ' + (s4Savings*100) + '% S4 automation savings. Adjust inputs in Lifecycle Cost Calculator for program-specific projections.</div>';
     out.innerHTML = html;
@@ -7341,7 +7341,7 @@ function _extractFromText(text, filename) {
     var diCodes = text.match(/DI-[A-Z]+-\d+[A-Z]*/gi) || [];
 
     var html = '<div style="border:1px solid rgba(0,170,255,0.2);border-radius:3px;overflow:hidden">';
-    html += '<div style="padding:10px 14px;background:rgba(0,170,255,0.08);border-bottom:1px solid rgba(0,170,255,0.15)"><strong style="color:#fff"><i class="fas fa-file-invoice" style="color:#00aaff;margin-right:6px"></i>' + filename + '</strong> <span style="color:var(--steel);font-size:0.72rem">(' + text.length + ' chars)</span></div>';
+    html += '<div style="padding:10px 14px;background:rgba(0,170,255,0.08);border-bottom:1px solid rgba(0,170,255,0.15)"><strong style="color:#1d1d1f"><i class="fas fa-file-invoice" style="color:#00aaff;margin-right:6px"></i>' + filename + '</strong> <span style="color:var(--steel);font-size:0.72rem">(' + text.length + ' chars)</span></div>';
     html += '<div style="padding:12px 14px">';
 
     var sections = [
@@ -7447,9 +7447,9 @@ function renderTemplates() {
     var filtered = _templateFilter === 'all' ? _templates : _templates.filter(function(t) { return t.category === _templateFilter; });
     list.innerHTML = filtered.map(function(t) {
         var catColor = t.category === 'contract' ? '#c9a84c' : t.category === 'engineering' ? '#00aaff' : t.category === 'logistics' ? '#00aaff' : '#00cc88';
-        return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid ' + catColor + '">'
+        return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px;margin-bottom:4px;background:rgba(0,0,0,0.015);border-radius:3px;border-left:3px solid ' + catColor + '">'
             + '<i class="fas ' + t.icon + '" style="color:' + catColor + ';font-size:1.1rem;margin-top:2px"></i>'
-            + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem;font-weight:600">' + t.name + ' <span style="color:var(--steel);font-size:0.68rem;font-weight:400">' + t.id + '</span></div><div style="color:var(--steel);font-size:0.75rem;margin-top:2px">' + t.desc + '</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">' + t.fields.map(function(f) { return '<span style="background:' + catColor + '11;color:' + catColor + ';padding:1px 6px;border-radius:3px;font-size:0.68rem">' + f + '</span>'; }).join('') + '</div></div>'
+            + '<div style="flex:1"><div style="color:#1d1d1f;font-size:0.82rem;font-weight:600">' + t.name + ' <span style="color:var(--steel);font-size:0.68rem;font-weight:400">' + t.id + '</span></div><div style="color:var(--steel);font-size:0.75rem;margin-top:2px">' + t.desc + '</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">' + t.fields.map(function(f) { return '<span style="background:' + catColor + '11;color:' + catColor + ';padding:1px 6px;border-radius:3px;font-size:0.68rem">' + f + '</span>'; }).join('') + '</div></div>'
             + '<button onclick="downloadTemplate(\'' + t.id + '\')" style="background:none;border:1px solid ' + catColor + '44;color:' + catColor + ';cursor:pointer;border-radius:3px;padding:4px 10px;font-size:0.72rem;white-space:nowrap" title="Download"><i class="fas fa-download"></i> Get</button>'
             + '</div>';
     }).join('');
@@ -7570,8 +7570,8 @@ function loadRiskData() {
     const levelLabels = {critical:'CRITICAL',high:'HIGH',medium:'MEDIUM',low:'LOW'};
     let html = '';
     items.forEach(it => {
-        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
-        html += '<td style="padding:10px 8px;"><div style="color:#fff;font-weight:600;font-size:0.85rem;">'+it.part+'</div><div style="color:var(--text-muted);font-family:monospace;font-size:0.72rem;">'+it.nsn+'</div></td>';
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);">';
+        html += '<td style="padding:10px 8px;"><div style="color:#1d1d1f;font-weight:600;font-size:0.85rem;">'+it.part+'</div><div style="color:var(--text-muted);font-family:monospace;font-size:0.72rem;">'+it.nsn+'</div></td>';
         html += '<td style="padding:10px 8px;color:var(--steel);font-size:0.82rem;">'+it.supplier+'</td>';
         html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 12px;border-radius:3px;font-weight:700;font-size:0.82rem;background:'+levelColors[it.level]+'22;color:'+levelColors[it.level]+';border:1px solid '+levelColors[it.level]+'44;">'+it.score+'</div></td>';
         html += '<td style="padding:10px 8px;font-size:0.78rem;color:var(--steel);">'+it.factors.map(f=>'<div style="margin-bottom:2px;">• '+f+'</div>').join('')+'</td>';
@@ -7668,7 +7668,7 @@ function generateReport() {
     let html = '<div style="border:1px solid rgba(201,168,76,0.2);border-radius:3px;overflow:hidden;">';
     html += '<div style="background:rgba(0,170,255,0.06);padding:16px;border-bottom:1px solid rgba(201,168,76,0.2);">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-    html += '<div><span style="font-size:1.3rem;margin-right:8px;"><i class="fas '+(rt.icon||'fa-file')+'" style="color:'+(rt.color||'var(--accent)')+'"></i></span><strong style="color:#fff;font-size:1.05rem;">'+rt.title+'</strong></div>';
+    html += '<div><span style="font-size:1.3rem;margin-right:8px;"><i class="fas '+(rt.icon||'fa-file')+'" style="color:'+(rt.color||'var(--accent)')+'"></i></span><strong style="color:#1d1d1f;font-size:1.05rem;">'+rt.title+'</strong></div>';
     html += '<span style="background:#00aaff22;color:#00aaff;padding:4px 10px;border-radius:3px;font-size:0.75rem;font-weight:600;">GENERATED</span></div>';
     html += '<div style="color:var(--text-muted);font-size:0.78rem;margin-top:6px;">Period: '+startDate.toLocaleDateString()+' — '+now.toLocaleDateString()+' | Records: '+totalRecords+' | Format: '+format.toUpperCase()+'</div></div>';
 
@@ -7683,9 +7683,9 @@ function generateReport() {
         // Small per-section variation based on section index (deterministic, not random)
         var sectionVariance = ((i * 7 + 3) % 10) * 0.3;
         const complianceScore = Math.min(baseScore + sectionVariance, 100).toFixed(1);
-        html += '<div style="padding:10px 12px;margin-bottom:6px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid '+(i%2===0?'#00aaff':'#00aaff')+';">';
+        html += '<div style="padding:10px 12px;margin-bottom:6px;background:rgba(0,0,0,0.015);border-radius:3px;border-left:3px solid '+(i%2===0?'#00aaff':'#00aaff')+';">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-        html += '<strong style="color:#fff;font-size:0.88rem;">'+(i+1)+'. '+section+'</strong>';
+        html += '<strong style="color:#1d1d1f;font-size:0.88rem;">'+(i+1)+'. '+section+'</strong>';
         html += '<span style="color:var(--steel);font-size:0.78rem;">'+sectionRecords+' items | Score: '+complianceScore+'%</span></div></div>';
     });
 
@@ -7929,8 +7929,8 @@ function loadPredictiveData() {
     let html = '';
     items.forEach(it => {
         const confColor = it.confidence >= 90 ? '#ff3b30' : it.confidence >= 80 ? '#ff9500' : it.confidence >= 70 ? '#ffcc00' : '#34c759';
-        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);'+(it.urgent?'background:rgba(255,59,48,0.04);':'') +'">';
-        html += '<td style="padding:10px 8px;"><div style="color:#fff;font-weight:600;font-size:0.82rem;">'+it.system+'</div><div style="color:var(--text-muted);font-size:0.72rem;">'+it.component+'</div></td>';
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);'+(it.urgent?'background:rgba(255,59,48,0.04);':'') +'">';
+        html += '<td style="padding:10px 8px;"><div style="color:#1d1d1f;font-weight:600;font-size:0.82rem;">'+it.system+'</div><div style="color:var(--text-muted);font-size:0.72rem;">'+it.component+'</div></td>';
         html += '<td style="padding:10px 8px;color:var(--steel);font-size:0.8rem;">'+it.mode+'</td>';
         html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 10px;border-radius:3px;font-weight:700;font-size:0.82rem;background:'+confColor+'22;color:'+confColor+';border:1px solid '+confColor+'44;">'+it.confidence+'%</div></td>';
         html += '<td style="padding:10px 8px;text-align:center;color:'+(it.urgent?'#ff3b30':'var(--steel)')+';font-weight:'+(it.urgent?'700':'400')+';font-size:0.82rem;">'+it.eta+(it.urgent?' <i class="fas fa-exclamation-triangle"></i>':'')+'</td>';
@@ -8217,11 +8217,11 @@ function renderDiscrepancyTable(discrepancies) {
 
     tbody.innerHTML = window._s4Safe(filtered.map(d => '<tr style="border-color:var(--border)">' +
         '<td style="padding:5px 8px;border-color:var(--border);white-space:nowrap"><i class="fas ' + (sevIcons[d.severity]||'fa-circle') + '" style="color:' + (sevColors[d.severity]||'#888') + ';margin-right:4px"></i><span style="color:' + (sevColors[d.severity]||'#888') + ';font-weight:600;text-transform:uppercase;font-size:.7rem">' + d.severity + '</span></td>' +
-        '<td style="padding:5px 8px;border-color:var(--border);color:#fff">' + d.category + '</td>' +
+        '<td style="padding:5px 8px;border-color:var(--border);color:#1d1d1f">' + d.category + '</td>' +
         '<td style="padding:5px 8px;border-color:var(--border);font-family:monospace;font-size:.75rem">' + d.item + '</td>' +
         '<td style="padding:5px 8px;border-color:var(--border)">' + d.issue + '</td>' +
-        '<td style="padding:5px 8px;border-color:var(--border);color:#888">' + d.previous + '</td>' +
-        '<td style="padding:5px 8px;border-color:var(--border);color:#fff">' + d.current + '</td>' +
+        '<td style="padding:5px 8px;border-color:var(--border);color:#6e6e73">' + d.previous + '</td>' +
+        '<td style="padding:5px 8px;border-color:var(--border);color:#1d1d1f">' + d.current + '</td>' +
         '<td style="padding:5px 8px;border-color:var(--border);color:' + (sevColors[d.severity]||'#888') + '">' + (d.impact||'') + '</td>' +
     '</tr>').join(''));
 
@@ -8354,7 +8354,7 @@ function calcLifecycle() {
     var output = document.getElementById('lifecycleOutput');
     if (output) {
         output.innerHTML = '<div style="padding:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;font-size:0.82rem;color:var(--steel);">' +
-            '<strong style="color:#fff">Cost Breakdown:</strong><br>' +
+            '<strong style="color:#1d1d1f">Cost Breakdown:</strong><br>' +
             'Acquisition: ' + fmt(totalAcq) + ' (' + fleetSize + ' units @ $' + (acqCost * 1000000).toLocaleString() + ' each)<br>' +
             'Sustainment (O&S): ' + fmt(totalSust) + ' (' + sustRate + '% annually over ' + serviceLife + ' years)<br>' +
             'DMSMS/Obsolescence: ' + fmt(dmsmsCost) + ' (est. 4% annually)<br>' +
@@ -8429,8 +8429,8 @@ function loadSBOMData() {
         table.innerHTML = _sbomData.map(function(c) {
             var statusColor = c.status === 'verified' ? '#00cc66' : c.status === 'flagged' ? '#ff3b30' : '#ffa500';
             var cveColor = c.cves > 0 ? '#ff3b30' : '#00cc66';
-            return '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">' +
-                '<td style="padding:8px;font-size:0.82rem;color:#fff">' + c.name + '</td>' +
+            return '<tr style="border-bottom:1px solid rgba(0,0,0,0.04)">' +
+                '<td style="padding:8px;font-size:0.82rem;color:#1d1d1f">' + c.name + '</td>' +
                 '<td style="padding:8px;font-size:0.82rem;color:var(--steel);font-family:monospace">' + c.version + '</td>' +
                 '<td style="padding:8px;font-size:0.78rem;color:var(--steel);text-align:center">' + c.type + '</td>' +
                 '<td style="padding:8px;font-size:0.82rem;text-align:center;color:' + cveColor + ';font-weight:600">' + c.cves + '</td>' +
@@ -8589,7 +8589,7 @@ function loadSubmissionHistory() {
     container.innerHTML = window._s4Safe(_subHistory.slice(0, 20).map(h => {
         const sevColor = h.stats.criticals > 3 ? '#ff4444' : h.stats.criticals > 0 ? '#ffa500' : '#00aaff';
         return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid var(--border);font-size:.78rem">' +
-            '<div><span style="color:#fff;font-weight:600">' + (SUBMISSION_TYPES[h.meta.docType]||h.meta.docType) + '</span> <span style="color:var(--steel)">— ' + h.meta.program + ' (' + h.meta.branch + ')</span></div>' +
+            '<div><span style="color:#1d1d1f;font-weight:600">' + (SUBMISSION_TYPES[h.meta.docType]||h.meta.docType) + '</span> <span style="color:var(--steel)">— ' + h.meta.program + ' (' + h.meta.branch + ')</span></div>' +
             '<div style="display:flex;gap:12px;align-items:center">' +
                 '<span style="color:' + sevColor + ';font-weight:600">' + h.stats.discrepancies + ' disc. / ' + h.stats.criticals + ' crit.</span>' +
                 '<span style="color:var(--steel);font-size:.72rem">' + new Date(h.timestamp).toLocaleDateString() + '</span>' +

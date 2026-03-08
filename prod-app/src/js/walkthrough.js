@@ -13,7 +13,7 @@ var _steps = [
         mock: function() {
             return '<div class="wt-mock-welcome">'
                 + '<div class="wt-mock-logo"><i class="fas fa-shield-halved" style="font-size:3rem;color:var(--accent);"></i></div>'
-                + '<h2 style="color:#fff;font-size:1.4rem;font-weight:700;margin:16px 0 8px;">S4 Ledger Platform</h2>'
+                + '<h2 style="color:#1d1d1f;font-size:1.4rem;font-weight:700;margin:16px 0 8px;">S4 Ledger Platform</h2>'
                 + '<p style="color:var(--steel);font-size:0.9rem;margin-bottom:24px;">The integrity layer for defense logistics</p>'
                 + '<div class="wt-stat-grid">'
                 + '<div class="wt-stat"><span class="wt-stat-num" data-animate="20">0</span><span class="wt-stat-label">ILS Tools</span></div>'
@@ -110,7 +110,7 @@ var _steps = [
             return '<div class="wt-mock-tool"><div class="wt-mock-tool-head"><i class="fas fa-search-plus"></i> Gap Analysis \u2014 DDG-51 Program</div>'
                 + '<div class="wt-mock-score-panel">'
                 + '<div class="wt-mock-score-circle" id="wtGapScore"><span>0%</span></div>'
-                + '<div style="margin-left:16px;"><div style="color:#fff;font-weight:700;font-size:0.95rem;">Program Coverage</div><div style="color:var(--steel);font-size:0.78rem;">42 of 54 required deliverables found</div></div>'
+                + '<div style="margin-left:16px;"><div style="color:#1d1d1f;font-weight:700;font-size:0.95rem;">Program Coverage</div><div style="color:var(--steel);font-size:0.78rem;">42 of 54 required deliverables found</div></div>'
                 + '</div>'
                 + '<div class="wt-mock-gap-list">'
                 + '<div class="wt-mock-gap critical"><span class="wt-mock-gap-sev">CRITICAL</span> Missing: DI-ILSS-81495 \u2014 Provisioning Technical Documentation</div>'
@@ -214,8 +214,8 @@ var _steps = [
         mock: function() {
             return '<div class="wt-mock-tool"><div class="wt-mock-tool-head"><i class="fas fa-chart-line"></i> Predictive Maintenance \u2014 LCS-9 Main Engine</div>'
                 + '<div class="wt-mock-pred-card">'
-                + '<div class="wt-mock-pred-row"><span>Component</span><span style="color:#fff;">LM2500 Gas Turbine Engine</span></div>'
-                + '<div class="wt-mock-pred-row"><span>Current Hours</span><span style="color:#fff;">12,847 hrs</span></div>'
+                + '<div class="wt-mock-pred-row"><span>Component</span><span style="color:#1d1d1f;">LM2500 Gas Turbine Engine</span></div>'
+                + '<div class="wt-mock-pred-row"><span>Current Hours</span><span style="color:#1d1d1f;">12,847 hrs</span></div>'
                 + '<div class="wt-mock-pred-row"><span>Est. RUL</span><span style="color:var(--gold);">2,153 hrs (\u00b1340)</span></div>'
                 + '<div class="wt-mock-pred-row"><span>Confidence</span><span style="color:var(--green);">92%</span></div>'
                 + '<div class="wt-mock-pred-row"><span>Recommended Action</span><span style="color:var(--accent);">Schedule overhaul by Aug 2026</span></div>'
@@ -307,9 +307,9 @@ var _steps = [
         mock: function() {
             return '<div class="wt-mock-tool"><div class="wt-mock-tool-head"><i class="fas fa-file-alt"></i> Report Generator</div>'
                 + '<div class="wt-mock-report-list">'
-                + '<div class="wt-mock-report-item"><i class="fas fa-file-pdf" style="color:var(--red);"></i><div><div style="color:#fff;font-weight:600;">Quarterly Compliance Report</div><div style="color:var(--steel);font-size:0.72rem;">DDG-51 FY26 Q1 \u2014 12 pages, tamper-proof verified</div></div><span class="wt-mock-badge-green">Ready</span></div>'
-                + '<div class="wt-mock-report-item"><i class="fas fa-file-pdf" style="color:var(--red);"></i><div><div style="color:#fff;font-weight:600;">Gap Analysis Summary</div><div style="color:var(--steel);font-size:0.72rem;">F-35C Program \u2014 8 pages, 6 critical findings</div></div><span class="wt-mock-badge-green">Ready</span></div>'
-                + '<div class="wt-mock-report-item"><i class="fas fa-file-pdf" style="color:var(--red);"></i><div><div style="color:#fff;font-weight:600;">DMSMS Risk Assessment</div><div style="color:var(--steel);font-size:0.72rem;">V-22 Osprey \u2014 5 pages, 3 obsolete parts flagged</div></div><span class="wt-mock-badge-yellow">Generating...</span></div>'
+                + '<div class="wt-mock-report-item"><i class="fas fa-file-pdf" style="color:var(--red);"></i><div><div style="color:#1d1d1f;font-weight:600;">Quarterly Compliance Report</div><div style="color:var(--steel);font-size:0.72rem;">DDG-51 FY26 Q1 \u2014 12 pages, tamper-proof verified</div></div><span class="wt-mock-badge-green">Ready</span></div>'
+                + '<div class="wt-mock-report-item"><i class="fas fa-file-pdf" style="color:var(--red);"></i><div><div style="color:#1d1d1f;font-weight:600;">Gap Analysis Summary</div><div style="color:var(--steel);font-size:0.72rem;">F-35C Program \u2014 8 pages, 6 critical findings</div></div><span class="wt-mock-badge-green">Ready</span></div>'
+                + '<div class="wt-mock-report-item"><i class="fas fa-file-pdf" style="color:var(--red);"></i><div><div style="color:#1d1d1f;font-weight:600;">DMSMS Risk Assessment</div><div style="color:var(--steel);font-size:0.72rem;">V-22 Osprey \u2014 5 pages, 3 obsolete parts flagged</div></div><span class="wt-mock-badge-yellow">Generating...</span></div>'
                 + '</div></div>';
         }
     },
@@ -469,7 +469,7 @@ var _steps = [
         mock: function() {
             return '<div class="wt-mock-welcome">'
                 + '<div class="wt-mock-logo"><i class="fas fa-rocket" style="font-size:3rem;color:var(--accent);"></i></div>'
-                + '<h2 style="color:#fff;font-size:1.3rem;font-weight:700;margin:16px 0 8px;">Platform Tour Complete</h2>'
+                + '<h2 style="color:#1d1d1f;font-size:1.3rem;font-weight:700;margin:16px 0 8px;">Platform Tour Complete</h2>'
                 + '<p style="color:var(--steel);font-size:0.88rem;margin-bottom:20px;max-width:400px;">S4 Ledger gives your team 23+ purpose-built defense logistics tools with tamper-proof verification. Every record. Every handoff. Proven.</p>'
                 + '<div class="wt-stat-grid">'
                 + '<div class="wt-stat"><span class="wt-stat-num">23+</span><span class="wt-stat-label">ILS Tools</span></div>'
@@ -783,7 +783,7 @@ function submitFeedback() {
     if (body) {
         body.innerHTML = '<div style="text-align:center;padding:40px 20px;">'
             + '<i class="fas fa-check-circle" style="font-size:2.5rem;color:var(--green);margin-bottom:12px;display:block;"></i>'
-            + '<div style="color:#fff;font-weight:700;font-size:1rem;margin-bottom:4px;">Thank you!</div>'
+            + '<div style="color:#1d1d1f;font-weight:700;font-size:1rem;margin-bottom:4px;">Thank you!</div>'
             + '<div style="color:var(--steel);font-size:0.82rem;">Your feedback helps us improve S4 Ledger.</div>'
             + '</div>';
     }
