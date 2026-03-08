@@ -2930,6 +2930,208 @@ details:not([style*="display:none"]) > *:not(summary){color:#444;font-size:0.84r
 
 /* ━━━ END ROUND 8 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* ━━━ ROUND 9: FULL-WIDTH LAYOUT — USE ALL DESKTOP SPACE ━━━━━━━━━━ */
+/* ━━━ Kill max-width bottlenecks, expand tool interiors, Brief fix ━ */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ── R9-A: CONTAINER WIDTH EXPANSION ── */
+/* Main .container — expand from 1400px to fluid with comfortable margins */
+.container{
+    max-width:1800px!important;
+    padding:0 24px!important;
+    margin:0 auto!important;
+}
+@media(min-width:1200px){
+    .container{max-width:1800px!important;padding:0 32px!important}
+}
+@media(min-width:1600px){
+    .container{max-width:94vw!important;padding:0 3vw!important}
+}
+@media(min-width:2000px){
+    .container{max-width:92vw!important;padding:0 4vw!important}
+}
+
+/* ── R9-B: PLATFORM HUB — full width utilization ── */
+.platform-hub{
+    max-width:1800px!important;
+    padding:0 20px!important;
+}
+@media(min-width:1200px){
+    .platform-hub{max-width:1800px!important;padding:0 28px!important}
+}
+@media(min-width:1600px){
+    .platform-hub{max-width:94vw!important;padding:0 3vw!important}
+}
+@media(min-width:2000px){
+    .platform-hub{max-width:92vw!important;padding:0 4vw!important}
+}
+
+/* Hub grid — expand to 4 columns on wide screens */
+@media(min-width:1400px){
+    .hub-grid{grid-template-columns:repeat(4,1fr)!important}
+}
+@media(min-width:1800px){
+    .hub-grid{grid-template-columns:repeat(4,1fr)!important;gap:20px!important}
+}
+
+/* ── R9-C: TOOL PANEL CARDS — Use full available width ── */
+/* Remove restrictive padding that narrows content */
+.ils-hub-panel{
+    padding:0!important;
+    max-width:none!important;
+}
+.ils-hub-panel .row{
+    margin-left:0!important;
+    margin-right:0!important;
+}
+.ils-hub-panel .row > [class*="col-"]{
+    padding-left:0!important;
+    padding-right:0!important;
+}
+/* Cards expand to fill */
+.ils-hub-panel .s4-card,
+.ils-hub-panel .glass-card,
+.ils-hub-panel .demo-card{
+    max-width:none!important;
+    width:100%!important;
+}
+
+/* ── R9-D: FORM LAYOUT — Multi-column on wide screens ── */
+/* The .row grids inside tools — make them use more columns on wide screens */
+@media(min-width:1200px){
+    .ils-hub-panel .row > .col-md-3{flex:0 0 25%!important;max-width:25%!important}
+    .ils-hub-panel .row > .col-md-4{flex:0 0 25%!important;max-width:25%!important}
+    .ils-hub-panel .row > .col-md-6{flex:0 0 33.333%!important;max-width:33.333%!important}
+}
+@media(min-width:1600px){
+    .ils-hub-panel .row > .col-md-3{flex:0 0 20%!important;max-width:20%!important}
+    .ils-hub-panel .row > .col-md-4{flex:0 0 20%!important;max-width:20%!important}
+    .ils-hub-panel .row > .col-md-6{flex:0 0 25%!important;max-width:25%!important}
+}
+
+/* ── R9-E: STAT GRIDS — More columns on wider screens ── */
+@media(min-width:1200px){
+    .ils-hub-panel [style*="display:grid"][style*="minmax(140px"],
+    .ils-hub-panel .vault-stats,
+    .ils-hub-panel .kpi-strip{
+        grid-template-columns:repeat(auto-fit,minmax(160px,1fr))!important;
+    }
+}
+@media(min-width:1600px){
+    .ils-hub-panel [style*="display:grid"][style*="minmax(140px"],
+    .ils-hub-panel .vault-stats,
+    .ils-hub-panel .kpi-strip{
+        grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;
+    }
+}
+
+/* ── R9-F: TABLES — Full width, denser on wide screens ── */
+.ils-hub-panel [style*="max-height"][style*="overflow"]{
+    max-height:600px!important;
+}
+@media(min-width:1200px){
+    .ils-hub-panel [style*="max-height"][style*="overflow"]{
+        max-height:700px!important;
+    }
+}
+
+/* ── R9-G: PROGRAM BRIEF ENGINE — Full viewport utilization ── */
+/* Brief container — fill the entire tool panel width */
+#hub-brief .demo-card,
+#hub-brief .s4-card{
+    padding:16px!important;
+}
+/* Brief main flex layout — taller, use viewport height */
+#hub-brief [style*="display:flex"][style*="min-height:540px"]{
+    min-height:calc(100vh - 200px)!important;
+    max-height:calc(100vh - 140px)!important;
+    border-color:rgba(0,0,0,0.06)!important;
+}
+/* Brief stage (canvas area) — expand fully */
+.brief-stage{
+    padding:24px!important;
+    min-height:0!important;
+    flex:1!important;
+}
+/* Brief canvas — allow it to scale bigger */
+.brief-canvas,#briefCanvas{
+    max-width:100%!important;
+}
+/* Brief slide panel — wider for readability */
+.brief-slide-panel{
+    width:200px!important;
+    min-width:200px!important;
+    padding:14px 12px!important;
+}
+@media(min-width:1600px){
+    .brief-slide-panel{
+        width:240px!important;
+        min-width:240px!important;
+    }
+}
+/* Brief sidebar — slightly wider for icons */
+.brief-sidebar{
+    width:56px!important;
+    min-width:56px!important;
+}
+/* Brief zoom bar — refined positioning */
+.brief-zoom-bar{
+    bottom:16px!important;
+    right:16px!important;
+}
+
+/* ── R9-H: CHART CONTAINERS — Bigger on wide screens ── */
+@media(min-width:1200px){
+    .ils-hub-panel .chart-container canvas{
+        max-height:340px!important;
+    }
+}
+@media(min-width:1600px){
+    .ils-hub-panel .chart-container canvas{
+        max-height:420px!important;
+    }
+}
+
+/* ── R9-I: TWO-COLUMN TOOLS — Better use of width ── */
+/* Tools with col-lg-8 + col-lg-4 sidebar (like Unified Actions) */
+@media(min-width:1400px){
+    .ils-hub-panel .row > .col-lg-8{flex:0 0 70%!important;max-width:70%!important}
+    .ils-hub-panel .row > .col-lg-4{flex:0 0 30%!important;max-width:30%!important}
+}
+
+/* ── R9-J: ILS CHECKLIST — More items visible at once ── */
+@media(min-width:1200px){
+    #ilsChecklist{grid-template-columns:1fr 1fr 1fr!important}
+}
+@media(min-width:1600px){
+    #ilsChecklist{grid-template-columns:1fr 1fr 1fr 1fr!important}
+}
+
+/* ── R9-K: COLLAPSIBLE SECTIONS — Side-by-side on wide screens ── */
+/* Multiple collapsible sections in tools (POA&M, Evidence, Monitoring, etc) can go 2-column */
+@media(min-width:1400px){
+    .ils-hub-panel > .s4-card > [style*="border:1px solid"]:not([style*="display:none"]) + [style*="border:1px solid"]:not([style*="display:none"]){
+        display:inline-block!important;
+        width:calc(50% - 8px)!important;
+        vertical-align:top!important;
+    }
+}
+
+/* ── R9-L: REDUCED VERTICAL SCROLLING — Tighter vertical rhythm ── */
+/* Reduce excessive margins where content stacks vertically */
+.ils-hub-panel .s4-card > p + [style*="display:grid"],
+.ils-hub-panel .s4-card > p + .row,
+.ils-hub-panel .s4-card > p + [style*="display:flex"]{
+    margin-top:0!important;
+}
+/* Tighter gap between description and first section */
+.ils-hub-panel .s4-card > p:first-of-type{
+    margin-bottom:16px!important;
+}
+
+/* ━━━ END ROUND 9 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
 /* ━━━ 4H: MOBILE RESPONSIVE POLISH ━━━ */
 @media(max-width:768px){
     .hero h1{font-size:1.8rem!important}
