@@ -1807,4 +1807,33 @@ Font Visibility Fixes:
 - Both `dist/` folders rebuilt with Vite
 
 ---
+
+### Session 26 — Round 5: Fix Nuclear Color Overrides & Brief/Ledger Light Mode (commit `1ebda61`)
+
+**Problem:** Round 4's nuclear `body,body *{color:#1d1d1f}` and `#hub-analysis *,...{color:#1d1d1f!important}` rules successfully eliminated white-on-light text but killed ALL accent/status colors (#00aaff, #c9a84c, #ffa500, #ff3333, #a855f7, etc.) across every tool panel. Brief toolbar/sidebar/modal remained dark (JS-injected CSS classes with hardcoded dark backgrounds). The C1 "How It Works" unhide rule forced hidden `<details>` visible when users already had `?` help buttons. Anchor overlay popup had a dark gradient background, and Ledger Account had dark navy gradient buttons.
+
+**Root cause:** The nuclear `*` selector with `!important` overrode inline accent/status colors. Brief's dark backgrounds came from JS-injected CSS class rules that main.css had never overridden.
+
+**Fix (CSS-only, zero JS changes):**
+
+| Change | Description |
+|--------|-------------|
+| Remove nuclear rules | Deleted `body,body *`, `.tool-panel *`, and 23-panel ID blanket color overrides |
+| Targeted text overrides | `[style*="color:#fff"]:not(...)` attribute selectors preserving inline accents |
+| Tool panel text | `.tool-panel h1-h5` dark + `.tool-panel span:not([style*="color:"])` only |
+| Brief light mode | 25+ rules for .brief-sidebar, .brief-header, .brief-format-bar, .brief-modal |
+| C1 removal | Removed "How It Works" unhide block entirely |
+| Anchor overlay | `#s4ResultPopup` dark gradient → light; box-shadow toned down |
+| Ledger buttons | Dark navy gradient buttons → accent blue gradient |
+| Ledger widgets | SLS stat/expand/chart-range/amount buttons — light overrides |
+| Details/summary | Only style visible ones, don't force-show hidden |
+
+**Architecture after Round 5:**
+| Metric | Value |
+|--------|-------|
+| CSS bundle (both apps) | 139KB |
+| JS files | Identical to commit `aecff72` |
+| Commit chain | `aecff72` → `78b3ba0` (R1) → `bf0c17f` (R2) → `9daeabf` (R3) → `0ff2866` (R4) → `1ebda61` (R5) |
+
+---
 *This log is updated every session. Reference before making changes.*
