@@ -4291,8 +4291,8 @@ a[href="#mainContent"]:focus{
 .s4-quick-fab{position:fixed;bottom:24px;left:24px;z-index:9997}
 .s4-fab-trigger{width:48px;height:48px;border-radius:50%;background:var(--accent,#00aaff);color:#fff;border:none;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 16px rgba(0,170,255,0.3);transition:all 0.3s;display:flex;align-items:center;justify-content:center}
 .s4-fab-trigger:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(0,170,255,0.4)}
-.s4-fab-menu{position:absolute;bottom:56px;left:0;flex-direction:column;gap:6px;min-width:160px}
-.s4-fab-item{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--card-bg,#1c1f26);border:1px solid var(--border,rgba(255,255,255,0.08));border-radius:4px;color:var(--text-primary,#f0f0f5);font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:inherit;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+.s4-fab-menu{position:absolute;bottom:56px;left:0;flex-direction:column;gap:6px;min-width:180px}
+.s4-fab-item{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--card-bg,#1c1f26);border:1px solid var(--border,rgba(255,255,255,0.08));border-radius:6px;color:var(--text-primary,#f0f0f5);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:inherit;box-shadow:0 4px 16px rgba(0,0,0,0.3)}
 .s4-fab-item:hover{border-color:var(--accent,#00aaff);color:var(--accent,#00aaff);transform:translateX(4px)}
 .s4-fab-item i{width:16px;text-align:center;font-size:0.8rem}
 
@@ -4309,12 +4309,60 @@ a[href="#mainContent"]:focus{
 :root[data-theme="light"] .s4-playbook-menu{background:#fff;border-color:rgba(0,0,0,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.15)}
 :root[data-theme="light"] .s4-playbook-card{background:rgba(0,0,0,0.02);border-color:rgba(0,0,0,0.06)}
 :root[data-theme="light"] .s4-playbook-panel{background:#fff;border-color:rgba(0,0,0,0.1);box-shadow:0 16px 48px rgba(0,0,0,0.15)}
-:root[data-theme="light"] .s4-fab-item{background:#fff;border-color:rgba(0,0,0,0.08);color:#1c1f26;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
-:root[data-theme="light"] .s4-cross-links{background:rgba(0,0,0,0.02);border-color:rgba(0,0,0,0.06)}
+:root[data-theme="light"] .s4-fab-item{background:#fff;border-color:rgba(0,0,0,0.1);color:#1a1a2e;box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+:root[data-theme="light"] .s4-fab-item:hover{background:rgba(0,113,227,0.06);border-color:rgba(0,113,227,0.3);color:#0071e3}
+:root[data-theme="light"] .s4-fab-item span{color:#1a1a2e}
+:root[data-theme="light"] .s4-fab-item i{color:#0071e3}
+:root[data-theme="light"] .s4-cross-links{background:rgba(0,113,227,0.03);border-color:rgba(0,113,227,0.08)}
+:root[data-theme="light"] .s4-cross-link-chip{color:#0071e3;background:rgba(0,113,227,0.06);border-color:rgba(0,113,227,0.15)}
+:root[data-theme="light"] .s4-cross-link-chip:hover{background:rgba(0,113,227,0.12);border-color:rgba(0,113,227,0.3)}
 :root[data-theme="light"] .s4-ai-suggestions{background:rgba(168,85,247,0.03);border-color:rgba(168,85,247,0.08)}
+:root[data-theme="light"] .s4-ai-prompt-chip{color:#7c3aed;background:rgba(168,85,247,0.06);border-color:rgba(168,85,247,0.12)}
+:root[data-theme="light"] .s4-ai-prompt-chip:hover{background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.25)}
 :root[data-theme="light"] .s4-health-cell.health-green{background:rgba(52,199,89,0.06);border-color:rgba(52,199,89,0.15)}
 :root[data-theme="light"] .s4-health-cell.health-yellow{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.15)}
 :root[data-theme="light"] .s4-health-cell.health-red{background:rgba(255,59,48,0.06);border-color:rgba(255,59,48,0.15)}
+:root[data-theme="light"] .s4-playbook-card{color:#1a1a2e}
+:root[data-theme="light"] .s4-playbook-step-label{color:#1a1a2e}
+:root[data-theme="light"] .s4-notif-panel-header{color:#1a1a2e}
+:root[data-theme="light"] .s4-notif-item.unread{color:#1a1a2e}
+
+/* ─── R11 FIX: Force-hide HIW details elements ─── */
+.ils-hub-panel details[style*="display"],
+.ils-hub-panel > .s4-card > details,
+.s4-card > details[style]{display:none!important}
+
+/* ─── R11 FIX: Show-more collapsible for long content ─── */
+.s4-show-more-wrap{max-height:200px;overflow:hidden;position:relative;transition:max-height 0.4s ease}
+.s4-show-more-wrap.expanded{max-height:none}
+.s4-show-more-wrap:not(.expanded)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,var(--card-bg,#fff));pointer-events:none}
+:root[data-theme="light"] .s4-show-more-wrap:not(.expanded)::after{background:linear-gradient(transparent,#fff)}
+.s4-show-more-btn{display:block;margin:8px auto 0;padding:4px 16px;font-size:0.72rem;font-weight:600;color:var(--accent,#0071e3);background:rgba(0,113,227,0.06);border:1px solid rgba(0,113,227,0.15);border-radius:3px;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.s4-show-more-btn:hover{background:rgba(0,113,227,0.12);border-color:rgba(0,113,227,0.25)}
+
+/* ─── R12: Gap Analysis sidebar compact empty states ─── */
+#hub-analysis .col-lg-5 .s4-card{padding:12px 16px;margin-bottom:8px}
+#hub-analysis .col-lg-5 .s4-card h3{font-size:0.82rem;margin-bottom:6px}
+#hub-analysis .col-lg-5 #ilsScoreContainer{padding:0.5rem 0}
+#hub-analysis .col-lg-5 #ilsScore{font-size:2.8rem}
+#hub-analysis .col-lg-5 #ilsCoverage > div,
+#hub-analysis .col-lg-5 #ilsActions > div,
+#hub-analysis .col-lg-5 #ilsCostSchedule > div{padding:0.5rem;font-size:0.8rem}
+
+/* ─── R12: Provenance light-mode form label fixes ─── */
+:root[data-theme="light"] #hub-provenance label{color:#6e6e73!important}
+:root[data-theme="light"] #hub-provenance .stat-mini-lbl{color:#6e6e73!important}
+:root[data-theme="light"] #hub-provenance .stat-mini-val{font-weight:700}
+:root[data-theme="light"] #hub-provenance p{color:#6e6e73!important}
+:root[data-theme="light"] .ils-hub-panel [style*="color:#c9a84c"]{color:#8b6914!important}
+
+/* ─── R12: Button ordering within tool panels — primary actions first ─── */
+.ils-hub-panel .d-flex.gap-2{display:flex!important;flex-wrap:wrap!important}
+.ils-hub-panel .d-flex.gap-2 .btn-accent{order:-2}
+.ils-hub-panel .d-flex.gap-2 .btn-gold{order:-1}
+.ils-hub-panel .d-flex.gap-2 .post-action-btn{order:1}
+
+/* ━━━ END ROUND 12 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 /* ━━━ END ROUND 11 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 

@@ -511,6 +511,123 @@
                     'Generate an acquisition strategy document',
                     'Compare adaptive vs traditional pathways'
                 ]
+            },
+            'hub-actions': {
+                label: 'Action Items',
+                suggestions: [
+                    'Show overdue action items by priority',
+                    'Generate action item summary for leadership',
+                    'Which action items have the highest cost impact?',
+                    'Assign open items to responsible parties'
+                ]
+            },
+            'hub-lifecycle': {
+                label: 'Lifecycle Cost',
+                suggestions: [
+                    'Project lifecycle cost for next 5 years',
+                    'What are the top cost drivers?',
+                    'Compare O&S costs across platforms',
+                    'Model cost impact of deferred maintenance'
+                ]
+            },
+            'hub-docs': {
+                label: 'Document Manager',
+                suggestions: [
+                    'Which documents are expiring this quarter?',
+                    'Find missing deliverables in the DRL',
+                    'Cross-reference CDRLs against contract requirements',
+                    'Generate a document status dashboard'
+                ]
+            },
+            'hub-reports': {
+                label: 'Report Generator',
+                suggestions: [
+                    'Generate an executive program summary',
+                    'Create a compliance status report',
+                    'Build a quarterly ILS metrics report',
+                    'Draft a risk assessment briefing'
+                ]
+            },
+            'hub-sbom': {
+                label: 'SBOM / BOM',
+                suggestions: [
+                    'Scan my BOM for single-source parts',
+                    'Identify components with long lead times',
+                    'Check SBOM against known vulnerabilities',
+                    'Generate a BOM health report'
+                ]
+            },
+            'hub-submissions': {
+                label: 'Data Submissions',
+                suggestions: [
+                    'What submissions are due this month?',
+                    'Check submission status across all CDRLs',
+                    'Flag overdue contractor deliverables',
+                    'Generate a submission compliance scorecard'
+                ]
+            },
+            'hub-gfp': {
+                label: 'GFP Tracker',
+                suggestions: [
+                    'List all government-furnished property by location',
+                    'Which GFP items need inventory reconciliation?',
+                    'Generate a GFP accountability report',
+                    'Flag GFP with missing custody records'
+                ]
+            },
+            'hub-cdrl': {
+                label: 'CDRL Manager',
+                suggestions: [
+                    'Show CDRLs with upcoming due dates',
+                    'Which CDRLs are non-compliant?',
+                    'Map CDRLs to contract line items',
+                    'Generate a CDRL delivery tracker'
+                ]
+            },
+            'hub-contract': {
+                label: 'Contract Tracker',
+                suggestions: [
+                    'Summarize contract obligations and status',
+                    'Which CLINs are at risk of overrun?',
+                    'Map contract mods to scope changes',
+                    'Generate a contract health dashboard'
+                ]
+            },
+            'hub-provenance': {
+                label: 'Provenance Chain',
+                suggestions: [
+                    'Show chain of custody for a specific item',
+                    'Identify provenance gaps in the supply chain',
+                    'Verify blockchain integrity for recent transfers',
+                    'Generate a custody audit report'
+                ]
+            },
+            'hub-analytics': {
+                label: 'Cross-Program Analytics',
+                suggestions: [
+                    'Compare readiness scores across programs',
+                    'Which programs have the highest risk exposure?',
+                    'Generate a portfolio-level KPI dashboard',
+                    'Identify cross-program resource conflicts'
+                ]
+            },
+            'hub-team': {
+                label: 'Team Hub',
+                suggestions: [
+                    'Show team workload distribution',
+                    'Who is responsible for overdue items?',
+                    'Generate a team performance summary',
+                    'Map team assignments to program milestones'
+                ]
+            },
+            'hub-milestones': {
+                label: 'Program Milestones',
+                suggestions: [
+                    'Which milestones are behind schedule?',
+                    'Generate a milestone status timeline',
+                    'Calculate schedule risk for upcoming gates',
+                    'Map milestone dependencies across programs'
+                ]
             }
         },
 
@@ -953,7 +1070,7 @@
             var actions = [
                 { label: 'Anchor Record', icon: 'fa-anchor', action: function() { if (typeof showSection === 'function') showSection('sectionAnchor'); } },
                 { label: 'Verify Record', icon: 'fa-check-circle', action: function() { if (typeof showSection === 'function') showSection('sectionVerify'); } },
-                { label: 'Command Palette', icon: 'fa-terminal', action: function() { if (typeof toggleCommandPalette === 'function') toggleCommandPalette(); } },
+                { label: 'Command Palette', icon: 'fa-terminal', action: function() { if (window.S4 && S4.commandPalette) S4.commandPalette.toggle(); } },
                 { label: 'Playbooks', icon: 'fa-book-open', action: function() { S4.playbooks.showMenu(); } },
                 { label: 'Home', icon: 'fa-th-large', action: function() { if (typeof showHub === 'function') showHub(); } }
             ];
@@ -981,6 +1098,64 @@
 
 
     // ══════════════════════════════════════════════════════════════
+    // R12-A: SHOW-MORE COLLAPSIBLE for long content sections
+    // ══════════════════════════════════════════════════════════════
+    S4.showMore = {
+        _threshold: 220, // px — collapse if content taller than this
+
+        init: function() {
+            // Target lists, tables, and scrollable areas in ILS panels
+            var selectors = [
+                '.ils-hub-panel .result-panel',
+                '.ils-hub-panel table',
+                '.ils-hub-panel .ils-action-list',
+                '.ils-hub-panel [style*="max-height"]',
+                '#ilsActions',
+                '#ilsCoverage'
+            ];
+            var self = this;
+            // Observe for dynamically-inserted long content
+            var observer = new MutationObserver(function() {
+                self._scan();
+            });
+            var tabILS = document.getElementById('tabILS');
+            if (tabILS) {
+                observer.observe(tabILS, { childList: true, subtree: true });
+            }
+            // Initial scan after delay
+            setTimeout(function() { self._scan(); }, 1000);
+        },
+
+        _scan: function() {
+            var panels = document.querySelectorAll('.ils-hub-panel .result-panel');
+            for (var i = 0; i < panels.length; i++) {
+                var el = panels[i];
+                if (el.parentNode && el.parentNode.classList.contains('s4-show-more-wrap')) continue;
+                if (el.scrollHeight > this._threshold && el.offsetHeight > 0) {
+                    this._wrap(el);
+                }
+            }
+        },
+
+        _wrap: function(el) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 's4-show-more-wrap';
+            el.parentNode.insertBefore(wrapper, el);
+            wrapper.appendChild(el);
+
+            var btn = document.createElement('button');
+            btn.className = 's4-show-more-btn';
+            btn.textContent = 'Show More';
+            btn.onclick = function() {
+                var isExpanded = wrapper.classList.toggle('expanded');
+                btn.textContent = isExpanded ? 'Show Less' : 'Show More';
+            };
+            wrapper.parentNode.insertBefore(btn, wrapper.nextSibling);
+        }
+    };
+
+
+    // ══════════════════════════════════════════════════════════════
     // INITIALIZATION — Run after DOM is ready
     // ══════════════════════════════════════════════════════════════
     function initEnterpriseFeatures() {
@@ -1001,10 +1176,11 @@
         S4.contextualAI.init();
         S4.playbooks.init();
         S4.quickActions.init();
+        S4.showMore.init();
 
         S4.register('enterprise-features', {
             version: '1.0.0',
-            features: ['dashboard', 'notifications', 'crossLink', 'hubPriority', 'contextualAI', 'playbooks', 'healthMap', 'quickActions']
+            features: ['dashboard', 'notifications', 'crossLink', 'hubPriority', 'contextualAI', 'playbooks', 'healthMap', 'quickActions', 'showMore']
         });
     }
 
