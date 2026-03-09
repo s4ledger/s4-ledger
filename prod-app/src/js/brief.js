@@ -997,7 +997,7 @@
     // ================================================================
     function briefNewFromTemplate() {
         var templates = _getTemplates();
-        var html = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-height:400px;overflow-y:auto;padding:4px">';
+        var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;max-height:400px;overflow-y:auto;padding:4px">';
         templates.forEach(function (t, i) {
             var bt = BRIEF_TYPES[t.brief_type] || BRIEF_TYPES.STATUS;
             html += '<div class="stat-mini" style="cursor:pointer;padding:16px;text-align:center;transition:border-color 0.2s" onclick="briefCreateFromTemplate(' + i + ')" onmouseover="this.style.borderColor=\'' + bt.color + '\'" onmouseout="this.style.borderColor=\'rgba(0,0,0,0.06)\'">';
@@ -3432,7 +3432,7 @@
         try { templates = JSON.parse(localStorage.getItem('s4_brief_templates') || '[]'); } catch (e) { templates = []; }
         var html = '<div style="margin-bottom:12px;font-size:0.82rem;color:var(--steel)">Your saved templates and slides. Click to insert as a new brief.</div>';
         if (templates.length) {
-            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:300px;overflow-y:auto">';
+            html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;max-height:300px;overflow-y:auto">';
             templates.forEach(function (t, i) {
                 html += '<div class="stat-mini" style="cursor:pointer;padding:10px" onclick="briefLoadTemplate(' + i + ')" onmouseover="this.style.borderColor=\'#00aaff\'" onmouseout="this.style.borderColor=\'rgba(0,0,0,0.08)\'">';
                 html += '<div style="font-size:0.82rem;color:#1d1d1f;font-weight:600;margin-bottom:4px">' + _esc(t.title || 'Untitled') + '</div>';

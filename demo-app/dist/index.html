@@ -67,12 +67,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-CF4emkg7.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-C5_hw1lY.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-DFv016wT.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-L6nCPHIP.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-Bv4cOf5O.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-7e01C4aG.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-C_4hPVyM.css">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-Dm7RsGX6.css">
 </head>
 <body class="light-mode" data-theme="light">
 <!-- Light mode always on -->
@@ -155,7 +155,7 @@
             </ul>
             <p style="color:#00aaff;font-size:0.82rem;line-height:1.7;margin:0;font-weight:600;">Notwithstanding the above, using this IS does not constitute consent to PM, LE, or CI investigative searching or monitoring of the content of privileged communications.</p>
         </div>
-        <button onclick="acceptDodConsent()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:14px 48px;border-radius:3px;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.5px;">I Accept &mdash; Continue</button>
+        <button onclick="acceptDodConsent()" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;padding:14px 48px;border-radius:3px;font-weight:700;font-size:0.95rem;cursor:pointer;letter-spacing:0.5px;">I Accept &mdash; Continue</button>
         <div style="margin-top:12px;font-size:0.7rem;color:var(--muted);">By clicking "I Accept" you acknowledge and consent to the terms above.</div>
     </div>
 </div>
@@ -174,13 +174,13 @@
                 <p style="color:var(--steel);font-size:0.85rem;margin:0 0 12px;">Insert your Common Access Card (CAC) or PIV card and select your certificate.</p>
                 <div style="font-size:0.75rem;color:var(--muted);">(Insert your CAC or PIV card to authenticate)</div>
             </div>
-            <button onclick="simulateCacLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:3px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC</button>
+            <button onclick="simulateCacLogin()" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;padding:12px 36px;border-radius:3px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC</button>
         </div>
         <div id="acctLoginPane" style="display:none;">
             <div id="loginAuthError" style="display:none;background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.3);border-radius:3px;padding:10px 12px;margin-bottom:12px;color:#ff3b30;font-size:0.82rem;text-align:left;"></div>
             <div style="margin-bottom:12px;text-align:left;"><label for="loginEmail" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email</label><input type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#fff;color:#1d1d1f;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;" autocomplete="email"></div>
             <div style="margin-bottom:16px;text-align:left;"><label for="loginPassword" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input type="password" id="loginPassword" placeholder="••••••••" style="background:#fff;color:#1d1d1f;border:1px solid var(--border);border-radius:3px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;" autocomplete="current-password"></div>
-            <button id="btnAccountLogin" onclick="handleAccountLogin()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;padding:12px 36px;border-radius:3px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In</button>
+            <button id="btnAccountLogin" onclick="handleAccountLogin()" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;padding:12px 36px;border-radius:3px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;"><i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In</button>
             <div id="signupToggle" style="margin-top:12px;font-size:0.78rem;text-align:center;">
                 <span style="color:var(--steel);">No account?</span> <a href="#" onclick="event.preventDefault();toggleSignupMode();" style="color:var(--accent);text-decoration:none;font-weight:600;">Create one</a>
                 <span style="margin:0 8px;color:var(--muted);">|</span>
@@ -810,10 +810,16 @@
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                         <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:3px;font-size:0.72rem;font-weight:600;background:rgba(0,204,102,0.08);border:1px solid rgba(0,204,102,0.15);color:#00cc66"><i class="fas fa-circle" style="font-size:0.4rem"></i> Live</span>
                         <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:3px;font-size:0.72rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.12);color:var(--accent)"><i class="fas fa-shield-halved"></i> IL4/IL5</span>
-                        <span class="r16-hdr-btn" onclick="showSavedAnalyses()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:3px;font-size:0.72rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:#00aaff;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,170,255,0.15)'" onmouseout="this.style.background='rgba(0,170,255,0.06)'"><i class="fas fa-history"></i> My Analyses</span>
-                        <span class="r16-hdr-btn" onclick="showTeamPanel()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:3px;font-size:0.72rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.12);color:var(--accent);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,170,255,0.15)'" onmouseout="this.style.background='rgba(0,170,255,0.06)'"><i class="fas fa-users"></i> Team</span>
-                        <span class="r16-hdr-btn" onclick="showWebhookSettings()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:3px;font-size:0.72rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:#00aaff;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,170,255,0.15)'" onmouseout="this.style.background='rgba(0,170,255,0.06)'"><i class="fas fa-plug"></i> Webhooks</span>
-                        <span class="r16-hdr-btn" onclick="exportPDF()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:3px;font-size:0.72rem;font-weight:600;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);color:#c9a84c;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.15)'" onmouseout="this.style.background='rgba(201,168,76,0.06)'"><i class="fas fa-file-pdf"></i> PDF Export</span>
+                        <details class="ils-hdr-overflow" style="position:relative;">
+                            <summary style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:3px;font-size:0.78rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:var(--accent);cursor:pointer;list-style:none;transition:all 0.2s;user-select:none;" title="More actions"><i class="fas fa-ellipsis"></i></summary>
+                            <div style="position:absolute;right:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:100;min-width:180px;padding:4px 0;font-size:0.8rem;">
+                                <button onclick="showSavedAnalyses();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:#1d1d1f;cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-history" style="color:#00aaff;width:16px;text-align:center"></i> My Analyses</button>
+                                <button onclick="showTeamPanel();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:#1d1d1f;cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-users" style="color:var(--accent);width:16px;text-align:center"></i> Team</button>
+                                <button onclick="showWebhookSettings();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:#1d1d1f;cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-plug" style="color:#00aaff;width:16px;text-align:center"></i> Webhooks</button>
+                                <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+                                <button onclick="exportPDF();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:#1d1d1f;cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(201,168,76,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-file-pdf" style="color:#c9a84c;width:16px;text-align:center"></i> PDF Export</button>
+                            </div>
+                        </details>
                     </div>
                 </div>
                 <div class="ils-hub-tabs" id="ilsHubTabs" style="display:flex;">
@@ -1099,6 +1105,20 @@
                         </div>
                     </div>
                 </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to help analyze ILS gaps, prioritize findings, and estimate remediation impact.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize ILS gaps')">Summarize Gap Analysis</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('What are my highest-risk gaps?')">Top Risks</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Estimate cost to close all gaps')">Cost Estimate</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which gaps affect readiness most?')">Readiness Impact</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft a gap closure plan')">Closure Plan</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Compare my gaps to industry benchmarks')">Benchmark</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent can cross-reference gap analysis with compliance, risk, and readiness tools for a full picture.</div>
+                </div>
                 </div><!-- /hub-analysis -->
 
                 <!-- ══ HUB: ACTION ITEMS ══ -->
@@ -1228,9 +1248,23 @@
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="dmsmsCost" style="color:#ffa500">$0</div><div class="stat-mini-label">Est. Resolution Cost</div></div></div>
                         </div>
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                            <button onclick="exportDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-download"></i> Export DMSMS Report</button>
-                            <button onclick="anchorDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button onclick="exportDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-download"></i> Export DMSMS Report</button>
+                            <button onclick="anchorDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         </div>
+                    </div>
+                    <!-- AI Assistant Quick Buttons -->
+                    <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                        <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                        <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about obsolescence risks, alternate sourcing, and DMSMS mitigation strategies.</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                            <button class="ai-quick-btn" onclick="aiAsk('Summarize my DMSMS risks')">Risk Summary</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Which parts are most critical?')">Critical Parts</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Find alternate sources for flagged parts')">Alt Sources</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Estimate DMSMS resolution costs')">Cost Estimate</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Draft a DMSMS mitigation plan')">Mitigation Plan</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('What parts expire in the next 12 months?')">Expiring Soon</button>
+                        </div>
+                        <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent can cross-reference DMSMS data with SBOM, supply chain provenance, and lifecycle cost tools.</div>
                     </div>
                 </div>
 
@@ -1275,9 +1309,23 @@
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="statMissReady">—</div><div class="stat-mini-label">Mission Readiness</div></div></div>
                         </div>
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                            <button onclick="exportReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-download"></i> Export RAM Report</button>
-                            <button onclick="anchorReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button onclick="exportReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-download"></i> Export RAM Report</button>
+                            <button onclick="anchorReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         </div>
+                    </div>
+                    <!-- AI Assistant Quick Buttons -->
+                    <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                        <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                        <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about readiness posture, material availability, and mission-capability trends.</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                            <button class="ai-quick-btn" onclick="aiAsk('Summarize readiness status')">Readiness Summary</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('What drives my readiness gaps?')">Gap Drivers</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Which items have lowest Ao?')">Low Availability</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Forecast readiness for next quarter')">Forecast</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Draft readiness brief for leadership')">Leadership Brief</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Compare readiness across programs')">Cross-Program</button>
+                        </div>
+                        <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent integrates readiness with lifecycle, predictive maintenance, and action items for holistic assessment.</div>
                     </div>
                 </div>
 
@@ -1331,9 +1379,23 @@
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="roi5Year" style="color:#00aaff">—</div><div class="stat-mini-label">5-Year Net Savings</div></div></div>
                         </div>
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                            <button onclick="exportROI()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-download"></i> Export ROI Report</button>
-                            <button onclick="anchorROI()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button onclick="exportROI()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-download"></i> Export ROI Report</button>
+                            <button onclick="anchorROI()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         </div>
+                    </div>
+                    <!-- AI Assistant Quick Buttons -->
+                    <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                        <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                        <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to calculate ROI scenarios, compare investment options, and forecast lifecycle savings.</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                            <button class="ai-quick-btn" onclick="aiAsk('Calculate ROI for current plan')">Calculate ROI</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Compare investment scenarios')">Compare Scenarios</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('What gives the best cost avoidance?')">Best Savings</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Forecast 5-year lifecycle cost')">5-Year Forecast</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Draft ROI justification memo')">ROI Memo</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Show break-even timeline')">Break-Even</button>
+                        </div>
+                        <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent can factor in readiness, DMSMS, and predictive maintenance data for accurate ROI projections.</div>
                     </div>
                 </div>
 
@@ -1387,9 +1449,23 @@
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="lcCostPerHr" style="color:#00aaff">—</div><div class="stat-mini-label">Cost per Op Hour</div></div></div>
                         </div>
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                            <button onclick="exportLifecycle()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-download"></i> Export Lifecycle Report</button>
-                            <button onclick="anchorLifecycle()" class="btn btn-sm" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button onclick="exportLifecycle()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-download"></i> Export Lifecycle Report</button>
+                            <button onclick="anchorLifecycle()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         </div>
+                    </div>
+                    <!-- AI Assistant Quick Buttons -->
+                    <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                        <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                        <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about lifecycle cost trends, sustainment projections, and total ownership cost analysis.</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                            <button class="ai-quick-btn" onclick="aiAsk('Summarize lifecycle costs')">Cost Summary</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('What are my top cost drivers?')">Top Drivers</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Forecast sustainment costs for 10 years')">10-Year Forecast</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Compare O-level vs D-level costs')">Maint Comparison</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Draft lifecycle cost estimate brief')">LCC Brief</button>
+                            <button class="ai-quick-btn" onclick="aiAsk('Show cost trends over time')">Cost Trends</button>
+                        </div>
+                        <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent integrates lifecycle data with ROI, readiness, and acquisition tools for comprehensive cost views.</div>
                     </div>
                 </div>
 
@@ -1471,7 +1547,7 @@
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                         <button onclick="exportVault('csv')" class="ai-quick-btn hover-lift" style="font-weight:700"><i class="fas fa-file-csv"></i> Export CSV</button>
                         <button onclick="exportVault('xlsx')" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-file-excel"></i> Export XLSX</button>
-                        <button onclick="verifyAllVault()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-check-double"></i> Re-Verify All</button>
+                        <button onclick="verifyAllVault()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-check-double"></i> Re-Verify All</button>
                         <button onclick="clearVault()" class="btn btn-sm" style="background:rgba(255,51,51,0.1);color:#ff3333;border:1px solid rgba(255,51,51,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-trash"></i> Clear Vault</button>
                     </div>
 
@@ -1483,9 +1559,10 @@
                     </div>
 
                     <!-- Vault Analytics Dashboard -->
-                    <div id="vaultMetricsDashboard" style="margin-top:1rem;background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(201,168,76,0.03));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:16px;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                            <div style="font-size:0.82rem;font-weight:700;color:#00aaff;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-chart-bar"></i> Vault Analytics</div>
+                    <details style="margin-top:1rem;background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(201,168,76,0.03));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 16px;">
+                        <summary style="cursor:pointer;padding:12px 0;display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:700;color:#00aaff;text-transform:uppercase;letter-spacing:0.8px"><i class="fas fa-chart-bar"></i> Vault Analytics <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.7rem;color:var(--steel)"></i></summary>
+                    <div id="vaultMetricsDashboard" style="padding-bottom:16px;">
+                        <div style="display:flex;justify-content:flex-end;align-items:center;margin-bottom:12px;">
                             <button onclick="refreshVaultMetrics()" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:3px 10px;font-size:0.72rem;cursor:pointer;font-weight:600"><i class="fas fa-sync-alt"></i> Refresh</button>
                         </div>
                         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;" id="vaultMetricsGrid">
@@ -1516,6 +1593,7 @@
                         </div>
                         <div id="vmTypeBreakdown" style="margin-top:10px;font-size:0.75rem;color:var(--steel)"></div>
                     </div>
+                    </details>
 
                     <!-- Vault Stress Test Tool -->
                     <details style="margin-top:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
@@ -1538,6 +1616,20 @@
                             <div id="stressTestResults" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:12px;font-size:0.78rem;color:var(--steel)"></div>
                         </div>
                     </details>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to search audit records, verify integrity, and generate compliance summaries from your vault.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize my vault activity')">Vault Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Find all records for a specific program')">Search Program</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Verify integrity of recent anchors')">Verify Integrity</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which records need re-certification?')">Expiring Certs</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Generate audit trail for inspectors')">Audit Trail</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Export records for compliance review')">Export Review</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent can cross-reference vault records with compliance, submissions, and provenance tools.</div>
                 </div>
             </div>
 
@@ -1597,6 +1689,20 @@
                         </div>
                     </div>
 
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to find documents, summarize references, and identify applicable standards.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Find relevant MIL-STDs for my program')">Find Standards</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize document requirements')">Doc Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which documents need updates?')">Needs Update</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('List CDRLs for my contract type')">CDRL List</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft document review checklist')">Review Checklist</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Compare document versions')">Version Compare</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent links document references to compliance frameworks, CDRLs, and contract requirements.</div>
                 </div>
             </div>
 
@@ -1668,7 +1774,7 @@
                         <div id="poamSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Track weaknesses, planned remediations, milestones, and responsible parties per NIST SP 800-53 / OMB A-130 requirements.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-                                <button onclick="addPOAM()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-plus"></i> Add POA&M Item</button>
+                                <button onclick="addPOAM()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-plus"></i> Add POA&M Item</button>
                                 <button onclick="exportPOAM()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-download"></i> Export POA&M</button>
                             </div>
                             <div id="poamTableWrap" style="overflow-x:auto">
@@ -1739,7 +1845,7 @@
                         <div id="monitoringSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Real-time control status monitoring with drift detection. Auto-scans workspace activity to flag degraded controls.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px">
-                                <button onclick="runMonitoringScan()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-satellite-dish"></i> Run Full Scan</button>
+                                <button onclick="runMonitoringScan()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-satellite-dish"></i> Run Full Scan</button>
                                 <button onclick="toggleAutoMonitor()" id="autoMonitorBtn" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-sync"></i> Auto-Monitor: OFF</button>
                             </div>
                             <div id="monitoringGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px"></div>
@@ -1781,9 +1887,23 @@
                     </div>
 
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                        <button onclick="exportCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-download"></i> Export Scorecard</button>
-                        <button onclick="anchorCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="exportCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-download"></i> Export Scorecard</button>
+                        <button onclick="anchorCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about compliance status, framework gaps, and remediation recommendations.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize my compliance posture')">Compliance Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which frameworks have the most gaps?')">Framework Gaps</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft POA&M for open findings')">Draft POA&M</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Estimate time to full compliance')">Timeline Estimate</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Show FedRAMP alignment status')">FedRAMP Status</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Generate evidence package for auditors')">Evidence Package</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent integrates compliance data with risk assessment, document library, and vault for audit readiness.</div>
                 </div>
             </div>
 
@@ -1857,7 +1977,7 @@
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                         <button onclick="loadRiskData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-sync-alt"></i> Refresh Analysis</button>
                         <button onclick="exportRisk()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Risk Report</button>
-                        <button onclick="anchorRisk()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="anchorRisk()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
                     <!-- ── AI Remediation Plans ── -->
@@ -1870,7 +1990,7 @@
                         </div>
                         <div id="remediationSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">AI generates step-by-step remediation plans for high-risk supply chain items, including alternate sourcing, redesign recommendations, and cost estimates.</p>
-                            <button onclick="generateRemediationPlans()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.82rem;margin-bottom:12px"><i class="fas fa-wand-magic-sparkles"></i> Generate Plans</button>
+                            <button onclick="generateRemediationPlans()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.82rem;margin-bottom:12px"><i class="fas fa-wand-magic-sparkles"></i> Generate Plans</button>
                             <div id="remediationOutput"></div>
                         </div>
                     </div>
@@ -1933,6 +2053,20 @@
                     </div>
 
                 </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about supply chain risks, threat intelligence, and risk mitigation strategies.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize my risk exposure')">Risk Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which suppliers are highest risk?')">High-Risk Suppliers</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft risk mitigation plan')">Mitigation Plan</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Show anomaly detection results')">Anomalies</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Forecast risk trends for next quarter')">Risk Forecast</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Estimate budget impact of top risks')">Budget Impact</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent cross-references risk data with DMSMS, provenance, compliance, and predictive maintenance tools.</div>
+                </div>
             </div>
 
             <!-- ══ HUB: AUTOMATED AUDIT REPORT GENERATOR ══ -->
@@ -1971,9 +2105,9 @@
                         <div id="reportContent" style="font-size:0.85rem;color:var(--steel);line-height:1.7;">Select a report type and click Generate to preview your audit package.</div>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                        <button onclick="generateReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-magic"></i> Generate Report</button>
+                        <button onclick="generateReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-magic"></i> Generate Report</button>
                         <button onclick="downloadReport()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Download Report</button>
-                        <button onclick="anchorReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Report Hash</button>
+                        <button onclick="anchorReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Report Hash</button>
                     </div>
 
                     <!-- ── Executive Summary Generator ── -->
@@ -1987,7 +2121,7 @@
                         <div id="execSummarySection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Generate a leadership-ready executive summary combining compliance posture, risk status, action item metrics, and financial impact.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px">
-                                <button onclick="generateExecSummary()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-size:0.82rem"><i class="fas fa-bolt"></i> Generate Executive Summary</button>
+                                <button onclick="generateExecSummary()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-size:0.82rem"><i class="fas fa-bolt"></i> Generate Executive Summary</button>
                                 <button onclick="downloadExecSummary()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:3px;padding:8px 16px;font-size:0.82rem"><i class="fas fa-download"></i> Download</button>
                             </div>
                             <div id="execSummaryOutput" style="font-size:0.82rem;color:var(--steel);line-height:1.7"></div>
@@ -2033,7 +2167,7 @@
                         </div>
                         <div id="fleetCompareSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Compare compliance, readiness, and risk metrics across multiple programs/platforms side-by-side.</p>
-                            <button onclick="generateFleetComparison()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.82rem;margin-bottom:12px"><i class="fas fa-table"></i> Generate Comparison</button>
+                            <button onclick="generateFleetComparison()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.82rem;margin-bottom:12px"><i class="fas fa-table"></i> Generate Comparison</button>
                             <div id="fleetCompareOutput" style="overflow-x:auto"></div>
                         </div>
                     </div>
@@ -2052,6 +2186,20 @@
                         </div>
                     </div>
 
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to generate reports, customize templates, and schedule automated deliverables.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Generate executive summary report')">Exec Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Create fleet-wide comparison report')">Fleet Comparison</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft a risk heat map report')">Risk Heat Map</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Schedule monthly compliance report')">Schedule Report</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('What report formats are available?')">Available Formats</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize key findings across all tools')">Cross-Tool Summary</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent can pull data from any tool to build comprehensive, multi-source reports automatically.</div>
                 </div>
             </div>
 
@@ -2115,10 +2263,24 @@
                         </div>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                        <button onclick="loadPredictiveData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Run Predictions</button>
+                        <button onclick="loadPredictiveData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Run Predictions</button>
                         <button onclick="exportPredictive()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Report</button>
-                        <button onclick="anchorPredictive()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="anchorPredictive()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about maintenance predictions, failure patterns, and optimal scheduling windows.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize maintenance predictions')">Prediction Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which items need urgent attention?')">Urgent Items</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Forecast failure rates for next 90 days')">90-Day Forecast</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Optimize maintenance schedule')">Optimize Schedule</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Estimate cost savings from predictive approach')">Cost Savings</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Show confidence levels for predictions')">Confidence Report</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent integrates predictive data with lifecycle, readiness, and acquisition tools for smarter maintenance planning.</div>
                 </div>
             </div>
 
@@ -2162,10 +2324,24 @@
                         </table>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                        <button onclick="loadSBOMData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Scan Components</button>
+                        <button onclick="loadSBOMData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Scan Components</button>
                         <button onclick="exportSBOM()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export SBOM</button>
-                        <button onclick="anchorSBOM()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor SBOM to Ledger</button>
+                        <button onclick="anchorSBOM()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor SBOM to Ledger</button>
                     </div>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to analyze your software bill of materials for vulnerabilities and compliance.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize SBOM status')">SBOM Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Find critical vulnerabilities')">Critical Vulns</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which components need updates?')">Needs Update</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Check license compliance')">License Check</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft SBOM report for auditors')">Audit Report</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Compare SBOM across versions')">Version Compare</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent cross-references SBOM data with compliance, risk, and provenance tools for software supply chain assurance.</div>
                 </div>
             </div>
 
@@ -2275,10 +2451,10 @@
 
                     <!-- Analysis Controls -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="analyzeSubmission()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Analyze &amp; Compare</button>
+                        <button onclick="analyzeSubmission()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Analyze &amp; Compare</button>
 
-                        <button onclick="anchorSubmissionReview()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Review to Ledger</button>
-                        <button onclick="exportDiscrepancyReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export Discrepancy Report</button>
+                        <button onclick="anchorSubmissionReview()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Review to Ledger</button>
+                        <button onclick="exportDiscrepancyReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export Discrepancy Report</button>
                         <button onclick="clearSubmissionReview()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 16px"><i class="fas fa-trash-alt"></i> Clear</button>
                     </div>
 
@@ -2355,6 +2531,20 @@
                         <div id="subHistory" style="margin-top:8px;max-height:200px;overflow-y:auto"></div>
                     </details>
                 </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to review submissions, flag discrepancies, and validate data quality.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Review my latest submission')">Review Submission</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Flag discrepancies in uploaded data')">Find Discrepancies</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Validate format compliance')">Validate Format</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Compare submission to previous version')">Compare Versions</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize submission status across programs')">Status Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft corrective action for flagged items')">Draft Correction</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent links submission analysis with compliance, contract requirements, and CDRL validation.</div>
+                </div>
             </div>
 
             <!-- ══ HUB: GFP TRACKER — GOVERNMENT-FURNISHED PROPERTY ══ -->
@@ -2430,9 +2620,9 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="runGfpInventory()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Run Inventory Check</button>
-                        <button onclick="anchorGFP()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="runGfpInventory()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Run Inventory Check</button>
                         <button onclick="exportGfpReport()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export DD 1662 Report</button>
+                        <button onclick="anchorGFP()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
@@ -2451,6 +2641,20 @@
                         <i class="fas fa-boxes-stacked" style="font-size:2rem;color:rgba(0,170,255,0.3);margin-bottom:8px;display:block"></i>
                         Upload DD 1662 files or enter property data above to begin tracking. GFP inventory data loads from Supabase.
                     </div>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about government-furnished property tracking, accountability, and DD 1662 compliance.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize GFP inventory status')">GFP Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which items are overdue for accountability?')">Overdue Items</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Validate DD 1662 compliance')">DD 1662 Check</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Find GFP items by custodian')">By Custodian</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft GFP status report')">Status Report</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Flag items with missing documentation')">Missing Docs</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent integrates GFP data with contract requirements, vault records, and compliance tools.</div>
                 </div>
             </div>
 
@@ -2525,9 +2729,9 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="runCdrlValidation()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-check-double"></i> Validate CDRLs</button>
-                        <button onclick="anchorCDRL()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="runCdrlValidation()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-check-double"></i> Validate CDRLs</button>
                         <button onclick="exportCdrlReport()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export Compliance Report</button>
+                        <button onclick="anchorCDRL()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
@@ -2546,6 +2750,20 @@
                         <i class="fas fa-clipboard-check" style="font-size:2rem;color:rgba(201,168,76,0.3);margin-bottom:8px;display:block"></i>
                         Upload DD 1423 or CDRL packages above to begin validation. Results and compliance scores display here.
                     </div>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to validate CDRLs, check format compliance, and track delivery status.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Validate my CDRL package')">Validate CDRLs</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which CDRLs are overdue?')">Overdue CDRLs</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Check DID format compliance')">Format Check</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize CDRL status by contract')">By Contract</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft CDRL delivery schedule')">Delivery Schedule</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Find missing CDRL deliverables')">Missing Items</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent cross-references CDRLs with contract extraction, document library, and submission review tools.</div>
                 </div>
             </div>
 
@@ -2622,9 +2840,9 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="runContractExtraction()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-wand-magic-sparkles"></i> Extract Clauses (AI)</button>
-                        <button onclick="anchorContract()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="runContractExtraction()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-wand-magic-sparkles"></i> Extract Clauses (AI)</button>
                         <button onclick="exportContractMatrix()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-table"></i> Export Clause Matrix</button>
+                        <button onclick="anchorContract()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
@@ -2643,6 +2861,20 @@
                         <i class="fas fa-file-contract" style="font-size:2rem;color:rgba(0,170,255,0.3);margin-bottom:8px;display:block"></i>
                         Upload a contract PDF or DOCX above. AI-powered clause extraction results display here.
                     </div>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to extract contract clauses, identify requirements, and flag compliance gaps.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Extract key contract requirements')">Extract Requirements</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Find ILS-relevant clauses')">ILS Clauses</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Flag non-standard terms')">Flag Terms</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Compare contracts across programs')">Compare Contracts</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft contract compliance checklist')">Compliance Checklist</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize contract obligations')">Obligations Summary</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent integrates contract data with CDRL validation, GFP tracking, and compliance tools.</div>
                 </div>
             </div>
 
@@ -2719,8 +2951,8 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="recordProvenanceEvent()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-link"></i> Record Transfer</button>
-                        <button onclick="anchorChain()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Chain to Ledger</button>
+                        <button onclick="recordProvenanceEvent()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-link"></i> Record Transfer</button>
+                        <button onclick="anchorChain()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Chain to Ledger</button>
                         <button onclick="generateProvenanceQR()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-qrcode"></i> Generate QR Tag</button>
                         <button onclick="verifyProvenanceChain()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-shield-check"></i> Verify Chain</button>
                     </div>
@@ -2742,6 +2974,20 @@
                         <i class="fas fa-link" style="font-size:2rem;color:rgba(201,168,76,0.3);margin-bottom:8px;display:block"></i>
                         Record custody transfers above or upload asset manifests. Provenance chain timeline renders here with blockchain verification.
                     </div>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about supply chain provenance, part authentication, and chain-of-custody verification.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Verify provenance chain for a part')">Verify Chain</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Flag suspected counterfeit components')">Counterfeit Check</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Show full chain of custody')">Chain of Custody</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Which parts lack provenance data?')">Missing Provenance</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft provenance report for auditors')">Audit Report</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Compare supplier certifications')">Cert Comparison</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent cross-references provenance with SBOM, risk assessment, DMSMS, and compliance tools.</div>
                 </div>
             </div>
 
@@ -2805,6 +3051,20 @@
                         Loading cross-program analytics...
                     </div>
                 </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to run cross-program analytics, compare trends, and generate insight dashboards.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Compare performance across programs')">Cross-Program Compare</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Show trending metrics')">Trend Analysis</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('What are my top improvement areas?')">Improvement Areas</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Generate analytics dashboard')">Dashboard</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Forecast program health trends')">Health Forecast</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft analytics summary for leadership')">Exec Summary</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent aggregates data from all 23 ILS tools for comprehensive cross-program intelligence.</div>
+                </div>
             </div>
 
             <!-- ══ HUB: TEAM MANAGEMENT — Full Admin Portal (differs from sidebar quick-view Team popup) ══ -->
@@ -2849,8 +3109,8 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="createNewTeam()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-plus-circle"></i> Create Team</button>
-                        <button onclick="inviteTeamMember()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-user-plus"></i> Invite Member</button>
+                        <button onclick="createNewTeam()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-plus-circle"></i> Create Team</button>
+                        <button onclick="inviteTeamMember()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-user-plus"></i> Invite Member</button>
                         <button onclick="exportTeamAudit()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-clipboard-list"></i> Export Access Audit</button>
                         <button onclick="runAccessReview()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-shield-halved"></i> Access Review</button>
                     </div>
@@ -2882,6 +3142,20 @@
                         <i class="fas fa-users-gear" style="font-size:2rem;color:rgba(201,168,76,0.3);margin-bottom:8px;display:block"></i>
                         Create a team or select an existing team above. Full team administration with program assignments and audit trails.
                     </div>
+                </div>
+                <!-- AI Assistant Quick Buttons -->
+                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
+                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent about team utilization, role assignments, and workload distribution.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
+                        <button class="ai-quick-btn" onclick="aiAsk('Summarize team workload')">Workload Summary</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Who has capacity for new tasks?')">Available Capacity</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Show role coverage gaps')">Coverage Gaps</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Draft team activity report')">Activity Report</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Optimize task assignments')">Optimize Assignments</button>
+                        <button class="ai-quick-btn" onclick="aiAsk('Compare team performance metrics')">Performance Metrics</button>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent integrates team data with action items, milestones, and acquisition planning for resource optimization.</div>
                 </div>
             </div>
 
@@ -2936,7 +3210,7 @@
                         <button class="ai-quick-btn" onclick="acqShowAuditLog()" style="background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.25);color:#c9a84c"><i class="fas fa-history"></i> Audit Log</button>
                         <span style="flex:1"></span>
                         <input type="text" id="acqSearchInput" placeholder="Search hull, region, builder..." oninput="acqFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:#1d1d1f;border-radius:3px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
-                        <button onclick="anchorAcquisitionPlan()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="anchorAcquisitionPlan()" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
                     <!-- Bulk Actions Bar (hidden by default) -->
@@ -3055,7 +3329,7 @@
                         <button class="ai-quick-btn" onclick="milShowAuditLog()" style="background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.25);color:#c9a84c"><i class="fas fa-history"></i> Audit Log</button>
                         <span style="flex:1"></span>
                         <input type="text" id="milSearchInput" placeholder="Search hull, builder, program..." oninput="milFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:#1d1d1f;border-radius:3px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
-                        <button onclick="anchorMilestones()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="anchorMilestones()" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
                     <!-- Bulk Actions Bar -->

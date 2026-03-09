@@ -279,6 +279,8 @@
         .ils-hub-tab.active{background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff!important;border-color:transparent;box-shadow:0 2px 10px rgba(0,113,227,0.3)}
         .ils-hub-tab .tab-badge{font-size:0.65rem;padding:1px 6px;border-radius:8px;background:rgba(255,51,51,0.2);color:#ff3333;font-weight:700}
         .ils-hub-tab.active .tab-badge{background:rgba(255,255,255,0.3);color:#fff}
+        .ils-hdr-overflow summary::-webkit-details-marker,.ils-hdr-overflow summary::marker{display:none;content:''}
+        .ils-hdr-overflow[open] summary{background:rgba(0,170,255,0.15)!important}
         /* ═══ ANCHOR-S4 UX OVERHAUL — Professional Enhancement ═══ */
         /* ── Override inline styles on panel cards ── */
         .ils-hub-panel .s4-card,
@@ -544,6 +546,47 @@
         .ils-hub-panel ::-webkit-scrollbar-track{background:transparent}
         .ils-hub-panel ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.06);border-radius:8px}
         .ils-hub-panel ::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.15)}
+
+        /* ═══ OPTION C — TOOL LAYOUT TIGHTENING ═══ */
+        /* ── Compact stat strips (inline with content) ── */
+        .ils-hub-panel .stat-mini{
+            padding:12px 10px !important;
+        }
+        .ils-hub-panel .stat-mini-val{
+            font-size:1.3rem !important;
+        }
+        .ils-hub-panel .stat-mini-lbl,
+        .ils-hub-panel .stat-mini-label{
+            font-size:0.62rem !important;letter-spacing:0.8px !important;
+        }
+        /* Compact the inline stat cards (col-md-3 grid cards) */
+        .ils-hub-panel .row.mb-3 > [class*="col-"] > div[style*="text-align:center;padding:12px"]{
+            padding:8px 6px !important;border-radius:6px !important;
+        }
+        .ils-hub-panel .row.mb-3 > [class*="col-"] > div[style*="text-align:center;padding:12px"] > div:first-child{
+            font-size:1.2rem !important;font-weight:800 !important;
+        }
+        .ils-hub-panel .row.mb-3 > [class*="col-"] > div[style*="text-align:center;padding:12px"] > div:last-child{
+            font-size:0.62rem !important;
+        }
+        /* ── Tighter panel padding on mobile ── */
+        @media(max-width:768px){
+            .ils-hub-panel .s4-card,.ils-hub-panel .s4-card.glass-card{padding:18px 16px !important}
+        }
+        /* ── Button bar: visual separator + consistent spacing ── */
+        .ils-hub-panel > .s4-card > div[style*="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem"]{
+            padding-top:14px !important;
+            border-top:1px solid var(--border) !important;
+            margin-top:18px !important;
+        }
+        /* ── Clickable sections are uniform ── */
+        .ils-hub-panel div[onclick*="toggleComplianceSection"]{
+            border-radius:3px !important;
+            transition:background 0.2s !important;
+        }
+        .ils-hub-panel div[onclick*="toggleComplianceSection"]:hover{
+            filter:brightness(0.97) !important;
+        }
         /* ── Enhanced Form Controls ── */
         .ils-hub-panel input[type="text"],
         .ils-hub-panel input[type="number"],
