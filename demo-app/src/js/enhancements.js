@@ -535,7 +535,7 @@ function showSampleDigitalThread() {
         html += '</div></div></div></div>';
     });
     html += '</div>';
-    html += '<div style="margin-top:12px;padding:10px;background:rgba(155,89,182,0.08);border-radius:3px;font-size:0.75rem;color:var(--steel);"><i class="fas fa-info-circle" style="color:#9b59b6;margin-right:6px;"></i>This is a sample provenance chain. Anchor records using any ILS tool to see real digital thread data with XRPL verification links.</div>';
+    html += '<div style="margin-top:12px;padding:10px;background:rgba(155,89,182,0.08);border-radius:8px;font-size:0.75rem;color:var(--steel);"><i class="fas fa-info-circle" style="color:#9b59b6;margin-right:6px;"></i>This is a sample provenance chain. Anchor records using any ILS tool to see real digital thread data with XRPL verification links.</div>';
     content.innerHTML = html;
     panel.style.display = 'block';
 }
@@ -564,7 +564,7 @@ function showSampleDigitalThread() {
                     btn.className = 'thread-btn';
                     btn.innerHTML = '<i class="fas fa-project-diagram"></i>';
                     btn.title = 'View Digital Thread';
-                    btn.style.cssText = 'background:rgba(155,89,182,0.12);color:#9b59b6;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;margin-left:4px;';
+                    btn.style.cssText = 'background:rgba(155,89,182,0.12);color:#9b59b6;border:1px solid rgba(155,89,182,0.3);border-radius:8px;padding:3px 8px;font-size:0.7rem;cursor:pointer;margin-left:4px;';
                     btn.onclick = function(e) { e.stopPropagation(); showDigitalThread(hash); };
                     var actions = row.querySelector('.vault-actions, [style*="gap"]');
                     if (actions) actions.appendChild(btn);
@@ -592,7 +592,7 @@ function showSampleDigitalThread() {
                             btn.className = 'thread-btn';
                             btn.innerHTML = '<i class="fas fa-project-diagram"></i>';
                             btn.title = 'View Digital Thread';
-                            btn.style.cssText = 'background:rgba(155,89,182,0.12);color:#9b59b6;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;margin-left:4px;';
+                            btn.style.cssText = 'background:rgba(155,89,182,0.12);color:#9b59b6;border:1px solid rgba(155,89,182,0.3);border-radius:8px;padding:3px 8px;font-size:0.7rem;cursor:pointer;margin-left:4px;';
                             btn.onclick = function(e) { e.stopPropagation(); showDigitalThread(hash); };
                             var actions = row.querySelector('.vault-actions, [style*="gap"]');
                             if (actions) actions.appendChild(btn);
@@ -658,7 +658,7 @@ function loadSBOMData() {
        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);">';
        html += '<td style="padding:10px 8px;color:#1d1d1f;font-weight:600;font-size:0.85rem;">' + c.name + '<div style="color:var(--steel);font-size:0.72rem;">' + c.supplier + '</div></td>';
        html += '<td style="padding:10px 8px;color:var(--steel);font-family:monospace;font-size:0.78rem;">' + c.version + '</td>';
-       html += '<td style="padding:10px 8px;text-align:center;"><span style="background:rgba(0,170,255,0.1);color:#00aaff;padding:2px 8px;border-radius:3px;font-size:0.75rem;font-weight:600;">' + c.type + '</span></td>';
+       html += '<td style="padding:10px 8px;text-align:center;"><span style="background:rgba(0,170,255,0.1);color:#00aaff;padding:2px 8px;border-radius:8px;font-size:0.75rem;font-weight:600;">' + c.type + '</span></td>';
        html += '<td style="padding:10px 8px;text-align:center;color:' + (c.cves > 0 ? '#ff3b30' : '#34c759') + ';font-weight:700;">' + (c.cves > 0 ? c.cves + ' <i class="fas fa-exclamation-triangle" style="font-size:0.7rem"></i>' : '<i class="fas fa-check-circle"></i>') + '</td>';
        html += '<td style="padding:10px 8px;text-align:center;color:var(--steel);font-size:0.78rem;">' + c.license + '</td>';
        html += '<td style="padding:10px 8px;text-align:center;"><span style="color:' + (sevColors[c.severity]||'#fff') + ';font-weight:600;font-size:0.82rem;">' + c.severity + '</span></td>';
@@ -746,12 +746,12 @@ async function sbomAiAsk(presetQuestion) {
     if (!chatBody) return;
 
     // Add user message
-    chatBody.innerHTML += window._s4Safe('<div style="align-self:flex-end;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:8px 12px;max-width:85%;color:#1d1d1f;font-size:0.83rem;">' + msg.replace(/</g,'&lt;') + '</div>');
+    chatBody.innerHTML += window._s4Safe('<div style="align-self:flex-end;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:8px 12px;max-width:85%;color:#1d1d1f;font-size:0.83rem;">' + msg.replace(/</g,'&lt;') + '</div>');
     chatBody.scrollTop = chatBody.scrollHeight;
 
     // Thinking indicator
     var thinkId = 'sbomThink_' + Date.now();
-    chatBody.innerHTML += '<div id="' + thinkId + '" style="background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.1);border-radius:3px;padding:10px 12px;color:var(--steel);max-width:85%;"><div style="font-weight:700;color:#2ecc71;font-size:0.72rem;margin-bottom:4px;"><i class="fas fa-robot"></i> SBOM Agent</div><i class="fas fa-circle-notch fa-spin" style="color:#2ecc71"></i> Analyzing SBOM data...</div>';
+    chatBody.innerHTML += '<div id="' + thinkId + '" style="background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.1);border-radius:8px;padding:10px 12px;color:var(--steel);max-width:85%;"><div style="font-weight:700;color:#2ecc71;font-size:0.72rem;margin-bottom:4px;"><i class="fas fa-robot"></i> SBOM Agent</div><i class="fas fa-circle-notch fa-spin" style="color:#2ecc71"></i> Analyzing SBOM data...</div>';
     chatBody.scrollTop = chatBody.scrollHeight;
 
     // Gather current SBOM data as context
@@ -1380,34 +1380,34 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var firstCard = hubPanel.querySelector('.s4-card');
         if (!firstCard) return;
 
-        var badgeHTML = '<div id="fedRampBadgePanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(0,100,0,0.06),rgba(0,170,255,0.04));border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:16px;">'
+        var badgeHTML = '<div id="fedRampBadgePanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(0,100,0,0.06),rgba(0,170,255,0.04));border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:16px;">'
             + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
             + '<div style="font-size:0.82rem;font-weight:700;color:#00aaff;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-shield-halved"></i> FedRAMP / Impact Level Authorization Status</div>'
-            + '<span style="background:rgba(255,149,0,0.15);color:#ff9500;padding:3px 10px;border-radius:3px;font-size:0.72rem;font-weight:700;">IN PROGRESS</span>'
+            + '<span style="background:rgba(255,149,0,0.15);color:#ff9500;padding:3px 10px;border-radius:8px;font-size:0.72rem;font-weight:700;">IN PROGRESS</span>'
             + '</div>'
             + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;">'
-            + '<div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;">'
+            + '<div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;">'
             + '<div style="font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">FedRAMP</div>'
             + '<div style="font-size:0.85rem;font-weight:800;color:#ff9500;"><i class="fas fa-clock"></i> Moderate</div>'
             + '<div style="font-size:0.65rem;color:var(--steel);margin-top:2px;">ATO Pending</div></div>'
-            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:3px;">'
+            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:8px;">'
             + '<div style="font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Impact Level</div>'
             + '<div style="font-size:0.85rem;font-weight:800;color:#34c759;"><i class="fas fa-check-circle"></i> IL4 / IL5</div>'
             + '<div style="font-size:0.65rem;color:var(--steel);margin-top:2px;">CUI / NOFORN Ready</div></div>'
-            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:3px;">'
+            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:8px;">'
             + '<div style="font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">CMMC Level</div>'
             + '<div style="font-size:0.85rem;font-weight:800;color:#34c759;"><i class="fas fa-check-circle"></i> Level 2</div>'
             + '<div style="font-size:0.65rem;color:var(--steel);margin-top:2px;">110 Practices Met</div></div>'
-            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:3px;">'
+            + '<div style="text-align:center;padding:12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:8px;">'
             + '<div style="font-size:0.68rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">NIST 800-171</div>'
             + '<div style="font-size:0.85rem;font-weight:800;color:#34c759;"><i class="fas fa-check-circle"></i> Compliant</div>'
             + '<div style="font-size:0.65rem;color:var(--steel);margin-top:2px;">SSP Documented</div></div>'
             + '</div>'
             + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
-            + '<a href="#" onclick="event.preventDefault();if(typeof _showNotif===\'function\')_showNotif(\'ATO documentation package available for download in production deployment.\',\'info\');" style="font-size:0.75rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;"><i class="fas fa-file-alt"></i> ATO Package</a>'
-            + '<a href="#" onclick="event.preventDefault();if(typeof _showNotif===\'function\')_showNotif(\'SSP (System Security Plan) available for download in production deployment.\',\'info\');" style="font-size:0.75rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;"><i class="fas fa-file-shield"></i> SSP Document</a>'
-            + '<a href="#" onclick="event.preventDefault();if(typeof _showNotif===\'function\')_showNotif(\'POA&M (Plan of Action & Milestones) available for review.\',\'info\');" style="font-size:0.75rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;"><i class="fas fa-list-check"></i> POA&M</a>'
-            + '<a href="#" onclick="event.preventDefault();if(typeof _showNotif===\'function\')_showNotif(\'Third-party RAR (Risk Assessment Report) results available in production.\',\'info\');" style="font-size:0.75rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;"><i class="fas fa-clipboard-check"></i> 3PAO RAR</a>'
+            + '<a href="#" onclick="event.preventDefault();if(typeof _showNotif===\'function\')_showNotif(\'ATO documentation package available for download in production deployment.\',\'info\');" style="font-size:0.75rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;"><i class="fas fa-file-alt"></i> ATO Package</a>'
+            + '<a href="#" onclick="event.preventDefault();if(typeof _showNotif===\'function\')_showNotif(\'SSP (System Security Plan) available for download in production deployment.\',\'info\');" style="font-size:0.75rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;"><i class="fas fa-file-shield"></i> SSP Document</a>'
+            + '<a href="#" onclick="event.preventDefault();if(typeof _showNotif===\'function\')_showNotif(\'POA&M (Plan of Action & Milestones) available for review.\',\'info\');" style="font-size:0.75rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;"><i class="fas fa-list-check"></i> POA&M</a>'
+            + '<a href="#" onclick="event.preventDefault();if(typeof _showNotif===\'function\')_showNotif(\'Third-party RAR (Risk Assessment Report) results available in production.\',\'info\');" style="font-size:0.75rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;"><i class="fas fa-clipboard-check"></i> 3PAO RAR</a>'
             + '</div>'
             + '</div>';
 
@@ -1450,7 +1450,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         if (existing) { existing.remove(); return; }
 
         var statusColors = { online: '#34c759', away: '#ff9500', offline: '#6e6e73' };
-        var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.12);">';
+        var html = '<div id="teamManagePanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.12);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#1d1d1f;font-size:1.1rem;"><i class="fas fa-users" style="color:var(--accent);margin-right:8px"></i>Team Workspace</h3>';
         html += '<button onclick="document.getElementById(\'teamManagePanel\').remove();document.getElementById(\'teamManageOverlay\').remove();" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -1464,17 +1464,17 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             var statusColor = statusColors[m.status] || '#6e6e73';
             html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);">';
             html += '<td style="padding:10px 8px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;border-radius:50%;background:' + role.color + '22;display:flex;align-items:center;justify-content:center;"><i class="fas ' + role.icon + '" style="color:' + role.color + ';font-size:0.7rem;"></i></div><div><div style="color:#1d1d1f;font-weight:600;font-size:0.82rem;">' + m.name + '</div><div style="color:var(--steel);font-size:0.7rem;">' + m.email + '</div></div></div></td>';
-            html += '<td style="padding:10px 8px;"><span style="background:' + role.color + '22;color:' + role.color + ';padding:3px 10px;border-radius:3px;font-size:0.72rem;font-weight:700;">' + role.label + '</span></td>';
+            html += '<td style="padding:10px 8px;"><span style="background:' + role.color + '22;color:' + role.color + ';padding:3px 10px;border-radius:8px;font-size:0.72rem;font-weight:700;">' + role.label + '</span></td>';
             html += '<td style="padding:10px 8px;text-align:center;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:' + statusColor + ';"><span style="width:6px;height:6px;border-radius:50%;background:' + statusColor + ';display:inline-block;"></span>' + m.status + '</span></td>';
             html += '<td style="padding:10px 8px;text-align:center;">';
-            if (i > 0) html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Role change requires Admin approval in production.\',\'info\')" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-pen"></i></button>';
+            if (i > 0) html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Role change requires Admin approval in production.\',\'info\')" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:8px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-pen"></i></button>';
             else html += '<span style="font-size:0.7rem;color:var(--steel);">—</span>';
             html += '</td></tr>';
         });
         html += '</tbody></table>';
         html += '<div style="margin-top:16px;display:flex;gap:8px;">';
-        html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Invite sent! Team member will receive an email with workspace access.\',\'success\')" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;"><i class="fas fa-user-plus" style="margin-right:4px"></i> Invite Member</button>';
-        html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Role permissions exported.\',\'info\')" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:3px;padding:8px 16px;font-size:0.8rem;font-weight:600;cursor:pointer;"><i class="fas fa-download" style="margin-right:4px"></i> Export Roles</button>';
+        html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Invite sent! Team member will receive an email with workspace access.\',\'success\')" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;"><i class="fas fa-user-plus" style="margin-right:4px"></i> Invite Member</button>';
+        html += '<button onclick="if(typeof _showNotif===\'function\')_showNotif(\'Role permissions exported.\',\'info\')" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:8px;padding:8px 16px;font-size:0.8rem;font-weight:600;cursor:pointer;"><i class="fas fa-download" style="margin-right:4px"></i> Export Roles</button>';
         html += '</div></div>';
         // Overlay
         html = '<div id="teamManageOverlay" onclick="document.getElementById(\'teamManagePanel\').remove();document.getElementById(\'teamManageOverlay\').remove();" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.85);z-index:10000;"></div>' + html;
@@ -1524,7 +1524,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var existing = document.getElementById('savedAnalysesPanel');
         if (existing) { existing.remove(); return; }
 
-        var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.12);">';
+        var html = '<div id="savedAnalysesPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.12);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#1d1d1f;font-size:1.1rem;"><i class="fas fa-history" style="color:var(--accent);margin-right:8px"></i>Saved Analyses</h3>';
         html += '<button onclick="_closeSavedAnalyses()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -1536,12 +1536,12 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             _savedAnalyses.sort(function(a,b){return new Date(b.timestamp)-new Date(a.timestamp);});
             _savedAnalyses.forEach(function(a, i) {
                 var scoreColor = a.score >= 80 ? '#34c759' : a.score >= 50 ? '#ff9500' : '#ff3b30';
-                html += '<div style="padding:14px;margin-bottom:8px;background:var(--surface);border:1px solid var(--border);border-radius:3px;">';
+                html += '<div style="padding:14px;margin-bottom:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">';
                 html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
                 html += '<div><div style="color:#1d1d1f;font-weight:700;font-size:0.88rem;">' + a.title + '</div><div style="color:var(--steel);font-size:0.72rem;">' + a.type + ' — ' + new Date(a.timestamp).toLocaleString() + '</div></div>';
                 html += '<div style="display:flex;align-items:center;gap:12px;">';
                 html += '<div style="text-align:center;"><div style="font-size:1.2rem;font-weight:800;color:' + scoreColor + ';">' + Math.round(a.score) + '%</div><div style="font-size:0.6rem;color:var(--steel);">Score</div></div>';
-                html += '<button onclick="_deleteSavedAnalysis(' + i + ')" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:3px;padding:4px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-trash"></i></button>';
+                html += '<button onclick="_deleteSavedAnalysis(' + i + ')" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:8px;padding:4px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-trash"></i></button>';
                 html += '</div></div>';
                 if (a.data) {
                     html += '<div style="display:flex;gap:12px;margin-top:8px;font-size:0.72rem;color:var(--steel);">';
@@ -1554,7 +1554,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
             });
         }
         html += '<div style="margin-top:16px;display:flex;gap:8px;">';
-        html += '<button onclick="_closeSavedAnalyses();saveCurrentAnalysis();showSavedAnalyses();" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;"><i class="fas fa-save" style="margin-right:4px"></i> Save Current Analysis</button>';
+        html += '<button onclick="_closeSavedAnalyses();saveCurrentAnalysis();showSavedAnalyses();" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;"><i class="fas fa-save" style="margin-right:4px"></i> Save Current Analysis</button>';
         html += '</div></div>';
         html = '<div id="savedAnalysesOverlay" onclick="_closeSavedAnalyses()" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.85);z-index:10000;"></div>' + html;
         document.body.insertAdjacentHTML('beforeend', html);
@@ -1691,7 +1691,7 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         var existing = document.getElementById('webhookPanel');
         if (existing) { existing.remove(); return; }
 
-        var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.12);">';
+        var html = '<div id="webhookPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:650px;max-width:90vw;max-height:80vh;background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:24px;z-index:10001;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.12);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
         html += '<h3 style="margin:0;color:#1d1d1f;font-size:1.1rem;"><i class="fas fa-plug" style="color:var(--accent);margin-right:8px"></i>Webhook Configuration</h3>';
         html += '<button onclick="_closeWebhooks()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:1.2rem;"><i class="fas fa-times"></i></button>';
@@ -1699,15 +1699,15 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         html += '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:16px;">Configure webhook URLs to receive real-time notifications when records are anchored, verified, or exported.</div>';
 
         // Add webhook form
-        html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:16px;">';
+        html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">';
         html += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;">';
-        html += '<input type="url" id="webhookUrlInput" placeholder="https://your-system.mil/api/webhooks/s4" style="background:#f5f5f7;color:#1d1d1f;border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:0.82rem;font-family:monospace;width:100%;">';
-        html += '<button onclick="addWebhook()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;white-space:nowrap;"><i class="fas fa-plus" style="margin-right:4px"></i> Add</button>';
+        html += '<input type="url" id="webhookUrlInput" placeholder="https://your-system.mil/api/webhooks/s4" style="background:#f5f5f7;color:#1d1d1f;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.82rem;font-family:monospace;width:100%;">';
+        html += '<button onclick="addWebhook()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:0.8rem;font-weight:700;cursor:pointer;white-space:nowrap;"><i class="fas fa-plus" style="margin-right:4px"></i> Add</button>';
         html += '</div>';
         html += '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
         var events = ['anchor.confirmed','anchor.failed','record.verified','export.completed','vault.cleared','analysis.saved'];
         events.forEach(function(evt) {
-            html += '<label style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--steel);cursor:pointer;padding:3px 8px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:3px;"><input type="checkbox" class="webhook-event-cb" value="' + evt + '" checked style="width:auto;accent-color:var(--accent);"> ' + evt + '</label>';
+            html += '<label style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--steel);cursor:pointer;padding:3px 8px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:8px;"><input type="checkbox" class="webhook-event-cb" value="' + evt + '" checked style="width:auto;accent-color:var(--accent);"> ' + evt + '</label>';
         });
         html += '</div></div>';
 
@@ -1715,11 +1715,11 @@ console.log('[Round-13] Production subscription code loaded — Stripe Checkout 
         if (_localWebhooks.length > 0) {
             html += '<div style="font-size:0.78rem;color:var(--accent);font-weight:600;margin-bottom:8px;">Active Webhooks</div>';
             _localWebhooks.forEach(function(wh, i) {
-                html += '<div style="padding:10px;margin-bottom:6px;background:var(--surface);border:1px solid var(--border);border-radius:3px;display:flex;justify-content:space-between;align-items:center;">';
+                html += '<div style="padding:10px;margin-bottom:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">';
                 html += '<div><div style="color:#1d1d1f;font-family:monospace;font-size:0.78rem;">' + wh.url + '</div><div style="color:var(--steel);font-size:0.68rem;">Events: ' + wh.events.join(', ') + ' | Added: ' + new Date(wh.created).toLocaleDateString() + '</div></div>';
                 html += '<div style="display:flex;gap:6px;">';
-                html += '<button onclick="testWebhook(' + i + ')" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.2);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-paper-plane"></i> Test</button>';
-                html += '<button onclick="removeWebhook(' + i + ')" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:3px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-trash"></i></button>';
+                html += '<button onclick="testWebhook(' + i + ')" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.2);border-radius:8px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-paper-plane"></i> Test</button>';
+                html += '<button onclick="removeWebhook(' + i + ')" style="background:rgba(255,59,48,0.1);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:8px;padding:3px 8px;font-size:0.7rem;cursor:pointer;"><i class="fas fa-trash"></i></button>';
                 html += '</div></div>';
             });
         } else {
@@ -2511,7 +2511,7 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
         connectedCallback() {
             var type = this.getAttribute('type') || 'info';
             var colors = { success: '#34c759', warning: '#ff9500', error: '#ff3b30', info: '#00aaff' };
-            this.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:3px;font-size:0.72rem;font-weight:600;background:' +
+            this.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:8px;font-size:0.72rem;font-weight:600;background:' +
                 (colors[type] || colors.info) + '15;color:' + (colors[type] || colors.info) + ';border:1px solid ' + (colors[type] || colors.info) + '30';
             var dot = document.createElement('span');
             dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:' + (colors[type] || colors.info);
@@ -2537,7 +2537,7 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
             var value = this.getAttribute('value') || '0';
             var trend = this.getAttribute('trend') || '';
             var trendColor = trend.startsWith('+') ? '#34c759' : trend.startsWith('-') ? '#ff3b30' : '#86868b';
-            this.style.cssText = 'display:block;padding:16px;background:var(--card,#fff);border:1px solid var(--border,rgba(0,0,0,0.06));border-radius:3px;text-align:center;';
+            this.style.cssText = 'display:block;padding:16px;background:var(--card,#fff);border:1px solid var(--border,rgba(0,0,0,0.06));border-radius:8px;text-align:center;';
             this.innerHTML = '<div style="color:var(--steel,#86868b);font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">' + label + '</div>' +
                 '<div style="color:var(--text,#f5f5f7);font-size:1.5rem;font-weight:800">' + value + '</div>' +
                 (trend ? '<div style="color:' + trendColor + ';font-size:0.75rem;font-weight:600;margin-top:4px">' + trend + '</div>' : '');
@@ -2818,7 +2818,7 @@ function _updateThemeIcon(isLight) {
             return va === vb;
         }).length;
 
-        overlay.innerHTML = '<div style="background:var(--card,#fff);border:1px solid rgba(0,0,0,0.08);border-radius:3px;width:95%;max-width:900px;max-height:85vh;overflow-y:auto">' +
+        overlay.innerHTML = '<div style="background:var(--card,#fff);border:1px solid rgba(0,0,0,0.08);border-radius:8px;width:95%;max-width:900px;max-height:85vh;overflow-y:auto">' +
             '<div style="padding:20px 24px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center">' +
             '<div><h3 style="color:#1d1d1f;margin:0;font-size:1rem"><i class="fas fa-code-compare" style="margin-right:8px;color:#00aaff"></i>Record Comparison</h3>' +
             '<p style="color:#6e6e73;font-size:0.75rem;margin:4px 0 0">' + matchCount + '/' + fields.length + ' fields match</p></div>' +
@@ -2846,7 +2846,7 @@ function _updateThemeIcon(isLight) {
     var shortcutsOverlay = document.createElement('div');
     shortcutsOverlay.id = 's4ShortcutsOverlay';
     shortcutsOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:99999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
-    shortcutsOverlay.innerHTML = '<div style="background:var(--card,#fff);border:1px solid rgba(0,0,0,0.08);border-radius:3px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">' +
+    shortcutsOverlay.innerHTML = '<div style="background:var(--card,#fff);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><h3 style="color:#1d1d1f;font-size:1.1rem;margin:0"><i class="fas fa-keyboard" style="margin-right:8px;color:#00aaff"></i>Keyboard Shortcuts</h3><button onclick="toggleShortcuts()" style="background:none;border:none;color:#6e6e73;font-size:1.2rem;cursor:pointer">&times;</button></div>' +
         '<div style="display:grid;gap:8px">' +
         _shortcutRow('⌘/Ctrl + K', 'Open Global Search') +
@@ -2859,14 +2859,14 @@ function _updateThemeIcon(isLight) {
         _shortcutRow('N', 'Notification History') +
         _shortcutRow('T', 'Toggle Light/Dark Theme') +
         '</div>' +
-        '<p style="color:#666;font-size:0.72rem;margin-top:16px;text-align:center">Press <kbd style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:3px;font-size:0.7rem">?</kbd> at any time to show this help</p>' +
+        '<p style="color:#666;font-size:0.72rem;margin-top:16px;text-align:center">Press <kbd style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:8px;font-size:0.7rem">?</kbd> at any time to show this help</p>' +
         '</div>';
     document.body.appendChild(shortcutsOverlay);
 
     function _shortcutRow(key, desc) {
-        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(0,0,0,0.02);border-radius:3px">' +
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(0,0,0,0.02);border-radius:8px">' +
             '<span style="color:#6e6e73;font-size:0.85rem">' + desc + '</span>' +
-            '<kbd style="background:rgba(0,170,255,0.1);color:#00aaff;padding:4px 10px;border-radius:3px;font-size:0.78rem;font-family:\'Inter\',monospace;font-weight:600;border:1px solid rgba(0,170,255,0.2)">' + key + '</kbd>' +
+            '<kbd style="background:rgba(0,170,255,0.1);color:#00aaff;padding:4px 10px;border-radius:8px;font-size:0.78rem;font-family:\'Inter\',monospace;font-weight:600;border:1px solid rgba(0,170,255,0.2)">' + key + '</kbd>' +
             '</div>';
     }
 
@@ -2879,11 +2879,11 @@ function _updateThemeIcon(isLight) {
     var searchOverlay = document.createElement('div');
     searchOverlay.id = 's4GlobalSearch';
     searchOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:99998;display:none;align-items:flex-start;justify-content:center;padding-top:15vh;backdrop-filter:blur(8px)';
-    searchOverlay.innerHTML = '<div style="background:var(--card,#fff);border:1px solid rgba(0,0,0,0.08);border-radius:3px;width:90%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,0.12)">' +
+    searchOverlay.innerHTML = '<div style="background:var(--card,#fff);border:1px solid rgba(0,0,0,0.08);border-radius:8px;width:90%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,0.12)">' +
         '<div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,0.06)">' +
         '<i class="fas fa-search" style="color:#00aaff;margin-right:12px;font-size:1rem"></i>' +
         '<input id="globalSearchInput" type="text" placeholder="Search records, vault, tools, documents..." style="flex:1;background:transparent;border:none;color:#1d1d1f;font-size:1rem;outline:none;font-family:Inter,sans-serif" autocomplete="off">' +
-        '<kbd style="background:rgba(0,0,0,0.04);color:#666;padding:3px 8px;border-radius:3px;font-size:0.7rem;margin-left:8px">ESC</kbd>' +
+        '<kbd style="background:rgba(0,0,0,0.04);color:#666;padding:3px 8px;border-radius:8px;font-size:0.7rem;margin-left:8px">ESC</kbd>' +
         '</div>' +
         '<div id="globalSearchResults" style="max-height:50vh;overflow-y:auto;padding:8px"></div>' +
         '<div style="padding:8px 16px;border-top:1px solid rgba(0,0,0,0.04);display:flex;gap:12px;justify-content:center">' +
@@ -2909,7 +2909,7 @@ function _updateThemeIcon(isLight) {
     notifDrawer.style.cssText = 'position:fixed;top:0;right:-420px;width:400px;max-width:90vw;height:100vh;background:var(--card,#fff);border-left:1px solid rgba(0,0,0,0.08);z-index:99997;transition:right 0.3s ease;overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,0.1)';
     notifDrawer.innerHTML = '<div style="padding:20px;border-bottom:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card,#fff);z-index:1">' +
         '<h4 style="color:#1d1d1f;margin:0;font-size:0.95rem"><i class="fas fa-bell" style="margin-right:8px;color:#00aaff"></i>Notification History</h4>' +
-        '<div style="display:flex;gap:8px"><button onclick="clearNotifHistory()" style="background:none;border:1px solid rgba(0,0,0,0.08);color:#6e6e73;padding:4px 10px;border-radius:3px;font-size:0.72rem;cursor:pointer">Clear</button>' +
+        '<div style="display:flex;gap:8px"><button onclick="clearNotifHistory()" style="background:none;border:1px solid rgba(0,0,0,0.08);color:#6e6e73;padding:4px 10px;border-radius:8px;font-size:0.72rem;cursor:pointer">Clear</button>' +
         '<button onclick="toggleNotifHistory()" style="background:none;border:none;color:#6e6e73;font-size:1.2rem;cursor:pointer">&times;</button></div>' +
         '</div>' +
         '<div id="notifHistoryList" style="padding:12px"></div>';
@@ -3033,13 +3033,13 @@ function _updateThemeIcon(isLight) {
         resultsDiv.innerHTML = window._s4Safe(results.slice(0, 15).map(function(r, i) {
             var typeColors = {tab:'#00aaff',vault:'#c9a84c',doc:'#30d158',tool:'#00aaff'};
             var typeLabels = {tab:'Tab',vault:'Vault',doc:'Doc',tool:'Tool'};
-            return '<div class="search-result-item" tabindex="0" style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;border-radius:3px;transition:background 0.15s" ' +
+            return '<div class="search-result-item" tabindex="0" style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;border-radius:8px;transition:background 0.15s" ' +
                 'onmouseover="this.style.background=\'rgba(0,170,255,0.06)\'" onmouseout="this.style.background=\'transparent\'" ' +
                 'onclick="' + (r.action || (r.hash ? 'loadRecordToVerify(\''+r.hash+'\')' : '')) + ';toggleGlobalSearch()">' +
                 '<i class="fas ' + (r.icon||'fa-file') + '" style="color:#00aaff;width:20px;text-align:center"></i>' +
                 '<div style="flex:1;min-width:0"><div style="font-size:0.85rem;color:#6e6e73;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + r.name + '</div>' +
                 '<div style="font-size:0.72rem;color:#666">' + r.desc + '</div></div>' +
-                '<span style="font-size:0.65rem;padding:2px 6px;border-radius:3px;background:' + (typeColors[r.type]||'#555') + '22;color:' + (typeColors[r.type]||'#555') + ';font-weight:600;text-transform:uppercase">' + (typeLabels[r.type]||r.type) + '</span>' +
+                '<span style="font-size:0.65rem;padding:2px 6px;border-radius:8px;background:' + (typeColors[r.type]||'#555') + '22;color:' + (typeColors[r.type]||'#555') + ';font-weight:600;text-transform:uppercase">' + (typeLabels[r.type]||r.type) + '</span>' +
                 '</div>';
         }).join(''));
     }
@@ -4321,7 +4321,7 @@ function _updateThemeIcon(isLight) {
                 var color = d.color || '#00aaff';
                 html += '<div style="display:flex;flex-direction:column;align-items:center;flex:1;min-width:' + barWidth + 'px">' +
                     '<div style="font-size:10px;color:var(--text-secondary,#86868b);margin-bottom:4px">' + d.value + '</div>' +
-                    '<div style="width:100%;max-width:' + barWidth + 'px;height:' + pct + '%;background:' + color + ';border-radius:3px 3px 0 0;min-height:2px;transition:height .5s ease"></div>' +
+                    '<div style="width:100%;max-width:' + barWidth + 'px;height:' + pct + '%;background:' + color + ';border-radius:8px 3px 0 0;min-height:2px;transition:height .5s ease"></div>' +
                     '<div style="font-size:9px;color:var(--text-tertiary,#555);margin-top:4px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:' + barWidth + 'px">' + (S4.sanitize ? S4.sanitize(d.label) : d.label) + '</div>' +
                 '</div>';
             });
@@ -4729,8 +4729,8 @@ function _updateThemeIcon(isLight) {
                 var progress = t.progress || 0;
                 var color = t.color || '#00aaff';
                 html += '<div style="height:' + rowH + 'px;position:relative;border-bottom:1px solid rgba(51,51,51,0.3)">' +
-                    '<div style="position:absolute;left:' + left + '%;width:' + width + '%;top:6px;height:20px;background:rgba(0,170,255,0.15);border-radius:3px;overflow:hidden">' +
-                    '<div style="width:' + progress + '%;height:100%;background:' + color + ';border-radius:3px;opacity:0.8"></div>' +
+                    '<div style="position:absolute;left:' + left + '%;width:' + width + '%;top:6px;height:20px;background:rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">' +
+                    '<div style="width:' + progress + '%;height:100%;background:' + color + ';border-radius:8px;opacity:0.8"></div>' +
                     '</div></div>';
             });
             html += '</div></div>';
@@ -6952,51 +6952,51 @@ window.s4Analytics = {
         this.getData().then(function(metrics) {
             var html = '<div class="analytics-dashboard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;padding:20px">';
             // Total uploads card
-            html += '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:20px">'
+            html += '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:20px">'
                 + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:4px">Total File Uploads</div>'
                 + '<div style="font-size:2.2rem;font-weight:700;color:#00aaff">' + (metrics.total_uploads || 0) + '</div>'
                 + '<div style="font-size:0.75rem;color:var(--steel);margin-top:4px">' + Object.keys(metrics.upload_counts_by_tool || {}).length + ' tools used</div></div>';
             // Documents card
-            html += '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:20px">'
+            html += '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:20px">'
                 + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:4px">Document Library</div>'
                 + '<div style="font-size:2.2rem;font-weight:700;color:#c9a84c">' + (metrics.total_documents || 0) + '</div>'
                 + '<div style="font-size:0.75rem;color:var(--steel);margin-top:4px">' + Object.keys(metrics.document_counts_by_status || {}).map(function(k) { return k + ': ' + metrics.document_counts_by_status[k]; }).join(', ') + '</div></div>';
             // POA&M card
-            html += '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:20px">'
+            html += '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:20px">'
                 + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:4px">POA&M Items</div>'
                 + '<div style="font-size:2.2rem;font-weight:700;color:#00aaff">' + (metrics.total_poam || 0) + '</div>'
                 + '<div style="font-size:0.75rem;color:var(--steel);margin-top:4px">' + Object.keys(metrics.poam_by_risk || {}).map(function(k) { return k + ': ' + metrics.poam_by_risk[k]; }).join(', ') + '</div></div>';
             // GFP card
-            html += '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:20px">'
+            html += '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:20px">'
                 + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:4px">GFP Tracked Value</div>'
                 + '<div style="font-size:2.2rem;font-weight:700;color:#c9a84c">$' + (metrics.total_gfp_value || 0).toLocaleString() + '</div>'
                 + '<div style="font-size:0.75rem;color:var(--steel);margin-top:4px">' + (metrics.total_gfp_items || 0) + ' items tracked</div></div>';
             // SBOM card
-            html += '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:20px">'
+            html += '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:20px">'
                 + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:4px">Software Components</div>'
                 + '<div style="font-size:2.2rem;font-weight:700;color:#00aaff">' + (metrics.total_components || 0) + '</div>'
                 + '<div style="font-size:0.75rem;color:var(--steel);margin-top:4px">' + (metrics.total_vulnerabilities || 0) + ' vulnerabilities detected</div></div>';
             // Submissions card
-            html += '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:20px">'
+            html += '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:20px">'
                 + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:4px">Submission Reviews</div>'
                 + '<div style="font-size:2.2rem;font-weight:700;color:#c9a84c">' + (metrics.total_submissions || 0) + '</div>'
                 + '<div style="font-size:0.75rem;color:var(--steel);margin-top:4px">' + (metrics.total_discrepancies || 0) + ' discrepancies found</div></div>';
             // Provenance card
-            html += '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:20px">'
+            html += '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:20px">'
                 + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:4px">Provenance Events</div>'
                 + '<div style="font-size:2.2rem;font-weight:700;color:#00aaff">' + (metrics.total_provenance_events || 0) + '</div>'
                 + '<div style="font-size:0.75rem;color:var(--steel);margin-top:4px">Blockchain-verified chain of custody</div></div>';
             // Upload trend by tool
             var toolCounts = metrics.upload_counts_by_tool || {};
             if (Object.keys(toolCounts).length > 0) {
-                html += '<div style="background:rgba(0,0,0,0.015);border:1px solid rgba(0,0,0,0.06);border-radius:3px;padding:20px;grid-column:span 2">'
+                html += '<div style="background:rgba(0,0,0,0.015);border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:20px;grid-column:span 2">'
                     + '<div style="font-size:0.85rem;color:var(--steel);margin-bottom:12px">Uploads by ILS Tool</div>'
                     + '<div style="display:flex;gap:8px;flex-wrap:wrap">';
                 var toolIdx = 0;
                 Object.keys(toolCounts).forEach(function(tool) {
                     var tColor = toolIdx % 2 === 0 ? '#00aaff' : '#c9a84c';
                     var tBg = toolIdx % 2 === 0 ? 'rgba(0,170,255,0.15)' : 'rgba(201,168,76,0.15)';
-                    html += '<div style="background:' + tBg + ';border-radius:3px;padding:8px 14px;font-size:0.8rem">'
+                    html += '<div style="background:' + tBg + ';border-radius:8px;padding:8px 14px;font-size:0.8rem">'
                         + '<span style="color:#1d1d1f;font-weight:600">' + tool + '</span> '
                         + '<span style="color:' + tColor + ';font-weight:700">' + toolCounts[tool] + '</span></div>';
                     toolIdx++;
@@ -7138,7 +7138,7 @@ function _renderContractResults(content, result) {
     var html = '<div style="margin-top:12px"><h4 style="color:var(--text,#1d1d1f);margin-bottom:12px;font-size:0.95rem"><i class="fas fa-check-circle" style="color:var(--accent);margin-right:6px"></i>Contract Extraction Results</h4>';
     html += '<div style="display:grid;gap:6px;margin-bottom:16px">';
     clauses.forEach(function(c) {
-        html += '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:3px;font-size:0.82rem">';
+        html += '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:8px;font-size:0.82rem">';
         html += '<code style="color:var(--accent);font-weight:700;font-size:0.78rem;white-space:nowrap">' + (c.type||'Clause') + '</code>';
         html += '<span style="color:#1d1d1f">' + (c.title||c) + '</span></div>';
     });

@@ -187,7 +187,7 @@ function _flashSlsBalance(newBalance, fee) {
     return; // Notifications disabled in demo-app
     var toast = document.createElement('div');
     toast.id = 'slsFlashToast';
-    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:3px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
+    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
     toast.innerHTML = '<div style="font-weight:700;color:#c9a84c;margin-bottom:6px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-coins" style="margin-right:6px"></i>Credit Balance Updated</div>'
         + '<div style="font-size:1.4rem;font-weight:800;color:#c9a84c;">' + newBalance + ' <span style="font-size:0.8rem;font-weight:600;">Credits</span></div>'
         + '<div style="font-size:0.78rem;color:#ff6b6b;margin-top:4px;">-' + fee.toFixed(2) + ' Credits (anchor fee)</div>';
@@ -764,7 +764,7 @@ function showAnchorAnimation(hash, typeLabel, clfLevel) {
     document.getElementById('animSuccess').textContent = '';
     const clfDiv = document.getElementById('animClf');
     if (clfDiv) {
-        clfDiv.innerHTML = '<span style="padding:4px 14px;border-radius:3px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;color:' + meta.color + ';border:1px solid ' + meta.color + '30;background:' + meta.color + '15">' + '<i class="fas ' + meta.icon + '" style="margin-right:4px"></i>' + meta.label + '</span>';
+        clfDiv.innerHTML = '<span style="padding:4px 14px;border-radius:8px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;color:' + meta.color + ';border:1px solid ' + meta.color + '30;background:' + meta.color + '15">' + '<i class="fas ' + meta.icon + '" style="margin-right:4px"></i>' + meta.label + '</span>';
     }
     document.getElementById('animFee').innerHTML = '0.01 Credits &rarr; Treasury';
     overlay.style.display = 'flex';
@@ -1123,7 +1123,7 @@ async function anchorRecord() {
     const panel = document.getElementById('anchorResult');
     panel.innerHTML = window._s4Safe('<div class="result-label">STATUS</div><div class="result-value" style="font-size:1rem;margin-bottom:0.8rem">\u2705 Record anchored successfully</div>'
         + '<div class="result-label">RECORD TYPE</div><div style="margin-bottom:0.5rem">' + _renderIcon(record.icon) + ' ' + typeInfo.label + ' (' + typeInfo.branch + ')</div>'
-        + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:3px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + '<i class="fas ' + CLF_META[clfLevel].icon + '" style="margin-right:4px"></i>' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
+        + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:8px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + '<i class="fas ' + CLF_META[clfLevel].icon + '" style="margin-right:4px"></i>' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
         + '<div class="result-label">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
         + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all">' + (explorerUrl ? '<a href="'+explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+txHash+' <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>' : '<span style="color:var(--muted)">'+txHash+'</span>') + '</div>'
             + '<div class="result-label">NETWORK</div><div style="margin-bottom:0.5rem">' + (network === 'mainnet' ? '<span style="color:#00aaff;font-weight:700"><i class="fas fa-globe" style="margin-right:4px"></i>XRPL Mainnet</span>' : '<span style="color:var(--muted)">' + (network||'Pending') + '</span>') + '</div>'
@@ -1208,14 +1208,14 @@ function refreshVerifyRecents() {
             ago = diff < 60 ? diff + 's ago' : diff < 3600 ? Math.floor(diff/60) + 'm ago' : diff < 86400 ? Math.floor(diff/3600) + 'h ago' : Math.floor(diff/86400) + 'd ago';
         } catch(e) { ago = ''; }
         var hasFullContent = r.fullContent && r.fullContent.length > 0;
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:3px;margin-bottom:4px;transition:all 0.2s;background:rgba(255,255,255,0.02);">'
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:4px;transition:all 0.2s;background:rgba(255,255,255,0.02);">'
             + '<span style="color:var(--accent);font-size:0.8rem;width:20px;text-align:center;display:inline-block">' + _renderIcon(r.icon) + '</span>'
             + '<div style="flex:1;min-width:0;cursor:pointer" onclick="loadRecordToVerify(' + idx + ')">'
             + '<div style="font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.label + '</div>'
             + '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.hash.substring(0,24) + '...</div>'
             + '</div>'
             + '<span style="font-size:0.65rem;color:var(--steel);white-space:nowrap;">' + ago + '</span>'
-            + '<button onclick="loadRecordToVerify(' + idx + ')" style="background:' + (hasFullContent ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.05)') + ';border:1px solid ' + (hasFullContent ? 'rgba(0,170,255,0.3)' : 'rgba(255,255,255,0.1)') + ';color:' + (hasFullContent ? 'var(--accent)' : 'var(--steel)') + ';border-radius:3px;padding:3px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="fas fa-eye" style="margin-right:3px"></i>View</button>'
+            + '<button onclick="loadRecordToVerify(' + idx + ')" style="background:' + (hasFullContent ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.05)') + ';border:1px solid ' + (hasFullContent ? 'rgba(0,170,255,0.3)' : 'rgba(255,255,255,0.1)') + ';color:' + (hasFullContent ? 'var(--accent)' : 'var(--steel)') + ';border-radius:8px;padding:3px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="fas fa-eye" style="margin-right:3px"></i>View</button>'
             + '</div>';
     }).join(''));
 }
@@ -1299,7 +1299,7 @@ async function verifyRecord() {
     }
     panel.innerHTML = window._s4Safe('<div class="result-label">COMPUTED SHA-256 <button class="copy-btn" onclick="copyHash(\'' + effectiveHash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + effectiveHash + '</div>' + matchHtml + sessionHtml
         + '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)">To verify on-chain: compare this hash with the MemoData field of the anchor transaction.</div>'
-        + '<button onclick="resetVerify()" style="margin-top:12px;background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:8px 18px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit;transition:all 0.2s"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another Record</button>');
+        + '<button onclick="resetVerify()" style="margin-top:12px;background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:8px 18px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit;transition:all 0.2s"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another Record</button>');
     panel.classList.add('show');
 }
 
@@ -1342,7 +1342,7 @@ async function verifyFiles(fileList) {
     }
 
     // Render results
-    var html = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;">';
+    var html = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;">';
     html += '<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">';
     html += '<span style="color:#fff;font-weight:700;font-size:0.88rem;"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:6px;"></i>File Verification Results</span>';
     var matched = results.filter(function(r) { return r.matched; }).length;
@@ -1361,7 +1361,7 @@ async function verifyFiles(fileList) {
         var statusText = r.matched ? 'VERIFIED \u2014 Integrity confirmed' : (r.noAnchor ? 'NOT FOUND \u2014 No matching anchor in session' : 'MISMATCH \u2014 File may have been tampered with');
 
         html += '<div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;gap:12px;align-items:flex-start;">';
-        html += '<div style="width:32px;height:32px;border-radius:3px;background:rgba(0,170,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-file" style="color:var(--accent);font-size:0.85rem;"></i></div>';
+        html += '<div style="width:32px;height:32px;border-radius:8px;background:rgba(0,170,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-file" style="color:var(--accent);font-size:0.85rem;"></i></div>';
         html += '<div style="flex:1;min-width:0;">';
         html += '<div style="color:#fff;font-weight:600;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.fileName + ' <span style="color:var(--muted);font-weight:400;">(' + r.fileSize + ')</span></div>';
         html += '<div style="font-family:monospace;font-size:0.7rem;color:var(--muted);margin:3px 0;word-break:break-all;">SHA-256: ' + r.hash + '</div>';
@@ -1375,9 +1375,9 @@ async function verifyFiles(fileList) {
 
     // Batch controls
     html += '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">';
-    html += '<button onclick="document.getElementById(\'verifyFileInput\').value=\'\';document.getElementById(\'verifyFileResults\').style.display=\'none\';" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);padding:6px 14px;border-radius:3px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-redo"></i> Verify More Files</button>';
+    html += '<button onclick="document.getElementById(\'verifyFileInput\').value=\'\';document.getElementById(\'verifyFileResults\').style.display=\'none\';" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);padding:6px 14px;border-radius:8px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-redo"></i> Verify More Files</button>';
     if (matched > 0) {
-        html += '<button onclick="exportVerificationReport()" style="background:rgba(0,170,255,0.12);color:var(--accent);border:1px solid rgba(0,170,255,0.3);padding:6px 14px;border-radius:3px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-download"></i> Export Report</button>';
+        html += '<button onclick="exportVerificationReport()" style="background:rgba(0,170,255,0.12);color:var(--accent);border:1px solid rgba(0,170,255,0.3);padding:6px 14px;border-radius:8px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-download"></i> Export Report</button>';
     }
     html += '</div>';
 
@@ -3501,7 +3501,7 @@ function initILSChecklist(progKey) {
     if (!container) return;
     const cl = getCL(progKey || document.getElementById('ilsProgram').value);
     container.innerHTML = cl.map(el =>
-        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 6px;border-radius:3px;transition:background 0.2s;'+(el.c?'font-weight:600':'')+'" onmouseover="this.style.background=\'rgba(0,170,255,0.05)\'" onmouseout="this.style.background=\'transparent\'">'
+        '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 6px;border-radius:8px;transition:background 0.2s;'+(el.c?'font-weight:600':'')+'" onmouseover="this.style.background=\'rgba(0,170,255,0.05)\'" onmouseout="this.style.background=\'transparent\'">'
         + '<input type="checkbox" id="ils_'+el.id+'" style="width:auto!important;accent-color:var(--accent)">'
         + '<span>' + el.l + (el.c?' <span style="color:var(--red);font-size:0.7rem">CRITICAL</span>':'') + '</span></label>'
     ).join('');
@@ -3784,9 +3784,9 @@ function renderILSCost(actions, totalCost, critGaps) {
     if (!actions.length) { el.innerHTML = '<div style="color:var(--accent);text-align:center;padding:0.5rem"><i class="fas fa-check-circle"></i> No cost or schedule risk identified.</div>'; return; }
     const maxSch = critGaps > 3 ? '6-12 months' : critGaps > 0 ? '2-6 months' : '< 2 months';
     el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">'
-        + '<div style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:3px;padding:12px;text-align:center">'
+        + '<div style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:8px;padding:12px;text-align:center">'
         + '<div style="font-size:1.5rem;font-weight:800;color:#ff3333">'+formatCost(totalCost)+'</div><div style="font-size:0.75rem;color:var(--muted)">Est. Risk Cost</div></div>'
-        + '<div style="background:rgba(255,165,0,0.08);border:1px solid rgba(255,165,0,0.2);border-radius:3px;padding:12px;text-align:center">'
+        + '<div style="background:rgba(255,165,0,0.08);border:1px solid rgba(255,165,0,0.2);border-radius:8px;padding:12px;text-align:center">'
         + '<div style="font-size:1.5rem;font-weight:800;color:#ffa500">'+maxSch+'</div><div style="font-size:0.75rem;color:var(--muted)">Schedule Risk</div></div></div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
         + '<div style="text-align:center;padding:8px"><div style="font-size:1.2rem;font-weight:700;color:#ff3333">'+critGaps+'</div><div style="font-size:0.75rem;color:var(--muted)">Critical Path Items</div></div>'
@@ -3804,11 +3804,11 @@ function renderILSResult() {
         + '<div style="margin:0.5rem 0;font-size:0.85rem;color:var(--muted)">Office: '+r.prog.ofc+' \u00b7 Phase: '+phaseStr+' \u00b7 Files: '+ilsFiles.length+'</div>'
         + '<div style="margin:0.8rem 0"><span style="font-size:1.3rem;font-weight:800;color:'+(r.pct>=80?'var(--green)':r.pct>=50?'#ffa500':'var(--red)')+'">'+r.pct+'% Overall Readiness</span></div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0.8rem 0">'
-        + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--accent)">'+clComplete+'/'+r.clItems.length+'</div><div style="font-size:0.72rem;color:var(--muted)">Checklist Items</div></div>'
-        + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--accent)">'+r.drlFound+'/'+r.drlTotal+'</div><div style="font-size:0.72rem;color:var(--muted)">DRL Items Verified</div></div></div>'
+        + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--accent)">'+clComplete+'/'+r.clItems.length+'</div><div style="font-size:0.72rem;color:var(--muted)">Checklist Items</div></div>'
+        + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--accent)">'+r.drlFound+'/'+r.drlTotal+'</div><div style="font-size:0.72rem;color:var(--muted)">DRL Items Verified</div></div></div>'
         + (r.critGaps > 0
-            ? '<div style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:3px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-exclamation-triangle" style="color:#ff3333"></i> <strong style="color:#ff3333">'+r.critGaps+' critical gap'+(r.critGaps>1?'s':'')+' found</strong> \u2014 Est. risk: <strong>'+formatCost(r.totalCost)+'</strong>. See Action Items.</div>'
-            : '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-check-circle" style="color:var(--accent)"></i> <strong style="color:var(--accent)">All critical items accounted for.</strong> Package appears ready for review.</div>')
+            ? '<div style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:8px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-exclamation-triangle" style="color:#ff3333"></i> <strong style="color:#ff3333">'+r.critGaps+' critical gap'+(r.critGaps>1?'s':'')+' found</strong> \u2014 Est. risk: <strong>'+formatCost(r.totalCost)+'</strong>. See Action Items.</div>'
+            : '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:10px;margin:0.8rem 0;font-size:0.88rem"><i class="fas fa-check-circle" style="color:var(--accent)"></i> <strong style="color:var(--accent)">All critical items accounted for.</strong> Package appears ready for review.</div>')
         + '<div style="margin-top:1rem;font-size:0.78rem;color:var(--muted)">Analysis based on DoD 5000 series ILS requirements per program type. Always verify against your contract-specific DRL.</div>';
     panel.classList.add('show');
     showPostActions();
@@ -3895,8 +3895,8 @@ function generateILSReport() {
 
     const panel = document.getElementById('ilsResult');
     panel.innerHTML = '<div style="color:var(--accent);font-size:0.95rem;font-weight:700;margin-bottom:8px"><i class="fas fa-download"></i> Report downloaded!</div>'
-        + '<pre style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:1rem;font-size:0.7rem;color:var(--steel);max-height:300px;overflow-y:auto;white-space:pre-wrap">' + rpt + '</pre>'
-        + '<button style="margin-top:8px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:3px;padding:6px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600" onclick="navigator.clipboard.writeText(document.querySelector(\'#ilsResult pre\').textContent).then(()=>this.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied!\')"><i class="fas fa-copy"></i> Copy to Clipboard</button>';
+        + '<pre style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;font-size:0.7rem;color:var(--steel);max-height:300px;overflow-y:auto;white-space:pre-wrap">' + rpt + '</pre>'
+        + '<button style="margin-top:8px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600" onclick="navigator.clipboard.writeText(document.querySelector(\'#ilsResult pre\').textContent).then(()=>this.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied!\')"><i class="fas fa-copy"></i> Copy to Clipboard</button>';
     panel.classList.add('show');
 }
 
@@ -3944,7 +3944,7 @@ function calcROI() {
     // Build output HTML
     var output = el('roiOutput');
     if (output) {
-        output.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:20px;margin-top:12px">'
+        output.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;margin-top:12px">'
             + '<div class="section-label"><i class="fas fa-chart-line"></i> ROI BREAKDOWN</div>'
             + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;margin-bottom:16px">'
             + '<div><span style="color:var(--steel)">Labor Automation (65%)</span><br><strong style="color:#00cc66">$' + formatNum(Math.round(laborSavings)) + '</strong></div>'
@@ -4433,7 +4433,7 @@ function generateAiResponse(query) {
     if (/how.*work|how.*anchor|how.*hash|how.*blockchain/.test(q)) return '<strong>How S4 Ledger Works:</strong><br><br>1. <strong>Upload or create a record</strong> \u2014 any ILS document, analysis, or data point<br>2. <strong>SHA-256 hash computed</strong> \u2014 a unique 64-character fingerprint of the content<br>3. <strong>Hash anchored to Ledger</strong> \u2014 written as a Memo on an XRP Ledger transaction<br>4. <strong>Transaction verified</strong> \u2014 XRPL validates within 3-5 seconds at ~$0.001 tx fee<br>5. <strong>Credit fee applied</strong> \u2014 0.01 Credits ($0.01) per anchor for network access<br><br>The original data stays on your device (never sent to blockchain). Only the hash is anchored. Anyone can independently verify a record by recomputing the hash and checking the XRPL transaction.<br><br><strong>Result:</strong> Tamper-proof, independently verifiable audit trail \u2014 1,500x cheaper than legacy verification.';
 
     // ── PRICING ──
-    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(0,170,255,0.2);border-radius:3px"><strong style="color:#00aaff">Pilot (Free)</strong><br>100 Credits/mo<br>10,000 anchors<br>All 23+ tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:3px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 Credits/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Professional ($2,499/mo)</strong><br>100,000 Credits/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:3px"><strong style="color:#00aaff">Enterprise ($9,999/mo)</strong><br>500,000 Credits/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + Credits TrustLine setup. $0.01 Credits per anchor.';
+    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(0,170,255,0.2);border-radius:8px"><strong style="color:#00aaff">Pilot (Free)</strong><br>100 Credits/mo<br>10,000 anchors<br>All 23+ tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:8px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 Credits/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:8px"><strong style="color:#00aaff">Professional ($2,499/mo)</strong><br>100,000 Credits/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:8px"><strong style="color:#00aaff">Enterprise ($9,999/mo)</strong><br>500,000 Credits/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + Credits TrustLine setup. $0.01 Credits per anchor.';
 
     // ── WALLETS & SLS ──
     if (/wallet|xrpl.*wallet|seed|family.*seed|trustline|trust.*line/.test(q)) return '<strong>XRPL Wallet & TrustLine Setup</strong><br><br>When you subscribe, S4 automatically:<br><br>1. <strong>Generates a secp256k1 wallet</strong> \u2014 your unique XRPL address + family seed (secret key)<br>2. <strong>Funds with XRP</strong> \u2014 covers the 12 XRP account reserve + TrustLine reserve<br>3. <strong>Sets up Credits TrustLine</strong> \u2014 pointed at the Credits issuer (<code>r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code>)<br>4. <strong>Credits delivered</strong> \u2014 from the Treasury wallet to your wallet<br><br><strong>Important:</strong><br>\u2022 TrustLines go to the <strong>Credits issuer</strong> (r95...) \u2014 this is the wallet that created the Credits token (SLS on XRPL)<br>\u2022 Credits are delivered from the <strong>Treasury</strong> (rMLm...) \u2014 this holds the circulating supply<br>\u2022 Your family seed is the ONLY way to access your wallet \u2014 save it securely<br>\u2022 Compatible with <strong>Xaman</strong> (formerly XUMM) for mobile wallet management';
@@ -5002,7 +5002,7 @@ function calcReadiness() {
     const systems = READINESS_DEFAULTS[progKey] || READINESS_DEFAULTS.ddg51;
     const sysName = systems[sysIdx] ? systems[sysIdx].sys : 'System';
 
-    let html = '<div style="background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:16px;font-size:0.85rem;">';
+    let html = '<div style="background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:16px;font-size:0.85rem;">';
     html += '<div style="font-weight:700;color:#00aaff;margin-bottom:10px;font-size:1rem;">RAM Analysis: ' + sysName + '</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
     html += '<div><strong>Operational Availability (Ao):</strong></div><div style="color:' + (ao>=0.9?'#00aaff':ao>=0.75?'#ffa500':'#ff3333') + ';font-weight:700;">' + (ao*100).toFixed(2) + '%</div>';
@@ -5015,7 +5015,7 @@ function calcReadiness() {
     html += '</div>';
 
     // Assessment
-    html += '<div style="margin-top:12px;padding:10px;border-radius:3px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">';
+    html += '<div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">';
     if (ao >= 0.95) html += '<span style="color:#00aaff;font-weight:700;">EXCELLENT</span> — System exceeds readiness requirements. Ao > 95% meets most high-priority program thresholds.';
     else if (ao >= 0.90) html += '<span style="color:#00aaff;font-weight:700;">MEETS REQUIREMENTS</span> — Ao > 90% is acceptable for most defense programs. Monitor MLDT for improvement opportunities.';
     else if (ao >= 0.80) html += '<span style="color:#ffa500;font-weight:700;">MARGINAL</span> — Ao between 80-90%. Consider reducing MLDT through pre-positioned spares or improving MTTR via better training/tools.';
@@ -5076,18 +5076,18 @@ function showCustomProgramInput() {
     var modal = document.createElement('div');
     modal.id = 'customProgramModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease';
-    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto">'
+    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 8px"><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>Custom Program / Platform</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Enter your program details. A GEIA-STD-0007 ILS template will be applied.</p>'
         + '<div style="display:grid;gap:12px">'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Acquiring Office</label><input id="customProgOffice" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., PMS 400D, PMA-299"></div>'
-        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Program Name *</label><input id="customProgName" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., MH-60S Seahawk, DDG-51 Flight III"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Hull / Serial / Tail Number</label><input id="customProgHull" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., DDG-133, 168451"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Acquiring Office</label><input id="customProgOffice" class="form-control" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;width:100%;margin-top:4px" placeholder="e.g., PMS 400D, PMA-299"></div>'
+        + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Cancel</button>'
-        + '<button onclick="applyCustomProgram()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Apply Program</button>'
+        + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 20px;cursor:pointer;font-weight:600">Cancel</button>'
+        + '<button onclick="applyCustomProgram()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 20px;cursor:pointer;font-weight:600">Apply Program</button>'
         + '</div></div>';
     document.body.appendChild(modal);
     setTimeout(function(){ document.getElementById('customProgName').focus(); }, 100);
@@ -5422,9 +5422,9 @@ function openProdFeatures(){
   _prodFeatures.forEach(function(g){
     html+='<div style="margin-bottom:18px"><h5 style="color:#c9a84c;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px"><i class="fas '+g.icon+'" style="margin-right:6px"></i>'+g.cat+'</h5>';
     g.items.forEach(function(f){
-      html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin-bottom:4px;background:var(--surface);border-radius:3px;border:1px solid var(--border)">';
+      html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin-bottom:4px;background:var(--surface);border-radius:8px;border:1px solid var(--border)">';
       html+='<div style="flex:1"><strong style="font-size:0.85rem">'+f.name+'</strong><p style="margin:2px 0 0;font-size:0.78rem;color:var(--steel)">'+f.desc+'</p></div>';
-      html+='<span style="white-space:nowrap;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:3px;background:rgba(0,170,255,0.12);color:#00aaff;border:1px solid rgba(0,170,255,0.3)">PLANNED</span>';
+      html+='<span style="white-space:nowrap;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:8px;background:rgba(0,170,255,0.12);color:#00aaff;border:1px solid rgba(0,170,255,0.3)">PLANNED</span>';
       html+='</div>';
     });
     html+='</div>';
@@ -5519,7 +5519,7 @@ function renderActionTimeline() {
     items.forEach(function(item, i) {
         var color = sevColors[item.severity] || '#00aaff';
         var dateLabel = item.due ? item.due : (item.schedule || 'No date');
-        html += '<div style="position:relative;margin-bottom:16px;padding:10px 14px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:3px;border-left:3px solid ' + color + '">';
+        html += '<div style="position:relative;margin-bottom:16px;padding:10px 14px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:8px;border-left:3px solid ' + color + '">';
         html += '<div style="position:absolute;left:-24px;top:14px;width:12px;height:12px;border-radius:50%;background:' + color + ';border:2px solid var(--bg)"></div>';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><strong style="color:#fff;font-size:0.85rem">' + item.title + '</strong>';
         html += '<span style="font-size:0.72rem;color:' + color + ';font-weight:600">' + dateLabel + '</span></div>';
@@ -5813,7 +5813,7 @@ function refreshVaultMetrics() {
         breakdownEl.innerHTML = '<div style="margin-top:6px;font-weight:700;color:#00aaff;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Type Distribution</div>' +
             top.map(function(e) {
                 var pct = count > 0 ? ((e[1] / count) * 100).toFixed(0) : 0;
-                return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + e[0] + '</div><div style="width:80px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:#00aaff;border-radius:3px"></div></div><div style="min-width:36px;text-align:right;color:#ccc">' + e[1] + '</div></div>';
+                return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + e[0] + '</div><div style="width:80px;height:6px;background:var(--surface);border-radius:8px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:#00aaff;border-radius:8px"></div></div><div style="min-width:36px;text-align:right;color:#ccc">' + e[1] + '</div></div>';
             }).join('') +
             (sorted.length > 8 ? '<div style="color:var(--muted);font-size:0.7rem;margin-top:4px">+' + (sorted.length - 8) + ' more types</div>' : '');
     } else if (breakdownEl) {
@@ -5880,7 +5880,7 @@ function renderVault() {
                 </div>
             </div>
             <div class="vault-hash"><i class="fas fa-fingerprint" style="margin-right:6px;opacity:0.6"></i>${v.hash}</div>
-            ${v.content ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:8px;padding:6px 10px;background:var(--surface);border-radius:3px"><i class="fas fa-file-lines" style="margin-right:6px;opacity:0.5"></i>' + v.content + '</div>' : ''}
+            ${v.content ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:8px;padding:6px 10px;background:var(--surface);border-radius:8px"><i class="fas fa-file-lines" style="margin-right:6px;opacity:0.5"></i>' + v.content + '</div>' : ''}
             <div class="vault-meta">
                 <span><i class="fas fa-clock"></i> ${new Date(v.timestamp).toLocaleString()}</span>
                 <span><i class="fas fa-hashtag"></i> TX: ${v.explorerUrl ? '<a href="'+v.explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+(v.txHash||'').substring(0,16)+'… <i class="fas fa-external-link-alt" style="font-size:0.6rem"></i></a>' : (v.txHash||'').substring(0,16)+'...'}</span>
@@ -6096,10 +6096,10 @@ function runVaultStressTest() {
         if (resultsDiv) {
             var sizeEstimate = (new Blob([JSON.stringify(s4Vault)]).size / 1024).toFixed(1);
             resultsDiv.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px">'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + count.toLocaleString() + '</div><div style="color:#888;font-size:0.72rem">Records Generated</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + s4Vault.length.toLocaleString() + '</div><div style="color:#888;font-size:0.72rem">Total Vault Records</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + sizeEstimate + ' KB</div><div style="color:#888;font-size:0.72rem">Storage Used</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:3px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + totalMs.toFixed(0) + ' ms</div><div style="color:#888;font-size:0.72rem">Total Time</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + count.toLocaleString() + '</div><div style="color:#888;font-size:0.72rem">Records Generated</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + s4Vault.length.toLocaleString() + '</div><div style="color:#888;font-size:0.72rem">Total Vault Records</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + sizeEstimate + ' KB</div><div style="color:#888;font-size:0.72rem">Storage Used</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + totalMs.toFixed(0) + ' ms</div><div style="color:#888;font-size:0.72rem">Total Time</div></div>'
                 + '</div>'
                 + '<table style="width:100%;font-size:0.75rem;border-collapse:collapse">'
                 + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#888">Record Generation</td><td style="padding:4px 8px;color:#fff;text-align:right">' + genMs.toFixed(1) + ' ms</td></tr>'
@@ -6151,20 +6151,20 @@ function showDocUpload() {
     var modal = document.createElement('div');
     modal.id = 'docUploadModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
-    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:560px;width:90%">'
+    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:560px;width:90%">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-file-upload" style="color:var(--accent);margin-right:8px"></i>Add New Document</h3>'
         + '<div style="display:grid;gap:12px">'
-        + '<input id="newDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Document ID (e.g., GEIA-STD-0007, MIL-STD-1388-2B)">'
-        + '<input id="newDocTitle" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px" placeholder="Title">'
-        + '<textarea id="newDocContent" rows="6" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
-        + '<select id="newDocCat" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
-        + '<div id="docUploadDropzone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(0,170,255,0.08)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\'" ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\';if(event.dataTransfer.files.length){var inp=document.getElementById(\'newDocFile\');inp.files=event.dataTransfer.files;handleDocFileSelect(inp)}" onclick="document.getElementById(\'newDocFile\').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:3px;padding:28px 20px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(0,170,255,0.02);transition:all 0.3s"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;display:block;color:var(--accent)"></i><div style=\'font-size:0.9rem;color:var(--steel);font-weight:600;margin-bottom:6px\'>Drag & drop your file here</div><div style=\'font-size:0.78rem;color:var(--muted)\'>or <span style=\'color:var(--accent);text-decoration:underline\'>click to browse</span></div><div style=\'font-size:0.72rem;color:var(--muted);margin-top:8px\'>PDF, Word, Excel, CSV, TXT — any document type</div><input type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv,.json" onchange="handleDocFileSelect(this)"></div>'
-        + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:10px 14px;margin-top:12px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong style="color:#00aaff">S4 AI Agent</strong> will automatically scan uploads for discrepancies, compliance gaps, unauthorized changes, and red flags.</div>'
-        + '<div id="newDocFileInfo" style="display:none;padding:8px;background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:3px;font-size:0.82rem;color:#00cc66"></div>'
+        + '<input id="newDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px" placeholder="Document ID (e.g., GEIA-STD-0007, MIL-STD-1388-2B)">'
+        + '<input id="newDocTitle" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px" placeholder="Title">'
+        + '<textarea id="newDocContent" rows="6" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;font-family:monospace;font-size:0.82rem" placeholder="Paste document content or notes..."></textarea>'
+        + '<select id="newDocCat" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px"><option>ILS</option><option>DMSMS</option><option>Readiness</option><option>Cybersecurity</option><option>Quality</option><option>Logistics</option><option>Configuration</option><option>Other</option></select>'
+        + '<div id="docUploadDropzone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(0,170,255,0.08)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\'" ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor=\'rgba(0,170,255,0.3)\';this.style.background=\'rgba(0,170,255,0.02)\';if(event.dataTransfer.files.length){var inp=document.getElementById(\'newDocFile\');inp.files=event.dataTransfer.files;handleDocFileSelect(inp)}" onclick="document.getElementById(\'newDocFile\').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:8px;padding:28px 20px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(0,170,255,0.02);transition:all 0.3s"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;margin-bottom:10px;display:block;color:var(--accent)"></i><div style=\'font-size:0.9rem;color:var(--steel);font-weight:600;margin-bottom:6px\'>Drag & drop your file here</div><div style=\'font-size:0.78rem;color:var(--muted)\'>or <span style=\'color:var(--accent);text-decoration:underline\'>click to browse</span></div><div style=\'font-size:0.72rem;color:var(--muted);margin-top:8px\'>PDF, Word, Excel, CSV, TXT — any document type</div><input type="file" id="newDocFile" style="display:none" accept=".pdf,.docx,.xlsx,.txt,.csv,.json" onchange="handleDocFileSelect(this)"></div>'
+        + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong style="color:#00aaff">S4 AI Agent</strong> will automatically scan uploads for discrepancies, compliance gaps, unauthorized changes, and red flags.</div>'
+        + '<div id="newDocFileInfo" style="display:none;padding:8px;background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:8px;font-size:0.82rem;color:#00cc66"></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'docUploadModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
-        + '<button onclick="addNewDoc()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Add Document</button>'
+        + '<button onclick="document.getElementById(\'docUploadModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 20px;cursor:pointer">Cancel</button>'
+        + '<button onclick="addNewDoc()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 20px;cursor:pointer;font-weight:600">Add Document</button>'
         + '</div></div>';
     document.body.appendChild(modal);
 }
@@ -6205,15 +6205,15 @@ function showDocVersionUpload() {
     var modal = document.createElement('div');
     modal.id = 'docVersionModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
-    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">'
+    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:8px"></i>Upload New Version</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Upload a revised version of an existing document. Our AI agent will analyze it for discrepancies, changes, errors, omissions, and cost modifications — then flag anything that needs attention.</p>'
-        + '<select id="versionDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
-        + '<textarea id="versionContent" rows="8" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;font-family:monospace;font-size:0.82rem;margin-bottom:12px" placeholder="Paste updated document content..."></textarea>'
-        + '<input id="versionNote" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:10px;width:100%;margin-bottom:12px" placeholder="Change notes (optional)">'
+        + '<select id="versionDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
+        + '<textarea id="versionContent" rows="8" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;font-family:monospace;font-size:0.82rem;margin-bottom:12px" placeholder="Paste updated document content..."></textarea>'
+        + '<input id="versionNote" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;margin-bottom:12px" placeholder="Change notes (optional)">'
         + '<div style="display:flex;gap:10px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'docVersionModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
-        + '<button onclick="uploadDocVersion()" style="background:#c9a84c;color:#000;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Upload & Analyze</button>'
+        + '<button onclick="document.getElementById(\'docVersionModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 20px;cursor:pointer">Cancel</button>'
+        + '<button onclick="uploadDocVersion()" style="background:#c9a84c;color:#000;border:none;border-radius:8px;padding:8px 20px;cursor:pointer;font-weight:600">Upload & Analyze</button>'
         + '</div></div>';
     document.body.appendChild(modal);
 }
@@ -6271,7 +6271,7 @@ function scanForRedFlags(content, docId) {
 }
 
 function showRedFlagAlert(docId, flags) {
-    var html = '<div style="position:fixed;top:80px;right:20px;background:#1a0a0a;border:2px solid #ff4444;border-radius:3px;padding:20px;max-width:400px;z-index:10001;animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(255,0,0,0.2)">'
+    var html = '<div style="position:fixed;top:80px;right:20px;background:#1a0a0a;border:2px solid #ff4444;border-radius:8px;padding:20px;max-width:400px;z-index:10001;animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(255,0,0,0.2)">'
         + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h4 style="color:#ff4444;margin:0"><i class="fas fa-flag"></i> Red Flags: '+docId+'</h4><button onclick="this.closest(\'div\').parentElement.remove()" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:1.2rem">&times;</button></div>';
     flags.forEach(function(f) {
         var col = f.severity === 'critical' ? '#ff0000' : f.severity === 'high' ? '#ff4444' : f.severity === 'medium' ? '#ff8800' : '#c9a84c';
@@ -6287,21 +6287,21 @@ function showRedFlagAlert(docId, flags) {
 function showDiffResult(docId, diff, flags) {
     var modal = document.createElement('div');
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
-    var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:3px;padding:32px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto">'
+    var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto">'
         + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-brain" style="color:#c9a84c;margin-right:8px"></i>Document Intelligence Analysis: '+docId+'</h3>'
-                + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;color:var(--steel)"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong style="color:#00aaff">S4 AI Agent:</strong> Analyzed document for discrepancies, unauthorized changes, errors, omissions, and cost modifications.</div>'
+                + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;color:var(--steel)"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong style="color:#00aaff">S4 AI Agent:</strong> Analyzed document for discrepancies, unauthorized changes, errors, omissions, and cost modifications.</div>'
         + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">'
-        + '<div style="background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:3px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#00cc66">+'+diff.added+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Added</div></div>'
-        + '<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:3px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#ff4444">-'+diff.removed+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Removed</div></div>'
-        + '<div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#c9a84c">~'+diff.changed+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Modified</div></div>'
+        + '<div style="background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#00cc66">+'+diff.added+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Added</div></div>'
+        + '<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#ff4444">-'+diff.removed+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Removed</div></div>'
+        + '<div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#c9a84c">~'+diff.changed+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Modified</div></div>'
         + '</div>';
     if (flags.length > 0) {
-        html += '<div style="background:rgba(255,0,0,0.04);border:1px solid rgba(255,68,68,0.2);border-radius:3px;padding:12px;margin-bottom:16px"><div style="color:#ff4444;font-weight:700;margin-bottom:8px"><i class="fas fa-flag"></i> Red Flags ('+flags.length+')</div>';
+        html += '<div style="background:rgba(255,0,0,0.04);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:12px;margin-bottom:16px"><div style="color:#ff4444;font-weight:700;margin-bottom:8px"><i class="fas fa-flag"></i> Red Flags ('+flags.length+')</div>';
         flags.forEach(function(f){ html += '<div style="font-size:0.82rem;color:var(--steel);margin-bottom:4px">• <strong style="color:#ff4444">'+f.severity.toUpperCase()+':</strong> '+f.msg+'</div>'; });
         html += '</div>';
     }
     if (diff.details.length > 0) {
-        html += '<div style="background:#050810;border-radius:3px;padding:12px;font-family:monospace;font-size:0.78rem;max-height:250px;overflow-y:auto">';
+        html += '<div style="background:#050810;border-radius:8px;padding:12px;font-family:monospace;font-size:0.78rem;max-height:250px;overflow-y:auto">';
         diff.details.forEach(function(d) {
             if (d.type==='add') html += '<div style="color:#00cc66">+ L'+d.line+': '+d.text.substring(0,80)+'</div>';
             else if (d.type==='del') html += '<div style="color:#ff4444">- L'+d.line+': '+d.text.substring(0,80)+'</div>';
@@ -6309,7 +6309,7 @@ function showDiffResult(docId, diff, flags) {
         });
         html += '</div>';
     }
-    html += '<div style="text-align:right;margin-top:16px"><button onclick="this.closest(\'div\').parentElement.remove()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 24px;cursor:pointer;font-weight:600">Close</button></div></div>';
+    html += '<div style="text-align:right;margin-top:16px"><button onclick="this.closest(\'div\').parentElement.remove()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 24px;cursor:pointer;font-weight:600">Close</button></div></div>';
     modal.innerHTML = html;
     document.body.appendChild(modal);
 }
@@ -6639,10 +6639,10 @@ function renderEvidence() {
     if (empty) empty.style.display = 'none';
     list.innerHTML = window._s4Safe(_evidenceItems.map(function(e, i) {
         var icon = e.type.indexOf('pdf') >= 0 ? 'fa-file-pdf' : e.type.indexOf('image') >= 0 ? 'fa-file-image' : e.type.indexOf('sheet') >= 0 || e.filename.match(/\.xlsx?$/i) ? 'fa-file-excel' : 'fa-file';
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid #c9a84c">'
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid #c9a84c">'
             + '<i class="fas ' + icon + '" style="color:#c9a84c;font-size:1rem;width:20px;text-align:center"></i>'
             + '<div style="flex:1;min-width:0"><div style="color:#fff;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + e.filename + '</div><div style="font-size:0.72rem;color:var(--steel)">' + e.control + ' | ' + e.size + ' | ' + new Date(e.timestamp).toLocaleDateString() + (e.hash ? ' | <span style="color:#00aaff">Hash: ' + e.hash + '</span>' : '') + '</div></div>'
-            + '<span style="font-size:0.72rem;color:#00aaff;background:#00aaff11;padding:2px 6px;border-radius:3px">' + e.status + '</span>'
+            + '<span style="font-size:0.72rem;color:#00aaff;background:#00aaff11;padding:2px 6px;border-radius:8px">' + e.status + '</span>'
             + '<button onclick="removeEvidence(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Remove"><i class="fas fa-times"></i></button>'
             + '</div>';
     }).join(''));
@@ -6702,11 +6702,11 @@ function runMonitoringScan() {
         var status = score >= 80 ? 'Operational' : score >= 50 ? 'Degraded' : 'At Risk';
         var color = score >= 80 ? '#00cc88' : score >= 50 ? '#c9a84c' : '#ff6b6b';
         var icon = score >= 80 ? 'fa-check-circle' : score >= 50 ? 'fa-exclamation-circle' : 'fa-times-circle';
-        return '<div style="background:rgba(255,255,255,0.02);border:1px solid ' + color + '33;border-radius:3px;padding:10px;text-align:center">'
+        return '<div style="background:rgba(255,255,255,0.02);border:1px solid ' + color + '33;border-radius:8px;padding:10px;text-align:center">'
             + '<i class="fas ' + icon + '" style="color:' + color + ';font-size:1.1rem;margin-bottom:4px;display:block"></i>'
             + '<div style="color:#fff;font-size:0.78rem;font-weight:600">' + c.id + '</div>'
             + '<div style="color:var(--steel);font-size:0.7rem;margin-bottom:4px">' + c.name + '</div>'
-            + '<span style="font-size:0.68rem;padding:2px 6px;border-radius:3px;background:' + color + '22;color:' + color + ';font-weight:600">' + status + ' (' + score + '%)</span>'
+            + '<span style="font-size:0.68rem;padding:2px 6px;border-radius:8px;background:' + color + '22;color:' + color + ';font-weight:600">' + status + ' (' + score + '%)</span>'
             + '</div>';
     }).join('');
 
@@ -6886,7 +6886,7 @@ function generateExecSummary() {
     var now = new Date();
     var estSavings = Math.round((vault * 850 + done * 1200 + evCount * 400) / 1000);
 
-    var html = '<div style="border:1px solid rgba(0,170,255,0.2);border-radius:3px;overflow:hidden">';
+    var html = '<div style="border:1px solid rgba(0,170,255,0.2);border-radius:8px;overflow:hidden">';
     html += '<div style="background:rgba(0,170,255,0.08);padding:16px;border-bottom:1px solid rgba(0,170,255,0.15)">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center"><strong style="color:#fff;font-size:1.05rem"><i class="fas fa-file-lines" style="color:#00aaff;margin-right:8px"></i>S4 Ledger — Executive Summary</strong><span style="color:var(--steel);font-size:0.78rem">' + now.toLocaleDateString() + '</span></div></div>';
     html += '<div style="padding:16px">';
@@ -6906,7 +6906,7 @@ function generateExecSummary() {
 
     html += '<div style="margin-bottom:16px"><strong style="color:#00aaff;font-size:0.88rem">4. Financial Impact</strong><div style="margin-top:6px">Estimated cost avoidance: <strong style="color:#fff">$' + estSavings + 'K</strong> through automated compliance tracking, blockchain-anchored records, and reduced audit preparation labor. Traditional manual processes would require 3-5x more FTE hours.</div></div>';
 
-    html += '<div style="padding:10px;background:rgba(0,170,255,0.06);border-radius:3px;border-left:3px solid #00aaff"><strong style="color:#00aaff">Recommendation:</strong> ';
+    html += '<div style="padding:10px;background:rgba(0,170,255,0.06);border-radius:8px;border-left:3px solid #00aaff"><strong style="color:#00aaff">Recommendation:</strong> ';
     if (vault < 5) html += 'Increase record anchoring activity to establish a stronger compliance baseline.';
     else if (poamOpen > 3) html += 'Prioritize closing open POA&M items to reduce risk exposure.';
     else if (evCount < 3) html += 'Attach additional evidence artifacts to strengthen audit readiness.';
@@ -6977,7 +6977,7 @@ function renderScheduledReports() {
     if (empty) empty.style.display = 'none';
     list.innerHTML = _scheduledReports.map(function(r, i) {
         var statusColor = r.active ? '#00aaff' : 'var(--steel)';
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid ' + statusColor + '">'
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid ' + statusColor + '">'
             + '<i class="fas fa-calendar-check" style="color:' + statusColor + '"></i>'
             + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem">' + r.label + ' <span style="color:var(--steel);font-size:0.72rem">(' + r.frequency + ')</span></div><div style="font-size:0.72rem;color:var(--steel)">Next: ' + r.nextRun + '</div></div>'
             + '<button onclick="toggleScheduledReport(' + i + ')" style="background:none;border:none;color:' + (r.active ? '#00aaff' : 'var(--steel)') + ';cursor:pointer;font-size:0.78rem" title="Toggle"><i class="fas fa-' + (r.active ? 'toggle-on' : 'toggle-off') + '"></i></button>'
@@ -7020,7 +7020,7 @@ function generateFleetComparison() {
         html += '<td style="padding:8px;color:#fff;font-weight:600">' + p.name + '</td>';
         html += '<td style="padding:8px;text-align:center;color:' + compColor + ';font-weight:600">' + p.compliance + '%</td>';
         html += '<td style="padding:8px;text-align:center;color:' + readColor + '">' + p.readiness + '%</td>';
-        html += '<td style="padding:8px;text-align:center"><span style="padding:2px 8px;border-radius:3px;background:' + riskColor + '22;color:' + riskColor + ';font-size:0.72rem;font-weight:600">' + p.risk + '</span></td>';
+        html += '<td style="padding:8px;text-align:center"><span style="padding:2px 8px;border-radius:8px;background:' + riskColor + '22;color:' + riskColor + ';font-size:0.72rem;font-weight:600">' + p.risk + '</span></td>';
         html += '<td style="padding:8px;text-align:center;color:var(--steel)">' + p.resolved + '/' + p.actions + '</td>';
         html += '<td style="padding:8px;text-align:center;color:' + (p.dmsms > 5 ? '#ff6b6b' : '#c9a84c') + '">' + p.dmsms + ' items</td>';
         html += '<td style="padding:8px;text-align:right;color:#00aaff;font-weight:600">' + p.savings + '</td>';
@@ -7053,7 +7053,7 @@ function generateHeatMap() {
         var color = c.risk >= 80 ? '#ff3333' : c.risk >= 60 ? '#ff6b6b' : c.risk >= 40 ? '#c9a84c' : '#00cc88';
         var bg = c.risk >= 80 ? 'rgba(255,51,51,0.12)' : c.risk >= 60 ? 'rgba(255,107,107,0.08)' : c.risk >= 40 ? 'rgba(201,168,76,0.06)' : 'rgba(0,204,136,0.06)';
         var label = c.risk >= 80 ? 'CRITICAL' : c.risk >= 60 ? 'HIGH' : c.risk >= 40 ? 'MODERATE' : 'LOW';
-        html += '<div style="background:' + bg + ';border:1px solid ' + color + '33;border-radius:3px;padding:12px;text-align:center">';
+        html += '<div style="background:' + bg + ';border:1px solid ' + color + '33;border-radius:8px;padding:12px;text-align:center">';
         html += '<div style="font-size:1.4rem;font-weight:800;color:' + color + '">' + c.risk + '</div>';
         html += '<div style="color:#fff;font-size:0.8rem;font-weight:600;margin:4px 0">' + c.name + '</div>';
         html += '<div style="font-size:0.68rem;color:' + color + ';font-weight:700;margin-bottom:6px">' + label + '</div>';
@@ -7081,9 +7081,9 @@ function generateRemediationPlans() {
 
     var html = plans.map(function(p) {
         var sColor = p.severity === 'Critical' ? '#ff3333' : p.severity === 'High' ? '#ff6b6b' : '#c9a84c';
-        return '<div style="margin-bottom:10px;border:1px solid ' + sColor + '33;border-radius:3px;overflow:hidden">'
+        return '<div style="margin-bottom:10px;border:1px solid ' + sColor + '33;border-radius:8px;overflow:hidden">'
             + '<div style="padding:10px 14px;background:' + sColor + '08;display:flex;align-items:center;gap:8px">'
-            + '<span style="background:' + sColor + '22;color:' + sColor + ';padding:2px 8px;border-radius:3px;font-size:0.7rem;font-weight:700">' + p.severity + '</span>'
+            + '<span style="background:' + sColor + '22;color:' + sColor + ';padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:700">' + p.severity + '</span>'
             + '<strong style="color:#fff;font-size:0.82rem">' + p.risk + '</strong>'
             + '<span style="margin-left:auto;color:var(--steel);font-size:0.72rem">' + p.timeline + ' | ' + p.cost + '</span></div>'
             + '<div style="padding:10px 14px">'
@@ -7219,7 +7219,7 @@ function _extractFromText(text, filename) {
     var milSpecs = text.match(/MIL-[A-Z]+-\d+[A-Z]*/gi) || [];
     var diCodes = text.match(/DI-[A-Z]+-\d+[A-Z]*/gi) || [];
 
-    var html = '<div style="border:1px solid rgba(0,170,255,0.2);border-radius:3px;overflow:hidden">';
+    var html = '<div style="border:1px solid rgba(0,170,255,0.2);border-radius:8px;overflow:hidden">';
     html += '<div style="padding:10px 14px;background:rgba(0,170,255,0.08);border-bottom:1px solid rgba(0,170,255,0.15)"><strong style="color:#fff"><i class="fas fa-file-invoice" style="color:#00aaff;margin-right:6px"></i>' + filename + '</strong> <span style="color:var(--steel);font-size:0.72rem">(' + text.length + ' chars)</span></div>';
     html += '<div style="padding:12px 14px">';
 
@@ -7236,11 +7236,11 @@ function _extractFromText(text, filename) {
     sections.forEach(function(s) {
         if (s.items.length === 0) return;
         html += '<div style="margin-bottom:8px"><div style="color:' + s.color + ';font-size:0.78rem;font-weight:600;margin-bottom:4px"><i class="fas ' + s.icon + '" style="margin-right:4px"></i>' + s.label + ' (' + s.items.length + ')</div>';
-        html += '<div style="display:flex;flex-wrap:wrap;gap:4px">' + s.items.map(function(item) { return '<span style="background:' + s.color + '11;color:' + s.color + ';padding:2px 8px;border-radius:3px;font-size:0.72rem;font-family:monospace">' + item + '</span>'; }).join('') + '</div></div>';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:4px">' + s.items.map(function(item) { return '<span style="background:' + s.color + '11;color:' + s.color + ';padding:2px 8px;border-radius:8px;font-size:0.72rem;font-family:monospace">' + item + '</span>'; }).join('') + '</div></div>';
     });
 
     var totalExtracted = sections.reduce(function(sum, s) { return sum + s.items.length; }, 0);
-    html += '<div style="margin-top:10px;padding:8px;background:rgba(0,170,255,0.06);border-radius:3px;font-size:0.78rem;color:var(--steel)"><strong style="color:#00aaff">' + totalExtracted + ' data points</strong> extracted from document. In production, extracted data auto-populates CDRL tracking, procurement forms, and compliance evidence.</div>';
+    html += '<div style="margin-top:10px;padding:8px;background:rgba(0,170,255,0.06);border-radius:8px;font-size:0.78rem;color:var(--steel)"><strong style="color:#00aaff">' + totalExtracted + ' data points</strong> extracted from document. In production, extracted data auto-populates CDRL tracking, procurement forms, and compliance evidence.</div>';
     html += '</div></div>';
     out.innerHTML = html;
     showWorkspaceNotification('AI extracted ' + totalExtracted + ' data points from ' + filename);
@@ -7279,10 +7279,10 @@ function renderTemplates() {
     var filtered = _templateFilter === 'all' ? _templates : _templates.filter(function(t) { return t.category === _templateFilter; });
     list.innerHTML = filtered.map(function(t) {
         var catColor = t.category === 'contract' ? '#c9a84c' : t.category === 'engineering' ? '#00aaff' : t.category === 'logistics' ? '#00aaff' : '#00cc88';
-        return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid ' + catColor + '">'
+        return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid ' + catColor + '">'
             + '<i class="fas ' + t.icon + '" style="color:' + catColor + ';font-size:1.1rem;margin-top:2px"></i>'
-            + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem;font-weight:600">' + t.name + ' <span style="color:var(--steel);font-size:0.68rem;font-weight:400">' + t.id + '</span></div><div style="color:var(--steel);font-size:0.75rem;margin-top:2px">' + t.desc + '</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">' + t.fields.map(function(f) { return '<span style="background:' + catColor + '11;color:' + catColor + ';padding:1px 6px;border-radius:3px;font-size:0.68rem">' + f + '</span>'; }).join('') + '</div></div>'
-            + '<button onclick="downloadTemplate(\'' + t.id + '\')" style="background:none;border:1px solid ' + catColor + '44;color:' + catColor + ';cursor:pointer;border-radius:3px;padding:4px 10px;font-size:0.72rem;white-space:nowrap" title="Download"><i class="fas fa-download"></i> Get</button>'
+            + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem;font-weight:600">' + t.name + ' <span style="color:var(--steel);font-size:0.68rem;font-weight:400">' + t.id + '</span></div><div style="color:var(--steel);font-size:0.75rem;margin-top:2px">' + t.desc + '</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">' + t.fields.map(function(f) { return '<span style="background:' + catColor + '11;color:' + catColor + ';padding:1px 6px;border-radius:8px;font-size:0.68rem">' + f + '</span>'; }).join('') + '</div></div>'
+            + '<button onclick="downloadTemplate(\'' + t.id + '\')" style="background:none;border:1px solid ' + catColor + '44;color:' + catColor + ';cursor:pointer;border-radius:8px;padding:4px 10px;font-size:0.72rem;white-space:nowrap" title="Download"><i class="fas fa-download"></i> Get</button>'
             + '</div>';
     }).join('');
 }
@@ -7382,7 +7382,7 @@ function loadRiskData() {
         html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);">';
         html += '<td style="padding:10px 8px;"><div style="color:#fff;font-weight:600;font-size:0.85rem;">'+it.part+'</div><div style="color:var(--text-muted);font-family:monospace;font-size:0.72rem;">'+it.nsn+'</div></td>';
         html += '<td style="padding:10px 8px;color:var(--steel);font-size:0.82rem;">'+it.supplier+'</td>';
-        html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 12px;border-radius:3px;font-weight:700;font-size:0.82rem;background:'+levelColors[it.level]+'22;color:'+levelColors[it.level]+';border:1px solid '+levelColors[it.level]+'44;">'+it.score+'</div></td>';
+        html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 12px;border-radius:8px;font-weight:700;font-size:0.82rem;background:'+levelColors[it.level]+'22;color:'+levelColors[it.level]+';border:1px solid '+levelColors[it.level]+'44;">'+it.score+'</div></td>';
         html += '<td style="padding:10px 8px;font-size:0.78rem;color:var(--steel);">'+it.factors.map(f=>'<div style="margin-bottom:2px;">• '+f+'</div>').join('')+'</td>';
         html += '<td style="padding:10px 8px;text-align:center;font-weight:600;color:'+(it.etaImpact==='None'?'var(--text-muted)':'#ff9500')+';font-size:0.82rem;">'+it.etaImpact+'</td>';
         html += '</tr>';
@@ -7474,11 +7474,11 @@ function generateReport() {
     const startDate = new Date(now.getTime() - period * 86400000);
 
     // Build preview
-    let html = '<div style="border:1px solid rgba(201,168,76,0.2);border-radius:3px;overflow:hidden;">';
+    let html = '<div style="border:1px solid rgba(201,168,76,0.2);border-radius:8px;overflow:hidden;">';
     html += '<div style="background:rgba(0,170,255,0.06);padding:16px;border-bottom:1px solid rgba(201,168,76,0.2);">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
     html += '<div><span style="font-size:1.3rem;margin-right:8px;">'+(rt.icon||'<i class="fas fa-file" style="color:'+(rt.color||'var(--accent)')+'"></i>')+'</span><strong style="color:#fff;font-size:1.05rem;">'+rt.title+'</strong></div>';
-    html += '<span style="background:#00aaff22;color:#00aaff;padding:4px 10px;border-radius:3px;font-size:0.75rem;font-weight:600;">GENERATED</span></div>';
+    html += '<span style="background:#00aaff22;color:#00aaff;padding:4px 10px;border-radius:8px;font-size:0.75rem;font-weight:600;">GENERATED</span></div>';
     html += '<div style="color:var(--text-muted);font-size:0.78rem;margin-top:6px;">Period: '+startDate.toLocaleDateString()+' — '+now.toLocaleDateString()+' | Records: '+totalRecords+' | Format: '+format.toUpperCase()+'</div></div>';
 
     html += '<div style="padding:16px;">';
@@ -7492,7 +7492,7 @@ function generateReport() {
         // Small per-section variation based on section index (deterministic, not random)
         var sectionVariance = ((i * 7 + 3) % 10) * 0.3;
         const complianceScore = Math.min(baseScore + sectionVariance, 100).toFixed(1);
-        html += '<div style="padding:10px 12px;margin-bottom:6px;background:rgba(255,255,255,0.02);border-radius:3px;border-left:3px solid '+(i%2===0?'#00aaff':'#00aaff')+';">';
+        html += '<div style="padding:10px 12px;margin-bottom:6px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid '+(i%2===0?'#00aaff':'#00aaff')+';">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
         html += '<strong style="color:#fff;font-size:0.88rem;">'+(i+1)+'. '+section+'</strong>';
         html += '<span style="color:var(--steel);font-size:0.78rem;">'+sectionRecords+' items | Score: '+complianceScore+'%</span></div></div>';
@@ -7504,7 +7504,7 @@ function generateReport() {
     var ovAct = s4ActionItems ? s4ActionItems.filter(a=>a.done).length : 0;
     ovBase += Math.min(ovVault * 0.6, 9) + Math.min(ovAct * 0.4, 4);
     const totalScore = Math.min(ovBase, 100).toFixed(1);
-    html += '<div style="margin-top:12px;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:3px;display:flex;justify-content:space-between;align-items:center;">';
+    html += '<div style="margin-top:12px;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">';
     html += '<div><strong style="color:#00aaff;">Overall Compliance Score: '+totalScore+'%</strong><br><span style="color:var(--steel);font-size:0.78rem;">All records verified against XRPL blockchain anchors</span></div>';
     html += '<div style="font-size:1.8rem;color:#00aaff;font-weight:800;">'+totalScore+'%</div></div>';
     html += '</div></div>';
@@ -7741,7 +7741,7 @@ function loadPredictiveData() {
         html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04);'+(it.urgent?'background:rgba(255,59,48,0.04);':'') +'">';
         html += '<td style="padding:10px 8px;"><div style="color:#fff;font-weight:600;font-size:0.82rem;">'+it.system+'</div><div style="color:var(--text-muted);font-size:0.72rem;">'+it.component+'</div></td>';
         html += '<td style="padding:10px 8px;color:var(--steel);font-size:0.8rem;">'+it.mode+'</td>';
-        html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 10px;border-radius:3px;font-weight:700;font-size:0.82rem;background:'+confColor+'22;color:'+confColor+';border:1px solid '+confColor+'44;">'+it.confidence+'%</div></td>';
+        html += '<td style="padding:10px 8px;text-align:center;"><div style="display:inline-block;padding:4px 10px;border-radius:8px;font-weight:700;font-size:0.82rem;background:'+confColor+'22;color:'+confColor+';border:1px solid '+confColor+'44;">'+it.confidence+'%</div></td>';
         html += '<td style="padding:10px 8px;text-align:center;color:'+(it.urgent?'#ff3b30':'var(--steel)')+';font-weight:'+(it.urgent?'700':'400')+';font-size:0.82rem;">'+it.eta+(it.urgent?' <i class="fas fa-exclamation-triangle"></i>':'')+'</td>';
         html += '<td style="padding:10px 8px;text-align:right;color:#ff9500;font-weight:600;font-size:0.85rem;">$'+(it.cost*1000).toLocaleString()+'</td>';
         html += '</tr>';
@@ -8330,7 +8330,7 @@ function calcLifecycle() {
     
     var output = document.getElementById('lifecycleOutput');
     if (output) {
-        output.innerHTML = '<div style="padding:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;font-size:0.82rem;color:var(--steel);">' +
+        output.innerHTML = '<div style="padding:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;font-size:0.82rem;color:var(--steel);">' +
             '<strong style="color:#fff">Cost Breakdown:</strong><br>' +
             'Acquisition: ' + fmt(totalAcq) + ' (' + fleetSize + ' units @ $' + (acqCost * 1000000).toLocaleString() + ' each)<br>' +
             'Sustainment (O&S): ' + fmt(totalSust) + ' (' + sustRate + '% annually over ' + serviceLife + ' years)<br>' +
@@ -8412,7 +8412,7 @@ function loadSBOMData() {
                 '<td style="padding:8px;font-size:0.78rem;color:var(--steel);text-align:center">' + c.type + '</td>' +
                 '<td style="padding:8px;font-size:0.82rem;text-align:center;color:' + cveColor + ';font-weight:600">' + c.cves + '</td>' +
                 '<td style="padding:8px;font-size:0.78rem;color:var(--steel);text-align:center">' + c.license + '</td>' +
-                '<td style="padding:8px;text-align:center"><span style="padding:2px 8px;border-radius:3px;font-size:0.7rem;font-weight:700;background:' + statusColor + '20;color:' + statusColor + '">' + c.status.toUpperCase() + '</span></td>' +
+                '<td style="padding:8px;text-align:center"><span style="padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:700;background:' + statusColor + '20;color:' + statusColor + '">' + c.status.toUpperCase() + '</span></td>' +
                 '</tr>';
         }).join('');
     }
