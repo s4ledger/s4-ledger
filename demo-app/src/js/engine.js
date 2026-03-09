@@ -968,6 +968,11 @@ function updateStats() {
     animateValue(document.getElementById('statVerified'), stats.verified);
     animateValue(document.getElementById('statTypes'), stats.types.size);
     animateValue(document.getElementById('statSlsFees'), stats.slsFees, 3);
+    // Show stat strip once there's any activity
+    var strip = document.getElementById('statsRow');
+    if (strip && (stats.verified > 0 || stats.anchored > 0 || stats.types.size > 0)) {
+        strip.style.display = '';
+    }
 }
 
 function showAnchorAnimation(hash, typeLabel, clfLevel) {

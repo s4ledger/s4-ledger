@@ -56,7 +56,7 @@
                 { label: 'Verified', value: stats.verified || 0, icon: 'fa-check-circle', accent: '#34c759' },
                 { label: 'Vault Records', value: vaultCount, icon: 'fa-vault', accent: '#c9a84c' },
                 { label: 'Record Types', value: stats.types ? (stats.types.size || 0) : 0, icon: 'fa-layer-group', accent: '#a855f7' },
-                { label: 'XRP Fees', value: (stats.slsFees || 0).toFixed(4), icon: 'fa-coins', accent: '#f59e0b' },
+                { label: 'Credit Fees', value: (stats.slsFees || 0).toFixed(4), icon: 'fa-coins', accent: '#f59e0b' },
                 { label: 'Offline Queue', value: offlineQueue.length, icon: 'fa-wifi-slash', accent: offlineQueue.length > 0 ? '#ff6b6b' : '#8b8fa3' }
             ];
 
@@ -1070,9 +1070,9 @@
             var actions = [
                 { label: 'Anchor Record', icon: 'fa-anchor', action: function() { if (typeof showSection === 'function') showSection('sectionAnchor'); } },
                 { label: 'Verify Record', icon: 'fa-check-circle', action: function() { if (typeof showSection === 'function') showSection('sectionVerify'); } },
-                { label: 'Command Palette', icon: 'fa-terminal', action: function() { if (window.S4 && S4.commandPalette) S4.commandPalette.toggle(); } },
-                { label: 'Playbooks', icon: 'fa-book-open', action: function() { S4.playbooks.showMenu(); } },
-                { label: 'Home', icon: 'fa-th-large', action: function() { if (typeof showHub === 'function') showHub(); } }
+                { label: 'ILS Tools', icon: 'fa-brain', action: function() { if (typeof showSection === 'function') showSection('sectionILS'); } },
+                { label: 'AI Agent', icon: 'fa-robot', action: function() { if (typeof toggleAiAgent === 'function') toggleAiAgent(); } },
+                { label: 'Command Palette', icon: 'fa-terminal', action: function() { if (window.S4 && S4.commandPalette) { S4.commandPalette.toggle(); } else { var p = document.getElementById('s4CommandPalette'); if (p) { p.classList.toggle('active'); var inp = document.getElementById('s4CommandInput'); if (inp) inp.focus(); } } } }
             ];
 
             var html = '';

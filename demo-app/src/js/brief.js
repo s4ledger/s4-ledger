@@ -37,7 +37,7 @@
         bodySize: 16,
         headerBg: '#f5f5f7',
         headerColor: '#ffffff',
-        bodyBg: '#2c2c2e',
+        bodyBg: '#ffffff',
         bodyColor: '#1d1d1f',
         accentColor: '#00aaff',
         footerText: 'S4 Ledger — UNCLASSIFIED',
@@ -185,7 +185,7 @@
         css += '@keyframes briefPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,170,255,0.3)}50%{box-shadow:0 0 0 6px rgba(0,170,255,0)}}';
         css += '@keyframes briefGlow{0%,100%{opacity:0.6}50%{opacity:1}}';
         // Left sidebar
-        css += '.brief-sidebar{width:52px;min-width:52px;background:rgba(10,14,26,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid ' + bdr + ';display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px;overflow-y:auto;overflow-x:hidden}';
+        css += '.brief-sidebar{width:52px;min-width:52px;background:rgba(245,245,247,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid ' + bdr + ';display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px;overflow-y:auto;overflow-x:hidden}';
         css += '.brief-sidebar-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:' + tm + ';cursor:pointer;border-radius:10px;font-size:0.88rem;transition:all 0.2s;position:relative}';
         css += '.brief-sidebar-btn:hover{background:rgba(0,0,0,0.04);color:' + tp + ';transform:scale(1.08)}';
         css += '.brief-sidebar-btn.active{background:linear-gradient(135deg,rgba(0,170,255,0.2),rgba(168,85,247,0.15));color:' + a + ';box-shadow:0 0 16px rgba(0,170,255,0.15)}';
@@ -197,11 +197,11 @@
         css += '.brief-thumb:hover{border-color:rgba(0,170,255,0.25);transform:scale(1.03);box-shadow:0 4px 16px rgba(0,0,0,0.06)}';
         css += '.brief-thumb.active{border-color:' + a + ';box-shadow:0 0 20px rgba(0,170,255,0.2);transform:scale(1.03)}';
         // Canvas stage
-        css += '.brief-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(0,170,255,0.02) 0%,rgba(13,17,23,0.5) 70%);padding:20px;overflow:auto;position:relative}';
+        css += '.brief-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(0,170,255,0.02) 0%,rgba(240,240,245,0.5) 70%);padding:20px;overflow:auto;position:relative}';
         css += '.brief-canvas{position:relative;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.1),0 0 0 1px rgba(0,0,0,0.08),0 0 80px rgba(0,170,255,0.04);overflow:hidden;transition:box-shadow 0.3s}';
         css += '.brief-canvas:hover{box-shadow:0 10px 40px rgba(0,0,0,0.12),0 0 0 1px rgba(0,0,0,0.1),0 0 100px rgba(0,170,255,0.06)}';
         // Format bar (floating)
-        css += '.brief-format-bar{display:flex;align-items:center;gap:3px;background:rgba(10,14,26,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:6px 12px;box-shadow:0 8px 32px rgba(0,0,0,0.1);flex-wrap:wrap}';
+        css += '.brief-format-bar{display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:6px 12px;box-shadow:0 8px 32px rgba(0,0,0,0.06);flex-wrap:wrap}';
         css += '.brief-fmt-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;color:' + ts + ';cursor:pointer;border-radius:8px;font-size:0.82rem;transition:all 0.15s}';
         css += '.brief-fmt-btn:hover{background:rgba(0,0,0,0.04);color:' + tp + ';border-color:rgba(0,0,0,0.1)}';
         css += '.brief-fmt-btn.active{background:rgba(0,170,255,0.15);color:' + a + ';border-color:rgba(0,170,255,0.2)}';
@@ -215,13 +215,13 @@
         css += '.brief-prop-input:focus{border-color:rgba(0,170,255,0.4);outline:none}';
         // Modal glass
         css += '.brief-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;animation:briefFadeIn 0.2s ease}';
-        css += '.brief-modal{background:rgba(13,17,23,0.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(0,0,0,0.08);border-radius:16px;padding:28px;max-width:640px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.6),0 0 0 1px rgba(0,170,255,0.08);animation:briefSlideUp 0.25s ease}';
+        css += '.brief-modal{background:rgba(255,255,255,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(0,0,0,0.1);border-radius:16px;padding:28px;max-width:640px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.12),0 0 0 1px rgba(0,170,255,0.08);animation:briefSlideUp 0.25s ease}';
         css += '.brief-modal h4{margin:0;color:' + tp + ';font-size:1.1rem;font-weight:600}';
         css += '.brief-modal-close{background:none;border:1px solid rgba(0,0,0,0.06);color:' + tm + ';width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;font-size:1.1rem;transition:all 0.15s}';
         css += '.brief-modal-close:hover{background:rgba(0,0,0,0.035);color:' + tp + '}';
         // List cards
         css += '.brief-list-card{background:rgba(0,0,0,0.02);border:1px solid ' + bdr + ';border-radius:14px;padding:22px;cursor:pointer;transition:all 0.3s}';
-        css += '.brief-list-card:hover{border-color:rgba(0,170,255,0.25);background:rgba(0,170,255,0.03);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.3)}';
+        css += '.brief-list-card:hover{border-color:rgba(0,170,255,0.25);background:rgba(0,170,255,0.03);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.06)}';
         // Element styles
         css += '.briefEl{transition:box-shadow 0.15s,border-color 0.15s}';
         css += '.briefEl:hover{box-shadow:0 0 0 1px rgba(0,170,255,0.25)}';
@@ -234,7 +234,7 @@
         css += '.brief-rh-n{top:-4px;left:50%;margin-left:-4px;cursor:n-resize}.brief-rh-s{bottom:-4px;left:50%;margin-left:-4px;cursor:s-resize}';
         css += '.brief-rh-w{left:-4px;top:50%;margin-top:-4px;cursor:w-resize}.brief-rh-e{right:-4px;top:50%;margin-top:-4px;cursor:e-resize}';
         // Zoom controls
-        css += '.brief-zoom-bar{display:flex;align-items:center;gap:6px;background:rgba(10,14,26,0.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.06);border-radius:10px;padding:4px 12px;position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:50}';
+        css += '.brief-zoom-bar{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:4px 12px;position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:50}';
         css += '.brief-zoom-btn{background:transparent;border:none;color:' + ts + ';cursor:pointer;padding:4px 6px;border-radius:6px;font-size:0.8rem;transition:all 0.15s}';
         css += '.brief-zoom-btn:hover{color:' + tp + ';background:rgba(0,0,0,0.035)}';
         // Classification banner
@@ -251,7 +251,7 @@
         css += '.brief-notes{width:100%;height:56px;margin-top:12px;background:rgba(0,0,0,0.015);border:1px solid ' + bdr + ';border-radius:8px;color:' + ts + ';padding:8px 12px;font-size:0.8rem;resize:vertical;transition:border-color 0.2s}';
         css += '.brief-notes:focus{border-color:rgba(0,170,255,0.3);outline:none}';
         // Header bar
-        css += '.brief-header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(10,14,26,0.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid ' + bdr + ';gap:8px;flex-wrap:wrap}';
+        css += '.brief-header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(245,245,247,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid ' + bdr + ';gap:8px;flex-wrap:wrap}';
         css += '.brief-header-left{display:flex;align-items:center;gap:8px}';
         css += '.brief-header-right{display:flex;align-items:center;gap:4px;flex-wrap:wrap}';
         css += '.brief-action-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:rgba(0,0,0,0.025);border:1px solid rgba(0,0,0,0.06);border-radius:8px;color:' + ts + ';cursor:pointer;font-size:0.78rem;font-weight:500;transition:all 0.2s;white-space:nowrap}';
@@ -955,7 +955,7 @@
             }
             html += '</div>';
         } else {
-            html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">';
+            html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">';
             filteredBriefs.forEach(function (b) {
                 var idx = _briefs.indexOf(b);
                 var bt = BRIEF_TYPES[b.brief_type] || BRIEF_TYPES.STATUS;
@@ -1267,7 +1267,7 @@
             if (sel) html += '<button onclick="event.stopPropagation();briefDeleteSlide()" class="brief-fmt-btn" style="width:20px;height:20px;font-size:0.6rem;color:#ff6b6b" title="Delete"><i class="fas fa-times"></i></button>';
             html += '</div>';
             // Thumbnail preview
-            html += '<div style="background:' + (master.bodyBg || '#2c2c2e') + ';height:80px;margin:0 6px 6px 6px;border-radius:6px;overflow:hidden;position:relative">';
+            html += '<div style="background:' + (master.bodyBg || '#fff') + ';height:80px;margin:0 6px 6px 6px;border-radius:6px;overflow:hidden;position:relative">';
             var firstText = '';
             (s.elements || []).forEach(function (e) { if (e.type === 'text' && !firstText) firstText = (e.text || '').substring(0, 50); });
             html += '<div style="padding:6px;font-size:0.45rem;color:' + (master.bodyColor || '#1d1d1f') + ';overflow:hidden;line-height:1.3;opacity:0.7">' + _esc(firstText) + '</div>';
@@ -1304,7 +1304,7 @@
         html += '<button class="brief-fmt-btn" onclick="briefSetAlign(\'right\')" title="Align Right"><i class="fas fa-align-right"></i></button>';
         html += '<div class="brief-fmt-divider"></div>';
         html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.7rem;color:#6e6e73;cursor:pointer" title="Text Color">A <input type="color" id="briefColorPick" value="#ffffff" onchange="briefSetColor(this.value)" style="width:22px;height:22px;border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:0;cursor:pointer;background:transparent"></label>';
-        html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.7rem;color:#6e6e73;cursor:pointer" title="Fill"><i class="fas fa-fill-drip"></i> <input type="color" id="briefBgPick" value="#2c2c2e" onchange="briefSetBg(this.value)" style="width:22px;height:22px;border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:0;cursor:pointer;background:transparent"></label>';
+        html += '<label style="display:flex;align-items:center;gap:3px;font-size:0.7rem;color:#6e6e73;cursor:pointer" title="Fill"><i class="fas fa-fill-drip"></i> <input type="color" id="briefBgPick" value="#ffffff" onchange="briefSetBg(this.value)" style="width:22px;height:22px;border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:0;cursor:pointer;background:transparent"></label>';
         html += '<div class="brief-fmt-divider"></div>';
         html += '<button class="brief-fmt-btn" onclick="briefBringToFront()" title="Bring to Front"><i class="fas fa-layer-group"></i></button>';
         html += '<button class="brief-fmt-btn" onclick="briefSendToBack()" title="Send to Back"><i class="fas fa-level-down-alt"></i></button>';
@@ -1313,7 +1313,7 @@
         html += '</div>'; // end format bar
 
         // Canvas
-        html += '<div id="briefCanvas" class="brief-canvas" style="width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#2c2c2e') + ';transform:scale(' + scale.toFixed(3) + ');transform-origin:top center;cursor:' + (_annotationMode ? 'crosshair' : 'default') + '" onclick="briefCanvasClick(event)" onmousedown="briefCanvasMouseDown(event)" onmousemove="briefCanvasMouseMove(event)" onmouseup="briefCanvasMouseUp(event)">';
+        html += '<div id="briefCanvas" class="brief-canvas" style="width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#fff') + ';transform:scale(' + scale.toFixed(3) + ');transform-origin:top center;cursor:' + (_annotationMode ? 'crosshair' : 'default') + '" onclick="briefCanvasClick(event)" onmousedown="briefCanvasMouseDown(event)" onmousemove="briefCanvasMouseMove(event)" onmouseup="briefCanvasMouseUp(event)">';
         // Grid overlay
         if (_snapToGrid) {
             html += '<div style="position:absolute;top:0;left:0;right:0;bottom:24px;pointer-events:none;background-image:linear-gradient(rgba(0,0,0,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.015) 1px,transparent 1px);background-size:' + _gridSize + 'px ' + _gridSize + 'px;z-index:0"></div>';
@@ -1340,7 +1340,7 @@
             footerRight = 'Page ' + (_activeSlideIdx + 1) + ' of ' + slides.length + '  //  ' + cls.label;
         }
         // Footer
-        html += '<div style="position:absolute;bottom:0;left:0;right:0;height:24px;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:0.62rem;color:#6e6e73;z-index:10">';
+        html += '<div style="position:absolute;bottom:0;left:0;right:0;height:24px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:0.62rem;color:#6e6e73;z-index:10">';
         html += '<span>' + _esc(footerLeft) + '</span>';
         html += '<span>' + footerRight + '</span>';
         html += '</div>';
@@ -1419,7 +1419,7 @@
         // Appearance
         h += '<div class="brief-prop-group"><div class="brief-prop-label">Appearance</div>';
         h += '<div class="brief-prop-row"><label style="color:#6e6e73;font-size:0.72rem;width:50px">Color</label><input type="color" value="' + (elem.color || '#ffffff') + '" onchange="briefSetProp(\'color\',this.value)" style="width:32px;height:24px;border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:0;cursor:pointer"></div>';
-        h += '<div class="brief-prop-row"><label style="color:#6e6e73;font-size:0.72rem;width:50px">Fill</label><input type="color" value="' + (elem.bg || elem.fill || '#2c2c2e') + '" onchange="briefSetProp(\'bg\',this.value)" style="width:32px;height:24px;border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:0;cursor:pointer"></div>';
+        h += '<div class="brief-prop-row"><label style="color:#6e6e73;font-size:0.72rem;width:50px">Fill</label><input type="color" value="' + (elem.bg || elem.fill || '#fff') + '" onchange="briefSetProp(\'bg\',this.value)" style="width:32px;height:24px;border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:0;cursor:pointer"></div>';
         h += '<div class="brief-prop-row"><label style="color:#6e6e73;font-size:0.72rem;width:50px">Z-Index</label><input type="number" class="brief-prop-input" value="' + (elem.zIndex || 1) + '" onchange="briefSetProp(\'zIndex\',parseInt(this.value))" style="width:60px"></div>';
         h += '</div>';
         // Type-specific
@@ -1907,7 +1907,7 @@
         html += _masterField('Body Size', 'masterBodySize', m.bodySize || 16);
         html += _masterColorField('Header BG', 'masterHeaderBg', m.headerBg || '#f5f5f7');
         html += _masterColorField('Header Color', 'masterHeaderColor', m.headerColor || '#ffffff');
-        html += _masterColorField('Body BG', 'masterBodyBg', m.bodyBg || '#2c2c2e');
+        html += _masterColorField('Body BG', 'masterBodyBg', m.bodyBg || '#fff');
         html += _masterColorField('Body Color', 'masterBodyColor', m.bodyColor || '#1d1d1f');
         html += _masterColorField('Accent', 'masterAccent', m.accentColor || '#00aaff');
         html += '</div>';
@@ -2022,7 +2022,7 @@
         var doc = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + _esc(brief.title) + '</title>';
         doc += '<style>@media print{.slide{page-break-after:always}.slide:last-child{page-break-after:auto}}';
         doc += 'body{margin:0;padding:20px;background:#1a1a2e;font-family:' + (master.fontFamily || 'sans-serif') + '}';
-        doc += '.slide{position:relative;width:' + sw + 'px;height:' + sh + 'px;margin:0 auto 20px;background:' + (master.bodyBg || '#2c2c2e') + ';border-radius:4px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)}';
+        doc += '.slide{position:relative;width:' + sw + 'px;height:' + sh + 'px;margin:0 auto 20px;background:' + (master.bodyBg || '#fff') + ';border-radius:4px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)}';
         doc += '.el{position:absolute;box-sizing:border-box;overflow:hidden;white-space:pre-wrap;word-wrap:break-word}';
         doc += '</style></head><body>';
 
@@ -2591,7 +2591,7 @@
             // Classification banner top
             html += '<div style="position:fixed;top:0;left:0;right:0;height:28px;background:' + cls.bg + ';display:flex;align-items:center;justify-content:center;z-index:100000;font-size:0.75rem;font-weight:700;letter-spacing:2px;color:' + cls.color + '">' + cls.label + '</div>';
             // Slide
-            html += '<div style="position:relative;width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#2c2c2e') + ';border-radius:4px;transform:scale(' + scale.toFixed(3) + ');box-shadow:0 8px 48px rgba(0,0,0,0.8);overflow:hidden;margin-top:30px">';
+            html += '<div style="position:relative;width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#fff') + ';border-radius:4px;transform:scale(' + scale.toFixed(3) + ');box-shadow:0 8px 48px rgba(0,0,0,0.08);overflow:hidden;margin-top:30px">';
             (slide.elements || []).forEach(function (el) {
                 var s = 'position:absolute;left:' + el.x + 'px;top:' + el.y + 'px;width:' + el.w + 'px;height:' + el.h + 'px;';
                 if (el.type === 'text') {
@@ -2622,7 +2622,7 @@
                 }
             });
             // Footer
-            html += '<div style="position:absolute;bottom:0;left:0;right:0;height:24px;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:0.6rem;color:#86868b">';
+            html += '<div style="position:absolute;bottom:0;left:0;right:0;height:24px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:0.6rem;color:#86868b">';
             html += '<span>' + (master.footerText || '') + '</span>';
             html += '<span>Slide ' + (curSlide + 1) + ' of ' + slides.length + '</span>';
             html += '</div></div>';
@@ -2772,7 +2772,7 @@
         var doc = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + _esc(brief.title) + '</title>';
         doc += '<style>@page{margin:0;size:' + sw + 'px ' + (sh + 40) + 'px}@media print{.slide{page-break-after:always;break-after:page}.slide:last-child{page-break-after:auto}}';
         doc += '*{box-sizing:border-box;margin:0;padding:0}body{background:#fff;font-family:' + (master.fontFamily || 'sans-serif') + '}';
-        doc += '.slide{position:relative;width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#2c2c2e') + ';overflow:hidden}';
+        doc += '.slide{position:relative;width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#fff') + ';overflow:hidden}';
         doc += '.el{position:absolute;overflow:hidden;white-space:pre-wrap;word-wrap:break-word}';
         doc += '.cls-banner{width:100%;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:2px}';
         doc += '</style></head><body>';
@@ -3532,7 +3532,7 @@
             master.headerBg = '#e2e4e8';
             master.headerColor = '#000000';
         } else {
-            master.bodyBg = '#2c2c2e';
+            master.bodyBg = '#ffffff';
             master.bodyColor = '#1d1d1f';
             master.headerBg = '#f5f5f7';
             master.headerColor = '#ffffff';
@@ -4491,7 +4491,7 @@
         var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
         html += '<div><label class="brief-prop-label">Slide Width</label><input type="number" class="brief-prop-input" value="' + (m.slideWidth || 960) + '" onchange="briefSetMaster(\'slideWidth\',this.value)"></div>';
         html += '<div><label class="brief-prop-label">Slide Height</label><input type="number" class="brief-prop-input" value="' + (m.slideHeight || 540) + '" onchange="briefSetMaster(\'slideHeight\',this.value)"></div>';
-        html += '<div><label class="brief-prop-label">Background Color</label><input type="color" value="' + (m.bgColor || '#2c2c2e') + '" onchange="briefSetMaster(\'bgColor\',this.value)" style="width:100%;height:32px;border:none;cursor:pointer;border-radius:6px"></div>';
+        html += '<div><label class="brief-prop-label">Background Color</label><input type="color" value="' + (m.bgColor || '#fff') + '" onchange="briefSetMaster(\'bgColor\',this.value)" style="width:100%;height:32px;border:none;cursor:pointer;border-radius:6px"></div>';
         html += '<div><label class="brief-prop-label">Title Color</label><input type="color" value="' + (m.titleColor || '#1d1d1f') + '" onchange="briefSetMaster(\'titleColor\',this.value)" style="width:100%;height:32px;border:none;cursor:pointer;border-radius:6px"></div>';
         html += '<div><label class="brief-prop-label">Body Color</label><input type="color" value="' + (m.bodyColor || '#1d1d1f') + '" onchange="briefSetMaster(\'bodyColor\',this.value)" style="width:100%;height:32px;border:none;cursor:pointer;border-radius:6px"></div>';
         html += '<div><label class="brief-prop-label">Font Family</label><input type="text" class="brief-prop-input" value="' + _esc(m.fontFamily || 'Inter, sans-serif') + '" onchange="briefSetMaster(\'fontFamily\',this.value)"></div>';

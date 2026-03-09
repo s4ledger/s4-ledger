@@ -191,7 +191,7 @@
         html += '<div id="acqDDStatusTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#00aaff;font-weight:700;font-size:1rem">' + totalVessels + '</span> <span style="color:var(--steel);font-size:0.82rem">across ' + Object.keys(statusCounts).length + ' statuses</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Status Breakdown</div>';
-        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.1)">';
         ACQ_STATUSES.forEach(function(s) {
             var cnt = statusCounts[s] || 0;
             var sc = ACQ_STATUS_COLORS[s] || '#8b949e';
@@ -207,7 +207,7 @@
         var topCond = Object.keys(condCounts).sort(function(a,b){ return condCounts[b]-condCounts[a]; })[0] || '-';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:' + (condColors[topCond]||'#555') + ';font-weight:700;font-size:1rem">' + topCond + '</span> <span style="color:var(--muted);font-size:0.82rem">most common (' + (condCounts[topCond]||0) + ')</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Material Condition</div>';
-        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqDDCond" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.1)">';
         condOrder.forEach(function(c) {
             var cnt = condCounts[c] || 0;
             var cc = condColors[c] || '#555';
@@ -1029,7 +1029,7 @@
                 var d = new Date(r[mk.key]);
                 var px = dateToPx(d);
                 if (px < 0) return;
-                html += '<div style="position:absolute;left:' + (px-5) + 'px;top:8px;width:10px;height:10px;border-radius:50%;background:' + mk.color + ';border:2px solid rgba(0,0,0,0.4);z-index:3;cursor:pointer" title="' + mk.label + ': ' + _fmtDate(r[mk.key]) + '"></div>';
+                html += '<div style="position:absolute;left:' + (px-5) + 'px;top:8px;width:10px;height:10px;border-radius:50%;background:' + mk.color + ';border:2px solid rgba(0,0,0,0.15);z-index:3;cursor:pointer" title="' + mk.label + ': ' + _fmtDate(r[mk.key]) + '"></div>';
                 html += '<div style="position:absolute;left:' + (px-30) + 'px;top:26px;width:70px;text-align:center;font-size:0.6rem;color:' + mk.color + ';white-space:nowrap;pointer-events:none;opacity:0.85">' + _fmtDate(r[mk.key]) + '</div>';
             });
             html += '</div></div>';
@@ -1056,7 +1056,7 @@
         html += '<button class="acq-prog-btn acq-prog-active" onclick="acqToggleProgramDropdown()" style="min-width:200px;text-align:left;display:flex;justify-content:space-between;align-items:center">';
         var selLabel = !selectedSet ? 'All Programs (' + _acqPrograms.length + ')' : selectedSet.length + ' of ' + _acqPrograms.length + ' selected';
         html += '<span>' + selLabel + '</span> <i class="fas fa-chevron-down" style="font-size:0.65rem;margin-left:8px;opacity:0.6"></i></button>';
-        html += '<div id="acqProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<div id="acqProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.1)">';
         html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:0.82rem;color:#86868b;border-bottom:1px solid rgba(0,0,0,0.06);margin-bottom:4px"><input type="checkbox" ' + (!selectedSet ? 'checked' : '') + ' onchange="acqSelectAllPrograms(this.checked)" style="accent-color:#00aaff;width:15px;height:15px"> <strong style="color:#1d1d1f">All Programs</strong></label>';
         _acqPrograms.forEach(function (p) {
             var checked = !selectedSet || selectedSet.indexOf(p) >= 0;

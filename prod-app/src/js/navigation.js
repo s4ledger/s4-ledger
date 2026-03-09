@@ -845,10 +845,10 @@ function _showTourStep() {
     overlay.style.display = 'block';
     if (el) {
         var rect = el.getBoundingClientRect();
-        highlight.style.cssText = 'position:fixed;top:' + (rect.top - 4) + 'px;left:' + (rect.left - 4) + 'px;width:' + (rect.width + 8) + 'px;height:' + (rect.height + 8) + 'px;border:2px solid var(--accent);border-radius:6px;z-index:100001;pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,0.6);transition:all 0.3s ease;';
+        highlight.style.cssText = 'position:fixed;top:' + (rect.top - 4) + 'px;left:' + (rect.left - 4) + 'px;width:' + (rect.width + 8) + 'px;height:' + (rect.height + 8) + 'px;border:2px solid var(--accent);border-radius:6px;z-index:100001;pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,0.4);transition:all 0.3s ease;';
         var tipTop = rect.bottom + 12;
         var tipLeft = Math.max(16, Math.min(rect.left, window.innerWidth - 340));
-        tooltip.style.cssText = 'position:fixed;top:' + tipTop + 'px;left:' + tipLeft + 'px;z-index:100002;background:var(--card);border:1px solid var(--accent);border-radius:3px;padding:16px 20px;max-width:320px;box-shadow:0 12px 40px rgba(0,0,0,0.4);';
+        tooltip.style.cssText = 'position:fixed;top:' + tipTop + 'px;left:' + tipLeft + 'px;z-index:100002;background:var(--card);border:1px solid var(--accent);border-radius:3px;padding:16px 20px;max-width:320px;box-shadow:0 12px 40px rgba(0,0,0,0.1);';
     }
     tooltip.innerHTML = '<div style="font-size:0.72rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Step ' + (_tourIdx + 1) + ' of ' + _tourSteps.length + '</div>'
         + '<h4 style="color:#1d1d1f;font-size:0.95rem;font-weight:700;margin:0 0 6px;">' + step.title + '</h4>'

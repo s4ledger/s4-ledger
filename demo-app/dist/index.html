@@ -67,12 +67,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-BG_0SZcv.js"></script>
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-DdGhwXMn.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-DWGOrE7c.js">
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-ClT61NBn.js"></script>
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-DFv016wT.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-L6nCPHIP.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-Bv4cOf5O.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-DvBBITAh.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-CYQ8dOLR.css">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-7e01C4aG.js">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-CCSE52OJ.css">
 </head>
 <body class="light-mode" data-theme="light">
 <!-- Light mode always on -->
@@ -141,7 +141,7 @@
 
 <!-- ═══ DoW CONSENT BANNER ═══ -->
 <div id="dodConsentBanner" role="dialog" aria-modal="true" aria-labelledby="dodConsentHeading" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.95);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);">
-    <div style="background:#fff;border:2px solid rgba(0,170,255,0.5);border-radius:3px;padding:40px;max-width:680px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+    <div style="background:#fff;border:2px solid rgba(0,170,255,0.5);border-radius:3px;padding:40px;max-width:680px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
         <div style="margin-bottom:20px;"><i class="fas fa-shield-halved" style="font-size:3rem;color:#00aaff;"></i></div>
         <h2 id="dodConsentHeading" style="color:#00aaff;font-size:1.3rem;font-weight:800;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">U.S. Department of War Information System</h2>
         <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:20px;margin-bottom:20px;text-align:left;">
@@ -162,7 +162,7 @@
 
 <!-- ═══ CAC / LOGIN POPUP ═══ -->
 <div id="cacLoginModal" role="dialog" aria-modal="true" aria-labelledby="cacLoginHeading" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.95);z-index:99998;align-items:center;justify-content:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);">
-    <div style="background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+    <div style="background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
         <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="" style="height:48px;width:48px;margin-bottom:8px;"><h3 id="cacLoginHeading" style="color:#1d1d1f;font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the Anchor-S4 workspace</p></div>
         <div id="cacLoginTabs" style="display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
             <button onclick="switchLoginTab('cac')" id="loginTabCac" style="flex:1;padding:10px;background:rgba(0,170,255,0.1);color:var(--accent);border:none;font-weight:700;font-size:0.82rem;cursor:pointer;"><i class="fas fa-id-card" style="margin-right:6px;"></i>CAC / PIV</button>
@@ -240,7 +240,7 @@
             </div></div>
         </div>
         <div style="text-align:center;">
-            <button onclick="startAuthFlow()" style="background:var(--accent);color:#1d1d1f;border:none;padding:14px 36px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+            <button onclick="startAuthFlow()" style="background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
             <button onclick="enterDemoMode()" style="display:inline-block;margin-left:12px;background:transparent;color:var(--accent);border:1px solid rgba(0,113,227,0.4);padding:14px 28px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;letter-spacing:-0.01em;font-family:inherit;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See A Demo</button>
         </div>
     </div>
@@ -249,7 +249,7 @@
 <div id="platformWorkspace" style="display:none;">
 <section class="tab-section">
     <div class="container">
-        <div class="stat-strip" id="statsRow">
+        <div class="stat-strip" id="statsRow" style="display:none;">
             <div class="ss-item"><span class="ss-val" id="statVerified">0</span> <span class="ss-label">Verified</span></div>
             <div class="ss-item"><span class="ss-val" id="statTypes">0</span> <span class="ss-label">Types</span></div>
             <div class="ss-item"><span class="ss-val" id="statSlsFees">0.000</span> <span class="ss-label">Credit Fees</span></div>
@@ -397,7 +397,7 @@
             <div id="gettingStartedSection" style="display:none;margin-bottom:28px;animation:fadeIn 0.4s ease;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
                     <div>
-                        <h3 style="color:var(--text-primary,#f0f0f5);font-size:1.1rem;font-weight:700;margin:0;letter-spacing:-0.02em;">
+                        <h3 style="color:#1d1d1f;font-size:1.1rem;font-weight:700;margin:0;letter-spacing:-0.02em;">
                             <i class="fas fa-compass" style="color:var(--accent);margin-right:8px;"></i>Getting Started
                         </h3>
                         <p style="color:var(--steel,#8b8fa3);font-size:0.82rem;margin:4px 0 0;">Choose your first action &mdash; each takes under 2 minutes.</p>
@@ -406,23 +406,23 @@
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
                     <!-- Card 1: Anchor Your First Record -->
-                    <div onclick="showSection('sectionAnchor')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
+                    <div onclick="showSection('sectionAnchor')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
                         <div style="width:40px;height:40px;border-radius:3px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-anchor" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:var(--text-primary,#f0f0f5);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Anchor Your First Record</div>
+                        <div style="color:#1d1d1f;font-weight:700;font-size:0.92rem;margin-bottom:6px;">Anchor Your First Record</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">Pick a type, upload content, anchor to XRPL.</div>
                         <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start anchoring</div>
                     </div>
                     <!-- Card 2: Explore the 23+ Tools -->
-                    <div onclick="showSection('sectionILS')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
+                    <div onclick="showSection('sectionILS')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
                         <div style="width:40px;height:40px;border-radius:3px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-brain" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:var(--text-primary,#f0f0f5);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Browse ILS Tools</div>
+                        <div style="color:#1d1d1f;font-weight:700;font-size:0.92rem;margin-bottom:6px;">Browse ILS Tools</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">23+ tools &mdash; gap analysis, compliance, risk, and more.</div>
                         <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Browse tools</div>
                     </div>
                     <!-- Card 3: Take the Guided Tour -->
-                    <div onclick="if(typeof startWalkthrough==='function')startWalkthrough()" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
+                    <div onclick="if(typeof startWalkthrough==='function')startWalkthrough()" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
                         <div style="width:40px;height:40px;border-radius:3px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-route" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:var(--text-primary,#f0f0f5);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Take the Guided Tour</div>
+                        <div style="color:#1d1d1f;font-weight:700;font-size:0.92rem;margin-bottom:6px;">Take the Guided Tour</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">Voice-narrated walkthrough of every feature.</div>
                         <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start tour</div>
                     </div>
@@ -3374,7 +3374,7 @@
 </div><!-- /platformWorkspace -->
 
 <div id="anchorOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center" onclick="if(event.target===this)hideAnchorAnimation()">
-    <div id="s4ResultPopup" style="background:linear-gradient(135deg,rgba(12,16,28,0.98),rgba(18,22,38,0.98));border:1px solid rgba(0,170,255,0.25);border-radius:6px;padding:2rem 2.5rem;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(0,170,255,0.08);position:relative;">
+    <div id="s4ResultPopup" style="background:#fff;border:1px solid rgba(0,170,255,0.25);border-radius:6px;padding:2rem 2.5rem;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.12),0 0 40px rgba(0,170,255,0.06);position:relative;">
         <button onclick="hideAnchorAnimation()" style="position:absolute;top:10px;right:14px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1">&times;</button>
         <div id="animStatus" style="font-size:1.05rem;font-weight:700;color:#1d1d1f;margin-bottom:0.8rem;display:flex;align-items:center;gap:8px"><i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to Ledger...</div>
         <div id="animHash" style="font-family:monospace;font-size:0.72rem;color:var(--muted);word-break:break-all;background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:3px;margin-bottom:0.6rem"></div>
