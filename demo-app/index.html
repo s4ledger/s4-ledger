@@ -67,12 +67,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-DSnVBIyv.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-BXsPcHCS.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-DFv016wT.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-Bq6zu2hA.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-Bv4cOf5O.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-CE3aSwmv.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-CAJXa2ue.css">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-CkejOGY-.css">
 </head>
 <body class="light-mode" data-theme="light">
 <!-- Light mode always on -->
@@ -1031,6 +1031,7 @@
                                     <button class="ai-quick-btn" onclick="toggleActionTimeline()" id="timelineToggleBtn" title="Timeline View"><i class="fas fa-stream"></i> Timeline</button>
                                     <button class="ai-quick-btn" onclick="smartPrioritizeActions()" title="AI Smart Priority Sort"><i class="fas fa-wand-magic-sparkles"></i> Smart Sort</button>
                                     <button class="ai-quick-btn" onclick="exportActionItems()"><i class="fas fa-download"></i> Export CSV</button>
+                                    <button class="ai-quick-btn" onclick="anchorToLedger('actions','Action Items snapshot anchored')"><i class="fas fa-anchor"></i> Anchor</button>
                                     <button class="ai-quick-btn" onclick="clearCompletedActions()"><i class="fas fa-broom"></i> Clear Done</button>
                                 </div>
                                 <!-- Bulk Action Bar -->
@@ -1101,11 +1102,10 @@
                     <div class="s4-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-exclamation-triangle" style="color:var(--accent)"></i> DMSMS / Obsolescence Tracker <button onclick="showAddActionModal('dmsms')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Track Diminishing Manufacturing Sources and Material Shortages (DMSMS). Identify parts at risk of obsolescence, find alternates, and estimate resolution costs. Per DoDI 4245.14.</p>
-<label>Select Program</label>
-                        <select id="dmsmsProgram" aria-label="Select DMSMS program" class="form-select mb-2"  onchange="loadDMSMSData()"></select>
-                        <div class="row mb-3">
-                            <div class="col-6"><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
-                            <div class="col-6"><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                            <div><label>Select Program</label><select id="dmsmsProgram" aria-label="Select DMSMS program" class="form-select" onchange="loadDMSMSData()"></select></div>
+                            <div><label>Hull # / Tail #</label><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
+                            <div><label>Program Office</label><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
                         </div>
                                                 <label style="font-size:0.82rem;margin-top:0.5rem">Upload DMSMS Data <span style="color:var(--muted);font-weight:400">(parts lists, GIDEP notices, vendor EOL notices)</span></label>
                         <div class="ils-dropzone" id="dmsmsDropzone" onclick="document.getElementById('dmsmsFileInput').click()" style="border-color:rgba(0,170,255,0.15)">
@@ -1282,7 +1282,7 @@
                             <select id="digitalThreadRecordSelect" aria-label="Select digital thread record" onchange="showDigitalThreadFromSelect()" style="background:#fff;color:#1d1d1f;border:1px solid rgba(155,89,182,0.3);border-radius:3px;padding:4px 10px;font-size:0.75rem;max-width:240px;">
                                 <option value="">— Select a vault record —</option>
                             </select>
-                            <button onclick="closeDigitalThread()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:0.8rem;"><i class="fas fa-times"></i></button>
+                            <button onclick="closeDigitalThread()" style="background:none;border:none;color:var(--steel);cursor:pointer;font-size:0.8rem;min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center;padding:4px;"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
                     <div id="digitalThreadContent" style="font-size:0.82rem;"></div>
@@ -1432,6 +1432,8 @@
                     <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
                         <button onclick="showDocUpload()" class="ai-quick-btn" style="background:rgba(0,170,255,0.2);border-color:var(--accent);font-weight:700"><i class="fas fa-plus"></i> Add Document</button>
                         <button onclick="showDocVersionUpload()" class="ai-quick-btn"><i class="fas fa-brain"></i> Analyze Revision</button>
+                        <button onclick="exportDocLibrary()" class="ai-quick-btn"><i class="fas fa-download"></i> Export Library</button>
+                        <button onclick="anchorToLedger('docs','Document library anchored')" class="ai-quick-btn"><i class="fas fa-anchor"></i> Anchor</button>
                         <select id="docBranchFilter" aria-label="Filter documents by branch" class="form-select" style="width:auto" onchange="renderDocLibrary()">
                             <option value="all">All Branches</option>
                             <option value="USN">U.S. Navy</option>
@@ -1492,13 +1494,10 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-shield-halved" style="color:var(--accent)"></i> Compliance Scorecard <span style="background:rgba(0,170,255,0.15);color:#00aaff;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">REAL-TIME</span> <button onclick="showAddActionModal('compliance')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Live compliance posture across CMMC, NIST SP 800-171, DFARS, and program-specific requirements. Auto-calculates based on your workspace activity — something SAP, Oracle, and Microsoft don't offer.</p>
 <!-- Program Selector -->
-                    <div style="margin-bottom:16px">
-                        <label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label>
-                        <select id="complianceProgram" aria-label="Select compliance program" class="form-select" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select>
-                        <div class="row" style="margin-top:6px">
-                            <div class="col-6"><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
-                            <div class="col-6"><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
-                        </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;margin-bottom:16px">
+                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label><select id="complianceProgram" aria-label="Select compliance program" class="form-select" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select></div>
+                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Hull # / Tail #</label><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
+                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program Office</label><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
                     </div>
 
                     <!-- Score Ring -->
@@ -1681,19 +1680,11 @@
             <div class="ils-hub-panel" id="hub-risk">
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-triangle-exclamation" style="color:#c9a84c"></i> AI Supply Chain Risk Engine <button onclick="showAddActionModal('risk')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-<div class="row mb-3">
-                        <div class="col-md-6">
-                            <label>Select Program</label>
-                            <select id="riskProgram" aria-label="Select risk program" onchange="loadRiskData()" style="font-size:0.88rem"></select>
-                            <div class="row" style="margin-top:6px">
-                                <div class="col-6"><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:3px;padding:5px 8px;width:100%"></div>
-                                <div class="col-6"><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:3px;padding:5px 8px;width:100%"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Risk Threshold</label>
-                            <select id="riskThreshold" aria-label="Select risk threshold" onchange="loadRiskData()" style="font-size:0.88rem"><option value="all">All Risk Levels</option><option value="critical">Critical Only</option><option value="high">High & Critical</option><option value="medium">Medium & Above</option></select>
-                        </div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div><label>Program</label><select id="riskProgram" aria-label="Select risk program" onchange="loadRiskData()" style="font-size:0.88rem"></select></div>
+                        <div><label>Hull # / Tail #</label><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:3px;padding:5px 8px;width:100%"></div>
+                        <div><label>Program Office</label><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:3px;padding:5px 8px;width:100%"></div>
+                        <div><label>Risk Threshold</label><select id="riskThreshold" aria-label="Select risk threshold" onchange="loadRiskData()" style="font-size:0.88rem"><option value="all">All Risk Levels</option><option value="critical">Critical Only</option><option value="high">High & Critical</option><option value="medium">Medium & Above</option></select></div>
                     </div>
                     <!-- Risk Summary Stats -->
                     <div class="row mb-3" id="riskStats">
@@ -1833,19 +1824,10 @@
             <div class="ils-hub-panel" id="hub-reports">
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-pdf" style="color:var(--accent)"></i> Automated Audit Report Generator <button onclick="showAddActionModal('reports')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-<div class="row mb-3">
-                        <div class="col-md-4">
-                            <label>Report Type</label>
-                            <select id="reportType" aria-label="Select report type" style="font-size:0.88rem"><option value="full_audit">Full Audit Package</option><option value="supply_chain">Supply Chain Verification</option><option value="maintenance">Maintenance Records</option><option value="compliance">Compliance Summary</option><option value="custody">Chain of Custody</option><option value="contract">Contract Deliverables</option></select>
-                        </div>
-                        <div class="col-md-4">
-                            <label>Time Period</label>
-                            <select id="reportPeriod" aria-label="Select report period" style="font-size:0.88rem"><option value="30">Last 30 Days</option><option value="90">Last 90 Days</option><option value="180">Last 6 Months</option><option value="365">Last 12 Months</option><option value="all">All Time</option></select>
-                        </div>
-                        <div class="col-md-4">
-                            <label>Format</label>
-                            <select id="reportFormat" aria-label="Select report format" style="font-size:0.88rem"><option value="pdf">PDF Report</option><option value="csv">CSV Data Export</option><option value="json">JSON Package</option></select>
-                        </div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div><label>Report Type</label><select id="reportType" aria-label="Select report type" style="font-size:0.88rem"><option value="full_audit">Full Audit Package</option><option value="supply_chain">Supply Chain Verification</option><option value="maintenance">Maintenance Records</option><option value="compliance">Compliance Summary</option><option value="custody">Chain of Custody</option><option value="contract">Contract Deliverables</option></select></div>
+                        <div><label>Time Period</label><select id="reportPeriod" aria-label="Select report period" style="font-size:0.88rem"><option value="30">Last 30 Days</option><option value="90">Last 90 Days</option><option value="180">Last 6 Months</option><option value="365">Last 12 Months</option><option value="all">All Time</option></select></div>
+                        <div><label>Format</label><select id="reportFormat" aria-label="Select report format" style="font-size:0.88rem"><option value="pdf">PDF Report</option><option value="csv">CSV Data Export</option><option value="json">JSON Package</option></select></div>
                     </div>
                     <!-- Report Preview -->
                     <div id="reportPreview" style="background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:16px;margin-bottom:1rem;">
@@ -1959,23 +1941,11 @@
             <div class="ils-hub-panel" id="hub-predictive">
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-brain" style="color:var(--accent)"></i> Predictive Maintenance AI <button onclick="showAddActionModal('predictive')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-<div class="row mb-3">
-                        <div class="col-md-4">
-                            <label>Select Fleet / Platform</label>
-                            <select id="pdmPlatform" aria-label="Select predictive maintenance platform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select>
-                            <div class="row" style="margin-top:6px">
-                                <div class="col-6"><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:3px;padding:5px 8px;width:100%"></div>
-                                <div class="col-6"><input type="text" id="pdmOffice" placeholder="Program Office" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:3px;padding:5px 8px;width:100%"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label>Prediction Window</label>
-                            <select id="pdmWindow" aria-label="Select prediction time window" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="30">Next 30 Days</option><option value="60">Next 60 Days</option><option value="90" selected>Next 90 Days</option><option value="180">Next 6 Months</option><option value="365">Next 12 Months</option></select>
-                        </div>
-                        <div class="col-md-4">
-                            <label>Confidence Threshold</label>
-                            <select id="pdmConfidence" aria-label="Select confidence threshold" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="50">50%+ (Show All)</option><option value="70">70%+ (Likely)</option><option value="85" selected>85%+ (High Confidence)</option><option value="95">95%+ (Near Certain)</option></select>
-                        </div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div><label>Fleet / Platform</label><select id="pdmPlatform" aria-label="Select predictive maintenance platform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select></div>
+                        <div><label>Hull # / Tail #</label><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:3px;padding:5px 8px;width:100%"></div>
+                        <div><label>Prediction Window</label><select id="pdmWindow" aria-label="Select prediction time window" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="30">Next 30 Days</option><option value="60">Next 60 Days</option><option value="90" selected>Next 90 Days</option><option value="180">Next 6 Months</option><option value="365">Next 12 Months</option></select></div>
+                        <div><label>Confidence Threshold</label><select id="pdmConfidence" aria-label="Select confidence threshold" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="50">50%+ (Show All)</option><option value="70">70%+ (Likely)</option><option value="85" selected>85%+ (High Confidence)</option><option value="95">95%+ (Near Certain)</option></select></div>
                     </div>
                     <!-- Predictive Stats -->
                     <div class="row mb-3">
@@ -2032,15 +2002,9 @@
             <div class="ils-hub-panel" id="hub-sbom">
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-microchip" style="color:#00aaff"></i> Software Bill of Materials (SBOM) <button onclick="showAddActionModal('sbom')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-<div class="row mb-3">
-                        <div class="col-md-6">
-                            <label>Select Platform</label>
-                            <select id="sbomProgram" aria-label="Select SBOM program" onchange="loadSBOMData()" style="font-size:0.88rem"></select>
-                        </div>
-                        <div class="col-md-6">
-                            <label>SBOM Format</label>
-                            <select id="sbomFormat" aria-label="Select SBOM format" style="font-size:0.88rem"><option value="cyclonedx">CycloneDX 1.5</option><option value="spdx">SPDX 2.3</option><option value="s4native">S4 Native</option></select>
-                        </div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div><label>Select Platform</label><select id="sbomProgram" aria-label="Select SBOM program" onchange="loadSBOMData()" style="font-size:0.88rem"></select></div>
+                        <div><label>SBOM Format</label><select id="sbomFormat" aria-label="Select SBOM format" style="font-size:0.88rem"><option value="cyclonedx">CycloneDX 1.5</option><option value="spdx">SPDX 2.3</option><option value="s4native">S4 Native</option></select></div>
                     </div>
                     <!-- SBOM Stats -->
                     <div class="row mb-3">
@@ -2083,22 +2047,7 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-circle-check" style="color:#c9a84c"></i> Submissions &amp; PTD <button onclick="showAddActionModal('submissions')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Upload and compare ILS data submissions from OEMs, shipbuilders, vendors, and contractors for Navy programs and programs. Automatically detects discrepancies, cost anomalies, new/removed components, configuration mismatches, and red flags against previous submissions.</p>
 <!-- Branch & Program Selection -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
-                            <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="subBranch" aria-label="Select branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
-                                <option value="USN" selected>Navy</option>
-                                <option value="USMC">Marine Corps</option>
-                                <option value="USCG">Coast Guard</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="subProgram" aria-label="Select submissions program" class="form-control form-control-sm" onchange="onSubProgramChange()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem"></select>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <label style="font-size:.78rem;color:var(--steel)">Submission Type</label>
-                            <select id="subDocType" aria-label="Select document type" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                                 <option value="VRSL">Vendor Recommended Spares List (VRS)</option>
                                 <option value="IUID">IUID Registry / Serialized List</option>
                                 <option value="CONFIG_DWG">Configuration Drawing / Baseline</option>
@@ -2125,23 +2074,23 @@
                                 <option value="CUSTOM">Custom Submission Type</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Submitter (OEM / Vendor)</label>
                             <input type="text" id="subVendor" class="form-control form-control-sm" placeholder="e.g., Huntington Ingalls, Lockheed Martin" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
                     </div>
 
                     <!-- Custom Fields -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-4 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Custom Platform Name <span style="color:var(--steel);font-size:.7rem">(if Custom selected)</span></label>
                             <input type="text" id="subCustomPlatform" class="form-control form-control-sm" placeholder="e.g., DDG-1000 Zumwalt" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-4 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Custom Document Type <span style="color:var(--steel);font-size:.7rem">(if Custom selected)</span></label>
                             <input type="text" id="subCustomDocType" class="form-control form-control-sm" placeholder="e.g., Hull Survey Report" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-4 col-12">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Submission Reference / Contract #</label>
                             <input type="text" id="subContractRef" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
@@ -2272,24 +2221,24 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-boxes-stacked" style="color:#00aaff"></i> GFP Tracker <button onclick="showAddActionModal('gfp')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Government-Furnished Property tracking per FAR 52.245-1 and DFARS 252.245-7001. Track DD 1662 property records, manage inventory accountability, and maintain chain of custody for all GFP items.</p>
 <!-- Branch & Program Selection -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="gfpBranch" aria-label="Select GFP branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
                             <select id="gfpProgram" aria-label="Select GFP program" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
                             <input type="text" id="gfpContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Property Category</label>
                             <select id="gfpCategory" aria-label="Select GFP category" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ALL">All Categories</option><option value="EQUIP">Equipment</option><option value="MATERIAL">Material</option><option value="SPECIAL_TOOLING">Special Tooling</option><option value="SPECIAL_TEST">Special Test Equipment</option><option value="REAL_PROP">Real Property</option><option value="AGENCY_PECULIAR">Agency-Peculiar</option>
@@ -2298,22 +2247,22 @@
                     </div>
 
                     <!-- GFP-specific inputs -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">NSN / Part Number</label>
                             <input type="text" id="gfpNSN" class="form-control form-control-sm" placeholder="e.g., 5945-01-234-5678" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Serial Number / IUID</label>
                             <input type="text" id="gfpSerial" class="form-control form-control-sm" placeholder="e.g., SN-2026-00142" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Condition Code</label>
                             <select id="gfpCondition" aria-label="Select GFP condition" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="A">A — Serviceable (Issuable)</option><option value="B">B — Serviceable (Restricted)</option><option value="C">C — Serviceable (Priority)</option><option value="D">D — Serviceable (Test/Modification)</option><option value="E">E — Unserviceable (Limited Restoration)</option><option value="F">F — Unserviceable (Reparable)</option><option value="G">G — Unserviceable (Incomplete)</option><option value="H">H — Unserviceable (Condemned)</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Custodian / Location</label>
                             <input type="text" id="gfpLocation" class="form-control form-control-sm" placeholder="e.g., Bldg 450, Bay 3" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
@@ -2374,44 +2323,44 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-clipboard-check" style="color:#c9a84c"></i> CDRL Validator <button onclick="showAddActionModal('cdrl')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Contract Data Requirements List validation engine. Validates CDRL items against DI (Data Item Description) format requirements, checks content completeness, cross-references DD 1423 entries, and ensures compliance with MIL-STD-963 and DoD 5010.12-M.</p>
 <!-- Branch & Program Selection -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="cdrlBranch" aria-label="Select CDRL branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
                             <select id="cdrlProgram" aria-label="Select CDRL program" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
                             <input type="text" id="cdrlContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">DI Number</label>
                             <input type="text" id="cdrlDINumber" class="form-control form-control-sm" placeholder="e.g., DI-ILSS-81495" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
                     </div>
 
                     <!-- CDRL-specific inputs -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">CDRL Line Item</label>
                             <input type="text" id="cdrlLineItem" class="form-control form-control-sm" placeholder="e.g., A001" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Deliverable Title</label>
                             <input type="text" id="cdrlTitle" class="form-control form-control-sm" placeholder="e.g., Provisioning Parts List" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Due Date</label>
                             <input type="date" id="cdrlDueDate" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Frequency</label>
                             <select id="cdrlFrequency" aria-label="Select CDRL frequency" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ONE_TIME">One-Time</option><option value="MONTHLY">Monthly</option><option value="QUARTERLY">Quarterly</option><option value="SEMI_ANNUAL">Semi-Annual</option><option value="ANNUAL">Annual</option><option value="AS_REQUIRED">As Required</option><option value="EVENT_DRIVEN">Event-Driven</option>
@@ -2474,24 +2423,24 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-contract" style="color:#00aaff"></i> Contract Extractor <button onclick="showAddActionModal('contract')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">AI-powered contract clause extraction engine. Upload contract documents (SOWs, modifications, task orders) and automatically extract FAR/DFARS clauses, CDRL requirements, performance obligations, period of performance, and key terms.</p>
 <!-- Branch & Program Selection -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="contractBranch" aria-label="Select contract branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
                             <select id="contractProgram" aria-label="Select contract program" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
                             <input type="text" id="contractNumber" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract Type</label>
                             <select id="contractType" aria-label="Select contract type" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="FFP">Firm Fixed Price (FFP)</option><option value="CPFF">Cost Plus Fixed Fee (CPFF)</option><option value="CPAF">Cost Plus Award Fee (CPAF)</option><option value="CPIF">Cost Plus Incentive Fee (CPIF)</option><option value="T_M">Time & Materials (T&M)</option><option value="IDIQ">IDIQ</option><option value="BPA">BPA</option><option value="BOA">Basic Ordering Agreement</option>
@@ -2500,22 +2449,22 @@
                     </div>
 
                     <!-- Contract-specific inputs -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Base / Option</label>
                             <select id="contractOption" aria-label="Select contract option" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="BASE">Base Period</option><option value="OPT1">Option 1</option><option value="OPT2">Option 2</option><option value="OPT3">Option 3</option><option value="OPT4">Option 4</option><option value="MOD">Modification</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Award Date</label>
                             <input type="date" id="contractAwardDate" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Prime Contractor</label>
                             <input type="text" id="contractPrime" class="form-control form-control-sm" placeholder="e.g., BAE Systems" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">NAICS Code</label>
                             <input type="text" id="contractNAICS" class="form-control form-control-sm" placeholder="e.g., 336611" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
@@ -2576,24 +2525,24 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-link" style="color:#c9a84c"></i> Provenance Chain <button onclick="showAddActionModal('provenance')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Blockchain-verified chain of custody and provenance tracking. Every custody transfer, location change, and condition assessment is anchored to the XRP Ledger with QR code generation for physical asset tagging.</p>
 <!-- Branch & Program Selection -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
                             <select id="provBranch" aria-label="Select provenance branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
                             <select id="provProgram" aria-label="Select provenance program" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
                             <input type="text" id="provContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Transfer Type</label>
                             <select id="provTransferType" aria-label="Select transfer type" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="CUSTODY">Custody Transfer</option><option value="LOCATION">Location Change</option><option value="CONDITION">Condition Assessment</option><option value="INSPECTION">Inspection / Test</option><option value="RECEIPT">Receipt</option><option value="SHIPMENT">Shipment</option><option value="INSTALLATION">Installation</option><option value="REMOVAL">Removal / Turn-in</option>
@@ -2602,20 +2551,20 @@
                     </div>
 
                     <!-- Provenance-specific inputs -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Item Identifier / IUID</label>
                             <input type="text" id="provItemId" class="form-control form-control-sm" placeholder="e.g., IUID-2026-00142 or NSN" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">From (Custodian / Location)</label>
                             <input type="text" id="provFrom" class="form-control form-control-sm" placeholder="e.g., NSWC Crane, Bldg 64" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">To (Custodian / Location)</label>
                             <input type="text" id="provTo" class="form-control form-control-sm" placeholder="e.g., USS Wayne E. Meyer (DDG-108)" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Condition at Transfer</label>
                             <select id="provCondition" aria-label="Select provenance condition" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="A">A — Serviceable (Issuable)</option><option value="B">B — Serviceable (Restricted)</option><option value="F">F — Unserviceable (Reparable)</option><option value="H">H — Unserviceable (Condemned)</option><option value="NEW">New / Unused</option>
@@ -2681,30 +2630,31 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-chart-pie" style="color:#00aaff"></i> Cross-Program Analytics <button onclick="showAddActionModal('analytics')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Aggregate analytics dashboard spanning all ILS tools and programs. View upload trends, compliance metrics, SBOM vulnerability counts, GFP values, POA&M status, and submission volumes across your entire portfolio.</p>
 <!-- Filters -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch Filter</label>
                             <select id="analyticsBranch" aria-label="Select analytics branch" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ALL" selected>All Branches</option><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program Filter</label>
                             <select id="analyticsProgram" aria-label="Select analytics program" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ALL" selected>All Programs</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Time Period</label>
                             <select id="analyticsPeriod" aria-label="Select analytics period" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="7d">Last 7 Days</option><option value="30d" selected>Last 30 Days</option><option value="90d">Last 90 Days</option><option value="1y">Last Year</option><option value="ALL">All Time</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Export</label>
                             <div style="display:flex;gap:6px">
                                 <button onclick="exportAnalyticsReport()" class="btn btn-sm" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-file-pdf"></i> PDF</button>
                                 <button onclick="exportAnalyticsCSV()" class="btn btn-sm" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-file-csv"></i> CSV</button>
+                                <button onclick="anchorToLedger('analytics','Cross-program analytics anchored')" class="btn btn-sm" style="background:rgba(201,168,76,0.08);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-anchor"></i> Anchor</button>
                             </div>
                         </div>
                     </div>
@@ -2748,24 +2698,24 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-users-gear" style="color:#c9a84c"></i> Team & Access Management <button onclick="showAddActionModal('team')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Full team administration portal — create teams, assign program access, manage tool permissions, and audit team activity across all ILS tools. For quick team status, use the <strong style="color:#00aaff">Team</strong> button in the header bar.</p>
 <!-- Team Management Controls -->
-                    <div class="row" style="gap:8px 0;margin-bottom:12px">
-                        <div class="col-md-3 col-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Team</label>
                             <select id="teamSelect" aria-label="Select team member" class="form-control form-control-sm" onchange="loadTeamDetails()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="">— Select Team —</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program Assignment</label>
                             <select id="teamProgAssign" aria-label="Select program assignment" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="ALL">All Programs</option>
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Member Email</label>
                             <input type="email" id="teamInviteEmail" class="form-control form-control-sm" placeholder="name@organization.mil" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem" />
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div>
                             <label style="font-size:.78rem;color:var(--steel)">Role</label>
                             <select id="teamInviteRole" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:.82rem">
                                 <option value="analyst">Analyst</option><option value="ils_manager">ILS Manager</option><option value="admin">Admin</option><option value="read_only">Read-Only</option>
@@ -2779,6 +2729,7 @@
                         <button onclick="inviteTeamMember()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-user-plus"></i> Invite Member</button>
                         <button onclick="exportTeamAudit()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-clipboard-list"></i> Export Access Audit</button>
                         <button onclick="runAccessReview()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-shield-halved"></i> Access Review</button>
+                        <button onclick="anchorToLedger('team','Team access audit anchored')" class="btn btn-sm hover-lift" style="background:rgba(201,168,76,0.08);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
@@ -2924,32 +2875,13 @@
 
             <!-- ══ HUB: PROGRAM MILESTONE TRACKER (Phase 2) ══ -->
             <div class="ils-hub-panel" id="hub-milestones">
-                <div class="row"><div class="col-lg-12"><div class="s4-card">
+                <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px">
                         <i class="fas fa-flag-checkered" style="color:#00aaff"></i> Program Milestone Tracker
                         <button onclick="showAddActionModal('milestones')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button>
                     </h3>
 
-                    <details style="display:none;margin-bottom:1rem;background:rgba(168,85,247,0.04);border:1px solid rgba(168,85,247,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#a855f7;font-weight:600;font-size:0.85rem;">
-                            <i class="fas fa-info-circle"></i> How Program Milestones Works
-                        </summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What this tool does:</strong> The Program Milestone Tracker replaces legacy spreadsheets and NAVSEA milestone tracking systems for managing vessel construction lifecycle events — from contract award through delivery. Track OWLD (Over/Under Working Level Days) variance, builders trials, acceptance trials, and delivery status across all programs.</p>
-                            <p><strong style="color:#a855f7;">Step-by-step:</strong></p>
-                            <ol style="margin:0 0 8px 16px;padding:0;">
-                                <li>Add vessel milestones manually or import from CSV/Excel</li>
-                                <li>Track each vessel through contract award → construction → trials → delivery</li>
-                                <li>Monitor OWLD variance — days ahead or behind contract delivery date</li>
-                                <li>Switch between programs (PMS 300, PMS 325, PMS 501, etc.)</li>
-                                <li>View the interactive Gantt chart with diamond milestone markers</li>
-                                <li>Edit vessel types per program via the Vessel Type Editor</li>
-                                <li>AI auto-update: when comms mention date changes, milestones update automatically</li>
-                                <li>Anchor milestone data to the Ledger for tamper-proof verification</li>
-                            </ol>
-                            <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense shipbuilding programs spend significant resources manually tracking milestone dates across dozens of contractors and stakeholders. Version conflicts, missed OWLD alerts, and manual Gantt creation waste thousands of staff-hours. S4 Ledger consolidates all milestone data with AI-powered auto-updates from communications, ensuring PMs are always working with current data.</p>
-                        </div>
-                    </details>
+
 
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Track vessel construction milestones from contract award through delivery. Monitor OWLD variance, builders/acceptance trials, and delivery status across all programs.</p>
 
@@ -3026,37 +2958,18 @@
                             <button class="ai-quick-btn" onclick="aiAsk('Compare planned vs actual delivery dates')">Delivery Variance</button>
                         </div>
                     </div>
-                </div></div></div>
+                </div>
             </div>
 
             <!-- ══ HUB: PROGRAM BRIEF ENGINE (Phase 3) ══ -->
             <div class="ils-hub-panel" id="hub-brief">
-                <div class="row"><div class="col-lg-12"><div class="s4-card">
+                <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px">
                         <i class="fas fa-briefcase" style="color:#00aaff"></i> Program Brief Engine
                         <button onclick="showAddActionModal('brief')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button>
                     </h3>
 
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;">
-                            <i class="fas fa-info-circle"></i> How Program Brief Engine Works
-                        </summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What this tool does:</strong> The Program Brief Engine replaces manual PowerPoint creation for defense program briefs. Create professional slide-based briefs from templates — Program Status, Milestone Review, POM, President's Budget, ILSMT, ILSMP, and IPR — with auto-populated data from your platform.</p>
-                            <p><strong style="color:#00aaff;">Step-by-step:</strong></p>
-                            <ol style="margin:0 0 8px 16px;padding:0;">
-                                <li>Choose a brief template (POM, PB, ILSMT, ILSMP, IPR, Status, or Milestone Review)</li>
-                                <li>Platform data auto-populates into slide content</li>
-                                <li>Edit slides with the formatting toolbar — font, size, color, alignment, images</li>
-                                <li>Add, delete, duplicate, and reorder slides</li>
-                                <li>Customize the Slide Master for consistent branding</li>
-                                <li>Set permissions — private, team, org, or public sharing</li>
-                                <li>Export to printable HTML or anchor to the Ledger for tamper-proof verification</li>
-                                <li>Import existing PPTX files to continue editing in-platform</li>
-                            </ol>
-                            <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense programs spend hundreds of staff-hours per year creating, updating, and distributing briefs across PowerPoint, email, and SharePoint. Version conflicts, classification marking errors, and lost context waste resources. S4 Ledger consolidates brief creation with auto-populated program data, permission-based access, and immutable audit trail via Ledger anchoring.</p>
-                        </div>
-                    </details>
+
 
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Create, edit, and share slide-based program briefs. Choose from 7 DoD brief templates with auto-populated data, formatting tools, and Ledger anchoring.</p>
 
@@ -3080,7 +2993,7 @@
                             <button class="ai-quick-btn" onclick="aiAsk('Help me write executive summary content')">Executive Summary</button>
                         </div>
                     </div>
-                </div></div></div>
+                </div>
             </div>
 
 

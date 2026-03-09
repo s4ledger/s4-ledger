@@ -3180,10 +3180,10 @@ details:not([style*="display:none"]) > *:not(summary){color:#444;font-size:0.84r
         min-width:240px!important;
     }
 }
-/* Brief sidebar — slightly wider for icons */
+/* Brief sidebar — keep 200px to show full button labels */
 .brief-sidebar{
-    width:56px!important;
-    min-width:56px!important;
+    width:200px!important;
+    min-width:200px!important;
 }
 /* Brief zoom bar — refined positioning */
 .brief-zoom-bar{
