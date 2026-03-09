@@ -1,5 +1,5 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 26 — Deep Visual Consistency Audit (Commit 25dabc0)
+## Last Updated: Session 27 — Visual Consistency Overhaul (Commit aa439c1)
 
 ---
 
@@ -2013,6 +2013,51 @@ Font Visibility Fixes:
 - `prod-app/src/styles/main.css` — 15+ CSS fixes
 - `prod-app/src/js/enterprise-features.js` — Added S4.toolHelp with 28 descriptions
 - `prod-app/src/js/brief.js` — Sidebar redesign (width, grid, labels, order)
+- `demo-app/` — All synced, both apps rebuilt
+
+---
+## Session 27 — Visual Consistency Overhaul (Commit aa439c1)
+
+**Date**: June 2025
+**Commit**: `aa439c1`
+**Parent**: Session 26 commit `59e5448`
+
+### Problem Statement
+After Session 26 deployment, user reported 6 issues still present:
+1. Brief sidebar buttons visually cut off (only icons visible, no text)
+2. Digital Thread exit button had 0x0 dimensions
+3. "How It Works" dropdowns still existed in some tools (dead HTML)
+4. Some tools (hub-actions, hub-analytics, hub-team, hub-docs) missing Anchor buttons
+5. Wasted space from Bootstrap `.row` layouts still in 13 tool panels
+6. Unnecessary `row/col-lg-12` structural wrappers in milestones + brief
+
+### Audit Process
+- Ran Playwright visual audit of all 23 tool panels (screenshots)
+- Ran subagent deep line-by-line audit of every panel's HTML structure
+- Compared all tool panels for layout patterns and button consistency
+
+### Fixes Applied
+
+**1. CSS Grid Conversion (13 tools)**
+Converted all remaining Bootstrap `.row` input layouts to CSS grid:
+- hub-dmsms (3-col), hub-compliance (3-col), hub-risk (4-col), hub-reports (3-col)
+- hub-predictive (4-col), hub-sbom (2-col), hub-submissions (4+3-col), hub-gfp (4+4-col)
+- hub-cdrl (4+4-col), hub-contract (4+4-col), hub-provenance (4+4-col)
+- hub-analytics (4-col), hub-team (4-col)
+
+**2. Brief Sidebar Fix**: CSS override 56px → 200px (all 34+ buttons show full text)
+
+**3. Digital Thread Close Button**: Added explicit min-width/min-height sizing
+
+**4. Dead HTML Removal**: Removed "How It Works" details blocks + col-lg-12 wrappers
+
+**5. Action Button Consistency**: Added Anchor buttons to hub-actions, hub-analytics, hub-team, hub-docs; added Export Library to hub-docs
+
+**6. Class Cleanup**: Stripped leftover col-md-3 col-6 from grid children
+
+### Files Changed:
+- `prod-app/src/index.html` — Grid conversions, button additions, dead HTML removal, wrapper cleanup
+- `prod-app/src/styles/main.css` — Brief sidebar CSS override fix
 - `demo-app/` — All synced, both apps rebuilt
 
 ---
