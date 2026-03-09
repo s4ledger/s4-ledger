@@ -8703,7 +8703,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 aiWrapper.style.display = 'flex';
                 // Update context label per tab
                 var ctxEl = document.getElementById('aiContextLabel');
-                var labels = {'#tabAnchor':'Anchor','#tabVerify':'Verify','#tabLog':'Transaction Log','#tabILS':'Anchor-S4','#tabMetrics':'Metrics','#tabOffline':'Offline Queue'};
+                var labels = {'#tabAnchor':'Anchor','#tabLog':'Transaction Log','#tabILS':'Anchor-S4','#tabMetrics':'Metrics','#tabOffline':'Offline Queue'};
                 if (ctxEl) ctxEl.textContent = labels[target] || 'S4 Agent';
             }
             // Auto-refresh metrics when switching to Metrics tab
