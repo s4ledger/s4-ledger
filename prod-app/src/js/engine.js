@@ -161,7 +161,7 @@ function _flashSlsBalance(newBalance, fee) {
     if (existing) existing.remove();
     var toast = document.createElement('div');
     toast.id = 'slsFlashToast';
-    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:3px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.12);backdrop-filter:blur(6px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
+    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:3px;padding:16px 24px;font-size:0.9rem;color:#1d1d1f;box-shadow:0 8px 32px rgba(0,0,0,0.12);backdrop-filter:blur(6px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
     toast.innerHTML = '<div style="font-weight:700;color:#c9a84c;margin-bottom:6px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-coins" style="margin-right:6px"></i>Credit Balance Updated</div>'
         + '<div style="font-size:1.4rem;font-weight:800;color:#c9a84c;">' + _s4Safe(String(newBalance)) + ' <span style="font-size:0.8rem;font-weight:600;">Credits</span></div>'
         + '<div style="font-size:0.78rem;color:#ff6b6b;margin-top:4px;">-' + _s4Safe(fee.toFixed(2)) + ' Credits (anchor fee)</div>';
@@ -5212,7 +5212,7 @@ function showCustomProgramInput() {
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">'
         + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(0,0,0,0.03);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Cancel</button>'
-        + '<button onclick="applyCustomProgram()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Apply Program</button>'
+        + '<button onclick="applyCustomProgram()" style="background:#0071e3;color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Apply Program</button>'
         + '</div></div>';
     document.body.appendChild(modal);
     setTimeout(function(){ document.getElementById('customProgName').focus(); }, 100);
@@ -6302,7 +6302,7 @@ function showDocUpload() {
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">'
         + '<button onclick="document.getElementById(\'docUploadModal\').remove()" style="background:rgba(0,0,0,0.03);color:var(--steel);border:1px solid var(--border);border-radius:3px;padding:8px 20px;cursor:pointer">Cancel</button>'
-        + '<button onclick="addNewDoc()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Add Document</button>'
+        + '<button onclick="addNewDoc()" style="background:#0071e3;color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-weight:600">Add Document</button>'
         + '</div></div>';
     document.body.appendChild(modal);
 }
@@ -6447,7 +6447,7 @@ function showDiffResult(docId, diff, flags) {
         });
         html += '</div>';
     }
-    html += '<div style="text-align:right;margin-top:16px"><button onclick="this.closest(\'div\').parentElement.remove()" style="background:var(--accent);color:#fff;border:none;border-radius:3px;padding:8px 24px;cursor:pointer;font-weight:600">Close</button></div></div>';
+    html += '<div style="text-align:right;margin-top:16px"><button onclick="this.closest(\'div\').parentElement.remove()" style="background:#0071e3;color:#fff;border:none;border-radius:3px;padding:8px 24px;cursor:pointer;font-weight:600">Close</button></div></div>';
     modal.innerHTML = html;
     document.body.appendChild(modal);
 }

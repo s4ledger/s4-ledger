@@ -384,7 +384,6 @@
         .hiw-modal-box .hiw-body p{margin:0 0 10px}
         .hiw-modal-box .hiw-body strong{color:#1d1d1f}
         .hiw-modal-box{background:#fff;border-color:rgba(0,170,255,0.2);box-shadow:0 12px 40px rgba(0,0,0,0.15)}
-        .hiw-modal-box .hiw-body strong{color:#1d1d1f}
         .hiw-modal-box .hiw-close{color:#999}
 
         /* ── Drag-reorder tool cards ── */
@@ -521,7 +520,7 @@
         /* ── Enhanced Buttons ── */
         .btn-anchor{
             background:linear-gradient(135deg,#00aaff,#0071e3) !important;
-            color:#1d1d1f !important;border:none !important;border-radius:8px !important;
+            color:#fff !important;border:none !important;border-radius:8px !important;
             padding:10px 20px !important;font-size:0.82rem !important;font-weight:700 !important;
             cursor:pointer !important;transition:all 0.3s !important;
             display:inline-flex !important;align-items:center !important;gap:8px !important;
@@ -1772,8 +1771,8 @@ textarea,.result-panel,.tx-hash,.vault-hash,.wt-mock-hash,.hash-display,code,pre
 .ils-tool-card,.s4-card,.glass-card,.stat-card,.cal-container,
 .action-tracker,.chart-container,.result-panel,.vault-record,.doc-card,
 .tx-entry,.ai-float-panel{border-radius:12px!important}
-/* Modals — 3px (consistent with buttons) */
-.onboard-modal{border-radius:3px!important}
+/* Modals — 16px (premium Apple-like) */
+.onboard-modal{border-radius:16px!important}
 .modal-box,.hiw-modal-box,.wt-container,
 #dodConsentBanner > div,#cacLoginModal > div,#roleModal > div,
 .s4-command-palette{border-radius:16px!important}
@@ -2237,8 +2236,8 @@ button:disabled,button[disabled],.btn:disabled{opacity:0.45!important;cursor:not
 .ils-hub-tab.active{background:#0071e3!important;color:#fff!important;box-shadow:0 2px 8px rgba(0,113,227,0.2)!important}
 
 /* Premium modals */
-.modal-box,.hiw-modal-box,.onboard-modal{background:#fff!important;border:1px solid rgba(0,0,0,0.08)!important;border-radius:3px!important}
-#dodConsentBanner > div,#cacLoginModal > div{border-radius:3px!important}
+.modal-box,.hiw-modal-box,.onboard-modal{background:#fff!important;border:1px solid rgba(0,0,0,0.08)!important;border-radius:16px!important}
+#dodConsentBanner > div,#cacLoginModal > div{border-radius:16px!important}
 
 /* Premium toast notifications */
 .s4-toast{border-radius:8px!important;box-shadow:0 4px 20px rgba(0,0,0,0.1)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -2274,7 +2273,7 @@ button:disabled,button[disabled],.btn:disabled{opacity:0.45!important;cursor:not
 
 /* Onboarding overlay — premium glass */
 .onboard-overlay{background:rgba(245,245,247,0.92)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
-.onboard-modal{max-width:580px!important;padding:44px 40px!important;box-shadow:0 12px 40px rgba(0,0,0,0.1),0 4px 12px rgba(0,0,0,0.04)!important;border-radius:20px!important}
+.onboard-modal{max-width:580px!important;padding:44px 40px!important;box-shadow:0 12px 40px rgba(0,0,0,0.1),0 4px 12px rgba(0,0,0,0.04)!important;border-radius:16px!important}
 
 /* Consent banner — premium styling */
 #dodConsentBanner > div{padding:32px 36px!important;max-width:540px!important}
