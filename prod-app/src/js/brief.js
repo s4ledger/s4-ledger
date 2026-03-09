@@ -185,12 +185,14 @@
         css += '@keyframes briefPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,170,255,0.3)}50%{box-shadow:0 0 0 6px rgba(0,170,255,0)}}';
         css += '@keyframes briefGlow{0%,100%{opacity:0.6}50%{opacity:1}}';
         // Left sidebar
-        css += '.brief-sidebar{width:52px;min-width:52px;background:rgba(245,245,247,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid ' + bdr + ';display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px;overflow-y:auto;overflow-x:hidden}';
-        css += '.brief-sidebar-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;color:' + tm + ';cursor:pointer;border-radius:10px;font-size:0.88rem;transition:all 0.2s;position:relative}';
-        css += '.brief-sidebar-btn:hover{background:rgba(0,0,0,0.04);color:' + tp + ';transform:scale(1.08)}';
-        css += '.brief-sidebar-btn.active{background:linear-gradient(135deg,rgba(0,170,255,0.2),rgba(168,85,247,0.15));color:' + a + ';box-shadow:0 0 16px rgba(0,170,255,0.15)}';
-        css += '.brief-sidebar-divider{width:28px;height:1px;background:' + bdr + ';margin:6px 0}';
-        css += '.brief-sidebar-label{font-size:0.5rem;color:' + tm + ';text-transform:uppercase;letter-spacing:1px;margin-top:2px;text-align:center;line-height:1}';
+        css += '.brief-sidebar{width:220px;min-width:220px;background:rgba(245,245,247,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid ' + bdr + ';display:flex;flex-direction:column;padding:8px;gap:2px;overflow-y:auto;overflow-x:hidden}';
+        css += '.brief-sidebar-group{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:100%}';
+        css += '.brief-sidebar-btn{display:flex;align-items:center;gap:5px;border:none;background:transparent;color:' + tm + ';cursor:pointer;border-radius:6px;font-size:0.72rem;transition:all 0.2s;padding:6px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}';
+        css += '.brief-sidebar-btn i{font-size:0.78rem;width:16px;text-align:center;flex-shrink:0;color:var(--accent,#00aaff)}';
+        css += '.brief-sidebar-btn:hover{background:rgba(0,0,0,0.04);color:' + tp + '}';
+        css += '.brief-sidebar-btn.active{background:rgba(0,113,227,0.1);color:var(--accent,#00aaff)}';
+        css += '.brief-sidebar-divider{width:100%;height:1px;background:' + bdr + ';margin:4px 0}';
+        css += '.brief-sidebar-label{font-size:0.58rem;color:' + tm + ';text-transform:uppercase;letter-spacing:1px;margin:4px 0 2px 2px;line-height:1;font-weight:600}';
         // Slide panel
         css += '.brief-slide-panel{width:180px;min-width:180px;background:rgba(245,245,247,0.95);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-right:1px solid rgba(0,0,0,0.05);overflow-y:auto;padding:12px 10px}';
         css += '.brief-thumb{position:relative;cursor:pointer;margin-bottom:10px;border:2px solid rgba(0,0,0,0.05);border-radius:10px;overflow:hidden;transition:all 0.25s;background:rgba(0,0,0,0.015)}';
@@ -1202,56 +1204,66 @@
         // ── Main layout: sidebar + slides + canvas + contextual panels ──
         html += '<div style="display:flex;min-height:540px;border-top:1px solid rgba(0,0,0,0.04)">';
 
-        // ═══ LEFT SIDEBAR (icon strip) ═══
+        // ═══ LEFT SIDEBAR (2-column labeled grid) ═══
         html += '<div class="brief-sidebar">';
+        // -- Insert group (most used — content creation) --
+        html += '<div class="brief-sidebar-label">INSERT</div>';
+        html += '<div class="brief-sidebar-group">';
+        html += '<button class="brief-sidebar-btn" onclick="briefInsertText()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-font"></i> Text</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefInsertImage()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-image"></i> Image</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefInsertTable()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-table"></i> Table</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefInsertChart()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-chart-bar"></i> Chart</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefInsertShape()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-square"></i> Shape</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefInsertStoplight()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-traffic-light"></i> Stoplight</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefInsertRiskMatrix()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-exclamation-triangle"></i> Risk</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefInsertWidget()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-tachometer-alt"></i> Widget</button>';
+        html += '</div>';
+        html += '<div class="brief-sidebar-divider"></div>';
         // -- File group --
         html += '<div class="brief-sidebar-label">FILE</div>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Add Slide" onclick="briefAddSlide()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-plus"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Duplicate" onclick="briefDuplicateSlide()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-copy"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Undo" onclick="briefUndo()"><i class="fas fa-undo"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Redo" onclick="briefRedo()"><i class="fas fa-redo"></i></button>';
-        html += '<div class="brief-sidebar-divider"></div>';
-        // -- Insert group --
-        html += '<div class="brief-sidebar-label">INSERT</div>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Text" onclick="briefInsertText()"><i class="fas fa-font"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Shape" onclick="briefInsertShape()"><i class="fas fa-square"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Image" onclick="briefInsertImage()"><i class="fas fa-image"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Table" onclick="briefInsertTable()" style="color:#00cc88"><i class="fas fa-table"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Chart" onclick="briefInsertChart()" style="color:#00aaff"><i class="fas fa-chart-bar"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Stoplight" onclick="briefInsertStoplight()" style="color:#4ecb71"><i class="fas fa-traffic-light"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Risk Matrix" onclick="briefInsertRiskMatrix()" style="color:#f97316"><i class="fas fa-exclamation-triangle"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Live Widget" onclick="briefInsertWidget()" style="color:#a855f7"><i class="fas fa-tachometer-alt"></i></button>';
-        html += '<div class="brief-sidebar-divider"></div>';
-        // -- View group --
-        html += '<div class="brief-sidebar-label">VIEW</div>';
-        html += '<button class="brief-sidebar-btn brief-tip' + (_snapToGrid ? ' active' : '') + '" data-tip="Grid (' + (_snapToGrid ? 'ON' : 'OFF') + ')" onclick="briefToggleGrid()"><i class="fas fa-th"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Theme (' + _theme + ')" onclick="briefToggleTheme()"><i class="fas ' + (_theme === 'dark' ? 'fa-sun' : 'fa-moon') + '"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip' + (_dodNumbering ? ' active' : '') + '" data-tip="DoD Numbering" onclick="briefToggleDodNumbering()"><i class="fas fa-list-ol"></i></button>';
+        html += '<div class="brief-sidebar-group">';
+        html += '<button class="brief-sidebar-btn" onclick="briefAddSlide()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-plus"></i> Add Slide</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefDuplicateSlide()"' + (isLocked ? ' disabled' : '') + '><i class="fas fa-copy"></i> Duplicate</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefUndo()"><i class="fas fa-undo"></i> Undo</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefRedo()"><i class="fas fa-redo"></i> Redo</button>';
+        html += '</div>';
         html += '<div class="brief-sidebar-divider"></div>';
         // -- Tools group --
         html += '<div class="brief-sidebar-label">TOOLS</div>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="AI Assistant" onclick="briefAIGenerate()" style="color:#00aaff"><i class="fas fa-magic"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Slide Library" onclick="briefSlideLibrary()"><i class="fas fa-book"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Save Template" onclick="briefSaveAsTemplate()"><i class="fas fa-file-export"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Glossary" onclick="briefAcronymGlossary()"><i class="fas fa-spell-check"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Compliance Scan" onclick="briefComplianceScan()"><i class="fas fa-shield-alt"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Auto Summary" onclick="briefAutoSummary()"><i class="fas fa-file-alt"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Export .ics" onclick="briefExportICS()"><i class="fas fa-calendar-alt"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="QR Code" onclick="briefGenerateQR()"><i class="fas fa-qrcode"></i></button>';
+        html += '<div class="brief-sidebar-group">';
+        html += '<button class="brief-sidebar-btn" onclick="briefAIGenerate()"><i class="fas fa-magic"></i> AI Assist</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefSlideLibrary()"><i class="fas fa-book"></i> Library</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefSaveAsTemplate()"><i class="fas fa-file-export"></i> Template</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefAcronymGlossary()"><i class="fas fa-spell-check"></i> Glossary</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefComplianceScan()"><i class="fas fa-shield-alt"></i> Compliance</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefAutoSummary()"><i class="fas fa-file-alt"></i> Summary</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefExportICS()"><i class="fas fa-calendar-alt"></i> Export .ics</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefGenerateQR()"><i class="fas fa-qrcode"></i> QR Code</button>';
+        html += '</div>';
+        html += '<div class="brief-sidebar-divider"></div>';
+        // -- View group --
+        html += '<div class="brief-sidebar-label">VIEW</div>';
+        html += '<div class="brief-sidebar-group">';
+        html += '<button class="brief-sidebar-btn' + (_snapToGrid ? ' active' : '') + '" onclick="briefToggleGrid()"><i class="fas fa-th"></i> Grid ' + (_snapToGrid ? 'ON' : 'OFF') + '</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefToggleTheme()"><i class="fas ' + (_theme === 'dark' ? 'fa-sun' : 'fa-moon') + '"></i> Theme</button>';
+        html += '<button class="brief-sidebar-btn' + (_dodNumbering ? ' active' : '') + '" onclick="briefToggleDodNumbering()"><i class="fas fa-list-ol"></i> Numbering</button>';
+        html += '</div>';
         html += '<div class="brief-sidebar-divider"></div>';
         // -- Panels group --
         html += '<div class="brief-sidebar-label">PANELS</div>';
-        html += '<button class="brief-sidebar-btn brief-tip' + (_showComments ? ' active' : '') + '" data-tip="Comments" onclick="briefToggleComments()"><i class="fas fa-comments"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip' + (_annotationMode ? ' active' : '') + '" data-tip="Annotate" onclick="briefToggleAnnotations()" style="' + (_annotationMode ? 'color:#ff6b35' : '') + '"><i class="fas fa-pen-fancy"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="History" onclick="briefShowHistory()"><i class="fas fa-history"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Compare" onclick="briefVersionDiff()"><i class="fas fa-columns"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Analytics" onclick="briefAnalyticsPanel()"><i class="fas fa-chart-pie"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Schedule" onclick="briefSchedulePanel()"><i class="fas fa-clock"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Slide Master" onclick="briefSlideMaster()"><i class="fas fa-palette"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Share" onclick="briefShareSettings()"><i class="fas fa-share-alt"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Approval" onclick="briefApprovalModal()" style="color:' + apr.color + '"><i class="fas fa-clipboard-check"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Shortcuts" onclick="briefShowShortcuts()"><i class="fas fa-keyboard"></i></button>';
-        html += '<button class="brief-sidebar-btn brief-tip" data-tip="Export HTML" onclick="briefExportHTML()"><i class="fas fa-print"></i></button>';
+        html += '<div class="brief-sidebar-group">';
+        html += '<button class="brief-sidebar-btn' + (_showComments ? ' active' : '') + '" onclick="briefToggleComments()"><i class="fas fa-comments"></i> Comments</button>';
+        html += '<button class="brief-sidebar-btn' + (_annotationMode ? ' active' : '') + '" onclick="briefToggleAnnotations()"><i class="fas fa-pen-fancy"></i> Annotate</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefShowHistory()"><i class="fas fa-history"></i> History</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefVersionDiff()"><i class="fas fa-columns"></i> Compare</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefAnalyticsPanel()"><i class="fas fa-chart-pie"></i> Analytics</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefSchedulePanel()"><i class="fas fa-clock"></i> Schedule</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefSlideMaster()"><i class="fas fa-palette"></i> Master</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefShareSettings()"><i class="fas fa-share-alt"></i> Share</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefApprovalModal()"><i class="fas fa-clipboard-check"></i> Approval</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefShowShortcuts()"><i class="fas fa-keyboard"></i> Shortcuts</button>';
+        html += '<button class="brief-sidebar-btn" onclick="briefExportHTML()"><i class="fas fa-print"></i> Export</button>';
+        html += '</div>';
         html += '</div>'; // end sidebar
 
         // ═══ SLIDE PANEL ═══
@@ -1282,7 +1294,7 @@
         // ═══ CANVAS STAGE (center) ═══
         var sw = master.slideWidth || 960;
         var sh = master.slideHeight || 540;
-        var maxCanvasW = window.innerWidth - 52 - 180 - (_showComments || _showProps ? 260 : 0) - 80;
+        var maxCanvasW = window.innerWidth - 220 - 180 - (_showComments || _showProps ? 260 : 0) - 80;
         var scale = _canvasZoom * Math.min(1, maxCanvasW / sw, 520 / sh);
         html += '<div class="brief-stage">';
 

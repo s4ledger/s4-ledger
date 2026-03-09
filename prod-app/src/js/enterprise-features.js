@@ -1803,6 +1803,92 @@
 
 
     // ══════════════════════════════════════════════════════════════
+    // TOOL HELP ICONS — ? button on each tool heading
+    // ══════════════════════════════════════════════════════════════
+    S4.toolHelp = {
+        _helpMap: {
+            'hub-analysis': 'ILS Gap Analysis identifies logistics shortfalls before they become costly delays. S4 Ledger anchors every finding to XRPL so auditors can verify gap closures instantly — reducing audit prep time by up to 80%.',
+            'hub-dmsms': 'DMSMS tracking monitors diminishing manufacturing sources and material shortages. S4 Ledger provides tamper-proof records of obsolescence decisions, saving programs millions in reactive re-engineering.',
+            'hub-readiness': 'Readiness Assessment measures system availability and supportability metrics. S4 anchors readiness snapshots to provide indisputable baselines for milestone reviews.',
+            'hub-roi': 'ROI Calculator quantifies the return on ILS investments. S4 Ledger audit trail proves cost avoidance claims to stakeholders with blockchain-verified data.',
+            'hub-lifecycle': 'Lifecycle Cost Estimator projects total ownership costs across a system\'s lifespan. S4 Ledger locks estimates to XRPL so historical projections are always verifiable.',
+            'hub-vault': 'Document Vault stores and organizes program documents with version control. Every document hash is anchored to XRPL — proving document integrity without expensive third-party notarization.',
+            'hub-docs': 'Technical Data Manager handles engineering drawings, manuals, and specs. S4 Ledger ensures no TDP is silently altered, eliminating costly rework from unauthorized changes.',
+            'hub-compliance': 'Compliance & Audit Dashboard tracks regulatory requirements and audit findings. S4 Ledger creates an immutable compliance trail, cutting audit response time from weeks to minutes.',
+            'hub-risk': 'Risk Register captures, scores, and tracks program risks. Anchoring risk assessments to XRPL provides verifiable proof that risks were identified and mitigated on schedule.',
+            'hub-reports': 'Report Generator creates formatted ILS reports from your data. S4 Ledger timestamps and anchors every report, eliminating disputes over when data was reported.',
+            'hub-predictive': 'Predictive Maintenance uses AI to forecast equipment failures before they occur. S4 Ledger records every prediction and outcome, building a verifiable maintenance intelligence baseline.',
+            'hub-sbom': 'SBOM Manager tracks software bills of materials for cybersecurity compliance. S4 anchors every SBOM version to XRPL, meeting CMMC and EO 14028 requirements automatically.',
+            'hub-submissions': 'Submissions tracks data deliverables and contractor submittals. S4 Ledger timestamps every submission to prove on-time delivery and prevent contract disputes.',
+            'hub-gfp': 'GFP Tracker manages Government Furnished Property and equipment accountability. S4 Ledger provides blockchain-verified custody chains, eliminating property loss disputes.',
+            'hub-cdrl': 'CDRL Manager tracks Contract Data Requirements List items and deliverables. S4 anchors delivery receipts to XRPL, proving compliance with contractual data requirements.',
+            'hub-contract': 'Contract & Config Manager handles configuration baselines and change control. S4 Ledger locks every configuration change to XRPL, preventing unauthorized modifications.',
+            'hub-provenance': 'Supply Chain Provenance verifies part authenticity through the full supply chain. S4 Ledger creates an immutable chain of custody, catching counterfeits before they enter the supply line.',
+            'hub-analytics': 'Analytics Dashboard visualizes trends across all your ILS data. S4 Ledger ensures every data point is anchored and verifiable, making analytics trustworthy.',
+            'hub-team': 'Team & Access manages user roles, permissions, and collaboration. S4 Ledger logs every access change to XRPL for complete accountability.',
+            'hub-acquisition': 'Acquisition Tracker manages program milestones and gates through the DoD acquisition lifecycle. S4 anchors milestone completions as proof of progress.',
+            'hub-milestones': 'Milestones & Tasks tracks deliverables, deadlines, and project progress. S4 Ledger timestamps every status change to prevent schedule disputes.',
+            'hub-brief': 'Program Brief creates professional DoD briefings with built-in compliance. S4 Ledger anchors every brief version, providing an auditable presentation history.',
+            'tabAnchor': 'Anchor Records hashes any defense document and writes the fingerprint to the XRP Ledger. Proves document integrity forever — no third-party notary required.',
+            'tabLog': 'Transaction Log shows every anchored record with XRPL verification links. Instant audit lookups replace manual record searches.',
+            'tabMetrics': 'Performance Metrics Dashboard tracks platform usage, anchor volume, and verification stats in real time.',
+            'tabOffline': 'Offline Queue lets you anchor records without internet. Operations sync automatically when connectivity returns.',
+            'tabWallet': 'Ledger Account manages your XRP wallet, credit balance, and transaction history for anchoring operations.',
+            'tabILS': 'ILS Tools Hub provides 23+ integrated logistics tools — the complete defense ILS toolkit in one platform.'
+        },
+        init: function() {
+            var self = this;
+            // Inject CSS for help button
+            var css = document.createElement('style');
+            css.textContent = '.s4-tool-help{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(0,113,227,0.08);color:var(--accent,#0071e3);border:1px solid rgba(0,113,227,0.2);font-size:0.7rem;font-weight:700;cursor:pointer;margin-left:8px;transition:all 0.2s;flex-shrink:0;vertical-align:middle;line-height:1}'
+                + '.s4-tool-help:hover{background:rgba(0,113,227,0.15);transform:scale(1.1)}'
+                + '.s4-help-popover{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid rgba(0,113,227,0.2);border-radius:3px;padding:12px 14px;font-size:0.82rem;color:#1d1d1f;line-height:1.6;font-weight:400;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.1);margin-top:8px;max-width:440px;animation:briefFadeIn 0.15s ease}';
+            document.head.appendChild(css);
+
+            // Find all tool panels and inject help icons
+            var panels = document.querySelectorAll('.ils-hub-panel, .tab-pane');
+            panels.forEach(function(panel) {
+                var id = panel.id;
+                var helpText = self._helpMap[id];
+                if (!helpText) return;
+                var heading = panel.querySelector('h3');
+                if (!heading) return;
+                // Don't add duplicate help icons
+                if (heading.querySelector('.s4-tool-help')) return;
+                // Make heading position relative for popover
+                heading.style.position = 'relative';
+                var btn = document.createElement('button');
+                btn.className = 's4-tool-help';
+                btn.textContent = '?';
+                btn.title = 'About this tool';
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var existing = heading.querySelector('.s4-help-popover');
+                    if (existing) { existing.remove(); return; }
+                    // Close any other open popovers
+                    document.querySelectorAll('.s4-help-popover').forEach(function(p) { p.remove(); });
+                    var pop = document.createElement('div');
+                    pop.className = 's4-help-popover';
+                    pop.textContent = helpText;
+                    heading.appendChild(pop);
+                    // Close on outside click
+                    setTimeout(function() {
+                        document.addEventListener('click', function closeHelp() {
+                            pop.remove();
+                            document.removeEventListener('click', closeHelp);
+                        }, { once: true });
+                    }, 10);
+                });
+                // Insert before the ai-quick-btn if present, otherwise append
+                var quickBtn = heading.querySelector('.ai-quick-btn');
+                if (quickBtn) { heading.insertBefore(btn, quickBtn); }
+                else { heading.appendChild(btn); }
+            });
+        }
+    };
+
+
+    // ══════════════════════════════════════════════════════════════
     // INITIALIZATION — Run after DOM is ready
     // ══════════════════════════════════════════════════════════════
     function initEnterpriseFeatures() {
@@ -1833,9 +1919,12 @@
         S4.auditTimeline.init();
         S4.offlineEnhanced.init();
 
+        // Initialize tool help icons
+        S4.toolHelp.init();
+
         S4.register('enterprise-features', {
             version: '2.0.0',
-            features: ['dashboard', 'notifications', 'crossLink', 'hubPriority', 'contextualAI', 'playbooks', 'healthMap', 'quickActions', 'showMore', 'defenseDashboard', 'alertRules', 'annotations', 'importExport', 'auditTimeline', 'offlineEnhanced']
+            features: ['dashboard', 'notifications', 'crossLink', 'hubPriority', 'contextualAI', 'playbooks', 'healthMap', 'quickActions', 'showMore', 'defenseDashboard', 'alertRules', 'annotations', 'importExport', 'auditTimeline', 'offlineEnhanced', 'toolHelp']
         });
     }
 

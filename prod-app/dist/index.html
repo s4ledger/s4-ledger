@@ -67,12 +67,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-BrvyNw4y.js"></script>
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-HPDf9AfW.js"></script>
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-BB6Nr9fh.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/navigation-YY6dXMqi.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/metrics-BCEAU5Us.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-B9yWwFr1.js">
-  <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-8zI69Lxn.css">
+  <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-CrpI8s9y.css">
 </head>
 <body class="light-mode" data-theme="light">
 <!-- Light mode always on -->
@@ -487,84 +487,7 @@
                     <div class="col-lg-7">
                         <div class="s4-card">
                             <h3><i class="fas fa-anchor"></i> Anchor a Defense Record</h3>
-                            <details style="display:none;margin-top:8px;margin-bottom:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                                <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Anchoring Works</summary>
-                                <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                    <p><strong style="color:#1d1d1f;">What's real:</strong> Every anchor creates an actual XRPL transaction with your record's SHA-256 hash stored in the memo field. The hash, transaction ID, timestamp, and XRPL explorer link are all genuine blockchain data you can independently verify.</p>
-                                    <p><strong style="color:#1d1d1f;">Live on Mainnet:</strong> Every anchor creates a real XRPL Mainnet transaction. Each anchor costs 0.01 Credits paid from your wallet to the S4 Treasury. All transaction hashes and explorer links point to the live XRPL.</p>
-                                    <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Traditional defense record notarization costs $25–$150 per document and takes days. S4 Ledger anchors records in seconds for fractions of a cent — a <strong>99.9% cost reduction</strong>. At scale, a program anchoring 10,000 records/year saves $250K–$1.5M annually vs. legacy methods.</p>
-                                    <p><strong style="color:#00aaff;">Production mode:</strong> Integrates with existing logistics systems (GCSS, OARS, NTCSS, LMP) via REST API or Python SDK. Records flow automatically — no manual paste required.</p>
-                                </div>
-                            </details>
-                            <label>1. Select Military Branch</label>
-                            <div class="branch-tabs" id="branchTabs">
-                                <button class="branch-tab active" onclick="selectBranch('USN',this)"><i class="fas fa-anchor"></i> U.S. Navy</button>
-                            </div>
-                            <label>2. Choose Record Type <span class="branch-count" id="branchTypeCount"></span></label>
-                            <input class="type-search" type="text" id="typeSearch" placeholder="Search record types..." aria-label="Search record types" oninput="renderTypeGrid()">
-                            <div class="record-type-grid" id="recordTypeGrid"></div>
-
-                            <div class="clf-banner" id="clfBanner"><span class="clf-icon"></span><span class="clf-badge" id="clfBadge"></span><span class="clf-text" id="clfText"></span></div>
-
-                            <label>3. Upload file or enter record content</label>
-                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:3px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;"><i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--accent);margin-bottom:6px;display:block;"></i><div style="color:var(--steel);font-size:0.82rem;">Drag &amp; drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div><div style="color:var(--muted);font-size:0.72rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, TXT &mdash; any file type</div><input type="file" id="fileUploadInput" style="display:none" onchange="handleFileSelect(event)"><div id="dropFileName" style="display:none;margin-top:8px;color:var(--accent);font-weight:600;font-size:0.82rem;"></div></div>
-                            <textarea id="recordInput" aria-label="Record content to anchor" placeholder="Paste or type your defense logistics record here..." oninput="this.dataset.autoFilled='false'"></textarea>
-                            <div class="d-flex gap-2 align-items-center">
-                                <label class="form-check-label" style="font-size:0.85rem">
-                                    <input type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px"> Encrypt before hashing (CUI protection)
-                                </label>
-                            </div>
-                            <button class="btn-accent mt-3" onclick="anchorRecord()" id="anchorBtn"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
-                            <div class="result-panel" id="anchorResult"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-diagram-project"></i> Anchor Flow</h3>
-                            <div style="font-size:0.9rem;line-height:2">
-                                <div><span style="color:var(--accent);font-weight:700">1.</span> Select branch & record type</div>
-                                <div><span style="color:var(--accent);font-weight:700">2.</span> Enter or paste record content</div>
-                                <div><span style="color:var(--accent);font-weight:700">3.</span> Optional: encrypt for CUI protection</div>
-                                <div><span style="color:var(--accent);font-weight:700">4.</span> SHA-256 hash computed client-side</div>
-                                <div><span style="color:var(--accent);font-weight:700">5.</span> Hash anchored to XRPL memo field</div>
-                                <div><span style="color:var(--accent);font-weight:700">6.</span> Credits micro-fee (0.01) paid to treasury</div>
-                                <div><span style="color:var(--accent);font-weight:700">7.</span> Record appears in Live Metrics dashboard</div>
-                            </div>
-                        </div>
-                        <div class="s4-card">
-                            <h3><i class="fas fa-shield-halved"></i> What Gets Stored On-Chain</h3>
-                            <p style="font-size:0.85rem;color:var(--steel)"><strong>Only the SHA-256 hash</strong> of your record is stored on the XRP Ledger. No classified data, CUI, ITAR-controlled, or sensitive content ever touches the blockchain.</p>
-                            <div style="font-size:0.8rem;margin-top:0.5rem">
-                                <span style="color:var(--accent)">&#10003;</span> NIST SP 800-171 compatible<br>
-                                <span style="color:var(--accent)">&#10003;</span> CMMC Level 2 aligned<br>
-                                <span style="color:var(--accent)">&#10003;</span> DFARS 252.204-7012 compliant<br>
-                                <span style="color:var(--accent)">&#10003;</span> No PII/CUI on-chain
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="tabVerify" role="tabpanel">
-                <div class="subpage-back" style="display:flex;align-items:center;">
-                    <button class="back-btn" onclick="showHub()"><i class="fas fa-arrow-left"></i> Back</button>
-                    <div class="breadcrumb-text">Verify Records</div>
-                    <button onclick="resetVerify();if(typeof refreshVerifyRecents==='function')refreshVerifyRecents();" style="margin-left:auto;background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:7px 16px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit;transition:all 0.2s;" title="Clear all fields and refresh records"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Refresh</button>
-                </div>
-                <div class="row">
-                    <div class="col-lg-7">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-check-circle"></i> Verify a Defense Record</h3>
-                            <details style="display:none;margin-top:8px;margin-bottom:12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                                <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Verification Works</summary>
-                                <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                    <p><strong style="color:#1d1d1f;">What's real:</strong> Verification computes the SHA-256 hash of your uploaded file or pasted content and compares it against the hash that was previously anchored on the XRPL. If they match, the record is proven unaltered since the anchor date — the blockchain itself is the proof. <strong>Files are hashed locally in your browser — nothing is uploaded to any server.</strong></p>
-                                    <p><strong style="color:#1d1d1f;">How it works:</strong> Upload a PDF, spreadsheet, contract packet, or any file — S4 Ledger computes the SHA-256 hash of the raw file bytes and checks it against the anchored hash. If they match, integrity is confirmed. Works with any file type: PDFs, XLSX, DOCX, images, signed documents — even view-only or copy-protected files.</p>
-                                    <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Manual record verification during audits and inspections can take 40–200 staff-hours per event. S4 Ledger provides instant, cryptographic proof in seconds — reducing verification labor costs by <strong>90–98%</strong> and eliminating disputes about record authenticity.</p>
-                                    <p><strong style="color:#00aaff;">Production mode:</strong> Automated batch verification via API — plug into QA pipelines, audit workflows, and supply chain acceptance processes for continuous integrity monitoring.</p>
-                                </div>
-                            </details>
-                            <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload or paste the original record to verify its hash matches what was anchored on XRPL.</p>
+<p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload or paste the original record to verify its hash matches what was anchored on XRPL.</p>
 
                             <!-- FILE UPLOAD VERIFICATION -->
                             <label><i class="fas fa-file-upload" style="color:var(--accent);margin-right:4px;"></i> Upload File(s) to Verify</label>
@@ -996,147 +919,7 @@
                     <div class="col-lg-12">
                         <div class="s4-card">
                             <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-brain"></i> ILS Gap Analysis <button onclick="showAddActionModal('ils')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                            <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                                <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How Gap Analysis Works</summary>
-                                    <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                        <p><strong style="color:#1d1d1f;">What this tool does:</strong> The ILS Gap Analysis Engine evaluates your program’s compliance with <strong>GEIA-STD-0007</strong> (formerly MIL-STD-1388-1A/2B) Integrated Logistics Support requirements. It scores 10 ILS element areas — Supply Support, Maintenance Planning, Technical Data, Training, Configuration Management, DMSMS, PHS&amp;T, Reliability, Support Equipment, and Manpower — to identify gaps, missing deliverables, and corrective actions.</p>
-                                        <p><strong style="color:#00aaff;">Step-by-step:</strong> (1) Select your program and hull/tail number. (2) Review the generated ILS checklist and mark items as complete. (3) Upload DRL spreadsheets, CDRLs, or ILS documents for automated cross-reference. (4) Click “Run Full Analysis” — the engine scores your checklist (weighted: critical items ×2), cross-references uploaded documents against DRL requirements using fuzzy matching, and outputs a combined coverage score (60% checklist + 40% DRL). (5) Review critical gaps, action items, estimated remediation costs, and recommended owners.</p>
-                                        <p><strong style="color:#c9a84c;">Action output:</strong> Gap Analysis generates a prioritized corrective action register (CAR) with severity ratings, cost estimates ($K), schedule targets, and assigned owners (government + contractor). Critical gaps are flagged for immediate attention. Every analysis result can be anchored to the XRP Ledger for tamper-proof audit trail.</p>
-                                        <p><strong style="color:#00aaff;">Charts:</strong> After analysis, a radar chart shows ILS element coverage and a horizontal bar chart shows individual element scores color-coded (green ≥80%, amber ≥50%, red &lt;50%). Charts update automatically when you re-run with different parameters.</p>
-                                        <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense programs routinely spend $150K–$500K per ILS review cycle hiring contractors to manually compile gap analyses across dozens of spreadsheets, CDRLs, and DRL trackers. The S4 Gap Analysis Engine automates the entire cross-reference process — parsing uploaded documents against GEIA-STD-0007 requirements in seconds instead of weeks. This eliminates 70-85% of the labor cost associated with ILS reviews, catches gaps that manual processes miss, and produces audit-ready output that can be anchored to XRPL for tamper-proof compliance evidence. Programs typically recover the annual platform cost in a single review cycle.</p>
-                                    </div>
-                            </details>
-                            <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload your DRLs, spreadsheets, checklists, and documents. The analyzer will parse them, cross-reference against program requirements, and identify gaps, missing deliverables, and actionable items.</p>
-
-                            <label>1. Select Program / Platform Type</label>
-                            <div class="row mb-3">
-                                <div class="col-7">
-                                    <select id="ilsProgram" aria-label="Select program" onchange="onILSProgramChange()">
-                                    </select>
-                                </div>
-                                <div class="col-5">
-                                    <input type="text" id="ilsHull" placeholder="Hull # / Designation" style="font-size:0.88rem">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <label style="font-size:0.82rem">Program Office</label>
-                                    <input type="text" id="ilsOffice" placeholder="e.g. PMS 300" style="font-size:0.88rem">
-                                </div>
-                                <div class="col-6">
-                                    <label style="font-size:0.82rem">Acquisition Phase</label>
-                                    <select id="ilsPhase" aria-label="Select acquisition phase" style="font-size:0.88rem">
-                                        <option value="pre_award">Pre-Award</option>
-                                        <option value="design" selected>Design</option>
-                                        <option value="construction">Construction</option>
-                                        <option value="test_eval">Test & Evaluation</option>
-                                        <option value="delivery">Delivery / Turnover</option>
-                                        <option value="post_delivery">Post-Delivery</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <label>2. Upload Documents <span style="color:var(--muted);font-weight:400">(DRLs, spreadsheets, PDFs, Word docs, checklists)</span></label>
-                            <div class="ils-dropzone" id="ilsDropzone" onclick="document.getElementById('ilsFileInput').click()">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <div style="font-weight:600;color:#1d1d1f;margin-bottom:4px">Drag & drop files here or click to browse</div>
-                                <div style="font-size:0.82rem;color:var(--muted)">Accepts .csv, .xlsx, .xls, .pdf, .docx, .txt — all processing done locally in your browser</div>
-                            </div>
-                            <input type="file" id="ilsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx,.doc" style="display:none" onchange="handleILSFiles(this.files)">
-                            <div style="margin:8px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                                <span style="font-size:0.78rem;color:var(--muted)">Supports 23+ document types — DRL, LCSP, IUID, VRS, IMS, CDRL & more</span>
-                            </div>
-                            <div class="ils-file-list" id="ilsFileList"></div>
-
-                            <label>3. Program ILS Checklist <span style="color:var(--muted);font-weight:400">(changes per program — auto-populated from uploads, or check manually)</span></label>
-                            <div id="ilsChecklist" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1rem;font-size:0.85rem;"></div>
-
-                            <div class="d-flex gap-2 flex-wrap">
-                                <button class="btn-accent" onclick="runFullILSAnalysis()"><i class="fas fa-chart-line"></i> Run Full Analysis</button>
-                                <button class="btn-gold" onclick="generateILSReport()"><i class="fas fa-file-export"></i> Generate Report</button>
-                                <button style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:3px;padding:0.5rem 1rem;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600" onclick="anchorILSReport()"><i class="fas fa-anchor"></i> Anchor Report Hash</button>
-                            </div>
-                            <div id="ilsPostActions" style="display:none">
-                                <div class="post-actions">
-                                    <button class="post-action-btn" onclick="sendILSAnalysis()"><i class="fas fa-paper-plane"></i> Send Analysis</button>
-                                    <button class="post-action-btn" onclick="scheduleILSMeeting()"><i class="fas fa-calendar-plus"></i> Schedule Meeting</button>
-                                    <button class="post-action-btn" onclick="exportActionTracker()"><i class="fas fa-clipboard-list"></i> Update Action Tracker</button>
-                                    <button class="post-action-btn" onclick="printILSReport()"><i class="fas fa-print"></i> Print Report</button>
-                                    <button class="post-action-btn" onclick="saveILSReport()"><i class="fas fa-save"></i> Save Report</button>
-                                </div>
-                            </div>
-                            <div class="result-panel" id="ilsResult"></div>
-
-                            <!-- Compact summary grid — replaces the old right column -->
-                            <div id="ilsSummaryGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
-                                <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;">
-                                    <h4 style="font-size:0.85rem;margin:0 0 8px;display:flex;align-items:center;gap:6px"><i class="fas fa-chart-pie" style="color:var(--accent)"></i> ILS Readiness Score</h4>
-                                    <div id="ilsScoreContainer" style="text-align:center;padding:0.5rem 0">
-                                        <div style="font-size:2.5rem;font-weight:800;color:var(--muted)" id="ilsScore">--</div>
-                                        <div style="font-size:0.8rem;color:var(--steel)" id="ilsScoreLabel">Run analysis to score</div>
-                                        <div style="margin-top:8px" id="ilsGaugeBar">
-                                            <div style="background:var(--surface);border-radius:3px;height:8px;overflow:hidden;border:1px solid var(--border)">
-                                                <div id="ilsGaugeFill" style="height:100%;width:0%;background:linear-gradient(90deg,#ff3333,#ffa500,#00aaff);border-radius:3px;transition:width 0.8s ease"></div>
-                                            </div>
-                                            <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--muted);margin-top:2px"><span>Critical</span><span>Partial</span><span>Ready</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;">
-                                    <h4 style="font-size:0.85rem;margin:0 0 8px;display:flex;align-items:center;gap:6px"><i class="fas fa-list-check" style="color:var(--accent)"></i> Element Coverage</h4>
-                                    <div id="ilsCoverage" style="font-size:0.82rem">
-                                        <div style="color:var(--muted);padding:4px 0;font-size:0.8rem">Upload files to see coverage.</div>
-                                    </div>
-                                </div>
-                                <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;">
-                                    <h4 style="font-size:0.85rem;margin:0 0 8px;display:flex;align-items:center;gap:6px"><i class="fas fa-exclamation-triangle" style="color:#ffa500"></i> Action Items</h4>
-                                    <div id="ilsActions" style="max-height:200px;overflow-y:auto">
-                                        <div style="color:var(--muted);padding:4px 0;font-size:0.8rem">Run analysis to generate action items.</div>
-                                    </div>
-                                </div>
-                                <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;">
-                                    <h4 style="font-size:0.85rem;margin:0 0 8px;display:flex;align-items:center;gap:6px"><i class="fas fa-dollar-sign" style="color:var(--accent)"></i> Cost & Schedule</h4>
-                                    <div id="ilsCostSchedule" style="font-size:0.82rem">
-                                        <div style="color:var(--muted);padding:4px 0;font-size:0.8rem">Analysis required to estimate impact.</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- AI Assistant Quick Buttons -->
-                <div style="margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-                    <div style="font-size:0.82rem;color:var(--steel);margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i><strong>AI Assistant</strong></div>
-                    <p style="color:var(--steel);font-size:0.78rem;margin:0 0 8px">Ask the S4 Agent to help analyze ILS gaps, prioritize findings, and estimate remediation impact.</p>
-                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">
-                        <button class="ai-quick-btn" onclick="aiAsk('Summarize ILS gaps')">Summarize Gap Analysis</button>
-                        <button class="ai-quick-btn" onclick="aiAsk('What are my highest-risk gaps?')">Top Risks</button>
-                        <button class="ai-quick-btn" onclick="aiAsk('Estimate cost to close all gaps')">Cost Estimate</button>
-                        <button class="ai-quick-btn" onclick="aiAsk('Which gaps affect readiness most?')">Readiness Impact</button>
-                        <button class="ai-quick-btn" onclick="aiAsk('Draft a gap closure plan')">Closure Plan</button>
-                        <button class="ai-quick-btn" onclick="aiAsk('Compare my gaps to industry benchmarks')">Benchmark</button>
-                    </div>
-                    <div style="font-size:0.75rem;color:var(--muted);padding:6px 8px;background:rgba(0,113,227,0.03);border-radius:3px;border:1px solid var(--border)"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:4px"></i><strong>Tip:</strong> The agent can cross-reference gap analysis with compliance, risk, and readiness tools for a full picture.</div>
-                </div>
-                </div><!-- /hub-analysis -->
-
-                <!-- ══ HUB: ACTION ITEMS ══ -->
-                <div class="ils-hub-panel" id="hub-actions">
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <div class="s4-card">
-                                <h3><i class="fas fa-tasks" style="color:var(--accent)"></i> Unified Action Items & Alerts</h3>
-                                <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                                    <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Unified Action Tracking</summary>
-                                    <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                        <p><strong style="color:#1d1d1f;">What this tool does:</strong> Every tool in the S4 Ledger suite generates actionable recommendations — DMSMS obsolescence alerts, readiness failures, warranty expirations, lifecycle cost opportunities, parts shortages, and ILS gap analysis items. This panel <strong>consolidates all of them</strong> into one unified tracker so nothing falls through the cracks.</p>
-                                        <p><strong style="color:#00aaff;">How actions are created:</strong> When you use any tool (run a DMSMS check, calculate readiness, review warranties, estimate lifecycle costs, or run an ILS gap analysis), the system automatically generates action items with: (1) <strong>Severity</strong> — Critical, Warning, or Info, (2) <strong>Owner</strong> — assigned responsible party, (3) <strong>Cost impact</strong> — estimated dollar risk, (4) <strong>Schedule</strong> — recommended timeline, (5) <strong>Source tool</strong> — which analysis generated it.</p>
-                                        <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Missed action items are one of the biggest cost drivers in defense programs. A warranty that expires unrenewed can cost $500K+. An obsolete part discovered during production costs 10x more than one caught early. This tracker ensures every actionable finding from every tool is visible, assignable, and trackable — with the ability to export, filter, and communicate to stakeholders.</p>
-                                        <p><strong style="color:#00aaff;">AI Recommendations:</strong> Ask the S4 ILS Agent (below) about your action items. It can prioritize them, suggest corrective actions, draft CARs, estimate total risk, and recommend next steps based on all the data from every tool.</p>
-                                    </div>
-                                </details>
-                                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">
                                     <button class="ai-quick-btn" onclick="showAddActionModal()" style="background:rgba(0,170,255,0.2);border-color:var(--accent);font-weight:700"><i class="fas fa-plus"></i> Add New</button>
                                     <button class="ai-quick-btn" onclick="filterHubActions('all')" style="background:rgba(0,170,255,0.15);border-color:var(--accent)">All</button>
                                     <button class="ai-quick-btn" onclick="filterHubActions('critical')"><span style="color:#c9a84c">●</span> Critical</button>
@@ -1217,16 +1000,7 @@
                     <div class="s4-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-exclamation-triangle" style="color:var(--accent)"></i> DMSMS / Obsolescence Tracker <button onclick="showAddActionModal('dmsms')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Track Diminishing Manufacturing Sources and Material Shortages (DMSMS). Identify parts at risk of obsolescence, find alternates, and estimate resolution costs. Per DoDI 4245.14.</p>
-                        <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(255,153,0,0.15);border-radius:3px;padding:0 12px;">
-                            <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
-                            <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                <p><strong style="color:#1d1d1f;">What's real:</strong> Platform names, system names, manufacturers, CAGE codes, and FSC groups are all real. The systems shown (AN/SPY-6, Mk 41 VLS, LM2500, etc.) are the actual systems installed on these platforms.</p>
-                                <p><strong style="color:#ffa500;">Data source note:</strong> The DMSMS statuses (Active/At Risk/Obsolete) are <em>simulated</em> in sample mode. Real obsolescence data comes from <strong>GIDEP</strong> (Government-Industry Data Exchange Program), <strong>DLA</strong> (Defense Logistics Agency), and vendor EOL notices — all of which require authenticated access.</p>
-                                <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> When a DMSMS case is identified and a resolution is chosen (bridge buy, redesign, alternate source), S4 Ledger anchors a SHA-256 hash of that decision to the XRP Ledger. This creates <em>immutable proof</em> that the obsolescence was documented, analyzed, and resolved at a specific date — critical for audits, contract disputes, and proving due diligence. Without this, programs lose millions to undocumented obsolescence discoveries during production.</p>
-                                <p><strong style="color:#00aaff;">Production mode:</strong> Connect to GIDEP, DLA ASSIST, or your own parts database via the S4 API. Upload real DMSMS case files via CSV/XLSX. The tool structure is designed for real data — connect your authenticated data source for full integration.</p>
-                            </div>
-                        </details>
-                        <label>Select Program</label>
+<label>Select Program</label>
                         <select id="dmsmsProgram" aria-label="Select DMSMS program" class="form-select mb-2"  onchange="loadDMSMSData()"></select>
                         <div class="row mb-3">
                             <div class="col-6"><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
@@ -1272,16 +1046,7 @@
                     <div class="s4-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-chart-line" style="color:var(--accent)"></i> Operational Readiness Calculator <button onclick="showAddActionModal('readiness')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Calculate Operational Availability (Ao), Mean Time Between Failures (MTBF), Mean Time To Repair (MTTR), and Mean Logistics Delay Time (MLDT). Per MIL-STD-1390D and DoDI 5000.02.</p>
-                        <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                            <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
-                            <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                <p><strong style="color:#1d1d1f;">What's real:</strong> The formula <code style='color:#00aaff'>Ao = MTBF / (MTBF + MTTR + MLDT)</code> is the actual DoW standard calculation. The MTBF/MTTR/MLDT values pre-loaded for each system are <em>representative ranges</em> based on published data for those system types (e.g., gas turbines average 2000-5000 hr MTBF, radar systems 600-1800 hr).</p>
-                                <p><strong style="color:#ffa500;">Data source note:</strong> The specific MTBF/MTTR/MLDT numbers are representative but NOT from actual FRACAS (Failure Reporting, Analysis and Corrective Action System) databases. Real values come from fleet maintenance data (3-M system for Navy).</p>
-                                <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Readiness calculations drive billions in sustainment spending. When you compute an Ao and anchor it to the XRP Ledger, you create a <em>timestamped, tamper-proof record</em> that this system had X% availability on this date. This matters for: (1) Contract performance metrics — proving a system met its KPP/KSA readiness threshold, (2) Milestone decision briefings — anchored readiness reports can't be retroactively altered, (3) DMSMS correlation — linking obsolescence events to readiness drops to justify resolution funding.</p>
-                                <p><strong style="color:#00aaff;">Production mode:</strong> Input your actual FRACAS/3-M data. The fields are editable — type in real MTBF/MTTR/MLDT values from your program's RAM analysis. Export the report, anchor the hash. That hash becomes permanent proof of the calculation.</p>
-                            </div>
-                        </details>
-                        <div class="row">
+<div class="row">
                             <div class="col-md-6">
                                 <label>Select Program</label>
                                 <select id="readinessProgram" aria-label="Select readiness program" class="form-select mb-2"  onchange="loadReadinessData()"></select>
@@ -1334,22 +1099,7 @@
                     <div class="s4-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-dollar-sign" style="color:var(--accent)"></i> S4 Ledger ROI Calculator <button onclick="showAddActionModal('roi')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Calculate the return on investment from implementing S4 Ledger across your ILS, DMSMS, and readiness programs. Compare manual processes vs. automated blockchain-backed document management.</p>
-                        <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                            <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — What These Numbers Mean</summary>
-                            <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                <p><strong style="color:#1d1d1f;">This calculator is a sales tool.</strong> Input YOUR program's real numbers (how many programs, how many staff, what you pay them) and it shows the cost savings from automating manual ILS work with S4 Ledger.</p>
-                                <p><strong style="color:#00aaff;">Where the savings come from:</strong></p>
-                                <ul style="margin:4px 0 8px 16px;">
-                                    <li><strong>Labor automation (65%):</strong> S4 Ledger automates document hashing, record tracking, DRL status tracking, and compliance checklist management. Tasks that take an ILS manager hours (verifying a CDRL was delivered, checking a supply receipt against the contract) become one-click operations with XRPL-anchored proof.</li>
-                                    <li><strong>Error reduction (90%):</strong> Manual data entry into spreadsheets causes errors. Mistyped NSNs, wrong CAGE codes, duplicated PO entries — each costs thousands in rework, re-procurement, or failed audits. Automated hashing eliminates transcription errors.</li>
-                                    <li><strong>Audit cost reduction (70%):</strong> Instead of gathering evidence for weeks before a DCMA or DLA audit, S4 Ledger provides instant proof via XRPL hashes. The auditor can verify any record's integrity in seconds.</li>
-                                    <li><strong>Compliance acceleration:</strong> Per-program value of faster CDRL delivery, reduced contract risk, and avoided schedule delays from documentation gaps.</li>
-                                </ul>
-                                <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> ILS program offices spend <strong>$500K–$2M per year per program</strong> on manual record-keeping, audit preparation, and error remediation. S4 Ledger automates 65–85% of that labor, reduces error-driven rework by 90%, and cuts audit preparation costs by 70%. Across a 10-program portfolio, annual savings typically reach <strong>$3M–$8M</strong> — a 5–15x return on platform investment.</p>
-                                <p><strong style="color:#00aaff;">All inputs are editable.</strong> Change them to match your actual program. The output updates in real time. Use it in proposals or briefings to show the business case for S4 Ledger.</p>
-                            </div>
-                        </details>
-                        <div class="row">
+<div class="row">
                             <div class="col-md-6">
                                 <label>Number of Programs Managed</label>
                                 <input type="number" id="roiPrograms" class="form-control mb-2"  placeholder="e.g., 5" value="5" oninput="calcROI()">
@@ -1403,23 +1153,7 @@
                     <div class="s4-card">
                         <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-clock" style="color:var(--accent)"></i> Lifecycle Cost Estimator <button onclick="showAddActionModal('lifecycle')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Project total ownership cost (TOC) over a weapon system's lifecycle. Factors in sustainment, DMSMS resolution, tech refresh, and depot maintenance per DoD 5000.73 and MIL-STD-881F.</p>
-                        <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                            <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Understanding Total Ownership Cost</summary>
-                            <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                                <p><strong style="color:#1d1d1f;">What this tool does:</strong> It calculates how much a weapon system costs over its ENTIRE life — not just the sticker price. The DoW famously spends 60-70% of a system's total cost AFTER it's built, on sustainment, repairs, and obsolescence. This tool breaks that down.</p>
-                                <p><strong style="color:#00aaff;">What the numbers mean:</strong></p>
-                                <ul style="margin:4px 0 8px 16px;">
-                                    <li><strong>Acquisition:</strong> What you pay upfront — unit cost × fleet size. For a DDG-51 Flight III, that's roughly $2.2B per ship × 20 ships = ~$44B.</li>
-                                    <li><strong>Sustainment (O&S):</strong> Annual maintenance, crew, parts, depot work — typically 6-10% of acquisition cost <em>per year</em>, over 30+ years. This is where most money goes.</li>
-                                    <li><strong>DMSMS/Obsolescence:</strong> Parts go out of production. Redesigning circuits, finding new vendors, bridge buys — estimated at ~4% of acquisition per year. Over 30 years for a fleet of destroyers, this can be billions.</li>
-                                    <li><strong>Tech Refresh:</strong> Every ~5 years, major systems need upgrades (new radar software, engine overhauls, avionics refreshes) — estimated at 2% of acquisition per cycle.</li>
-                                    <li><strong>Cost per Op Hour:</strong> Total cost divided by total operating hours across the fleet — what it costs to operate this system for one hour.</li>
-                                </ul>
-                                <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> S4 Ledger doesn't change acquisition costs — those are fixed. It reduces sustainment and DMSMS costs by 15-25%. How? (1) Automated DMSMS tracking catches obsolescence earlier, before emergency bridge buys at premium prices, (2) Anchored maintenance records reduce duplicate work orders and audit overhead, (3) Parts cross-referencing with anchored provenance prevents counterfeit part insertion — a single counterfeit electronic part in a radar system can cost $3-5M to find and remediate.</p>
-                                <p><strong style="color:#ffa500;">Input your own data:</strong> Change the unit cost, fleet size, service life, and sustainment rate to match your actual program. The defaults (85M, 20 units, 30 years, 8%) are representative of a mid-size Navy combatant.</p>
-                            </div>
-                        </details>
-                        <div class="row">
+<div class="row">
                             <div class="col-md-6">
                                 <label>Select Program</label>
                                 <select id="lifecycleProgram" aria-label="Select lifecycle program" class="form-select mb-2"  onchange="calcLifecycle()"></select>
@@ -1488,19 +1222,7 @@
                 <div class="s4-card" style="animation:slideUp 0.4s ease">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-vault" style="color:var(--accent)"></i> Audit Record Vault <span style="background:rgba(0,170,255,0.15);color:#00aaff;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">LIVE</span> <button onclick="showAddActionModal('vault')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Every record you anchor is stored here with its hash, original content preview, timestamp, and verification status — your single source of auditing proof. No more searching the XRPL manually.</p>
-
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What's real:</strong> Every record you anchor from any tool (Anchor tab, DMSMS, Readiness, Lifecycle, Warranty, ROI, Parts, Gap Analysis) is automatically saved here with its SHA-256 hash, content preview, timestamp, record type, and XRPL transaction ID. This is your <strong>permanent audit trail</strong> — like a filing cabinet that's also blockchain-verified.</p>
-                            <p><strong style="color:#00aaff;">Data Storage:</strong> Records are stored in your browser's localStorage for this session and sync across tabs. In your organization's deployment, records sync to a secure database with role-based access, retention policies, and automated backup.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Defense programs spend $50K-$200K annually on manual audit trail compilation for IG inspections, DCMA reviews, and milestone briefings. The vault auto-compiles every anchored record with one-click re-verification and instant CSV/XLSX export. No more searching the XRPL manually, no more lost audit evidence, no more "we can't prove when we documented this."</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves time on audits:</strong> Traditional audit preparation takes 2-6 weeks of staff time per inspection — gathering records from multiple systems, verifying document versions, compiling evidence binders. The Audit Record Vault reduces this to minutes. Every anchored record is instantly searchable, filterable by time period (today, this week, this month, this year, or any custom range), and re-verifiable against the XRPL with one click. Auditors can independently verify any record's integrity without requesting original documents from the contractor. Government estimates show S4 Ledger can reduce audit preparation labor by 85-95%.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> Connect to your organizational database via the S4 API. Records sync across all users with the same program access. Export formats include CSV, XLSX, and PDF for formal audit submissions. Each record's TX Hash links directly to the XRPL public ledger for independent verification.</p>
-                        </div>
-                    </details>
-
-                    <!-- Vault Stats -->
+<!-- Vault Stats -->
                     <div class="vault-stats" id="vaultStats">
                         <div class="vault-stat hover-lift"><div class="stat-val stat-animate" id="vaultTotal">0</div><div class="stat-lbl">Total Records</div></div>
                         <div class="vault-stat hover-lift"><div class="stat-val stat-animate" id="vaultVerified">0</div><div class="stat-lbl">Verified</div></div>
@@ -1610,7 +1332,7 @@
                                     <option value="50000">50,000 Records</option>
                                     <option value="100000">100,000 Records</option>
                                 </select>
-                                <button onclick="runVaultStressTest()" class="btn btn-sm" style="background:linear-gradient(135deg,#c9a84c,#a8893d);color:#fff;border:none;border-radius:3px;padding:6px 16px;font-size:0.82rem;font-weight:600"><i class="fas fa-bolt"></i> Run Stress Test</button>
+                                <button onclick="runVaultStressTest()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 16px;font-size:0.82rem;font-weight:600"><i class="fas fa-bolt"></i> Run Stress Test</button>
                                 <button onclick="clearStressTestRecords()" class="btn btn-sm" style="background:rgba(0,0,0,0.03);color:#6e6e73;border:1px solid rgba(0,0,0,0.08);border-radius:3px;padding:6px 12px;font-size:0.78rem"><i class="fas fa-broom"></i> Clear Test Records</button>
                             </div>
                             <div id="stressTestResults" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:12px;font-size:0.78rem;color:var(--steel)"></div>
@@ -1638,18 +1360,7 @@
                 <div class="s4-card" style="animation:slideUp 0.4s ease">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-book-open" style="color:var(--accent)"></i> Defense Document Library <span id="docCount" style="font-size:0.78rem;color:var(--muted)"></span><button onclick="showAddActionModal('docs')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Searchable reference library of MIL-STDs, OPNAVINSTs, DoD Directives, DFARS clauses, NIST standards, and service-specific regulations. Quick-reference while you work — no tab-switching needed.</p>
-
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What's real:</strong> All 100+ documents are <strong>real defense standards and regulations</strong> — GEIA-STD-0007 (MIL-STD-1388), MIL-HDBK-502, OPNAVINST 4790.16, COMDTINST M4000.13, Army AR 700-127, AFI 63-101, MCO 4105.2, DFARS 252.204-7012, NIST SP 800-171, and more. Links go to official DoW, NAVSEA, DLA, and NIST sources.</p>
-                            <p><strong style="color:#ffa500;">Data source note:</strong> The document library itself is fully real — these are the actual standards ILS managers reference daily. No simulated content. The library is currently static; production mode adds your organization's internal documents, SOPs, and program-specific references.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> ILS managers waste 15-30 minutes per reference lookup, switching between tabs, Googling document numbers, and tracking down the latest revision. With 100+ standards pre-loaded and searchable by category, branch, keywords, and document ID, you find the right standard in seconds — while working in the same tool where you're running analysis. Across a program office, this saves 200+ hours/year in reference lookup time.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> Add your organization's internal documents via the S4 API. Create custom categories. Upload program-specific SOPs, instructions, and contract documents. The library becomes your program's searchable knowledge base — always available, always current.</p>
-                        </div>
-                    </details>
-
-                    <!-- Search & Filters -->
+<!-- Search & Filters -->
                     <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
                         <input type="text" id="docSearch" class="form-control" aria-label="Search document library" style="flex:1;min-width:200px;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:3px;padding:8px 14px;font-size:0.85rem" placeholder="Search by ID, title, keywords... (e.g., MIL-STD-1388, DMSMS, OPNAVINST)" oninput="renderDocLibrary()">
                         <button onclick="showDocUpload()" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:3px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px"><i class="fas fa-plus"></i> Add Document</button>
@@ -1711,18 +1422,7 @@
                 <div class="s4-card" style="animation:slideUp 0.4s ease">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-shield-halved" style="color:var(--accent)"></i> Compliance Scorecard <span style="background:rgba(0,170,255,0.15);color:#00aaff;font-size:0.65rem;padding:2px 8px;border-radius:3px;font-weight:600;margin-left:6px;">REAL-TIME</span> <button onclick="showAddActionModal('compliance')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Live compliance posture across CMMC, NIST SP 800-171, DFARS, and program-specific requirements. Auto-calculates based on your workspace activity — something SAP, Oracle, and Microsoft don't offer.</p>
-
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Data Sources & S4 Ledger Value</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What's real:</strong> The compliance frameworks (CMMC Level 2, NIST SP 800-171, DFARS 252.204-7012, FAR 46, GEIA-STD-0007 ILS, DoDI 4245.15 DMSMS) are real regulatory requirements that every defense contractor and program office must meet. Your compliance score is calculated from <strong>actual workspace activity</strong> — records anchored, DMSMS items tracked, readiness calculated, warranties monitored, and more.</p>
-                            <p><strong style="color:#ffa500;">Data source note:</strong> The scoring algorithm uses representative weights and thresholds. In production, weights are calibrated to your organization's specific compliance requirements, C3PAO audit criteria, and program-specific CDRL obligations. The score formula is transparent and adjustable.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> CMMC assessments alone cost $50K-$200K per assessment. Failed assessments cost 6-12 months of schedule delay plus reassessment fees. This scorecard lets you track compliance posture <em>continuously</em> instead of discovering gaps during the assessment. Each compliance data point is blockchain-anchored, so you can prove to auditors exactly when you achieved each milestone — something SAP, Oracle, and Microsoft cannot offer.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> Connect your compliance data sources via the S4 API. Map your SPRS score, eMASS data, and internal audit findings to the scorecard. Export compliance snapshots as PDF-ready reports for C3PAOs, DCMA, or IG inspections. Anchor each compliance snapshot to XRPL for immutable proof of your compliance posture at any point in time.</p>
-                        </div>
-                    </details>
-
-                    <!-- Program Selector -->
+<!-- Program Selector -->
                     <div style="margin-bottom:16px">
                         <label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label>
                         <select id="complianceProgram" aria-label="Select compliance program" class="form-select" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:3px;margin-top:4px" onchange="calcCompliance()"></select>
@@ -1822,7 +1522,7 @@
                                     <option value="SC-28">SC-28 Protection at Rest</option>
                                     <option value="SI-4">SI-4 System Monitoring</option>
                                 </select>
-                                <label class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a8893d);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem;cursor:pointer;margin:0">
+                                <label class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem;cursor:pointer;margin:0">
                                     <i class="fas fa-upload"></i> Attach Evidence
                                     <input type="file" id="evidenceFileInput" onchange="attachEvidence(this)" accept=".pdf,.png,.jpg,.jpeg,.csv,.xlsx,.docx,.txt" style="display:none" multiple>
                                 </label>
@@ -1912,16 +1612,7 @@
             <div class="ils-hub-panel" id="hub-risk">
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-triangle-exclamation" style="color:#c9a84c"></i> AI Supply Chain Risk Engine <button onclick="showAddActionModal('risk')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — AI Risk Prediction</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What's real:</strong> The risk engine analyzes supplier health indicators — GIDEP alerts, CAGE code changes, DLA lead time spikes, financial distress signals, and single-source dependencies — to generate risk scores for every part in your supply chain. Alerts are timestamped and can be anchored to XRPL for audit trail.</p>
-                            <p><strong style="color:#1d1d1f;">Data source note:</strong> Risk scores and supplier data are generated from realistic DoW supply chain patterns. In production, this connects to live GIDEP, DLA, SAM.gov, and commercial financial data feeds via API.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> A single undetected supplier failure costs $2M–$8M in emergency redesign. Predictive risk detection 18–24 months ahead reduces emergency procurement by <strong>60–80%</strong>. Across 50 programs: <strong>$15M–$100M in avoided costs over 5 years</strong>.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> Connects to GIDEP API, DLA FLIS, SAM.gov entity data, Dun & Bradstreet financial health scores, and XRPL anchor history for continuous monitoring.</p>
-                        </div>
-                    </details>
-                    <div class="row mb-3">
+<div class="row mb-3">
                         <div class="col-md-6">
                             <label>Select Program</label>
                             <select id="riskProgram" aria-label="Select risk program" onchange="loadRiskData()" style="font-size:0.88rem"></select>
@@ -1975,7 +1666,7 @@
                         </table>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                        <button onclick="loadRiskData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3a);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-sync-alt"></i> Refresh Analysis</button>
+                        <button onclick="loadRiskData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-sync-alt"></i> Refresh Analysis</button>
                         <button onclick="exportRisk()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Risk Report</button>
                         <button onclick="anchorRisk()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
@@ -2025,7 +1716,7 @@
                                     <option value="5" selected>5-Year Forecast</option>
                                     <option value="10">10-Year Forecast</option>
                                 </select>
-                                <button onclick="generateBudgetForecast()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a8893d);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.82rem"><i class="fas fa-chart-line"></i> Forecast</button>
+                                <button onclick="generateBudgetForecast()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.82rem"><i class="fas fa-chart-line"></i> Forecast</button>
                             </div>
                             <div id="budgetForecastOutput"></div>
                         </div>
@@ -2073,16 +1764,7 @@
             <div class="ils-hub-panel" id="hub-reports">
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-pdf" style="color:var(--accent)"></i> Automated Audit Report Generator <button onclick="showAddActionModal('reports')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — One-Click Audit Packages</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What's real:</strong> The report generator compiles all anchored records, verification timestamps, chain-of-custody proof, and compliance scores into audit-ready packages. Every data point is backed by an XRPL transaction hash for independent verification.</p>
-                            <p><strong style="color:#1d1d1f;">Data sources:</strong> Reports pull from your anchoring history, compliance scorecard, and ILS analysis results stored in your S4 Ledger database.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Average DoW contract audit costs $45K–$150K in preparation labor alone (2–6 weeks of staff time). S4 Ledger generates a complete, verifiable audit package in <strong>under 60 seconds</strong> — a <strong>95–99% cost reduction</strong>.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> DCMA-ready (Defense Contract Management Agency), DCAA-ready (Defense Contract Audit Agency), and IG-ready (Inspector General) report templates with full chain-of-custody visualization and compliance gap analysis.</p>
-                        </div>
-                    </details>
-                    <div class="row mb-3">
+<div class="row mb-3">
                         <div class="col-md-4">
                             <label>Report Type</label>
                             <select id="reportType" aria-label="Select report type" style="font-size:0.88rem"><option value="full_audit">Full Audit Package</option><option value="supply_chain">Supply Chain Verification</option><option value="maintenance">Maintenance Records</option><option value="compliance">Compliance Summary</option><option value="custody">Chain of Custody</option><option value="contract">Contract Deliverables</option></select>
@@ -2151,7 +1833,7 @@
                                     <option value="monthly">Monthly</option>
                                     <option value="quarterly">Quarterly</option>
                                 </select>
-                                <button onclick="addScheduledReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a8893d);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-plus"></i> Schedule</button>
+                                <button onclick="addScheduledReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-plus"></i> Schedule</button>
                             </div>
                             <div id="schedReportList"></div>
                             <div id="schedReportEmpty" style="text-align:center;padding:16px;color:var(--steel);font-size:0.82rem"><i class="fas fa-clock" style="font-size:1.2rem;margin-bottom:6px;display:block;color:rgba(201,168,76,0.3)"></i>No scheduled reports yet.</div>
@@ -2208,16 +1890,7 @@
             <div class="ils-hub-panel" id="hub-predictive">
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-brain" style="color:var(--accent)"></i> Predictive Maintenance AI <button onclick="showAddActionModal('predictive')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — AI-Powered Failure Prediction</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What's real:</strong> The Predictive Maintenance engine analyzes maintenance history patterns across the S4 Ledger network — MTBF trends, failure mode clustering, component age curves, and environmental stress factors — to predict which systems will require maintenance before unplanned failures occur.</p>
-                            <p><strong style="color:#1d1d1f;">How predictions improve:</strong> The AI model starts with fleet maintenance patterns from publicly available DoW reliability data, then trains on your actual anchored maintenance records for increasingly accurate predictions over time.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Unplanned maintenance costs 3–10× more than planned maintenance. A single unplanned engine failure on a DDG-51 costs $500K–$2M including parts, labor, and lost operational time. Predictive maintenance reduces unplanned failures by <strong>40–60%</strong>, saving <strong>$2M–$10M per fleet per year</strong>.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> Connects to 3-M maintenance databases, OARS, NTCSS, and sensor data feeds. Uses anonymized/aggregated fleet-wide patterns (like Google Maps traffic) while keeping individual records private.</p>
-                        </div>
-                    </details>
-                    <div class="row mb-3">
+<div class="row mb-3">
                         <div class="col-md-4">
                             <label>Select Fleet / Platform</label>
                             <select id="pdmPlatform" aria-label="Select predictive maintenance platform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select>
@@ -2290,16 +1963,7 @@
             <div class="ils-hub-panel" id="hub-sbom">
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-microchip" style="color:#00aaff"></i> Software Bill of Materials (SBOM) <button onclick="showAddActionModal('sbom')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works — Blockchain-Verified SBOM</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What's real:</strong> The SBOM Viewer catalogs all embedded software components across weapon systems — firmware, RTOS, middleware, drivers, and third-party libraries. Each component is tracked with version, CVE status, license type, and supply chain provenance. S4 Ledger hashes each SBOM snapshot to XRPL for tamper-proof versioning.</p>
-                            <p><strong style="color:#00aaff;">Why it matters:</strong> CMMC Level 2+ requires SBOM management. Executive Order 14028 mandates SBOMs for all federal software. No competitor ties SBOM tracking to blockchain verification — this is a first.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> A single undetected software vulnerability in a weapon system costs <strong>$5M–$25M</strong> in emergency patching, re-certification, and operational downtime. Manual SBOM tracking across 50+ embedded components per platform misses 30–40% of CVEs. S4 Ledger’s automated NVD scanning catches vulnerabilities in real-time, and blockchain-anchored SBOM snapshots prove compliance for EO 14028 and CMMC audits — eliminating <strong>$200K–$500K per program per year</strong> in manual SBOM compilation and audit preparation costs.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> Ingests CycloneDX and SPDX formats from CI/CD pipelines. Integrates with NVD for real-time CVE matching. Auto-generates SBOM attestation documents for DCMA/DCAA auditors.</p>
-                        </div>
-                    </details>
-                    <div class="row mb-3">
+<div class="row mb-3">
                         <div class="col-md-6">
                             <label>Select Platform</label>
                             <select id="sbomProgram" aria-label="Select SBOM program" onchange="loadSBOMData()" style="font-size:0.88rem"></select>
@@ -2349,20 +2013,7 @@
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-circle-check" style="color:#c9a84c"></i> Submissions &amp; PTD <button onclick="showAddActionModal('submissions')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Upload and compare ILS data submissions from OEMs, shipbuilders, vendors, and contractors for Navy programs and programs. Automatically detects discrepancies, cost anomalies, new/removed components, configuration mismatches, and red flags against previous submissions.</p>
-
-                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;">
-                            <i class="fas fa-info-circle"></i> How It Works — Submissions &amp; PTD — Submission Intelligence &amp; Discrepancy Detection
-                        </summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What's real:</strong> Ingests ILS submissions from any OEM, shipbuilder, vendor, or contractor — including Vendor Recommended Spares Lists (VRS), IUID registries, configuration drawings, outfitting lists/drawings, Purchase Order Indices, provisioning technical data (PTD), allowance parts lists (APL), technical manuals (IETM/TM), maintenance plan updates, supply support requests, LSAR data, reliability reports (FRACAS), calibration records, packaging/PHS&amp;T data, training equipment lists, support equipment recommendations, warranty claims, Engineering Change Proposals (ECP), CDRL deliverables, and more. Each submission is hashed, version-tracked, and compared line-by-line against the previous accepted version for that program/platform/document type.</p>
-                            <p><strong style="color:#1d1d1f;">Data source note:</strong> Upload CSV, Excel (.xlsx), XML, JSON, or PDF submissions. S4 Ledger parses the data, auto-detects the submission type and format, maps fields, and runs the discrepancy engine against stored baselines. Upload your own files to see the full analysis workflow.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> ILS contractors manually reviewing vendor submissions spend 40-120 hours per submission package comparing line-by-line against previous versions. Across a major platform program with 15-25 submission cycles per year, this costs <strong>$800K-$1.5M/year per program</strong> in review labor alone — and still misses 12-18% of discrepancies that cause downstream procurement errors, maintenance failures, and readiness gaps. S4 Ledger's AI-powered discrepancy engine reviews submissions in <strong>seconds</strong>, catches <strong>99.7%</strong> of discrepancies (vs 82-88% manual), flags cost anomalies exceeding thresholds, and generates severity-rated reports ready for leadership. At scale across 100 programs, this tool alone generates <strong>$120M+/year</strong> in savings from eliminated review labor, prevented procurement errors, and avoided readiness shortfalls.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> Connects to contractor submission portals (PIEE, WAWF, EDA, UID Registry) and OEM data feeds via IL4/IL5 secure channels. Automatically ingests new submissions, runs the discrepancy engine, cross-references against authoritative data sources (FLIS, DPAS, HAYSTACK, FEDLOG), and routes discrepancy reports to designated reviewers with severity ratings and recommended actions. Integrates with S4's AI Agent for natural-language querying of discrepancy history and predictive trend analysis.</p>
-                        </div>
-                    </details>
-
-                    <!-- Branch & Program Selection -->
+<!-- Branch & Program Selection -->
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
@@ -2519,7 +2170,7 @@
                                 <select id="diffVersionB" aria-label="Select version B for comparison" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:3px;font-size:0.82rem;max-width:160px">
                                     <option value="">Version B (New)</option>
                                 </select>
-                                <button onclick="runVersionDiff()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a8893d);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-code-compare"></i> Compare</button>
+                                <button onclick="runVersionDiff()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:3px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-code-compare"></i> Compare</button>
                             </div>
                             <div id="diffOutput" style="max-height:300px;overflow-y:auto;font-family:monospace;font-size:0.78rem;line-height:1.5"></div>
                         </div>
@@ -2552,16 +2203,7 @@
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-boxes-stacked" style="color:#00aaff"></i> GFP Tracker <button onclick="showAddActionModal('gfp')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Government-Furnished Property tracking per FAR 52.245-1 and DFARS 252.245-7001. Track DD 1662 property records, manage inventory accountability, and maintain chain of custody for all GFP items.</p>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">DD 1662 Management:</strong> Upload or create DD Form 1662 records (DoW Property in the Custody of Contractors). Track acquisition cost, serial numbers, condition codes, location, and custodian assignments. Automated alerts for annual physical inventory requirements.</p>
-                            <p><strong style="color:#00aaff;">Production capabilities:</strong> API-backed inventory with Supabase persistence, blockchain-anchored custody transfers, automated DD 1662 generation, and IUID registry integration. Connects to DPAS (Defense Property Accountability System) and PIEE for government property records.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Government-Furnished Property management across DoW generates <strong>$2.8B+ in annual losses</strong> from unaccounted items, duplicate procurements, and failed physical inventories. Contractors spend 200-400 hours per program per year manually reconciling DD 1662 records, conducting wall-to-wall inventories, and resolving discrepancies with DCMA property administrators. S4 Ledger's blockchain-anchored GFP tracking provides <strong>real-time accountability</strong>, automated condition code updates, custody transfer verification, and instant audit-ready reports. At scale across 100 programs, this eliminates <strong>$80M+/year</strong> in lost property write-offs, audit remediation costs, and duplicate procurement of items already in government inventory.</p>
-                        </div>
-                    </details>
-
-                    <!-- Branch & Program Selection -->
+<!-- Branch & Program Selection -->
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
@@ -2663,16 +2305,7 @@
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-clipboard-check" style="color:#c9a84c"></i> CDRL Validator <button onclick="showAddActionModal('cdrl')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Contract Data Requirements List validation engine. Validates CDRL items against DI (Data Item Description) format requirements, checks content completeness, cross-references DD 1423 entries, and ensures compliance with MIL-STD-963 and DoD 5010.12-M.</p>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">Validation Engine:</strong> Upload DD 1423 contract data requirements and associated deliverables. The validator checks each CDRL item against its specified DI format, verifies required sections are present, flags missing content, and scores overall compliance. Supports all DI prefixes (DI-MGMT, DI-SESS, DI-ILSS, DI-MCCR, etc.).</p>
-                            <p><strong style="color:#00aaff;">Production capabilities:</strong> Batch validation of entire CDRL packages, automated due-date tracking, overdue alerts, deliverable status dashboards, and integration with the Submissions tool for end-to-end CDRL workflow management.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> CDRL management is one of the most labor-intensive aspects of defense contract administration. A typical program has <strong>50-150 CDRLs</strong> with complex DI format requirements, approval workflows, and revision tracking. Program offices spend <strong>$400K-$800K/year per program</strong> on CDRL review staff who manually verify deliverable format compliance, track due dates, and chase overdue items. Across multiple programs, 15-25% of CDRLs are rejected for format non-compliance — requiring expensive re-submission cycles. S4 Ledger's automated CDRL validator catches <strong>99%+ of format violations instantly</strong>, tracks all due dates with automated alerts, and maintains a blockchain-anchored audit trail of every submission. At scale across 100 programs, this saves <strong>$60M+/year</strong> in reduced review labor, eliminated re-submission cycles, and prevented contract compliance penalties.</p>
-                        </div>
-                    </details>
-
-                    <!-- Branch & Program Selection -->
+<!-- Branch & Program Selection -->
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
@@ -2772,16 +2405,7 @@
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-file-contract" style="color:#00aaff"></i> Contract Extractor <button onclick="showAddActionModal('contract')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">AI-powered contract clause extraction engine. Upload contract documents (SOWs, modifications, task orders) and automatically extract FAR/DFARS clauses, CDRL requirements, performance obligations, period of performance, and key terms.</p>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">Extraction Engine:</strong> Upload PDF or DOCX contract documents. The AI parser identifies and extracts FAR/DFARS clause citations, CDRL references, deliverable schedules, Government-Furnished items, security requirements (CUI/classified), and performance metrics. Results are structured and searchable.</p>
-                            <p><strong style="color:#00aaff;">Production capabilities:</strong> Connects to Claude AI for advanced clause interpretation, automated obligation tracking, contract modification comparison, and exportable clause matrices for program management review.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Contract analysis and clause extraction consume <strong>1,000-3,000 hours per major contract award</strong> across legal, contracts, and program management staff. A single acquisition program may have 50-200 FAR/DFARS clauses, dozens of CDRLs, and hundreds of SOW paragraphs requiring cross-reference. Missing a single clause like DFARS 252.211-7003 (IUID) or DFARS 252.204-7012 (CMMC/CUI) can result in <strong>$1-5M in remediation costs</strong> and schedule delays. S4 Ledger's AI-powered extractor processes entire contract packages in <strong>minutes</strong>, identifies 100% of clause references, maps obligations to responsible parties, and flags potential conflicts between modifications. At scale across 100 programs, this saves <strong>$50M+/year</strong> in reduced legal review hours, prevented clause omission penalties, and accelerated contract startup timelines.</p>
-                        </div>
-                    </details>
-
-                    <!-- Branch & Program Selection -->
+<!-- Branch & Program Selection -->
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
@@ -2883,16 +2507,7 @@
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-link" style="color:#c9a84c"></i> Provenance Chain <button onclick="showAddActionModal('provenance')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Blockchain-verified chain of custody and provenance tracking. Every custody transfer, location change, and condition assessment is anchored to the XRP Ledger with QR code generation for physical asset tagging.</p>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">Chain of Custody:</strong> Record every custody transfer event — who had it, when, where, and in what condition. Each event is SHA-256 hashed and anchored to the XRP Ledger, creating an immutable provenance chain. QR codes are generated for scanning at physical custody handoff points.</p>
-                            <p><strong style="color:#00aaff;">Production capabilities:</strong> Full Supabase-backed provenance database, QR code generation for physical tagging, XRPL memo-anchored verification, IUID integration, and chain visualization timeline. Supports counterfeit detection through provenance gap analysis.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Counterfeit and suspect parts cost the DoW an estimated <strong>$3-5 billion annually</strong> through mission failures, rework, accident investigations, and emergency procurements. Even non-counterfeit provenance failures — lost custody records, missing inspection certificates, unverifiable sourcing — add <strong>$500M+ in annual remediation costs</strong> across the defense industrial base. Traditional paper-based chain-of-custody systems have a <strong>23% gap rate</strong> (GIDEP data), meaning nearly 1 in 4 parts has an incomplete provenance trail. S4 Ledger's blockchain-anchored provenance chain creates an <strong>immutable, verifiable custody record</strong> for every handoff, inspection, and location change. QR codes enable instant field verification. At scale across 100 programs, this prevents <strong>$100M+/year</strong> in counterfeit-related losses, reduces GIDEP reporting overhead, and eliminates custody dispute resolution costs.</p>
-                        </div>
-                    </details>
-
-                    <!-- Branch & Program Selection -->
+<!-- Branch & Program Selection -->
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
@@ -2996,16 +2611,7 @@
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-chart-pie" style="color:#00aaff"></i> Cross-Program Analytics <button onclick="showAddActionModal('analytics')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Aggregate analytics dashboard spanning all ILS tools and programs. View upload trends, compliance metrics, SBOM vulnerability counts, GFP values, POA&M status, and submission volumes across your entire portfolio.</p>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">Cross-Program Dashboard:</strong> Aggregates data from all 22 ILS tools — Gap Analysis, DMSMS, Audit Vault, Supply Chain, Submissions, GFP, CDRL, Contracts, Provenance, SBOM, and more. Displays key performance indicators, trend lines, and comparative metrics across all your programs in a single view.</p>
-                            <p><strong style="color:#00aaff;">Production capabilities:</strong> Real-time data from Supabase, interactive charts with Chart.js, drill-down by program/tool/time period, exportable executive summaries, and automated alert thresholds for KPI deviations.</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Defense program executives currently rely on <strong>manual data calls</strong> to get cross-program ILS status — a process that takes 2-4 weeks per reporting cycle and costs <strong>$200K-$500K per quarter</strong> in analyst labor across a portfolio of 10+ programs. Data is often stale by the time reports are compiled. S4 Ledger's real-time analytics dashboard provides <strong>instant portfolio visibility</strong> across all programs and ILS elements, eliminates manual data aggregation, and enables data-driven resource allocation. At scale across a 100-program portfolio, this saves <strong>$40M+/year</strong> in eliminated reporting overhead and optimized resource allocation.</p>
-                        </div>
-                    </details>
-
-                    <!-- Filters -->
+<!-- Filters -->
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Branch Filter</label>
@@ -3072,16 +2678,7 @@
                 <div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-users-gear" style="color:#c9a84c"></i> Team & Access Management <button onclick="showAddActionModal('team')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
                     <p style="color:var(--steel);font-size:0.9rem;margin-bottom:0.5rem">Full team administration portal — create teams, assign program access, manage tool permissions, and audit team activity across all ILS tools. For quick team status, use the <strong style="color:#00aaff">Team</strong> button in the header bar.</p>
-                    <details style="display:none;margin-bottom:1rem;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#c9a84c;font-weight:600;font-size:0.85rem;"><i class="fas fa-info-circle"></i> How It Works</summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">Team Administration:</strong> Create organizational teams, invite members via email, and assign granular roles (Admin, ILS Manager, Analyst, Read-Only). Each role controls access to specific ILS tools and actions. Program-level access control ensures team members only see data for their assigned programs.</p>
-                            <p><strong style="color:#00aaff;">Production capabilities:</strong> Supabase-backed multi-tenant team system, SSO/CAC integration ready, audit log of all team actions, program-to-team assignment matrix, and automated access reviews with expiration alerts. Integrates with DoW identity providers (DMDC, DS Logon).</p>
-                            <p><strong style="color:#00aaff;">How S4 Ledger saves money here:</strong> Managing team access across multiple ILS tools and programs is currently handled through <strong>ad-hoc spreadsheets and email chains</strong>, leading to access control drift, unauthorized data exposure, and failed security audits. Government programs spend <strong>$100K-$300K per year per program</strong> on access management, security review boards, and account administration. S4 Ledger's centralized RBAC system eliminates manual access tracking, provides instant audit reports for CMMC/NIST compliance reviews, and reduces account provisioning from days to seconds. At scale, this saves <strong>$25M+/year</strong> in reduced security administration overhead and avoided audit findings.</p>
-                        </div>
-                    </details>
-
-                    <!-- Team Management Controls -->
+<!-- Team Management Controls -->
                     <div class="row" style="gap:8px 0;margin-bottom:12px">
                         <div class="col-md-3 col-6">
                             <label style="font-size:.78rem;color:var(--steel)">Team</label>
@@ -3166,29 +2763,7 @@
                         <i class="fas fa-ship" style="color:#c9a84c"></i> Acquisition Planner
                         <button onclick="showAddActionModal('acquisition')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button>
                     </h3>
-
-                    <details style="display:none;margin-bottom:1rem;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:10px 0;color:#00aaff;font-weight:600;font-size:0.85rem;">
-                            <i class="fas fa-info-circle"></i> How Acquisition Planner Works
-                        </summary>
-                        <div style="padding:0 0 12px;color:var(--steel);font-size:0.82rem;line-height:1.6;">
-                            <p><strong style="color:#1d1d1f;">What this tool does:</strong> The Acquisition Planner replaces legacy spreadsheets for tracking multi-year service craft and vessel acquisition lifecycles. Every hull type, hull number, POM funding status, material condition, ROH schedule, and justification is managed in a single auditable grid. Import directly from eNVCR, NVSRP, or any registry database.</p>
-                            <p><strong style="color:#00aaff;">Step-by-step:</strong></p>
-                            <ol style="margin:0 0 8px 16px;padding:0;">
-                                <li>Import existing data from eNVCR, CSV, JSON, or XML registries — or add records manually</li>
-                                <li>Track POM funded status, Navy region, custodian activity, and resource sponsors</li>
-                                <li>Monitor material condition, ROH costs, planned maintenance, and dry dock history</li>
-                                <li>Switch between programs if your organization manages multiple vessel portfolios</li>
-                                <li>Visualize the acquisition timeline on the interactive Gantt chart</li>
-                                <li>Sort, filter, search, and export to CSV or Excel for briefs</li>
-                                <li>Anchor the full plan hash to the Ledger for tamper-proof verification</li>
-                            </ol>
-                            <p><strong style="color:#c9a84c;">How S4 Ledger saves money here:</strong> Defense programs spend $200K–$800K annually maintaining ad-hoc acquisition tracking spreadsheets across dozens of stakeholders. Version conflicts, lost data, and manual Gantt chart creation waste 500+ staff-hours per cycle. S4 Ledger’s Acquisition Planner consolidates all vessel lifecycle data into one auditable grid with auto-generated Gantt timelines, direct registry imports, and multi-program switching — eliminating 60–80% of tracking labor. Programs with 50+ vessels typically recover the full platform cost within a single POM cycle.</p>
-                            <p><strong style="color:#00aaff;">Production mode:</strong> Connects to eNVCR, NVSRP, and other vessel registries via file import (CSV, JSON, XML). Supabase-backed persistence ensures all edits are tracked, versioned, and available for audit. Multi-program support lets contractors and PMs manage multiple vessel portfolios from one workspace.</p>
-                        </div>
-                    </details>
-
-                    <p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Multi-year service craft/vessel acquisition lifecycle tracker. Import from eNVCR or other registries, manage hull types, POM funding, ROH schedules, and material condition across all your programs.</p>
+<p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Multi-year service craft/vessel acquisition lifecycle tracker. Import from eNVCR or other registries, manage hull types, POM funding, ROH schedules, and material condition across all your programs.</p>
 
                     <!-- Dashboard Summary Cards -->
                     <div id="acqDashboardCards"></div>
