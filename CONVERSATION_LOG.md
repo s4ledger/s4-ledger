@@ -1,5 +1,5 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 25 — Restore + Light Mode Font Fixes + Steve Jobs UX Enhancements
+## Last Updated: Session 26 — Deep Visual Consistency Audit (Commit 25dabc0)
 
 ---
 
@@ -1973,6 +1973,47 @@ Font Visibility Fixes:
 | Tool card order | By importance (Compliance first, Brief last) |
 | Overlay consistency | All 5 overlays: rgba(245,245,247,0.95) + blur(20px) |
 | Details styling | HIW hidden; functional details clean white (R8-Q) |
+
+---
+## Session 26 — Deep Visual Consistency Audit (Commit 25dabc0)
+
+### What was done:
+**Complete platform-wide styling audit and normalization. Every tool, modal, and form input reviewed.**
+
+#### 1. Removed "How It Works" Dropdowns (21 blocks)
+- Deleted all 21 `<details style="display:none">` blocks from index.html (~370 lines removed)
+
+#### 2. Added ? Help Icons to Every Tool
+- New `S4.toolHelp` module in enterprise-features.js
+- Blue `?` circle icon injected into every tool heading (28 tools/panels)
+- Click shows popover with tool description and S4 Ledger value proposition
+
+#### 3. Fixed FAB White Box
+- `.s4-quick-fab` set to `background:transparent;pointer-events:none`
+- Interactive children get `pointer-events:all`
+
+#### 4. Fixed Global Input Text Color
+- `color:#fff !important` (dark-mode remnant) caused invisible text — changed to `#1d1d1f`
+
+#### 5. Standardized Border-Radius to 3px
+- ALL buttons, inputs, modals unified to `border-radius:3px!important`
+- Was competing between 3px, 8px, 12px, 20px at 4+ cascade levels
+
+#### 6. Normalized Gold Buttons to Blue
+- `.btn-gold` CSS class and 6 inline HTML gold gradient buttons all converted to blue
+- Remaining gold elements (credits, badges) verified decorative and kept
+
+#### 7. Redesigned Program Brief Sidebar
+- 52px icon strip → 220px 2-column grid with visible text labels
+- Reordered by importance: INSERT → FILE → TOOLS → VIEW → PANELS
+- Consistent accent color (removed per-icon custom colors)
+
+### Files Changed:
+- `prod-app/src/index.html` — 21 blocks removed, 6 gold buttons converted
+- `prod-app/src/styles/main.css` — 15+ CSS fixes
+- `prod-app/src/js/enterprise-features.js` — Added S4.toolHelp with 28 descriptions
+- `prod-app/src/js/brief.js` — Sidebar redesign (width, grid, labels, order)
+- `demo-app/` — All synced, both apps rebuilt
 
 ---
 *This log is updated every session. Reference before making changes.*
