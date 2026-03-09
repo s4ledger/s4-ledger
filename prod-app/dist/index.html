@@ -67,12 +67,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-BfR_mLuu.js"></script>
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-BID8heuq.js"></script>
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-BWE_XCB0.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/navigation-C-K2oFyj.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/metrics-BCEAU5Us.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-DoTPs1lX.js">
-  <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-DVq23rLJ.css">
+  <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-CYQ8dOLR.css">
 </head>
 <body class="light-mode" data-theme="light">
 <!-- Light mode always on -->
@@ -241,7 +241,7 @@
         </div>
         <div style="text-align:center;">
             <button onclick="startAuthFlow()" style="background:var(--accent);color:#1d1d1f;border:none;padding:14px 36px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
-            <button onclick="enterDemoMode()" style="display:inline-block;margin-left:12px;background:transparent;color:#c9a84c;border:1px solid rgba(201,168,76,0.4);padding:14px 28px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;letter-spacing:-0.01em;font-family:inherit;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See A Demo</button>
+            <button onclick="enterDemoMode()" style="display:inline-block;margin-left:12px;background:transparent;color:var(--accent);border:1px solid rgba(0,113,227,0.4);padding:14px 28px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;letter-spacing:-0.01em;font-family:inherit;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See A Demo</button>
         </div>
     </div>
 </section>
@@ -256,7 +256,7 @@
         </div>
         <!-- Demo Mode Banner (hidden by default, shown by enterDemoMode) -->
         <div class="demo-mode-banner" id="demoModeBanner" style="display:none;">
-            <span class="dmb-text"><i class="fas fa-eye" style="color:#c9a84c;margin-right:6px;"></i><strong>Demo Mode</strong> — Exploring with sample data. Sign in for full access and real blockchain anchoring.</span>
+            <span class="dmb-text"><i class="fas fa-eye" style="color:var(--accent);margin-right:6px;"></i><strong>Demo Mode</strong> — Exploring with sample data. Sign in for full access and real blockchain anchoring.</span>
             <div style="display:flex;gap:8px;align-items:center;">
                 <button class="dmb-tour" onclick="startWalkthrough()"><i class="fas fa-play-circle" style="margin-right:4px;"></i>Watch Demo</button>
                 <button class="dmb-signin" onclick="exitDemoMode()"><i class="fas fa-right-to-bracket" style="margin-right:4px;"></i>Sign In</button>
@@ -413,18 +413,18 @@
                         <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start anchoring</div>
                     </div>
                     <!-- Card 2: Explore the 23+ Tools -->
-                    <div onclick="showSection('sectionILS')" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
-                        <div style="width:40px;height:40px;border-radius:3px;background:rgba(201,168,76,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-brain" style="color:#c9a84c;font-size:1rem;"></i></div>
+                    <div onclick="showSection('sectionILS')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
+                        <div style="width:40px;height:40px;border-radius:3px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-brain" style="color:var(--accent);font-size:1rem;"></i></div>
                         <div style="color:var(--text-primary,#f0f0f5);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Browse ILS Tools</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">23+ tools &mdash; gap analysis, compliance, risk, and more.</div>
-                        <div style="margin-top:12px;color:#c9a84c;font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Browse tools</div>
+                        <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Browse tools</div>
                     </div>
                     <!-- Card 3: Take the Guided Tour -->
-                    <div onclick="if(typeof startWalkthrough==='function')startWalkthrough()" style="background:linear-gradient(135deg,rgba(168,85,247,0.06),rgba(168,85,247,0.02));border:1px solid rgba(168,85,247,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(168,85,247,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(168,85,247,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
-                        <div style="width:40px;height:40px;border-radius:3px;background:rgba(168,85,247,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-route" style="color:#a855f7;font-size:1rem;"></i></div>
+                    <div onclick="if(typeof startWalkthrough==='function')startWalkthrough()" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
+                        <div style="width:40px;height:40px;border-radius:3px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-route" style="color:var(--accent);font-size:1rem;"></i></div>
                         <div style="color:var(--text-primary,#f0f0f5);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Take the Guided Tour</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">Voice-narrated walkthrough of every feature.</div>
-                        <div style="margin-top:12px;color:#a855f7;font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start tour</div>
+                        <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start tour</div>
                     </div>
                 </div>
             </div>

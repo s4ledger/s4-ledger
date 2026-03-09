@@ -1309,12 +1309,11 @@
         .ils-category-label{color:#0071e3;border-bottom-color:rgba(0,113,227,0.1)}
 
 /* ═══ Demo Mode Banner ═══ */
-        .demo-mode-banner{background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(0,170,255,0.06));border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:8px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;animation:fadeIn 0.4s ease}
+        .demo-mode-banner{background:linear-gradient(135deg,rgba(0,170,255,0.08),rgba(0,113,227,0.04));border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:8px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;animation:fadeIn 0.4s ease}
         .demo-mode-banner .dmb-text{font-size:0.78rem;color:var(--steel)}
-        .demo-mode-banner .dmb-text strong{color:#c9a84c}
+        .demo-mode-banner .dmb-text strong{color:var(--accent)}
         .demo-mode-banner .dmb-signin{background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);color:var(--accent);border-radius:8px;padding:4px 14px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;white-space:nowrap}
         .demo-mode-banner .dmb-signin:hover{background:rgba(0,170,255,0.2);border-color:var(--accent)}
-        .demo-mode-banner{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(0,113,227,0.04));border-color:rgba(201,168,76,0.2)}
 
 /* C1 removed — user prefers the existing ? help buttons in tools */
 
@@ -1473,8 +1472,8 @@
 .fb-submit{width:100%;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.2s}
 .fb-submit:hover{background:#0099ee}
 /* Demo banner tour button */
-.dmb-tour{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:#c9a84c;border-radius:8px;padding:4px 14px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;white-space:nowrap}
-.dmb-tour:hover{background:rgba(201,168,76,0.2);border-color:#c9a84c}
+.dmb-tour{background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);color:var(--accent);border-radius:8px;padding:4px 14px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;white-space:nowrap}
+.dmb-tour:hover{background:rgba(0,170,255,0.2);border-color:var(--accent)}
 /* Light mode overrides */
 .fb-drawer{background:#fff;border-color:rgba(0,0,0,0.08)}
 .fb-category,.fb-comment{background:#f8f8fa;color:#1d1d1f;border-color:rgba(0,0,0,0.12)}

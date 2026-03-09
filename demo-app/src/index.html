@@ -235,7 +235,7 @@
         </div>
         <div style="text-align:center;">
             <button onclick="startAuthFlow()" style="background:var(--accent);color:#1d1d1f;border:none;padding:14px 36px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.1,0.25,1);letter-spacing:-0.01em;">Enter Platform <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
-            <button onclick="enterDemoMode()" style="display:inline-block;margin-left:12px;background:transparent;color:#c9a84c;border:1px solid rgba(201,168,76,0.4);padding:14px 28px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;letter-spacing:-0.01em;font-family:inherit;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See A Demo</button>
+            <button onclick="enterDemoMode()" style="display:inline-block;margin-left:12px;background:transparent;color:var(--accent);border:1px solid rgba(0,113,227,0.4);padding:14px 28px;border-radius:3px;font-weight:600;font-size:0.9375rem;cursor:pointer;transition:all 0.3s;letter-spacing:-0.01em;font-family:inherit;"><i class="fas fa-play-circle" style="margin-right:8px;"></i>See A Demo</button>
         </div>
     </div>
 </section>
@@ -250,7 +250,7 @@
         </div>
         <!-- Demo Mode Banner (hidden by default, shown by enterDemoMode) -->
         <div class="demo-mode-banner" id="demoModeBanner" style="display:none;">
-            <span class="dmb-text"><i class="fas fa-eye" style="color:#c9a84c;margin-right:6px;"></i><strong>Demo Mode</strong> — Exploring with sample data. Sign in for full access and real blockchain anchoring.</span>
+            <span class="dmb-text"><i class="fas fa-eye" style="color:var(--accent);margin-right:6px;"></i><strong>Demo Mode</strong> — Exploring with sample data. Sign in for full access and real blockchain anchoring.</span>
             <div style="display:flex;gap:8px;align-items:center;">
                 <button class="dmb-tour" onclick="startWalkthrough()"><i class="fas fa-play-circle" style="margin-right:4px;"></i>Watch Demo</button>
                 <button class="dmb-signin" onclick="exitDemoMode()"><i class="fas fa-right-to-bracket" style="margin-right:4px;"></i>Sign In</button>
@@ -407,18 +407,18 @@
                         <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start anchoring</div>
                     </div>
                     <!-- Card 2: Explore the 23+ Tools -->
-                    <div onclick="showSection('sectionILS')" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
-                        <div style="width:40px;height:40px;border-radius:3px;background:rgba(201,168,76,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-brain" style="color:#c9a84c;font-size:1rem;"></i></div>
+                    <div onclick="showSection('sectionILS')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
+                        <div style="width:40px;height:40px;border-radius:3px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-brain" style="color:var(--accent);font-size:1rem;"></i></div>
                         <div style="color:var(--text-primary,#f0f0f5);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Browse ILS Tools</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">23+ tools &mdash; gap analysis, compliance, risk, and more.</div>
-                        <div style="margin-top:12px;color:#c9a84c;font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Browse tools</div>
+                        <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Browse tools</div>
                     </div>
                     <!-- Card 3: Take the Guided Tour -->
-                    <div onclick="if(typeof startWalkthrough==='function')startWalkthrough()" style="background:linear-gradient(135deg,rgba(168,85,247,0.06),rgba(168,85,247,0.02));border:1px solid rgba(168,85,247,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(168,85,247,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(168,85,247,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
-                        <div style="width:40px;height:40px;border-radius:3px;background:rgba(168,85,247,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-route" style="color:#a855f7;font-size:1rem;"></i></div>
+                    <div onclick="if(typeof startWalkthrough==='function')startWalkthrough()" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:3px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
+                        <div style="width:40px;height:40px;border-radius:3px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-route" style="color:var(--accent);font-size:1rem;"></i></div>
                         <div style="color:var(--text-primary,#f0f0f5);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Take the Guided Tour</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">Voice-narrated walkthrough of every feature.</div>
-                        <div style="margin-top:12px;color:#a855f7;font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start tour</div>
+                        <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start tour</div>
                     </div>
                 </div>
             </div>
@@ -831,6 +831,9 @@
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-provenance',this)"><i class="fas fa-link"></i> Provenance Chain</button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-analytics',this)"><i class="fas fa-chart-pie"></i> Cross-Program Analytics</button>
                     <button class="ils-hub-tab" onclick="switchHubTab('hub-team',this)"><i class="fas fa-users-gear"></i> Team Management</button>
+                    <button class="ils-hub-tab" onclick="switchHubTab('hub-acquisition',this)"><i class="fas fa-ship"></i> Acquisition Planner</button>
+                    <button class="ils-hub-tab" onclick="switchHubTab('hub-milestones',this)"><i class="fas fa-flag-checkered"></i> Milestones</button>
+                    <button class="ils-hub-tab" onclick="switchHubTab('hub-brief',this)"><i class="fas fa-briefcase"></i> Program Brief</button>
                 </div>
 
                 <!-- Recommended for You (populated by roles.js after role selection) -->
@@ -2106,7 +2109,7 @@
                         </div>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
-                        <button onclick="loadPredictiveData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#2c2c2e;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Run Predictions</button>
+                        <button onclick="loadPredictiveData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Run Predictions</button>
                         <button onclick="exportPredictive()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Report</button>
                         <button onclick="anchorPredictive()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
@@ -2266,7 +2269,7 @@
 
                     <!-- Analysis Controls -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="analyzeSubmission()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Analyze &amp; Compare</button>
+                        <button onclick="analyzeSubmission()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Analyze &amp; Compare</button>
 
                         <button onclick="anchorSubmissionReview()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Review to Ledger</button>
                         <button onclick="exportDiscrepancyReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export Discrepancy Report</button>
@@ -2422,7 +2425,7 @@
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
                         <button onclick="runGfpInventory()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-magnifying-glass-chart"></i> Run Inventory Check</button>
-                        <button onclick="anchorGFP()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="anchorGFP()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         <button onclick="exportGfpReport()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export DD 1662 Report</button>
                     </div>
 
@@ -2516,9 +2519,9 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="runCdrlValidation()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-check-double"></i> Validate CDRLs</button>
+                        <button onclick="runCdrlValidation()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-check-double"></i> Validate CDRLs</button>
                         <button onclick="anchorCDRL()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
-                        <button onclick="exportCdrlReport()" class="btn btn-sm hover-lift" style="background:rgba(201,168,76,0.1);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export Compliance Report</button>
+                        <button onclick="exportCdrlReport()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-file-pdf"></i> Export Compliance Report</button>
                     </div>
 
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
@@ -2614,7 +2617,7 @@
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
                         <button onclick="runContractExtraction()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-wand-magic-sparkles"></i> Extract Clauses (AI)</button>
-                        <button onclick="anchorContract()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="anchorContract()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         <button onclick="exportContractMatrix()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-table"></i> Export Clause Matrix</button>
                     </div>
 
@@ -2710,9 +2713,9 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="recordProvenanceEvent()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-link"></i> Record Transfer</button>
+                        <button onclick="recordProvenanceEvent()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-link"></i> Record Transfer</button>
                         <button onclick="anchorChain()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Chain to Ledger</button>
-                        <button onclick="generateProvenanceQR()" class="btn btn-sm hover-lift" style="background:rgba(201,168,76,0.1);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-qrcode"></i> Generate QR Tag</button>
+                        <button onclick="generateProvenanceQR()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-qrcode"></i> Generate QR Tag</button>
                         <button onclick="verifyProvenanceChain()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-shield-check"></i> Verify Chain</button>
                     </div>
 
@@ -2840,9 +2843,9 @@
 
                     <!-- Action Buttons -->
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
-                        <button onclick="createNewTeam()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#c9a84c,#a88a3c);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-plus-circle"></i> Create Team</button>
+                        <button onclick="createNewTeam()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;font-weight:700"><i class="fas fa-plus-circle"></i> Create Team</button>
                         <button onclick="inviteTeamMember()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px"><i class="fas fa-user-plus"></i> Invite Member</button>
-                        <button onclick="exportTeamAudit()" class="btn btn-sm hover-lift" style="background:rgba(201,168,76,0.1);color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-clipboard-list"></i> Export Access Audit</button>
+                        <button onclick="exportTeamAudit()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-clipboard-list"></i> Export Access Audit</button>
                         <button onclick="runAccessReview()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:8px 16px"><i class="fas fa-shield-halved"></i> Access Review</button>
                     </div>
 
@@ -2997,7 +3000,7 @@
 
             <!-- ══ HUB: PROGRAM MILESTONE TRACKER (Phase 2) ══ -->
             <div class="ils-hub-panel" id="hub-milestones">
-                <div class="row"><div class="col-lg-12"><div class="demo-card">
+                <div class="row"><div class="col-lg-12"><div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px">
                         <i class="fas fa-flag-checkered" style="color:#00aaff"></i> Program Milestone Tracker
                         <button onclick="showAddActionModal('milestones')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button>
@@ -3046,7 +3049,7 @@
                         <button class="ai-quick-btn" onclick="milShowAuditLog()" style="background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.25);color:#c9a84c"><i class="fas fa-history"></i> Audit Log</button>
                         <span style="flex:1"></span>
                         <input type="text" id="milSearchInput" placeholder="Search hull, builder, program..." oninput="milFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:#1d1d1f;border-radius:3px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
-                        <button onclick="anchorMilestones()" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;border-radius:3px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="anchorMilestones()" style="background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border:none;border-radius:3px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
                     <!-- Bulk Actions Bar -->
@@ -3104,7 +3107,7 @@
 
             <!-- ══ HUB: PROGRAM BRIEF ENGINE (Phase 3) ══ -->
             <div class="ils-hub-panel" id="hub-brief">
-                <div class="row"><div class="col-lg-12"><div class="demo-card">
+                <div class="row"><div class="col-lg-12"><div class="s4-card">
                     <h3 style="display:flex;align-items:center;gap:8px">
                         <i class="fas fa-briefcase" style="color:#00aaff"></i> Program Brief Engine
                         <button onclick="showAddActionModal('brief')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button>
