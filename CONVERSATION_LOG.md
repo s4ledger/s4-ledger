@@ -2582,4 +2582,32 @@ Every panel has exactly ONE action bar matching the Phase 3 selector. Button ord
 - Both `*/dist/` — Rebuilt and verified
 
 ---
+
+### Session 36d — Button Spacing Audit & Brief Composer Redundancy Fix
+**Commit:** `d102aeb`
+
+**Problem:** Brief Composer had redundant action buttons — static HTML action bar (New Brief, Import PPTX, Export PDF, Anchor to Ledger) visible ALONGSIDE brief.js dynamic buttons (list view: New Brief + Import PPTX; editor view: Present, PPTX, PDF, Anchor to Ledger, Save). Also, buttons across all tools were too compact and close together (gap:10px, margin-top:4px).
+
+**Deep Audit Findings:**
+- 22 hub panels with `gap:10px` action bars processed by metrics.js Phase 3 → `.tool-actions-bar`
+- Brief Composer had BOTH static HTML bar AND brief.js dynamic buttons = redundant
+- Compliance sub-sections use `gap:8px` (appropriate for smaller nested controls)
+- Vault search/filter bar uses `gap:8px` (appropriate for filter UI)
+- metrics.js Phase 3 risked converting brief.js dynamic content inside `#briefContainer`
+
+**Fixes Applied:**
+1. **CSS** (`main.css`): `.tool-actions-bar` gap `10px→14px`, margin-top `4px→10px` — breathing room between all buttons across every tool
+2. **HTML** (`index.html`): Removed redundant static action bar from hub-brief — brief.js already renders context-appropriate buttons (list view: New Brief + Import; editor view: Present + PPTX + PDF + Anchor + Save)
+3. **metrics.js Phase 3**: Added `!div.closest('#briefContainer')` guard — prevents DOM transformer from breaking brief.js dynamic layout
+4. **brief.js**: List view button gap `8px→10px` — consistent with system standard
+
+**Files Changed:**
+- `prod-app/src/styles/main.css` — `.tool-actions-bar` spacing increase
+- `prod-app/src/index.html` — Removed hub-brief static action bar (7 lines)
+- `prod-app/src/js/metrics.js` — Phase 3 briefContainer guard
+- `prod-app/src/js/brief.js` — List view button gap normalization
+- `demo-app/src/` — Synced: main.css, index.html, metrics.js, brief.js
+- Both `*/dist/` — Rebuilt and verified
+
+---
 *This log is updated every session. Reference before making changes.*
