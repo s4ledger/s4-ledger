@@ -5287,6 +5287,12 @@ body[data-theme="dark"] {
 [data-theme="dark"] [style*="background:#1a3a5c"],
 [data-theme="dark"] [style*="background: #1a3a5c"] { background:#1a2940!important; }
 [data-theme="dark"] [style*="background:rgba(255,255,255,0.0"] { background:rgba(255,255,255,0.04)!important; }
+[data-theme="dark"] [style*="background:rgba(255,255,255,0.1"],
+[data-theme="dark"] [style*="background: rgba(255,255,255,0.1"] { background:rgba(255,255,255,0.1)!important; }
+[data-theme="dark"] [style*="background:rgba(255,255,255,0.2"],
+[data-theme="dark"] [style*="background: rgba(255,255,255,0.2"] { background:rgba(255,255,255,0.15)!important; }
+[data-theme="dark"] [style*="background:rgba(255,255,255,0.3"],
+[data-theme="dark"] [style*="background: rgba(255,255,255,0.3"] { background:rgba(255,255,255,0.15)!important; }
 
 /* ── Counter-override: Lines ~1700-1730 "nuclear" white-text killer.
      In dark mode, restore white/light text everywhere needed. ── */
@@ -5366,12 +5372,21 @@ body.dark-mode #mainNav button[aria-label="Menu"] { color:#E0E0FF!important; }
 [data-theme="dark"] [style*="background:#f8f9fb"] { background:#1E1E2E!important; }
 
 /* Borders */
+[data-theme="dark"] [style*="border-bottom:1px solid rgba(0,0,0,0.04)"],
+[data-theme="dark"] [style*="border-bottom: 1px solid rgba(0,0,0,0.04)"] { border-bottom-color:rgba(255,255,255,0.04)!important; }
 [data-theme="dark"] [style*="border-bottom:1px solid rgba(0,0,0,0.06)"] { border-bottom-color:rgba(255,255,255,0.06)!important; }
 [data-theme="dark"] [style*="border:1px solid rgba(0,0,0,0.06)"] { border-color:rgba(255,255,255,0.06)!important; }
-[data-theme="dark"] [style*="border:1px solid rgba(0,0,0,0.1)"] { border-color:rgba(255,255,255,0.08)!important; }
+[data-theme="dark"] [style*="border:1px solid rgba(0,0,0,0.08)"],
+[data-theme="dark"] [style*="border: 1px solid rgba(0,0,0,0.08)"] { border-color:rgba(255,255,255,0.08)!important; }
+[data-theme="dark"] [style*="border:1px solid rgba(0,0,0,0.1)"],
+[data-theme="dark"] [style*="border: 1px solid rgba(0,0,0,0.1)"] { border-color:rgba(255,255,255,0.08)!important; }
+[data-theme="dark"] [style*="border:1px solid rgba(0,0,0,0.12)"],
+[data-theme="dark"] [style*="border: 1px solid rgba(0,0,0,0.12)"] { border-color:rgba(255,255,255,0.1)!important; }
 [data-theme="dark"] [style*="border:2px solid rgba(0,0,0"] { border-color:rgba(255,255,255,0.08)!important; }
 [data-theme="dark"] [style*="border:1px solid rgba(255,255,255"],
-[data-theme="dark"] [style*="border: 1px solid rgba(255,255,255"] { border-color:rgba(255,255,255,0.08)!important; }
+[data-theme="dark"] [style*="border: 1px solid rgba(255,255,255"] { border-color:rgba(255,255,255,0.1)!important; }
+[data-theme="dark"] [style*="border-bottom:1px solid rgba(255,255,255"],
+[data-theme="dark"] [style*="border-bottom: 1px solid rgba(255,255,255"] { border-bottom-color:rgba(255,255,255,0.06)!important; }
 [data-theme="dark"] [style*="border:2px solid rgba(255,255,255"],
 [data-theme="dark"] [style*="border: 2px solid rgba(255,255,255"] { border-color:rgba(255,255,255,0.1)!important; }
 
@@ -5390,12 +5405,14 @@ body.dark-mode #mainNav button[aria-label="Menu"] { color:#E0E0FF!important; }
 [data-theme="dark"] .s4-card h4 { color:var(--accent)!important; }
 [data-theme="dark"] .s4-card p,
 [data-theme="dark"] .s4-card label { color:var(--steel)!important; }
-[data-theme="dark"] select,
-[data-theme="dark"] input,
+[data-theme="dark"] select:not([style*="background:linear"]),
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([style*="background:linear"]),
 [data-theme="dark"] textarea {
     background:var(--surface)!important; color:var(--text)!important;
     border-color:var(--border)!important;
 }
+[data-theme="dark"] input[type="checkbox"],
+[data-theme="dark"] input[type="radio"] { accent-color:var(--accent); }
 [data-theme="dark"] select option { background:#1E1E2E!important; color:#E0E0FF!important; }
 [data-theme="dark"] input::placeholder,
 [data-theme="dark"] textarea::placeholder { color:rgba(255,255,255,0.3)!important; }
@@ -5449,7 +5466,7 @@ body.dark-mode #mainNav button[aria-label="Menu"] { color:#E0E0FF!important; }
 [data-theme="dark"] h3,
 [data-theme="dark"] h4 { color:var(--text)!important; }
 [data-theme="dark"] .hero p,
-[data-theme="dark"] p { color:var(--steel); }
+[data-theme="dark"] p { color:var(--steel)!important; }
 [data-theme="dark"] .s4-welcome-card { background:rgba(15,17,23,0.97)!important; }
 [data-theme="dark"] .s4-welcome-inner { background:var(--card)!important; }
 [data-theme="dark"] .s4-welcome-chain { background:var(--surface)!important; border-color:var(--border)!important; }
