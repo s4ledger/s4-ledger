@@ -8624,31 +8624,94 @@ window.verifyProvenanceChain = verifyProvenanceChain;
 
     function _runTour() {
         if (localStorage.getItem('s4_tour_done')) return;
+
+        // Save where the user is right now so we can return them
+        var savedScrollX = window.scrollX;
+        var savedScrollY = window.scrollY;
+
         var overlay = document.createElement('div');
         overlay.className = 's4-tour-overlay';
         document.body.appendChild(overlay);
         requestAnimationFrame(function() { overlay.classList.add('visible'); });
 
         var currentStep = 0;
+        var highlightedEl = null;
+
+        function _clearHighlight() {
+            if (highlightedEl) {
+                highlightedEl.style.removeProperty('position');
+                highlightedEl.style.removeProperty('z-index');
+                highlightedEl.style.removeProperty('box-shadow');
+                highlightedEl.style.removeProperty('border-radius');
+                highlightedEl = null;
+            }
+        }
+
+        function _highlightTarget(el) {
+            _clearHighlight();
+            if (!el) return;
+            highlightedEl = el;
+            var cs = getComputedStyle(el);
+            if (cs.position === 'static') el.style.position = 'relative';
+            el.style.zIndex = '99999';
+            el.style.boxShadow = '0 0 0 4px rgba(0,122,255,0.5), 0 0 20px rgba(0,122,255,0.2)';
+            el.style.borderRadius = '10px';
+        }
+
+        function _positionTip(tip, target, step) {
+            if (!target) {
+                tip.style.top = '50%';
+                tip.style.left = '50%';
+                tip.style.transform = 'translate(-50%, -50%)';
+                return;
+            }
+            // Read rect AFTER scroll has settled
+            var rect = target.getBoundingClientRect();
+            var tipW = 280;
+            var tipH = tip.offsetHeight || 200;
+            var gap = 14;
+
+            // Decide: place below or above the target
+            var spaceBelow = window.innerHeight - rect.bottom;
+            var placeBelow = spaceBelow > (tipH + gap);
+
+            var tipTop, tipLeft;
+            if (placeBelow) {
+                tipTop = rect.bottom + gap;
+                tip.classList.remove('arrow-bottom');
+            } else {
+                tipTop = rect.top - tipH - gap;
+                tip.classList.add('arrow-bottom');
+            }
+            tipLeft = rect.left + (rect.width / 2) - (tipW / 2);
+            tipLeft = Math.max(12, Math.min(tipLeft, window.innerWidth - tipW - 12));
+            tipTop = Math.max(12, tipTop);
+
+            // Use fixed positioning (relative to viewport, not page)
+            tip.style.position = 'fixed';
+            tip.style.top = tipTop + 'px';
+            tip.style.left = tipLeft + 'px';
+        }
 
         function _showStep(idx) {
             // Remove previous tip
             var old = document.querySelector('.s4-tour-tip');
-            if (old) old.remove();
+            if (old) { old.classList.remove('visible'); old.remove(); }
+            _clearHighlight();
             if (idx >= TOUR_STEPS.length) { _endTour(); return; }
             currentStep = idx;
             var step = TOUR_STEPS[idx];
             var target = _findTourTarget(step);
-            var tip = document.createElement('div');
-            tip.className = 's4-tour-tip' + (step.arrow === 'bottom' ? ' arrow-bottom' : '');
-            tip.setAttribute('role', 'dialog');
-            tip.setAttribute('aria-label', step.title);
 
             var dotsHtml = '';
             for (var d = 0; d < TOUR_STEPS.length; d++) {
                 dotsHtml += '<div class="s4-tour-dot' + (d === idx ? ' active' : '') + '"></div>';
             }
 
+            var tip = document.createElement('div');
+            tip.className = 's4-tour-tip';
+            tip.setAttribute('role', 'dialog');
+            tip.setAttribute('aria-label', step.title);
             tip.innerHTML = '<div class="s4-tour-step">Step ' + (idx + 1) + ' of ' + TOUR_STEPS.length + '</div>' +
                 '<div class="s4-tour-title">' + step.title + '</div>' +
                 '<div class="s4-tour-body">' + step.body + '</div>' +
@@ -8660,42 +8723,38 @@ window.verifyProvenanceChain = verifyProvenanceChain;
                     '</div>' +
                 '</div>';
 
-            document.body.appendChild(tip);
-
-            // Position relative to target
-            if (target) {
-                var rect = target.getBoundingClientRect();
-                var tipTop = rect.bottom + window.scrollY + 12;
-                var tipLeft = rect.left + window.scrollX + (rect.width / 2) - 140;
-                tipLeft = Math.max(12, Math.min(tipLeft, window.innerWidth - 300));
-                if (tipTop + 200 > window.innerHeight + window.scrollY) {
-                    tipTop = rect.top + window.scrollY - 200;
-                    tip.classList.add('arrow-bottom');
-                }
-                tip.style.top = tipTop + 'px';
-                tip.style.left = tipLeft + 'px';
-                target.scrollIntoView({behavior: 'smooth', block: 'center'});
-            } else {
-                tip.style.top = '50%';
-                tip.style.left = '50%';
-                tip.style.transform = 'translate(-50%, -50%)';
-            }
-
-            requestAnimationFrame(function() { tip.classList.add('visible'); });
-
             tip.querySelector('.s4-tour-next').addEventListener('click', function() { _showStep(idx + 1); });
             tip.querySelector('.s4-tour-skip').addEventListener('click', _endTour);
 
-            // Focus the next button for keyboard users
-            tip.querySelector('.s4-tour-next').focus();
+            document.body.appendChild(tip);
+
+            if (target) {
+                // Scroll the target into the center of the viewport FIRST
+                target.scrollIntoView({behavior: 'smooth', block: 'center'});
+                // Wait for the scroll to settle, THEN position + highlight + reveal
+                setTimeout(function() {
+                    _highlightTarget(target);
+                    _positionTip(tip, target, step);
+                    requestAnimationFrame(function() { tip.classList.add('visible'); });
+                    tip.querySelector('.s4-tour-next').focus();
+                }, 500);
+            } else {
+                // No target found — center the tooltip in viewport
+                _positionTip(tip, null, step);
+                requestAnimationFrame(function() { tip.classList.add('visible'); });
+                tip.querySelector('.s4-tour-next').focus();
+            }
         }
 
         function _endTour() {
             localStorage.setItem('s4_tour_done', '1');
+            _clearHighlight();
             var tip = document.querySelector('.s4-tour-tip');
             if (tip) { tip.classList.remove('visible'); setTimeout(function() { tip.remove(); }, 350); }
             overlay.classList.remove('visible');
             setTimeout(function() { overlay.remove(); }, 350);
+            // Scroll the user back to exactly where they were
+            window.scrollTo({left: savedScrollX, top: savedScrollY, behavior: 'smooth'});
             if (typeof window._s4Announce === 'function') window._s4Announce('Onboarding tour complete');
         }
 
