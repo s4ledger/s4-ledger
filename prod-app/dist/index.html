@@ -94,7 +94,7 @@
 <a href="#mainContent" id="skipToContent" style="position:absolute;top:-100px;left:0;background:#00aaff;color:#fff;padding:8px 16px;z-index:10000;font-size:0.9rem;font-weight:700;text-decoration:none;border-radius:0 0 4px 0;transition:top 0.2s;" onfocus="this.style.top='0'" onblur="this.style.top='-100px'">Skip to Content</a>
 <nav id="mainNav" role="navigation" aria-label="Main navigation" style="position:fixed;top:28px;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.06);height:64px;">
     <div style="max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:100%;">
-        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#1d1d1f;font-weight:700;font-size:1rem;">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text,#1d1d1f);font-weight:700;font-size:1rem;">
             <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:32px;width:32px;">
             <span>S4 Ledger</span>
         </a>
@@ -133,7 +133,7 @@
 <div id="s4SessionLockOverlay" role="alertdialog" aria-modal="true" aria-label="Session locked" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.95);z-index:99998;align-items:center;justify-content:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);cursor:pointer" onclick="S4.resumeSession()">
     <div style="text-align:center;max-width:400px;">
         <i class="fas fa-lock" style="font-size:3rem;color:#c9a84c;margin-bottom:16px;display:block"></i>
-        <h3 style="color:#1d1d1f;font-weight:800;margin-bottom:8px">Session Locked</h3>
+        <h3 style="color:var(--text,#1d1d1f);font-weight:800;margin-bottom:8px">Session Locked</h3>
         <p style="color:var(--steel);font-size:0.9rem;margin-bottom:20px">Your session was locked due to inactivity.<br>Click anywhere to resume.</p>
         <div style="font-size:0.75rem;color:var(--muted)"><i class="fas fa-shield-halved" style="margin-right:4px;color:#00aaff"></i>Security policy: 30-minute timeout</div>
     </div>
@@ -163,7 +163,7 @@
 <!-- ═══ CAC / LOGIN POPUP ═══ -->
 <div id="cacLoginModal" role="dialog" aria-modal="true" aria-labelledby="cacLoginHeading" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.95);z-index:99998;align-items:center;justify-content:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);">
     <div style="background:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:16px;padding:40px;max-width:480px;width:95%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
-        <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:48px;width:48px;margin-bottom:8px;"><h3 id="cacLoginHeading" style="color:#1d1d1f;font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the Anchor-S4 workspace</p></div>
+        <div style="margin-bottom:24px;"><img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:48px;width:48px;margin-bottom:8px;"><h3 id="cacLoginHeading" style="color:var(--text,#1d1d1f);font-size:1.2rem;font-weight:800;margin:0;">S4 Ledger Platform Login</h3><p style="color:var(--steel);font-size:0.82rem;margin-top:4px;">Authenticate to access the Anchor-S4 workspace</p></div>
         <div id="cacLoginTabs" style="display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
             <button onclick="switchLoginTab('cac')" id="loginTabCac" style="flex:1;padding:10px;background:rgba(0,170,255,0.1);color:var(--accent);border:none;font-weight:700;font-size:0.82rem;cursor:pointer;"><i class="fas fa-id-card" style="margin-right:6px;"></i>CAC / PIV</button>
             <button onclick="switchLoginTab('account')" id="loginTabAcct" style="flex:1;padding:10px;background:transparent;color:var(--steel);border:none;font-weight:600;font-size:0.82rem;cursor:pointer;"><i class="fas fa-user" style="margin-right:6px;"></i>Account</button>
@@ -178,8 +178,8 @@
         </div>
         <div id="acctLoginPane" style="display:none;">
             <div id="loginAuthError" style="display:none;background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.3);border-radius:8px;padding:10px 12px;margin-bottom:12px;color:#ff3b30;font-size:0.82rem;text-align:left;"></div>
-            <div style="margin-bottom:12px;text-align:left;"><label for="loginEmail" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email</label><input type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#fff;color:#1d1d1f;border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;" autocomplete="email"></div>
-            <div style="margin-bottom:16px;text-align:left;"><label for="loginPassword" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input type="password" id="loginPassword" placeholder="••••••••" style="background:#fff;color:#1d1d1f;border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;" autocomplete="current-password"></div>
+            <div style="margin-bottom:12px;text-align:left;"><label for="loginEmail" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Email</label><input type="email" id="loginEmail" placeholder="user@agency.mil" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;" autocomplete="email"></div>
+            <div style="margin-bottom:16px;text-align:left;"><label for="loginPassword" style="color:var(--steel);font-size:0.78rem;font-weight:600;">Password</label><input type="password" id="loginPassword" placeholder="••••••••" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin-top:4px;font-size:0.88rem;" autocomplete="current-password"></div>
             <button id="btnAccountLogin" onclick="handleAccountLogin()" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;padding:12px 36px;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;width:100%;box-shadow:0 2px 8px rgba(0,113,227,0.2);transition:all 0.25s cubic-bezier(0.25,0.1,0.25,1);"><i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In</button>
             <div id="signupToggle" style="margin-top:12px;font-size:0.78rem;text-align:center;">
                 <span style="color:var(--steel);">No account?</span> <a href="#" onclick="event.preventDefault();toggleSignupMode();" style="color:var(--accent);text-decoration:none;font-weight:600;">Create one</a>
@@ -193,7 +193,7 @@
 <main id="mainContent" role="main" style="margin-top:92px;">
 <section class="hero" aria-label="Platform overview" style="padding:2rem 0 2rem;text-align:center;">
     <div class="container">
-        <h1 style="font-size:2.4rem;font-weight:800;margin-bottom:0.75rem;color:#1d1d1f;letter-spacing:-0.035em;line-height:1.1;">S4 Ledger <span style="color:var(--accent);">Platform</span></h1>
+        <h1 style="font-size:2.4rem;font-weight:800;margin-bottom:0.75rem;color:var(--text,#1d1d1f);letter-spacing:-0.035em;line-height:1.1;">S4 Ledger <span style="color:var(--accent);">Platform</span></h1>
         <p style="color:var(--steel);font-size:1.05rem;">The integrity layer for defense logistics. Track every part, verify every handoff, and prove compliance &mdash; instantly.</p>
         <div class="badge-live" style="display:inline-block;margin-top:12px;background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.25);color:var(--accent);padding:6px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;">XRPL Mainnet Connected &mdash; Navy Record Types &bull; 54+ Pre-Built Templates</div>
     </div>
@@ -202,40 +202,40 @@
 <section id="platformLanding" aria-label="Defense logistics toolkit" style="padding:3rem 0 4rem;">
     <div class="container">
         <div style="text-align:center;margin-bottom:3rem;">
-            <h2 style="font-size:1.8rem;font-weight:700;color:#1d1d1f;margin-bottom:0.75rem;letter-spacing:-0.03em;line-height:1.15;">The Complete Defense Logistics Toolkit</h2>
+            <h2 style="font-size:1.8rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:0.75rem;letter-spacing:-0.03em;line-height:1.15;">The Complete Defense Logistics Toolkit</h2>
             <p style="color:var(--steel);font-size:1.05rem;max-width:640px;margin:0 auto;">23+ integrated tools for anchoring, verifying, and managing Navy logistics records on the XRP Ledger. Built by ILS professionals, for ILS professionals.</p>
         </div>
         <div class="row" style="margin-bottom:2rem;">
             <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-anchor" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
-                <h4 style="font-size:1rem;font-weight:700;color:#1d1d1f;margin-bottom:0.5rem;">Anchor &amp; Verify</h4>
+                <h4 style="font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:0.5rem;">Anchor &amp; Verify</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Hash any defense record with SHA-256 and anchor the fingerprint to the XRP Ledger. Verify integrity at any time.</p>
             </div></div>
             <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-cubes" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
-                <h4 style="font-size:1rem;font-weight:700;color:#1d1d1f;margin-bottom:0.5rem;">Anchor-S4</h4>
+                <h4 style="font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:0.5rem;">Anchor-S4</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Gap analysis, DMSMS tracking, readiness scoring, lifecycle cost estimation, compliance scorecards, acquisition planning, and 15+ more tools.</p>
             </div></div>
             <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-shield-halved" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
-                <h4 style="font-size:1rem;font-weight:700;color:#1d1d1f;margin-bottom:0.5rem;">Audit &amp; Compliance</h4>
+                <h4 style="font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:0.5rem;">Audit &amp; Compliance</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">CMMC, NIST 800-171, DFARS &mdash; automated compliance scoring with blockchain-anchored evidence.</p>
             </div></div>
         </div>
         <div class="row" style="margin-bottom:2rem;">
             <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-brain" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
-                <h4 style="font-size:1rem;font-weight:700;color:#1d1d1f;margin-bottom:0.5rem;">AI-Powered Analysis</h4>
+                <h4 style="font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:0.5rem;">AI-Powered Analysis</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Supply chain risk engine, predictive maintenance AI, and a conversational agent for ILS guidance.</p>
             </div></div>
             <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-database" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
-                <h4 style="font-size:1rem;font-weight:700;color:#1d1d1f;margin-bottom:0.5rem;">Defense Data Import</h4>
+                <h4 style="font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:0.5rem;">Defense Data Import</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Import from DPAS, OARS, OMMS-NG, DECKPLATE, and other Navy systems. 500+ defense platforms database.</p>
             </div></div>
             <div class="col-md-4 mb-3"><div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem 1.5rem;text-align:center;height:100%;">
                 <i class="fas fa-file-contract" style="font-size:2rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
-                <h4 style="font-size:1rem;font-weight:700;color:#1d1d1f;margin-bottom:0.5rem;">Contract &amp; Config Mgmt</h4>
+                <h4 style="font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:0.5rem;">Contract &amp; Config Mgmt</h4>
                 <p style="color:var(--steel);font-size:0.88rem;line-height:1.6;">Track warranties, CDRL deliverables, contract modifications, and engineering change proposals.</p>
             </div></div>
         </div>
@@ -267,7 +267,7 @@
         <div class="onboard-modal">
             <div class="onboard-header">
                 <div style="font-size:2rem;margin-bottom:8px"><i class="fas fa-shield-halved" style="color:var(--accent)"></i></div>
-                <h2 style="margin:0;font-size:1.3rem;color:#1d1d1f;font-weight:800">Welcome to S4 Ledger</h2>
+                <h2 style="margin:0;font-size:1.3rem;color:var(--text,#1d1d1f);font-weight:800">Welcome to S4 Ledger</h2>
                 <p style="color:var(--steel);font-size:0.82rem;margin:6px 0 0">Immutable Defense Logistics on the XRP Ledger</p>
                 <div class="onboard-progress" id="onboardProgress">
                     <div class="onboard-dot active" data-step="0"></div>
@@ -280,24 +280,24 @@
             <div class="onboard-body">
                 <!-- Step 0: Welcome -->
                 <div class="onboard-step active" id="onboardStep0">
-                    <h4 style="color:#1d1d1f;margin:0 0 12px;font-size:1rem"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:8px"></i>Platform Setup</h4>
+                    <h4 style="color:var(--text,#1d1d1f);margin:0 0 12px;font-size:1rem"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:8px"></i>Platform Setup</h4>
                     <p style="color:var(--steel);font-size:0.85rem;line-height:1.6;margin-bottom:16px">S4 Ledger will set up your account, provision your XRPL wallet, and allocate your Credits. This takes just a few seconds.</p>
-                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--accent)"><i class="fas fa-anchor"></i></div><div><strong style="color:#1d1d1f">Anchor Records</strong><div style="color:var(--steel);font-size:0.8rem">SHA-256 hash any document to the XRP Ledger in 3-5 seconds</div></div></div>
-                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(201,168,76,0.1);color:var(--gold)"><i class="fas fa-coins"></i></div><div><strong style="color:#1d1d1f">Credit Economy</strong><div style="color:var(--steel);font-size:0.8rem">0.01 Credits per anchor (~$0.0001). Real on-chain token transfers.</div></div></div>
-                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--green)"><i class="fas fa-brain"></i></div><div><strong style="color:#1d1d1f">23+ ILS Tools</strong><div style="color:var(--steel);font-size:0.8rem">Gap analysis, DMSMS, readiness, compliance, risk, and more</div></div></div>
-                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:#00aaff"><i class="fas fa-robot"></i></div><div><strong style="color:#1d1d1f">AI Agent</strong><div style="color:var(--steel);font-size:0.8rem">Context-aware assistant available on every tool and tab</div></div></div>
+                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--accent)"><i class="fas fa-anchor"></i></div><div><strong style="color:var(--text,#1d1d1f)">Anchor Records</strong><div style="color:var(--steel);font-size:0.8rem">SHA-256 hash any document to the XRP Ledger in 3-5 seconds</div></div></div>
+                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(201,168,76,0.1);color:var(--gold)"><i class="fas fa-coins"></i></div><div><strong style="color:var(--text,#1d1d1f)">Credit Economy</strong><div style="color:var(--steel);font-size:0.8rem">0.01 Credits per anchor (~$0.0001). Real on-chain token transfers.</div></div></div>
+                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:var(--green)"><i class="fas fa-brain"></i></div><div><strong style="color:var(--text,#1d1d1f)">23+ ILS Tools</strong><div style="color:var(--steel);font-size:0.8rem">Gap analysis, DMSMS, readiness, compliance, risk, and more</div></div></div>
+                    <div class="onboard-feature"><div class="onboard-icon" style="background:rgba(0,170,255,0.1);color:#00aaff"><i class="fas fa-robot"></i></div><div><strong style="color:var(--text,#1d1d1f)">AI Agent</strong><div style="color:var(--steel);font-size:0.8rem">Context-aware assistant available on every tool and tab</div></div></div>
                     <div style="text-align:center;margin-top:20px"><button class="onboard-btn"><i class="fas fa-arrow-right" style="margin-right:6px"></i>Start Setup</button></div>
                 </div>
 
                 <!-- Step 1: Create Account -->
                 <div class="onboard-step" id="onboardStep1">
-                    <h4 style="color:#1d1d1f;margin:0 0 12px;font-size:1rem"><i class="fas fa-user-plus" style="color:var(--accent);margin-right:8px"></i>Step 1: Account Created</h4>
+                    <h4 style="color:var(--text,#1d1d1f);margin:0 0 12px;font-size:1rem"><i class="fas fa-user-plus" style="color:var(--accent);margin-right:8px"></i>Step 1: Account Created</h4>
                     <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
-                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#0088cc);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem">OP</div><div><div style="color:#1d1d1f;font-weight:700">Platform Operator</div><div style="color:var(--steel);font-size:0.78rem">user@agency.mil</div></div></div>
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#0088cc);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem">OP</div><div><div style="color:var(--text,#1d1d1f);font-weight:700">Platform Operator</div><div style="color:var(--steel);font-size:0.78rem">user@agency.mil</div></div></div>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.78rem">
                             <div style="color:var(--steel)">Account ID: <span style="color:var(--accent);font-family:monospace" id="onboardAcctId">—</span></div>
-                            <div style="color:var(--steel)">Org: <span style="color:#1d1d1f">Your Organization</span></div>
-                            <div style="color:var(--steel)">Role: <span style="color:#1d1d1f">Admin</span></div>
+                            <div style="color:var(--steel)">Org: <span style="color:var(--text,#1d1d1f)">Your Organization</span></div>
+                            <div style="color:var(--steel)">Role: <span style="color:var(--text,#1d1d1f)">Admin</span></div>
                             <div style="color:var(--steel)">Status: <span style="color:var(--green)" id="onboardAcctStatus"><i class="fas fa-spinner fa-spin"></i> Creating...</span></div>
                         </div>
                     </div>
@@ -306,29 +306,29 @@
 
                 <!-- Step 2: Wallet Funded -->
                 <div class="onboard-step" id="onboardStep2">
-                    <h4 style="color:#1d1d1f;margin:0 0 12px;font-size:1rem"><i class="fas fa-wallet" style="color:var(--accent);margin-right:8px"></i>Step 2: XRP Wallet Funded</h4>
+                    <h4 style="color:var(--text,#1d1d1f);margin:0 0 12px;font-size:1rem"><i class="fas fa-wallet" style="color:var(--accent);margin-right:8px"></i>Step 2: XRP Wallet Funded</h4>
                     <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">Your XRPL wallet has been provisioned and funded with the base reserve required for on-chain operations.</p>
                     <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.82rem">
                             <div><div style="color:var(--steel);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Wallet Address</div><div style="color:var(--green);font-family:monospace;font-size:0.75rem" id="onboardWalletAddr">—</div></div>
                             <div><div style="color:var(--steel);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">XRP Balance</div><div style="font-size:1.3rem;font-weight:700;color:var(--green)" id="onboardXrpBal"><i class="fas fa-spinner fa-spin" style="font-size:0.8rem"></i></div></div>
-                            <div><div style="color:var(--steel);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Network</div><div style="color:#1d1d1f">XRPL Mainnet</div></div>
+                            <div><div style="color:var(--steel);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Network</div><div style="color:var(--text,#1d1d1f)">XRPL Mainnet</div></div>
                             <div><div style="color:var(--steel);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Trust Line</div><div style="color:var(--gold)" id="onboardTrustLine"><i class="fas fa-spinner fa-spin" style="font-size:0.8rem"></i></div></div>
                         </div>
                     </div>
-                    <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:10px 14px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:6px"></i><strong style="color:#1d1d1f">Note:</strong> 12 XRP is the base reserve, funded automatically from the S4 Treasury when your account is provisioned. This covers XRPL transaction fees for anchoring.</div>
+                    <div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:10px 14px;font-size:0.78rem;color:var(--steel)"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:6px"></i><strong style="color:var(--text,#1d1d1f)">Note:</strong> 12 XRP is the base reserve, funded automatically from the S4 Treasury when your account is provisioned. This covers XRPL transaction fees for anchoring.</div>
                     <div id="onboardWalletDone" style="display:none;text-align:center;margin-top:16px"><button class="onboard-btn">Continue <i class="fas fa-arrow-right" style="margin-left:6px"></i></button></div>
                 </div>
 
                 <!-- Step 3: Credit Allocation -->
                 <div class="onboard-step" id="onboardStep3">
-                    <h4 style="color:#1d1d1f;margin:0 0 12px;font-size:1rem"><i class="fas fa-coins" style="color:var(--gold);margin-right:8px"></i>Step 3: Credit Allocation</h4>
+                    <h4 style="color:var(--text,#1d1d1f);margin:0 0 12px;font-size:1rem"><i class="fas fa-coins" style="color:var(--gold);margin-right:8px"></i>Step 3: Credit Allocation</h4>
                     <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">Your Credit allocation is based on your subscription tier. Select a plan:</p>
                     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">
-                        <div class="onboard-tier" data-tier="pilot"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Pilot</div><div style="font-size:1.1rem;font-weight:800;color:#1d1d1f;margin:4px 0">Free</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100 Credits</div></div>
-                        <div class="onboard-tier selected" data-tier="starter"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Starter</div><div style="font-size:1.1rem;font-weight:800;color:#1d1d1f;margin:4px 0">$999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">25,000 Credits</div></div>
-                        <div class="onboard-tier" data-tier="professional"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Professional</div><div style="font-size:1.1rem;font-weight:800;color:#1d1d1f;margin:4px 0">$2,499/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100,000 Credits</div></div>
-                        <div class="onboard-tier" data-tier="enterprise"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Enterprise</div><div style="font-size:1.1rem;font-weight:800;color:#1d1d1f;margin:4px 0">$9,999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">500,000 Credits</div></div>
+                        <div class="onboard-tier" data-tier="pilot"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Pilot</div><div style="font-size:1.1rem;font-weight:800;color:var(--text,#1d1d1f);margin:4px 0">Free</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100 Credits</div></div>
+                        <div class="onboard-tier selected" data-tier="starter"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Starter</div><div style="font-size:1.1rem;font-weight:800;color:var(--text,#1d1d1f);margin:4px 0">$999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">25,000 Credits</div></div>
+                        <div class="onboard-tier" data-tier="professional"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Professional</div><div style="font-size:1.1rem;font-weight:800;color:var(--text,#1d1d1f);margin:4px 0">$2,499/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">100,000 Credits</div></div>
+                        <div class="onboard-tier" data-tier="enterprise"><div style="font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.5px">Enterprise</div><div style="font-size:1.1rem;font-weight:800;color:var(--text,#1d1d1f);margin:4px 0">$9,999/mo</div><div style="color:var(--gold);font-weight:700;font-size:0.85rem">500,000 Credits</div></div>
                     </div>
                     <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center">
                         <div style="color:var(--steel);font-size:0.78rem;margin-bottom:4px">Your Credit Balance</div>
@@ -340,7 +340,7 @@
 
                 <!-- Step 4: How Credits Work -->
                 <div class="onboard-step" id="onboardStep4">
-                    <h4 style="color:#1d1d1f;margin:0 0 12px;font-size:1rem"><i class="fas fa-coins" style="color:var(--gold);margin-right:8px"></i>Step 4: How Your Credits Are Used</h4>
+                    <h4 style="color:var(--text,#1d1d1f);margin:0 0 12px;font-size:1rem"><i class="fas fa-coins" style="color:var(--gold);margin-right:8px"></i>Step 4: How Your Credits Are Used</h4>
                     <p style="color:var(--steel);font-size:0.82rem;margin-bottom:16px">Every time you anchor a record, a tiny Credit fee flows to the S4 Treasury on the XRP Ledger.</p>
                     <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
                         <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:8px;text-align:center">
@@ -352,7 +352,7 @@
                         </div>
                     </div>
                     <div style="font-size:0.82rem;color:var(--steel);line-height:1.6;margin-bottom:12px">
-                        <div style="margin-bottom:8px"><i class="fas fa-check" style="color:var(--accent);margin-right:8px;width:14px"></i><strong style="color:#1d1d1f">Steps 1-3</strong> happen automatically when you subscribe</div>
+                        <div style="margin-bottom:8px"><i class="fas fa-check" style="color:var(--accent);margin-right:8px;width:14px"></i><strong style="color:var(--text,#1d1d1f)">Steps 1-3</strong> happen automatically when you subscribe</div>
                         <div style="margin-bottom:8px"><i class="fas fa-check" style="color:var(--gold);margin-right:8px;width:14px"></i><strong style="color:var(--gold)">Step 4 (0.01 Credits → Treasury)</strong> is a REAL on-chain transfer via XRPL</div>
                         <div style="margin-bottom:8px"><i class="fas fa-check" style="color:var(--accent);margin-right:8px;width:14px"></i>Every anchor produces a verifiable XRPL transaction hash with your record's SHA-256 fingerprint</div>
                         <div><i class="fas fa-check" style="color:var(--accent);margin-right:8px;width:14px"></i>Anyone can independently verify records on <a href="https://livenet.xrpl.org" target="_blank" style="color:var(--accent)">XRPL Explorer</a></div>
@@ -397,7 +397,7 @@
             <div id="gettingStartedSection" style="display:none;margin-bottom:28px;animation:fadeIn 0.4s ease;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
                     <div>
-                        <h3 style="color:#1d1d1f;font-size:1.1rem;font-weight:700;margin:0;letter-spacing:-0.02em;">
+                        <h3 style="color:var(--text,#1d1d1f);font-size:1.1rem;font-weight:700;margin:0;letter-spacing:-0.02em;">
                             <i class="fas fa-compass" style="color:var(--accent);margin-right:8px;"></i>Getting Started
                         </h3>
                         <p style="color:var(--steel,#8b8fa3);font-size:0.82rem;margin:4px 0 0;">Choose your first action &mdash; each takes under 2 minutes.</p>
@@ -408,21 +408,21 @@
                     <!-- Card 1: Anchor Your First Record -->
                     <div onclick="showSection('sectionAnchor')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
                         <div style="width:40px;height:40px;border-radius:8px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-anchor" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:#1d1d1f;font-weight:700;font-size:0.92rem;margin-bottom:6px;">Anchor Your First Record</div>
+                        <div style="color:var(--text,#1d1d1f);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Anchor Your First Record</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">Pick a type, upload content, anchor to XRPL.</div>
                         <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start anchoring</div>
                     </div>
                     <!-- Card 2: Explore the 23+ Tools -->
                     <div onclick="showSection('sectionILS')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
                         <div style="width:40px;height:40px;border-radius:8px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-brain" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:#1d1d1f;font-weight:700;font-size:0.92rem;margin-bottom:6px;">Browse ILS Tools</div>
+                        <div style="color:var(--text,#1d1d1f);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Browse ILS Tools</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">23+ tools &mdash; gap analysis, compliance, risk, and more.</div>
                         <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Browse tools</div>
                     </div>
                     <!-- Card 3: Take the Guided Tour -->
                     <div onclick="if(typeof startWalkthrough==='function')startWalkthrough()" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
                         <div style="width:40px;height:40px;border-radius:8px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-route" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:#1d1d1f;font-weight:700;font-size:0.92rem;margin-bottom:6px;">Take the Guided Tour</div>
+                        <div style="color:var(--text,#1d1d1f);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Take the Guided Tour</div>
                         <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">Voice-narrated walkthrough of every feature.</div>
                         <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start tour</div>
                     </div>
@@ -638,7 +638,7 @@
                     <div class="breadcrumb-text">Systems</div>
                 </div>
                 <div style="max-width:900px;margin:0 auto;padding:1rem 0;">
-                    <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:6px;color:#1d1d1f;"><i class="fas fa-server" style="color:var(--accent);margin-right:8px;"></i>Systems</h3>
+                    <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:6px;color:var(--text,#1d1d1f);"><i class="fas fa-server" style="color:var(--accent);margin-right:8px;"></i>Systems</h3>
                     <p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px;">Platform health, performance metrics, and offline queue management.</p>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                         <div class="hub-card" onclick="showSystemsSub('tabMetrics')" style="padding:20px;">
@@ -749,7 +749,7 @@
                                 <tr style="border-bottom:1px solid rgba(0,0,0,0.04)"><td style="padding:6px 10px;color:var(--text)"><i class="fas fa-floppy-disk" style="color:var(--accent);margin-right:6px;width:14px"></i>Vault Save</td><td style="text-align:right;padding:6px 10px;color:var(--green);font-weight:600">28</td><td style="text-align:right;padding:6px 10px;color:var(--muted)">12</td><td style="text-align:right;padding:6px 10px;color:var(--muted)">65</td><td style="text-align:right;padding:6px 10px;color:var(--gold)">0.9%</td></tr>
                                 <tr style="border-bottom:1px solid rgba(0,0,0,0.04)"><td style="padding:6px 10px;color:var(--text)"><i class="fas fa-desktop" style="color:var(--accent);margin-right:6px;width:14px"></i>UI Render</td><td style="text-align:right;padding:6px 10px;color:var(--green);font-weight:600">110</td><td style="text-align:right;padding:6px 10px;color:var(--muted)">60</td><td style="text-align:right;padding:6px 10px;color:var(--muted)">240</td><td style="text-align:right;padding:6px 10px;color:var(--gold)">3.4%</td></tr>
                             </tbody>
-                            <tfoot><tr style="border-top:2px solid var(--border)"><td style="padding:8px 10px;color:#1d1d1f;font-weight:700">Total</td><td style="text-align:right;padding:8px 10px;color:#1d1d1f;font-weight:700" id="metricTimingTotal">3,205</td><td colspan="3" style="text-align:right;padding:8px 10px;color:var(--accent);font-weight:600">~3.2 seconds end-to-end</td></tr></tfoot>
+                            <tfoot><tr style="border-top:2px solid var(--border)"><td style="padding:8px 10px;color:var(--text,#1d1d1f);font-weight:700">Total</td><td style="text-align:right;padding:8px 10px;color:var(--text,#1d1d1f);font-weight:700" id="metricTimingTotal">3,205</td><td colspan="3" style="text-align:right;padding:8px 10px;color:var(--accent);font-weight:600">~3.2 seconds end-to-end</td></tr></tfoot>
                         </table>
                     </div>
                     <div style="text-align:center;margin-top:12px">
@@ -803,7 +803,7 @@
                     <div style="display:flex;align-items:center;gap:14px;">
                         <div style="width:42px;height:42px;border-radius:8px;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-anchor" style="color:#00aaff;font-size:1.1rem"></i></div>
                         <div>
-                            <h3 style="font-size:1.15rem;font-weight:700;color:#1d1d1f;margin:0;letter-spacing:-0.02em">Anchor-S4</h3>
+                            <h3 style="font-size:1.15rem;font-weight:700;color:var(--text,#1d1d1f);margin:0;letter-spacing:-0.02em">Anchor-S4</h3>
                             <p style="font-size:0.78rem;color:var(--steel);margin:2px 0 0;line-height:1.4">Defense logistics workspace &mdash; 23+ integrated tools</p>
                         </div>
                     </div>
@@ -813,11 +813,11 @@
                         <details class="ils-hdr-overflow" style="position:relative;">
                             <summary style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:8px;font-size:0.78rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:var(--accent);cursor:pointer;list-style:none;transition:all 0.2s;user-select:none;" title="More actions"><i class="fas fa-ellipsis"></i></summary>
                             <div style="position:absolute;right:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:100;min-width:180px;padding:4px 0;font-size:0.8rem;">
-                                <button onclick="showSavedAnalyses();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:#1d1d1f;cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-history" style="color:#00aaff;width:16px;text-align:center"></i> My Analyses</button>
-                                <button onclick="showTeamPanel();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:#1d1d1f;cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-users" style="color:var(--accent);width:16px;text-align:center"></i> Team</button>
-                                <button onclick="showWebhookSettings();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:#1d1d1f;cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-plug" style="color:#00aaff;width:16px;text-align:center"></i> Webhooks</button>
+                                <button onclick="showSavedAnalyses();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:var(--text,#1d1d1f);cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-history" style="color:#00aaff;width:16px;text-align:center"></i> My Analyses</button>
+                                <button onclick="showTeamPanel();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:var(--text,#1d1d1f);cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-users" style="color:var(--accent);width:16px;text-align:center"></i> Team</button>
+                                <button onclick="showWebhookSettings();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:var(--text,#1d1d1f);cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-plug" style="color:#00aaff;width:16px;text-align:center"></i> Webhooks</button>
                                 <div style="border-top:1px solid var(--border);margin:4px 0"></div>
-                                <button onclick="exportPDF();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:#1d1d1f;cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-file-pdf" style="color:var(--accent);width:16px;text-align:center"></i> PDF Export</button>
+                                <button onclick="exportPDF();this.closest('details').open=false" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:var(--text,#1d1d1f);cursor:pointer;font-size:0.8rem;text-align:left;" onmouseover="this.style.background='rgba(0,170,255,0.06)'" onmouseout="this.style.background='none'"><i class="fas fa-file-pdf" style="color:var(--accent);width:16px;text-align:center"></i> PDF Export</button>
                             </div>
                         </details>
                     </div>
@@ -882,7 +882,7 @@
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-actions')" style="position:relative">
                         <span class="itc-icon"><i class="fas fa-tasks" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Action Items <span id="actionItemBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#ff4444;color:#1d1d1f;font-size:0.65rem;font-weight:800;min-width:20px;height:20px;border-radius:8px;padding:0 6px;margin-left:6px;vertical-align:middle"></span></div>
+                        <div class="itc-title">Action Items <span id="actionItemBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#ff4444;color:var(--text,#1d1d1f);font-size:0.65rem;font-weight:800;min-width:20px;height:20px;border-radius:8px;padding:0 6px;margin-left:6px;vertical-align:middle"></span></div>
                         <div class="itc-desc">Track ILS action items, corrective actions, and follow-ups with deadlines.</div>
                     </div>
                     <div class="ils-tool-card" data-category="compliance" onclick="openILSTool('hub-vault')">
@@ -1025,7 +1025,7 @@
                         <label>Upload Documents <span style="color:var(--muted);font-weight:400">(DRLs, spreadsheets, PDFs, Word docs, checklists)</span></label>
                         <div class="ils-dropzone" id="ilsDropzone" onclick="document.getElementById('ilsFileInput').click()">
                             <i class="fas fa-cloud-upload-alt" style="color:var(--accent)"></i>
-                            <div style="font-weight:600;color:#1d1d1f;margin-bottom:4px">Drag & drop files here or click to browse</div>
+                            <div style="font-weight:600;color:var(--text,#1d1d1f);margin-bottom:4px">Drag & drop files here or click to browse</div>
                             <div style="font-size:0.82rem;color:var(--muted)">Accepts .csv, .xlsx, .xls, .pdf, .docx, .txt — all processing done locally in your browser</div>
                         </div>
                         <input type="file" id="ilsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx,.doc" style="display:none" onchange="handleILSFiles(this.files)">
@@ -1127,7 +1127,7 @@
                                 </div>
                                 <div id="actionCalendarSection" style="margin-bottom:16px">
                                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                                        <h4 style="font-size:0.9rem;font-weight:700;color:#1d1d1f;margin:0"><i class="fas fa-calendar-alt" style="color:var(--accent);margin-right:6px"></i>Action Calendar</h4>
+                                        <h4 style="font-size:0.9rem;font-weight:700;color:var(--text,#1d1d1f);margin:0"><i class="fas fa-calendar-alt" style="color:var(--accent);margin-right:6px"></i>Action Calendar</h4>
                                         <div style="display:flex;gap:6px">
                                             <button onclick="changeCalMonth(-1)" class="ai-quick-btn" style="padding:4px 10px;font-size:0.75rem"><i class="fas fa-chevron-left"></i></button>
                                             <span id="calMonthLabel" style="font-size:0.82rem;color:var(--steel);font-weight:600;min-width:120px;text-align:center;line-height:28px"></span>
@@ -1202,13 +1202,13 @@
                     </details>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                             <div><label>Select Program</label><select id="dmsmsProgram" aria-label="Select DMSMS program" class="form-select" onchange="loadDMSMSData()"></select></div>
-                            <div><label>Hull # / Tail #</label><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
-                            <div><label>Program Office</label><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
+                            <div><label>Hull # / Tail #</label><input type="text" id="dmsmsHull" class="form-control" placeholder="Hull # / Tail # / Designation" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
+                            <div><label>Program Office</label><input type="text" id="dmsmsOffice" class="form-control" placeholder="Program Office (e.g. PMS 300)" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
                         </div>
                                                 <label style="font-size:0.82rem;margin-top:0.5rem">Upload DMSMS Data <span style="color:var(--muted);font-weight:400">(parts lists, GIDEP notices, vendor EOL notices)</span></label>
                         <div class="ils-dropzone" id="dmsmsDropzone" onclick="document.getElementById('dmsmsFileInput').click()" style="border-color:rgba(0,170,255,0.15)">
                             <i class="fas fa-cloud-upload-alt" style="color:var(--accent)"></i>
-                            <div style="font-weight:600;color:#1d1d1f;margin-bottom:4px">Drag & drop DMSMS files or click to browse</div>
+                            <div style="font-weight:600;color:var(--text,#1d1d1f);margin-bottom:4px">Drag & drop DMSMS files or click to browse</div>
                             <div style="font-size:0.82rem;color:var(--muted)">Accepts .csv, .xlsx, .xls, .pdf, .docx, .txt — identifies NSNs, CAGE codes, part statuses</div>
                         </div>
                         <input type="file" id="dmsmsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx" style="display:none" onchange="handleToolUpload(this.files,'dmsms')">
@@ -1361,7 +1361,7 @@
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                         <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;"><i class="fas fa-project-diagram"></i> Digital Thread</div>
                         <div style="display:flex;align-items:center;gap:6px;">
-                            <select id="digitalThreadRecordSelect" aria-label="Select digital thread record" onchange="showDigitalThreadFromSelect()" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,170,255,0.3);border-radius:6px;padding:2px 6px;font-size:0.7rem;max-width:180px;">
+                            <select id="digitalThreadRecordSelect" aria-label="Select digital thread record" onchange="showDigitalThreadFromSelect()" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,170,255,0.3);border-radius:6px;padding:2px 6px;font-size:0.7rem;max-width:180px;">
                                 <option value="">— Select record —</option>
                             </select>
                             <button onclick="closeDigitalThread()" style="background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.25);color:var(--accent);cursor:pointer;font-size:0.68rem;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;border-radius:50%;transition:all 0.2s;line-height:1;" title="Close Digital Thread"><i class="fas fa-times"></i></button>
@@ -1382,8 +1382,8 @@
 
                     <!-- Search & Filter -->
                     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-                        <input type="text" id="vaultSearch" class="form-control" aria-label="Search vault records" style="flex:1;min-width:200px;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 14px;font-size:0.85rem" placeholder="Search records by type, hash, content..." oninput="_vaultPage=1;renderVault()">
-                        <select id="vaultFilter" aria-label="Filter vault records" class="form-select" style="width:auto;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 14px;font-size:0.85rem" onchange="_vaultPage=1;renderVault()">
+                        <input type="text" id="vaultSearch" class="form-control" aria-label="Search vault records" style="flex:1;min-width:200px;background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 14px;font-size:0.85rem" placeholder="Search records by type, hash, content..." oninput="_vaultPage=1;renderVault()">
+                        <select id="vaultFilter" aria-label="Filter vault records" class="form-select" style="width:auto;background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 14px;font-size:0.85rem" onchange="_vaultPage=1;renderVault()">
                             <option value="all">All Records</option>
                             <option value="today">Today</option>
                             <option value="week">This Week</option>
@@ -1473,7 +1473,7 @@
                         <div style="padding:0 0 14px">
                             <p style="color:var(--steel);font-size:0.78rem;margin-bottom:12px">Generate synthetic records to test vault performance at scale. Records are generated locally and stored in localStorage. Useful for benchmarking query speed, rendering performance, and export capability with large datasets.</p>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
-                                <select id="stressTestCount" aria-label="Select stress test count" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px 12px;font-size:0.82rem">
+                                <select id="stressTestCount" aria-label="Select stress test count" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px 12px;font-size:0.82rem">
                                     <option value="100">100 Records</option>
                                     <option value="500">500 Records</option>
                                     <option value="1000" selected>1,000 Records</option>
@@ -1533,7 +1533,7 @@
                     <div style="margin-top:16px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('templates')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.06);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-file-signature" style="color:#00aaff"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Template Library</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Template Library</strong>
                             <span style="background:#00aaff22;color:#00aaff;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600">15 TEMPLATES</span>
                             <i id="templatesChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
@@ -1572,9 +1572,9 @@
                     </details>
 <!-- Program Selector -->
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;margin-bottom:16px">
-                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label><select id="complianceProgram" aria-label="Select compliance program" class="form-select" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:8px;margin-top:4px" onchange="calcCompliance()"></select></div>
-                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Hull # / Tail #</label><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
-                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program Office</label><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
+                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program</label><select id="complianceProgram" aria-label="Select compliance program" class="form-select" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.08);border-radius:8px;margin-top:4px" onchange="calcCompliance()"></select></div>
+                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Hull # / Tail #</label><input type="text" id="complianceHull" class="form-control" placeholder="Hull # / Tail #" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
+                        <div><label style="font-size:0.82rem;color:var(--steel);font-weight:600">Program Office</label><input type="text" id="complianceOffice" class="form-control" placeholder="Program Office" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.06);font-size:0.85rem"></div>
                     </div>
 
                     <!-- Score Ring -->
@@ -1604,7 +1604,7 @@
 
                     <!-- Recommendations -->
                     <div style="margin-top:16px">
-                        <h5 style="font-size:0.9rem;font-weight:700;color:#1d1d1f;margin-bottom:10px"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:6px"></i> Recommendations</h5>
+                        <h5 style="font-size:0.9rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:10px"><i class="fas fa-lightbulb" style="color:var(--accent);margin-right:6px"></i> Recommendations</h5>
                         <div id="complianceRecs" style="font-size:0.82rem;color:var(--steel);line-height:1.7"></div>
                     </div>
 
@@ -1612,7 +1612,7 @@
                     <div style="margin-top:20px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('poam')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.06);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-list-check" style="color:#00aaff"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">POA&M — Plan of Action & Milestones</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">POA&M — Plan of Action & Milestones</strong>
                             <span id="poamCount" style="background:#00aaff22;color:#00aaff;padding:2px 8px;border-radius:8px;font-size:0.72rem;font-weight:600">0</span>
                             <i id="poamChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
@@ -1620,7 +1620,7 @@
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Track weaknesses, planned remediations, milestones, and responsible parties per NIST SP 800-53 / OMB A-130 requirements.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
                                 <button onclick="addPOAM()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-plus"></i> Add POA&M Item</button>
-                                <button onclick="exportPOAM()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-download"></i> Export POA&M</button>
+                                <button onclick="exportPOAM()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-download"></i> Export POA&M</button>
                             </div>
                             <div id="poamTableWrap" style="overflow-x:auto">
                                 <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
@@ -1648,14 +1648,14 @@
                     <div style="margin-top:12px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('evidence')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-paperclip" style="color:var(--accent)"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Evidence Manager</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Evidence Manager</strong>
                             <span id="evidenceCount" style="background:rgba(0,170,255,0.15);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.72rem;font-weight:600">0</span>
                             <i id="evidenceChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
                         <div id="evidenceSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Attach evidence artifacts (screenshots, documents, scan reports) to compliance controls. Evidence is hashed and anchored for audit-ready proof.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-                                <select id="evidenceControl" aria-label="Select evidence control" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:220px">
+                                <select id="evidenceControl" aria-label="Select evidence control" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:220px">
                                     <option value="AC-1">AC-1 Access Control Policy</option>
                                     <option value="AC-2">AC-2 Account Management</option>
                                     <option value="AU-2">AU-2 Audit Events</option>
@@ -1671,7 +1671,7 @@
                                     <i class="fas fa-upload"></i> Attach Evidence
                                     <input type="file" id="evidenceFileInput" onchange="attachEvidence(this)" accept=".pdf,.png,.jpg,.jpeg,.csv,.xlsx,.docx,.txt" style="display:none" multiple>
                                 </label>
-                                <button onclick="exportEvidenceLog()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-download"></i> Export Log</button>
+                                <button onclick="exportEvidenceLog()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-download"></i> Export Log</button>
                             </div>
                             <div id="evidenceList" style="max-height:260px;overflow-y:auto"></div>
                             <div id="evidenceEmpty" style="text-align:center;padding:20px;color:var(--steel);font-size:0.82rem"><i class="fas fa-folder-open" style="font-size:1.5rem;margin-bottom:8px;display:block;color:rgba(0,170,255,0.3)"></i>No evidence attached. Select a control and upload a document.</div>
@@ -1682,7 +1682,7 @@
                     <div style="margin-top:12px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('monitoring')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-satellite-dish" style="color:#00aaff"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Continuous Monitoring Dashboard</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Continuous Monitoring Dashboard</strong>
                             <span class="pulse-dot" style="margin-left:4px"></span>
                             <span style="font-size:0.72rem;color:#00aaff;font-weight:600">LIVE</span>
                             <i id="monitoringChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
@@ -1691,7 +1691,7 @@
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Real-time control status monitoring with drift detection. Auto-scans workspace activity to flag degraded controls.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px">
                                 <button onclick="runMonitoringScan()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-satellite-dish"></i> Run Full Scan</button>
-                                <button onclick="toggleAutoMonitor()" id="autoMonitorBtn" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-sync"></i> Auto-Monitor: OFF</button>
+                                <button onclick="toggleAutoMonitor()" id="autoMonitorBtn" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-sync"></i> Auto-Monitor: OFF</button>
                             </div>
                             <div id="monitoringGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px"></div>
                             <div id="monitoringLog" style="margin-top:12px;max-height:150px;overflow-y:auto;font-size:0.78rem;color:var(--steel)"></div>
@@ -1702,14 +1702,14 @@
                     <div style="margin-top:12px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('fedramp')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-cloud-arrow-up" style="color:#00aaff"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">FedRAMP Alignment</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">FedRAMP Alignment</strong>
                             <span id="fedrampLevel" style="background:rgba(0,170,255,0.15);color:#00aaff;padding:2px 8px;border-radius:8px;font-size:0.72rem;font-weight:600">Moderate</span>
                             <i id="fedrampChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
                         <div id="fedrampSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">FedRAMP impact-level mapping across 325 controls (Low/Moderate/High). Shows which NIST 800-53 controls your workspace satisfies.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
-                                <select id="fedrampImpact" aria-label="Select FedRAMP impact level" class="form-control form-control-sm" onchange="calcFedRAMP()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:180px">
+                                <select id="fedrampImpact" aria-label="Select FedRAMP impact level" class="form-control form-control-sm" onchange="calcFedRAMP()" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:180px">
                                     <option value="low">Low Impact</option>
                                     <option value="moderate" selected>Moderate Impact</option>
                                     <option value="high">High Impact</option>
@@ -1745,8 +1745,8 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-triangle-exclamation" style="color:var(--accent)"></i> AI Supply Chain Risk Engine <button onclick="showAddActionModal('risk')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div><label>Program</label><select id="riskProgram" aria-label="Select risk program" onchange="loadRiskData()" style="font-size:0.88rem"></select></div>
-                        <div><label>Hull # / Tail #</label><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:5px 8px;width:100%"></div>
-                        <div><label>Program Office</label><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:5px 8px;width:100%"></div>
+                        <div><label>Hull # / Tail #</label><input type="text" id="riskHull" placeholder="Hull # / Tail #" style="font-size:0.82rem;background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:5px 8px;width:100%"></div>
+                        <div><label>Program Office</label><input type="text" id="riskOffice" placeholder="Program Office" style="font-size:0.82rem;background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:5px 8px;width:100%"></div>
                         <div><label>Risk Threshold</label><select id="riskThreshold" aria-label="Select risk threshold" onchange="loadRiskData()" style="font-size:0.88rem"><option value="all">All Risk Levels</option><option value="critical">Critical Only</option><option value="high">High & Critical</option><option value="medium">Medium & Above</option></select></div>
                     </div>
                     <!-- Risk Summary Stats -->
@@ -1790,7 +1790,7 @@
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                         <button onclick="loadRiskData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-sync-alt"></i> Refresh Analysis</button>
-                        <button onclick="exportRisk()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Risk Report</button>
+                        <button onclick="exportRisk()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Risk Report</button>
                         <button onclick="anchorRisk()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
@@ -1798,7 +1798,7 @@
                     <div style="margin-top:16px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('remediation')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.06);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-wand-magic-sparkles" style="color:#00aaff"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">AI Remediation Plans</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">AI Remediation Plans</strong>
                             <span style="background:#00aaff22;color:#00aaff;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600">AI-POWERED</span>
                             <i id="remediationChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
@@ -1825,7 +1825,7 @@
                     <div style="margin-top:12px;border:1px solid rgba(255,107,107,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('anomaly')" style="cursor:pointer;padding:12px 16px;background:rgba(255,107,107,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-magnifying-glass-chart" style="color:#ff6b6b"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Anomaly Detection</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Anomaly Detection</strong>
                             <span style="background:rgba(255,107,107,0.15);color:#ff6b6b;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600">AI-SCAN</span>
                             <i id="anomalyChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
@@ -1840,13 +1840,13 @@
                     <div style="margin-top:12px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('budgetForecast')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-chart-line" style="color:var(--accent)"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Budget Forecasting</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Budget Forecasting</strong>
                             <i id="budgetForecastChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
                         <div id="budgetForecastSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">AI-driven budget forecasting based on historical procurement data, obsolescence trends, and maintenance cost trajectories.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
-                                <select id="budgetForecastYears" aria-label="Select forecast years" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:140px">
+                                <select id="budgetForecastYears" aria-label="Select forecast years" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:140px">
                                     <option value="3">3-Year Forecast</option>
                                     <option value="5" selected>5-Year Forecast</option>
                                     <option value="10">10-Year Forecast</option>
@@ -1861,7 +1861,7 @@
                     <div style="margin-top:12px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('docAI')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-file-invoice" style="color:#00aaff"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Document AI — Data Extraction</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Document AI — Data Extraction</strong>
                             <span style="background:rgba(0,170,255,0.15);color:#00aaff;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600">CLIENT-SIDE</span>
                             <i id="docAIChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
@@ -1900,7 +1900,7 @@
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;">
                         <button onclick="generateReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-magic"></i> Generate Report</button>
-                        <button onclick="downloadReport()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Download Report</button>
+                        <button onclick="downloadReport()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Download Report</button>
                         <button onclick="anchorReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor Report Hash</button>
                     </div>
 
@@ -1908,7 +1908,7 @@
                     <div style="margin-top:20px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('execSummary')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.06);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-file-lines" style="color:#00aaff"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Executive Summary Generator</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Executive Summary Generator</strong>
                             <span style="background:#00aaff22;color:#00aaff;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:600">ONE-CLICK</span>
                             <i id="execSummaryChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
@@ -1927,7 +1927,7 @@
                     </details>
                             <div style="display:flex;gap:8px;margin-bottom:12px">
                                 <button onclick="generateExecSummary()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:0.82rem"><i class="fas fa-bolt"></i> Generate Executive Summary</button>
-                                <button onclick="downloadExecSummary()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:#1d1d1f;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 16px;font-size:0.82rem"><i class="fas fa-download"></i> Download</button>
+                                <button onclick="downloadExecSummary()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.03);color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 16px;font-size:0.82rem"><i class="fas fa-download"></i> Download</button>
                             </div>
                             <div id="execSummaryOutput" style="font-size:0.82rem;color:var(--steel);line-height:1.7"></div>
                         </div>
@@ -1937,20 +1937,20 @@
                     <div style="margin-top:12px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('schedReports')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-calendar-check" style="color:var(--accent)"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Scheduled Reports</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Scheduled Reports</strong>
                             <span id="schedReportCount" style="background:rgba(0,170,255,0.15);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.72rem;font-weight:600">0</span>
                             <i id="schedReportsChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
                         <div id="schedReportsSection" style="display:none;padding:12px 16px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Schedule automatic report generation on a recurring cadence. Reports auto-generate and are ready for download.</p>
                             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-                                <select id="schedReportType" aria-label="Select scheduled report type" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:180px">
+                                <select id="schedReportType" aria-label="Select scheduled report type" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:180px">
                                     <option value="full_audit">Full Audit Package</option>
                                     <option value="compliance">Compliance Summary</option>
                                     <option value="supply_chain">Supply Chain</option>
                                     <option value="executive">Executive Summary</option>
                                 </select>
-                                <select id="schedReportFreq" aria-label="Select report frequency" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:140px">
+                                <select id="schedReportFreq" aria-label="Select report frequency" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:140px">
                                     <option value="daily">Daily</option>
                                     <option value="weekly" selected>Weekly</option>
                                     <option value="monthly">Monthly</option>
@@ -1967,7 +1967,7 @@
                     <div style="margin-top:12px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('fleetCompare')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-ship" style="color:#00aaff"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Fleet-wide Comparison</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Fleet-wide Comparison</strong>
                             <i id="fleetCompareChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
                         <div id="fleetCompareSection" style="display:none;padding:12px 16px">
@@ -1981,7 +1981,7 @@
                     <div style="margin-top:12px;border:1px solid rgba(255,107,107,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('heatMap')" style="cursor:pointer;padding:12px 16px;background:rgba(255,107,107,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-fire" style="color:#ff6b6b"></i>
-                            <strong style="color:#1d1d1f;font-size:0.92rem">Supply Chain Risk Heat Map</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.92rem">Supply Chain Risk Heat Map</strong>
                             <i id="heatMapChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
                         <div id="heatMapSection" style="display:none;padding:12px 16px">
@@ -2001,7 +2001,7 @@
                     <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-brain" style="color:var(--accent)"></i> Predictive Maintenance AI <button onclick="showAddActionModal('predictive')" class="ai-quick-btn" style="margin-left:auto;font-size:0.72rem;padding:4px 10px"><i class="fas fa-plus"></i> Action Item</button></h3>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div><label>Fleet / Platform</label><select id="pdmPlatform" aria-label="Select predictive maintenance platform" onchange="loadPredictiveData()" style="font-size:0.88rem"></select></div>
-                        <div><label>Hull # / Tail #</label><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:5px 8px;width:100%"></div>
+                        <div><label>Hull # / Tail #</label><input type="text" id="pdmHull" placeholder="Hull # / Tail # / Fleet" style="font-size:0.82rem;background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:5px 8px;width:100%"></div>
                         <div><label>Prediction Window</label><select id="pdmWindow" aria-label="Select prediction time window" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="30">Next 30 Days</option><option value="60">Next 60 Days</option><option value="90" selected>Next 90 Days</option><option value="180">Next 6 Months</option><option value="365">Next 12 Months</option></select></div>
                         <div><label>Confidence Threshold</label><select id="pdmConfidence" aria-label="Select confidence threshold" onchange="loadPredictiveData()" style="font-size:0.88rem"><option value="50">50%+ (Show All)</option><option value="70">70%+ (Likely)</option><option value="85" selected>85%+ (High Confidence)</option><option value="95">95%+ (Near Certain)</option></select></div>
                     </div>
@@ -2034,7 +2034,7 @@
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                         <button onclick="loadPredictiveData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Run Predictions</button>
-                        <button onclick="exportPredictive()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Report</button>
+                        <button onclick="exportPredictive()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Report</button>
                         <button onclick="anchorPredictive()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
                 </div>
@@ -2066,7 +2066,7 @@
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                         <button onclick="loadSBOMData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Scan Components</button>
-                        <button onclick="exportSBOM()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:#1d1d1f;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export SBOM</button>
+                        <button onclick="exportSBOM()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export SBOM</button>
                         <button onclick="anchorSBOM()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor SBOM to Ledger</button>
                     </div>
                 </div>
@@ -2106,7 +2106,7 @@
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Submitter (OEM / Vendor)</label>
-                            <input type="text" id="subVendor" class="form-control form-control-sm" placeholder="e.g., Huntington Ingalls, Lockheed Martin" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="subVendor" class="form-control form-control-sm" placeholder="e.g., Huntington Ingalls, Lockheed Martin" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                     </div>
 
@@ -2114,15 +2114,15 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Custom Platform Name <span style="color:var(--steel);font-size:.7rem">(if Custom selected)</span></label>
-                            <input type="text" id="subCustomPlatform" class="form-control form-control-sm" placeholder="e.g., DDG-1000 Zumwalt" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="subCustomPlatform" class="form-control form-control-sm" placeholder="e.g., DDG-1000 Zumwalt" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Custom Document Type <span style="color:var(--steel);font-size:.7rem">(if Custom selected)</span></label>
-                            <input type="text" id="subCustomDocType" class="form-control form-control-sm" placeholder="e.g., Hull Survey Report" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="subCustomDocType" class="form-control form-control-sm" placeholder="e.g., Hull Survey Report" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Submission Reference / Contract #</label>
-                            <input type="text" id="subContractRef" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="subContractRef" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                     </div>
 
@@ -2139,13 +2139,13 @@
                     <!-- Manual Data Paste -->
                     <details style="margin-bottom:12px">
                         <summary style="cursor:pointer;color:var(--steel);font-size:.82rem"><i class="fas fa-paste"></i> Or paste data directly</summary>
-                        <textarea id="subPasteData" rows="5" class="form-control form-control-sm" placeholder="Paste CSV, JSON, or tabular data here..." style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem;margin-top:8px;font-family:monospace"></textarea>
+                        <textarea id="subPasteData" rows="5" class="form-control form-control-sm" placeholder="Paste CSV, JSON, or tabular data here..." style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem;margin-top:8px;font-family:monospace"></textarea>
                     </details>
 
                     <!-- Submission Notes -->
                     <div style="margin-bottom:12px">
                         <label style="font-size:.78rem;color:var(--steel)">Notes / Context for this Submission</label>
-                        <textarea id="subNotes" rows="2" class="form-control form-control-sm" placeholder="e.g., Revised spares list per ECN-2026-0042, adds new LRU for radar upgrade..." style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem"></textarea>
+                        <textarea id="subNotes" rows="2" class="form-control form-control-sm" placeholder="e.g., Revised spares list per ECN-2026-0042, adds new LRU for radar upgrade..." style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem"></textarea>
                     </div>
 
                     <!-- Analysis Controls -->
@@ -2204,17 +2204,17 @@
                     <div style="margin-top:12px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('versionDiff')" style="cursor:pointer;padding:10px 14px;background:rgba(0,170,255,0.04);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-code-compare" style="color:var(--accent)"></i>
-                            <strong style="color:#1d1d1f;font-size:0.88rem">Version Diff Viewer</strong>
+                            <strong style="color:var(--text,#1d1d1f);font-size:0.88rem">Version Diff Viewer</strong>
                             <i id="versionDiffChevron" class="fas fa-chevron-down" style="margin-left:auto;color:var(--steel);font-size:0.75rem;transition:transform 0.3s"></i>
                         </div>
                         <div id="versionDiffSection" style="display:none;padding:12px 14px">
                             <p style="color:var(--steel);font-size:0.82rem;margin-bottom:10px">Compare two submission versions side-by-side to see added, removed, and changed fields.</p>
                             <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
-                                <select id="diffVersionA" aria-label="Select version A for comparison" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:160px">
+                                <select id="diffVersionA" aria-label="Select version A for comparison" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:160px">
                                     <option value="">Version A (Base)</option>
                                 </select>
                                 <span style="color:var(--steel);font-size:0.82rem">vs</span>
-                                <select id="diffVersionB" aria-label="Select version B for comparison" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:160px">
+                                <select id="diffVersionB" aria-label="Select version B for comparison" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:0.82rem;max-width:160px">
                                     <option value="">Version B (New)</option>
                                 </select>
                                 <button onclick="runVersionDiff()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.8rem"><i class="fas fa-code-compare"></i> Compare</button>
@@ -2251,23 +2251,23 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="gfpBranch" aria-label="Select GFP branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="gfpBranch" aria-label="Select GFP branch" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="gfpProgram" aria-label="Select GFP program" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="gfpProgram" aria-label="Select GFP program" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
-                            <input type="text" id="gfpContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="gfpContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Property Category</label>
-                            <select id="gfpCategory" aria-label="Select GFP category" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="gfpCategory" aria-label="Select GFP category" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="ALL">All Categories</option><option value="EQUIP">Equipment</option><option value="MATERIAL">Material</option><option value="SPECIAL_TOOLING">Special Tooling</option><option value="SPECIAL_TEST">Special Test Equipment</option><option value="REAL_PROP">Real Property</option><option value="AGENCY_PECULIAR">Agency-Peculiar</option>
                             </select>
                         </div>
@@ -2277,21 +2277,21 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">NSN / Part Number</label>
-                            <input type="text" id="gfpNSN" class="form-control form-control-sm" placeholder="e.g., 5945-01-234-5678" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="gfpNSN" class="form-control form-control-sm" placeholder="e.g., 5945-01-234-5678" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Serial Number / IUID</label>
-                            <input type="text" id="gfpSerial" class="form-control form-control-sm" placeholder="e.g., SN-2026-00142" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="gfpSerial" class="form-control form-control-sm" placeholder="e.g., SN-2026-00142" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Condition Code</label>
-                            <select id="gfpCondition" aria-label="Select GFP condition" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="gfpCondition" aria-label="Select GFP condition" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="A">A — Serviceable (Issuable)</option><option value="B">B — Serviceable (Restricted)</option><option value="C">C — Serviceable (Priority)</option><option value="D">D — Serviceable (Test/Modification)</option><option value="E">E — Unserviceable (Limited Restoration)</option><option value="F">F — Unserviceable (Reparable)</option><option value="G">G — Unserviceable (Incomplete)</option><option value="H">H — Unserviceable (Condemned)</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Custodian / Location</label>
-                            <input type="text" id="gfpLocation" class="form-control form-control-sm" placeholder="e.g., Bldg 450, Bay 3" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="gfpLocation" class="form-control form-control-sm" placeholder="e.g., Bldg 450, Bay 3" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                     </div>
 
@@ -2350,23 +2350,23 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="cdrlBranch" aria-label="Select CDRL branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="cdrlBranch" aria-label="Select CDRL branch" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="cdrlProgram" aria-label="Select CDRL program" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="cdrlProgram" aria-label="Select CDRL program" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
-                            <input type="text" id="cdrlContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="cdrlContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">DI Number</label>
-                            <input type="text" id="cdrlDINumber" class="form-control form-control-sm" placeholder="e.g., DI-ILSS-81495" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="cdrlDINumber" class="form-control form-control-sm" placeholder="e.g., DI-ILSS-81495" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                     </div>
 
@@ -2374,19 +2374,19 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">CDRL Line Item</label>
-                            <input type="text" id="cdrlLineItem" class="form-control form-control-sm" placeholder="e.g., A001" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="cdrlLineItem" class="form-control form-control-sm" placeholder="e.g., A001" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Deliverable Title</label>
-                            <input type="text" id="cdrlTitle" class="form-control form-control-sm" placeholder="e.g., Provisioning Parts List" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="cdrlTitle" class="form-control form-control-sm" placeholder="e.g., Provisioning Parts List" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Due Date</label>
-                            <input type="date" id="cdrlDueDate" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="date" id="cdrlDueDate" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Frequency</label>
-                            <select id="cdrlFrequency" aria-label="Select CDRL frequency" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="cdrlFrequency" aria-label="Select CDRL frequency" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="ONE_TIME">One-Time</option><option value="MONTHLY">Monthly</option><option value="QUARTERLY">Quarterly</option><option value="SEMI_ANNUAL">Semi-Annual</option><option value="ANNUAL">Annual</option><option value="AS_REQUIRED">As Required</option><option value="EVENT_DRIVEN">Event-Driven</option>
                             </select>
                         </div>
@@ -2447,23 +2447,23 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="contractBranch" aria-label="Select contract branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="contractBranch" aria-label="Select contract branch" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="contractProgram" aria-label="Select contract program" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="contractProgram" aria-label="Select contract program" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
-                            <input type="text" id="contractNumber" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="contractNumber" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract Type</label>
-                            <select id="contractType" aria-label="Select contract type" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="contractType" aria-label="Select contract type" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="FFP">Firm Fixed Price (FFP)</option><option value="CPFF">Cost Plus Fixed Fee (CPFF)</option><option value="CPAF">Cost Plus Award Fee (CPAF)</option><option value="CPIF">Cost Plus Incentive Fee (CPIF)</option><option value="T_M">Time & Materials (T&M)</option><option value="IDIQ">IDIQ</option><option value="BPA">BPA</option><option value="BOA">Basic Ordering Agreement</option>
                             </select>
                         </div>
@@ -2473,21 +2473,21 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Base / Option</label>
-                            <select id="contractOption" aria-label="Select contract option" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="contractOption" aria-label="Select contract option" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="BASE">Base Period</option><option value="OPT1">Option 1</option><option value="OPT2">Option 2</option><option value="OPT3">Option 3</option><option value="OPT4">Option 4</option><option value="MOD">Modification</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Award Date</label>
-                            <input type="date" id="contractAwardDate" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="date" id="contractAwardDate" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Prime Contractor</label>
-                            <input type="text" id="contractPrime" class="form-control form-control-sm" placeholder="e.g., BAE Systems" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="contractPrime" class="form-control form-control-sm" placeholder="e.g., BAE Systems" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">NAICS Code</label>
-                            <input type="text" id="contractNAICS" class="form-control form-control-sm" placeholder="e.g., 336611" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="contractNAICS" class="form-control form-control-sm" placeholder="e.g., 336611" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                     </div>
 
@@ -2546,23 +2546,23 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch</label>
-                            <select id="provBranch" aria-label="Select provenance branch" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="provBranch" aria-label="Select provenance branch" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
-                            <select id="provProgram" aria-label="Select provenance program" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="provProgram" aria-label="Select provenance program" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="">— Select Program —</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
-                            <input type="text" id="provContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="provContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Transfer Type</label>
-                            <select id="provTransferType" aria-label="Select transfer type" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="provTransferType" aria-label="Select transfer type" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="CUSTODY">Custody Transfer</option><option value="LOCATION">Location Change</option><option value="CONDITION">Condition Assessment</option><option value="INSPECTION">Inspection / Test</option><option value="RECEIPT">Receipt</option><option value="SHIPMENT">Shipment</option><option value="INSTALLATION">Installation</option><option value="REMOVAL">Removal / Turn-in</option>
                             </select>
                         </div>
@@ -2572,19 +2572,19 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Item Identifier / IUID</label>
-                            <input type="text" id="provItemId" class="form-control form-control-sm" placeholder="e.g., IUID-2026-00142 or NSN" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="provItemId" class="form-control form-control-sm" placeholder="e.g., IUID-2026-00142 or NSN" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">From (Custodian / Location)</label>
-                            <input type="text" id="provFrom" class="form-control form-control-sm" placeholder="e.g., NSWC Crane, Bldg 64" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="provFrom" class="form-control form-control-sm" placeholder="e.g., NSWC Crane, Bldg 64" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">To (Custodian / Location)</label>
-                            <input type="text" id="provTo" class="form-control form-control-sm" placeholder="e.g., USS Wayne E. Meyer (DDG-108)" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="text" id="provTo" class="form-control form-control-sm" placeholder="e.g., USS Wayne E. Meyer (DDG-108)" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Condition at Transfer</label>
-                            <select id="provCondition" aria-label="Select provenance condition" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="provCondition" aria-label="Select provenance condition" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="A">A — Serviceable (Issuable)</option><option value="B">B — Serviceable (Restricted)</option><option value="F">F — Unserviceable (Reparable)</option><option value="H">H — Unserviceable (Condemned)</option><option value="NEW">New / Unused</option>
                             </select>
                         </div>
@@ -2648,19 +2648,19 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch Filter</label>
-                            <select id="analyticsBranch" aria-label="Select analytics branch" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="analyticsBranch" aria-label="Select analytics branch" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="ALL" selected>All Branches</option><option value="USN">Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program Filter</label>
-                            <select id="analyticsProgram" aria-label="Select analytics program" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="analyticsProgram" aria-label="Select analytics program" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="ALL" selected>All Programs</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Time Period</label>
-                            <select id="analyticsPeriod" aria-label="Select analytics period" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="analyticsPeriod" aria-label="Select analytics period" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="7d">Last 7 Days</option><option value="30d" selected>Last 30 Days</option><option value="90d">Last 90 Days</option><option value="1y">Last Year</option><option value="ALL">All Time</option>
                             </select>
                         </div>
@@ -2702,23 +2702,23 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Team</label>
-                            <select id="teamSelect" aria-label="Select team member" class="form-control form-control-sm" onchange="loadTeamDetails()" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="teamSelect" aria-label="Select team member" class="form-control form-control-sm" onchange="loadTeamDetails()" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="">— Select Team —</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Program Assignment</label>
-                            <select id="teamProgAssign" aria-label="Select program assignment" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="teamProgAssign" aria-label="Select program assignment" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="ALL">All Programs</option>
                             </select>
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Member Email</label>
-                            <input type="email" id="teamInviteEmail" class="form-control form-control-sm" placeholder="name@organization.mil" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                            <input type="email" id="teamInviteEmail" class="form-control form-control-sm" placeholder="name@organization.mil" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
                         </div>
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Role</label>
-                            <select id="teamInviteRole" class="form-control form-control-sm" style="background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                            <select id="teamInviteRole" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="analyst">Analyst</option><option value="ils_manager">ILS Manager</option><option value="admin">Admin</option><option value="read_only">Read-Only</option>
                             </select>
                         </div>
@@ -2802,7 +2802,7 @@
                         <button class="ai-quick-btn" onclick="acqPrintReport()"><i class="fas fa-print"></i> Print Report</button>
                         <button class="ai-quick-btn" onclick="acqShowAuditLog()"><i class="fas fa-history"></i> Audit Log</button>
                         <span style="flex:1"></span>
-                        <input type="text" id="acqSearchInput" placeholder="Search hull, region, builder..." oninput="acqFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:#1d1d1f;border-radius:8px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
+                        <input type="text" id="acqSearchInput" placeholder="Search hull, region, builder..." oninput="acqFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:var(--text,#1d1d1f);border-radius:8px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
                         <button onclick="anchorAcquisitionPlan()" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
@@ -2913,7 +2913,7 @@
                         <button class="ai-quick-btn" onclick="milPrintReport()"><i class="fas fa-print"></i> Print Report</button>
                         <button class="ai-quick-btn" onclick="milShowAuditLog()"><i class="fas fa-history"></i> Audit Log</button>
                         <span style="flex:1"></span>
-                        <input type="text" id="milSearchInput" placeholder="Search hull, builder, program..." oninput="milFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:#1d1d1f;border-radius:8px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
+                        <input type="text" id="milSearchInput" placeholder="Search hull, builder, program..." oninput="milFilter(this.value)" style="background:var(--surface);border:1px solid var(--border);color:var(--text,#1d1d1f);border-radius:8px;padding:6px 12px;font-size:0.82rem;width:220px;font-family:inherit;">
                         <button onclick="anchorMilestones()" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                     </div>
 
@@ -3023,7 +3023,7 @@
                     <div class="ai-chat-header">
                         <div style="display:flex;align-items:center;gap:10px">
                             <div class="ai-dot"></div>
-                            <div><span style="font-weight:700;color:#1d1d1f;font-size:0.92rem"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i>S4 Anchor Agent</span></div>
+                            <div><span style="font-weight:700;color:var(--text,#1d1d1f);font-size:0.92rem"><i class="fas fa-robot" style="color:var(--accent);margin-right:6px"></i>S4 Anchor Agent</span></div>
                         </div>
                         <button class="ai-close-btn" onclick="toggleAiAgent()" title="Minimize"><i class="fas fa-chevron-down"></i></button>
                     </div>
@@ -3055,7 +3055,7 @@
                         <div class="sls-stat"><i class="fas fa-coins" style="color:#c9a84c"></i> <span class="sls-stat-label">Credits Balance:</span> <span class="sls-stat-val" id="slsBarBalance">25,000 Credits</span></div>
                         <div class="sls-stat"><i class="fas fa-anchor" style="color:var(--accent)"></i> <span class="sls-stat-label">Anchors:</span> <span class="sls-stat-val" id="slsBarAnchors" style="color:#00aaff">0</span></div>
                         <div class="sls-stat"><i class="fas fa-bolt" style="color:var(--accent)"></i> <span class="sls-stat-label">Credits Spent:</span> <span class="sls-stat-val" id="slsBarSpent">0.00 Credits</span></div>
-                        <div class="sls-stat"><i class="fas fa-layer-group" style="color:var(--accent)"></i> <span class="sls-stat-label">Plan:</span> <span class="sls-stat-val" id="slsBarPlan" style="color:#1d1d1f">Starter</span></div>
+                        <div class="sls-stat"><i class="fas fa-layer-group" style="color:var(--accent)"></i> <span class="sls-stat-label">Plan:</span> <span class="sls-stat-val" id="slsBarPlan" style="color:var(--text,#1d1d1f)">Starter</span></div>
                     </div>
                     <div style="display:flex;gap:8px;align-items:center">
                         <button class="sls-expand-btn" id="slsToggleBtn" onclick="toggleFlowBox()"><i class="fas fa-chart-simple" style="margin-right:4px"></i>Flow Details</button>
@@ -3105,7 +3105,7 @@
                             <div id="walletCredentials" style="display:none">
                                 <div style="margin-bottom:10px;padding:10px;background:var(--surface);border-radius:8px;border:1px solid var(--border);position:relative">
                                     <div style="font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:3px">Wallet Address</div>
-                                    <div id="walletAddress" style="font-size:0.78rem;font-family:'Fira Code',monospace;color:#1d1d1f;word-break:break-all;cursor:text;user-select:all">--</div>
+                                    <div id="walletAddress" style="font-size:0.78rem;font-family:'Fira Code',monospace;color:var(--text,#1d1d1f);word-break:break-all;cursor:text;user-select:all">--</div>
                                     <button onclick="copyWalletField('walletAddress')" style="position:absolute;top:8px;right:8px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:8px;padding:3px 8px;font-size:0.65rem;cursor:pointer"><i class="fas fa-copy"></i></button>
                                 </div>
 
@@ -3120,7 +3120,7 @@
 
                                 <div style="margin-bottom:10px;padding:10px;background:var(--surface);border-radius:8px;border:1px solid var(--border)">
                                     <div style="font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-bottom:3px">Algorithm</div>
-                                    <div style="font-size:0.78rem;color:#1d1d1f">secp256k1 (Xaman compatible)</div>
+                                    <div style="font-size:0.78rem;color:var(--text,#1d1d1f)">secp256k1 (Xaman compatible)</div>
                                 </div>
 
                                 <a id="walletExplorer" href="#" target="_blank" style="display:block;text-align:center;padding:10px;background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.15);border-radius:8px;color:var(--accent);text-decoration:none;font-size:0.82rem;font-weight:600;margin-top:10px"><i class="fas fa-external-link-alt" style="margin-right:6px"></i>View on XRPL Explorer</a>
@@ -3151,7 +3151,7 @@
                                     <button class="sls-amt-btn" onclick="setSLSAmount(100,this)" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--accent);font-weight:700;font-size:0.85rem">$100</button>
                                     <button class="sls-amt-btn" onclick="setSLSAmount(500,this)" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;color:var(--steel);font-weight:600;font-size:0.85rem">$500</button>
                                 </div>
-                                <input type="number" id="slsUsdInput" value="100" min="1" step="1" onchange="updateSLSPreview()" oninput="updateSLSPreview()" style="width:100%;background:var(--surface);color:#1d1d1f;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.92rem">
+                                <input type="number" id="slsUsdInput" value="100" min="1" step="1" onchange="updateSLSPreview()" oninput="updateSLSPreview()" style="width:100%;background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:0.92rem">
                             </div>
 
                             <div style="padding:14px;background:var(--surface);border-radius:8px;border:1px solid var(--border);margin-bottom:14px">
@@ -3211,8 +3211,8 @@
                     <!-- SEC Compliance Notice -->
                     <div style="margin-top:20px;padding:16px;background:rgba(26,58,92,0.08);border:1px solid rgba(26,58,92,0.2);border-radius:8px">
                         <h5 style="font-size:0.88rem;font-weight:700;color:#00aaff;margin-bottom:8px"><i class="fas fa-gavel" style="margin-right:6px"></i>Regulatory Notice</h5>
-                        <p style="font-size:0.78rem;color:var(--steel);margin-bottom:6px">Credits are <strong style="color:#1d1d1f">utility tokens</strong> used exclusively for platform service fees (anchoring, verification, and record integrity operations). Credits are not equity, not a security, and confer no ownership, governance rights, or expectation of profit.</p>
-                        <p style="font-size:0.78rem;color:var(--steel);margin-bottom:6px">Credits are <strong style="color:#1d1d1f">purchased at fair market value</strong> via your subscription plan (USD → XRP → Credits on XRPL DEX). They are consumed as services are used and have no cash value or redemption mechanism outside the S4 Ledger platform. Credits are never given away for free — all Credits are purchased through transparent, auditable on-chain transactions.</p>
+                        <p style="font-size:0.78rem;color:var(--steel);margin-bottom:6px">Credits are <strong style="color:var(--text,#1d1d1f)">utility tokens</strong> used exclusively for platform service fees (anchoring, verification, and record integrity operations). Credits are not equity, not a security, and confer no ownership, governance rights, or expectation of profit.</p>
+                        <p style="font-size:0.78rem;color:var(--steel);margin-bottom:6px">Credits are <strong style="color:var(--text,#1d1d1f)">purchased at fair market value</strong> via your subscription plan (USD → XRP → Credits on XRPL DEX). They are consumed as services are used and have no cash value or redemption mechanism outside the S4 Ledger platform. Credits are never given away for free — all Credits are purchased through transparent, auditable on-chain transactions.</p>
                         <p style="font-size:0.72rem;color:var(--muted);margin:0">S4 Systems, LLC is committed to full regulatory compliance and maintains ongoing legal counsel for digital asset classification under SEC, FinCEN, and state-level guidance. <a href="/s4-terms/" style="color:var(--accent)">Terms of Service</a> | <a href="/SEC_COMPLIANCE.md" style="color:var(--accent)">SEC Compliance</a></p>
                     </div>
 
@@ -3227,7 +3227,7 @@
 <div id="anchorOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center" onclick="if(event.target===this)hideAnchorAnimation()">
     <div id="s4ResultPopup" style="background:#fff;border:1px solid rgba(0,170,255,0.25);border-radius:6px;padding:2rem 2.5rem;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.12),0 0 40px rgba(0,170,255,0.06);position:relative;">
         <button onclick="hideAnchorAnimation()" style="position:absolute;top:10px;right:14px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1">&times;</button>
-        <div id="animStatus" style="font-size:1.05rem;font-weight:700;color:#1d1d1f;margin-bottom:0.8rem;display:flex;align-items:center;gap:8px"><i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to Ledger...</div>
+        <div id="animStatus" style="font-size:1.05rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:0.8rem;display:flex;align-items:center;gap:8px"><i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to Ledger...</div>
         <div id="animHash" style="font-family:monospace;font-size:0.72rem;color:var(--muted);word-break:break-all;background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px;margin-bottom:0.6rem"></div>
         <div id="animClf" style="margin-bottom:0.6rem"></div>
         <div id="animFee" style="font-size:0.82rem;color:var(--gold)">0.01 Credits &rarr; Treasury</div>
@@ -3784,14 +3784,14 @@
                 ];
                 var html = '<div id="roleSelectorOverlay" style="position:fixed;inset:0;background:rgba(255,255,255,0.98);z-index:10001;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s;backdrop-filter:blur(8px);">';
                 html += '<div style="background:var(--card,#0f1318);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:28px;max-width:680px;width:94%;max-height:85vh;overflow-y:auto;">';
-                html += '<h3 style="color:#1d1d1f;text-align:center;margin:0 0 6px;font-size:1.2rem;"><i class="fas fa-users-cog" style="color:#00aaff;margin-right:8px;"></i>Select Your Role</h3>';
+                html += '<h3 style="color:var(--text,#1d1d1f);text-align:center;margin:0 0 6px;font-size:1.2rem;"><i class="fas fa-users-cog" style="color:#00aaff;margin-right:8px;"></i>Select Your Role</h3>';
                 html += '<p style="color:#8892a4;text-align:center;font-size:0.82rem;margin:0 0 20px;">Choose a role to customize your dashboard view. You can change this later.</p>';
                 html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">';
                 roles.forEach(function(r) {
                     html += '<div onclick="window._selectRole(\'' + r.key + '\')" style="cursor:pointer;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:6px;padding:20px 16px;text-align:center;transition:all 0.2s;"';
                     html += ' onmouseover="this.style.borderColor=\'#00aaff\';this.style.background=\'rgba(0,170,255,0.1)\'" onmouseout="this.style.borderColor=\'rgba(0,170,255,0.12)\';this.style.background=\'rgba(0,170,255,0.04)\'">';
                     html += '<i class="fas ' + r.icon + '" style="font-size:1.8rem;color:#00aaff;margin-bottom:10px;display:block;"></i>';
-                    html += '<div style="color:#1d1d1f;font-weight:700;font-size:0.9rem;margin-bottom:6px;">' + r.title + '</div>';
+                    html += '<div style="color:var(--text,#1d1d1f);font-weight:700;font-size:0.9rem;margin-bottom:6px;">' + r.title + '</div>';
                     html += '<div style="color:#8892a4;font-size:0.75rem;line-height:1.5;">' + r.desc + '</div>';
                     html += '</div>';
                 });
@@ -4157,7 +4157,7 @@
             <div class="wt-narrator-header">
                 <div style="display:flex;align-items:center;gap:8px;">
                     <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" style="height:24px;width:24px;">
-                    <span style="color:#1d1d1f;font-weight:700;font-size:0.88rem;">S4 Ledger Platform Tour</span>
+                    <span style="color:var(--text,#1d1d1f);font-weight:700;font-size:0.88rem;">S4 Ledger Platform Tour</span>
                 </div>
                 <button class="wt-close" onclick="endWalkthrough()" aria-label="Close walkthrough"><i class="fas fa-times"></i></button>
             </div>
@@ -4192,7 +4192,7 @@
 </div>
 <div id="s4FeedbackDrawer" class="fb-drawer" aria-hidden="true">
     <div class="fb-header">
-        <span style="font-weight:700;color:#1d1d1f;font-size:0.88rem;"><i class="fas fa-comment-dots" style="color:var(--accent);margin-right:6px;"></i>Send Feedback</span>
+        <span style="font-weight:700;color:var(--text,#1d1d1f);font-size:0.88rem;"><i class="fas fa-comment-dots" style="color:var(--accent);margin-right:6px;"></i>Send Feedback</span>
         <button class="fb-close" onclick="closeFeedbackDrawer()" aria-label="Close"><i class="fas fa-times"></i></button>
     </div>
     <div class="fb-body">

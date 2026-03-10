@@ -1,5 +1,5 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 31 — Anchor/Verify Audit & Fix (Anchor form restored)
+## Last Updated: Session 34 — Steve Jobs Visual Overhaul Complete (Gold/Purple Elimination)
 
 ---
 
@@ -2211,6 +2211,177 @@ User returned furious that Session 28 fixes were incomplete. Demanded Steve Jobs
 - `prod-app/src/js/enterprise-features.js` — 4 button + 1 avatar `var(--accent)` → `#0071e3`
 - `prod-app/dist/` — Rebuilt
 - `demo-app/` — All synced, both apps rebuilt
+
+---
+
+## Session 30 — Steve Jobs Design System: Tabs, Buttons, Inputs (Commit e09db42)
+
+**Date**: March 9, 2026
+**Commit**: `e09db42`
+**Parent**: Session 29 commit `a4299d2`
+
+### Changes
+1. **Tab pills** — standardized to 20px border-radius across all tab bars
+2. **Button radius** — all buttons normalized to 8px border-radius
+3. **Input fields** — all inputs normalized to 8px border-radius
+4. **Padding/font-size** — standardized across ILS tool panels
+
+### Files Changed:
+- `prod-app/src/styles/main.css` — Tab, button, and input radius standardization
+- `prod-app/src/js/engine.js` — Inline style updates
+- Both apps rebuilt and synced
+
+---
+
+## Session 31 — Anchor Form Restoration & tabVerify Fix (Commits d305eee, 54a1059, 6043634)
+
+**Date**: March 9, 2026
+**Commits**: `6043634` (demo SLS restore), `54a1059` (tabVerify fix), `d305eee` (anchor form restore)
+**Parent**: Session 30 commit `e09db42`
+
+### Problem Statement
+Anchor form was completely missing from index.html in both apps. The `tabVerify` element referenced throughout JS didn't exist — both Anchor and Verify share `tabAnchor`.
+
+### Fixes
+1. **Anchor form HTML** — restored full anchor form markup to both prod-app and demo-app index.html
+2. **navigation.js** — `sectionVerify→tabVerify` fixed to `sectionVerify→tabAnchor`
+3. **enhancements.js** — Ctrl+2, search tabs, Ctrl+Shift+V all referenced `tabVerify` → fixed to `tabAnchor`
+4. **enterprise-features.js** — removed `tabVerify` related links entry
+5. **engine.js** — added `window.loadSample` export for prod-app
+6. **Demo SLS flow** — restored to baseline working state (commit bf0c17f patterns)
+
+### Files Changed:
+- `prod-app/src/index.html`, `demo-app/src/index.html` — Anchor form restored
+- `prod-app/src/js/navigation.js`, `engine.js`, `enhancements.js`, `enterprise-features.js`
+- `demo-app/` — All synced, both apps rebuilt
+
+---
+
+## Session 32 — Inline Border-Radius Sweep (Commit fc01d55)
+
+**Date**: March 9, 2026
+**Commit**: `fc01d55`
+**Parent**: Session 31 commit `d305eee`
+
+### Problem Statement
+483 inline `border-radius:3px` in index.html overrode CSS border-radius rules due to CSS specificity (inline always wins).
+
+### Fix
+- `sed` replaced all 483 inline `border-radius:3px` with `border-radius:8px` in both prod-app and demo-app src/index.html
+- CSS attribute selector overrides added to main.css for any remaining conflicts
+
+### Files Changed:
+- `prod-app/src/index.html`, `demo-app/src/index.html` — 483 border-radius fixes each
+- Both apps rebuilt
+
+---
+
+## Session 33 — Visual Polish: ROI/Readiness/Lifecycle Compaction (Commit c742e41)
+
+**Date**: March 9, 2026
+**Commit**: `c742e41`
+**Parent**: Session 32 commit `fc01d55`
+
+### Changes
+1. **ROI/Readiness/Lifecycle calculator outputs** — compacted for cleaner layout
+2. **18 detailed help blocks** — added to ILS tools
+3. **Button standardization** — sizing normalization
+4. **Digital Thread sizing** — exit button 26px → 20px
+5. **FAB white box artifact** — CSS fix
+
+### Files Changed:
+- `prod-app/src/js/engine.js` — Calculator output compaction, help blocks
+- `prod-app/src/styles/main.css` — Button sizing, FAB fix
+- Both apps rebuilt and synced
+
+---
+
+## Session 34 — Steve Jobs Visual Overhaul: Gold/Purple Elimination (Commit b17fcaf + current)
+
+**Date**: March 9, 2026
+**Commits**: `b17fcaf` (initial), current (demo index.html fix + proper build)
+**Parent**: Session 33 commit `c742e41`
+
+### Problem Statement
+User demanded complete Steve Jobs visual overhaul — eliminate old gold (#c9a84c) and purple (#9b59b6) colors across ALL modules, replace with semantic design system colors, and convert hardcoded text colors to CSS variables for dark mode support.
+
+### Color Design System
+| Color | Usage | Hex |
+|-------|-------|-----|
+| Accent Blue | Primary UI, icons, buttons, interactive elements | `#00aaff` / `var(--accent)` |
+| Orange | Warnings, moderate risk, costs, status indicators | `#ffa500` |
+| Red | Critical errors, high severity | `#ff6b6b` / `#ff4444` |
+| Green | Success, on-track, healthy | `#00cc88` / `#4ecb71` |
+| Modern Purple | Data visualization (charts) | `#a855f7` |
+| Gold (KEPT) | Credit/wallet/coins economy ONLY | `#c9a84c` |
+
+### Gold Keeps (Intentional — credit economy UI only)
+- **engine.js**: Credit toast (L165-166), balance color (L207) — 3 refs prod, 11 refs demo
+- **navigation.js**: Credit economic flow panel (L425-578) — 5 refs each
+- **enhancements.js**: warm-amber theme preset (L4228) — 1 ref each
+- **index.html**: Login lock, logout buttons, roadmap, credits balance, critical dots — 9 refs each
+
+### Scope of Changes
+
+**JS Files Fixed** (applied to BOTH prod-app and demo-app):
+| File | Gold Refs Fixed | Purple Fixed | Hardcoded Text Fixed |
+|------|----------------|--------------|---------------------|
+| acquisition.js | 10 | 0 | 6 |
+| brief.js | 14 | 0 | 69 |
+| engine.js | varies (prod 35+, demo 44) | 1 each | 4 each |
+| enhancements.js | 14 (1 keep) | 5 | 19 |
+| enterprise-features.js | (prior session) | 1 | 25 |
+| metrics.js | 6 + 2 rgba | 2 | 3 |
+| milestones.js | 10 | 0 | 13 |
+| navigation.js | 0 (all keeps) | 0 | 8 |
+| roles.js | 3 + 2 rgba | 0 | 3 |
+| scroll.js | 1 rgba | 0 | 0 |
+
+**index.html Fixed** (both apps):
+| Change | Prod Count | Demo Count |
+|--------|-----------|------------|
+| #c9a84c eliminated | 83 → 9 | 83 → 9 |
+| rgba(201,168,76) eliminated | 52 → 9 | 52 → 9 |
+| #9b59b6 → #a855f7 | 6 → 0 | 6 → 0 |
+| color:#1d1d1f → var(--text) | 149 → 0 | 150 → 0 |
+
+**CSS (main.css)** — 4 non-wallet gold rules fixed:
+- `.s4-widget .widget-change.negative` → #ffa500
+- `.acq-badge-yellow` → orange styling
+- `.acq-summary-cost` → accent blue
+- `.hub-card.s4-recommended` → accent blue border/badge
+
+### Build Process Fix
+- **CRITICAL LESSON**: Must always follow the full build process:
+  1. Build prod: `cd prod-app && npx vite build`
+  2. Build demo: `cd demo-app && npx vite build`
+  3. Copy demo landing: `cp demo-app/dist/index.html demo-app/index.html`
+  4. Verify with grep: `grep -c '#c9a84c' prod-app/dist/index.html demo-app/dist/index.html`
+  5. Check stale patterns: `grep -c 'OLD_PATTERN' */dist/index.html`
+  6. NEVER say "done" without verification
+
+### Verification Results
+| Check | Prod dist | Demo dist |
+|-------|----------|----------|
+| #c9a84c | 9 (keeps) | 9 (keeps) |
+| #9b59b6 | 0 | 0 |
+| color:#1d1d1f | 0 | 0 |
+| #00aaff (accent) | 221 | 279 |
+| #ffa500 (orange) | 14 | 20 |
+| var(--text) | 174 | 175 |
+
+### Bug Fix
+- **engine.js missing brace**: `renderActionItem` function was missing closing `}` (lost during prior session's `_esc()` wrapper addition). Fixed by restoring the brace.
+
+### Files Changed:
+- `prod-app/src/index.html` — 149 hardcoded text colors converted to var(--text)
+- `prod-app/src/js/` — acquisition.js, brief.js, engine.js, enhancements.js, enterprise-features.js, metrics.js, milestones.js, navigation.js, roles.js, scroll.js
+- `prod-app/src/styles/main.css` — 4 CSS gold rules fixed
+- `demo-app/src/index.html` — 83 gold, 52 rgba gold, 6 purple, 150 hardcoded text — all converted
+- `demo-app/src/js/` — All JS files synced/fixed
+- `demo-app/src/styles/main.css` — Synced from prod
+- Both `*/dist/` — Rebuilt and verified
+- `demo-app/index.html` — Copied from demo dist
 
 ---
 *This log is updated every session. Reference before making changes.*
