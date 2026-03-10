@@ -730,6 +730,16 @@
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                         <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-size:0.72rem;font-weight:600;background:rgba(0,204,102,0.08);border:1px solid rgba(0,204,102,0.15);color:#00cc66"><i class="fas fa-circle" style="font-size:0.4rem"></i> Live</span>
                         <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-size:0.72rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.12);color:var(--accent)"><i class="fas fa-shield-halved"></i> IL4/IL5</span>
+                        <!-- Presets dropdown (Change 11) -->
+                        <details class="s4-presets-dropdown" style="position:relative;">
+                            <summary style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:8px;font-size:0.78rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:var(--accent);cursor:pointer;list-style:none;transition:all 0.2s;user-select:none;" title="Workflow presets"><i class="fas fa-bolt"></i> Presets</summary>
+                            <div class="s4-presets-menu" style="position:absolute;right:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:100;min-width:240px;padding:6px 0;font-size:0.8rem;">
+                                <div style="padding:6px 14px 4px;font-size:0.68rem;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:0.05em">Quick Workflows</div>
+                                <button onclick="window._s4ApplyPreset('daily');this.closest('details').open=false" class="s4-preset-btn"><i class="fas fa-sun" style="color:#ff9500;width:18px;text-align:center"></i><div><strong>Standard ILS Daily</strong><span>Compliance → Gap Finder → Risk Radar</span></div></button>
+                                <button onclick="window._s4ApplyPreset('audit');this.closest('details').open=false" class="s4-preset-btn"><i class="fas fa-clipboard-check" style="color:var(--accent);width:18px;text-align:center"></i><div><strong>Audit Prep</strong><span>Audit Builder → Audit Vault → Brief Composer</span></div></button>
+                                <button onclick="window._s4ApplyPreset('obsol');this.closest('details').open=false" class="s4-preset-btn"><i class="fas fa-microchip" style="color:#ff3b30;width:18px;text-align:center"></i><div><strong>Obsolescence Sweep</strong><span>Obsolescence Alert → SBOM Scanner → Risk Radar</span></div></button>
+                            </div>
+                        </details>
                         <details class="ils-hdr-overflow" style="position:relative;">
                             <summary style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:8px;font-size:0.78rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:var(--accent);cursor:pointer;list-style:none;transition:all 0.2s;user-select:none;" title="More actions"><i class="fas fa-ellipsis"></i></summary>
                             <div style="position:absolute;right:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:100;min-width:180px;padding:4px 0;font-size:0.8rem;">
@@ -4154,6 +4164,57 @@
 .s4-thumb.thumb-selected[data-positive="false"]{background:rgba(255,69,58,0.1);border-color:var(--red);color:var(--red);}
 </style>
 
+<!-- ═══ EXPORT OPTIONS PANEL (Change 14) ═══ -->
+<div class="s4-export-overlay" id="s4ExportOverlay" style="display:none">
+    <div class="s4-export-panel">
+        <div class="s4-export-header">
+            <h3><i class="fas fa-file-export" style="color:var(--accent)"></i> Export Report</h3>
+            <button class="s4-export-close" onclick="window._s4CloseExport()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="s4-export-body">
+            <div class="s4-export-section">
+                <label class="s4-export-label">Format</label>
+                <div class="s4-export-formats" id="s4ExportFormats">
+                    <button class="s4-export-fmt active" data-fmt="pdf" onclick="window._s4SelectFmt(this)"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="s4-export-fmt" data-fmt="csv" onclick="window._s4SelectFmt(this)"><i class="fas fa-file-csv"></i> CSV</button>
+                    <button class="s4-export-fmt" data-fmt="json" onclick="window._s4SelectFmt(this)"><i class="fas fa-file-code"></i> JSON</button>
+                </div>
+            </div>
+            <div class="s4-export-section">
+                <label class="s4-export-label">Include</label>
+                <label class="s4-export-check"><input type="checkbox" checked> Session summary &amp; metrics</label>
+                <label class="s4-export-check"><input type="checkbox" checked> Tool results &amp; analysis</label>
+                <label class="s4-export-check"><input type="checkbox" checked> Charts &amp; visualizations</label>
+                <label class="s4-export-check"><input type="checkbox"> Blockchain verification proofs</label>
+            </div>
+            <div class="s4-export-section">
+                <label class="s4-export-label">Branding</label>
+                <div class="s4-export-branding" id="s4ExportBranding">
+                    <i class="fas fa-cloud-arrow-up"></i>
+                    <span>Drop logo here or <u>browse</u></span>
+                    <input type="file" accept="image/*" style="display:none" id="s4ExportLogoInput">
+                </div>
+            </div>
+            <div class="s4-export-section">
+                <label class="s4-export-label">Preview</label>
+                <div class="s4-export-preview" id="s4ExportPreview">
+                    <div class="s4-export-preview-page">
+                        <div style="width:40%;height:6px;background:var(--accent);border-radius:3px;margin-bottom:6px"></div>
+                        <div style="width:70%;height:4px;background:var(--border);border-radius:2px;margin-bottom:4px"></div>
+                        <div style="width:55%;height:4px;background:var(--border);border-radius:2px;margin-bottom:8px"></div>
+                        <div style="width:100%;height:24px;background:rgba(0,122,255,0.06);border:1px solid rgba(0,122,255,0.1);border-radius:3px;margin-bottom:4px"></div>
+                        <div style="width:100%;height:24px;background:rgba(0,122,255,0.06);border:1px solid rgba(0,122,255,0.1);border-radius:3px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="s4-export-footer">
+            <button class="s4-export-cancel" onclick="window._s4CloseExport()">Cancel</button>
+            <button class="s4-export-now" onclick="window._s4RunExport()"><i class="fas fa-download"></i> Export Now</button>
+        </div>
+    </div>
+</div>
+
 <!-- ═══ REPORT SIDEBAR (Step 5) ═══ -->
 <div class="s4-report-sidebar" id="s4ReportSidebar">
     <div class="s4-report-sidebar-header">
@@ -4164,7 +4225,7 @@
         <div class="s4rs-empty"><i class="fas fa-inbox" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:0.4"></i>Run tools to build your session report</div>
     </div>
     <div class="s4-report-sidebar-footer">
-        <button class="s4rs-export" onclick="window._s4ExportReport()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+        <button class="s4rs-export" onclick="window._s4OpenExport()"><i class="fas fa-file-pdf"></i> Export PDF</button>
         <button class="s4rs-clear" onclick="window._s4ClearReport()">Clear</button>
     </div>
 </div>

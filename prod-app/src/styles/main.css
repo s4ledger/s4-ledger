@@ -5205,3 +5205,257 @@ button:active, .btn:active {
 }
 @keyframes s4-toast-in { from{opacity:0;transform:translateX(-50%) translateY(12px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
 @keyframes s4-toast-out { from{opacity:1} to{opacity:0} }
+
+/* ═══════════════════════════════════════════════════
+   CHANGES 11-15: Presets, Accordions, Previews,
+   Export Panel, Micro-animations
+   ═══════════════════════════════════════════════════ */
+
+/* ═══ CHANGE 11: Presets Dropdown ═══ */
+.s4-presets-dropdown summary::-webkit-details-marker { display:none; }
+.s4-presets-dropdown summary::marker { display:none; content:''; }
+.s4-preset-btn {
+    display:flex; align-items:center; gap:10px;
+    width:100%; padding:8px 14px;
+    background:none; border:none;
+    color:var(--text,#1d1d1f); cursor:pointer;
+    font-size:0.8rem; text-align:left;
+    transition:background 0.15s;
+}
+.s4-preset-btn:hover { background:rgba(0,170,255,0.06); }
+.s4-preset-btn div { display:flex; flex-direction:column; gap:1px; }
+.s4-preset-btn strong { font-size:0.8rem; font-weight:700; color:var(--text); }
+.s4-preset-btn span { font-size:0.68rem; color:var(--steel); }
+
+/* ═══ CHANGE 12: Collapsible Grid Sections ═══ */
+.s4-grid-section-header {
+    cursor:pointer; user-select:none;
+    transition:opacity 0.2s;
+}
+.s4-grid-section-header:hover { opacity:1 !important; }
+.s4-grid-section-header .s4gs-chevron {
+    margin-left:8px; font-size:0.6rem; color:var(--steel);
+    transition:transform 0.25s ease;
+}
+.s4-grid-section-header.collapsed .s4gs-chevron {
+    transform:rotate(-90deg);
+}
+.s4-grid-section-body {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:14px;
+    overflow:hidden;
+    transition:max-height 0.3s ease, opacity 0.25s ease;
+    max-height:2000px; opacity:1;
+}
+.s4-grid-section-body.collapsed {
+    max-height:0; opacity:0;
+    margin:0; padding:0;
+}
+
+/* ═══ CHANGE 13: Inline Tool Previews ═══ */
+.s4-tool-preview {
+    position:absolute; left:50%; bottom:calc(100% + 8px);
+    transform:translateX(-50%) translateY(4px);
+    width:240px; max-width:90vw;
+    background:#fff; border:1px solid var(--border);
+    border-radius:10px; padding:14px 16px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.12);
+    z-index:200;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.2s ease, transform 0.2s ease;
+    font-size:0.75rem;
+}
+.s4-tool-preview.visible {
+    opacity:1; pointer-events:auto;
+    transform:translateX(-50%) translateY(0);
+}
+.s4-tool-preview::after {
+    content:''; position:absolute;
+    left:50%; bottom:-6px; transform:translateX(-50%) rotate(45deg);
+    width:10px; height:10px;
+    background:#fff; border-right:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.s4-tool-preview-title {
+    font-weight:700; color:var(--text); margin-bottom:6px;
+    display:flex; align-items:center; gap:6px;
+}
+.s4-tool-preview-title i { color:var(--accent); font-size:0.7rem; }
+.s4-tool-preview-desc {
+    color:var(--steel); line-height:1.45; margin-bottom:8px;
+}
+.s4-tool-preview-snippet {
+    background:rgba(0,122,255,0.04); border:1px solid rgba(0,122,255,0.1);
+    border-radius:6px; padding:8px 10px;
+    font-family:'SF Mono',monospace; font-size:0.65rem; color:var(--text);
+    line-height:1.5;
+}
+
+/* ═══ CHANGE 14: Export Options Panel ═══ */
+.s4-export-overlay {
+    position:fixed; inset:0;
+    background:rgba(245,245,247,0.88);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    z-index:10002;
+    display:flex; align-items:center; justify-content:center;
+    animation:fadeIn 0.25s ease;
+}
+.s4-export-panel {
+    background:#fff; border:1px solid var(--border);
+    border-radius:12px; width:460px; max-width:92vw;
+    max-height:88vh; overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,0.12);
+    animation:slideUp 0.3s ease;
+    display:flex; flex-direction:column;
+}
+.s4-export-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 24px 16px; border-bottom:1px solid var(--border);
+}
+.s4-export-header h3 {
+    font-size:1rem; font-weight:700; color:var(--text);
+    margin:0; display:flex; align-items:center; gap:8px;
+}
+.s4-export-close {
+    background:none; border:none; color:var(--steel);
+    font-size:1rem; cursor:pointer; padding:4px;
+}
+.s4-export-body { padding:20px 24px; }
+.s4-export-section { margin-bottom:18px; }
+.s4-export-label {
+    display:block; font-size:0.72rem; font-weight:700;
+    color:var(--steel); text-transform:uppercase; letter-spacing:0.04em;
+    margin-bottom:8px;
+}
+.s4-export-formats { display:flex; gap:8px; }
+.s4-export-fmt {
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    padding:10px 12px; border-radius:8px;
+    background:var(--bg); border:2px solid var(--border);
+    color:var(--text); font-size:0.82rem; font-weight:600;
+    cursor:pointer; transition:all 0.2s; font-family:inherit;
+}
+.s4-export-fmt:hover { border-color:rgba(0,122,255,0.3); }
+.s4-export-fmt.active {
+    border-color:var(--accent); background:rgba(0,122,255,0.06);
+    color:var(--accent);
+}
+.s4-export-check {
+    display:flex; align-items:center; gap:8px;
+    font-size:0.82rem; color:var(--text);
+    padding:6px 0; cursor:pointer;
+}
+.s4-export-check input { accent-color:var(--accent); width:16px; height:16px; }
+.s4-export-branding {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:6px; padding:20px;
+    border:2px dashed var(--border); border-radius:8px;
+    color:var(--steel); font-size:0.78rem;
+    cursor:pointer; transition:all 0.2s;
+}
+.s4-export-branding:hover { border-color:var(--accent); color:var(--accent); }
+.s4-export-branding i { font-size:1.2rem; }
+.s4-export-preview {
+    display:flex; justify-content:center;
+    padding:12px; background:var(--bg);
+    border:1px solid var(--border); border-radius:8px;
+}
+.s4-export-preview-page {
+    width:100px; min-height:130px;
+    background:#fff; border:1px solid var(--border);
+    border-radius:4px; padding:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+.s4-export-footer {
+    display:flex; gap:10px; justify-content:flex-end;
+    padding:16px 24px; border-top:1px solid var(--border);
+}
+.s4-export-cancel {
+    background:none; border:1px solid var(--border);
+    color:var(--steel); border-radius:8px;
+    padding:10px 20px; font-size:0.82rem;
+    cursor:pointer; font-family:inherit;
+}
+.s4-export-now {
+    background:var(--accent); color:#fff;
+    border:none; border-radius:8px;
+    padding:10px 24px; font-size:0.82rem; font-weight:700;
+    cursor:pointer; font-family:inherit;
+    display:flex; align-items:center; gap:6px;
+    transition:all 0.2s;
+}
+.s4-export-now:hover { background:#0066e0; }
+
+/* ═══ CHANGE 15: Micro-animations ═══ */
+/* Card hover scale + glow */
+.ils-tool-card {
+    transition:transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.ils-tool-card:hover {
+    transform:translateY(-3px) scale(1.015);
+    box-shadow:0 8px 24px rgba(0,122,255,0.10);
+    border-color:rgba(0,122,255,0.2);
+}
+.ils-tool-card:active {
+    transform:translateY(0) scale(0.98);
+    transition-duration:0.1s;
+}
+
+/* Progress bar smooth fill */
+.s4-chain-step .s4cs-icon,
+.s4-progress-ring .ring-fill {
+    transition:all 0.3s ease;
+}
+
+/* Chain bar slide-in */
+.s4-today-chain.visible {
+    animation:s4-slideDown 0.3s ease;
+}
+@keyframes s4-slideDown {
+    from { opacity:0; transform:translateY(-8px); }
+    to { opacity:1; transform:translateY(0); }
+}
+
+/* Sidebar grow/fade */
+.s4-report-sidebar {
+    transition:transform 0.28s cubic-bezier(0.32,0.72,0,1);
+}
+.s4-report-sidebar.open {
+    transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);
+}
+
+/* Continue chain bar slide-in */
+.s4-continue-chain {
+    animation:s4-slideDown 0.25s ease;
+}
+
+/* Grid section expand/collapse */
+.s4-grid-section-body {
+    will-change:max-height, opacity;
+}
+
+/* Filter tab press */
+.filter-tab {
+    transition:all 0.2s ease;
+}
+.filter-tab:active {
+    transform:scale(0.95);
+}
+
+/* Welcome chain card hover lift */
+.s4-welcome-chain {
+    transition:all 0.22s ease;
+}
+.s4-welcome-chain:hover {
+    transform:translateX(4px) translateY(-1px);
+    box-shadow:0 4px 12px rgba(0,122,255,0.08);
+}
+
+/* Preset button press */
+.s4-preset-btn:active {
+    background:rgba(0,170,255,0.1);
+    transform:scale(0.98);
+}
+
+/* Export format button press */
+.s4-export-fmt:active { transform:scale(0.96); }

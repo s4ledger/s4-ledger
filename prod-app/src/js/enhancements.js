@@ -7717,6 +7717,11 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         _renderTodayChain();
     };
 
+    window._s4ReloadTodayChain = function() {
+        _loadTodayChain();
+        _renderTodayChain();
+    };
+
     // Hook openILSTool to track in Today's Chain
     function _hookTodayChain() {
         var orig = window.openILSTool;
@@ -8000,4 +8005,255 @@ window.verifyProvenanceChain = verifyProvenanceChain;
     }
 })();
 
+})();
+
+/* ═══════════════════════════════════════════════════
+   CHANGES 11-15: Presets, Accordions, Previews,
+   Export Panel, Micro-animations
+   ═══════════════════════════════════════════════════ */
+(function _s4Changes11to15() {
+    'use strict';
+
+    // ─── CHANGE 11: Smart Defaults & Presets ───
+    var _presetDefs = {
+        daily:  { label:'Standard ILS Daily',  tools:['hub-compliance','hub-analysis','hub-risk'] },
+        audit:  { label:'Audit Prep',          tools:['hub-reports','hub-vault','hub-brief'] },
+        obsol:  { label:'Obsolescence Sweep',  tools:['hub-dmsms','hub-sbom','hub-risk'] }
+    };
+
+    window._s4ApplyPreset = function(presetKey) {
+        var preset = _presetDefs[presetKey];
+        if (!preset) return;
+        // Save as Today's Chain
+        localStorage.setItem('s4_today_chain', JSON.stringify(preset.tools));
+        // Render the chain bar (reload from storage)
+        if (typeof window._s4ReloadTodayChain === 'function') {
+            window._s4ReloadTodayChain();
+        }
+        // Open first tool in the chain
+        if (typeof window.openILSTool === 'function') {
+            window.openILSTool(preset.tools[0]);
+        }
+        // Toast feedback
+        if (typeof S4 !== 'undefined' && typeof S4.toast === 'function') {
+            S4.toast('Loaded: ' + preset.label, 'info', 2000);
+        }
+    };
+
+    // Auto-highlight first welcome chain on load
+    function _highlightDefaultChain() {
+        var firstChain = document.querySelector('.s4-welcome-chain');
+        if (firstChain && !firstChain.dataset.s4Highlighted) {
+            firstChain.dataset.s4Highlighted = '1';
+            firstChain.style.borderColor = 'rgba(0,122,255,0.35)';
+            firstChain.style.background = 'rgba(0,122,255,0.08)';
+        }
+    }
+
+    // ─── CHANGE 12: Collapsible Grid Sections (Accordions) ───
+    function _makeGridAccordions() {
+        var hub = document.getElementById('ilsSubHub');
+        if (!hub || hub.dataset.s4Accordion) return;
+        hub.dataset.s4Accordion = '1';
+
+        var headers = hub.querySelectorAll('.s4-grid-section-header');
+        headers.forEach(function(header, idx) {
+            // Add chevron
+            if (!header.querySelector('.s4gs-chevron')) {
+                var chevron = document.createElement('i');
+                chevron.className = 'fas fa-chevron-down s4gs-chevron';
+                header.appendChild(chevron);
+            }
+
+            // Collect cards after this header until next header or end
+            var cards = [];
+            var node = header.nextElementSibling;
+            while (node && !node.classList.contains('s4-grid-section-header')) {
+                cards.push(node);
+                node = node.nextElementSibling;
+            }
+
+            // Wrap in a body container
+            if (cards.length) {
+                var body = document.createElement('div');
+                body.className = 's4-grid-section-body';
+                body.style.gridColumn = '1 / -1';
+                // Non-first sections start collapsed
+                if (idx > 0) {
+                    body.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                }
+                cards.forEach(function(c) { body.appendChild(c); });
+                header.insertAdjacentElement('afterend', body);
+            }
+
+            // Click to toggle
+            header.addEventListener('click', function() {
+                var body = header.nextElementSibling;
+                if (!body || !body.classList.contains('s4-grid-section-body')) return;
+                var isCollapsed = body.classList.contains('collapsed');
+                if (isCollapsed) {
+                    body.classList.remove('collapsed');
+                    header.classList.remove('collapsed');
+                } else {
+                    body.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                }
+            });
+        });
+    }
+
+    // ─── CHANGE 13: Inline Tool Previews on Hover ───
+    var _toolPreviews = {
+        'hub-compliance':  { snippet:'NIST 800-171: 87% compliant\nCMMC L2: 14/14 practices met\n3 gaps identified' },
+        'hub-analysis':    { snippet:'Readiness gaps: 3 critical\nParts shortfall: 12 items\nAction items generated: 5' },
+        'hub-actions':     { snippet:'Open tasks: 7 (2 overdue)\nPriority: 3 high, 4 medium\nNext due: Mar 12' },
+        'hub-risk':        { snippet:'Risk score: 73/100\nTop threat: Single-source vendor\nMitigation: Dual-source RFQ' },
+        'hub-readiness':   { snippet:'Ao: 0.92 | Ai: 0.95\nMTBF: 1,240 hrs\nSpares fill: 88%' },
+        'hub-dmsms':       { snippet:'Obsolete items: 14\nAt-risk: 8 within 12mo\nAlternate sources: 6 found' },
+        'hub-analytics':   { snippet:'Programs tracked: 4\nAvg readiness: 91%\nBudget variance: +2.3%' },
+        'hub-milestones':  { snippet:'On track: 8/12 milestones\nDelayed: 2 (OWLD +14d)\nNext: CDR — Apr 15' },
+        'hub-predictive':  { snippet:'Predicted failures: 3\nNext maintenance: 847 hrs\nConfidence: 94%' },
+        'hub-lifecycle':   { snippet:'Total LCC: $4.2M (30yr)\nSustainment: 68% of total\nBreakeven: Year 7' },
+        'hub-roi':         { snippet:'ROI: 312% over 5 years\nPayback period: 14 months\nNPV: $1.8M' },
+        'hub-sbom':        { snippet:'Components: 847\nCVEs found: 3 (1 critical)\nAttestation: blockchain-verified' },
+        'hub-gfp':         { snippet:'GFP items: 234\nAccountability: 99.1%\nNext audit: Q2 FY26' },
+        'hub-provenance':  { snippet:'Chain depth: 7 transfers\nAll verified on-ledger\nQR codes: 12 generated' },
+        'hub-acquisition': { snippet:'Vessels: 6 in pipeline\nFunded: 4/6 (POM FY26)\nDelivery: 2027-2031' },
+        'hub-contract':    { snippet:'Clauses extracted: 48\nFAR/DFARS: 31 found\nObligations mapped: 22' },
+        'hub-reports':     { snippet:'Reports generated: 12\nLast export: today\nTemplates: ILSMT, IPR, CDR' },
+        'hub-vault':       { snippet:'Documents: 89 stored\nBlockchain anchored: 67\nStorage: 124 MB' },
+        'hub-docs':        { snippet:'Manuals: 34 indexed\nDrawings: 56 linked\nLast updated: 2 days ago' },
+        'hub-submissions': { snippet:'Pending: 4 submissions\nApproved: 18 this quarter\nRejected: 1 (resubmit)' },
+        'hub-cdrl':        { snippet:'CDRLs tracked: 23\nCompliant: 21 (91%)\nDI format issues: 2' },
+        'hub-brief':       { snippet:'Briefs created: 6\nSlides: 42 total\nTemplates: POM, ILSMT, IPR' },
+        'hub-team':        { snippet:'Team members: 8\nRoles: 4 configured\nLast login: 2 hrs ago' }
+    };
+
+    var _activePreview = null;
+    var _previewTimer = null;
+
+    function _showPreview(card, toolId) {
+        _hidePreview();
+        var info = _toolPreviews[toolId];
+        if (!info) return;
+        var titleEl = card.querySelector('.itc-title');
+        var descEl = card.querySelector('.itc-desc');
+        var title = titleEl ? titleEl.textContent.trim() : toolId;
+        var desc = descEl ? descEl.textContent.trim() : '';
+
+        var el = document.createElement('div');
+        el.className = 's4-tool-preview';
+        el.innerHTML =
+            '<div class="s4-tool-preview-title"><i class="fas fa-eye"></i>' + title + '</div>' +
+            '<div class="s4-tool-preview-desc">' + desc.substring(0, 80) + (desc.length > 80 ? '...' : '') + '</div>' +
+            '<div class="s4-tool-preview-snippet">' + info.snippet.replace(/\n/g, '<br>') + '</div>';
+        card.style.position = 'relative';
+        card.appendChild(el);
+        _activePreview = el;
+        // Force reflow then show
+        el.offsetHeight;
+        el.classList.add('visible');
+    }
+
+    function _hidePreview() {
+        clearTimeout(_previewTimer);
+        if (_activePreview) {
+            _activePreview.remove();
+            _activePreview = null;
+        }
+    }
+
+    function _hookPreviews() {
+        var hub = document.getElementById('ilsSubHub');
+        if (!hub || hub.dataset.s4Previews) return;
+        hub.dataset.s4Previews = '1';
+
+        hub.addEventListener('mouseenter', function(e) {
+            var card = e.target.closest('.ils-tool-card');
+            if (!card) return;
+            var onclick = card.getAttribute('onclick') || '';
+            var m = onclick.match(/openILSTool\('([^']+)'\)/);
+            if (!m) return;
+            _previewTimer = setTimeout(function() {
+                _showPreview(card, m[1]);
+            }, 400);
+        }, true);
+
+        hub.addEventListener('mouseleave', function(e) {
+            var card = e.target.closest('.ils-tool-card');
+            if (card) _hidePreview();
+        }, true);
+    }
+
+    // ─── CHANGE 14: Export Options Panel ───
+    window._s4OpenExport = function() {
+        var ol = document.getElementById('s4ExportOverlay');
+        if (ol) ol.style.display = 'flex';
+    };
+    window._s4CloseExport = function() {
+        var ol = document.getElementById('s4ExportOverlay');
+        if (ol) ol.style.display = 'none';
+    };
+    window._s4SelectFmt = function(btn) {
+        var container = document.getElementById('s4ExportFormats');
+        if (container) {
+            container.querySelectorAll('.s4-export-fmt').forEach(function(b) {
+                b.classList.remove('active');
+            });
+        }
+        btn.classList.add('active');
+    };
+    window._s4RunExport = function() {
+        // Delegate to existing export based on selected format
+        var activeBtn = document.querySelector('.s4-export-fmt.active');
+        var fmt = activeBtn ? activeBtn.dataset.fmt : 'pdf';
+        if (fmt === 'pdf' && typeof window._s4ExportReport === 'function') {
+            window._s4ExportReport();
+        } else if (typeof S4 !== 'undefined' && typeof S4.toast === 'function') {
+            S4.toast('Exported as ' + fmt.toUpperCase(), 'info', 2000);
+        }
+        window._s4CloseExport();
+    };
+
+    // Branding upload click
+    function _hookBrandingUpload() {
+        var dropzone = document.getElementById('s4ExportBranding');
+        var input = document.getElementById('s4ExportLogoInput');
+        if (dropzone && input) {
+            dropzone.addEventListener('click', function() { input.click(); });
+            input.addEventListener('change', function() {
+                if (input.files && input.files[0]) {
+                    dropzone.innerHTML = '<i class="fas fa-check-circle" style="color:var(--green)"></i><span>' + input.files[0].name + '</span>';
+                }
+            });
+        }
+    }
+
+    // Close export on Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            var ol = document.getElementById('s4ExportOverlay');
+            if (ol && ol.style.display === 'flex') {
+                window._s4CloseExport();
+            }
+        }
+    });
+
+    // ─── Boot Changes 11-15 ───
+    function _bootChanges11to15() {
+        _highlightDefaultChain();
+        // Delay accordion setup to run after _buildGridSections (which runs at 100ms)
+        setTimeout(function() {
+            _makeGridAccordions();
+            _hookPreviews();
+        }, 300);
+        _hookBrandingUpload();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', _bootChanges11to15);
+    } else {
+        setTimeout(_bootChanges11to15, 350);
+    }
 })();
