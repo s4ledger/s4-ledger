@@ -67,12 +67,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-Debvu8jp.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-CdQB9rwZ.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-_gc9Aom0.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-C1fbh0ws.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-C5CXBMPi.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-DpRov6Ji.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-Ct6ZKFQH.css">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-ClbNdPym.css">
 </head>
 <body class="light-mode">
 <!-- Light mode always on -->
@@ -330,61 +330,42 @@
                     </div>
                     <button onclick="dismissGettingStarted()" style="background:transparent;border:1px solid var(--border,rgba(0,0,0,0.06));color:var(--steel,#8b8fa3);border-radius:8px;padding:4px 12px;font-size:0.72rem;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,0,0,0.12)'" onmouseout="this.style.borderColor='var(--border,rgba(0,0,0,0.06))'"><i class="fas fa-times" style="margin-right:4px;"></i>Dismiss</button>
                 </div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-                    <!-- Card 1: Anchor Your First Record -->
-                    <div onclick="showSection('sectionAnchor')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
-                        <div style="width:40px;height:40px;border-radius:8px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-anchor" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:var(--text,#1d1d1f);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Anchor Your First Record</div>
-                        <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">Pick a type, upload content, anchor to XRPL.</div>
-                        <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start anchoring</div>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+                    <div class="gs-card" onclick="showSection('sectionAnchor')" role="button" tabindex="0">
+                        <span class="gs-icon"><i class="fas fa-anchor" style="color:var(--accent);"></i></span>
+                        <div><div class="gs-title">Anchor Your First Record</div><div class="gs-desc">Pick a type, upload content, anchor to XRPL.</div></div>
                     </div>
-                    <!-- Card 2: Explore the 23+ Tools -->
-                    <div onclick="showSection('sectionILS')" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
-                        <div style="width:40px;height:40px;border-radius:8px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-brain" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:var(--text,#1d1d1f);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Browse ILS Tools</div>
-                        <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">23+ tools &mdash; gap analysis, compliance, risk, and more.</div>
-                        <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Browse tools</div>
+                    <div class="gs-card" onclick="showSection('sectionILS')" role="button" tabindex="0">
+                        <span class="gs-icon"><i class="fas fa-brain" style="color:var(--accent);"></i></span>
+                        <div><div class="gs-title">Browse ILS Tools</div><div class="gs-desc">23+ tools &mdash; gap analysis, compliance, risk, and more.</div></div>
                     </div>
-                    <!-- Card 3: Take the Guided Tour -->
-                    <div onclick="if(typeof startWalkthrough==='function')startWalkthrough()" style="background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:24px 20px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,170,255,0.35)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)'" onmouseout="this.style.borderColor='rgba(0,170,255,0.15)';this.style.transform='translateY(0)';this.style.boxShadow='none'" role="button" tabindex="0">
-                        <div style="width:40px;height:40px;border-radius:8px;background:rgba(0,170,255,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;"><i class="fas fa-route" style="color:var(--accent);font-size:1rem;"></i></div>
-                        <div style="color:var(--text,#1d1d1f);font-weight:700;font-size:0.92rem;margin-bottom:6px;">Take the Guided Tour</div>
-                        <div style="color:var(--steel,#8b8fa3);font-size:0.78rem;line-height:1.5;">Voice-narrated walkthrough of every feature.</div>
-                        <div style="margin-top:12px;color:var(--accent);font-size:0.72rem;font-weight:600;"><i class="fas fa-arrow-right" style="margin-right:4px;"></i>Start tour</div>
+                    <div class="gs-card" onclick="if(typeof startWalkthrough==='function')startWalkthrough()" role="button" tabindex="0">
+                        <span class="gs-icon"><i class="fas fa-route" style="color:var(--accent);"></i></span>
+                        <div><div class="gs-title">Take the Guided Tour</div><div class="gs-desc">Voice-narrated walkthrough of every feature.</div></div>
                     </div>
                 </div>
             </div>
 
             <div style="font-size:0.68rem;color:var(--accent);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;">Modules</div>
             <div class="hub-grid">
-                
                 <div class="hub-card" data-section="sectionILS" onclick="showSection('sectionILS')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showSection('sectionILS')}">
                     <div class="hc-icon" style="background:rgba(0,170,255,0.1);"><i class="fas fa-brain" style="color:var(--accent);"></i></div>
-                    <div class="hc-title">Anchor-S4 <span style="background:rgba(0,170,255,0.15);color:var(--accent);font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">23+ TOOLS</span></div>
-                    <div class="hc-desc">23+ integrated defense tools: Gap Finder, DMSMS, Readiness, Compliance, Risk, Maintenance Predictor, ROI, Audit Vault, Fleet Optimizer, Milestone Monitor, and more.</div>
-                    <div class="hc-meta"><i class="fas fa-tools"></i> 23+ ILS tools &bull; AI-powered</div>
+                    <div class="hc-body"><div class="hc-title">Anchor-S4 <span style="background:rgba(0,170,255,0.15);color:var(--accent);font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">23+ TOOLS</span></div><div class="hc-desc">Integrated defense logistics workspace &mdash; gap analysis, compliance, risk, readiness, and more.</div></div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" data-section="sectionLog" onclick="showSection('sectionLog')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showSection('sectionLog')}">
                     <div class="hc-icon" style="background:rgba(0,170,255,0.1);"><i class="fas fa-list" style="color:var(--accent);"></i></div>
-                    <div class="hc-title">Transaction Log <span style="background:rgba(0,170,255,0.15);color:var(--accent);font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">AUDIT</span></div>
-                    <div class="hc-desc">Full audit trail of every anchored record with XRPL explorer links, timestamps, and hash verification status.</div>
-                    <div class="hc-meta"><i class="fas fa-link"></i> On-chain explorer links</div>
+                    <div class="hc-body"><div class="hc-title">Transaction Log <span style="background:rgba(0,170,255,0.15);color:var(--accent);font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">AUDIT</span></div><div class="hc-desc">Full audit trail with XRPL explorer links, timestamps, and hash verification.</div></div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" data-section="sectionVerify" onclick="showSection('sectionVerify')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showSection('sectionVerify')}">
-
                     <div class="hc-icon" style="background:rgba(0,170,255,0.1);"><i class="fas fa-check-circle" style="color:#00aaff;"></i></div>
-                    <div class="hc-title">Verify Records <span style="background:rgba(0,170,255,0.15);color:#00aaff;font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">LIVE</span></div>
-                    <div class="hc-desc">Upload a PDF, spreadsheet, or any file to verify its integrity against the blockchain anchor. Batch verification supported.</div>
-                    <div class="hc-meta"><i class="fas fa-file-upload"></i> Drag-drop files &bull; Free verification</div>
+                    <div class="hc-body"><div class="hc-title">Verify Records <span style="background:rgba(0,170,255,0.15);color:var(--accent);font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">LIVE</span></div><div class="hc-desc">Upload files to verify integrity against blockchain anchors. Batch supported.</div></div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="hub-card" data-section="sectionSystems" onclick="showSection('sectionSystems')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showSection('sectionSystems')}">
                     <div class="hc-icon" style="background:rgba(52,152,219,0.1);"><i class="fas fa-server" style="color:#3498db;"></i></div>
-                    <div class="hc-title">Systems <span style="background:rgba(52,152,219,0.15);color:#3498db;font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">METRICS</span></div>
-                    <div class="hc-desc">Platform metrics, performance monitoring, and offline queue management with encrypted persistence and auto-sync.</div>
-                    <div class="hc-meta"><i class="fas fa-chart-line"></i> Metrics &bull; Offline Queue</div>
+                    <div class="hc-body"><div class="hc-title">Systems <span style="background:rgba(52,152,219,0.15);color:#3498db;font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;margin-left:6px;">METRICS</span></div><div class="hc-desc">Platform metrics, performance monitoring, and offline queue management.</div></div>
                     <div class="hc-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
             </div>
@@ -795,7 +776,7 @@
                         <i class="fas fa-star" style="color:var(--accent);font-size:0.8rem;"></i>
                         <span style="font-size:0.78rem;font-weight:700;color:var(--accent);letter-spacing:0.04em;text-transform:uppercase;">Recommended for You</span>
                     </div>
-                    <div id="recommendedToolsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;"></div>
+                    <div id="recommendedToolsGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;"></div>
                 </div>
 
                 <!-- ILS Tool Cards Sub-Hub -->

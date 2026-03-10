@@ -901,16 +901,15 @@
         .hub-header { text-align:center; margin-bottom:32px; padding-top:8px; }
         .hub-header h2 { font-size:1.5rem; font-weight:800; color:#1d1d1f; margin-bottom:6px; }
         .hub-header p { color:var(--steel); font-size:0.88rem; max-width:600px; margin:0 auto; }
-        .hub-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:20px; margin-bottom:28px; }
-        @media(min-width:1024px){ .hub-grid{grid-template-columns:repeat(3, 1fr);} }
+        .hub-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; margin-bottom:28px; }
         @media(max-width:640px){ .hub-grid{grid-template-columns:1fr !important;}  }
-        .hub-card { background:linear-gradient(145deg, var(--card), rgba(0,170,255,0.015)); border:1px solid var(--border); border-radius:6px; padding:28px 26px; cursor:pointer; transition:all 0.28s; position:relative; overflow:hidden; counter-increment:hubcard; }
-        .hub-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,170,255,0.12); }
-        .hub-card .hc-icon { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; font-size:1.3rem; background:rgba(0,113,227,0.06); box-shadow:0 2px 8px rgba(0,113,227,0.06); }
-        .hub-card .hc-title { font-size:1.05rem; font-weight:700; color:#1d1d1f; margin-bottom:8px; letter-spacing:-0.02em; }
-        .hub-card .hc-desc { font-size:0.84rem; color:var(--muted); line-height:1.6; margin-bottom:12px; }
-        .hub-card .hc-meta { font-size:0.72rem; color:var(--muted); display:flex; align-items:center; gap:6px; }
-        .hub-card .hc-arrow { position:absolute; top:28px; right:22px; color:var(--muted); font-size:0.85rem; transition:all 0.3s; }
+        .hub-card { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:18px 20px; cursor:pointer; transition:all 0.25s cubic-bezier(0.25,0.1,0.25,1); display:flex; align-items:center; gap:14px; position:relative; }
+        .hub-card:hover { border-color:var(--accent); background:rgba(0,170,255,0.04); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,170,255,0.06); }
+        .hub-card .hc-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+        .hub-card .hc-body { flex:1; min-width:0; }
+        .hub-card .hc-title { font-size:0.88rem; font-weight:700; color:#1d1d1f; margin-bottom:3px; letter-spacing:-0.02em; }
+        .hub-card .hc-desc { font-size:0.73rem; color:var(--steel); line-height:1.5; }
+        .hub-card .hc-arrow { color:var(--muted); font-size:0.75rem; transition:all 0.3s; flex-shrink:0; margin-left:auto; }
         .hub-card:hover .hc-arrow { color:var(--accent); transform:translateX(4px); }
 
         /* ═══ Sub-page Navigation ═══ */
@@ -970,20 +969,26 @@
             padding:28px 28px !important;
         }
         .s4-card:hover,.glass-card:hover{box-shadow:var(--shadow-hover)}
-        /* Hub cards — premium, spacious, jewel-like */
+        /* Hub cards — compact horizontal, matching tool cards */
         .hub-card { 
             background:#fff !important; 
             border:1px solid var(--border) !important; 
-            border-radius:14px; 
-            padding:32px 28px; 
+            border-radius:12px; 
+            padding:18px 20px; 
             box-shadow:var(--shadow-card);
-            transition:all 0.35s cubic-bezier(0.25,0.1,0.25,1);
+            transition:all 0.25s cubic-bezier(0.25,0.1,0.25,1);
         }
         .hub-card:hover { 
             border-color:rgba(0,113,227,0.2) !important; 
             box-shadow:var(--shadow-hover);
-            transform:translateY(-4px);
+            transform:translateY(-2px);
         }
+        /* Getting Started cards — compact horizontal */
+        .gs-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px 18px; cursor:pointer; transition:all 0.25s; display:flex; align-items:center; gap:14px; box-shadow:var(--shadow-card); }
+        .gs-card:hover { border-color:rgba(0,122,255,0.2); box-shadow:var(--shadow-hover); transform:translateY(-2px); }
+        .gs-icon { width:36px; height:36px; border-radius:8px; background:rgba(0,170,255,0.08); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+        .gs-title { font-size:0.85rem; font-weight:700; color:var(--text,#1d1d1f); margin-bottom:2px; }
+        .gs-desc { font-size:0.73rem; color:var(--steel); line-height:1.5; }
         /* Tool cards — clean white surfaces */
         .ils-tool-card {
             background:#fff !important;
@@ -1115,9 +1120,10 @@
 
         /* ═══ LIGHT MODE — Unified enterprise component overrides ═══ */
         .s4-card,.glass-card{background:#fff!important;border:1px solid var(--border)!important;border-radius:12px!important;box-shadow:var(--shadow-card)}
-        .hub-card{background:#fff!important;border:1px solid var(--border)!important;border-radius:14px!important;box-shadow:var(--shadow-card)}
-        .hub-card:hover{border-color:rgba(0,113,227,0.2)!important;box-shadow:var(--shadow-hover)!important;transform:translateY(-4px)}
+        .hub-card{background:#fff!important;border:1px solid var(--border)!important;border-radius:12px!important;box-shadow:var(--shadow-card)}
+        .hub-card:hover{border-color:rgba(0,113,227,0.2)!important;box-shadow:var(--shadow-hover)!important;transform:translateY(-2px)}
         .hub-card .hc-title{color:#1d1d1f}
+        .hub-card .hc-desc{color:var(--muted)!important}
         .ils-tool-card{background:#fff!important;border:1px solid var(--border)!important;border-radius:12px!important;box-shadow:var(--shadow-card)}
         .ils-tool-card:hover{border-color:rgba(0,113,227,0.2)!important;box-shadow:var(--shadow-hover)!important;transform:translateY(-2px)}
         .ils-tool-card h4,.ils-tool-card strong{color:#1d1d1f!important}
