@@ -5560,3 +5560,187 @@ body.dark-mode #mainNav button[aria-label="Menu"] { color:#E0E0FF!important; }
 /* Dark toggle icon */
 [data-theme="dark"] .s4-dark-toggle { color:#ffd866; border-color:rgba(255,216,102,0.3); }
 [data-theme="dark"] .s4-dark-toggle:hover { color:#ffe599; border-color:rgba(255,216,102,0.5); }
+
+/* ── Counter-override: LIGHT MODE component section (lines ~1116-1225) ──
+   Every rule in the light section that forces #fff/#1d1d1f/#6e6e73
+   with !important must be reversed here for dark mode.             ── */
+
+/* Glass card (light: background:#fff!important) */
+[data-theme="dark"] .glass-card { background:var(--card)!important; border-color:var(--border)!important; }
+
+/* ILS tool card — h4/strong/p/desc (light uses element selectors, dark had only .itc-title/.itc-desc) */
+[data-theme="dark"] .ils-tool-card h4,
+[data-theme="dark"] .ils-tool-card strong { color:var(--text)!important; }
+[data-theme="dark"] .ils-tool-card p,
+[data-theme="dark"] .ils-tool-card .desc { color:var(--steel)!important; }
+
+/* Platform landing cards */
+[data-theme="dark"] #platformLanding .col-md-4 > div {
+    background:var(--card)!important; border-color:var(--border)!important;
+    box-shadow:var(--shadow-card)!important;
+}
+[data-theme="dark"] #platformLanding .col-md-4 > div:hover {
+    border-color:rgba(0,122,255,0.4)!important;
+    box-shadow:0 12px 40px rgba(0,122,255,0.15)!important;
+}
+[data-theme="dark"] #platformLanding h4 { color:var(--text)!important; }
+
+/* Vault — strong, meta, badge, hash background */
+[data-theme="dark"] .vault-record strong { color:var(--text)!important; }
+[data-theme="dark"] .vault-meta,
+[data-theme="dark"] .vault-meta span { color:var(--muted)!important; }
+[data-theme="dark"] .vault-badge { color:var(--text)!important; }
+[data-theme="dark"] .vault-hash { background:rgba(0,122,255,0.12)!important; color:var(--accent)!important; }
+
+/* Overlays (light forces rgba(240,240,245,...)) */
+[data-theme="dark"] #anchorOverlay { background:rgba(15,17,23,0.95)!important; }
+[data-theme="dark"] .onboard-overlay { background:rgba(15,17,23,0.97)!important; }
+[data-theme="dark"] .modal-overlay { background:rgba(15,17,23,0.92)!important; }
+
+/* Brand text class */
+[data-theme="dark"] .brand-text { color:var(--text)!important; }
+
+/* Nav links — class-level override (light: .nav-link{color:#1d1d1f!important}) */
+[data-theme="dark"] .nav-link { color:var(--steel)!important; }
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active { color:var(--accent)!important; }
+
+/* Headings h1, h5 (dark block only had .hero h1, h2, h3, h4) */
+[data-theme="dark"] h1 { color:var(--text)!important; }
+[data-theme="dark"] h5 { color:var(--text)!important; }
+
+/* Hub card .hc-desc / .hc-title class selectors */
+[data-theme="dark"] .hub-card .hc-desc { color:var(--steel)!important; }
+[data-theme="dark"] .hub-card .hc-title { color:var(--text)!important; }
+
+/* DoD consent banner — light targets > div, dark had > div > div */
+[data-theme="dark"] #dodConsentBanner > div {
+    background:var(--card)!important; border-color:rgba(0,122,255,0.3)!important;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4)!important;
+}
+[data-theme="dark"] #dodConsentBanner p,
+[data-theme="dark"] #dodConsentBanner li { color:var(--steel)!important; }
+
+/* CAC login modal — light targets > div, dark had > div > div */
+[data-theme="dark"] #cacLoginModal > div {
+    background:var(--card)!important; border-color:var(--border)!important;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4)!important;
+}
+[data-theme="dark"] #cacLoginModal label { color:var(--steel)!important; }
+
+/* Input/select/textarea focus states (light: background:#fff, border blue) */
+[data-theme="dark"] select:focus,
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus {
+    background:var(--card)!important;
+    border-color:rgba(0,122,255,0.5)!important;
+    box-shadow:0 0 0 4px rgba(0,122,255,0.15)!important;
+}
+
+/* Dropdown menu/items (lines 40-42) */
+[data-theme="dark"] .dropdown-menu {
+    background:rgba(30,30,46,0.98)!important;
+    border-color:var(--border)!important;
+    box-shadow:0 8px 30px rgba(0,0,0,0.4)!important;
+}
+[data-theme="dark"] .dropdown-item { color:var(--steel)!important; }
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+    background:rgba(0,122,255,0.15)!important;
+    color:var(--accent)!important;
+}
+
+/* Wallet sidebar wildcard + balance */
+[data-theme="dark"] .wallet-sidebar * { color:var(--text); }
+[data-theme="dark"] .wallet-sidebar .wallet-balance { color:var(--text)!important; }
+
+/* Mobile navbar collapse */
+@media(max-width:991px){
+    [data-theme="dark"] .navbar-collapse,
+    [data-theme="dark"] #navLinks {
+        background:rgba(15,17,23,0.98)!important;
+        border-color:rgba(255,255,255,0.06)!important;
+    }
+}
+
+/* Gradient text */
+[data-theme="dark"] .gradient-text { color:var(--text)!important; }
+
+/* ILS action titles */
+[data-theme="dark"] .ils-action-item .action-title { color:var(--text)!important; }
+
+/* ILS coverage row dividers */
+[data-theme="dark"] .ils-coverage-row { border-bottom-color:rgba(255,255,255,0.06)!important; }
+
+/* Tour tooltip buttons */
+[data-theme="dark"] .s4-tour-tooltip button {
+    color:var(--text)!important;
+    border-color:var(--border)!important;
+}
+[data-theme="dark"] .s4-tour-tooltip button:hover { background:rgba(255,255,255,0.06)!important; }
+
+/* Activity feed strong text */
+[data-theme="dark"] .s4-activity-item .act-text strong { color:var(--text)!important; }
+[data-theme="dark"] .s4-activity-item .act-text { color:var(--steel)!important; }
+
+/* HIW close button */
+[data-theme="dark"] .hiw-close:hover { color:var(--text)!important; }
+
+/* Command palette */
+[data-theme="dark"] .s4-command-palette {
+    background:var(--card)!important;
+    border-color:var(--border)!important;
+    color:var(--text)!important;
+}
+[data-theme="dark"] .s4-command-palette input {
+    background:var(--surface)!important;
+    color:var(--text)!important;
+    border-color:var(--border)!important;
+}
+[data-theme="dark"] .s4-command-palette input::placeholder { color:rgba(255,255,255,0.3)!important; }
+[data-theme="dark"] .s4-command-palette .cmd-item:hover,
+[data-theme="dark"] .s4-command-item:hover,
+[data-theme="dark"] .s4-command-item.selected { background:rgba(0,170,255,0.15)!important; }
+[data-theme="dark"] .s4-command-item { color:var(--text)!important; }
+
+/* Scrollbars */
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15)!important; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.25)!important; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background:rgba(255,255,255,0.02)!important; }
+
+/* Breadcrumbs */
+[data-theme="dark"] .s4-breadcrumbs { background:var(--surface)!important; border-color:var(--border)!important; }
+[data-theme="dark"] .s4-breadcrumbs a { color:var(--muted)!important; }
+[data-theme="dark"] .s4-breadcrumbs .bc-current { color:var(--text)!important; }
+
+/* Favorites bar */
+[data-theme="dark"] .s4-favorites-bar { background:var(--surface)!important; border-color:var(--border)!important; }
+[data-theme="dark"] .s4-fav-chip { background:rgba(0,170,255,0.15)!important; border-color:rgba(0,170,255,0.3)!important; }
+
+/* Avatar dark borders */
+[data-theme="dark"] [style*="border:2px solid #0a0e1a"],
+[data-theme="dark"] [style*="border: 2px solid #0a0e1a"] { border-color:rgba(255,255,255,0.1)!important; }
+
+/* Catch-all: any remaining inline background:#fff or #f8f8fa that component classes might miss */
+[data-theme="dark"] .result-panel code,
+[data-theme="dark"] .result-panel pre { color:var(--text)!important; background:rgba(0,122,255,0.08)!important; }
+[data-theme="dark"] .result-panel strong { color:var(--text)!important; }
+[data-theme="dark"] .result-panel span { color:var(--text); }
+
+/* Tables in dark mode */
+[data-theme="dark"] table { border-color:var(--border)!important; }
+[data-theme="dark"] th { background:var(--surface)!important; color:var(--text)!important; border-color:var(--border)!important; }
+[data-theme="dark"] td { color:var(--text)!important; border-color:var(--border)!important; }
+
+/* Badges and small UI elements */
+[data-theme="dark"] .badge { color:var(--text); }
+[data-theme="dark"] code { color:var(--accent); }
+[data-theme="dark"] kbd { background:var(--surface); color:var(--text); border-color:var(--border); }
+
+/* Ensure all text inside dark-themed surface cards is readable */
+[data-theme="dark"] .s4-card span,
+[data-theme="dark"] .hub-card span { color:var(--steel); }
+[data-theme="dark"] .s4-card strong,
+[data-theme="dark"] .hub-card strong { color:var(--text)!important; }
+[data-theme="dark"] .s4-card code,
+[data-theme="dark"] .hub-card code { color:var(--accent); }
