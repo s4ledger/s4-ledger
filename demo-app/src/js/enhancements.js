@@ -8014,29 +8014,178 @@ window.verifyProvenanceChain = verifyProvenanceChain;
 (function _s4Changes11to15() {
     'use strict';
 
-    // ─── CHANGE 11: Smart Defaults & Presets ───
-    var _presetDefs = {
-        daily:  { label:'Standard ILS Daily',  tools:['hub-compliance','hub-analysis','hub-risk'] },
-        audit:  { label:'Audit Prep',          tools:['hub-reports','hub-vault','hub-brief'] },
-        obsol:  { label:'Obsolescence Sweep',  tools:['hub-dmsms','hub-sbom','hub-risk'] }
+    // ─── CHANGE 11: Smart Defaults & Custom Presets ───
+    var CUSTOM_PRESETS_KEY = 's4_custom_presets';
+    var _builtInPresets = {
+        daily:  { label:'Standard ILS Daily',  icon:'fa-sun',              iconColor:'#ff9500', tools:['hub-compliance','hub-analysis','hub-risk'] },
+        audit:  { label:'Audit Prep',          icon:'fa-clipboard-check',  iconColor:'var(--accent)', tools:['hub-reports','hub-vault','hub-brief'] },
+        obsol:  { label:'Obsolescence Sweep',  icon:'fa-microchip',        iconColor:'#ff3b30', tools:['hub-dmsms','hub-sbom','hub-risk'] }
     };
 
+    var _allToolNames = {
+        'hub-compliance':'Compliance Scorecard','hub-analysis':'Gap Finder','hub-actions':'Task Prioritizer',
+        'hub-risk':'Risk Radar','hub-readiness':'Readiness Score','hub-dmsms':'Obsolescence Alert',
+        'hub-analytics':'Program Overview','hub-milestones':'Milestone Monitor','hub-predictive':'Maintenance Predictor',
+        'hub-lifecycle':'Lifecycle Cost Estimator','hub-roi':'ROI Calculator','hub-sbom':'SBOM Scanner',
+        'hub-gfp':'Property Custodian','hub-provenance':'Chain of Custody','hub-acquisition':'Fleet Optimizer',
+        'hub-contract':'Contract Analyzer','hub-reports':'Audit Builder','hub-vault':'Audit Vault',
+        'hub-docs':'Document Library','hub-submissions':'Submissions Hub','hub-cdrl':'Deliverables Tracker',
+        'hub-brief':'Brief Composer','hub-team':'Team Manager'
+    };
+
+    function _loadCustomPresets() {
+        try { return JSON.parse(localStorage.getItem(CUSTOM_PRESETS_KEY)) || []; }
+        catch(e) { return []; }
+    }
+    function _saveCustomPresets(list) {
+        localStorage.setItem(CUSTOM_PRESETS_KEY, JSON.stringify(list));
+    }
+
+    function _renderPresetsList() {
+        var container = document.getElementById('s4PresetsList');
+        if (!container) return;
+        var customPresets = _loadCustomPresets();
+        // Built-in presets
+        var html = '';
+        Object.keys(_builtInPresets).forEach(function(key) {
+            var p = _builtInPresets[key];
+            var toolLabels = p.tools.map(function(t) { return _allToolNames[t] || t; }).join(' \u2192 ');
+            html += '<button onclick="window._s4ApplyPreset(\'' + key + '\');this.closest(\'details\').open=false" class="s4-preset-btn">' +
+                '<i class="fas ' + p.icon + '" style="color:' + p.iconColor + ';width:18px;text-align:center"></i>' +
+                '<div><strong>' + p.label + '</strong><span>' + toolLabels + '</span></div></button>';
+        });
+        // Custom presets
+        customPresets.forEach(function(cp, idx) {
+            var toolLabels = cp.tools.map(function(t) { return _allToolNames[t] || t; }).join(' \u2192 ');
+            html += '<div style="display:flex;align-items:center;">' +
+                '<button onclick="window._s4ApplyPreset(\'custom_' + idx + '\');this.closest(\'details\').open=false" class="s4-preset-btn" style="flex:1">' +
+                '<i class="fas fa-user-gear" style="color:var(--accent);width:18px;text-align:center"></i>' +
+                '<div><strong>' + (cp.label || 'Custom ' + (idx+1)) + '</strong><span>' + toolLabels + '</span></div></button>' +
+                '<button onclick="window._s4DeletePreset(' + idx + ')" style="background:none;border:none;color:var(--steel);cursor:pointer;padding:6px 10px;font-size:0.7rem;opacity:0.5;transition:opacity 0.15s" onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'0.5\'" title="Delete preset"><i class="fas fa-trash-alt"></i></button></div>';
+        });
+        container.innerHTML = html;
+    }
+
     window._s4ApplyPreset = function(presetKey) {
-        var preset = _presetDefs[presetKey];
-        if (!preset) return;
-        // Save as Today's Chain
+        var preset;
+        if (presetKey.indexOf('custom_') === 0) {
+            var idx = parseInt(presetKey.replace('custom_', ''), 10);
+            var customs = _loadCustomPresets();
+            preset = customs[idx];
+        } else {
+            preset = _builtInPresets[presetKey];
+        }
+        if (!preset || !preset.tools || !preset.tools.length) return;
         localStorage.setItem('s4_today_chain', JSON.stringify(preset.tools));
-        // Render the chain bar (reload from storage)
-        if (typeof window._s4ReloadTodayChain === 'function') {
-            window._s4ReloadTodayChain();
-        }
-        // Open first tool in the chain
-        if (typeof window.openILSTool === 'function') {
-            window.openILSTool(preset.tools[0]);
-        }
-        // Toast feedback
+        if (typeof window._s4ReloadTodayChain === 'function') window._s4ReloadTodayChain();
+        if (typeof window.openILSTool === 'function') window.openILSTool(preset.tools[0]);
         if (typeof S4 !== 'undefined' && typeof S4.toast === 'function') {
-            S4.toast('Loaded: ' + preset.label, 'info', 2000);
+            S4.toast('Loaded: ' + (preset.label || 'Custom Preset'), 'info', 2000);
+        }
+    };
+
+    window._s4DeletePreset = function(idx) {
+        var customs = _loadCustomPresets();
+        customs.splice(idx, 1);
+        _saveCustomPresets(customs);
+        _renderPresetsList();
+    };
+
+    // Custom preset creator
+    window._s4ShowPresetCreator = function() {
+        // Close settings menu
+        var menu = document.getElementById('s4WorkspaceMenu');
+        if (menu) menu.open = false;
+
+        var overlay = document.createElement('div');
+        overlay.className = 's4-preset-creator-overlay';
+        overlay.id = 's4PresetCreatorOverlay';
+
+        var selectedTools = [];
+
+        var toolListHtml = Object.keys(_allToolNames).map(function(tid) {
+            return '<div class="s4-pc-tool" data-tool="' + tid + '">' +
+                '<span class="s4-pc-num"></span>' +
+                '<span>' + _allToolNames[tid] + '</span></div>';
+        }).join('');
+
+        overlay.innerHTML =
+            '<div class="s4-preset-creator">' +
+                '<div class="s4-pc-header"><h3><i class="fas fa-wand-magic-sparkles" style="color:var(--accent)"></i> Create Custom Preset</h3>' +
+                '<button onclick="document.getElementById(\'s4PresetCreatorOverlay\').remove()" style="background:none;border:none;color:var(--steel);font-size:1rem;cursor:pointer;padding:4px"><i class="fas fa-times"></i></button></div>' +
+                '<div class="s4-pc-body">' +
+                    '<label class="s4-pc-label">Preset Name</label>' +
+                    '<input type="text" class="s4-pc-name-input" id="s4PcName" placeholder="e.g., My Morning Workflow" maxlength="40">' +
+                    '<label class="s4-pc-label">Select Tools (up to 5, in order)</label>' +
+                    '<div class="s4-pc-tool-list" id="s4PcToolList">' + toolListHtml + '</div>' +
+                '</div>' +
+                '<div class="s4-pc-footer">' +
+                    '<button onclick="document.getElementById(\'s4PresetCreatorOverlay\').remove()" class="s4-export-cancel">Cancel</button>' +
+                    '<button onclick="window._s4SaveCustomPreset()" class="s4-export-now"><i class="fas fa-check"></i> Save Preset</button>' +
+                '</div>' +
+            '</div>';
+
+        document.body.appendChild(overlay);
+
+        // Hook tool selection
+        var toolList = document.getElementById('s4PcToolList');
+        toolList.addEventListener('click', function(e) {
+            var tool = e.target.closest('.s4-pc-tool');
+            if (!tool) return;
+            var tid = tool.dataset.tool;
+            var existIdx = selectedTools.indexOf(tid);
+            if (existIdx >= 0) {
+                selectedTools.splice(existIdx, 1);
+                tool.classList.remove('selected');
+            } else if (selectedTools.length < 5) {
+                selectedTools.push(tid);
+                tool.classList.add('selected');
+            }
+            // Update numbers
+            toolList.querySelectorAll('.s4-pc-tool').forEach(function(el) {
+                var idx = selectedTools.indexOf(el.dataset.tool);
+                var numEl = el.querySelector('.s4-pc-num');
+                if (idx >= 0) {
+                    numEl.textContent = String(idx + 1);
+                    numEl.style.display = 'flex';
+                } else {
+                    numEl.style.display = 'none';
+                }
+            });
+        });
+
+        // Store reference for save
+        overlay._s4SelectedTools = selectedTools;
+
+        // Escape key
+        var escHandler = function(e) {
+            if (e.key === 'Escape') {
+                var ol = document.getElementById('s4PresetCreatorOverlay');
+                if (ol) ol.remove();
+                document.removeEventListener('keydown', escHandler);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+    };
+
+    window._s4SaveCustomPreset = function() {
+        var overlay = document.getElementById('s4PresetCreatorOverlay');
+        if (!overlay) return;
+        var nameInput = document.getElementById('s4PcName');
+        var name = nameInput ? nameInput.value.trim() : '';
+        var tools = overlay._s4SelectedTools || [];
+        if (!tools.length) {
+            if (nameInput) { nameInput.style.borderColor = '#ff3b30'; nameInput.placeholder = 'Select at least one tool'; }
+            return;
+        }
+        if (!name) name = 'Custom Preset';
+        var customs = _loadCustomPresets();
+        customs.push({ label: name, tools: tools });
+        _saveCustomPresets(customs);
+        overlay.remove();
+        _renderPresetsList();
+        if (typeof S4 !== 'undefined' && typeof S4.toast === 'function') {
+            S4.toast('Preset saved: ' + name, 'info', 2000);
         }
     };
 
@@ -8168,22 +8317,28 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         var hub = document.getElementById('ilsSubHub');
         if (!hub || hub.dataset.s4Previews) return;
         hub.dataset.s4Previews = '1';
+        var _hoverCard = null;
 
-        hub.addEventListener('mouseenter', function(e) {
+        hub.addEventListener('mouseover', function(e) {
             var card = e.target.closest('.ils-tool-card');
-            if (!card) return;
+            if (!card) { _hidePreview(); _hoverCard = null; return; }
+            if (card === _hoverCard) return;
+            _hoverCard = card;
+            _hidePreview();
             var onclick = card.getAttribute('onclick') || '';
             var m = onclick.match(/openILSTool\('([^']+)'\)/);
             if (!m) return;
             _previewTimer = setTimeout(function() {
                 _showPreview(card, m[1]);
             }, 400);
-        }, true);
+        });
 
-        hub.addEventListener('mouseleave', function(e) {
-            var card = e.target.closest('.ils-tool-card');
-            if (card) _hidePreview();
-        }, true);
+        hub.addEventListener('mouseout', function(e) {
+            var related = e.relatedTarget;
+            if (related && related.closest && related.closest('.ils-tool-card') === _hoverCard) return;
+            _hidePreview();
+            _hoverCard = null;
+        });
     }
 
     // ─── CHANGE 14: Export Options Panel ───
@@ -8243,6 +8398,7 @@ window.verifyProvenanceChain = verifyProvenanceChain;
     // ─── Boot Changes 11-15 ───
     function _bootChanges11to15() {
         _highlightDefaultChain();
+        _renderPresetsList();
         // Delay accordion setup to run after _buildGridSections (which runs at 100ms)
         setTimeout(function() {
             _makeGridAccordions();
