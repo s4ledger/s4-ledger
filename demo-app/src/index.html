@@ -98,6 +98,8 @@
 
 <!-- ═══ S4 UX ELEMENTS ═══ -->
 <div class="s4-toast-container" id="s4ToastContainer" role="status" aria-live="polite" aria-atomic="true"></div>
+<!-- Change 17: Screen reader live region -->
+<div id="s4A11yLive" aria-live="assertive" aria-atomic="true" role="status"></div>
 
 <div class="s4-tour-overlay" id="s4TourOverlay">
     <div class="s4-tour-highlight" id="s4TourHighlight"></div>
@@ -287,15 +289,42 @@
     </div>
 
         <!-- ═══ WALLET TRIGGER (Top Right) ═══ -->
-        <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:8px;">
             <button onclick="logout()" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:#c9a84c;border-radius:10px;padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.15)'" onmouseout="this.style.background='rgba(201,168,76,0.08)'"><i class="fas fa-right-from-bracket"></i><span class="d-none d-md-inline">Logout</span></button>
                         <button class="wallet-trigger" onclick="openWalletSidebar()" id="walletTriggerBtn">
                 <i class="fas fa-wallet"></i> Ledger Account <span class="wt-bal" id="walletTriggerBal">--</span>
             </button>
+            <!-- Change 19: User Avatar -->
+            <div style="position:relative">
+                <button class="s4-avatar-btn" id="s4AvatarBtn" onclick="window._s4ToggleAvatar()" aria-label="User preferences" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div class="s4-avatar-popover" id="s4AvatarPopover" role="dialog" aria-label="User preferences">
+                    <div class="s4-ap-header">
+                        <div class="s4-ap-avatar" id="s4ApInitials">OP</div>
+                        <div><div class="s4-ap-name" id="s4ApName">Operator</div><div class="s4-ap-role">Program Manager</div></div>
+                    </div>
+                    <div class="s4-ap-row"><span><i class="fas fa-palette"></i> Default Preset</span>
+                        <select id="s4PrefPreset" onchange="window._s4SavePref('preset',this.value)" style="font-size:0.78rem;padding:3px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer">
+                            <option value="classic">Classic</option><option value="compact">Compact</option><option value="spacious">Spacious</option>
+                        </select>
+                    </div>
+                    <div class="s4-ap-row"><span><i class="fas fa-bell"></i> Notifications</span>
+                        <button class="s4-ap-toggle on" id="s4PrefNotif" onclick="window._s4TogglePref('notifications')" aria-label="Toggle notifications"></button>
+                    </div>
+                    <div class="s4-ap-row"><span><i class="fas fa-volume-up"></i> Sound Effects</span>
+                        <button class="s4-ap-toggle" id="s4PrefSound" onclick="window._s4TogglePref('sound')" aria-label="Toggle sound"></button>
+                    </div>
+                    <hr class="s4-ap-divider">
+                    <div class="s4-ap-row"><span><i class="fas fa-keyboard"></i> Shortcuts</span>
+                        <span style="font-size:0.72rem;color:var(--muted)">? key</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- ═══ PLATFORM HUB ═══ -->
-        <div id="platformHub" class="platform-hub">
+        <div id="platformHub" class="platform-hub" role="main" aria-label="Platform Hub">
             <div class="hub-header">
                 <h2><i class="fas fa-th-large" style="color:var(--accent);margin-right:10px;font-size:1.2rem;"></i>Platform</h2>
                 <p>Select a module to get started. Each tool is purpose-built for defense logistics integrity.</p>
@@ -3805,22 +3834,16 @@
             }
         });
 
-        // ══════ 3c. HAMBURGER MENU TOGGLE ══════
+        // ══════ 3c. HAMBURGER MENU TOGGLE (class-based for CSS) ══════
         (function() {
             var btn = document.querySelector('button[aria-controls="navLinks"]');
             if (btn) {
                 btn.addEventListener('click', function() {
                     var nl = document.getElementById('navLinks');
                     if (!nl) return;
-                    var isOpen = nl.style.display === 'flex';
-                    nl.style.display = isOpen ? 'none' : 'flex';
-                    this.setAttribute('aria-expanded', !isOpen);
-                    nl.style.flexDirection = !isOpen ? 'column' : 'row';
-                    nl.style.position = !isOpen && window.innerWidth < 768 ? 'absolute' : 'static';
-                    nl.style.top = '64px'; nl.style.left = '0'; nl.style.right = '0';
-                    nl.style.background = document.body.classList.contains('light-mode') ? 'rgba(255,255,255,0.98)' : 'rgba(5,8,16,0.98)';
-                    nl.style.padding = '1rem';
-                    nl.style.borderBottom = document.body.classList.contains('light-mode') ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(0,0,0,0.06)';
+                    var isOpen = nl.classList.contains('mobile-open');
+                    nl.classList.toggle('mobile-open');
+                    this.setAttribute('aria-expanded', String(!isOpen));
                 });
             }
         })();
@@ -3832,21 +3855,13 @@
         // already cover both native-inline and CSP-blocked scenarios.
 
         // ══════ 3b. UTILITY FUNCTIONS FOR DELEGATION ══════
-        // toggleMobileNav — extracted from hamburger mega-onclick
+        // toggleMobileNav — class-based for CSS media queries
         window.toggleMobileNav = function(btn) {
             var nl = document.getElementById('navLinks');
             if (!nl) return;
-            var isOpen = nl.style.display === 'flex';
-            nl.style.display = isOpen ? 'none' : 'flex';
+            var isOpen = nl.classList.contains('mobile-open');
+            nl.classList.toggle('mobile-open');
             if (btn) btn.setAttribute('aria-expanded', String(!isOpen));
-            nl.style.flexDirection = !isOpen ? 'column' : 'row';
-            nl.style.position = !isOpen && window.innerWidth < 768 ? 'absolute' : 'static';
-            nl.style.top = '64px';
-            nl.style.left = '0';
-            nl.style.right = '0';
-            nl.style.background = document.body.classList.contains('light-mode') ? 'rgba(255,255,255,0.98)' : 'rgba(5,8,16,0.98)';
-            nl.style.padding = '1rem';
-            nl.style.borderBottom = document.body.classList.contains('light-mode') ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(0,0,0,0.06)';
         };
 
         // _copyILSResult — extracted from clipboard mega-onclick

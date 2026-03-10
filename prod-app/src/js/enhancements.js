@@ -8422,3 +8422,179 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         setTimeout(_bootChanges11to15, 350);
     }
 })();
+
+// ═══════════════════════════════════════════════════════════════
+//  CHANGES 16-20: Mobile, A11y, Error Recovery, Avatar, Polish
+// ═══════════════════════════════════════════════════════════════
+(function() {
+    'use strict';
+
+    // ── CHANGE 17: Screen-reader announcement helper ──
+    window._s4Announce = function(msg) {
+        var el = document.getElementById('s4A11yLive');
+        if (!el) return;
+        el.textContent = '';
+        setTimeout(function() { el.textContent = msg; }, 50);
+    };
+
+    // ── CHANGE 17: Add ARIA roles to hub cards on render ──
+    function _addAriaRoles() {
+        document.querySelectorAll('.hub-card').forEach(function(card) {
+            if (!card.getAttribute('role')) {
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+            }
+        });
+        // Score rings
+        document.querySelectorAll('.score-ring').forEach(function(ring) {
+            ring.setAttribute('role', 'img');
+            var val = ring.querySelector('.score-val');
+            if (val) ring.setAttribute('aria-label', 'Compliance score: ' + (val.textContent || 'loading'));
+        });
+        // Action bars
+        document.querySelectorAll('.tool-actions-bar').forEach(function(bar) {
+            bar.setAttribute('role', 'toolbar');
+            bar.setAttribute('aria-label', 'Actions');
+        });
+    }
+
+    // ── CHANGE 18: Inline error recovery banner API ──
+    window._s4ShowError = function(containerId, message, options) {
+        options = options || {};
+        var container = document.getElementById(containerId);
+        if (!container) return null;
+        // Remove existing banner in this container
+        var existing = container.querySelector('.s4-error-banner');
+        if (existing) existing.remove();
+        var banner = document.createElement('div');
+        banner.className = 's4-error-banner';
+        banner.setAttribute('role', 'alert');
+        var html = '<i class="fas fa-exclamation-circle"></i>';
+        html += '<span class="s4-eb-msg">' + message + '</span>';
+        html += '<div class="s4-eb-actions">';
+        if (options.quickFix) {
+            html += '<button class="s4-eb-btn primary" data-action="fix"><i class="fas fa-wrench" style="margin-right:4px"></i>Quick Fix</button>';
+        }
+        if (options.retry) {
+            html += '<button class="s4-eb-btn secondary" data-action="retry"><i class="fas fa-redo" style="margin-right:4px"></i>Retry</button>';
+        }
+        html += '<button class="s4-eb-btn secondary" data-action="dismiss" style="padding:5px 8px"><i class="fas fa-times"></i></button>';
+        html += '</div>';
+        banner.innerHTML = html;
+        banner.addEventListener('click', function(e) {
+            var btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            var action = btn.dataset.action;
+            if (action === 'dismiss') { banner.remove(); return; }
+            if (action === 'fix' && options.quickFix) options.quickFix();
+            if (action === 'retry' && options.retry) options.retry();
+        });
+        container.insertBefore(banner, container.firstChild);
+        if (typeof window._s4Announce === 'function') window._s4Announce(message);
+        return banner;
+    };
+
+    window._s4ShowSuccess = function(containerId, message) {
+        var container = document.getElementById(containerId);
+        if (!container) return null;
+        var existing = container.querySelector('.s4-error-banner');
+        if (existing) existing.remove();
+        var banner = document.createElement('div');
+        banner.className = 's4-error-banner s4-eb-success';
+        banner.setAttribute('role', 'status');
+        banner.innerHTML = '<i class="fas fa-check-circle"></i><span class="s4-eb-msg">' + message + '</span>' +
+            '<div class="s4-eb-actions"><button class="s4-eb-btn secondary" data-action="dismiss" style="padding:5px 8px"><i class="fas fa-times"></i></button></div>';
+        banner.addEventListener('click', function(e) {
+            if (e.target.closest('[data-action="dismiss"]')) banner.remove();
+        });
+        container.insertBefore(banner, container.firstChild);
+        setTimeout(function() { if (banner.parentNode) banner.remove(); }, 5000);
+        return banner;
+    };
+
+    // ── CHANGE 19: Avatar popover toggle + preferences ──
+    var _prefs = (function() {
+        try { return JSON.parse(localStorage.getItem('s4_user_prefs') || '{}'); } catch(e) { return {}; }
+    })();
+
+    function _savePrefsToDisk() {
+        try { localStorage.setItem('s4_user_prefs', JSON.stringify(_prefs)); } catch(e) {}
+    }
+
+    window._s4ToggleAvatar = function() {
+        var pop = document.getElementById('s4AvatarPopover');
+        var btn = document.getElementById('s4AvatarBtn');
+        if (!pop) return;
+        var isOpen = pop.classList.contains('open');
+        pop.classList.toggle('open');
+        if (btn) btn.setAttribute('aria-expanded', String(!isOpen));
+    };
+
+    window._s4SavePref = function(key, value) {
+        _prefs[key] = value;
+        _savePrefsToDisk();
+    };
+
+    window._s4TogglePref = function(key) {
+        var toggle = document.getElementById(key === 'notifications' ? 's4PrefNotif' : 's4PrefSound');
+        if (!toggle) return;
+        var isOn = toggle.classList.contains('on');
+        toggle.classList.toggle('on');
+        _prefs[key] = !isOn;
+        _savePrefsToDisk();
+    };
+
+    function _restorePrefs() {
+        if (_prefs.preset) {
+            var sel = document.getElementById('s4PrefPreset');
+            if (sel) sel.value = _prefs.preset;
+        }
+        if (_prefs.notifications === false) {
+            var t = document.getElementById('s4PrefNotif');
+            if (t) t.classList.remove('on');
+        }
+        if (_prefs.sound === true) {
+            var s = document.getElementById('s4PrefSound');
+            if (s) s.classList.add('on');
+        }
+    }
+
+    // Close popover on outside click
+    document.addEventListener('click', function(e) {
+        var pop = document.getElementById('s4AvatarPopover');
+        var btn = document.getElementById('s4AvatarBtn');
+        if (pop && pop.classList.contains('open') && !pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+            pop.classList.remove('open');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    // ── CHANGE 20: Loading skeleton helper ──
+    window._s4Skeleton = function(containerId, count) {
+        var c = document.getElementById(containerId);
+        if (!c) return;
+        var html = '';
+        for (var i = 0; i < (count || 3); i++) {
+            html += '<div class="skeleton skeleton-card"></div>';
+        }
+        c.innerHTML = html;
+    };
+
+    // ── Boot 16-20 ──
+    function _bootChanges16to20() {
+        _addAriaRoles();
+        _restorePrefs();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', _bootChanges16to20);
+    } else {
+        setTimeout(_bootChanges16to20, 500);
+    }
+})();
