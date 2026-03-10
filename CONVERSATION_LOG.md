@@ -2656,4 +2656,47 @@ Every panel has exactly ONE action bar matching the Phase 3 selector. Button ord
 - Both `*/dist/` — Rebuilt and verified
 
 ---
+
+## Session 38 — Changes 21-25: Onboarding, Performance, Celebration, Theme, Polish
+**Commit:** `d224c0a` | **Date:** 2025-03-10
+
+### Change 21: Non-Intrusive Onboarding Tour
+- 4-step dismissible tooltip tour: Presets → Today's Chain → Hover Previews → Export
+- First-load only (localStorage `s4_tour_done`), subtle #007AFF border, fade in/out
+- Dot pagination, Skip/Next buttons, keyboard accessible (auto-focus Next)
+- Overlay dims background, arrow pointers, auto-scroll to target
+
+### Change 22: Performance Optimizations
+- IntersectionObserver lazy-loading for hub cards (`.s4-visible` class on intersection)
+- Debounced `runChain()` (300ms) to prevent rapid re-runs
+- `_s4ShimmerPanel(panelId)` helper for shimmer placeholder injection
+- CSS shimmer rows + lazy placeholder styling
+
+### Change 23: Export Success Celebration
+- `_s4ExportCelebrate()` fires confetti burst (40 pieces, 7 colors, physics animation)
+- Success toast: "Report exported!" with Open/Share buttons + animated progress bar
+- Monkey-patched onto `exportPDF`, `exportAnalyticsCSV`, `exportAnalyticsReport`, `S4.vaultIO.exportCSV`, `_s4ExportReport`
+- Auto-dismiss after 8s, Escape key dismiss, screen-reader announced
+
+### Change 24: Theme Customization Teaser
+- 5 accent color presets in avatar popover: Ocean Blue, Emerald, Violet, Amber, Rose
+- Applies via CSS custom properties (`--accent`, `--accent-hover`, `--accent-rgb`)
+- localStorage persistence, auto-restore on boot
+- Teaser text: "Theme engine coming soon — full dark/light/custom"
+
+### Change 25: End-to-End Stress Test & Tweaks
+- Hidden "Reset All Preferences" button in avatar popover (red, full-width)
+- Escape key closes avatar popover + export toast + returns focus
+- `will-change: transform, opacity` on all animated elements (anti-stutter)
+- Z-index layering audit: sidebar 1000 → popover 1001 → palette 9999 → overlay 99998 → tips 99999 → toast 100000
+- `confirm()` dialog on reset to prevent accidental data loss
+
+### Files Modified
+- `prod-app/src/styles/main.css` — ~120 lines CSS appended (changes 21-25)
+- `prod-app/src/index.html` — Accent color swatches + Reset All button in avatar popover
+- `prod-app/src/js/enhancements.js` — New IIFE with all JS for changes 21-25
+- `demo-app/src/` — Synced: main.css, index.html, enhancements.js (NOT engine.js)
+- Both `*/dist/` — Rebuilt and verified
+
+---
 *This log is updated every session. Reference before making changes.*
