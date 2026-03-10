@@ -1753,10 +1753,20 @@
             try { this._queue = JSON.parse(localStorage.getItem('s4_offline_queue') || '[]'); } catch(e) { this._queue = []; }
             var ind = document.createElement('div');
             ind.id = 's4OnlineStatus';
-            ind.style.cssText = 'position:fixed;top:2px;right:16px;z-index:99999;display:flex;align-items:center;gap:6px;padding:2px 10px;border-radius:20px;font-size:0.68rem;font-weight:600;transition:all 0.3s;pointer-events:none;opacity:0.95';
+            ind.style.cssText = 'position:fixed;bottom:84px;left:24px;z-index:8998;display:none;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:0.68rem;font-weight:600;transition:all 0.3s;pointer-events:none;opacity:0.9';
             document.body.appendChild(ind);
             this._indicatorEl = ind;
             this._updateIndicator();
+            // Show only when inside the platform
+            var ws = document.getElementById('platformWorkspace');
+            if (ws && ws.style.display === 'block') ind.style.display = 'flex';
+            if (ws) {
+                var self2 = this;
+                var _wsObs = new MutationObserver(function() {
+                    ind.style.display = ws.style.display === 'block' ? 'flex' : 'none';
+                });
+                _wsObs.observe(ws, { attributes: true, attributeFilter: ['style'] });
+            }
             var self = this;
             window.addEventListener('online', function() { self._isOnline = true; self._updateIndicator(); self._syncQueue(); if (S4.toast) S4.toast('Connection restored — syncing queued operations', 'success', 3000); });
             window.addEventListener('offline', function() { self._isOnline = false; self._updateIndicator(); if (S4.toast) S4.toast('You are offline — operations will be queued', 'warning', 4000); });
