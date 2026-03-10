@@ -67,12 +67,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-DbDHfbMT.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-Cx82CDGF.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-BKaeKLHt.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-B3DpiWGW.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-C5CXBMPi.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-B3AvGs81.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-Di3ehveQ.css">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-DlVzziH0.js">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-BtEP9xBs.css">
 </head>
 <body class="light-mode" data-theme="light">
 <!-- Light mode always on -->
@@ -3786,6 +3786,8 @@
                 if (hero) hero.style.display = '';
                 var _aiW = document.getElementById('aiFloatWrapper');
                 if (_aiW) _aiW.style.display = 'none';
+                // Hide report toggle + sidebar on logout
+                if (typeof window._s4HideReportToggle === 'function') window._s4HideReportToggle();
                 document.querySelectorAll('.ils-hub-panel').forEach(function(p) { p.classList.remove('active'); p.style.display = 'none'; });
                 window.scrollTo(0, 0);
             };

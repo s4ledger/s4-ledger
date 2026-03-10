@@ -5064,7 +5064,7 @@ button:active, .btn:active {
     padding:10px 14px; font-size:0.78rem;
     cursor:pointer; font-family:inherit;
 }
-/* Report toggle button (fixed) */
+/* Report toggle button (fixed) — hidden until user enters platform */
 .s4-report-toggle {
     position:fixed; right:20px; bottom:80px;
     width:48px; height:48px;
@@ -5073,7 +5073,7 @@ button:active, .btn:active {
     font-size:1rem; cursor:pointer;
     box-shadow:0 4px 16px rgba(0,122,255,0.3);
     z-index:8999;
-    display:flex; align-items:center; justify-content:center;
+    display:none; align-items:center; justify-content:center;
     transition:all 0.2s;
 }
 .s4-report-toggle:hover { transform:scale(1.08); box-shadow:0 6px 20px rgba(0,122,255,0.4); }

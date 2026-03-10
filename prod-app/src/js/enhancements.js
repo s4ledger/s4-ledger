@@ -7427,6 +7427,8 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         if (typeof window._updateSlsBalance === 'function') window._updateSlsBalance();
         if (typeof window.showRoleSelector === 'function') window.showRoleSelector();
         if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
+        // Show report toggle now that user is inside the platform
+        if (typeof _showReportToggle === 'function') _showReportToggle();
     };
 
     window._s4StartChain = function(chainKey) {
@@ -7742,6 +7744,20 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         }
     };
 
+    // ── Show/hide report toggle based on platform state ──
+    function _showReportToggle() {
+        var btn = document.getElementById('s4ReportToggle');
+        if (btn) btn.style.display = 'flex';
+    }
+    function _hideReportToggle() {
+        var btn = document.getElementById('s4ReportToggle');
+        if (btn) btn.style.display = 'none';
+        var sidebar = document.getElementById('s4ReportSidebar');
+        if (sidebar) sidebar.classList.remove('open');
+    }
+    window._s4ShowReportToggle = _showReportToggle;
+    window._s4HideReportToggle = _hideReportToggle;
+
     // ── Boot all steps ──
     function _bootSteps() {
         // Defensive: ensure no tool panels are visible on initial load
@@ -7750,6 +7766,22 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         _hookContinueChain();
         _buildGridSections();
         _renderReport();
+        // Show report toggle only if user is already inside the platform
+        var ws = document.getElementById('platformWorkspace');
+        if (ws && ws.style.display === 'block') {
+            _showReportToggle();
+        }
+        // Watch for platform workspace show/hide to sync report toggle
+        if (ws) {
+            var _wsObs = new MutationObserver(function() {
+                if (ws.style.display === 'block') {
+                    _showReportToggle();
+                } else {
+                    _hideReportToggle();
+                }
+            });
+            _wsObs.observe(ws, { attributes: true, attributeFilter: ['style'] });
+        }
     }
 
     if (document.readyState === 'loading') {

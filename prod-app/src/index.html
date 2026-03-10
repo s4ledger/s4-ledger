@@ -3781,6 +3781,8 @@
                 if (hero) hero.style.display = '';
                 var _aiW = document.getElementById('aiFloatWrapper');
                 if (_aiW) _aiW.style.display = 'none';
+                // Hide report toggle + sidebar on logout
+                if (typeof window._s4HideReportToggle === 'function') window._s4HideReportToggle();
                 document.querySelectorAll('.ils-hub-panel').forEach(function(p) { p.classList.remove('active'); p.style.display = 'none'; });
                 window.scrollTo(0, 0);
             };
