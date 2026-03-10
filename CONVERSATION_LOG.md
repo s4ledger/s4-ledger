@@ -2699,4 +2699,24 @@ Every panel has exactly ONE action bar matching the Phase 3 selector. Button ord
 - Both `*/dist/` — Rebuilt and verified
 
 ---
+
+## Session 39 — Fix Change 21: Tour Navigation & Scroll-Back
+**Commit:** `83f4f09` | **Date:** 2025-03-10
+
+### Problem
+Onboarding tour tooltips were randomly positioned — the tooltip appeared but didn't actually take the user to the element being described. On dismiss it left the user at a random scroll position.
+
+### Fix
+- **Scroll-first, position-second**: Each step now calls `scrollIntoView({behavior:'smooth', block:'center'})` on the target element, waits 500ms for the scroll to settle, then positions the tooltip using `position:fixed` relative to the viewport
+- **Highlight ring**: Target element gets a blue `box-shadow` glow (0 0 0 4px rgba(0,122,255,0.5)) and z-index 99999 so it punches through the overlay
+- **Smart placement**: Tooltip auto-detects whether to appear above or below the target based on available viewport space
+- **Scroll-back on dismiss**: Saves `window.scrollX/Y` before tour starts, smooth-scrolls back to exact position when user clicks Skip or Done
+- **Cleanup**: Highlight styles are cleanly removed from each element between steps and on tour end
+
+### Files Modified
+- `prod-app/src/js/enhancements.js` — Rewrote `_runTour()` with scroll-first positioning, highlight ring, and scroll restoration
+- `demo-app/src/js/enhancements.js` — Synced (NOT engine.js)
+- Both `*/dist/` — Rebuilt and verified
+
+---
 *This log is updated every session. Reference before making changes.*
