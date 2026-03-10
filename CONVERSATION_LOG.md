@@ -2384,4 +2384,56 @@ User demanded complete Steve Jobs visual overhaul — eliminate old gold (#c9a84
 - `demo-app/index.html` — Copied from demo dist
 
 ---
+
+## Session — Dark Mode Round 5 + Demo Data Restoration + Anchor Button Standardization
+
+**Commit:** `cd20399`  
+**Previous:** `b30a13f` (Dark mode round 4)
+
+### Problem 1: Demo Data Missing from Most Tools
+**Root Cause:** Commits `b16caa0` and `35d08b5` synced prod JS files over demo-specific JS files, wiping all demo data. 7 of 8 shared JS files were identical to prod (only engine.js and wallet-toggle.js were unique).
+
+**Fix:** Restored all 7 affected files from known-good commit `3377227`:
+- `acquisition.js` — 12 acquisition records (YRBM-44 SLE, YR-92 Replacement, etc.)
+- `milestones.js` — 18 vessel records across PMS 300, PMS 325, PMS 501, Strategic Programs
+- `enhancements.js` — Demo team members, Stripe demo guard, demo URLs, webhook handlers
+- `metrics.js` — Demo localStorage keys (`s4_demo_stats`), stat fallbacks, offline provision handling
+- `navigation.js` — Demo tool card order key, Getting Started flow, inline HIW modal
+- `roles.js` — CSS var usage (`var(--accent)`, `var(--card)`), demo-specific selectors
+- `scroll.js` — `_demoSession` references, `demoWalletExplorer` element IDs
+
+### Problem 2: Dark Mode — Data Fields Still Hard to Read
+**5 CSS fixes added to `prod-app/src/styles/main.css`:**
+1. `.stat-card .stat-val` — Missing dark override; `#0071e3` on dark surface = 3.0:1 contrast (fails WCAG AA). **Added:** `color:var(--text)!important`
+2. `#s4ResultPopup` — Light rule specificity (1,4,0) beat dark rule (1,1,0). **Fixed:** Matched specificity with `:not()` pseudo-classes + `!important`
+3. `.sls-stat-label` — `#86868b` on dark surface = 4.1:1 (below AA for 0.72rem text). **Added:** `color:var(--muted)!important`
+4. `.action-item` — `border-color` shorthand killed accent left stripe in dark mode. **Added:** `border-left-color:var(--accent)!important`
+5. `.tool-panel table` — White background could bleed at edges. **Added:** `background:var(--card)!important`
+
+### Problem 3: Anchor Button Text Inconsistency
+**6 buttons standardized to "Anchor to Ledger":**
+- "Anchor to XRPL" → "Anchor to Ledger" (main anchor tab)
+- "Anchor Report Hash" × 2 → "Anchor to Ledger" (ILS report, status report)
+- "Anchor SBOM to Ledger" → "Anchor to Ledger"
+- "Anchor Review to Ledger" → "Anchor to Ledger"
+- "Anchor Chain to Ledger" → "Anchor to Ledger"
+
+### Build Verification
+| Check | Result |
+|-------|--------|
+| Demo milestone data in build | 6 vessel references confirmed |
+| Anchor to Ledger buttons | 22 in prod dist |
+| Dark mode CSS fixes in build | Present |
+| Demo engine ≠ prod engine | Different hashes (correct) |
+
+### Files Changed
+- `prod-app/src/styles/main.css` — 5 dark mode CSS fixes
+- `prod-app/src/index.html` — 6 anchor button text changes
+- `demo-app/src/js/` — 7 files restored from commit 3377227
+- `demo-app/src/styles/main.css` — Synced from prod
+- `demo-app/src/index.html` — Synced from prod
+- Both `*/dist/` — Rebuilt and verified
+- `demo-app/index.html` — Copied from demo dist
+
+---
 *This log is updated every session. Reference before making changes.*
