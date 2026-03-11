@@ -21,6 +21,10 @@
 - Ledger Account: Low-Balance Alert toggle — configurable threshold with iOS-style toggle, persisted to localStorage
 - Ledger Account: Plan Upgrade CTA — shows next tier with credits/mo and "View Plans" button (hidden if already on Enterprise)
 - Ledger Account: Export Statement button — downloads CSV with full credits summary and transaction detail
+- Ledger Account: Verified and Types stats moved from top-bar into sidebar stats grid (5-card grid: Anchors, Verified, Types, Remaining, Plan)
+- Ledger Account: "Your Data Is Protected" compliance assurance card — SHA-256 tamper-proof, NIST 800-53 / FedRAMP / DFARS alignment, full audit trail
+- Session Stats Toast — contextual notification slides down from top after each anchor/verify showing Anchored, Verified, Types, Credits; auto-dismisses after 4 seconds
+- Removed persistent stats strip from workspace header (redundant — data now in sidebar + toast)
 - Rebuilt dist bundle
 
 ## [5.12.1] — 2026-02-26

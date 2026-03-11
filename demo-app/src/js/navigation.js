@@ -27,9 +27,9 @@ function showHub() {
     // Show hub
     var hub = document.getElementById('platformHub');
     if (hub) { hub.style.display = 'block'; hub.style.animation = 'fadeIn 0.3s ease'; }
-    // Show stat strip
-    var sr = document.getElementById('statsRow');
-    if (sr) sr.style.display = 'flex';
+    // Show stat strip (moved into Ledger Account sidebar)
+    // var sr = document.getElementById('statsRow');
+    // if (sr) sr.style.display = 'flex';
     // Only show hero + pre-platform landing if user hasn't entered yet
     if (!sessionStorage.getItem('s4_entered')) {
         var hero = document.querySelector('.hero');
@@ -410,6 +410,9 @@ function openWalletSidebar() {
     if (!body) return;
 
     var d = _getCreditsData();
+    var stats = window._s4Stats || {anchored:0,verified:0,slsFees:0,types:new Set()};
+    var verified = stats.verified || 0;
+    var typesCount = stats.types ? (stats.types.size || 0) : 0;
 
     // Color logic: healthy (#007AFF), low/amber (#FF9500), critical (#FF3B30)
     var balColor = d.pct > 20 ? '#007AFF' : d.pct > 5 ? '#FF9500' : '#FF3B30';
@@ -535,11 +538,21 @@ function openWalletSidebar() {
         + usageToast
 
         // ── Quick Stats ──
-        + '<div class="ws-stats-grid">'
+        + '<div class="ws-stats-grid ws-stats-5">'
         +   '<div class="ws-stat-card">'
         +     '<div class="ws-stat-icon" style="background:rgba(0,122,255,0.08);"><i class="fas fa-anchor" style="color:#007AFF;"></i></div>'
         +     '<div class="ws-stat-val">' + d.anchored + '</div>'
         +     '<div class="ws-stat-lbl">Anchors</div>'
+        +   '</div>'
+        +   '<div class="ws-stat-card">'
+        +     '<div class="ws-stat-icon" style="background:rgba(52,199,89,0.08);"><i class="fas fa-check-double" style="color:#34C759;"></i></div>'
+        +     '<div class="ws-stat-val">' + verified + '</div>'
+        +     '<div class="ws-stat-lbl">Verified</div>'
+        +   '</div>'
+        +   '<div class="ws-stat-card">'
+        +     '<div class="ws-stat-icon" style="background:rgba(88,86,214,0.08);"><i class="fas fa-layer-group" style="color:#5856D6;"></i></div>'
+        +     '<div class="ws-stat-val">' + typesCount + '</div>'
+        +     '<div class="ws-stat-lbl">Types</div>'
         +   '</div>'
         +   '<div class="ws-stat-card">'
         +     '<div class="ws-stat-icon" style="background:rgba(52,199,89,0.08);"><i class="fas fa-coins" style="color:#34C759;"></i></div>'
@@ -550,6 +563,16 @@ function openWalletSidebar() {
         +     '<div class="ws-stat-icon" style="background:rgba(255,149,0,0.08);"><i class="fas fa-tag" style="color:#FF9500;"></i></div>'
         +     '<div class="ws-stat-val">' + d.plan + '</div>'
         +     '<div class="ws-stat-lbl">Plan</div>'
+        +   '</div>'
+        + '</div>'
+
+        // ── Compliance & Security Assurance ──
+        + '<div class="ws-compliance-card">'
+        +   '<div class="ws-compliance-header"><i class="fas fa-shield-alt" style="margin-right:6px"></i>Your Data Is Protected</div>'
+        +   '<div class="ws-compliance-body">'
+        +     '<div class="ws-compliance-item"><i class="fas fa-lock" style="color:#34C759"></i><span>Every record is <strong>SHA-256 hashed</strong> and anchored to the XRP Ledger — tamper-proof and immutable</span></div>'
+        +     '<div class="ws-compliance-item"><i class="fas fa-certificate" style="color:#007AFF"></i><span>Aligned with <strong>NIST 800-53</strong>, <strong>FedRAMP</strong>, and <strong>DFARS 252.204-7012</strong> compliance frameworks</span></div>'
+        +     '<div class="ws-compliance-item"><i class="fas fa-eye" style="color:#5856D6"></i><span>Full <strong>audit trail</strong> — every action is logged, time-stamped, and independently verifiable</span></div>'
         +   '</div>'
         + '</div>'
 
@@ -799,6 +822,61 @@ window._wsExportStatement = function() {
     a.click();
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
 };
+
+// ═══ Session Stats Toast — fires after every anchor/verify ═══
+(function() {
+    var _toastTimer = null;
+    var _prevAnchored = -1;
+
+    function _showSessionToast() {
+        var s = window._s4Stats || {anchored:0,verified:0,slsFees:0,types:new Set()};
+        var d = _getCreditsData();
+
+        // Only show if anchored count actually changed (skip initial load)
+        if (_prevAnchored === -1) { _prevAnchored = s.anchored; return; }
+        if (s.anchored === _prevAnchored) return;
+        _prevAnchored = s.anchored;
+
+        // Remove existing toast
+        var old = document.getElementById('wsSessionToast');
+        if (old) old.remove();
+        if (_toastTimer) clearTimeout(_toastTimer);
+
+        var toast = document.createElement('div');
+        toast.id = 'wsSessionToast';
+        toast.className = 'ws-session-toast';
+        toast.innerHTML = ''
+            + '<div class="ws-st-row">'
+            +   '<div class="ws-st-item"><i class="fas fa-anchor" style="color:#007AFF"></i><span class="ws-st-val">' + s.anchored + '</span><span class="ws-st-lbl">Anchored</span></div>'
+            +   '<div class="ws-st-divider"></div>'
+            +   '<div class="ws-st-item"><i class="fas fa-check-double" style="color:#34C759"></i><span class="ws-st-val">' + (s.verified || 0) + '</span><span class="ws-st-lbl">Verified</span></div>'
+            +   '<div class="ws-st-divider"></div>'
+            +   '<div class="ws-st-item"><i class="fas fa-layer-group" style="color:#5856D6"></i><span class="ws-st-val">' + (s.types ? s.types.size : 0) + '</span><span class="ws-st-lbl">Types</span></div>'
+            +   '<div class="ws-st-divider"></div>'
+            +   '<div class="ws-st-item"><i class="fas fa-coins" style="color:#FF9500"></i><span class="ws-st-val">' + d.remaining.toLocaleString(undefined,{maximumFractionDigits:0}) + '</span><span class="ws-st-lbl">Credits</span></div>'
+            + '</div>';
+        document.body.appendChild(toast);
+
+        // Trigger enter animation
+        requestAnimationFrame(function() { toast.classList.add('ws-st-enter'); });
+
+        // Auto-dismiss after 4 seconds
+        _toastTimer = setTimeout(function() {
+            toast.classList.remove('ws-st-enter');
+            toast.classList.add('ws-st-exit');
+            setTimeout(function() { if (toast.parentElement) toast.remove(); }, 400);
+        }, 4000);
+    }
+
+    // Hook updateStats
+    if (typeof updateStats === 'function') {
+        var _origUpdateStats = updateStats;
+        updateStats = function() {
+            _origUpdateStats();
+            _showSessionToast();
+        };
+    }
+})();
 
 // === Window exports for inline event handlers ===
 window.closeILSTool = closeILSTool;
