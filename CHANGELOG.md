@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.12.9] — 2026-03-11
+### Changed
+- **Floating button cleanup**: removed the standalone Recent Actions toggle (3rd floating button) that was cluttering the bottom-right corner; reduced from 3 stacked buttons to 2 clean ones (Activity + Agent)
+- **"Session Report" → "Activity"**: renamed throughout — sidebar header, toggle title, empty state, speed tips — the sidebar now combines session report entries with a new **"Recent"** section at the top showing last 5 tools used (name + time ago, click to re-run)
+- **Text labels on all floating toggles**: Activity toggle shows "Activity" label below via CSS `::after`; AI Agent toggle shows "Agent" label below; labels are 0.55rem, subtle gray, pointer-events:none
+- **Gradient progress ring on Activity toggle**: the toggle button **itself** changes color via conic-gradient as session readiness increases — 0% default blue, 1–49% steel-blue partial fill, 50–89% blue→teal partial fill, 90%+ full green gradient with green glow shadow; removed old Export Summary button ring wrapper entirely
+- `.ai-float-toggle` `overflow:hidden` → `overflow:visible` to allow label pseudo-element
+- `.s4-report-toggle` repositioned to `bottom:104px` for label clearance; hover simplified to transform-only (no box-shadow conflict with JS)
+- Both demo-app and prod-app updated identically
+
 ## [5.12.8] — 2026-03-11
 ### Changed
 - **Section 27 — Recent Actions**: moved from inline pill in the avatar row to a **floating circular toggle button** (44×44px, `position:fixed`, `bottom:70px`, `right:18px`) — sits above Session Report toggle following the same design pattern; blue history icon with a count badge; click opens a fixed-position **dropdown panel** (280px, 14px radius, 40px shadow) with "RECENT ACTIONS" header + scrollable item list; dropdown closes with scale-down animation on outside click; removes all clutter from the avatar/header row

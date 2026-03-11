@@ -9232,9 +9232,8 @@ function _waitForWorkspaceThenHint() {
     setTimeout(function() { obs.disconnect(); _showShortcutHint(); }, 10000);
 }
 
-// ── SECTION 27: Recent Actions Dropdown ──
+// ── SECTION 27: Recent Actions (inside Activity sidebar) ──
 var _recentTools = [];
-var _dropdownOpen = false;
 
 function _timeAgo(ts) {
     var diff = Math.max(0, Math.floor((Date.now() - ts) / 1000));
@@ -9251,131 +9250,36 @@ function _trackRecentTool(toolId) {
     _recentTools.unshift({ id: toolId, name: name, time: Date.now() });
     if (_recentTools.length > 8) _recentTools = _recentTools.slice(0, 8);
     _sessionToolCount++;
-    _renderRecentToggle();
+    _renderRecentInSidebar();
     _updateProgressRing();
 }
 
-function _renderRecentToggle() {
-    var toggle = document.getElementById('s4RecentToggle');
-    if (!toggle) {
-        // Create fixed-position toggle button above the Session Report toggle
-        toggle = document.createElement('button');
-        toggle.id = 's4RecentToggle';
-        toggle.setAttribute('aria-label', 'Recent Actions');
-        Object.assign(toggle.style, {
-            position:'fixed', bottom:'70px', right:'18px', zIndex:'99990',
-            width:'44px', height:'44px', borderRadius:'50%',
-            background:'#fff', border:'1px solid rgba(0,0,0,0.08)',
-            boxShadow:'0 2px 12px rgba(0,0,0,0.10)',
-            cursor:'pointer', display:'none', alignItems:'center', justifyContent:'center',
-            transition:'all 0.25s ease', padding:'0',
-            fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif'
-        });
-        toggle.onmouseover = function() {
-            toggle.style.boxShadow = '0 4px 18px rgba(0,122,255,0.18)';
-            toggle.style.borderColor = 'rgba(0,122,255,0.25)';
-        };
-        toggle.onmouseout = function() {
-            if (!_dropdownOpen) {
-                toggle.style.boxShadow = '0 2px 12px rgba(0,0,0,0.10)';
-                toggle.style.borderColor = 'rgba(0,0,0,0.08)';
-            }
-        };
-        toggle.onclick = function(e) {
-            e.stopPropagation();
-            if (_dropdownOpen) _closeDropdown(); else _openDropdown();
-        };
-        document.body.appendChild(toggle);
-
-        // Close on outside click
-        document.addEventListener('click', function(e) {
-            if (_dropdownOpen && toggle && !toggle.contains(e.target)) {
-                var dd = document.getElementById('s4RecentDropdown');
-                if (!dd || !dd.contains(e.target)) _closeDropdown();
-            }
-        }, true);
+function _renderRecentInSidebar() {
+    var body = document.getElementById('s4ReportBody');
+    if (!body || _recentTools.length === 0) return;
+    var section = document.getElementById('s4RecentSection');
+    if (!section) {
+        section = document.createElement('div');
+        section.id = 's4RecentSection';
+        section.style.borderBottom = '1px solid var(--border,rgba(0,0,0,0.06))';
+        body.insertBefore(section, body.firstChild);
     }
-
-    if (_recentTools.length === 0) { toggle.style.display = 'none'; return; }
-    toggle.style.display = 'flex';
-
-    // Icon + count badge
-    toggle.innerHTML = '<i class="fas fa-history" style="font-size:1rem;color:var(--accent,#007AFF)"></i>' +
-        '<span style="position:absolute;top:-2px;right:-2px;background:var(--accent,#007AFF);color:#fff;font-size:0.6rem;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;line-height:1">' + _recentTools.length + '</span>';
-
-    if (_dropdownOpen) _renderDropdownList();
-}
-
-function _openDropdown() {
-    _dropdownOpen = true;
-    var toggle = document.getElementById('s4RecentToggle');
-    if (toggle) {
-        toggle.style.boxShadow = '0 4px 18px rgba(0,122,255,0.18)';
-        toggle.style.borderColor = 'rgba(0,122,255,0.25)';
-        toggle.style.background = 'rgba(0,122,255,0.04)';
-    }
-    _renderDropdownList();
-}
-
-function _closeDropdown() {
-    _dropdownOpen = false;
-    var toggle = document.getElementById('s4RecentToggle');
-    if (toggle) {
-        toggle.style.boxShadow = '0 2px 12px rgba(0,0,0,0.10)';
-        toggle.style.borderColor = 'rgba(0,0,0,0.08)';
-        toggle.style.background = '#fff';
-    }
-    var dd = document.getElementById('s4RecentDropdown');
-    if (dd) {
-        dd.style.opacity = '0';
-        dd.style.transform = 'translateY(6px) scale(0.97)';
-        setTimeout(function() { if (dd.parentNode) dd.parentNode.removeChild(dd); }, 180);
-    }
-}
-
-function _renderDropdownList() {
-    var dd = document.getElementById('s4RecentDropdown');
-    if (!dd) {
-        dd = document.createElement('div');
-        dd.id = 's4RecentDropdown';
-        Object.assign(dd.style, {
-            position:'fixed', bottom:'120px', right:'18px',
-            background:'#fff', border:'1px solid rgba(0,0,0,0.08)',
-            borderRadius:'14px', boxShadow:'0 12px 40px rgba(0,0,0,0.12)',
-            width:'280px', maxWidth:'300px', zIndex:'99991',
-            opacity:'0', transform:'translateY(6px) scale(0.97)',
-            transition:'opacity 0.2s ease, transform 0.2s ease',
-            overflow:'hidden',
-            fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif'
-        });
-        document.body.appendChild(dd);
-        requestAnimationFrame(function() { dd.style.opacity = '1'; dd.style.transform = 'translateY(0) scale(1)'; });
-    }
-
-    var header = '<div style="padding:10px 14px 8px;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:space-between">' +
-        '<span style="font-size:0.72rem;font-weight:700;letter-spacing:0.02em;text-transform:uppercase;color:var(--muted,#6e6e73)">Recent Actions</span>' +
-        '<span style="font-size:0.65rem;color:var(--muted,#6e6e73)">' + _recentTools.length + ' tools</span></div>';
-
-    var items = _recentTools.map(function(t, i) {
-        var border = i < _recentTools.length - 1 ? 'border-bottom:1px solid rgba(0,0,0,0.03);' : '';
-        return '<button class="s4ra-item" data-tool="' + t.id + '" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 14px;background:none;border:none;' + border + 'cursor:pointer;font-family:inherit;font-size:0.78rem;text-align:left;transition:background 0.15s;color:var(--steel,#3a3a3c)">' +
-            '<span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">' + _esc(t.name) + '</span>' +
-            '<span style="font-size:0.68rem;color:var(--muted,#6e6e73);white-space:nowrap;margin-left:10px">' + _timeAgo(t.time) + '</span>' +
+    var html = '<div style="padding:8px 16px 4px;font-size:0.62rem;font-weight:700;color:var(--muted,#6e6e73);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:5px"><i class="fas fa-history" style="font-size:0.58rem"></i>Recent</div>';
+    html += _recentTools.slice(0, 5).map(function(t, i) {
+        var bdr = i < Math.min(_recentTools.length, 5) - 1 ? 'border-bottom:1px solid rgba(0,0,0,0.03);' : '';
+        return '<button data-tool="' + t.id + '" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:7px 16px;background:none;border:none;' + bdr + 'cursor:pointer;font-family:inherit;font-size:0.74rem;text-align:left;transition:background 0.15s;color:var(--steel,#3a3a3c)">' +
+            '<span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">' + _esc(t.name) + '</span>' +
+            '<span style="font-size:0.64rem;color:var(--muted,#6e6e73);white-space:nowrap;margin-left:8px">' + _timeAgo(t.time) + '</span>' +
             '</button>';
     }).join('');
-
-    dd.innerHTML = header + '<div style="max-height:320px;overflow-y:auto">' + items + '</div>';
-
-    // Attach click handlers
-    var btns = dd.querySelectorAll('.s4ra-item');
+    section.innerHTML = html;
+    var btns = section.querySelectorAll('button[data-tool]');
     for (var i = 0; i < btns.length; i++) {
         (function(btn) {
             btn.onmouseover = function() { btn.style.background = 'rgba(0,122,255,0.04)'; };
             btn.onmouseout = function() { btn.style.background = 'none'; };
-            btn.onclick = function(e) {
-                e.stopPropagation();
+            btn.onclick = function() {
                 var tid = btn.getAttribute('data-tool');
-                _closeDropdown();
                 if (typeof openILSTool === 'function') openILSTool(tid);
             };
         })(btns[i]);
@@ -9453,7 +9357,7 @@ function _injectCopyBullet(toolId) {
     if (card) card.appendChild(btn);
 }
 
-// ── SECTION 29: Smart Gradient Progress Ring on Export Summary ──
+// ── SECTION 29: Gradient Progress Ring on Activity Toggle ──
 var _sessionToolCount = 0;
 
 function _computeSmartPct() {
@@ -9466,109 +9370,38 @@ function _computeSmartPct() {
     return 90 + Math.min(n - 3, 1) * 10;
 }
 
-function _ringGradient(pct) {
-    // Returns a conic-gradient string with color that transitions through stages:
-    //   0%     → gray
-    //   1-49%  → steel blue to blue
-    //   50-89% → blue to teal
-    //   90%+   → teal to emerald green
-    var angle = Math.round(pct * 3.6);
-    var trail = 'rgba(0,0,0,0.06)';
-    if (pct === 0) return 'none';
-    if (pct < 50) {
-        // Steel-blue gradient
-        return 'conic-gradient(#5B9BD5 0deg, #007AFF ' + angle + 'deg, ' + trail + ' ' + angle + 'deg)';
-    }
-    if (pct < 90) {
-        // Blue → teal gradient
-        return 'conic-gradient(#007AFF 0deg, #06B6D4 ' + Math.round(angle * 0.6) + 'deg, #0EA5E9 ' + angle + 'deg, ' + trail + ' ' + angle + 'deg)';
-    }
-    // Green glow: teal → emerald → green
-    return 'conic-gradient(#06B6D4 0deg, #10B981 ' + Math.round(angle * 0.5) + 'deg, #34D399 ' + Math.round(angle * 0.8) + 'deg, #10B981 ' + angle + 'deg, ' + trail + ' ' + angle + 'deg)';
-}
-
 function _updateProgressRing() {
-    var exportBtn = document.querySelector('.s4rs-export');
-    if (!exportBtn) return;
-
+    var btn = document.getElementById('s4ReportToggle');
+    if (!btn) return;
     var pct = _computeSmartPct();
+    var angle = Math.round(pct * 3.6);
 
-    var wrapper = document.getElementById('s4ExportRingWrap');
-    if (!wrapper) {
-        wrapper = document.createElement('div');
-        wrapper.id = 's4ExportRingWrap';
-        Object.assign(wrapper.style, {
-            position:'relative', display:'inline-flex', flexDirection:'column',
-            alignItems:'center', width:'100%'
-        });
-        exportBtn.parentNode.insertBefore(wrapper, exportBtn);
-        wrapper.appendChild(exportBtn);
-
-        var label = document.createElement('div');
-        label.id = 's4ExportRingLabel';
-        Object.assign(label.style, {
-            fontSize:'0.65rem', color:'var(--muted,#6e6e73)', textAlign:'center',
-            marginTop:'4px', fontWeight:'500', letterSpacing:'0.01em',
-            fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif',
-            transition:'color 0.4s ease'
-        });
-        wrapper.appendChild(label);
-    }
-
-    // Apply gradient ring via conic-gradient on border
-    var grad = _ringGradient(pct);
+    // The toggle button itself fills with a conic gradient showing progress.
+    // At 0%: default accent blue. 1-49%: partial fill steel→blue.
+    // 50-89%: partial fill blue→teal. 90%+: full green gradient.
     if (pct === 0) {
-        exportBtn.style.borderImage = '';
-        exportBtn.style.backgroundImage = '';
-        exportBtn.style.border = '2px solid rgba(0,0,0,0.08)';
-        exportBtn.style.backgroundClip = '';
-        exportBtn.style.backgroundOrigin = '';
-        exportBtn.style.boxShadow = '';
+        btn.style.background = 'var(--accent,#007AFF)';
+        btn.style.boxShadow = '0 4px 16px rgba(0,122,255,0.3)';
+    } else if (pct >= 90) {
+        btn.style.background = 'linear-gradient(135deg,#10B981,#34D399)';
+        btn.style.boxShadow = '0 4px 20px rgba(16,185,129,0.40)';
+    } else if (pct >= 50) {
+        btn.style.background = 'conic-gradient(from 0deg, #06B6D4 0deg, #0EA5E9 ' + angle + 'deg, #007AFF ' + angle + 'deg)';
+        btn.style.boxShadow = '0 4px 16px rgba(6,182,212,0.30)';
     } else {
-        exportBtn.style.borderImage = 'none';
-        exportBtn.style.borderColor = 'transparent';
-        exportBtn.style.backgroundImage = 'linear-gradient(var(--surface,#fff),var(--surface,#fff)),' + grad;
-        exportBtn.style.backgroundOrigin = 'border-box';
-        exportBtn.style.backgroundClip = 'padding-box, border-box';
-        exportBtn.style.border = '2.5px solid transparent';
-        // Subtle glow at high readiness
-        if (pct >= 90) {
-            exportBtn.style.boxShadow = '0 0 12px rgba(16,185,129,0.20)';
-        } else {
-            exportBtn.style.boxShadow = '0 0 8px rgba(0,122,255,0.10)';
-        }
+        btn.style.background = 'conic-gradient(from 0deg, #5B9BD5 0deg, #007AFF ' + angle + 'deg, rgba(0,122,255,0.7) ' + angle + 'deg)';
+        btn.style.boxShadow = '0 4px 16px rgba(0,122,255,0.3)';
     }
 
-    // Tooltip
-    if (pct >= 90) {
-        exportBtn.title = 'Session ready for summary export';
-    } else if (pct > 0) {
-        exportBtn.title = 'Run more tools to build your session summary';
-    } else {
-        exportBtn.title = '';
-    }
-
-    var label = document.getElementById('s4ExportRingLabel');
-    if (label) {
-        if (pct === 0) {
-            label.style.display = 'none';
-        } else {
-            label.style.display = 'block';
-            if (pct >= 90) {
-                label.style.color = '#10B981';
-                label.textContent = '\u2713 Ready for summary export';
-            } else {
-                label.style.color = 'var(--muted,#6e6e73)';
-                label.textContent = 'Session ' + pct + '% ready';
-            }
-        }
-    }
+    if (pct >= 90) btn.title = 'Activity \u2014 ready for export';
+    else if (pct > 0) btn.title = 'Activity (' + pct + '% ready)';
+    else btn.title = 'Activity';
 }
 
 // ── SECTION 30: Floating Speed Tip Badge ──
 var _speedTips = [
     'Press \u2318/Ctrl + K to jump to any tool instantly.',
-    'Click the Session Report icon to see everything you\u2019ve done today.',
+    'Click the Activity icon to see everything you\u2019ve done today.',
     'Use the time period dropdown to compare daily, weekly, or monthly data.'
 ];
 

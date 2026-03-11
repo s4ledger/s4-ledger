@@ -4040,10 +4040,18 @@ a[href="#mainContent"]:focus{
     background:linear-gradient(135deg,#0071e3,#00aaff)!important;
     background-color:#0071e3!important;
     border-radius:50%!important;
-    overflow:hidden!important;
+    overflow:visible!important;
     border:none!important;
     -webkit-appearance:none!important;
     appearance:none!important;
+}
+.ai-float-toggle::after {
+    content:'Agent';
+    position:absolute; bottom:-16px; left:50%; transform:translateX(-50%);
+    font-size:0.55rem; font-weight:600; color:rgba(0,0,0,0.42);
+    white-space:nowrap; letter-spacing:0.02em;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+    pointer-events:none;
 }
 @keyframes aiPulse{
     0%,100%{box-shadow:0 4px 20px rgba(0,113,227,0.25)}
@@ -5199,7 +5207,7 @@ button:active, .btn:active {
 }
 /* Report toggle button (fixed) — hidden until user enters platform */
 .s4-report-toggle {
-    position:fixed; right:24px; bottom:100px;
+    position:fixed; right:24px; bottom:104px;
     width:44px; height:44px;
     background:var(--accent); color:#fff;
     border:none; border-radius:50%;
@@ -5207,10 +5215,18 @@ button:active, .btn:active {
     box-shadow:0 4px 16px rgba(0,122,255,0.3);
     z-index:8999;
     display:none; align-items:center; justify-content:center;
-    transition:all 0.2s;
+    transition:all 0.25s;
 }
-.s4-report-toggle:hover { transform:scale(1.08); box-shadow:0 6px 20px rgba(0,122,255,0.4); }
+.s4-report-toggle:hover { transform:scale(1.08); }
 .s4-report-toggle:active { transform:scale(0.95); }
+.s4-report-toggle::after {
+    content:'Activity';
+    position:absolute; bottom:-16px; left:50%; transform:translateX(-50%);
+    font-size:0.55rem; font-weight:600; color:rgba(0,0,0,0.42);
+    white-space:nowrap; letter-spacing:0.02em;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+    pointer-events:none;
+}
 .s4-report-toggle .s4rt-count {
     position:absolute; top:-4px; right:-4px;
     background:#ff3b30; color:#fff;
