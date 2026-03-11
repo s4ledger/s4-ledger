@@ -67,11 +67,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-BEIG4HkX.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-BjfJqonT.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-xXCZYzDT.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-DqQtR5Ds.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-BF4aFrbM.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-Cfn1G9KZ.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-CZxGG97x.js">
   <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-VIQKg1L7.css">
 </head>
 <body class="light-mode">
@@ -2260,14 +2260,17 @@
                         </div>
                         <!-- Omission Banner -->
                         <div id="subDrlOmissionBanner" style="display:none;background:rgba(175,82,222,0.08);border:1px solid rgba(175,82,222,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#af52de"><i class="fas fa-exclamation-triangle"></i> <span id="subDrlOmissionText"></span></div>
+                        <!-- AI Insights Panel -->
+                        <div id="subDrlAiInsights" style="display:none;margin-bottom:14px"></div>
                         <!-- Action Buttons -->
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <button onclick="exportDrlStatusCSV('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
                             <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
+                            <button onclick="drlAiAssist('sub')" id="subDrlAiBtn" class="btn btn-sm" style="font-size:.78rem;background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
                         </div>
-                        <!-- 15-Column Table -->
+                        <!-- 17-Column Table -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
-                            <table class="discrepancy-table" id="subDrlStatusTable" style="min-width:1600px;font-size:.74rem">
+                            <table class="discrepancy-table" id="subDrlStatusTable" style="min-width:2000px;font-size:.74rem">
                                 <thead>
                                     <tr>
                                         <th>DI Number</th>
@@ -2285,6 +2288,8 @@
                                         <th>Response Posted Date</th>
                                         <th>Notes</th>
                                         <th>Status</th>
+                                        <th>Actions</th>
+                                        <th>Workflow Link</th>
                                     </tr>
                                 </thead>
                                 <tbody id="subDrlStatusBody"></tbody>
@@ -2514,15 +2519,19 @@
                             <i class="fas fa-triangle-exclamation"></i> <span id="drlOmissionText">Repeated omissions detected — review flagged items below</span>
                         </div>
 
+                        <!-- AI Insights Panel -->
+                        <div id="drlAiInsights" style="display:none;margin-bottom:14px"></div>
+
                         <!-- Action buttons (demo-app: no Import) -->
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
                             <button onclick="exportDrlStatusCSV()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
                             <button onclick="anchorDrlStatus()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button onclick="drlAiAssist()" id="drlAiBtn" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
                         </div>
 
-                        <!-- DRL/DI Status Table — 15 columns -->
+                        <!-- DRL/DI Status Table — 17 columns -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
-                            <table class="table table-sm" id="drlStatusTable" style="color:var(--text,#1d1d1f);font-size:.74rem;margin:0;min-width:1600px">
+                            <table class="table table-sm" id="drlStatusTable" style="color:var(--text,#1d1d1f);font-size:.74rem;margin:0;min-width:2000px">
                                 <thead style="position:sticky;top:0;background:var(--surface);z-index:1">
                                     <tr>
                                         <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">DI Number</th>
@@ -2540,6 +2549,8 @@
                                         <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Response Posted Date</th>
                                         <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Notes</th>
                                         <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Status</th>
+                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Actions</th>
+                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Workflow Link</th>
                                     </tr>
                                 </thead>
                                 <tbody id="drlStatusBody"></tbody>

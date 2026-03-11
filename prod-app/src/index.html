@@ -2254,15 +2254,18 @@
                         </div>
                         <!-- Omission Banner -->
                         <div id="subDrlOmissionBanner" style="display:none;background:rgba(175,82,222,0.08);border:1px solid rgba(175,82,222,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#af52de"><i class="fas fa-exclamation-triangle"></i> <span id="subDrlOmissionText"></span></div>
+                        <!-- AI Insights Panel -->
+                        <div id="subDrlAiInsights" style="display:none;margin-bottom:14px"></div>
                         <!-- Action Buttons (prod-app: includes Import) -->
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <button onclick="importDrlSpreadsheet('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
                             <button onclick="exportDrlStatusCSV('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
                             <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
+                            <button onclick="drlAiAssist('sub')" id="subDrlAiBtn" class="btn btn-sm" style="font-size:.78rem;background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
                         </div>
-                        <!-- 15-Column Table -->
+                        <!-- 17-Column Table -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
-                            <table class="discrepancy-table" id="subDrlStatusTable" style="min-width:1600px;font-size:.74rem">
+                            <table class="discrepancy-table" id="subDrlStatusTable" style="min-width:2000px;font-size:.74rem">
                                 <thead>
                                     <tr>
                                         <th>DI Number</th>
@@ -2280,6 +2283,8 @@
                                         <th>Response Posted Date</th>
                                         <th>Notes</th>
                                         <th>Status</th>
+                                        <th>Actions</th>
+                                        <th>Workflow Link</th>
                                     </tr>
                                 </thead>
                                 <tbody id="subDrlStatusBody"></tbody>
@@ -2514,16 +2519,20 @@
                             <i class="fas fa-exclamation-triangle"></i> <span id="drlOmissionText"></span>
                         </div>
 
+                        <!-- AI Insights Panel -->
+                        <div id="drlAiInsights" style="display:none;margin-bottom:14px"></div>
+
                         <!-- Action buttons (prod-app: includes Import) -->
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <button onclick="importDrlSpreadsheet()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
                             <button onclick="exportDrlStatusCSV()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
                             <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
+                            <button onclick="drlAiAssist()" id="drlAiBtn" class="btn btn-sm" style="font-size:.78rem;background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
                         </div>
 
-                        <!-- 15-Column DRL/DI Status Table -->
+                        <!-- 17-Column DRL/DI Status Table -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
-                            <table class="discrepancy-table" id="drlStatusTable" style="min-width:1600px;font-size:.74rem">
+                            <table class="discrepancy-table" id="drlStatusTable" style="min-width:2000px;font-size:.74rem">
                                 <thead>
                                     <tr>
                                         <th>DI Number</th>
@@ -2541,6 +2550,8 @@
                                         <th>Response Posted Date</th>
                                         <th>Notes</th>
                                         <th>Status</th>
+                                        <th>Actions</th>
+                                        <th>Workflow Link</th>
                                     </tr>
                                 </thead>
                                 <tbody id="drlStatusBody"></tbody>

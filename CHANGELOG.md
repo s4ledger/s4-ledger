@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.12.13] — 2026-03-11
+### Changed
+- **DRL / DI Status Tracker — Inline Editing** — every cell is now double-click editable. Click any cell to edit in-place; press Enter or blur to save. Changes auto-sync across Deliverables Tracker and Submissions Hub views.
+- **Actions column** — new column with In-Progress (yellow) and Completed (green) quick-action buttons per row. When a Workflow Link is present, a "Push to External" checkbox appears.
+- **Workflow Link column** — new column at end of table. Rows with links show a clickable "Open" link (opens in new tab). Rows without links show an "Add Link" button that prompts for a URL.
+- **AI Assist button** — new purple-gradient AI Assist button next to Export. Sends table data to AI agents via `/api/ai-chat`, falls back to local analysis. Shows spinner during analysis, then renders AI Insights panel with overdue/approaching summary, repeated omissions, prioritized actions.
+- **New status types** — added `in-progress` (purple badge) and `completed` (green badge) status colors.
+- **Demo data** — 7 of 10 rows now seeded with sample `workflowLink` URLs (e.g., `https://nserc.navy.mil/task/...`).
+- **Export CSV** — now includes Workflow Link as 16th column.
+- **Import Spreadsheet** — now maps `workflowLink` field from 16th CSV column.
+
 ## [5.12.12] — 2026-03-11
 ### Changed
 - **DRL / DI Status Tracker — 15 columns** — expanded from 10 to 15 columns matching the real DRL spreadsheet: DI Number, Transmittal Serial #, SharePoint Rev, Coordinated Due Date, Des Date / Bas. Day?, Submittal Guidance, Coord. Calculated Date, Actual Submission Date, RCV D, Cal. Days to Review, SME Reviewer Target, Release Authority, Response Posted Date, Notes, Status.

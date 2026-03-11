@@ -67,11 +67,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-DCyzxnXh.js"></script>
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-dnNlhenb.js"></script>
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-JAFsQsco.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/navigation-DPFf6ce8.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/metrics-CE3sqmpZ.js">
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-DZiIhO9F.js">
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-201WiKyZ.js">
   <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-VIQKg1L7.css">
 </head>
 <body class="light-mode">
@@ -2260,15 +2260,18 @@
                         </div>
                         <!-- Omission Banner -->
                         <div id="subDrlOmissionBanner" style="display:none;background:rgba(175,82,222,0.08);border:1px solid rgba(175,82,222,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#af52de"><i class="fas fa-exclamation-triangle"></i> <span id="subDrlOmissionText"></span></div>
+                        <!-- AI Insights Panel -->
+                        <div id="subDrlAiInsights" style="display:none;margin-bottom:14px"></div>
                         <!-- Action Buttons (prod-app: includes Import) -->
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <button onclick="importDrlSpreadsheet('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
                             <button onclick="exportDrlStatusCSV('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
                             <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
+                            <button onclick="drlAiAssist('sub')" id="subDrlAiBtn" class="btn btn-sm" style="font-size:.78rem;background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
                         </div>
-                        <!-- 15-Column Table -->
+                        <!-- 17-Column Table -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
-                            <table class="discrepancy-table" id="subDrlStatusTable" style="min-width:1600px;font-size:.74rem">
+                            <table class="discrepancy-table" id="subDrlStatusTable" style="min-width:2000px;font-size:.74rem">
                                 <thead>
                                     <tr>
                                         <th>DI Number</th>
@@ -2286,6 +2289,8 @@
                                         <th>Response Posted Date</th>
                                         <th>Notes</th>
                                         <th>Status</th>
+                                        <th>Actions</th>
+                                        <th>Workflow Link</th>
                                     </tr>
                                 </thead>
                                 <tbody id="subDrlStatusBody"></tbody>
@@ -2520,16 +2525,20 @@
                             <i class="fas fa-exclamation-triangle"></i> <span id="drlOmissionText"></span>
                         </div>
 
+                        <!-- AI Insights Panel -->
+                        <div id="drlAiInsights" style="display:none;margin-bottom:14px"></div>
+
                         <!-- Action buttons (prod-app: includes Import) -->
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <button onclick="importDrlSpreadsheet()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
                             <button onclick="exportDrlStatusCSV()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
                             <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
+                            <button onclick="drlAiAssist()" id="drlAiBtn" class="btn btn-sm" style="font-size:.78rem;background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
                         </div>
 
-                        <!-- 15-Column DRL/DI Status Table -->
+                        <!-- 17-Column DRL/DI Status Table -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
-                            <table class="discrepancy-table" id="drlStatusTable" style="min-width:1600px;font-size:.74rem">
+                            <table class="discrepancy-table" id="drlStatusTable" style="min-width:2000px;font-size:.74rem">
                                 <thead>
                                     <tr>
                                         <th>DI Number</th>
@@ -2547,6 +2556,8 @@
                                         <th>Response Posted Date</th>
                                         <th>Notes</th>
                                         <th>Status</th>
+                                        <th>Actions</th>
+                                        <th>Workflow Link</th>
                                     </tr>
                                 </thead>
                                 <tbody id="drlStatusBody"></tbody>

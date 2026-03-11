@@ -7012,6 +7012,8 @@ function exportCdrlReport() {
 
 var _drlDemoData = [];
 
+var _drlFieldKeys = ['di','transmittalSerial','spRev','coordDueDate','desDateBasDay','submittalGuidance','coordCalcDate','actualDate','rcvD','calDaysReview','smeTarget','authority','responseDate','notes','status'];
+
 function switchCdrlView(view) {
     var valView = document.getElementById('cdrlView-validation');
     var drlView = document.getElementById('cdrlView-drl');
@@ -7061,8 +7063,60 @@ function _getDrlStatusColor(status) {
         case 'past-due': return { bg:'rgba(255,59,48,0.08)', border:'rgba(255,59,48,0.3)', badge:'#ff3b30', label:'Past Due' };
         case 'late':     return { bg:'rgba(255,149,0,0.08)', border:'rgba(255,149,0,0.3)', badge:'#ff9500', label:'Late' };
         case 'approaching': return { bg:'rgba(255,149,0,0.06)', border:'rgba(255,149,0,0.2)', badge:'#ff9500', label:'Approaching' };
+        case 'in-progress': return { bg:'rgba(94,92,230,0.06)', border:'rgba(94,92,230,0.2)', badge:'#5e5ce6', label:'In Progress' };
+        case 'completed': return { bg:'rgba(52,199,89,0.08)', border:'rgba(52,199,89,0.3)', badge:'#34c759', label:'Completed' };
         default:         return { bg:'rgba(52,199,89,0.06)', border:'rgba(52,199,89,0.2)', badge:'#34c759', label:'On Time' };
     }
+}
+
+function _drlMakeCellEditable(td, rowIdx, fieldKey, prefix) {
+    if (td.querySelector('input')) return;
+    var data = window._drlTrackerData || _drlDemoData;
+    var row = data[rowIdx]; if (!row) return;
+    var current = String(row[fieldKey] != null ? row[fieldKey] : '');
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.value = current;
+    input.style.cssText = 'width:100%;font-size:.74rem;padding:3px 5px;border:1px solid #007AFF;border-radius:4px;background:var(--surface);color:var(--text);outline:none;box-sizing:border-box';
+    function commit() {
+        var val = input.value.trim();
+        if (fieldKey === 'calDaysReview') row[fieldKey] = parseInt(val) || 0;
+        else row[fieldKey] = val;
+        renderDrlStatusTable(prefix || '');
+        if (prefix === 'sub') renderDrlStatusTable('');
+        else renderDrlStatusTable('sub');
+        if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Cell updated & anchored.', 'success');
+    }
+    input.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
+    input.addEventListener('blur', commit);
+    td.textContent = '';
+    td.appendChild(input);
+    input.focus();
+    input.select();
+}
+
+function drlSetStatus(rowIdx, newStatus, prefix) {
+    var data = window._drlTrackerData || _drlDemoData;
+    if (!data[rowIdx]) return;
+    data[rowIdx].status = newStatus;
+    renderDrlStatusTable(prefix || '');
+    if (prefix === 'sub') renderDrlStatusTable('');
+    else renderDrlStatusTable('sub');
+    if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Status updated — anchored.', 'success');
+}
+
+function drlAddWorkflowLink(rowIdx, prefix) {
+    var data = window._drlTrackerData || _drlDemoData;
+    if (!data[rowIdx]) return;
+    var url = prompt('Paste the external workflow URL (e.g., NSERC IDE task link):');
+    if (!url || !url.trim()) return;
+    url = url.trim();
+    if (!/^https?:\/\//i.test(url)) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Please enter a valid URL starting with http:// or https://', 'warning'); return; }
+    data[rowIdx].workflowLink = url;
+    renderDrlStatusTable(prefix || '');
+    if (prefix === 'sub') renderDrlStatusTable('');
+    else renderDrlStatusTable('sub');
+    if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Workflow link anchored.', 'success');
 }
 
 function renderDrlStatusTable(prefix) {
@@ -7071,49 +7125,59 @@ function renderDrlStatusTable(prefix) {
     var tbody = document.getElementById(tbodyId);
     if (!tbody) return;
     var data = window._drlTrackerData || _drlDemoData;
-    var emptyId = pre ? pre + 'DrlEmptyState' : 'drlEmptyState';
-    var emptyState = document.getElementById(emptyId);
-    if (data.length === 0) {
-        tbody.innerHTML = '';
-        if (emptyState) emptyState.style.display = 'block';
-        return;
-    }
-    if (emptyState) emptyState.style.display = 'none';
     var onTime = 0, approaching = 0, pastDue = 0, omissions = 0;
     var diMissCounts = {};
     data.forEach(function(r) { if (r.status === 'past-due') { diMissCounts[r.di] = (diMissCounts[r.di] || 0) + 1; } });
-    var dash = '<span style="color:var(--steel);opacity:0.5">—</span>';
+    var dash = '<span style="color:var(--steel);opacity:0.5">\u2014</span>';
     var html = '';
-    data.forEach(function(row) {
+    data.forEach(function(row, idx) {
         var c = _getDrlStatusColor(row.status);
         var isOmission = diMissCounts[row.di] && diMissCounts[row.di] >= 2;
-        if (row.status === 'on-time') onTime++;
-        else if (row.status === 'approaching') approaching++;
+        if (row.status === 'on-time' || row.status === 'completed') onTime++;
+        else if (row.status === 'approaching' || row.status === 'in-progress') approaching++;
         else if (row.status === 'past-due' || row.status === 'late') pastDue++;
         if (isOmission && row.status === 'past-due') omissions++;
-        var td = '<td style="padding:6px 7px;border-color:var(--border);white-space:nowrap">';
-        var tdWrap = '<td style="padding:6px 7px;border-color:var(--border);max-width:180px">';
+        var td = 'padding:6px 7px;border-color:var(--border);white-space:nowrap;cursor:pointer';
+        var tdW = 'padding:6px 7px;border-color:var(--border);max-width:180px;cursor:pointer';
+        var pre2 = pre ? "'" + pre + "'" : "''";
+        function ec(key, val, style) { return '<td style="' + style + '" ondblclick="window._drlMakeCellEditable(this,' + idx + ',\'' + key + '\',' + pre2 + ')" title="Double-click to edit">' + (val || dash) + '</td>'; }
         html += '<tr style="background:' + c.bg + ';border-left:3px solid ' + c.badge + '">';
-        html += '<td style="padding:6px 7px;border-color:var(--border);font-weight:600;white-space:nowrap">' + _escHtml(row.di) + '</td>';
-        html += td + (row.transmittalSerial ? _escHtml(row.transmittalSerial) : dash) + '</td>';
-        html += td + (row.spRev ? _escHtml(row.spRev) : dash) + '</td>';
-        html += td + (row.coordDueDate ? _escHtml(row.coordDueDate) : dash) + '</td>';
-        html += td + (row.desDateBasDay ? _escHtml(row.desDateBasDay) : dash) + '</td>';
-        html += tdWrap + (row.submittalGuidance ? _escHtml(row.submittalGuidance) : dash) + '</td>';
-        html += td + (row.coordCalcDate ? _escHtml(row.coordCalcDate) : dash) + '</td>';
-        html += td + (row.actualDate ? _escHtml(row.actualDate) : dash) + '</td>';
-        html += '<td style="padding:6px 7px;border-color:var(--border);text-align:center">' + (row.rcvD ? _escHtml(row.rcvD) : dash) + '</td>';
-        html += '<td style="padding:6px 7px;border-color:var(--border);text-align:center">' + (row.calDaysReview > 0 ? row.calDaysReview + 'd' : dash) + '</td>';
-        html += td + (row.smeTarget ? _escHtml(row.smeTarget) : dash) + '</td>';
-        html += td + (row.authority ? _escHtml(row.authority) : dash) + '</td>';
-        html += td + (row.responseDate ? _escHtml(row.responseDate) : dash) + '</td>';
-        html += tdWrap + _escHtml(row.notes || '') + '</td>';
-        html += '<td style="padding:6px 7px;border-color:var(--border);white-space:nowrap"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;color:#fff;background:' + c.badge + '">' + c.label;
+        html += ec('di', '<span style="font-weight:600">' + _escHtml(row.di) + '</span>', td);
+        html += ec('transmittalSerial', row.transmittalSerial ? _escHtml(row.transmittalSerial) : '', td);
+        html += ec('spRev', row.spRev ? _escHtml(row.spRev) : '', td);
+        html += ec('coordDueDate', row.coordDueDate ? _escHtml(row.coordDueDate) : '', td);
+        html += ec('desDateBasDay', row.desDateBasDay ? _escHtml(row.desDateBasDay) : '', td);
+        html += ec('submittalGuidance', row.submittalGuidance ? _escHtml(row.submittalGuidance) : '', tdW);
+        html += ec('coordCalcDate', row.coordCalcDate ? _escHtml(row.coordCalcDate) : '', td);
+        html += ec('actualDate', row.actualDate ? _escHtml(row.actualDate) : '', td);
+        html += ec('rcvD', row.rcvD ? _escHtml(row.rcvD) : '', td.replace('white-space:nowrap','text-align:center'));
+        html += ec('calDaysReview', row.calDaysReview > 0 ? row.calDaysReview + 'd' : '', td.replace('white-space:nowrap','text-align:center'));
+        html += ec('smeTarget', row.smeTarget ? _escHtml(row.smeTarget) : '', td);
+        html += ec('authority', row.authority ? _escHtml(row.authority) : '', td);
+        html += ec('responseDate', row.responseDate ? _escHtml(row.responseDate) : '', td);
+        html += ec('notes', _escHtml(row.notes || ''), tdW);
+        // Status badge
+        html += '<td style="' + td + '" ondblclick="window._drlMakeCellEditable(this,' + idx + ',\'status\',' + pre2 + ')" title="Double-click to edit"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;color:#fff;background:' + c.badge + '">' + c.label;
         if (isOmission && row.status === 'past-due') html += ' <i class="fas fa-flag" title="Repeated omission"></i>';
         html += '</span></td>';
+        // Actions column
+        html += '<td style="padding:6px 5px;border-color:var(--border);white-space:nowrap">';
+        html += '<button onclick="drlSetStatus(' + idx + ',\'in-progress\',' + pre2 + ')" style="font-size:.65rem;padding:2px 7px;border-radius:4px;border:none;background:#ff9500;color:#fff;font-weight:700;cursor:pointer;margin-right:3px" title="Mark In-Progress">In-Prog</button>';
+        html += '<button onclick="drlSetStatus(' + idx + ',\'completed\',' + pre2 + ')" style="font-size:.65rem;padding:2px 7px;border-radius:4px;border:none;background:#34c759;color:#fff;font-weight:700;cursor:pointer" title="Mark Completed">Done</button>';
+        if (row.workflowLink) html += '<br><label style="font-size:.6rem;color:var(--steel);cursor:pointer;margin-top:2px;display:inline-block"><input type="checkbox" style="margin-right:3px;vertical-align:middle"> Push to External</label>';
+        html += '</td>';
+        // Workflow Link column
+        html += '<td style="padding:6px 5px;border-color:var(--border);white-space:nowrap">';
+        if (row.workflowLink) {
+            html += '<a href="' + _escHtml(row.workflowLink) + '" target="_blank" rel="noopener noreferrer" style="color:#007AFF;text-decoration:underline;font-size:.72rem" title="' + _escHtml(row.workflowLink) + '"><i class="fas fa-external-link-alt"></i> Open</a>';
+        } else {
+            html += '<button onclick="drlAddWorkflowLink(' + idx + ',' + pre2 + ')" style="font-size:.65rem;padding:2px 7px;border-radius:4px;border:1px solid #007AFF;background:transparent;color:#007AFF;font-weight:600;cursor:pointer"><i class="fas fa-plus"></i> Add Link</button>';
+        }
+        html += '</td>';
         html += '</tr>';
     });
     tbody.innerHTML = html;
+    // Update stats
     var pId = pre ? pre + 'Drl' : 'drl';
     var elTotal = document.getElementById(pId + 'Total');
     var elOnTime = document.getElementById(pId + 'OnTime');
@@ -7125,6 +7189,7 @@ function renderDrlStatusTable(prefix) {
     if (elAppr) elAppr.textContent = approaching;
     if (elOver) elOver.textContent = pastDue;
     if (elOm) elOm.textContent = omissions;
+    // Show omission banner
     var bannerId = pre ? pre + 'DrlOmissionBanner' : 'drlOmissionBanner';
     var textId = pre ? pre + 'DrlOmissionText' : 'drlOmissionText';
     var banner = document.getElementById(bannerId);
@@ -7133,17 +7198,78 @@ function renderDrlStatusTable(prefix) {
         if (omissions > 0) {
             banner.style.display = 'block';
             var flaggedDIs = Object.keys(diMissCounts).filter(function(k) { return diMissCounts[k] >= 2; });
-            if (bannerText) bannerText.textContent = omissions + ' repeated omission' + (omissions > 1 ? 's' : '') + ' detected for ' + flaggedDIs.join(', ') + ' — escalation recommended';
+            if (bannerText) bannerText.textContent = omissions + ' repeated omission' + (omissions > 1 ? 's' : '') + ' detected for ' + flaggedDIs.join(', ') + ' \u2014 escalation recommended';
         } else { banner.style.display = 'none'; }
     }
 }
 
 function _escHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
+// AI Assist: sends DRL data to AI agents for analysis
+async function drlAiAssist(prefix) {
+    var pre = prefix || '';
+    var btnId = pre ? pre + 'DrlAiBtn' : 'drlAiBtn';
+    var panelId = pre ? pre + 'DrlAiInsights' : 'drlAiInsights';
+    var btn = document.getElementById(btnId);
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    var data = window._drlTrackerData || _drlDemoData;
+    if (data.length === 0) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('No DRL data to analyze.', 'info'); return; }
+    if (btn) btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Analyzing\u2026';
+    panel.style.display = 'block';
+    panel.innerHTML = '<div style="text-align:center;padding:20px;color:var(--steel)"><i class="fas fa-circle-notch fa-spin" style="font-size:1.4rem;color:#5e5ce6"></i><div style="margin-top:8px;font-size:.82rem">AI agents analyzing ' + data.length + ' DRL items\u2026</div></div>';
+    var summary = data.map(function(r, i) { return (i+1) + '. ' + r.di + ' | Due: ' + (r.coordDueDate||'N/A') + ' | Submitted: ' + (r.actualDate||'Not submitted') + ' | Status: ' + r.status + ' | Notes: ' + (r.notes||''); }).join('\n');
+    var aiResponse = null;
+    try {
+        var resp = await fetch('/api/ai-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: 'Analyze this DRL/DI Status Tracker data. Identify: (1) overdue and upcoming items, (2) repeated omissions, (3) criticality ranking. Provide a prioritized task list with suggested actions. Be concise.\n\nDRL Data:\n' + summary, conversation: [], tool_context: 'DRL/DI Status Tracker', analysis_data: null, document_content: summary, document_name: 'DRL Status Tracker' })
+        });
+        if (resp.ok) { var d = await resp.json(); if (d.response && !d.fallback) aiResponse = d.response; }
+    } catch(e) { /* fallback below */ }
+    if (!aiResponse) aiResponse = _drlLocalAnalysis(data);
+    var formatted = aiResponse.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>').replace(/^### (.+)$/gm, '<h5 style="margin:8px 0 4px;font-size:.85rem">$1</h5>').replace(/^## (.+)$/gm, '<h4 style="margin:10px 0 4px">$1</h4>').replace(/^- (.+)$/gm, '\u2022 $1<br>').replace(/\n/g, '<br>');
+    panel.innerHTML = '<div style="background:linear-gradient(135deg,rgba(94,92,230,0.06),rgba(191,90,242,0.06));border:1px solid rgba(94,92,230,0.2);border-radius:10px;padding:14px 16px">' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><i class="fas fa-wand-magic-sparkles" style="color:#5e5ce6"></i><strong style="font-size:.88rem">AI Insights</strong><button onclick="this.closest(\'[id$=DrlAiInsights]\').style.display=\'none\'" style="margin-left:auto;background:none;border:none;color:var(--steel);cursor:pointer;font-size:.8rem"><i class="fas fa-times"></i></button></div>' +
+        '<div style="font-size:.8rem;color:var(--text);line-height:1.5">' + (typeof window._s4Safe === 'function' ? window._s4Safe(formatted) : formatted) + '</div></div>';
+    if (btn) btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> AI Assist';
+}
+
+function _drlLocalAnalysis(data) {
+    var overdue = [], approaching = [], onTime = [], omissionDIs = {};
+    data.forEach(function(r) {
+        if (r.status === 'past-due') { overdue.push(r); omissionDIs[r.di] = (omissionDIs[r.di]||0)+1; }
+        else if (r.status === 'late') overdue.push(r);
+        else if (r.status === 'approaching' || r.status === 'in-progress') approaching.push(r);
+        else onTime.push(r);
+    });
+    var repeats = Object.keys(omissionDIs).filter(function(k) { return omissionDIs[k] >= 2; });
+    var lines = ['## DRL/DI Status Tracker \u2014 AI Analysis\n'];
+    lines.push('### Overdue / Late Summary');
+    if (overdue.length === 0) lines.push('- No overdue items. All deliverables are on track.');
+    else { overdue.forEach(function(r) { lines.push('- **' + r.di + '** \u2014 Due: ' + (r.coordDueDate||'N/A') + ' \u2014 ' + (r.notes||'No notes')); }); }
+    lines.push('\n### Upcoming / In-Progress');
+    if (approaching.length === 0) lines.push('- No items approaching deadline.');
+    else { approaching.forEach(function(r) { lines.push('- **' + r.di + '** \u2014 Due: ' + (r.coordDueDate||'N/A') + ' \u2014 ' + (r.notes||'')); }); }
+    if (repeats.length > 0) {
+        lines.push('\n### \u26a0\ufe0f Repeated Omissions (Critical)');
+        repeats.forEach(function(di) { lines.push('- **' + di + '** has ' + omissionDIs[di] + ' past-due entries \u2014 escalation to program office recommended immediately.'); });
+    }
+    lines.push('\n### Prioritized Actions');
+    var priority = 1;
+    repeats.forEach(function(di) { lines.push('- **' + (priority++) + '.** Escalate ' + di + ' repeated omission to Release Authority and Program Manager'); });
+    overdue.filter(function(r) { return !repeats.includes(r.di); }).forEach(function(r) { lines.push('- **' + (priority++) + '.** Follow up on ' + r.di + ' (' + r.status + ') \u2014 contact submitter for delivery timeline'); });
+    approaching.forEach(function(r) { lines.push('- **' + (priority++) + '.** Monitor ' + r.di + ' approaching deadline (' + (r.coordDueDate||'') + ')'); });
+    lines.push('\n### Summary');
+    lines.push('- **' + data.length + '** total items: **' + onTime.length + '** on-time, **' + approaching.length + '** approaching, **' + overdue.length + '** overdue/late');
+    if (repeats.length > 0) lines.push('- **' + repeats.length + '** DI(s) with repeated omissions requiring immediate attention');
+    return lines.join('\n');
+}
+
 function exportDrlStatusCSV(prefix) {
     var data = window._drlTrackerData || _drlDemoData;
-    if (data.length === 0) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Import a DRL spreadsheet first.', 'info'); return; }
-    var headers = ['DI Number','Transmittal Serial #','SharePoint Rev','Coordinated Due Date','Des Date / Bas. Day?','Submittal Guidance','Coord. Calculated Date','Actual Submission Date','RCV D','Cal. Days to Review','SME Reviewer Target','Release Authority','Response Posted Date','Notes','Status'];
+    var headers = ['DI Number','Transmittal Serial #','SharePoint Rev','Coordinated Due Date','Des Date / Bas. Day?','Submittal Guidance','Coord. Calculated Date','Actual Submission Date','RCV D','Cal. Days to Review','SME Reviewer Target','Release Authority','Response Posted Date','Notes','Status','Workflow Link'];
     var rows = [headers.join(',')];
     data.forEach(function(r) {
         rows.push([
@@ -7161,7 +7287,8 @@ function exportDrlStatusCSV(prefix) {
             '"' + (r.authority||'') + '"',
             '"' + (r.responseDate||'') + '"',
             '"' + (r.notes||'').replace(/"/g,'""') + '"',
-            '"' + (r.status||'') + '"'
+            '"' + (r.status||'') + '"',
+            '"' + (r.workflowLink||'') + '"'
         ].join(','));
     });
     var blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
@@ -7216,7 +7343,8 @@ function importDrlSpreadsheet(prefix) {
                         authority: (cols[11]||'').replace(/"/g,'').trim(),
                         responseDate: (cols[12]||'').replace(/"/g,'').trim(),
                         notes: (cols[13]||'').replace(/"/g,'').trim(),
-                        status: (cols[14]||'').replace(/"/g,'').trim() || 'on-time'
+                        status: (cols[14]||'').replace(/"/g,'').trim() || 'on-time',
+                        workflowLink: (cols[15]||'').replace(/"/g,'').trim()
                     });
                 }
                 window._drlTrackerData = rows;
@@ -7519,6 +7647,10 @@ window.renderDrlStatusTable = renderDrlStatusTable;
 window.exportDrlStatusCSV = exportDrlStatusCSV;
 window.anchorDrlStatus = anchorDrlStatus;
 window.importDrlSpreadsheet = importDrlSpreadsheet;
+window.drlAiAssist = drlAiAssist;
+window.drlSetStatus = drlSetStatus;
+window.drlAddWorkflowLink = drlAddWorkflowLink;
+window._drlMakeCellEditable = _drlMakeCellEditable;
 window.exportContractMatrix = exportContractMatrix;
 window.exportGfpReport = exportGfpReport;
 window.exportSBOM = exportSBOM;
