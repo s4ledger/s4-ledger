@@ -9166,9 +9166,21 @@ window.verifyProvenanceChain = verifyProvenanceChain;
     }
 })();
 
-// ═══ SECTIONS 26-30 — Productivity Layer ═══
+// ═══ SECTIONS 26-30 — Productivity Layer (v2) ═══
 (function() {
 'use strict';
+
+var _TOOL_NAMES = {
+    'hub-analysis':'Gap Finder','hub-dmsms':'Obsolescence Alert','hub-readiness':'Readiness Score',
+    'hub-compliance':'Compliance Scorecard','hub-risk':'Risk Radar','hub-actions':'Task Prioritizer',
+    'hub-predictive':'Maintenance Predictor','hub-lifecycle':'Lifecycle Cost','hub-roi':'ROI Calculator',
+    'hub-vault':'Audit Vault','hub-docs':'Document Library','hub-reports':'Audit Builder',
+    'hub-submissions':'Submissions Hub','hub-sbom':'SBOM Scanner','hub-gfp':'Property Custodian',
+    'hub-cdrl':'Deliverables Tracker','hub-contract':'Contract Analyzer','hub-provenance':'Chain of Custody',
+    'hub-analytics':'Program Overview','hub-team':'Team Manager','hub-acquisition':'Fleet Optimizer',
+    'hub-milestones':'Milestone Monitor','hub-brief':'Brief Composer'
+};
+function _esc(s) { return typeof S4 !== 'undefined' && S4.sanitize ? S4.sanitize(s) : s; }
 
 // ── SECTION 26: Cmd/Ctrl+K Shortcut Hint ──
 function _showShortcutHint() {
@@ -9198,41 +9210,36 @@ function _showShortcutHint() {
     }, 8000);
 }
 
-// Watch for platform workspace to appear then show hint
 function _waitForWorkspaceThenHint() {
     var ws = document.getElementById('platformWorkspace');
     if (ws && ws.style.display === 'block') { setTimeout(_showShortcutHint, 1500); return; }
-    var obs = new MutationObserver(function(mutations) {
+    var obs = new MutationObserver(function() {
         var el = document.getElementById('platformWorkspace');
-        if (el && el.style.display === 'block') {
-            obs.disconnect();
-            setTimeout(_showShortcutHint, 1500);
-        }
+        if (el && el.style.display === 'block') { obs.disconnect(); setTimeout(_showShortcutHint, 1500); }
     });
     obs.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['style'] });
-    // Fallback
     setTimeout(function() { obs.disconnect(); _showShortcutHint(); }, 10000);
 }
 
-// ── SECTION 27: Recent Actions Pill ──
+// ── SECTION 27: Recent Actions Dropdown ──
 var _recentTools = [];
+var _dropdownOpen = false;
+
+function _timeAgo(ts) {
+    var diff = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+    if (diff < 60) return 'just now';
+    var m = Math.floor(diff / 60);
+    if (m < 60) return m + ' min ago';
+    var h = Math.floor(m / 60);
+    return h + ' hr ago';
+}
 
 function _trackRecentTool(toolId) {
-    var toolNames = {
-        'hub-analysis':'Gap Finder','hub-dmsms':'Obsolescence Alert','hub-readiness':'Readiness Score',
-        'hub-compliance':'Compliance Scorecard','hub-risk':'Risk Radar','hub-actions':'Task Prioritizer',
-        'hub-predictive':'Maintenance Predictor','hub-lifecycle':'Lifecycle Cost','hub-roi':'ROI Calculator',
-        'hub-vault':'Audit Vault','hub-docs':'Document Library','hub-reports':'Audit Builder',
-        'hub-submissions':'Submissions Hub','hub-sbom':'SBOM Scanner','hub-gfp':'Property Custodian',
-        'hub-cdrl':'Deliverables Tracker','hub-contract':'Contract Analyzer','hub-provenance':'Chain of Custody',
-        'hub-analytics':'Program Overview','hub-team':'Team Manager','hub-acquisition':'Fleet Optimizer',
-        'hub-milestones':'Milestone Monitor','hub-brief':'Brief Composer'
-    };
-    var name = toolNames[toolId] || toolId;
-    // Remove if already in list, add to front
+    var name = _TOOL_NAMES[toolId] || toolId;
     _recentTools = _recentTools.filter(function(t) { return t.id !== toolId; });
     _recentTools.unshift({ id: toolId, name: name, time: Date.now() });
-    if (_recentTools.length > 3) _recentTools = _recentTools.slice(0, 3);
+    if (_recentTools.length > 8) _recentTools = _recentTools.slice(0, 8);
+    _sessionToolCount++;
     _renderRecentPill();
     _updateProgressRing();
 }
@@ -9240,28 +9247,133 @@ function _trackRecentTool(toolId) {
 function _renderRecentPill() {
     var pill = document.getElementById('s4RecentPill');
     if (!pill) {
-        // Create pill next to avatar
         var avatarWrap = document.getElementById('s4AvatarBtn');
         if (!avatarWrap) return;
         var container = avatarWrap.parentElement;
         pill = document.createElement('div');
         pill.id = 's4RecentPill';
         Object.assign(pill.style, {
-            position:'relative', display:'inline-flex', alignItems:'center', gap:'2px',
-            background:'rgba(0,122,255,0.06)', border:'1px solid rgba(0,122,255,0.12)',
-            borderRadius:'10px', padding:'3px 4px', marginRight:'4px', cursor:'default',
-            fontSize:'0.72rem', fontWeight:'600', color:'var(--steel,#3a3a3c)',
-            fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif',
-            transition:'opacity 0.3s ease', maxHeight:'28px'
+            position:'relative', display:'inline-flex', alignItems:'center',
+            marginRight:'6px', cursor:'pointer', userSelect:'none',
+            fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif'
         });
         container.insertBefore(pill, avatarWrap);
+        // Close dropdown on outside click
+        document.addEventListener('click', function(e) {
+            if (_dropdownOpen && pill && !pill.contains(e.target)) _closeDropdown();
+        }, true);
     }
     if (_recentTools.length === 0) { pill.style.display = 'none'; return; }
     pill.style.display = 'inline-flex';
-    pill.innerHTML = '<i class="fas fa-history" style="color:var(--accent,#007AFF);font-size:0.65rem;margin:0 3px"></i>' +
-        _recentTools.map(function(t) {
-            return '<button onclick="if(typeof openILSTool===\'function\')openILSTool(\'' + t.id + '\')" title="Re-run ' + (typeof S4 !== 'undefined' && S4.sanitize ? S4.sanitize(t.name) : t.name) + '" style="background:rgba(0,122,255,0.08);border:1px solid rgba(0,122,255,0.10);color:var(--accent,#007AFF);border-radius:6px;padding:2px 7px;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background 0.2s">' + (typeof S4 !== 'undefined' && S4.sanitize ? S4.sanitize(t.name) : t.name) + '</button>';
-        }).join('');
+
+    // Render collapsed pill (preserve existing dropdown if open)
+    var trigger = pill.querySelector('.s4ra-trigger');
+    if (!trigger) {
+        trigger = document.createElement('button');
+        trigger.className = 's4ra-trigger';
+        Object.assign(trigger.style, {
+            display:'inline-flex', alignItems:'center', gap:'5px',
+            background:'rgba(0,122,255,0.06)', border:'1px solid rgba(0,122,255,0.12)',
+            borderRadius:'10px', padding:'5px 12px', cursor:'pointer',
+            fontSize:'0.75rem', fontWeight:'600', color:'var(--steel,#3a3a3c)',
+            fontFamily:'inherit', transition:'all 0.2s ease', lineHeight:'1.3',
+            whiteSpace:'nowrap'
+        });
+        trigger.onmouseover = function() { trigger.style.background = 'rgba(0,122,255,0.10)'; };
+        trigger.onmouseout = function() { if (!_dropdownOpen) trigger.style.background = 'rgba(0,122,255,0.06)'; };
+        trigger.onclick = function(e) {
+            e.stopPropagation();
+            if (_dropdownOpen) _closeDropdown(); else _openDropdown();
+        };
+        pill.appendChild(trigger);
+    }
+    trigger.innerHTML = '<i class="fas fa-history" style="color:var(--accent,#007AFF);font-size:0.68rem"></i>Recent Actions (' + _recentTools.length + ')' +
+        '<i class="fas fa-chevron-down" style="font-size:0.55rem;opacity:0.5;margin-left:2px;transition:transform 0.2s"></i>';
+
+    // If dropdown is open, refresh its content
+    if (_dropdownOpen) _renderDropdownList();
+}
+
+function _openDropdown() {
+    _dropdownOpen = true;
+    var pill = document.getElementById('s4RecentPill');
+    if (!pill) return;
+    var trigger = pill.querySelector('.s4ra-trigger');
+    if (trigger) {
+        trigger.style.background = 'rgba(0,122,255,0.10)';
+        trigger.style.borderBottomLeftRadius = '0';
+        trigger.style.borderBottomRightRadius = '0';
+        trigger.style.borderBottom = '1px solid transparent';
+        var chev = trigger.querySelector('.fa-chevron-down');
+        if (chev) chev.style.transform = 'rotate(180deg)';
+    }
+    _renderDropdownList();
+}
+
+function _closeDropdown() {
+    _dropdownOpen = false;
+    var pill = document.getElementById('s4RecentPill');
+    if (!pill) return;
+    var trigger = pill.querySelector('.s4ra-trigger');
+    if (trigger) {
+        trigger.style.background = 'rgba(0,122,255,0.06)';
+        trigger.style.borderBottomLeftRadius = '10px';
+        trigger.style.borderBottomRightRadius = '10px';
+        trigger.style.borderBottom = '1px solid rgba(0,122,255,0.12)';
+        var chev = trigger.querySelector('.fa-chevron-down');
+        if (chev) chev.style.transform = '';
+    }
+    var dd = pill.querySelector('.s4ra-dropdown');
+    if (dd) {
+        dd.style.opacity = '0';
+        dd.style.transform = 'translateY(-4px)';
+        setTimeout(function() { if (dd.parentNode) dd.parentNode.removeChild(dd); }, 180);
+    }
+}
+
+function _renderDropdownList() {
+    var pill = document.getElementById('s4RecentPill');
+    if (!pill) return;
+    var dd = pill.querySelector('.s4ra-dropdown');
+    if (!dd) {
+        dd = document.createElement('div');
+        dd.className = 's4ra-dropdown';
+        Object.assign(dd.style, {
+            position:'absolute', top:'100%', right:'0',
+            background:'#fff', border:'1px solid rgba(0,0,0,0.08)',
+            borderTop:'none', borderRadius:'0 0 10px 10px',
+            boxShadow:'0 8px 24px rgba(0,0,0,0.10)',
+            width:'280px', maxWidth:'300px', zIndex:'100000',
+            opacity:'0', transform:'translateY(-4px)',
+            transition:'opacity 0.18s ease, transform 0.18s ease',
+            overflow:'hidden'
+        });
+        pill.appendChild(dd);
+        requestAnimationFrame(function() { dd.style.opacity = '1'; dd.style.transform = 'translateY(0)'; });
+    }
+
+    dd.innerHTML = _recentTools.map(function(t, i) {
+        var border = i < _recentTools.length - 1 ? 'border-bottom:1px solid rgba(0,0,0,0.04);' : '';
+        return '<button class="s4ra-item" data-tool="' + t.id + '" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:9px 14px;background:none;border:none;' + border + 'cursor:pointer;font-family:inherit;font-size:0.76rem;text-align:left;transition:background 0.15s;color:var(--steel,#3a3a3c)">' +
+            '<span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">' + _esc(t.name) + '</span>' +
+            '<span style="font-size:0.68rem;color:var(--muted,#6e6e73);white-space:nowrap;margin-left:8px">' + _timeAgo(t.time) + '</span>' +
+            '</button>';
+    }).join('');
+
+    // Attach click handlers
+    var items = dd.querySelectorAll('.s4ra-item');
+    for (var i = 0; i < items.length; i++) {
+        (function(item) {
+            item.onmouseover = function() { item.style.background = 'rgba(0,122,255,0.04)'; };
+            item.onmouseout = function() { item.style.background = 'none'; };
+            item.onclick = function(e) {
+                e.stopPropagation();
+                var tid = item.getAttribute('data-tool');
+                _closeDropdown();
+                if (typeof openILSTool === 'function') openILSTool(tid);
+            };
+        })(items[i]);
+    }
 }
 
 // Hook into openILSTool for recent tracking + session count
@@ -9271,11 +9383,9 @@ function _hookForProductivity() {
     var wrapped = function(toolId) {
         orig.call(this, toolId);
         setTimeout(function() { _trackRecentTool(toolId); }, 100);
-        // Section 28: inject copy-bullet button after tool runs
         setTimeout(function() { _injectCopyBullet(toolId); }, 800);
     };
     wrapped._s4ProdHooked = true;
-    // Preserve existing hooks
     if (orig._s4ChainHooked) wrapped._s4ChainHooked = true;
     if (orig._s4R13Hooked) wrapped._s4R13Hooked = true;
     window.openILSTool = wrapped;
@@ -9285,7 +9395,6 @@ function _hookForProductivity() {
 function _injectCopyBullet(toolId) {
     var panel = document.getElementById(toolId);
     if (!panel) return;
-    // Remove any existing bullet button in this panel
     var existing = panel.querySelector('.s4-copy-bullet-btn');
     if (existing) existing.remove();
 
@@ -9306,17 +9415,7 @@ function _injectCopyBullet(toolId) {
     btn.onmouseover = function() { btn.style.background = 'rgba(0,122,255,0.12)'; };
     btn.onmouseout = function() { btn.style.background = 'rgba(0,122,255,0.06)'; };
 
-    var toolNames = {
-        'hub-analysis':'Gap Finder','hub-dmsms':'Obsolescence Alert','hub-readiness':'Readiness Score',
-        'hub-compliance':'Compliance Scorecard','hub-risk':'Risk Radar','hub-actions':'Task Prioritizer',
-        'hub-predictive':'Maintenance Predictor','hub-lifecycle':'Lifecycle Cost','hub-roi':'ROI Calculator',
-        'hub-vault':'Audit Vault','hub-docs':'Document Library','hub-reports':'Audit Builder',
-        'hub-submissions':'Submissions Hub','hub-sbom':'SBOM Scanner','hub-gfp':'Property Custodian',
-        'hub-cdrl':'Deliverables Tracker','hub-contract':'Contract Analyzer','hub-provenance':'Chain of Custody',
-        'hub-analytics':'Program Overview','hub-team':'Team Manager','hub-acquisition':'Fleet Optimizer',
-        'hub-milestones':'Milestone Monitor','hub-brief':'Brief Composer'
-    };
-    var toolName = toolNames[toolId] || toolId;
+    var toolName = _TOOL_NAMES[toolId] || toolId;
 
     btn.onclick = function() {
         var text = '';
@@ -9332,7 +9431,6 @@ function _injectCopyBullet(toolId) {
                 setTimeout(function() { btn.innerHTML = '<i class="fas fa-copy" style="margin-right:5px"></i>Copy as Bullet Point'; }, 2000);
             });
         } else {
-            // Fallback
             var ta = document.createElement('textarea');
             ta.value = bullet;
             ta.style.cssText = 'position:fixed;left:-9999px';
@@ -9345,22 +9443,43 @@ function _injectCopyBullet(toolId) {
         }
     };
 
-    // Insert after result panel or at end of card
     var card = resultPanel.closest('.s4-card') || resultPanel.parentElement;
     if (card) card.appendChild(btn);
 }
 
-// ── SECTION 29: Progress Ring Around Export Summary Button ──
-var _sessionToolSet = new Set();
-var _totalToolCount = 23;
+// ── SECTION 29: Smart Progress Ring on Export Summary ──
+var _sessionToolCount = 0;
+
+function _computeSmartPct() {
+    // Smart contextual readiness:
+    //   0 tools  →  0%
+    //   1 tool   → 50%
+    //   2 tools  → 70%
+    //   3+ tools → 90%
+    //   Check for session report content → 100%
+    var n = _sessionToolCount;
+    if (n === 0) return 0;
+
+    // If session report sidebar has meaningful content, consider it complete
+    var reportEntries = window._reportEntries;
+    if (reportEntries && reportEntries.length >= 3) return 100;
+
+    if (n === 1) return 50;
+    if (n === 2) return 70;
+    return 90 + Math.min(n - 3, 1) * 10; // 3→90, 4+→100
+}
 
 function _updateProgressRing() {
     var exportBtn = document.querySelector('.s4rs-export');
     if (!exportBtn) return;
 
-    // Count unique tools used this session
-    _recentTools.forEach(function(t) { _sessionToolSet.add(t.id); });
-    var pct = Math.min(Math.round((_sessionToolSet.size / _totalToolCount) * 100), 100);
+    var pct = _computeSmartPct();
+
+    // Determine color: gray 0%, blue 1-89%, green 90%+
+    var ringColor;
+    if (pct === 0) ringColor = 'rgba(0,0,0,0.10)';
+    else if (pct < 90) ringColor = '#007AFF';
+    else ringColor = '#10B981';
 
     // Find or create the ring wrapper
     var wrapper = document.getElementById('s4ExportRingWrap');
@@ -9368,43 +9487,61 @@ function _updateProgressRing() {
         wrapper = document.createElement('div');
         wrapper.id = 's4ExportRingWrap';
         Object.assign(wrapper.style, {
-            position:'relative', display:'inline-flex', alignItems:'center', width:'100%'
+            position:'relative', display:'inline-flex', flexDirection:'column',
+            alignItems:'center', width:'100%'
         });
         exportBtn.parentNode.insertBefore(wrapper, exportBtn);
         wrapper.appendChild(exportBtn);
 
-        // Add progress label below
         var label = document.createElement('div');
         label.id = 's4ExportRingLabel';
         Object.assign(label.style, {
             fontSize:'0.65rem', color:'var(--muted,#6e6e73)', textAlign:'center',
             marginTop:'4px', fontWeight:'500', letterSpacing:'0.01em',
-            fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif'
+            fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif',
+            transition:'color 0.3s ease'
         });
         wrapper.appendChild(label);
     }
 
-    // Update button border as a progress indicator
+    // Update button border as progress ring
     var angle = Math.round(pct * 3.6);
     if (pct === 0) {
-        exportBtn.style.background = '';
         exportBtn.style.borderImage = '';
+        exportBtn.style.backgroundImage = '';
+        exportBtn.style.border = '2px solid rgba(0,0,0,0.08)';
+        exportBtn.style.backgroundClip = '';
+        exportBtn.style.backgroundOrigin = '';
     } else {
         exportBtn.style.borderImage = 'none';
         exportBtn.style.borderColor = 'transparent';
-        exportBtn.style.backgroundImage = 'linear-gradient(var(--surface,#fff),var(--surface,#fff)),conic-gradient(var(--accent,#007AFF) ' + angle + 'deg, rgba(0,0,0,0.06) ' + angle + 'deg)';
+        exportBtn.style.backgroundImage = 'linear-gradient(var(--surface,#fff),var(--surface,#fff)),conic-gradient(' + ringColor + ' ' + angle + 'deg, rgba(0,0,0,0.06) ' + angle + 'deg)';
         exportBtn.style.backgroundOrigin = 'border-box';
         exportBtn.style.backgroundClip = 'padding-box, border-box';
         exportBtn.style.border = '2px solid transparent';
     }
 
+    // Tooltip
+    if (pct >= 90) {
+        exportBtn.title = 'Session ready for summary export';
+    } else if (pct > 0) {
+        exportBtn.title = 'Run more tools to build your session summary';
+    } else {
+        exportBtn.title = '';
+    }
+
     var label = document.getElementById('s4ExportRingLabel');
     if (label) {
-        if (_sessionToolSet.size > 0) {
-            label.textContent = 'Session ' + pct + '% ready for summary';
-            label.style.display = 'block';
-        } else {
+        if (pct === 0) {
             label.style.display = 'none';
+        } else {
+            label.style.display = 'block';
+            label.style.color = pct >= 90 ? '#10B981' : 'var(--muted,#6e6e73)';
+            if (pct >= 90) {
+                label.textContent = 'Ready for summary export';
+            } else {
+                label.textContent = 'Session ' + pct + '% ready';
+            }
         }
     }
 }
@@ -9449,20 +9586,14 @@ function _showSpeedTip() {
     });
 
     document.body.appendChild(badge);
-    // Fade in after Cmd+K hint starts fading
     setTimeout(function() { badge.style.opacity = '1'; }, 10000);
 
-    // Rotate tips every 10 seconds
     var rotateId = setInterval(function() {
         tipIdx = (tipIdx + 1) % _speedTips.length;
         badge.style.opacity = '0';
-        setTimeout(function() {
-            setTip();
-            badge.style.opacity = '1';
-        }, 500);
+        setTimeout(function() { setTip(); badge.style.opacity = '1'; }, 500);
     }, 10000);
 
-    // Auto-hide after 40 seconds total
     setTimeout(function() {
         clearInterval(rotateId);
         badge.style.opacity = '0';
@@ -9475,7 +9606,6 @@ function _bootSections26to30() {
     _waitForWorkspaceThenHint();
     _hookForProductivity();
 
-    // Speed tip — delayed so it doesn't overlap with Cmd+K hint
     var speedObs = new MutationObserver(function() {
         var el = document.getElementById('platformWorkspace');
         if (el && el.style.display === 'block') {
@@ -9486,12 +9616,11 @@ function _bootSections26to30() {
     speedObs.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['style'] });
     setTimeout(function() { speedObs.disconnect(); }, 20000);
 
-    // Update progress ring whenever report sidebar renders
     var origClear = window._s4ClearReport;
     if (typeof origClear === 'function') {
         window._s4ClearReport = function() {
             origClear();
-            _sessionToolSet.clear();
+            _sessionToolCount = 0;
             _updateProgressRing();
         };
     }

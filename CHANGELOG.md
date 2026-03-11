@@ -1,13 +1,10 @@
 # Changelog
 
 ## [5.12.8] — 2026-03-11
-### Added
-- **Section 26 — Cmd/Ctrl+K Shortcut Hint**: once-per-session floating hint at bottom of viewport when workspace loads; fades after 8 seconds; detects Mac vs Windows for correct modifier key display
-- **Section 27 — Recent Actions Pill**: top-right pill next to avatar shows last 3 tools used; one-click buttons re-run any recent tool instantly
-- **Section 28 — Copy Tool Result as Bullet Point**: "Copy as Bullet Point" button appended after every tool run; formats as `• ToolName — result text (date)` and copies to clipboard
-- **Section 29 — Progress Ring on Export Summary**: conic-gradient border on Export Summary button tracks unique tools used this session as a percentage; label shows "Session X% ready for summary"
-- **Section 30 — Floating Speed Tip Badge**: bottom-left badge rotates 3 productivity tips every 10 seconds; auto-hides after 40 seconds; stops appearing after 3 sessions via localStorage counter
-- New `_hookForProductivity()` wrapper on `openILSTool` chains with existing hooks (`_s4ChainHooked`, `_s4R13Hooked`) for tool tracking and copy-bullet injection
+### Changed
+- **Section 27 — Recent Actions**: converted inline pill with 3 tool buttons into a clean dropdown; collapsed state shows "Recent Actions (X)" count; click expands a compact ≤300px list of last 5–8 tools with tool name + relative time (e.g., "12 min ago"); each item re-runs the tool on click; dropdown auto-closes on outside click or selection; chevron rotates on open; subtle 8px shadow, 10px radius
+- **Section 29 — Smart Progress Ring**: replaced "unique tools / 23 total" metric with contextual session readiness — 0 tools → 0% (gray ring), 1 tool → 50%, 2 tools → 70%, 3+ tools → 90%, session report with 3+ entries → 100%; ring color transitions gray → blue (#007AFF) → green (#10B981); hover tooltip "Session ready for summary export" at ≥90%; label turns green and reads "Ready for summary export" when complete
+- Shared `_TOOL_NAMES` map and `_esc()` sanitizer extracted to reduce duplication across sections 27/28
 - Both demo-app and prod-app updated identically
 
 ## [5.12.7] — 2026-03-11
