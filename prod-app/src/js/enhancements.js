@@ -7034,20 +7034,45 @@ function switchCdrlView(view) {
     }
 }
 
-function _getDrlStatusColor(status) {
-    switch (status) {
-        case 'past-due': return { bg:'rgba(255,68,68,0.08)', border:'rgba(255,68,68,0.3)', badge:'#ff4444', label:'Past Due' };
-        case 'late':     return { bg:'rgba(255,165,0,0.08)', border:'rgba(255,165,0,0.3)', badge:'#ffa500', label:'Late' };
-        case 'approaching': return { bg:'rgba(255,165,0,0.06)', border:'rgba(255,165,0,0.2)', badge:'#ffa500', label:'Approaching' };
-        default:         return { bg:'rgba(0,204,102,0.06)', border:'rgba(0,204,102,0.2)', badge:'#00cc66', label:'On Time' };
+function switchSubView(view) {
+    var subView = document.getElementById('subView-submissions');
+    var drlView = document.getElementById('subView-drl');
+    var btnSub = document.getElementById('subViewBtn-submissions');
+    var btnDrl = document.getElementById('subViewBtn-drl');
+    if (!subView || !drlView) return;
+    var activeStyle = 'background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:0;padding:7px 18px;font-size:.8rem;font-weight:700;transition:all 0.25s';
+    var inactiveStyle = 'background:transparent;color:var(--steel);border:none;border-radius:0;padding:7px 18px;font-size:.8rem;font-weight:700;transition:all 0.25s';
+    if (view === 'drl') {
+        subView.style.display = 'none';
+        drlView.style.display = 'block';
+        btnSub.setAttribute('style', inactiveStyle);
+        btnDrl.setAttribute('style', activeStyle);
+        renderDrlStatusTable('sub');
+    } else {
+        subView.style.display = 'block';
+        drlView.style.display = 'none';
+        btnSub.setAttribute('style', activeStyle);
+        btnDrl.setAttribute('style', inactiveStyle);
     }
 }
 
-function renderDrlStatusTable() {
-    var tbody = document.getElementById('drlStatusBody');
+function _getDrlStatusColor(status) {
+    switch (status) {
+        case 'past-due': return { bg:'rgba(255,59,48,0.08)', border:'rgba(255,59,48,0.3)', badge:'#ff3b30', label:'Past Due' };
+        case 'late':     return { bg:'rgba(255,149,0,0.08)', border:'rgba(255,149,0,0.3)', badge:'#ff9500', label:'Late' };
+        case 'approaching': return { bg:'rgba(255,149,0,0.06)', border:'rgba(255,149,0,0.2)', badge:'#ff9500', label:'Approaching' };
+        default:         return { bg:'rgba(52,199,89,0.06)', border:'rgba(52,199,89,0.2)', badge:'#34c759', label:'On Time' };
+    }
+}
+
+function renderDrlStatusTable(prefix) {
+    var pre = prefix || '';
+    var tbodyId = pre ? pre + 'DrlStatusBody' : 'drlStatusBody';
+    var tbody = document.getElementById(tbodyId);
     if (!tbody) return;
     var data = window._drlTrackerData || _drlDemoData;
-    var emptyState = document.getElementById('drlEmptyState');
+    var emptyId = pre ? pre + 'DrlEmptyState' : 'drlEmptyState';
+    var emptyState = document.getElementById(emptyId);
     if (data.length === 0) {
         tbody.innerHTML = '';
         if (emptyState) emptyState.style.display = 'block';
@@ -7056,11 +7081,8 @@ function renderDrlStatusTable() {
     if (emptyState) emptyState.style.display = 'none';
     var onTime = 0, approaching = 0, pastDue = 0, omissions = 0;
     var diMissCounts = {};
-    data.forEach(function(r) {
-        if (r.status === 'past-due') {
-            diMissCounts[r.di] = (diMissCounts[r.di] || 0) + 1;
-        }
-    });
+    data.forEach(function(r) { if (r.status === 'past-due') { diMissCounts[r.di] = (diMissCounts[r.di] || 0) + 1; } });
+    var dash = '<span style="color:var(--steel);opacity:0.5">—</span>';
     var html = '';
     data.forEach(function(row) {
         var c = _getDrlStatusColor(row.status);
@@ -7069,64 +7091,77 @@ function renderDrlStatusTable() {
         else if (row.status === 'approaching') approaching++;
         else if (row.status === 'past-due' || row.status === 'late') pastDue++;
         if (isOmission && row.status === 'past-due') omissions++;
+        var td = '<td style="padding:6px 7px;border-color:var(--border);white-space:nowrap">';
+        var tdWrap = '<td style="padding:6px 7px;border-color:var(--border);max-width:180px">';
         html += '<tr style="background:' + c.bg + ';border-left:3px solid ' + c.badge + '">';
-        html += '<td style="padding:7px 8px;border-color:var(--border);font-weight:600;white-space:nowrap">' + _escHtml(row.di) + '</td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);white-space:nowrap">' + _escHtml(row.transmittal) + '</td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);white-space:nowrap">' + _escHtml(row.dueDate) + '</td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);white-space:nowrap">' + (row.actualDate ? _escHtml(row.actualDate) : '<span style="color:var(--steel);opacity:0.5">—</span>') + '</td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);text-align:center">' + (row.rcvDays > 0 ? row.rcvDays + 'd' : '<span style="color:var(--steel);opacity:0.5">—</span>') + '</td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);white-space:nowrap">' + (row.sme || '<span style="color:var(--steel);opacity:0.5">—</span>') + '</td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);white-space:nowrap">' + (row.authority || '<span style="color:var(--steel);opacity:0.5">—</span>') + '</td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);white-space:nowrap">' + (row.responseDate ? _escHtml(row.responseDate) : '<span style="color:var(--steel);opacity:0.5">—</span>') + '</td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);white-space:nowrap"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;color:#fff;background:' + c.badge + '">' + c.label;
+        html += '<td style="padding:6px 7px;border-color:var(--border);font-weight:600;white-space:nowrap">' + _escHtml(row.di) + '</td>';
+        html += td + (row.transmittalSerial ? _escHtml(row.transmittalSerial) : dash) + '</td>';
+        html += td + (row.spRev ? _escHtml(row.spRev) : dash) + '</td>';
+        html += td + (row.coordDueDate ? _escHtml(row.coordDueDate) : dash) + '</td>';
+        html += td + (row.desDateBasDay ? _escHtml(row.desDateBasDay) : dash) + '</td>';
+        html += tdWrap + (row.submittalGuidance ? _escHtml(row.submittalGuidance) : dash) + '</td>';
+        html += td + (row.coordCalcDate ? _escHtml(row.coordCalcDate) : dash) + '</td>';
+        html += td + (row.actualDate ? _escHtml(row.actualDate) : dash) + '</td>';
+        html += '<td style="padding:6px 7px;border-color:var(--border);text-align:center">' + (row.rcvD ? _escHtml(row.rcvD) : dash) + '</td>';
+        html += '<td style="padding:6px 7px;border-color:var(--border);text-align:center">' + (row.calDaysReview > 0 ? row.calDaysReview + 'd' : dash) + '</td>';
+        html += td + (row.smeTarget ? _escHtml(row.smeTarget) : dash) + '</td>';
+        html += td + (row.authority ? _escHtml(row.authority) : dash) + '</td>';
+        html += td + (row.responseDate ? _escHtml(row.responseDate) : dash) + '</td>';
+        html += tdWrap + _escHtml(row.notes || '') + '</td>';
+        html += '<td style="padding:6px 7px;border-color:var(--border);white-space:nowrap"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;color:#fff;background:' + c.badge + '">' + c.label;
         if (isOmission && row.status === 'past-due') html += ' <i class="fas fa-flag" title="Repeated omission"></i>';
         html += '</span></td>';
-        html += '<td style="padding:7px 8px;border-color:var(--border);font-size:.76rem;max-width:200px">' + _escHtml(row.notes) + '</td>';
         html += '</tr>';
     });
     tbody.innerHTML = html;
-    var elTotal = document.getElementById('drlTotal');
-    var elOnTime = document.getElementById('drlOnTime');
-    var elAppr = document.getElementById('drlApproaching');
-    var elOver = document.getElementById('drlOverdue');
-    var elOm = document.getElementById('drlOmissions');
+    var pId = pre ? pre + 'Drl' : 'drl';
+    var elTotal = document.getElementById(pId + 'Total');
+    var elOnTime = document.getElementById(pId + 'OnTime');
+    var elAppr = document.getElementById(pId + 'Approaching');
+    var elOver = document.getElementById(pId + 'Overdue');
+    var elOm = document.getElementById(pId + 'Omissions');
     if (elTotal) elTotal.textContent = data.length;
     if (elOnTime) elOnTime.textContent = onTime;
     if (elAppr) elAppr.textContent = approaching;
     if (elOver) elOver.textContent = pastDue;
     if (elOm) elOm.textContent = omissions;
-    var banner = document.getElementById('drlOmissionBanner');
-    var bannerText = document.getElementById('drlOmissionText');
+    var bannerId = pre ? pre + 'DrlOmissionBanner' : 'drlOmissionBanner';
+    var textId = pre ? pre + 'DrlOmissionText' : 'drlOmissionText';
+    var banner = document.getElementById(bannerId);
+    var bannerText = document.getElementById(textId);
     if (banner) {
         if (omissions > 0) {
             banner.style.display = 'block';
             var flaggedDIs = Object.keys(diMissCounts).filter(function(k) { return diMissCounts[k] >= 2; });
             if (bannerText) bannerText.textContent = omissions + ' repeated omission' + (omissions > 1 ? 's' : '') + ' detected for ' + flaggedDIs.join(', ') + ' — escalation recommended';
-        } else {
-            banner.style.display = 'none';
-        }
+        } else { banner.style.display = 'none'; }
     }
 }
 
 function _escHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-function exportDrlStatusCSV() {
+function exportDrlStatusCSV(prefix) {
     var data = window._drlTrackerData || _drlDemoData;
     if (data.length === 0) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Import a DRL spreadsheet first.', 'info'); return; }
-    var headers = ['DI Number','Transmittal Serial # / SharePoint Rev','Calculated Due Date','Actual Submission Date','RCV / Review Days','SME Reviewer','Release Authority','Response Posted Date','Status','Notes'];
+    var headers = ['DI Number','Transmittal Serial #','SharePoint Rev','Coordinated Due Date','Des Date / Bas. Day?','Submittal Guidance','Coord. Calculated Date','Actual Submission Date','RCV D','Cal. Days to Review','SME Reviewer Target','Release Authority','Response Posted Date','Notes','Status'];
     var rows = [headers.join(',')];
     data.forEach(function(r) {
         rows.push([
             '"' + (r.di||'') + '"',
-            '"' + (r.transmittal||'') + '"',
-            '"' + (r.dueDate||'') + '"',
+            '"' + (r.transmittalSerial||'') + '"',
+            '"' + (r.spRev||'') + '"',
+            '"' + (r.coordDueDate||'') + '"',
+            '"' + (r.desDateBasDay||'') + '"',
+            '"' + (r.submittalGuidance||'').replace(/"/g,'""') + '"',
+            '"' + (r.coordCalcDate||'') + '"',
             '"' + (r.actualDate||'') + '"',
-            r.rcvDays || '',
-            '"' + (r.sme||'') + '"',
+            '"' + (r.rcvD||'') + '"',
+            r.calDaysReview || '',
+            '"' + (r.smeTarget||'') + '"',
             '"' + (r.authority||'') + '"',
             '"' + (r.responseDate||'') + '"',
-            '"' + (r.status||'') + '"',
-            '"' + (r.notes||'').replace(/"/g,'""') + '"'
+            '"' + (r.notes||'').replace(/"/g,'""') + '"',
+            '"' + (r.status||'') + '"'
         ].join(','));
     });
     var blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
@@ -7134,7 +7169,7 @@ function exportDrlStatusCSV() {
     a.href = URL.createObjectURL(blob);
     a.download = 'drl_di_status_tracker.csv';
     a.click();
-    if (typeof S4 !== 'undefined' && S4.toast) S4.toast('DRL Status Spreadsheet exported.', 'success');
+    if (typeof S4 !== 'undefined' && S4.toast) S4.toast('DRL Status Spreadsheet exported (' + data.length + ' rows).', 'success');
 }
 
 function anchorDrlStatus() {
@@ -7148,7 +7183,7 @@ function anchorDrlStatus() {
     }
 }
 
-function importDrlSpreadsheet() {
+function importDrlSpreadsheet(prefix) {
     var input = document.createElement('input');
     input.type = 'file';
     input.accept = '.csv,.xlsx,.xls';
@@ -7162,26 +7197,31 @@ function importDrlSpreadsheet() {
                 var text = ev.target.result;
                 var lines = text.split('\n').filter(function(l) { return l.trim(); });
                 if (lines.length < 2) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('File appears empty.', 'warning'); return; }
-                var headerLine = lines[0];
                 var rows = [];
                 for (var i = 1; i < lines.length; i++) {
                     var cols = lines[i].split(',');
-                    if (cols.length < 5) continue;
+                    if (cols.length < 8) continue;
                     rows.push({
                         di: (cols[0]||'').replace(/"/g,'').trim(),
-                        transmittal: (cols[1]||'').replace(/"/g,'').trim(),
-                        dueDate: (cols[2]||'').replace(/"/g,'').trim(),
-                        actualDate: (cols[3]||'').replace(/"/g,'').trim(),
-                        rcvDays: parseInt(cols[4]) || 0,
-                        sme: (cols[5]||'').replace(/"/g,'').trim(),
-                        authority: (cols[6]||'').replace(/"/g,'').trim(),
-                        responseDate: (cols[7]||'').replace(/"/g,'').trim(),
-                        status: (cols[8]||'').replace(/"/g,'').trim() || 'on-time',
-                        notes: (cols[9]||'').replace(/"/g,'').trim()
+                        transmittalSerial: (cols[1]||'').replace(/"/g,'').trim(),
+                        spRev: (cols[2]||'').replace(/"/g,'').trim(),
+                        coordDueDate: (cols[3]||'').replace(/"/g,'').trim(),
+                        desDateBasDay: (cols[4]||'').replace(/"/g,'').trim(),
+                        submittalGuidance: (cols[5]||'').replace(/"/g,'').trim(),
+                        coordCalcDate: (cols[6]||'').replace(/"/g,'').trim(),
+                        actualDate: (cols[7]||'').replace(/"/g,'').trim(),
+                        rcvD: (cols[8]||'').replace(/"/g,'').trim(),
+                        calDaysReview: parseInt(cols[9]) || 0,
+                        smeTarget: (cols[10]||'').replace(/"/g,'').trim(),
+                        authority: (cols[11]||'').replace(/"/g,'').trim(),
+                        responseDate: (cols[12]||'').replace(/"/g,'').trim(),
+                        notes: (cols[13]||'').replace(/"/g,'').trim(),
+                        status: (cols[14]||'').replace(/"/g,'').trim() || 'on-time'
                     });
                 }
                 window._drlTrackerData = rows;
                 renderDrlStatusTable();
+                renderDrlStatusTable('sub');
                 if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Imported ' + rows.length + ' DRL records from ' + file.name, 'success');
             } catch (err) {
                 if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Error parsing file: ' + err.message, 'error');
@@ -7474,6 +7514,7 @@ window.exportAnalyticsCSV = exportAnalyticsCSV;
 window.exportAnalyticsReport = exportAnalyticsReport;
 window.exportCdrlReport = exportCdrlReport;
 window.switchCdrlView = switchCdrlView;
+window.switchSubView = switchSubView;
 window.renderDrlStatusTable = renderDrlStatusTable;
 window.exportDrlStatusCSV = exportDrlStatusCSV;
 window.anchorDrlStatus = anchorDrlStatus;

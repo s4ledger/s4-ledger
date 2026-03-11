@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.12.12] — 2026-03-11
+### Changed
+- **DRL / DI Status Tracker — 15 columns** — expanded from 10 to 15 columns matching the real DRL spreadsheet: DI Number, Transmittal Serial #, SharePoint Rev, Coordinated Due Date, Des Date / Bas. Day?, Submittal Guidance, Coord. Calculated Date, Actual Submission Date, RCV D, Cal. Days to Review, SME Reviewer Target, Release Authority, Response Posted Date, Notes, Status.
+- **Submissions Hub — DRL / DI Status Tracker view** — added the same 15-column DRL/DI Status Tracker as a toggle view inside Submissions Hub (Submissions Review ↔ DRL / DI Status Tracker). Both panels share the same data and render the identical table.
+- **Demo data updated** — 10 realistic DRL rows (up from 8) with all 15 fields populated, covering on-time, late, approaching, past-due, and repeated omission scenarios.
+- **Export CSV** — now exports all 15 columns in the correct order.
+- **Import Spreadsheet** — (prod-app only) updated field mapping for 15-column CSV. Import populates both Deliverables Tracker and Submissions Hub DRL views simultaneously.
+- Color palette updated to SF-native system colors (#34c759 green, #ff9500 orange, #ff3b30 red, #af52de omission purple).
+
 ## [5.12.11] — 2026-03-11
 ### Added
 - **DRL / DI Status Tracker** — new view toggle inside the existing Deliverables Tracker (hub-cdrl). Toggle between "CDRL Validation" (existing) and "DRL / DI Status Tracker" (new) with a segmented control.

@@ -67,11 +67,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-BoDQu9Tg.js"></script>
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-DCyzxnXh.js"></script>
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-JAFsQsco.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/navigation-DPFf6ce8.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/metrics-CE3sqmpZ.js">
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-e38CxPfP.js">
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-DZiIhO9F.js">
   <link rel="stylesheet" crossorigin href="/prod-app/dist/assets/index-VIQKg1L7.css">
 </head>
 <body class="light-mode">
@@ -2085,6 +2085,15 @@
                         </ol>
                         <p style="font-size:0.8rem;color:var(--steel);margin-bottom:8px;"><strong>How S4 saves you money:</strong> Manual submission comparison takes 8-16 hours per data package at $150/hr. S4 completes the same comparison in under 2 minutes — saving <strong style="color:#00cc66">90% on labor</strong> and catching discrepancies that manual review misses <strong style="color:#00cc66">40% of the time</strong>.</p>
                     </details>
+
+                    <!-- ── View Toggle: Submissions Review vs DRL/DI Status Tracker ── -->
+                    <div id="subViewToggle" style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden;width:fit-content">
+                        <button onclick="switchSubView('submissions')" id="subViewBtn-submissions" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:0;padding:7px 18px;font-size:.8rem;font-weight:700;transition:all 0.25s"><i class="fas fa-paper-plane"></i> Submissions Review</button>
+                        <button onclick="switchSubView('drl')" id="subViewBtn-drl" class="btn btn-sm" style="background:transparent;color:var(--steel);border:none;border-radius:0;padding:7px 18px;font-size:.8rem;font-weight:700;transition:all 0.25s"><i class="fas fa-table-list"></i> DRL / DI Status Tracker</button>
+                    </div>
+
+                    <!-- ══ Submissions Review View (existing) ══ -->
+                    <div id="subView-submissions">
 <!-- Branch & Program Selection -->
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                                 <option value="VRSL">Vendor Recommended Spares List (VRS)</option>
@@ -2237,6 +2246,57 @@
                         <summary style="cursor:pointer;color:var(--steel);font-size:.82rem"><i class="fas fa-history"></i> Submission History for this Program/Platform</summary>
                         <div id="subHistory" style="margin-top:8px;max-height:200px;overflow-y:auto"></div>
                     </details>
+                    </div><!-- /subView-submissions -->
+
+                    <!-- ══ DRL / DI Status Tracker View ══ -->
+                    <div id="subView-drl" style="display:none">
+                        <!-- Stats Row -->
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800" id="subDrlTotal">0</div><div style="font-size:.72rem;color:var(--steel)">Total Items</div></div>
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#34c759" id="subDrlOnTime">0</div><div style="font-size:.72rem;color:var(--steel)">On Time</div></div>
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#ff9500" id="subDrlApproaching">0</div><div style="font-size:.72rem;color:var(--steel)">Approaching</div></div>
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#ff3b30" id="subDrlOverdue">0</div><div style="font-size:.72rem;color:var(--steel)">Past Due</div></div>
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#af52de" id="subDrlOmissions">0</div><div style="font-size:.72rem;color:var(--steel)">Omissions</div></div>
+                        </div>
+                        <!-- Omission Banner -->
+                        <div id="subDrlOmissionBanner" style="display:none;background:rgba(175,82,222,0.08);border:1px solid rgba(175,82,222,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#af52de"><i class="fas fa-exclamation-triangle"></i> <span id="subDrlOmissionText"></span></div>
+                        <!-- Action Buttons (prod-app: includes Import) -->
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+                            <button onclick="importDrlSpreadsheet('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
+                            <button onclick="exportDrlStatusCSV('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
+                            <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
+                        </div>
+                        <!-- 15-Column Table -->
+                        <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
+                            <table class="discrepancy-table" id="subDrlStatusTable" style="min-width:1600px;font-size:.74rem">
+                                <thead>
+                                    <tr>
+                                        <th>DI Number</th>
+                                        <th>Transmittal Serial #</th>
+                                        <th>SharePoint Rev</th>
+                                        <th>Coordinated Due Date</th>
+                                        <th>Des Date / Bas. Day?</th>
+                                        <th>Submittal Guidance</th>
+                                        <th>Coord. Calculated Date</th>
+                                        <th>Actual Submission Date</th>
+                                        <th>RCV D</th>
+                                        <th>Cal. Days to Review</th>
+                                        <th>SME Reviewer Target</th>
+                                        <th>Release Authority</th>
+                                        <th>Response Posted Date</th>
+                                        <th>Notes</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="subDrlStatusBody"></tbody>
+                            </table>
+                        </div>
+                        <!-- Empty state (prod) -->
+                        <div id="subDrlEmptyState" style="display:none;min-height:80px;color:var(--steel);font-size:0.85rem;text-align:center;padding:30px 20px;margin-top:12px">
+                            <i class="fas fa-file-import" style="font-size:1.8rem;color:rgba(0,170,255,0.3);margin-bottom:8px;display:block"></i>
+                            Import an existing DRL spreadsheet to begin tracking. Your data stays private and is never uploaded.
+                        </div>
+                    </div><!-- /subView-drl -->
                 </div>
             </div>
 
@@ -2447,41 +2507,46 @@
                     <!-- ══ DRL/DI Status Tracker View (new) ══ -->
                     <div id="cdrlView-drl" style="display:none">
                         <!-- Summary stats row -->
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:14px">
-                            <div class="stat-mini"><div class="stat-mini-val" id="drlTotal" style="color:var(--accent)">0</div><div class="stat-mini-lbl">Total DIs</div></div>
-                            <div class="stat-mini"><div class="stat-mini-val" id="drlOnTime" style="color:#00cc66">0</div><div class="stat-mini-lbl">On Time</div></div>
-                            <div class="stat-mini"><div class="stat-mini-val" id="drlApproaching" style="color:#ffa500">0</div><div class="stat-mini-lbl">Approaching</div></div>
-                            <div class="stat-mini"><div class="stat-mini-val" id="drlOverdue" style="color:#ff4444">0</div><div class="stat-mini-lbl">Past Due</div></div>
-                            <div class="stat-mini"><div class="stat-mini-val" id="drlOmissions" style="color:#cc0000">0</div><div class="stat-mini-lbl">Repeated Omissions</div></div>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800" id="drlTotal">0</div><div style="font-size:.72rem;color:var(--steel)">Total Items</div></div>
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#34c759" id="drlOnTime">0</div><div style="font-size:.72rem;color:var(--steel)">On Time</div></div>
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#ff9500" id="drlApproaching">0</div><div style="font-size:.72rem;color:var(--steel)">Approaching</div></div>
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#ff3b30" id="drlOverdue">0</div><div style="font-size:.72rem;color:var(--steel)">Past Due</div></div>
+                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#af52de" id="drlOmissions">0</div><div style="font-size:.72rem;color:var(--steel)">Omissions</div></div>
                         </div>
 
                         <!-- Repeated Omission Banner (hidden by default) -->
-                        <div id="drlOmissionBanner" style="display:none;background:rgba(204,0,0,0.08);border:1px solid rgba(204,0,0,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;color:#cc0000;font-weight:600">
-                            <i class="fas fa-triangle-exclamation"></i> <span id="drlOmissionText">Repeated omissions detected — review flagged items below</span>
+                        <div id="drlOmissionBanner" style="display:none;background:rgba(175,82,222,0.08);border:1px solid rgba(175,82,222,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#af52de">
+                            <i class="fas fa-exclamation-triangle"></i> <span id="drlOmissionText"></span>
                         </div>
 
                         <!-- Action buttons (prod-app: includes Import) -->
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-                            <button onclick="importDrlSpreadsheet()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
-                            <button onclick="exportDrlStatusCSV()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
-                            <button onclick="anchorDrlStatus()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+                            <button onclick="importDrlSpreadsheet()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
+                            <button onclick="exportDrlStatusCSV()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
+                            <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
                         </div>
 
-                        <!-- DRL/DI Status Table -->
+                        <!-- 15-Column DRL/DI Status Table -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
-                            <table class="table table-sm" id="drlStatusTable" style="color:var(--text,#1d1d1f);font-size:.78rem;margin:0;min-width:1100px">
-                                <thead style="position:sticky;top:0;background:var(--surface);z-index:1">
+                            <table class="discrepancy-table" id="drlStatusTable" style="min-width:1600px;font-size:.74rem">
+                                <thead>
                                     <tr>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">DI Number</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">Transmittal Serial # / SP Rev</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">Calculated Due Date</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">Actual Submission</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">RCV / Review Days</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">SME Reviewer</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">Release Authority</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">Response Posted</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">Status</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:8px 8px;white-space:nowrap">Notes</th>
+                                        <th>DI Number</th>
+                                        <th>Transmittal Serial #</th>
+                                        <th>SharePoint Rev</th>
+                                        <th>Coordinated Due Date</th>
+                                        <th>Des Date / Bas. Day?</th>
+                                        <th>Submittal Guidance</th>
+                                        <th>Coord. Calculated Date</th>
+                                        <th>Actual Submission Date</th>
+                                        <th>RCV D</th>
+                                        <th>Cal. Days to Review</th>
+                                        <th>SME Reviewer Target</th>
+                                        <th>Release Authority</th>
+                                        <th>Response Posted Date</th>
+                                        <th>Notes</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="drlStatusBody"></tbody>
