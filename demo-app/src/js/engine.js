@@ -4347,14 +4347,16 @@ function _buildSummaryData() {
 
 let _lastSummaryText = '';
 let _summaryAIEnhanced = false;
+let _cachedAISummary = null;
+let _cachedAIPeriod = null;
 
 function _getAIMockText() {
     return {
-        execOverview: 'All critical records anchored and verified with zero integrity exceptions. 2 obsolescence risks identified across the fleet with an estimated $75K combined impact requiring near-term action. Compliance posture at 92% — on track for next audit cycle. Program health is stable with no blockers to milestone delivery.',
+        execOverview: 'All critical records anchored and verified with zero integrity exceptions. 2 obsolescence risks identified across the fleet with an estimated $75K combined impact requiring near-term action. Compliance posture at 92\u2009%\u2009\u2014 on track for next audit cycle. Program health is stable with no blockers to milestone delivery.',
         issues: [
-            { desc: 'Part XYZ-4420 flagged for obsolescence — last-time-buy window closes Q3 2026. Assigned to John Doe (SEA21) for sourcing alternatives.', impact: '$45,000' },
-            { desc: 'DMSMS Alert: Firmware v2.1 for LRU-8800 no longer supported by OEM. Replacement qualification in progress — est. 90-day lead time.', impact: '$30,000' },
-            { desc: 'Warranty claim WC-2026-018 pending escalation to SEA21 — original vendor dispute on coverage period.', impact: '$12,500' }
+            { desc: 'Part XYZ-4420 flagged for obsolescence \u2014 last-time-buy window closes Q3 2026. Assigned to John Doe (SEA21) for sourcing alternatives.', impact: '$45,000' },
+            { desc: 'DMSMS Alert: Firmware v2.1 for LRU-8800 no longer supported by OEM. Replacement qualification in progress \u2014 est. 90-day lead time.', impact: '$30,000' },
+            { desc: 'Warranty claim WC-2026-018 pending escalation to SEA21 \u2014 original vendor dispute on coverage period.', impact: '$12,500' }
         ],
         nextSteps: [
             'Escalate warranty claim WC-2026-018 to SEA21 contracting officer by Friday.',
@@ -4364,6 +4366,80 @@ function _getAIMockText() {
             'Run compliance re-assessment after Q2 policy updates take effect.'
         ]
     };
+}
+
+function _buildSummaryPayload(d) {
+    return {
+        records_anchored: d.recs.length,
+        records_verified: stats.verified,
+        compliance_status: d.complianceColor,
+        compliance_note: d.complianceNote,
+        total_impact: d.totalImpact,
+        period: d.periodLabel,
+        issues: d.issues.map(function(i) { return { description: i.desc, impact: i.impact }; }),
+        decisions: d.decisions.map(function(dec) { return { label: dec.label, date: dec.date }; }),
+        assignments: d.recentAssignments.map(function(a) { return { person: a.person, role: a.role || 'Responsible', item: a.program || a.tool || 'Action item', date: new Date(a.assignedAt).toLocaleDateString() }; }),
+        next_steps: d.nextSteps
+    };
+}
+
+function _parseAIResponse(text) {
+    var result = { execOverview: '', issues: [], nextSteps: [] };
+    var sections = text.split(/(?:^|\n)##\s*/);
+    sections.forEach(function(sec) {
+        var lower = sec.toLowerCase();
+        if (lower.indexOf('overview') !== -1 || lower.indexOf('executive') !== -1 || lower.indexOf('summary') !== -1) {
+            result.execOverview = sec.replace(/^[^\n]*\n/, '').trim();
+        } else if (lower.indexOf('risk') !== -1 || lower.indexOf('issue') !== -1) {
+            var lines = sec.split('\n').filter(function(l) { return /^\s*[-\u2022*]/.test(l); });
+            lines.forEach(function(l) {
+                var clean = l.replace(/^\s*[-\u2022*]\s*/, '');
+                var impactMatch = clean.match(/\$[\d,]+/);
+                result.issues.push({ desc: clean.replace(/\s*\$[\d,]+\s*(impact)?/i, '').trim(), impact: impactMatch ? impactMatch[0] : '' });
+            });
+        } else if (lower.indexOf('next') !== -1 || lower.indexOf('step') !== -1 || lower.indexOf('action') !== -1 || lower.indexOf('recommendation') !== -1) {
+            var items = sec.split('\n').filter(function(l) { return /^\s*[-\u2022*\d]/.test(l); });
+            items.forEach(function(l) { result.nextSteps.push(l.replace(/^\s*[-\u2022*\d.)\s]+/, '').trim()); });
+        }
+    });
+    if (!result.execOverview && !result.issues.length && !result.nextSteps.length) {
+        result.execOverview = text.trim();
+    }
+    return result;
+}
+
+async function _fetchAISummary(d) {
+    var periodKey = d.period || 'session';
+    if (_cachedAISummary && _cachedAIPeriod === periodKey) return _cachedAISummary;
+    var payload = _buildSummaryPayload(d);
+    var prompt = 'Generate an executive summary in plain English from this ILS anchored data. ' +
+        'Format your response with three sections using ## headers: ' +
+        '## Executive Overview (under 150 words — highlight overall program health, compliance posture, and key metrics), ' +
+        '## Key Issues & Risks (bullet list — each risk with dollar impact if known), ' +
+        '## Next Steps (bullet list of actionable recommendations with owners/deadlines where possible). ' +
+        'Data:\\n' + JSON.stringify(payload);
+    try {
+        var resp = await fetch('/api/ai-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: prompt, conversation: [], tool_context: 'Export Summary', analysis_data: payload, document_content: JSON.stringify(payload), document_name: 'Program Summary Data' })
+        });
+        if (resp.ok) {
+            var data = await resp.json();
+            if (data.response && !data.fallback) {
+                var parsed = _parseAIResponse(data.response);
+                if (parsed.execOverview) {
+                    _cachedAISummary = parsed;
+                    _cachedAIPeriod = periodKey;
+                    return parsed;
+                }
+            }
+        }
+    } catch (e) { console.log('AI summary API unavailable, using mock fallback'); }
+    var mock = _getAIMockText();
+    _cachedAISummary = mock;
+    _cachedAIPeriod = periodKey;
+    return mock;
 }
 
 function _buildExecOverview(d) {
@@ -4379,7 +4455,7 @@ function _buildExecOverview(d) {
     return o;
 }
 
-function exportProgramSummary() {
+async function exportProgramSummary() {
     const d = _buildSummaryData();
     const modal = document.getElementById('programSummaryModal');
     if (!modal) return;
@@ -4387,6 +4463,20 @@ function exportProgramSummary() {
     const execOverview = _buildExecOverview(d);
     const cColors = { Green:'#34c759', Yellow:'#f5a623', Red:'#ff3b30' };
     const cColor = cColors[d.complianceColor] || '#34c759';
+
+    // Show modal with loading state if AI is enabled
+    if (_summaryAIEnhanced) {
+        modal.classList.add('active');
+        document.getElementById('programSummaryBody').innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px">' +
+            '<i class="fas fa-circle-notch fa-spin" style="font-size:2rem;color:var(--accent)"></i>' +
+            '<div style="font-size:0.88rem;font-weight:600;color:var(--steel)">Generating AI-enhanced summary\u2026</div>' +
+            '<div style="font-size:0.75rem;color:var(--muted)">Calling AI agent with your anchored data</div></div>';
+    }
+
+    let aiResult = null;
+    if (_summaryAIEnhanced) {
+        aiResult = await _fetchAISummary(d);
+    }
 
     let html = '';
     // Header
@@ -4398,15 +4488,14 @@ function exportProgramSummary() {
 
     // AI Enhancement checkbox
     html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:8px 12px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.10);border-radius:8px">';
-    html += '<input type="checkbox" id="summaryAIToggle" ' + (_summaryAIEnhanced ? 'checked' : '') + ' onchange="_summaryAIEnhanced=this.checked;exportProgramSummary()" style="accent-color:#00aaff;width:16px;height:16px;cursor:pointer">';
+    html += '<input type="checkbox" id="summaryAIToggle" ' + (_summaryAIEnhanced ? 'checked' : '') + ' onchange="_summaryAIEnhanced=this.checked;_cachedAISummary=null;exportProgramSummary()" style="accent-color:#00aaff;width:16px;height:16px;cursor:pointer">';
     html += '<label for="summaryAIToggle" style="font-size:0.78rem;font-weight:600;color:var(--steel);cursor:pointer;display:flex;align-items:center;gap:6px"><i class="fas fa-wand-magic-sparkles" style="color:var(--accent);font-size:0.72rem"></i> Enhance with AI Insights</label>';
     html += '<span style="font-size:0.68rem;color:var(--muted);margin-left:auto">' + (_summaryAIEnhanced ? 'AI-Enhanced' : 'Raw Data Only') + '</span>';
     html += '</div>';
 
-    const aiMock = _summaryAIEnhanced ? _getAIMockText() : null;
-    const displayOverview = aiMock ? aiMock.execOverview : execOverview;
-    const displayIssues = aiMock ? aiMock.issues : d.issues;
-    const displayNextSteps = aiMock ? aiMock.nextSteps : d.nextSteps;
+    const displayOverview = aiResult ? aiResult.execOverview : execOverview;
+    const displayIssues = aiResult ? aiResult.issues : d.issues;
+    const displayNextSteps = aiResult ? aiResult.nextSteps : d.nextSteps;
 
     // EXECUTIVE OVERVIEW
     html += '<div style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-briefcase" style="color:var(--accent);margin-right:4px"></i> Executive Overview</div>';
@@ -4479,10 +4568,10 @@ function exportProgramSummary() {
 }
 
 function _buildSummaryPlainText(d) {
-    const aiMock = _summaryAIEnhanced ? _getAIMockText() : null;
-    const execOverview = aiMock ? aiMock.execOverview : _buildExecOverview(d);
-    const displayIssues = aiMock ? aiMock.issues : d.issues;
-    const displayNextSteps = aiMock ? aiMock.nextSteps : d.nextSteps;
+    const aiData = _summaryAIEnhanced && _cachedAISummary ? _cachedAISummary : null;
+    const execOverview = aiData ? aiData.execOverview : _buildExecOverview(d);
+    const displayIssues = aiData ? aiData.issues : d.issues;
+    const displayNextSteps = aiData ? aiData.nextSteps : d.nextSteps;
     let t = '';
     t += 'S4 LEDGER \u2013 PROGRAM STATUS SUMMARY\n';
     t += '\u2550'.repeat(44) + '\n';
@@ -4557,10 +4646,10 @@ function downloadProgramSummaryPDF() {
     printWin.document.write('</style></head><body>');
 
     var d = _buildSummaryData();
-    var aiMock = _summaryAIEnhanced ? _getAIMockText() : null;
-    var execOverview = aiMock ? aiMock.execOverview : _buildExecOverview(d);
-    var displayIssues = aiMock ? aiMock.issues : d.issues;
-    var displayNextSteps = aiMock ? aiMock.nextSteps : d.nextSteps;
+    var aiData = _summaryAIEnhanced && _cachedAISummary ? _cachedAISummary : null;
+    var execOverview = aiData ? aiData.execOverview : _buildExecOverview(d);
+    var displayIssues = aiData ? aiData.issues : d.issues;
+    var displayNextSteps = aiData ? aiData.nextSteps : d.nextSteps;
     var cClass = 'badge-' + d.complianceColor.toLowerCase();
 
     printWin.document.write('<h1>S4 LEDGER \u2013 PROGRAM STATUS SUMMARY</h1>');
@@ -9453,6 +9542,7 @@ window.showLeadershipSummary = showLeadershipSummary;
 window.exportLeadershipSummary = exportLeadershipSummary;
 window.exportProgramSummary = exportProgramSummary;
 Object.defineProperty(window, '_summaryAIEnhanced', { get() { return _summaryAIEnhanced; }, set(v) { _summaryAIEnhanced = v; } });
+Object.defineProperty(window, '_cachedAISummary', { get() { return _cachedAISummary; }, set(v) { _cachedAISummary = v; } });
 window.downloadProgramSummaryPDF = downloadProgramSummaryPDF;
 window.copyProgramSummaryText = copyProgramSummaryText;
 window.saveImpactToNotes = saveImpactToNotes;

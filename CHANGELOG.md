@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.12.7] — 2026-03-11
+### Changed
+- "Enhance with AI Insights" checkbox now calls **real AI agents** (Azure OpenAI → OpenAI GPT-4o → Anthropic Claude cascade) instead of hardcoded mock text
+- `_fetchAISummary(d)` sends anchored data as structured JSON to `/api/ai-chat` (demo) or `/api/ai/rag` + `/api/ai-chat` fallback (prod)
+- Prompt instructs AI to return `## Executive Overview`, `## Key Issues & Risks`, `## Next Steps` sections
+- `_parseAIResponse()` extracts structured sections from AI markdown output into `{execOverview, issues[], nextSteps[]}`
+- `_cachedAISummary` / `_cachedAIPeriod` prevent redundant API calls within the same period
+- Loading spinner shown in modal while AI agent processes the request
+- Falls back to `_getAIMockText()` offline or when all AI providers are unavailable
+- AI-enhanced text flows through modal HTML, Copy for Email/Word plaintext, and Download PDF
+
 ## [5.12.6] — 2026-03-11
 ### Added
 - "Enhance with AI Insights" checkbox in Export Summary modal (default unchecked)
