@@ -24,8 +24,11 @@
 - Ledger Account: Verified and Types stats moved from top-bar into sidebar stats grid (5-card grid: Anchors, Verified, Types, Remaining, Plan)
 - Ledger Account: "Your Data Is Protected" compliance assurance card — SHA-256 tamper-proof, NIST 800-53 / FedRAMP / DFARS alignment, full audit trail
 - Session Stats Toast — contextual notification slides down from top after each anchor/verify showing Anchored, Verified, Types, Credits; auto-dismisses after 4 seconds
+- Ledger Account: Browser Push Notifications toggle — requests Notification API permission, fires native OS notification on anchor/verify with stats summary; status badge shows Active/Off/Blocked/Unsupported
+- Ledger Account: "Mobile App — Coming Soon" card — tasteful teaser for native iOS & Android apps with real-time push and offline anchoring
 - Removed persistent stats strip from workspace header (redundant — data now in sidebar + toast)
-- Rebuilt dist bundle
+- **prod-app: full port of all Ledger Account sidebar changes** — credits hero, explainer, verified badge, usage toast, 5-card stats grid, compliance card, sparkline, transaction feed, threshold alert, push notifications, iOS card, upgrade CTA, export statement, legal disclaimer, session stats toast, z-index/width/overlay fixes — 100% feature parity with demo-app
+- Rebuilt dist bundles (demo-app + prod-app)
 
 ## [5.12.1] — 2026-02-26
 ### Fixed

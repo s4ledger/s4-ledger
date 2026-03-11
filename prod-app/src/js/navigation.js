@@ -27,9 +27,9 @@ function showHub() {
     // Show hub
     var hub = document.getElementById('platformHub');
     if (hub) { hub.style.display = 'block'; hub.style.animation = 'fadeIn 0.3s ease'; }
-    // Show stat strip
-    var sr = document.getElementById('statsRow');
-    if (sr) sr.style.display = 'flex';
+    // Stats now live in sidebar — hide stat strip
+    // var sr = document.getElementById('statsRow');
+    // if (sr) sr.style.display = 'flex';
     // Only show hero + pre-platform landing if user hasn't entered yet
     if (!sessionStorage.getItem('s4_entered')) {
         var hero = document.querySelector('.hero');
@@ -386,79 +386,344 @@ function closeILSTool() {
 })();
 
 // ═══ Wallet Sidebar ═══
+function _getCreditsData() {
+    var _tFallback = (window._onboardTiers && window._onboardTier) ? (window._onboardTiers[window._onboardTier]?.sls || 25000) : (parseInt(localStorage.getItem('s4_tier_allocation')) || 25000);
+    var _s = window._demoSession;
+    var allocation = _s ? (_s.subscription?.sls_allocation || _tFallback) : _tFallback;
+    var _stats = window._s4Stats || {anchored:0,verified:0,slsFees:0};
+    var spent = _stats.slsFees || 0;
+    var remaining = Math.round((allocation - spent) * 100) / 100;
+    var anchored = _stats.anchored || 0;
+    var plan = _s ? (_s.subscription?.label || 'Starter') : (localStorage.getItem('s4_tier_label') || 'Starter');
+    var addr = _s?.wallet?.address || '';
+    var pct = allocation > 0 ? Math.max(0, Math.min(100, (remaining / allocation) * 100)) : 100;
+    return { allocation: allocation, spent: spent, remaining: remaining, anchored: anchored, plan: plan, addr: addr, pct: pct };
+}
+
 function openWalletSidebar() {
     var sidebar = document.getElementById('walletSidebar');
     var overlay = document.getElementById('walletOverlay');
     if (sidebar) sidebar.classList.add('open');
     if (overlay) overlay.classList.add('show');
-    
-    // Always re-copy wallet content into sidebar for fresh data on every open
-    var body = document.getElementById('walletSidebarBody');
-    var walletPane = document.getElementById('tabWallet');
-    if (body && walletPane) {
-        body.innerHTML = walletPane.innerHTML;
-        body.dataset.loaded = 'true';
-        // Trigger wallet data load
-        if (typeof loadWalletData === 'function') loadWalletData();
-        
-        // Rewire flow details button to show INSIDE the sidebar
-        _rewireWalletFlowDetails(body);
-    }
-    
-    // Force-sync ALL balance elements (including sidebar clones) with current state
-    if (typeof window._syncSlsBar === 'function') { try { window._syncSlsBar(); } catch(e) {} }
-    else if (typeof _syncSlsBar === 'function') { try { _syncSlsBar(); } catch(e) {} }
-    
-    // Update wallet trigger balance
-    updateWalletTrigger();
-}
 
-function _rewireWalletFlowDetails(sidebarBody) {
-    // Find the "Flow Details" button inside the sidebar copy
-    var flowBtn = sidebarBody.querySelector('#slsToggleBtn');
-    if (!flowBtn) return;
-    
-    // Remove the original onclick toggle
-    flowBtn.removeAttribute('onclick');
-    
-    // Create inline flow details panel for the sidebar
-    var flowPanel = document.createElement('div');
-    flowPanel.id = 'sidebarFlowPanel';
-    flowPanel.style.cssText = 'display:none;margin-top:12px;background:linear-gradient(135deg,rgba(0,170,255,0.06),rgba(201,168,76,0.04));border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:16px 18px;';
-    flowPanel.innerHTML = '<div style="position:relative">'
-        + '<div style="position:absolute;top:-4px;right:0;background:linear-gradient(135deg,#00aaff,#c9a84c);padding:3px 12px;border-radius:0 10px 0 8px;font-size:0.62rem;font-weight:700;color:var(--text,#1d1d1f);letter-spacing:0.5px">LIVE PREVIEW</div>'
-        + '<h4 style="margin:0 0 4px;font-size:0.95rem;color:var(--text,#1d1d1f)"><i class="fas fa-flask" style="color:#00aaff;margin-right:6px"></i>Credit Economic Flow</h4>'
-        + '<p style="color:#6e6e73;font-size:0.72rem;margin:0 0 12px">See how the Credit economy works. <strong style="color:#c9a84c">Every anchor costs 0.01 Credits.</strong></p>'
-        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-user-plus" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:var(--text,#1d1d1f)">1. Account</div><div style="font-size:0.62rem;color:#6e6e73">Created &amp; provisioned</div></div>'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-wallet" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:var(--text,#1d1d1f)">2. Wallet Funded</div><div style="font-size:0.62rem;color:#6e6e73">12 XRP reserve</div></div>'
-        + '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-coins" style="color:#c9a84c;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:var(--text,#1d1d1f)">3. Credits Allocated</div><div style="font-size:0.62rem;color:#6e6e73">Based on plan tier</div></div>'
-        + '<div style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:10px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,170,255,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:6px"><i class="fas fa-arrow-right" style="color:#00aaff;font-size:0.75rem"></i></div><div style="font-size:0.68rem;font-weight:700;color:var(--text,#1d1d1f)">4. 0.01 Credits &rarr; Treasury</div><div style="font-size:0.62rem;color:#6e6e73">Per anchor fee</div></div>'
-        + '</div>'
-        + '<div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,0.04);border-radius:3px;font-size:0.7rem">'
-        + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">'
-        + '<div><span style="color:#6e6e73">Wallet:</span> <span style="color:#00aaff;font-family:monospace" id="sidebarWalletAddr">rMLmk...f1KLqJ</span></div>'
-        + '<div><span style="color:#6e6e73">Balance:</span> <span style="color:#c9a84c;font-weight:700" id="sidebarSlsBal">' + (document.getElementById('slsBarBalance') ? document.getElementById('slsBarBalance').textContent : '25,000') + ' Credits</span></div>'
-        + '</div></div>'
-        + '</div>';
-    
-    // Insert flow panel after the slsBalanceBar in sidebar
-    var slsBar = sidebarBody.querySelector('#slsBalanceBar');
-    if (slsBar) {
-        slsBar.parentNode.insertBefore(flowPanel, slsBar.nextSibling);
-    } else {
-        sidebarBody.insertBefore(flowPanel, sidebarBody.firstChild ? sidebarBody.firstChild.nextSibling : null);
+    var body = document.getElementById('walletSidebarBody');
+    if (!body) return;
+
+    var d = _getCreditsData();
+    var stats = window._s4Stats || {anchored:0,verified:0,slsFees:0,types:new Set()};
+    var verified = stats.verified || 0;
+    var typesCount = stats.types ? (stats.types.size || 0) : 0;
+
+    // Color logic: healthy (#007AFF), low/amber (#FF9500), critical (#FF3B30)
+    var balColor = d.pct > 20 ? '#007AFF' : d.pct > 5 ? '#FF9500' : '#FF3B30';
+    var barColor = balColor;
+    var allPaid = d.anchored > 0;
+
+    // Recent usage toast (only if anchors > 0)
+    var usageToast = '';
+    if (d.anchored > 0) {
+        usageToast = '<div class="ws-usage-toast">'
+            + '<i class="fas fa-bolt" style="color:#FF9500;margin-right:6px;font-size:0.7rem"></i>'
+            + '<span>-' + d.spent.toFixed(2) + ' $SLS (' + d.anchored + ' record' + (d.anchored !== 1 ? 's' : '') + ' anchored)</span>'
+            + '</div>';
     }
-    
-    // Wire up the button to toggle the SIDEBAR flow panel
-    var _sidebarFlowShown = false;
-    flowBtn.addEventListener('click', function() {
-        _sidebarFlowShown = !_sidebarFlowShown;
-        flowPanel.style.display = _sidebarFlowShown ? 'block' : 'none';
-        flowBtn.innerHTML = _sidebarFlowShown 
-            ? '<i class="fas fa-chevron-up" style="margin-right:4px"></i>Hide Flow Details'
-            : '<i class="fas fa-chart-simple" style="margin-right:4px"></i>Show Flow Details';
+
+    // ── Build recent transactions list from s4Vault ──
+    var txRows = '';
+    var vault = (typeof s4Vault !== 'undefined') ? s4Vault : [];
+    var recentTx = vault.slice(0, 5);
+    if (recentTx.length > 0) {
+        recentTx.forEach(function(r) {
+            var shortHash = r.hash ? (r.hash.substring(0,10) + '...') : '—';
+            var tLabel = r.label || r.type || 'Record';
+            var tTime = r.timestamp ? new Date(r.timestamp).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+            var tFee = (r.fee != null) ? r.fee.toFixed(2) : '0.01';
+            txRows += '<div class="ws-tx-row">'
+                + '<div class="ws-tx-icon"><i class="fas ' + (r.icon || 'fa-anchor') + '"></i></div>'
+                + '<div class="ws-tx-detail">'
+                +   '<div class="ws-tx-label">' + tLabel + '</div>'
+                +   '<div class="ws-tx-hash">' + shortHash + '</div>'
+                + '</div>'
+                + '<div class="ws-tx-meta">'
+                +   '<div class="ws-tx-fee">-' + tFee + '</div>'
+                +   '<div class="ws-tx-time">' + tTime + '</div>'
+                + '</div>'
+                + '</div>';
+        });
+    } else {
+        txRows = '<div class="ws-tx-empty"><i class="fas fa-inbox" style="font-size:1.1rem;margin-bottom:6px;display:block;opacity:0.35"></i>No transactions yet</div>';
+    }
+
+    // ── Build usage sparkline (last 7 days) ──
+    var sparkBars = '';
+    var dailyCounts = [0,0,0,0,0,0,0];
+    var now = Date.now();
+    vault.forEach(function(r) {
+        if (!r.timestamp) return;
+        var age = Math.floor((now - new Date(r.timestamp).getTime()) / 86400000);
+        if (age >= 0 && age < 7) dailyCounts[6 - age]++;
     });
+    var maxDay = Math.max.apply(null, dailyCounts) || 1;
+    var dayLabels = [];
+    for (var di = 6; di >= 0; di--) {
+        var dd = new Date(now - di * 86400000);
+        dayLabels.push(dd.toLocaleDateString(undefined,{weekday:'narrow'}));
+    }
+    dailyCounts.forEach(function(c, i) {
+        var h = Math.max(4, Math.round((c / maxDay) * 48));
+        sparkBars += '<div class="ws-spark-col">'
+            + '<div class="ws-spark-bar" style="height:' + h + 'px;background:' + (c > 0 ? '#007AFF' : 'var(--border,rgba(0,0,0,0.08))') + '"></div>'
+            + '<div class="ws-spark-day">' + dayLabels[i] + '</div>'
+            + '</div>';
+    });
+
+    // ── Plan upgrade CTA ──
+    var tierOrder = ['pilot','starter','professional','enterprise'];
+    var tiers = window._onboardTiers || {};
+    var currentTierKey = (localStorage.getItem('s4_selected_tier') || 'starter').toLowerCase();
+    var currentIdx = tierOrder.indexOf(currentTierKey);
+    var upgradeCTA = '';
+    if (currentIdx >= 0 && currentIdx < tierOrder.length - 1) {
+        var nextKey = tierOrder[currentIdx + 1];
+        var nextTier = tiers[nextKey];
+        if (nextTier) {
+            var nextCredits = nextTier.credits || nextTier.sls || 0;
+            upgradeCTA = '<div class="ws-upgrade-card">'
+                + '<div class="ws-upgrade-header"><i class="fas fa-arrow-up" style="margin-right:6px"></i>Upgrade Available</div>'
+                + '<div class="ws-upgrade-body">'
+                +   '<strong>' + (nextTier.label || nextKey) + '</strong>'
+                +   '<span class="ws-upgrade-credits">' + nextCredits.toLocaleString() + ' credits/mo</span>'
+                + '</div>'
+                + '<button class="ws-upgrade-btn" onclick="if(typeof showSection===\'function\'){showSection(\'sectionILS\');closeWalletSidebar();}">View Plans</button>'
+                + '</div>';
+        }
+    }
+
+    // ── Auto top-up threshold ──
+    var savedThreshold = parseInt(localStorage.getItem('s4_topup_threshold')) || 0;
+    var thresholdChecked = savedThreshold > 0 ? ' checked' : '';
+    var thresholdVal = savedThreshold > 0 ? savedThreshold : Math.round(d.allocation * 0.1);
+
+    body.innerHTML = ''
+        // ── Hero: Credits Remaining ──
+        + '<div class="ws-credits-hero">'
+        +   '<div class="ws-credits-label">Credits Remaining</div>'
+        +   '<div class="ws-credits-amount" style="color:' + balColor + ';">'
+        +     '<span class="ws-credits-num">' + d.remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + '</span>'
+        +     ' <span class="ws-credits-unit">$SLS</span>'
+        +   '</div>'
+        +   '<div class="ws-credits-sub">'
+        +     'Used Today: <strong>' + d.spent.toFixed(2) + '</strong>'
+        +     '<span class="ws-credits-sep">|</span>'
+        +     'Total Allocated: <strong>' + d.allocation.toLocaleString() + '</strong>'
+        +   '</div>'
+        // ── Progress bar ──
+        +   '<div class="ws-progress-track">'
+        +     '<div class="ws-progress-fill" style="width:' + d.pct.toFixed(1) + '%;background:' + barColor + ';"></div>'
+        +   '</div>'
+        + '</div>'
+
+        // ── What are Credits? ──
+        + '<div class="ws-explainer">'
+        +   '<div class="ws-explainer-title"><i class="fas fa-question-circle" style="margin-right:5px;opacity:0.6"></i>What are Credits?</div>'
+        +   '<div class="ws-explainer-body">Credits = <strong>$SLS</strong> (Secure Logistics Standard) — the utility token used to anchor records on the XRPL blockchain. Each anchor costs 0.01 $SLS. Credits are consumed when you create tamper-proof audit records.</div>'
+        + '</div>'
+
+        // ── Verified status ──
+        + (allPaid
+            ? '<div class="ws-verified-badge"><i class="fas fa-check-circle"></i> All Anchors Paid &amp; Verified</div>'
+            : '<div class="ws-verified-badge ws-verified-empty"><i class="fas fa-info-circle"></i> No anchors yet — start anchoring to see activity</div>')
+
+        // ── Usage toast ──
+        + usageToast
+
+        // ── Quick Stats ──
+        + '<div class="ws-stats-grid ws-stats-5">'
+        +   '<div class="ws-stat-card">'
+        +     '<div class="ws-stat-icon" style="background:rgba(0,122,255,0.08);"><i class="fas fa-anchor" style="color:#007AFF;"></i></div>'
+        +     '<div class="ws-stat-val">' + d.anchored + '</div>'
+        +     '<div class="ws-stat-lbl">Anchors</div>'
+        +   '</div>'
+        +   '<div class="ws-stat-card">'
+        +     '<div class="ws-stat-icon" style="background:rgba(52,199,89,0.08);"><i class="fas fa-check-double" style="color:#34C759;"></i></div>'
+        +     '<div class="ws-stat-val">' + verified + '</div>'
+        +     '<div class="ws-stat-lbl">Verified</div>'
+        +   '</div>'
+        +   '<div class="ws-stat-card">'
+        +     '<div class="ws-stat-icon" style="background:rgba(88,86,214,0.08);"><i class="fas fa-layer-group" style="color:#5856D6;"></i></div>'
+        +     '<div class="ws-stat-val">' + typesCount + '</div>'
+        +     '<div class="ws-stat-lbl">Types</div>'
+        +   '</div>'
+        +   '<div class="ws-stat-card">'
+        +     '<div class="ws-stat-icon" style="background:rgba(52,199,89,0.08);"><i class="fas fa-coins" style="color:#34C759;"></i></div>'
+        +     '<div class="ws-stat-val">' + Math.floor(d.remaining / 0.01).toLocaleString() + '</div>'
+        +     '<div class="ws-stat-lbl">Remaining</div>'
+        +   '</div>'
+        +   '<div class="ws-stat-card">'
+        +     '<div class="ws-stat-icon" style="background:rgba(255,149,0,0.08);"><i class="fas fa-tag" style="color:#FF9500;"></i></div>'
+        +     '<div class="ws-stat-val">' + d.plan + '</div>'
+        +     '<div class="ws-stat-lbl">Plan</div>'
+        +   '</div>'
+        + '</div>'
+
+        // ── Compliance & Security Assurance ──
+        + '<div class="ws-compliance-card">'
+        +   '<div class="ws-compliance-header"><i class="fas fa-shield-alt" style="margin-right:6px"></i>Your Data Is Protected</div>'
+        +   '<div class="ws-compliance-body">'
+        +     '<div class="ws-compliance-item"><i class="fas fa-lock" style="color:#34C759"></i><span>Every record is <strong>SHA-256 hashed</strong> and anchored to the XRP Ledger — tamper-proof and immutable</span></div>'
+        +     '<div class="ws-compliance-item"><i class="fas fa-certificate" style="color:#007AFF"></i><span>Aligned with <strong>NIST 800-53</strong>, <strong>FedRAMP</strong>, and <strong>DFARS 252.204-7012</strong> compliance frameworks</span></div>'
+        +     '<div class="ws-compliance-item"><i class="fas fa-eye" style="color:#5856D6"></i><span>Full <strong>audit trail</strong> — every action is logged, time-stamped, and independently verifiable</span></div>'
+        +   '</div>'
+        + '</div>'
+
+        // ── 7-Day Usage Chart ──
+        + '<div class="ws-section-label"><i class="fas fa-chart-bar" style="margin-right:5px;color:#007AFF;font-size:0.65rem"></i>7-Day Activity</div>'
+        + '<div class="ws-spark-chart">' + sparkBars + '</div>'
+
+        // ── Recent Transactions ──
+        + '<div class="ws-section-label"><i class="fas fa-clock" style="margin-right:5px;color:#FF9500;font-size:0.65rem"></i>Recent Transactions</div>'
+        + '<div class="ws-tx-list">' + txRows + '</div>'
+
+        // ── Auto Top-Up Threshold ──
+        + '<div class="ws-section-label"><i class="fas fa-bell" style="margin-right:5px;color:#FF9500;font-size:0.65rem"></i>Low-Balance Alert</div>'
+        + '<div class="ws-threshold-card">'
+        +   '<div class="ws-threshold-row">'
+        +     '<label class="ws-threshold-toggle">'
+        +       '<input type="checkbox" id="wsThresholdOn"' + thresholdChecked + '>'
+        +       '<span class="ws-toggle-track"><span class="ws-toggle-thumb"></span></span>'
+        +     '</label>'
+        +     '<span class="ws-threshold-text">Alert when credits fall below</span>'
+        +   '</div>'
+        +   '<div class="ws-threshold-input-row">'
+        +     '<input type="number" id="wsThresholdVal" class="ws-threshold-input" value="' + thresholdVal + '" min="1" max="' + d.allocation + '">'
+        +     '<span class="ws-threshold-unit">$SLS</span>'
+        +   '</div>'
+        + '</div>'
+
+        // ── Browser Push Notifications ──
+        + '<div class="ws-section-label"><i class="fas fa-bell" style="margin-right:5px;color:#5856D6;font-size:0.65rem"></i>Notifications</div>'
+        + '<div class="ws-notify-card">'
+        +   '<div class="ws-notify-row">'
+        +     '<label class="ws-threshold-toggle">'
+        +       '<input type="checkbox" id="wsNotifyOn"' + (localStorage.getItem('s4_push_notify') === '1' ? ' checked' : '') + '>'
+        +       '<span class="ws-toggle-track"><span class="ws-toggle-thumb"></span></span>'
+        +     '</label>'
+        +     '<span class="ws-notify-text">Browser Push Notifications</span>'
+        +     '<span class="ws-notify-status" id="wsNotifyStatus"></span>'
+        +   '</div>'
+        +   '<div class="ws-notify-sub">Get notified when anchors complete, verifications finish, or credits run low.</div>'
+        + '</div>'
+
+        // ── iOS / Mobile App Coming Soon ──
+        + '<div class="ws-ios-card">'
+        +   '<div class="ws-ios-icon"><i class="fas fa-mobile-alt"></i></div>'
+        +   '<div class="ws-ios-body">'
+        +     '<div class="ws-ios-title">Mobile App</div>'
+        +     '<div class="ws-ios-sub">Native iOS &amp; Android apps with real-time push notifications and offline anchoring.</div>'
+        +   '</div>'
+        +   '<span class="ws-ios-badge">Coming Soon</span>'
+        + '</div>'
+
+        // ── Plan Upgrade CTA ──
+        + upgradeCTA
+
+        // ── Wallet address ──
+        + (d.addr ? '<div class="ws-wallet-addr">'
+        +   '<div class="ws-addr-label"><i class="fas fa-link" style="margin-right:4px;color:#007AFF;font-size:0.65rem;"></i>XRPL Wallet</div>'
+        +   '<div class="ws-addr-val">' + d.addr.substring(0,8) + '...' + d.addr.slice(-6) + '</div>'
+        + '</div>' : '')
+
+        // ── Export Statement + Top Up (side by side) ──
+        + '<div class="ws-action-row">'
+        +   '<button class="ws-export-btn" onclick="window._wsExportStatement()"><i class="fas fa-file-download" style="margin-right:6px;"></i>Statement</button>'
+        +   '<button class="ws-topup-btn" onclick="if(typeof showSection===\'function\'){showSection(\'sectionILS\');closeWalletSidebar();}"><i class="fas fa-plus-circle" style="margin-right:6px;"></i>Top Up</button>'
+        + '</div>'
+
+        // ── Rate info ──
+        + '<div class="ws-rate-footer">'
+        +   '<span>0.01 $SLS per anchor</span><span class="ws-credits-sep">•</span><span>~$0.0001 per record</span>'
+        + '</div>'
+
+        // ── Legal disclaimer ──
+        + '<div class="ws-legal">'
+        +   '<i class="fas fa-shield-alt" style="margin-right:4px;opacity:0.5"></i>'
+        +   '$SLS is a utility asset used exclusively for anchoring records on the S4 Ledger platform. '
+        +   'It is <strong>not</strong> a security, equity, investment contract, or financial instrument. '
+        +   'No promise of profit or return is made or implied.'
+        + '</div>';
+
+    // ── Wire threshold toggle ──
+    var threshOn = body.querySelector('#wsThresholdOn');
+    var threshVal = body.querySelector('#wsThresholdVal');
+    if (threshOn && threshVal) {
+        var saveThreshold = function() {
+            if (threshOn.checked) {
+                localStorage.setItem('s4_topup_threshold', threshVal.value);
+            } else {
+                localStorage.removeItem('s4_topup_threshold');
+            }
+        };
+        threshOn.addEventListener('change', saveThreshold);
+        threshVal.addEventListener('change', saveThreshold);
+    }
+
+    // ── Wire push notification toggle ──
+    var notifyOn = body.querySelector('#wsNotifyOn');
+    var notifyStatus = body.querySelector('#wsNotifyStatus');
+    if (notifyOn && notifyStatus) {
+        // Update status badge
+        var _updateNotifyBadge = function() {
+            if (!('Notification' in window)) {
+                notifyStatus.textContent = 'Unsupported';
+                notifyStatus.className = 'ws-notify-status ws-ns-unsupported';
+                notifyOn.disabled = true;
+            } else if (Notification.permission === 'granted' && notifyOn.checked) {
+                notifyStatus.textContent = 'Active';
+                notifyStatus.className = 'ws-notify-status ws-ns-on';
+            } else if (Notification.permission === 'denied') {
+                notifyStatus.textContent = 'Blocked';
+                notifyStatus.className = 'ws-notify-status ws-ns-unsupported';
+                notifyOn.disabled = true;
+            } else {
+                notifyStatus.textContent = 'Off';
+                notifyStatus.className = 'ws-notify-status ws-ns-off';
+            }
+        };
+        _updateNotifyBadge();
+        notifyOn.addEventListener('change', function() {
+            if (notifyOn.checked) {
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission().then(function(perm) {
+                        if (perm === 'granted') {
+                            localStorage.setItem('s4_push_notify', '1');
+                        } else {
+                            notifyOn.checked = false;
+                            localStorage.removeItem('s4_push_notify');
+                        }
+                        _updateNotifyBadge();
+                    });
+                } else if ('Notification' in window && Notification.permission === 'granted') {
+                    localStorage.setItem('s4_push_notify', '1');
+                    _updateNotifyBadge();
+                } else {
+                    notifyOn.checked = false;
+                }
+            } else {
+                localStorage.removeItem('s4_push_notify');
+                _updateNotifyBadge();
+            }
+        });
+    }
+
+    // Trigger the count-up animation on the hero number
+    requestAnimationFrame(function() {
+        var numEl = body.querySelector('.ws-credits-num');
+        if (numEl) {
+            numEl.classList.add('ws-num-enter');
+        }
+    });
+
+    body.dataset.loaded = 'true';
 }
 
 function closeWalletSidebar() {
@@ -469,10 +734,10 @@ function closeWalletSidebar() {
 }
 
 function updateWalletTrigger() {
-    var bal = document.getElementById('slsBarBalance');
+    var d = _getCreditsData();
     var trigger = document.getElementById('walletTriggerBal');
-    if (bal && trigger) {
-        trigger.textContent = bal.textContent || '--';
+    if (trigger) {
+        trigger.textContent = d.remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' Credits';
     }
 }
 
@@ -590,6 +855,110 @@ document.addEventListener('shown.bs.tab', function(e) {
             setTimeout(function(){ if (banner.parentElement) banner.remove(); }, 15000);
         }
     };
+})();
+
+// ═══ Wallet Export Statement ═══
+window._wsExportStatement = function() {
+    var d = _getCreditsData();
+    var vault = (typeof s4Vault !== 'undefined') ? s4Vault : [];
+    var lines = [
+        'S4 LEDGER — CREDITS STATEMENT',
+        'Generated: ' + new Date().toISOString(),
+        'Plan: ' + d.plan,
+        'Wallet: ' + (d.addr || 'N/A'),
+        '',
+        'SUMMARY',
+        'Total Allocated: ' + d.allocation.toLocaleString() + ' $SLS',
+        'Total Spent: ' + d.spent.toFixed(2) + ' $SLS',
+        'Remaining: ' + d.remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' $SLS',
+        'Records Anchored: ' + d.anchored,
+        '',
+        'TRANSACTION DETAIL',
+        'Type,Hash,TX Hash,Timestamp,Fee'
+    ];
+    vault.forEach(function(r) {
+        lines.push(
+            (r.label || r.type || 'Record') + ','
+            + (r.hash || '') + ','
+            + (r.txHash || '') + ','
+            + (r.timestamp || '') + ','
+            + ((r.fee != null) ? r.fee : 0.01)
+        );
+    });
+    var blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 's4-credits-statement-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+};
+
+// ═══ Session Stats Toast — fires after every anchor/verify ═══
+(function() {
+    var _toastTimer = null;
+    var _prevAnchored = -1;
+
+    function _showSessionToast() {
+        var s = window._s4Stats || {anchored:0,verified:0,slsFees:0,types:new Set()};
+        var d = _getCreditsData();
+
+        // Only show if anchored count actually changed (skip initial load)
+        if (_prevAnchored === -1) { _prevAnchored = s.anchored; return; }
+        if (s.anchored === _prevAnchored) return;
+        _prevAnchored = s.anchored;
+
+        // Fire browser push notification if enabled
+        if (localStorage.getItem('s4_push_notify') === '1' && 'Notification' in window && Notification.permission === 'granted') {
+            try {
+                new Notification('S4 Ledger — Record Anchored', {
+                    body: 'Anchored: ' + s.anchored + ' | Verified: ' + (s.verified || 0) + ' | Credits: ' + d.remaining.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $SLS',
+                    icon: '/s4-assets/s4-icon-192.png',
+                    tag: 's4-anchor-' + s.anchored
+                });
+            } catch(e) {}
+        }
+
+        // Remove existing toast
+        var old = document.getElementById('wsSessionToast');
+        if (old) old.remove();
+        if (_toastTimer) clearTimeout(_toastTimer);
+
+        var toast = document.createElement('div');
+        toast.id = 'wsSessionToast';
+        toast.className = 'ws-session-toast';
+        toast.innerHTML = ''
+            + '<div class="ws-st-row">'
+            +   '<div class="ws-st-item"><i class="fas fa-anchor" style="color:#007AFF"></i><span class="ws-st-val">' + s.anchored + '</span><span class="ws-st-lbl">Anchored</span></div>'
+            +   '<div class="ws-st-divider"></div>'
+            +   '<div class="ws-st-item"><i class="fas fa-check-double" style="color:#34C759"></i><span class="ws-st-val">' + (s.verified || 0) + '</span><span class="ws-st-lbl">Verified</span></div>'
+            +   '<div class="ws-st-divider"></div>'
+            +   '<div class="ws-st-item"><i class="fas fa-layer-group" style="color:#5856D6"></i><span class="ws-st-val">' + (s.types ? s.types.size : 0) + '</span><span class="ws-st-lbl">Types</span></div>'
+            +   '<div class="ws-st-divider"></div>'
+            +   '<div class="ws-st-item"><i class="fas fa-coins" style="color:#FF9500"></i><span class="ws-st-val">' + d.remaining.toLocaleString(undefined,{maximumFractionDigits:0}) + '</span><span class="ws-st-lbl">Credits</span></div>'
+            + '</div>';
+        document.body.appendChild(toast);
+
+        // Trigger enter animation
+        requestAnimationFrame(function() { toast.classList.add('ws-st-enter'); });
+
+        // Auto-dismiss after 4 seconds
+        _toastTimer = setTimeout(function() {
+            toast.classList.remove('ws-st-enter');
+            toast.classList.add('ws-st-exit');
+            setTimeout(function() { if (toast.parentElement) toast.remove(); }, 400);
+        }, 4000);
+    }
+
+    // Hook updateStats
+    if (typeof updateStats === 'function') {
+        var _origUpdateStats = updateStats;
+        updateStats = function() {
+            _origUpdateStats();
+            _showSessionToast();
+        };
+    }
 })();
 
 // === Window exports for inline event handlers ===

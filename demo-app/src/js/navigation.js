@@ -600,6 +600,30 @@ function openWalletSidebar() {
         +   '</div>'
         + '</div>'
 
+        // ── Browser Push Notifications ──
+        + '<div class="ws-section-label"><i class="fas fa-bell" style="margin-right:5px;color:#5856D6;font-size:0.65rem"></i>Notifications</div>'
+        + '<div class="ws-notify-card">'
+        +   '<div class="ws-notify-row">'
+        +     '<label class="ws-threshold-toggle">'
+        +       '<input type="checkbox" id="wsNotifyOn"' + (localStorage.getItem('s4_push_notify') === '1' ? ' checked' : '') + '>'
+        +       '<span class="ws-toggle-track"><span class="ws-toggle-thumb"></span></span>'
+        +     '</label>'
+        +     '<span class="ws-notify-text">Browser Push Notifications</span>'
+        +     '<span class="ws-notify-status" id="wsNotifyStatus"></span>'
+        +   '</div>'
+        +   '<div class="ws-notify-sub">Get notified when anchors complete, verifications finish, or credits run low.</div>'
+        + '</div>'
+
+        // ── iOS / Mobile App Coming Soon ──
+        + '<div class="ws-ios-card">'
+        +   '<div class="ws-ios-icon"><i class="fas fa-mobile-alt"></i></div>'
+        +   '<div class="ws-ios-body">'
+        +     '<div class="ws-ios-title">Mobile App</div>'
+        +     '<div class="ws-ios-sub">Native iOS &amp; Android apps with real-time push notifications and offline anchoring.</div>'
+        +   '</div>'
+        +   '<span class="ws-ios-badge">Coming Soon</span>'
+        + '</div>'
+
         // ── Plan Upgrade CTA ──
         + upgradeCTA
 
@@ -641,6 +665,54 @@ function openWalletSidebar() {
         };
         threshOn.addEventListener('change', saveThreshold);
         threshVal.addEventListener('change', saveThreshold);
+    }
+
+    // ── Wire push notification toggle ──
+    var notifyOn = body.querySelector('#wsNotifyOn');
+    var notifyStatus = body.querySelector('#wsNotifyStatus');
+    if (notifyOn && notifyStatus) {
+        // Update status badge
+        var _updateNotifyBadge = function() {
+            if (!('Notification' in window)) {
+                notifyStatus.textContent = 'Unsupported';
+                notifyStatus.className = 'ws-notify-status ws-ns-unsupported';
+                notifyOn.disabled = true;
+            } else if (Notification.permission === 'granted' && notifyOn.checked) {
+                notifyStatus.textContent = 'Active';
+                notifyStatus.className = 'ws-notify-status ws-ns-on';
+            } else if (Notification.permission === 'denied') {
+                notifyStatus.textContent = 'Blocked';
+                notifyStatus.className = 'ws-notify-status ws-ns-unsupported';
+                notifyOn.disabled = true;
+            } else {
+                notifyStatus.textContent = 'Off';
+                notifyStatus.className = 'ws-notify-status ws-ns-off';
+            }
+        };
+        _updateNotifyBadge();
+        notifyOn.addEventListener('change', function() {
+            if (notifyOn.checked) {
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission().then(function(perm) {
+                        if (perm === 'granted') {
+                            localStorage.setItem('s4_push_notify', '1');
+                        } else {
+                            notifyOn.checked = false;
+                            localStorage.removeItem('s4_push_notify');
+                        }
+                        _updateNotifyBadge();
+                    });
+                } else if ('Notification' in window && Notification.permission === 'granted') {
+                    localStorage.setItem('s4_push_notify', '1');
+                    _updateNotifyBadge();
+                } else {
+                    notifyOn.checked = false;
+                }
+            } else {
+                localStorage.removeItem('s4_push_notify');
+                _updateNotifyBadge();
+            }
+        });
     }
 
     // Trigger the count-up animation on the hero number
@@ -836,6 +908,17 @@ window._wsExportStatement = function() {
         if (_prevAnchored === -1) { _prevAnchored = s.anchored; return; }
         if (s.anchored === _prevAnchored) return;
         _prevAnchored = s.anchored;
+
+        // Fire browser push notification if enabled
+        if (localStorage.getItem('s4_push_notify') === '1' && 'Notification' in window && Notification.permission === 'granted') {
+            try {
+                new Notification('S4 Ledger — Record Anchored', {
+                    body: 'Anchored: ' + s.anchored + ' | Verified: ' + (s.verified || 0) + ' | Credits: ' + d.remaining.toLocaleString(undefined,{maximumFractionDigits:0}) + ' $SLS',
+                    icon: '/s4-assets/s4-icon-192.png',
+                    tag: 's4-anchor-' + s.anchored
+                });
+            } catch(e) {}
+        }
 
         // Remove existing toast
         var old = document.getElementById('wsSessionToast');

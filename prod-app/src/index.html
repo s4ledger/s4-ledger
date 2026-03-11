@@ -3525,8 +3525,9 @@
             _currentILSTool = null;
             var hub = document.getElementById('platformHub');
             if (hub) { hub.style.display='block'; hub.style.animation='fadeIn 0.3s ease'; }
-            var sr = document.getElementById('statsRow');
-            if (sr) sr.style.display = 'flex';
+            // Stats now live in sidebar — hide stat strip
+            // var sr = document.getElementById('statsRow');
+            // if (sr) sr.style.display = 'flex';
             _currentSection = null;
             history.replaceState(null, '', window.location.pathname);
         };
@@ -3561,19 +3562,8 @@
             _currentILSTool = null;
         };
 
-        window.openWalletSidebar = function openWalletSidebar() {
-            var sidebar = document.getElementById('walletSidebar');
-            var overlay = document.getElementById('walletOverlay');
-            if (sidebar) sidebar.classList.add('open');
-            if (overlay) overlay.classList.add('open');
-        };
-
-        window.closeWalletSidebar = function closeWalletSidebar() {
-            var sidebar = document.getElementById('walletSidebar');
-            var overlay = document.getElementById('walletOverlay');
-            if (sidebar) sidebar.classList.remove('open');
-            if (overlay) overlay.classList.remove('open');
-        };
+        // Wallet sidebar functions are now in navigation.js module
+        // (openWalletSidebar / closeWalletSidebar — full credits-view redesign)
 
         // Standalone startAuthFlow — shows DoW consent → CAC login → onboarding → role
         if (!window.startAuthFlow) {
