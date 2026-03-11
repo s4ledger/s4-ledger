@@ -1027,7 +1027,7 @@
         .ws-explainer-body strong{color:var(--text,#1d1d1f);font-weight:700}
 
         /* ═══ Sidebar — Legal Disclaimer ═══ */
-        .ws-legal{font-size:0.62rem;line-height:1.5;color:var(--muted,#aeaeb2);padding:12px 0 4px;border-top:1px solid var(--border,rgba(0,0,0,0.04));margin-top:8px;display:flex;align-items:flex-start}
+        .ws-legal{font-size:0.62rem;line-height:1.5;color:var(--muted,#aeaeb2);padding:12px 0 4px;border-top:1px solid var(--border,rgba(0,0,0,0.04));margin-top:8px}
         .ws-legal strong{font-weight:600;color:var(--steel,#86868b)}
 
         /* ═══ ILS Sub-Hub Cards ═══ */
