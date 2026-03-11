@@ -9240,139 +9240,134 @@ function _trackRecentTool(toolId) {
     _recentTools.unshift({ id: toolId, name: name, time: Date.now() });
     if (_recentTools.length > 8) _recentTools = _recentTools.slice(0, 8);
     _sessionToolCount++;
-    _renderRecentPill();
+    _renderRecentToggle();
     _updateProgressRing();
 }
 
-function _renderRecentPill() {
-    var pill = document.getElementById('s4RecentPill');
-    if (!pill) {
-        var avatarWrap = document.getElementById('s4AvatarBtn');
-        if (!avatarWrap) return;
-        var container = avatarWrap.parentElement;
-        pill = document.createElement('div');
-        pill.id = 's4RecentPill';
-        Object.assign(pill.style, {
-            position:'relative', display:'inline-flex', alignItems:'center',
-            marginRight:'6px', cursor:'pointer', userSelect:'none',
+function _renderRecentToggle() {
+    var toggle = document.getElementById('s4RecentToggle');
+    if (!toggle) {
+        // Create fixed-position toggle button above the Session Report toggle
+        toggle = document.createElement('button');
+        toggle.id = 's4RecentToggle';
+        toggle.setAttribute('aria-label', 'Recent Actions');
+        Object.assign(toggle.style, {
+            position:'fixed', bottom:'70px', right:'18px', zIndex:'99990',
+            width:'44px', height:'44px', borderRadius:'50%',
+            background:'#fff', border:'1px solid rgba(0,0,0,0.08)',
+            boxShadow:'0 2px 12px rgba(0,0,0,0.10)',
+            cursor:'pointer', display:'none', alignItems:'center', justifyContent:'center',
+            transition:'all 0.25s ease', padding:'0',
             fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif'
         });
-        container.insertBefore(pill, avatarWrap);
-        // Close dropdown on outside click
-        document.addEventListener('click', function(e) {
-            if (_dropdownOpen && pill && !pill.contains(e.target)) _closeDropdown();
-        }, true);
-    }
-    if (_recentTools.length === 0) { pill.style.display = 'none'; return; }
-    pill.style.display = 'inline-flex';
-
-    // Render collapsed pill (preserve existing dropdown if open)
-    var trigger = pill.querySelector('.s4ra-trigger');
-    if (!trigger) {
-        trigger = document.createElement('button');
-        trigger.className = 's4ra-trigger';
-        Object.assign(trigger.style, {
-            display:'inline-flex', alignItems:'center', gap:'5px',
-            background:'rgba(0,122,255,0.06)', border:'1px solid rgba(0,122,255,0.12)',
-            borderRadius:'10px', padding:'5px 12px', cursor:'pointer',
-            fontSize:'0.75rem', fontWeight:'600', color:'var(--steel,#3a3a3c)',
-            fontFamily:'inherit', transition:'all 0.2s ease', lineHeight:'1.3',
-            whiteSpace:'nowrap'
-        });
-        trigger.onmouseover = function() { trigger.style.background = 'rgba(0,122,255,0.10)'; };
-        trigger.onmouseout = function() { if (!_dropdownOpen) trigger.style.background = 'rgba(0,122,255,0.06)'; };
-        trigger.onclick = function(e) {
+        toggle.onmouseover = function() {
+            toggle.style.boxShadow = '0 4px 18px rgba(0,122,255,0.18)';
+            toggle.style.borderColor = 'rgba(0,122,255,0.25)';
+        };
+        toggle.onmouseout = function() {
+            if (!_dropdownOpen) {
+                toggle.style.boxShadow = '0 2px 12px rgba(0,0,0,0.10)';
+                toggle.style.borderColor = 'rgba(0,0,0,0.08)';
+            }
+        };
+        toggle.onclick = function(e) {
             e.stopPropagation();
             if (_dropdownOpen) _closeDropdown(); else _openDropdown();
         };
-        pill.appendChild(trigger);
-    }
-    trigger.innerHTML = '<i class="fas fa-history" style="color:var(--accent,#007AFF);font-size:0.68rem"></i>Recent Actions (' + _recentTools.length + ')' +
-        '<i class="fas fa-chevron-down" style="font-size:0.55rem;opacity:0.5;margin-left:2px;transition:transform 0.2s"></i>';
+        document.body.appendChild(toggle);
 
-    // If dropdown is open, refresh its content
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+            if (_dropdownOpen && toggle && !toggle.contains(e.target)) {
+                var dd = document.getElementById('s4RecentDropdown');
+                if (!dd || !dd.contains(e.target)) _closeDropdown();
+            }
+        }, true);
+    }
+
+    if (_recentTools.length === 0) { toggle.style.display = 'none'; return; }
+    toggle.style.display = 'flex';
+
+    // Icon + count badge
+    toggle.innerHTML = '<i class="fas fa-history" style="font-size:1rem;color:var(--accent,#007AFF)"></i>' +
+        '<span style="position:absolute;top:-2px;right:-2px;background:var(--accent,#007AFF);color:#fff;font-size:0.6rem;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;line-height:1">' + _recentTools.length + '</span>';
+
     if (_dropdownOpen) _renderDropdownList();
 }
 
 function _openDropdown() {
     _dropdownOpen = true;
-    var pill = document.getElementById('s4RecentPill');
-    if (!pill) return;
-    var trigger = pill.querySelector('.s4ra-trigger');
-    if (trigger) {
-        trigger.style.background = 'rgba(0,122,255,0.10)';
-        trigger.style.borderBottomLeftRadius = '0';
-        trigger.style.borderBottomRightRadius = '0';
-        trigger.style.borderBottom = '1px solid transparent';
-        var chev = trigger.querySelector('.fa-chevron-down');
-        if (chev) chev.style.transform = 'rotate(180deg)';
+    var toggle = document.getElementById('s4RecentToggle');
+    if (toggle) {
+        toggle.style.boxShadow = '0 4px 18px rgba(0,122,255,0.18)';
+        toggle.style.borderColor = 'rgba(0,122,255,0.25)';
+        toggle.style.background = 'rgba(0,122,255,0.04)';
     }
     _renderDropdownList();
 }
 
 function _closeDropdown() {
     _dropdownOpen = false;
-    var pill = document.getElementById('s4RecentPill');
-    if (!pill) return;
-    var trigger = pill.querySelector('.s4ra-trigger');
-    if (trigger) {
-        trigger.style.background = 'rgba(0,122,255,0.06)';
-        trigger.style.borderBottomLeftRadius = '10px';
-        trigger.style.borderBottomRightRadius = '10px';
-        trigger.style.borderBottom = '1px solid rgba(0,122,255,0.12)';
-        var chev = trigger.querySelector('.fa-chevron-down');
-        if (chev) chev.style.transform = '';
+    var toggle = document.getElementById('s4RecentToggle');
+    if (toggle) {
+        toggle.style.boxShadow = '0 2px 12px rgba(0,0,0,0.10)';
+        toggle.style.borderColor = 'rgba(0,0,0,0.08)';
+        toggle.style.background = '#fff';
     }
-    var dd = pill.querySelector('.s4ra-dropdown');
+    var dd = document.getElementById('s4RecentDropdown');
     if (dd) {
         dd.style.opacity = '0';
-        dd.style.transform = 'translateY(-4px)';
+        dd.style.transform = 'translateY(6px) scale(0.97)';
         setTimeout(function() { if (dd.parentNode) dd.parentNode.removeChild(dd); }, 180);
     }
 }
 
 function _renderDropdownList() {
-    var pill = document.getElementById('s4RecentPill');
-    if (!pill) return;
-    var dd = pill.querySelector('.s4ra-dropdown');
+    var dd = document.getElementById('s4RecentDropdown');
     if (!dd) {
         dd = document.createElement('div');
-        dd.className = 's4ra-dropdown';
+        dd.id = 's4RecentDropdown';
         Object.assign(dd.style, {
-            position:'absolute', top:'100%', right:'0',
+            position:'fixed', bottom:'120px', right:'18px',
             background:'#fff', border:'1px solid rgba(0,0,0,0.08)',
-            borderTop:'none', borderRadius:'0 0 10px 10px',
-            boxShadow:'0 8px 24px rgba(0,0,0,0.10)',
-            width:'280px', maxWidth:'300px', zIndex:'100000',
-            opacity:'0', transform:'translateY(-4px)',
-            transition:'opacity 0.18s ease, transform 0.18s ease',
-            overflow:'hidden'
+            borderRadius:'14px', boxShadow:'0 12px 40px rgba(0,0,0,0.12)',
+            width:'280px', maxWidth:'300px', zIndex:'99991',
+            opacity:'0', transform:'translateY(6px) scale(0.97)',
+            transition:'opacity 0.2s ease, transform 0.2s ease',
+            overflow:'hidden',
+            fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif'
         });
-        pill.appendChild(dd);
-        requestAnimationFrame(function() { dd.style.opacity = '1'; dd.style.transform = 'translateY(0)'; });
+        document.body.appendChild(dd);
+        requestAnimationFrame(function() { dd.style.opacity = '1'; dd.style.transform = 'translateY(0) scale(1)'; });
     }
 
-    dd.innerHTML = _recentTools.map(function(t, i) {
-        var border = i < _recentTools.length - 1 ? 'border-bottom:1px solid rgba(0,0,0,0.04);' : '';
-        return '<button class="s4ra-item" data-tool="' + t.id + '" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:9px 14px;background:none;border:none;' + border + 'cursor:pointer;font-family:inherit;font-size:0.76rem;text-align:left;transition:background 0.15s;color:var(--steel,#3a3a3c)">' +
-            '<span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">' + _esc(t.name) + '</span>' +
-            '<span style="font-size:0.68rem;color:var(--muted,#6e6e73);white-space:nowrap;margin-left:8px">' + _timeAgo(t.time) + '</span>' +
+    var header = '<div style="padding:10px 14px 8px;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:space-between">' +
+        '<span style="font-size:0.72rem;font-weight:700;letter-spacing:0.02em;text-transform:uppercase;color:var(--muted,#6e6e73)">Recent Actions</span>' +
+        '<span style="font-size:0.65rem;color:var(--muted,#6e6e73)">' + _recentTools.length + ' tools</span></div>';
+
+    var items = _recentTools.map(function(t, i) {
+        var border = i < _recentTools.length - 1 ? 'border-bottom:1px solid rgba(0,0,0,0.03);' : '';
+        return '<button class="s4ra-item" data-tool="' + t.id + '" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 14px;background:none;border:none;' + border + 'cursor:pointer;font-family:inherit;font-size:0.78rem;text-align:left;transition:background 0.15s;color:var(--steel,#3a3a3c)">' +
+            '<span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">' + _esc(t.name) + '</span>' +
+            '<span style="font-size:0.68rem;color:var(--muted,#6e6e73);white-space:nowrap;margin-left:10px">' + _timeAgo(t.time) + '</span>' +
             '</button>';
     }).join('');
 
+    dd.innerHTML = header + '<div style="max-height:320px;overflow-y:auto">' + items + '</div>';
+
     // Attach click handlers
-    var items = dd.querySelectorAll('.s4ra-item');
-    for (var i = 0; i < items.length; i++) {
-        (function(item) {
-            item.onmouseover = function() { item.style.background = 'rgba(0,122,255,0.04)'; };
-            item.onmouseout = function() { item.style.background = 'none'; };
-            item.onclick = function(e) {
+    var btns = dd.querySelectorAll('.s4ra-item');
+    for (var i = 0; i < btns.length; i++) {
+        (function(btn) {
+            btn.onmouseover = function() { btn.style.background = 'rgba(0,122,255,0.04)'; };
+            btn.onmouseout = function() { btn.style.background = 'none'; };
+            btn.onclick = function(e) {
                 e.stopPropagation();
-                var tid = item.getAttribute('data-tool');
+                var tid = btn.getAttribute('data-tool');
                 _closeDropdown();
                 if (typeof openILSTool === 'function') openILSTool(tid);
             };
-        })(items[i]);
+        })(btns[i]);
     }
 }
 
@@ -9447,26 +9442,38 @@ function _injectCopyBullet(toolId) {
     if (card) card.appendChild(btn);
 }
 
-// ── SECTION 29: Smart Progress Ring on Export Summary ──
+// ── SECTION 29: Smart Gradient Progress Ring on Export Summary ──
 var _sessionToolCount = 0;
 
 function _computeSmartPct() {
-    // Smart contextual readiness:
-    //   0 tools  →  0%
-    //   1 tool   → 50%
-    //   2 tools  → 70%
-    //   3+ tools → 90%
-    //   Check for session report content → 100%
     var n = _sessionToolCount;
     if (n === 0) return 0;
-
-    // If session report sidebar has meaningful content, consider it complete
     var reportEntries = window._reportEntries;
     if (reportEntries && reportEntries.length >= 3) return 100;
-
     if (n === 1) return 50;
     if (n === 2) return 70;
-    return 90 + Math.min(n - 3, 1) * 10; // 3→90, 4+→100
+    return 90 + Math.min(n - 3, 1) * 10;
+}
+
+function _ringGradient(pct) {
+    // Returns a conic-gradient string with color that transitions through stages:
+    //   0%     → gray
+    //   1-49%  → steel blue to blue
+    //   50-89% → blue to teal
+    //   90%+   → teal to emerald green
+    var angle = Math.round(pct * 3.6);
+    var trail = 'rgba(0,0,0,0.06)';
+    if (pct === 0) return 'none';
+    if (pct < 50) {
+        // Steel-blue gradient
+        return 'conic-gradient(#5B9BD5 0deg, #007AFF ' + angle + 'deg, ' + trail + ' ' + angle + 'deg)';
+    }
+    if (pct < 90) {
+        // Blue → teal gradient
+        return 'conic-gradient(#007AFF 0deg, #06B6D4 ' + Math.round(angle * 0.6) + 'deg, #0EA5E9 ' + angle + 'deg, ' + trail + ' ' + angle + 'deg)';
+    }
+    // Green glow: teal → emerald → green
+    return 'conic-gradient(#06B6D4 0deg, #10B981 ' + Math.round(angle * 0.5) + 'deg, #34D399 ' + Math.round(angle * 0.8) + 'deg, #10B981 ' + angle + 'deg, ' + trail + ' ' + angle + 'deg)';
 }
 
 function _updateProgressRing() {
@@ -9475,13 +9482,6 @@ function _updateProgressRing() {
 
     var pct = _computeSmartPct();
 
-    // Determine color: gray 0%, blue 1-89%, green 90%+
-    var ringColor;
-    if (pct === 0) ringColor = 'rgba(0,0,0,0.10)';
-    else if (pct < 90) ringColor = '#007AFF';
-    else ringColor = '#10B981';
-
-    // Find or create the ring wrapper
     var wrapper = document.getElementById('s4ExportRingWrap');
     if (!wrapper) {
         wrapper = document.createElement('div');
@@ -9499,26 +9499,33 @@ function _updateProgressRing() {
             fontSize:'0.65rem', color:'var(--muted,#6e6e73)', textAlign:'center',
             marginTop:'4px', fontWeight:'500', letterSpacing:'0.01em',
             fontFamily:'-apple-system,BlinkMacSystemFont,SF Pro Text,system-ui,sans-serif',
-            transition:'color 0.3s ease'
+            transition:'color 0.4s ease'
         });
         wrapper.appendChild(label);
     }
 
-    // Update button border as progress ring
-    var angle = Math.round(pct * 3.6);
+    // Apply gradient ring via conic-gradient on border
+    var grad = _ringGradient(pct);
     if (pct === 0) {
         exportBtn.style.borderImage = '';
         exportBtn.style.backgroundImage = '';
         exportBtn.style.border = '2px solid rgba(0,0,0,0.08)';
         exportBtn.style.backgroundClip = '';
         exportBtn.style.backgroundOrigin = '';
+        exportBtn.style.boxShadow = '';
     } else {
         exportBtn.style.borderImage = 'none';
         exportBtn.style.borderColor = 'transparent';
-        exportBtn.style.backgroundImage = 'linear-gradient(var(--surface,#fff),var(--surface,#fff)),conic-gradient(' + ringColor + ' ' + angle + 'deg, rgba(0,0,0,0.06) ' + angle + 'deg)';
+        exportBtn.style.backgroundImage = 'linear-gradient(var(--surface,#fff),var(--surface,#fff)),' + grad;
         exportBtn.style.backgroundOrigin = 'border-box';
         exportBtn.style.backgroundClip = 'padding-box, border-box';
-        exportBtn.style.border = '2px solid transparent';
+        exportBtn.style.border = '2.5px solid transparent';
+        // Subtle glow at high readiness
+        if (pct >= 90) {
+            exportBtn.style.boxShadow = '0 0 12px rgba(16,185,129,0.20)';
+        } else {
+            exportBtn.style.boxShadow = '0 0 8px rgba(0,122,255,0.10)';
+        }
     }
 
     // Tooltip
@@ -9536,10 +9543,11 @@ function _updateProgressRing() {
             label.style.display = 'none';
         } else {
             label.style.display = 'block';
-            label.style.color = pct >= 90 ? '#10B981' : 'var(--muted,#6e6e73)';
             if (pct >= 90) {
-                label.textContent = 'Ready for summary export';
+                label.style.color = '#10B981';
+                label.textContent = '\u2713 Ready for summary export';
             } else {
+                label.style.color = 'var(--muted,#6e6e73)';
                 label.textContent = 'Session ' + pct + '% ready';
             }
         }

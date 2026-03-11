@@ -2,9 +2,8 @@
 
 ## [5.12.8] — 2026-03-11
 ### Changed
-- **Section 27 — Recent Actions**: converted inline pill with 3 tool buttons into a clean dropdown; collapsed state shows "Recent Actions (X)" count; click expands a compact ≤300px list of last 5–8 tools with tool name + relative time (e.g., "12 min ago"); each item re-runs the tool on click; dropdown auto-closes on outside click or selection; chevron rotates on open; subtle 8px shadow, 10px radius
-- **Section 29 — Smart Progress Ring**: replaced "unique tools / 23 total" metric with contextual session readiness — 0 tools → 0% (gray ring), 1 tool → 50%, 2 tools → 70%, 3+ tools → 90%, session report with 3+ entries → 100%; ring color transitions gray → blue (#007AFF) → green (#10B981); hover tooltip "Session ready for summary export" at ≥90%; label turns green and reads "Ready for summary export" when complete
-- Shared `_TOOL_NAMES` map and `_esc()` sanitizer extracted to reduce duplication across sections 27/28
+- **Section 27 — Recent Actions**: moved from inline pill in the avatar row to a **floating circular toggle button** (44×44px, `position:fixed`, `bottom:70px`, `right:18px`) — sits above Session Report toggle following the same design pattern; blue history icon with a count badge; click opens a fixed-position **dropdown panel** (280px, 14px radius, 40px shadow) with "RECENT ACTIONS" header + scrollable item list; dropdown closes with scale-down animation on outside click; removes all clutter from the avatar/header row
+- **Section 29 — Smart Gradient Progress Ring**: replaced flat single-color conic gradient with **multi-stop gradient** that transitions through stages: 0% gray, 1–49% steel-blue→blue, 50–89% blue→teal→cyan, 90%+ teal→emerald→green; thicker 2.5px border; subtle box-shadow glow (blue at mid-range, green at high readiness); label shows checkmark "✓ Ready for summary export" at ≥90%
 - Both demo-app and prod-app updated identically
 
 ## [5.12.7] — 2026-03-11
