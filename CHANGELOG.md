@@ -13,6 +13,14 @@
 - Sidebar now renders its own focused credits view instead of cloning the full tabWallet pane
 - Fade-in + scale-up animation on credits number on open
 - SF Pro / system font stack, 12px radius cards, generous spacing
+### Added
+- Ledger Account: "What are Credits?" explainer card — describes $SLS as the utility blockchain asset used for anchoring, aimed at novice and onboarding users
+- Ledger Account: legal disclaimer footer — $SLS is not a security, equity, investment contract, or financial instrument
+- Ledger Account: Recent Transactions feed — last 5 anchored records with type, hash, fee, and timestamp
+- Ledger Account: 7-Day Activity sparkline chart — per-day anchor volume bar chart
+- Ledger Account: Low-Balance Alert toggle — configurable threshold with iOS-style toggle, persisted to localStorage
+- Ledger Account: Plan Upgrade CTA — shows next tier with credits/mo and "View Plans" button (hidden if already on Enterprise)
+- Ledger Account: Export Statement button — downloads CSV with full credits summary and transaction detail
 - Rebuilt dist bundle
 
 ## [5.12.1] — 2026-02-26

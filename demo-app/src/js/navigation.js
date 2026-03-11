@@ -425,6 +425,82 @@ function openWalletSidebar() {
             + '</div>';
     }
 
+    // ── Build recent transactions list from s4Vault ──
+    var txRows = '';
+    var vault = (typeof s4Vault !== 'undefined') ? s4Vault : [];
+    var recentTx = vault.slice(0, 5);
+    if (recentTx.length > 0) {
+        recentTx.forEach(function(r) {
+            var shortHash = r.hash ? (r.hash.substring(0,10) + '...') : '—';
+            var tLabel = r.label || r.type || 'Record';
+            var tTime = r.timestamp ? new Date(r.timestamp).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+            var tFee = (r.fee != null) ? r.fee.toFixed(2) : '0.01';
+            txRows += '<div class="ws-tx-row">'
+                + '<div class="ws-tx-icon"><i class="fas ' + (r.icon || 'fa-anchor') + '"></i></div>'
+                + '<div class="ws-tx-detail">'
+                +   '<div class="ws-tx-label">' + tLabel + '</div>'
+                +   '<div class="ws-tx-hash">' + shortHash + '</div>'
+                + '</div>'
+                + '<div class="ws-tx-meta">'
+                +   '<div class="ws-tx-fee">-' + tFee + '</div>'
+                +   '<div class="ws-tx-time">' + tTime + '</div>'
+                + '</div>'
+                + '</div>';
+        });
+    } else {
+        txRows = '<div class="ws-tx-empty"><i class="fas fa-inbox" style="font-size:1.1rem;margin-bottom:6px;display:block;opacity:0.35"></i>No transactions yet</div>';
+    }
+
+    // ── Build usage sparkline (last 7 days) ──
+    var sparkBars = '';
+    var dailyCounts = [0,0,0,0,0,0,0];
+    var now = Date.now();
+    vault.forEach(function(r) {
+        if (!r.timestamp) return;
+        var age = Math.floor((now - new Date(r.timestamp).getTime()) / 86400000);
+        if (age >= 0 && age < 7) dailyCounts[6 - age]++;
+    });
+    var maxDay = Math.max.apply(null, dailyCounts) || 1;
+    var dayLabels = [];
+    for (var di = 6; di >= 0; di--) {
+        var dd = new Date(now - di * 86400000);
+        dayLabels.push(dd.toLocaleDateString(undefined,{weekday:'narrow'}));
+    }
+    dailyCounts.forEach(function(c, i) {
+        var h = Math.max(4, Math.round((c / maxDay) * 48));
+        sparkBars += '<div class="ws-spark-col">'
+            + '<div class="ws-spark-bar" style="height:' + h + 'px;background:' + (c > 0 ? '#007AFF' : 'var(--border,rgba(0,0,0,0.08))') + '"></div>'
+            + '<div class="ws-spark-day">' + dayLabels[i] + '</div>'
+            + '</div>';
+    });
+
+    // ── Plan upgrade CTA ──
+    var tierOrder = ['pilot','starter','professional','enterprise'];
+    var tiers = window._onboardTiers || {};
+    var currentTierKey = (localStorage.getItem('s4_selected_tier') || 'starter').toLowerCase();
+    var currentIdx = tierOrder.indexOf(currentTierKey);
+    var upgradeCTA = '';
+    if (currentIdx >= 0 && currentIdx < tierOrder.length - 1) {
+        var nextKey = tierOrder[currentIdx + 1];
+        var nextTier = tiers[nextKey];
+        if (nextTier) {
+            var nextCredits = nextTier.credits || nextTier.sls || 0;
+            upgradeCTA = '<div class="ws-upgrade-card">'
+                + '<div class="ws-upgrade-header"><i class="fas fa-arrow-up" style="margin-right:6px"></i>Upgrade Available</div>'
+                + '<div class="ws-upgrade-body">'
+                +   '<strong>' + (nextTier.label || nextKey) + '</strong>'
+                +   '<span class="ws-upgrade-credits">' + nextCredits.toLocaleString() + ' credits/mo</span>'
+                + '</div>'
+                + '<button class="ws-upgrade-btn" onclick="if(typeof showSection===\'function\'){showSection(\'sectionILS\');closeWalletSidebar();}">View Plans</button>'
+                + '</div>';
+        }
+    }
+
+    // ── Auto top-up threshold ──
+    var savedThreshold = parseInt(localStorage.getItem('s4_topup_threshold')) || 0;
+    var thresholdChecked = savedThreshold > 0 ? ' checked' : '';
+    var thresholdVal = savedThreshold > 0 ? savedThreshold : Math.round(d.allocation * 0.1);
+
     body.innerHTML = ''
         // ── Hero: Credits Remaining ──
         + '<div class="ws-credits-hero">'
@@ -442,6 +518,12 @@ function openWalletSidebar() {
         +   '<div class="ws-progress-track">'
         +     '<div class="ws-progress-fill" style="width:' + d.pct.toFixed(1) + '%;background:' + barColor + ';"></div>'
         +   '</div>'
+        + '</div>'
+
+        // ── What are Credits? ──
+        + '<div class="ws-explainer">'
+        +   '<div class="ws-explainer-title"><i class="fas fa-question-circle" style="margin-right:5px;opacity:0.6"></i>What are Credits?</div>'
+        +   '<div class="ws-explainer-body">Credits = <strong>$SLS</strong> (Secure Logistics Standard) — the utility token used to anchor records on the XRPL blockchain. Each anchor costs 0.01 $SLS. Credits are consumed when you create tamper-proof audit records.</div>'
         + '</div>'
 
         // ── Verified status ──
@@ -471,19 +553,72 @@ function openWalletSidebar() {
         +   '</div>'
         + '</div>'
 
+        // ── 7-Day Usage Chart ──
+        + '<div class="ws-section-label"><i class="fas fa-chart-bar" style="margin-right:5px;color:#007AFF;font-size:0.65rem"></i>7-Day Activity</div>'
+        + '<div class="ws-spark-chart">' + sparkBars + '</div>'
+
+        // ── Recent Transactions ──
+        + '<div class="ws-section-label"><i class="fas fa-clock" style="margin-right:5px;color:#FF9500;font-size:0.65rem"></i>Recent Transactions</div>'
+        + '<div class="ws-tx-list">' + txRows + '</div>'
+
+        // ── Auto Top-Up Threshold ──
+        + '<div class="ws-section-label"><i class="fas fa-bell" style="margin-right:5px;color:#FF9500;font-size:0.65rem"></i>Low-Balance Alert</div>'
+        + '<div class="ws-threshold-card">'
+        +   '<div class="ws-threshold-row">'
+        +     '<label class="ws-threshold-toggle">'
+        +       '<input type="checkbox" id="wsThresholdOn"' + thresholdChecked + '>'
+        +       '<span class="ws-toggle-track"><span class="ws-toggle-thumb"></span></span>'
+        +     '</label>'
+        +     '<span class="ws-threshold-text">Alert when credits fall below</span>'
+        +   '</div>'
+        +   '<div class="ws-threshold-input-row">'
+        +     '<input type="number" id="wsThresholdVal" class="ws-threshold-input" value="' + thresholdVal + '" min="1" max="' + d.allocation + '">'
+        +     '<span class="ws-threshold-unit">$SLS</span>'
+        +   '</div>'
+        + '</div>'
+
+        // ── Plan Upgrade CTA ──
+        + upgradeCTA
+
         // ── Wallet address ──
         + (d.addr ? '<div class="ws-wallet-addr">'
         +   '<div class="ws-addr-label"><i class="fas fa-link" style="margin-right:4px;color:#007AFF;font-size:0.65rem;"></i>XRPL Wallet</div>'
         +   '<div class="ws-addr-val">' + d.addr.substring(0,8) + '...' + d.addr.slice(-6) + '</div>'
         + '</div>' : '')
 
-        // ── Top Up ──
-        + '<button class="ws-topup-btn" onclick="if(typeof showSection===\'function\'){showSection(\'sectionILS\');closeWalletSidebar();}"><i class="fas fa-plus-circle" style="margin-right:6px;"></i>Top Up Credits</button>'
+        // ── Export Statement + Top Up (side by side) ──
+        + '<div class="ws-action-row">'
+        +   '<button class="ws-export-btn" onclick="window._wsExportStatement()"><i class="fas fa-file-download" style="margin-right:6px;"></i>Statement</button>'
+        +   '<button class="ws-topup-btn" onclick="if(typeof showSection===\'function\'){showSection(\'sectionILS\');closeWalletSidebar();}"><i class="fas fa-plus-circle" style="margin-right:6px;"></i>Top Up</button>'
+        + '</div>'
 
         // ── Rate info ──
         + '<div class="ws-rate-footer">'
         +   '<span>0.01 $SLS per anchor</span><span class="ws-credits-sep">•</span><span>~$0.0001 per record</span>'
+        + '</div>'
+
+        // ── Legal disclaimer ──
+        + '<div class="ws-legal">'
+        +   '<i class="fas fa-shield-alt" style="margin-right:4px;opacity:0.5"></i>'
+        +   '$SLS is a utility asset used exclusively for anchoring records on the S4 Ledger platform. '
+        +   'It is <strong>not</strong> a security, equity, investment contract, or financial instrument. '
+        +   'No promise of profit or return is made or implied.'
         + '</div>';
+
+    // ── Wire threshold toggle ──
+    var threshOn = body.querySelector('#wsThresholdOn');
+    var threshVal = body.querySelector('#wsThresholdVal');
+    if (threshOn && threshVal) {
+        var saveThreshold = function() {
+            if (threshOn.checked) {
+                localStorage.setItem('s4_topup_threshold', threshVal.value);
+            } else {
+                localStorage.removeItem('s4_topup_threshold');
+            }
+        };
+        threshOn.addEventListener('change', saveThreshold);
+        threshVal.addEventListener('change', saveThreshold);
+    }
 
     // Trigger the count-up animation on the hero number
     requestAnimationFrame(function() {
@@ -626,6 +761,44 @@ document.addEventListener('shown.bs.tab', function(e) {
         }
     };
 })();
+
+// ═══ Wallet Export Statement ═══
+window._wsExportStatement = function() {
+    var d = _getCreditsData();
+    var vault = (typeof s4Vault !== 'undefined') ? s4Vault : [];
+    var lines = [
+        'S4 LEDGER — CREDITS STATEMENT',
+        'Generated: ' + new Date().toISOString(),
+        'Plan: ' + d.plan,
+        'Wallet: ' + (d.addr || 'N/A'),
+        '',
+        'SUMMARY',
+        'Total Allocated: ' + d.allocation.toLocaleString() + ' $SLS',
+        'Total Spent: ' + d.spent.toFixed(2) + ' $SLS',
+        'Remaining: ' + d.remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' $SLS',
+        'Records Anchored: ' + d.anchored,
+        '',
+        'TRANSACTION DETAIL',
+        'Type,Hash,TX Hash,Timestamp,Fee'
+    ];
+    vault.forEach(function(r) {
+        lines.push(
+            (r.label || r.type || 'Record') + ','
+            + (r.hash || '') + ','
+            + (r.txHash || '') + ','
+            + (r.timestamp || '') + ','
+            + ((r.fee != null) ? r.fee : 0.01)
+        );
+    });
+    var blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 's4-credits-statement-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+};
 
 // === Window exports for inline event handlers ===
 window.closeILSTool = closeILSTool;
