@@ -8612,10 +8612,15 @@ window.verifyProvenanceChain = verifyProvenanceChain;
             title: 'Workflow Presets',
             body: 'Choose a ready-made workflow — Standard ILS Daily, Audit Prep, or Obsolescence Sweep — and the platform queues the right tools for you automatically.',
             setup: function() {
+                // Navigate into the ILS section so the Settings menu is visible
+                if (typeof window.showSection === 'function') window.showSection('sectionILS');
                 // Open the Settings <details> dropdown to reveal presets
                 var menu = document.getElementById('s4WorkspaceMenu');
                 if (menu) menu.open = true;
-                return document.querySelector('#s4PresetsList .s4-preset-btn') || menu;
+                // Return the <details> element itself — its summary button is always
+                // in normal document flow with a stable bounding rect, unlike the
+                // absolutely-positioned dropdown contents.
+                return menu;
             },
             teardown: function() {
                 var menu = document.getElementById('s4WorkspaceMenu');
@@ -8642,6 +8647,8 @@ window.verifyProvenanceChain = verifyProvenanceChain;
             title: 'Tool Cards & Hover Previews',
             body: 'Each card is a full-featured tool. Hover any card for an instant data preview — or click to dive in. 23 tools, zero learning curve.',
             setup: function() {
+                // Navigate into the ILS section so tool cards are visible
+                if (typeof window.showSection === 'function') window.showSection('sectionILS');
                 // Make sure we're on the hub (not inside a tool panel)
                 var subHub = document.getElementById('ilsSubHub');
                 if (subHub) subHub.style.display = 'grid';
@@ -8677,8 +8684,28 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         }
     ];
 
+    var _tourWatcher = null;
+
+    function _waitForILSThenTour() {
+        if (localStorage.getItem('s4_tour_done')) return;
+        if (_tourWatcher) return; // already watching
+        _tourWatcher = setInterval(function() {
+            if (localStorage.getItem('s4_tour_done')) { clearInterval(_tourWatcher); _tourWatcher = null; return; }
+            var tab = document.getElementById('tabILS');
+            if (tab && tab.style.display !== 'none' && tab.classList.contains('active')) {
+                clearInterval(_tourWatcher);
+                _tourWatcher = null;
+                setTimeout(_runTour, 600);
+            }
+        }, 500);
+    }
+
     function _runTour() {
         if (localStorage.getItem('s4_tour_done')) return;
+
+        // Don't start the tour until the user has actually entered the Anchor-S4 section
+        var tab = document.getElementById('tabILS');
+        if (!tab || tab.style.display === 'none' || !tab.classList.contains('active')) return;
 
         // Save the user's entire UI state so we can restore it
         var savedScrollX = window.scrollX;
@@ -9076,8 +9103,8 @@ window.verifyProvenanceChain = verifyProvenanceChain;
     function _bootChanges21to25() {
         _setupLazyCards();
         _restoreAccent();
-        // Delay tour to let UI settle
-        setTimeout(_runTour, 1500);
+        // Start watching for user to enter Anchor-S4 section before showing tour
+        _waitForILSThenTour();
     }
 
     if (document.readyState === 'loading') {

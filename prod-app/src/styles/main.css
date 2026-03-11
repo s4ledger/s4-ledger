@@ -2415,7 +2415,7 @@ button:disabled,button[disabled],.btn:disabled{opacity:0.45!important;cursor:not
 #dodConsentBanner h2{font-weight:700!important;letter-spacing:-0.03em!important}
 
 /* WAL sidebar — premium */
-.wallet-sidebar{box-shadow:-8px 0 40px rgba(0,0,0,0.08)!important;border-left:1px solid rgba(0,0,0,0.06)!important}
+.wallet-sidebar{box-shadow:-8px 0 40px rgba(0,0,0,0.08)!important;border-left:1px solid rgba(0,0,0,0.06)!important;z-index:10001!important}
 
 /* Walkthrough overlay — premium glass */
 .wt-container{border-radius:12px!important;box-shadow:0 24px 80px rgba(0,0,0,0.12)!important;border:1px solid rgba(0,0,0,0.08)!important}
@@ -6044,9 +6044,8 @@ h4{font-size:0.95rem;font-weight:700}
     will-change:transform,opacity;
 }
 /* Anti-overlap: ensure z-index layering */
-.wallet-overlay{z-index:10000}
 .wallet-sidebar{z-index:10001}
-.s4-avatar-popover{z-index:1001}
+.s4-avatar-popover{z-index:10002}
 .s4-cmd-palette{z-index:9999}
 .s4-tour-overlay{z-index:99998}
 .s4-tour-tip{z-index:99999}

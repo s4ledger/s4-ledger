@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.12.3] — 2026-03-10
+### Fixed
+- Prod-app: full visual parity with demo-app — ported all UI/color changes from past 2 days
+- Prod-app acquisition.js, milestones.js: synced dark-theme color palette (#0d1117 backgrounds, rgba(255,255,255,…) borders, #fff text, #c9a84c gold accent)
+- Prod-app engine.js: 133 targeted color replacements (backgrounds, borders, text, blur, accents) while preserving all functional/auth differences
+- Prod-app enhancements.js: ported onboarding tour improvements (_waitForILSThenTour, showSection calls, guard clause)
+- Prod-app scroll.js: chart range button border color synced (rgba(201,168,76,0.3))
+- Prod-app main.css: wallet-sidebar z-index 10001, avatar-popover z-index 10002, removed stale wallet-overlay rule
+- Prod-app index.html: updated all asset hashes to match fresh build output
+
 ## [5.12.2] — 2026-03-10
 ### Fixed
 - Onboarding tour steps 1 ("Workflow Presets") and 3 ("Tool Cards & Hover Previews"): now navigate into the ILS section before highlighting, so the target elements are actually visible on screen

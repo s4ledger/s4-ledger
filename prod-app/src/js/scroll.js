@@ -207,7 +207,7 @@ function setChartRange(range) {
     const btn = document.getElementById('chart' + range.charAt(0).toUpperCase() + range.slice(1));
     if (btn) {
         btn.style.background = 'rgba(26,58,92,0.2)';
-        btn.style.border = '1px solid rgba(0,170,255,0.3)';
+        btn.style.border = '1px solid rgba(201,168,76,0.3)';
         btn.style.color = '#00aaff';
         btn.style.fontWeight = '700';
     }

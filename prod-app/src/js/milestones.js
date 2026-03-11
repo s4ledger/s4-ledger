@@ -10,7 +10,7 @@
     // -- Delivery Status States --
     var MIL_STATUSES = ['On Track','At Risk','Delayed','Complete','Cancelled'];
     var MIL_STATUS_COLORS = {
-        'On Track':'#4ecb71','At Risk':'#ffa500','Delayed':'#ff4444',
+        'On Track':'#4ecb71','At Risk':'#c9a84c','Delayed':'#ff4444',
         'Complete':'#00cc88','Cancelled':'#8b949e'
     };
 
@@ -92,14 +92,14 @@
         var logs = rowId ? _milAuditLog.filter(function(l) { return l.rowId === String(rowId); }) : _milAuditLog;
         if (!logs.length) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('No milestone audit history.', 'info'); return; }
         var html = '<div style="max-height:400px;overflow:auto;font-size:0.8rem"><table style="width:100%;border-collapse:collapse">';
-        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.1);color:var(--steel)"><th style="padding:6px;text-align:left">Time</th><th style="padding:6px;text-align:left">Action</th><th style="padding:6px;text-align:left">Details</th><th style="padding:6px;text-align:left">User</th></tr>';
+        html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:var(--steel)"><th style="padding:6px;text-align:left">Time</th><th style="padding:6px;text-align:left">Action</th><th style="padding:6px;text-align:left">Details</th><th style="padding:6px;text-align:left">User</th></tr>';
         logs.slice().reverse().forEach(function(l) {
-            html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04)"><td style="padding:4px 6px;color:var(--muted);white-space:nowrap">' + new Date(l.timestamp).toLocaleString() + '</td><td style="padding:4px 6px;color:#00aaff;font-weight:600">' + l.action + '</td><td style="padding:4px 6px;color:var(--steel)">' + (l.details || '').substring(0,80) + '</td><td style="padding:4px 6px;color:var(--muted)">' + l.user + '</td></tr>';
+            html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.04)"><td style="padding:4px 6px;color:var(--muted);white-space:nowrap">' + new Date(l.timestamp).toLocaleString() + '</td><td style="padding:4px 6px;color:#00aaff;font-weight:600">' + l.action + '</td><td style="padding:4px 6px;color:var(--steel)">' + (l.details || '').substring(0,80) + '</td><td style="padding:4px 6px;color:var(--muted)">' + l.user + '</td></tr>';
         });
         html += '</table></div>';
         var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:9999;display:flex;align-items:center;justify-content:center';
-        overlay.innerHTML = '<div style="background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:6px;padding:24px;max-width:700px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.12)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:var(--text,#1d1d1f)"><i class="fas fa-history" style="color:var(--accent,#00aaff);margin-right:8px"></i>Milestone Audit Log</h4><button style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center';
+        overlay.innerHTML = '<div style="background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:700px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Milestone Audit Log</h4><button style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
         overlay.querySelector('button').addEventListener('click', function() { overlay.remove(); });
         overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
         document.body.appendChild(overlay);
@@ -175,24 +175,24 @@
     function milShowVesselTypeEditor() {
         var selectedProg = (_milSelectedPrograms && _milSelectedPrograms.length === 1) ? _milSelectedPrograms[0] : (_milPrograms[0] || 'PMS 300');
         var types = _getVesselTypesForProgram(selectedProg);
-        var html = '<div style="margin-bottom:12px"><label style="color:var(--steel);font-size:0.82rem">Program: <select id="milVTEProgSelect" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:4px 8px;font-size:0.8rem;margin-left:6px">';
+        var html = '<div style="margin-bottom:12px"><label style="color:var(--steel);font-size:0.82rem">Program: <select id="milVTEProgSelect" style="background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:4px 8px;font-size:0.8rem;margin-left:6px">';
         _milPrograms.forEach(function(p) {
             html += '<option value="' + p.replace(/"/g,'&quot;') + '"' + (p === selectedProg ? ' selected' : '') + '>' + p + '</option>';
         });
         html += '</select></label></div>';
         html += '<div id="milVTEList" style="max-height:300px;overflow-y:auto;margin-bottom:12px">';
         types.forEach(function(v) {
-            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px;border-bottom:1px solid rgba(0,0,0,0.04)">';
-            html += '<span style="color:var(--text,#1d1d1f);font-size:0.85rem"><i class="fas fa-ship" style="color:var(--accent);margin-right:6px;font-size:0.7rem"></i>' + v + '</span>';
+            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px;border-bottom:1px solid rgba(255,255,255,0.04)">';
+            html += '<span style="color:#fff;font-size:0.85rem"><i class="fas fa-ship" style="color:var(--accent);margin-right:6px;font-size:0.7rem"></i>' + v + '</span>';
             html += '<button style="background:rgba(255,51,51,0.12);border:1px solid rgba(255,51,51,0.25);color:#ff3333;border-radius:3px;padding:2px 8px;font-size:0.7rem;cursor:pointer" data-vtype="' + v + '">&times;</button>';
             html += '</div>';
         });
         html += '</div>';
-        html += '<div style="display:flex;gap:6px"><input id="milVTENewInput" type="text" placeholder="New vessel type..." style="flex:1;background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:5px 8px;font-size:0.8rem"><button id="milVTEAddBtn" style="background:rgba(0,170,255,0.2);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:3px;padding:5px 12px;cursor:pointer;font-size:0.8rem;font-weight:600"><i class="fas fa-plus"></i> Add</button></div>';
+        html += '<div style="display:flex;gap:6px"><input id="milVTENewInput" type="text" placeholder="New vessel type..." style="flex:1;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.8rem"><button id="milVTEAddBtn" style="background:rgba(0,170,255,0.2);border:1px solid rgba(0,170,255,0.3);color:#00aaff;border-radius:3px;padding:5px 12px;cursor:pointer;font-size:0.8rem;font-weight:600"><i class="fas fa-plus"></i> Add</button></div>';
 
         var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:9999;display:flex;align-items:center;justify-content:center';
-        overlay.innerHTML = '<div style="background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:6px;padding:24px;max-width:500px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.12)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:var(--text,#1d1d1f)"><i class="fas fa-ship" style="color:var(--accent,#00aaff);margin-right:8px"></i>Vessel Type Editor</h4><button class="milVTEClose" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center';
+        overlay.innerHTML = '<div style="background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:500px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>Vessel Type Editor</h4><button class="milVTEClose" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
         document.body.appendChild(overlay);
 
         // Wire events
@@ -304,10 +304,10 @@
         var html = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">';
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#00aaff;font-size:1.4rem">' + total + '</div><div class="stat-mini-lbl">Total Milestones</div></div>';
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#4ecb71;font-size:1.4rem">' + onTrack + '</div><div class="stat-mini-lbl">On Track</div></div>';
-        html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#ffa500;font-size:1.4rem">' + atRisk + '</div><div class="stat-mini-lbl">At Risk</div></div>';
+        html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#c9a84c;font-size:1.4rem">' + atRisk + '</div><div class="stat-mini-lbl">At Risk</div></div>';
         html += '<div class="stat-mini" style="text-align:center"><div class="stat-mini-val" style="color:#ff4444;font-size:1.4rem">' + delayed + '</div><div class="stat-mini-lbl">Delayed</div></div>';
         html += '</div>';
-        html += '<div class="stat-mini" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;padding:10px 14px"><div class="stat-mini-lbl" style="margin:0;white-space:nowrap"><i class="fas fa-calendar-check" style="color:var(--accent,#00aaff);margin-right:6px"></i>Next Milestone</div><div style="color:var(--accent,#00aaff);font-size:0.95rem;font-weight:600">' + nextMilestone + '</div></div>';
+        html += '<div class="stat-mini" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;padding:10px 14px"><div class="stat-mini-lbl" style="margin:0;white-space:nowrap"><i class="fas fa-calendar-check" style="color:#c9a84c;margin-right:6px"></i>Next Milestone</div><div style="color:#c9a84c;font-size:0.95rem;font-weight:600">' + nextMilestone + '</div></div>';
 
         // Status + Program row with dropdowns
         html += '<div style="display:flex;gap:10px;margin-bottom:16px">';
@@ -315,11 +315,11 @@
         html += '<div id="milDDStatusTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#00aaff;font-weight:700;font-size:1rem">' + total + '</span> <span style="color:var(--steel);font-size:0.82rem">across ' + MIL_STATUSES.length + ' statuses</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Delivery Status</div>';
-        html += '<div id="milDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.1)">';
+        html += '<div id="milDDStatus" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         MIL_STATUSES.forEach(function(s) {
             var cnt = statusCounts[s] || 0;
             var sc = MIL_STATUS_COLORS[s] || '#8b949e';
-            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(0,0,0,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
+            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(255,255,255,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<span style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:' + sc + ';display:inline-block"></span><span style="color:var(--steel)">' + s + '</span></span>';
             html += '<span style="color:' + sc + ';font-weight:700">' + cnt + '</span></div>';
         });
@@ -327,14 +327,14 @@
 
         // Programs summary
         html += '<div id="milDDProgTrigger" class="stat-mini" style="flex:1;position:relative;cursor:pointer;overflow:visible">';
-        html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:var(--accent,#00aaff);font-weight:700;font-size:1rem">' + progCount + '</span> <span style="color:var(--steel);font-size:0.82rem">active programs</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
+        html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px"><div><span style="color:#c9a84c;font-weight:700;font-size:1rem">' + progCount + '</span> <span style="color:var(--steel);font-size:0.82rem">active programs</span></div><i class="fas fa-chevron-down" style="color:var(--muted);font-size:0.7rem"></i></div>';
         html += '<div class="stat-mini-lbl" style="margin-top:4px">Programs</div>';
-        html += '<div id="milDDProg" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.1)">';
+        html += '<div id="milDDProg" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:6px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
         Object.keys(programs).sort().forEach(function(p) {
             var cnt = data.filter(function(r){ return r.program_name === p; }).length;
-            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(0,0,0,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
+            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:0.8rem" onmouseover="this.style.background=\'rgba(255,255,255,0.04)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<span style="color:var(--steel)">' + p + '</span>';
-            html += '<span style="color:var(--accent,#00aaff);font-weight:700">' + cnt + '</span></div>';
+            html += '<span style="color:#c9a84c;font-weight:700">' + cnt + '</span></div>';
         });
         html += '</div></div>';
         html += '</div>';
@@ -411,7 +411,7 @@
         var html = '<div style="overflow-x:auto">';
         html += '<table class="mil-grid-table" style="width:100%;border-collapse:collapse;font-size:0.78rem">';
         // Header
-        html += '<thead><tr style="background:rgba(0,0,0,0.02);border-bottom:2px solid var(--border)">';
+        html += '<thead><tr style="background:rgba(255,255,255,0.03);border-bottom:2px solid var(--border)">';
         html += '<th style="padding:8px 4px;width:36px"><input type="checkbox" id="milSelectAll" style="accent-color:#00aaff"></th>';
         MIL_COLUMNS.forEach(function(c) {
             var sortIcon = '';
@@ -428,22 +428,22 @@
             var isEditing = _milEditingId === rid;
             var sc = MIL_STATUS_COLORS[row.delivery_status] || '#8b949e';
             var bgRow = _milBulkSelected[rid] ? 'rgba(0,170,255,0.06)' : 'transparent';
-            html += '<tr data-rid="' + rid + '" style="border-bottom:1px solid rgba(0,0,0,0.04);background:' + bgRow + '">';
+            html += '<tr data-rid="' + rid + '" style="border-bottom:1px solid rgba(255,255,255,0.04);background:' + bgRow + '">';
             html += '<td style="padding:6px 4px;text-align:center"><input type="checkbox" class="milRowCb" data-rid="' + rid + '"' + (_milBulkSelected[rid] ? ' checked' : '') + ' style="accent-color:#00aaff"></td>';
             MIL_COLUMNS.forEach(function(c) {
                 var val = row[c.key] !== undefined && row[c.key] !== null ? row[c.key] : '';
                 if (isEditing) {
                     if (c.type === 'select') {
                         var opts = c.dynamic ? _getVesselTypesForProgram(row.program_name || 'PMS 300') : (c.options || []);
-                        html += '<td style="padding:4px 2px"><select class="milEditField" data-key="' + c.key + '" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem">';
+                        html += '<td style="padding:4px 2px"><select class="milEditField" data-key="' + c.key + '" style="background:#2c2c2e;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem">';
                         opts.forEach(function(o) {
                             html += '<option value="' + o + '"' + (val === o ? ' selected' : '') + '>' + o + '</option>';
                         });
                         html += '</select></td>';
                     } else if (c.type === 'textarea') {
-                        html += '<td style="padding:4px 2px"><textarea class="milEditField" data-key="' + c.key + '" rows="2" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem;resize:vertical">' + val + '</textarea></td>';
+                        html += '<td style="padding:4px 2px"><textarea class="milEditField" data-key="' + c.key + '" rows="2" style="background:#2c2c2e;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem;resize:vertical">' + val + '</textarea></td>';
                     } else {
-                        html += '<td style="padding:4px 2px"><input type="' + (c.type === 'date' ? 'date' : c.type === 'number' ? 'number' : 'text') + '" class="milEditField" data-key="' + c.key + '" value="' + val + '" style="background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem"></td>';
+                        html += '<td style="padding:4px 2px"><input type="' + (c.type === 'date' ? 'date' : c.type === 'number' ? 'number' : 'text') + '" class="milEditField" data-key="' + c.key + '" value="' + val + '" style="background:#2c2c2e;color:#fff;border:1px solid rgba(0,170,255,0.3);border-radius:2px;padding:3px 4px;width:100%;font-size:0.78rem"></td>';
                     }
                 } else {
                     var display = val;
@@ -454,7 +454,7 @@
                     if (c.key === 'owld_date' && val) {
                         var owldD = new Date(val);
                         var now = new Date();
-                        var owldColor = owldD < now ? '#ff4444' : '#ffa500';
+                        var owldColor = owldD < now ? '#ff4444' : '#c9a84c';
                         display = '<span style="color:' + owldColor + ';font-weight:600">' + _fmtDate(val) + '</span>';
                     }
                     html += '<td style="padding:6px 4px;color:var(--steel);white-space:nowrap;max-width:' + c.width + ';overflow:hidden;text-overflow:ellipsis" title="' + String(val).replace(/"/g,'&quot;') + '">' + display + '</td>';
@@ -464,7 +464,7 @@
             html += '<td style="padding:6px 4px;text-align:center;white-space:nowrap">';
             if (isEditing) {
                 html += '<button class="milSaveBtn" data-rid="' + rid + '" style="background:rgba(0,204,136,0.15);border:1px solid rgba(0,204,136,0.3);color:#00cc88;border-radius:2px;padding:3px 8px;cursor:pointer;font-size:0.72rem;margin-right:2px" title="Save"><i class="fas fa-check"></i></button>';
-                html += '<button class="milCancelBtn" data-rid="' + rid + '" style="background:rgba(0,0,0,0.035);border:1px solid rgba(0,0,0,0.08);color:var(--muted);border-radius:2px;padding:3px 8px;cursor:pointer;font-size:0.72rem" title="Cancel"><i class="fas fa-times"></i></button>';
+                html += '<button class="milCancelBtn" data-rid="' + rid + '" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--muted);border-radius:2px;padding:3px 8px;cursor:pointer;font-size:0.72rem" title="Cancel"><i class="fas fa-times"></i></button>';
             } else {
                 html += '<button class="milEditBtn" data-rid="' + rid + '" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:#00aaff;border-radius:2px;padding:3px 8px;cursor:pointer;font-size:0.72rem;margin-right:2px" title="Edit"><i class="fas fa-pen"></i></button>';
                 html += '<button class="milDeleteBtn" data-rid="' + rid + '" style="background:rgba(255,51,51,0.1);border:1px solid rgba(255,51,51,0.2);color:#ff3333;border-radius:2px;padding:3px 8px;cursor:pointer;font-size:0.72rem" title="Delete"><i class="fas fa-trash"></i></button>';
@@ -478,11 +478,11 @@
                 MIL_COLUMNS.forEach(function(c) {
                     var v = row[c.key] || '-';
                     if (c.type === 'date' && row[c.key]) v = _fmtDate(row[c.key]);
-                    html += '<div><span style="color:var(--muted);font-size:0.72rem">' + c.label + '</span><div style="color:var(--text,#1d1d1f)">' + v + '</div></div>';
+                    html += '<div><span style="color:var(--muted);font-size:0.72rem">' + c.label + '</span><div style="color:#fff">' + v + '</div></div>';
                 });
                 html += '</div>';
                 if (row.acquisition_plan_id) {
-                    html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.06);font-size:0.78rem"><i class="fas fa-link" style="color:var(--accent);margin-right:4px"></i><span style="color:var(--steel)">Linked to Acquisition Plan record: </span><span style="color:#00aaff">' + row.acquisition_plan_id + '</span></div>';
+                    html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);font-size:0.78rem"><i class="fas fa-link" style="color:var(--accent);margin-right:4px"></i><span style="color:var(--steel)">Linked to Acquisition Plan record: </span><span style="color:#00aaff">' + row.acquisition_plan_id + '</span></div>';
                 }
                 html += '</td></tr>';
             }
@@ -795,13 +795,13 @@
             { key:'contract_award_date', color:'#8b949e', label:'Contract Award', symbol:'◆' },
             { key:'construction_start_date', color:'#00aaff', label:'Construction Start', symbol:'◆' },
             { key:'launch_date', color:'#a855f7', label:'Launch', symbol:'◆' },
-            { key:'builders_trials_date', color:'#ffa500', label:'Builders Trials', symbol:'◆' },
+            { key:'builders_trials_date', color:'#c9a84c', label:'Builders Trials', symbol:'◆' },
             { key:'acceptance_trials_date', color:'#ff9500', label:'Acceptance Trials', symbol:'◆' },
             { key:'contract_delivery_date', color:'#ff4444', label:'Contract Delivery', symbol:'▼' },
             { key:'planned_delivery_date', color:'#4ecb71', label:'Planned Delivery', symbol:'●' },
             { key:'pm_estimated_delivery', color:'#00cc88', label:'PM Est Delivery', symbol:'●' },
             { key:'sail_away_date', color:'#00aaff', label:'Sail Away', symbol:'►' },
-            { key:'arrival_date', color:'#00cc88', label:'Arrival', symbol:'★' }
+            { key:'arrival_date', color:'#c9a84c', label:'Arrival', symbol:'★' }
         ];
 
         var now = new Date();
@@ -834,7 +834,7 @@
         }
 
         var html = '<div class="mil-gantt-wrap">';
-        html += '<div style="font-size:0.88rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:8px"><i class="fas fa-chart-gantt" style="color:#a855f7;margin-right:6px"></i>Milestone Timeline <span style="font-size:0.72rem;color:var(--muted);margin-left:8px">(scroll horizontally)</span></div>';
+        html += '<div style="font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:8px"><i class="fas fa-chart-gantt" style="color:#a855f7;margin-right:6px"></i>Milestone Timeline <span style="font-size:0.72rem;color:var(--muted);margin-left:8px">(scroll horizontally)</span></div>';
 
         // Legend
         html += '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;font-size:0.72rem">';
@@ -844,20 +844,20 @@
         html += '</div>';
 
         // Scrollable container
-        html += '<div style="overflow-x:auto;border:1px solid rgba(0,0,0,0.06);border-radius:3px">';
+        html += '<div style="overflow-x:auto;border:1px solid rgba(255,255,255,0.08);border-radius:3px">';
 
         // Year/month ruler
         html += '<div style="display:flex">';
-        html += '<div style="flex:0 0 ' + labelW + 'px;padding:6px 8px;font-size:0.72rem;color:var(--muted);background:#fff;border-bottom:2px solid var(--border);position:sticky;left:0;z-index:10">Vessel</div>';
+        html += '<div style="flex:0 0 ' + labelW + 'px;padding:6px 8px;font-size:0.72rem;color:var(--muted);background:#2c2c2e;border-bottom:2px solid var(--border);position:sticky;left:0;z-index:10">Vessel</div>';
         html += '<div style="width:' + totalWidth + 'px;position:relative;height:40px;background:rgba(0,0,0,0.15);border-bottom:2px solid var(--border)">';
         for (var y = yearStart; y <= yearEnd; y++) {
             var xYear = (y - yearStart) * 12 * MONTH_PX;
             var isNowYear = y === now.getFullYear();
-            html += '<div style="position:absolute;left:' + xYear + 'px;top:0;height:100%;border-left:1px solid ' + (isNowYear ? 'rgba(0,170,255,0.4)' : 'rgba(0,0,0,0.1)') + '">';
-            html += '<span style="position:absolute;top:2px;left:4px;font-size:0.78rem;font-weight:' + (isNowYear ? '700' : '400') + ';color:' + (isNowYear ? '#00aaff' : 'rgba(0,0,0,0.35)') + '">' + y + '</span></div>';
+            html += '<div style="position:absolute;left:' + xYear + 'px;top:0;height:100%;border-left:1px solid ' + (isNowYear ? 'rgba(0,170,255,0.4)' : 'rgba(255,255,255,0.1)') + '">';
+            html += '<span style="position:absolute;top:2px;left:4px;font-size:0.78rem;font-weight:' + (isNowYear ? '700' : '400') + ';color:' + (isNowYear ? '#00aaff' : 'rgba(255,255,255,0.35)') + '">' + y + '</span></div>';
             for (var m = 0; m < 12; m++) {
                 var xMonth = xYear + m * MONTH_PX;
-                if (m > 0) html += '<div style="position:absolute;left:' + xMonth + 'px;top:24px;height:16px;border-left:1px solid rgba(0,0,0,0.04)"></div>';
+                if (m > 0) html += '<div style="position:absolute;left:' + xMonth + 'px;top:24px;height:16px;border-left:1px solid rgba(255,255,255,0.04)"></div>';
             }
         }
         // Today marker
@@ -870,12 +870,12 @@
         // Vessel rows
         data.forEach(function(r, idx) {
             var sc = MIL_STATUS_COLORS[r.delivery_status] || '#8b949e';
-            var bgAlt = idx % 2 === 0 ? 'rgba(0,0,0,0.01)' : 'rgba(0,0,0,0.03)';
-            html += '<div style="display:flex;min-width:' + (labelW + totalWidth) + 'px;border-bottom:1px solid rgba(0,0,0,0.04);background:' + bgAlt + '">';
+            var bgAlt = idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.03)';
+            html += '<div style="display:flex;min-width:' + (labelW + totalWidth) + 'px;border-bottom:1px solid rgba(255,255,255,0.04);background:' + bgAlt + '">';
             // Label
-            var stickyBg = idx % 2 === 0 ? '#f5f5f7' : '#eeeef0';
-            html += '<div style="flex:0 0 ' + labelW + 'px;padding:10px 8px;font-size:0.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:' + stickyBg + ';position:sticky;left:0;z-index:10;border-right:1px solid rgba(0,0,0,0.06)">';
-            html += '<strong style="color:var(--text,#1d1d1f)">' + (r.hull_number || '-') + '</strong>';
+            var stickyBg = idx % 2 === 0 ? '#2c2c2e' : '#3a3a3c';
+            html += '<div style="flex:0 0 ' + labelW + 'px;padding:10px 8px;font-size:0.8rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:' + stickyBg + ';position:sticky;left:0;z-index:10;border-right:1px solid rgba(255,255,255,0.06)">';
+            html += '<strong style="color:#fff">' + (r.hull_number || '-') + '</strong>';
             html += ' <span style="font-size:0.6rem;padding:1px 4px;border-radius:2px;background:' + sc + '22;color:' + sc + '">' + (r.delivery_status || '') + '</span>';
             html += '<div style="font-size:0.65rem;color:var(--muted)">' + (r.vessel_type || '') + ' | ' + (r.ship_builder || '') + '</div>';
             html += '</div>';
@@ -884,7 +884,7 @@
             // Year grid lines
             for (var y2 = yearStart; y2 <= yearEnd; y2++) {
                 var xY2 = (y2 - yearStart) * 12 * MONTH_PX;
-                html += '<div style="position:absolute;left:' + xY2 + 'px;top:0;bottom:0;border-left:1px solid rgba(0,0,0,0.03)"></div>';
+                html += '<div style="position:absolute;left:' + xY2 + 'px;top:0;bottom:0;border-left:1px solid rgba(255,255,255,0.03)"></div>';
             }
             if (todayPx >= 0) html += '<div style="position:absolute;left:' + todayPx + 'px;top:0;bottom:0;border-left:2px dashed rgba(0,170,255,0.15);z-index:2"></div>';
 
@@ -903,7 +903,7 @@
                 var px = dateToPx(d);
                 if (px < 0) return;
                 // Diamond shape via rotated square
-                html += '<div style="position:absolute;left:' + (px - 6) + 'px;top:14px;width:12px;height:12px;background:' + mk.color + ';transform:rotate(45deg);border:1px solid rgba(0,0,0,0.15);z-index:3;cursor:pointer;border-radius:1px" title="' + mk.label + ': ' + _fmtDate(r[mk.key]) + '"></div>';
+                html += '<div style="position:absolute;left:' + (px - 6) + 'px;top:14px;width:12px;height:12px;background:' + mk.color + ';transform:rotate(45deg);border:1px solid rgba(0,0,0,0.5);z-index:3;cursor:pointer;border-radius:1px" title="' + mk.label + ': ' + _fmtDate(r[mk.key]) + '"></div>';
             });
             html += '</div></div>';
         });
@@ -931,14 +931,14 @@
         html += '<button class="acq-prog-btn acq-prog-active" id="milProgDDBtnTrigger" style="min-width:200px;text-align:left;display:flex;justify-content:space-between;align-items:center">';
         var selLabel = !selectedSet ? 'All Programs (' + _milPrograms.length + ')' : selectedSet.length + ' of ' + _milPrograms.length + ' selected';
         html += '<span>' + selLabel + '</span> <i class="fas fa-chevron-down" style="font-size:0.65rem;margin-left:8px;opacity:0.6"></i></button>';
-        html += '<div id="milProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.1)">';
-        html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:0.82rem;color:#86868b;border-bottom:1px solid rgba(0,0,0,0.06);margin-bottom:4px"><input type="checkbox" id="milProgAll"' + (!selectedSet ? ' checked' : '') + ' style="accent-color:#00aaff;width:15px;height:15px"> <strong style="color:var(--text,#1d1d1f)">All Programs</strong></label>';
+        html += '<div id="milProgDropdownPanel" style="display:none;position:absolute;top:100%;left:0;z-index:100;min-width:280px;max-height:300px;overflow-y:auto;background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:3px;margin-top:4px;padding:8px 0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">';
+        html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:0.82rem;color:#8b949e;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:4px"><input type="checkbox" id="milProgAll"' + (!selectedSet ? ' checked' : '') + ' style="accent-color:#00aaff;width:15px;height:15px"> <strong style="color:#fff">All Programs</strong></label>';
         _milPrograms.forEach(function(p) {
             var checked = !selectedSet || selectedSet.indexOf(p) >= 0;
             html += '<label style="display:flex;align-items:center;gap:8px;padding:4px 12px;cursor:pointer;font-size:0.82rem;color:var(--steel)" data-prog="' + p.replace(/"/g, '&quot;') + '" onmouseover="this.style.background=\'rgba(0,170,255,0.06)\'" onmouseout="this.style.background=\'transparent\'">';
             html += '<input type="checkbox" class="milProgCb" data-prog="' + p.replace(/"/g, '&quot;') + '"' + (checked ? ' checked' : '') + ' style="accent-color:#00aaff;width:15px;height:15px"> ' + p + '</label>';
         });
-        html += '<div style="border-top:1px solid rgba(0,0,0,0.06);margin-top:4px;padding:6px 12px"><div style="display:flex;gap:6px"><input id="milNewProgInput" type="text" placeholder="Add new program..." style="flex:1;background:#fff;color:var(--text,#1d1d1f);border:1px solid rgba(0,0,0,0.12);border-radius:3px;padding:5px 8px;font-size:0.8rem">';
+        html += '<div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:4px;padding:6px 12px"><div style="display:flex;gap:6px"><input id="milNewProgInput" type="text" placeholder="Add new program..." style="flex:1;background:#2c2c2e;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:5px 8px;font-size:0.8rem">';
         html += '<button id="milAddProgBtn" class="acq-prog-btn" style="padding:4px 10px;font-size:0.78rem"><i class="fas fa-plus"></i></button></div></div>';
         html += '</div></div>';
         if (selectedSet && selectedSet.length < _milPrograms.length) {
@@ -1234,12 +1234,12 @@
                 var briefText = slideTexts.join('\n\n');
                 // Show confirmation overlay
                 var overlay = document.createElement('div');
-                overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.85);z-index:10001;display:flex;align-items:center;justify-content:center';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10001;display:flex;align-items:center;justify-content:center';
                 var modal = document.createElement('div');
-                modal.style.cssText = 'background:#fff;border:1px solid rgba(168,85,247,0.3);border-radius:6px;padding:24px;max-width:700px;width:90%;max-height:80vh;display:flex;flex-direction:column';
+                modal.style.cssText = 'background:#2c2c2e;border:1px solid rgba(168,85,247,0.3);border-radius:6px;padding:24px;max-width:700px;width:90%;max-height:80vh;display:flex;flex-direction:column';
                 modal.innerHTML = '<div style="color:#a855f7;font-weight:700;font-size:1.1rem;margin-bottom:12px"><i class="fas fa-file-powerpoint" style="margin-right:8px"></i>Brief Extracted: ' + file.name + '</div>'
                     + '<div style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">' + slideFiles.length + ' slides extracted (' + briefText.length + ' characters). The AI agent will scan this content for vessel names, milestone dates, and schedule updates.</div>'
-                    + '<div style="flex:1;overflow:auto;background:rgba(0,0,0,0.02);border:1px solid var(--border);border-radius:3px;padding:12px;margin-bottom:16px;font-size:0.78rem;color:var(--muted);white-space:pre-wrap;max-height:300px">' + briefText.substring(0, 3000).replace(/</g, '&lt;') + (briefText.length > 3000 ? '\n\n[... truncated for preview ...]' : '') + '</div>'
+                    + '<div style="flex:1;overflow:auto;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;padding:12px;margin-bottom:16px;font-size:0.78rem;color:var(--muted);white-space:pre-wrap;max-height:300px">' + briefText.substring(0, 3000).replace(/</g, '&lt;') + (briefText.length > 3000 ? '\n\n[... truncated for preview ...]' : '') + '</div>'
                     + '<div style="display:flex;gap:8px;justify-content:flex-end">'
                     + '<button id="milPptxCancel" style="background:var(--surface);border:1px solid var(--border);color:var(--steel);border-radius:3px;padding:8px 20px;cursor:pointer;font-family:inherit">Cancel</button>'
                     + '<button id="milPptxSend" style="background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;border-radius:3px;padding:8px 20px;cursor:pointer;font-family:inherit;font-weight:600"><i class="fas fa-robot" style="margin-right:6px"></i>Send to AI Agent</button>'
