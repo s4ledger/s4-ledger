@@ -7085,6 +7085,8 @@ function _drlMakeCellEditable(td, rowIdx, fieldKey, prefix) {
         renderDrlStatusTable(prefix || '');
         if (prefix === 'sub') renderDrlStatusTable('');
         else renderDrlStatusTable('sub');
+        // TODO: POST updated row to backend API to persist and anchor the change
+        // e.g. fetch('/api/drl/update', { method:'POST', body: JSON.stringify({ rowIdx, fieldKey, value: val }) })
         if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Cell updated & anchored.', 'success');
     }
     input.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
@@ -7099,6 +7101,8 @@ function drlSetStatus(rowIdx, newStatus, prefix) {
     var data = window._drlTrackerData || _drlDemoData;
     if (!data[rowIdx]) return;
     data[rowIdx].status = newStatus;
+    // TODO: POST status change to backend API to persist and anchor
+    // e.g. fetch('/api/drl/status', { method:'POST', body: JSON.stringify({ rowIdx, status: newStatus }) })
     renderDrlStatusTable(prefix || '');
     if (prefix === 'sub') renderDrlStatusTable('');
     else renderDrlStatusTable('sub');
@@ -7113,6 +7117,8 @@ function drlAddWorkflowLink(rowIdx, prefix) {
     url = url.trim();
     if (!/^https?:\/\//i.test(url)) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Please enter a valid URL starting with http:// or https://', 'warning'); return; }
     data[rowIdx].workflowLink = url;
+    // TODO: POST workflow link to backend API to persist and anchor
+    // e.g. fetch('/api/drl/workflow-link', { method:'POST', body: JSON.stringify({ rowIdx, url }) })
     renderDrlStatusTable(prefix || '');
     if (prefix === 'sub') renderDrlStatusTable('');
     else renderDrlStatusTable('sub');
@@ -7140,7 +7146,7 @@ function renderDrlStatusTable(prefix) {
         var td = 'padding:6px 7px;border-color:var(--border);white-space:nowrap;cursor:pointer';
         var tdW = 'padding:6px 7px;border-color:var(--border);max-width:180px;cursor:pointer';
         var pre2 = pre ? "'" + pre + "'" : "''";
-        function ec(key, val, style) { return '<td style="' + style + '" ondblclick="window._drlMakeCellEditable(this,' + idx + ',\'' + key + '\',' + pre2 + ')" title="Double-click to edit">' + (val || dash) + '</td>'; }
+        function ec(key, val, style) { return '<td style="' + style + '" onclick="window._drlMakeCellEditable(this,' + idx + ',\'' + key + '\',' + pre2 + ')" title="Click to edit">' + (val || dash) + '</td>'; }
         html += '<tr style="background:' + c.bg + ';border-left:3px solid ' + c.badge + '">';
         html += ec('di', '<span style="font-weight:600">' + _escHtml(row.di) + '</span>', td);
         html += ec('transmittalSerial', row.transmittalSerial ? _escHtml(row.transmittalSerial) : '', td);
@@ -7157,7 +7163,7 @@ function renderDrlStatusTable(prefix) {
         html += ec('responseDate', row.responseDate ? _escHtml(row.responseDate) : '', td);
         html += ec('notes', _escHtml(row.notes || ''), tdW);
         // Status badge
-        html += '<td style="' + td + '" ondblclick="window._drlMakeCellEditable(this,' + idx + ',\'status\',' + pre2 + ')" title="Double-click to edit"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;color:#fff;background:' + c.badge + '">' + c.label;
+        html += '<td style="' + td + '" onclick="window._drlMakeCellEditable(this,' + idx + ',\'status\',' + pre2 + ')" title="Click to edit"><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;color:#fff;background:' + c.badge + '">' + c.label;
         if (isOmission && row.status === 'past-due') html += ' <i class="fas fa-flag" title="Repeated omission"></i>';
         html += '</span></td>';
         // Actions column
@@ -7348,6 +7354,8 @@ function importDrlSpreadsheet(prefix) {
                     });
                 }
                 window._drlTrackerData = rows;
+                // TODO: POST imported rows to backend API to create anchored records
+                // e.g. fetch('/api/drl/import', { method:'POST', body: JSON.stringify({ rows }) })
                 renderDrlStatusTable();
                 renderDrlStatusTable('sub');
                 if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Imported ' + rows.length + ' DRL records from ' + file.name, 'success');
