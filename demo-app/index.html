@@ -2096,6 +2096,25 @@
                     <div id="subView-submissions">
 <!-- Branch & Program Selection -->
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                        <div>
+                            <label style="font-size:.78rem;color:var(--steel)">Branch</label>
+                            <select id="subBranch" aria-label="Select submission branch" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                                <option value="USN" selected>Navy</option><option value="USMC">Marine Corps</option><option value="USCG">Coast Guard</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:.78rem;color:var(--steel)">Program / Platform</label>
+                            <select id="subProgram" aria-label="Select submission program" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
+                                <option value="">— Select Program —</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:.78rem;color:var(--steel)">Contract #</label>
+                            <input type="text" id="subContract" class="form-control form-control-sm" placeholder="e.g., N00024-22-C-5312" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem" />
+                        </div>
+                        <div>
+                            <label style="font-size:.78rem;color:var(--steel)">Submission Type</label>
+                            <select id="subType" aria-label="Select submission type" class="form-control form-control-sm" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="VRSL">Vendor Recommended Spares List (VRS)</option>
                                 <option value="IUID">IUID Registry / Serialized List</option>
                                 <option value="CONFIG_DWG">Configuration Drawing / Baseline</option>
@@ -2569,28 +2588,28 @@
 
                         <!-- DRL/DI Status Table — 17 columns -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
-                            <table class="table table-sm" id="drlStatusTable" style="color:var(--text,#1d1d1f);font-size:.74rem;margin:0;min-width:2000px">
-                                <thead style="position:sticky;top:0;background:var(--surface);z-index:1">
+                            <table class="discrepancy-table" id="drlStatusTable" style="min-width:2000px;font-size:.74rem">
+                                <thead>
                                     <tr>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;width:30px;text-align:center"><input type="checkbox" onchange="drlToggleAll(this.checked,'')" title="Select all" style="cursor:pointer;accent-color:#007AFF"></th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">DI Number</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Transmittal Serial #</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">SharePoint Rev</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Coordinated Due Date</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Des Date / Bas. Day?</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Submittal Guidance</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Coord. Calculated Date</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Actual Submission Date</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">RCV D</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Cal. Days to Review</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">SME Reviewer Target</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Release Authority</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Response Posted Date</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Notes</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Status</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Actions</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">Workflow Link</th>
-                                        <th style="color:var(--steel);border-color:var(--border);padding:7px 6px;white-space:nowrap">History</th>
+                                        <th style="width:30px;text-align:center"><input type="checkbox" onchange="drlToggleAll(this.checked,'')" title="Select all" style="cursor:pointer;accent-color:#007AFF"></th>
+                                        <th>DI Number</th>
+                                        <th>Transmittal Serial #</th>
+                                        <th>SharePoint Rev</th>
+                                        <th>Coordinated Due Date</th>
+                                        <th>Des Date / Bas. Day?</th>
+                                        <th>Submittal Guidance</th>
+                                        <th>Coord. Calculated Date</th>
+                                        <th>Actual Submission Date</th>
+                                        <th>RCV D</th>
+                                        <th>Cal. Days to Review</th>
+                                        <th>SME Reviewer Target</th>
+                                        <th>Release Authority</th>
+                                        <th>Response Posted Date</th>
+                                        <th>Notes</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                        <th>Workflow Link</th>
+                                        <th>History</th>
                                     </tr>
                                 </thead>
                                 <tbody id="drlStatusBody"></tbody>
