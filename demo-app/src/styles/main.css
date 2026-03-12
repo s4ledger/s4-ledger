@@ -6312,3 +6312,18 @@ h4{font-size:0.95rem;font-weight:700}
 .ils-hub-panel div[style*="margin-bottom:4px"][style*="border-radius"]{
     margin-bottom:8px !important;
 }
+
+/* ── §51-§57 v5.12.24 — Quick-access features ── */
+.s4-quick-filter-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.s4-pill{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:6px 14px;border-radius:20px;border:1px solid rgba(0,122,255,0.2);
+    background:rgba(0,122,255,0.06);color:#007AFF;
+    font-size:0.76rem;font-weight:600;cursor:pointer;
+    transition:all 0.2s ease;white-space:nowrap;
+}
+.s4-pill:hover{background:rgba(0,122,255,0.12);border-color:rgba(0,122,255,0.35)}
+.s4-pill-active,.s4-pill-active:hover{
+    background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;
+    border-color:transparent;box-shadow:0 2px 8px rgba(0,113,227,0.25);
+}

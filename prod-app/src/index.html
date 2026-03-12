@@ -1211,6 +1211,7 @@
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                             <button onclick="exportDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export DMSMS Report</button>
                             <button onclick="anchorDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button onclick="_s4ExportRiskMitigationPlan()" class="btn btn-sm" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-shield-halved"></i> Export Risk Mitigation Plan</button>
                         </div>
                     </div>
                 </div>
@@ -1253,6 +1254,7 @@
                             <button onclick="exportReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export RAM Report</button>
                             <button onclick="anchorReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                             <button id="dashBtnReadiness" onclick="addToProgramDashboard('readiness')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-th-large"></i> Add to Program Dashboard</button>
+                            <button onclick="_s4CopyReadinessStatement()" class="btn btn-sm hover-lift" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-clipboard"></i> Copy Readiness Statement</button>
                         </div>
                     </div>
                 </div>
@@ -1733,6 +1735,7 @@
                         <button onclick="exportCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-download"></i> Export Scorecard</button>
                         <button onclick="anchorCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         <button id="complianceStmtBtnCompliance" onclick="generateComplianceStatement('compliance')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-signature"></i> Generate Compliance Statement</button>
+                        <button onclick="_s4GenerateEvidencePackage()" class="btn btn-sm hover-lift" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-folder-open"></i> Generate Evidence Package</button>
                     </div>
                 </div>
             </div>
@@ -1793,6 +1796,7 @@
                         <button onclick="loadRiskData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-sync-alt"></i> Refresh Analysis</button>
                         <button onclick="exportRisk()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Risk Report</button>
                         <button onclick="anchorRisk()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="_s4SnapshotForLeadership()" class="btn btn-sm hover-lift" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-bullhorn"></i> Snapshot for Leadership</button>
                     </div>
 
                     <!-- ── AI Remediation Plans ── -->
@@ -1904,9 +1908,8 @@
                         <button onclick="downloadReport()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Download Report</button>
                         <button onclick="anchorReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         <button id="complianceStmtBtnReports" onclick="generateComplianceStatement('reports')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-signature"></i> Generate Compliance Statement</button>
+                        <button onclick="_s4CopyComplianceStatement()" class="btn btn-sm hover-lift" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-clipboard-check"></i> One-Click Compliance Statement</button>
                     </div>
-
-                    <!-- ── Executive Summary Generator ── -->
                     <div style="margin-top:20px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('execSummary')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.06);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-file-lines" style="color:#00aaff"></i>
@@ -2105,12 +2108,12 @@
                         <summary style="cursor:pointer;padding:8px 0;font-size:0.8rem;font-weight:700;color:#00aaff;">How It Works</summary>
                         <p style="font-size:0.82rem;color:var(--steel);margin-bottom:6px;">The Submissions Hub centralizes ILS data ingestion from OEMs, shipbuilders, vendors, and contractors.</p>
                         <ol style="font-size:0.8rem;color:var(--steel);padding-left:18px;margin-bottom:8px;">
-                            <li><strong>Upload submissions</strong> — Drag-and-drop or browse ILS data packages (ALSPs, provisioning docs, CDRLs) from any source.</li>
-                            <li><strong>Auto-compare</strong> — S4 diffs new submissions against previous baselines, flagging discrepancies, cost anomalies, and configuration mismatches.</li>
-                            <li><strong>Red-flag detection</strong> — AI identifies suspicious patterns such as part number changes, cost spikes, and removed components.</li>
-                            <li><strong>Anchor submissions</strong> — Lock each submission to the ledger to prove what was received, when, and from whom.</li>
+                            <li><strong>Upload submissions</strong> &mdash; Drag-and-drop or browse ILS data packages (ALSPs, provisioning docs, CDRLs) from any source.</li>
+                            <li><strong>Auto-compare</strong> &mdash; S4 diffs new submissions against previous baselines, flagging discrepancies, cost anomalies, and configuration mismatches.</li>
+                            <li><strong>Red-flag detection</strong> &mdash; AI identifies suspicious patterns such as part number changes, cost spikes, and removed components.</li>
+                            <li><strong>Anchor submissions</strong> &mdash; Lock each submission to the ledger to prove what was received, when, and from whom.</li>
                         </ol>
-                        <p style="font-size:0.8rem;color:var(--steel);margin-bottom:8px;"><strong>How S4 saves you money:</strong> Manual submission comparison takes 8-16 hours per data package at $150/hr. S4 completes the same comparison in under 2 minutes — saving <strong style="color:#00cc66">90% on labor</strong> and catching discrepancies that manual review misses <strong style="color:#00cc66">40% of the time</strong>.</p>
+                        <p style="font-size:0.8rem;color:var(--steel);margin-bottom:8px;"><strong>How S4 saves you money:</strong> Manual submission comparison takes 8-16 hours per data package at $150/hr. S4 completes the same comparison in under 2 minutes &mdash; saving <strong style="color:#00cc66">90% on labor</strong> and catching discrepancies that manual review misses <strong style="color:#00cc66">40% of the time</strong>.</p>
                     </details>
 
                     <!-- ── View Toggle: Submissions Review vs DRL/DI Status Tracker ── -->
@@ -2310,6 +2313,13 @@
                         <div id="subDrlAiInsights" style="display:none;margin-bottom:14px"></div>
                         <!-- §35 Summary Stats Bar -->
                         <div id="subDrlSummaryBar" style="margin-bottom:12px"></div>
+                        <!-- §51 Quick Filter Pills -->
+                        <div class="s4-quick-filter-pills" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                            <button class="s4-pill s4-pill-active" onclick="_s4QuickFilter('all','sub')"><i class="fas fa-list"></i> All</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('assigned','sub')"><i class="fas fa-user-check"></i> My Assigned</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('overdue','sub')"><i class="fas fa-clock"></i> Overdue</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('thisweek','sub')"><i class="fas fa-calendar-week"></i> This Week</button>
+                        </div>
                         <!-- §36 Saved Views + §40 Compare -->
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <select onchange="drlSwitchView(this.value,'sub')" style="font-size:.76rem;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer">
@@ -2336,9 +2346,8 @@
                             </label>
                         </div>
                         <div id="subDrlSubscribeBanner" style="display:none;background:rgba(255,149,0,0.08);border:1px solid rgba(255,149,0,0.25);border-radius:8px;padding:8px 14px;margin-bottom:10px;font-size:.78rem;color:#ff9500"><i class="fas fa-bell"></i> You will receive email alerts for overdue or high-criticality items in this view.</div>
-                        <!-- Action Buttons (prod-app: includes Import) -->
+                        <!-- Action Buttons -->
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-                            <button onclick="importDrlSpreadsheet('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
                             <button onclick="exportDrlStatusCSV('sub')" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
                             <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
                             <button onclick="drlAiAssist('sub')" id="subDrlAiBtn" class="btn btn-sm" style="font-size:.78rem;background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
@@ -2371,11 +2380,6 @@
                                 </thead>
                                 <tbody id="subDrlStatusBody"></tbody>
                             </table>
-                        </div>
-                        <!-- Empty state (prod) -->
-                        <div id="subDrlEmptyState" style="display:none;min-height:80px;color:var(--steel);font-size:0.85rem;text-align:center;padding:30px 20px;margin-top:12px">
-                            <i class="fas fa-file-import" style="font-size:1.8rem;color:rgba(0,170,255,0.3);margin-bottom:8px;display:block"></i>
-                            Import an existing DRL spreadsheet to begin tracking. Your data stays private and is never uploaded.
                         </div>
                     </div><!-- /subView-drl -->
                 </div>
@@ -2588,23 +2592,30 @@
                     <!-- ══ DRL/DI Status Tracker View (new) ══ -->
                     <div id="cdrlView-drl" style="display:none">
                         <!-- Summary stats row -->
-                        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800" id="drlTotal">0</div><div style="font-size:.72rem;color:var(--steel)">Total Items</div></div>
-                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#34c759" id="drlOnTime">0</div><div style="font-size:.72rem;color:var(--steel)">On Time</div></div>
-                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#ff9500" id="drlApproaching">0</div><div style="font-size:.72rem;color:var(--steel)">Approaching</div></div>
-                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#ff3b30" id="drlOverdue">0</div><div style="font-size:.72rem;color:var(--steel)">Past Due</div></div>
-                            <div class="stat-card" style="flex:1;min-width:110px;text-align:center;padding:10px 8px"><div style="font-size:1.3rem;font-weight:800;color:#af52de" id="drlOmissions">0</div><div style="font-size:.72rem;color:var(--steel)">Omissions</div></div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:14px">
+                            <div class="stat-mini"><div class="stat-mini-val" id="drlTotal" style="color:var(--accent)">0</div><div class="stat-mini-lbl">Total DIs</div></div>
+                            <div class="stat-mini"><div class="stat-mini-val" id="drlOnTime" style="color:#00cc66">0</div><div class="stat-mini-lbl">On Time</div></div>
+                            <div class="stat-mini"><div class="stat-mini-val" id="drlApproaching" style="color:#ffa500">0</div><div class="stat-mini-lbl">Approaching</div></div>
+                            <div class="stat-mini"><div class="stat-mini-val" id="drlOverdue" style="color:#ff4444">0</div><div class="stat-mini-lbl">Past Due</div></div>
+                            <div class="stat-mini"><div class="stat-mini-val" id="drlOmissions" style="color:#cc0000">0</div><div class="stat-mini-lbl">Repeated Omissions</div></div>
                         </div>
 
-                        <!-- Repeated Omission Banner (hidden by default) -->
-                        <div id="drlOmissionBanner" style="display:none;background:rgba(175,82,222,0.08);border:1px solid rgba(175,82,222,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#af52de">
-                            <i class="fas fa-exclamation-triangle"></i> <span id="drlOmissionText"></span>
+                        <!-- Repeated Omission Banner -->
+                        <div id="drlOmissionBanner" style="display:none;background:rgba(204,0,0,0.08);border:1px solid rgba(204,0,0,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;color:#cc0000;font-weight:600">
+                            <i class="fas fa-triangle-exclamation"></i> <span id="drlOmissionText">Repeated omissions detected — review flagged items below</span>
                         </div>
 
                         <!-- AI Insights Panel -->
                         <div id="drlAiInsights" style="display:none;margin-bottom:14px"></div>
                         <!-- §35 Summary Stats Bar -->
                         <div id="drlSummaryBar" style="margin-bottom:12px"></div>
+                        <!-- §51 Quick Filter Pills -->
+                        <div class="s4-quick-filter-pills" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                            <button class="s4-pill s4-pill-active" onclick="_s4QuickFilter('all','')"><i class="fas fa-list"></i> All</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('assigned','')"><i class="fas fa-user-check"></i> My Assigned</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('overdue','')"><i class="fas fa-clock"></i> Overdue</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('thisweek','')"><i class="fas fa-calendar-week"></i> This Week</button>
+                        </div>
                         <!-- §36 Saved Views + §40 Compare -->
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <select onchange="drlSwitchView(this.value,'')" style="font-size:.76rem;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer">
@@ -2632,15 +2643,14 @@
                         </div>
                         <div id="drlSubscribeBanner" style="display:none;background:rgba(255,149,0,0.08);border:1px solid rgba(255,149,0,0.25);border-radius:8px;padding:8px 14px;margin-bottom:10px;font-size:.78rem;color:#ff9500"><i class="fas fa-bell"></i> You will receive email alerts for overdue or high-criticality items in this view.</div>
 
-                        <!-- Action buttons (prod-app: includes Import) -->
-                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-                            <button onclick="importDrlSpreadsheet()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-import"></i> Import Existing Spreadsheet</button>
-                            <button onclick="exportDrlStatusCSV()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
-                            <button onclick="anchorDrlStatus()" class="btn btn-sm" style="font-size:.78rem"><i class="fas fa-link"></i> Anchor to XRPL</button>
-                            <button onclick="drlAiAssist()" id="drlAiBtn" class="btn btn-sm" style="font-size:.78rem;background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
+                        <!-- Action buttons (demo-app: no Import) -->
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+                            <button onclick="exportDrlStatusCSV()" class="btn btn-sm hover-lift" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-csv"></i> Export DRL Status Spreadsheet</button>
+                            <button onclick="anchorDrlStatus()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button onclick="drlAiAssist()" id="drlAiBtn" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-wand-magic-sparkles"></i> AI Assist</button>
                         </div>
 
-                        <!-- 17-Column DRL/DI Status Table -->
+                        <!-- DRL/DI Status Table — 17 columns -->
                         <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
                             <table class="discrepancy-table" id="drlStatusTable" style="min-width:2000px;font-size:.74rem">
                                 <thead>
@@ -2668,12 +2678,6 @@
                                 </thead>
                                 <tbody id="drlStatusBody"></tbody>
                             </table>
-                        </div>
-
-                        <!-- Placeholder when empty (prod: import-centric) -->
-                        <div id="drlEmptyState" style="display:none;min-height:80px;color:var(--steel);font-size:0.85rem;text-align:center;padding:30px 20px;margin-top:12px">
-                            <i class="fas fa-file-import" style="font-size:1.8rem;color:rgba(0,170,255,0.3);margin-bottom:8px;display:block"></i>
-                            Import an existing DRL spreadsheet to begin tracking. Your data stays private and is never uploaded.
                         </div>
                     </div><!-- /cdrlView-drl -->
                 </div>
@@ -2932,6 +2936,7 @@
                         <button onclick="exportAnalyticsCSV()" class="ai-quick-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
                         <button onclick="anchorToLedger('analytics','Cross-program analytics anchored')" class="ai-quick-btn"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         <button id="coBriefBtn" onclick="snapshotForCOBrief()" class="ai-quick-btn" style="background:rgba(0,113,227,0.12);border-color:rgba(0,113,227,0.25);color:#0071e3;font-weight:700"><i class="fas fa-briefcase"></i> Snapshot for CO Brief</button>
+                        <button onclick="_s4ExportCOBrief()" class="ai-quick-btn" style="background:rgba(52,199,89,0.12);border-color:rgba(52,199,89,0.3);color:#34c759;font-weight:700"><i class="fas fa-file-export"></i> One-Page CO Brief Export</button>
                     </div>
 
                     <!-- Chart containers -->
@@ -3844,9 +3849,8 @@
             _currentILSTool = null;
             var hub = document.getElementById('platformHub');
             if (hub) { hub.style.display='block'; hub.style.animation='fadeIn 0.3s ease'; }
-            // Stats now live in sidebar — hide stat strip
-            // var sr = document.getElementById('statsRow');
-            // if (sr) sr.style.display = 'flex';
+            var sr = document.getElementById('statsRow');
+            if (sr) sr.style.display = 'flex';
             _currentSection = null;
             history.replaceState(null, '', window.location.pathname);
         };
@@ -3881,8 +3885,19 @@
             _currentILSTool = null;
         };
 
-        // Wallet sidebar functions are now in navigation.js module
-        // (openWalletSidebar / closeWalletSidebar — full credits-view redesign)
+        window.openWalletSidebar = function openWalletSidebar() {
+            var sidebar = document.getElementById('walletSidebar');
+            var overlay = document.getElementById('walletOverlay');
+            if (sidebar) sidebar.classList.add('open');
+            if (overlay) overlay.classList.add('open');
+        };
+
+        window.closeWalletSidebar = function closeWalletSidebar() {
+            var sidebar = document.getElementById('walletSidebar');
+            var overlay = document.getElementById('walletOverlay');
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('open');
+        };
 
         // Standalone startAuthFlow — shows DoW consent → CAC login → onboarding → role
         if (!window.startAuthFlow) {

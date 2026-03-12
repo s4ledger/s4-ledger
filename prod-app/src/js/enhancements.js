@@ -1102,20 +1102,10 @@ console.log('[Round-12b] Competitive Enhancement Suite loaded: AI Threat Scoring
                 + _buildMultiAssignHTML('s4Assign_' + toolId)
                 + '</div>';
         } else {
-            assignHTML = '<div style="background:var(--surface,#fff);border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;padding:10px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px">'
+            assignHTML = '<div style="background:var(--surface,#fff);border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
                 + '<label style="font-size:0.82rem;font-weight:600;color:var(--steel,#3a3a3c);white-space:nowrap"><i class="fas fa-user-check" style="color:var(--accent,#00aaff);margin-right:4px"></i> Assign Responsible Person</label>'
                 + (typeof _buildAssignDropdownHTML === 'function' ? _buildAssignDropdownHTML('s4AssignPerson_' + toolId) :
-                '<select onchange="assignResponsiblePerson(this.value)" style="flex:1;padding:6px 10px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.82rem;color:var(--steel,#3a3a3c);background:var(--surface,#fff);cursor:pointer">' +
-                    '<option value="">\u2014 Select \u2014</option>' +
-                    '<option value="Program Manager">Program Manager</option>' +
-                    '<option value="ILS Manager">ILS Manager</option>' +
-                    '<option value="Logistics Lead">Logistics Lead</option>' +
-                    '<option value="Engineering Lead">Engineering Lead</option>' +
-                    '<option value="Contracts Officer">Contracts Officer</option>' +
-                    '<option value="Supply Chain Manager">Supply Chain Manager</option>' +
-                    '<option value="Configuration Manager">Configuration Manager</option>' +
-                    '<option value="Quality Assurance Lead">Quality Assurance Lead</option>' +
-                '</select>')
+                    '<select onchange="assignResponsiblePerson(this.value)" style="flex:1;padding:6px 10px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.82rem;color:var(--steel,#3a3a3c);background:var(--surface,#fff);cursor:pointer"><option value="">— Select —</option></select>')
                 + '</div>';
         }
 
@@ -7010,7 +7000,18 @@ function exportCdrlReport() {
 // DRL / DI STATUS TRACKER — integrated into Deliverables Tracker
 // ═══════════════════════════════════════════════════════
 
-var _drlDemoData = [];
+var _drlDemoData = [
+    { di:'DI-ILSS-81495',  transmittalSerial:'TSN-2025-0041', spRev:'Rev 3', coordDueDate:'2025-06-15', desDateBasDay:'2025-06-10 / BD', submittalGuidance:'Per CDRL A005', coordCalcDate:'2025-06-13', actualDate:'2025-06-12', rcvD:'Y', calDaysReview:8, smeTarget:'2025-06-20', authority:'CAPT R. Hughes', responseDate:'2025-06-20', notes:'Provisioning Parts List — approved on first review', status:'on-time', workflowLink:'https://nserc.navy.mil/task/PPL-2025-0041', vendor:'Huntington Ingalls' },
+    { di:'DI-ILSS-81491',  transmittalSerial:'TSN-2025-0038', spRev:'Rev 1', coordDueDate:'2025-05-30', desDateBasDay:'2025-05-25 / BD', submittalGuidance:'Per CDRL A003', coordCalcDate:'2025-05-28', actualDate:'2025-06-04', rcvD:'Y', calDaysReview:14, smeTarget:'2025-06-18', authority:'CDR S. Kim', responseDate:'2025-06-18', notes:'LSAR data — 5 days past due, minor corrections required', status:'late', workflowLink:'https://nserc.navy.mil/task/LSAR-2025-0038', vendor:'General Dynamics NASSCO' },
+    { di:'DI-MGMT-81466',  transmittalSerial:'TSN-2025-0052', spRev:'Rev 2', coordDueDate:'2025-07-01', desDateBasDay:'2025-06-26 / BD', submittalGuidance:'Per CDRL B002', coordCalcDate:'2025-06-29', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'Configuration Status Accounting — due in 2 weeks', status:'on-time', workflowLink:'', vendor:'Huntington Ingalls' },
+    { di:'DI-SESS-81517',  transmittalSerial:'TSN-2025-0029', spRev:'Rev 4', coordDueDate:'2025-04-15', desDateBasDay:'2025-04-10 / CD', submittalGuidance:'Per CDRL C001', coordCalcDate:'2025-04-12', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'Support Equipment Recommendation — missed, no submission received', status:'past-due', workflowLink:'https://nserc.navy.mil/task/SE-2025-0029', vendor:'Lockheed Martin' },
+    { di:'DI-ILSS-81495',  transmittalSerial:'TSN-2025-0033', spRev:'Rev 2', coordDueDate:'2025-03-30', desDateBasDay:'2025-03-25 / BD', submittalGuidance:'Per CDRL A005', coordCalcDate:'2025-03-28', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'Provisioning Parts List (Q1) — second consecutive miss', status:'past-due', workflowLink:'', vendor:'Huntington Ingalls' },
+    { di:'DI-TMSS-80939',  transmittalSerial:'TSN-2025-0045', spRev:'Rev 1', coordDueDate:'2025-06-28', desDateBasDay:'2025-06-23 / BD', submittalGuidance:'Per CDRL D004', coordCalcDate:'2025-06-26', actualDate:'2025-06-25', rcvD:'Y', calDaysReview:5, smeTarget:'2025-06-30', authority:'CAPT R. Hughes', responseDate:'2025-06-30', notes:'Technical Manual update — accepted', status:'on-time', workflowLink:'https://nserc.navy.mil/task/TM-2025-0045', vendor:'Bath Iron Works' },
+    { di:'DI-MISC-80711A', transmittalSerial:'TSN-2025-0050', spRev:'Rev 1', coordDueDate:'2025-07-10', desDateBasDay:'2025-07-05 / CD', submittalGuidance:'Per CDRL E001', coordCalcDate:'2025-07-08', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'Test & Evaluation Report — due in 5 days', status:'approaching', workflowLink:'https://nserc.navy.mil/task/TE-2025-0050', vendor:'Raytheon' },
+    { di:'DI-ILSS-81491',  transmittalSerial:'TSN-2025-0022', spRev:'Rev 3', coordDueDate:'2025-02-28', desDateBasDay:'2025-02-23 / BD', submittalGuidance:'Per CDRL A003', coordCalcDate:'2025-02-26', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'LSAR data (Q4) — third consecutive omission, escalation recommended', status:'past-due', workflowLink:'', vendor:'General Dynamics NASSCO' },
+    { di:'DI-RELI-81400',  transmittalSerial:'TSN-2025-0055', spRev:'Rev 1', coordDueDate:'2025-07-05', desDateBasDay:'2025-07-01 / BD', submittalGuidance:'Per CDRL F003', coordCalcDate:'2025-07-03', actualDate:'2025-07-02', rcvD:'Y', calDaysReview:7, smeTarget:'2025-07-09', authority:'CDR S. Kim', responseDate:'', notes:'FRACAS reliability report — under review', status:'on-time', workflowLink:'https://nserc.navy.mil/task/FRACAS-2025-0055', vendor:'Lockheed Martin' },
+    { di:'DI-PACK-81222',  transmittalSerial:'TSN-2025-0048', spRev:'Rev 2', coordDueDate:'2025-06-20', desDateBasDay:'2025-06-15 / CD', submittalGuidance:'Per CDRL G002', coordCalcDate:'2025-06-18', actualDate:'2025-06-19', rcvD:'Y', calDaysReview:10, smeTarget:'2025-06-29', authority:'LCDR M. Davis', responseDate:'2025-06-28', notes:'Packaging data — approved with comment', status:'on-time', workflowLink:'https://nserc.navy.mil/task/PKG-2025-0048', vendor:'Bath Iron Works' },
+];
 
 var _drlFieldKeys = ['di','transmittalSerial','spRev','coordDueDate','desDateBasDay','submittalGuidance','coordCalcDate','actualDate','rcvD','calDaysReview','smeTarget','authority','responseDate','notes','status'];
 // §35-40 state variables
@@ -9503,7 +9504,6 @@ window.verifyProvenanceChain = verifyProvenanceChain;
 
     function _runTour() {
         if (localStorage.getItem('s4_tour_done')) return;
-
         // Don't start the tour until the user has actually entered the Anchor-S4 section
         var tab = document.getElementById('tabILS');
         if (!tab || tab.style.display === 'none' || !tab.classList.contains('active')) return;
@@ -10898,6 +10898,306 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _bootSections46to50);
 } else {
     setTimeout(_bootSections46to50, 1000);
+}
+
+})();
+
+// ═══════════════════════════════════════════════════════════
+// §51-§57  v5.12.24 — Quick-access features for top 7 tools
+// ═══════════════════════════════════════════════════════════
+(function(){
+'use strict';
+
+// ── §51: Quick Filter Pills ──
+// Delegates to existing drlSwitchView() and highlights the active pill
+window._s4QuickFilter = function(view, prefix) {
+    if (typeof drlSwitchView === 'function') drlSwitchView(view, prefix);
+    // Determine parent container
+    var pillContainer;
+    if (prefix === 'sub') {
+        pillContainer = document.querySelector('#subView-drl .s4-quick-filter-pills');
+    } else {
+        pillContainer = document.querySelector('#cdrlView-drl .s4-quick-filter-pills');
+    }
+    if (pillContainer) {
+        pillContainer.querySelectorAll('.s4-pill').forEach(function(btn) {
+            btn.classList.remove('s4-pill-active');
+        });
+        // Activate the clicked one
+        pillContainer.querySelectorAll('.s4-pill').forEach(function(btn) {
+            if (btn.textContent.trim().toLowerCase().replace(/\s+/g,'').indexOf(
+                view === 'all' ? 'all' : view === 'assigned' ? 'myassigned' : view === 'overdue' ? 'overdue' : 'thisweek'
+            ) !== -1) {
+                btn.classList.add('s4-pill-active');
+            }
+        });
+    }
+    // Sync the <select> dropdown
+    var selectParent = (prefix === 'sub') ? document.getElementById('subView-drl') : document.getElementById('cdrlView-drl');
+    if (selectParent) {
+        var sel = selectParent.querySelector('select[onchange*="drlSwitchView"]');
+        if (sel) sel.value = view;
+    }
+};
+
+// ── §52: One-Click Compliance Statement ──
+window._s4CopyComplianceStatement = function() {
+    var now = new Date();
+    var dateStr = now.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+    var program = (document.getElementById('programSelect') || {}).value || 'the selected program';
+    var period = (document.getElementById('reportPeriod') || {}).selectedOptions
+        ? (document.getElementById('reportPeriod').selectedOptions[0] || {}).textContent || 'the reporting period'
+        : 'the reporting period';
+
+    var stmt = 'COMPLIANCE ATTESTATION STATEMENT\n\n' +
+        'Date: ' + dateStr + '\n' +
+        'Program: ' + program + '\n' +
+        'Period: ' + period + '\n\n' +
+        'This statement certifies that the above-referenced program has been reviewed against applicable ' +
+        'compliance frameworks including CMMC Level 2, NIST SP 800-171, DFARS 252.204-7012, and ' +
+        'GEIA-STD-0007 ILS standards. All audit records referenced herein have been cryptographically ' +
+        'hashed and anchored to the XRP Ledger, providing immutable, independently verifiable proof of ' +
+        'compliance posture as of the date above.\n\n' +
+        'This audit package was generated by S4 Ledger and is suitable for submission to contracting ' +
+        'officers, program management offices, and oversight authorities. All data integrity hashes can ' +
+        'be independently verified at https://s4ledger.com/verify.\n\n' +
+        'Prepared by: S4 Ledger Automated Audit System\n' +
+        'Classification: CUI — Controlled Unclassified Information';
+
+    navigator.clipboard.writeText(stmt).then(function() {
+        _s4Toast('Compliance statement copied to clipboard', 'success');
+    });
+};
+
+// ── §53: Generate Evidence Package ──
+window._s4GenerateEvidencePackage = function() {
+    var now = new Date();
+    var dateStr = now.toISOString().split('T')[0];
+    var scores = {
+        cmmc: (document.getElementById('pctCMMC') || {}).textContent || '—',
+        nist: (document.getElementById('pctNIST') || {}).textContent || '—',
+        dfars: (document.getElementById('pctDFARS') || {}).textContent || '—',
+        far: (document.getElementById('pctFAR') || {}).textContent || '—',
+        ils: (document.getElementById('pctILS') || {}).textContent || '—',
+        dmsms: (document.getElementById('pctDMSMSmgmt') || {}).textContent || '—'
+    };
+    var overall = (document.getElementById('complianceScore') || {}).textContent || '—';
+    var recs = (document.getElementById('complianceRecs') || {}).textContent || 'No recommendations available.';
+
+    var content = '═══════════════════════════════════════════\n' +
+        '  S4 LEDGER — COMPLIANCE EVIDENCE PACKAGE\n' +
+        '═══════════════════════════════════════════\n\n' +
+        'Generated: ' + dateStr + '\n' +
+        'Overall Compliance Score: ' + overall + '\n\n' +
+        '── FRAMEWORK SCORES ──\n' +
+        'CMMC Level 2:        ' + scores.cmmc + '\n' +
+        'NIST SP 800-171:     ' + scores.nist + '\n' +
+        'DFARS 252.204:       ' + scores.dfars + '\n' +
+        'FAR 46 Quality:      ' + scores.far + '\n' +
+        'GEIA-STD-0007 ILS:   ' + scores.ils + '\n' +
+        'DMSMS (DoDI 4245.15):' + scores.dmsms + '\n\n' +
+        '── RECOMMENDATIONS ──\n' +
+        recs + '\n\n' +
+        '── EVIDENCE ARTIFACTS ──\n';
+
+    // Collect evidence items from Evidence Manager
+    var evidenceList = document.getElementById('evidenceList');
+    if (evidenceList && evidenceList.children.length > 0) {
+        Array.from(evidenceList.children).forEach(function(item, i) {
+            content += (i+1) + '. ' + (item.textContent || '').trim().substring(0, 120) + '\n';
+        });
+    } else {
+        content += 'No evidence artifacts attached.\n';
+    }
+
+    content += '\n── VERIFICATION ──\n' +
+        'All records cryptographically hashed and anchored to XRP Ledger.\n' +
+        'Verify at: https://s4ledger.com/verify\n';
+
+    var blob = new Blob([content], {type: 'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'S4_Evidence_Package_' + dateStr + '.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    _s4Toast('Evidence package downloaded', 'success');
+};
+
+// ── §54: Export Risk Mitigation Plan ──
+window._s4ExportRiskMitigationPlan = function() {
+    var now = new Date();
+    var dateStr = now.toISOString().split('T')[0];
+    var stats = {
+        total: (document.getElementById('dmsmsTotalParts') || {}).textContent || '0',
+        atRisk: (document.getElementById('dmsmsAtRisk') || {}).textContent || '0',
+        resolved: (document.getElementById('dmsmsResolved') || {}).textContent || '0',
+        cost: (document.getElementById('dmsmsCost') || {}).textContent || '$0'
+    };
+
+    var content = '═══════════════════════════════════════════\n' +
+        '  S4 LEDGER — RISK MITIGATION PLAN\n' +
+        '  Obsolescence & DMSMS Management\n' +
+        '═══════════════════════════════════════════\n\n' +
+        'Generated: ' + dateStr + '\n\n' +
+        '── CURRENT STATUS ──\n' +
+        'Total Parts Tracked:     ' + stats.total + '\n' +
+        'Parts At Risk:           ' + stats.atRisk + '\n' +
+        'Resolved Cases:          ' + stats.resolved + '\n' +
+        'Est. Resolution Cost:    ' + stats.cost + '\n\n' +
+        '── MITIGATION STRATEGIES ──\n' +
+        '1. IMMEDIATE (0-30 days)\n' +
+        '   • Procure last-time-buy quantities for critical at-risk parts\n' +
+        '   • Validate alternate source qualifications with CAGE code verification\n' +
+        '   • Submit GIDEP alerts for newly identified obsolescence cases\n\n' +
+        '2. SHORT-TERM (30-90 days)\n' +
+        '   • Initiate form-fit-function replacement qualification\n' +
+        '   • Complete DMSMS impact analysis per DoDI 4245.15\n' +
+        '   • Update provisioning technical documentation\n\n' +
+        '3. LONG-TERM (90-365 days)\n' +
+        '   • Submit Engineering Change Proposals (ECPs) for redesign candidates\n' +
+        '   • Negotiate long-term supply agreements with qualified vendors\n' +
+        '   • Establish predictive analytics monitoring for emerging risk\n\n' +
+        '── VERIFICATION ──\n' +
+        'All DMSMS records anchored to XRP Ledger for audit trail.\n' +
+        'Verify at: https://s4ledger.com/verify\n';
+
+    var blob = new Blob([content], {type: 'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'S4_Risk_Mitigation_Plan_' + dateStr + '.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    _s4Toast('Risk mitigation plan downloaded', 'success');
+};
+
+// ── §55: Snapshot for Leadership ──
+window._s4SnapshotForLeadership = function() {
+    var program = (document.getElementById('programSelect') || {}).value || 'Selected Program';
+
+    // Gather risk data from the risk table
+    var rows = document.querySelectorAll('#riskTableBody tr');
+    var highRisk = 0, medRisk = 0, lowRisk = 0;
+    rows.forEach(function(row) {
+        var cells = row.querySelectorAll('td');
+        if (cells.length >= 3) {
+            var score = parseInt(cells[2].textContent) || 0;
+            if (score >= 7) highRisk++;
+            else if (score >= 4) medRisk++;
+            else if (score > 0) lowRisk++;
+        }
+    });
+
+    var threatLevel = (document.getElementById('threatBar') || {}).style.width || '0%';
+    var gidep = (document.getElementById('threatGIDEP') || {}).textContent || '0';
+    var leadTime = (document.getElementById('threatLeadTime') || {}).textContent || '0';
+
+    var bullets = 'SUPPLY CHAIN RISK — LEADERSHIP SNAPSHOT\n' +
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+        'Program: ' + program + '\n' +
+        'Date: ' + new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) + '\n\n' +
+        '• Threat Index: ' + threatLevel + '\n' +
+        '• High-Risk Items: ' + highRisk + '\n' +
+        '• Medium-Risk Items: ' + medRisk + '\n' +
+        '• Low-Risk Items: ' + lowRisk + '\n' +
+        '• GIDEP Alerts: ' + gidep + '\n' +
+        '• Lead Time Spikes: ' + leadTime + '\n\n' +
+        'RECOMMENDATION: ' + (highRisk > 0
+            ? 'Immediate attention required — ' + highRisk + ' high-risk supply chain item(s) detected.'
+            : 'Supply chain posture is within acceptable tolerances.') + '\n\n' +
+        'Source: S4 Ledger AI Risk Radar • All data ledger-anchored';
+
+    navigator.clipboard.writeText(bullets).then(function() {
+        _s4Toast('Leadership snapshot copied to clipboard', 'success');
+    });
+};
+
+// ── §56: Copy Readiness Statement ──
+window._s4CopyReadinessStatement = function() {
+    var ao = (document.getElementById('statAo') || {}).textContent || '—';
+    var ai = (document.getElementById('statAi') || {}).textContent || '—';
+    var failRate = (document.getElementById('statFailRate') || {}).textContent || '—';
+    var missionReady = (document.getElementById('statMissReady') || {}).textContent || '—';
+    var program = (document.getElementById('programSelect') || {}).value || 'the selected program';
+    var dateStr = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+
+    var stmt = 'As of ' + dateStr + ', ' + program + ' reports an operational availability (Ao) of ' +
+        ao + ' with an inherent availability (Ai) of ' + ai + ', a failure rate (\u03BB) of ' + failRate +
+        ', and a mission readiness score of ' + missionReady + '. These RAM metrics are calculated by ' +
+        'S4 Ledger and all underlying records are cryptographically anchored to the XRP Ledger for ' +
+        'independent verification.';
+
+    navigator.clipboard.writeText(stmt).then(function() {
+        _s4Toast('Readiness statement copied to clipboard', 'success');
+    });
+};
+
+// ── §57: One-Page CO Brief Export ──
+window._s4ExportCOBrief = function() {
+    var now = new Date();
+    var dateStr = now.toISOString().split('T')[0];
+
+    // Gather analytics data
+    var statEls = document.querySelectorAll('#hub-analytics .stat-mini-val, #hub-analytics .stat-card div[style*="font-weight:800"]');
+    var stats = [];
+    statEls.forEach(function(el) {
+        var label = '';
+        var sibling = el.nextElementSibling || el.parentElement.querySelector('.stat-mini-lbl, div[style*=".72rem"]');
+        if (sibling) label = sibling.textContent.trim();
+        if (label && el.textContent.trim() !== '—') {
+            stats.push(label + ': ' + el.textContent.trim());
+        }
+    });
+
+    var program = (document.getElementById('programSelect') || {}).value || 'Cross-Program';
+
+    var content = '═══════════════════════════════════════════\n' +
+        '  CONTRACTING OFFICER BRIEF — ONE PAGE\n' +
+        '  S4 Ledger Program Analytics\n' +
+        '═══════════════════════════════════════════\n\n' +
+        'Program: ' + program + '\n' +
+        'Date: ' + now.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) + '\n' +
+        'Classification: CUI\n\n' +
+        '── KEY METRICS ──\n';
+
+    if (stats.length > 0) {
+        stats.forEach(function(s) { content += '  • ' + s + '\n'; });
+    } else {
+        content += '  No analytics data loaded. Run "Refresh" first.\n';
+    }
+
+    content += '\n── PROGRAM HEALTH ──\n';
+    // Pull compliance score if available
+    var compScore = (document.getElementById('complianceScore') || {}).textContent;
+    if (compScore && compScore !== '—') content += '  Compliance Score: ' + compScore + '\n';
+    var riskWidth = (document.getElementById('threatBar') || {}).style.width;
+    if (riskWidth) content += '  Risk Index: ' + riskWidth + '\n';
+
+    content += '\n── SUMMARY ──\n' +
+        'This brief was auto-generated from live program data tracked in S4 Ledger. ' +
+        'All underlying records have been cryptographically hashed and anchored to the ' +
+        'XRP Ledger, providing tamper-evident, independently verifiable proof of program ' +
+        'status as of the date above.\n\n' +
+        '── PREPARED BY ──\n' +
+        'S4 Ledger Automated Analytics System\n' +
+        'https://s4ledger.com\n';
+
+    var blob = new Blob([content], {type: 'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'S4_CO_Brief_' + dateStr + '.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    _s4Toast('CO brief exported', 'success');
+};
+
+// ── Toast helper (reuse existing or create minimal) ──
+function _s4Toast(msg, type) {
+    if (typeof window.showToast === 'function') { window.showToast(msg, type); return; }
+    var t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#34c759;color:#fff;padding:12px 24px;border-radius:12px;font-size:0.88rem;font-weight:600;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.15);transition:opacity 0.4s;';
+    document.body.appendChild(t);
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },500); }, 2500);
 }
 
 })();

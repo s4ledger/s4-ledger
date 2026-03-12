@@ -1211,6 +1211,7 @@
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                             <button onclick="exportDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export DMSMS Report</button>
                             <button onclick="anchorDMSMS()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button onclick="_s4ExportRiskMitigationPlan()" class="btn btn-sm" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-shield-halved"></i> Export Risk Mitigation Plan</button>
                         </div>
                     </div>
                 </div>
@@ -1253,6 +1254,7 @@
                             <button onclick="exportReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export RAM Report</button>
                             <button onclick="anchorReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                             <button id="dashBtnReadiness" onclick="addToProgramDashboard('readiness')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-th-large"></i> Add to Program Dashboard</button>
+                            <button onclick="_s4CopyReadinessStatement()" class="btn btn-sm hover-lift" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-clipboard"></i> Copy Readiness Statement</button>
                         </div>
                     </div>
                 </div>
@@ -1733,6 +1735,7 @@
                         <button onclick="exportCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-download"></i> Export Scorecard</button>
                         <button onclick="anchorCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         <button id="complianceStmtBtnCompliance" onclick="generateComplianceStatement('compliance')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-signature"></i> Generate Compliance Statement</button>
+                        <button onclick="_s4GenerateEvidencePackage()" class="btn btn-sm hover-lift" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-folder-open"></i> Generate Evidence Package</button>
                     </div>
                 </div>
             </div>
@@ -1793,6 +1796,7 @@
                         <button onclick="loadRiskData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-sync-alt"></i> Refresh Analysis</button>
                         <button onclick="exportRisk()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Risk Report</button>
                         <button onclick="anchorRisk()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button onclick="_s4SnapshotForLeadership()" class="btn btn-sm hover-lift" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-bullhorn"></i> Snapshot for Leadership</button>
                     </div>
 
                     <!-- ── AI Remediation Plans ── -->
@@ -1904,6 +1908,7 @@
                         <button onclick="downloadReport()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Download Report</button>
                         <button onclick="anchorReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         <button id="complianceStmtBtnReports" onclick="generateComplianceStatement('reports')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-signature"></i> Generate Compliance Statement</button>
+                        <button onclick="_s4CopyComplianceStatement()" class="btn btn-sm hover-lift" style="background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.3);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-clipboard-check"></i> One-Click Compliance Statement</button>
                     </div>
                     <div style="margin-top:20px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('execSummary')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.06);display:flex;align-items:center;gap:8px">
@@ -2308,6 +2313,13 @@
                         <div id="subDrlAiInsights" style="display:none;margin-bottom:14px"></div>
                         <!-- §35 Summary Stats Bar -->
                         <div id="subDrlSummaryBar" style="margin-bottom:12px"></div>
+                        <!-- §51 Quick Filter Pills -->
+                        <div class="s4-quick-filter-pills" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                            <button class="s4-pill s4-pill-active" onclick="_s4QuickFilter('all','sub')"><i class="fas fa-list"></i> All</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('assigned','sub')"><i class="fas fa-user-check"></i> My Assigned</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('overdue','sub')"><i class="fas fa-clock"></i> Overdue</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('thisweek','sub')"><i class="fas fa-calendar-week"></i> This Week</button>
+                        </div>
                         <!-- §36 Saved Views + §40 Compare -->
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <select onchange="drlSwitchView(this.value,'sub')" style="font-size:.76rem;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer">
@@ -2597,6 +2609,13 @@
                         <div id="drlAiInsights" style="display:none;margin-bottom:14px"></div>
                         <!-- §35 Summary Stats Bar -->
                         <div id="drlSummaryBar" style="margin-bottom:12px"></div>
+                        <!-- §51 Quick Filter Pills -->
+                        <div class="s4-quick-filter-pills" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                            <button class="s4-pill s4-pill-active" onclick="_s4QuickFilter('all','')"><i class="fas fa-list"></i> All</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('assigned','')"><i class="fas fa-user-check"></i> My Assigned</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('overdue','')"><i class="fas fa-clock"></i> Overdue</button>
+                            <button class="s4-pill" onclick="_s4QuickFilter('thisweek','')"><i class="fas fa-calendar-week"></i> This Week</button>
+                        </div>
                         <!-- §36 Saved Views + §40 Compare -->
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
                             <select onchange="drlSwitchView(this.value,'')" style="font-size:.76rem;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer">
@@ -2917,6 +2936,7 @@
                         <button onclick="exportAnalyticsCSV()" class="ai-quick-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
                         <button onclick="anchorToLedger('analytics','Cross-program analytics anchored')" class="ai-quick-btn"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
                         <button id="coBriefBtn" onclick="snapshotForCOBrief()" class="ai-quick-btn" style="background:rgba(0,113,227,0.12);border-color:rgba(0,113,227,0.25);color:#0071e3;font-weight:700"><i class="fas fa-briefcase"></i> Snapshot for CO Brief</button>
+                        <button onclick="_s4ExportCOBrief()" class="ai-quick-btn" style="background:rgba(52,199,89,0.12);border-color:rgba(52,199,89,0.3);color:#34c759;font-weight:700"><i class="fas fa-file-export"></i> One-Page CO Brief Export</button>
                     </div>
 
                     <!-- Chart containers -->

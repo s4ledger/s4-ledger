@@ -965,6 +965,7 @@
         .ws-addr-label{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--steel,#86868b)}
         .ws-addr-val{font-size:0.78rem;font-family:'SF Mono','Fira Code',monospace;color:var(--text,#1d1d1f);font-weight:500}
         .ws-rate-footer{text-align:center;font-size:0.68rem;color:var(--muted,#aeaeb2);padding:4px 0}
+        /* Animation: fade-in + scale-up on the hero number */
         .ws-credits-num{display:inline-block;opacity:0;transform:scale(0.7);transition:opacity 0.5s ease,transform 0.5s cubic-bezier(0.34,1.56,0.64,1)}
         .ws-credits-num.ws-num-enter{opacity:1;transform:scale(1)}
         @keyframes wsToastIn{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:translateY(0)}}
@@ -2205,7 +2206,7 @@ input::placeholder,textarea::placeholder,select::placeholder,.form-control::plac
 .brief-zoom-btn{color:#6e6e73!important;background:rgba(0,0,0,0.04)!important;border-color:rgba(0,0,0,0.08)!important}
 .brief-zoom-btn:hover{background:rgba(0,0,0,0.08)!important;color:#1d1d1f!important}
 
-/* ━━━ HOW IT WORKS — hide ? buttons and force-hide all details in tools ━━━ */
+/* ━━━ HOW IT WORKS — ? buttons visible, force-hide all details dropdowns in tools ━━━ */
 .ils-hub-panel details[style*="display:none"]{display:none!important}
 .ils-hub-panel > .s4-card > details,.ils-hub-panel > .row > div > .s4-card > details{display:none!important}
 
@@ -6310,4 +6311,19 @@ h4{font-size:0.95rem;font-weight:700}
 /* FedRAMP rows: increase margin-bottom */
 .ils-hub-panel div[style*="margin-bottom:4px"][style*="border-radius"]{
     margin-bottom:8px !important;
+}
+
+/* ── §51-§57 v5.12.24 — Quick-access features ── */
+.s4-quick-filter-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.s4-pill{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:6px 14px;border-radius:20px;border:1px solid rgba(0,122,255,0.2);
+    background:rgba(0,122,255,0.06);color:#007AFF;
+    font-size:0.76rem;font-weight:600;cursor:pointer;
+    transition:all 0.2s ease;white-space:nowrap;
+}
+.s4-pill:hover{background:rgba(0,122,255,0.12);border-color:rgba(0,122,255,0.35)}
+.s4-pill-active,.s4-pill-active:hover{
+    background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;
+    border-color:transparent;box-shadow:0 2px 8px rgba(0,113,227,0.25);
 }
