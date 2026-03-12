@@ -290,6 +290,19 @@
 
         <!-- ═══ UNIFIED PROFILE POPOVER (Top Right) ═══ -->
         <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:8px;">
+            <!-- §50: End of Day Summary -->
+            <button class="s4-eod-btn" id="s4EodBtn" onclick="window._s4EndOfDay()" title="End of Day Summary"><i class="fas fa-moon"></i><span class="d-none d-md-inline">EOD</span></button>
+            <!-- §48: Quick Print -->
+            <button class="s4-quick-print" id="s4QuickPrint" onclick="window._s4QuickPrint()" title="Print current view"><i class="fas fa-print"></i></button>
+            <!-- §47: Program Health -->
+            <div class="s4-health-badge" id="s4HealthBadge">
+                <span class="s4-health-dot green" id="s4HealthDot"></span>
+                <span id="s4HealthCount">0</span>
+                <div class="s4-health-tip" id="s4HealthTip">
+                    <div class="s4-health-tip-title">Program Health</div>
+                    <div id="s4HealthTipBody">All systems nominal.</div>
+                </div>
+            </div>
             <div style="position:relative">
                 <button class="s4-avatar-btn" id="s4AvatarBtn" onclick="window._s4ToggleAvatar()" aria-label="Profile & account" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user"></i>

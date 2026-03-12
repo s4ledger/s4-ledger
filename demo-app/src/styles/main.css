@@ -6093,3 +6093,52 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-tour-overlay{z-index:99998}
 .s4-tour-tip{z-index:99999}
 .s4-export-toast{z-index:100000}
+
+/* ═══════════════════════════════════════════════════════════════
+   §46-§50 — Power-user polish
+   ═══════════════════════════════════════════════════════════════ */
+/* §46: Keyboard shortcut bar */
+.s4-shortcut-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:99990;display:flex;align-items:center;gap:16px;padding:10px 28px;background:rgba(30,30,32,0.92);border-radius:12px 12px 0 0;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 -4px 24px rgba(0,0,0,0.10);font-size:0.74rem;color:rgba(255,255,255,0.85);opacity:1;transition:opacity 0.6s ease,transform 0.4s ease;pointer-events:none}
+.s4-shortcut-bar.s4-sb-hide{opacity:0;transform:translateX(-50%) translateY(100%)}
+.s4-shortcut-bar kbd{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);border-radius:5px;padding:2px 7px;font-size:0.68rem;font-family:'Inter',monospace;font-weight:600;color:#fff;margin:0 2px}
+.s4-shortcut-bar .s4-sb-sep{width:1px;height:16px;background:rgba(255,255,255,0.15)}
+
+/* §47: Program Health badge */
+.s4-health-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;cursor:default;position:relative;border:1px solid var(--border,rgba(0,0,0,0.08));background:var(--surface,#f5f5f7);transition:all 0.2s;white-space:nowrap}
+.s4-health-badge:hover{background:rgba(0,170,255,0.06);border-color:rgba(0,170,255,0.2)}
+.s4-health-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.s4-health-dot.green{background:#34C759;box-shadow:0 0 6px rgba(52,199,89,0.4)}
+.s4-health-dot.yellow{background:#FF9500;box-shadow:0 0 6px rgba(255,149,0,0.4)}
+.s4-health-dot.red{background:#FF3B30;box-shadow:0 0 6px rgba(255,59,48,0.4)}
+.s4-health-tip{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:280px;background:var(--card,#fff);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:14px 16px;font-size:0.74rem;line-height:1.6;z-index:10003;color:var(--text,#1d1d1f);font-weight:400}
+.s4-health-badge:hover .s4-health-tip{display:block}
+.s4-health-tip-title{font-weight:700;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted,#86868b);margin-bottom:8px}
+.s4-health-tip-item{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;font-size:0.73rem}
+.s4-health-tip-item:last-child{margin-bottom:0}
+.s4-health-tip-item i{color:var(--accent,#007AFF);font-size:0.65rem;margin-top:3px;flex-shrink:0}
+
+/* §48: Quick Print */
+.s4-quick-print{background:none;border:1px solid var(--border,rgba(0,0,0,0.08));border-radius:8px;padding:5px 10px;font-size:0.78rem;color:var(--muted,#6e6e73);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.2s;font-family:inherit}
+.s4-quick-print:hover{color:var(--accent,#007AFF);border-color:rgba(0,170,255,0.3);background:rgba(0,170,255,0.04)}
+@media print{body *{visibility:hidden!important}.s4-print-target,.s4-print-target *{visibility:visible!important}.s4-print-target{position:absolute;top:0;left:0;width:100%;padding:24px;font-size:12pt;line-height:1.6;color:#000!important;background:#fff!important}}
+
+/* §49: Share Result */
+.s4-share-result{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:0.7rem;font-weight:600;color:var(--muted,#6e6e73);background:none;border:1px solid var(--border,rgba(0,0,0,0.08));cursor:pointer;transition:all 0.2s;font-family:inherit;margin-top:8px}
+.s4-share-result:hover{color:var(--accent,#007AFF);border-color:rgba(0,170,255,0.3);background:rgba(0,170,255,0.04)}
+.s4-share-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(30,30,32,0.92);color:#fff;padding:12px 24px;border-radius:12px;font-size:0.8rem;font-weight:600;z-index:100001;backdrop-filter:blur(8px);display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,0.15);animation:s4ShareIn 0.3s ease}
+@keyframes s4ShareIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* §50: End of Day Summary */
+.s4-eod-btn{background:none;border:1px solid var(--border,rgba(0,0,0,0.08));border-radius:8px;padding:5px 10px;font-size:0.78rem;color:var(--muted,#6e6e73);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.2s;font-family:inherit}
+.s4-eod-btn:hover{color:var(--accent,#007AFF);border-color:rgba(0,170,255,0.3);background:rgba(0,170,255,0.04)}
+.s4-eod-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,247,0.88);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.s4-eod-card{background:var(--card,#fff);border:1px solid var(--border);border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.12);padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto}
+.s4-eod-card h3{font-size:1.05rem;font-weight:800;color:var(--text,#1d1d1f);margin:0 0 16px;display:flex;align-items:center;gap:8px}
+.s4-eod-card h3 i{color:var(--accent,#007AFF)}
+.s4-eod-body{font-size:0.85rem;line-height:1.7;color:var(--text,#1d1d1f);white-space:pre-wrap;background:var(--surface,#f5f5f7);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.s4-eod-actions{display:flex;gap:10px;justify-content:flex-end}
+.s4-eod-actions button{border-radius:10px;padding:8px 18px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.s4-eod-copy{background:var(--accent,#007AFF);border:none;color:#fff}
+.s4-eod-copy:hover{opacity:0.85}
+.s4-eod-close{background:var(--surface,#f5f5f7);border:1px solid var(--border);color:var(--text,#1d1d1f)}
+.s4-eod-close:hover{background:rgba(0,0,0,0.04)}

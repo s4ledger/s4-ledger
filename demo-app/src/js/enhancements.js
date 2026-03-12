@@ -10652,3 +10652,234 @@ if (document.readyState === 'loading') {
 }
 
 })();
+
+// ═══════════════════════════════════════════════════════
+// §46-§50  v5.12.21 — Power-user polish
+// ═══════════════════════════════════════════════════════
+
+(function _s4Sections46to50() {
+'use strict';
+
+// ── §46: Global Keyboard Shortcut Bar ──
+function _showShortcutBar() {
+    if (sessionStorage.getItem('s4_shortcut_bar_shown')) return;
+    sessionStorage.setItem('s4_shortcut_bar_shown', '1');
+    var isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+    var mod = isMac ? '⌘' : 'Ctrl';
+    var bar = document.createElement('div');
+    bar.className = 's4-shortcut-bar';
+    bar.id = 's4ShortcutBar';
+    bar.innerHTML = '<kbd>' + mod + '</kbd>+<kbd>K</kbd> Search Tools'
+        + '<span class="s4-sb-sep"></span>'
+        + '<kbd>' + mod + '</kbd>+<kbd>E</kbd> Export Summary'
+        + '<span class="s4-sb-sep"></span>'
+        + '<kbd>' + mod + '</kbd>+<kbd>R</kbd> Re-run Last Tool';
+    document.body.appendChild(bar);
+    setTimeout(function() { bar.classList.add('s4-sb-hide'); }, 8000);
+    setTimeout(function() { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 9000);
+}
+
+// Cmd/Ctrl+R — re-run last tool (intercept only when not in an input)
+var _lastOpenedTool = null;
+var _origOpenILS = window.openILSTool;
+if (typeof _origOpenILS === 'function' && !_origOpenILS._s4R46) {
+    window.openILSTool = function(id) {
+        _lastOpenedTool = id;
+        return _origOpenILS.apply(this, arguments);
+    };
+    window.openILSTool._s4R46 = true;
+    // preserve any other hooks
+    Object.keys(_origOpenILS).forEach(function(k){ if(k!=='_s4R46') window.openILSTool[k]=_origOpenILS[k]; });
+}
+
+document.addEventListener('keydown', function(e) {
+    var isMod = e.metaKey || e.ctrlKey;
+    if (!isMod || e.key !== 'r') return;
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable) return;
+    e.preventDefault();
+    if (_lastOpenedTool && typeof window.openILSTool === 'function') {
+        window.openILSTool(_lastOpenedTool);
+        if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Re-running ' + _lastOpenedTool.replace('hub-','').replace(/-/g,' '), 'info');
+    } else {
+        if (typeof s4Notify === 'function') s4Notify('Re-run','Run a tool first, then use ⌘R to repeat it.','info');
+    }
+});
+
+// ── §47: Program Health Badge ──
+function _updateHealthBadge() {
+    var dot = document.getElementById('s4HealthDot');
+    var countEl = document.getElementById('s4HealthCount');
+    var tipBody = document.getElementById('s4HealthTipBody');
+    if (!dot || !countEl) return;
+
+    // Scan vault for high-criticality items
+    var vault = [];
+    try {
+        var vk = 's4Vault' + (window._currentRole ? '_' + window._currentRole : '');
+        vault = JSON.parse(localStorage.getItem(vk) || '[]');
+    } catch(e) {}
+    if (!vault.length && typeof s4Vault !== 'undefined' && Array.isArray(s4Vault)) vault = s4Vault;
+
+    var highItems = [];
+    vault.forEach(function(r) {
+        if (!r) return;
+        var lbl = (r.label || r.type || '').toLowerCase();
+        var content = (r.content || '').toLowerCase();
+        var isHigh = /critical|urgent|overdue|casrep|failure|fault|red/i.test(lbl + ' ' + content);
+        if (isHigh) highItems.push(r);
+    });
+
+    var count = highItems.length;
+    countEl.textContent = count;
+
+    dot.className = 's4-health-dot ' + (count === 0 ? 'green' : count <= 2 ? 'yellow' : 'red');
+
+    if (tipBody) {
+        if (count === 0) {
+            tipBody.innerHTML = '<div style="color:var(--muted);font-size:0.73rem">All systems nominal — no high-criticality items detected.</div>';
+        } else {
+            var html = '';
+            highItems.slice(0, 3).forEach(function(r) {
+                var label = r.label || r.type || 'Record';
+                var time = r.timestamp ? new Date(r.timestamp).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : '';
+                html += '<div class="s4-health-tip-item"><i class="fas fa-exclamation-triangle" style="color:#FF3B30"></i><span><strong>' + label + '</strong>' + (time ? ' — ' + time : '') + '</span></div>';
+            });
+            if (count > 3) html += '<div style="font-size:0.68rem;color:var(--muted);margin-top:4px">+ ' + (count - 3) + ' more</div>';
+            tipBody.innerHTML = html;
+        }
+    }
+}
+
+// ── §48: Quick Print ──
+window._s4QuickPrint = function() {
+    // Find the currently visible tool panel or result
+    var target = document.querySelector('.section-view.active') || document.querySelector('.tab-pane.active');
+    if (!target) { window.print(); return; }
+    target.classList.add('s4-print-target');
+    window.print();
+    setTimeout(function() { target.classList.remove('s4-print-target'); }, 500);
+};
+
+// ── §49: Share This Result ──
+function _injectShareButtons() {
+    document.querySelectorAll('.result-panel').forEach(function(panel) {
+        if (panel.dataset.s4Share) return;
+        panel.dataset.s4Share = '1';
+        // Use MutationObserver to inject when result appears
+        var obs = new MutationObserver(function() {
+            if (!panel.classList.contains('show') && !panel.innerHTML.trim()) return;
+            if (panel.querySelector('.s4-share-result')) return;
+            var btn = document.createElement('button');
+            btn.className = 's4-share-result';
+            btn.innerHTML = '<i class="fas fa-share-alt" style="font-size:0.65rem"></i> Share This Result';
+            btn.onclick = function(ev) {
+                ev.stopPropagation();
+                _generateShareLink(panel);
+            };
+            panel.appendChild(btn);
+        });
+        obs.observe(panel, { childList:true, characterData:true, subtree:true });
+    });
+}
+
+function _generateShareLink(panel) {
+    // Simulate secure time-limited link
+    var token = 'S4-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    var expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    var link = location.origin + '/share/' + token;
+    navigator.clipboard.writeText(link).then(function() {
+        _showShareToast('Link copied — expires ' + expires.toLocaleDateString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}));
+    }).catch(function() {
+        _showShareToast('Share link: ' + token);
+    });
+}
+
+function _showShareToast(msg) {
+    var existing = document.querySelector('.s4-share-toast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.className = 's4-share-toast';
+    toast.innerHTML = '<i class="fas fa-link" style="color:#34C759"></i> ' + msg;
+    document.body.appendChild(toast);
+    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 4000);
+}
+
+// ── §50: End of Day Summary ──
+window._s4EndOfDay = function() {
+    var vault = [];
+    try {
+        var vk = 's4Vault' + (window._currentRole ? '_' + window._currentRole : '');
+        vault = JSON.parse(localStorage.getItem(vk) || '[]');
+    } catch(e) {}
+    if (!vault.length && typeof s4Vault !== 'undefined' && Array.isArray(s4Vault)) vault = s4Vault;
+
+    // Filter today's records
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    var todayRecords = vault.filter(function(r) {
+        if (!r || !r.timestamp) return false;
+        return new Date(r.timestamp) >= today;
+    });
+
+    var anchored = todayRecords.length;
+    var verified = todayRecords.filter(function(r){ return r.verified; }).length;
+    var types = {};
+    todayRecords.forEach(function(r){ var t = r.label || r.type || 'Record'; types[t] = (types[t]||0) + 1; });
+    var typeList = Object.keys(types);
+
+    var userName = (document.getElementById('s4ApName') || {}).textContent || 'Operator';
+    var roleName = (window._currentTitle || (window._s4Roles && window._currentRole ? window._s4Roles[window._currentRole]?.label : '') || 'Program Manager');
+    var dateStr = today.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+
+    var summary;
+    if (anchored === 0) {
+        summary = dateStr + '\n\nNo records were anchored today. The ledger is current and all previously anchored data remains intact and verifiable on the XRPL.';
+    } else {
+        summary = dateStr + '\n\n' + userName + ' (' + roleName + ') anchored ' + anchored + ' record' + (anchored !== 1 ? 's' : '') + ' to the XRPL today'
+            + (verified > 0 ? ', with ' + verified + ' independently verified' : '')
+            + '. Types included: ' + typeList.join(', ') + '.'
+            + ' All records are SHA-256 hashed, immutable, and available for audit. '
+            + 'Total credits used: ' + (anchored * 0.01).toFixed(2) + ' $SLS.';
+    }
+
+    // Render modal
+    var modal = document.createElement('div');
+    modal.className = 's4-eod-modal';
+    modal.id = 's4EodModal';
+    modal.onclick = function(ev) { if (ev.target === modal) modal.remove(); };
+    modal.innerHTML = '<div class="s4-eod-card">'
+        + '<h3><i class="fas fa-moon"></i> End of Day Summary</h3>'
+        + '<div class="s4-eod-body" id="s4EodBody">' + summary + '</div>'
+        + '<div class="s4-eod-actions">'
+        +   '<button class="s4-eod-close" onclick="document.getElementById(\'s4EodModal\').remove()">Close</button>'
+        +   '<button class="s4-eod-copy" onclick="navigator.clipboard.writeText(document.getElementById(\'s4EodBody\').textContent).then(function(){this.textContent=\'Copied!\';setTimeout(function(){this.textContent=\'Copy to Clipboard\';}.bind(this),1500);}.bind(this))"><i class="fas fa-copy" style="margin-right:5px"></i>Copy to Clipboard</button>'
+        + '</div>'
+        + '</div>';
+    document.body.appendChild(modal);
+
+    // Escape to close
+    var _escHandler = function(e) {
+        if (e.key === 'Escape') { modal.remove(); document.removeEventListener('keydown', _escHandler); }
+    };
+    document.addEventListener('keydown', _escHandler);
+};
+
+// ── Boot §46-§50 ──
+function _bootSections46to50() {
+    _showShortcutBar();
+    _updateHealthBadge();
+    _injectShareButtons();
+    // Refresh health badge when vault changes
+    setInterval(_updateHealthBadge, 15000);
+    // Re-inject share buttons periodically (new results may appear)
+    setInterval(_injectShareButtons, 5000);
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _bootSections46to50);
+} else {
+    setTimeout(_bootSections46to50, 1000);
+}
+
+})();
