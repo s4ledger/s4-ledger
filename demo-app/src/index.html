@@ -303,6 +303,29 @@
                     <div id="s4HealthTipBody">All systems nominal.</div>
                 </div>
             </div>
+            <!-- Quick Actions dropdown -->
+            <div style="position:relative" id="s4QuickActionsWrap">
+                <button class="s4-quick-print" id="s4QuickActionsBtn" onclick="window._s4ToggleQuickActions()" title="Quick Actions" style="font-size:0.82rem;"><i class="fas fa-bolt"></i></button>
+                <div class="s4-qa-popover" id="s4QuickActionsPopover" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--surface,#fff);border:1px solid var(--border);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,0.14);z-index:200;width:320px;padding:0;font-size:0.8rem;overflow:hidden;">
+                    <div style="padding:10px 16px 6px;font-size:0.65rem;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:0.06em;background:rgba(0,170,255,0.03);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px"><i class="fas fa-bolt" style="font-size:0.6rem;color:var(--accent)"></i> Workflow Presets</div>
+                    <div id="s4PresetsList" style="padding:4px 0;">
+                        <button onclick="window._s4ApplyPreset('daily');window._s4ToggleQuickActions()" class="s4-preset-btn"><i class="fas fa-sun" style="color:#ff9500;width:18px;text-align:center"></i><div><strong>Standard ILS Daily</strong><span>Compliance &#8594; Gap Finder &#8594; Risk Radar</span></div></button>
+                        <button onclick="window._s4ApplyPreset('audit');window._s4ToggleQuickActions()" class="s4-preset-btn"><i class="fas fa-clipboard-check" style="color:var(--accent);width:18px;text-align:center"></i><div><strong>Audit Prep</strong><span>Audit Builder &#8594; Audit Vault &#8594; Brief Composer</span></div></button>
+                        <button onclick="window._s4ApplyPreset('obsol');window._s4ToggleQuickActions()" class="s4-preset-btn"><i class="fas fa-microchip" style="color:#ff3b30;width:18px;text-align:center"></i><div><strong>Obsolescence Sweep</strong><span>Obsolescence Alert &#8594; SBOM Scanner &#8594; Risk Radar</span></div></button>
+                    </div>
+                    <div style="padding:0 8px 8px;">
+                        <button onclick="window._s4ShowPresetCreator()" class="s4-preset-btn" style="border:1px dashed var(--border);border-radius:6px;margin:0 6px;width:calc(100% - 12px);justify-content:center;gap:6px;color:var(--accent);font-weight:600;"><i class="fas fa-plus" style="width:auto"></i> Create Custom Preset</button>
+                    </div>
+                    <div style="padding:10px 16px 6px;font-size:0.65rem;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:0.06em;background:rgba(0,170,255,0.03);border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px"><i class="fas fa-zap" style="font-size:0.6rem;color:var(--accent)"></i> Quick Actions</div>
+                    <div style="padding:4px 0;">
+                        <button onclick="showSavedAnalyses();window._s4ToggleQuickActions()" class="s4-ws-action"><i class="fas fa-history" style="color:#00aaff;width:18px;text-align:center"></i> My Analyses</button>
+                        <button onclick="window._s4OpenExport();window._s4ToggleQuickActions()" class="s4-ws-action"><i class="fas fa-file-export" style="color:var(--accent);width:18px;text-align:center"></i> Export Report</button>
+                        <button onclick="showWebhookSettings();window._s4ToggleQuickActions()" class="s4-ws-action"><i class="fas fa-plug" style="color:#00aaff;width:18px;text-align:center"></i> Webhooks</button>
+                        <button onclick="showTeamPanel();window._s4ToggleQuickActions()" class="s4-ws-action"><i class="fas fa-users" style="color:var(--accent);width:18px;text-align:center"></i> Team</button>
+                        <button onclick="exportPDF();window._s4ToggleQuickActions()" class="s4-ws-action"><i class="fas fa-file-pdf" style="color:#ff3b30;width:18px;text-align:center"></i> PDF Export</button>
+                    </div>
+                </div>
+            </div>
             <div style="position:relative">
                 <button class="s4-avatar-btn" id="s4AvatarBtn" onclick="window._s4ToggleAvatar()" aria-label="Profile & account" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user"></i>
@@ -781,31 +804,7 @@
                     <div style="display:flex;align-items:center;gap:6px;">
                         <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;background:rgba(0,204,102,0.08);border:1px solid rgba(0,204,102,0.15);color:#00cc66"><i class="fas fa-circle" style="font-size:0.35rem"></i> Live</span>
                         <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.12);color:var(--accent)"><i class="fas fa-shield-halved"></i> IL4/IL5</span>
-                        <!-- Unified Workspace Menu -->
-                        <details class="s4-workspace-menu" id="s4WorkspaceMenu" style="position:relative;">
-                            <summary style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:8px;font-size:0.78rem;font-weight:600;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);color:var(--accent);cursor:pointer;list-style:none;transition:all 0.2s;user-select:none;" title="Workspace settings"><i class="fas fa-sliders"></i> Settings</summary>
-                            <div class="s4-ws-panel" style="position:absolute;right:0;top:calc(100% + 4px);background:var(--surface,#fff);border:1px solid var(--border);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,0.14);z-index:200;width:320px;padding:0;font-size:0.8rem;overflow:hidden;">
-                                <!-- Section: Workflow Presets -->
-                                <div style="padding:10px 16px 6px;font-size:0.65rem;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:0.06em;background:rgba(0,170,255,0.03);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px"><i class="fas fa-bolt" style="font-size:0.6rem;color:var(--accent)"></i> Workflow Presets</div>
-                                <div id="s4PresetsList" style="padding:4px 0;">
-                                    <button onclick="window._s4ApplyPreset('daily');this.closest('details').open=false" class="s4-preset-btn"><i class="fas fa-sun" style="color:#ff9500;width:18px;text-align:center"></i><div><strong>Standard ILS Daily</strong><span>Compliance &#8594; Gap Finder &#8594; Risk Radar</span></div></button>
-                                    <button onclick="window._s4ApplyPreset('audit');this.closest('details').open=false" class="s4-preset-btn"><i class="fas fa-clipboard-check" style="color:var(--accent);width:18px;text-align:center"></i><div><strong>Audit Prep</strong><span>Audit Builder &#8594; Audit Vault &#8594; Brief Composer</span></div></button>
-                                    <button onclick="window._s4ApplyPreset('obsol');this.closest('details').open=false" class="s4-preset-btn"><i class="fas fa-microchip" style="color:#ff3b30;width:18px;text-align:center"></i><div><strong>Obsolescence Sweep</strong><span>Obsolescence Alert &#8594; SBOM Scanner &#8594; Risk Radar</span></div></button>
-                                </div>
-                                <div style="padding:0 8px 8px;">
-                                    <button onclick="window._s4ShowPresetCreator()" class="s4-preset-btn" style="border:1px dashed var(--border);border-radius:6px;margin:0 6px;width:calc(100% - 12px);justify-content:center;gap:6px;color:var(--accent);font-weight:600;"><i class="fas fa-plus" style="width:auto"></i> Create Custom Preset</button>
-                                </div>
-                                <!-- Section: Quick Actions -->
-                                <div style="padding:10px 16px 6px;font-size:0.65rem;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:0.06em;background:rgba(0,170,255,0.03);border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px"><i class="fas fa-zap" style="font-size:0.6rem;color:var(--accent)"></i> Quick Actions</div>
-                                <div style="padding:4px 0;">
-                                    <button onclick="showSavedAnalyses();this.closest('details').open=false" class="s4-ws-action"><i class="fas fa-history" style="color:#00aaff;width:18px;text-align:center"></i> My Analyses</button>
-                                    <button onclick="window._s4OpenExport();this.closest('details').open=false" class="s4-ws-action"><i class="fas fa-file-export" style="color:var(--accent);width:18px;text-align:center"></i> Export Report</button>
-                                    <button onclick="showWebhookSettings();this.closest('details').open=false" class="s4-ws-action"><i class="fas fa-plug" style="color:#00aaff;width:18px;text-align:center"></i> Webhooks</button>
-                                    <button onclick="showTeamPanel();this.closest('details').open=false" class="s4-ws-action"><i class="fas fa-users" style="color:var(--accent);width:18px;text-align:center"></i> Team</button>
-                                    <button onclick="exportPDF();this.closest('details').open=false" class="s4-ws-action"><i class="fas fa-file-pdf" style="color:#ff3b30;width:18px;text-align:center"></i> PDF Export</button>
-                                </div>
-                            </div>
-                        </details>
+
                     </div>
                 </div>
                 <div class="ils-hub-tabs" id="ilsHubTabs" style="display:flex;">

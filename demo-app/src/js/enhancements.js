@@ -10763,7 +10763,8 @@ window._s4QuickPrint = function() {
 
 // ── §49: Share This Result ──
 function _injectShareButtons() {
-    document.querySelectorAll('.result-panel').forEach(function(panel) {
+    // Cover static result panels AND ILS hub tool panels
+    document.querySelectorAll('.result-panel, .ils-hub-panel').forEach(function(panel) {
         if (panel.dataset.s4Share) return;
         panel.dataset.s4Share = '1';
         // Use MutationObserver to inject when result appears
@@ -10863,6 +10864,23 @@ window._s4EndOfDay = function() {
         if (e.key === 'Escape') { modal.remove(); document.removeEventListener('keydown', _escHandler); }
     };
     document.addEventListener('keydown', _escHandler);
+};
+
+// ── Quick Actions toggle ──
+window._s4ToggleQuickActions = function() {
+    var pop = document.getElementById('s4QuickActionsPopover');
+    if (!pop) return;
+    var isOpen = pop.style.display !== 'none';
+    pop.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) {
+        var _closeQA = function(e) {
+            if (!document.getElementById('s4QuickActionsWrap').contains(e.target)) {
+                pop.style.display = 'none';
+                document.removeEventListener('click', _closeQA, true);
+            }
+        };
+        setTimeout(function() { document.addEventListener('click', _closeQA, true); }, 0);
+    }
 };
 
 // ── Boot §46-§50 ──
