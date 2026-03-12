@@ -75,6 +75,37 @@ def _handle_api(handler, path, body=None):
                 "wallet": {"address": "rDEMO" + uuid.uuid4().hex[:20], "balance": 100000}}
     elif path == "/api/metrics/performance":
         resp = {"status": "ok", "data": {"avg_anchor_time_ms": 2100, "uptime_pct": 99.97, "total_anchors": 1847}}
+    elif path == "/api/ai-chat":
+        # Try to proxy to real Vercel API to get live AI responses locally
+        msg = ""
+        if body:
+            try:
+                msg = json.loads(body).get("message", "")
+            except: pass
+        try:
+            import urllib.request
+            proxy_req = urllib.request.Request(
+                "https://s4ledger.com/api/ai-chat",
+                data=body,
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(proxy_req, timeout=35) as proxy_resp:
+                return proxy_resp.read()
+        except Exception:
+            # Fallback: structured mock that matches the expected response shape
+            sections = ["executive_summary", "milestones", "risks", "compliance", "next_steps"]
+            mock_bullets = {
+                "executive_summary": "\u2022 Program on track \u2014 94% readiness across all ILS elements\n\u2022 3 new data anchors verified on XRPL this period\n\u2022 Zero critical compliance gaps identified",
+                "milestones": "\u2022 CDR milestone successfully completed ahead of schedule\n\u2022 SBOM v2.1 submitted and verified \u2014 all 847 components clean\n\u2022 Provisioning data package accepted by NAVSEA",
+                "risks": "\u2022 DMSMS alert: 2 components entering obsolescence window (Q3 action required)\n\u2022 Supplier lead-time variance +12% \u2014 monitoring closely\n\u2022 Budget execution at 87% \u2014 within acceptable range",
+                "compliance": "\u2022 CMMC Level 2+ audit passed \u2014 all 110 controls verified\n\u2022 EO 14028 SBOM requirements fully met\n\u2022 NIST SP 800-171 self-assessment score: 98/110",
+                "next_steps": "\u2022 Schedule PDR for next reporting period\n\u2022 Complete DMSMS mitigation plan for flagged components\n\u2022 Submit quarterly logistics metrics to PEO"
+            }
+            parts = []
+            for s in sections:
+                parts.append("---SECTION: " + s + "---\n" + mock_bullets.get(s, "\u2022 Data pending"))
+            resp = {"response": "\n\n".join(parts), "provider": "local-mock", "fallback": False}
     else:
         resp = {"status": "ok", "message": "Local preview mock - real API at s4ledger.com"}
 
