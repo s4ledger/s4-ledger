@@ -2949,7 +2949,7 @@
                         <p style="font-size:0.8rem;color:var(--steel);margin-bottom:8px;"><strong>How S4 saves you money:</strong> Manual data aggregation for program reviews takes <strong>20-40 hours per review</strong>. S4 real-time dashboards eliminate this entirely — saving <strong style="color:#00cc66">$3,000-$6,000 per review</strong>. With monthly reviews across multiple programs, that is <strong style="color:#00cc66">$100,000-$300,000/year</strong> in executive reporting efficiency.</p>
                     </details>
 <!-- Filters -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;margin-bottom:12px">
                         <div>
                             <label style="font-size:.78rem;color:var(--steel)">Branch Filter</label>
                             <select id="analyticsBranch" aria-label="Select analytics branch" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
@@ -2967,14 +2967,6 @@
                             <select id="analyticsPeriod" aria-label="Select analytics period" class="form-control form-control-sm" onchange="refreshAnalytics()" style="background:var(--surface);color:var(--text,#1d1d1f);border:1px solid var(--border);border-radius:8px;font-size:.82rem">
                                 <option value="7d">Last 7 Days</option><option value="30d" selected>Last 30 Days</option><option value="90d">Last 90 Days</option><option value="1y">Last Year</option><option value="ALL">All Time</option>
                             </select>
-                        </div>
-                        <div>
-                            <label style="font-size:.78rem;color:var(--steel)">Export</label>
-                            <div style="display:flex;gap:6px">
-                                <button onclick="exportAnalyticsReport()" class="s4-btn-secondary btn btn-sm" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-file-pdf"></i> PDF</button>
-                                <button onclick="exportAnalyticsCSV()" class="s4-btn-secondary btn btn-sm" style="background:rgba(0,170,255,0.1);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-file-csv"></i> CSV</button>
-                                <button onclick="anchorToLedger('analytics','Cross-program analytics anchored')" class="s4-btn-primary btn btn-sm" style="background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:6px 12px;font-size:.78rem;flex:1"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
-                            </div>
                         </div>
                     </div>
 

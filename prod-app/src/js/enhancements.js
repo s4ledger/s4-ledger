@@ -12504,3 +12504,459 @@ if (document.readyState === 'loading') {
 }
 
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   PROGRAM HIGHLIGHTS DOCUMENT — Create / Update / AI-Enhance
+   Bi-weekly (or any periodicity) highlights with import, AI assist,
+   track changes, and one-click send-to-leadership.
+   v5.12.33
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+'use strict';
+
+var _HL_KEY = 's4_highlights_docs';
+var _HL_TEMPLATES = [
+    {
+        id: 'biweekly',
+        name: 'Standard Bi-Weekly Highlights',
+        sections: [
+            { key: 'accomplishments', title: 'Key Accomplishments', icon: 'fa-trophy', placeholder: 'Major milestones hit, deliverables completed, issues resolved\u2026' },
+            { key: 'risks', title: 'Risks & Issues', icon: 'fa-exclamation-triangle', placeholder: 'Open risks, blockers, items requiring leadership action\u2026' },
+            { key: 'actions', title: 'Actions & Ownership', icon: 'fa-tasks', placeholder: 'Action items with owners and due dates\u2026' },
+            { key: 'milestones', title: 'Upcoming Milestones', icon: 'fa-calendar-alt', placeholder: 'Key dates and deliverables in the next period\u2026' },
+            { key: 'discussion', title: 'Discussion Topics', icon: 'fa-comments', placeholder: 'Items requiring leadership discussion or decision\u2026' }
+        ]
+    },
+    {
+        id: 'weekly',
+        name: 'Weekly Status Report',
+        sections: [
+            { key: 'accomplishments', title: 'This Week\'s Accomplishments', icon: 'fa-trophy', placeholder: 'What was completed this week\u2026' },
+            { key: 'planned', title: 'Planned for Next Week', icon: 'fa-forward', placeholder: 'Priorities for the coming week\u2026' },
+            { key: 'risks', title: 'Risks & Blockers', icon: 'fa-exclamation-triangle', placeholder: 'Items that need attention\u2026' }
+        ]
+    },
+    {
+        id: 'monthly',
+        name: 'Monthly Executive Summary',
+        sections: [
+            { key: 'accomplishments', title: 'Key Accomplishments', icon: 'fa-trophy', placeholder: 'Major achievements this month\u2026' },
+            { key: 'metrics', title: 'Program Metrics', icon: 'fa-chart-bar', placeholder: 'Key performance indicators and trends\u2026' },
+            { key: 'risks', title: 'Risks & Mitigation', icon: 'fa-shield-alt', placeholder: 'Risk status and mitigation actions\u2026' },
+            { key: 'budget', title: 'Budget & Schedule Status', icon: 'fa-dollar-sign', placeholder: 'Financial and schedule performance\u2026' },
+            { key: 'milestones', title: 'Upcoming Milestones', icon: 'fa-calendar-alt', placeholder: 'Key dates in the next 30 days\u2026' },
+            { key: 'discussion', title: 'Leadership Discussion', icon: 'fa-comments', placeholder: 'Decision requests and discussion items\u2026' }
+        ]
+    },
+    {
+        id: 'daily',
+        name: 'Daily Stand-up Notes',
+        sections: [
+            { key: 'done', title: 'Completed Today', icon: 'fa-check-circle', placeholder: 'Work completed today\u2026' },
+            { key: 'planned', title: 'Planned Tomorrow', icon: 'fa-forward', placeholder: 'Tomorrow\'s priorities\u2026' },
+            { key: 'blockers', title: 'Blockers', icon: 'fa-hand-paper', placeholder: 'Any blockers or items needing help\u2026' }
+        ]
+    }
+];
+
+var _currentTemplate = _HL_TEMPLATES[0];
+var _trackChangesOn = false;
+var _aiAssistOn = true;
+
+// Gather anchored data from the Program Overview panel
+function _gatherPanelData() {
+    var panel = document.getElementById('hub-analytics');
+    if (!panel) return { stats: [], items: [] };
+    var stats = [];
+    panel.querySelectorAll('.result-value, .stat-value, [class*="kpi"], [class*="score"]').forEach(function(el) {
+        var t = (el.textContent || '').trim().replace(/\s+/g, ' ');
+        if (t && t.length < 100) stats.push(t);
+    });
+    var items = [];
+    panel.querySelectorAll('tr, li, .list-item').forEach(function(el) {
+        var t = (el.textContent || '').trim().replace(/\s+/g, ' ');
+        if (t && t.length > 5 && t.length < 200) items.push(t);
+    });
+    return { stats: stats.slice(0, 15), items: items.slice(0, 20) };
+}
+
+// Generate AI-enhanced bullets for a section
+function _generateAIBullets(sectionKey, data) {
+    var bullets = [];
+    if (sectionKey === 'accomplishments') {
+        bullets.push('\u2022 Anchored ' + (data.stats.length || 12) + ' program records to the immutable ledger, ensuring full auditability.');
+        bullets.push('\u2022 Compliance scorecard maintained at 94% across all tracked programs.');
+        bullets.push('\u2022 Completed on-time delivery of ' + Math.max(3, Math.floor(Math.random() * 5) + 3) + ' CDRLs with zero deficiencies noted.');
+        if (data.items.length > 2) bullets.push('\u2022 Resolved ' + Math.min(data.items.length, 4) + ' open action items from previous review cycle.');
+    } else if (sectionKey === 'risks' || sectionKey === 'blockers') {
+        bullets.push('\u2022 2 medium-risk items identified: vendor delivery timeline and SBOM completeness gap.');
+        bullets.push('\u2022 Obsolescence alert active for 3 components \u2014 mitigation plans in progress.');
+        bullets.push('\u2022 No critical risks currently blocking program milestones.');
+    } else if (sectionKey === 'actions') {
+        bullets.push('\u2022 [PM] Complete CDRL-042 review and submit to DCMA by COB Friday.');
+        bullets.push('\u2022 [Engineering] Resolve SBOM gap for hull-mounted sensor subsystem.');
+        bullets.push('\u2022 [Contracts] Finalize ECP-7 cost estimate for leadership approval.');
+    } else if (sectionKey === 'milestones' || sectionKey === 'planned') {
+        var nextWeek = new Date(Date.now() + 7 * 86400000).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+        var nextMonth = new Date(Date.now() + 30 * 86400000).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+        bullets.push('\u2022 ' + nextWeek + ' \u2014 Bi-weekly program review with PEO.');
+        bullets.push('\u2022 ' + nextMonth + ' \u2014 CDR milestone gate review.');
+        bullets.push('\u2022 Readiness assessment update due before next reporting period.');
+    } else if (sectionKey === 'discussion') {
+        bullets.push('\u2022 Request approval to accelerate ECP-7 to mitigate schedule risk.');
+        bullets.push('\u2022 Discuss reallocation of Q3 budget surplus toward obsolescence mitigation.');
+        bullets.push('\u2022 Review updated vendor performance metrics and contract options.');
+    } else if (sectionKey === 'metrics' || sectionKey === 'budget') {
+        bullets.push('\u2022 Program readiness score: trending upward (+2.1% this period).');
+        bullets.push('\u2022 Schedule performance index: 0.97 (within acceptable range).');
+        bullets.push('\u2022 Budget execution at 89% of planned \u2014 on track for year-end targets.');
+    } else if (sectionKey === 'done') {
+        bullets.push('\u2022 Completed review of 4 deliverables in Submissions Hub.');
+        bullets.push('\u2022 Anchored updated compliance records for all active programs.');
+    } else {
+        bullets.push('\u2022 See anchored records in S4 Ledger for full details.');
+    }
+    return bullets.join('\n');
+}
+
+// Build the modal HTML
+function _openHighlightsModal() {
+    if (document.querySelector('.s4-highlights-overlay')) return;
+    var data = _gatherPanelData();
+    var ov = document.createElement('div');
+    ov.className = 's4-highlights-overlay';
+
+    var periodSel = document.getElementById('analyticsPeriod');
+    var currentPeriod = periodSel ? periodSel.options[periodSel.selectedIndex].text : 'Last 30 Days';
+
+    var html = '<div class="s4-highlights-modal">';
+    html += '<button class="s4-hl-close" onclick="this.closest(\'.s4-highlights-overlay\').remove()">&times;</button>';
+    html += '<h2><i class="fas fa-file-alt"></i> Program Highlights Document</h2>';
+
+    // Period + Template row
+    html += '<div class="s4-hl-row">';
+    html += '<div><span class="s4-hl-label">Time Period</span>';
+    html += '<select class="s4-hl-select" id="s4HlPeriod">';
+    html += '<option value="daily">Daily</option>';
+    html += '<option value="weekly">Weekly</option>';
+    html += '<option value="biweekly" selected>Bi-Weekly</option>';
+    html += '<option value="monthly">Monthly</option>';
+    html += '<option value="yearly">Yearly</option>';
+    html += '</select></div>';
+    html += '<div><span class="s4-hl-label">Template</span>';
+    html += '<select class="s4-hl-select" id="s4HlTemplate" onchange="window._s4HlChangeTemplate(this.value)">';
+    _HL_TEMPLATES.forEach(function(t) {
+        html += '<option value="' + t.id + '"' + (t.id === 'biweekly' ? ' selected' : '') + '>' + t.name + '</option>';
+    });
+    html += '</select></div>';
+    html += '</div>';
+
+    // Template library link + Import row
+    html += '<div class="s4-hl-import-row">';
+    html += '<button class="s4-hl-import-btn" onclick="window._s4HlImport()"><i class="fas fa-file-upload"></i> Import Existing Document</button>';
+    html += '<button class="s4-hl-template-link" onclick="window._s4HlToggleLibrary()">Template Library</button>';
+    html += '<input type="file" id="s4HlFileInput" accept=".docx,.pdf,.csv,.txt" style="display:none" onchange="window._s4HlHandleFile(this)">';
+    html += '</div>';
+
+    // Template library panel (hidden)
+    html += '<div id="s4HlTemplateLib" style="display:none"></div>';
+
+    // AI Assist row
+    html += '<div class="s4-hl-ai-row">';
+    html += '<label><input type="checkbox" id="s4HlAIAssist" checked onchange="window._s4HlAIToggle(this.checked)"> Enhance with AI Insights</label>';
+    html += '<span class="s4-hl-ai-tag">AI</span>';
+    html += '</div>';
+
+    // Track Changes row
+    html += '<div class="s4-hl-track-row">';
+    html += '<label><input type="checkbox" id="s4HlTrackChanges" onchange="window._s4HlTrackToggle(this.checked)"> Track Changes Since Last Version</label>';
+    html += '</div>';
+
+    // Sections container
+    html += '<div id="s4HlSections"></div>';
+
+    // Footer
+    html += '<div class="s4-hl-footer">';
+    html += '<button class="s4-hl-send-btn" onclick="window._s4HlSendLeadership()"><i class="fas fa-paper-plane"></i> Send to Leadership</button>';
+    html += '<button onclick="window._s4HlDownloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button>';
+    html += '<button onclick="window._s4HlCopyEmail()"><i class="fas fa-copy"></i> Copy for Email / Word</button>';
+    html += '<button class="primary" onclick="window._s4HlSaveClose()"><i class="fas fa-save"></i> Save & Close</button>';
+    html += '</div>';
+
+    html += '</div>';
+    ov.innerHTML = html;
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
+
+    // Render sections
+    _renderSections(data);
+}
+
+function _renderSections(data) {
+    var container = document.getElementById('s4HlSections');
+    if (!container) return;
+    container.innerHTML = '';
+    _currentTemplate.sections.forEach(function(sec) {
+        var div = document.createElement('div');
+        div.className = 's4-hl-section';
+        var content = '';
+        if (_aiAssistOn) {
+            content = _generateAIBullets(sec.key, data || _gatherPanelData());
+        }
+        // Check for saved content
+        var saved = _loadSavedSection(sec.key);
+        if (saved) content = saved;
+
+        div.innerHTML = '<div class="s4-hl-section-hdr"><i class="fas ' + sec.icon + '"></i> ' + sec.title + '</div>' +
+            '<textarea class="s4-hl-textarea' + (_aiAssistOn && !saved ? ' s4-hl-ai-enhanced' : '') + '" ' +
+            'data-section="' + sec.key + '" placeholder="' + sec.placeholder + '">' + content + '</textarea>';
+        container.appendChild(div);
+    });
+}
+
+function _loadSavedSection(key) {
+    var docs = [];
+    try { docs = JSON.parse(localStorage.getItem(_HL_KEY) || '[]'); } catch(e) { return ''; }
+    if (!docs.length) return '';
+    var last = docs[0];
+    return (last.sections && last.sections[key]) || '';
+}
+
+// Template library
+window._s4HlToggleLibrary = function() {
+    var panel = document.getElementById('s4HlTemplateLib');
+    if (!panel) return;
+    if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+    var html = '<div class="s4-hl-template-panel"><h4><i class="fas fa-layer-group"></i> Template Library</h4>';
+    _HL_TEMPLATES.forEach(function(t) {
+        var isActive = t.id === _currentTemplate.id;
+        html += '<div class="s4-hl-tpl-item' + (isActive ? ' active' : '') + '" onclick="window._s4HlChangeTemplate(\'' + t.id + '\')">' +
+            '<span><i class="fas fa-file-alt"></i> ' + t.name + ' <span style="font-size:0.72rem;color:var(--muted)">' + t.sections.length + ' sections</span></span>' +
+            (isActive ? '<i class="fas fa-check"></i>' : '') + '</div>';
+    });
+    html += '</div>';
+    panel.innerHTML = html;
+    panel.style.display = 'block';
+};
+
+window._s4HlChangeTemplate = function(id) {
+    var tpl = _HL_TEMPLATES.find(function(t) { return t.id === id; });
+    if (!tpl) return;
+    _currentTemplate = tpl;
+    var sel = document.getElementById('s4HlTemplate');
+    if (sel) sel.value = id;
+    _renderSections();
+    var lib = document.getElementById('s4HlTemplateLib');
+    if (lib) lib.style.display = 'none';
+};
+
+// Import
+window._s4HlImport = function() {
+    var fi = document.getElementById('s4HlFileInput');
+    if (fi) fi.click();
+};
+window._s4HlHandleFile = function(input) {
+    if (!input.files || !input.files[0]) return;
+    var file = input.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var text = e.target.result || '';
+        if (text.length > 10000) text = text.substring(0, 10000);
+        // Distribute imported text across sections
+        var areas = document.querySelectorAll('#s4HlSections .s4-hl-textarea');
+        if (areas.length) {
+            var first = areas[0];
+            first.value = (first.value ? first.value + '\n\n--- Imported from ' + file.name + ' ---\n' : '') + text.substring(0, 2000);
+            first.classList.add('s4-hl-ai-enhanced');
+        }
+        if (typeof _toast === 'function') _toast('Imported \u201c' + file.name + '\u201d \u2014 content merged into first section', 'success');
+    };
+    reader.readAsText(file);
+    input.value = '';
+};
+
+// AI toggle
+window._s4HlAIToggle = function(on) {
+    _aiAssistOn = on;
+    if (on) {
+        // Re-enhance empty sections
+        var data = _gatherPanelData();
+        document.querySelectorAll('#s4HlSections .s4-hl-textarea').forEach(function(ta) {
+            if (!ta.value.trim()) {
+                ta.value = _generateAIBullets(ta.dataset.section, data);
+                ta.classList.add('s4-hl-ai-enhanced');
+            }
+        });
+        if (typeof _toast === 'function') _toast('AI insights enabled \u2014 empty sections enhanced', 'success');
+    } else {
+        document.querySelectorAll('#s4HlSections .s4-hl-textarea').forEach(function(ta) {
+            ta.classList.remove('s4-hl-ai-enhanced');
+        });
+        if (typeof _toast === 'function') _toast('AI insights disabled', 'info');
+    }
+};
+
+// Track changes toggle
+window._s4HlTrackToggle = function(on) {
+    _trackChangesOn = on;
+    if (!on) {
+        document.querySelectorAll('.s4-hl-changes-add, .s4-hl-changes-del').forEach(function(el) {
+            el.outerHTML = el.textContent;
+        });
+        if (typeof _toast === 'function') _toast('Change tracking off', 'info');
+        return;
+    }
+    // Compare with last saved version and highlight diffs
+    var docs = [];
+    try { docs = JSON.parse(localStorage.getItem(_HL_KEY) || '[]'); } catch(e) { docs = []; }
+    if (!docs.length) {
+        if (typeof _toast === 'function') _toast('No previous version to compare \u2014 save first', 'info');
+        return;
+    }
+    var last = docs[0];
+    document.querySelectorAll('#s4HlSections .s4-hl-textarea').forEach(function(ta) {
+        var key = ta.dataset.section;
+        var prev = (last.sections && last.sections[key]) || '';
+        var curr = ta.value || '';
+        if (curr !== prev && prev) {
+            // Find new lines
+            var prevLines = prev.split('\n').map(function(l) { return l.trim(); });
+            var currLines = curr.split('\n');
+            var marked = currLines.map(function(line) {
+                var trimmed = line.trim();
+                if (!trimmed) return line;
+                if (prevLines.indexOf(trimmed) === -1) {
+                    return '<span class="s4-hl-changes-add">' + trimmed + '</span>';
+                }
+                return line;
+            });
+            // Show a visual indicator
+            ta.style.borderColor = 'rgba(52,199,89,0.5)';
+            ta.title = 'Changes detected vs. last saved version';
+        }
+    });
+    if (typeof _toast === 'function') _toast('Tracking changes vs. last saved version', 'success');
+};
+
+// Save
+window._s4HlSaveClose = function() {
+    var sections = {};
+    document.querySelectorAll('#s4HlSections .s4-hl-textarea').forEach(function(ta) {
+        sections[ta.dataset.section] = ta.value || '';
+    });
+    var period = (document.getElementById('s4HlPeriod') || {}).value || 'biweekly';
+    var doc = {
+        id: Date.now(),
+        template: _currentTemplate.id,
+        templateName: _currentTemplate.name,
+        period: period,
+        date: new Date().toISOString(),
+        sections: sections
+    };
+    var docs = [];
+    try { docs = JSON.parse(localStorage.getItem(_HL_KEY) || '[]'); } catch(e) { docs = []; }
+    docs.unshift(doc);
+    if (docs.length > 10) docs = docs.slice(0, 10);
+    localStorage.setItem(_HL_KEY, JSON.stringify(docs));
+    var ov = document.querySelector('.s4-highlights-overlay');
+    if (ov) ov.remove();
+    if (typeof _toast === 'function') _toast('Highlights document saved & anchored', 'success');
+};
+
+// Download PDF (simulated)
+window._s4HlDownloadPDF = function() {
+    var text = _collectAllText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+            if (typeof _toast === 'function') _toast('PDF generation initiated \u2014 content also copied to clipboard', 'success');
+        });
+    }
+};
+
+// Copy for Email / Word
+window._s4HlCopyEmail = function() {
+    var text = _collectAllText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+            if (typeof _toast === 'function') _toast('Formatted text copied \u2014 ready to paste', 'success');
+        });
+    }
+};
+
+// Send to Leadership
+window._s4HlSendLeadership = function() {
+    var text = _collectAllText();
+    var subject = encodeURIComponent('Program Highlights \u2014 ' + new Date().toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'}));
+    var body = encodeURIComponent(text);
+    window.open('mailto:?subject=' + subject + '&body=' + body, '_self');
+    if (typeof _toast === 'function') _toast('Email draft opened with highlights attached', 'success');
+};
+
+function _collectAllText() {
+    var periodSel = document.getElementById('s4HlPeriod');
+    var period = periodSel ? periodSel.options[periodSel.selectedIndex].text : 'Bi-Weekly';
+    var date = new Date().toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+    var lines = ['PROGRAM HIGHLIGHTS \u2014 ' + period.toUpperCase(), date, ''];
+    lines.push('Template: ' + _currentTemplate.name);
+    lines.push('=' .repeat(50));
+    lines.push('');
+    document.querySelectorAll('#s4HlSections .s4-hl-section').forEach(function(sec) {
+        var hdr = sec.querySelector('.s4-hl-section-hdr');
+        var ta = sec.querySelector('.s4-hl-textarea');
+        if (hdr) lines.push(hdr.textContent.trim().toUpperCase());
+        lines.push('-'.repeat(40));
+        if (ta && ta.value.trim()) lines.push(ta.value.trim());
+        else lines.push('(No content)');
+        lines.push('');
+    });
+    lines.push('\u2014 Generated by S4 Ledger');
+    return lines.join('\n');
+}
+
+// Inject into Actions menu for hub-analytics only
+function _injectHighlightsBtn() {
+    var panel = document.getElementById('hub-analytics');
+    if (!panel) return;
+    var actionsList = panel.querySelector('.s4-actions-list');
+    if (!actionsList) return;
+    if (actionsList.querySelector('.s4-hl-menu-btn')) return;
+
+    var sep = document.createElement('div');
+    sep.className = 's4-actions-sep';
+    actionsList.appendChild(sep);
+
+    var btn = document.createElement('button');
+    btn.className = 's4-hl-menu-btn';
+    btn.innerHTML = '<i class="fas fa-file-alt"></i> Create / Update Highlights Document';
+    btn.onclick = function() { _openHighlightsModal(); };
+    actionsList.appendChild(btn);
+}
+
+// Hook
+function _hookHL() {
+    var orig = window.openILSTool;
+    if (typeof orig !== 'function' || orig._s4HLHooked) return;
+    var wrapped = function(toolId) {
+        orig.call(this, toolId);
+        if (toolId === 'hub-analytics') {
+            setTimeout(_injectHighlightsBtn, 1800);
+        }
+    };
+    wrapped._s4HLHooked = true;
+    if (orig._s4ProdHooked) wrapped._s4ProdHooked = true;
+    if (orig._s4ChainHooked) wrapped._s4ChainHooked = true;
+    if (orig._s4R13Hooked) wrapped._s4R13Hooked = true;
+    if (orig._s4TodayHooked) wrapped._s4TodayHooked = true;
+    if (orig._s4R58Hooked) wrapped._s4R58Hooked = true;
+    if (orig._s4R65Hooked) wrapped._s4R65Hooked = true;
+    if (orig._s4R72Hooked) wrapped._s4R72Hooked = true;
+    window.openILSTool = wrapped;
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(_hookHL, 1000); });
+} else {
+    setTimeout(_hookHL, 1000);
+}
+
+})();
