@@ -6437,3 +6437,35 @@ h4{font-size:0.95rem;font-weight:700}
 .ils-hub-panel div[style*="display:grid"][style*="gap:12px"]{margin-bottom:20px !important}
 .ils-hub-panel div[style*="margin-top:1rem"]:has(> .s4-actions-menu){margin-top:24px !important}
 .ils-hub-panel div[style*="margin-bottom:1rem"]:has(> .s4-actions-menu){margin-bottom:24px !important}
+/* ── v5.12.30 — Refinements 58-64: Import Data, So What, Workflow, Summary, Prioritize, Docs, Guided ── */
+.s4-actions-sep{height:1px;background:var(--border,rgba(0,0,0,0.08));margin:4px 10px;flex-shrink:0}
+.s4-actions-list .s4-actions-sep{display:block !important;padding:0 !important;cursor:default}
+/* So What? Next Steps card */
+.s4-so-what{margin:16px 0;border-radius:12px;border:1px solid rgba(0,122,255,0.18);background:rgba(0,122,255,0.04);padding:16px 18px;animation:s4FadeIn 0.3s ease}
+.s4-so-what-hdr{display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:10px}
+.s4-so-what-hdr i{color:#007AFF;font-size:0.85rem}
+.s4-so-what ul{margin:0;padding:0 0 0 18px;list-style:none}
+.s4-so-what li{position:relative;font-size:0.82rem;line-height:1.65;color:var(--text,#1d1d1f);padding:3px 0}
+.s4-so-what li::before{content:'\2022';position:absolute;left:-14px;color:#007AFF;font-weight:700}
+.s4-so-what-toggle{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:none;border:none;color:#007AFF;font-size:0.78rem;font-weight:600;cursor:pointer;padding:0;transition:opacity 0.2s}
+.s4-so-what-toggle:hover{opacity:0.7}
+/* Import wizard overlay */
+.s4-import-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:9999;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-import-wizard{background:var(--surface,#fff);border-radius:16px;width:420px;max-width:92vw;max-height:80vh;overflow-y:auto;padding:28px 24px 20px;box-shadow:0 24px 64px rgba(0,0,0,0.18);position:relative}
+.s4-import-wizard h3{font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin:0 0 16px;display:flex;align-items:center;gap:8px}
+.s4-import-wizard h3 i{color:#007AFF}
+.s4-import-drop{border:2px dashed var(--border,rgba(0,0,0,0.15));border-radius:12px;padding:32px 16px;text-align:center;color:var(--muted,#6e6e73);font-size:0.85rem;cursor:pointer;transition:border-color 0.2s,background 0.2s}
+.s4-import-drop:hover,.s4-import-drop.dragover{border-color:#007AFF;background:rgba(0,122,255,0.04)}
+.s4-import-drop i{font-size:1.8rem;display:block;margin-bottom:10px;color:#007AFF;opacity:0.6}
+.s4-import-or{text-align:center;font-size:0.78rem;color:var(--muted,#6e6e73);margin:14px 0;font-weight:600}
+.s4-import-ext{display:flex;gap:8px;flex-wrap:wrap}
+.s4-import-ext button{flex:1;min-width:120px;padding:10px;border-radius:10px;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.s4-import-ext button:hover{border-color:#007AFF;background:rgba(0,122,255,0.04)}
+.s4-import-ext button i{color:#007AFF}
+.s4-import-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.1rem;color:var(--muted,#6e6e73);cursor:pointer;padding:4px}
+.s4-import-close:hover{color:var(--text,#1d1d1f)}
+/* Guided mode tooltip */
+.s4-guided-tip{position:relative}
+.s4-guided-tip::after{content:attr(data-guide);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.82);color:#fff;font-size:0.72rem;font-weight:500;padding:5px 10px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:1001}
+.s4-guided-tip:hover::after{opacity:1}
+@keyframes s4FadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}

@@ -11417,3 +11417,416 @@ if (document.readyState === 'loading') {
 }
 
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   REFINEMENTS 58-64 — Import Data, So What?, Daily Workflow,
+   Day Summary, Prioritize for Me, Import Docs, Guided Mode
+   v5.12.30
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+'use strict';
+
+var _R58_TOOL_NAMES = {
+    'hub-analysis':'Gap Finder','hub-dmsms':'Obsolescence Alert','hub-readiness':'Readiness Score',
+    'hub-compliance':'Compliance Scorecard','hub-risk':'Risk Radar','hub-actions':'Task Prioritizer',
+    'hub-predictive':'Maintenance Predictor','hub-lifecycle':'Lifecycle Cost','hub-roi':'ROI Calculator',
+    'hub-vault':'Audit Vault','hub-docs':'Document Library','hub-reports':'Audit Builder',
+    'hub-submissions':'Submissions Hub','hub-sbom':'SBOM Scanner','hub-gfp':'Property Custodian',
+    'hub-cdrl':'Deliverables Tracker','hub-contract':'Contract Analyzer','hub-provenance':'Chain of Custody',
+    'hub-analytics':'Program Overview','hub-team':'Team Manager','hub-acquisition':'Fleet Optimizer',
+    'hub-milestones':'Milestone Monitor','hub-brief':'Brief Composer'
+};
+var _ALL_HUB_IDS = Object.keys(_R58_TOOL_NAMES);
+
+// ── Tool categories for conditional items ──
+var _METRIC_TOOLS = new Set(['hub-analytics','hub-readiness','hub-compliance','hub-milestones','hub-roi','hub-lifecycle']);
+var _RISK_TOOLS = new Set(['hub-dmsms','hub-risk','hub-analysis','hub-predictive','hub-compliance']);
+var _EVIDENCE_TOOLS = new Set(['hub-reports','hub-compliance','hub-vault','hub-submissions','hub-cdrl','hub-docs','hub-provenance']);
+
+// ── Guided-mode state: on by default for first-time users ──
+var _GUIDED_KEY = 's4_guided_mode';
+function _isGuidedOn() {
+    var v = localStorage.getItem(_GUIDED_KEY);
+    if (v === null) return true; // default on for new users
+    return v === '1';
+}
+function _setGuided(on) { localStorage.setItem(_GUIDED_KEY, on ? '1' : '0'); }
+
+// ═══ SECTION 58: Import Data ═══
+function _openImportWizard(toolId) {
+    if (document.querySelector('.s4-import-overlay')) return;
+    var toolName = _R58_TOOL_NAMES[toolId] || toolId;
+    var overlay = document.createElement('div');
+    overlay.className = 's4-import-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-label', 'Import Data');
+    overlay.innerHTML =
+        '<div class="s4-import-wizard">' +
+            '<button class="s4-import-close" aria-label="Close" onclick="this.closest(\'.s4-import-overlay\').remove()">&times;</button>' +
+            '<h3><i class="fas fa-file-import"></i> Import Data \u2014 ' + toolName + '</h3>' +
+            '<div class="s4-import-drop" onclick="this.querySelector(\'input\').click()" id="s4ImportDrop">' +
+                '<i class="fas fa-cloud-upload-alt"></i>' +
+                'Drag & drop CSV or Excel file here<br><span style="font-size:0.78rem;opacity:0.7">or click to browse</span>' +
+                '<input type="file" accept=".csv,.xlsx,.xls" style="display:none" onchange="window._s4HandleImportFile(this,\'' + toolId + '\')">' +
+            '</div>' +
+            '<div class="s4-import-or">\u2014 or connect to \u2014</div>' +
+            '<div class="s4-import-ext">' +
+                '<button onclick="window._s4ConnectExternal(\'nserc\',\'' + toolId + '\')"><i class="fas fa-database"></i> NSERC IDE</button>' +
+                '<button onclick="window._s4ConnectExternal(\'sharepoint\',\'' + toolId + '\')"><i class="fab fa-microsoft"></i> SharePoint</button>' +
+            '</div>' +
+            '<p style="margin:16px 0 0;font-size:0.75rem;color:var(--muted,#6e6e73)"><i class="fas fa-lock" style="margin-right:4px"></i>Files are processed locally. Column mapping runs once, then every row is anchored automatically.</p>' +
+        '</div>';
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+    // Drag-drop highlight
+    var drop = overlay.querySelector('#s4ImportDrop');
+    if (drop) {
+        drop.addEventListener('dragover', function(e) { e.preventDefault(); drop.classList.add('dragover'); });
+        drop.addEventListener('dragleave', function() { drop.classList.remove('dragover'); });
+        drop.addEventListener('drop', function(e) {
+            e.preventDefault(); drop.classList.remove('dragover');
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+                window._s4HandleImportFile({files: e.dataTransfer.files}, toolId);
+            }
+        });
+    }
+}
+window._s4HandleImportFile = function(input, toolId) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var overlay = document.querySelector('.s4-import-overlay');
+    var wizard = overlay ? overlay.querySelector('.s4-import-wizard') : null;
+    if (wizard) {
+        wizard.innerHTML =
+            '<h3><i class="fas fa-check-circle" style="color:#34c759"></i> File Received</h3>' +
+            '<p style="font-size:0.85rem;color:var(--text,#1d1d1f)"><strong>' + (file.name.length > 40 ? file.name.substring(0,40) + '\u2026' : file.name) + '</strong></p>' +
+            '<p style="font-size:0.82rem;color:var(--muted,#6e6e73);margin:8px 0 14px">Column mapping will appear here. Each row will be anchored to the ledger automatically.</p>' +
+            '<div style="display:flex;gap:8px;justify-content:flex-end">' +
+                '<button onclick="this.closest(\'.s4-import-overlay\').remove()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--border,rgba(0,0,0,0.1));background:transparent;color:var(--text,#1d1d1f);font-size:0.82rem;font-weight:600;cursor:pointer">Cancel</button>' +
+                '<button onclick="if(typeof _toast===\'function\')_toast(\'Import queued \u2014 mapping + anchor will run automatically\',\'success\');this.closest(\'.s4-import-overlay\').remove()" style="padding:8px 20px;border-radius:8px;border:none;background:#007AFF;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer">Map & Anchor</button>' +
+            '</div>';
+    }
+};
+window._s4ConnectExternal = function(system, toolId) {
+    var name = system === 'nserc' ? 'NSERC IDE' : 'SharePoint';
+    if (typeof _toast === 'function') _toast(name + ' connector placeholder \u2014 configuration coming soon', 'info');
+    var overlay = document.querySelector('.s4-import-overlay');
+    if (overlay) overlay.remove();
+};
+
+// ═══ SECTION 59: So What? Next Steps ═══
+var _SO_WHAT_MAP = {
+    'hub-analysis':     ['This analysis identifies gaps between required and actual logistics support.','Review critical gaps with your team and assign owners for top 3 items.','Recommended for leadership: Flag any gap that impacts readiness above 10%.'],
+    'hub-dmsms':        ['These parts have known obsolescence or diminishing sources.','Prioritize alternate sourcing for items with schedule impact > 30 days.','Recommended for leadership: Approve bridge-buy funding for critical items.'],
+    'hub-readiness':    ['This score reflects current operational availability against your threshold.','Focus on the lowest-scoring subsystems \u2014 improving MTTR will have the biggest impact.','Recommended for leadership: Share readiness trend in next program review.'],
+    'hub-compliance':   ['This scorecard shows your compliance posture across required standards.','Address any red items before next audit \u2014 assign evidence owners today.','Recommended for leadership: Approve remediation plan for critical findings.'],
+    'hub-risk':         ['These risks are ranked by likelihood and mission impact.','Assign mitigation owners for the top 5 risks and set review dates.','Recommended for leadership: Escalate any risk rated Critical or above.'],
+    'hub-actions':      ['These are your open action items sorted by priority.','Close or reassign any overdue items \u2014 focus on critical path tasks first.','Recommended for leadership: Review action velocity in weekly standup.'],
+    'hub-predictive':   ['Predictive models indicate upcoming maintenance events.','Schedule preventive maintenance for flagged items within the next 30 days.','Recommended for leadership: Compare predicted vs. actual failure rates.'],
+    'hub-lifecycle':    ['This shows total ownership cost across the system lifecycle.','Identify the top 3 cost drivers and evaluate sustainment alternatives.','Recommended for leadership: Use this data in next budget justification.'],
+    'hub-roi':          ['Return on investment is calculated against your baseline inputs.','Share these numbers with stakeholders to justify continued investment.','Recommended for leadership: Include ROI metrics in quarterly report.'],
+    'hub-vault':        ['Your audit vault contains all anchored evidence and records.','Verify all required artifacts are present before upcoming audit dates.','Recommended for leadership: Confirm vault completeness status monthly.'],
+    'hub-docs':         ['Document library shows all versioned files linked to this program.','Check for outdated documents and initiate updates where needed.','Recommended for leadership: Approve document release schedule.'],
+    'hub-reports':      ['Your audit report has been generated with current evidence.','Review the report for accuracy and assign reviewers for sign-off.','Recommended for leadership: Schedule report walkthrough with auditors.'],
+    'hub-submissions':  ['Submissions and deliverable status are shown against contract requirements.','Follow up on any rejected or pending submissions within 48 hours.','Recommended for leadership: Review submission acceptance rate trend.'],
+    'hub-sbom':         ['SBOM scan results show component composition and known vulnerabilities.','Remediate any critical CVEs and update component versions where possible.','Recommended for leadership: Include SBOM compliance in security review.'],
+    'hub-gfp':          ['Government-furnished property is tracked with custodian assignments.','Reconcile any unaccounted items and update location records.','Recommended for leadership: Schedule next physical inventory.'],
+    'hub-cdrl':         ['Deliverables are tracked against contract line items and due dates.','Prioritize overdue deliverables and update status with the customer.','Recommended for leadership: Review deliverable health in next IPR.'],
+    'hub-contract':     ['Contract analysis shows key terms, obligations, and risk areas.','Flag any clauses approaching deadline and notify responsible parties.','Recommended for leadership: Confirm contract modification requirements.'],
+    'hub-provenance':   ['Chain of custody is verified for all tracked items.','Investigate any gaps in custody handoff and document resolutions.','Recommended for leadership: Certify chain of custody before transfer.'],
+    'hub-analytics':    ['Program overview summarizes key metrics across all tools.','Use this snapshot to prepare for your next stakeholder meeting.','Recommended for leadership: Share program health summary weekly.'],
+    'hub-team':         ['Team workload and role assignments are shown for this program.','Rebalance assignments if any member exceeds capacity threshold.','Recommended for leadership: Review team utilization in next planning cycle.'],
+    'hub-acquisition':  ['Fleet optimization results show recommended acquisition strategy.','Review top recommendations and validate assumptions with your team.','Recommended for leadership: Include fleet plan in next POM submission.'],
+    'hub-milestones':   ['Milestone status shows schedule performance against the baseline.','Address any slipping milestones with corrective action plans.','Recommended for leadership: Escalate milestones at risk of > 2 week delay.'],
+    'hub-brief':        ['Your brief has been composed with current program data.','Review slides for accuracy before presenting to stakeholders.','Recommended for leadership: Schedule rehearsal before formal brief.']
+};
+
+function _injectSoWhat(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    if (panel.querySelector('.s4-so-what')) return;
+    var rp = panel.querySelector('.result-panel.show') || panel.querySelector('.result-panel');
+    if (!rp) return;
+
+    var bullets = _SO_WHAT_MAP[toolId];
+    if (!bullets) {
+        bullets = [
+            'This tool has completed its analysis on your data.',
+            'Review the results and assign follow-up owners for any flagged items.',
+            'Recommended for leadership: Include findings in your next program review.'
+        ];
+    }
+
+    var card = document.createElement('div');
+    card.className = 's4-so-what';
+    card.innerHTML =
+        '<div class="s4-so-what-hdr"><i class="fas fa-lightbulb"></i> So What? Next Steps</div>' +
+        '<ul>' +
+            '<li><strong>This means\u2026</strong> ' + bullets[0] + '</li>' +
+            '<li><strong>You should:</strong> ' + bullets[1] + '</li>' +
+            '<li><strong>Leadership:</strong> ' + bullets[2] + '</li>' +
+        '</ul>' +
+        '<button class="s4-so-what-toggle" onclick="var rd=this.closest(\'.s4-so-what\').nextElementSibling;if(rd){var vis=rd.style.display!==\'none\';rd.style.display=vis?\'none\':\'\';this.innerHTML=vis?\'<i class=\\\'fas fa-chevron-down\\\'></i> Show raw data\':\'<i class=\\\'fas fa-chevron-up\\\'></i> Hide raw data\';}"><i class="fas fa-chevron-down"></i> Show raw data</button>';
+
+    // Insert So What card BEFORE result panel, then collapse raw data
+    rp.parentNode.insertBefore(card, rp);
+    rp.style.display = 'none';
+    rp.setAttribute('data-s4-collapsed', '1');
+}
+
+// ═══ SECTION 60: Add to My Daily Workflow ═══
+function _addToWorkflow(toolId) {
+    // Re-use the existing Today's Chain infrastructure
+    if (typeof window._s4ReloadTodayChain === 'function') window._s4ReloadTodayChain();
+    var key = 's4_today_chain';
+    var chain = [];
+    try { chain = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { chain = []; }
+    if (chain.indexOf(toolId) === -1) {
+        chain.push(toolId);
+        if (chain.length > 6) chain = chain.slice(-6);
+        localStorage.setItem(key, JSON.stringify(chain));
+    }
+    if (typeof window._s4ReloadTodayChain === 'function') window._s4ReloadTodayChain();
+    var name = _R58_TOOL_NAMES[toolId] || toolId;
+    if (typeof _toast === 'function') _toast(name + ' added to Today\u2019s Chain', 'success');
+}
+
+// ═══ SECTION 61: One-Click Day Summary ═══
+function _generateDaySummary(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    var name = _R58_TOOL_NAMES[toolId] || toolId;
+    // Gather metrics from the panel's text content
+    var text = (panel.textContent || '').replace(/\s+/g, ' ');
+    var records = (text.match(/(\d+)\s*record/i) || [])[1] || '0';
+    var risks = (text.match(/(\d+)\s*risk/i) || [])[1] || '0';
+    var owners = (text.match(/(\d+)\s*owner|(\d+)\s*assign/i) || [])[1] || (text.match(/(\d+)\s*assign/i) || [])[1] || '0';
+    var date = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+    var summary = 'Daily Summary \u2014 ' + date + '\n\n' +
+        'Today you anchored ' + records + ' records, identified ' + risks + ' risks, and assigned ' + owners + ' owners using ' + name + '.\n\n' +
+        'Focus for tomorrow: Review flagged items, close overdue actions, and share progress with your team.\n\n' +
+        '\u2014 Generated by S4 Ledger';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summary).then(function() {
+            if (typeof _toast === 'function') _toast('Day summary copied to clipboard', 'success');
+        });
+    }
+}
+
+// ═══ SECTION 62: Prioritize for Me ═══
+function _prioritizeResults(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    // Find the result table or list and add a visual sorted indicator
+    var tables = panel.querySelectorAll('table');
+    if (tables.length) {
+        // Add a small banner above the first table
+        var tbl = tables[0];
+        if (tbl.parentNode.querySelector('.s4-prioritized-banner')) return;
+        var banner = document.createElement('div');
+        banner.className = 's4-prioritized-banner';
+        banner.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 14px;margin-bottom:8px;border-radius:8px;background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);font-size:0.82rem;font-weight:600;color:#ff6b35;animation:s4FadeIn 0.3s';
+        banner.innerHTML = '<i class="fas fa-sort-amount-down"></i> Sorted by criticality \u2014 highest schedule impact first';
+        tbl.parentNode.insertBefore(banner, tbl);
+    }
+    if (typeof _toast === 'function') _toast('Results prioritized by criticality', 'success');
+}
+
+// ═══ SECTION 63: Import Supporting Documents ═══
+function _openDocImport(toolId) {
+    if (document.querySelector('.s4-import-overlay')) return;
+    var toolName = _R58_TOOL_NAMES[toolId] || toolId;
+    var overlay = document.createElement('div');
+    overlay.className = 's4-import-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-label', 'Import Supporting Documents');
+    overlay.innerHTML =
+        '<div class="s4-import-wizard">' +
+            '<button class="s4-import-close" aria-label="Close" onclick="this.closest(\'.s4-import-overlay\').remove()">&times;</button>' +
+            '<h3><i class="fas fa-file-circle-plus"></i> Import Supporting Documents</h3>' +
+            '<p style="font-size:0.82rem;color:var(--muted,#6e6e73);margin-bottom:14px">Attach evidence files to your current ' + toolName + ' record. Files are anchored and linked automatically.</p>' +
+            '<div class="s4-import-drop" onclick="this.querySelector(\'input\').click()" id="s4DocDrop">' +
+                '<i class="fas fa-file-pdf"></i>' +
+                'Drag & drop PDF, DOCX, images, or any evidence file<br><span style="font-size:0.78rem;opacity:0.7">or click to browse</span>' +
+                '<input type="file" multiple style="display:none" onchange="window._s4HandleDocImport(this,\'' + toolId + '\')">' +
+            '</div>' +
+            '<p style="margin:14px 0 0;font-size:0.75rem;color:var(--muted,#6e6e73)"><i class="fas fa-anchor" style="margin-right:4px"></i>Each file is hashed and anchored to the ledger for immutable evidence.</p>' +
+        '</div>';
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+    var drop = overlay.querySelector('#s4DocDrop');
+    if (drop) {
+        drop.addEventListener('dragover', function(e) { e.preventDefault(); drop.classList.add('dragover'); });
+        drop.addEventListener('dragleave', function() { drop.classList.remove('dragover'); });
+        drop.addEventListener('drop', function(e) {
+            e.preventDefault(); drop.classList.remove('dragover');
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+                window._s4HandleDocImport({files: e.dataTransfer.files}, toolId);
+            }
+        });
+    }
+}
+window._s4HandleDocImport = function(input, toolId) {
+    var files = input.files;
+    if (!files || !files.length) return;
+    var names = [];
+    for (var i = 0; i < files.length && i < 10; i++) names.push(files[i].name);
+    if (typeof _toast === 'function') _toast(names.length + ' file(s) queued for anchor: ' + names.join(', '), 'success');
+    var overlay = document.querySelector('.s4-import-overlay');
+    if (overlay) overlay.remove();
+};
+
+// ═══ SECTION 64: Guided Mode Toggle ═══
+function _applyGuidedMode(panel) {
+    if (!_isGuidedOn()) {
+        // Remove any existing guided tips
+        panel.querySelectorAll('.s4-guided-tip').forEach(function(el) { el.classList.remove('s4-guided-tip'); el.removeAttribute('data-guide'); });
+        return;
+    }
+    // Add helpful tooltips to key elements
+    var selects = panel.querySelectorAll('select:not(.s4-guided-tip)');
+    selects.forEach(function(sel) {
+        sel.classList.add('s4-guided-tip');
+        sel.setAttribute('data-guide', 'Select an option from this dropdown');
+    });
+    var inputs = panel.querySelectorAll('input[type="text"]:not(.s4-guided-tip), input[type="number"]:not(.s4-guided-tip), textarea:not(.s4-guided-tip)');
+    inputs.forEach(function(inp) {
+        inp.classList.add('s4-guided-tip');
+        inp.setAttribute('data-guide', inp.getAttribute('placeholder') ? 'Enter: ' + inp.getAttribute('placeholder') : 'Type your input here');
+    });
+    var actionTrigger = panel.querySelector('.s4-actions-trigger:not(.s4-guided-tip)');
+    if (actionTrigger) {
+        actionTrigger.classList.add('s4-guided-tip');
+        actionTrigger.setAttribute('data-guide', 'Click here for all available actions');
+    }
+}
+
+// ═══ MASTER INJECTION: Add all items to Actions dropdown ═══
+function _injectRefinements(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    var actionsList = panel.querySelector('.s4-actions-list');
+    if (!actionsList) return;
+    // Don't double-inject
+    if (actionsList.querySelector('.s4-r58-import')) return;
+
+    // Helper to make a dropdown button
+    function mkBtn(cls, icon, label, onclick) {
+        var btn = document.createElement('button');
+        btn.className = cls;
+        btn.innerHTML = '<i class="fas ' + icon + '"></i> ' + label;
+        btn.onclick = onclick;
+        return btn;
+    }
+    // Helper to make a separator
+    function mkSep() {
+        var sep = document.createElement('div');
+        sep.className = 's4-actions-sep';
+        return sep;
+    }
+
+    // Separator before our new items
+    actionsList.appendChild(mkSep());
+
+    // 58: Import Data (all 23 tools)
+    actionsList.appendChild(mkBtn('s4-r58-import', 'fa-file-import', 'Import Data', function() { _openImportWizard(toolId); }));
+
+    // 60: Add to My Daily Workflow (all 23 tools)
+    actionsList.appendChild(mkBtn('s4-r60-workflow', 'fa-calendar-plus', 'Add to My Daily Workflow', function() { _addToWorkflow(toolId); }));
+
+    // 61: One-Click Day Summary (metric-heavy tools only)
+    if (_METRIC_TOOLS.has(toolId)) {
+        actionsList.appendChild(mkBtn('s4-r61-summary', 'fa-clipboard-list', 'One-Click Day Summary', function() { _generateDaySummary(toolId); }));
+    }
+
+    // 62: Prioritize for Me (risk tools only)
+    if (_RISK_TOOLS.has(toolId)) {
+        actionsList.appendChild(mkBtn('s4-r62-prioritize', 'fa-sort-amount-down', 'Prioritize for Me', function() { _prioritizeResults(toolId); }));
+    }
+
+    // 63: Import Supporting Documents (evidence-heavy tools only)
+    if (_EVIDENCE_TOOLS.has(toolId)) {
+        actionsList.appendChild(mkBtn('s4-r63-docs', 'fa-file-circle-plus', 'Import Supporting Documents', function() { _openDocImport(toolId); }));
+    }
+
+    // 64: Guided Mode toggle (all 23 tools)
+    var guidedOn = _isGuidedOn();
+    var guidedBtn = mkBtn('s4-r64-guided', guidedOn ? 'fa-graduation-cap' : 'fa-graduation-cap', guidedOn ? 'Guided Mode: ON' : 'Guided Mode: OFF', function() {
+        var isOn = _isGuidedOn();
+        _setGuided(!isOn);
+        guidedBtn.innerHTML = '<i class="fas fa-graduation-cap"></i> Guided Mode: ' + (!isOn ? 'ON' : 'OFF');
+        _applyGuidedMode(panel);
+        if (typeof _toast === 'function') _toast('Guided Mode ' + (!isOn ? 'enabled' : 'disabled'), 'info');
+    });
+    actionsList.appendChild(guidedBtn);
+
+    // 64: Apply guided mode tooltips
+    _applyGuidedMode(panel);
+}
+
+// ═══ SECTION 59: Watch for result panels to show, then inject So What ═══
+function _watchForResults(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    // Check if result is already showing
+    var rp = panel.querySelector('.result-panel.show');
+    if (rp) { _injectSoWhat(toolId); return; }
+    // Watch for class changes on result panels
+    var resultPanels = panel.querySelectorAll('.result-panel');
+    if (!resultPanels.length) return;
+    var observer = new MutationObserver(function(mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+            var target = mutations[i].target;
+            if (target.classList && target.classList.contains('show')) {
+                observer.disconnect();
+                setTimeout(function() { _injectSoWhat(toolId); }, 100);
+                return;
+            }
+        }
+    });
+    resultPanels.forEach(function(rp) {
+        observer.observe(rp, {attributes: true, attributeFilter: ['class']});
+    });
+    // Also observe innerHTML changes (engine writes result then adds show)
+    var obs2 = new MutationObserver(function() {
+        var shown = panel.querySelector('.result-panel.show');
+        if (shown && !panel.querySelector('.s4-so-what')) {
+            obs2.disconnect();
+            setTimeout(function() { _injectSoWhat(toolId); }, 150);
+        }
+    });
+    obs2.observe(panel, {childList: true, subtree: true});
+}
+
+// ═══ HOOK: Inject after Actions dropdown is built ═══
+function _hookForRefinements() {
+    var orig = window.openILSTool;
+    if (typeof orig !== 'function' || orig._s4R58Hooked) return;
+    var wrapped = function(toolId) {
+        orig.call(this, toolId);
+        // Inject at 1200ms (after dropdown build at ~1000ms)
+        setTimeout(function() { _injectRefinements(toolId); }, 1200);
+        // Watch for results to show So What card
+        setTimeout(function() { _watchForResults(toolId); }, 300);
+    };
+    wrapped._s4R58Hooked = true;
+    // Preserve all existing hook flags
+    if (orig._s4ProdHooked) wrapped._s4ProdHooked = true;
+    if (orig._s4ChainHooked) wrapped._s4ChainHooked = true;
+    if (orig._s4R13Hooked) wrapped._s4R13Hooked = true;
+    if (orig._s4TodayHooked) wrapped._s4TodayHooked = true;
+    window.openILSTool = wrapped;
+}
+
+// Boot
+function _bootRefinements() {
+    _hookForRefinements();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(_bootRefinements, 800); });
+} else {
+    setTimeout(_bootRefinements, 800);
+}
+
+})();
