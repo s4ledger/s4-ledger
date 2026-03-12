@@ -10035,6 +10035,13 @@ function _hookForProductivity() {
             _injectCopyBullet(toolId);
             _injectStatusBar(toolId);
             _injectRerun(toolId);
+            // Re-run dropdown conversion for this panel (absorbs Copy as Bullet etc.)
+            if (typeof window._s4ConvertButtonDensity === 'function') {
+                setTimeout(function() {
+                    var p = document.getElementById(toolId);
+                    if (p) window._s4ConvertButtonDensity(p);
+                }, 200);
+            }
         }, 800);
     };
     wrapped._s4ProdHooked = true;
@@ -11203,108 +11210,159 @@ function _s4Toast(msg, type) {
 })();
 
 // ═══════════════════════════════════════════════════════════
-// v5.12.25 — Button density cleanup: Actions dropdowns
+// v5.12.27 — Button density: expanded grouping + color hierarchy
 // ═══════════════════════════════════════════════════════════
 (function(){
 'use strict';
 
-function _s4ConvertButtonDensity() {
-    var panels = document.querySelectorAll('.ils-hub-panel');
+// Everything is an action button EXCEPT filter/status buttons and AI Assist
+function _isActionBtn(b) {
+    var t = b.textContent.trim().toLowerCase();
+    // AI Assist stays visible as standalone
+    if (t.indexOf('ai assist') !== -1) return false;
+    // Filter buttons (onclick contains filter functions or chart range)
+    var oc = b.getAttribute('onclick') || '';
+    if (/filter|setChartRange/i.test(oc)) return false;
+    // Status filter buttons with data-status attribute
+    if (b.hasAttribute('data-status')) return false;
+    // Chart range buttons
+    if (b.classList.contains('chart-range-btn')) return false;
+    // Everything else is an action button
+    return true;
+}
+
+// Primary actions get blue treatment (Anchor, Export, Run, Add, Create, Invite)
+function _isPrimaryBtn(b) {
+    var t = b.textContent.trim().toLowerCase();
+    return t.indexOf('anchor') !== -1 || t.indexOf('export') !== -1 ||
+           t.indexOf('run ') === 0 || t.indexOf('add ') === 0 ||
+           t.indexOf('create team') !== -1 || t.indexOf('invite') !== -1;
+}
+
+function _classifyBtn(btn) {
+    btn.classList.remove('s4-btn-primary', 's4-btn-secondary');
+    btn.classList.add(_isPrimaryBtn(btn) ? 's4-btn-primary' : 's4-btn-secondary');
+}
+
+function _buildDropdown(actionBtns) {
+    var menu = document.createElement('div');
+    menu.className = 's4-actions-menu';
+    var trigger = document.createElement('button');
+    trigger.className = 's4-actions-trigger';
+    trigger.setAttribute('type', 'button');
+    trigger.innerHTML = '<i class="fas fa-bolt"></i> Actions <i class="fas fa-chevron-down"></i>';
+    var list = document.createElement('div');
+    list.className = 's4-actions-list';
+    actionBtns.forEach(function(btn) { _classifyBtn(btn); list.appendChild(btn); });
+    trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var wasOpen = list.classList.contains('s4-open');
+        document.querySelectorAll('.s4-actions-list.s4-open').forEach(function(l) { l.classList.remove('s4-open'); });
+        document.querySelectorAll('.s4-actions-trigger.s4-open').forEach(function(t) { t.classList.remove('s4-open'); });
+        if (!wasOpen) { list.classList.add('s4-open'); trigger.classList.add('s4-open'); }
+    });
+    list.addEventListener('click', function() {
+        list.classList.remove('s4-open');
+        trigger.classList.remove('s4-open');
+    });
+    menu.appendChild(trigger);
+    menu.appendChild(list);
+    return menu;
+}
+
+function _s4ConvertButtonDensity(targetPanel) {
+    var panels = targetPanel ? [targetPanel] : Array.from(document.querySelectorAll('.ils-hub-panel'));
 
     panels.forEach(function(panel) {
         var flexRows = panel.querySelectorAll('div[style*="display:flex"][style*="flex-wrap:wrap"]');
 
         flexRows.forEach(function(row) {
-            // Only consider direct button children
+            // Skip quick filter pill rows
+            if (row.classList.contains('s4-quick-filter-pills')) return;
+
+            // If dropdown already exists, absorb any late-injected action buttons
+            var existingMenu = row.querySelector('.s4-actions-menu');
+            if (existingMenu) {
+                var children = Array.from(row.children);
+                var lateBtns = children.filter(function(el) {
+                    return el.tagName === 'BUTTON' && _isActionBtn(el);
+                });
+                if (lateBtns.length > 0) {
+                    var list = existingMenu.querySelector('.s4-actions-list');
+                    lateBtns.forEach(function(btn) { _classifyBtn(btn); list.appendChild(btn); });
+                }
+                return;
+            }
+
             var children = Array.from(row.children);
             var buttons = children.filter(function(el) { return el.tagName === 'BUTTON'; });
+            if (buttons.length < 2) return;
 
-            // Need 3+ buttons to merit a dropdown
-            if (buttons.length < 3) return;
-
-            // Skip rows that contain non-button interactive elements (toolbars with search, selects, spacers)
+            // Detect mixed rows (contain non-button interactive elements)
             var hasNonBtn = children.some(function(el) {
                 var tag = el.tagName;
                 return tag === 'INPUT' || tag === 'SELECT' || tag === 'LABEL' || tag === 'A' ||
                        (tag === 'SPAN' && el.style && el.style.flex);
             });
-            if (hasNonBtn) return;
 
-            // Skip quick filter pill rows
-            if (row.classList.contains('s4-quick-filter-pills')) return;
+            // Separate action buttons from non-action
+            var actionBtns = buttons.filter(_isActionBtn);
+            var nonActionBtns = buttons.filter(function(b) { return !_isActionBtn(b); });
 
-            // Skip rows inside collapsed sub-sections (POA&M, Evidence Manager, etc.)
-            if (row.closest('[id$="Section"]') || row.closest('details[style*="display:none"]')) return;
+            if (actionBtns.length < 2) return;
 
-            // Skip rows inside hidden div containers (ilsPostActions, etc.)
-            if (row.closest('[style*="display:none"]')) return;
-
-            // Only convert rows that have at least one action-type button
-            var hasAction = buttons.some(function(b) {
-                var t = b.textContent.trim().toLowerCase();
-                return t.indexOf('export') !== -1 || t.indexOf('anchor') !== -1 ||
-                       t.indexOf('download') !== -1 || t.indexOf('generate') !== -1 ||
-                       t.indexOf('verify') !== -1 || t.indexOf('clear') !== -1 ||
-                       t.indexOf('snapshot') !== -1 || t.indexOf('brief') !== -1;
-            });
-            if (!hasAction) return;
-
-            // Build the Actions dropdown
-            var menu = document.createElement('div');
-            menu.className = 's4-actions-menu';
-
-            var trigger = document.createElement('button');
-            trigger.className = 's4-actions-trigger';
-            trigger.setAttribute('type', 'button');
-            trigger.innerHTML = '<i class="fas fa-bolt"></i> Actions <i class="fas fa-chevron-down"></i>';
-
-            var list = document.createElement('div');
-            list.className = 's4-actions-list';
-
-            // Move all buttons into the dropdown list (preserves onclick attributes)
-            buttons.forEach(function(btn) { list.appendChild(btn); });
-
-            trigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                var wasOpen = list.classList.contains('s4-open');
-                // Close every other open dropdown first
-                document.querySelectorAll('.s4-actions-list.s4-open').forEach(function(l) { l.classList.remove('s4-open'); });
-                document.querySelectorAll('.s4-actions-trigger.s4-open').forEach(function(t) { t.classList.remove('s4-open'); });
-                if (!wasOpen) {
-                    list.classList.add('s4-open');
-                    trigger.classList.add('s4-open');
-                }
-            });
-
-            // Close dropdown after any button click inside
-            list.addEventListener('click', function() {
-                list.classList.remove('s4-open');
-                trigger.classList.remove('s4-open');
-            });
-
-            menu.appendChild(trigger);
-            menu.appendChild(list);
-
-            // Replace the flex row contents with the dropdown
-            while (row.firstChild) row.removeChild(row.firstChild);
-            row.appendChild(menu);
+            if (!hasNonBtn && nonActionBtns.length === 0) {
+                // Pure action row: wrap ALL buttons into dropdown
+                var menu = _buildDropdown(buttons);
+                while (row.firstChild) row.removeChild(row.firstChild);
+                row.appendChild(menu);
+            } else {
+                // Mixed row: extract only action buttons into dropdown, leave rest in place
+                var menu = _buildDropdown(actionBtns);
+                actionBtns.forEach(function(btn) { btn.remove(); });
+                row.appendChild(menu);
+            }
         });
     });
 
-    // Global: close all dropdowns on outside click
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.s4-actions-menu')) {
-            document.querySelectorAll('.s4-actions-list.s4-open').forEach(function(l) { l.classList.remove('s4-open'); });
-            document.querySelectorAll('.s4-actions-trigger.s4-open').forEach(function(t) { t.classList.remove('s4-open'); });
-        }
-    });
+    // Global close handler (attach once)
+    if (!_s4ConvertButtonDensity._closeAttached) {
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.s4-actions-menu')) {
+                document.querySelectorAll('.s4-actions-list.s4-open').forEach(function(l) { l.classList.remove('s4-open'); });
+                document.querySelectorAll('.s4-actions-trigger.s4-open').forEach(function(t) { t.classList.remove('s4-open'); });
+            }
+        });
+        _s4ConvertButtonDensity._closeAttached = true;
+    }
+}
+
+// Expose for cross-IIFE access (openILSTool hook)
+window._s4ConvertButtonDensity = _s4ConvertButtonDensity;
+
+// Hook switchHubTab to re-run conversion when panels become visible
+function _hookSwitchHubTab() {
+    var orig = window.switchHubTab;
+    if (typeof orig !== 'function' || orig._s4DensityHooked) return;
+    window.switchHubTab = function(tabId, btn) {
+        orig.call(this, tabId, btn);
+        setTimeout(function() {
+            var p = document.getElementById(tabId);
+            if (p) _s4ConvertButtonDensity(p);
+        }, 600);
+    };
+    window.switchHubTab._s4DensityHooked = true;
 }
 
 // Boot after DOM ready + a tick for other scripts to finish
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(_s4ConvertButtonDensity, 500); });
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(_s4ConvertButtonDensity, 500);
+        setTimeout(_hookSwitchHubTab, 600);
+    });
 } else {
     setTimeout(_s4ConvertButtonDensity, 500);
+    setTimeout(_hookSwitchHubTab, 600);
 }
 
 })();
