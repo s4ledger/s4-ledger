@@ -9566,3 +9566,4 @@ window._buildAssignDropdownHTML = _buildAssignDropdownHTML;
 window._buildMultiAssignHTML = _buildMultiAssignHTML;
 window._addAssignRow = _addAssignRow;
 window._MULTI_ASSIGN_TOOLS = _MULTI_ASSIGN_TOOLS;
+window._getAssignContacts = _getAssignContacts;
