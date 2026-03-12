@@ -67,11 +67,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-COR5QjLk.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-NAli29FR.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-xXCZYzDT.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-DqQtR5Ds.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-BF4aFrbM.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-DZo2deXx.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-CMisU_jB.js">
   <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-VIQKg1L7.css">
 </head>
 <body class="light-mode">
@@ -836,6 +836,7 @@
                     </div>
                     <input type="text" class="ils-search" id="ilsToolSearch" placeholder="Search tools..." oninput="searchILSTools(this.value)" autocomplete="off" spellcheck="false" aria-label="Search ILS tools">
                 </div>
+                <div id="s4TodaysChainBar" style="display:none;margin-bottom:10px;padding:8px 14px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:10px;"></div>
                 <div class="ils-sub-hub" id="ilsSubHub" style="display:grid !important;">
                     <div class="ils-tool-card" data-category="compliance" onclick="openILSTool('hub-compliance')">
                         <span class="itc-icon"><i class="fas fa-shield-halved" style="color:var(--accent);"></i></span>
@@ -1181,6 +1182,8 @@
                         <input type="file" id="dmsmsFileInput" multiple accept=".csv,.xlsx,.xls,.txt,.tsv,.pdf,.docx" style="display:none" onchange="handleToolUpload(this.files,'dmsms')">
                         <div class="ils-file-list" id="dmsmsFileList"></div>
                         <div id="dmsmsResults" style="margin-top:1rem"></div>
+                        <!-- §42 Trend Sparkline -->
+                        <div id="dmsmsTrendSparkline" style="margin:8px 0;padding:8px 12px;background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.1);border-radius:8px;"></div>
                         <div class="row mt-3">
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="dmsmsTotalParts">0</div><div class="stat-mini-label">Parts Tracked</div></div></div>
                             <div class="col-md-3 col-6 mb-2"><div class="stat-mini"><div class="stat-mini-val" id="dmsmsAtRisk" style="color:#ff3333">0</div><div class="stat-mini-label">At Risk</div></div></div>
@@ -1231,6 +1234,7 @@
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                             <button onclick="exportReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-download"></i> Export RAM Report</button>
                             <button onclick="anchorReadiness()" class="btn btn-sm" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                            <button id="dashBtnReadiness" onclick="addToProgramDashboard('readiness')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-th-large"></i> Add to Program Dashboard</button>
                         </div>
                     </div>
                 </div>
@@ -1710,6 +1714,7 @@
                     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem">
                         <button onclick="exportCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-download"></i> Export Scorecard</button>
                         <button onclick="anchorCompliance()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button id="complianceStmtBtnCompliance" onclick="generateComplianceStatement('compliance')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-signature"></i> Generate Compliance Statement</button>
                     </div>
                 </div>
             </div>
@@ -1732,6 +1737,8 @@
                         <div class="col-md-3 col-6 mb-2"><div style="text-align:center;padding:12px;background:rgba(255,204,0,0.1);border:1px solid rgba(255,204,0,0.3);border-radius:8px;"><div style="font-size:1.6rem;font-weight:800;color:#ffcc00" id="riskMedium">0</div><div style="font-size:0.75rem;color:var(--muted)">Medium</div></div></div>
                         <div class="col-md-3 col-6 mb-2"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);border-radius:8px;"><div style="font-size:1.6rem;font-weight:800;color:#00aaff" id="riskLow">0</div><div style="font-size:0.75rem;color:var(--muted)">Low</div></div></div>
                     </div>
+                    <!-- §42 Trend Sparkline -->
+                    <div id="riskTrendSparkline" style="margin-bottom:12px;padding:8px 12px;background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.1);border-radius:8px;"></div>
                     <!-- ── AI Threat Intelligence Score (vs Palantir Gotham) ── -->
                     <div id="threatIntelPanel" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(0,170,255,0.02));border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:16px;display:none;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -1878,9 +1885,8 @@
                         <button onclick="generateReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-magic"></i> Generate Report</button>
                         <button onclick="downloadReport()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Download Report</button>
                         <button onclick="anchorReport()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button id="complianceStmtBtnReports" onclick="generateComplianceStatement('reports')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-file-signature"></i> Generate Compliance Statement</button>
                     </div>
-
-                    <!-- ── Executive Summary Generator ── -->
                     <div style="margin-top:20px;border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden">
                         <div onclick="toggleComplianceSection('execSummary')" style="cursor:pointer;padding:12px 16px;background:rgba(0,170,255,0.06);display:flex;align-items:center;gap:8px">
                             <i class="fas fa-file-lines" style="color:#00aaff"></i>
@@ -2023,6 +2029,7 @@
                         <button onclick="loadPredictiveData()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-sync-alt"></i> Run Predictions</button>
                         <button onclick="exportPredictive()" class="btn btn-sm hover-lift" style="background:rgba(0,0,0,0.04);color:var(--text,#1d1d1f);border:none;border-radius:8px;padding:8px 16px;font-weight:700"><i class="fas fa-download"></i> Export Report</button>
                         <button onclick="anchorPredictive()" class="btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:8px 16px"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button id="dashBtnPredictive" onclick="addToProgramDashboard('predictive')" class="btn btn-sm hover-lift" style="background:rgba(0,113,227,0.08);color:#0071e3;border:1px solid rgba(0,113,227,0.2);border-radius:8px;padding:8px 16px;font-weight:600"><i class="fas fa-th-large"></i> Add to Program Dashboard</button>
                     </div>
                 </div>
             </div>
@@ -2891,6 +2898,7 @@
                         <button onclick="exportAnalyticsReport()" class="ai-quick-btn"><i class="fas fa-file-pdf"></i> Export PDF</button>
                         <button onclick="exportAnalyticsCSV()" class="ai-quick-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
                         <button onclick="anchorToLedger('analytics','Cross-program analytics anchored')" class="ai-quick-btn"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+                        <button id="coBriefBtn" onclick="snapshotForCOBrief()" class="ai-quick-btn" style="background:rgba(0,113,227,0.12);border-color:rgba(0,113,227,0.25);color:#0071e3;font-weight:700"><i class="fas fa-briefcase"></i> Snapshot for CO Brief</button>
                     </div>
 
                     <!-- Chart containers -->

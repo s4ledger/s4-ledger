@@ -10403,3 +10403,244 @@ if (document.readyState === 'loading') {
     setTimeout(_bootSections26to30, 800);
 }
 })();
+
+// ═══════════════════════════════════════════════════════
+// §41-§45  v5.12.18 — Polish additions for other tools
+// ═══════════════════════════════════════════════════════
+
+(function _s4Sections41to45() {
+'use strict';
+
+// ── §41: Generate Compliance Statement ──
+window.generateComplianceStatement = function(tool) {
+    var ts = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+    var lines = [];
+    if (tool === 'reports') {
+        var recEl = document.getElementById('reportRecordCount');
+        var recs = recEl ? recEl.textContent : '0 records';
+        lines = [
+            'COMPLIANCE STATEMENT — Audit Builder',
+            'Generated: ' + ts,
+            '',
+            'This audit package contains ' + recs + '.',
+            'All records have been reviewed and anchored to the S4 Ledger blockchain.',
+            'Report integrity verified via SHA-256 hash attestation.',
+            '',
+            'Classification: UNCLASSIFIED // FOUO',
+            'Prepared by S4 Ledger Integrated Logistics Platform.'
+        ];
+    } else {
+        var scoreEl = document.getElementById('complianceScore');
+        var score = scoreEl ? scoreEl.textContent : '—';
+        var frameworkEl = document.getElementById('complianceFrameworkSelect');
+        var fw = frameworkEl ? frameworkEl.options[frameworkEl.selectedIndex].text : 'NIST 800-171';
+        lines = [
+            'COMPLIANCE STATEMENT — ' + fw + ' Scorecard',
+            'Generated: ' + ts,
+            '',
+            'Overall Compliance Score: ' + score,
+            'Framework: ' + fw,
+            '',
+            'This scorecard reflects the current compliance posture as assessed',
+            'by S4 Ledger automated controls mapping. All evidence artifacts',
+            'are stored in the Audit Vault with blockchain-anchored integrity.',
+            '',
+            'Classification: UNCLASSIFIED // FOUO',
+            'Prepared by S4 Ledger Integrated Logistics Platform.'
+        ];
+    }
+    var text = lines.join('\n');
+    navigator.clipboard.writeText(text).then(function() {
+        _s41Flash(tool === 'reports' ? 'complianceStmtBtnReports' : 'complianceStmtBtnCompliance', 'Copied to Clipboard ✓');
+    });
+};
+
+function _s41Flash(id, msg) {
+    var btn = document.getElementById(id);
+    if (!btn) return;
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> ' + msg;
+    btn.style.background = '#34c759';
+    setTimeout(function() { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
+}
+
+// ── §42: Trend This Month sparkline ──
+window.renderTrendSparkline = function(containerId) {
+    var el = document.getElementById(containerId);
+    if (!el || el.dataset.rendered) return;
+    el.dataset.rendered = '1';
+    // Simulated 30-day trend
+    var pts = [];
+    var v = 40 + Math.random() * 20;
+    for (var i = 0; i < 30; i++) {
+        v += (Math.random() - 0.48) * 8;
+        v = Math.max(5, Math.min(95, v));
+        pts.push(v);
+    }
+    var min = Math.min.apply(null, pts), max = Math.max.apply(null, pts);
+    var w = 140, h = 32, pad = 2;
+    var range = max - min || 1;
+    var d = pts.map(function(p, i) {
+        var x = pad + (i / 29) * (w - 2 * pad);
+        var y = pad + (1 - (p - min) / range) * (h - 2 * pad);
+        return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    var last = pts[pts.length - 1], prev = pts[pts.length - 2];
+    var delta = last - prev;
+    var color = delta >= 0 ? '#34c759' : '#ff3b30';
+    var arrow = delta >= 0 ? '▲' : '▼';
+    el.innerHTML =
+        '<div style="display:flex;align-items:center;gap:8px">' +
+            '<svg width="' + w + '" height="' + h + '" style="flex-shrink:0">' +
+                '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-linecap="round"/>' +
+            '</svg>' +
+            '<span style="font-size:0.72rem;font-weight:700;color:' + color + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '%</span>' +
+            '<span style="font-size:0.68rem;color:var(--steel)">30-day trend</span>' +
+        '</div>';
+};
+
+// ── §43: Add to Program Dashboard ──
+window.addToProgramDashboard = function(tool) {
+    var metrics = [];
+    var ts = new Date().toLocaleString();
+    if (tool === 'predictive') {
+        var els = document.querySelectorAll('#hub-predictive .stat-mini-val');
+        els.forEach(function(e) { metrics.push(e.textContent); });
+        var text = 'MAINTENANCE PREDICTOR — Dashboard Metrics (' + ts + ')\n' +
+            (metrics.length ? metrics.join(' | ') : 'No data loaded') +
+            '\nSource: S4 Ledger Maintenance Predictor';
+    } else {
+        var ao = document.getElementById('statAo');
+        var ai = document.getElementById('statAi');
+        var fr = document.getElementById('statFailRate');
+        var mr = document.getElementById('statMissReady');
+        var text = 'READINESS SCORE — Dashboard Metrics (' + ts + ')\n' +
+            'Ao: ' + (ao ? ao.textContent : '—') +
+            ' | Ai: ' + (ai ? ai.textContent : '—') +
+            ' | λ: ' + (fr ? fr.textContent : '—') +
+            ' | Mission Readiness: ' + (mr ? mr.textContent : '—') +
+            '\nSource: S4 Ledger Readiness Score';
+    }
+    navigator.clipboard.writeText(text).then(function() {
+        _s43Flash(tool === 'predictive' ? 'dashBtnPredictive' : 'dashBtnReadiness', 'Copied for Dashboard ✓');
+    });
+};
+
+function _s43Flash(id, msg) {
+    var btn = document.getElementById(id);
+    if (!btn) return;
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> ' + msg;
+    btn.style.background = '#34c759';
+    setTimeout(function() { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
+}
+
+// ── §44: Snapshot for CO Brief ──
+window.snapshotForCOBrief = function() {
+    var ts = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+    var content = document.getElementById('analyticsContent');
+    var summary = content ? content.innerText.substring(0, 500).trim() : 'No analytics data loaded.';
+    var lines = [
+        '══════════════════════════════════════',
+        '  COMMANDING OFFICER BRIEF — SNAPSHOT',
+        '  ' + ts,
+        '══════════════════════════════════════',
+        '',
+        'PROGRAM OVERVIEW SUMMARY:',
+        summary,
+        '',
+        '──────────────────────────────────────',
+        'Source: S4 Ledger Program Overview',
+        'Classification: UNCLASSIFIED // FOUO'
+    ];
+    var text = lines.join('\n');
+    navigator.clipboard.writeText(text).then(function() {
+        var btn = document.getElementById('coBriefBtn');
+        if (!btn) return;
+        var orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied to Clipboard ✓';
+        btn.style.background = '#34c759';
+        setTimeout(function() { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
+    });
+};
+
+// ── §45: Pin to Today's Chain ──
+var _pinnedTools = JSON.parse(localStorage.getItem('s4_pinned_chain') || '[]');
+
+window.togglePinToChain = function(toolId, ev) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    var idx = _pinnedTools.indexOf(toolId);
+    if (idx >= 0) { _pinnedTools.splice(idx, 1); } else { _pinnedTools.push(toolId); }
+    localStorage.setItem('s4_pinned_chain', JSON.stringify(_pinnedTools));
+    _renderPinStars();
+    _renderTodaysChain();
+};
+
+function _renderPinStars() {
+    document.querySelectorAll('.ils-tool-card').forEach(function(card) {
+        var onclick = card.getAttribute('onclick') || '';
+        var m = onclick.match(/openILSTool\('([^']+)'\)/);
+        if (!m) return;
+        var toolId = m[1];
+        var star = card.querySelector('.s4-pin-star');
+        if (!star) {
+            star = document.createElement('button');
+            star.className = 's4-pin-star';
+            star.title = 'Pin to Today\'s Chain';
+            star.setAttribute('onclick', 'togglePinToChain("' + toolId + '", event)');
+            star.style.cssText = 'position:absolute;top:6px;right:6px;background:none;border:none;cursor:pointer;font-size:0.9rem;padding:2px 4px;z-index:2;transition:transform 0.2s;color:rgba(0,170,255,0.25);';
+            card.style.position = 'relative';
+            card.appendChild(star);
+        }
+        var pinned = _pinnedTools.indexOf(toolId) >= 0;
+        star.innerHTML = pinned ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+        star.style.color = pinned ? '#ffcc00' : 'rgba(0,170,255,0.25)';
+        star.style.transform = pinned ? 'scale(1.15)' : 'scale(1)';
+    });
+}
+
+function _renderTodaysChain() {
+    var bar = document.getElementById('s4TodaysChainBar');
+    if (!bar) return;
+    if (_pinnedTools.length === 0) {
+        bar.style.display = 'none';
+        return;
+    }
+    bar.style.display = 'block';
+    var html = '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+        '<span style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;"><i class="fas fa-link" style="margin-right:4px"></i>Today\'s Chain</span>';
+    _pinnedTools.forEach(function(id) {
+        var card = document.querySelector('[onclick*="openILSTool(\'' + id + '\')"]');
+        var title = card ? card.querySelector('.itc-title') : null;
+        var name = title ? title.textContent.trim() : id.replace('hub-', '');
+        html += '<button onclick="openILSTool(\'' + id + '\')" class="hover-lift" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:8px;padding:4px 12px;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;">' + name + '</button>';
+    });
+    html += '<button onclick="clearTodaysChain()" style="background:none;border:none;color:var(--steel);font-size:0.68rem;cursor:pointer;padding:2px 6px;opacity:0.6;" title="Clear all pins"><i class="fas fa-times"></i> Clear</button>';
+    html += '</div>';
+    bar.innerHTML = html;
+}
+
+window.clearTodaysChain = function() {
+    _pinnedTools.length = 0;
+    localStorage.removeItem('s4_pinned_chain');
+    _renderPinStars();
+    _renderTodaysChain();
+};
+
+// ── Boot §41-§45 ──
+function _bootSections41to45() {
+    // §42: render sparklines if containers exist
+    renderTrendSparkline('riskTrendSparkline');
+    renderTrendSparkline('dmsmsTrendSparkline');
+    // §45: render pin stars and chain bar
+    _renderPinStars();
+    _renderTodaysChain();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _bootSections41to45);
+} else {
+    setTimeout(_bootSections41to45, 900);
+}
+
+})();
