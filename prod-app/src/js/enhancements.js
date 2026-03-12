@@ -11216,10 +11216,16 @@ function _isActionBtn(b) {
     // Filter buttons (onclick contains filter functions or chart range)
     var oc = b.getAttribute('onclick') || '';
     if (/filter|setChartRange/i.test(oc)) return false;
+    // AI quick-ask buttons (onclick calls aiAsk)
+    if (/aiAsk\s*\(/.test(oc)) return false;
     // Status filter buttons with data-status attribute
     if (b.hasAttribute('data-status')) return false;
     // Chart range buttons
     if (b.classList.contains('chart-range-btn')) return false;
+    // Status filter pill buttons
+    if (b.classList.contains('s4-pill') || b.classList.contains('s4-pill-active')) return false;
+    // Status filter buttons (fleet/milestone)
+    if (b.classList.contains('acq-status-filter-btn') || b.classList.contains('mil-status-filter-btn')) return false;
     // Everything else is an action button
     return true;
 }
@@ -11282,7 +11288,6 @@ function _s4ConvertButtonDensity(targetPanel) {
         // ONE dropdown per panel — check if it already exists
         var existingMenu = panel.querySelector('.s4-actions-menu');
         var existingList = existingMenu ? existingMenu.querySelector('.s4-actions-list') : null;
-        var firstRow = null; // row where the dropdown will live
 
         var flexRows = panel.querySelectorAll('div[style*="display:flex"][style*="flex-wrap:wrap"]');
         var allActionBtns = [];
@@ -11291,15 +11296,32 @@ function _s4ConvertButtonDensity(targetPanel) {
             // Skip quick filter pill rows
             if (row.classList.contains('s4-quick-filter-pills')) return;
 
+            // Skip rows inside AI Assistant containers
+            // Check previous sibling or parent for "AI Assistant" / "AI Recommendations"
+            var prevSib = row.previousElementSibling;
+            if (prevSib) {
+                var sibText = prevSib.textContent || '';
+                if (/AI Assistant|AI Recommendations/i.test(sibText)) return;
+            }
+            // Also check if parent is a small container (not a full s4-card) with AI text
+            var parent = row.parentElement;
+            if (parent && !parent.classList.contains('s4-card')) {
+                var parentFirstChild = parent.firstElementChild;
+                if (parentFirstChild && /AI Assistant/i.test(parentFirstChild.textContent || '')) return;
+            }
+
+            // Skip rows where ALL buttons are AI quick-ask (aiAsk onclick)
             var children = Array.from(row.children);
             var buttons = children.filter(function(el) { return el.tagName === 'BUTTON'; });
             if (buttons.length < 1) return;
+            var allAiAsk = buttons.every(function(b) {
+                var oc = b.getAttribute('onclick') || '';
+                return /aiAsk\s*\(/.test(oc);
+            });
+            if (allAiAsk) return;
 
             var actionBtns = buttons.filter(_isActionBtn);
             if (actionBtns.length === 0) return;
-
-            // Remember the first row that has action buttons (dropdown goes here)
-            if (!firstRow) firstRow = row;
 
             // Remove action buttons from this row
             actionBtns.forEach(function(btn) {
@@ -11337,11 +11359,27 @@ function _s4ConvertButtonDensity(targetPanel) {
                 btn.querySelectorAll('i').forEach(function(ic) { ic.style.cssText = ''; });
                 existingList.appendChild(btn);
             });
-        } else if (allActionBtns.length >= 1 && firstRow) {
-            // Build the single dropdown and place it in the first action row
+        } else if (allActionBtns.length >= 1) {
+            // Build the single dropdown
             var menu = _buildDropdown(allActionBtns);
-            firstRow.style.display = '';
-            firstRow.appendChild(menu);
+            // Place at TOP of tool: right after header area (h3 → p → details)
+            var card = panel.querySelector('.s4-card');
+            if (card) {
+                var insertPoint = null;
+                for (var c = card.firstElementChild; c; c = c.nextElementSibling) {
+                    if (c.tagName === 'H3' || c.tagName === 'P' || c.tagName === 'DETAILS') {
+                        insertPoint = c;
+                        if (c.tagName === 'DETAILS') break;
+                    } else {
+                        break;
+                    }
+                }
+                if (insertPoint) {
+                    insertPoint.insertAdjacentElement('afterend', menu);
+                } else {
+                    card.insertBefore(menu, card.firstChild);
+                }
+            }
         }
     });
 

@@ -319,7 +319,7 @@
             transition:border-color 0.3s,box-shadow 0.3s !important;
             animation:panelSlideIn 0.4s ease !important;
             position:relative !important;
-            overflow:hidden !important;
+            overflow:visible !important;
         }
         .ils-hub-panel .s4-card::before{
             content:'';position:absolute;top:0;left:0;right:0;height:3px;
@@ -6369,7 +6369,7 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-actions-list .s4-btn-secondary i{color:var(--accent,#00aaff) !important}
 
 /* ── v5.12.25 — Actions dropdown & spacing polish ── */
-.s4-actions-menu{position:relative;display:inline-block}
+.s4-actions-menu{position:relative;display:inline-block;margin-top:16px;margin-bottom:16px}
 .s4-actions-header{display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text,#1d1d1f);margin-bottom:8px}
 .s4-actions-header i{color:#34c759;font-size:0.7rem}
 .s4-actions-trigger{
@@ -6387,6 +6387,7 @@ h4{font-size:0.95rem;font-weight:700}
     display:none;flex-direction:column;gap:2px;
     position:absolute;top:calc(100% + 6px);left:0;
     min-width:280px;max-width:360px;
+    max-height:50vh;overflow-y:auto;
     background:var(--surface,#fff);border:1px solid var(--border,rgba(0,0,0,0.08));
     border-radius:12px;padding:6px;
     box-shadow:0 8px 30px rgba(0,0,0,0.12),0 2px 8px rgba(0,0,0,0.06);
@@ -6411,7 +6412,7 @@ h4{font-size:0.95rem;font-weight:700}
 /* Spacing: 24px between major tool sections */
 .ils-hub-panel .row.mt-2{margin-top:24px !important}
 .ils-hub-panel .row.mt-3{margin-top:24px !important}
-.ils-hub-panel .s4-actions-menu{margin-top:0}
+.ils-hub-panel .s4-actions-menu{margin-top:16px;margin-bottom:16px}
 .ils-hub-panel div[style*="display:grid"][style*="gap:12px"]{margin-bottom:20px !important}
 .ils-hub-panel div[style*="margin-top:1rem"]:has(> .s4-actions-menu){margin-top:24px !important}
 .ils-hub-panel div[style*="margin-bottom:1rem"]:has(> .s4-actions-menu){margin-bottom:24px !important}
