@@ -6564,6 +6564,10 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-hl-changes-del{color:#cc3333;background:rgba(255,59,48,0.08);padding:0 2px;border-radius:3px;text-decoration:line-through}
 .s4-hl-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,122,255,0.2);border-top-color:#007AFF;border-radius:50%;animation:s4HlSpin 0.6s linear infinite;margin-right:6px;vertical-align:middle}
 @keyframes s4HlSpin{to{transform:rotate(360deg)}}
+/* AI status bar + loading state */
+.s4-hl-ai-status{display:flex;align-items:center;padding:10px 14px;border-radius:10px;background:rgba(0,122,255,0.06);border:1px solid rgba(0,122,255,0.12);font-size:0.8rem;font-weight:600;color:#007AFF;margin-bottom:12px;animation:s4FadeIn 0.3s}
+.s4-hl-textarea.s4-hl-ai-loading{opacity:0.5;background:repeating-linear-gradient(90deg,var(--surface,#fff) 0%,rgba(0,122,255,0.03) 50%,var(--surface,#fff) 100%);background-size:200% 100%;animation:s4HlShimmer 1.5s ease infinite}
+@keyframes s4HlShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 /* Standalone highlights button (beside Actions dropdown) */
 .s4-hl-standalone-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:10px;border:1px solid rgba(0,122,255,0.2);background:rgba(0,122,255,0.06);color:#007AFF;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.15s,border-color 0.15s;white-space:nowrap;margin-left:10px;vertical-align:middle}
 .s4-hl-standalone-btn:hover{background:rgba(0,122,255,0.12);border-color:rgba(0,122,255,0.35)}

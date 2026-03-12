@@ -12562,6 +12562,7 @@ var _HL_TEMPLATES = [
 var _currentTemplate = _HL_TEMPLATES[0];
 var _trackChangesOn = false;
 var _aiAssistOn = true;
+var _hlImportedContent = ''; // stored imported text from file uploads
 
 // Gather anchored data from the Program Overview panel
 function _gatherPanelData() {
@@ -12580,8 +12581,8 @@ function _gatherPanelData() {
     return { stats: stats.slice(0, 15), items: items.slice(0, 20) };
 }
 
-// Generate AI-enhanced bullets for a section
-function _generateAIBullets(sectionKey, data) {
+// Fallback bullets when the real AI call fails or is unavailable
+function _generateFallbackBullets(sectionKey, data) {
     var bullets = [];
     if (sectionKey === 'accomplishments') {
         bullets.push('\u2022 Anchored ' + (data.stats.length || 12) + ' program records to the immutable ledger, ensuring full auditability.');
@@ -12617,6 +12618,110 @@ function _generateAIBullets(sectionKey, data) {
         bullets.push('\u2022 See anchored records in S4 Ledger for full details.');
     }
     return bullets.join('\n');
+}
+
+// Real AI call via /api/ai-chat (same endpoint used by AI Agent, SBOM AI, DRL AI)
+function _callAIEnhance(data, sectionTitles) {
+    var periodSel = document.getElementById('s4HlPeriod');
+    var period = periodSel ? periodSel.options[periodSel.selectedIndex].text : 'Bi-Weekly';
+
+    var anchoredSummary = 'ANCHORED DATA SUMMARY:\n';
+    if (data.stats.length) anchoredSummary += 'Key Metrics: ' + data.stats.join('; ') + '\n';
+    if (data.items.length) anchoredSummary += 'Program Items: ' + data.items.join('; ') + '\n';
+
+    var importedBlock = '';
+    if (_hlImportedContent) {
+        importedBlock = '\n\nIMPORTED DOCUMENT CONTENT:\n' + _hlImportedContent.substring(0, 8000);
+    }
+
+    // Also gather any user-typed content already in the textareas
+    var existingContent = '';
+    document.querySelectorAll('#s4HlSections .s4-hl-textarea').forEach(function(ta) {
+        if (ta.value.trim()) {
+            existingContent += '\n[' + (ta.dataset.section || '') + ']: ' + ta.value.trim();
+        }
+    });
+    if (existingContent) {
+        importedBlock += '\n\nEXISTING DRAFT CONTENT:' + existingContent;
+    }
+
+    var sectionList = sectionTitles.join(', ');
+
+    var prompt = 'Generate an executive-level ' + period + ' Highlights document in plain English from this ILS anchored data and imported content. ' +
+        'Include these sections: ' + sectionList + '. ' +
+        'Highlight risks, costs, ownership, compliance status, key decisions, and next steps. ' +
+        'Keep each section concise and professional. Use bullet points (\u2022) for each item. ' +
+        'Format your response as sections separated by "---SECTION: <section_name>---" headers so I can parse them. ' +
+        'Each section should have 2\u20134 bullet points.\n\n' +
+        anchoredSummary + importedBlock;
+
+    return fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            message: prompt,
+            conversation: [],
+            tool_context: 'Program Overview \u2014 Highlights Document',
+            analysis_data: anchoredSummary
+        })
+    })
+    .then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+    })
+    .then(function(json) {
+        if (!json.response || json.fallback) throw new Error('No AI response');
+        return json.response;
+    });
+}
+
+// Parse AI response into sections
+function _parseAIResponse(responseText, sectionKeys) {
+    var result = {};
+    // Try structured parsing first (---SECTION: key---)
+    sectionKeys.forEach(function(key) {
+        var regex = new RegExp('---SECTION:\\s*' + key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*---([\\s\\S]*?)(?=---SECTION:|$)', 'i');
+        var match = responseText.match(regex);
+        if (match && match[1]) {
+            result[key] = match[1].trim();
+        }
+    });
+    // If structured parsing found results, return them
+    if (Object.keys(result).length >= Math.floor(sectionKeys.length / 2)) return result;
+
+    // Fallback: try matching by section title keywords
+    var titleMap = {
+        'accomplishments': /accomplishments?|achievements?|completed/i,
+        'risks': /risks?\s*[&|and]*\s*issues?|blockers?/i,
+        'actions': /actions?\s*[&|and]*\s*ownership|action\s*items?/i,
+        'milestones': /milestones?|upcoming|schedule/i,
+        'discussion': /discussion|topics?|leadership/i,
+        'metrics': /metrics?|performance|kpi/i,
+        'budget': /budget|cost|financial/i,
+        'planned': /planned|next\s*week|priorities/i,
+        'done': /completed|done|today/i,
+        'blockers': /blockers?|impediments?/i
+    };
+    // Split by common header patterns
+    var chunks = responseText.split(/\n(?=(?:[#*]+\s+|\d+\.\s+|[A-Z][A-Z\s&]+:))/);
+    chunks.forEach(function(chunk) {
+        sectionKeys.forEach(function(key) {
+            if (result[key]) return; // already found
+            var pat = titleMap[key];
+            if (pat && pat.test(chunk.substring(0, 80))) {
+                // Strip the header line
+                var lines = chunk.split('\n');
+                lines.shift();
+                var clean = lines.join('\n').trim();
+                if (clean) result[key] = clean;
+            }
+        });
+    });
+    // If still nothing, dump the whole response into the first section
+    if (!Object.keys(result).length && sectionKeys.length) {
+        result[sectionKeys[0]] = responseText.trim();
+    }
+    return result;
 }
 
 // Build the modal HTML
@@ -12696,22 +12801,89 @@ function _renderSections(data) {
     var container = document.getElementById('s4HlSections');
     if (!container) return;
     container.innerHTML = '';
+    var d = data || _gatherPanelData();
     _currentTemplate.sections.forEach(function(sec) {
         var div = document.createElement('div');
         div.className = 's4-hl-section';
-        var content = '';
-        if (_aiAssistOn) {
-            content = _generateAIBullets(sec.key, data || _gatherPanelData());
-        }
-        // Check for saved content
+        // Check for saved content first
         var saved = _loadSavedSection(sec.key);
-        if (saved) content = saved;
-
         div.innerHTML = '<div class="s4-hl-section-hdr"><i class="fas ' + sec.icon + '"></i> ' + sec.title + '</div>' +
-            '<textarea class="s4-hl-textarea' + (_aiAssistOn && !saved ? ' s4-hl-ai-enhanced' : '') + '" ' +
-            'data-section="' + sec.key + '" placeholder="' + sec.placeholder + '">' + content + '</textarea>';
+            '<textarea class="s4-hl-textarea" ' +
+            'data-section="' + sec.key + '" placeholder="' + sec.placeholder + '">' + (saved || '') + '</textarea>';
         container.appendChild(div);
     });
+
+    // If AI is on and no saved content, call the real AI
+    if (_aiAssistOn) {
+        var hasSaved = _currentTemplate.sections.some(function(sec) { return !!_loadSavedSection(sec.key); });
+        if (!hasSaved) {
+            _enhanceSectionsWithAI(d);
+        }
+    }
+}
+
+// Call real AI and populate sections (with spinner + fallback)
+function _enhanceSectionsWithAI(data) {
+    var container = document.getElementById('s4HlSections');
+    if (!container) return;
+    var textareas = container.querySelectorAll('.s4-hl-textarea');
+    var sectionTitles = _currentTemplate.sections.map(function(s) { return s.title; });
+    var sectionKeys = _currentTemplate.sections.map(function(s) { return s.key; });
+
+    // Show spinner in each empty textarea
+    textareas.forEach(function(ta) {
+        if (!ta.value.trim()) {
+            ta.value = '';
+            ta.placeholder = 'Generating AI insights\u2026';
+            ta.classList.add('s4-hl-ai-loading');
+        }
+    });
+    // Show spinner indicator at top
+    var spinnerEl = document.createElement('div');
+    spinnerEl.className = 's4-hl-ai-status';
+    spinnerEl.id = 's4HlAIStatus';
+    spinnerEl.innerHTML = '<span class="s4-hl-spinner"></span> Enhancing with AI\u2026 calling ' + (window.location.hostname.includes('localhost') ? 'local' : 'cloud') + ' agents';
+    var firstSection = container.querySelector('.s4-hl-section');
+    if (firstSection) container.insertBefore(spinnerEl, firstSection);
+
+    _callAIEnhance(data, sectionTitles)
+        .then(function(responseText) {
+            var parsed = _parseAIResponse(responseText, sectionKeys);
+            textareas.forEach(function(ta) {
+                var key = ta.dataset.section;
+                ta.classList.remove('s4-hl-ai-loading');
+                if (parsed[key]) {
+                    ta.value = parsed[key];
+                    ta.classList.add('s4-hl-ai-enhanced');
+                } else if (!ta.value.trim()) {
+                    // Fallback for sections the AI didn't cover
+                    ta.value = _generateFallbackBullets(key, data);
+                    ta.classList.add('s4-hl-ai-enhanced');
+                }
+                // Restore placeholder
+                var sec = _currentTemplate.sections.find(function(s) { return s.key === key; });
+                if (sec) ta.placeholder = sec.placeholder;
+            });
+            var status = document.getElementById('s4HlAIStatus');
+            if (status) { status.innerHTML = '<i class="fas fa-check-circle" style="color:#34C759;margin-right:6px"></i> AI enhancement complete'; setTimeout(function() { if (status.parentNode) status.remove(); }, 3000); }
+            if (typeof _toast === 'function') _toast('AI-enhanced highlights generated', 'success');
+        })
+        .catch(function(err) {
+            // Fallback to local bullets
+            textareas.forEach(function(ta) {
+                var key = ta.dataset.section;
+                ta.classList.remove('s4-hl-ai-loading');
+                if (!ta.value.trim()) {
+                    ta.value = _generateFallbackBullets(key, data);
+                    ta.classList.add('s4-hl-ai-enhanced');
+                }
+                var sec = _currentTemplate.sections.find(function(s) { return s.key === key; });
+                if (sec) ta.placeholder = sec.placeholder;
+            });
+            var status = document.getElementById('s4HlAIStatus');
+            if (status) { status.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#ff9500;margin-right:6px"></i> AI enhancement failed \u2014 using generated content'; setTimeout(function() { if (status.parentNode) status.remove(); }, 4000); }
+            if (typeof _toast === 'function') _toast('AI enhancement failed \u2014 using raw data', 'warning');
+        });
 }
 
 function _loadSavedSection(key) {
@@ -12762,6 +12934,8 @@ window._s4HlHandleFile = function(input) {
     reader.onload = function(e) {
         var text = e.target.result || '';
         if (text.length > 10000) text = text.substring(0, 10000);
+        // Store for AI context
+        _hlImportedContent = text;
         // Distribute imported text across sections
         var areas = document.querySelectorAll('#s4HlSections .s4-hl-textarea');
         if (areas.length) {
@@ -12779,15 +12953,16 @@ window._s4HlHandleFile = function(input) {
 window._s4HlAIToggle = function(on) {
     _aiAssistOn = on;
     if (on) {
-        // Re-enhance empty sections
-        var data = _gatherPanelData();
+        // Check if any sections are empty — if so, call real AI
+        var hasEmpty = false;
         document.querySelectorAll('#s4HlSections .s4-hl-textarea').forEach(function(ta) {
-            if (!ta.value.trim()) {
-                ta.value = _generateAIBullets(ta.dataset.section, data);
-                ta.classList.add('s4-hl-ai-enhanced');
-            }
+            if (!ta.value.trim()) hasEmpty = true;
         });
-        if (typeof _toast === 'function') _toast('AI insights enabled \u2014 empty sections enhanced', 'success');
+        if (hasEmpty) {
+            _enhanceSectionsWithAI(_gatherPanelData());
+        } else {
+            if (typeof _toast === 'function') _toast('AI insights enabled \u2014 sections already have content', 'info');
+        }
     } else {
         document.querySelectorAll('#s4HlSections .s4-hl-textarea').forEach(function(ta) {
             ta.classList.remove('s4-hl-ai-enhanced');
