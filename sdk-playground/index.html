@@ -158,8 +158,8 @@
                 <div class="sdk-func-box" data-func="action_items" onclick="loadAndRun('action_items',this)"><i class="fas fa-tasks" style="font-size:1.3rem;color:#2ed573;margin-bottom:6px;display:block;"></i><div style="font-size:0.78rem;font-weight:600;color:#fff;">get_action_items()</div><div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">Task queue</div></div>
                 <div class="sdk-func-box" data-func="doc_library" onclick="loadAndRun('doc_library',this)"><i class="fas fa-book-open" style="font-size:1.3rem;color:#a29bfe;margin-bottom:6px;display:block;"></i><div style="font-size:0.78rem;font-weight:600;color:#fff;">search_documents()</div><div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">Standards library</div></div>
                 <div class="sdk-func-box" data-func="audit_vault" onclick="loadAndRun('audit_vault',this)"><i class="fas fa-vault" style="font-size:1.3rem;color:#c9a84c;margin-bottom:6px;display:block;"></i><div style="font-size:0.78rem;font-weight:600;color:#fff;">store_in_vault()</div><div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">Encrypted vault</div></div>
-                <div class="sdk-func-box" data-func="ilie" onclick="loadAndRun('ilie',this)"><i class="fas fa-magnifying-glass-chart" style="font-size:1.3rem;color:#00cec9;margin-bottom:6px;display:block;"></i><div style="font-size:0.78rem;font-weight:600;color:#fff;">analyze_submission()</div><div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">Submissions &amp; PTD</div></div>
-                <div class="sdk-func-box" data-func="sbom" onclick="loadAndRun('sbom',this)"><i class="fas fa-sitemap" style="font-size:1.3rem;color:#e056fd;margin-bottom:6px;display:block;"></i><div style="font-size:0.78rem;font-weight:600;color:#fff;">scan_sbom()</div><div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">SBOM Viewer</div></div>
+                <div class="sdk-func-box" data-func="ilie" onclick="loadAndRun('ilie',this)"><i class="fas fa-magnifying-glass-chart" style="font-size:1.3rem;color:#00cec9;margin-bottom:6px;display:block;"></i><div style="font-size:0.78rem;font-weight:600;color:#fff;">analyze_submission()</div><div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">Submissions Hub</div></div>
+                <div class="sdk-func-box" data-func="sbom" onclick="loadAndRun('sbom',this)"><i class="fas fa-sitemap" style="font-size:1.3rem;color:#e056fd;margin-bottom:6px;display:block;"></i><div style="font-size:0.78rem;font-weight:600;color:#fff;">scan_sbom()</div><div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">SBOM Scanner</div></div>
             </div>
         </div>
 
@@ -295,8 +295,8 @@
                         </div>
                         <div class="ref-items">
                             <div class="ref-item"><span class="ri-name">generate_audit_report()</span><span class="ri-desc">One-click audit reports (6 types)</span></div>
-                            <div class="ref-item"><span class="ri-name">analyze_submission()</span><span class="ri-desc">Submissions &amp; PTD engine</span></div>
-                            <div class="ref-item"><span class="ri-name">scan_sbom()</span><span class="ri-desc">SBOM viewer &amp; risk scan</span></div>
+                            <div class="ref-item"><span class="ri-name">analyze_submission()</span><span class="ri-desc">Submissions hub engine</span></div>
+                            <div class="ref-item"><span class="ri-name">scan_sbom()</span><span class="ri-desc">SBOM scanner &amp; risk scan</span></div>
                             <div class="ref-item"><span class="ri-name">search_documents()</span><span class="ri-desc">Defense standards library</span></div>
                             <div class="ref-item"><span class="ri-name">store_in_vault()</span><span class="ri-desc">Encrypted audit vault storage</span></div>
                         </div>
@@ -375,7 +375,7 @@
                         </div>
                         <div class="ref-items">
                             <div class="ref-item"><span class="ri-name">/api/audit-reports</span><span class="ri-desc">POST &mdash; audit report gen</span></div>
-                            <div class="ref-item"><span class="ri-name">/api/ilie</span><span class="ri-desc">POST &mdash; submissions &amp; PTD</span></div>
+                            <div class="ref-item"><span class="ri-name">/api/ilie</span><span class="ri-desc">POST &mdash; submissions hub</span></div>
                             <div class="ref-item"><span class="ri-name">/api/sbom</span><span class="ri-desc">POST &mdash; SBOM scan &amp; risk</span></div>
                             <div class="ref-item"><span class="ri-name">/api/doc-library</span><span class="ri-desc">GET &mdash; standards lookup</span></div>
                             <div class="ref-item"><span class="ri-name">/api/audit-vault</span><span class="ri-desc">POST &mdash; vault storage</span></div>
@@ -1093,7 +1093,7 @@
     async function runSupplyChainRisk() {
         var output = '>>> ledger.analyze_supply_chain_risk(platform="DDG-51 Flight III")\n\nPOST /api/supply-chain-risk  \u2192  200 OK\n\n';
         output += '\u2550'.repeat(55) + '\n';
-        output += '  AI SUPPLY CHAIN RISK ENGINE \u2014 DDG-51 Flight III\n';
+        output += '  AI SUPPLY CHAIN RISK RADAR \u2014 DDG-51 Flight III\n';
         output += '\u2550'.repeat(55) + '\n\n';
         output += '  Overall Risk Level:   MEDIUM\n';
         output += '  Suppliers Analyzed:   12\n';
@@ -1122,7 +1122,7 @@
     async function runAuditReports() {
         var output = '>>> ledger.generate_audit_report(type="Full Audit", program="F-35A")\n\nPOST /api/audit-reports  \u2192  200 OK\n\n';
         output += '\u2550'.repeat(55) + '\n';
-        output += '  AUDIT REPORT GENERATOR \u2014 F-35A Lightning II\n';
+        output += '  AUDIT BUILDER \u2014 F-35A Lightning II\n';
         output += '\u2550'.repeat(55) + '\n\n';
         output += '  Report Type:     Full Audit\n';
         output += '  Time Period:     Last 90 Days\n';
@@ -1185,7 +1185,7 @@
     async function runILIE() {
         var output = '>>> ledger.analyze_submission(program="DDG-51", doc_type="VRS")\n\nPOST /api/ilie  \u2192  200 OK\n\n';
         output += '\u2550'.repeat(55) + '\n';
-        output += '  SUBMISSIONS & PTD \u2014 REVIEW & DISCREPANCY ENGINE\n';
+        output += '  SUBMISSIONS HUB \u2014 REVIEW & DISCREPANCY ENGINE\n';
         output += '\u2550'.repeat(55) + '\n\n';
         output += '  Program:       DDG-51 \u2014 Arleigh Burke Class Destroyer\n';
         output += '  Branch:        USN\n';
@@ -1203,14 +1203,14 @@
         output += '\u2500'.repeat(55) + '\n';
         output += '  Hash: ' + fakeHash.substring(0,32) + '...\n';
         output += '  \u2713 Anchored to XRPL Mainnet\n';
-        output += '  \u2713 Full Submissions & PTD in Platform > Anchor-S4';
+        output += '  \u2713 Full Submissions Hub in Platform > Anchor-S4';
         return output;
     }
 
     async function runSBOM() {
         var output = '>>> ledger.scan_sbom(program="F-35A", sbom_format="CycloneDX")\n\nPOST /api/sbom  \u2192  200 OK\n\n';
         output += '\u2550'.repeat(55) + '\n';
-        output += '  SBOM VIEWER \u2014 SOFTWARE BILL OF MATERIALS\n';
+        output += '  SBOM SCANNER \u2014 SOFTWARE BILL OF MATERIALS\n';
         output += '\u2550'.repeat(55) + '\n\n';
         output += '  Program:       F-35A Lightning II Block 4\n';
         output += '  SBOM Format:   CycloneDX v1.5\n';
@@ -1233,7 +1233,7 @@
         output += '\u2500'.repeat(55) + '\n';
         output += '  Hash: ' + fakeHash.substring(0,32) + '...\n';
         output += '  \u2713 SBOM scan anchored to XRPL Mainnet\n';
-        output += '  \u2713 Full SBOM Viewer in Platform > Anchor-S4';
+        output += '  \u2713 Full SBOM Scanner in Platform > Anchor-S4';
         return output;
     }
 
