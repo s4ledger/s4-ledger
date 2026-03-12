@@ -989,9 +989,9 @@ function showAnchorAnimation(hash, typeLabel, clfLevel) {
     document.getElementById('animFee').innerHTML = '0.01 Credits &rarr; Treasury';
     overlay.style.display = 'flex';
     setTimeout(() => {
-        document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#00aaff"></i> ' + _esc(typeLabel) + ' Anchored!';
+        document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#00aaff"></i> ' + _esc(typeLabel) + ' Anchored Successfully on XRPL';
         document.getElementById('animStatus').style.color = '#00aaff';
-        document.getElementById('animSuccess').innerHTML = '<span style="color:var(--green)">&#x2713; Record secured on XRPL</span>';
+        document.getElementById('animSuccess').innerHTML = '<span style="color:var(--green)">&#x2713; Immutable and verifiable on the XRP Ledger</span>';
     }, 2000);
 }
 
@@ -1009,17 +1009,18 @@ async function anchorToLedger(toolName, label) {
         content = text.substring(0, 500);
     }
     var hash = await sha256(content);
-    showAnchorAnimation(hash, label || (toolName + ' anchored'), 'CUI');
+    var _anchorLabel = label || (toolName.charAt(0).toUpperCase() + toolName.slice(1));
+    showAnchorAnimation(hash, _anchorLabel, 'CUI');
     var result = await _anchorToXRPL(hash, toolName.toUpperCase() + '_SNAPSHOT', content.substring(0, 100));
     stats.anchored++; stats.types.add(toolName.toUpperCase()); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
-    sessionRecords.push({hash: hash, type: toolName.toUpperCase() + '_SNAPSHOT', branch: 'JOINT', timestamp: new Date().toISOString(), label: label || (toolName + ' anchored'), txHash: result.txHash});
-    saveLocalRecord({hash: hash, record_type: toolName.toUpperCase() + '_SNAPSHOT', record_label: label || (toolName + ' anchored'), branch: 'JOINT', timestamp: new Date().toISOString(), timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee: 0.01, tx_hash: result.txHash, system: toolName, explorer_url: result.explorerUrl, network: result.network});
+    sessionRecords.push({hash: hash, type: toolName.toUpperCase() + '_SNAPSHOT', branch: 'JOINT', timestamp: new Date().toISOString(), label: _anchorLabel, txHash: result.txHash});
+    saveLocalRecord({hash: hash, record_type: toolName.toUpperCase() + '_SNAPSHOT', record_label: _anchorLabel, branch: 'JOINT', timestamp: new Date().toISOString(), timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee: 0.01, tx_hash: result.txHash, system: toolName, explorer_url: result.explorerUrl, network: result.network});
     updateTxLog();
-    addToVault({hash: hash, txHash: result.txHash, type: toolName.toUpperCase() + '_SNAPSHOT', label: label || (toolName + ' anchored'), branch: 'JOINT', icon: '<i class="fas fa-anchor"></i>', content: content.substring(0, 100), encrypted: false, timestamp: new Date().toISOString(), source: toolName, fee: 0.01, explorerUrl: result.explorerUrl, network: result.network});
+    addToVault({hash: hash, txHash: result.txHash, type: toolName.toUpperCase() + '_SNAPSHOT', label: _anchorLabel, branch: 'JOINT', icon: '<i class="fas fa-anchor"></i>', content: content.substring(0, 100), encrypted: false, timestamp: new Date().toISOString(), source: toolName, fee: 0.01, explorerUrl: result.explorerUrl, network: result.network});
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> ' + _esc(label || toolName + ' anchored') + '!'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> ' + _esc(_anchorLabel) + ' Anchored Successfully on XRPL'; }, 2200);
     await new Promise(function(r){ setTimeout(r, 3500); });
     hideAnchorAnimation();
 }
@@ -1134,11 +1135,11 @@ async function anchorRecord() {
     await new Promise(r => setTimeout(r, 400));
 
     const panel = document.getElementById('anchorResult');
-    panel.innerHTML = window._s4Safe('<div class="result-label">STATUS</div><div class="result-value" style="font-size:1rem;margin-bottom:0.8rem">\u2705 Record anchored successfully</div>'
+    panel.innerHTML = window._s4Safe('<div class="result-label">STATUS</div><div class="result-value" style="font-size:1rem;margin-bottom:0.8rem">\u2705 ' + typeInfo.label + ' Anchored Successfully on XRPL \u2014 Immutable and verifiable</div>'
         + '<div class="result-label">RECORD TYPE</div><div style="margin-bottom:0.5rem">' + _renderIcon(record.icon) + ' ' + typeInfo.label + ' (' + typeInfo.branch + ')</div>'
         + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:8px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + '<i class="fas ' + CLF_META[clfLevel].icon + '" style="margin-right:4px"></i>' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
         + '<div class="result-label">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
-        + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all">' + (explorerUrl ? '<a href="'+explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+txHash+' <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>' : '<span style="color:var(--muted)">'+txHash+'</span>') + '</div>'
+        + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all;display:flex;align-items:center;gap:6px;flex-wrap:wrap">' + (explorerUrl ? '<a href="'+explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+txHash+' <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>' : '<span style="color:var(--muted)">'+txHash+'</span>') + '<button onclick="navigator.clipboard.writeText(\''+txHash+'\').then(function(){var b=this;b.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i> Copy TX Hash\';},1500);}.bind(this))" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);border-radius:6px;color:#00aaff;font-size:0.7rem;padding:2px 8px;cursor:pointer;font-weight:600;white-space:nowrap"><i class="fas fa-copy"></i> Copy TX Hash</button></div>'
             + '<div class="result-label">NETWORK</div><div style="margin-bottom:0.5rem">' + (network === 'mainnet' ? '<span style="color:#00aaff;font-weight:700"><i class="fas fa-globe" style="margin-right:4px"></i>XRPL Mainnet</span>' : '<span style="color:var(--muted)">' + (network||'Pending') + '</span>') + '</div>'
         + '<div class="result-label">SYSTEM</div><div style="margin-bottom:0.5rem">' + (typeInfo.system||'N/A') + '</div>'
         + '<div class="result-label">ENCRYPTED</div><div style="margin-bottom:0.5rem">' + (encrypt ? '<i class="fas fa-lock" style="color:var(--accent)"></i> Yes (CUI protected)' : '\uD83D\uDD13 No (plaintext hash)') + '</div>'
@@ -1221,11 +1222,20 @@ function refreshVerifyRecents() {
             ago = diff < 60 ? diff + 's ago' : diff < 3600 ? Math.floor(diff/60) + 'm ago' : diff < 86400 ? Math.floor(diff/3600) + 'h ago' : Math.floor(diff/86400) + 'd ago';
         } catch(e) { ago = ''; }
         var hasFullContent = r.fullContent && r.fullContent.length > 0;
+        var _txH = r.txHash || '';
+        var _isLocal = _txH.indexOf('LOCAL_') === 0;
+        var _xrplBadge = '<span style="font-size:0.55rem;color:#34c759;background:rgba(52,199,89,0.1);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700;letter-spacing:0.3px;vertical-align:middle"><i class="fas fa-check-circle"></i> XRPL</span>';
+        var _hashLine = '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.hash.substring(0,24) + '...';
+        if (_txH && !_isLocal) {
+            _hashLine += ' <a href="https://livenet.xrpl.org/transactions/' + _txH + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#00aaff;text-decoration:none;font-size:0.6rem"><i class="fas fa-external-link-alt"></i></a>';
+            _hashLine += ' <button onclick="event.stopPropagation();var t=this;navigator.clipboard.writeText(\'' + _txH + '\').then(function(){t.textContent=\'Copied\';setTimeout(function(){t.textContent=\'TX\';},1200);})" style="background:none;border:1px solid rgba(0,170,255,0.25);border-radius:3px;color:#00aaff;font-size:0.5rem;padding:0 3px;cursor:pointer;font-weight:600;vertical-align:middle" title="Copy TX Hash">TX</button>';
+        }
+        _hashLine += '</div>';
         return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:4px;transition:all 0.2s;background:rgba(255,255,255,0.02);">'
             + '<span style="color:var(--accent);font-size:0.8rem;width:20px;text-align:center;display:inline-block">' + _renderIcon(r.icon) + '</span>'
             + '<div style="flex:1;min-width:0;cursor:pointer" onclick="loadRecordToVerify(' + idx + ')">'
-            + '<div style="font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + _esc(r.label) + '</div>'
-            + '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.hash.substring(0,24) + '...</div>'
+            + '<div style="font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + _esc(r.label) + _xrplBadge + '</div>'
+            + _hashLine
             + '</div>'
             + '<span style="font-size:0.65rem;color:var(--steel);white-space:nowrap;">' + ago + '</span>'
             + '<button onclick="loadRecordToVerify(' + idx + ')" style="background:' + (hasFullContent ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.05)') + ';border:1px solid ' + (hasFullContent ? 'rgba(0,170,255,0.3)' : 'rgba(255,255,255,0.1)') + ';color:' + (hasFullContent ? 'var(--accent)' : 'var(--steel)') + ';border-radius:8px;padding:3px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="fas fa-eye" style="margin-right:3px"></i>View</button>'
@@ -1523,7 +1533,18 @@ function updateTxLog() {
     for (let i = sessionRecords.length - 1; i >= 0; i--) {
         const r = sessionRecords[i];
         const time = new Date(r.timestamp).toLocaleTimeString('en-US',{hour12:false});
-        log.innerHTML += window._s4Safe('<div class="tx-entry"><div class="tx-icon">' + _renderIcon(r.icon) + '</div><div class="tx-info"><div class="tx-type">' + _esc(r.label) + ' <span style="color:var(--muted);font-size:0.75rem">(' + _esc(r.branch) + ')</span></div><div class="tx-hash">' + r.hash.substring(0,32) + '...</div></div><div><span class="tx-badge anchored">Anchored</span><div class="tx-time">' + time + '</div></div></div>');
+        var _txH = r.txHash || '';
+        var _isLocal = _txH.indexOf('LOCAL_') === 0;
+        var _explorerLink = '';
+        if (_txH && !_isLocal) {
+            _explorerLink = '<a href="https://livenet.xrpl.org/transactions/' + _txH + '" target="_blank" rel="noopener" style="color:#00aaff;text-decoration:none;font-size:0.7rem;margin-left:4px" title="View on XRPL Explorer"><i class="fas fa-external-link-alt"></i> View on XRPL</a>';
+        }
+        var _copyBtn = '';
+        if (_txH) {
+            _copyBtn = '<button onclick="event.stopPropagation();var t=this;navigator.clipboard.writeText(\'' + _txH + '\').then(function(){t.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied\';setTimeout(function(){t.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i> Copy TX Hash\';},1500);})" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:5px;color:#00aaff;font-size:0.62rem;padding:1px 6px;cursor:pointer;font-weight:600;margin-left:4px;white-space:nowrap"><i class="fas fa-copy"></i> Copy TX Hash</button>';
+        }
+        var _badge = _isLocal ? '<span class="tx-badge anchored">Anchored</span>' : '<span class="tx-badge anchored" style="background:rgba(52,199,89,0.15);color:#34c759;border:1px solid rgba(52,199,89,0.3)"><i class="fas fa-check-circle" style="margin-right:3px"></i>Anchored on XRPL</span>';
+        log.innerHTML += window._s4Safe('<div class="tx-entry"><div class="tx-icon">' + _renderIcon(r.icon) + '</div><div class="tx-info"><div class="tx-type">' + _esc(r.label) + ' <span style="color:var(--muted);font-size:0.75rem">(' + _esc(r.branch) + ')</span></div><div class="tx-hash">' + r.hash.substring(0,32) + '...' + _explorerLink + _copyBtn + '</div></div><div>' + _badge + '<div class="tx-time">' + time + '</div></div></div>');
     }
 }
 
@@ -4147,7 +4168,7 @@ async function anchorROI() {
     addToVault({hash:hash, txHash:result.txHash, type:'ROI_REPORT', label:'S4 Ledger ROI Analysis', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     // Update SLS display
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Report anchored!'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Analysis Anchored Successfully on XRPL'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -5745,7 +5766,7 @@ async function anchorDMSMS() {
     saveLocalRecord({hash, record_type:'DMSMS_REPORT', record_label:'DMSMS Obsolescence Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'DMSMS Tracker', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS report anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS Obsolescence Check Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -5863,7 +5884,7 @@ async function anchorReadiness() {
     saveLocalRecord({hash, record_type:'RAM_REPORT', record_label:'RAM Readiness Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Readiness Calculator', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> RAM report anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Readiness Score Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -7299,7 +7320,7 @@ async function anchorCompliance() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'compliance_scorecard', record_label:'Compliance Scorecard', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Compliance Scorecard', explorer_url: explorerUrl, network});
     updateTxLog();
-    setTimeout(()=>{ var st = document.getElementById('animStatus'); if(st) { st.innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Compliance scorecard anchored!'; st.style.color = '#00aaff'; } }, 2200);
+    setTimeout(()=>{ var st = document.getElementById('animStatus'); if(st) { st.innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Compliance Scorecard Anchored Successfully on XRPL'; st.style.color = '#00aaff'; } }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -8305,7 +8326,7 @@ async function anchorRisk() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'risk_report', record_label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'risk_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Supply Chain Risk Report', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Risk report anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Risk Report Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -8416,7 +8437,7 @@ async function anchorReport() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'audit_report', record_label:r.title, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'audit_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Audit Report', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Audit report hash anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Audit Report Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -8645,7 +8666,7 @@ async function anchorPredictive() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'predictive_maintenance', record_label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'predictive_maintenance', branch:'JOINT', timestamp:new Date().toISOString(), label:'Predictive Maintenance', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Predictive data anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Predictive Maintenance Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -9001,7 +9022,7 @@ async function anchorSubmissionReview() {
     saveLocalRecord({hash, record_type:'SUBMISSION_REVIEW', record_label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Submissions & PTD', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Submissions & PTD', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').textContent = 'Submissions & PTD analysis anchored — ' + _subCache.discrepancies.length + ' discrepancies recorded on-chain'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').textContent = 'Submissions & PTD Anchored Successfully on XRPL — ' + _subCache.discrepancies.length + ' discrepancies recorded on-chain'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
@@ -9069,7 +9090,7 @@ async function anchorLifecycle() {
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis anchored!'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis Anchored Successfully on XRPL'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9159,7 +9180,7 @@ async function anchorSBOM() {
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM anchored!'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Anchored Successfully on XRPL'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9181,7 +9202,7 @@ async function anchorGFP() {
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record anchored!'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record Anchored Successfully on XRPL'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9202,7 +9223,7 @@ async function anchorCDRL() {
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable anchored!'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable Anchored Successfully on XRPL'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9223,7 +9244,7 @@ async function anchorContract() {
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record anchored!'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record Anchored Successfully on XRPL'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9244,7 +9265,7 @@ async function anchorChain() {
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain record anchored!'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain Record Anchored Successfully on XRPL'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }

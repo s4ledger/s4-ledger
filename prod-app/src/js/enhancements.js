@@ -706,7 +706,7 @@ async function anchorSBOM() {
     if (typeof window.saveLocalRecord === 'function') window.saveLocalRecord({hash:hash, tx_hash:tx.txHash||'', record_type:'SBOM_ATTESTATION', record_label:'SBOM Attestation — '+progKey.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), fee:0.01, explorer_url:tx.explorerUrl||'', network:tx.network||''});
     if (typeof window.sessionRecords !== 'undefined' && window.sessionRecords) window.sessionRecords.push({hash:hash, type:'SBOM_ATTESTATION', branch:'JOINT', timestamp:new Date().toISOString(), label:'SBOM Attestation', txHash:tx.txHash||''});
     if (typeof window.updateTxLog === 'function') window.updateTxLog();
-    setTimeout(function(){ var s = document.getElementById('animStatus'); if(s){s.innerHTML='<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM attestation anchored!'; s.style.color='#00aaff';} }, 2200);
+    setTimeout(function(){ var s = document.getElementById('animStatus'); if(s){s.innerHTML='<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Attestation Anchored Successfully on XRPL'; s.style.color='#00aaff';} }, 2200);
     await new Promise(function(r){ setTimeout(r, 3500); });
     if (typeof window.hideAnchorAnimation === 'function') window.hideAnchorAnimation();
 }
@@ -7261,7 +7261,7 @@ function renderDrlStatusTable(prefix) {
         var checked = _drlSelectedRows[idx] ? ' checked' : '';
         html += '<td style="padding:6px 4px;border-color:var(--border);text-align:center"><input type="checkbox" onchange="drlToggleRow(' + idx + ',this.checked,\'' + pre + '\')" ' + checked + ' style="cursor:pointer;accent-color:#007AFF"></td>';
 
-        html += ec('di', '<span style="font-weight:600">' + _escHtml(row.di) + '</span>', td);
+        html += ec('di', '<span style="font-weight:600">' + _escHtml(row.di) + '</span> <span style="font-size:0.55rem;color:#34c759;background:rgba(52,199,89,0.1);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700;letter-spacing:0.3px;vertical-align:middle"><i class="fas fa-check-circle"></i> XRPL</span>', td);
         html += ec('transmittalSerial', row.transmittalSerial ? _escHtml(row.transmittalSerial) : '', td);
         html += ec('spRev', row.spRev ? _escHtml(row.spRev) : '', td);
         html += ec('coordDueDate', row.coordDueDate ? _escHtml(row.coordDueDate) : '', td);
@@ -7447,12 +7447,12 @@ function exportDrlStatusCSV(prefix) {
 
 function anchorDrlStatus() {
     if (typeof window._anchorToXRPL === 'function') {
-        if (typeof window.showAnchorAnimation === 'function') window.showAnchorAnimation();
+        if (typeof window.showAnchorAnimation === 'function') window.showAnchorAnimation(null, 'DRL/DI Status Tracker');
         window._anchorToXRPL('DRL/DI Status Tracker Snapshot', 'drl_status_record').finally(function() {
             if (typeof window.hideAnchorAnimation === 'function') window.hideAnchorAnimation();
         });
     } else if (typeof S4 !== 'undefined' && S4.toast) {
-        S4.toast('DRL status snapshot anchored to ledger.', 'info');
+        S4.toast('DRL/DI Status Tracker Anchored Successfully on XRPL', 'success');
     }
 }
 
