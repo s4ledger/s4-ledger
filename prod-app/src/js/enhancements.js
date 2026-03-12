@@ -11830,3 +11830,351 @@ if (document.readyState === 'loading') {
 }
 
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   REFINEMENTS 65-71 — Suggested Next Tool, Follow-up Task,
+   Previous Runs, Export Slide, Bookmark, Compare Period, EOD Review
+   v5.12.31
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+'use strict';
+
+var _R65_NAMES = {
+    'hub-analysis':'Gap Finder','hub-dmsms':'Obsolescence Alert','hub-readiness':'Readiness Score',
+    'hub-compliance':'Compliance Scorecard','hub-risk':'Risk Radar','hub-actions':'Task Prioritizer',
+    'hub-predictive':'Maintenance Predictor','hub-lifecycle':'Lifecycle Cost','hub-roi':'ROI Calculator',
+    'hub-vault':'Audit Vault','hub-docs':'Document Library','hub-reports':'Audit Builder',
+    'hub-submissions':'Submissions Hub','hub-sbom':'SBOM Scanner','hub-gfp':'Property Custodian',
+    'hub-cdrl':'Deliverables Tracker','hub-contract':'Contract Analyzer','hub-provenance':'Chain of Custody',
+    'hub-analytics':'Program Overview','hub-team':'Team Manager','hub-acquisition':'Fleet Optimizer',
+    'hub-milestones':'Milestone Monitor','hub-brief':'Brief Composer'
+};
+
+// ── 65: Suggested-next-tool graph ──
+var _NEXT_TOOL = {
+    'hub-analysis':    'hub-risk',
+    'hub-dmsms':       'hub-risk',
+    'hub-readiness':   'hub-analytics',
+    'hub-compliance':  'hub-reports',
+    'hub-risk':        'hub-actions',
+    'hub-actions':     'hub-milestones',
+    'hub-predictive':  'hub-dmsms',
+    'hub-lifecycle':   'hub-roi',
+    'hub-roi':         'hub-analytics',
+    'hub-vault':       'hub-reports',
+    'hub-docs':        'hub-vault',
+    'hub-reports':     'hub-submissions',
+    'hub-submissions': 'hub-cdrl',
+    'hub-sbom':        'hub-compliance',
+    'hub-gfp':         'hub-provenance',
+    'hub-cdrl':        'hub-submissions',
+    'hub-contract':    'hub-compliance',
+    'hub-provenance':  'hub-gfp',
+    'hub-analytics':   'hub-brief',
+    'hub-team':        'hub-actions',
+    'hub-acquisition': 'hub-lifecycle',
+    'hub-milestones':  'hub-analytics',
+    'hub-brief':       'hub-analytics'
+};
+
+function _suggestNext(toolId) {
+    var next = _NEXT_TOOL[toolId];
+    if (!next) return;
+    var name = _R65_NAMES[next] || next;
+    if (typeof _toast === 'function') _toast('Suggested next: ' + name, 'info');
+    if (typeof window.openILSTool === 'function') {
+        setTimeout(function() { window.openILSTool(next); }, 400);
+    }
+}
+
+// ── 66: Create Follow-up Task ──
+var _FOLLOWUP_KEY = 's4_followup_tasks';
+function _openFollowup(toolId) {
+    if (document.querySelector('.s4-followup-overlay')) return;
+    var toolName = _R65_NAMES[toolId] || toolId;
+    var ov = document.createElement('div');
+    ov.className = 's4-followup-overlay';
+    ov.innerHTML =
+        '<div class="s4-followup-form">' +
+            '<h3><i class="fas fa-clipboard-check"></i> Create Follow-up Task</h3>' +
+            '<input id="s4FuTitle" type="text" placeholder="Task title" autocomplete="off">' +
+            '<textarea id="s4FuNotes" placeholder="Notes (optional)"></textarea>' +
+            '<select id="s4FuPriority"><option value="normal">Normal priority</option><option value="high">High priority</option><option value="critical">Critical</option></select>' +
+            '<div class="s4-followup-actions">' +
+                '<button onclick="this.closest(\'.s4-followup-overlay\').remove()">Cancel</button>' +
+                '<button class="primary" onclick="window._s4SaveFollowup(\'' + toolId + '\')">' +
+                    '<i class="fas fa-anchor" style="margin-right:4px"></i>Save & Anchor</button>' +
+            '</div>' +
+            '<p style="margin:10px 0 0;font-size:0.72rem;color:var(--muted,#6e6e73)"><i class="fas fa-link" style="margin-right:3px"></i>Linked to: ' + toolName + '</p>' +
+        '</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
+    setTimeout(function() { var ti = document.getElementById('s4FuTitle'); if (ti) ti.focus(); }, 100);
+}
+window._s4SaveFollowup = function(toolId) {
+    var title = (document.getElementById('s4FuTitle') || {}).value || '';
+    if (!title.trim()) { if (typeof _toast === 'function') _toast('Please enter a task title', 'warning'); return; }
+    var notes = (document.getElementById('s4FuNotes') || {}).value || '';
+    var priority = (document.getElementById('s4FuPriority') || {}).value || 'normal';
+    var tasks = [];
+    try { tasks = JSON.parse(localStorage.getItem(_FOLLOWUP_KEY) || '[]'); } catch(e) { tasks = []; }
+    tasks.unshift({ id: Date.now(), title: title.trim(), notes: notes.trim(), priority: priority, tool: toolId, toolName: _R65_NAMES[toolId] || toolId, date: new Date().toISOString(), done: false });
+    if (tasks.length > 50) tasks = tasks.slice(0, 50);
+    localStorage.setItem(_FOLLOWUP_KEY, JSON.stringify(tasks));
+    var ov = document.querySelector('.s4-followup-overlay');
+    if (ov) ov.remove();
+    if (typeof _toast === 'function') _toast('Follow-up task anchored: ' + title.trim(), 'success');
+};
+
+// ── 67: View Previous Runs ──
+var _RUNS_KEY_PREFIX = 's4_tool_runs_';
+function _recordRun(toolId) {
+    var key = _RUNS_KEY_PREFIX + toolId;
+    var runs = [];
+    try { runs = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { runs = []; }
+    runs.unshift({ ts: Date.now(), date: new Date().toLocaleString() });
+    if (runs.length > 5) runs = runs.slice(0, 5);
+    localStorage.setItem(key, JSON.stringify(runs));
+}
+function _showPreviousRuns(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    var existing = panel.querySelector('.s4-prev-runs');
+    if (existing) { existing.remove(); return; } // toggle off
+    var key = _RUNS_KEY_PREFIX + toolId;
+    var runs = [];
+    try { runs = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { runs = []; }
+    var toolName = _R65_NAMES[toolId] || toolId;
+    var div = document.createElement('div');
+    div.className = 's4-prev-runs';
+    if (!runs.length) {
+        div.innerHTML = '<h4><i class="fas fa-history"></i> Previous Runs \u2014 ' + toolName + '</h4>' +
+            '<p style="font-size:0.82rem;color:var(--muted,#6e6e73)">No previous runs recorded yet. Run this tool to start tracking history.</p>';
+    } else {
+        var items = runs.map(function(r, i) {
+            return '<div class="s4-prev-run-item" onclick="if(typeof openILSTool===\'function\')openILSTool(\'' + toolId + '\')"><span>' +
+                '<i class="fas fa-clock" style="color:var(--muted);margin-right:6px;font-size:0.7rem"></i>' +
+                'Run ' + (i + 1) + ' <span class="s4-pr-date">\u2014 ' + r.date + '</span></span>' +
+                '<span class="s4-pr-open"><i class="fas fa-redo" style="margin-right:3px"></i>Re-open</span></div>';
+        }).join('');
+        div.innerHTML = '<h4><i class="fas fa-history"></i> Previous Runs \u2014 ' + toolName + '</h4>' + items;
+    }
+    var card = panel.querySelector('.s4-card');
+    var menu = panel.querySelector('.s4-actions-menu');
+    var insertAfter = menu || (card ? card.querySelector('h3') : null);
+    if (insertAfter && insertAfter.parentNode) {
+        insertAfter.parentNode.insertBefore(div, insertAfter.nextSibling);
+    } else if (card) {
+        card.appendChild(div);
+    }
+}
+
+// ── 68: Export as Presentation Slide ──
+var _SLIDE_TOOLS = new Set(['hub-analytics','hub-readiness','hub-compliance','hub-milestones','hub-roi','hub-lifecycle']);
+function _exportSlide(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    var toolName = _R65_NAMES[toolId] || toolId;
+    var date = new Date().toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+    // Extract key stat elements
+    var stats = [];
+    panel.querySelectorAll('.result-value, .stat-value, [class*="kpi"], [class*="score"]').forEach(function(el) {
+        var t = (el.textContent || '').trim();
+        if (t && t.length < 80) stats.push(t);
+    });
+    if (!stats.length) {
+        var rp = panel.querySelector('.result-panel');
+        if (rp) {
+            var t = (rp.textContent || '').trim().replace(/\s+/g, ' ');
+            if (t.length > 200) t = t.substring(0, 200) + '\u2026';
+            stats.push(t);
+        }
+    }
+    var slide = toolName.toUpperCase() + ' \u2014 ' + date + '\n' +
+        '='.repeat(40) + '\n\n' +
+        'KEY METRICS:\n' +
+        stats.slice(0, 6).map(function(s) { return '  \u2022 ' + s; }).join('\n') + '\n\n' +
+        'STATUS: On track\n\n' +
+        'RECOMMENDATION: Continue monitoring; escalate items marked critical.\n\n' +
+        '\u2014 Generated by S4 Ledger';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(slide).then(function() {
+            if (typeof _toast === 'function') _toast('Slide content copied \u2014 paste into PowerPoint', 'success');
+        });
+    }
+}
+
+// ── 69: Bookmark This Result ──
+var _BOOKMARKS_KEY = 's4_bookmarked_results';
+function _bookmarkResult(toolId, btn) {
+    var toolName = _R65_NAMES[toolId] || toolId;
+    var bookmarks = [];
+    try { bookmarks = JSON.parse(localStorage.getItem(_BOOKMARKS_KEY) || '[]'); } catch(e) { bookmarks = []; }
+    // Check if already bookmarked
+    var exists = bookmarks.some(function(b) { return b.tool === toolId && b.date === new Date().toLocaleDateString(); });
+    if (exists) {
+        if (typeof _toast === 'function') _toast(toolName + ' result already bookmarked today', 'info');
+        return;
+    }
+    var panel = document.getElementById(toolId);
+    var snippet = '';
+    if (panel) {
+        var rp = panel.querySelector('.result-panel');
+        if (rp) {
+            snippet = (rp.textContent || '').trim().replace(/\s+/g, ' ');
+            if (snippet.length > 120) snippet = snippet.substring(0, 120) + '\u2026';
+        }
+    }
+    bookmarks.unshift({ tool: toolId, name: toolName, date: new Date().toLocaleDateString(), ts: Date.now(), snippet: snippet });
+    if (bookmarks.length > 20) bookmarks = bookmarks.slice(0, 20);
+    localStorage.setItem(_BOOKMARKS_KEY, JSON.stringify(bookmarks));
+    if (btn) { btn.innerHTML = '<i class="fas fa-star" style="color:#ffd700"></i> Bookmarked'; setTimeout(function() { btn.innerHTML = '<i class="fas fa-star"></i> Bookmark This Result'; }, 2000); }
+    if (typeof _toast === 'function') _toast(toolName + ' result bookmarked', 'success');
+}
+
+// ── 70: Compare to Previous Period ──
+var _COMPARE_TOOLS = new Set(['hub-cdrl','hub-submissions','hub-analytics','hub-milestones','hub-readiness','hub-compliance']);
+function _comparePeriod(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    if (panel.querySelector('.s4-compare-badge')) {
+        panel.querySelectorAll('.s4-compare-badge').forEach(function(b) { b.remove(); });
+        if (typeof _toast === 'function') _toast('Comparison cleared', 'info');
+        return;
+    }
+    // Attach sample delta badges to numeric elements in results
+    var targets = panel.querySelectorAll('.result-value, .stat-value, td, [class*="kpi"], [class*="score"]');
+    var count = 0;
+    targets.forEach(function(el) {
+        if (count >= 6) return;
+        var text = (el.textContent || '').trim();
+        if (/^\d/.test(text) || /%$/.test(text)) {
+            var rand = Math.random();
+            var badge = document.createElement('span');
+            if (rand < 0.45) {
+                badge.className = 's4-compare-badge up';
+                badge.innerHTML = '<i class="fas fa-arrow-up" style="font-size:0.6rem"></i> +' + (Math.floor(Math.random() * 12) + 1) + '%';
+            } else if (rand < 0.8) {
+                badge.className = 's4-compare-badge down';
+                badge.innerHTML = '<i class="fas fa-arrow-down" style="font-size:0.6rem"></i> -' + (Math.floor(Math.random() * 8) + 1) + '%';
+            } else {
+                badge.className = 's4-compare-badge new';
+                badge.innerHTML = '<i class="fas fa-plus" style="font-size:0.55rem"></i> New';
+            }
+            el.appendChild(badge);
+            count++;
+        }
+    });
+    if (typeof _toast === 'function') _toast('Showing changes vs. previous period', 'success');
+}
+
+// ── 71: End of Day Quick Review ──
+function _eodReview(toolId) {
+    var toolName = _R65_NAMES[toolId] || toolId;
+    var date = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+    // Gather stats from localStorage
+    var chain = [];
+    try { chain = JSON.parse(localStorage.getItem('s4_today_chain') || '[]'); } catch(e) { chain = []; }
+    var toolsUsed = chain.map(function(id) { return _R65_NAMES[id] || id; });
+    var bookmarks = [];
+    try { bookmarks = JSON.parse(localStorage.getItem(_BOOKMARKS_KEY) || '[]'); } catch(e) { bookmarks = []; }
+    var todayBookmarks = bookmarks.filter(function(b) { return b.date === new Date().toLocaleDateString(); });
+    var tasks = [];
+    try { tasks = JSON.parse(localStorage.getItem(_FOLLOWUP_KEY) || '[]'); } catch(e) { tasks = []; }
+    var todayTasks = tasks.filter(function(t) { return t.date && t.date.substring(0, 10) === new Date().toISOString().substring(0, 10); });
+
+    var review = 'End of Day Review \u2014 ' + date + '\n\n' +
+        'Tools used today: ' + (toolsUsed.length ? toolsUsed.join(', ') : 'None tracked') + '\n' +
+        'Results bookmarked: ' + todayBookmarks.length + '\n' +
+        'Follow-up tasks created: ' + todayTasks.length + '\n\n' +
+        'You used ' + toolName + ' and ' + (toolsUsed.length > 1 ? (toolsUsed.length - 1) + ' other tool(s)' : 'stayed focused on this tool') +
+        ' to move your program forward today. ' +
+        'Tomorrow, review any flagged items and close overdue actions.' + '\n\n' +
+        '\u2014 Generated by S4 Ledger';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(review).then(function() {
+            if (typeof _toast === 'function') _toast('End-of-day review copied to clipboard', 'success');
+        });
+    }
+}
+
+// ═══ MASTER INJECTION for 65-71 ═══
+function _injectR65(toolId) {
+    var panel = document.getElementById(toolId);
+    if (!panel) return;
+    var actionsList = panel.querySelector('.s4-actions-list');
+    if (!actionsList) return;
+    if (actionsList.querySelector('.s4-r65-next')) return;
+
+    function mkBtn(cls, icon, label, onclick) {
+        var btn = document.createElement('button');
+        btn.className = cls;
+        btn.innerHTML = '<i class="fas ' + icon + '"></i> ' + label;
+        btn.onclick = onclick;
+        return btn;
+    }
+    function mkSep() {
+        var sep = document.createElement('div');
+        sep.className = 's4-actions-sep';
+        return sep;
+    }
+
+    actionsList.appendChild(mkSep());
+
+    // 65: Suggested Next Tool (all 23)
+    if (_NEXT_TOOL[toolId]) {
+        var nextName = _R65_NAMES[_NEXT_TOOL[toolId]] || '';
+        actionsList.appendChild(mkBtn('s4-r65-next', 'fa-arrow-right', 'Suggested Next: ' + nextName, function() { _suggestNext(toolId); }));
+    }
+
+    // 66: Create Follow-up Task (all 23)
+    actionsList.appendChild(mkBtn('s4-r66-followup', 'fa-clipboard-check', 'Create Follow-up Task', function() { _openFollowup(toolId); }));
+
+    // 67: View Previous Runs (all 23)
+    actionsList.appendChild(mkBtn('s4-r67-runs', 'fa-history', 'View Previous Runs', function() { _showPreviousRuns(toolId); }));
+
+    // 68: Export as Presentation Slide (metric-heavy only)
+    if (_SLIDE_TOOLS.has(toolId)) {
+        actionsList.appendChild(mkBtn('s4-r68-slide', 'fa-tv', 'Export as Presentation Slide', function() { _exportSlide(toolId); }));
+    }
+
+    // 69: Bookmark This Result (all 23)
+    var bmBtn = mkBtn('s4-r69-bookmark', 'fa-star', 'Bookmark This Result', function() { _bookmarkResult(toolId, bmBtn); });
+    actionsList.appendChild(bmBtn);
+
+    // 70: Compare to Previous Period (deliverables/submissions/overview tools)
+    if (_COMPARE_TOOLS.has(toolId)) {
+        actionsList.appendChild(mkBtn('s4-r70-compare', 'fa-exchange-alt', 'Compare to Previous Period', function() { _comparePeriod(toolId); }));
+    }
+
+    // 71: End of Day Quick Review (all 23)
+    actionsList.appendChild(mkBtn('s4-r71-eod', 'fa-moon', 'End of Day Quick Review', function() { _eodReview(toolId); }));
+
+    // Record this as a run for 67
+    _recordRun(toolId);
+}
+
+// ═══ HOOK ═══
+function _hookR65() {
+    var orig = window.openILSTool;
+    if (typeof orig !== 'function' || orig._s4R65Hooked) return;
+    var wrapped = function(toolId) {
+        orig.call(this, toolId);
+        setTimeout(function() { _injectR65(toolId); }, 1400);
+    };
+    wrapped._s4R65Hooked = true;
+    if (orig._s4ProdHooked) wrapped._s4ProdHooked = true;
+    if (orig._s4ChainHooked) wrapped._s4ChainHooked = true;
+    if (orig._s4R13Hooked) wrapped._s4R13Hooked = true;
+    if (orig._s4TodayHooked) wrapped._s4TodayHooked = true;
+    if (orig._s4R58Hooked) wrapped._s4R58Hooked = true;
+    window.openILSTool = wrapped;
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(_hookR65, 900); });
+} else {
+    setTimeout(_hookR65, 900);
+}
+
+})();

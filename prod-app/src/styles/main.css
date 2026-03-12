@@ -6469,3 +6469,26 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-guided-tip::after{content:attr(data-guide);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.82);color:#fff;font-size:0.72rem;font-weight:500;padding:5px 10px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:1001}
 .s4-guided-tip:hover::after{opacity:1}
 @keyframes s4FadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+/* ── v5.12.31 — Refinements 65-71 ── */
+.s4-followup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:9999;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-followup-form{background:var(--surface,#fff);border-radius:16px;width:400px;max-width:92vw;padding:24px;box-shadow:0 24px 64px rgba(0,0,0,0.18);position:relative}
+.s4-followup-form h3{font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin:0 0 14px;display:flex;align-items:center;gap:8px}
+.s4-followup-form h3 i{color:#007AFF}
+.s4-followup-form input,.s4-followup-form textarea,.s4-followup-form select{width:100%;padding:8px 12px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.82rem;color:var(--text,#1d1d1f);background:var(--surface,#fff);margin-bottom:10px;font-family:inherit;box-sizing:border-box}
+.s4-followup-form textarea{height:64px;resize:vertical}
+.s4-followup-form .s4-followup-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.s4-followup-form .s4-followup-actions button{padding:8px 18px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;border:1px solid var(--border,rgba(0,0,0,0.1));background:transparent;color:var(--text,#1d1d1f)}
+.s4-followup-form .s4-followup-actions button.primary{background:#007AFF;color:#fff;border:none;font-weight:700}
+/* Previous runs panel */
+.s4-prev-runs{background:var(--surface,#fff);border:1px solid var(--border,rgba(0,0,0,0.08));border-radius:12px;padding:14px 16px;margin:12px 0;animation:s4FadeIn 0.3s}
+.s4-prev-runs h4{font-size:0.85rem;font-weight:700;color:var(--text,#1d1d1f);margin:0 0 10px;display:flex;align-items:center;gap:6px}
+.s4-prev-runs h4 i{color:#007AFF;font-size:0.8rem}
+.s4-prev-run-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;font-size:0.8rem;color:var(--text,#1d1d1f);transition:background 0.15s;cursor:pointer}
+.s4-prev-run-item:hover{background:rgba(0,122,255,0.05)}
+.s4-prev-run-item .s4-pr-date{color:var(--muted,#6e6e73);font-size:0.75rem}
+.s4-prev-run-item .s4-pr-open{color:#007AFF;font-weight:600;font-size:0.75rem;white-space:nowrap}
+/* Compare highlight delta badges */
+.s4-compare-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-size:0.72rem;font-weight:700;margin-left:6px}
+.s4-compare-badge.up{background:rgba(52,199,89,0.12);color:#22863a}
+.s4-compare-badge.down{background:rgba(255,59,48,0.12);color:#cc3333}
+.s4-compare-badge.new{background:rgba(0,122,255,0.1);color:#007AFF}
