@@ -288,53 +288,65 @@
         </div>
     </div>
 
-        <!-- ═══ WALLET TRIGGER (Top Right) ═══ -->
+        <!-- ═══ UNIFIED PROFILE POPOVER (Top Right) ═══ -->
         <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:8px;">
-            <button onclick="logout()" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:#c9a84c;border-radius:10px;padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.15)'" onmouseout="this.style.background='rgba(201,168,76,0.08)'"><i class="fas fa-right-from-bracket"></i><span class="d-none d-md-inline">Logout</span></button>
-                        <button class="wallet-trigger" onclick="openWalletSidebar()" id="walletTriggerBtn">
-                <i class="fas fa-wallet"></i> Ledger Account <span class="wt-bal" id="walletTriggerBal">--</span>
-            </button>
-            <!-- Change 19: User Avatar -->
             <div style="position:relative">
-                <button class="s4-avatar-btn" id="s4AvatarBtn" onclick="window._s4ToggleAvatar()" aria-label="User preferences" aria-haspopup="true" aria-expanded="false">
+                <button class="s4-avatar-btn" id="s4AvatarBtn" onclick="window._s4ToggleAvatar()" aria-label="Profile & account" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user"></i>
                 </button>
-                <div class="s4-avatar-popover" id="s4AvatarPopover" role="dialog" aria-label="User preferences">
-                    <div class="s4-ap-header">
-                        <div class="s4-ap-avatar" id="s4ApInitials">OP</div>
-                        <div><div class="s4-ap-name" id="s4ApName">Operator</div><div class="s4-ap-role">Program Manager</div></div>
-                    </div>
-                    <div class="s4-ap-row"><span><i class="fas fa-palette"></i> Default Preset</span>
-                        <select id="s4PrefPreset" onchange="window._s4SavePref('preset',this.value)" style="font-size:0.78rem;padding:3px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer">
-                            <option value="classic">Classic</option><option value="compact">Compact</option><option value="spacious">Spacious</option>
-                        </select>
-                    </div>
-                    <div class="s4-ap-row"><span><i class="fas fa-bell"></i> Notifications</span>
-                        <button class="s4-ap-toggle on" id="s4PrefNotif" onclick="window._s4TogglePref('notifications')" aria-label="Toggle notifications"></button>
-                    </div>
-                    <div class="s4-ap-row"><span><i class="fas fa-volume-up"></i> Sound Effects</span>
-                        <button class="s4-ap-toggle" id="s4PrefSound" onclick="window._s4TogglePref('sound')" aria-label="Toggle sound"></button>
-                    </div>
-                    <hr class="s4-ap-divider">
-                    <!-- Change 24: Accent Color Picker -->
-                    <div class="s4-accent-row">
-                        <div class="s4-accent-label"><i class="fas fa-swatchbook"></i> Accent Color</div>
-                        <div class="s4-accent-swatches" id="s4AccentSwatches">
-                            <div class="s4-accent-swatch active" data-accent="#007AFF" style="background:#007AFF" onclick="window._s4SetAccent('#007AFF')" title="Ocean Blue"></div>
-                            <div class="s4-accent-swatch" data-accent="#34c759" style="background:#34c759" onclick="window._s4SetAccent('#34c759')" title="Emerald"></div>
-                            <div class="s4-accent-swatch" data-accent="#af52de" style="background:#af52de" onclick="window._s4SetAccent('#af52de')" title="Violet"></div>
-                            <div class="s4-accent-swatch" data-accent="#ff9500" style="background:#ff9500" onclick="window._s4SetAccent('#ff9500')" title="Amber"></div>
-                            <div class="s4-accent-swatch" data-accent="#ff375f" style="background:#ff375f" onclick="window._s4SetAccent('#ff375f')" title="Rose"></div>
+                <div class="s4-avatar-popover s4-up" id="s4AvatarPopover" role="dialog" aria-label="Profile & account">
+                    <!-- ── Section 1: Profile ── -->
+                    <div class="s4-up-section s4-up-profile">
+                        <div class="s4-ap-header">
+                            <div class="s4-ap-avatar" id="s4ApInitials">OP</div>
+                            <div>
+                                <div class="s4-ap-name" id="s4ApName">Operator</div>
+                                <div class="s4-ap-role">Program Manager</div>
+                                <div class="s4-up-email" id="s4UpEmail"></div>
+                            </div>
                         </div>
-                        <div class="s4-accent-teaser">Theme engine coming soon — full dark/light/custom.</div>
+                        <button class="s4-up-logout" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
                     </div>
                     <hr class="s4-ap-divider">
-                    <div class="s4-ap-row"><span><i class="fas fa-keyboard"></i> Shortcuts</span>
-                        <span style="font-size:0.72rem;color:var(--muted)">? key</span>
+                    <!-- ── Section 2: Ledger Account ── -->
+                    <div class="s4-up-section s4-up-ledger" id="s4UnifiedLedger">
+                        <div class="s4-up-section-head"><i class="fas fa-wallet"></i> Ledger Account</div>
+                        <div id="s4UnifiedLedgerBody"></div>
                     </div>
-                    <!-- Change 25: Hidden Reset All -->
                     <hr class="s4-ap-divider">
-                    <button class="s4-reset-all" onclick="window._s4ResetAll()" title="Reset all preferences to defaults"><i class="fas fa-arrow-rotate-left"></i> Reset All Preferences</button>
+                    <!-- ── Section 3: Settings ── -->
+                    <div class="s4-up-section s4-up-settings">
+                        <div class="s4-up-section-head"><i class="fas fa-gear"></i> Settings</div>
+                        <div class="s4-ap-row"><span><i class="fas fa-palette"></i> Default Preset</span>
+                            <select id="s4PrefPreset" onchange="window._s4SavePref('preset',this.value)" style="font-size:0.78rem;padding:3px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer">
+                                <option value="classic">Classic</option><option value="compact">Compact</option><option value="spacious">Spacious</option>
+                            </select>
+                        </div>
+                        <div class="s4-ap-row"><span><i class="fas fa-bell"></i> Notifications</span>
+                            <button class="s4-ap-toggle on" id="s4PrefNotif" onclick="window._s4TogglePref('notifications')" aria-label="Toggle notifications"></button>
+                        </div>
+                        <div class="s4-ap-row"><span><i class="fas fa-volume-up"></i> Sound Effects</span>
+                            <button class="s4-ap-toggle" id="s4PrefSound" onclick="window._s4TogglePref('sound')" aria-label="Toggle sound"></button>
+                        </div>
+                        <hr class="s4-ap-divider">
+                        <div class="s4-accent-row">
+                            <div class="s4-accent-label"><i class="fas fa-swatchbook"></i> Accent Color</div>
+                            <div class="s4-accent-swatches" id="s4AccentSwatches">
+                                <div class="s4-accent-swatch active" data-accent="#007AFF" style="background:#007AFF" onclick="window._s4SetAccent('#007AFF')" title="Ocean Blue"></div>
+                                <div class="s4-accent-swatch" data-accent="#34c759" style="background:#34c759" onclick="window._s4SetAccent('#34c759')" title="Emerald"></div>
+                                <div class="s4-accent-swatch" data-accent="#af52de" style="background:#af52de" onclick="window._s4SetAccent('#af52de')" title="Violet"></div>
+                                <div class="s4-accent-swatch" data-accent="#ff9500" style="background:#ff9500" onclick="window._s4SetAccent('#ff9500')" title="Amber"></div>
+                                <div class="s4-accent-swatch" data-accent="#ff375f" style="background:#ff375f" onclick="window._s4SetAccent('#ff375f')" title="Rose"></div>
+                            </div>
+                            <div class="s4-accent-teaser">Theme engine coming soon — full dark/light/custom.</div>
+                        </div>
+                        <hr class="s4-ap-divider">
+                        <div class="s4-ap-row"><span><i class="fas fa-keyboard"></i> Shortcuts</span>
+                            <span style="font-size:0.72rem;color:var(--muted)">? key</span>
+                        </div>
+                        <hr class="s4-ap-divider">
+                        <button class="s4-reset-all" onclick="window._s4ResetAll()" title="Reset all preferences to defaults"><i class="fas fa-arrow-rotate-left"></i> Reset All Preferences</button>
+                    </div>
                 </div>
             </div>
         </div>

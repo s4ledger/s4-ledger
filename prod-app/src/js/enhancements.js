@@ -9327,6 +9327,14 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         var isOpen = pop.classList.contains('open');
         pop.classList.toggle('open');
         if (btn) btn.setAttribute('aria-expanded', String(!isOpen));
+        // Populate on open
+        if (!isOpen) {
+            var emailEl = document.getElementById('s4UpEmail');
+            if (emailEl) emailEl.textContent = localStorage.getItem('s4_user_email') || '';
+            if (typeof window._populateUnifiedLedger === 'function') {
+                window._populateUnifiedLedger();
+            }
+        }
     };
 
     window._s4SavePref = function(key, value) {

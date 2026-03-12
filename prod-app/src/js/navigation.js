@@ -400,13 +400,7 @@ function _getCreditsData() {
     return { allocation: allocation, spent: spent, remaining: remaining, anchored: anchored, plan: plan, addr: addr, pct: pct };
 }
 
-function openWalletSidebar() {
-    var sidebar = document.getElementById('walletSidebar');
-    var overlay = document.getElementById('walletOverlay');
-    if (sidebar) sidebar.classList.add('open');
-    if (overlay) overlay.classList.add('show');
-
-    var body = document.getElementById('walletSidebarBody');
+function _buildLedgerContent(body) {
     if (!body) return;
 
     var d = _getCreditsData();
@@ -726,11 +720,40 @@ function openWalletSidebar() {
     body.dataset.loaded = 'true';
 }
 
+window._populateUnifiedLedger = function() {
+    _buildLedgerContent(document.getElementById('s4UnifiedLedgerBody'));
+};
+
+function openWalletSidebar() {
+    // Unified popover mode
+    var unifiedBody = document.getElementById('s4UnifiedLedgerBody');
+    if (unifiedBody) {
+        _buildLedgerContent(unifiedBody);
+        var pop = document.getElementById('s4AvatarPopover');
+        if (pop && !pop.classList.contains('open') && typeof window._s4ToggleAvatar === 'function') {
+            window._s4ToggleAvatar();
+        }
+        return;
+    }
+    // Legacy sidebar fallback
+    var sidebar = document.getElementById('walletSidebar');
+    var overlay = document.getElementById('walletOverlay');
+    if (sidebar) sidebar.classList.add('open');
+    if (overlay) overlay.classList.add('show');
+    _buildLedgerContent(document.getElementById('walletSidebarBody'));
+}
+
 function closeWalletSidebar() {
     var sidebar = document.getElementById('walletSidebar');
     var overlay = document.getElementById('walletOverlay');
     if (sidebar) sidebar.classList.remove('open');
     if (overlay) overlay.classList.remove('show');
+    var pop = document.getElementById('s4AvatarPopover');
+    if (pop && pop.classList.contains('open')) {
+        pop.classList.remove('open');
+        var btn = document.getElementById('s4AvatarBtn');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
 }
 
 function updateWalletTrigger() {
