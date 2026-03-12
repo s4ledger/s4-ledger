@@ -6492,3 +6492,28 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-compare-badge.up{background:rgba(52,199,89,0.12);color:#22863a}
 .s4-compare-badge.down{background:rgba(255,59,48,0.12);color:#cc3333}
 .s4-compare-badge.new{background:rgba(0,122,255,0.1);color:#007AFF}
+/* ── v5.12.32 — Refinements 72-78 ── */
+/* 72: Smart Default indicator */
+.s4-smart-default-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;background:rgba(0,122,255,0.08);color:#007AFF;margin-left:6px;white-space:nowrap;animation:s4FadeIn 0.3s}
+.s4-smart-default-badge i{font-size:0.65rem}
+/* 73: Highlight changes overlay */
+.s4-highlight-changed{outline:2px solid rgba(0,122,255,0.45) !important;outline-offset:1px;background:rgba(0,122,255,0.04) !important;transition:outline-color 0.3s,background 0.3s;border-radius:4px}
+.s4-highlight-changed-new{outline:2px solid rgba(52,199,89,0.5) !important;outline-offset:1px;background:rgba(52,199,89,0.04) !important;transition:outline-color 0.3s,background 0.3s;border-radius:4px}
+.s4-changes-legend{display:flex;align-items:center;gap:14px;padding:8px 14px;border-radius:10px;background:var(--surface,#fff);border:1px solid var(--border,rgba(0,0,0,0.08));margin:10px 0;font-size:0.75rem;font-weight:600;color:var(--text,#1d1d1f);animation:s4FadeIn 0.3s}
+.s4-changes-legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+/* 75: Evidence completeness badge */
+.s4-evidence-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;white-space:nowrap;animation:s4FadeIn 0.3s}
+.s4-evidence-badge.green{background:rgba(52,199,89,0.12);color:#22863a}
+.s4-evidence-badge.yellow{background:rgba(255,204,0,0.15);color:#946800}
+.s4-evidence-badge.red{background:rgba(255,59,48,0.12);color:#cc3333}
+.s4-evidence-badge i{font-size:0.65rem}
+/* 76: Trend arrow */
+.s4-trend-arrow{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:6px;animation:s4FadeIn 0.3s}
+.s4-trend-arrow.up{background:rgba(52,199,89,0.12);color:#22863a}
+.s4-trend-arrow.down{background:rgba(255,59,48,0.12);color:#cc3333}
+.s4-trend-arrow.flat{background:rgba(0,0,0,0.05);color:var(--muted,#6e6e73)}
+/* 77: Copy Tool Link toast */
+.s4-tool-link-toast{font-size:0.78rem;font-weight:600}
+/* 78: Usage summary inline */
+.s4-usage-summary{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:0.78rem;font-weight:600;color:var(--muted,#6e6e73);line-height:1.5;white-space:normal}
+.s4-usage-summary i{color:#007AFF;font-size:0.8rem;flex-shrink:0}
