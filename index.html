@@ -27,16 +27,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0a0f;
-            --bg-elevated: #111118;
-            --bg-surface: #16161f;
+            --bg: #f5f5f7;
+            --bg-elevated: #ffffff;
+            --bg-surface: #ffffff;
             --accent: #00aaff;
             --accent-dim: rgba(0,170,255,0.08);
-            --text-primary: #f0f0f5;
-            --text-secondary: #8b8fa3;
-            --text-muted: #5a5e72;
-            --border: rgba(255,255,255,0.06);
-            --border-hover: rgba(255,255,255,0.12);
+            --text-primary: #1d1d1f;
+            --text-secondary: #3a3a3c;
+            --text-muted: #6e6e73;
+            --border: rgba(0,0,0,0.10);
+            --border-hover: rgba(0,0,0,0.15);
             --radius: 3px;
             --radius-lg: 4px;
             --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -58,7 +58,7 @@
             border-bottom: 1px solid transparent;
         }
         .nav.scrolled {
-            background: rgba(10, 10, 15, 0.92);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             border-bottom-color: var(--border);
         }
@@ -98,7 +98,7 @@
             content: ''; position: absolute; inset: 0; z-index: 1;
             background:
                 radial-gradient(ellipse 60% 50% at 50% 40%, rgba(0,170,255,0.10) 0%, transparent 70%),
-                linear-gradient(180deg, rgba(10,10,15,0.45) 0%, rgba(10,10,15,0.15) 40%, rgba(10,10,15,0.55) 100%);
+                linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0.60) 100%);
         }
         .hero-label {
             display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px;
@@ -230,7 +230,7 @@
         .cta-section { text-align: center; padding: 120px 24px; position: relative; }
         .cta-section::before {
             content: ''; position: absolute; inset: 0;
-            background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(0,170,255,0.04) 0%, transparent 70%);
+            background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(0,170,255,0.06) 0%, transparent 70%);
             z-index: -1;
         }
         .cta-section h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 700; letter-spacing: -0.03em; margin-bottom: 16px; }
@@ -282,7 +282,7 @@
             .nav-mobile-toggle { display: block; }
             .nav-links.open {
                 display: flex; flex-direction: column; position: absolute;
-                top: 64px; left: 0; right: 0; background: rgba(10,10,15,0.98);
+                top: 64px; left: 0; right: 0; background: rgba(255,255,255,0.98);
                 backdrop-filter: blur(24px); padding: 16px 24px 24px;
                 border-bottom: 1px solid var(--border); gap: 8px;
             }
@@ -352,7 +352,7 @@
     <section class="hero">
         <div class="hero-bg" id="heroBg">
             <video autoplay muted loop playsinline id="heroVideo"
-                   style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0.65;filter:brightness(1.4)contrast(1.05);">
+                   style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0.35;filter:brightness(1.1)contrast(1.05);">
                 <source src="s4-assets/hero-bg.mp4" type="video/mp4">
                 <source src="s4-assets/hero-bg.webm" type="video/webm">
             </video>

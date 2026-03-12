@@ -36,14 +36,14 @@
         .filter-btn{background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:10px 18px;margin:4px;cursor:pointer;font-weight:600;font-size:0.85rem;transition:all 0.3s;font-family:inherit}
         .filter-btn:hover{background:rgba(0,170,255,0.15);transform:translateY(-2px)}
         .filter-btn.active{background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;border-color:transparent;box-shadow:0 5px 20px rgba(0,170,255,0.3)}
-        .filter-select{background:rgba(0,170,255,0.08);color:#fff;border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:10px 15px;font-weight:500;cursor:pointer;font-family:inherit}
+        .filter-select{background:rgba(0,170,255,0.08);color:var(--text-primary);border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:10px 15px;font-weight:500;cursor:pointer;font-family:inherit}
         .filter-select:focus{outline:none;border-color:var(--accent)}
-        .filter-select option{background:#0a0a0f}
+        .filter-select option{background:var(--bg-elevated)}
         .export-btn{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:3px;padding:12px 24px;cursor:pointer;font-weight:600;font-size:0.9rem;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;font-family:inherit}
         .export-btn:hover{background:rgba(201,168,76,0.2);transform:translateY(-3px);box-shadow:0 10px 30px rgba(201,168,76,0.2)}
         .recent-table{width:100%;margin-top:20px;border-collapse:collapse}
         .recent-table th{color:var(--accent);padding:15px 12px;border-bottom:2px solid rgba(0,170,255,0.2);text-align:left;font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px}
-        .recent-table td{padding:14px 12px;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.2s;color:var(--text-secondary)}
+        .recent-table td{padding:14px 12px;border-bottom:1px solid var(--border);transition:background 0.2s;color:var(--text-secondary)}
         .recent-table tr:hover td{background:rgba(0,170,255,0.03)}
         .badge-type{background:linear-gradient(135deg,#00aaff,#0088cc);color:#fff;padding:6px 12px;border-radius:3px;font-size:0.75rem;font-weight:600;text-transform:uppercase}
         @media(max-width:768px){.stat-value{font-size:1.8rem}.d-flex.justify-content-between{flex-direction:column;gap:15px}}
@@ -51,7 +51,6 @@
     </style>
 </head>
 <body>
-<link rel="stylesheet" href="/s4-assets/style.css">
 <nav class="nav" id="mainNav">
     <div class="nav-inner">
         <a href="/" class="nav-brand">
@@ -179,7 +178,7 @@
             <p style="color:var(--text-secondary);font-size:0.9rem;">Individual records with exact timestamps</p>
             <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(0,170,255,0.2);border-radius:3px;">
                 <table class="recent-table" style="display:table;width:100%;">
-                    <thead style="position:sticky;top:0;background:#0a0a0f;z-index:1;"><tr><th>Timestamp</th><th>Record Type</th><th>Hash (truncated)</th><th>Fee</th></tr></thead>
+                    <thead style="position:sticky;top:0;background:var(--bg-elevated);z-index:1;"><tr><th>Timestamp</th><th>Record Type</th><th>Hash (truncated)</th><th>Fee</th></tr></thead>
                     <tbody id="recentBody"><tr><td colspan="4" style="text-align:center;color:var(--text-secondary);">Loading...</td></tr></tbody>
                 </table>
             </div>

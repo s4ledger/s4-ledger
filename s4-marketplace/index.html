@@ -26,13 +26,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="/s4-assets/style.css">
     <style>
-        :root { --steel: #8ea4b8; }
-        .card p { color: var(--steel) !important; }
-        .card h4 { color: #fff; }
+        .card p { color: var(--text-secondary) !important; }
+        .card h4 { color: var(--text-primary); }
         .card h5 { font-weight: 600; }
-        .marketplace-card { background: var(--bg-elevated, #111118); border: 1px solid rgba(255,255,255,0.06); border-radius: 3px; padding: 24px; transition: all 0.3s; }
-        .marketplace-card:hover { border-color: rgba(0,170,255,0.2); background: var(--bg-surface, #16161f); }
-        .publish-cta { text-align: center; padding: 40px 24px; margin-bottom: 2.5rem; background: var(--bg-elevated, #111118); border: 1px solid rgba(255,255,255,0.06); border-radius: 3px; }
+        .marketplace-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 3px; padding: 24px; transition: all 0.3s; }
+        .marketplace-card:hover { border-color: rgba(0,170,255,0.2); background: var(--bg-surface); }
+        .publish-cta { text-align: center; padding: 40px 24px; margin-bottom: 2.5rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 3px; }
     </style>
 
 </head>
@@ -76,12 +75,12 @@
 <div class="container" style="padding-top:2rem;">
     <div class="category-filter" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;justify-content:flex-start;">
         <button class="active" onclick="filterMarketplace('all',this)" style="background:rgba(0,170,255,0.15);color:#00aaff;border:1px solid rgba(0,170,255,0.3);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;">All</button>
-        <button onclick="filterMarketplace('integration',this)" style="background:rgba(255,255,255,0.04);color:var(--steel);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Integrations</button>
-        <button onclick="filterMarketplace('compliance',this)" style="background:rgba(255,255,255,0.04);color:var(--steel);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Compliance</button>
-        <button onclick="filterMarketplace('analytics',this)" style="background:rgba(255,255,255,0.04);color:var(--steel);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Analytics</button>
-        <button onclick="filterMarketplace('ai',this)" style="background:rgba(255,255,255,0.04);color:var(--steel);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">AI</button>
-        <button onclick="filterMarketplace('template',this)" style="background:rgba(255,255,255,0.04);color:var(--steel);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Templates</button>
-        <button onclick="filterMarketplace('community',this)" style="background:rgba(255,255,255,0.04);color:var(--steel);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Community</button>
+        <button onclick="filterMarketplace('integration',this)" style="background:var(--accent-dim);color:var(--text-secondary);border:1px solid var(--border);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Integrations</button>
+        <button onclick="filterMarketplace('compliance',this)" style="background:var(--accent-dim);color:var(--text-secondary);border:1px solid var(--border);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Compliance</button>
+        <button onclick="filterMarketplace('analytics',this)" style="background:var(--accent-dim);color:var(--text-secondary);border:1px solid var(--border);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Analytics</button>
+        <button onclick="filterMarketplace('ai',this)" style="background:var(--accent-dim);color:var(--text-secondary);border:1px solid var(--border);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">AI</button>
+        <button onclick="filterMarketplace('template',this)" style="background:var(--accent-dim);color:var(--text-secondary);border:1px solid var(--border);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Templates</button>
+        <button onclick="filterMarketplace('community',this)" style="background:var(--accent-dim);color:var(--text-secondary);border:1px solid var(--border);border-radius:3px;padding:6px 16px;font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;">Community</button>
     </div>
 </div>
 
@@ -96,7 +95,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-partner">Partner</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">PTC Windchill PLM Bridge</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">PTC Windchill PLM Bridge</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Anchors engineering changes, BOM revisions, and configuration baselines from Windchill to XRPL. Supports lifecycle verification and blockchain anchoring across the product lifecycle.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i> 4.3</div>
@@ -112,7 +111,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-official">Official</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">DCMA Compliance Scorecard</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">DCMA Compliance Scorecard</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Automated DCMA compliance scoring mapped to all 14 Attribute areas. Real-time dashboards track contractor performance with blockchain-verified evidence trails.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> 4.9</div>
@@ -128,7 +127,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-official">Official</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">Predictive Analytics Engine</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">Predictive Analytics Engine</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">ML-powered failure prediction using fleet-wide maintenance patterns. Analyzes MTBF trends, failure mode clustering, and component age curves to forecast maintenance needs.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> 4.6</div>
@@ -144,7 +143,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-partner">Partner</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">Siemens Teamcenter Connector</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">Siemens Teamcenter Connector</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Sync product data, BOM structures, and change management workflows between Teamcenter and S4 Ledger. Anchor engineering baselines with full traceability.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i> 4.2</div>
@@ -160,7 +159,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-official">Official</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">NIST 800-171 / CMMC Template Pack</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">NIST 800-171 / CMMC Template Pack</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Pre-built assessment templates for all 110 NIST 800-171 controls and CMMC Level 2 practices. Auto-maps S4 Ledger anchoring to control evidence requirements.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> 4.8</div>
@@ -176,7 +175,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-community">Community</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">Power BI Dashboard Pack</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">Power BI Dashboard Pack</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">12 pre-built Power BI dashboards for S4 Ledger data — anchoring trends, compliance heatmaps, supply chain risk matrices, and program readiness scorecards.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i> 4.1</div>
@@ -192,7 +191,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-partner">Partner</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">IBM Maximo EAM Connector</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">IBM Maximo EAM Connector</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Sync work orders, asset records, and maintenance schedules from IBM Maximo. Anchor completed maintenance actions with parts traceability and labor verification.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> 4.5</div>
@@ -208,7 +207,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-official">Official</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">GIDEP Alert Monitor</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">GIDEP Alert Monitor</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Real-time GIDEP (Government-Industry Data Exchange Program) alert monitoring. Auto-correlates alerts with your anchored parts database and triggers risk assessments.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> 4.9</div>
@@ -224,7 +223,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-official">Official</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">EDA / PIEE Contract Bridge</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">EDA / PIEE Contract Bridge</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Connect to Electronic Document Access (EDA) and Procurement Integrated Enterprise Environment (PIEE) for automated CDRL tracking and contract data ingestion.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> 4.6</div>
@@ -240,7 +239,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-official">Official</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">S4 SDK Starter Templates</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">S4 SDK Starter Templates</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Starter templates for Python, JavaScript, Java, and C# — includes authentication, anchoring, verification, and batch processing examples. Copy-paste ready.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> 5.0</div>
@@ -256,7 +255,7 @@
                     <div style="display:flex;gap:6px;margin-bottom:10px;">
                         <span class="card-badge badge-community">Community</span>
                     </div>
-                    <h5 style="color:#fff;font-size:1rem;margin-bottom:6px;">Splunk SIEM Integration</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin-bottom:6px;">Splunk SIEM Integration</h5>
                     <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px;">Forward S4 Ledger audit logs, anchoring events, and access records to Splunk for security monitoring. Includes pre-built correlation rules for anomaly detection.</p>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i> 4.0</div>
@@ -276,25 +275,25 @@
         <div class="row mb-4">
             <div class="col-md-4 col-sm-6 mb-4 reveal mp-card" data-category="integration">
                 <div class="marketplace-card" style="opacity:0.7;">
-                    <div class="card-icon" style="background:rgba(255,255,255,0.05);color:var(--text-muted);"><i class="fas fa-cloud"></i></div>
+                    <div class="card-icon" style="background:var(--accent-dim);color:var(--text-muted);"><i class="fas fa-cloud"></i></div>
                     <span class="card-badge badge-coming">Coming Q3 2026</span>
-                    <h5 style="color:#fff;font-size:1rem;margin:10px 0 6px;">Azure GovCloud Connector</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin:10px 0 6px;">Azure GovCloud Connector</h5>
                     <p style="font-size:0.82rem;color:var(--steel);">Native IL4/IL5 Azure Government deployment with Key Vault integration, managed identity auth, and sovereign cloud data residency.</p>
                 </div>
             </div>
             <div class="col-md-4 col-sm-6 mb-4 reveal mp-card" data-category="ai">
                 <div class="marketplace-card" style="opacity:0.7;">
-                    <div class="card-icon" style="background:rgba(255,255,255,0.05);color:var(--text-muted);"><i class="fas fa-language"></i></div>
+                    <div class="card-icon" style="background:var(--accent-dim);color:var(--text-muted);"><i class="fas fa-language"></i></div>
                     <span class="card-badge badge-coming">Coming Q4 2026</span>
-                    <h5 style="color:#fff;font-size:1rem;margin:10px 0 6px;">NATO STANAG Translator</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin:10px 0 6px;">NATO STANAG Translator</h5>
                     <p style="font-size:0.82rem;color:var(--steel);">Automated translation of S4 Ledger records between NATO STANAG formats, NSN cross-references, and Five Eyes partner data standards.</p>
                 </div>
             </div>
             <div class="col-md-4 col-sm-6 mb-4 reveal mp-card" data-category="analytics">
                 <div class="marketplace-card" style="opacity:0.7;">
-                    <div class="card-icon" style="background:rgba(255,255,255,0.05);color:var(--text-muted);"><i class="fas fa-robot"></i></div>
+                    <div class="card-icon" style="background:var(--accent-dim);color:var(--text-muted);"><i class="fas fa-robot"></i></div>
                     <span class="card-badge badge-coming">Coming Q1 2027</span>
-                    <h5 style="color:#fff;font-size:1rem;margin:10px 0 6px;">AI Contract Reviewer</h5>
+                    <h5 style="color:var(--text-primary);font-size:1rem;margin:10px 0 6px;">AI Contract Reviewer</h5>
                     <p style="font-size:0.82rem;color:var(--steel);">LLM-powered contract analysis — extracts CDRL requirements, identifies compliance gaps, and generates deliverable checklists from FAR/DFARS clauses.</p>
                 </div>
             </div>
@@ -302,35 +301,35 @@
 
         <!-- PUBLISH CTA -->
         <div class="publish-cta reveal">
-            <h3 style="color:#fff;margin-bottom:12px;"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:10px;"></i>Build on S4 Ledger</h3>
-            <p style="color:#b0b8c8;font-size:0.95rem;max-width:600px;margin:0 auto 20px;">Publish your own plugins, integrations, and extensions on the S4 Marketplace. Revenue share program available for qualified partners.</p>
+            <h3 style="color:var(--text-primary);margin-bottom:12px;"><i class="fas fa-code-branch" style="color:#c9a84c;margin-right:10px;"></i>Build on S4 Ledger</h3>
+            <p style="color:var(--text-secondary);font-size:0.95rem;max-width:600px;margin:0 auto 20px;">Publish your own plugins, integrations, and extensions on the S4 Marketplace. Revenue share program available for qualified partners.</p>
             <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
                 <a href="../sdk-playground/" class="btn-accent" style="text-decoration:none;"><i class="fas fa-code"></i> SDK Documentation</a>
-                <a href="../s4-partners/" class="btn" style="text-decoration:none;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:10px 24px;border-radius:3px;"><i class="fas fa-handshake"></i> Partner Program</a>
-                <a href="../s4-contact/" class="btn" style="text-decoration:none;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:10px 24px;border-radius:3px;"><i class="fas fa-envelope"></i> Contact Us</a>
+                <a href="../s4-partners/" class="btn" style="text-decoration:none;background:var(--accent-dim);border:1px solid var(--border);color:var(--text-primary);padding:10px 24px;border-radius:3px;"><i class="fas fa-handshake"></i> Partner Program</a>
+                <a href="../s4-contact/" class="btn" style="text-decoration:none;background:var(--accent-dim);border:1px solid var(--border);color:var(--text-primary);padding:10px 24px;border-radius:3px;"><i class="fas fa-envelope"></i> Contact Us</a>
             </div>
         </div>
 
         <!-- API REVENUE INFO -->
         <div class="card reveal" style="margin-top:1rem;margin-bottom:3rem;padding:32px;">
-            <h4 style="color:#fff;margin-bottom:16px;"><i class="fas fa-coins" style="color:#c9a84c;margin-right:8px;"></i>Marketplace Economics</h4>
+            <h4 style="color:var(--text-primary);margin-bottom:16px;"><i class="fas fa-coins" style="color:#c9a84c;margin-right:8px;"></i>Marketplace Economics</h4>
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <div style="padding:16px;background:rgba(20,241,149,0.04);border:1px solid rgba(20,241,149,0.15);border-radius:3px;">
                         <h5 style="color:#14f195;font-size:0.95rem;margin-bottom:8px;">70 / 30 Revenue Share</h5>
-                        <p style="font-size:0.82rem;color:#b0b8c8;margin:0;">Publishers keep 70% of all revenue. S4 Ledger handles hosting, billing, authentication, and marketplace distribution.</p>
+                        <p style="font-size:0.82rem;color:var(--text-secondary);margin:0;">Publishers keep 70% of all revenue. S4 Ledger handles hosting, billing, authentication, and marketplace distribution.</p>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <div style="padding:16px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:3px;">
                         <h5 style="color:#00aaff;font-size:0.95rem;margin-bottom:8px;">Free Tier Available</h5>
-                        <p style="font-size:0.82rem;color:#b0b8c8;margin:0;">Community extensions can be published for free — open-source encouraged. Premium extensions require a verified publisher account.</p>
+                        <p style="font-size:0.82rem;color:var(--text-secondary);margin:0;">Community extensions can be published for free — open-source encouraged. Premium extensions require a verified publisher account.</p>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <div style="padding:16px;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:3px;">
                         <h5 style="color:#c9a84c;font-size:0.95rem;margin-bottom:8px;">$50K+ Marketplace GMV</h5>
-                        <p style="font-size:0.82rem;color:#b0b8c8;margin:0;">Target $50K+ in Year 1 marketplace GMV, growing to $2M+ by Year 4 as the defense developer ecosystem scales.</p>
+                        <p style="font-size:0.82rem;color:var(--text-secondary);margin:0;">Target $50K+ in Year 1 marketplace GMV, growing to $2M+ by Year 4 as the defense developer ecosystem scales.</p>
                     </div>
                 </div>
             </div>
@@ -406,7 +405,7 @@
 
     // Category filter
     function filterMarketplace(cat, btn) {
-        document.querySelectorAll('.category-filter button').forEach(function(b){b.classList.remove('active');b.style.background='rgba(255,255,255,0.04)';b.style.color='var(--steel)';b.style.borderColor='rgba(255,255,255,0.1)';});
+        document.querySelectorAll('.category-filter button').forEach(function(b){b.classList.remove('active');b.style.background='var(--accent-dim)';b.style.color='var(--text-secondary)';b.style.borderColor='var(--border)';});
         btn.classList.add('active');
         btn.style.background='rgba(0,170,255,0.15)';btn.style.color='#00aaff';btn.style.borderColor='rgba(0,170,255,0.3)';
         document.querySelectorAll('.mp-card').forEach(card => {
@@ -426,7 +425,7 @@
 <!-- Search Modal -->
 <div id="searchOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);justify-content:center;align-items:flex-start;padding-top:20vh;">
     <div style="width:90%;max-width:560px;">
-        <input id="searchInput" type="text" placeholder="Search S4 Ledger..." style="width:100%;padding:18px 24px;border-radius:14px;border:1px solid rgba(0,170,255,0.3);background:rgba(17,17,24,0.95);color:#f0f0f5;font-size:1.1rem;outline:none;font-family:'Inter',sans-serif;">
+        <input id="searchInput" type="text" placeholder="Search S4 Ledger..." style="width:100%;padding:18px 24px;border-radius:14px;border:1px solid rgba(0,170,255,0.3);background:rgba(255,255,255,0.95);color:var(--text-primary);font-size:1.1rem;outline:none;font-family:'Inter',sans-serif;">
     </div>
 </div>
 <script>

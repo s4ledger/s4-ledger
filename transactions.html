@@ -34,25 +34,25 @@
         .stat-value{font-size:2rem;font-weight:800;background:#00aaff;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
         .stat-label{font-size:0.82rem;color:var(--text-secondary);margin-top:4px;font-weight:500}
         .filter-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:20px}
-        .filter-select{background:rgba(0,170,255,0.08);color:#fff;border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:8px 14px;font-weight:500;cursor:pointer;font-family:inherit;font-size:0.85rem}
+        .filter-select{background:rgba(0,170,255,0.08);color:var(--text-primary);border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:8px 14px;font-weight:500;cursor:pointer;font-family:inherit;font-size:0.85rem}
         .filter-select:focus{outline:none;border-color:var(--accent)}
-        .filter-select option,.filter-select optgroup{background:#0a0a0f}
-        .search-input{background:rgba(0,170,255,0.08);color:#fff;border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:8px 14px;font-family:inherit;font-size:0.85rem;flex:1;min-width:200px}
+        .filter-select option,.filter-select optgroup{background:var(--bg-elevated)}
+        .search-input{background:rgba(0,170,255,0.08);color:var(--text-primary);border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:8px 14px;font-family:inherit;font-size:0.85rem;flex:1;min-width:200px}
         .search-input:focus{outline:none;border-color:var(--accent)}
         .search-input::placeholder{color:var(--text-muted)}
         .tx-table-wrap{border:1px solid rgba(0,170,255,0.15);border-radius:3px;overflow:hidden}
         .tx-table{width:100%;border-collapse:collapse}
         .tx-table thead{background:rgba(0,170,255,0.06);position:sticky;top:0;z-index:1}
         .tx-table th{padding:14px 12px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--accent);font-weight:700;text-align:left;border-bottom:2px solid rgba(0,170,255,0.2)}
-        .tx-table td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.88rem;color:var(--text-secondary);transition:background 0.2s}
+        .tx-table td{padding:12px;border-bottom:1px solid var(--border);font-size:0.88rem;color:var(--text-secondary);transition:background 0.2s}
         .tx-table tr:hover td{background:rgba(0,170,255,0.03)}
         .tx-hash{font-family:'Monaco','Menlo',monospace;font-size:0.78rem;color:var(--accent);cursor:pointer;transition:color 0.2s}
-        .tx-hash:hover{color:#fff;text-decoration:underline}
+        .tx-hash:hover{color:var(--text-primary);text-decoration:underline}
         .branch-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:3px;font-size:0.75rem;font-weight:600;white-space:nowrap}
         .type-badge{background:rgba(0,170,255,0.12);color:var(--accent);padding:4px 10px;border-radius:3px;font-size:0.75rem;font-weight:600;white-space:nowrap}
         .fee-badge{color:var(--accent);font-weight:700;font-family:monospace}
         .explorer-link{color:var(--accent);text-decoration:none;font-size:0.8rem;transition:color 0.2s}
-        .explorer-link:hover{color:#fff}
+        .explorer-link:hover{color:var(--text-primary)}
         .pagination-bar{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:20px;padding:16px 0}
         .page-btn{background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.25);border-radius:3px;padding:8px 16px;cursor:pointer;font-weight:600;font-size:0.85rem;transition:all 0.2s;font-family:inherit}
         .page-btn:hover:not(:disabled){background:rgba(0,170,255,0.15);transform:translateY(-1px)}
