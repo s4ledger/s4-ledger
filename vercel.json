@@ -481,6 +481,26 @@
       "destination": "/api"
     },
     {
+      "source": "/api/cryptographic-mission-impact-ledger",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/self-healing-compliance",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/zero-trust-handoff",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/predictive-resource-allocator",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/immutable-after-action-review",
+      "destination": "/api"
+    },
+    {
       "source": "/demo",
       "destination": "/prod-app/demo.html"
     },

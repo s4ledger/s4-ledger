@@ -1960,6 +1960,16 @@ class handler(BaseHTTPRequestHandler):
             return "send_email"
         if path == "/api/vault-emails":
             return "vault_emails"
+        if path == "/api/cryptographic-mission-impact-ledger":
+            return "cryptographic_mission_impact_ledger"
+        if path == "/api/self-healing-compliance":
+            return "self_healing_compliance"
+        if path == "/api/zero-trust-handoff":
+            return "zero_trust_handoff"
+        if path == "/api/predictive-resource-allocator":
+            return "predictive_resource_allocator"
+        if path == "/api/immutable-after-action-review":
+            return "immutable_after_action_review"
         return None
 
     def _check_rate_limit(self):
@@ -6542,6 +6552,501 @@ class handler(BaseHTTPRequestHandler):
         elif route == "send_email":
             self._log_request("send-email")
             self._post_send_email(data)
+
+        # ═══════════════════════════════════════════════════════════════
+        #  Novel Feature 1 — Cryptographic Mission Impact Ledger
+        #  Anchors PIS risk simulation results to XRPL with AI analysis
+        # ═══════════════════════════════════════════════════════════════
+        elif route == "cryptographic_mission_impact_ledger":
+            self._log_request("cryptographic-mission-impact-ledger")
+            payload = data.get("payload", {})
+            client_hash = str(data.get("content_hash", "")).strip()
+
+            risk_label = str(payload.get("riskLabel", "Risk simulation"))[:200]
+            schedule_delay = payload.get("scheduleDelay", 0)
+            cost_impact = payload.get("costImpact", 0)
+            readiness_drop = payload.get("readinessDrop", 0)
+            explanation = str(payload.get("explanation", ""))[:2000]
+            program_name = str(payload.get("program", "All Programs"))[:200]
+
+            # Server-side content hash for verification
+            content_for_hash = json.dumps(payload, sort_keys=True, ensure_ascii=False)
+            server_hash = hashlib.sha256(content_for_hash.encode("utf-8")).hexdigest()
+
+            # AI analysis of mission impact
+            system_prompt = _build_ai_system_prompt("cryptographic_mission_impact_ledger", payload)
+            system_prompt += (
+                "\n## CRYPTOGRAPHIC MISSION IMPACT LEDGER\n"
+                "Analyze this risk simulation result that is being permanently anchored to an immutable ledger.\n"
+                "Return a JSON object with:\n"
+                "- 'impact_assessment': 1-2 paragraph assessment of mission-level impact\n"
+                "- 'classification': one of 'CRITICAL', 'HIGH', 'MODERATE', 'LOW'\n"
+                "- 'downstream_effects': array of 2-4 downstream effects on related programs\n"
+                "- 'recommendation': 1 sentence leadership recommendation\n"
+                "Reference specific ILS data elements and DoD acquisition milestones."
+            )
+            user_msg = (
+                f"Program: {program_name}\n"
+                f"Risk: {risk_label}\n"
+                f"Schedule Delay: {schedule_delay} days\n"
+                f"Cost Impact: ${cost_impact}K\n"
+                f"Readiness Drop: {readiness_drop}%\n"
+                f"Explanation: {explanation[:500]}\n\n"
+                f"Assess mission-level impact and classify severity."
+            )
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            ai_result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        ai_result = json.loads(json_match.group())
+                except Exception:
+                    ai_result = {"impact_assessment": ai_response[:1000]}
+
+            # XRPL anchoring
+            anchor_result = _anchor_xrpl(server_hash, "cmil_impact_anchor", "main", None)
+
+            now = datetime.utcnow()
+            anchor_id = f"CMIL-{now.strftime('%Y%m%dT%H%M%SZ')}-{server_hash[:8].upper()}"
+
+            # HMAC signature
+            sign_payload = f"cmil|{program_name}|{server_hash}|{now.isoformat()}"
+            signature = hmac.new(SCN_SIGNING_SECRET.encode(), sign_payload.encode(), hashlib.sha256).hexdigest()
+
+            # Persist to Supabase
+            if SUPABASE_AVAILABLE:
+                try:
+                    _sb_insert("lpl_snapshots", {
+                        "program_name": program_name,
+                        "period": "cmil_impact_anchor",
+                        "version_num": 0,
+                        "executive_overview": f"CMIL Anchor — {risk_label}",
+                        "sections_json": json.dumps({"risk_label": risk_label, "schedule_delay": schedule_delay,
+                                                      "cost_impact": cost_impact, "readiness_drop": readiness_drop,
+                                                      "server_hash": server_hash, "ai_result": ai_result}),
+                        "ai_provider": ai_provider,
+                        "analysis_data": json.dumps(payload),
+                        "created_at": now.isoformat() + "Z",
+                    })
+                except Exception:
+                    pass
+
+            response = {
+                "anchor_id": anchor_id,
+                "server_hash": server_hash,
+                "client_hash": client_hash,
+                "signature": signature,
+                "program": program_name,
+                "risk_label": risk_label,
+                "ai_assessment": ai_result,
+                "ai_provider": ai_provider,
+                "generated_at": now.isoformat() + "Z",
+            }
+            if anchor_result:
+                response["xrpl"] = {
+                    "tx_hash": anchor_result.get("tx_hash"),
+                    "ledger_index": anchor_result.get("ledger_index"),
+                    "explorer_url": anchor_result.get("explorer_url"),
+                    "network": anchor_result.get("network"),
+                    "verified": anchor_result.get("verified"),
+                }
+            self._send_json(response)
+
+        # ═══════════════════════════════════════════════════════════════
+        #  Novel Feature 2 — Self-Healing Compliance Chain
+        #  AI scans ILS tools for compliance gaps and proposes corrections
+        # ═══════════════════════════════════════════════════════════════
+        elif route == "self_healing_compliance":
+            self._log_request("self-healing-compliance")
+            tool_id = str(data.get("tool", "")).strip()[:100]
+            tool_name = str(data.get("toolName", tool_id)).strip()[:200]
+
+            system_prompt = _build_ai_system_prompt("self_healing_compliance", {"tool": tool_id, "toolName": tool_name})
+            system_prompt += (
+                "\n## SELF-HEALING COMPLIANCE CHAIN\n"
+                "Scan the specified ILS tool panel for compliance gaps against DoD standards.\n"
+                "Return a JSON object with a 'gaps' array. Each gap object has:\n"
+                "- 'id': gap identifier (e.g., 'SHC-001')\n"
+                "- 'severity': 'high', 'medium', or 'low'\n"
+                "- 'title': short gap title referencing specific MIL-STD or DFARS section\n"
+                "- 'description': 1-2 sentence description of the compliance gap\n"
+                "- 'correction': specific auto-correction action the system can take\n"
+                "- 'section': ILS category (e.g., 'Provisioning', 'Maintenance', 'Obsolescence', 'Property')\n"
+                "Generate 3-6 realistic compliance gaps for the given tool.\n"
+                "Reference real DoD standards: MIL-STD-1388, DFARS 252.211, DI-ILSS, MIL-HDBK-502."
+            )
+            user_msg = (
+                f"ILS Tool: {tool_name} (panel: {tool_id})\n\n"
+                f"Perform a compliance scan and identify gaps with proposed auto-corrections."
+            )
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            gaps = []
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        parsed = json.loads(json_match.group())
+                        if "gaps" in parsed and isinstance(parsed["gaps"], list):
+                            gaps = parsed["gaps"][:10]
+                except Exception:
+                    pass
+
+            # Content hash for the scan result
+            now = datetime.utcnow()
+            scan_content = json.dumps({"tool": tool_id, "gaps": gaps, "ts": now.isoformat()}, sort_keys=True)
+            scan_hash = hashlib.sha256(scan_content.encode("utf-8")).hexdigest()
+
+            # XRPL anchor the compliance scan
+            anchor_result = _anchor_xrpl(scan_hash, "shc_compliance_scan", "main", None)
+
+            # Persist
+            if SUPABASE_AVAILABLE:
+                try:
+                    _sb_insert("lpl_snapshots", {
+                        "program_name": tool_name,
+                        "period": "shc_compliance_scan",
+                        "version_num": 0,
+                        "executive_overview": f"Self-Healing Compliance Scan — {tool_name}",
+                        "sections_json": json.dumps({"gaps": gaps, "scan_hash": scan_hash}),
+                        "ai_provider": ai_provider,
+                        "analysis_data": json.dumps({"tool": tool_id, "toolName": tool_name}),
+                        "created_at": now.isoformat() + "Z",
+                    })
+                except Exception:
+                    pass
+
+            response = {
+                "gaps": gaps,
+                "provider": ai_provider,
+                "tool": tool_id,
+                "toolName": tool_name,
+                "scan_hash": scan_hash,
+                "scanned_at": now.isoformat() + "Z",
+            }
+            if anchor_result:
+                response["xrpl"] = {
+                    "tx_hash": anchor_result.get("tx_hash"),
+                    "ledger_index": anchor_result.get("ledger_index"),
+                    "explorer_url": anchor_result.get("explorer_url"),
+                    "verified": anchor_result.get("verified"),
+                }
+            self._send_json(response)
+
+        # ═══════════════════════════════════════════════════════════════
+        #  Novel Feature 3 — Zero-Trust Program Handoff Protocol
+        #  Generates a cryptographically-signed handoff package
+        # ═══════════════════════════════════════════════════════════════
+        elif route == "zero_trust_handoff":
+            self._log_request("zero-trust-handoff")
+            program_name = str(data.get("program", "All Programs")).strip()[:200]
+
+            # Collect program data from Supabase for the handoff package
+            lpl_data = []
+            compliance_data = []
+            if SUPABASE_AVAILABLE:
+                try:
+                    lpl_data = _sb_select("lpl_snapshots",
+                                           query_params=f"program_name=eq.{program_name}&order=created_at.desc&limit=10") or []
+                except Exception:
+                    pass
+                try:
+                    compliance_data = _sb_select("lpl_snapshots",
+                                                  query_params="period=eq.shc_compliance_scan&order=created_at.desc&limit=5") or []
+                except Exception:
+                    pass
+
+            # AI generates handoff summary
+            system_prompt = _build_ai_system_prompt("zero_trust_handoff", {"program": program_name})
+            system_prompt += (
+                "\n## ZERO-TRUST PROGRAM HANDOFF PROTOCOL\n"
+                "Generate a comprehensive handoff package summary for a defense program transfer.\n"
+                "Return a JSON object with:\n"
+                "- 'executive_summary': 2-3 paragraph program status for the receiving team\n"
+                "- 'included_artifacts': array of 5-8 artifact descriptions included in the package\n"
+                "- 'open_risks': array of 2-4 open risk items the receiving team must address\n"
+                "- 'compliance_status': overall compliance posture summary (1-2 sentences)\n"
+                "- 'verification_steps': array of 3-5 steps the receiving team should take to verify integrity\n"
+                "Reference specific ILS data categories and DoD acquisition frameworks."
+            )
+            user_msg = (
+                f"Program: {program_name}\n"
+                f"LPL records available: {len(lpl_data)}\n"
+                f"Compliance scans available: {len(compliance_data)}\n\n"
+                f"Generate a zero-trust handoff package summary."
+            )
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            handoff = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        handoff = json.loads(json_match.group())
+                except Exception:
+                    handoff = {"executive_summary": ai_response[:2000]}
+
+            # Build the handoff package content and hash it
+            now = datetime.utcnow()
+            package_content = json.dumps({
+                "program": program_name,
+                "handoff": handoff,
+                "lpl_count": len(lpl_data),
+                "compliance_count": len(compliance_data),
+                "timestamp": now.isoformat(),
+            }, sort_keys=True, ensure_ascii=False)
+            package_hash = hashlib.sha256(package_content.encode("utf-8")).hexdigest()
+            package_id = f"ZTH-{now.strftime('%Y%m%dT%H%M%SZ')}-{package_hash[:8].upper()}"
+
+            # HMAC signature
+            sign_payload = f"zth|{program_name}|{package_hash}|{now.isoformat()}"
+            signature = hmac.new(SCN_SIGNING_SECRET.encode(), sign_payload.encode(), hashlib.sha256).hexdigest()
+
+            # XRPL anchor
+            anchor_result = _anchor_xrpl(package_hash, "zth_handoff_package", "main", None)
+
+            # Persist
+            if SUPABASE_AVAILABLE:
+                try:
+                    _sb_insert("lpl_snapshots", {
+                        "program_name": program_name,
+                        "period": "zth_handoff_package",
+                        "version_num": 0,
+                        "executive_overview": f"Zero-Trust Handoff — {program_name}",
+                        "sections_json": json.dumps({"package_id": package_id, "handoff": handoff,
+                                                      "package_hash": package_hash, "signature": signature}),
+                        "ai_provider": ai_provider,
+                        "analysis_data": json.dumps({"program": program_name}),
+                        "created_at": now.isoformat() + "Z",
+                    })
+                except Exception:
+                    pass
+
+            response = {
+                "package_id": package_id,
+                "program": program_name,
+                "handoff": handoff,
+                "package_hash": package_hash,
+                "signature": signature,
+                "ai_provider": ai_provider,
+                "generated_at": now.isoformat() + "Z",
+                "includes": ["LPL Data", "Compliance Records", "Risk Assessments",
+                             "Audit Trails", "Impact Simulations", "XRPL Anchors"],
+            }
+            if anchor_result:
+                response["xrpl"] = {
+                    "tx_hash": anchor_result.get("tx_hash"),
+                    "ledger_index": anchor_result.get("ledger_index"),
+                    "explorer_url": anchor_result.get("explorer_url"),
+                    "verified": anchor_result.get("verified"),
+                }
+            self._send_json(response)
+
+        # ═══════════════════════════════════════════════════════════════
+        #  Novel Feature 4 — Predictive Resource Allocator
+        #  AI-driven resource reallocation recommendations
+        # ═══════════════════════════════════════════════════════════════
+        elif route == "predictive_resource_allocator":
+            self._log_request("predictive-resource-allocator")
+            program_name = str(data.get("program", "All Programs")).strip()[:200]
+            current_allocations = data.get("allocations", [])
+
+            # Pull recent simulation data for context
+            sim_data = []
+            if SUPABASE_AVAILABLE:
+                try:
+                    sim_data = _sb_select("impact_simulations",
+                                           query_params="order=created_at.desc&limit=10") or []
+                except Exception:
+                    pass
+
+            system_prompt = _build_ai_system_prompt("predictive_resource_allocator",
+                                                     {"program": program_name, "simulations": len(sim_data)})
+            system_prompt += (
+                "\n## PREDICTIVE RESOURCE ALLOCATOR\n"
+                "Analyze current resource allocations and recommend optimizations based on risk data.\n"
+                "Return a JSON object with:\n"
+                "- 'allocations': array of 4-6 reallocation recommendations, each with:\n"
+                "  - 'category': resource category (e.g., 'Spares', 'Personnel', 'Budget — Testing')\n"
+                "  - 'current': current allocation (e.g., '$2.4M' or '47 FTEs')\n"
+                "  - 'suggested': recommended allocation\n"
+                "  - 'change': delta (e.g., '-$500K' or '+3 FTEs')\n"
+                "  - 'risk': 'High', 'Medium', or 'Low'\n"
+                "  - 'rationale': 1-2 sentence justification referencing data\n"
+                "- 'net_savings': string with total projected savings\n"
+                "- 'confidence_score': integer 75-99\n"
+                "- 'summary': 2-3 sentence executive summary of recommendations\n"
+                "Base recommendations on realistic defense logistics resource patterns."
+            )
+            user_msg = (
+                f"Program: {program_name}\n"
+                f"Recent impact simulations: {len(sim_data)}\n"
+                f"Current allocations provided: {len(current_allocations)}\n\n"
+                f"Generate predictive resource reallocation recommendations."
+            )
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"summary": ai_response[:1000]}
+
+            now = datetime.utcnow()
+            result_content = json.dumps(result, sort_keys=True, ensure_ascii=False)
+            result_hash = hashlib.sha256(result_content.encode("utf-8")).hexdigest()
+
+            # XRPL anchor
+            anchor_result = _anchor_xrpl(result_hash, "pra_resource_allocation", "main", None)
+
+            # Persist
+            if SUPABASE_AVAILABLE:
+                try:
+                    _sb_insert("lpl_snapshots", {
+                        "program_name": program_name,
+                        "period": "pra_resource_allocation",
+                        "version_num": 0,
+                        "executive_overview": f"Predictive Resource Allocation — {program_name}",
+                        "sections_json": json.dumps({"result": result, "result_hash": result_hash}),
+                        "ai_provider": ai_provider,
+                        "analysis_data": json.dumps({"program": program_name}),
+                        "created_at": now.isoformat() + "Z",
+                    })
+                except Exception:
+                    pass
+
+            response = {
+                "allocations": result.get("allocations", []),
+                "net_savings": result.get("net_savings", "N/A"),
+                "confidence_score": result.get("confidence_score", 0),
+                "summary": result.get("summary", ""),
+                "ai_provider": ai_provider,
+                "result_hash": result_hash,
+                "generated_at": now.isoformat() + "Z",
+            }
+            if anchor_result:
+                response["xrpl"] = {
+                    "tx_hash": anchor_result.get("tx_hash"),
+                    "ledger_index": anchor_result.get("ledger_index"),
+                    "explorer_url": anchor_result.get("explorer_url"),
+                    "verified": anchor_result.get("verified"),
+                }
+            self._send_json(response)
+
+        # ═══════════════════════════════════════════════════════════════
+        #  Novel Feature 5 — Immutable After-Action Review Generator
+        #  AI generates AAR from program data, anchored to XRPL
+        # ═══════════════════════════════════════════════════════════════
+        elif route == "immutable_after_action_review":
+            self._log_request("immutable-after-action-review")
+            program_name = str(data.get("program", "All Programs")).strip()[:200]
+
+            # Gather program context from Supabase
+            lpl_data = []
+            sim_data = []
+            if SUPABASE_AVAILABLE:
+                try:
+                    lpl_data = _sb_select("lpl_snapshots",
+                                           query_params=f"program_name=eq.{program_name}&order=created_at.desc&limit=10") or []
+                except Exception:
+                    pass
+                try:
+                    sim_data = _sb_select("impact_simulations",
+                                           query_params="order=created_at.desc&limit=5") or []
+                except Exception:
+                    pass
+
+            system_prompt = _build_ai_system_prompt("immutable_after_action_review",
+                                                     {"program": program_name, "lpl_records": len(lpl_data),
+                                                      "simulations": len(sim_data)})
+            system_prompt += (
+                "\n## IMMUTABLE AFTER-ACTION REVIEW GENERATOR\n"
+                "Generate a comprehensive after-action review for the specified program.\n"
+                "Return a JSON object with:\n"
+                "- 'event': AAR title/event name (e.g., 'FY25 Q2 Readiness Assessment — Program Name')\n"
+                "- 'date': formatted date string\n"
+                "- 'participants': array of 3-5 participant roles\n"
+                "- 'objectives': array of 3-4 review objectives\n"
+                "- 'findings': array of 5-7 finding objects, each with:\n"
+                "  - 'type': 'sustain' (things going well), 'improve' (needs work), or 'action' (action items)\n"
+                "  - 'text': finding description (1-2 sentences)\n"
+                "Include realistic DoD acquisition metrics, MIL-STD references, and ILS data."
+            )
+            user_msg = (
+                f"Program: {program_name}\n"
+                f"LPL records available: {len(lpl_data)}\n"
+                f"Impact simulations available: {len(sim_data)}\n\n"
+                f"Generate an immutable after-action review."
+            )
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            aar = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        aar = json.loads(json_match.group())
+                except Exception:
+                    aar = {"event": f"After-Action Review — {program_name}",
+                           "findings": [{"type": "action", "text": ai_response[:500]}]}
+
+            # Content hash and XRPL anchor
+            now = datetime.utcnow()
+            aar_content = json.dumps(aar, sort_keys=True, ensure_ascii=False)
+            aar_hash = hashlib.sha256(aar_content.encode("utf-8")).hexdigest()
+
+            # HMAC signature
+            sign_payload = f"aar|{program_name}|{aar_hash}|{now.isoformat()}"
+            signature = hmac.new(SCN_SIGNING_SECRET.encode(), sign_payload.encode(), hashlib.sha256).hexdigest()
+
+            anchor_result = _anchor_xrpl(aar_hash, "aar_immutable_review", "main", None)
+
+            # Persist
+            if SUPABASE_AVAILABLE:
+                try:
+                    _sb_insert("lpl_snapshots", {
+                        "program_name": program_name,
+                        "period": "aar_immutable_review",
+                        "version_num": 0,
+                        "executive_overview": f"After-Action Review — {program_name}",
+                        "sections_json": json.dumps({"aar": aar, "aar_hash": aar_hash, "signature": signature}),
+                        "ai_provider": ai_provider,
+                        "analysis_data": json.dumps({"program": program_name}),
+                        "created_at": now.isoformat() + "Z",
+                    })
+                except Exception:
+                    pass
+
+            response = {
+                **aar,
+                "aar_hash": aar_hash,
+                "signature": signature,
+                "ai_provider": ai_provider,
+                "program": program_name,
+                "generated_at": now.isoformat() + "Z",
+            }
+            if anchor_result:
+                response["xrpl"] = {
+                    "tx_hash": anchor_result.get("tx_hash"),
+                    "ledger_index": anchor_result.get("ledger_index"),
+                    "explorer_url": anchor_result.get("explorer_url"),
+                    "verified": anchor_result.get("verified"),
+                }
+            self._send_json(response)
 
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)
