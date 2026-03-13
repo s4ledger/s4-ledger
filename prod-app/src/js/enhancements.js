@@ -8887,9 +8887,9 @@ window.verifyProvenanceChain = verifyProvenanceChain;
 
     // Custom preset creator
     window._s4ShowPresetCreator = function() {
-        // Close settings menu
-        var menu = document.getElementById('s4WorkspaceMenu');
-        if (menu) menu.open = false;
+        // Close Quick Actions popover
+        var pop = document.getElementById('s4QuickActionsPopover');
+        if (pop) pop.style.display = 'none';
 
         var overlay = document.createElement('div');
         overlay.className = 's4-preset-creator-overlay';
@@ -9414,19 +9414,17 @@ window.verifyProvenanceChain = verifyProvenanceChain;
             title: 'Workflow Presets',
             body: 'Choose a ready-made workflow — Standard ILS Daily, Audit Prep, or Obsolescence Sweep — and the platform queues the right tools for you automatically.',
             setup: function() {
-                // Navigate into the ILS section so the Settings menu is visible
+                // Navigate into the ILS section so the bolt menu is visible
                 if (typeof window.showSection === 'function') window.showSection('sectionILS');
-                // Open the Settings <details> dropdown to reveal presets
-                var menu = document.getElementById('s4WorkspaceMenu');
-                if (menu) menu.open = true;
-                // Return the <details> element itself — its summary button is always
-                // in normal document flow with a stable bounding rect, unlike the
-                // absolutely-positioned dropdown contents.
-                return menu;
+                // Open the Quick Actions popover to reveal Workflow Presets
+                var pop = document.getElementById('s4QuickActionsPopover');
+                if (pop) pop.style.display = 'block';
+                // Return the popover so the tour tip highlights & positions against it
+                return pop;
             },
             teardown: function() {
-                var menu = document.getElementById('s4WorkspaceMenu');
-                if (menu) menu.open = false;
+                var pop = document.getElementById('s4QuickActionsPopover');
+                if (pop) pop.style.display = 'none';
             }
         },
         {
@@ -9647,9 +9645,9 @@ window.verifyProvenanceChain = verifyProvenanceChain;
             overlay.classList.remove('visible');
             setTimeout(function() { overlay.remove(); }, 350);
             // Restore the UI back to the state before the tour
-            // Close Settings dropdown
-            var menu = document.getElementById('s4WorkspaceMenu');
-            if (menu) menu.open = false;
+            // Close Quick Actions popover
+            var pop = document.getElementById('s4QuickActionsPopover');
+            if (pop) pop.style.display = 'none';
             // Close export overlay
             if (typeof window._s4CloseExport === 'function') window._s4CloseExport();
             var expOv = document.getElementById('s4ExportOverlay');
