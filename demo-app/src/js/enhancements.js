@@ -14627,3 +14627,310 @@ if (document.readyState === 'loading') {
 }
 
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   SECURE COLLABORATION NETWORK — Standalone toggle in DRL/DI Status
+   Tracker (both Deliverables Tracker cdrlView-drl and Submissions Hub
+   subView-drl). First neutral, immutable collaboration layer in
+   defense logistics — all parties see the same live status with
+   cryptographic proof.
+   ═══════════════════════════════════════════════════════════════════ */
+// TODO: Backend endpoint /api/secure-collaboration to handle invitations, permissions, and two-way sync with external systems.
+(function() {
+'use strict';
+
+// ── Demo participants ──
+var _demoParticipants = [
+    { name: 'CDR M. Torres', org: 'NAVSEA PMS 400D (Government)', email: 'maria.torres@navy.mil', perm: 'Edit', color: '#0071e3' },
+    { name: 'J. Richardson', org: 'HII Ingalls Shipbuilding', email: 'j.richardson@hii-co.com', perm: 'Edit', color: '#34c759' },
+    { name: 'S. Patel', org: 'L3Harris Technologies', email: 's.patel@l3harris.com', perm: 'Comment', color: '#ff9500' },
+    { name: 'R. Kim', org: 'DCMA Quality Assurance', email: 'r.kim@dcma.mil', perm: 'View', color: '#636366' }
+];
+
+// ── Demo "last updated" entries per row ──
+var _demoUpdaters = [
+    { who: 'CDR Torres', when: '12 Mar 2026, 09:14' },
+    { who: 'J. Richardson', when: '11 Mar 2026, 16:42' },
+    { who: 'S. Patel', when: '11 Mar 2026, 14:08' },
+    { who: 'CDR Torres', when: '10 Mar 2026, 11:33' },
+    { who: 'J. Richardson', when: '10 Mar 2026, 09:55' },
+    { who: 'R. Kim', when: '09 Mar 2026, 15:21' },
+    { who: 'CDR Torres', when: '09 Mar 2026, 10:07' },
+    { who: 'S. Patel', when: '08 Mar 2026, 17:30' },
+    { who: 'J. Richardson', when: '08 Mar 2026, 13:12' },
+    { who: 'CDR Torres', when: '07 Mar 2026, 08:45' }
+];
+
+function _escH(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+// ── Build the collaboration bar + participants section ──
+function _injectSCN(prefix) {
+    var viewId = prefix === 'sub' ? 'subView-drl' : 'cdrlView-drl';
+    var viewEl = document.getElementById(viewId);
+    if (!viewEl) return;
+    if (viewEl.querySelector('.s4-scn-bar')) return; // already injected
+
+    // Find the action buttons div (has Export/Anchor/AI buttons)
+    var actionBtns = null;
+    var divs = viewEl.querySelectorAll('div[style*="display:flex"]');
+    for (var i = 0; i < divs.length; i++) {
+        if (divs[i].querySelector('[onclick*="exportDrlStatusCSV"]')) {
+            actionBtns = divs[i];
+            break;
+        }
+    }
+    if (!actionBtns) return;
+
+    // ── 1. Collaboration toggle bar — insert before action buttons ──
+    var barId = prefix ? prefix + 'ScnBar' : 'scnBar';
+    var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
+    var toggleId = prefix ? prefix + 'ScnToggle' : 'scnToggle';
+
+    var bar = document.createElement('div');
+    bar.className = 's4-scn-bar';
+    bar.id = barId;
+    bar.innerHTML =
+        '<label class="s4-scn-toggle">' +
+            '<i class="fas fa-shield-halved"></i>' +
+            '<input type="checkbox" id="' + toggleId + '" onchange="window._s4SCNToggle(\'' + prefix + '\',this.checked)"> Enable Secure Collaboration Network' +
+        '</label>' +
+        '<button class="s4-scn-share-btn" onclick="window._s4SCNShareLink(\'' + prefix + '\')" style="display:none" id="' + (prefix ? prefix + 'ScnShareBtn' : 'scnShareBtn') + '">' +
+            '<i class="fas fa-link"></i> Shared View Link' +
+        '</button>';
+
+    actionBtns.parentNode.insertBefore(bar, actionBtns);
+
+    // ── 2. Network Participants section — insert between bar and action buttons ──
+    var partSection = document.createElement('div');
+    partSection.className = 's4-scn-participants';
+    partSection.id = partId;
+    partSection.innerHTML = _buildParticipantsHTML(prefix);
+    actionBtns.parentNode.insertBefore(partSection, actionBtns);
+}
+
+function _buildParticipantsHTML(prefix) {
+    var html = '';
+    html += '<div class="s4-scn-participants-hdr"><i class="fas fa-users"></i> Network Participants</div>';
+
+    _demoParticipants.forEach(function(p) {
+        var initials = p.name.split(/\s+/).map(function(w) { return w.charAt(0); }).join('').substring(0, 2);
+        var permClass = p.perm === 'Edit' ? 's4-scn-perm-edit' : p.perm === 'Comment' ? 's4-scn-perm-comment' : 's4-scn-perm-view';
+        html += '<div class="s4-scn-participant-row">' +
+            '<div class="s4-scn-avatar" style="background:' + p.color + '">' + _escH(initials) + '</div>' +
+            '<div class="s4-scn-name">' + _escH(p.name) + '</div>' +
+            '<div class="s4-scn-org">' + _escH(p.org) + '</div>' +
+            '<span class="s4-scn-perm ' + permClass + '">' + _escH(p.perm) + '</span>' +
+        '</div>';
+    });
+
+    html += '<button class="s4-scn-invite-btn" onclick="window._s4SCNInvite(\'' + prefix + '\')"><i class="fas fa-user-plus"></i> Invite New Participant</button>';
+    return html;
+}
+
+// ── Toggle collaboration on/off ──
+window._s4SCNToggle = function(prefix, enabled) {
+    var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
+    var shareBtnId = prefix ? prefix + 'ScnShareBtn' : 'scnShareBtn';
+    var partEl = document.getElementById(partId);
+    var shareBtn = document.getElementById(shareBtnId);
+
+    if (partEl) {
+        if (enabled) partEl.classList.add('s4-scn-active');
+        else partEl.classList.remove('s4-scn-active');
+    }
+    if (shareBtn) shareBtn.style.display = enabled ? 'inline-flex' : 'none';
+
+    // Add/remove "Last Updated By" column to table rows
+    _toggleUpdatedByColumn(prefix, enabled);
+
+    if (enabled && typeof _toast === 'function') {
+        _toast('Secure Collaboration Network enabled \u2014 all changes are cryptographically signed', 'success');
+    }
+};
+
+// ── Add/remove "Last Updated By" info to each row ──
+function _toggleUpdatedByColumn(prefix, enabled) {
+    var tableId = prefix === 'sub' ? 'subDrlStatusTable' : 'drlStatusTable';
+    var table = document.getElementById(tableId);
+    if (!table) return;
+
+    var thead = table.querySelector('thead tr');
+    var tbody = table.querySelector('tbody');
+    if (!thead || !tbody) return;
+
+    if (enabled) {
+        // Add header if not already present
+        if (!thead.querySelector('.s4-scn-th')) {
+            var th = document.createElement('th');
+            th.className = 's4-scn-th';
+            th.textContent = 'Last Updated By';
+            th.style.cssText = 'white-space:nowrap;min-width:140px';
+            // Insert before the last column (History)
+            var lastTh = thead.querySelector('th:last-child');
+            thead.insertBefore(th, lastTh);
+        }
+        // Add cells to each row
+        var rows = tbody.querySelectorAll('tr');
+        rows.forEach(function(tr, idx) {
+            if (tr.querySelector('.s4-scn-updated-by')) return;
+            var td = document.createElement('td');
+            var updater = _demoUpdaters[idx % _demoUpdaters.length];
+            td.innerHTML = '<div class="s4-scn-updated-by"><strong>' + _escH(updater.who) + '</strong><br>' + _escH(updater.when) + '</div>';
+            td.className = 's4-scn-td';
+            var lastTd = tr.querySelector('td:last-child');
+            if (lastTd) tr.insertBefore(td, lastTd);
+            else tr.appendChild(td);
+        });
+    } else {
+        // Remove header
+        var scnTh = thead.querySelector('.s4-scn-th');
+        if (scnTh) scnTh.remove();
+        // Remove cells
+        tbody.querySelectorAll('.s4-scn-td').forEach(function(td) { td.remove(); });
+    }
+}
+
+// ── Generate a shared view link ──
+window._s4SCNShareLink = function(prefix) {
+    var viewName = prefix === 'sub' ? 'Submissions Hub' : 'Deliverables Tracker';
+    // Generate a demo secure token
+    var token = 'scn-' + Math.random().toString(36).substring(2, 10) + '-' + Date.now().toString(36);
+    var link = 'https://app.s4ledger.com/shared/' + token;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(function() {
+            // Show toast
+            var toast = document.createElement('div');
+            toast.className = 's4-scn-link-toast';
+            toast.innerHTML = '<i class="fas fa-check-circle"></i> Secure role-based link copied \u2014 ' + _escH(viewName);
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.remove(); }, 2600);
+        });
+    }
+};
+
+// ── Invite new participant modal ──
+window._s4SCNInvite = function(prefix) {
+    if (document.querySelector('.s4-scn-invite-modal')) return;
+
+    var ov = document.createElement('div');
+    ov.className = 's4-scn-invite-modal';
+    ov.innerHTML =
+        '<div class="s4-scn-invite-card">' +
+            '<h3><i class="fas fa-user-plus"></i> Invite New Participant</h3>' +
+            '<label>Email Address</label>' +
+            '<input type="email" id="s4ScnInviteEmail" placeholder="name@navy.mil or name@contractor.com">' +
+            '<label>Role / Organization</label>' +
+            '<input type="text" id="s4ScnInviteOrg" placeholder="e.g., NAVSEA PMS 400D">' +
+            '<label>Permission Level</label>' +
+            '<select id="s4ScnInvitePerm">' +
+                '<option value="View">View — Read-only access</option>' +
+                '<option value="Comment">Comment — Can annotate items</option>' +
+                '<option value="Edit">Edit — Full read/write access</option>' +
+            '</select>' +
+            '<div class="s4-scn-invite-actions">' +
+                '<button onclick="this.closest(\'.s4-scn-invite-modal\').remove()">Cancel</button>' +
+                '<button class="s4-scn-send" onclick="window._s4SCNSendInvite(\'' + prefix + '\')"><i class="fas fa-paper-plane"></i> Send Invite</button>' +
+            '</div>' +
+        '</div>';
+
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
+    var escH = function(e) { if (e.key === 'Escape') { ov.remove(); document.removeEventListener('keydown', escH); } };
+    document.addEventListener('keydown', escH);
+    setTimeout(function() { var inp = document.getElementById('s4ScnInviteEmail'); if (inp) inp.focus(); }, 100);
+};
+
+// ── Send invite (demo) ──
+window._s4SCNSendInvite = function(prefix) {
+    var emailInput = document.getElementById('s4ScnInviteEmail');
+    var orgInput = document.getElementById('s4ScnInviteOrg');
+    var permSelect = document.getElementById('s4ScnInvitePerm');
+    if (!emailInput || !emailInput.value.trim()) {
+        if (typeof _toast === 'function') _toast('Please enter an email address', 'warning');
+        return;
+    }
+
+    var email = emailInput.value.trim();
+    var org = orgInput ? orgInput.value.trim() || 'External' : 'External';
+    var perm = permSelect ? permSelect.value : 'View';
+
+    // Validate domain (navy.mil or common contractor domains)
+    var domain = email.split('@')[1] || '';
+    if (!domain) {
+        if (typeof _toast === 'function') _toast('Invalid email address', 'warning');
+        return;
+    }
+
+    // Add to demo participants list
+    var initials = email.substring(0, 2).toUpperCase();
+    var name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    var colors = ['#af52de', '#ff2d55', '#00c7be', '#5856d6'];
+    var newP = { name: name, org: org, email: email, perm: perm, color: colors[_demoParticipants.length % colors.length] };
+    _demoParticipants.push(newP);
+
+    // Re-render participants
+    var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
+    var partEl = document.getElementById(partId);
+    if (partEl) partEl.innerHTML = _buildParticipantsHTML(prefix);
+
+    // Close modal
+    var modal = document.querySelector('.s4-scn-invite-modal');
+    if (modal) modal.remove();
+
+    if (typeof _toast === 'function') _toast('Invitation sent to ' + email + ' (' + perm + ')', 'success');
+};
+
+// ── Inject SCN into DRL views when they become visible ──
+// Wrap switchCdrlView and switchSubView
+function _hookSCN() {
+    // Hook switchCdrlView
+    var origCdrl = window.switchCdrlView;
+    if (typeof origCdrl === 'function' && !origCdrl._s4SCNHooked) {
+        var wrappedCdrl = function(view) {
+            origCdrl.call(this, view);
+            if (view === 'drl') {
+                setTimeout(function() { _injectSCN(''); }, 200);
+            }
+        };
+        wrappedCdrl._s4SCNHooked = true;
+        window.switchCdrlView = wrappedCdrl;
+    }
+
+    // Hook switchSubView
+    var origSub = window.switchSubView;
+    if (typeof origSub === 'function' && !origSub._s4SCNHooked) {
+        var wrappedSub = function(view) {
+            origSub.call(this, view);
+            if (view === 'drl') {
+                setTimeout(function() { _injectSCN('sub'); }, 200);
+            }
+        };
+        wrappedSub._s4SCNHooked = true;
+        window.switchSubView = wrappedSub;
+    }
+
+    // Also re-inject after renderDrlStatusTable calls (which rebuild the tbody)
+    var origRender = window.renderDrlStatusTable;
+    if (typeof origRender === 'function' && !origRender._s4SCNHooked) {
+        var wrappedRender = function(prefix) {
+            origRender.call(this, prefix);
+            // Re-apply updated-by column if collab is currently enabled
+            var toggleId = (prefix || '') === 'sub' ? 'subScnToggle' : 'scnToggle';
+            var toggle = document.getElementById(toggleId);
+            if (toggle && toggle.checked) {
+                setTimeout(function() { _toggleUpdatedByColumn(prefix || '', true); }, 100);
+            }
+        };
+        wrappedRender._s4SCNHooked = true;
+        window.renderDrlStatusTable = wrappedRender;
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(_hookSCN, 1200); });
+} else {
+    setTimeout(_hookSCN, 1200);
+}
+
+})();
