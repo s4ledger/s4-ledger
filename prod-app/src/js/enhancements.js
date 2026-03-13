@@ -15965,6 +15965,44 @@ function _openEmailComposer(toolId) {
     ccBccWrap.appendChild(ccFields);
     body.appendChild(ccBccWrap);
 
+    // ── Batch Recipients (Task 7) ──
+    var batches = [{ to: toState, cc: ccState, bcc: bccState }];
+    var batchContainer = document.createElement('div');
+    var addBatchBtn = document.createElement('button');
+    addBatchBtn.className = 's4-email-add-batch';
+    addBatchBtn.innerHTML = '<i class="fas fa-users"></i> Add Recipient Batch';
+    addBatchBtn.onclick = function() {
+        var bIdx = batches.length + 1;
+        var sep = document.createElement('hr');
+        sep.className = 's4-email-batch-sep';
+        batchContainer.appendChild(sep);
+        var label = document.createElement('div');
+        label.className = 's4-email-batch-label';
+        label.textContent = 'Batch #' + bIdx;
+        batchContainer.appendChild(label);
+        var bTo = { chips: [], field: null, input: null };
+        var bCc = { chips: [], field: null, input: null };
+        var bBcc = { chips: [], field: null, input: null };
+        batchContainer.appendChild(_buildRecipientField('To', bTo));
+        var bCcFields = document.createElement('div');
+        bCcFields.style.display = 'none';
+        var bCcToggle = document.createElement('button');
+        bCcToggle.style.cssText = 'background:none;border:none;font-size:0.72rem;color:#5856D6;font-weight:600;cursor:pointer;padding:0;margin-bottom:8px';
+        bCcToggle.textContent = '+ CC / BCC';
+        bCcToggle.onclick = function() {
+            bCcFields.style.display = bCcFields.style.display === 'none' ? 'block' : 'none';
+            bCcToggle.textContent = bCcFields.style.display === 'none' ? '+ CC / BCC' : '- Hide CC / BCC';
+        };
+        bCcFields.appendChild(_buildRecipientField('CC', bCc));
+        bCcFields.appendChild(_buildRecipientField('BCC', bBcc));
+        batchContainer.appendChild(bCcToggle);
+        batchContainer.appendChild(bCcFields);
+        batches.push({ to: bTo, cc: bCc, bcc: bBcc });
+        if (typeof _toast === 'function') _toast('Batch #' + bIdx + ' added', 'info');
+    };
+    body.appendChild(addBatchBtn);
+    body.appendChild(batchContainer);
+
     // Subject
     var subjectField = document.createElement('div');
     subjectField.className = 's4-email-field';
@@ -16052,29 +16090,83 @@ function _openEmailComposer(toolId) {
     attachField.appendChild(attachBtn);
     body.appendChild(attachField);
 
-    // Options row
+    // Options row (enhanced — schedule picker, importance selector, draft action)
     var optRow = document.createElement('div');
     optRow.className = 's4-email-options';
-    var opts = [
-        { icon: 'fa-lock', label: 'Encrypt', key: 'encrypt' },
-        { icon: 'fa-receipt', label: 'Read Receipt', key: 'receipt' },
-        { icon: 'fa-clock', label: 'Schedule Send', key: 'schedule' },
-        { icon: 'fa-exclamation', label: 'High Importance', key: 'importance' },
-        { icon: 'fa-bookmark', label: 'Save as Draft', key: 'draft' }
-    ];
-    var optState = {};
-    opts.forEach(function(o) {
-        optState[o.key] = false;
-        var btn = document.createElement('button');
-        btn.className = 's4-email-opt';
-        btn.innerHTML = '<i class="fas ' + o.icon + '"></i> ' + o.label;
-        btn.onclick = function() {
-            optState[o.key] = !optState[o.key];
-            btn.classList.toggle('active', optState[o.key]);
-        };
-        optRow.appendChild(btn);
+    var optState = { encrypt: false, receipt: false, schedule: false, importance: 'normal', draft: false };
+
+    // Encrypt toggle
+    var encryptBtn = document.createElement('button');
+    encryptBtn.className = 's4-email-opt';
+    encryptBtn.innerHTML = '<i class="fas fa-lock"></i> Encrypt';
+    encryptBtn.onclick = function() { optState.encrypt = !optState.encrypt; encryptBtn.classList.toggle('active', optState.encrypt); };
+    optRow.appendChild(encryptBtn);
+
+    // Read Receipt toggle
+    var receiptBtn = document.createElement('button');
+    receiptBtn.className = 's4-email-opt';
+    receiptBtn.innerHTML = '<i class="fas fa-receipt"></i> Read Receipt';
+    receiptBtn.onclick = function() { optState.receipt = !optState.receipt; receiptBtn.classList.toggle('active', optState.receipt); };
+    optRow.appendChild(receiptBtn);
+
+    // Schedule Send toggle + datetime picker
+    var scheduleBtn = document.createElement('button');
+    scheduleBtn.className = 's4-email-opt';
+    scheduleBtn.innerHTML = '<i class="fas fa-clock"></i> Schedule Send';
+    var scheduleWrap = document.createElement('div');
+    scheduleWrap.className = 's4-email-schedule-wrap';
+    var scheduleLbl = document.createElement('label');
+    scheduleLbl.textContent = 'Send at:';
+    var scheduleInput = document.createElement('input');
+    scheduleInput.type = 'datetime-local';
+    var _now = new Date(); _now.setMinutes(_now.getMinutes() - _now.getTimezoneOffset());
+    scheduleInput.min = _now.toISOString().slice(0, 16);
+    scheduleWrap.appendChild(scheduleLbl);
+    scheduleWrap.appendChild(scheduleInput);
+    scheduleBtn.onclick = function() {
+        optState.schedule = !optState.schedule;
+        scheduleBtn.classList.toggle('active', optState.schedule);
+        scheduleWrap.classList.toggle('visible', optState.schedule);
+    };
+    optRow.appendChild(scheduleBtn);
+
+    // Importance selector (dropdown)
+    var impWrap = document.createElement('div');
+    impWrap.className = 's4-email-importance-wrap';
+    var impIcon = document.createElement('i');
+    impIcon.className = 'fas fa-exclamation';
+    impIcon.style.cssText = 'font-size:0.72rem;color:var(--steel,#6e6e73)';
+    var impSelect = document.createElement('select');
+    impSelect.className = 's4-email-importance-select';
+    ['Normal', 'Low', 'Medium', 'High'].forEach(function(level) {
+        var o = document.createElement('option');
+        o.value = level.toLowerCase();
+        o.textContent = level;
+        impSelect.appendChild(o);
     });
+    impSelect.onchange = function() { optState.importance = impSelect.value; };
+    impWrap.appendChild(impIcon);
+    impWrap.appendChild(impSelect);
+    optRow.appendChild(impWrap);
+
+    // Save as Draft button (triggers immediate draft save)
+    var draftBtn = document.createElement('button');
+    draftBtn.className = 's4-email-opt';
+    draftBtn.innerHTML = '<i class="fas fa-bookmark"></i> Save as Draft';
+    draftBtn.onclick = function() {
+        _saveSignature(sigRTE.getHTML());
+        var email = _buildEmailObj('draft');
+        var vault = _loadVault();
+        vault.unshift(email);
+        _saveVault(vault);
+        _renderVaultList();
+        if (typeof _toast === 'function') _toast('Draft saved to vault', 'success');
+        ov.remove();
+    };
+    optRow.appendChild(draftBtn);
+
     body.appendChild(optRow);
+    body.appendChild(scheduleWrap);
 
     modal.appendChild(body);
 
@@ -16094,6 +16186,32 @@ function _openEmailComposer(toolId) {
         }
         return html;
     }
+    // ── Helper: build email vault object ──
+    function _buildEmailObj(type) {
+        var scheduleTime = (optState.schedule && scheduleInput.value) ? new Date(scheduleInput.value).toISOString() : null;
+        if (type === 'scheduled' && !scheduleTime) type = 'saved';
+        return {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+            toolId: toolId,
+            toolName: toolName,
+            subject: subjectInput.value,
+            to: toState.chips.slice(),
+            cc: ccState.chips.slice(),
+            bcc: bccState.chips.slice(),
+            body: _getFullPlainText(),
+            bodyHTML: _getFullHTML(),
+            options: { encrypt: optState.encrypt, receipt: optState.receipt },
+            importance: optState.importance,
+            scheduleTime: scheduleTime,
+            type: type,
+            batches: batches.length > 1 ? batches.map(function(b) {
+                return { to: b.to.chips.slice(), cc: b.cc.chips.slice(), bcc: b.bcc.chips.slice() };
+            }) : null,
+            savedAt: new Date().toISOString(),
+            pinned: false,
+            flagged: false
+        };
+    }
 
     // ── Footer ──
     var footer = document.createElement('div');
@@ -16107,28 +16225,14 @@ function _openEmailComposer(toolId) {
     saveBtn.className = 's4-email-save';
     saveBtn.innerHTML = '<i class="fas fa-shield-halved"></i> Save to Secure Emails';
     saveBtn.onclick = function() {
-        // Also persist signature
         _saveSignature(sigRTE.getHTML());
-        var email = {
-            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-            toolId: toolId,
-            toolName: toolName,
-            subject: subjectInput.value,
-            to: toState.chips.slice(),
-            cc: ccState.chips.slice(),
-            bcc: bccState.chips.slice(),
-            body: _getFullPlainText(),
-            bodyHTML: _getFullHTML(),
-            options: Object.assign({}, optState),
-            savedAt: new Date().toISOString(),
-            pinned: false,
-            flagged: false
-        };
+        var type = (optState.schedule && scheduleInput.value) ? 'scheduled' : 'saved';
+        var email = _buildEmailObj(type);
         var vault = _loadVault();
         vault.unshift(email);
         _saveVault(vault);
         _renderVaultList();
-        if (typeof _toast === 'function') _toast('Email saved to Secure Email Vault', 'success');
+        if (typeof _toast === 'function') _toast(type === 'scheduled' ? 'Email scheduled & saved to vault' : 'Email saved to Secure Email Vault', 'success');
         ov.remove();
     };
 
@@ -16136,17 +16240,29 @@ function _openEmailComposer(toolId) {
     sendBtn.className = 's4-email-send';
     sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Open in Email Client';
     sendBtn.onclick = function() {
-        var to = toState.chips.join(',');
-        var cc = ccState.chips.join(',');
-        var bcc = bccState.chips.join(',');
-        var subject = encodeURIComponent(subjectInput.value);
-        var mailBody = encodeURIComponent(_getFullPlainText());
-        var mailto = 'mailto:' + encodeURIComponent(to) + '?subject=' + subject + '&body=' + mailBody;
-        if (cc) mailto += '&cc=' + encodeURIComponent(cc);
-        if (bcc) mailto += '&bcc=' + encodeURIComponent(bcc);
-        window.open(mailto);
-        // Also auto-save to vault
-        saveBtn.click();
+        // Handle batch recipients — open mailto for each batch
+        var allBatches = batches.length > 1 ? batches : [{ to: toState, cc: ccState, bcc: bccState }];
+        allBatches.forEach(function(b) {
+            var to = b.to.chips.join(',');
+            var cc = b.cc.chips.join(',');
+            var bcc = b.bcc.chips.join(',');
+            var subjectText = subjectInput.value;
+            if (optState.importance === 'high') subjectText = '\u26A1 [HIGH] ' + subjectText;
+            var mailBody = encodeURIComponent(_getFullPlainText());
+            var mailto = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subjectText) + '&body=' + mailBody;
+            if (cc) mailto += '&cc=' + encodeURIComponent(cc);
+            if (bcc) mailto += '&bcc=' + encodeURIComponent(bcc);
+            window.open(mailto);
+        });
+        // Log sent email to vault (Task 10)
+        _saveSignature(sigRTE.getHTML());
+        var email = _buildEmailObj('sent');
+        var vault = _loadVault();
+        vault.unshift(email);
+        _saveVault(vault);
+        _renderVaultList();
+        if (typeof _toast === 'function') _toast('Email opened in client & logged to vault', 'success');
+        ov.remove();
     };
 
     footer.appendChild(cancelBtn);
@@ -16267,38 +16383,81 @@ if (document.readyState === 'loading') {
 }
 
 // ── Secure Email Vault (profile popover section) ──
+var _vaultActiveTab = 'all';
+
 function _renderVaultList(filterText) {
     var container = document.getElementById('s4VaultEmailList');
     if (!container) return;
-    var vault = _loadVault();
-    if (filterText) {
-        var q = filterText.toLowerCase();
-        vault = vault.filter(function(e) {
-            return (e.subject && e.subject.toLowerCase().indexOf(q) !== -1) ||
-                   (e.toolName && e.toolName.toLowerCase().indexOf(q) !== -1) ||
-                   (e.to && e.to.join(',').toLowerCase().indexOf(q) !== -1);
-        });
-    }
-    if (!vault.length) {
+    var fullVault = _loadVault();
+
+    // Build filtered list preserving true indices
+    var filtered = [];
+    fullVault.forEach(function(e, trueIdx) {
+        if (_vaultActiveTab && _vaultActiveTab !== 'all') {
+            var t = e.type || 'saved';
+            if (t !== _vaultActiveTab) return;
+        }
+        if (filterText) {
+            var q = filterText.toLowerCase();
+            if (!((e.subject && e.subject.toLowerCase().indexOf(q) !== -1) ||
+                  (e.toolName && e.toolName.toLowerCase().indexOf(q) !== -1) ||
+                  (e.to && e.to.join(',').toLowerCase().indexOf(q) !== -1))) return;
+        }
+        filtered.push({ email: e, idx: trueIdx });
+    });
+
+    if (!filtered.length) {
         container.innerHTML = '<div class="s4-vault-email-empty"><i class="fas fa-envelope-open"></i>' +
-            (filterText ? 'No emails match your search.' : 'No saved emails yet.<br>Use "Prepare Email" on any tool to get started.') + '</div>';
+            (filterText ? 'No emails match your search.' : (_vaultActiveTab !== 'all' ? 'No ' + _vaultActiveTab + ' emails.' : 'No saved emails yet.<br>Use \u201cPrepare Email\u201d on any tool to get started.')) + '</div>';
         return;
     }
     var html = '';
-    vault.forEach(function(email, idx) {
+    filtered.forEach(function(item) {
+        var email = item.email;
+        var idx = item.idx;
         var pinClass = email.pinned ? ' pinned' : '';
         var flagClass = email.flagged ? ' flagged' : '';
         var date = new Date(email.savedAt);
         var dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        // Status badge
+        var t = email.type || 'saved';
+        var typeBadge = '<span class="s4-ve-badge ' + _escH(t) + '">' + _escH(t) + '</span>';
+
+        // Option badges (encrypt, receipt, importance)
+        var optBadges = '';
+        var opts = email.options || {};
+        var imp = email.importance || 'normal';
+        if (opts.encrypt) optBadges += '<span class="s4-ve-opt-badge encrypt"><i class="fas fa-lock"></i> Encrypted</span>';
+        if (opts.receipt) optBadges += '<span class="s4-ve-opt-badge receipt"><i class="fas fa-receipt"></i> Receipt</span>';
+        if (imp !== 'normal') optBadges += '<span class="s4-ve-opt-badge ' + _escH(imp) + '">' + (imp === 'high' ? '\u26A1 High' : imp === 'medium' ? '\u25CF Medium' : '\u25CB Low') + '</span>';
+        var optBadgeHTML = optBadges ? '<div class="s4-ve-opt-badges">' + optBadges + '</div>' : '';
+
+        // Countdown for scheduled
+        var countdownHTML = '';
+        if (t === 'scheduled' && email.scheduleTime) {
+            var diff = new Date(email.scheduleTime) - new Date();
+            if (diff > 0) {
+                var hrs = Math.floor(diff / 3600000);
+                var mins = Math.floor((diff % 3600000) / 60000);
+                countdownHTML = '<div class="s4-ve-countdown"><i class="fas fa-clock"></i> Sends in ' + (hrs > 0 ? hrs + 'h ' : '') + mins + 'm</div>';
+            } else {
+                countdownHTML = '<div class="s4-ve-countdown" style="color:#34c759"><i class="fas fa-check"></i> Send time reached</div>';
+            }
+        }
+
         html += '<div class="s4-vault-email-item' + pinClass + flagClass + '" data-eidx="' + idx + '">' +
             '<div class="s4-ve-icon"><i class="fas fa-envelope"></i></div>' +
             '<div class="s4-ve-body">' +
-            '<div class="s4-ve-subject">' + _escH(email.subject) + '</div>' +
+            '<div class="s4-ve-subject">' + _escH(email.subject) + typeBadge + '</div>' +
             '<div class="s4-ve-meta">' + _escH(email.toolName) + ' \u2022 ' + dateStr +
             (email.to && email.to.length ? ' \u2022 To: ' + _escH(email.to.slice(0, 2).join(', ')) + (email.to.length > 2 ? ' +' + (email.to.length - 2) : '') : '') +
             '</div>' +
+            optBadgeHTML +
+            countdownHTML +
             '<div class="s4-ve-actions">' +
             '<button onclick="window._s4VaultAction(\'reopen\',' + idx + ')" title="Re-open in composer"><i class="fas fa-pen-to-square"></i></button>' +
+            '<button onclick="window._s4VaultAction(\'aiReply\',' + idx + ')" title="AI Reply"><i class="fas fa-robot"></i></button>' +
             '<button onclick="window._s4VaultAction(\'pin\',' + idx + ')" title="' + (email.pinned ? 'Unpin' : 'Pin') + '"><i class="fas fa-thumbtack"></i></button>' +
             '<button onclick="window._s4VaultAction(\'flag\',' + idx + ')" class="s4-ve-flag" title="' + (email.flagged ? 'Unflag' : 'Flag') + '"><i class="fas fa-flag"></i></button>' +
             '<button onclick="window._s4VaultAction(\'mailto\',' + idx + ')" title="Open in email client"><i class="fas fa-paper-plane"></i></button>' +
@@ -16329,33 +16488,272 @@ window._s4VaultAction = function(action, idx) {
         var to = (email.to || []).join(',');
         var cc = (email.cc || []).join(',');
         var bcc = (email.bcc || []).join(',');
-        // Use plain text body (with signature already embedded from save)
+        var subjectText = email.subject || '';
+        var imp = email.importance || 'normal';
+        if (imp === 'high') subjectText = '\u26A1 [HIGH] ' + subjectText;
         var mailtoBody = email.body || '';
-        var mailto = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(email.subject || '') + '&body=' + encodeURIComponent(mailtoBody);
+        var mailto = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subjectText) + '&body=' + encodeURIComponent(mailtoBody);
         if (cc) mailto += '&cc=' + encodeURIComponent(cc);
         if (bcc) mailto += '&bcc=' + encodeURIComponent(bcc);
         window.open(mailto);
+        // If batches exist, open mailto for each additional batch
+        if (email.batches && email.batches.length > 0) {
+            email.batches.forEach(function(b, bIdx) {
+                if (bIdx === 0) return; // first batch already handled via primary to/cc/bcc
+                var bTo = (b.to || []).join(',');
+                var bCc = (b.cc || []).join(',');
+                var bBcc = (b.bcc || []).join(',');
+                var bMailto = 'mailto:' + encodeURIComponent(bTo) + '?subject=' + encodeURIComponent(subjectText) + '&body=' + encodeURIComponent(mailtoBody);
+                if (bCc) bMailto += '&cc=' + encodeURIComponent(bCc);
+                if (bBcc) bMailto += '&bcc=' + encodeURIComponent(bBcc);
+                window.open(bMailto);
+            });
+        }
     } else if (action === 'reopen') {
         _openEmailComposer(email.toolId || 'hub-analytics');
-        // Pre-fill from saved email after a tiny delay
         setTimeout(function() {
             var subj = document.querySelector('.s4-email-modal input[type="text"]');
             var rteEditor = document.querySelector('.s4-email-modal .s4-rte-editor:not(.s4-sig-editor)');
             if (subj) subj.value = email.subject || '';
             if (rteEditor) rteEditor.innerHTML = email.bodyHTML || _escH(email.body || '').replace(/\n/g, '<br>');
         }, 200);
+    } else if (action === 'aiReply') {
+        _openEmailComposer(email.toolId || 'hub-analytics');
+        setTimeout(function() {
+            var subj = document.querySelector('.s4-email-modal input[type="text"]');
+            var rteEditor = document.querySelector('.s4-email-modal .s4-rte-editor:not(.s4-sig-editor)');
+            if (subj) subj.value = 'Re: ' + (email.subject || '');
+            if (rteEditor) {
+                var opName = document.getElementById('s4ApName') ? document.getElementById('s4ApName').textContent : 'S4 Operator';
+                var aiDraft = '<p>Dear Team,</p>' +
+                    '<p>Thank you for sharing the <b>' + _escH(email.toolName || '') + '</b> report.</p>' +
+                    '<p>I\u2019ve reviewed the analysis and have the following observations:</p>' +
+                    '<ul><li>The data quality and completeness look solid</li>' +
+                    '<li>Key metrics are within expected parameters</li>' +
+                    '<li>I recommend we discuss the highlighted items in our next review</li></ul>' +
+                    '<p>Please let me know if additional context is needed.</p>' +
+                    '<p>Best regards,<br>' + _escH(opName) + '</p>' +
+                    '<br><hr style="border:none;border-top:1px solid #ccc;margin:12px 0">' +
+                    '<p style="color:#6e6e73;font-size:0.82rem"><i>Original message:</i></p>' +
+                    (email.bodyHTML || _escH(email.body || '').replace(/\n/g, '<br>'));
+                rteEditor.innerHTML = aiDraft;
+            }
+            // TODO: Replace with real AI backend call POST /api/email-ai-reply
+        }, 300);
     }
 };
 
 window._s4RenderEmailVault = _renderVaultList;
 
+// ── Vault toggle (collapsible) ──
+window._s4ToggleVault = function() {
+    var body = document.getElementById('s4VaultBody');
+    var toggle = document.getElementById('s4VaultToggle');
+    if (!body) return;
+    body.classList.toggle('collapsed');
+    if (toggle) toggle.classList.toggle('collapsed');
+};
+
+// ── Import Email (.eml / .msg / paste) ──
+window._s4ImportEmail = function() {
+    var existing = document.querySelector('.s4-import-overlay');
+    if (existing) existing.remove();
+
+    var ov = document.createElement('div');
+    ov.className = 's4-import-overlay';
+    ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+
+    var modal = document.createElement('div');
+    modal.className = 's4-import-modal';
+    modal.onclick = function(e) { e.stopPropagation(); };
+
+    // Header
+    var header = document.createElement('div');
+    header.className = 's4-import-header';
+    header.innerHTML = '<h3><i class="fas fa-file-import"></i> Import Email</h3>';
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 's4-email-close';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.onclick = function() { ov.remove(); };
+    header.appendChild(closeBtn);
+    modal.appendChild(header);
+
+    var body = document.createElement('div');
+    body.className = 's4-import-body';
+
+    // Tabs: File Upload | Paste
+    var activePanelKey = 'file';
+    var tabs = document.createElement('div');
+    tabs.className = 's4-import-tabs';
+    var fileTab = document.createElement('button');
+    fileTab.className = 's4-import-tab active';
+    fileTab.textContent = 'Upload .eml / .msg';
+    var pasteTab = document.createElement('button');
+    pasteTab.className = 's4-import-tab';
+    pasteTab.textContent = 'Paste Email';
+    tabs.appendChild(fileTab);
+    tabs.appendChild(pasteTab);
+    body.appendChild(tabs);
+
+    // File upload panel
+    var filePanel = document.createElement('div');
+    var dropZone = document.createElement('div');
+    dropZone.className = 's4-import-drop';
+    dropZone.innerHTML = '<i class="fas fa-cloud-arrow-up"></i>Drop .eml or .msg file here<br>or click to browse';
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.eml,.msg,.txt';
+    fileInput.style.display = 'none';
+    var importedData = { subject: '', from: '', to: '', cc: '', body: '', bodyHTML: '' };
+
+    dropZone.onclick = function() { fileInput.click(); };
+    dropZone.ondragover = function(e) { e.preventDefault(); dropZone.classList.add('dragover'); };
+    dropZone.ondragleave = function() { dropZone.classList.remove('dragover'); };
+    dropZone.ondrop = function(e) {
+        e.preventDefault(); dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) _processFile(e.dataTransfer.files[0]);
+    };
+    fileInput.onchange = function() { if (fileInput.files.length) _processFile(fileInput.files[0]); };
+
+    filePanel.appendChild(dropZone);
+    filePanel.appendChild(fileInput);
+    body.appendChild(filePanel);
+
+    // Paste panel
+    var pastePanel = document.createElement('div');
+    pastePanel.style.display = 'none';
+    var pasteArea = document.createElement('textarea');
+    pasteArea.className = 's4-import-paste';
+    pasteArea.placeholder = 'Paste email content here (headers + body)\u2026';
+    pastePanel.appendChild(pasteArea);
+    body.appendChild(pastePanel);
+
+    // Tab switching
+    fileTab.onclick = function() {
+        activePanelKey = 'file';
+        fileTab.classList.add('active'); pasteTab.classList.remove('active');
+        filePanel.style.display = ''; pastePanel.style.display = 'none';
+    };
+    pasteTab.onclick = function() {
+        activePanelKey = 'paste';
+        pasteTab.classList.add('active'); fileTab.classList.remove('active');
+        pastePanel.style.display = ''; filePanel.style.display = 'none';
+    };
+
+    modal.appendChild(body);
+
+    function _processFile(file) {
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            _parseEmailText(ev.target.result);
+            dropZone.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i>Parsed: <b>' + _escH(importedData.subject || file.name) + '</b>';
+        };
+        reader.readAsText(file);
+    }
+
+    function _parseEmailText(text) {
+        var lines = text.split(/\r?\n/);
+        var inHeaders = true;
+        var headerLines = [];
+        var bodyLines = [];
+        for (var i = 0; i < lines.length; i++) {
+            if (inHeaders && lines[i].trim() === '') { inHeaders = false; continue; }
+            if (inHeaders) headerLines.push(lines[i]);
+            else bodyLines.push(lines[i]);
+        }
+        var headers = {};
+        headerLines.forEach(function(line) {
+            var m = line.match(/^(From|To|Subject|Cc|Bcc|Date):\s*(.+)/i);
+            if (m) headers[m[1].toLowerCase()] = m[2].trim();
+        });
+        importedData.subject = headers.subject || '';
+        importedData.from = headers.from || '';
+        importedData.to = headers.to || '';
+        importedData.cc = headers.cc || '';
+        importedData.body = bodyLines.join('\n').trim();
+        importedData.bodyHTML = '<p>' + _escH(importedData.body).replace(/\n/g, '<br>') + '</p>';
+    }
+
+    // Footer
+    var footer = document.createElement('div');
+    footer.className = 's4-import-footer';
+    var cancelBtn = document.createElement('button');
+    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+    cancelBtn.onclick = function() { ov.remove(); };
+    var saveImportBtn = document.createElement('button');
+    saveImportBtn.className = 's4-import-save';
+    saveImportBtn.innerHTML = '<i class="fas fa-download"></i> Import to Vault';
+    saveImportBtn.onclick = function() {
+        if (activePanelKey === 'paste' && pasteArea.value.trim()) {
+            _parseEmailText(pasteArea.value);
+        }
+        if (!importedData.subject && !importedData.body) {
+            if (typeof _toast === 'function') _toast('No email content to import', 'warning');
+            return;
+        }
+        var toEmails = importedData.to ? importedData.to.split(/[,;]/).map(function(e) { return e.trim(); }).filter(Boolean) : [];
+        var ccEmails = importedData.cc ? importedData.cc.split(/[,;]/).map(function(e) { return e.trim(); }).filter(Boolean) : [];
+        var email = {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+            toolId: 'imported',
+            toolName: 'Imported Email',
+            subject: importedData.subject || 'Imported Email',
+            to: toEmails,
+            cc: ccEmails,
+            bcc: [],
+            body: importedData.body,
+            bodyHTML: importedData.bodyHTML,
+            options: {},
+            importance: 'normal',
+            type: 'imported',
+            savedAt: new Date().toISOString(),
+            pinned: false,
+            flagged: false
+        };
+        var vault = _loadVault();
+        vault.unshift(email);
+        _saveVault(vault);
+        _renderVaultList();
+        if (typeof _toast === 'function') _toast('Email imported to vault', 'success');
+        ov.remove();
+    };
+    footer.appendChild(cancelBtn);
+    footer.appendChild(saveImportBtn);
+    modal.appendChild(footer);
+
+    ov.appendChild(modal);
+    document.body.appendChild(ov);
+};
+
 // Init vault on load
 function _initVault() {
     _renderVaultList();
+    // Search
     var searchInput = document.getElementById('s4VaultEmailSearch');
     if (searchInput) {
         searchInput.oninput = function() { _renderVaultList(searchInput.value); };
     }
+    // Tabs
+    var tabsContainer = document.getElementById('s4VaultTabs');
+    if (tabsContainer) {
+        var tabs = tabsContainer.querySelectorAll('.s4-vault-tab');
+        tabs.forEach(function(tab) {
+            tab.onclick = function() {
+                tabs.forEach(function(t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+                _vaultActiveTab = tab.getAttribute('data-filter');
+                _renderVaultList(searchInput ? searchInput.value : '');
+            };
+        });
+    }
+    // Countdown auto-refresh for scheduled emails (every 60s)
+    setInterval(function() {
+        if (_vaultActiveTab === 'scheduled' || _vaultActiveTab === 'all') {
+            var vault = _loadVault();
+            var hasScheduled = vault.some(function(e) { return e.type === 'scheduled' && e.scheduleTime; });
+            if (hasScheduled) _renderVaultList(searchInput ? searchInput.value : '');
+        }
+    }, 60000);
 }
 
 if (document.readyState === 'loading') {
@@ -16364,8 +16762,15 @@ if (document.readyState === 'loading') {
     setTimeout(_initVault, 600);
 }
 
-// TODO: Backend integration — POST /api/email-save, GET /api/email-vault,
-//   POST /api/email-ai-assist for server-side AI enhancement,
-//   DELETE /api/email-vault/:id for vault management.
+// TODO: Backend integration —
+//   POST /api/email-save  → persist email to server vault
+//   GET  /api/email-vault  → fetch vault from server
+//   POST /api/email-ai-assist   → server-side AI email enhancement
+//   POST /api/email-ai-reply    → server-side AI reply drafting
+//   DELETE /api/email-vault/:id → delete email from server vault
+//   POST /api/scheduled-send    → enqueue email for timed delivery
+//     { emailId, scheduleTime, to, cc, bcc, subject, body, importance }
+//     Backend should run a cron/worker to send at scheduleTime.
+//   POST /api/email-import      → server-side .eml/.msg parsing
 
 })();

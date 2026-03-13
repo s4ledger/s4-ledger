@@ -7000,3 +7000,68 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-ve-actions button:hover{color:#5856D6;background:rgba(88,86,214,0.08)}
 .s4-vault-email-empty{text-align:center;padding:24px 12px;font-size:0.8rem;color:var(--muted,#6e6e73)}
 .s4-vault-email-empty i{font-size:1.4rem;color:rgba(88,86,214,0.3);display:block;margin-bottom:8px}
+/* ── Vault Collapsible & Header ── */
+.s4-vault-toggle{background:none;border:none;cursor:pointer;font-size:0.68rem;color:var(--muted,#6e6e73);padding:2px 4px;margin-left:auto;transition:transform 0.25s}
+.s4-vault-toggle.collapsed{transform:rotate(-90deg)}
+.s4-vault-body.collapsed{display:none}
+.s4-vault-header-actions{display:flex;gap:6px;margin:8px 0 6px}
+.s4-vault-import-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;border:1px solid rgba(88,86,214,0.2);background:rgba(88,86,214,0.06);color:#5856D6;font-size:0.72rem;font-weight:600;cursor:pointer;transition:background 0.15s}
+.s4-vault-import-btn:hover{background:rgba(88,86,214,0.14)}
+/* ── Vault Tabs ── */
+.s4-vault-tabs{display:flex;gap:2px;margin-bottom:10px;padding:2px;background:var(--border,rgba(0,0,0,0.04));border-radius:8px}
+.s4-vault-tab{flex:1;text-align:center;padding:5px 4px;font-size:0.66rem;font-weight:600;color:var(--muted,#6e6e73);border-radius:6px;cursor:pointer;border:none;background:none;transition:all 0.15s;white-space:nowrap}
+.s4-vault-tab:hover{color:var(--text,#1d1d1f)}
+.s4-vault-tab.active{background:var(--surface,#fff);color:#5856D6;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+/* ── Email Status Badges ── */
+.s4-ve-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.58rem;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.03em;margin-left:6px;vertical-align:middle}
+.s4-ve-badge.draft{background:rgba(255,149,0,0.12);color:#c77d00}
+.s4-ve-badge.sent{background:rgba(52,199,89,0.12);color:#22863a}
+.s4-ve-badge.scheduled{background:rgba(0,122,255,0.12);color:#007AFF}
+.s4-ve-badge.imported{background:rgba(175,82,222,0.12);color:#af52de}
+.s4-ve-badge.saved{background:rgba(88,86,214,0.1);color:#5856D6}
+/* ── Option Badges (encrypt, receipt, importance) ── */
+.s4-ve-opt-badges{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.s4-ve-opt-badge{font-size:0.57rem;font-weight:600;padding:1px 5px;border-radius:3px;background:rgba(0,0,0,0.04);color:var(--steel,#6e6e73)}
+.s4-ve-opt-badge.encrypt{color:#ff9500;background:rgba(255,149,0,0.08)}
+.s4-ve-opt-badge.receipt{color:#5856D6;background:rgba(88,86,214,0.08)}
+.s4-ve-opt-badge.high{color:#ff375f;background:rgba(255,55,95,0.08)}
+.s4-ve-opt-badge.medium{color:#ff9500;background:rgba(255,149,0,0.08)}
+.s4-ve-opt-badge.low{color:#34c759;background:rgba(52,199,89,0.08)}
+/* ── Schedule Countdown ── */
+.s4-ve-countdown{font-size:0.62rem;font-weight:600;color:#007AFF;margin-top:2px;display:flex;align-items:center;gap:4px}
+.s4-ve-countdown i{font-size:0.58rem}
+/* ── Import Email Modal ── */
+.s4-import-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:10003;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-import-modal{background:var(--surface,#fff);border-radius:16px;width:560px;max-width:92vw;max-height:80vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.22);padding:0;display:flex;flex-direction:column}
+.s4-import-header{display:flex;align-items:center;gap:10px;padding:18px 22px 12px;border-bottom:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-import-header h3{font-size:0.95rem;font-weight:700;margin:0;flex:1;display:flex;align-items:center;gap:8px;color:var(--text,#1d1d1f)}
+.s4-import-header h3 i{color:#5856D6}
+.s4-import-body{padding:18px 22px}
+.s4-import-tabs{display:flex;gap:8px;margin-bottom:14px}
+.s4-import-tab{padding:6px 14px;border-radius:8px;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);font-size:0.78rem;font-weight:600;cursor:pointer;color:var(--steel,#6e6e73);transition:all 0.15s}
+.s4-import-tab.active{background:rgba(88,86,214,0.08);border-color:rgba(88,86,214,0.3);color:#5856D6}
+.s4-import-paste{width:100%;min-height:140px;padding:12px 14px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:10px;font-size:0.82rem;font-family:inherit;resize:vertical;box-sizing:border-box;color:var(--text,#1d1d1f);background:var(--surface,#fff)}
+.s4-import-paste:focus{border-color:#5856D6;outline:none;box-shadow:0 0 0 3px rgba(88,86,214,0.12)}
+.s4-import-drop{border:2px dashed var(--border,rgba(0,0,0,0.15));border-radius:12px;padding:28px;text-align:center;color:var(--muted,#6e6e73);font-size:0.8rem;cursor:pointer;transition:border-color 0.15s,background 0.15s}
+.s4-import-drop:hover,.s4-import-drop.dragover{border-color:#5856D6;background:rgba(88,86,214,0.04)}
+.s4-import-drop i{font-size:1.5rem;display:block;margin-bottom:8px;color:rgba(88,86,214,0.4)}
+.s4-import-footer{display:flex;gap:10px;justify-content:flex-end;padding:14px 22px;border-top:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-import-footer button{padding:8px 16px;border-radius:10px;font-size:0.82rem;font-weight:600;cursor:pointer;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.s4-import-footer button:hover{background:var(--border,rgba(0,0,0,0.04))}
+.s4-import-footer .s4-import-save{background:rgba(88,86,214,0.1);color:#5856D6;border-color:rgba(88,86,214,0.25)}
+.s4-import-footer .s4-import-save:hover{background:rgba(88,86,214,0.18)}
+/* ── Schedule datetime picker (inline) ── */
+.s4-email-schedule-wrap{display:none;align-items:center;gap:8px;margin-top:8px}
+.s4-email-schedule-wrap.visible{display:flex}
+.s4-email-schedule-wrap input[type="datetime-local"]{padding:6px 10px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.78rem;font-family:inherit;color:var(--text,#1d1d1f);background:var(--surface,#fff)}
+.s4-email-schedule-wrap input:focus{border-color:#5856D6;outline:none}
+.s4-email-schedule-wrap label{font-size:0.72rem;font-weight:600;color:var(--steel,#6e6e73)}
+/* ── Importance selector (inline) ── */
+.s4-email-importance-wrap{display:inline-flex;align-items:center;gap:6px}
+.s4-email-importance-select{padding:5px 8px;border:1px solid var(--border,rgba(0,0,0,0.08));border-radius:8px;font-size:0.76rem;font-weight:600;color:var(--steel,#6e6e73);background:var(--surface,#fff);cursor:pointer;font-family:inherit}
+.s4-email-importance-select:focus{border-color:#5856D6;outline:none}
+/* ── Batch Recipients ── */
+.s4-email-batch-sep{border:none;border-top:1px dashed var(--border,rgba(0,0,0,0.1));margin:10px 0 6px}
+.s4-email-batch-label{font-size:0.68rem;font-weight:700;color:#5856D6;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.s4-email-add-batch{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;border:1px dashed rgba(88,86,214,0.3);background:rgba(88,86,214,0.04);color:#5856D6;font-size:0.72rem;font-weight:600;cursor:pointer;transition:background 0.15s;margin-bottom:14px}
+.s4-email-add-batch:hover{background:rgba(88,86,214,0.1)}

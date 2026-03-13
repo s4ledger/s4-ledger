@@ -67,12 +67,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-D_wMld2y.js"></script>
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-fcQ2q0K7.js"></script>
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-DKPbLUGy.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-BGI_OUt3.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-BF4aFrbM.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-C3JKxqsv.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-B9b6xnZ5.css">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-D2cOXgUp.js">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-B-YEAxAq.css">
 </head>
 <body class="light-mode">
 <!-- Light mode always on -->
@@ -390,12 +390,27 @@
                         <button class="s4-reset-all" onclick="window._s4ResetAll()" title="Reset all preferences to defaults"><i class="fas fa-arrow-rotate-left"></i> Reset All Preferences</button>
                     </div>
                     <hr class="s4-ap-divider">
-                    <!-- ── Section 4: Secure Email Vault ── -->
+                    <!-- ── Section 4: Secure Email Vault (collapsible) ── -->
                     <div class="s4-up-section">
-                        <div class="s4-up-section-head"><i class="fas fa-envelope-open-text" style="color:#5856D6"></i> Secure Email Vault</div>
-                        <input class="s4-vault-email-search" id="s4VaultEmailSearch" type="text" placeholder="Search saved emails\u2026">
-                        <div class="s4-vault-email-section" id="s4VaultEmailList">
-                            <div class="s4-vault-email-empty"><i class="fas fa-envelope-open"></i>No saved emails yet.<br>Use "Prepare Email" on any tool to get started.</div>
+                        <div class="s4-up-section-head" style="cursor:pointer;display:flex;align-items:center" onclick="window._s4ToggleVault&&window._s4ToggleVault()">
+                            <i class="fas fa-envelope-open-text" style="color:#5856D6"></i>&nbsp;Secure Email Vault
+                            <i class="fas fa-chevron-down s4-vault-toggle" id="s4VaultToggle"></i>
+                        </div>
+                        <div id="s4VaultBody">
+                            <div class="s4-vault-header-actions">
+                                <button class="s4-vault-import-btn" onclick="window._s4ImportEmail&&window._s4ImportEmail()"><i class="fas fa-file-import"></i> Import Email</button>
+                            </div>
+                            <div class="s4-vault-tabs" id="s4VaultTabs">
+                                <button class="s4-vault-tab active" data-filter="all">All</button>
+                                <button class="s4-vault-tab" data-filter="draft">Drafts</button>
+                                <button class="s4-vault-tab" data-filter="sent">Sent</button>
+                                <button class="s4-vault-tab" data-filter="scheduled">Scheduled</button>
+                                <button class="s4-vault-tab" data-filter="imported">Imported</button>
+                            </div>
+                            <input class="s4-vault-email-search" id="s4VaultEmailSearch" type="text" placeholder="Search saved emails…">
+                            <div class="s4-vault-email-section" id="s4VaultEmailList">
+                                <div class="s4-vault-email-empty"><i class="fas fa-envelope-open"></i>No saved emails yet.<br>Use "Prepare Email" on any tool to get started.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
