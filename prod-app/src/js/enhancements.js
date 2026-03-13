@@ -11358,6 +11358,10 @@ function _s4ConvertButtonDensity(targetPanel) {
             // Place at TOP of tool: right after header area (h3 → p → details)
             var card = panel.querySelector('.s4-card');
             if (card) {
+                // Wrap in flex row for perfect alignment with standalone buttons
+                var row = document.createElement('div');
+                row.className = 's4-actions-row';
+                row.appendChild(menu);
                 var insertPoint = null;
                 for (var c = card.firstElementChild; c; c = c.nextElementSibling) {
                     if (c.tagName === 'H3' || c.tagName === 'P' || c.tagName === 'DETAILS') {
@@ -11368,9 +11372,9 @@ function _s4ConvertButtonDensity(targetPanel) {
                     }
                 }
                 if (insertPoint) {
-                    insertPoint.insertAdjacentElement('afterend', menu);
+                    insertPoint.insertAdjacentElement('afterend', row);
                 } else {
-                    card.insertBefore(menu, card.firstChild);
+                    card.insertBefore(row, card.firstChild);
                 }
             }
         }
@@ -13269,7 +13273,7 @@ function _hookHL() {
     var wrapped = function(toolId) {
         orig.call(this, toolId);
         if (toolId === 'hub-analytics') {
-            setTimeout(_injectHighlightsBtn, 1800);
+            setTimeout(_injectHighlightsBtn, 1100);
         }
     };
     wrapped._s4HLHooked = true;
@@ -14211,7 +14215,7 @@ function _hookLPL() {
     var wrapped = function(toolId) {
         orig.call(this, toolId);
         if (toolId === 'hub-analytics') {
-            setTimeout(_injectLPLBtn, 2000);
+            setTimeout(_injectLPLBtn, 1100);
         }
     };
     wrapped._s4LPLHooked = true;
@@ -14637,7 +14641,7 @@ function _hookPIS() {
     var wrapped = function(toolId) {
         orig.call(this, toolId);
         if (toolId === 'hub-risk' || toolId === 'hub-dmsms') {
-            setTimeout(function() { _injectPISBtn(toolId); }, 2000);
+            setTimeout(function() { _injectPISBtn(toolId); }, 1100);
         }
     };
     wrapped._s4PISHooked = true;

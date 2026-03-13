@@ -6369,6 +6369,9 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-actions-list .s4-btn-secondary i{color:var(--accent,#00aaff) !important}
 
 /* ── v5.12.25 — Actions dropdown & spacing polish ── */
+.s4-actions-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:16px;margin-bottom:16px}
+.s4-actions-row > .s4-actions-menu{margin-top:0;margin-bottom:0}
+.s4-actions-row > button{margin-left:0;margin-top:0}
 .s4-actions-menu{position:relative;display:inline-block;margin-top:16px;margin-bottom:16px}
 .s4-actions-header{display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text,#1d1d1f);margin-bottom:8px}
 .s4-actions-header i{color:#34c759;font-size:0.7rem}
