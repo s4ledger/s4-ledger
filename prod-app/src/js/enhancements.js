@@ -14670,18 +14670,14 @@ function _injectSCN(prefix) {
     if (!viewEl) return;
     if (viewEl.querySelector('.s4-scn-bar')) return; // already injected
 
-    // Find the action buttons div (has Export/Anchor/AI buttons)
-    var actionBtns = null;
-    var divs = viewEl.querySelectorAll('div[style*="display:flex"]');
-    for (var i = 0; i < divs.length; i++) {
-        if (divs[i].querySelector('[onclick*="exportDrlStatusCSV"]')) {
-            actionBtns = divs[i];
-            break;
-        }
-    }
-    if (!actionBtns) return;
+    // Find the table scroll container (always present) as our anchor
+    var tableId = prefix === 'sub' ? 'subDrlStatusTable' : 'drlStatusTable';
+    var table = document.getElementById(tableId);
+    if (!table) return;
+    var tableWrapper = table.closest('div[style*="overflow"]') || table.parentNode;
+    if (!tableWrapper) return;
 
-    // ── 1. Collaboration toggle bar — insert before action buttons ──
+    // ── 1. Collaboration toggle bar — insert before the table ──
     var barId = prefix ? prefix + 'ScnBar' : 'scnBar';
     var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
     var toggleId = prefix ? prefix + 'ScnToggle' : 'scnToggle';
@@ -14698,14 +14694,14 @@ function _injectSCN(prefix) {
             '<i class="fas fa-link"></i> Shared View Link' +
         '</button>';
 
-    actionBtns.parentNode.insertBefore(bar, actionBtns);
+    tableWrapper.parentNode.insertBefore(bar, tableWrapper);
 
-    // ── 2. Network Participants section — insert between bar and action buttons ──
+    // ── 2. Network Participants section — insert between bar and table ──
     var partSection = document.createElement('div');
     partSection.className = 's4-scn-participants';
     partSection.id = partId;
     partSection.innerHTML = _buildParticipantsHTML(prefix);
-    actionBtns.parentNode.insertBefore(partSection, actionBtns);
+    tableWrapper.parentNode.insertBefore(partSection, tableWrapper);
 }
 
 function _buildParticipantsHTML(prefix) {
