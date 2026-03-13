@@ -16584,18 +16584,24 @@ function _buildRecipientField(label, state) {
     return field;
 }
 
-// ── Inject "Prepare Email" button into every tool's ACTIONS row ──
+// ── Inject "Prepare Email" into every tool's Actions dropdown ──
 function _injectEmailBtn(panelId) {
     var panel = document.getElementById(panelId);
     if (!panel) return;
-    if (panel.querySelector('.s4-email-standalone-btn')) return;
-    var actionsRow = panel.querySelector('.s4-actions-row');
-    if (!actionsRow) return;
+    if (panel.querySelector('.s4-email-dropdown-item')) return;
+    var actionsList = panel.querySelector('.s4-actions-list');
+    if (!actionsList) return;
     var btn = document.createElement('button');
-    btn.className = 's4-email-standalone-btn';
+    btn.className = 's4-btn-secondary s4-email-dropdown-item';
     btn.innerHTML = '<i class="fas fa-envelope"></i> Prepare Email';
     btn.onclick = function() { _openEmailComposer(panelId); };
-    actionsRow.appendChild(btn);
+    // Place after last primary action, or at the top if no primaries
+    var primaries = actionsList.querySelectorAll('.s4-btn-primary');
+    if (primaries.length > 0) {
+        primaries[primaries.length - 1].insertAdjacentElement('afterend', btn);
+    } else {
+        actionsList.insertBefore(btn, actionsList.firstChild);
+    }
 }
 
 // ── Hook into openILSTool chain — inject email button on every tool open ──
