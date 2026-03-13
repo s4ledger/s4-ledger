@@ -15593,3 +15593,506 @@ window._s4UnifiedCommandBrief = function() {
 };
 
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   PREPARED EMAIL COMPOSER & SECURE EMAIL VAULT
+   ───────────────────────────────────────────────────────────────────
+   • "Prepare Email" button on every tool's ACTIONS row
+   • Full Email Composer modal: recipients, CC/BCC, subject, body
+     (auto-pulled from current tool), AI Assist, attachments,
+     options (encrypt, read receipt, schedule, importance, save draft)
+   • "Open in Email Client" → mailto: link
+   • "Save to Secure Platform Emails" → local vault
+   • Secure Email Vault in profile popover: search, pin, flag, delete
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+'use strict';
+
+// ── Tool name map (matches platform naming) ──
+var _emailToolNames = {
+    'hub-compliance':'Compliance Scorecard','hub-analysis':'Gap Finder','hub-actions':'Task Prioritizer',
+    'hub-risk':'Risk Radar','hub-readiness':'Readiness Score','hub-dmsms':'Obsolescence Alert',
+    'hub-analytics':'Program Overview','hub-milestones':'Milestone Monitor','hub-predictive':'Maintenance Predictor',
+    'hub-lifecycle':'Lifecycle Cost Estimator','hub-roi':'ROI Calculator','hub-sbom':'SBOM Scanner',
+    'hub-gfp':'Property Custodian','hub-provenance':'Chain of Custody','hub-acquisition':'Fleet Optimizer',
+    'hub-contract':'Contract Analyzer','hub-reports':'Audit Builder','hub-vault':'Audit Vault',
+    'hub-docs':'Document Library','hub-submissions':'Submissions Hub','hub-cdrl':'Deliverables Tracker',
+    'hub-brief':'Brief Composer','hub-team':'Team Manager'
+};
+
+function _escH(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+// ── Vault storage (localStorage) ──
+var VAULT_KEY = 's4_email_vault';
+function _loadVault() { try { return JSON.parse(localStorage.getItem(VAULT_KEY)) || []; } catch(e) { return []; } }
+function _saveVault(v) { localStorage.setItem(VAULT_KEY, JSON.stringify(v)); }
+
+// ── Extract tool content for email body ──
+function _extractToolContent(panelId) {
+    var panel = document.getElementById(panelId);
+    if (!panel) return '';
+    var toolName = _emailToolNames[panelId] || panelId;
+    var lines = ['S4 Ledger — ' + toolName + ' Report', ''];
+    // Grab headings + visible text
+    var headers = panel.querySelectorAll('h3, h4, .s4-card h3');
+    headers.forEach(function(h) { lines.push(h.textContent.trim()); });
+    // Summary / key metrics
+    var metrics = panel.querySelectorAll('.metric-value, .stat-value, .score-value, .risk-score');
+    if (metrics.length) {
+        lines.push('');
+        lines.push('Key Metrics:');
+        metrics.forEach(function(m) {
+            var label = m.previousElementSibling ? m.previousElementSibling.textContent.trim() : '';
+            lines.push('  ' + (label ? label + ': ' : '') + m.textContent.trim());
+        });
+    }
+    // Table rows (first table only)
+    var table = panel.querySelector('table');
+    if (table) {
+        var ths = table.querySelectorAll('thead th');
+        if (ths.length) {
+            lines.push('');
+            var headerRow = [];
+            ths.forEach(function(th) { headerRow.push(th.textContent.trim()); });
+            lines.push(headerRow.join(' | '));
+            var rows = table.querySelectorAll('tbody tr');
+            var rowCount = 0;
+            rows.forEach(function(tr) {
+                if (rowCount >= 10) return;
+                var cells = [];
+                tr.querySelectorAll('td').forEach(function(td) { cells.push(td.textContent.trim()); });
+                lines.push(cells.join(' | '));
+                rowCount++;
+            });
+            if (rows.length > 10) lines.push('  ... and ' + (rows.length - 10) + ' more rows');
+        }
+    }
+    lines.push('');
+    lines.push('---');
+    lines.push('Prepared via S4 Ledger Platform — https://s4ledger.com');
+    return lines.join('\n');
+}
+
+// ── Open Email Composer modal ──
+function _openEmailComposer(toolId) {
+    // Remove existing overlay if any
+    var existing = document.querySelector('.s4-email-overlay');
+    if (existing) existing.remove();
+
+    var toolName = _emailToolNames[toolId] || toolId;
+    var bodyContent = _extractToolContent(toolId);
+    var defaultSubject = 'S4 Ledger — ' + toolName + ' Report';
+
+    var ov = document.createElement('div');
+    ov.className = 's4-email-overlay';
+    ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+
+    var modal = document.createElement('div');
+    modal.className = 's4-email-modal';
+    modal.onclick = function(e) { e.stopPropagation(); };
+
+    // ── Header ──
+    var header = document.createElement('div');
+    header.className = 's4-email-header';
+    header.innerHTML = '<h2><i class="fas fa-envelope"></i> Prepare Email — ' + _escH(toolName) + '</h2>';
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 's4-email-close';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.onclick = function() { ov.remove(); };
+    header.appendChild(closeBtn);
+    modal.appendChild(header);
+
+    // ── Body ──
+    var body = document.createElement('div');
+    body.className = 's4-email-body';
+
+    // Recipients (To)
+    var toState = { chips: [], field: null, input: null };
+    body.appendChild(_buildRecipientField('To', toState));
+
+    // CC / BCC toggle
+    var ccBccWrap = document.createElement('div');
+    ccBccWrap.style.cssText = 'margin-bottom:14px';
+    var ccToggle = document.createElement('button');
+    ccToggle.style.cssText = 'background:none;border:none;font-size:0.76rem;color:#5856D6;font-weight:600;cursor:pointer;padding:0';
+    ccToggle.textContent = '+ CC / BCC';
+    var ccState = { chips: [], field: null, input: null };
+    var bccState = { chips: [], field: null, input: null };
+    var ccFields = document.createElement('div');
+    ccFields.style.display = 'none';
+    ccToggle.onclick = function() {
+        if (ccFields.style.display === 'none') {
+            ccFields.style.display = 'block';
+            ccToggle.textContent = '- Hide CC / BCC';
+        } else {
+            ccFields.style.display = 'none';
+            ccToggle.textContent = '+ CC / BCC';
+        }
+    };
+    ccFields.appendChild(_buildRecipientField('CC', ccState));
+    ccFields.appendChild(_buildRecipientField('BCC', bccState));
+    ccBccWrap.appendChild(ccToggle);
+    ccBccWrap.appendChild(ccFields);
+    body.appendChild(ccBccWrap);
+
+    // Subject
+    var subjectField = document.createElement('div');
+    subjectField.className = 's4-email-field';
+    subjectField.innerHTML = '<label>Subject</label>';
+    var subjectInput = document.createElement('input');
+    subjectInput.type = 'text';
+    subjectInput.value = defaultSubject;
+    subjectField.appendChild(subjectInput);
+    body.appendChild(subjectField);
+
+    // AI Assist bar
+    var aiBar = document.createElement('div');
+    aiBar.className = 's4-email-ai-bar';
+    aiBar.style.cursor = 'pointer';
+    aiBar.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> <span>AI Assist — Click to auto-enhance email body</span>';
+    aiBar.onclick = function() {
+        aiBar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Enhancing with AI\u2026</span>';
+        setTimeout(function() {
+            var current = bodyTextarea.value;
+            var enhanced = 'Dear Team,\n\n' +
+                'Please find below the latest ' + toolName + ' analysis from S4 Ledger.\n\n' +
+                current + '\n\n' +
+                'Please review and provide feedback at your earliest convenience.\n\n' +
+                'Best regards,\n' +
+                (document.getElementById('s4ApName') ? document.getElementById('s4ApName').textContent : 'S4 Operator');
+            bodyTextarea.value = enhanced;
+            aiBar.innerHTML = '<i class="fas fa-check-circle"></i> <span>AI-enhanced \u2014 email body updated</span>';
+            // TODO: Replace with real AI backend call POST /api/email-ai-assist
+        }, 800);
+    };
+    body.appendChild(aiBar);
+
+    // Body textarea
+    var bodyField = document.createElement('div');
+    bodyField.className = 's4-email-field';
+    bodyField.innerHTML = '<label>Body</label>';
+    var bodyTextarea = document.createElement('textarea');
+    bodyTextarea.value = bodyContent;
+    bodyField.appendChild(bodyTextarea);
+    body.appendChild(bodyField);
+
+    // Attachments
+    var attachField = document.createElement('div');
+    attachField.className = 's4-email-field';
+    attachField.innerHTML = '<label>Attachments</label>';
+    var attachList = document.createElement('div');
+    attachList.className = 's4-email-attach-list';
+    // Auto-attach the current tool report
+    attachList.innerHTML = '<div class="s4-email-attach-tag"><i class="fas fa-file-alt"></i> ' + _escH(toolName) + '_Report.pdf</div>';
+    attachField.appendChild(attachList);
+    var attachBtn = document.createElement('button');
+    attachBtn.className = 's4-email-opt';
+    attachBtn.style.marginTop = '8px';
+    attachBtn.innerHTML = '<i class="fas fa-paperclip"></i> Add Attachment';
+    attachBtn.onclick = function() {
+        var name = prompt('Attachment filename (e.g. report.pdf):');
+        if (name && name.trim()) {
+            var tag = document.createElement('div');
+            tag.className = 's4-email-attach-tag';
+            tag.innerHTML = '<i class="fas fa-file"></i> ' + _escH(name.trim());
+            attachList.appendChild(tag);
+        }
+    };
+    attachField.appendChild(attachBtn);
+    body.appendChild(attachField);
+
+    // Options row
+    var optRow = document.createElement('div');
+    optRow.className = 's4-email-options';
+    var opts = [
+        { icon: 'fa-lock', label: 'Encrypt', key: 'encrypt' },
+        { icon: 'fa-receipt', label: 'Read Receipt', key: 'receipt' },
+        { icon: 'fa-clock', label: 'Schedule Send', key: 'schedule' },
+        { icon: 'fa-exclamation', label: 'High Importance', key: 'importance' },
+        { icon: 'fa-bookmark', label: 'Save as Draft', key: 'draft' }
+    ];
+    var optState = {};
+    opts.forEach(function(o) {
+        optState[o.key] = false;
+        var btn = document.createElement('button');
+        btn.className = 's4-email-opt';
+        btn.innerHTML = '<i class="fas ' + o.icon + '"></i> ' + o.label;
+        btn.onclick = function() {
+            optState[o.key] = !optState[o.key];
+            btn.classList.toggle('active', optState[o.key]);
+        };
+        optRow.appendChild(btn);
+    });
+    body.appendChild(optRow);
+
+    modal.appendChild(body);
+
+    // ── Footer ──
+    var footer = document.createElement('div');
+    footer.className = 's4-email-footer';
+
+    var cancelBtn = document.createElement('button');
+    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+    cancelBtn.onclick = function() { ov.remove(); };
+
+    var saveBtn = document.createElement('button');
+    saveBtn.className = 's4-email-save';
+    saveBtn.innerHTML = '<i class="fas fa-shield-halved"></i> Save to Secure Emails';
+    saveBtn.onclick = function() {
+        var email = {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+            toolId: toolId,
+            toolName: toolName,
+            subject: subjectInput.value,
+            to: toState.chips.slice(),
+            cc: ccState.chips.slice(),
+            bcc: bccState.chips.slice(),
+            body: bodyTextarea.value,
+            options: Object.assign({}, optState),
+            savedAt: new Date().toISOString(),
+            pinned: false,
+            flagged: false
+        };
+        var vault = _loadVault();
+        vault.unshift(email);
+        _saveVault(vault);
+        _renderVaultList();
+        if (typeof _toast === 'function') _toast('Email saved to Secure Email Vault', 'success');
+        ov.remove();
+    };
+
+    var sendBtn = document.createElement('button');
+    sendBtn.className = 's4-email-send';
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Open in Email Client';
+    sendBtn.onclick = function() {
+        var to = toState.chips.join(',');
+        var cc = ccState.chips.join(',');
+        var bcc = bccState.chips.join(',');
+        var subject = encodeURIComponent(subjectInput.value);
+        var mailBody = encodeURIComponent(bodyTextarea.value);
+        var mailto = 'mailto:' + encodeURIComponent(to) + '?subject=' + subject + '&body=' + mailBody;
+        if (cc) mailto += '&cc=' + encodeURIComponent(cc);
+        if (bcc) mailto += '&bcc=' + encodeURIComponent(bcc);
+        window.open(mailto);
+        // Also auto-save to vault
+        saveBtn.click();
+    };
+
+    footer.appendChild(cancelBtn);
+    footer.appendChild(saveBtn);
+    footer.appendChild(sendBtn);
+    modal.appendChild(footer);
+
+    ov.appendChild(modal);
+    document.body.appendChild(ov);
+
+    // Focus the To input
+    setTimeout(function() {
+        if (toState.input) toState.input.focus();
+    }, 100);
+}
+
+// ── Recipient field builder (chips input) ──
+function _buildRecipientField(label, state) {
+    var field = document.createElement('div');
+    field.className = 's4-email-field';
+    var lbl = document.createElement('label');
+    lbl.textContent = label;
+    field.appendChild(lbl);
+
+    var container = document.createElement('div');
+    container.className = 's4-email-recipients';
+    state.field = container;
+
+    var input = document.createElement('input');
+    input.className = 's4-email-chip-input';
+    input.placeholder = 'Type email and press Enter\u2026';
+    state.input = input;
+
+    function addChip(email) {
+        email = email.trim();
+        if (!email) return;
+        if (state.chips.indexOf(email) !== -1) return;
+        state.chips.push(email);
+        var chip = document.createElement('span');
+        chip.className = 's4-email-chip';
+        chip.innerHTML = _escH(email) + ' ';
+        var rm = document.createElement('button');
+        rm.innerHTML = '<i class="fas fa-times"></i>';
+        rm.onclick = function() {
+            var idx = state.chips.indexOf(email);
+            if (idx !== -1) state.chips.splice(idx, 1);
+            chip.remove();
+        };
+        chip.appendChild(rm);
+        container.insertBefore(chip, input);
+    }
+
+    input.onkeydown = function(e) {
+        if ((e.key === 'Enter' || e.key === ',' || e.key === 'Tab') && input.value.trim()) {
+            e.preventDefault();
+            addChip(input.value);
+            input.value = '';
+        }
+        if (e.key === 'Backspace' && !input.value && state.chips.length) {
+            var last = state.chips.pop();
+            var lastChip = container.querySelector('.s4-email-chip:last-of-type');
+            if (lastChip) lastChip.remove();
+        }
+    };
+    input.onblur = function() {
+        if (input.value.trim()) { addChip(input.value); input.value = ''; }
+    };
+
+    container.onclick = function() { input.focus(); };
+    container.appendChild(input);
+    field.appendChild(container);
+    return field;
+}
+
+// ── Inject "Prepare Email" button into every tool's ACTIONS row ──
+function _injectEmailBtn(panelId) {
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    if (panel.querySelector('.s4-email-standalone-btn')) return;
+    var actionsRow = panel.querySelector('.s4-actions-row');
+    if (!actionsRow) return;
+    var btn = document.createElement('button');
+    btn.className = 's4-email-standalone-btn';
+    btn.innerHTML = '<i class="fas fa-envelope"></i> Prepare Email';
+    btn.onclick = function() { _openEmailComposer(panelId); };
+    actionsRow.appendChild(btn);
+}
+
+// ── Hook into openILSTool chain — inject email button on every tool open ──
+function _hookEmail() {
+    var orig = window.openILSTool;
+    if (typeof orig !== 'function' || orig._s4EmailHooked) return;
+    var wrapped = function(toolId) {
+        orig.call(this, toolId);
+        setTimeout(function() { _injectEmailBtn(toolId); }, 1200);
+    };
+    wrapped._s4EmailHooked = true;
+    // Preserve all existing hook flags
+    if (orig._s4ProdHooked) wrapped._s4ProdHooked = true;
+    if (orig._s4ChainHooked) wrapped._s4ChainHooked = true;
+    if (orig._s4R13Hooked) wrapped._s4R13Hooked = true;
+    if (orig._s4TodayHooked) wrapped._s4TodayHooked = true;
+    if (orig._s4R58Hooked) wrapped._s4R58Hooked = true;
+    if (orig._s4R65Hooked) wrapped._s4R65Hooked = true;
+    if (orig._s4R72Hooked) wrapped._s4R72Hooked = true;
+    if (orig._s4HLHooked) wrapped._s4HLHooked = true;
+    if (orig._s4R79Hooked) wrapped._s4R79Hooked = true;
+    if (orig._s4LPLHooked) wrapped._s4LPLHooked = true;
+    if (orig._s4PISHooked) wrapped._s4PISHooked = true;
+    if (orig._s4SCNHooked) wrapped._s4SCNHooked = true;
+    window.openILSTool = wrapped;
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(_hookEmail, 1250); });
+} else {
+    setTimeout(_hookEmail, 1250);
+}
+
+// ── Secure Email Vault (profile popover section) ──
+function _renderVaultList(filterText) {
+    var container = document.getElementById('s4VaultEmailList');
+    if (!container) return;
+    var vault = _loadVault();
+    if (filterText) {
+        var q = filterText.toLowerCase();
+        vault = vault.filter(function(e) {
+            return (e.subject && e.subject.toLowerCase().indexOf(q) !== -1) ||
+                   (e.toolName && e.toolName.toLowerCase().indexOf(q) !== -1) ||
+                   (e.to && e.to.join(',').toLowerCase().indexOf(q) !== -1);
+        });
+    }
+    if (!vault.length) {
+        container.innerHTML = '<div class="s4-vault-email-empty"><i class="fas fa-envelope-open"></i>' +
+            (filterText ? 'No emails match your search.' : 'No saved emails yet.<br>Use "Prepare Email" on any tool to get started.') + '</div>';
+        return;
+    }
+    var html = '';
+    vault.forEach(function(email, idx) {
+        var pinClass = email.pinned ? ' pinned' : '';
+        var flagClass = email.flagged ? ' flagged' : '';
+        var date = new Date(email.savedAt);
+        var dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        html += '<div class="s4-vault-email-item' + pinClass + flagClass + '" data-eidx="' + idx + '">' +
+            '<div class="s4-ve-icon"><i class="fas fa-envelope"></i></div>' +
+            '<div class="s4-ve-body">' +
+            '<div class="s4-ve-subject">' + _escH(email.subject) + '</div>' +
+            '<div class="s4-ve-meta">' + _escH(email.toolName) + ' \u2022 ' + dateStr +
+            (email.to && email.to.length ? ' \u2022 To: ' + _escH(email.to.slice(0, 2).join(', ')) + (email.to.length > 2 ? ' +' + (email.to.length - 2) : '') : '') +
+            '</div>' +
+            '<div class="s4-ve-actions">' +
+            '<button onclick="window._s4VaultAction(\'reopen\',' + idx + ')" title="Re-open in composer"><i class="fas fa-pen-to-square"></i></button>' +
+            '<button onclick="window._s4VaultAction(\'pin\',' + idx + ')" title="' + (email.pinned ? 'Unpin' : 'Pin') + '"><i class="fas fa-thumbtack"></i></button>' +
+            '<button onclick="window._s4VaultAction(\'flag\',' + idx + ')" class="s4-ve-flag" title="' + (email.flagged ? 'Unflag' : 'Flag') + '"><i class="fas fa-flag"></i></button>' +
+            '<button onclick="window._s4VaultAction(\'mailto\',' + idx + ')" title="Open in email client"><i class="fas fa-paper-plane"></i></button>' +
+            '<button onclick="window._s4VaultAction(\'delete\',' + idx + ')" title="Delete"><i class="fas fa-trash-alt"></i></button>' +
+            '</div></div></div>';
+    });
+    container.innerHTML = html;
+}
+
+window._s4VaultAction = function(action, idx) {
+    var vault = _loadVault();
+    if (idx < 0 || idx >= vault.length) return;
+    var email = vault[idx];
+    if (action === 'pin') {
+        email.pinned = !email.pinned;
+        _saveVault(vault);
+        _renderVaultList();
+    } else if (action === 'flag') {
+        email.flagged = !email.flagged;
+        _saveVault(vault);
+        _renderVaultList();
+    } else if (action === 'delete') {
+        vault.splice(idx, 1);
+        _saveVault(vault);
+        _renderVaultList();
+        if (typeof _toast === 'function') _toast('Email deleted from vault', 'info');
+    } else if (action === 'mailto') {
+        var to = (email.to || []).join(',');
+        var cc = (email.cc || []).join(',');
+        var bcc = (email.bcc || []).join(',');
+        var mailto = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(email.subject || '') + '&body=' + encodeURIComponent(email.body || '');
+        if (cc) mailto += '&cc=' + encodeURIComponent(cc);
+        if (bcc) mailto += '&bcc=' + encodeURIComponent(bcc);
+        window.open(mailto);
+    } else if (action === 'reopen') {
+        _openEmailComposer(email.toolId || 'hub-analytics');
+        // Pre-fill from saved email after a tiny delay
+        setTimeout(function() {
+            var subj = document.querySelector('.s4-email-modal input[type="text"]');
+            var ta = document.querySelector('.s4-email-modal textarea');
+            if (subj) subj.value = email.subject || '';
+            if (ta) ta.value = email.body || '';
+        }, 200);
+    }
+};
+
+window._s4RenderEmailVault = _renderVaultList;
+
+// Init vault on load
+function _initVault() {
+    _renderVaultList();
+    var searchInput = document.getElementById('s4VaultEmailSearch');
+    if (searchInput) {
+        searchInput.oninput = function() { _renderVaultList(searchInput.value); };
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(_initVault, 600); });
+} else {
+    setTimeout(_initVault, 600);
+}
+
+// TODO: Backend integration — POST /api/email-save, GET /api/email-vault,
+//   POST /api/email-ai-assist for server-side AI enhancement,
+//   DELETE /api/email-vault/:id for vault management.
+
+})();

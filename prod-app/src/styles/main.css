@@ -6912,3 +6912,63 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-ucb-footer button:hover{background:var(--border,rgba(0,0,0,0.04))}
 .s4-ucb-dl{background:linear-gradient(135deg,#5856D6,#007AFF) !important;color:#fff !important;border:none !important;font-weight:700 !important}
 .s4-ucb-dl:hover{opacity:0.9}
+/* ═══════════════════════════════════════════════════════════════
+   PREPARED EMAIL COMPOSER & SECURE EMAIL VAULT
+   ═══════════════════════════════════════════════════════════════ */
+/* ── Standalone "Prepare Email" button in ACTIONS row ── */
+.s4-email-standalone-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:10px;border:1px solid rgba(88,86,214,0.25);background:rgba(88,86,214,0.08);color:#5856D6;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.15s,border-color 0.15s;white-space:nowrap;margin-left:10px;vertical-align:middle}
+.s4-email-standalone-btn:hover{background:rgba(88,86,214,0.16);border-color:rgba(88,86,214,0.4)}
+.s4-email-standalone-btn i{font-size:0.8rem}
+/* ── Email Composer overlay ── */
+.s4-email-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:10002;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-email-modal{background:var(--surface,#fff);border-radius:16px;width:720px;max-width:95vw;max-height:92vh;overflow-y:auto;padding:0;box-shadow:0 24px 64px rgba(0,0,0,0.22);position:relative;display:flex;flex-direction:column}
+.s4-email-header{display:flex;align-items:center;gap:10px;padding:20px 24px 14px;border-bottom:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-email-header h2{font-size:1.05rem;font-weight:700;color:var(--text,#1d1d1f);margin:0;display:flex;align-items:center;gap:8px;flex:1}
+.s4-email-header h2 i{color:#5856D6}
+.s4-email-close{background:none;border:none;font-size:1.2rem;color:var(--muted,#6e6e73);cursor:pointer;padding:4px 8px;border-radius:6px;transition:background 0.15s}
+.s4-email-close:hover{background:rgba(0,0,0,0.05)}
+.s4-email-body{padding:18px 24px 10px;flex:1;overflow-y:auto}
+.s4-email-field{margin-bottom:14px}
+.s4-email-field label{display:block;font-size:0.75rem;font-weight:700;color:var(--steel,#6e6e73);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:5px}
+.s4-email-field input,.s4-email-field textarea,.s4-email-field select{width:100%;padding:10px 14px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:10px;font-size:0.85rem;color:var(--text,#1d1d1f);background:var(--surface,#fff);font-family:inherit;transition:border-color 0.15s;box-sizing:border-box}
+.s4-email-field input:focus,.s4-email-field textarea:focus{border-color:#5856D6;outline:none;box-shadow:0 0 0 3px rgba(88,86,214,0.12)}
+.s4-email-field textarea{min-height:160px;resize:vertical;line-height:1.55}
+.s4-email-recipients{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:10px;min-height:42px;align-items:center;cursor:text;transition:border-color 0.15s}
+.s4-email-recipients:focus-within{border-color:#5856D6;box-shadow:0 0 0 3px rgba(88,86,214,0.12)}
+.s4-email-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(88,86,214,0.1);color:#5856D6;font-size:0.78rem;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.s4-email-chip button{background:none;border:none;color:#5856D6;cursor:pointer;font-size:0.7rem;padding:0 2px;opacity:0.6;transition:opacity 0.15s}
+.s4-email-chip button:hover{opacity:1}
+.s4-email-chip-input{border:none;outline:none;font-size:0.82rem;flex:1;min-width:120px;background:transparent;color:var(--text,#1d1d1f)}
+.s4-email-options{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+.s4-email-opt{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1px solid var(--border,rgba(0,0,0,0.08));background:var(--surface,#fff);font-size:0.76rem;font-weight:600;cursor:pointer;color:var(--steel,#6e6e73);transition:all 0.15s;user-select:none}
+.s4-email-opt:hover{border-color:rgba(88,86,214,0.3);color:#5856D6}
+.s4-email-opt.active{background:rgba(88,86,214,0.08);border-color:rgba(88,86,214,0.3);color:#5856D6}
+.s4-email-opt i{font-size:0.72rem}
+.s4-email-ai-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(88,86,214,0.06);border:1px solid rgba(88,86,214,0.12);font-size:0.78rem;font-weight:600;color:#5856D6;margin-bottom:14px;animation:s4FadeIn 0.3s}
+.s4-email-footer{display:flex;gap:10px;justify-content:flex-end;padding:14px 24px 18px;border-top:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-email-footer button{padding:10px 20px;border-radius:10px;font-size:0.84rem;font-weight:600;cursor:pointer;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);transition:all 0.15s;display:flex;align-items:center;gap:7px}
+.s4-email-footer button:hover{background:var(--border,rgba(0,0,0,0.04))}
+.s4-email-send{background:linear-gradient(135deg,#5856D6,#007AFF) !important;color:#fff !important;border:none !important}
+.s4-email-send:hover{opacity:0.9 !important}
+.s4-email-save{background:rgba(52,199,89,0.1) !important;color:#22863a !important;border:1px solid rgba(52,199,89,0.25) !important}
+.s4-email-save:hover{background:rgba(52,199,89,0.18) !important}
+.s4-email-attach-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.s4-email-attach-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(0,122,255,0.08);color:#007AFF;font-size:0.75rem;font-weight:600;padding:5px 10px;border-radius:8px}
+.s4-email-attach-tag i{font-size:0.68rem}
+/* ── Secure Email Vault (profile popover section) ── */
+.s4-vault-email-section{max-height:320px;overflow-y:auto;padding:0 2px}
+.s4-vault-email-search{width:100%;padding:8px 12px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.8rem;margin-bottom:10px;box-sizing:border-box;background:var(--surface,#fff);color:var(--text,#1d1d1f)}
+.s4-vault-email-search:focus{border-color:#5856D6;outline:none}
+.s4-vault-email-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border,rgba(0,0,0,0.06));border-radius:10px;margin-bottom:8px;transition:border-color 0.15s;cursor:default;position:relative}
+.s4-vault-email-item:hover{border-color:rgba(88,86,214,0.25)}
+.s4-vault-email-item.pinned{border-color:rgba(255,149,0,0.35);background:rgba(255,149,0,0.03)}
+.s4-vault-email-item.flagged .s4-ve-flag{color:#ff375f}
+.s4-ve-icon{width:32px;height:32px;border-radius:8px;background:rgba(88,86,214,0.1);display:flex;align-items:center;justify-content:center;color:#5856D6;font-size:0.8rem;flex-shrink:0}
+.s4-ve-body{flex:1;min-width:0}
+.s4-ve-subject{font-size:0.8rem;font-weight:600;color:var(--text,#1d1d1f);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s4-ve-meta{font-size:0.7rem;color:var(--muted,#6e6e73);margin-top:2px}
+.s4-ve-actions{display:flex;gap:4px;margin-top:4px}
+.s4-ve-actions button{background:none;border:none;font-size:0.68rem;color:var(--steel,#6e6e73);cursor:pointer;padding:2px 5px;border-radius:4px;transition:color 0.15s,background 0.15s}
+.s4-ve-actions button:hover{color:#5856D6;background:rgba(88,86,214,0.08)}
+.s4-vault-email-empty{text-align:center;padding:24px 12px;font-size:0.8rem;color:var(--muted,#6e6e73)}
+.s4-vault-email-empty i{font-size:1.4rem;color:rgba(88,86,214,0.3);display:block;margin-bottom:8px}
