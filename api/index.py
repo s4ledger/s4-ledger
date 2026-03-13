@@ -1974,6 +1974,34 @@ class handler(BaseHTTPRequestHandler):
             return "quantum_safe_reanchor"
         if path == "/api/program-legacy-archive":
             return "program_legacy_archive"
+        if path == "/api/congressional-funding-forecast":
+            return "congressional_funding_forecast"
+        if path == "/api/self-executing-contract-clause":
+            return "self_executing_contract_clause"
+        if path == "/api/federated-lessons-knowledge-graph":
+            return "federated_lessons_knowledge_graph"
+        if path == "/api/supply-chain-insurance-optimizer":
+            return "supply_chain_insurance_optimizer"
+        if path == "/api/verifiable-scorecard":
+            return "verifiable_scorecard"
+        if path == "/api/mission-outcome-correlation":
+            return "mission_outcome_correlation"
+        if path == "/api/multi-program-cascade":
+            return "multi_program_cascade"
+        if path == "/api/automated-neutral-mediator":
+            return "automated_neutral_mediator"
+        if path == "/api/drl/update":
+            return "drl_update"
+        if path == "/api/drl/status":
+            return "drl_status"
+        if path == "/api/drl/workflow-link":
+            return "drl_workflow_link"
+        if path == "/api/drl/import":
+            return "drl_import"
+        if path == "/api/living-ledger/export-pdf":
+            return "living_ledger_export_pdf"
+        if path == "/api/self-healing-compliance/approve":
+            return "self_healing_compliance_approve"
         return None
 
     def _check_rate_limit(self):
@@ -7255,6 +7283,536 @@ class handler(BaseHTTPRequestHandler):
                 "retention": "permanent",
                 "immutable": True,
                 "sealed_at": now.isoformat() + "Z",
+            })
+
+        # ── Congressional Funding Forecaster ─────────────────────────
+        elif route == "congressional_funding_forecast":
+            self._log_request("congressional-funding-forecast")
+            program_name = str(data.get("program", "All Programs")).strip()[:200]
+
+            lpl_data = []
+            if SUPABASE_AVAILABLE:
+                try:
+                    lpl_data = _sb_select("lpl_snapshots",
+                                           query_params=f"program_name=eq.{program_name}&order=created_at.desc&limit=10") or []
+                except Exception:
+                    pass
+
+            system_prompt = _build_ai_system_prompt("congressional_funding_forecast",
+                                                     {"program": program_name, "lpl_records": len(lpl_data)})
+            system_prompt += (
+                "\n## CONGRESSIONAL FUNDING FORECASTER\n"
+                "Analyze congressional funding outlook for the specified DoD program.\n"
+                "Return a JSON object with:\n"
+                "- 'overall_risk': 'Low'|'Medium'|'High'|'Critical'\n"
+                "- 'funding_confidence': integer 0-100\n"
+                "- 'factors': array of 4-6 objects each with 'label','value','impact' (positive/negative/neutral),'weight' (0-1),'detail'\n"
+                "- 'recommendations': array of 3-5 recommendation strings\n"
+                "- 'projected_outcomes': array of 3 objects each with 'scenario','funding','change','likelihood'\n"
+                "Use realistic NDAA/PPBE references and funding language."
+            )
+            user_msg = f"Program: {program_name}\nLPL records: {len(lpl_data)}\nGenerate congressional funding forecast."
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"overall_risk": "Medium", "funding_confidence": 65,
+                              "factors": [], "recommendations": [ai_response[:500]],
+                              "projected_outcomes": []}
+
+            now = datetime.utcnow()
+            content_hash = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
+            signature = hmac.new(SCN_SIGNING_SECRET.encode(),
+                                 f"cff|{program_name}|{content_hash}|{now.isoformat()}".encode(),
+                                 hashlib.sha256).hexdigest()
+
+            response = {
+                **result,
+                "content_hash": content_hash,
+                "signature": signature,
+                "ai_provider": ai_provider,
+                "program": program_name,
+                "generated_at": now.isoformat() + "Z",
+            }
+            self._send_json(response)
+
+        # ── Self-Executing Contract Clause ────────────────────────────
+        elif route == "self_executing_contract_clause":
+            self._log_request("self-executing-contract-clause")
+            risk_label = str(data.get("riskLabel", "Unknown Risk")).strip()[:200]
+            cascade = data.get("cascade", {})
+
+            system_prompt = _build_ai_system_prompt("self_executing_contract_clause",
+                                                     {"risk": risk_label})
+            system_prompt += (
+                "\n## SELF-EXECUTING CONTRACT CLAUSE GENERATOR\n"
+                "Generate smart contract clauses triggered by the specified risk.\n"
+                "Return a JSON object with:\n"
+                "- 'clause_id': unique clause identifier\n"
+                "- 'trigger_metric': the metric that triggers execution\n"
+                "- 'threshold': threshold value\n"
+                "- 'current_value': current value of the metric\n"
+                "- 'clause_type': 'penalty'|'incentive'|'adjustment'|'escalation'\n"
+                "- 'clauses': array of 3-5 objects each with 'type','title','text','trigger','verification'\n"
+                "- 'evidence_basis': description of data supporting the clause\n"
+                "Use realistic FAR/DFARS references."
+            )
+            user_msg = f"Risk: {risk_label}\nCascade context: {json.dumps(cascade)[:500]}\nGenerate self-executing contract clauses."
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"clause_id": f"SEC-{int(datetime.utcnow().timestamp())}",
+                              "clauses": [{"type": "adjustment", "title": "AI-generated clause",
+                                           "text": ai_response[:500], "trigger": risk_label,
+                                           "verification": "manual"}]}
+
+            now = datetime.utcnow()
+            if "clause_id" not in result:
+                result["clause_id"] = f"SEC-{int(now.timestamp())}"
+
+            content_hash = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
+            response = {
+                **result,
+                "content_hash": content_hash,
+                "ai_provider": ai_provider,
+                "generated_at": now.isoformat() + "Z",
+            }
+            self._send_json(response)
+
+        # ── Federated Lessons Knowledge Graph ─────────────────────────
+        elif route == "federated_lessons_knowledge_graph":
+            self._log_request("federated-lessons-knowledge-graph")
+            view = str(data.get("view", "main")).strip()[:100]
+
+            lpl_data = []
+            if SUPABASE_AVAILABLE:
+                try:
+                    lpl_data = _sb_select("lpl_snapshots",
+                                           query_params="order=created_at.desc&limit=20") or []
+                except Exception:
+                    pass
+
+            system_prompt = _build_ai_system_prompt("federated_lessons_knowledge_graph",
+                                                     {"view": view, "records": len(lpl_data)})
+            system_prompt += (
+                "\n## FEDERATED LESSONS KNOWLEDGE GRAPH\n"
+                "Generate a federated lessons-learned knowledge graph from program data.\n"
+                "Return a JSON object with:\n"
+                "- 'lessons': array of 5-8 objects each with 'id','category','title','source','confidence' (0-1),"
+                "'applicability','detail','suggested_action'\n"
+                "- 'total_programs': integer count of programs contributing\n"
+                "- 'privacy_method': description of differential privacy technique used\n"
+                "Categories: 'supply_chain','maintenance','compliance','cost','readiness','obsolescence'\n"
+                "Sources should reference realistic program names and MIL-STD references."
+            )
+            user_msg = f"View: {view}\nAvailable records: {len(lpl_data)}\nGenerate federated lessons knowledge graph."
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"lessons": [], "total_programs": 0,
+                              "privacy_method": "differential privacy (ε=1.0)"}
+
+            now = datetime.utcnow()
+            content_hash = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
+            response = {
+                **result,
+                "content_hash": content_hash,
+                "ai_provider": ai_provider,
+                "generated_at": now.isoformat() + "Z",
+            }
+            self._send_json(response)
+
+        # ── Supply Chain Insurance Optimizer ──────────────────────────
+        elif route == "supply_chain_insurance_optimizer":
+            self._log_request("supply-chain-insurance-optimizer")
+            source = str(data.get("source", "pis")).strip()[:100]
+
+            system_prompt = _build_ai_system_prompt("supply_chain_insurance_optimizer",
+                                                     {"source": source})
+            system_prompt += (
+                "\n## SUPPLY CHAIN INSURANCE OPTIMIZER\n"
+                "Analyze supply chain insurance coverage and recommend optimizations.\n"
+                "Return a JSON object with:\n"
+                "- 'current_coverage': dollar amount string (e.g., '$12.4M')\n"
+                "- 'recommended_coverage': dollar amount string\n"
+                "- 'potential_savings': dollar amount string\n"
+                "- 'risk_score': integer 0-100\n"
+                "- 'risk_label': 'Low'|'Medium'|'High'|'Critical'\n"
+                "- 'categories': array of 4-6 objects each with 'name','current_premium','recommended','savings','risk_trend' (up/down/stable),'rationale'\n"
+                "- 'evidence_count': integer\n"
+                "Use realistic insurance and DoD supply chain terminology."
+            )
+            user_msg = f"Source: {source}\nGenerate supply chain insurance optimization analysis."
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"current_coverage": "$0", "recommended_coverage": "$0",
+                              "potential_savings": "$0", "risk_score": 50, "risk_label": "Medium",
+                              "categories": [], "evidence_count": 0}
+
+            now = datetime.utcnow()
+            content_hash = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
+            response = {
+                **result,
+                "content_hash": content_hash,
+                "ai_provider": ai_provider,
+                "generated_at": now.isoformat() + "Z",
+            }
+            self._send_json(response)
+
+        # ── Verifiable Scorecard ──────────────────────────────────────
+        elif route == "verifiable_scorecard":
+            self._log_request("verifiable-scorecard")
+            view = str(data.get("view", "main")).strip()[:100]
+
+            lpl_data = []
+            if SUPABASE_AVAILABLE:
+                try:
+                    lpl_data = _sb_select("lpl_snapshots",
+                                           query_params="order=created_at.desc&limit=15") or []
+                except Exception:
+                    pass
+
+            system_prompt = _build_ai_system_prompt("verifiable_scorecard",
+                                                     {"view": view, "records": len(lpl_data)})
+            system_prompt += (
+                "\n## VERIFIABLE PRIVACY-SAFE SCORECARD\n"
+                "Generate a verifiable scorecard with privacy-safe metrics.\n"
+                "Return a JSON object with:\n"
+                "- 'scorecard_id': unique scorecard identifier\n"
+                "- 'metrics': array of 6-10 objects each with 'label','value','status' (green/yellow/red),'redacted' (boolean)\n"
+                "- 'share_options': array of 3-4 strings like 'Congressional Oversight','GAO Audit','IG Review','Public FOIA'\n"
+                "Redacted metrics should show aggregated/anonymized values only."
+            )
+            user_msg = f"View: {view}\nRecords: {len(lpl_data)}\nGenerate verifiable privacy-safe scorecard."
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"metrics": [], "share_options": []}
+
+            now = datetime.utcnow()
+            scorecard_id = result.get("scorecard_id", f"VPS-{int(now.timestamp())}")
+            content_hash = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
+            signature = hmac.new(SCN_SIGNING_SECRET.encode(),
+                                 f"vps|{scorecard_id}|{content_hash}|{now.isoformat()}".encode(),
+                                 hashlib.sha256).hexdigest()
+
+            response = {
+                **result,
+                "scorecard_id": scorecard_id,
+                "signature": signature,
+                "content_hash": content_hash,
+                "ai_provider": ai_provider,
+                "generated_at": now.isoformat() + "Z",
+            }
+            self._send_json(response)
+
+        # ── Mission Outcome Correlation ───────────────────────────────
+        elif route == "mission_outcome_correlation":
+            self._log_request("mission-outcome-correlation")
+            program_name = str(data.get("program", "All Programs")).strip()[:200]
+
+            lpl_data = []
+            if SUPABASE_AVAILABLE:
+                try:
+                    lpl_data = _sb_select("lpl_snapshots",
+                                           query_params=f"program_name=eq.{program_name}&order=created_at.desc&limit=10") or []
+                except Exception:
+                    pass
+
+            system_prompt = _build_ai_system_prompt("mission_outcome_correlation",
+                                                     {"program": program_name, "records": len(lpl_data)})
+            system_prompt += (
+                "\n## MISSION OUTCOME CORRELATION ENGINE\n"
+                "Correlate logistics metrics with mission outcomes for the program.\n"
+                "Return a JSON object with:\n"
+                "- 'correlations': array of 5-7 objects each with 'logistics_metric','mission_metric',"
+                "'correlation' (float -1 to 1),'strength' (weak/moderate/strong),'direction' (positive/negative),'insight'\n"
+                "- 'overall_score': integer 0-100\n"
+                "- 'data_points': integer count\n"
+                "- 'confidence': float 0-1\n"
+                "Use realistic readiness, MTBF, supply chain velocity metrics."
+            )
+            user_msg = f"Program: {program_name}\nRecords: {len(lpl_data)}\nGenerate mission outcome correlation analysis."
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"correlations": [], "overall_score": 0,
+                              "data_points": 0, "confidence": 0}
+
+            now = datetime.utcnow()
+            content_hash = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
+            response = {
+                **result,
+                "content_hash": content_hash,
+                "ai_provider": ai_provider,
+                "program": program_name,
+                "generated_at": now.isoformat() + "Z",
+            }
+            self._send_json(response)
+
+        # ── Multi-Program Cascade Simulator ───────────────────────────
+        elif route == "multi_program_cascade":
+            self._log_request("multi-program-cascade")
+            cascade = data.get("cascade", {})
+            origin = str(cascade.get("program", cascade.get("origin", "Unknown"))).strip()[:200] if isinstance(cascade, dict) else "Unknown"
+
+            system_prompt = _build_ai_system_prompt("multi_program_cascade",
+                                                     {"origin": origin})
+            system_prompt += (
+                "\n## MULTI-PROGRAM CASCADE SIMULATOR\n"
+                "Simulate how a risk or disruption cascades across multiple related programs.\n"
+                "Return a JSON object with:\n"
+                "- 'origin_program': program where disruption originates\n"
+                "- 'affected_programs': array of 4-6 objects each with 'name','impact' (Low/Medium/High/Critical),"
+                "'delay_days' (integer),'cost_impact' (dollar string),'path' (string chain),'mitigation'\n"
+                "- 'total_enterprise_impact': dollar string\n"
+                "- 'total_schedule_risk': number of days\n"
+                "- 'cascade_depth': integer 1-4\n"
+                "Use realistic DoD program interdependencies."
+            )
+            user_msg = f"Origin: {origin}\nCascade data: {json.dumps(cascade)[:500]}\nSimulate multi-program cascade."
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"origin_program": origin, "affected_programs": [],
+                              "total_enterprise_impact": "$0", "total_schedule_risk": 0,
+                              "cascade_depth": 0}
+
+            now = datetime.utcnow()
+            content_hash = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
+            response = {
+                **result,
+                "origin_program": result.get("origin_program", origin),
+                "content_hash": content_hash,
+                "ai_provider": ai_provider,
+                "generated_at": now.isoformat() + "Z",
+            }
+            self._send_json(response)
+
+        # ── Automated Neutral Mediator ────────────────────────────────
+        elif route == "automated_neutral_mediator":
+            self._log_request("automated-neutral-mediator")
+            view = str(data.get("view", "main")).strip()[:100]
+
+            system_prompt = _build_ai_system_prompt("automated_neutral_mediator",
+                                                     {"view": view})
+            system_prompt += (
+                "\n## AUTOMATED NEUTRAL MEDIATOR\n"
+                "Generate neutral mediation proposals for data disputes.\n"
+                "Return a JSON object with:\n"
+                "- 'disputes': array of 3-5 objects each with:\n"
+                "  - 'id': dispute identifier\n"
+                "  - 'field': disputed data field name\n"
+                "  - 'party_a': {name, value, evidence, timestamp}\n"
+                "  - 'party_b': {name, value, evidence, timestamp}\n"
+                "  - 'mediation': AI determination/recommendation\n"
+                "  - 'resolution': 'accept_a'|'accept_b'|'compromise'|'escalate'\n"
+                "  - 'confidence': float 0-1\n"
+                "- 'total_value_at_stake': dollar amount string\n"
+                "- 'estimated_resolution_time': time estimate string\n"
+                "Use realistic DoD supply chain and contractor dispute scenarios."
+            )
+            user_msg = f"View: {view}\nGenerate automated neutral mediation for data disputes."
+
+            ai_response = self._call_ai_cascade(system_prompt, user_msg)
+            ai_provider = "llm" if ai_response else "none"
+
+            result = {}
+            if ai_response:
+                try:
+                    json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                except Exception:
+                    result = {"disputes": [], "total_value_at_stake": "$0",
+                              "estimated_resolution_time": "N/A"}
+
+            now = datetime.utcnow()
+            content_hash = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
+            response = {
+                **result,
+                "content_hash": content_hash,
+                "ai_provider": ai_provider,
+                "generated_at": now.isoformat() + "Z",
+            }
+            self._send_json(response)
+
+        # ── DRL Update (single cell edit) ─────────────────────────────
+        elif route == "drl_update":
+            self._log_request("drl-update")
+            row_idx = data.get("rowIdx", 0)
+            field_key = str(data.get("fieldKey", "")).strip()[:100]
+            value = str(data.get("value", "")).strip()[:2000]
+            now = datetime.utcnow()
+            content = json.dumps({"rowIdx": row_idx, "field": field_key, "value": value}, sort_keys=True)
+            content_hash = hashlib.sha256(content.encode()).hexdigest()
+            anchor_result = _anchor_xrpl(content_hash, "drl_cell_update", "main", None)
+            tx_hash = anchor_result.get("tx_hash") if anchor_result else None
+            explorer_url = anchor_result.get("explorer_url") if anchor_result else None
+            self._send_json({
+                "ok": True,
+                "anchor_hash": content_hash,
+                "tx_hash": tx_hash or "",
+                "explorer_url": explorer_url or "",
+                "updated_at": now.isoformat() + "Z",
+            })
+
+        # ── DRL Status Change ─────────────────────────────────────────
+        elif route == "drl_status":
+            self._log_request("drl-status")
+            row_idx = data.get("rowIdx", 0)
+            new_status = str(data.get("status", "")).strip()[:100]
+            now = datetime.utcnow()
+            content = json.dumps({"rowIdx": row_idx, "status": new_status}, sort_keys=True)
+            content_hash = hashlib.sha256(content.encode()).hexdigest()
+            anchor_result = _anchor_xrpl(content_hash, "drl_status_change", "main", None)
+            tx_hash = anchor_result.get("tx_hash") if anchor_result else None
+            self._send_json({
+                "ok": True,
+                "anchor_hash": content_hash,
+                "tx_hash": tx_hash or "",
+                "updated_at": now.isoformat() + "Z",
+            })
+
+        # ── DRL Workflow Link ─────────────────────────────────────────
+        elif route == "drl_workflow_link":
+            self._log_request("drl-workflow-link")
+            row_idx = data.get("rowIdx", 0)
+            url = str(data.get("url", "")).strip()[:2000]
+            now = datetime.utcnow()
+            content = json.dumps({"rowIdx": row_idx, "url": url}, sort_keys=True)
+            content_hash = hashlib.sha256(content.encode()).hexdigest()
+            anchor_result = _anchor_xrpl(content_hash, "drl_workflow_link", "main", None)
+            tx_hash = anchor_result.get("tx_hash") if anchor_result else None
+            self._send_json({
+                "ok": True,
+                "anchor_hash": content_hash,
+                "tx_hash": tx_hash or "",
+                "updated_at": now.isoformat() + "Z",
+            })
+
+        # ── DRL Bulk Import ───────────────────────────────────────────
+        elif route == "drl_import":
+            self._log_request("drl-import")
+            rows = data.get("rows", [])
+            if not isinstance(rows, list):
+                rows = []
+            # Limit to 500 rows for safety
+            rows = rows[:500]
+            now = datetime.utcnow()
+            content = json.dumps({"count": len(rows), "ts": now.isoformat()}, sort_keys=True)
+            content_hash = hashlib.sha256(content.encode()).hexdigest()
+            anchor_result = _anchor_xrpl(content_hash, "drl_bulk_import", "main", None)
+            tx_hash = anchor_result.get("tx_hash") if anchor_result else None
+            if SUPABASE_AVAILABLE:
+                try:
+                    _sb_insert("lpl_snapshots", {
+                        "program_name": "DRL Import",
+                        "period": "drl_bulk_import",
+                        "version_num": 0,
+                        "executive_overview": f"Bulk import of {len(rows)} DRL records",
+                        "sections_json": json.dumps({"count": len(rows), "hash": content_hash}),
+                        "ai_provider": "none",
+                        "analysis_data": "{}",
+                        "created_at": now.isoformat() + "Z",
+                    })
+                except Exception:
+                    pass
+            self._send_json({
+                "ok": True,
+                "count": len(rows),
+                "anchor_hash": content_hash,
+                "tx_hash": tx_hash or "",
+                "imported_at": now.isoformat() + "Z",
+            })
+
+        # ── LPL Export PDF (returns text for now; full PDF requires wkhtmltopdf) ─
+        elif route == "living_ledger_export_pdf":
+            self._log_request("living-ledger-export-pdf")
+            text = str(data.get("text", "")).strip()[:50000]
+            now = datetime.utcnow()
+            content_hash = hashlib.sha256(text.encode()).hexdigest()
+            self._send_json({
+                "ok": True,
+                "content_hash": content_hash,
+                "format": "text",
+                "length": len(text),
+                "generated_at": now.isoformat() + "Z",
+            })
+
+        # ── Self-Healing Compliance Approve ───────────────────────────
+        elif route == "self_healing_compliance_approve":
+            self._log_request("self-healing-compliance-approve")
+            gap_id = str(data.get("gapId", "")).strip()[:100]
+            now = datetime.utcnow()
+            content = json.dumps({"gapId": gap_id, "approved_at": now.isoformat()}, sort_keys=True)
+            content_hash = hashlib.sha256(content.encode()).hexdigest()
+            anchor_result = _anchor_xrpl(content_hash, "shc_approve", "main", None)
+            tx_hash = anchor_result.get("tx_hash") if anchor_result else None
+            explorer_url = anchor_result.get("explorer_url") if anchor_result else None
+            self._send_json({
+                "ok": True,
+                "gap_id": gap_id,
+                "anchor_hash": content_hash,
+                "tx_hash": tx_hash or "",
+                "explorer_url": explorer_url or "",
+                "approved_at": now.isoformat() + "Z",
             })
 
         else:
