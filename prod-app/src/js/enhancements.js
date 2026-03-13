@@ -13980,17 +13980,21 @@ function _openLPLModal() {
     html += '<div id="s4MoceContent" class="s4-moce-content"><button class="s4-moce-run-btn" onclick="window._s4MissionOutcomeCorrelation()"><i class="fas fa-play"></i> Run Correlation Analysis</button></div>';
     html += '</div>';
 
-    // Footer
-    html += '<div class="s4-lpl-footer">';
+    // Footer – two compact rows
+    html += '<div class="s4-lpl-footer s4-footer-compact">';
+    html += '<div class="s4-footer-row">';
     html += '<button onclick="window._s4LplDownloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button>';
     html += '<button class="s4-lpl-signed-pkg-btn" onclick="window._s4LplSignedPackage()"><i class="fas fa-file-signature"></i> Generate Signed Executive Package</button>';
     html += '<button onclick="window._s4LplCopyEmail()"><i class="fas fa-copy"></i> Copy for Email</button>';
     html += '<button class="s4-lpl-share-btn" onclick="window._s4LplShare()"><i class="fas fa-user-plus"></i> Share with Team</button>';
     html += '<button class="s4-lpl-ucb-btn" onclick="window._s4UnifiedCommandBrief()"><i class="fas fa-star"></i> Unified Command Brief</button>';
+    html += '</div>';
+    html += '<div class="s4-footer-row">';
     html += '<button class="s4-zt-handoff-btn" onclick="window._s4ZeroTrustHandoff()"><i class="fas fa-right-left"></i> Generate Zero-Trust Handoff Package</button>';
     html += '<button class="s4-aar-btn" onclick="window._s4ImmutableAAR()"><i class="fas fa-clipboard-list"></i> Generate Immutable After-Action Review</button>';
     html += '<button class="s4-cfif-btn" onclick="window._s4CongressionalFundingForecaster()"><i class="fas fa-landmark"></i> Congressional Funding Impact Forecaster</button>';
     html += '<button class="s4-lpl-primary" onclick="window._s4LplSaveClose()"><i class="fas fa-save"></i> Save & Close</button>';
+    html += '</div>';
     html += '</div>';
 
     html += '</div>';
@@ -14447,16 +14451,20 @@ function _openPISModal(panelId) {
     html += '<div id="s4PisMonteCarloLegend" class="s4-pis-montecarlo-legend"></div>';
     html += '</div>';
 
-    // Footer
-    html += '<div class="s4-pis-footer">';
+    // Footer – two compact rows
+    html += '<div class="s4-pis-footer s4-footer-compact">';
+    html += '<div class="s4-footer-row">';
     html += '<button onclick="window._s4PisExportSlide()"><i class="fas fa-file-powerpoint"></i> Export as Briefing Slide</button>';
     html += '<button onclick="window._s4PisSaveScenarioToLPL()"><i class="fas fa-book-open"></i> Save Scenario to Living Program Ledger</button>';
     html += '<button class="s4-cmil-btn" onclick="window._s4SaveToCMIL()"><i class="fas fa-shield-halved"></i> Save to Cryptographic Mission Impact Ledger</button>';
+    html += '<button class="s4-pis-ucb-btn" onclick="window._s4UnifiedCommandBrief()"><i class="fas fa-star"></i> Unified Command Brief</button>';
+    html += '</div>';
+    html += '<div class="s4-footer-row">';
     html += '<button class="s4-semc-btn" onclick="window._s4SelfExecutingContractClause()"><i class="fas fa-file-contract"></i> Self-Executing Contract Clause</button>';
     html += '<button class="s4-scio-btn" onclick="window._s4SupplyChainInsuranceOptimizer()"><i class="fas fa-shield-virus"></i> Supply Chain Insurance Optimizer</button>';
     html += '<button class="s4-mpcs-btn" onclick="window._s4MultiProgramCascadeSimulator()"><i class="fas fa-diagram-project"></i> Multi-Program Cascade Simulator</button>';
-    html += '<button class="s4-pis-ucb-btn" onclick="window._s4UnifiedCommandBrief()"><i class="fas fa-star"></i> Unified Command Brief</button>';
     html += '<button class="s4-pis-primary" onclick="this.closest(\'.s4-pis-overlay\').remove()"><i class="fas fa-check"></i> Done</button>';
+    html += '</div>';
     html += '</div>';
 
     html += '</div>';

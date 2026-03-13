@@ -6666,12 +6666,12 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-lpl-textarea.s4-lpl-loading{opacity:0.5;background:repeating-linear-gradient(90deg,var(--surface,#fff) 0%,rgba(52,199,89,0.03) 50%,var(--surface,#fff) 100%);background-size:200% 100%;animation:s4HlShimmer 1.5s ease infinite}
 .s4-lpl-changes-add{color:#22863a;background:rgba(52,199,89,0.08);padding:0 2px;border-radius:3px}
 .s4-lpl-changes-del{color:#cc3333;background:rgba(255,59,48,0.08);padding:0 2px;border-radius:3px;text-decoration:line-through}
-.s4-lpl-footer{display:flex;gap:8px;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border,rgba(0,0,0,0.06));margin-top:8px;flex-wrap:wrap}
-.s4-lpl-footer button{padding:10px 20px;border-radius:10px;font-size:0.82rem;font-weight:600;cursor:pointer;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);transition:background 0.15s}
+.s4-lpl-footer{display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px solid var(--border,rgba(0,0,0,0.06));margin-top:8px}
+.s4-lpl-footer button{padding:6px 14px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);transition:background 0.15s;white-space:nowrap}
 .s4-lpl-footer button:hover{background:rgba(52,199,89,0.06)}
 .s4-lpl-footer button.s4-lpl-primary{background:#22863a;color:#fff;border:none;font-weight:700}
 .s4-lpl-footer button.s4-lpl-primary:hover{background:#1a6e2e}
-.s4-lpl-footer button i{margin-right:5px}
+.s4-lpl-footer button i{margin-right:4px;font-size:0.7rem}
 .s4-lpl-share-btn{background:rgba(0,122,255,0.08)!important;color:#007AFF!important;border-color:rgba(0,122,255,0.2)!important;font-weight:700!important}
 .s4-lpl-share-btn:hover{background:rgba(0,122,255,0.15)!important}
 .s4-lpl-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(52,199,89,0.2);border-top-color:#22863a;border-radius:50%;animation:s4HlSpin 0.6s linear infinite;margin-right:6px;vertical-align:middle}
@@ -6719,13 +6719,15 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-pis-mitigation-list{list-style:none;padding:0;margin:0}
 .s4-pis-mitigation-item{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border-radius:8px;font-size:0.82rem;line-height:1.5;color:var(--text,#1d1d1f);border:1px solid var(--border,rgba(0,0,0,0.06));margin-bottom:6px;background:rgba(52,199,89,0.02)}
 .s4-pis-mitigation-item i{color:#22863a;margin-top:3px;flex-shrink:0;font-size:0.75rem}
-.s4-pis-footer{display:flex;gap:8px;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border,rgba(0,0,0,0.06));margin-top:8px;flex-wrap:wrap}
-.s4-pis-footer button{padding:10px 20px;border-radius:10px;font-size:0.82rem;font-weight:600;cursor:pointer;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);transition:background 0.15s}
+.s4-pis-footer{display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px solid var(--border,rgba(0,0,0,0.06));margin-top:8px}
+.s4-pis-footer button{padding:6px 14px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);transition:background 0.15s;white-space:nowrap}
 .s4-pis-footer button:hover{background:rgba(255,149,0,0.06)}
 .s4-pis-footer button.s4-pis-primary{background:#FF9500;color:#fff;border:none;font-weight:700}
 .s4-pis-footer button.s4-pis-primary:hover{background:#e08600}
-.s4-pis-footer button i{margin-right:5px}
+.s4-pis-footer button i{margin-right:4px;font-size:0.7rem}
 .s4-pis-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,149,0,0.2);border-top-color:#FF9500;border-radius:50%;animation:s4HlSpin 0.6s linear infinite;margin-right:6px;vertical-align:middle}
+/* ── Compact two-row footer layout (LPL & PIS) ── */
+.s4-footer-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
 /* ═══ Secure Collaboration Network ═══ */
 .s4-scn-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:10px 16px;border-radius:10px;background:rgba(94,92,230,0.04);border:1px solid rgba(94,92,230,0.12)}
 .s4-scn-toggle{display:inline-flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;color:var(--text,#1d1d1f);cursor:pointer;white-space:nowrap}
