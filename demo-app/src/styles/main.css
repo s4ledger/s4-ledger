@@ -7095,3 +7095,138 @@ h4{font-size:0.95rem;font-weight:700}
 /* ── Import Inline button in composer ── */
 .s4-email-import-inline{border-color:rgba(175,82,222,0.25) !important;background:rgba(175,82,222,0.06) !important;color:#af52de !important}
 .s4-email-import-inline:hover{background:rgba(175,82,222,0.14) !important}
+/* ═══ Feature 1: Cryptographic Mission Impact Ledger ═══ */
+.s4-cmil-btn{background:rgba(0,122,255,0.08) !important;border-color:rgba(0,122,255,0.2) !important;color:#007AFF !important}
+.s4-cmil-btn:hover{background:rgba(0,122,255,0.16) !important}
+.s4-cmil-confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10005;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-cmil-confirm-card{background:var(--surface,#fff);border-radius:16px;width:480px;max-width:92vw;padding:32px;box-shadow:0 24px 64px rgba(0,0,0,0.22);text-align:center}
+.s4-cmil-confirm-card h3{font-size:1.05rem;font-weight:700;color:var(--text,#1d1d1f);margin:16px 0 12px}
+.s4-cmil-confirm-icon{font-size:2.2rem;color:#007AFF}
+.s4-cmil-confirm-status{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(52,199,89,0.1);color:#34c759;font-size:0.78rem;font-weight:600;margin-bottom:18px}
+.s4-cmil-detail{text-align:left;padding:6px 0;font-size:0.82rem;color:var(--text,#1d1d1f);border-bottom:1px solid var(--border,rgba(0,0,0,0.05))}
+.s4-cmil-detail span{font-weight:600;color:var(--steel,#6e6e73);display:inline-block;width:110px}
+.s4-cmil-detail code{background:rgba(0,122,255,0.06);padding:2px 6px;border-radius:4px;font-size:0.76rem}
+.s4-cmil-actions{margin-top:20px}
+.s4-cmil-actions button{padding:10px 24px;border-radius:12px;border:none;background:#007AFF;color:#fff;font-size:0.84rem;font-weight:600;cursor:pointer;transition:background 0.15s}
+.s4-cmil-actions button:hover{background:#0062cc}
+/* ═══ Feature 2: Self-Healing Compliance Chain ═══ */
+.s4-shc-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10005;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-shc-modal{background:var(--surface,#fff);border-radius:16px;width:680px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.22);display:flex;flex-direction:column}
+.s4-shc-header{display:flex;align-items:center;gap:10px;padding:20px 24px 14px;border-bottom:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-shc-header h2{font-size:1.05rem;font-weight:700;color:var(--text,#1d1d1f);margin:0;display:flex;align-items:center;gap:8px;flex:1}
+.s4-shc-header h2 i{color:#ff3b30}
+.s4-shc-body{padding:18px 24px;flex:1}
+.s4-shc-scan-status{padding:12px 16px;border-radius:10px;background:rgba(0,122,255,0.04);font-size:0.85rem;font-weight:600;color:var(--text,#1d1d1f);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.s4-shc-summary{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.s4-shc-pill{padding:5px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;display:flex;align-items:center;gap:4px}
+.s4-shc-pill.high{background:rgba(255,59,48,0.1);color:#ff3b30}
+.s4-shc-pill.medium{background:rgba(255,149,0,0.1);color:#ff9500}
+.s4-shc-pill.low{background:rgba(52,199,89,0.1);color:#34c759}
+.s4-shc-gap-list{display:flex;flex-direction:column;gap:12px}
+.s4-shc-gap-item{border:1px solid var(--border,rgba(0,0,0,0.08));border-radius:12px;padding:14px 16px}
+.s4-shc-gap-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.s4-shc-severity{padding:3px 8px;border-radius:6px;font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em}
+.s4-shc-severity.high{background:rgba(255,59,48,0.1);color:#ff3b30}
+.s4-shc-severity.medium{background:rgba(255,149,0,0.1);color:#ff9500}
+.s4-shc-severity.low{background:rgba(52,199,89,0.1);color:#34c759}
+.s4-shc-gap-id{font-size:0.72rem;font-weight:600;color:var(--steel,#6e6e73)}
+.s4-shc-gap-section{font-size:0.72rem;color:var(--muted,#6e6e73);margin-left:auto}
+.s4-shc-gap-title{font-size:0.86rem;font-weight:600;color:var(--text,#1d1d1f);margin-bottom:4px}
+.s4-shc-gap-desc{font-size:0.8rem;color:var(--muted,#6e6e73);line-height:1.5;margin-bottom:8px}
+.s4-shc-correction{font-size:0.78rem;color:#5856D6;background:rgba(88,86,214,0.04);padding:8px 12px;border-radius:8px;margin-bottom:10px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+.s4-shc-correction i{margin-top:2px;flex-shrink:0}
+.s4-shc-approve-btn{padding:7px 14px;border-radius:10px;border:1px solid rgba(52,199,89,0.3);background:rgba(52,199,89,0.06);color:#34c759;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.s4-shc-approve-btn:hover{background:rgba(52,199,89,0.14)}
+.s4-shc-approve-btn.approved{background:rgba(52,199,89,0.1);border-color:rgba(52,199,89,0.2);color:#34c759;cursor:default}
+.s4-shc-footer{padding:14px 0 0;border-top:1px solid var(--border,rgba(0,0,0,0.06));margin-top:16px;display:flex;justify-content:flex-end}
+.s4-shc-approve-all{padding:10px 20px;border-radius:12px;border:none;background:#34c759;color:#fff;font-size:0.84rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background 0.15s}
+.s4-shc-approve-all:hover{background:#2db84e}
+/* ═══ Feature 3: Zero-Trust Program Handoff ═══ */
+.s4-zt-handoff-btn{background:rgba(0,170,255,0.08) !important;border-color:rgba(0,170,255,0.2) !important;color:#00aaff !important}
+.s4-zt-handoff-btn:hover{background:rgba(0,170,255,0.16) !important}
+.s4-zth-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10005;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-zth-modal{background:var(--surface,#fff);border-radius:16px;width:560px;max-width:94vw;max-height:88vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.22);display:flex;flex-direction:column}
+.s4-zth-header{display:flex;align-items:center;gap:10px;padding:20px 24px 14px;border-bottom:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-zth-header h2{font-size:1.05rem;font-weight:700;color:var(--text,#1d1d1f);margin:0;display:flex;align-items:center;gap:8px;flex:1}
+.s4-zth-header h2 i{color:#00aaff}
+.s4-zth-body{padding:18px 24px;flex:1}
+.s4-zth-program{font-size:0.84rem;font-weight:600;color:var(--text,#1d1d1f);padding:10px 14px;background:rgba(0,170,255,0.04);border-radius:10px;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.s4-zth-program i{color:#00aaff}
+.s4-zth-step-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.s4-zth-step{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;font-size:0.84rem;color:var(--muted,#6e6e73);transition:all 0.3s}
+.s4-zth-step i{width:18px;text-align:center;font-size:0.7rem}
+.s4-zth-step.active{color:var(--text,#1d1d1f);background:rgba(0,170,255,0.04);font-weight:600}
+.s4-zth-step.active i{color:#007AFF}
+.s4-zth-step.done{color:#34c759}
+.s4-zth-step.done i{color:#34c759}
+.s4-zth-success{display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:10px;background:rgba(52,199,89,0.06);color:#34c759;font-size:0.88rem;font-weight:700;margin-bottom:16px}
+.s4-zth-detail{padding:7px 0;font-size:0.82rem;color:var(--text,#1d1d1f);border-bottom:1px solid var(--border,rgba(0,0,0,0.05))}
+.s4-zth-detail span{font-weight:600;color:var(--steel,#6e6e73);display:inline-block;width:120px}
+.s4-zth-detail code{background:rgba(0,122,255,0.06);padding:2px 6px;border-radius:4px;font-size:0.76rem}
+.s4-zth-actions{margin-top:18px;display:flex;gap:10px;justify-content:flex-end}
+.s4-zth-actions button{padding:9px 18px;border-radius:10px;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.s4-zth-actions button:first-child{background:#007AFF;color:#fff;border-color:#007AFF}
+.s4-zth-actions button:first-child:hover{background:#0062cc}
+.s4-zth-actions button:hover{background:rgba(0,0,0,0.03)}
+/* ═══ Feature 4: Predictive Resource Allocator ═══ */
+.s4-pra-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10005;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-pra-modal{background:var(--surface,#fff);border-radius:16px;width:780px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.22);display:flex;flex-direction:column}
+.s4-pra-header{display:flex;align-items:center;gap:10px;padding:20px 24px 14px;border-bottom:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-pra-header h2{font-size:1.05rem;font-weight:700;color:var(--text,#1d1d1f);margin:0;display:flex;align-items:center;gap:8px;flex:1}
+.s4-pra-header h2 i{color:#5856D6}
+.s4-pra-body{padding:18px 24px;flex:1}
+.s4-pra-summary{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.s4-pra-kpi{flex:1;min-width:100px;padding:14px 16px;border-radius:12px;background:rgba(0,122,255,0.04);border:1px solid rgba(0,122,255,0.08);text-align:center}
+.s4-pra-kpi-val{font-size:1.3rem;font-weight:800;color:#007AFF}
+.s4-pra-kpi-label{font-size:0.68rem;font-weight:600;color:var(--steel,#6e6e73);text-transform:uppercase;letter-spacing:0.04em;margin-top:2px}
+.s4-pra-table{width:100%;border-collapse:collapse;font-size:0.82rem}
+.s4-pra-table thead th{text-align:left;padding:8px 12px;font-size:0.7rem;font-weight:700;color:var(--steel,#6e6e73);text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid var(--border,rgba(0,0,0,0.08))}
+.s4-pra-table tbody td{padding:10px 12px;border-bottom:1px solid var(--border,rgba(0,0,0,0.04));color:var(--text,#1d1d1f)}
+.s4-pra-change.increase{color:#ff3b30;font-weight:600}
+.s4-pra-change.decrease{color:#34c759;font-weight:600}
+.s4-pra-risk{padding:3px 8px;border-radius:6px;font-size:0.68rem;font-weight:700}
+.s4-pra-risk.low{background:rgba(52,199,89,0.1);color:#34c759}
+.s4-pra-risk.medium{background:rgba(255,149,0,0.1);color:#ff9500}
+.s4-pra-risk.high{background:rgba(255,59,48,0.1);color:#ff3b30}
+.s4-pra-rationale-row td{font-size:0.76rem;color:var(--muted,#6e6e73);padding:4px 12px 10px;background:rgba(0,0,0,0.01)}
+.s4-pra-rationale-row td i{color:var(--accent,#007AFF);margin-right:4px}
+.s4-pra-footer{margin-top:18px;display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-pra-footer button{padding:9px 18px;border-radius:10px;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.s4-pra-footer button:first-child{background:#007AFF;color:#fff;border-color:#007AFF}
+.s4-pra-footer button:first-child:hover{background:#0062cc}
+.s4-pra-footer button:hover{background:rgba(0,0,0,0.03)}
+/* ═══ Feature 5: Immutable After-Action Review ═══ */
+.s4-aar-btn{background:rgba(88,86,214,0.08) !important;border-color:rgba(88,86,214,0.2) !important;color:#5856D6 !important}
+.s4-aar-btn:hover{background:rgba(88,86,214,0.16) !important}
+.s4-aar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10005;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
+.s4-aar-modal{background:var(--surface,#fff);border-radius:16px;width:680px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.22);display:flex;flex-direction:column}
+.s4-aar-header{display:flex;align-items:center;gap:10px;padding:20px 24px 14px;border-bottom:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-aar-header h2{font-size:1.05rem;font-weight:700;color:var(--text,#1d1d1f);margin:0;display:flex;align-items:center;gap:8px;flex:1}
+.s4-aar-header h2 i{color:#5856D6}
+.s4-aar-body{padding:18px 24px;flex:1}
+.s4-aar-program{font-size:0.84rem;font-weight:600;color:var(--text,#1d1d1f);padding:10px 14px;background:rgba(88,86,214,0.04);border-radius:10px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.s4-aar-program i{color:#5856D6}
+.s4-aar-gen-status{padding:12px 16px;border-radius:10px;background:rgba(0,122,255,0.04);font-size:0.85rem;font-weight:600;color:var(--text,#1d1d1f);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.s4-aar-section{margin-bottom:16px}
+.s4-aar-event-title{font-size:1rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:4px}
+.s4-aar-meta{font-size:0.78rem;color:var(--muted,#6e6e73)}
+.s4-aar-section-title{font-size:0.78rem;font-weight:700;color:var(--steel,#6e6e73);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.s4-aar-section-title i{color:var(--accent,#007AFF)}
+.s4-aar-item{padding:8px 12px;border-radius:8px;font-size:0.82rem;color:var(--text,#1d1d1f);margin-bottom:6px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.s4-aar-item i{margin-top:3px;flex-shrink:0;font-size:0.72rem}
+.s4-aar-item.objective{background:rgba(0,122,255,0.03)}
+.s4-aar-item.objective i{color:#007AFF}
+.s4-aar-item.sustain{background:rgba(52,199,89,0.04)}
+.s4-aar-item.sustain i{color:#34c759}
+.s4-aar-item.improve{background:rgba(255,149,0,0.04)}
+.s4-aar-item.improve i{color:#ff9500}
+.s4-aar-item.action{background:rgba(88,86,214,0.04)}
+.s4-aar-item.action i{color:#5856D6}
+.s4-aar-anchor-proof{padding:10px 14px;border-radius:10px;background:rgba(0,122,255,0.04);font-size:0.8rem;color:var(--text,#1d1d1f);display:flex;align-items:center;gap:8px;margin-top:16px}
+.s4-aar-anchor-proof i{color:#007AFF}
+.s4-aar-anchor-proof code{background:rgba(0,122,255,0.06);padding:2px 6px;border-radius:4px;font-size:0.74rem}
+.s4-aar-footer{margin-top:18px;display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:1px solid var(--border,rgba(0,0,0,0.06))}
+.s4-aar-footer button{padding:9px 18px;border-radius:10px;border:1px solid var(--border,rgba(0,0,0,0.1));background:var(--surface,#fff);color:var(--text,#1d1d1f);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.s4-aar-footer button:first-child{background:#007AFF;color:#fff;border-color:#007AFF}
+.s4-aar-footer button:first-child:hover{background:#0062cc}
+.s4-aar-footer button:hover{background:rgba(0,0,0,0.03)}
