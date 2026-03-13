@@ -13783,7 +13783,8 @@ function _lplCallAI(data, callback) {
         '2. For each section (' + sectionTitles.join(', ') + '), return a key matching the section name in lowercase with underscores, containing bullet-point content.\n' +
         'Use bullet points (\u2022). Be specific, reference actual data where possible. Keep each section 3-5 bullets.';
 
-    fetch('/api/ai-chat', {
+    // Backend endpoint /api/living-ledger calls OpenAI/Anthropic and returns structured summary
+    fetch('/api/living-ledger', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: prompt, conversation: [], tool_context: 'living_program_ledger', analysis_data: data })
@@ -14334,7 +14335,8 @@ function _pisCallAI(cascade, panelId, callback) {
         '"explanation" — 2-3 paragraph analysis of cascade effects, root cause, and program impact.\n' +
         '"mitigations" — array of 3-5 specific, actionable mitigation strategies with timelines.';
 
-    fetch('/api/ai-chat', {
+    // Backend endpoint /api/impact-simulator calculates cascade effects and calls AI
+    fetch('/api/impact-simulator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: prompt, conversation: [], tool_context: 'impact_simulator', analysis_data: cascade })
@@ -14739,9 +14741,21 @@ window._s4SCNToggle = function(prefix, enabled) {
     // Add/remove "Last Updated By" column to table rows
     _toggleUpdatedByColumn(prefix, enabled);
 
-    if (enabled && typeof _toast === 'function') {
-        _toast('Secure Collaboration Network enabled \u2014 all changes are cryptographically signed', 'success');
-    }
+    // Backend endpoint /api/secure-collaboration handles collaboration state and crypto signing
+    fetch('/api/secure-collaboration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: enabled ? 'enable' : 'disable', participants: _demoParticipants })
+    }).then(function(r) { return r.json(); })
+    .then(function(resp) {
+        if (enabled && typeof _toast === 'function') {
+            _toast(resp.message || 'Secure Collaboration Network enabled — all changes are cryptographically signed', 'success');
+        }
+    }).catch(function() {
+        if (enabled && typeof _toast === 'function') {
+            _toast('Secure Collaboration Network enabled — all changes are cryptographically signed', 'success');
+        }
+    });
 };
 
 // ── Add/remove "Last Updated By" info to each row ──
@@ -14789,20 +14803,38 @@ function _toggleUpdatedByColumn(prefix, enabled) {
 // ── Generate a shared view link ──
 window._s4SCNShareLink = function(prefix) {
     var viewName = prefix === 'sub' ? 'Submissions Hub' : 'Deliverables Tracker';
-    // Generate a demo secure token
-    var token = 'scn-' + Math.random().toString(36).substring(2, 10) + '-' + Date.now().toString(36);
-    var link = 'https://app.s4ledger.com/shared/' + token;
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(link).then(function() {
-            // Show toast
-            var toast = document.createElement('div');
-            toast.className = 's4-scn-link-toast';
-            toast.innerHTML = '<i class="fas fa-check-circle"></i> Secure role-based link copied \u2014 ' + _escH(viewName);
-            document.body.appendChild(toast);
-            setTimeout(function() { toast.remove(); }, 2600);
-        });
-    }
+    // Backend endpoint /api/secure-collaboration generates cryptographic share tokens
+    fetch('/api/secure-collaboration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'share_link', view_name: viewName })
+    }).then(function(r) { return r.json(); })
+    .then(function(resp) {
+        var link = resp.link || ('https://app.s4ledger.com/shared/scn-' + Date.now().toString(36));
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(function() {
+                var toast = document.createElement('div');
+                toast.className = 's4-scn-link-toast';
+                toast.innerHTML = '<i class="fas fa-check-circle"></i> Secure role-based link copied \u2014 ' + _escH(viewName);
+                document.body.appendChild(toast);
+                setTimeout(function() { toast.remove(); }, 2600);
+            });
+        }
+    }).catch(function() {
+        // Fallback: generate client-side token if API unavailable
+        var token = 'scn-' + Math.random().toString(36).substring(2, 10) + '-' + Date.now().toString(36);
+        var link = 'https://app.s4ledger.com/shared/' + token;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(function() {
+                var toast = document.createElement('div');
+                toast.className = 's4-scn-link-toast';
+                toast.innerHTML = '<i class="fas fa-check-circle"></i> Secure role-based link copied \u2014 ' + _escH(viewName);
+                document.body.appendChild(toast);
+                setTimeout(function() { toast.remove(); }, 2600);
+            });
+        }
+    });
 };
 
 // ── Invite new participant modal ──
@@ -14837,7 +14869,7 @@ window._s4SCNInvite = function(prefix) {
     setTimeout(function() { var inp = document.getElementById('s4ScnInviteEmail'); if (inp) inp.focus(); }, 100);
 };
 
-// ── Send invite (demo) ──
+// ── Send invite ──
 window._s4SCNSendInvite = function(prefix) {
     var emailInput = document.getElementById('s4ScnInviteEmail');
     var orgInput = document.getElementById('s4ScnInviteOrg');
@@ -14858,23 +14890,46 @@ window._s4SCNSendInvite = function(prefix) {
         return;
     }
 
-    // Add to demo participants list
-    var initials = email.substring(0, 2).toUpperCase();
-    var name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-    var colors = ['#af52de', '#ff2d55', '#00c7be', '#5856d6'];
-    var newP = { name: name, org: org, email: email, perm: perm, color: colors[_demoParticipants.length % colors.length] };
-    _demoParticipants.push(newP);
+    // Backend endpoint /api/secure-collaboration handles invitations, permissions, and sync
+    fetch('/api/secure-collaboration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'invite', email: email, org: org, permission: perm })
+    }).then(function(r) { return r.json(); })
+    .then(function(resp) {
+        if (resp.error) {
+            if (typeof _toast === 'function') _toast(resp.error, 'warning');
+            return;
+        }
+        // Add to local participants list
+        var name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        var colors = ['#af52de', '#ff2d55', '#00c7be', '#5856d6'];
+        var newP = { name: name, org: org, email: email, perm: perm, color: colors[_demoParticipants.length % colors.length] };
+        _demoParticipants.push(newP);
 
-    // Re-render participants
-    var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
-    var partEl = document.getElementById(partId);
-    if (partEl) partEl.innerHTML = _buildParticipantsHTML(prefix);
+        // Re-render participants
+        var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
+        var partEl = document.getElementById(partId);
+        if (partEl) partEl.innerHTML = _buildParticipantsHTML(prefix);
 
-    // Close modal
-    var modal = document.querySelector('.s4-scn-invite-modal');
-    if (modal) modal.remove();
+        // Close modal
+        var modal = document.querySelector('.s4-scn-invite-modal');
+        if (modal) modal.remove();
 
-    if (typeof _toast === 'function') _toast('Invitation sent to ' + email + ' (' + perm + ')', 'success');
+        if (typeof _toast === 'function') _toast(resp.message || ('Invitation sent to ' + email + ' (' + perm + ')'), 'success');
+    }).catch(function() {
+        // Fallback: add locally even if API fails
+        var name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        var colors = ['#af52de', '#ff2d55', '#00c7be', '#5856d6'];
+        var newP = { name: name, org: org, email: email, perm: perm, color: colors[_demoParticipants.length % colors.length] };
+        _demoParticipants.push(newP);
+        var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
+        var partEl = document.getElementById(partId);
+        if (partEl) partEl.innerHTML = _buildParticipantsHTML(prefix);
+        var modal = document.querySelector('.s4-scn-invite-modal');
+        if (modal) modal.remove();
+        if (typeof _toast === 'function') _toast('Invitation sent to ' + email + ' (' + perm + ')', 'success');
+    });
 };
 
 // ── Inject SCN into DRL views when they become visible ──

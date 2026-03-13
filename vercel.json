@@ -445,6 +445,18 @@
       "destination": "/api"
     },
     {
+      "source": "/api/living-ledger",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/impact-simulator",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/secure-collaboration",
+      "destination": "/api"
+    },
+    {
       "source": "/demo",
       "destination": "/prod-app/demo.html"
     },

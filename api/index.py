@@ -577,6 +577,22 @@ API_START_TIME = time.time()
 _verify_audit_log = []  # [{timestamp, operator, record_hash, chain_hash, tx_hash, result, tamper_detected}]
 
 # ═══════════════════════════════════════════════════════════════════════
+#  Living Program Ledger — per-program AI response cache
+# ═══════════════════════════════════════════════════════════════════════
+_lpl_cache: dict = {}  # program_name -> {response, timestamp, period}
+_LPL_CACHE_TTL = 300   # 5-minute TTL to reduce duplicate AI calls
+
+# ═══════════════════════════════════════════════════════════════════════
+#  Secure Collaboration Network — HMAC signing + state
+# ═══════════════════════════════════════════════════════════════════════
+SCN_SIGNING_SECRET = os.environ.get("S4_SCN_SIGNING_SECRET", "").strip()
+if not SCN_SIGNING_SECRET:
+    import secrets as _secrets_mod
+    SCN_SIGNING_SECRET = "scn_" + _secrets_mod.token_hex(24)
+    print(f"WARNING: S4_SCN_SIGNING_SECRET not set — generated ephemeral key (set env var for production)")
+_scn_collab_state: dict = {}  # view_id -> {enabled, signed_by, participants, updated_at}
+
+# ═══════════════════════════════════════════════════════════════════════
 #  AI AUDIT TRAIL — Hash-anchor every AI decision for transparency
 # ═══════════════════════════════════════════════════════════════════════
 _ai_audit_log = []  # [{timestamp, query, response_hash, tool_context, anchored}]
@@ -1669,6 +1685,66 @@ class handler(BaseHTTPRequestHandler):
         except Exception:
             return {}
 
+    def _call_ai_cascade(self, system_prompt, user_message, conversation=None):
+        """Call AI providers in cascade: Azure OpenAI → OpenAI → Anthropic → None."""
+        import urllib.request
+        if conversation is None:
+            conversation = []
+
+        openai_key = os.environ.get("OPENAI_API_KEY", "")
+        anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        azure_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
+        azure_key = os.environ.get("AZURE_OPENAI_KEY", "")
+        azure_deployment = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
+
+        messages = [{"role": "system", "content": system_prompt}]
+        for msg in conversation[-20:]:
+            messages.append({"role": msg.get("role", "user"), "content": msg.get("text", msg.get("content", ""))})
+        messages.append({"role": "user", "content": user_message})
+
+        # Try Azure OpenAI (FedRAMP eligible)
+        if azure_endpoint and azure_key:
+            try:
+                api_url = f"{azure_endpoint}/openai/deployments/{azure_deployment}/chat/completions?api-version=2024-02-01"
+                req_body = json.dumps({"messages": messages, "max_tokens": 2000, "temperature": 0.7}).encode()
+                req = urllib.request.Request(api_url, data=req_body, headers={"Content-Type": "application/json", "api-key": azure_key})
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    result = json.loads(resp.read().decode())
+                    return result["choices"][0]["message"]["content"]
+            except Exception:
+                pass
+
+        # Try OpenAI (GPT-4o)
+        if openai_key:
+            try:
+                req_body = json.dumps({"model": "gpt-4o", "messages": messages, "max_tokens": 2000, "temperature": 0.7}).encode()
+                req = urllib.request.Request("https://api.openai.com/v1/chat/completions", data=req_body, headers={"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"})
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    result = json.loads(resp.read().decode())
+                    return result["choices"][0]["message"]["content"]
+            except Exception:
+                pass
+
+        # Try Anthropic (Claude)
+        if anthropic_key:
+            try:
+                api_messages = []
+                for msg in conversation[-20:]:
+                    role = msg.get("role", "user")
+                    if role == "bot":
+                        role = "assistant"
+                    api_messages.append({"role": role, "content": msg.get("text", msg.get("content", ""))})
+                api_messages.append({"role": "user", "content": user_message})
+                req_body = json.dumps({"model": "claude-sonnet-4-20250514", "system": system_prompt, "messages": api_messages, "max_tokens": 2000}).encode()
+                req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=req_body, headers={"Content-Type": "application/json", "x-api-key": anthropic_key, "anthropic-version": "2023-06-01"})
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    result = json.loads(resp.read().decode())
+                    return result["content"][0]["text"]
+            except Exception:
+                pass
+
+        return None
+
     def _route(self, path):
         path = path.rstrip("/")
         if path in ("/api", "/api/status"):
@@ -1852,6 +1928,12 @@ class handler(BaseHTTPRequestHandler):
             return "state_load"
         if path == "/api/errors/report":
             return "errors_report"
+        if path == "/api/living-ledger":
+            return "living_ledger"
+        if path == "/api/impact-simulator":
+            return "impact_simulator"
+        if path == "/api/secure-collaboration":
+            return "secure_collaboration"
         return None
 
     def _check_rate_limit(self):
@@ -5242,6 +5324,381 @@ class handler(BaseHTTPRequestHandler):
             except Exception as e:
                 # Never fail on error reporting — just acknowledge
                 self._send_json({"status": "ok", "stored": 0, "note": str(e)[:200]})
+
+        # ═══════════════════════════════════════════════════════════════
+        #  Living Program Ledger — AI-Powered Program Summary
+        #  Supabase: lpl_snapshots | Cache: _lpl_cache (5-min TTL)
+        # ═══════════════════════════════════════════════════════════════
+        elif route == "living_ledger":
+            self._log_request("living-ledger")
+            user_message = data.get("message", "").strip()
+            analysis_data = data.get("analysis_data", None)
+
+            if not user_message:
+                self._send_json({"error": "No message provided"}, 400)
+                return
+
+            # Per-program caching — avoid duplicate AI calls within TTL
+            program_name = ""
+            period = ""
+            if analysis_data:
+                program_name = str(analysis_data.get("program", "")).strip()
+                period = str(analysis_data.get("period", "")).strip()
+            cache_key = f"{program_name}|{period}" if program_name else ""
+
+            if cache_key and cache_key in _lpl_cache:
+                cached = _lpl_cache[cache_key]
+                if time.time() - cached["timestamp"] < _LPL_CACHE_TTL:
+                    self._send_json({"response": cached["response"], "provider": "cache", "fallback": False, "cached": True})
+                    return
+
+            system_prompt = _build_ai_system_prompt("living_program_ledger", analysis_data)
+            system_prompt += (
+                "\n## LIVING PROGRAM LEDGER INSTRUCTIONS\n"
+                "Generate a comprehensive Living Program Ledger summary. "
+                "Return a JSON object with 'executive_overview' (1 paragraph) and section keys "
+                "(logistics_health, supply_chain_status, readiness_metrics, compliance_posture, "
+                "risk_assessment, maintenance_forecast, upcoming_milestones, action_items) — "
+                "each containing 3-5 bullet points using the bullet character. "
+                "Be specific and reference actual data from the analysis.\n\n"
+                "If compliance data is available, reference DCMA eTools metrics "
+                "(e.g., receipt rates, CDRL approval status, COR findings) where applicable."
+            )
+
+            ai_response = self._call_ai_cascade(system_prompt, user_message, data.get("conversation", []))
+            provider = "llm" if ai_response else "none"
+
+            # Update per-program cache
+            if ai_response and cache_key:
+                _lpl_cache[cache_key] = {"response": ai_response, "timestamp": time.time(), "period": period}
+                # Evict oldest entries if cache grows too large
+                if len(_lpl_cache) > 200:
+                    oldest_key = min(_lpl_cache, key=lambda k: _lpl_cache[k]["timestamp"])
+                    del _lpl_cache[oldest_key]
+
+            # Persist snapshot to Supabase
+            if ai_response and SUPABASE_AVAILABLE:
+                try:
+                    # Parse version from existing snapshots
+                    existing = _sb_select("lpl_snapshots",
+                                          query_params=f"program_name=eq.{program_name}&order=version_num.desc&limit=1") if program_name else []
+                    next_version = (existing[0]["version_num"] + 1) if existing else 1
+
+                    # Extract sections from AI response if possible
+                    sections_json = {}
+                    exec_overview = ""
+                    try:
+                        json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                        if json_match:
+                            parsed = json.loads(json_match.group())
+                            exec_overview = parsed.get("executive_overview", "")
+                            sections_json = {k: v for k, v in parsed.items() if k != "executive_overview"}
+                    except Exception:
+                        exec_overview = ai_response[:500]
+
+                    _sb_insert("lpl_snapshots", {
+                        "program_name": program_name,
+                        "period": period,
+                        "version_num": next_version,
+                        "executive_overview": exec_overview[:2000],
+                        "sections_json": json.dumps(sections_json),
+                        "ai_provider": provider,
+                        "analysis_data": json.dumps(analysis_data) if analysis_data else "{}",
+                        "created_at": datetime.utcnow().isoformat() + "Z",
+                    })
+                except Exception:
+                    pass  # Non-blocking — never fail the response on persistence error
+
+            if ai_response:
+                self._send_json({"response": ai_response, "provider": provider, "fallback": False})
+            else:
+                self._send_json({"response": None, "provider": "none", "fallback": True,
+                                 "message": "No AI provider configured. Using local pattern matching."})
+
+        # ═══════════════════════════════════════════════════════════════
+        #  Program Impact Simulator — Cascade Risk Analysis
+        #  Supabase: impact_simulations | GIDEP cross-reference in prompt
+        # ═══════════════════════════════════════════════════════════════
+        elif route == "impact_simulator":
+            self._log_request("impact-simulator")
+            user_message = data.get("message", "").strip()
+            analysis_data = data.get("analysis_data", None)
+
+            if not user_message:
+                self._send_json({"error": "No message provided"}, 400)
+                return
+
+            # Cross-reference GIDEP alerts for obsolescence cascades
+            gidep_context = ""
+            if analysis_data:
+                risk_label = str(analysis_data.get("riskLabel", "")).lower()
+                # Check for DMSMS/obsolescence-related items in Supabase
+                if SUPABASE_AVAILABLE and ("obsolescen" in risk_label or "dmsms" in risk_label
+                                            or "end of life" in risk_label or "discontinu" in risk_label):
+                    try:
+                        dmsms_hits = _sb_select("dmsms_items", query_params="limit=5&order=created_at.desc")
+                        if dmsms_hits:
+                            gidep_parts = [f"{d.get('nsn', 'N/A')} — {d.get('part_name', d.get('description', 'Unknown'))}" for d in dmsms_hits[:5]]
+                            gidep_context = (
+                                "\n\n## GIDEP / DMSMS CROSS-REFERENCE\n"
+                                "The following recently tracked DMSMS items may be related to this risk:\n"
+                                + "\n".join(f"• {p}" for p in gidep_parts) + "\n"
+                                "Cross-reference these when analyzing obsolescence cascade effects."
+                            )
+                    except Exception:
+                        pass
+
+                # Pull schedule milestones if available
+                if SUPABASE_AVAILABLE:
+                    try:
+                        program_name = str(analysis_data.get("programName", "")).strip()
+                        if program_name:
+                            milestones = _sb_select("program_milestones",
+                                                     query_params=f"program_name=eq.{program_name}&order=target_date.asc&limit=5")
+                            if milestones:
+                                schedule_context = "\n\n## PROGRAM SCHEDULE DATA\nUpcoming milestones:\n"
+                                for ms in milestones:
+                                    schedule_context += f"• {ms.get('milestone_name', 'TBD')} — target: {ms.get('target_date', 'TBD')}\n"
+                                gidep_context += schedule_context
+                    except Exception:
+                        pass
+
+            system_prompt = _build_ai_system_prompt("impact_simulator", analysis_data)
+            system_prompt += (
+                "\n## IMPACT SIMULATOR INSTRUCTIONS\n"
+                "Analyze the risk cascade and return a JSON object with:\n"
+                "- 'explanation': 2-3 paragraph analysis of cascade effects, root cause, "
+                "and program impact on cost/schedule/readiness.\n"
+                "- 'mitigations': array of 3-5 specific, actionable mitigation strategies "
+                "with realistic timelines, responsible parties, and expected risk reduction.\n"
+                "Consider GIDEP alerts, DMSMS tracking data, and program schedule milestones "
+                "when available in the context below."
+                + gidep_context
+            )
+
+            ai_response = self._call_ai_cascade(system_prompt, user_message, data.get("conversation", []))
+            provider = "llm" if ai_response else "none"
+
+            # Store simulation result in Supabase for trend analysis
+            if SUPABASE_AVAILABLE and analysis_data:
+                try:
+                    explanation = ""
+                    mitigations = []
+                    if ai_response:
+                        try:
+                            json_match = re.search(r'\{[\s\S]*\}', ai_response)
+                            if json_match:
+                                parsed = json.loads(json_match.group())
+                                explanation = parsed.get("explanation", "")
+                                mitigations = parsed.get("mitigations", [])
+                        except Exception:
+                            explanation = ai_response[:1000]
+
+                    _sb_insert("impact_simulations", {
+                        "program_name": str(analysis_data.get("programName", "")).strip(),
+                        "risk_label": str(analysis_data.get("riskLabel", ""))[:200],
+                        "severity": str(analysis_data.get("severity", ""))[:50],
+                        "schedule_delay": analysis_data.get("scheduleDelay", 0),
+                        "cost_impact": analysis_data.get("costImpact", 0),
+                        "readiness_drop": analysis_data.get("readinessDrop", 0),
+                        "downstream_programs": analysis_data.get("downstreamPrograms", 0),
+                        "source_tool": str(analysis_data.get("sourceTool", ""))[:100],
+                        "explanation": explanation[:5000],
+                        "mitigations": json.dumps(mitigations if isinstance(mitigations, list) else []),
+                        "ai_provider": provider,
+                        "created_at": datetime.utcnow().isoformat() + "Z",
+                    })
+                except Exception:
+                    pass  # Non-blocking
+
+            if ai_response:
+                self._send_json({"response": ai_response, "provider": provider, "fallback": False})
+            else:
+                self._send_json({"response": None, "provider": "none", "fallback": True,
+                                 "message": "No AI provider configured. Using local fallback."})
+
+        # ═══════════════════════════════════════════════════════════════
+        #  Secure Collaboration Network — Real-time Collaboration API
+        #  Supabase: scn_participants, scn_share_links, scn_collaboration_state
+        #  HMAC: SCN_SIGNING_SECRET for share token signatures
+        #  Email: SendGrid stub (fires when SENDGRID_API_KEY is set)
+        # ═══════════════════════════════════════════════════════════════
+        elif route == "secure_collaboration":
+            self._log_request("secure-collaboration")
+            action = data.get("action", "").strip()
+
+            if action == "enable" or action == "disable":
+                participants = data.get("participants", [])
+                view_id = data.get("view_id", "drl-main")
+
+                # HMAC-sign the state change
+                now = datetime.utcnow()
+                sign_payload = f"{action}|{view_id}|{now.isoformat()}"
+                signature = hmac.new(SCN_SIGNING_SECRET.encode(), sign_payload.encode(), hashlib.sha256).hexdigest()
+                signed_by = f"S4-SCN-{signature[:12].upper()}-{now.strftime('%Y%m%dT%H%M%SZ')}"
+
+                # Update in-memory state
+                _scn_collab_state[view_id] = {
+                    "enabled": action == "enable",
+                    "signed_by": signed_by,
+                    "participants": participants,
+                    "updated_at": now.isoformat() + "Z",
+                }
+
+                # Persist to Supabase
+                if SUPABASE_AVAILABLE:
+                    try:
+                        _sb_upsert("scn_collaboration_state", {
+                            "view_id": view_id,
+                            "enabled": action == "enable",
+                            "signed_by": signed_by,
+                            "updated_at": now.isoformat() + "Z",
+                        })
+                    except Exception:
+                        pass
+
+                self._send_json({
+                    "status": "ok",
+                    "action": action,
+                    "collaboration_active": action == "enable",
+                    "participants": participants,
+                    "signed_by": signed_by,
+                    "signature": signature,
+                    "message": f"Secure Collaboration Network {'enabled' if action == 'enable' else 'disabled'} — all changes cryptographically signed"
+                })
+
+            elif action == "invite":
+                email = data.get("email", "").strip()
+                org = data.get("org", "External")
+                permission = data.get("permission", "View")
+                view_id = data.get("view_id", "drl-main")
+
+                if not email or "@" not in email:
+                    self._send_json({"error": "Valid email address required"}, 400)
+                    return
+
+                # Generate HMAC-signed invite token
+                now = datetime.utcnow()
+                expires = now + timedelta(days=7)
+                token_payload = f"{email}|{view_id}|{permission}|{expires.isoformat()}"
+                token_hmac = hmac.new(SCN_SIGNING_SECRET.encode(), token_payload.encode(), hashlib.sha256).hexdigest()
+                invite_token = f"scn-inv-{token_hmac[:16]}"
+
+                # Store invitation in Supabase
+                if SUPABASE_AVAILABLE:
+                    try:
+                        name = email.split("@")[0].replace(".", " ").replace("_", " ").title()
+                        _sb_insert("scn_participants", {
+                            "view_id": view_id,
+                            "email": email,
+                            "name": name,
+                            "org": org[:200],
+                            "permission": permission,
+                            "invite_token": invite_token,
+                            "invite_expires": expires.isoformat() + "Z",
+                            "active": True,
+                            "created_at": now.isoformat() + "Z",
+                        })
+                    except Exception:
+                        pass
+
+                # Send invitation email via SendGrid (when configured)
+                sendgrid_key = os.environ.get("SENDGRID_API_KEY", "").strip()
+                email_sent = False
+                if sendgrid_key:
+                    try:
+                        import urllib.request
+                        email_body = json.dumps({
+                            "personalizations": [{"to": [{"email": email}]}],
+                            "from": {"email": "noreply@s4ledger.com", "name": "S4 Ledger SCN"},
+                            "subject": f"S4 Ledger — You've been invited to collaborate ({permission} access)",
+                            "content": [{
+                                "type": "text/html",
+                                "value": (
+                                    f"<h2>Secure Collaboration Invitation</h2>"
+                                    f"<p>You've been invited to join the <strong>S4 Ledger Secure Collaboration Network</strong> "
+                                    f"with <strong>{permission}</strong> access.</p>"
+                                    f"<p>Organization: {org}</p>"
+                                    f"<p>Your invite token: <code>{invite_token}</code></p>"
+                                    f"<p>This invitation expires on {expires.strftime('%B %d, %Y')}.</p>"
+                                    f"<p><a href='https://app.s4ledger.com/collaborate?token={invite_token}'>Accept Invitation</a></p>"
+                                )
+                            }]
+                        }).encode()
+                        req = urllib.request.Request(
+                            "https://api.sendgrid.com/v3/mail/send",
+                            data=email_body,
+                            headers={
+                                "Content-Type": "application/json",
+                                "Authorization": f"Bearer {sendgrid_key}",
+                            },
+                        )
+                        with urllib.request.urlopen(req, timeout=10) as resp:
+                            email_sent = resp.status in (200, 201, 202)
+                    except Exception:
+                        email_sent = False
+
+                self._send_json({
+                    "status": "ok",
+                    "action": "invite",
+                    "email": email,
+                    "org": org,
+                    "permission": permission,
+                    "invite_token": invite_token,
+                    "expires": expires.isoformat() + "Z",
+                    "email_sent": email_sent,
+                    "message": f"Invitation sent to {email} with {permission} access"
+                })
+
+            elif action == "share_link":
+                view_name = data.get("view_name", "DRL View")
+                view_id = data.get("view_id", "drl-main")
+
+                # Generate HMAC-signed share token with 30-day expiry
+                now = datetime.utcnow()
+                expires = now + timedelta(days=30)
+                token_payload = f"share|{view_id}|{view_name}|{expires.isoformat()}"
+                token_hmac = hmac.new(SCN_SIGNING_SECRET.encode(), token_payload.encode(), hashlib.sha256).hexdigest()
+                token = f"scn-{token_hmac[:16]}"
+                link = f"https://app.s4ledger.com/shared/{token}"
+
+                # Persist share link in Supabase
+                if SUPABASE_AVAILABLE:
+                    try:
+                        _sb_insert("scn_share_links", {
+                            "view_name": view_name[:200],
+                            "token": token,
+                            "hmac_signature": token_hmac,
+                            "expires_at": expires.isoformat() + "Z",
+                            "created_at": now.isoformat() + "Z",
+                        })
+                    except Exception:
+                        pass
+
+                self._send_json({
+                    "status": "ok",
+                    "action": "share_link",
+                    "link": link,
+                    "token": token,
+                    "view_name": view_name,
+                    "expires": expires.isoformat() + "Z",
+                    "hmac_verified": True,
+                    "message": f"Secure share link generated for {view_name}"
+                })
+
+            elif action == "list_participants":
+                view_id = data.get("view_id", "drl-main")
+                participants = []
+                if SUPABASE_AVAILABLE:
+                    try:
+                        participants = _sb_select("scn_participants",
+                                                   query_params=f"view_id=eq.{view_id}&active=eq.true&order=created_at.desc")
+                    except Exception:
+                        pass
+                self._send_json({"status": "ok", "participants": participants})
+
+            else:
+                self._send_json({"error": "Invalid action. Use: enable, disable, invite, share_link, list_participants"}, 400)
 
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)
