@@ -11239,9 +11239,6 @@ function _classifyBtn(btn) {
 function _buildDropdown(actionBtns) {
     var menu = document.createElement('div');
     menu.className = 's4-actions-menu';
-    var header = document.createElement('div');
-    header.className = 's4-actions-header';
-    header.innerHTML = '<i class="fas fa-bolt"></i> ACTIONS';
     var trigger = document.createElement('button');
     trigger.className = 's4-actions-trigger';
     trigger.setAttribute('type', 'button');
@@ -11268,7 +11265,6 @@ function _buildDropdown(actionBtns) {
         list.classList.remove('s4-open');
         trigger.classList.remove('s4-open');
     });
-    menu.appendChild(header);
     menu.appendChild(trigger);
     menu.appendChild(list);
     return menu;
@@ -11338,13 +11334,9 @@ function _s4ConvertButtonDensity(targetPanel) {
         if (allActionBtns.length === 0 && !existingList) return;
 
         if (existingList) {
-            // Ensure existing dropdown has the ACTIONS header
-            if (existingMenu && !existingMenu.querySelector('.s4-actions-header')) {
-                var hdr = document.createElement('div');
-                hdr.className = 's4-actions-header';
-                hdr.innerHTML = '<i class="fas fa-bolt"></i> ACTIONS';
-                existingMenu.insertBefore(hdr, existingMenu.firstChild);
-            }
+            // Remove legacy ACTIONS header if present
+            var legacyHdr = existingMenu ? existingMenu.querySelector('.s4-actions-header') : null;
+            if (legacyHdr) legacyHdr.remove();
             // Absorb newly found action buttons into existing dropdown
             allActionBtns.forEach(function(btn) {
                 _classifyBtn(btn);
