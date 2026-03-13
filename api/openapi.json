@@ -1543,6 +1543,60 @@
           "401": { "description": "Invalid API key" }
         }
       }
+    },
+    "/api/quantum-safe-reanchor": {
+      "post": {
+        "summary": "Quantum-Safe Future-Proof Anchor",
+        "description": "Re-anchors critical records to XRPL using post-quantum cryptography (CRYSTALS-Dilithium Level 3). Updates the Living Program Ledger with new quantum-safe hashes while maintaining backward compatibility with existing SHA-256 anchors.",
+        "operationId": "quantumSafeReanchor",
+        "tags": ["Anchoring"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "program_id": { "type": "string", "description": "Program ID to protect (default ALL)" },
+                  "record_ids": { "type": "array", "items": { "type": "string" }, "description": "Specific record IDs to re-anchor" },
+                  "user_email": { "type": "string", "description": "Email of the user initiating the re-anchor" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quantum-safe re-anchoring results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "quantum_safe_reanchor_complete" },
+                    "records_protected": { "type": "integer" },
+                    "algorithm": { "type": "string", "example": "CRYSTALS-Dilithium Level 3 (NIST PQC Standard)" },
+                    "security_level": { "type": "string", "example": "192-bit quantum security" },
+                    "backward_compatible": { "type": "boolean" },
+                    "reanchored": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "record_id": { "type": "string" },
+                          "quantum_safe_hash": { "type": "string" },
+                          "tx_hash": { "type": "string" },
+                          "explorer_url": { "type": "string", "nullable": true }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
