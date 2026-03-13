@@ -6370,10 +6370,11 @@ h4{font-size:0.95rem;font-weight:700}
 
 /* ── v5.12.25 — Actions dropdown & spacing polish ── */
 .s4-actions-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:16px;margin-bottom:16px}
-.s4-actions-row > .s4-actions-menu{margin-top:0;margin-bottom:0}
+.s4-actions-row > .s4-actions-menu{margin-top:0;margin-bottom:0;display:flex;align-items:center}
 .s4-actions-row > button{margin-left:0;margin-top:0}
 .s4-actions-row > .s4-scn-bar{margin-top:0;margin-bottom:0}
 .s4-actions-row > .s4-drl-action{margin-top:0;margin-bottom:0}
+.s4-actions-row > button,.s4-actions-row > .s4-actions-menu .s4-actions-trigger{height:36px;box-sizing:border-box}
 .s4-actions-menu{position:relative;display:inline-block;margin-top:16px;margin-bottom:16px}
 .s4-actions-header{display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text,#1d1d1f);margin-bottom:8px}
 .s4-actions-header i{color:#34c759;font-size:0.7rem}
@@ -6384,6 +6385,7 @@ h4{font-size:0.95rem;font-weight:700}
     color:#fff;border:none;font-size:0.82rem;
     font-weight:700;cursor:pointer;font-family:inherit;
     transition:all 0.2s ease;box-shadow:0 1px 3px rgba(37,99,235,0.3);
+    height:36px;box-sizing:border-box;
 }
 .s4-actions-trigger:hover{background:#1d4ed8;transform:translateY(-1px);box-shadow:0 2px 6px rgba(37,99,235,0.4)}
 .s4-actions-trigger .fa-chevron-down{font-size:0.6rem;transition:transform 0.25s;opacity:0.8}
@@ -6629,7 +6631,7 @@ h4{font-size:0.95rem;font-weight:700}
 .s4-hl-standalone-btn:hover{background:rgba(0,122,255,0.12);border-color:rgba(0,122,255,0.35)}
 .s4-hl-standalone-btn i{font-size:0.8rem}
 /* ── Living Program Ledger modal ── */
-.s4-lpl-standalone-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:10px;border:1px solid rgba(52,199,89,0.25);background:rgba(52,199,89,0.08);color:#22863a;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.15s,border-color 0.15s;white-space:nowrap;margin-left:10px;margin-top:0;vertical-align:middle}
+.s4-lpl-standalone-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;border:1px solid rgba(52,199,89,0.25);background:rgba(52,199,89,0.08);color:#22863a;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.15s,border-color 0.15s;white-space:nowrap;box-sizing:border-box}
 .s4-lpl-standalone-btn:hover{background:rgba(52,199,89,0.16);border-color:rgba(52,199,89,0.4)}
 .s4-lpl-standalone-btn i{font-size:0.8rem}
 .s4-lpl-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:10001;display:flex;align-items:center;justify-content:center;animation:s4FadeIn 0.2s ease}
@@ -6888,7 +6890,7 @@ h4{font-size:0.95rem;font-weight:700}
 /* ═══════════════════════════════════════════════════════════════
    Enhancement #7 — Unified Command Brief
    ═══════════════════════════════════════════════════════════════ */
-.s4-ucb-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid rgba(88,86,214,0.2);background:rgba(88,86,214,0.04);color:#5856D6}
+.s4-ucb-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid rgba(88,86,214,0.2);background:rgba(88,86,214,0.04);color:#5856D6;box-sizing:border-box}
 .s4-ucb-btn:hover{background:rgba(88,86,214,0.1);border-color:rgba(88,86,214,0.3)}
 .s4-ucb-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10200;animation:s4FadeIn 0.25s ease}
 .s4-ucb-modal{background:var(--surface,#fff);border-radius:18px;padding:32px;max-width:560px;width:94%;box-shadow:0 16px 48px rgba(0,0,0,0.2);max-height:85vh;overflow-y:auto;position:relative}
@@ -6916,7 +6918,7 @@ h4{font-size:0.95rem;font-weight:700}
    PREPARED EMAIL COMPOSER & SECURE EMAIL VAULT
    ═══════════════════════════════════════════════════════════════ */
 /* ── Standalone "Prepare Email" button in ACTIONS row ── */
-.s4-email-standalone-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:10px;border:1px solid rgba(88,86,214,0.25);background:rgba(88,86,214,0.08);color:#5856D6;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.15s,border-color 0.15s;white-space:nowrap;margin-left:10px;vertical-align:middle}
+.s4-email-standalone-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;border:1px solid rgba(88,86,214,0.25);background:rgba(88,86,214,0.08);color:#5856D6;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.15s,border-color 0.15s;white-space:nowrap;box-sizing:border-box}
 .s4-email-standalone-btn:hover{background:rgba(88,86,214,0.16);border-color:rgba(88,86,214,0.4)}
 .s4-email-standalone-btn i{font-size:0.8rem}
 /* ── Email Composer overlay ── */
