@@ -141,7 +141,10 @@
     // -- Data Loading (Supabase -> local) --
     function _loadAcqData(cb) {
         if (window._sbClient) {
-            window._sbClient.from('acquisition_plan').select('*').order('created_at', { ascending: true }).then(function (res) {
+            var _q = window._sbClient.from('acquisition_plan').select('*').order('created_at', { ascending: true });
+            var _email = localStorage.getItem('s4_user_email');
+            if (_email) _q = _q.eq('user_email', _email);
+            _q.then(function (res) {
                 if (res.data && res.data.length) {
                     _acqData = res.data.map(function (r) { r._persisted = true; return r; });
                     _acqNextLocalId = _acqData.length + 1;
@@ -648,7 +651,7 @@
         payload.updated_at = row.updated_at;
         payload.created_at = row.created_at;
         payload.org_id = sessionStorage.getItem('s4_org_id') || '';
-        payload.user_email = sessionStorage.getItem('s4_user_email') || '';
+        payload.user_email = localStorage.getItem('s4_user_email') || sessionStorage.getItem('s4_user_email') || '';
         if (row.id) {
             window._sbClient.from('acquisition_plan').update(payload).eq('id', row.id).then(function (res) { if (res.error) console.warn('ACQ update error:', res.error); });
         } else {

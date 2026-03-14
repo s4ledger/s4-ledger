@@ -2965,7 +2965,12 @@ class handler(BaseHTTPRequestHandler):
 
     def _get_user_state(self, params):
         """Load all persisted user state from Supabase user_state table."""
-        session_id = params.get("session_id", [None])[0] or self.headers.get("X-Session-ID", "default")
+        # Prefer authenticated user identity over raw headers
+        auth_user = _get_auth_user(self.headers)
+        if auth_user and auth_user.get('user_id'):
+            session_id = 'user_' + auth_user['user_id']
+        else:
+            session_id = params.get("session_id", [None])[0] or self.headers.get("X-Session-ID", "default")
         org_id = self.headers.get("X-API-Key", "") or "default"
         qp = f"org_id=eq.{org_id}&session_id=eq.{session_id}"
         rows = _sb_select("user_state", query_params=qp, limit=500)
@@ -2981,7 +2986,14 @@ class handler(BaseHTTPRequestHandler):
         """Save user state key-value pairs to Supabase user_state table.
         Accepts: { session_id, entries: [{key, value}, ...] } or { session_id, key, value }
         """
-        session_id = data.get("session_id", self.headers.get("X-Session-ID", "default"))
+        # Prefer authenticated user identity over raw headers
+        auth_user = _get_auth_user(self.headers)
+        if auth_user and auth_user.get('user_id'):
+            session_id = 'user_' + auth_user['user_id']
+            user_id = auth_user['user_id']
+        else:
+            session_id = data.get("session_id", self.headers.get("X-Session-ID", "default"))
+            user_id = None
         org_id = self.headers.get("X-API-Key", "") or "default"
 
         entries = data.get("entries", [])
@@ -3001,6 +3013,8 @@ class handler(BaseHTTPRequestHandler):
                 "state_value": value,
                 "updated_at": datetime.now(timezone.utc).isoformat(),
             }
+            if user_id:
+                row["user_id"] = user_id
             # Upsert on (org_id, session_id, state_key)
             result = _sb_upsert("user_state", row)
             if result is not None:

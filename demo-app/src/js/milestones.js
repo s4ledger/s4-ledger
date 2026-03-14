@@ -121,7 +121,10 @@
 
     function _loadMilData(cb) {
         if (window._sbClient) {
-            window._sbClient.from('program_milestones').select('*').order('created_at', { ascending: true }).then(function (res) {
+            var _q = window._sbClient.from('program_milestones').select('*').order('created_at', { ascending: true });
+            var _email = localStorage.getItem('s4_user_email');
+            if (_email) _q = _q.eq('user_email', _email);
+            _q.then(function (res) {
                 if (res.data && res.data.length) {
                     _milData = res.data.map(function (r) { r._persisted = true; return r; });
                     _milNextLocalId = _milData.length + 1;
@@ -639,7 +642,7 @@
         payload.program_name = row.program_name;
         payload.owld_date = row.owld_date;
         payload.org_id = row.org_id || sessionStorage.getItem('s4_org_id') || '';
-        payload.user_email = row.user_email || sessionStorage.getItem('s4_user_email') || '';
+        payload.user_email = row.user_email || localStorage.getItem('s4_user_email') || sessionStorage.getItem('s4_user_email') || '';
         if (row.acquisition_plan_id) payload.acquisition_plan_id = row.acquisition_plan_id;
 
         if (row._persisted && row.id) {

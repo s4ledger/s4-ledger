@@ -302,7 +302,10 @@
     // ================================================================
     function _loadBriefs(cb) {
         if (window._sbClient) {
-            window._sbClient.from('program_briefs').select('*').order('updated_at', { ascending: false }).then(function (res) {
+            var _q = window._sbClient.from('program_briefs').select('*').order('updated_at', { ascending: false });
+            var _email = localStorage.getItem('s4_user_email');
+            if (_email) _q = _q.eq('user_email', _email);
+            _q.then(function (res) {
                 if (res.data && res.data.length) {
                     _briefs = res.data;
                 } else {

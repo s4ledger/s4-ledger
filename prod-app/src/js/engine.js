@@ -304,8 +304,12 @@ function simulateCacLogin() {
         setTimeout(function() {
             if (modal) modal.style.display = 'none';
             if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
+            // Clear previous user data to prevent cross-user leakage
+            _clearS4UserData();
             sessionStorage.setItem('s4_authenticated', '1');
             sessionStorage.setItem('s4_auth_method', 'cac');
+            // Set a CAC-scoped session_id (real PKI deployment will provide a user-specific ID)
+            localStorage.setItem('s4_session_id', 'cac_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8));
             enterPlatformAfterAuth();
         }, 800);
     }, 1500);
@@ -390,6 +394,8 @@ function handleAccountLogin() {
 }
 
 function _onAuthSuccess(session, user) {
+    // Clear previous user data to prevent cross-user leakage on same browser
+    _clearS4UserData();
     // Store real JWT so the API interceptor sends it with every /api/ call
     if (session && session.access_token) {
         sessionStorage.setItem('s4_auth_token', session.access_token);
@@ -525,6 +531,13 @@ function enterPlatformAfterAuth() {
     }
 }
 
+// ═══ Clear S4 User Data — prevents cross-user leakage on same browser ═══
+function _clearS4UserData() {
+    Object.keys(localStorage).filter(function(k) {
+        return k.startsWith('s4_') || k.startsWith('s4V') || k.startsWith('s4A') || k.startsWith('s4N');
+    }).forEach(function(k) { localStorage.removeItem(k); });
+}
+
 // ═══ Logout / Reset Session ═══
 function logout() {
     // Sign out of Supabase (invalidates JWT)
@@ -540,25 +553,13 @@ function logout() {
     if (aiPanel && aiPanel.classList.contains('open')) {
         if (typeof window.toggleAiAgent === 'function') window.toggleAiAgent();
     }
-    // Clear all S4 localStorage keys
-    localStorage.removeItem('s4_stats');
-    localStorage.removeItem('s4_anchored_records');
-    localStorage.removeItem('s4_wallet');
-    localStorage.removeItem('s4_selected_tier');
-    localStorage.removeItem('s4_tier_allocation');
-    localStorage.removeItem('s4_tier_label');
+    // Clear ALL S4 localStorage keys (comprehensive — covers all features)
+    _clearS4UserData();
     // Reset in-memory tier state so timers don't show stale values
     window._s4TierAllocation = 0;
     window._s4TierLabel = '';
     // Reset module-scoped _onboardTier in onboarding.js to avoid stale tier on re-entry
     if (typeof window._resetOnboardTier === 'function') window._resetOnboardTier();
-    // Clear ALL role-scoped vaults (s4Vault, s4Vault_admin, s4Vault_auditor, etc.)
-    Object.keys(localStorage).filter(function(k){ return k.startsWith('s4Vault'); }).forEach(function(k){ localStorage.removeItem(k); });
-    localStorage.removeItem('s4_action_items');
-    localStorage.removeItem('s4ActionItems');
-    localStorage.removeItem('s4_uploaded_docs');
-    localStorage.removeItem('s4_doc_versions');
-    localStorage.removeItem('s4_doc_notifications');
     // Clear role from sessionStorage (session-scoped)
     sessionStorage.removeItem('s4_user_role');
     sessionStorage.removeItem('s4_user_title');
@@ -723,7 +724,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Force sync on page unload (beacon API for reliability)
     window.addEventListener('beforeunload', function() {
         var entries = [];
-        PERSIST_KEYS.forEach(function(key) {
+        // Collect explicit persist keys + any dynamic s4Vault_* keys
+        var allKeys = PERSIST_KEYS.slice();
+        Object.keys(localStorage).forEach(function(k) {
+            if (k.startsWith('s4Vault') && allKeys.indexOf(k) < 0) allKeys.push(k);
+        });
+        allKeys.forEach(function(key) {
             var val = localStorage.getItem(key);
             if (val && val !== 'null') {
                 entries.push({ key: key, value: val });
@@ -6569,9 +6575,11 @@ function renderHubActions(filter) {
 /* Override removed — saveActionItems now calls renderHubActions and updates badge directly */
 
 // ═══ AUDIT RECORD VAULT ═══
-// Vault key is scoped by role — each role sees only its own records
+// Vault key is scoped by user + role — each user/role combo sees only its own records
 function _vaultKey() {
-    return 's4Vault' + (window._currentRole ? '_' + window._currentRole : '');
+    var uid = localStorage.getItem('s4_user_email') || '';
+    var role = window._currentRole || '';
+    return 's4Vault' + (uid ? '_' + uid : '') + (role ? '_' + role : '');
 }
 let s4Vault;
 try { s4Vault = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(_e) { s4Vault = []; }
