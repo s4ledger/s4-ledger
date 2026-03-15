@@ -17715,7 +17715,7 @@ window._s4PredictiveResourceAllocator = function() {
 
     // Demo fallback allocations (used when backend is unavailable)
     var demoAllocations = [
-        { category: 'Spares', current: '$2.4M', suggested: '$1.9M', change: '-$500K', risk: 'Low', rationale: 'Historical consumption 22% below FY25 forecast; reduce safety stock for Cat III items.' },
+        { category: 'Spares', current: '$2.4M', suggested: '$1.9M', change: '-$500K', risk: 'Low', rationale: 'Historical consumption 22% below FY26 forecast; reduce safety stock for Cat III items.' },
         { category: 'Personnel', current: '47 FTEs', suggested: '44 FTEs', change: '-3 FTEs', risk: 'Medium', rationale: 'Automation of SBOM scanning reduces manual review load. Reassign to DMSMS monitoring.' },
         { category: 'Budget \u2014 Testing', current: '$890K', suggested: '$1.1M', change: '+$210K', risk: 'Low', rationale: 'Increased obsolescence risk in Q3 requires additional environmental stress testing.' },
         { category: 'Budget \u2014 Training', current: '$320K', suggested: '$280K', change: '-$40K', risk: 'Low', rationale: 'E-learning completion rate at 94%; reduce classroom sessions by one cycle.' },
@@ -17845,10 +17845,10 @@ window._s4ImmutableAAR = function() {
     }).catch(function() {
         // Demo fallback
         var demoAAR = {
-            event: 'FY25 Q2 Readiness Assessment \u2014 ' + programName,
+            event: 'FY26 Q2 Readiness Assessment \u2014 ' + programName,
             date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
             participants: ['Program Manager', 'DCMA QAR', 'Contracting Officer', 'S4 Ledger System'],
-            objectives: ['Validate fleet readiness posture against FY25 targets', 'Identify gaps between projected and actual sustainment costs', 'Assess compliance posture for upcoming DCMA audit'],
+            objectives: ['Validate fleet readiness posture against FY26 targets', 'Identify gaps between projected and actual sustainment costs', 'Assess compliance posture for upcoming DCMA audit'],
             findings: [
                 { type: 'sustain', text: 'Fleet readiness at 91.2%, exceeding 88% target by 3.2 percentage points.' },
                 { type: 'sustain', text: 'Compliance scorecard achieved GREEN status across all MIL-STD categories.' },
@@ -17972,7 +17972,7 @@ window._s4CongressionalFundingForecaster = function() {
                 { label: 'Operational Readiness Rate', value: '91.2%', impact: 'positive', weight: 'High', detail: 'Above 88% target strongly supports continued appropriation at current levels.' },
                 { label: 'Cost Performance Index', value: '0.97', impact: 'neutral', weight: 'Medium', detail: 'Near-unity CPI meets OMB thresholds but leaves minimal margin for congressional scrutiny.' },
                 { label: 'CDRL Compliance Rate', value: '84%', impact: 'negative', weight: 'High', detail: 'Below 90% compliance triggers GAO reporting flags \u2014 recommend immediate remediation.' },
-                { label: 'Supply Chain Disruption Events', value: '7 in FY25', impact: 'negative', weight: 'Medium', detail: 'Elevated disruptions may attract HASC subcommittee inquiry on program resilience.' }
+                { label: 'Supply Chain Disruption Events', value: '7 in FY26', impact: 'negative', weight: 'Medium', detail: 'Elevated disruptions may attract HASC subcommittee inquiry on program resilience.' }
             ],
             recommendations: [
                 'Increase CDRL compliance to above 90% within 60 days to remove GAO reporting trigger.',
@@ -18094,7 +18094,7 @@ window._s4SelfExecutingContractClause = function() {
                 { type: 'penalty', title: 'PENALTY CLAUSE \u2014 \u00A7 H.4.2', text: 'If Contractor fails to maintain Operational Availability (Ao) at or above 85% for any single reporting period as verified by XRPL-anchored logistics data, a liquidated damages assessment of $150K per percentage point below 85% shall automatically apply.', trigger: 'Ao < 85% for any period', verification: 'XRPL anchor hash verification' },
                 { type: 'escalation', title: 'ESCALATION CLAUSE \u2014 \u00A7 H.4.3', text: 'If Ao falls below 80% for two consecutive periods, the Contracting Officer is authorized to issue a Cure Notice under FAR 49.402-3 with automatic cost-share reallocation of 15% from contractor fee to corrective action budget.', trigger: 'Ao < 80% for 2 consecutive periods', verification: 'Automated XRPL threshold monitoring' }
             ],
-            evidence_basis: 'Based on 47 anchored performance records across FY24-FY25, verified against XRPL ledger entries.'
+            evidence_basis: 'Based on 47 anchored performance records across FY25-FY26, verified against XRPL ledger entries.'
         };
         setTimeout(function() { _renderSEMCResults(demo); }, 1500);
     });
@@ -18585,7 +18585,7 @@ window._s4MultiProgramCascadeSimulator = function() {
                 { name: 'F-35 Joint Strike Fighter', impact: 'High', delay_days: 45, cost_impact: '$12.4M', path: 'Shared ECU component \u2192 Common avionics bus \u2192 Mission system integration delay', mitigation: 'Activate alternate supplier qualification (est. 90 days)' },
                 { name: 'CH-53K King Stallion', impact: 'Medium', delay_days: 22, cost_impact: '$4.8M', path: 'ECU variant sharing \u2192 Power management subsystem \u2192 Flight test schedule slip', mitigation: 'Bridge buy from existing inventory (est. 30 days)' },
                 { name: 'DDG-51 Flight III', impact: 'Low', delay_days: 8, cost_impact: '$1.2M', path: 'ECU technology refresh dependency \u2192 Combat system upgrade timeline', mitigation: 'Decouple ECU upgrade from combat system schedule' },
-                { name: 'MQ-25A Stingray', impact: 'Medium', delay_days: 30, cost_impact: '$6.1M', path: 'ECU commonality with control system \u2192 Unmanned systems certification', mitigation: 'Pursue emergency DMSMS waiver for FY25 production lot' }
+                { name: 'MQ-25A Stingray', impact: 'Medium', delay_days: 30, cost_impact: '$6.1M', path: 'ECU commonality with control system \u2192 Unmanned systems certification', mitigation: 'Pursue emergency DMSMS waiver for FY26 production lot' }
             ],
             total_enterprise_impact: '$24.5M',
             total_schedule_risk: '105 program-days',
@@ -18677,8 +18677,8 @@ window._s4AutomatedNeutralMediator = function(prefix) {
     }).catch(function() {
         var demo = {
             disputes: [
-                { id: 'DSP-001', field: 'DI-ILSS-81495 Operational Availability', party_a: { name: 'Prime Contractor', value: '93.4%', evidence: '12 anchored maintenance records, June\u2013Aug FY25', timestamp: '2025-09-12T14:22:00Z' }, party_b: { name: 'Government QAR', value: '89.1%', evidence: '8 anchored inspection records, same period', timestamp: '2025-09-13T09:15:00Z' }, mediation: 'Discrepancy traced to differing downtime definitions (administrative vs. logistics). Applying MIL-STD-3034 standard definition yields 91.2%. Recommend adopting unified definition and re-anchoring.', resolution: '91.2% (MIL-STD-3034 basis)', confidence: 94 },
-                { id: 'DSP-002', field: 'Supply Chain Lead Time \u2014 Cat I Spares', party_a: { name: 'Logistics Team', value: '84 days', evidence: 'Procurement system extract, 5 orders', timestamp: '2025-09-10T11:00:00Z' }, party_b: { name: 'Contracting Officer', value: '127 days', evidence: 'Contract performance report, same orders', timestamp: '2025-09-11T16:30:00Z' }, mediation: 'Lead time discrepancy due to different measurement start points (PO issuance vs. requirement identification). Using DFARS 252.211-7007 standard, correct measurement is from requirement date.', resolution: '114 days (DFARS basis)', confidence: 88 }
+                { id: 'DSP-001', field: 'DI-ILSS-81495 Operational Availability', party_a: { name: 'Prime Contractor', value: '93.4%', evidence: '12 anchored maintenance records, June\u2013Aug FY26', timestamp: '2026-09-12T14:22:00Z' }, party_b: { name: 'Government QAR', value: '89.1%', evidence: '8 anchored inspection records, same period', timestamp: '2026-09-13T09:15:00Z' }, mediation: 'Discrepancy traced to differing downtime definitions (administrative vs. logistics). Applying MIL-STD-3034 standard definition yields 91.2%. Recommend adopting unified definition and re-anchoring.', resolution: '91.2% (MIL-STD-3034 basis)', confidence: 94 },
+                { id: 'DSP-002', field: 'Supply Chain Lead Time \u2014 Cat I Spares', party_a: { name: 'Logistics Team', value: '84 days', evidence: 'Procurement system extract, 5 orders', timestamp: '2026-09-10T11:00:00Z' }, party_b: { name: 'Contracting Officer', value: '127 days', evidence: 'Contract performance report, same orders', timestamp: '2026-09-11T16:30:00Z' }, mediation: 'Lead time discrepancy due to different measurement start points (PO issuance vs. requirement identification). Using DFARS 252.211-7007 standard, correct measurement is from requirement date.', resolution: '114 days (DFARS basis)', confidence: 88 }
             ],
             total_value_at_stake: '$3.2M in disputed deliverables',
             estimated_resolution_time: '2 hours (vs. 3-6 weeks traditional)'

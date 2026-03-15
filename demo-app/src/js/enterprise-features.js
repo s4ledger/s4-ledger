@@ -424,7 +424,7 @@
                     'Analyze gaps in my logistics support plan',
                     'What MIL-STD-1388 elements am I missing?',
                     'Compare my LSA against DLAD requirements',
-                    'Generate a gap closure plan for FY25'
+                    'Generate a gap closure plan for FY26'
                 ]
             },
             'hub-dmsms': {
