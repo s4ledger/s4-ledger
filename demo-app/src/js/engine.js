@@ -219,11 +219,11 @@ function toggleFlowBox() {
     if (_flowBoxCollapsed) {
         expandFlowBox();
         var btn = document.getElementById('slsToggleBtn');
-        if (btn) btn.innerHTML = '<i class="fas fa-chevron-up" style="margin-right:4px"></i>Hide Flow Details';
+        if (btn) btn.innerHTML = window._s4Safe('<i class="fas fa-chevron-up" style="margin-right:4px"></i>Hide Flow Details');
     } else {
         collapseFlowBox();
         var btn = document.getElementById('slsToggleBtn');
-        if (btn) btn.innerHTML = '<i class="fas fa-chart-simple" style="margin-right:4px"></i>Show Flow Details';
+        if (btn) btn.innerHTML = window._s4Safe('<i class="fas fa-chart-simple" style="margin-right:4px"></i>Show Flow Details');
     }
 }
 
@@ -258,7 +258,7 @@ function _syncSlsBar() {
     // Update sidebar flow panel step 4 if it exists
     var sidebarStep4 = document.getElementById('sidebarFlowStep4Status');
     if (sidebarStep4 && stats.anchored > 0) {
-        sidebarStep4.innerHTML = '<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px"></i> ' + stats.anchored + ' anchor' + (stats.anchored > 1 ? 's' : '') + ' (' + stats.slsFees.toFixed(2) + ' Credits)';
+        sidebarStep4.innerHTML = window._s4Safe('<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px"></i> ' + stats.anchored + ' anchor' + (stats.anchored > 1 ? 's' : '') + ' (' + stats.slsFees.toFixed(2) + ' Credits)');
     }
 }
 
@@ -287,9 +287,9 @@ function acceptDodConsent() {
     var login = document.getElementById('cacLoginModal');
     if (login) {
         var cacBtn = login.querySelector('button[onclick*="simulateCacLogin"]');
-        if (cacBtn) { cacBtn.innerHTML = '<i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC'; cacBtn.disabled = false; }
+        if (cacBtn) { cacBtn.innerHTML = window._s4Safe('<i class="fas fa-shield-halved" style="margin-right:8px;"></i>Authenticate with CAC'); cacBtn.disabled = false; }
         var acctBtn = login.querySelector('button[onclick*="simulateAccountLogin"]');
-        if (acctBtn) { acctBtn.innerHTML = '<i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In'; acctBtn.disabled = false; }
+        if (acctBtn) { acctBtn.innerHTML = window._s4Safe('<i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In'); acctBtn.disabled = false; }
         // Reset input fields
         var emailInput = login.querySelector('#loginEmail');
         var passInput = login.querySelector('#loginPassword');
@@ -324,9 +324,9 @@ function simulateCacLogin() {
     var modal = document.getElementById('cacLoginModal');
     // Show loading state
     var btn = modal.querySelector('button[onclick*="simulateCacLogin"]');
-    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Reading CAC certificate...'; btn.disabled = true; }
+    if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Reading CAC certificate...'); btn.disabled = true; }
     setTimeout(function() {
-        if (btn) { btn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i>Authenticated — DoW PKI Verified'; }
+        if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="margin-right:8px;"></i>Authenticated — DoW PKI Verified'); }
         setTimeout(function() {
             if (modal) modal.style.display = 'none';
             if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
@@ -347,9 +347,9 @@ function simulateAccountLogin() {
     if (!email) { if (typeof _showNotif === 'function') _showNotif('Please enter your email or User ID.', 'warning'); return; }
     var modal = document.getElementById('cacLoginModal');
     var btn = modal.querySelector('button[onclick*="simulateAccountLogin"]');
-    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Authenticating...'; btn.disabled = true; }
+    if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Authenticating...'); btn.disabled = true; }
     setTimeout(function() {
-        if (btn) { btn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i>Signed In'; }
+        if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="margin-right:8px;"></i>Signed In'); }
         setTimeout(function() {
             if (modal) modal.style.display = 'none';
             if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
@@ -646,8 +646,8 @@ async function sha256Binary(arrayBuffer) {
 
 function copyHash(hash) {
     navigator.clipboard.writeText(hash).then(function() {
-        document.querySelectorAll('.copy-btn').forEach(function(b) { b.innerHTML = '<i class="fas fa-check"></i> Copied!'; });
-        setTimeout(function() { document.querySelectorAll('.copy-btn').forEach(function(b) { b.innerHTML = '<i class="fas fa-copy"></i> Copy'; }); }, 2000);
+        document.querySelectorAll('.copy-btn').forEach(function(b) { b.innerHTML = window._s4Safe('<i class="fas fa-check"></i> Copied!'); });
+        setTimeout(function() { document.querySelectorAll('.copy-btn').forEach(function(b) { b.innerHTML = window._s4Safe('<i class="fas fa-copy"></i> Copy'); }); }, 2000);
     });
 }
 
@@ -713,7 +713,7 @@ function showClassificationBanner(typeKey) {
     const clf = getClassification(typeKey);
     const meta = CLF_META[clf];
     banner.className = 'clf-banner show clf-' + clf;
-    banner.querySelector('.clf-icon').innerHTML = '<i class="fas ' + meta.icon + '" style="color:' + meta.color + '"></i>';
+    banner.querySelector('.clf-icon').innerHTML = window._s4Safe('<i class="fas ' + meta.icon + '" style="color:' + meta.color + '"></i>');
     document.getElementById('clfBadge').textContent = meta.label;
     document.getElementById('clfText').textContent = meta.desc;
 }
@@ -762,20 +762,20 @@ function updateStats() {
 function showAnchorAnimation(hash, typeLabel, clfLevel) {
     const overlay = document.getElementById('anchorOverlay');
     const meta = CLF_META[clfLevel] || CLF_META['CUI'];
-    document.getElementById('animStatus').innerHTML = '<i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to Ledger...';
+    document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin" style="color:#00aaff"></i> Anchoring to Ledger...');
     document.getElementById('animStatus').style.color = '#fff';
     document.getElementById('animHash').textContent = hash;
     document.getElementById('animSuccess').textContent = '';
     const clfDiv = document.getElementById('animClf');
     if (clfDiv) {
-        clfDiv.innerHTML = '<span style="padding:4px 14px;border-radius:8px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;color:' + meta.color + ';border:1px solid ' + meta.color + '30;background:' + meta.color + '15">' + '<i class="fas ' + meta.icon + '" style="margin-right:4px"></i>' + meta.label + '</span>';
+        clfDiv.innerHTML = window._s4Safe('<span style="padding:4px 14px;border-radius:8px;font-size:0.85rem;font-weight:800;letter-spacing:0.5px;color:' + meta.color + ';border:1px solid ' + meta.color + '30;background:' + meta.color + '15">' + '<i class="fas ' + meta.icon + '" style="margin-right:4px"></i>' + meta.label + '</span>');
     }
-    document.getElementById('animFee').innerHTML = '0.01 Credits &rarr; Treasury';
+    document.getElementById('animFee').innerHTML = window._s4Safe('0.01 Credits &rarr; Treasury');
     overlay.style.display = 'flex';
     setTimeout(() => {
-        document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#00aaff"></i> ' + typeLabel + ' Anchored Successfully on XRPL';
+        document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#00aaff"></i> ' + typeLabel + ' Anchored Successfully on XRPL');
         document.getElementById('animStatus').style.color = '#00aaff';
-        document.getElementById('animSuccess').innerHTML = '<span style="color:var(--green)">&#x2713; Immutable and verifiable on the XRP Ledger</span>';
+        document.getElementById('animSuccess').innerHTML = window._s4Safe('<span style="color:var(--green)">&#x2713; Immutable and verifiable on the XRP Ledger</span>');
     }, 2000);
 }
 
@@ -802,7 +802,7 @@ async function anchorToLedger(toolName, label) {
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> ' + _anchorLabel + ' Anchored Successfully on XRPL'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ' + _anchorLabel + ' Anchored Successfully on XRPL'); }, 2200);
     await new Promise(function(r){ setTimeout(r, 3500); });
     hideAnchorAnimation();
 }
@@ -891,7 +891,7 @@ function _showDemoOffline() {
     if (!_demoSession.subscription) _demoSession.subscription = {label:_tierData.label,sls_allocation:_tierData.sls};
     window._demoSession = _demoSession;
     document.getElementById('demoBanner').style.display = 'none';
-    document.getElementById('demoBanner').innerHTML = '<i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong style="color:#fff;">S4 Ledger</strong> &mdash; Offline mode. Anchors are queued locally and will sync when connected.';
+    document.getElementById('demoBanner').innerHTML = window._s4Safe('<i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong style="color:#fff;">S4 Ledger</strong> &mdash; Offline mode. Anchors are queued locally and will sync when connected.');
     var panel = document.getElementById('demoPanel');
     // Panel visibility controlled by wallet tab — don't force-show
     // Show hypothetical balances
@@ -925,26 +925,26 @@ function _animateDemoSteps(data) {
         const s1 = document.getElementById('demoStep1');
         const s1s = document.getElementById('demoStep1Status');
         if (s1) { s1.style.borderColor = 'rgba(0,170,255,0.6)'; s1.style.background = 'rgba(0,170,255,0.15)'; }
-        if (s1s) { s1s.innerHTML = '<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> Provisioned'; s1s.style.color = '#00aaff'; }
+        if (s1s) { s1s.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> Provisioned'); s1s.style.color = '#00aaff'; }
     }, 300);
     setTimeout(() => {
         const s2 = document.getElementById('demoStep2');
         const s2s = document.getElementById('demoStep2Status');
         if (s2) { s2.style.borderColor = 'rgba(0,170,255,0.6)'; s2.style.background = 'rgba(0,170,255,0.15)'; }
-        if (s2s) { s2s.innerHTML = '<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> 12 XRP funded'; s2s.style.color = '#00aaff'; }
+        if (s2s) { s2s.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> 12 XRP funded'); s2s.style.color = '#00aaff'; }
     }, 800);
     setTimeout(() => {
         const s3 = document.getElementById('demoStep3');
         const s3s = document.getElementById('demoStep3Status');
         if (s3) { s3.style.borderColor = 'rgba(201,168,76,0.6)'; s3.style.background = 'rgba(201,168,76,0.12)'; }
         const alloc = data.subscription?.sls_allocation?.toLocaleString() || ((window._onboardTiers && window._onboardTier && window._onboardTiers[window._onboardTier]) ? window._onboardTiers[window._onboardTier].sls.toLocaleString() : '25,000');
-        if (s3s) { s3s.innerHTML = '<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> ' + alloc + ' Credits'; s3s.style.color = '#c9a84c'; }
+        if (s3s) { s3s.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> ' + alloc + ' Credits'); s3s.style.color = '#c9a84c'; }
     }, 1300);
     setTimeout(() => {
         const s4 = document.getElementById('demoStep4');
         const s4s = document.getElementById('demoStep4Status');
         if (s4) { s4.style.borderColor = 'rgba(0,170,255,0.6)'; s4.style.background = 'rgba(0,170,255,0.1)'; }
-        if (s4s) { s4s.innerHTML = '<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px;"></i> Ready — anchor to trigger'; s4s.style.color = '#00aaff'; }
+        if (s4s) { s4s.innerHTML = window._s4Safe('<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px;"></i> Ready — anchor to trigger'); s4s.style.color = '#00aaff'; }
     }, 1800);
     setTimeout(() => {
         const info = document.getElementById('demoSessionInfo');
@@ -977,7 +977,7 @@ async function _checkDemoStatus() {
             const s4s = document.getElementById('demoStep4Status');
             const anchors = data.anchors_used || 0;
             if (s4s && anchors > 0) {
-                s4s.innerHTML = '<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> ' + anchors + ' anchor' + (anchors > 1 ? 's' : '') + ' (' + (anchors * 0.01).toFixed(2) + ' Credits)';
+                s4s.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> ' + anchors + ' anchor' + (anchors > 1 ? 's' : '') + ' (' + (anchors * 0.01).toFixed(2) + ' Credits)');
             }
         }
     } catch(e) { console.warn('Demo status check failed:', e); }
@@ -1069,7 +1069,7 @@ async function anchorRecord() {
     if (!input) { s4Notify('Missing Content','Please enter record content.','warning'); return; }
     const btn = document.getElementById('anchorBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Anchoring...';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> Anchoring...');
 
     const encrypt = document.getElementById('encryptCheck').checked;
     // Use binary file hash if a file was uploaded, otherwise hash the text input
@@ -1112,7 +1112,7 @@ async function anchorRecord() {
     var s4el = document.getElementById('demoStep4');
     var s4s = document.getElementById('demoStep4Status');
     if (s4el) { s4el.style.boxShadow = '0 0 20px rgba(0,170,255,0.4)'; setTimeout(function(){ s4el.style.boxShadow = 'none'; }, 2000); }
-    if (s4s) { s4s.innerHTML = '<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px;"></i> ' + stats.anchored + ' anchor' + (stats.anchored > 1 ? 's' : '') + ' (' + stats.slsFees.toFixed(2) + ' Credits)'; }
+    if (s4s) { s4s.innerHTML = window._s4Safe('<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px;"></i> ' + stats.anchored + ' anchor' + (stats.anchored > 1 ? 's' : '') + ' (' + stats.slsFees.toFixed(2) + ' Credits)'); }
     // Auto-update demo SLS balance display
     _updateDemoSlsBalance();
     // Flash visible toast showing new balance
@@ -1141,7 +1141,7 @@ async function anchorRecord() {
     panel.classList.add('show');
     updateTxLog();
     btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-anchor"></i> Anchor to Ledger';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-anchor"></i> Anchor to Ledger');
     // Redundant synchronous balance update AFTER animation to guarantee UI is current
     _updateDemoSlsBalance();
     _syncSlsBar();
@@ -1203,7 +1203,7 @@ function refreshVerifyRecents() {
     // If container isn't in the DOM yet, just store and return
     if (!container) return;
     if (records.length === 0) {
-        container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">No anchored records yet. Anchor a record first to see it here.</div>';
+        container.innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">No anchored records yet. Anchor a record first to see it here.</div>');
         return;
     }
     container.innerHTML = window._s4Safe(records.slice(0, 20).map(function(r, idx) {
@@ -1343,7 +1343,7 @@ function handleVerifyFileSelect(e) {
 async function verifyFiles(fileList) {
     var resultsDiv = document.getElementById('verifyFileResults');
     resultsDiv.style.display = 'block';
-    resultsDiv.innerHTML = '<div style="text-align:center;padding:16px;color:var(--accent);"><i class="fas fa-spinner fa-spin"></i> Verifying ' + fileList.length + ' file' + (fileList.length > 1 ? 's' : '') + '...</div>';
+    resultsDiv.innerHTML = window._s4Safe('<div style="text-align:center;padding:16px;color:var(--accent);"><i class="fas fa-spinner fa-spin"></i> Verifying ' + fileList.length + ' file' + (fileList.length > 1 ? 's' : '') + '...</div>');
 
     var results = [];
     for (var i = 0; i < fileList.length; i++) {
@@ -3565,9 +3565,9 @@ function onILSProgramChange() {
     document.getElementById('ilsScore').style.color = 'var(--muted)';
     document.getElementById('ilsScoreLabel').textContent = 'Upload documents & run analysis';
     document.getElementById('ilsGaugeFill').style.width = '0%';
-    document.getElementById('ilsCoverage').innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">Upload files to see checklist coverage.</div>';
-    document.getElementById('ilsActions').innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem;font-size:0.85rem">Run analysis to generate action items.</div>';
-    document.getElementById('ilsCostSchedule').innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">Analysis required to estimate impact.</div>';
+    document.getElementById('ilsCoverage').innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:1rem">Upload files to see checklist coverage.</div>');
+    document.getElementById('ilsActions').innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:1rem;font-size:0.85rem">Run analysis to generate action items.</div>');
+    document.getElementById('ilsCostSchedule').innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:1rem">Analysis required to estimate impact.</div>');
     var r = document.getElementById('ilsResult'); if(r){r.innerHTML=''; r.classList.remove('show');}
 
     // ═══ SYNC ALL OTHER TOOL DROPDOWNS to same program ═══
@@ -3766,14 +3766,14 @@ function renderILSCoverage(clItems, drlResults) {
         html += '<div style="font-weight:700;color:var(--accent);margin:12px 0 6px;font-size:0.82rem">DRL COVERAGE: '+found+'/'+drlResults.length+'</div>';
         html += '<div class="ils-coverage-bar" style="margin-bottom:4px"><div class="ils-coverage-fill" style="width:'+Math.round(found/drlResults.length*100)+'%;background:'+(found/drlResults.length>=0.8?'#00aaff':found/drlResults.length>=0.5?'#ffa500':'#ff3333')+'"></div></div>';
     }
-    el.innerHTML = html;
+    el.innerHTML = window._s4Safe(html);
 }
 
 function renderILSActions(actions) {
     const el = document.getElementById('ilsActions');
     if (!el) return;
     if (!actions.length) {
-        el.innerHTML = '<div style="color:var(--accent);text-align:center;padding:1rem"><i class="fas fa-check-circle" style="font-size:1.5rem;display:block;margin-bottom:6px"></i>No gaps detected. ILS package appears complete.</div>';
+        el.innerHTML = window._s4Safe('<div style="color:var(--accent);text-align:center;padding:1rem"><i class="fas fa-check-circle" style="font-size:1.5rem;display:block;margin-bottom:6px"></i>No gaps detected. ILS package appears complete.</div>');
         return;
     }
     const crit = actions.filter(a => a.severity==='critical'), warn = actions.filter(a => a.severity==='warning');
@@ -3786,7 +3786,7 @@ function renderILSActions(actions) {
         html += '<div style="color:#ffa500;font-weight:700;margin:8px 0 6px;font-size:0.82rem"><i class="fas fa-exclamation-triangle"></i> WARNING (' + warn.length + ')</div>';
         warn.forEach(a => { html += renderActionItem(a); });
     }
-    el.innerHTML = html;
+    el.innerHTML = window._s4Safe(html);
 }
 
 function renderActionItem(a) {
@@ -3800,7 +3800,7 @@ function renderActionItem(a) {
 function renderILSCost(actions, totalCost, critGaps) {
     const el = document.getElementById('ilsCostSchedule');
     if (!el) return;
-    if (!actions.length) { el.innerHTML = '<div style="color:var(--accent);text-align:center;padding:0.5rem"><i class="fas fa-check-circle"></i> No cost or schedule risk identified.</div>'; return; }
+    if (!actions.length) { el.innerHTML = window._s4Safe('<div style="color:var(--accent);text-align:center;padding:0.5rem"><i class="fas fa-check-circle"></i> No cost or schedule risk identified.</div>'); return; }
     const maxSch = critGaps > 3 ? '6-12 months' : critGaps > 0 ? '2-6 months' : '< 2 months';
     el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">'
         + '<div style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);border-radius:8px;padding:12px;text-align:center">'
@@ -4033,7 +4033,7 @@ async function anchorROI() {
     addToVault({hash:hash, txHash:result.txHash, type:'ROI_REPORT', label:'S4 Ledger ROI Analysis', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     // Update SLS display
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Analysis Anchored Successfully on XRPL'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Analysis Anchored Successfully on XRPL'); }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -4580,7 +4580,7 @@ async function exportProgramSummary() {
     // Footer
     html += '<div style="text-align:center;font-size:0.72rem;color:var(--muted);padding-top:8px;border-top:1px solid var(--border)">Generated by S4 Ledger | s4ledger.com</div>';
 
-    document.getElementById('programSummaryBody').innerHTML = html;
+    document.getElementById('programSummaryBody').innerHTML = window._s4Safe(html);
     modal.classList.add('active');
 
     _lastSummaryText = _buildSummaryPlainText(d);
@@ -4873,7 +4873,7 @@ function updateAiContext(panelId) {
     if (toolLabel) toolLabel.textContent = ctx.label;
     const btnContainer = document.getElementById('aiQuickBtns');
     if (btnContainer) {
-        btnContainer.innerHTML = ctx.buttons.map(b => `<button class="ai-quick-btn" onclick="aiAsk('${b[0]}')">${b[1]}</button>`).join('');
+        btnContainer.innerHTML = window._s4Safe(ctx.buttons.map(b => `<button class="ai-quick-btn" onclick="aiAsk('${b[0]}')">${b[1]}</button>`).join(''));
     }
 }
 // Initialize quick buttons on load
@@ -5588,7 +5588,7 @@ async function anchorDMSMS() {
     saveLocalRecord({hash, record_type:'DMSMS_REPORT', record_label:'DMSMS Obsolescence Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'DMSMS Tracker', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS Obsolescence Check Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS Obsolescence Check Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -5606,7 +5606,7 @@ function loadReadinessData() {
     const progKey = document.getElementById('readinessProgram').value;
     const systems = READINESS_DEFAULTS[progKey] || READINESS_DEFAULTS.ddg51;
     const sel = document.getElementById('readinessSystem');
-    sel.innerHTML = systems.map((s,i) => '<option value="' + i + '">' + s.sys + '</option>').join('');
+    sel.innerHTML = window._s4Safe(systems.map((s,i) => '<option value="' + i + '">' + s.sys + '</option>').join(''));
     // Load first system defaults
     const first = systems[0];
     document.getElementById('inputMTBF').value = first.mtbf;
@@ -5621,7 +5621,7 @@ function calcReadiness() {
     const mldt = parseFloat(document.getElementById('inputMLDT').value) || 0;
     
     if (mtbf <= 0) {
-        document.getElementById('readinessOutput').innerHTML = '<div style="color:var(--steel);font-style:italic;">Enter MTBF value to calculate readiness metrics.</div>';
+        document.getElementById('readinessOutput').innerHTML = window._s4Safe('<div style="color:var(--steel);font-style:italic;">Enter MTBF value to calculate readiness metrics.</div>');
         return;
     }
 
@@ -5670,7 +5670,7 @@ function calcReadiness() {
     html += '<strong>Formulas:</strong> Ao = MTBF/(MTBF+MTTR+MLDT) | Ai = MTBF/(MTBF+MTTR) | λ = 1/MTBF | R(t) = e<sup>−λt</sup>';
     html += '</div></div>';
 
-    document.getElementById('readinessOutput').innerHTML = html;
+    document.getElementById('readinessOutput').innerHTML = window._s4Safe(html);
     // ── R12: Store Ao globally and trigger reactive chart update
     window._readinessAo = ao;
     if (typeof renderReadinessCharts === 'function') setTimeout(renderReadinessCharts, 200);
@@ -5706,7 +5706,7 @@ async function anchorReadiness() {
     saveLocalRecord({hash, record_type:'RAM_REPORT', record_label:'RAM Readiness Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Readiness Calculator', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Readiness Score Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Readiness Score Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -5838,7 +5838,7 @@ function populateAllDropdowns() {
     };
     Object.entries(selects).forEach(([id, opts]) => {
         const el = document.getElementById(id);
-        if (el) el.innerHTML = S4_buildProgramOptions(opts.all, opts.custom);
+        if (el) el.innerHTML = window._s4Safe(S4_buildProgramOptions(opts.all, opts.custom));
     });
     // Update platform count badge
     if (window.S4_countPlatforms) {
@@ -5944,7 +5944,7 @@ function clearCompletedActions() {
 // ── Action Item CRUD (Modal-based add/edit/delete) ──
 function showAddActionModal(preSource) {
     document.getElementById('actionModalEditId').value = '';
-    document.getElementById('actionModalTitle').innerHTML = '<i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>New Action Item';
+    document.getElementById('actionModalTitle').innerHTML = window._s4Safe('<i class="fas fa-plus-circle" style="color:var(--accent);margin-right:8px"></i>New Action Item');
     document.getElementById('actionModalItemTitle').value = '';
     document.getElementById('actionModalDetail').value = '';
     document.getElementById('actionModalSeverity').value = 'info';
@@ -5959,7 +5959,7 @@ function editActionItem(id) {
     const item = s4ActionItems.find(a => a.id === id);
     if (!item) return;
     document.getElementById('actionModalEditId').value = id;
-    document.getElementById('actionModalTitle').innerHTML = '<i class="fas fa-pen" style="color:var(--accent);margin-right:8px"></i>Edit Action Item';
+    document.getElementById('actionModalTitle').innerHTML = window._s4Safe('<i class="fas fa-pen" style="color:var(--accent);margin-right:8px"></i>Edit Action Item');
     document.getElementById('actionModalItemTitle').value = item.title || '';
     document.getElementById('actionModalDetail').value = item.detail || '';
     document.getElementById('actionModalSeverity').value = item.severity || 'info';
@@ -6071,7 +6071,7 @@ function openProdFeatures(){
     });
     html+='</div>';
   });
-  list.innerHTML=html;
+  list.innerHTML=window._s4Safe(html);
   el.classList.add('active');
 }
 function closeProdFeatures(){ document.getElementById('prodFeaturesModal').classList.remove('active'); }
@@ -6154,7 +6154,7 @@ function renderActionTimeline() {
         if (a.due) return -1; if (b.due) return 1;
         return (a.created || '') < (b.created || '') ? -1 : 1;
     });
-    if (!items.length) { container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:2rem">No open action items.</div>'; return; }
+    if (!items.length) { container.innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:2rem">No open action items.</div>'); return; }
     var sevColors = {critical: '#ff6b6b', warning: '#ffa500', info: '#00aaff'};
     var html = '<div style="position:relative;padding-left:28px">';
     html += '<div style="position:absolute;left:10px;top:0;bottom:0;width:2px;background:rgba(0,170,255,0.2)"></div>';
@@ -6349,7 +6349,7 @@ function renderHubActions(filter) {
         });
         srcEl.innerHTML = window._s4Safe(sHtml);
     }
-    if (!items.length) { container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem"><i class="fas fa-clipboard-list" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>'+(filter==='all'?'No action items yet. Click <strong>Add New</strong> above or use any tool to generate tasks.':'No items match this filter.')+'</div>'; return; }
+    if (!items.length) { container.innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem"><i class="fas fa-clipboard-list" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>'+(filter==='all'?'No action items yet. Click <strong>Add New</strong> above or use any tool to generate tasks.':'No items match this filter.')+'</div>'); return; }
     const sourceIcons = {dmsms:'<i class="fas fa-exclamation-triangle" style="color:var(--accent)"></i>',readiness:'<i class="fas fa-chart-line" style="color:var(--accent)"></i>',parts:'<i class="fas fa-cogs" style="color:var(--accent)"></i>',warranty:'<i class="fas fa-file-contract" style="color:var(--accent)"></i>',roi:'<i class="fas fa-dollar-sign" style="color:var(--accent)"></i>',lifecycle:'<i class="fas fa-clock" style="color:var(--accent)"></i>',ils:'<i class="fas fa-brain" style="color:var(--accent)"></i>',checklist:'<i class="fas fa-check-circle" style="color:var(--accent)"></i>',drl:'<i class="fas fa-file-alt" style="color:var(--accent)"></i>',manual:'<i class="fas fa-pen" style="color:var(--accent)"></i>',compliance:'<i class="fas fa-shield-halved" style="color:var(--accent)"></i>',risk:'<i class="fas fa-triangle-exclamation" style="color:var(--accent)"></i>',predictive:'<i class="fas fa-brain" style="color:var(--accent)"></i>',sbom:'<i class="fas fa-microchip" style="color:var(--accent)"></i>',submissions:'<i class="fas fa-file-circle-check" style="color:var(--accent)"></i>',reports:'<i class="fas fa-file-pdf" style="color:var(--accent)"></i>'};
     let html = '';
     items.forEach(item => {
@@ -6496,7 +6496,7 @@ function renderVault() {
     _vaultFilteredItems = items;
 
     if (items.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--muted)"><i class="fas fa-vault" style="font-size:2.5rem;margin-bottom:12px;opacity:0.3"></i><p>' + (search ? 'No records match your search.' : 'No anchored records yet. Records will appear here automatically as you anchor them.') + '</p></div>';
+        container.innerHTML = window._s4Safe('<div style="text-align:center;padding:40px 20px;color:var(--muted)"><i class="fas fa-vault" style="font-size:2.5rem;margin-bottom:12px;opacity:0.3"></i><p>' + (search ? 'No records match your search.' : 'No anchored records yet. Records will appear here automatically as you anchor them.') + '</p></div>');
         _updateBulkBar();
         _updateVaultPagination();
         return;
@@ -6680,7 +6680,7 @@ function runVaultStressTest() {
     var countEl = document.getElementById('stressTestCount');
     var count = parseInt(countEl ? countEl.value : '1000', 10);
     var resultsDiv = document.getElementById('stressTestResults');
-    if (resultsDiv) { resultsDiv.style.display = 'block'; resultsDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating ' + count.toLocaleString() + ' synthetic records…'; }
+    if (resultsDiv) { resultsDiv.style.display = 'block'; resultsDiv.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> Generating ' + count.toLocaleString() + ' synthetic records…'); }
 
     // Use setTimeout to keep UI responsive during large generation
     setTimeout(function() {
@@ -6723,7 +6723,7 @@ function runVaultStressTest() {
             // localStorage quota exceeded — remove the generated records and warn
             s4Vault = s4Vault.slice(0, s4Vault.length - count);
             if (resultsDiv) {
-                resultsDiv.innerHTML = '<span style="color:#ff3333"><i class="fas fa-exclamation-triangle"></i> <strong>localStorage quota exceeded.</strong> Could not store ' + count.toLocaleString() + ' records. Try a smaller count or clear existing records first.</span>';
+                resultsDiv.innerHTML = window._s4Safe('<span style="color:#ff3333"><i class="fas fa-exclamation-triangle"></i> <strong>localStorage quota exceeded.</strong> Could not store ' + count.toLocaleString() + ' records. Try a smaller count or clear existing records first.</span>');
             }
             s4Notify('Storage Limit','localStorage quota exceeded for ' + count.toLocaleString() + ' records.','danger');
             return;
@@ -6925,7 +6925,7 @@ function showRedFlagAlert(docId, flags) {
     });
     html += '</div>';
     var flagDiv = document.createElement('div');
-    flagDiv.innerHTML = html;
+    flagDiv.innerHTML = window._s4Safe(html);
     document.body.appendChild(flagDiv);
     setTimeout(function(){ if(flagDiv.parentElement) flagDiv.remove(); }, 15000);
 }
@@ -6956,7 +6956,7 @@ function showDiffResult(docId, diff, flags) {
         html += '</div>';
     }
     html += '<div style="text-align:right;margin-top:16px"><button onclick="this.closest(\'div\').parentElement.remove()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">Close</button></div></div>';
-    modal.innerHTML = html;
+    modal.innerHTML = window._s4Safe(html);
     document.body.appendChild(modal);
 }
 
@@ -6992,7 +6992,7 @@ function renderDocLibrary() {
     if (countEl) countEl.textContent = docs.length + ' of ' + S4_DEFENSE_DOCS.length + ' documents';
 
     if (docs.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)"><i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;opacity:0.3"></i><p>No documents match your filters.</p></div>';
+        container.innerHTML = window._s4Safe('<div style="text-align:center;padding:40px;color:var(--muted)"><i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;opacity:0.3"></i><p>No documents match your filters.</p></div>');
         return;
     }
 
@@ -7086,7 +7086,7 @@ function calcCompliance() {
     if (recs.length === 0) recs.push('<i class="fas fa-check-circle" style="color:var(--accent);margin-right:6px"></i> <strong>Excellent compliance posture!</strong> Continue anchoring records and monitoring DMSMS, readiness, and warranty status.');
 
     const recsEl = document.getElementById('complianceRecs');
-    if (recsEl) recsEl.innerHTML = recs.map(r => '<div style="margin-bottom:8px">' + r + '</div>').join('');
+    if (recsEl) recsEl.innerHTML = window._s4Safe(recs.map(r => '<div style="margin-bottom:8px">' + r + '</div>').join(''));
     // ── R12: Store compliance scores globally and trigger reactive chart
     window._complianceScores = [cmmc, nist, dfars, 0, 0, far, ils];
     if (typeof renderComplianceCharts === 'function') setTimeout(renderComplianceCharts, 250);
@@ -7131,7 +7131,7 @@ async function anchorCompliance() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'compliance_scorecard', record_label:'Compliance Scorecard', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Compliance Scorecard', explorer_url: explorerUrl, network});
     updateTxLog();
-    setTimeout(()=>{ var st = document.getElementById('animStatus'); if(st) { st.innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Compliance Scorecard Anchored Successfully on XRPL'; st.style.color = '#00aaff'; } }, 2200);
+    setTimeout(()=>{ var st = document.getElementById('animStatus'); if(st) { st.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Compliance Scorecard Anchored Successfully on XRPL'); st.style.color = '#00aaff'; } }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -7358,7 +7358,7 @@ function runMonitoringScan() {
 
     if (log) {
         var logEntry = '<div style="border-bottom:1px solid rgba(255,255,255,0.04);padding:4px 0"><span style="color:#00aaff">[' + new Date().toLocaleTimeString() + ']</span> Scan complete — ' + _monitorControls.filter(function(c,i){ return _getControlScore(c,vault,encrypted,actions,done) >= 80; }).length + '/' + _monitorControls.length + ' controls operational. Vault: ' + vault + ' records, ' + encrypted + ' encrypted. POA&M open: ' + poamOpen + '</div>';
-        log.innerHTML = logEntry + log.innerHTML;
+        log.innerHTML = window._s4Safe(logEntry + log.innerHTML);
         if (log.children.length > 20) log.removeChild(log.lastChild);
     }
 }
@@ -7379,7 +7379,7 @@ function _getControlScore(c, vault, encrypted, actions, done) {
 function toggleAutoMonitor() {
     _autoMonitor = !_autoMonitor;
     var btn = document.getElementById('autoMonitorBtn');
-    if (btn) { btn.innerHTML = '<i class="fas fa-sync' + (_autoMonitor ? ' fa-spin' : '') + '"></i> Auto-Monitor: ' + (_autoMonitor ? 'ON' : 'OFF'); btn.style.background = _autoMonitor ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.06)'; btn.style.color = _autoMonitor ? '#00aaff' : '#fff'; }
+    if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-sync' + (_autoMonitor ? ' fa-spin' : '') + '"></i> Auto-Monitor: ' + (_autoMonitor ? 'ON' : 'OFF')); btn.style.background = _autoMonitor ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.06)'; btn.style.color = _autoMonitor ? '#00aaff' : '#fff'; }
     if (_autoMonitor) { _autoMonitorTimer = setInterval(runMonitoringScan, 30000); showWorkspaceNotification('Auto-monitoring enabled — scanning every 30s'); }
     else { clearInterval(_autoMonitorTimer); _autoMonitorTimer = null; showWorkspaceNotification('Auto-monitoring disabled'); }
 }
@@ -7471,12 +7471,12 @@ function populateDiffVersions() {
             { label: 'PTD v1.0 — 2024-02-01', id: 'v4' },
             { label: 'PTD v1.1 — 2024-05-18', id: 'v5' }
         ];
-        selA.innerHTML = '<option value="">Version A (Base)</option>' + demoVersions.map(function(v) { return '<option value="' + v.id + '">' + v.label + '</option>'; }).join('');
-        selB.innerHTML = '<option value="">Version B (New)</option>' + demoVersions.map(function(v) { return '<option value="' + v.id + '">' + v.label + '</option>'; }).join('');
+        selA.innerHTML = window._s4Safe('<option value="">Version A (Base)</option>' + demoVersions.map(function(v) { return '<option value="' + v.id + '">' + v.label + '</option>'; }).join(''));
+        selB.innerHTML = window._s4Safe('<option value="">Version B (New)</option>' + demoVersions.map(function(v) { return '<option value="' + v.id + '">' + v.label + '</option>'; }).join(''));
     } else {
         var opts = subs.map(function(s, i) { return '<option value="sub' + i + '">' + (s.label || 'Submission') + ' — ' + new Date(s.timestamp).toLocaleDateString() + '</option>'; }).join('');
-        selA.innerHTML = '<option value="">Version A (Base)</option>' + opts;
-        selB.innerHTML = '<option value="">Version B (New)</option>' + opts;
+        selA.innerHTML = window._s4Safe('<option value="">Version A (Base)</option>' + opts);
+        selB.innerHTML = window._s4Safe('<option value="">Version B (New)</option>' + opts);
     }
 }
 
@@ -7485,8 +7485,8 @@ function runVersionDiff() {
     var vB = document.getElementById('diffVersionB')?.value;
     var output = document.getElementById('diffOutput');
     if (!output) return;
-    if (!vA || !vB) { output.innerHTML = '<div style="color:#ffa500;padding:12px">Please select both Version A and Version B to compare.</div>'; return; }
-    if (vA === vB) { output.innerHTML = '<div style="color:var(--steel);padding:12px">Same version selected. No differences.</div>'; return; }
+    if (!vA || !vB) { output.innerHTML = window._s4Safe('<div style="color:#ffa500;padding:12px">Please select both Version A and Version B to compare.</div>'); return; }
+    if (vA === vB) { output.innerHTML = window._s4Safe('<div style="color:var(--steel);padding:12px">Same version selected. No differences.</div>'); return; }
 
     // Generate realistic diff output
     var diffs = [
@@ -7560,7 +7560,7 @@ function generateExecSummary() {
     html += '</div>';
 
     html += '</div></div>';
-    out.innerHTML = html;
+    out.innerHTML = window._s4Safe(html);
     window._lastExecSummary = { vault:vault, actions:actions, done:done, compScore:compScore, grade:grade, poamOpen:poamOpen, evCount:evCount, savings:estSavings, date:now.toISOString() };
     showWorkspaceNotification('Executive summary generated');
 }
@@ -7673,7 +7673,7 @@ function generateFleetComparison() {
         html += '</tr>';
     });
     html += '</tbody></table>';
-    out.innerHTML = html;
+    out.innerHTML = window._s4Safe(html);
     showWorkspaceNotification('Fleet comparison generated — ' + programs.length + ' programs');
 }
 
@@ -7708,7 +7708,7 @@ function generateHeatMap() {
     });
     html += '</div>';
     html += '<div style="margin-top:10px;display:flex;gap:12px;font-size:0.72rem;color:var(--steel)"><span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#ff3333;margin-right:4px"></span>Critical (80+)</span><span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#ff6b6b;margin-right:4px"></span>High (60-79)</span><span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#ffa500;margin-right:4px"></span>Moderate (40-59)</span><span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#00cc88;margin-right:4px"></span>Low (&lt;40)</span></div>';
-    out.innerHTML = html;
+    out.innerHTML = window._s4Safe(html);
     showWorkspaceNotification('Risk heat map generated — ' + categories.length + ' categories analyzed');
 }
 
@@ -7736,7 +7736,7 @@ function generateRemediationPlans() {
             + p.steps.map(function(s, i) { return '<div style="padding:3px 0;color:var(--steel);font-size:0.78rem"><span style="color:#00aaff;margin-right:6px;font-weight:700">' + (i+1) + '.</span>' + s + '</div>'; }).join('')
             + '</div></div>';
     }).join('');
-    out.innerHTML = html;
+    out.innerHTML = window._s4Safe(html);
     showWorkspaceNotification('AI generated ' + plans.length + ' remediation plans');
 }
 
@@ -7782,7 +7782,7 @@ function runAnomalyDetection() {
             + '<i class="fas ' + a.icon + '" style="color:' + a.color + ';font-size:1rem;margin-top:2px"></i>'
             + '<div><div style="color:#fff;font-size:0.82rem;font-weight:600">' + a.type + ' <span style="color:' + a.color + ';font-size:0.7rem;font-weight:400">' + a.severity + '</span></div><div style="color:var(--steel);font-size:0.78rem;margin-top:2px">' + a.desc + '</div></div></div>';
     }).join('');
-    out.innerHTML = html;
+    out.innerHTML = window._s4Safe(html);
     showWorkspaceNotification('Anomaly scan complete — ' + anomalies.length + ' findings');
 }
 
@@ -7828,7 +7828,7 @@ function generateBudgetForecast() {
     html += '<td style="padding:8px;text-align:right;color:#fff;font-size:0.88rem">$' + Math.round(totalNet * 1000000).toLocaleString() + '</td>';
     html += '</tr></tbody></table>';
     html += '<div style="margin-top:8px;font-size:0.72rem;color:var(--steel)">Forecast assumes ' + (inflationRate*100).toFixed(1) + '% annual inflation, ' + (obsolescenceGrowth*100).toFixed(1) + '% obsolescence growth, and ' + (s4Savings*100) + '% S4 automation savings. Adjust inputs in Lifecycle Cost Calculator for program-specific projections.</div>';
-    out.innerHTML = html;
+    out.innerHTML = window._s4Safe(html);
     showWorkspaceNotification(years + '-year budget forecast generated — $' + Math.round(totalSavings * 1000000).toLocaleString() + ' in projected savings');
 }
 
@@ -7888,7 +7888,7 @@ function _extractFromText(text, filename) {
     var totalExtracted = sections.reduce(function(sum, s) { return sum + s.items.length; }, 0);
     html += '<div style="margin-top:10px;padding:8px;background:rgba(0,170,255,0.06);border-radius:8px;font-size:0.78rem;color:var(--steel)"><strong style="color:#00aaff">' + totalExtracted + ' data points</strong> extracted from document. In production, extracted data auto-populates CDRL tracking, procurement forms, and compliance evidence.</div>';
     html += '</div></div>';
-    out.innerHTML = html;
+    out.innerHTML = window._s4Safe(html);
     showWorkspaceNotification('AI extracted ' + totalExtracted + ' data points from ' + filename);
 }
 
@@ -8033,7 +8033,7 @@ function loadRiskData() {
         html += '<td style="padding:10px 8px;text-align:center;font-weight:600;color:'+(it.etaImpact==='None'?'var(--text-muted)':'#ff9500')+';font-size:0.82rem;">'+it.etaImpact+'</td>';
         html += '</tr>';
     });
-    document.getElementById('riskTableBody').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">No risks found at selected threshold.</td></tr>';
+    document.getElementById('riskTableBody').innerHTML = window._s4Safe(html || '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">No risks found at selected threshold.</td></tr>');
     showWorkspaceNotification('Risk analysis loaded — ' + crit + ' critical, ' + high + ' high risk items');
     // ── R12: Compute category risk scores from items for chart reactivity
     var _catScores = {};
@@ -8080,7 +8080,7 @@ async function anchorRisk() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'risk_report', record_label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'risk_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Supply Chain Risk Report', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Risk Report Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Risk Report Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -8096,7 +8096,7 @@ function loadReportPreview() {
     const vaultRecords = s4Vault || [];
     const totalRecords = Math.max(records.length, vaultRecords.length, stats.anchored || 0);
     document.getElementById('reportRecordCount').textContent = totalRecords + ' records available';
-    document.getElementById('reportContent').innerHTML = '<div style="color:var(--text-muted);font-style:italic;">Click "Generate Report" to compile your audit package.</div>';
+    document.getElementById('reportContent').innerHTML = window._s4Safe('<div style="color:var(--text-muted);font-style:italic;">Click "Generate Report" to compile your audit package.</div>');
 }
 
 function generateReport() {
@@ -8191,7 +8191,7 @@ async function anchorReport() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'audit_report', record_label:r.title, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'audit_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Audit Report', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Audit Report Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Audit Report Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -8392,7 +8392,7 @@ function loadPredictiveData() {
         html += '<td style="padding:10px 8px;text-align:right;color:#ff9500;font-weight:600;font-size:0.85rem;">$'+(it.cost*1000).toLocaleString()+'</td>';
         html += '</tr>';
     });
-    document.getElementById('pdmTableBody').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">No predictions above confidence threshold.</td></tr>';
+    document.getElementById('pdmTableBody').innerHTML = window._s4Safe(html || '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">No predictions above confidence threshold.</td></tr>');
     showWorkspaceNotification('Predictive analysis complete — ' + items.length + ' predictions, ' + urgent + ' urgent');
 }
 
@@ -8420,7 +8420,7 @@ async function anchorPredictive() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'predictive_maintenance', record_label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'predictive_maintenance', branch:'JOINT', timestamp:new Date().toISOString(), label:'Predictive Maintenance', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Predictive Maintenance Anchored Successfully on XRPL'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Predictive Maintenance Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
@@ -8656,7 +8656,7 @@ function runSubmissionDemo() {
         timestamp: new Date().toISOString()
     };
 
-    document.getElementById('subUploadZone').innerHTML = '<i class="fas fa-check-circle" style="font-size:2rem;color:#00aaff;display:block;margin-bottom:4px"></i><div style="color:#00aaff;font-weight:600">Demo ' + (SUBMISSION_TYPES[docType]||docType) + '</div><div style="color:var(--steel);font-size:.78rem">' + items.length + ' current records vs ' + _subCache.baseline.length + ' baseline records loaded</div>';
+    document.getElementById('subUploadZone').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="font-size:2rem;color:#00aaff;display:block;margin-bottom:4px"></i><div style="color:#00aaff;font-weight:600">Demo ' + (SUBMISSION_TYPES[docType]||docType) + '</div><div style="color:var(--steel);font-size:.78rem">' + items.length + ' current records vs ' + _subCache.baseline.length + ' baseline records loaded</div>');
 
     runDiscrepancyEngine();
 }
@@ -9012,7 +9012,7 @@ async function anchorLifecycle() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis Anchored Successfully on XRPL'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis Anchored Successfully on XRPL'); }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9102,7 +9102,7 @@ async function anchorSBOM() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Anchored Successfully on XRPL'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Anchored Successfully on XRPL'); }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9124,7 +9124,7 @@ async function anchorGFP() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record Anchored Successfully on XRPL'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record Anchored Successfully on XRPL'); }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9145,7 +9145,7 @@ async function anchorCDRL() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable Anchored Successfully on XRPL'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable Anchored Successfully on XRPL'); }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9166,7 +9166,7 @@ async function anchorContract() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record Anchored Successfully on XRPL'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record Anchored Successfully on XRPL'); }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9187,7 +9187,7 @@ async function anchorChain() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain Record Anchored Successfully on XRPL'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain Record Anchored Successfully on XRPL'); }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
 }
@@ -9210,7 +9210,7 @@ function loadSubmissionHistory() {
     const container = document.getElementById('subHistory');
     if (!container) return;
     if (!_subHistory.length) {
-        container.innerHTML = '<div style="color:var(--steel);font-size:.8rem;padding:8px">No submission reviews yet. Run an analysis to start building history.</div>';
+        container.innerHTML = window._s4Safe('<div style="color:var(--steel);font-size:.8rem;padding:8px">No submission reviews yet. Run an analysis to start building history.</div>');
         return;
     }
     container.innerHTML = window._s4Safe(_subHistory.slice(0, 20).map(h => {
@@ -9283,7 +9283,7 @@ function clearSubmissionReview() {
     document.getElementById('subDiscrepancyTable').innerHTML = '';
     document.getElementById('subResultsContainer').style.display = 'none';
     document.getElementById('subAiSummary').style.display = 'none';
-    document.getElementById('subUploadZone').innerHTML = '<i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:var(--accent,#00aaff);margin-bottom:8px;display:block"></i><div style="color:var(--accent,#00aaff);font-weight:600;font-size:.9rem">Upload Submission Data</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF, or paste data below</div><div style="color:var(--steel);font-size:.72rem;margin-top:2px">Drag & drop or click to browse</div>';
+    document.getElementById('subUploadZone').innerHTML = window._s4Safe('<i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:var(--accent,#00aaff);margin-bottom:8px;display:block"></i><div style="color:var(--accent,#00aaff);font-weight:600;font-size:.9rem">Upload Submission Data</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF, or paste data below</div><div style="color:var(--steel);font-size:.72rem;margin-top:2px">Drag & drop or click to browse</div>');
     document.getElementById('subVendor').value = '';
     document.getElementById('subCustomPlatform').value = '';
     document.getElementById('subCustomDocType').value = '';

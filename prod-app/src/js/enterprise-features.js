@@ -75,7 +75,7 @@
                 html += '</div>';
             }
             html += '</div>';
-            this._el.innerHTML = html;
+            this._el.innerHTML = window._s4Safe(html);
         }
     };
 
@@ -234,7 +234,7 @@
             var body = document.getElementById('s4NotifBody');
             if (!body) return;
             if (this._history.length === 0) {
-                body.innerHTML = '<div class="s4-notif-empty"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>';
+                body.innerHTML = window._s4Safe('<div class="s4-notif-empty"><i class="fas fa-bell-slash"></i><p>No notifications</p></div>');
                 return;
             }
             var html = '';
@@ -247,7 +247,7 @@
                 html += '<div class="s4-notif-content"><div class="s4-notif-msg">' + n.message + '</div>';
                 html += '<div class="s4-notif-time">' + ago + '</div></div></div>';
             }
-            body.innerHTML = html;
+            body.innerHTML = window._s4Safe(html);
         },
 
         _timeAgo: function(isoStr) {
@@ -295,7 +295,7 @@
 
             var container = document.createElement('div');
             container.className = 's4-cross-links';
-            container.innerHTML = '<div class="s4-cross-links-header"><i class="fas fa-link"></i> Related Tools</div>';
+            container.innerHTML = window._s4Safe('<div class="s4-cross-links-header"><i class="fas fa-link"></i> Related Tools</div>');
             var grid = document.createElement('div');
             grid.className = 's4-cross-links-grid';
             for (var i = 0; i < links.length; i++) {
@@ -303,7 +303,7 @@
                 var chip = document.createElement('button');
                 chip.className = 's4-cross-link-chip';
                 chip.setAttribute('data-section', link.section);
-                chip.innerHTML = '<i class="fas ' + link.icon + '"></i> ' + link.label;
+                chip.innerHTML = window._s4Safe('<i class="fas ' + link.icon + '"></i> ' + link.label);
                 chip.onclick = (function(sec) {
                     return function() {
                         if (typeof window.showSection === 'function') window.showSection(sec);
@@ -654,7 +654,7 @@
 
             var container = document.createElement('div');
             container.className = 's4-ai-suggestions';
-            container.innerHTML = '<div class="s4-ai-suggestions-header"><i class="fas fa-robot"></i> AI Quick Prompts — ' + prompts.label + '</div>';
+            container.innerHTML = window._s4Safe('<div class="s4-ai-suggestions-header"><i class="fas fa-robot"></i> AI Quick Prompts — ' + prompts.label + '</div>');
             var grid = document.createElement('div');
             grid.className = 's4-ai-suggestions-grid';
 
@@ -760,7 +760,7 @@
             btn.className = 's4-playbook-launch-btn';
             btn.onclick = function() { S4.playbooks.showMenu(); };
             btn.title = 'Workflow Playbooks';
-            btn.innerHTML = '<i class="fas fa-book-open"></i> Playbooks';
+            btn.innerHTML = window._s4Safe('<i class="fas fa-book-open"></i> Playbooks');
             collabIndicators.appendChild(btn);
         },
 
@@ -788,7 +788,7 @@
                     html += '</button>';
                 }
             }
-            menu.innerHTML = html;
+            menu.innerHTML = window._s4Safe(html);
 
             // Position near the playbook button
             var pbBtn = document.getElementById('s4PlaybookBtn');
@@ -876,7 +876,7 @@
             }
             html += '</div>';
 
-            this._panelEl.innerHTML = html;
+            this._panelEl.innerHTML = window._s4Safe(html);
         },
 
         next: function() {
@@ -968,7 +968,7 @@
                 html += '</div>';
             }
             html += '</div>';
-            this._el.innerHTML = html;
+            this._el.innerHTML = window._s4Safe(html);
         },
 
         _calculateHealth: function() {
@@ -1096,7 +1096,7 @@
                 html += '<button class="s4-fab-item" title="' + a.label + '" data-action="' + i + '">' +
                     '<i class="fas ' + a.icon + '"></i><span>' + a.label + '</span></button>';
             }
-            menu.innerHTML = html;
+            menu.innerHTML = window._s4Safe(html);
 
             // Bind actions with error guards
             var buttons = menu.querySelectorAll('.s4-fab-item');
@@ -1215,7 +1215,7 @@
             var el = this._el; if (!el) return;
             var kpis = el.querySelectorAll('.dc-kpi-value');
             if (kpis[0]) kpis[0].textContent = healthScore;
-            if (kpis[1]) kpis[1].innerHTML = '<span style="color:' + riskColor + '">' + riskLevel + '</span>';
+            if (kpis[1]) kpis[1].innerHTML = window._s4Safe('<span style="color:' + riskColor + '">' + riskLevel + '</span>');
             if (kpis[2]) kpis[2].textContent = (compScore != null ? compScore : '--') + '%';
             if (kpis[3]) kpis[3].textContent = anchored;
             if (kpis[4]) kpis[4].textContent = vault.length;
@@ -1228,7 +1228,7 @@
                     events.push({ time: r.timestamp || new Date().toISOString(), type: r.type || 'Record', action: 'Anchored' });
                 });
                 if (!events.length) {
-                    timeline.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;font-size:0.82rem">No recent activity</div>';
+                    timeline.innerHTML = window._s4Safe('<div style="text-align:center;color:var(--muted);padding:20px;font-size:0.82rem">No recent activity</div>');
                 } else {
                     var th = '';
                     events.forEach(function(e) {
@@ -1239,7 +1239,7 @@
                             '<div style="flex:1"><div style="font-size:0.82rem;font-weight:600;color:var(--text,#1d1d1f)">' + e.type + ' — ' + e.action + '</div>' +
                             '<div style="font-size:0.72rem;color:var(--muted)">' + ts + '</div></div></div>';
                     });
-                    timeline.innerHTML = th;
+                    timeline.innerHTML = window._s4Safe(th);
                 }
             }
 
@@ -1395,7 +1395,7 @@
                 });
             }
             html += '</div></div>';
-            this._el.innerHTML = html;
+            this._el.innerHTML = window._s4Safe(html);
         }
     };
     window.openAlertRules = function() { S4.alertRules.toggle(); };
@@ -1504,7 +1504,7 @@
                 });
             }
             html += '</div></div>';
-            this._el.innerHTML = html;
+            this._el.innerHTML = window._s4Safe(html);
         }
     };
     window.openAnnotations = function(ctx) { S4.annotations.open(ctx); };
@@ -1637,7 +1637,7 @@
                 html += '<button onclick="S4.importExport.close()" style="padding:8px 16px;background:#0071e3;color:#fff;border:none;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit">Done</button></div>';
             }
             html += '</div></div>';
-            this._el.innerHTML = html;
+            this._el.innerHTML = window._s4Safe(html);
         }
     };
     window.openImportExport = function() { S4.importExport.open(); };
@@ -1734,7 +1734,7 @@
                 if (entries.length > 100) html += '<div style="text-align:center;color:var(--muted);padding:12px;font-size:0.78rem">Showing 100 of ' + entries.length + '. Export for full log.</div>';
             }
             html += '</div></div>';
-            this._el.innerHTML = html;
+            this._el.innerHTML = window._s4Safe(html);
         }
     };
     window.openAuditTimeline = function() { S4.auditTimeline.open(); };
@@ -1779,12 +1779,12 @@
                 this._indicatorEl.style.background = 'rgba(26,138,62,0.08)';
                 this._indicatorEl.style.border = '1px solid rgba(26,138,62,0.15)';
                 this._indicatorEl.style.color = '#1a8a3e';
-                this._indicatorEl.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#1a8a3e"></div> Online' + (this._queue.length ? ' <span style="color:var(--muted)">(' + this._queue.length + ' queued)</span>' : '');
+                this._indicatorEl.innerHTML = window._s4Safe('<div style="width:6px;height:6px;border-radius:50%;background:#1a8a3e"></div> Online' + (this._queue.length ? ' <span style="color:var(--muted)">(' + this._queue.length + ' queued)</span>' : ''));
             } else {
                 this._indicatorEl.style.background = 'rgba(255,165,0,0.08)';
                 this._indicatorEl.style.border = '1px solid rgba(255,165,0,0.15)';
                 this._indicatorEl.style.color = '#ffa500';
-                this._indicatorEl.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#ffa500;animation:pulse 2s infinite"></div> Offline' + (this._queue.length ? ' <span style="color:var(--muted)">(' + this._queue.length + ' queued)</span>' : '');
+                this._indicatorEl.innerHTML = window._s4Safe('<div style="width:6px;height:6px;border-radius:50%;background:#ffa500;animation:pulse 2s infinite"></div> Offline' + (this._queue.length ? ' <span style="color:var(--muted)">(' + this._queue.length + ' queued)</span>' : ''));
             }
         },
 

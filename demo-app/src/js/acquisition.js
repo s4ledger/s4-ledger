@@ -121,7 +121,7 @@
         overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
         var inner = document.createElement('div');
         inner.style.cssText = 'background:#0d1117;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:20px;max-width:800px;width:90%;max-height:80vh;overflow:auto';
-        inner.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:12px"><h3 style="color:#fff;margin:0"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Audit Log' + (rowId ? ' - Row ' + rowId : '') + '</h3></div>' + html;
+        inner.innerHTML = window._s4Safe('<div style="display:flex;justify-content:space-between;margin-bottom:12px"><h3 style="color:#fff;margin:0"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Audit Log' + (rowId ? ' - Row ' + rowId : '') + '</h3></div>' + html);
         overlay.appendChild(inner);
         document.body.appendChild(overlay);
     }
@@ -234,7 +234,7 @@
         });
         html += '</div></div>';
         html += '</div>';
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
         // Attach dropdown click handlers via DOM (no inline onclick)
         var statusTrigger = document.getElementById('acqDDStatusTrigger');
         var condTrigger = document.getElementById('acqDDCondTrigger');
@@ -329,7 +329,7 @@
             });
         }
         html += '</tbody></table></div>';
-        container.innerHTML = html;
+        container.innerHTML = window._s4Safe(html);
     }
 
     function _renderDisplayCell(col, val) {
@@ -910,7 +910,7 @@
             html += '</div></div>';
         });
         html += '</div>';
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
     }
 
     // -- Gantt Chart (Scrollable Wide Layout) --
@@ -932,7 +932,7 @@
         if (!el) return;
         var data = _getFilteredData();
         if (!data.length) {
-            el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-chart-gantt" style="font-size:2rem;display:block;margin-bottom:12px;opacity:0.3"></i>No vessel data to chart.</div>';
+            el.innerHTML = window._s4Safe('<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-chart-gantt" style="font-size:2rem;display:block;margin-bottom:12px;opacity:0.3"></i>No vessel data to chart.</div>');
             return;
         }
         var now = new Date();
@@ -943,7 +943,7 @@
             });
         });
         if (!allDates.length) {
-            el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)">No dates found in vessel records.</div>';
+            el.innerHTML = window._s4Safe('<div style="text-align:center;padding:3rem;color:var(--muted)">No dates found in vessel records.</div>');
             return;
         }
         var minDate = new Date(Math.min.apply(null, allDates));
@@ -1050,7 +1050,7 @@
             html += '</div></div>';
         });
         html += '</div></div>';
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
     }
 
     // -- Multi-Program Switcher --
@@ -1088,7 +1088,7 @@
             });
         }
         html += '</div>';
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
     }
 
     function acqToggleProgramDropdown() {

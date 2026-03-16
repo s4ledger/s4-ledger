@@ -90,11 +90,11 @@ function toggleSeed() {
     if (revealed.style.display === 'none') {
         revealed.style.display = 'inline';
         masked.style.display = 'none';
-        btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
+        btn.innerHTML = window._s4Safe('<i class="fas fa-eye-slash"></i> Hide');
     } else {
         revealed.style.display = 'none';
         masked.style.display = 'inline';
-        btn.innerHTML = '<i class="fas fa-eye"></i> Show';
+        btn.innerHTML = window._s4Safe('<i class="fas fa-eye"></i> Show');
     }
 }
 
@@ -103,8 +103,8 @@ function copyWalletField(id) {
     navigator.clipboard.writeText(text).then(() => {
         const btn = document.getElementById(id).parentElement.querySelector('button');
         const orig = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i>';
-        setTimeout(() => { btn.innerHTML = orig; }, 1200);
+        btn.innerHTML = window._s4Safe('<i class="fas fa-check"></i>');
+        setTimeout(() => { btn.innerHTML = window._s4Safe(orig); }, 1200);
     });
 }
 
@@ -141,7 +141,7 @@ async function handleBuySLS() {
         resultEl.style.background = 'rgba(255,51,51,0.08)';
         resultEl.style.border = '1px solid rgba(255,51,51,0.2)';
         resultEl.style.color = '#ff6b6b';
-        resultEl.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px"></i>Please <a href="/s4-login/" style="color:var(--accent)">create an account</a> first to get a wallet.';
+        resultEl.innerHTML = window._s4Safe('<i class="fas fa-exclamation-circle" style="margin-right:6px"></i>Please <a href="/s4-login/" style="color:var(--accent)">create an account</a> first to get a wallet.');
         return;
     }
 
@@ -156,7 +156,7 @@ async function handleBuySLS() {
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> Processing...');
     resultEl.style.display = 'none';
 
     try {
@@ -177,13 +177,13 @@ async function handleBuySLS() {
             resultEl.style.background = 'rgba(255,51,51,0.08)';
             resultEl.style.border = '1px solid rgba(255,51,51,0.2)';
             resultEl.style.color = '#ff6b6b';
-            resultEl.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px"></i>' + data.error;
+            resultEl.innerHTML = window._s4Safe('<i class="fas fa-exclamation-circle" style="margin-right:6px"></i>' + data.error);
         } else {
             resultEl.style.display = 'block';
             resultEl.style.background = 'rgba(0,170,255,0.2)';
             resultEl.style.border = '1px solid rgba(0,170,255,0.2)';
             resultEl.style.color = '#00aaff';
-            resultEl.innerHTML = '<i class="fas fa-check-circle" style="margin-right:6px"></i>Purchased ' + parseFloat(data.purchase.sls_received).toLocaleString() + ' Credits for $' + data.purchase.usd_paid.toFixed(2) + '! <a href="' + data.explorer_url + '" target="_blank" style="color:var(--accent);margin-left:8px">View TX <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>';
+            resultEl.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="margin-right:6px"></i>Purchased ' + parseFloat(data.purchase.sls_received).toLocaleString() + ' Credits for $' + data.purchase.usd_paid.toFixed(2) + '! <a href="' + data.explorer_url + '" target="_blank" style="color:var(--accent);margin-left:8px">View TX <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>');
             // Refresh balance
             fetchWalletBalance(walletData.wallet.address);
         }
@@ -192,10 +192,10 @@ async function handleBuySLS() {
         resultEl.style.background = 'rgba(255,51,51,0.08)';
         resultEl.style.border = '1px solid rgba(255,51,51,0.2)';
         resultEl.style.color = '#ff6b6b';
-        resultEl.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px"></i>Network error: ' + e.message;
+        resultEl.innerHTML = window._s4Safe('<i class="fas fa-exclamation-circle" style="margin-right:6px"></i>Network error: ' + e.message);
     }
     btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-credit-card" style="margin-right:6px"></i> Purchase with Card';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-credit-card" style="margin-right:6px"></i> Purchase with Card');
 }
 
 // SLS Usage Chart range selector

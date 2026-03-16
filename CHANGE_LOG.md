@@ -26,6 +26,53 @@ git revert <hash> or specific steps to undo.
 
 ---
 
+## Phase 1 — Security Hardening
+
+### 2026-03-15 — Checklist Items 1.1 + 1.4 + 1.6: CSP Headers, Rate Limiting, HSTS
+**Commit:** *(pending)*
+**Files Changed:**
+- api/index.py — Replaced `Access-Control-Allow-Origin: *` with allowlist (`_ALLOWED_ORIGINS` set). Added `Vary: Origin`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy`, `Content-Security-Policy` to API responses. Aligned HSTS to `max-age=63072000; includeSubDomains; preload`.
+
+**What Was Done:**
+- **1.1 CSP:** CSP meta tags already existed in both apps' `index.html` and `vercel.json`. Added matching CSP header to API responses. Tightened CORS from wildcard `*` to an explicit origin allowlist (s4ledger.com, www.s4ledger.com, vercel previews, localhost:8080/5173/4173).
+- **1.4 Rate Limiting:** Already implemented — 120 req/60s per IP, LRU-bounded store (10K IPs), applied to both GET and POST. No changes needed.
+- **1.6 HSTS:** vercel.json already had HSTS + `upgrade-insecure-requests`. Aligned API `_cors_headers()` to 63072000s (2yr) + preload to match.
+
+**What Was Tested:**
+API compiles cleanly (`python -c "import api.index"`). Both apps build successfully.
+
+**Rollback Instructions:**
+Revert `_cors_headers()` in api/index.py to the previous version with `Access-Control-Allow-Origin: *`.
+
+---
+
+### 2026-03-15 — Checklist Item 1.2: innerHTML XSS Hardening
+**Commit:** *(pending)*
+**Files Changed:**
+- demo-app/src/js/engine.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/enhancements.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/acquisition.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/milestones.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/brief.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/scroll.js — innerHTML → _s4Safe() wrapping (CRITICAL: API response data)
+- demo-app/src/js/enterprise-features.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/metrics.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/walkthrough.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/roles.js — innerHTML → _s4Safe() wrapping
+- demo-app/src/js/onboarding.js — innerHTML → _s4Safe() wrapping
+- prod-app/src/js/* — Same changes mirrored to all corresponding files
+
+**What Was Done:**
+Wrapped 489 single-line `.innerHTML = value;` assignments with `window._s4Safe(value)` (DOMPurify sanitization). 63 assignments were already safe. 188 multi-line patterns were skipped (hardcoded HTML templates, low XSS risk). **Critical fix:** `scroll.js` in both apps had API response data (`data.error`, `data.explorer_url`, `e.message`) injected directly into the DOM — now sanitized.
+
+**What Was Tested:**
+Both apps build successfully (`npx vite build` in demo-app and prod-app). No syntax errors. Manual spot-check of rendered pages.
+
+**Rollback Instructions:**
+`git revert <hash>` — or search/replace `window._s4Safe(` back to raw assignment for specific files.
+
+---
+
 ## Pre-Checklist Work (Historical)
 
 ### 2026-03-13 — Phase 1-3 Backend Wiring
@@ -99,6 +146,24 @@ Both apps build. Grep verified: only intentional FY25 references remain.
 
 ## Checklist Improvements
 
-*Entries will be added below as checklist items are completed.*
+### 2026-03-15 — Checklist Items 1.1 + 1.4 + 1.6: CSP Headers, Rate Limiting, HSTS
+**Commit:** `pending`
+**Files Changed:**
+- api/index.py — Hardened `_cors_headers()` method
+
+**What Was Done:**
+- **Item 1.1 (CSP headers):** Added `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'` to all API JSON responses. Both HTML meta tags and vercel.json already had comprehensive CSP — this closes the API gap.
+- **Item 1.1 (CORS tightening):** Replaced `Access-Control-Allow-Origin: *` wildcard with an explicit allowlist: `s4ledger.com`, `www.s4ledger.com`, `s4-ledger.vercel.app`, and localhost dev ports. Added `Vary: Origin` header for proper cache behavior.
+- **Item 1.4 (Rate limiting):** Discovered already implemented — 120 requests per 60 seconds per IP, LRU-bounded to 10K entries, applied to both GET and POST handlers. No changes needed.
+- **Item 1.6 (HSTS):** Aligned API HSTS header from `max-age=31536000` (1 year, no preload) to `max-age=63072000; includeSubDomains; preload` (2 years, matching vercel.json). vercel.json already had `upgrade-insecure-requests` in production CSP.
+- **Additional headers:** Added `Permissions-Policy`, `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy` to API responses (matching vercel.json headers).
+
+**What Was Tested:**
+- api/index.py compiles without errors (`py_compile`)
+- demo-app builds successfully (`npx vite build`)
+- prod-app builds successfully (`npx vite build`)
+
+**Rollback Instructions:**
+Revert `_cors_headers()` method in api/index.py to use `"Access-Control-Allow-Origin": "*"` and remove the `_ALLOWED_ORIGINS` class attribute. Restore HSTS to `max-age=31536000; includeSubDomains`.
 
 ---

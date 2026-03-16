@@ -79,7 +79,7 @@ async function loadPerformanceMetrics() {
                     + '</div>';
             }).join(''));
         } else if (reqEl) {
-            reqEl.innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">No recent requests. Metrics auto-refresh when data is available.</div>';
+            reqEl.innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:1rem">No recent requests. Metrics auto-refresh when data is available.</div>');
         }
     } catch (e) {
         // API unavailable — populate from session data
@@ -337,9 +337,9 @@ function refreshOfflineQueueUI() {
     var statusEl = document.getElementById('offlineStatus');
     if (countEl) countEl.textContent = queue.length;
     if (syncEl) { var ls = localStorage.getItem(OFFLINE_SYNC_KEY); syncEl.textContent = ls ? new Date(ls).toLocaleString() : 'Never'; }
-    if (statusEl) { var on = navigator.onLine; statusEl.innerHTML = on ? '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--green)"></i> Online' : '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--red)"></i> Offline'; statusEl.style.color = on ? 'var(--green)' : 'var(--red)'; }
+    if (statusEl) { var on = navigator.onLine; statusEl.innerHTML = window._s4Safe(on ? '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--green)"></i> Online' : '<i class="fas fa-circle" style="font-size:0.6rem;color:var(--red)"></i> Offline'); statusEl.style.color = on ? 'var(--green)' : 'var(--red)'; }
     if (listEl) {
-        if (!queue.length) { listEl.innerHTML = '<div style="color:var(--muted);text-align:center;padding:1rem">Queue is empty. Hashes are queued automatically when offline.</div>'; }
+        if (!queue.length) { listEl.innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:1rem">Queue is empty. Hashes are queued automatically when offline.</div>'); }
         else { listEl.innerHTML = window._s4Safe(queue.map(function(item, i) { return '<div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid rgba(0,0,0,0.03)"><span style="color:var(--accent);font-weight:700;width:24px">' + (i+1) + '</span><span style="flex:1;color:var(--text);font-family:monospace;font-size:0.72rem">' + (item.hash ? item.hash.substring(0,24)+'...' : 'N/A') + '</span><span style="color:var(--steel);font-size:0.7rem;width:80px">' + (item.record_type||'GENERAL') + '</span><span style="color:' + (item.synced ? 'var(--green)' : 'var(--gold)') + ';font-size:0.72rem">' + (item.synced ? '✓ Synced' : '⏳ Pending') + '</span><button onclick="offlineRemoveItem(' + i + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.75rem" title="Remove"><i class="fas fa-times"></i></button></div>'; }).join('')); }
     }
 }
@@ -965,7 +965,7 @@ function injectChartContainers() {
             var target = document.getElementById(conf.target);
             if (target) {
                 var wrapper = document.createElement('div');
-                wrapper.innerHTML = conf.charts;
+                wrapper.innerHTML = window._s4Safe(conf.charts);
                 target.parentNode.insertBefore(wrapper.firstElementChild, target.nextSibling);
                 panel.setAttribute('data-charts-injected','1');
                 return;
@@ -974,7 +974,7 @@ function injectChartContainers() {
         
         // For others, append to the first s4-card
         var wrapper = document.createElement('div');
-        wrapper.innerHTML = conf.charts;
+        wrapper.innerHTML = window._s4Safe(conf.charts);
         card.appendChild(wrapper.firstElementChild);
         panel.setAttribute('data-charts-injected','1');
     });
@@ -1144,7 +1144,7 @@ async function anchorLifecycle() {
     if (typeof window.addToVault === 'function') window.addToVault({hash:hash, txHash:result.txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost — '+platName, branch:'JOINT', icon:'<i class="fas fa-clock"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Cost Estimator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     if (typeof window.updateTxLog === 'function') window.updateTxLog();
     if (typeof window._updateSlsBalance === 'function') window._updateSlsBalance();
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = '<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle report anchored!'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle report anchored!'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(function(r){ setTimeout(r, 3200); });
     if (typeof window.hideAnchorAnimation === 'function') window.hideAnchorAnimation();
     if (typeof window.s4Notify === 'function') window.s4Notify('Anchored', 'Lifecycle cost report anchored to XRPL.', 'success');
@@ -1243,7 +1243,7 @@ async function anchorLifecycle() {
             if (firstLabel && !firstLabel.previousElementSibling?.classList?.contains('section-label')) {
                 var divider = document.createElement('div');
                 divider.className = 'section-label';
-                divider.innerHTML = '<i class="fas fa-sliders"></i> CONFIGURATION';
+                divider.innerHTML = window._s4Safe('<i class="fas fa-sliders"></i> CONFIGURATION');
                 var hr = document.createElement('hr');
                 hr.className = 'section-divider';
                 firstLabel.parentNode.insertBefore(hr, firstLabel);
@@ -1255,7 +1255,7 @@ async function anchorLifecycle() {
             if (resultDiv && !resultDiv.previousElementSibling?.classList?.contains('section-label')) {
                 var divider2 = document.createElement('div');
                 divider2.className = 'section-label';
-                divider2.innerHTML = '<i class="fas fa-chart-bar"></i> RESULTS';
+                divider2.innerHTML = window._s4Safe('<i class="fas fa-chart-bar"></i> RESULTS');
                 var hr2 = document.createElement('hr');
                 hr2.className = 'section-divider';
                 resultDiv.parentNode.insertBefore(hr2, resultDiv);
@@ -1267,7 +1267,7 @@ async function anchorLifecycle() {
             if (actionBar && !actionBar.previousElementSibling?.classList?.contains('section-label')) {
                 var divider3 = document.createElement('div');
                 divider3.className = 'section-label';
-                divider3.innerHTML = '<i class="fas fa-bolt"></i> ACTIONS';
+                divider3.innerHTML = window._s4Safe('<i class="fas fa-bolt"></i> ACTIONS');
                 actionBar.parentNode.insertBefore(divider3, actionBar);
             }
         });
@@ -1465,7 +1465,7 @@ function renderActionCalendar() {
             + (dots ? '<div style="margin-top:2px">' + dots + '</div>' : '')
             + '</div>';
     }
-    grid.innerHTML = html;
+    grid.innerHTML = window._s4Safe(html);
 }
 
 function showCalDay(day) {
@@ -1500,7 +1500,7 @@ function showCalDay(day) {
             + (item.owner ? '<div style="font-size:0.72rem;color:var(--steel)">Owner: ' + item.owner + '</div>' : '')
             + '</div>';
     });
-    detail.innerHTML = html;
+    detail.innerHTML = window._s4Safe(html);
     detail.style.display = 'block';
 }
 

@@ -99,7 +99,7 @@
         html += '</table></div>';
         var overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center';
-        overlay.innerHTML = '<div style="background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:700px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Milestone Audit Log</h4><button style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
+        overlay.innerHTML = window._s4Safe('<div style="background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:700px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-history" style="color:#c9a84c;margin-right:8px"></i>Milestone Audit Log</h4><button style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>');
         overlay.querySelector('button').addEventListener('click', function() { overlay.remove(); });
         overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
         document.body.appendChild(overlay);
@@ -195,7 +195,7 @@
 
         var overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center';
-        overlay.innerHTML = '<div style="background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:500px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>Vessel Type Editor</h4><button class="milVTEClose" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>';
+        overlay.innerHTML = window._s4Safe('<div style="background:#2c2c2e;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:24px;max-width:500px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.6)"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><h4 style="margin:0;color:#fff"><i class="fas fa-ship" style="color:#c9a84c;margin-right:8px"></i>Vessel Type Editor</h4><button class="milVTEClose" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">&times;</button></div>' + html + '</div>');
         document.body.appendChild(overlay);
 
         // Wire events
@@ -341,7 +341,7 @@
         });
         html += '</div></div>';
         html += '</div>';
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
 
         // Attach dropdown handlers via DOM
         var statusTrigger = document.getElementById('milDDStatusTrigger');
@@ -403,11 +403,11 @@
         if (!container) return;
         var data = _getMilFiltered();
         if (!data.length && !_milData.length) {
-            container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-flag-checkered" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>No milestone data. Click <strong>Add Milestone</strong> to begin.</div>';
+            container.innerHTML = window._s4Safe('<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-flag-checkered" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3"></i>No milestone data. Click <strong>Add Milestone</strong> to begin.</div>');
             return;
         }
         if (!data.length) {
-            container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">No milestones match your current filters.</div>';
+            container.innerHTML = window._s4Safe('<div style="text-align:center;padding:2rem;color:var(--muted)">No milestones match your current filters.</div>');
             return;
         }
 
@@ -491,7 +491,7 @@
             }
         });
         html += '</tbody></table></div>';
-        container.innerHTML = html;
+        container.innerHTML = window._s4Safe(html);
 
         // Wire event listeners via DOM
         _wireGridEvents(container);
@@ -790,7 +790,7 @@
         if (!el) return;
         var data = _getMilFiltered();
         if (!data.length) {
-            el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-chart-gantt" style="font-size:2rem;display:block;margin-bottom:12px;opacity:0.3"></i>No milestone data to chart.</div>';
+            el.innerHTML = window._s4Safe('<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-chart-gantt" style="font-size:2rem;display:block;margin-bottom:12px;opacity:0.3"></i>No milestone data to chart.</div>');
             return;
         }
 
@@ -815,7 +815,7 @@
             });
         });
         if (!allDates.length) {
-            el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)">No dates found in milestone records.</div>';
+            el.innerHTML = window._s4Safe('<div style="text-align:center;padding:3rem;color:var(--muted)">No dates found in milestone records.</div>');
             return;
         }
 
@@ -911,7 +911,7 @@
             html += '</div></div>';
         });
         html += '</div></div>';
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
     }
 
     // ============================================================
@@ -950,7 +950,7 @@
             });
         }
         html += '</div>';
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
 
         // Wire events
         var trigger = document.getElementById('milProgDDBtnTrigger');

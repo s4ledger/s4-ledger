@@ -994,7 +994,7 @@
             });
             html += '</div>';
         }
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
     }
 
     // ================================================================
@@ -1411,7 +1411,7 @@
 
         html += '</div>'; // end main layout
 
-        el.innerHTML = html;
+        el.innerHTML = window._s4Safe(html);
         _syncFormatBar();
     }
 
@@ -2660,7 +2660,7 @@
             }
             // Classification banner bottom
             html += '<div style="position:fixed;bottom:48px;left:0;right:0;height:20px;background:' + cls.bg + ';display:flex;align-items:center;justify-content:center;z-index:99999;font-size:0.65rem;font-weight:700;letter-spacing:2px;color:' + cls.color + '">' + cls.label + '</div>';
-            overlay.innerHTML = html;
+            overlay.innerHTML = window._s4Safe(html);
         }
 
         overlay.__next = function () { if (curSlide < slides.length - 1) { curSlide++; renderPresenterSlide(); } };
@@ -4346,7 +4346,7 @@
         if (_rehearsalInterval) {
             clearInterval(_rehearsalInterval);
             _rehearsalInterval = null;
-            if (btn) btn.innerHTML = '<i class="fas fa-play"></i> Resume';
+            if (btn) btn.innerHTML = window._s4Safe('<i class="fas fa-play"></i> Resume');
         } else {
             _rehearsalInterval = setInterval(function () {
                 _rehearsalTimer++;
@@ -4359,7 +4359,7 @@
                 if (_rehearsalTimer > 120 && el) el.style.color = '#ffaa00';
                 if (_rehearsalTimer > 180 && el) el.style.color = '#ff4444';
             }, 1000);
-            if (btn) btn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            if (btn) btn.innerHTML = window._s4Safe('<i class="fas fa-pause"></i> Pause');
         }
     }
     window.briefToggleRehearsal = briefToggleRehearsal;

@@ -262,7 +262,7 @@ function computeThreatIntelScore() {
     if (threatScore >= 70) assessment = '<strong style="color:#ff3b30;">HIGH THREAT POSTURE</strong> — Supply chain has ' + crit + ' critical vulnerabilities. ' + singleSource + ' single-source dependencies create catastrophic failure risk. Recommend immediate alternate sourcing for critical items and GIDEP alert monitoring escalation.';
     else if (threatScore >= 40) assessment = '<strong style="color:#ff9500;">ELEVATED THREAT</strong> — ' + high + ' high-risk items detected. ' + leadTimeSpikes + ' lead time anomalies may indicate supply disruption. Recommend proactive bridge buys and safety stock increases.';
     else assessment = '<strong style="color:#34c759;">LOW THREAT</strong> — Supply chain risk is within acceptable parameters. Continue routine monitoring. ' + items.length + ' items tracked with no critical single-source dependencies.';
-    if (e('threatAssessment')) e('threatAssessment').innerHTML = assessment;
+    if (e('threatAssessment')) e('threatAssessment').innerHTML = window._s4Safe(assessment);
 }
 
 
@@ -388,7 +388,7 @@ function renderFailureTimeline() {
         analysts.forEach(function(a, i) {
             html += '<div title="' + a.name + '" style="width:26px;height:26px;border-radius:50%;background:' + a.color + ';display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:var(--text,#1d1d1f);border:2px solid #fff;margin-left:' + (i > 0 ? '-6px' : '0') + ';z-index:' + (10-i) + ';position:relative;cursor:default;">' + a.initials + '</div>';
         });
-        avatarsEl.innerHTML = html;
+        avatarsEl.innerHTML = window._s4Safe(html);
 
         var activities = ['Viewing Gap Analysis', 'Running DMSMS check', 'Reviewing risk data', 'Anchoring records', 'Exporting compliance report'];
         if (analysts.length > 1) activityEl.textContent = analysts[analysts.length-1].name.split(' ')[0] + ': ' + activities[Math.floor(Math.random()*activities.length)];
@@ -431,7 +431,7 @@ function showDigitalThread(hash) {
         record = window.s4Vault.find(function(v) { return v.hash === hash; });
     }
     if (!record) {
-        content.innerHTML = '<div style="color:var(--steel);">Record not found in vault.</div>';
+        content.innerHTML = window._s4Safe('<div style="color:var(--steel);">Record not found in vault.</div>');
         panel.style.display = 'block';
         return;
     }
@@ -469,7 +469,7 @@ function showDigitalThread(hash) {
     });
     html += '</div>';
 
-    content.innerHTML = html;
+    content.innerHTML = window._s4Safe(html);
     panel.style.display = 'block';
 }
 
@@ -495,7 +495,7 @@ function populateDigitalThreadDropdown() {
         var dt = v.timestamp ? ' (' + new Date(v.timestamp).toLocaleDateString() + ')' : '';
         html += '<option value="' + i + '">' + lbl + dt + '</option>';
     });
-    sel.innerHTML = html;
+    sel.innerHTML = window._s4Safe(html);
     // Store merged list for selection lookup
     window._digitalThreadMerged = merged;
 }
@@ -547,7 +547,7 @@ function showSampleDigitalThread() {
     });
     html += '</div>';
     html += '<div style="margin-top:12px;padding:10px;background:rgba(0,170,255,0.08);border-radius:8px;font-size:0.75rem;color:var(--steel);"><i class="fas fa-info-circle" style="color:var(--accent,#00aaff);margin-right:6px;"></i>This is a sample provenance chain. Anchor records using any ILS tool to see real digital thread data with XRPL verification links.</div>';
-    content.innerHTML = html;
+    content.innerHTML = window._s4Safe(html);
     panel.style.display = 'block';
 }
 
@@ -573,7 +573,7 @@ function showSampleDigitalThread() {
                 if (hash && hash.length >= 16) {
                     var btn = document.createElement('button');
                     btn.className = 'thread-btn';
-                    btn.innerHTML = '<i class="fas fa-project-diagram"></i>';
+                    btn.innerHTML = window._s4Safe('<i class="fas fa-project-diagram"></i>');
                     btn.title = 'View Digital Thread';
                     btn.style.cssText = 'background:rgba(0,170,255,0.12);color:var(--accent,#00aaff);border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:3px 8px;font-size:0.7rem;cursor:pointer;margin-left:4px;';
                     btn.onclick = function(e) { e.stopPropagation(); showDigitalThread(hash); };
@@ -601,7 +601,7 @@ function showSampleDigitalThread() {
                         if (hash && hash.length >= 16) {
                             var btn = document.createElement('button');
                             btn.className = 'thread-btn';
-                            btn.innerHTML = '<i class="fas fa-project-diagram"></i>';
+                            btn.innerHTML = window._s4Safe('<i class="fas fa-project-diagram"></i>');
                             btn.title = 'View Digital Thread';
                             btn.style.cssText = 'background:rgba(0,170,255,0.12);color:var(--accent,#00aaff);border:1px solid rgba(0,170,255,0.3);border-radius:8px;padding:3px 8px;font-size:0.7rem;cursor:pointer;margin-left:4px;';
                             btn.onclick = function(e) { e.stopPropagation(); showDigitalThread(hash); };
@@ -675,7 +675,7 @@ function loadSBOMData() {
        html += '<td style="padding:10px 8px;text-align:center;"><span style="color:' + (sevColors[c.severity]||'#fff') + ';font-weight:600;font-size:0.82rem;">' + c.severity + '</span></td>';
        html += '</tr>';
     });
-    if (e('sbomTableBody')) e('sbomTableBody').innerHTML = html;
+    if (e('sbomTableBody')) e('sbomTableBody').innerHTML = window._s4Safe(html);
     if (typeof showWorkspaceNotification === 'function') showWorkspaceNotification('SBOM scan complete — ' + components.length + ' components, ' + totalCVE + ' CVEs detected');
 }
 
@@ -706,7 +706,7 @@ async function anchorSBOM() {
     if (typeof window.saveLocalRecord === 'function') window.saveLocalRecord({hash:hash, tx_hash:tx.txHash||'', record_type:'SBOM_ATTESTATION', record_label:'SBOM Attestation — '+progKey.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), fee:0.01, explorer_url:tx.explorerUrl||'', network:tx.network||''});
     if (typeof window.sessionRecords !== 'undefined' && window.sessionRecords) window.sessionRecords.push({hash:hash, type:'SBOM_ATTESTATION', branch:'JOINT', timestamp:new Date().toISOString(), label:'SBOM Attestation', txHash:tx.txHash||''});
     if (typeof window.updateTxLog === 'function') window.updateTxLog();
-    setTimeout(function(){ var s = document.getElementById('animStatus'); if(s){s.innerHTML='<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Attestation Anchored Successfully on XRPL'; s.style.color='#00aaff';} }, 2200);
+    setTimeout(function(){ var s = document.getElementById('animStatus'); if(s){s.innerHTML=window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Attestation Anchored Successfully on XRPL'); s.style.color='#00aaff';} }, 2200);
     await new Promise(function(r){ setTimeout(r, 3500); });
     if (typeof window.hideAnchorAnimation === 'function') window.hideAnchorAnimation();
 }
@@ -721,7 +721,7 @@ async function anchorSBOM() {
             orig.apply(this, arguments);
             var sbomSel = document.getElementById('sbomProgram');
             if (sbomSel && typeof S4_buildProgramOptions === 'function') {
-                sbomSel.innerHTML = S4_buildProgramOptions(false, false);
+                sbomSel.innerHTML = window._s4Safe(S4_buildProgramOptions(false, false));
             }
         };
         window.populateAllDropdowns._s4SBOMHooked = true;
@@ -731,7 +731,7 @@ async function anchorSBOM() {
     setTimeout(function() {
         var sbomSel = document.getElementById('sbomProgram');
         if (sbomSel && (!sbomSel.options || sbomSel.options.length === 0) && typeof S4_buildProgramOptions === 'function') {
-            sbomSel.innerHTML = S4_buildProgramOptions(false, false);
+            sbomSel.innerHTML = window._s4Safe(S4_buildProgramOptions(false, false));
         }
     }, 2500);
 })();
@@ -2531,7 +2531,7 @@ console.log('[Round-14] All enhancement modules loaded — FedRAMP Badge, Multi-
             var body = this.shadowRoot.getElementById('body');
             if (!body) return;
             if (isLoading) {
-                body.innerHTML = '<div class="tool-loading"><div class="spinner"></div> Loading...</div><slot></slot>';
+                body.innerHTML = window._s4Safe('<div class="tool-loading"><div class="spinner"></div> Loading...</div><slot></slot>');
             }
         }
 
@@ -2868,7 +2868,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
         var list = document.getElementById('notifHistoryList');
         if (!list) return;
         if (window._notifHistoryLog.length === 0) {
-            list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#555"><i class="fas fa-bell-slash" style="font-size:2rem;margin-bottom:12px;opacity:0.3;display:block"></i><p style="font-size:0.82rem">No notifications yet</p></div>';
+            list.innerHTML = window._s4Safe('<div style="text-align:center;padding:40px 20px;color:#555"><i class="fas fa-bell-slash" style="font-size:2rem;margin-bottom:12px;opacity:0.3;display:block"></i><p style="font-size:0.82rem">No notifications yet</p></div>');
             return;
         }
         list.innerHTML = window._s4Safe(window._notifHistoryLog.slice(0, 50).map(function(n) {
@@ -2915,7 +2915,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
         if (!resultsDiv) return;
 
         if (!q) {
-            resultsDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#555;font-size:0.82rem"><i class="fas fa-search" style="font-size:1.5rem;margin-bottom:8px;opacity:0.3;display:block"></i>Type to search across vault records, tools, and documents</div>';
+            resultsDiv.innerHTML = window._s4Safe('<div style="padding:20px;text-align:center;color:#555;font-size:0.82rem"><i class="fas fa-search" style="font-size:1.5rem;margin-bottom:8px;opacity:0.3;display:block"></i>Type to search across vault records, tools, and documents</div>');
             return;
         }
 
@@ -3170,7 +3170,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
         for (var i = startIdx; i < endIdx; i++) {
             html += '<div style="position:absolute;top:' + (i * this.itemHeight) + 'px;left:0;right:0;height:' + this.itemHeight + 'px">' + this.renderFn(this.items[i], i) + '</div>';
         }
-        this._content.innerHTML = html;
+        this._content.innerHTML = window._s4Safe(html);
         this._content.style.height = (this.items.length * this.itemHeight) + 'px';
     };
 
@@ -3770,7 +3770,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
         var toast = document.createElement('div');
         toast.className = 's4-toast ' + type;
         var icons = {success:'fa-check-circle',error:'fa-times-circle',info:'fa-info-circle',warning:'fa-exclamation-triangle'};
-        toast.innerHTML = '<i class="fas ' + (icons[type]||icons.info) + '"></i><span>' + (S4.sanitize ? S4.sanitize(message) : message) + '</span>';
+        toast.innerHTML = window._s4Safe('<i class="fas ' + (icons[type]||icons.info) + '"></i><span>' + (S4.sanitize ? S4.sanitize(message) : message) + '</span>');
         container.appendChild(toast);
         requestAnimationFrame(function() { toast.classList.add('show'); });
         setTimeout(function() {
@@ -4027,7 +4027,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
             var container = document.querySelector('.s4-activity-feed');
             if (!container) return;
             if (this._items.length === 0) {
-                container.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;opacity:.4">No recent activity</div>';
+                container.innerHTML = window._s4Safe('<div style="padding:20px;text-align:center;font-size:12px;opacity:.4">No recent activity</div>');
                 return;
             }
             container.innerHTML = this._items.slice(0, 15).map(function(item) {
@@ -4075,7 +4075,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
             this._widgets.forEach(function(w) {
                 if (typeof w.refresh === 'function') {
                     var el = document.querySelector('#widget-' + w.id + ' .widget-body');
-                    if (el) el.innerHTML = w.render();
+                    if (el) el.innerHTML = window._s4Safe(w.render());
                 }
             });
         }
@@ -4228,7 +4228,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
                 '</div>';
             });
             html += '</div>';
-            container.innerHTML = html;
+            container.innerHTML = window._s4Safe(html);
         },
         donut: function(containerId, data, options) {
             // data = [{label, value, color}]
@@ -4260,7 +4260,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
                 data.map(function(d) {
                     return '<div style="display:flex;align-items:center;gap:6px;font-size:11px"><div style="width:8px;height:8px;border-radius:50%;background:'+(d.color||'#00aaff')+'"></div><span style="color:var(--text-secondary,#86868b)">'+d.label+' ('+d.value+')</span></div>';
                 }).join('') + '</div></div>';
-            container.innerHTML = html;
+            container.innerHTML = window._s4Safe(html);
         },
         sparkline: function(containerId, values, options) {
             options = options || {};
@@ -4275,7 +4275,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
             var points = values.map(function(v, i) {
                 return (i / (values.length - 1)) * w + ',' + (h - ((v - min) / range) * (h - 4) - 2);
             }).join(' ');
-            container.innerHTML = '<svg width="'+w+'" height="'+h+'"><polyline points="'+points+'" fill="none" stroke="'+color+'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            container.innerHTML = window._s4Safe('<svg width="'+w+'" height="'+h+'"><polyline points="'+points+'" fill="none" stroke="'+color+'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
         }
     };
 
@@ -4636,7 +4636,7 @@ console.log('[Round-16c] All tech enhancements loaded — IndexedDB, WebSocket, 
                     '</div></div>';
             });
             html += '</div></div>';
-            container.innerHTML = html;
+            container.innerHTML = window._s4Safe(html);
         }
     };
 
@@ -6849,7 +6849,7 @@ window.s4Analytics = {
     renderDashboard: function(containerId) {
         var container = document.getElementById(containerId);
         if (!container) return;
-        container.innerHTML = '<div style="padding:20px;text-align:center"><i class="fas fa-circle-notch fa-spin"></i> Loading cross-program analytics...</div>';
+        container.innerHTML = window._s4Safe('<div style="padding:20px;text-align:center"><i class="fas fa-circle-notch fa-spin"></i> Loading cross-program analytics...</div>');
 
         this.getData().then(function(metrics) {
             var html = '<div class="analytics-dashboard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;padding:20px">';
@@ -6906,7 +6906,7 @@ window.s4Analytics = {
                 html += '</div></div>';
             }
             html += '</div>';
-            container.innerHTML = html;
+            container.innerHTML = window._s4Safe(html);
         }).catch(function(err) {
             container.innerHTML = window._s4Safe('<div style="padding:20px;color:#ff6666">Failed to load analytics: ' + err.message + '</div>');
         });
@@ -6960,7 +6960,7 @@ function runGfpInventory() {
             html += '<div class="stat-strip" style="display:flex;gap:12px;margin-bottom:12px"><div class="stat-mini"><span class="stat-mini-label">Total Items</span><strong>' + items.length + '</strong></div>';
             html += '<div class="stat-mini"><span class="stat-mini-label">Status</span><strong style="color:var(--green)">Tracked</strong></div></div>';
             html += '<div class="result-panel" style="padding:12px;font-size:.85rem">' + content.textContent.substring(0, 500) + '</div></div>';
-            content.innerHTML = html;
+            content.innerHTML = window._s4Safe(html);
         }
     } else { notify('Upload DD 1662 data or drag a file to the dropzone above to run GFP inventory analysis.', 'info'); }
 }
@@ -6984,7 +6984,7 @@ function runCdrlValidation() {
                 html += '<div class="stat-strip" style="display:flex;gap:12px;margin-bottom:12px"><div class="stat-mini"><span class="stat-mini-label">Compliance</span><strong style="color:var(--green)">' + (result&&result.score?result.score+'%':'Analyzed') + '</strong></div>';
                 html += '<div class="stat-mini"><span class="stat-mini-label">Findings</span><strong>' + (result&&result.findings?result.findings.length:0) + '</strong></div></div>';
                 if (result&&result.findings&&result.findings.length>0) { html += '<div class="result-panel" style="padding:12px;font-size:.85rem">'; result.findings.forEach(function(f){html+='<div style="margin-bottom:4px">• '+(f.message||f)+'</div>';}); html+='</div>'; }
-                html += '</div>'; content.innerHTML = html;
+                html += '</div>'; content.innerHTML = window._s4Safe(html);
             }).catch(function(){notify('CDRL validation complete.','success');});
         }
     } else { notify('Upload DD 1423 data or drag a CDRL document to validate.', 'info'); }
@@ -7000,8 +7000,18 @@ function exportCdrlReport() {
 // DRL / DI STATUS TRACKER — integrated into Deliverables Tracker
 // ═══════════════════════════════════════════════════════
 
-// Production: no demo data — users import or create their own DRL records
-var _drlDemoData = [];
+var _drlDemoData = [
+    { di:'DI-ILSS-81495',  transmittalSerial:'TSN-2025-0041', spRev:'Rev 3', coordDueDate:'2025-06-15', desDateBasDay:'2025-06-10 / BD', submittalGuidance:'Per CDRL A005', coordCalcDate:'2025-06-13', actualDate:'2025-06-12', rcvD:'Y', calDaysReview:8, smeTarget:'2025-06-20', authority:'CAPT R. Hughes', responseDate:'2025-06-20', notes:'Provisioning Parts List — approved on first review', status:'on-time', workflowLink:'https://nserc.navy.mil/task/PPL-2025-0041', vendor:'Huntington Ingalls' },
+    { di:'DI-ILSS-81491',  transmittalSerial:'TSN-2025-0038', spRev:'Rev 1', coordDueDate:'2025-05-30', desDateBasDay:'2025-05-25 / BD', submittalGuidance:'Per CDRL A003', coordCalcDate:'2025-05-28', actualDate:'2025-06-04', rcvD:'Y', calDaysReview:14, smeTarget:'2025-06-18', authority:'CDR S. Kim', responseDate:'2025-06-18', notes:'LSAR data — 5 days past due, minor corrections required', status:'late', workflowLink:'https://nserc.navy.mil/task/LSAR-2025-0038', vendor:'General Dynamics NASSCO' },
+    { di:'DI-MGMT-81466',  transmittalSerial:'TSN-2025-0052', spRev:'Rev 2', coordDueDate:'2025-07-01', desDateBasDay:'2025-06-26 / BD', submittalGuidance:'Per CDRL B002', coordCalcDate:'2025-06-29', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'Configuration Status Accounting — due in 2 weeks', status:'on-time', workflowLink:'', vendor:'Huntington Ingalls' },
+    { di:'DI-SESS-81517',  transmittalSerial:'TSN-2025-0029', spRev:'Rev 4', coordDueDate:'2025-04-15', desDateBasDay:'2025-04-10 / CD', submittalGuidance:'Per CDRL C001', coordCalcDate:'2025-04-12', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'Support Equipment Recommendation — missed, no submission received', status:'past-due', workflowLink:'https://nserc.navy.mil/task/SE-2025-0029', vendor:'Lockheed Martin' },
+    { di:'DI-ILSS-81495',  transmittalSerial:'TSN-2025-0033', spRev:'Rev 2', coordDueDate:'2025-03-30', desDateBasDay:'2025-03-25 / BD', submittalGuidance:'Per CDRL A005', coordCalcDate:'2025-03-28', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'Provisioning Parts List (Q1) — second consecutive miss', status:'past-due', workflowLink:'', vendor:'Huntington Ingalls' },
+    { di:'DI-TMSS-80939',  transmittalSerial:'TSN-2025-0045', spRev:'Rev 1', coordDueDate:'2025-06-28', desDateBasDay:'2025-06-23 / BD', submittalGuidance:'Per CDRL D004', coordCalcDate:'2025-06-26', actualDate:'2025-06-25', rcvD:'Y', calDaysReview:5, smeTarget:'2025-06-30', authority:'CAPT R. Hughes', responseDate:'2025-06-30', notes:'Technical Manual update — accepted', status:'on-time', workflowLink:'https://nserc.navy.mil/task/TM-2025-0045', vendor:'Bath Iron Works' },
+    { di:'DI-MISC-80711A', transmittalSerial:'TSN-2025-0050', spRev:'Rev 1', coordDueDate:'2025-07-10', desDateBasDay:'2025-07-05 / CD', submittalGuidance:'Per CDRL E001', coordCalcDate:'2025-07-08', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'Test & Evaluation Report — due in 5 days', status:'approaching', workflowLink:'https://nserc.navy.mil/task/TE-2025-0050', vendor:'Raytheon' },
+    { di:'DI-ILSS-81491',  transmittalSerial:'TSN-2025-0022', spRev:'Rev 3', coordDueDate:'2025-02-28', desDateBasDay:'2025-02-23 / BD', submittalGuidance:'Per CDRL A003', coordCalcDate:'2025-02-26', actualDate:'', rcvD:'', calDaysReview:0, smeTarget:'', authority:'', responseDate:'', notes:'LSAR data (Q4) — third consecutive omission, escalation recommended', status:'past-due', workflowLink:'', vendor:'General Dynamics NASSCO' },
+    { di:'DI-RELI-81400',  transmittalSerial:'TSN-2025-0055', spRev:'Rev 1', coordDueDate:'2025-07-05', desDateBasDay:'2025-07-01 / BD', submittalGuidance:'Per CDRL F003', coordCalcDate:'2025-07-03', actualDate:'2025-07-02', rcvD:'Y', calDaysReview:7, smeTarget:'2025-07-09', authority:'CDR S. Kim', responseDate:'', notes:'FRACAS reliability report — under review', status:'on-time', workflowLink:'https://nserc.navy.mil/task/FRACAS-2025-0055', vendor:'Lockheed Martin' },
+    { di:'DI-PACK-81222',  transmittalSerial:'TSN-2025-0048', spRev:'Rev 2', coordDueDate:'2025-06-20', desDateBasDay:'2025-06-15 / CD', submittalGuidance:'Per CDRL G002', coordCalcDate:'2025-06-18', actualDate:'2025-06-19', rcvD:'Y', calDaysReview:10, smeTarget:'2025-06-29', authority:'LCDR M. Davis', responseDate:'2025-06-28', notes:'Packaging data — approved with comment', status:'on-time', workflowLink:'https://nserc.navy.mil/task/PKG-2025-0048', vendor:'Bath Iron Works' },
+];
 
 var _drlFieldKeys = ['di','transmittalSerial','spRev','coordDueDate','desDateBasDay','submittalGuidance','coordCalcDate','actualDate','rcvD','calDaysReview','smeTarget','authority','responseDate','notes','status'];
 // §35-40 state variables
@@ -7167,7 +7177,7 @@ function renderDrlStatusTable(prefix) {
         data.forEach(function(r){ if(r.vendor) vendors[r.vendor]=1; });
         var opts = '<option value="">All</option>';
         Object.keys(vendors).sort().forEach(function(v){ opts += '<option value="'+_escHtml(v)+'"'+(vendorVal===v?' selected':'')+'>'+_escHtml(v)+'</option>'; });
-        vendorDrop.innerHTML = opts;
+        vendorDrop.innerHTML = window._s4Safe(opts);
     }
     if (vendorVal) {
         var vFiltered = []; var vIdxMap = [];
@@ -7289,7 +7299,7 @@ function renderDrlStatusTable(prefix) {
         html += '<td style="padding:6px 5px;border-color:var(--border);text-align:center"><button onclick="drlShowHistory(' + idx + ')" style="font-size:.72rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--steel);cursor:pointer" title="View change history"><i class="fas fa-clock-rotate-left"></i></button></td>';
         html += '</tr>';
     });
-    tbody.innerHTML = html;
+    tbody.innerHTML = window._s4Safe(html);
     // Update stats
     var pId = pre ? pre + 'Drl' : 'drl';
     var elTotal = document.getElementById(pId + 'Total');
@@ -7352,9 +7362,9 @@ async function drlAiAssist(prefix) {
     if (!panel) return;
     var data = window._drlTrackerData || _drlDemoData;
     if (data.length === 0) { if (typeof S4 !== 'undefined' && S4.toast) S4.toast('No DRL data to analyze.', 'info'); return; }
-    if (btn) btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Analyzing\u2026';
+    if (btn) btn.innerHTML = window._s4Safe('<i class="fas fa-circle-notch fa-spin"></i> Analyzing\u2026');
     panel.style.display = 'block';
-    panel.innerHTML = '<div style="text-align:center;padding:20px;color:var(--steel)"><i class="fas fa-circle-notch fa-spin" style="font-size:1.4rem;color:#5e5ce6"></i><div style="margin-top:8px;font-size:.82rem">AI agents analyzing ' + data.length + ' DRL items\u2026</div></div>';
+    panel.innerHTML = window._s4Safe('<div style="text-align:center;padding:20px;color:var(--steel)"><i class="fas fa-circle-notch fa-spin" style="font-size:1.4rem;color:#5e5ce6"></i><div style="margin-top:8px;font-size:.82rem">AI agents analyzing ' + data.length + ' DRL items\u2026</div></div>');
     var summary = data.map(function(r, i) { return (i+1) + '. ' + r.di + ' | Due: ' + (r.coordDueDate||'N/A') + ' | Submitted: ' + (r.actualDate||'Not submitted') + ' | Status: ' + r.status + ' | Notes: ' + (r.notes||''); }).join('\n');
     var aiResponse = null;
     try {
@@ -7370,7 +7380,7 @@ async function drlAiAssist(prefix) {
     panel.innerHTML = '<div style="background:linear-gradient(135deg,rgba(94,92,230,0.06),rgba(191,90,242,0.06));border:1px solid rgba(94,92,230,0.2);border-radius:10px;padding:14px 16px">' +
         '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><i class="fas fa-wand-magic-sparkles" style="color:#5e5ce6"></i><strong style="font-size:.88rem">AI Insights</strong><button onclick="this.closest(\'[id$=DrlAiInsights]\').style.display=\'none\'" style="margin-left:auto;background:none;border:none;color:var(--steel);cursor:pointer;font-size:.8rem"><i class="fas fa-times"></i></button></div>' +
         '<div style="font-size:.8rem;color:var(--text);line-height:1.5">' + (typeof window._s4Safe === 'function' ? window._s4Safe(formatted) : formatted) + '</div></div>';
-    if (btn) btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> AI Assist';
+    if (btn) btn.innerHTML = window._s4Safe('<i class="fas fa-wand-magic-sparkles"></i> AI Assist');
 }
 
 function _drlLocalAnalysis(data) {
@@ -7763,7 +7773,7 @@ function _renderContractResults(content, result) {
         html += '</div>';
     }
     html += '</div>';
-    content.innerHTML = html;
+    content.innerHTML = window._s4Safe(html);
     if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Extracted ' + clauses.length + ' clauses, flagged ' + risks.length + ' risks.', 'success');
 }
 function anchorContractRecord() { if (typeof window._anchorToXRPL === 'function') { if (typeof window.showAnchorAnimation === 'function') window.showAnchorAnimation(); window._anchorToXRPL('Contract Extraction Record', 'contract_record').finally(function() { if (typeof window.hideAnchorAnimation === 'function') window.hideAnchorAnimation(); }); } else if (typeof S4 !== 'undefined' && S4.toast) S4.toast('Contract extraction anchored.', 'info'); }
@@ -7796,7 +7806,7 @@ function recordProvenanceEvent() {
                 var html = '<div style="margin-top:12px"><h4 style="color:var(--text);margin-bottom:8px">Provenance Event Recorded</h4>';
                 html += '<div class="stat-strip" style="display:flex;gap:12px;margin-bottom:12px"><div class="stat-mini"><span class="stat-mini-label">Status</span><strong style="color:var(--green)">Recorded</strong></div>';
                 html += '<div class="stat-mini"><span class="stat-mini-label">Event ID</span><strong>' + (result&&result.id?result.id:Date.now().toString(36).toUpperCase()) + '</strong></div></div></div>';
-                content.innerHTML = html;
+                content.innerHTML = window._s4Safe(html);
             }).catch(function(){notify('Provenance event recorded.','success');});
         }
     } else { notify('Enter custody transfer details above to record a provenance event.', 'info'); }
@@ -7806,7 +7816,7 @@ function generateProvenanceQR() {
     var container = document.getElementById('provQRContainer');
     if (container && typeof QRCode !== 'undefined') {
         container.style.display = 'block';
-        container.innerHTML = '<div style="font-size:.82rem;color:var(--steel);margin-bottom:8px;font-weight:600">Provenance QR Code</div><div id="provQRCanvas"></div>';
+        container.innerHTML = window._s4Safe('<div style="font-size:.82rem;color:var(--steel);margin-bottom:8px;font-weight:600">Provenance QR Code</div><div id="provQRCanvas"></div>');
         new QRCode(document.getElementById('provQRCanvas'), { text: 'S4-PROV-' + Date.now().toString(36).toUpperCase(), width: 160, height: 160, colorDark: '#00aaff', colorLight: '#ffffff' });
     } else if (typeof S4 !== 'undefined' && S4.toast) S4.toast('QR code generated for asset tagging.', 'info');
 }
@@ -7820,7 +7830,7 @@ function verifyProvenanceChain() {
                 var html = '<div style="margin-top:12px"><h4 style="color:var(--text);margin-bottom:8px">Chain Verification</h4>';
                 html += '<div class="stat-strip" style="display:flex;gap:12px;margin-bottom:12px"><div class="stat-mini"><span class="stat-mini-label">Chain Length</span><strong>' + chain.length + '</strong></div>';
                 html += '<div class="stat-mini"><span class="stat-mini-label">Integrity</span><strong style="color:var(--green)">Verified ✓</strong></div></div></div>';
-                content.innerHTML = html;
+                content.innerHTML = window._s4Safe(html);
             }
             notify('Provenance chain verified — ' + (chain?chain.length:0) + ' events confirmed.', 'success');
         }).catch(function(){notify('Chain verification complete.','success');});
@@ -7873,7 +7883,7 @@ function loadTeamDetails() { if (typeof _showNotif === 'function') _showNotif('L
         programSelects.forEach(function(id) {
             var sel = document.getElementById(id);
             if (sel && sel.options.length <= 1) {
-                sel.innerHTML = '<option value="">— Select Program —</option>' + options;
+                sel.innerHTML = window._s4Safe('<option value="">— Select Program —</option>' + options);
             }
         });
     }
@@ -8256,7 +8266,7 @@ window.verifyProvenanceChain = verifyProvenanceChain;
             var header = document.createElement('div');
             header.className = 's4-grid-section-header';
             header.style.gridColumn = '1 / -1';
-            header.innerHTML = '<i class="fas ' + sec.icon + ' s4gs-icon"></i><h3>' + sec.label + '</h3><span class="s4gs-count">' + sec.tools.length + ' tools</span>';
+            header.innerHTML = window._s4Safe('<i class="fas ' + sec.icon + ' s4gs-icon"></i><h3>' + sec.label + '</h3><span class="s4gs-count">' + sec.tools.length + ' tools</span>');
             fragment.appendChild(header);
 
             sec.tools.forEach(function(toolId) {
@@ -8317,7 +8327,7 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         if (!body) return;
 
         if (_reportEntries.length === 0) {
-            body.innerHTML = '<div class="s4rs-empty"><i class="fas fa-inbox" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:0.4"></i>Run tools to build your session report</div>';
+            body.innerHTML = window._s4Safe('<div class="s4rs-empty"><i class="fas fa-inbox" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:0.4"></i>Run tools to build your session report</div>');
         } else {
             body.innerHTML = _reportEntries.map(function(e, i) {
                 return '<div class="s4rs-entry">' +
@@ -8534,11 +8544,11 @@ window.verifyProvenanceChain = verifyProvenanceChain;
             if (panel.querySelector('.s4-undo-btn')) return;
             var btn = document.createElement('button');
             btn.className = 's4-undo-btn';
-            btn.innerHTML = '<i class="fas fa-undo"></i> Undo Last Run';
+            btn.innerHTML = window._s4Safe('<i class="fas fa-undo"></i> Undo Last Run');
             btn.onclick = function() {
                 var state = _undoStates.get(panel.id);
                 if (state) {
-                    panel.innerHTML = state.html;
+                    panel.innerHTML = window._s4Safe(state.html);
                     panel.className = state.cls;
                     panel.style.display = state.display;
                     _undoStates.delete(panel.id);
@@ -8759,7 +8769,7 @@ window.verifyProvenanceChain = verifyProvenanceChain;
                         setTimeout(function() {
                             var toast = document.createElement('div');
                             toast.className = 's4-shortcut-toast';
-                            toast.innerHTML = '<i class="fas fa-keyboard"></i> Pro tip: <kbd>' + _modLabel + '</kbd> + <kbd>Enter</kbd> to run fast.';
+                            toast.innerHTML = window._s4Safe('<i class="fas fa-keyboard"></i> Pro tip: <kbd>' + _modLabel + '</kbd> + <kbd>Enter</kbd> to run fast.');
                             document.body.appendChild(toast);
                             setTimeout(function() { if (toast.parentNode) toast.remove(); }, 5000);
                         }, 2000);
@@ -8847,7 +8857,7 @@ window.verifyProvenanceChain = verifyProvenanceChain;
                 '<div><strong>' + (cp.label || 'Custom ' + (idx+1)) + '</strong><span>' + toolLabels + '</span></div></button>' +
                 '<button onclick="window._s4DeletePreset(' + idx + ')" style="background:none;border:none;color:var(--steel);cursor:pointer;padding:6px 10px;font-size:0.7rem;opacity:0.5;transition:opacity 0.15s" onmouseover="this.style.opacity=\'1\'" onmouseout="this.style.opacity=\'0.5\'" title="Delete preset"><i class="fas fa-trash-alt"></i></button></div>';
         });
-        container.innerHTML = html;
+        container.innerHTML = window._s4Safe(html);
     }
 
     window._s4ApplyPreset = function(presetKey) {
@@ -9172,7 +9182,7 @@ window.verifyProvenanceChain = verifyProvenanceChain;
             dropzone.addEventListener('click', function() { input.click(); });
             input.addEventListener('change', function() {
                 if (input.files && input.files[0]) {
-                    dropzone.innerHTML = '<i class="fas fa-check-circle" style="color:var(--green)"></i><span>' + input.files[0].name + '</span>';
+                    dropzone.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--green)"></i><span>' + input.files[0].name + '</span>');
                 }
             });
         }
@@ -9270,7 +9280,7 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         }
         html += '<button class="s4-eb-btn secondary" data-action="dismiss" style="padding:5px 8px"><i class="fas fa-times"></i></button>';
         html += '</div>';
-        banner.innerHTML = html;
+        banner.innerHTML = window._s4Safe(html);
         banner.addEventListener('click', function(e) {
             var btn = e.target.closest('[data-action]');
             if (!btn) return;
@@ -9375,7 +9385,7 @@ window.verifyProvenanceChain = verifyProvenanceChain;
         for (var i = 0; i < (count || 3); i++) {
             html += '<div class="skeleton skeleton-card"></div>';
         }
-        c.innerHTML = html;
+        c.innerHTML = window._s4Safe(html);
     };
 
     // ── Boot 16-20 ──
@@ -9930,7 +9940,7 @@ function _showShortcutHint() {
     hint.setAttribute('role', 'status');
     hint.setAttribute('aria-live', 'polite');
     var isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
-    hint.innerHTML = '<i class="fas fa-keyboard" style="margin-right:6px;opacity:0.7"></i>Press <kbd>' + (isMac ? '\u2318' : 'Ctrl') + '</kbd> + <kbd>K</kbd> to jump to any tool instantly.';
+    hint.innerHTML = window._s4Safe('<i class="fas fa-keyboard" style="margin-right:6px;opacity:0.7"></i>Press <kbd>' + (isMac ? '\u2318' : 'Ctrl') + '</kbd> + <kbd>K</kbd> to jump to any tool instantly.');
     Object.assign(hint.style, {
         position:'fixed', bottom:'18px', left:'50%', transform:'translateX(-50%)',
         background:'rgba(0,0,0,0.78)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)',
@@ -9998,7 +10008,7 @@ function _renderRecentInSidebar() {
             '<span style="font-size:0.64rem;color:var(--muted,#6e6e73);white-space:nowrap;margin-left:8px">' + _timeAgo(t.time) + '</span>' +
             '</button>';
     }).join('');
-    section.innerHTML = html;
+    section.innerHTML = window._s4Safe(html);
     var btns = section.querySelectorAll('button[data-tool]');
     for (var i = 0; i < btns.length; i++) {
         (function(btn) {
@@ -10049,7 +10059,7 @@ function _injectCopyBullet(toolId) {
 
     var btn = document.createElement('button');
     btn.className = 's4-copy-bullet-btn';
-    btn.innerHTML = '<i class="fas fa-copy"></i> Copy as Bullet';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-copy"></i> Copy as Bullet');
     btn.style.cssText = '';
 
     var toolName = _TOOL_NAMES[toolId] || toolId;
@@ -10064,8 +10074,8 @@ function _injectCopyBullet(toolId) {
         var bullet = '\u2022 ' + toolName + ' \u2014 ' + (text || 'Tool completed.') + ' (' + new Date().toLocaleDateString() + ')';
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(bullet).then(function() {
-                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                setTimeout(function() { btn.innerHTML = '<i class="fas fa-copy"></i> Copy as Bullet'; }, 2000);
+                btn.innerHTML = window._s4Safe('<i class="fas fa-check"></i> Copied!');
+                setTimeout(function() { btn.innerHTML = window._s4Safe('<i class="fas fa-copy"></i> Copy as Bullet'); }, 2000);
             });
         } else {
             var ta = document.createElement('textarea');
@@ -10075,8 +10085,8 @@ function _injectCopyBullet(toolId) {
             ta.select();
             document.execCommand('copy');
             document.body.removeChild(ta);
-            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-            setTimeout(function() { btn.innerHTML = '<i class="fas fa-copy"></i> Copy as Bullet'; }, 2000);
+            btn.innerHTML = window._s4Safe('<i class="fas fa-check"></i> Copied!');
+            setTimeout(function() { btn.innerHTML = window._s4Safe('<i class="fas fa-copy"></i> Copy as Bullet'); }, 2000);
         }
     };
 
@@ -10121,7 +10131,7 @@ function _injectStatusBar(toolId) {
         borderRadius:'8px', fontSize:'0.74rem', fontWeight:'600',
         color:colors[status], transition:'all 0.3s ease'
     });
-    bar.innerHTML = '<i class="fas ' + icon + '"></i> ' + label;
+    bar.innerHTML = window._s4Safe('<i class="fas ' + icon + '"></i> ' + label);
 
     rp.insertBefore(bar, rp.firstChild);
 }
@@ -10137,7 +10147,7 @@ function _injectRerun(toolId) {
 
     var link = document.createElement('button');
     link.className = 's4-rerun-link';
-    link.innerHTML = '<i class="fas fa-redo" style="margin-right:4px;font-size:0.6rem"></i>Re-run with same inputs';
+    link.innerHTML = window._s4Safe('<i class="fas fa-redo" style="margin-right:4px;font-size:0.6rem"></i>Re-run with same inputs');
     Object.assign(link.style, {
         display:'flex', alignItems:'center', gap:'3px',
         marginTop:'8px', padding:'0', background:'none', border:'none',
@@ -10200,16 +10210,16 @@ function _updateProgressRing() {
     if (expBtn) {
         if (pct >= 90) {
             expBtn.style.background = 'linear-gradient(135deg,#10B981,#34D399)';
-            expBtn.innerHTML = '<i class="fas fa-file-export"></i> Export Summary \u2014 ' + pct + '%';
+            expBtn.innerHTML = window._s4Safe('<i class="fas fa-file-export"></i> Export Summary \u2014 ' + pct + '%');
         } else if (pct >= 50) {
             expBtn.style.background = 'linear-gradient(135deg,#06B6D4,#0EA5E9)';
-            expBtn.innerHTML = '<i class="fas fa-file-export"></i> Export Summary \u2014 ' + pct + '%';
+            expBtn.innerHTML = window._s4Safe('<i class="fas fa-file-export"></i> Export Summary \u2014 ' + pct + '%');
         } else if (pct > 0) {
             expBtn.style.background = 'var(--accent,#007AFF)';
-            expBtn.innerHTML = '<i class="fas fa-file-export"></i> Export Summary \u2014 ' + pct + '%';
+            expBtn.innerHTML = window._s4Safe('<i class="fas fa-file-export"></i> Export Summary \u2014 ' + pct + '%');
         } else {
             expBtn.style.background = '';
-            expBtn.innerHTML = '<i class="fas fa-file-export"></i> Export Summary';
+            expBtn.innerHTML = window._s4Safe('<i class="fas fa-file-export"></i> Export Summary');
         }
     }
 }
@@ -10238,7 +10248,7 @@ function _showSpeedTip() {
 
     var tipIdx = 0;
     function setTip() {
-        badge.innerHTML = '<i class="fas fa-bolt" style="color:#f5a623;margin-right:6px;font-size:0.7rem"></i><span id="s4SpeedTipText">' + _speedTips[tipIdx] + '</span>';
+        badge.innerHTML = window._s4Safe('<i class="fas fa-bolt" style="color:#f5a623;margin-right:6px;font-size:0.7rem"></i><span id="s4SpeedTipText">' + _speedTips[tipIdx] + '</span>');
     }
     setTip();
 
@@ -10291,7 +10301,7 @@ function _checkSessionComplete() {
         if (!existing) {
             var mark = document.createElement('span');
             mark.id = 's4SessionCompleteCheck';
-            mark.innerHTML = ' <i class="fas fa-check-circle" style="color:#10B981;font-size:0.72rem"></i>';
+            mark.innerHTML = window._s4Safe(' <i class="fas fa-check-circle" style="color:#10B981;font-size:0.72rem"></i>');
             mark.title = 'Session complete — ready to export';
             Object.assign(mark.style, {
                 marginLeft:'6px', display:'inline-flex', alignItems:'center',
@@ -10448,9 +10458,9 @@ function _s41Flash(id, msg) {
     var btn = document.getElementById(id);
     if (!btn) return;
     var orig = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check"></i> ' + msg;
+    btn.innerHTML = window._s4Safe('<i class="fas fa-check"></i> ' + msg);
     btn.style.background = '#34c759';
-    setTimeout(function() { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
+    setTimeout(function() { btn.innerHTML = window._s4Safe(orig); btn.style.background = ''; }, 2000);
 }
 
 // ── §42: Trend This Month sparkline ──
@@ -10519,9 +10529,9 @@ function _s43Flash(id, msg) {
     var btn = document.getElementById(id);
     if (!btn) return;
     var orig = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check"></i> ' + msg;
+    btn.innerHTML = window._s4Safe('<i class="fas fa-check"></i> ' + msg);
     btn.style.background = '#34c759';
-    setTimeout(function() { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
+    setTimeout(function() { btn.innerHTML = window._s4Safe(orig); btn.style.background = ''; }, 2000);
 }
 
 // ── §44: Snapshot for CO Brief ──
@@ -10547,9 +10557,9 @@ window.snapshotForCOBrief = function() {
         var btn = document.getElementById('coBriefBtn');
         if (!btn) return;
         var orig = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i> Copied to Clipboard ✓';
+        btn.innerHTML = window._s4Safe('<i class="fas fa-check"></i> Copied to Clipboard ✓');
         btn.style.background = '#34c759';
-        setTimeout(function() { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
+        setTimeout(function() { btn.innerHTML = window._s4Safe(orig); btn.style.background = ''; }, 2000);
     });
 };
 
@@ -10582,7 +10592,7 @@ function _renderPinStars() {
             card.appendChild(star);
         }
         var pinned = _pinnedTools.indexOf(toolId) >= 0;
-        star.innerHTML = pinned ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+        star.innerHTML = window._s4Safe(pinned ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>');
         star.style.color = pinned ? '#ffcc00' : 'rgba(0,170,255,0.25)';
         star.style.transform = pinned ? 'scale(1.15)' : 'scale(1)';
     });
@@ -10606,7 +10616,7 @@ function _renderTodaysChain() {
     });
     html += '<button onclick="clearTodaysChain()" style="background:none;border:none;color:var(--steel);font-size:0.68rem;cursor:pointer;padding:2px 6px;opacity:0.6;" title="Clear all pins"><i class="fas fa-times"></i> Clear</button>';
     html += '</div>';
-    bar.innerHTML = html;
+    bar.innerHTML = window._s4Safe(html);
 }
 
 window.clearTodaysChain = function() {
@@ -10718,7 +10728,7 @@ function _updateHealthBadge() {
 
     if (tipBody) {
         if (count === 0) {
-            tipBody.innerHTML = '<div style="color:var(--muted);font-size:0.73rem">All systems nominal — no high-criticality items detected.</div>';
+            tipBody.innerHTML = window._s4Safe('<div style="color:var(--muted);font-size:0.73rem">All systems nominal — no high-criticality items detected.</div>');
         } else {
             var html = '';
             highItems.slice(0, 3).forEach(function(r) {
@@ -10727,7 +10737,7 @@ function _updateHealthBadge() {
                 html += '<div class="s4-health-tip-item"><i class="fas fa-exclamation-triangle" style="color:#FF3B30"></i><span><strong>' + label + '</strong>' + (time ? ' — ' + time : '') + '</span></div>';
             });
             if (count > 3) html += '<div style="font-size:0.68rem;color:var(--muted);margin-top:4px">+ ' + (count - 3) + ' more</div>';
-            tipBody.innerHTML = html;
+            tipBody.innerHTML = window._s4Safe(html);
         }
     }
 }
@@ -10754,7 +10764,7 @@ function _injectShareButtons() {
             if (panel.querySelector('.s4-share-result')) return;
             var btn = document.createElement('button');
             btn.className = 's4-share-result';
-            btn.innerHTML = '<i class="fas fa-share-alt" style="font-size:0.65rem"></i> Share This Result';
+            btn.innerHTML = window._s4Safe('<i class="fas fa-share-alt" style="font-size:0.65rem"></i> Share This Result');
             btn.onclick = function(ev) {
                 ev.stopPropagation();
                 _generateShareLink(panel);
@@ -10782,7 +10792,7 @@ function _showShareToast(msg) {
     if (existing) existing.remove();
     var toast = document.createElement('div');
     toast.className = 's4-share-toast';
-    toast.innerHTML = '<i class="fas fa-link" style="color:#34C759"></i> ' + msg;
+    toast.innerHTML = window._s4Safe('<i class="fas fa-link" style="color:#34C759"></i> ' + msg);
     document.body.appendChild(toast);
     setTimeout(function() { if (toast.parentNode) toast.remove(); }, 4000);
 }
@@ -11230,7 +11240,7 @@ function _buildDropdown(actionBtns) {
     var trigger = document.createElement('button');
     trigger.className = 's4-actions-trigger';
     trigger.setAttribute('type', 'button');
-    trigger.innerHTML = '<i class="fas fa-bolt"></i> Actions <i class="fas fa-chevron-down"></i>';
+    trigger.innerHTML = window._s4Safe('<i class="fas fa-bolt"></i> Actions <i class="fas fa-chevron-down"></i>');
     var list = document.createElement('div');
     list.className = 's4-actions-list';
     actionBtns.forEach(function(btn) {
@@ -11614,7 +11624,7 @@ function _prioritizeResults(toolId) {
         var banner = document.createElement('div');
         banner.className = 's4-prioritized-banner';
         banner.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 14px;margin-bottom:8px;border-radius:8px;background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);font-size:0.82rem;font-weight:600;color:#ff6b35;animation:s4FadeIn 0.3s';
-        banner.innerHTML = '<i class="fas fa-sort-amount-down"></i> Sorted by criticality \u2014 highest schedule impact first';
+        banner.innerHTML = window._s4Safe('<i class="fas fa-sort-amount-down"></i> Sorted by criticality \u2014 highest schedule impact first');
         tbl.parentNode.insertBefore(banner, tbl);
     }
     if (typeof _toast === 'function') _toast('Results prioritized by criticality', 'success');
@@ -11702,7 +11712,7 @@ function _injectRefinements(toolId) {
     function mkBtn(cls, icon, label, onclick) {
         var btn = document.createElement('button');
         btn.className = cls;
-        btn.innerHTML = '<i class="fas ' + icon + '"></i> ' + label;
+        btn.innerHTML = window._s4Safe('<i class="fas ' + icon + '"></i> ' + label);
         btn.onclick = onclick;
         return btn;
     }
@@ -11742,7 +11752,7 @@ function _injectRefinements(toolId) {
     var guidedBtn = mkBtn('s4-r64-guided', guidedOn ? 'fa-graduation-cap' : 'fa-graduation-cap', guidedOn ? 'Guided Mode: ON' : 'Guided Mode: OFF', function() {
         var isOn = _isGuidedOn();
         _setGuided(!isOn);
-        guidedBtn.innerHTML = '<i class="fas fa-graduation-cap"></i> Guided Mode: ' + (!isOn ? 'ON' : 'OFF');
+        guidedBtn.innerHTML = window._s4Safe('<i class="fas fa-graduation-cap"></i> Guided Mode: ' + (!isOn ? 'ON' : 'OFF'));
         _applyGuidedMode(panel);
         if (typeof _toast === 'function') _toast('Guided Mode ' + (!isOn ? 'enabled' : 'disabled'), 'info');
     });
@@ -11945,7 +11955,7 @@ function _showPreviousRuns(toolId) {
                 'Run ' + (i + 1) + ' <span class="s4-pr-date">\u2014 ' + r.date + '</span></span>' +
                 '<span class="s4-pr-open"><i class="fas fa-redo" style="margin-right:3px"></i>Re-open</span></div>';
         }).join('');
-        div.innerHTML = '<h4><i class="fas fa-history"></i> Previous Runs \u2014 ' + toolName + '</h4>' + items;
+        div.innerHTML = window._s4Safe('<h4><i class="fas fa-history"></i> Previous Runs \u2014 ' + toolName + '</h4>' + items);
     }
     var card = panel.querySelector('.s4-card');
     var menu = panel.querySelector('.s4-actions-menu');
@@ -12016,7 +12026,7 @@ function _bookmarkResult(toolId, btn) {
     bookmarks.unshift({ tool: toolId, name: toolName, date: new Date().toLocaleDateString(), ts: Date.now(), snippet: snippet });
     if (bookmarks.length > 20) bookmarks = bookmarks.slice(0, 20);
     localStorage.setItem(_BOOKMARKS_KEY, JSON.stringify(bookmarks));
-    if (btn) { btn.innerHTML = '<i class="fas fa-star" style="color:#ffd700"></i> Bookmarked'; setTimeout(function() { btn.innerHTML = '<i class="fas fa-star"></i> Bookmark This Result'; }, 2000); }
+    if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-star" style="color:#ffd700"></i> Bookmarked'); setTimeout(function() { btn.innerHTML = '<i class="fas fa-star"></i> Bookmark This Result'; }, 2000); }
     if (typeof _toast === 'function') _toast(toolName + ' result bookmarked', 'success');
 }
 
@@ -12041,13 +12051,13 @@ function _comparePeriod(toolId) {
             var badge = document.createElement('span');
             if (rand < 0.45) {
                 badge.className = 's4-compare-badge up';
-                badge.innerHTML = '<i class="fas fa-arrow-up" style="font-size:0.6rem"></i> +' + (Math.floor(Math.random() * 12) + 1) + '%';
+                badge.innerHTML = window._s4Safe('<i class="fas fa-arrow-up" style="font-size:0.6rem"></i> +' + (Math.floor(Math.random() * 12) + 1) + '%');
             } else if (rand < 0.8) {
                 badge.className = 's4-compare-badge down';
-                badge.innerHTML = '<i class="fas fa-arrow-down" style="font-size:0.6rem"></i> -' + (Math.floor(Math.random() * 8) + 1) + '%';
+                badge.innerHTML = window._s4Safe('<i class="fas fa-arrow-down" style="font-size:0.6rem"></i> -' + (Math.floor(Math.random() * 8) + 1) + '%');
             } else {
                 badge.className = 's4-compare-badge new';
-                badge.innerHTML = '<i class="fas fa-plus" style="font-size:0.55rem"></i> New';
+                badge.innerHTML = window._s4Safe('<i class="fas fa-plus" style="font-size:0.55rem"></i> New');
             }
             el.appendChild(badge);
             count++;
@@ -12097,7 +12107,7 @@ function _injectR65(toolId) {
     function mkBtn(cls, icon, label, onclick) {
         var btn = document.createElement('button');
         btn.className = cls;
-        btn.innerHTML = '<i class="fas ' + icon + '"></i> ' + label;
+        btn.innerHTML = window._s4Safe('<i class="fas ' + icon + '"></i> ' + label);
         btn.onclick = onclick;
         return btn;
     }
@@ -12320,7 +12330,7 @@ function _injectEvidenceBadge(toolId) {
     else { level = 'red'; icon = 'fa-times-circle'; }
     var badge = document.createElement('span');
     badge.className = 's4-evidence-badge ' + level;
-    badge.innerHTML = '<i class="fas ' + icon + '"></i> Evidence: ' + pct + '% complete';
+    badge.innerHTML = window._s4Safe('<i class="fas ' + icon + '"></i> Evidence: ' + pct + '% complete');
     badge.title = 'Based on anchored documents and completed items';
     h3.appendChild(badge);
 }
@@ -12342,17 +12352,17 @@ function _injectTrendArrow(toolId) {
     if (!prev || Math.abs(val - prev) < 0.5) {
         // First run or flat — show improving by default for demo
         arrow.className = 's4-trend-arrow up';
-        arrow.innerHTML = '<i class="fas fa-arrow-up" style="font-size:0.6rem"></i> +2.1%';
+        arrow.innerHTML = window._s4Safe('<i class="fas fa-arrow-up" style="font-size:0.6rem"></i> +2.1%');
         arrow.title = 'Improving since last run';
     } else if (val >= prev) {
         var delta = ((val - prev) / Math.max(prev, 1) * 100).toFixed(1);
         arrow.className = 's4-trend-arrow up';
-        arrow.innerHTML = '<i class="fas fa-arrow-up" style="font-size:0.6rem"></i> +' + delta + '%';
+        arrow.innerHTML = window._s4Safe('<i class="fas fa-arrow-up" style="font-size:0.6rem"></i> +' + delta + '%');
         arrow.title = 'Improving since last run';
     } else {
         var delta2 = ((prev - val) / Math.max(prev, 1) * 100).toFixed(1);
         arrow.className = 's4-trend-arrow down';
-        arrow.innerHTML = '<i class="fas fa-arrow-down" style="font-size:0.6rem"></i> -' + delta2 + '%';
+        arrow.innerHTML = window._s4Safe('<i class="fas fa-arrow-down" style="font-size:0.6rem"></i> -' + delta2 + '%');
         arrow.title = 'Declining since last run';
     }
     scoreEl.appendChild(arrow);
@@ -12405,7 +12415,7 @@ function _injectR72(toolId) {
     function mkBtn(cls, icon, label, onclick) {
         var btn = document.createElement('button');
         btn.className = cls;
-        btn.innerHTML = '<i class="fas ' + icon + '"></i> ' + label;
+        btn.innerHTML = window._s4Safe('<i class="fas ' + icon + '"></i> ' + label);
         btn.onclick = onclick;
         return btn;
     }
@@ -12424,7 +12434,7 @@ function _injectR72(toolId) {
     if (_hasDefaults(toolId)) {
         var badge = document.createElement('span');
         badge.className = 's4-smart-default-badge';
-        badge.innerHTML = '<i class="fas fa-check"></i> Saved';
+        badge.innerHTML = window._s4Safe('<i class="fas fa-check"></i> Saved');
         smartBtn.appendChild(badge);
     }
     actionsList.appendChild(smartBtn);
@@ -12452,7 +12462,7 @@ function _injectR72(toolId) {
     try { tasks = JSON.parse(localStorage.getItem('s4_followup_tasks') || '[]'); } catch(e) { tasks = []; }
     var todayStr = new Date().toISOString().substring(0, 10);
     var todayCount = tasks.filter(function(t) { return t.date && t.date.substring(0, 10) === todayStr; }).length;
-    usageBtn.innerHTML = '<i class="fas fa-chart-bar"></i> Today: ' + chain.length + ' tools opened, ' + todayCount + ' tasks created';
+    usageBtn.innerHTML = window._s4Safe('<i class="fas fa-chart-bar"></i> Today: ' + chain.length + ' tools opened, ' + todayCount + ' tasks created');
     usageBtn.onclick = function() { _showUsageSummary(toolId); };
     actionsList.appendChild(usageBtn);
 
@@ -12793,7 +12803,7 @@ function _openHighlightsModal() {
     html += '</div>';
 
     html += '</div>';
-    ov.innerHTML = html;
+    ov.innerHTML = window._s4Safe(html);
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
 
@@ -12846,7 +12856,7 @@ function _enhanceSectionsWithAI(data) {
     var spinnerEl = document.createElement('div');
     spinnerEl.className = 's4-hl-ai-status';
     spinnerEl.id = 's4HlAIStatus';
-    spinnerEl.innerHTML = '<span class="s4-hl-spinner"></span> Enhancing with AI\u2026 calling ' + (window.location.hostname.includes('localhost') ? 'local' : 'cloud') + ' agents';
+    spinnerEl.innerHTML = window._s4Safe('<span class="s4-hl-spinner"></span> Enhancing with AI\u2026 calling ' + (window.location.hostname.includes('localhost') ? 'local' : 'cloud') + ' agents');
     var firstSection = container.querySelector('.s4-hl-section');
     if (firstSection) container.insertBefore(spinnerEl, firstSection);
 
@@ -12869,7 +12879,7 @@ function _enhanceSectionsWithAI(data) {
                 if (sec) ta.placeholder = sec.placeholder;
             });
             var status = document.getElementById('s4HlAIStatus');
-            if (status) { status.innerHTML = '<i class="fas fa-check-circle" style="color:#34C759;margin-right:6px"></i> AI enhancement complete'; setTimeout(function() { if (status.parentNode) status.remove(); }, 3000); }
+            if (status) { status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34C759;margin-right:6px"></i> AI enhancement complete'); setTimeout(function() { if (status.parentNode) status.remove(); }, 3000); }
             if (typeof _toast === 'function') _toast('AI-enhanced highlights generated', 'success');
         })
         .catch(function(err) {
@@ -12885,7 +12895,7 @@ function _enhanceSectionsWithAI(data) {
                 if (sec) ta.placeholder = sec.placeholder;
             });
             var status = document.getElementById('s4HlAIStatus');
-            if (status) { status.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#ff9500;margin-right:6px"></i> AI enhancement failed \u2014 using generated content'; setTimeout(function() { if (status.parentNode) status.remove(); }, 4000); }
+            if (status) { status.innerHTML = window._s4Safe('<i class="fas fa-exclamation-triangle" style="color:#ff9500;margin-right:6px"></i> AI enhancement failed \u2014 using generated content'); setTimeout(function() { if (status.parentNode) status.remove(); }, 4000); }
             if (typeof _toast === 'function') _toast('AI enhancement failed \u2014 using raw data', 'warning');
         });
 }
@@ -12911,7 +12921,7 @@ window._s4HlToggleLibrary = function() {
             (isActive ? '<i class="fas fa-check"></i>' : '') + '</div>';
     });
     html += '</div>';
-    panel.innerHTML = html;
+    panel.innerHTML = window._s4Safe(html);
     panel.style.display = 'block';
 };
 
@@ -13135,7 +13145,7 @@ function _renderSharePeople() {
     var container = document.getElementById('s4HlSharePeople');
     if (!container) return;
     if (!_hlSharedPeople.length) {
-        container.innerHTML = '<div class="s4-hl-share-empty"><i class="fas fa-user-friends"></i> No one shared yet</div>';
+        container.innerHTML = window._s4Safe('<div class="s4-hl-share-empty"><i class="fas fa-user-friends"></i> No one shared yet</div>');
         return;
     }
     var html = '';
@@ -13155,7 +13165,7 @@ function _renderSharePeople() {
         html += '</div>';
         html += '</div>';
     });
-    container.innerHTML = html;
+    container.innerHTML = window._s4Safe(html);
 }
 
 window._s4HlOpenSharePanel = function() {
@@ -13245,7 +13255,7 @@ function _injectHighlightsBtn() {
 
     var btn = document.createElement('button');
     btn.className = 's4-hl-standalone-btn';
-    btn.innerHTML = '<i class="fas fa-file-alt"></i> Create / Update Highlights Document';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-file-alt"></i> Create / Update Highlights Document');
     btn.onclick = function() { _openHighlightsModal(); };
     actionsMenu.parentNode.insertBefore(btn, actionsMenu.nextSibling);
 }
@@ -13571,7 +13581,7 @@ function _injectR79(toolId) {
     function mkBtn(cls, icon, label, onclick) {
         var btn = document.createElement('button');
         btn.className = cls;
-        btn.innerHTML = '<i class="fas ' + icon + '"></i> ' + label;
+        btn.innerHTML = window._s4Safe('<i class="fas ' + icon + '"></i> ' + label);
         btn.onclick = onclick;
         return btn;
     }
@@ -13992,7 +14002,7 @@ function _openLPLModal() {
     html += '</div>';
 
     html += '</div>';
-    ov.innerHTML = html;
+    ov.innerHTML = window._s4Safe(html);
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
 
@@ -14209,7 +14219,7 @@ function _injectLPLBtn() {
     var hlBtn = panel.querySelector('.s4-hl-standalone-btn');
     var btn = document.createElement('button');
     btn.className = 's4-lpl-standalone-btn';
-    btn.innerHTML = '<i class="fas fa-book-open"></i> Living Program Ledger';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-book-open"></i> Living Program Ledger');
     btn.onclick = function() { _openLPLModal(); };
     if (hlBtn && hlBtn.parentNode) {
         hlBtn.parentNode.insertBefore(btn, hlBtn.nextSibling);
@@ -14471,7 +14481,7 @@ function _openPISModal(panelId) {
     html += '</div>';
 
     html += '</div>';
-    ov.innerHTML = html;
+    ov.innerHTML = window._s4Safe(html);
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
 
@@ -14541,8 +14551,8 @@ window._s4PisRunSim = function() {
     var mitEl = document.getElementById('s4PisMitigations');
 
     if (_pisAIOn) {
-        if (explEl) explEl.innerHTML = '<span class="s4-pis-spinner"></span> AI analyzing cascade effects\u2026';
-        if (mitEl) mitEl.innerHTML = '<div style="font-size:0.82rem;color:var(--muted,#6e6e73);padding:8px"><span class="s4-pis-spinner"></span> Generating mitigation paths\u2026</div>';
+        if (explEl) explEl.innerHTML = window._s4Safe('<span class="s4-pis-spinner"></span> AI analyzing cascade effects\u2026');
+        if (mitEl) mitEl.innerHTML = window._s4Safe('<div style="font-size:0.82rem;color:var(--muted,#6e6e73);padding:8px"><span class="s4-pis-spinner"></span> Generating mitigation paths\u2026</div>');
 
         _pisCallAI(cascade, panelId, function(text) {
             var parsed = _pisParseAI(text);
@@ -14576,7 +14586,7 @@ function _renderMitigations(container, mitigations) {
         var text = typeof m === 'string' ? m : (m.action || m.description || m.text || JSON.stringify(m));
         var div = document.createElement('div');
         div.className = 's4-pis-mitigation-item';
-        div.innerHTML = '<i class="fas fa-check-circle"></i> <span>' + _escH(text) + '</span>';
+        div.innerHTML = window._s4Safe('<i class="fas fa-check-circle"></i> <span>' + _escH(text) + '</span>');
         container.appendChild(div);
     });
 }
@@ -14651,7 +14661,7 @@ function _injectPISBtn(panelId) {
     var actionsMenu = panel.querySelector('.s4-actions-menu');
     var btn = document.createElement('button');
     btn.className = 's4-pis-standalone-btn';
-    btn.innerHTML = '<i class="fas fa-bolt"></i> Run Program Impact Simulator';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-bolt"></i> Run Program Impact Simulator');
     btn.onclick = function() { _openPISModal(panelId); };
     if (actionsMenu && actionsMenu.parentNode) {
         actionsMenu.parentNode.insertBefore(btn, actionsMenu.nextSibling);
@@ -14809,7 +14819,7 @@ function _injectSCN(prefix) {
     var partSection = document.createElement('div');
     partSection.className = 's4-scn-participants';
     partSection.id = partId;
-    partSection.innerHTML = _buildParticipantsHTML(prefix);
+    partSection.innerHTML = window._s4Safe(_buildParticipantsHTML(prefix));
     tableWrapper.parentNode.insertBefore(partSection, tableWrapper);
 }
 
@@ -14892,7 +14902,7 @@ function _toggleUpdatedByColumn(prefix, enabled) {
             if (tr.querySelector('.s4-scn-updated-by')) return;
             var td = document.createElement('td');
             var updater = _demoUpdaters[idx % _demoUpdaters.length];
-            td.innerHTML = '<div class="s4-scn-updated-by"><strong>' + _escH(updater.who) + '</strong><br>' + _escH(updater.when) + '</div>';
+            td.innerHTML = window._s4Safe('<div class="s4-scn-updated-by"><strong>' + _escH(updater.who) + '</strong><br>' + _escH(updater.when) + '</div>');
             td.className = 's4-scn-td';
             var lastTd = tr.querySelector('td:last-child');
             if (lastTd) tr.insertBefore(td, lastTd);
@@ -14923,7 +14933,7 @@ window._s4SCNShareLink = function(prefix) {
             navigator.clipboard.writeText(link).then(function() {
                 var toast = document.createElement('div');
                 toast.className = 's4-scn-link-toast';
-                toast.innerHTML = '<i class="fas fa-check-circle"></i> Secure role-based link copied \u2014 ' + _escH(viewName);
+                toast.innerHTML = window._s4Safe('<i class="fas fa-check-circle"></i> Secure role-based link copied \u2014 ' + _escH(viewName));
                 document.body.appendChild(toast);
                 setTimeout(function() { toast.remove(); }, 2600);
             });
@@ -14936,7 +14946,7 @@ window._s4SCNShareLink = function(prefix) {
             navigator.clipboard.writeText(link).then(function() {
                 var toast = document.createElement('div');
                 toast.className = 's4-scn-link-toast';
-                toast.innerHTML = '<i class="fas fa-check-circle"></i> Secure role-based link copied \u2014 ' + _escH(viewName);
+                toast.innerHTML = window._s4Safe('<i class="fas fa-check-circle"></i> Secure role-based link copied \u2014 ' + _escH(viewName));
                 document.body.appendChild(toast);
                 setTimeout(function() { toast.remove(); }, 2600);
             });
@@ -15017,7 +15027,7 @@ window._s4SCNSendInvite = function(prefix) {
         // Re-render participants
         var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
         var partEl = document.getElementById(partId);
-        if (partEl) partEl.innerHTML = _buildParticipantsHTML(prefix);
+        if (partEl) partEl.innerHTML = window._s4Safe(_buildParticipantsHTML(prefix));
 
         // Close modal
         var modal = document.querySelector('.s4-scn-invite-modal');
@@ -15032,7 +15042,7 @@ window._s4SCNSendInvite = function(prefix) {
         _demoParticipants.push(newP);
         var partId = prefix ? prefix + 'ScnParticipants' : 'scnParticipants';
         var partEl = document.getElementById(partId);
-        if (partEl) partEl.innerHTML = _buildParticipantsHTML(prefix);
+        if (partEl) partEl.innerHTML = window._s4Safe(_buildParticipantsHTML(prefix));
         var modal = document.querySelector('.s4-scn-invite-modal');
         if (modal) modal.remove();
         if (typeof _toast === 'function') _toast('Invitation sent to ' + email + ' (' + perm + ')', 'success');
@@ -15122,9 +15132,9 @@ window._s4LplForesightToggle = function(on) {
         var f60 = document.getElementById('s4LplF60');
         var f90 = document.getElementById('s4LplF90');
         if (f30 && !f30.dataset.loaded) {
-            f30.innerHTML = '<span class="s4-lpl-spinner"></span> Generating 30-day forecast\u2026';
-            f60.innerHTML = '<span class="s4-lpl-spinner"></span> Generating 60-day forecast\u2026';
-            f90.innerHTML = '<span class="s4-lpl-spinner"></span> Generating 90-day forecast\u2026';
+            f30.innerHTML = window._s4Safe('<span class="s4-lpl-spinner"></span> Generating 30-day forecast\u2026');
+            f60.innerHTML = window._s4Safe('<span class="s4-lpl-spinner"></span> Generating 60-day forecast\u2026');
+            f90.innerHTML = window._s4Safe('<span class="s4-lpl-spinner"></span> Generating 90-day forecast\u2026');
 
             // Gather current ledger data for context
             var prog = document.getElementById('s4LplProgram');
@@ -15161,9 +15171,9 @@ window._s4LplForesightToggle = function(on) {
                     }).join('');
                 };
                 f30.dataset.loaded = '1';
-                f30.innerHTML = _renderItems(forecast.forecast_30 || []);
-                f60.innerHTML = _renderItems(forecast.forecast_60 || []);
-                f90.innerHTML = _renderItems(forecast.forecast_90 || []);
+                f30.innerHTML = window._s4Safe(_renderItems(forecast.forecast_30 || []));
+                f60.innerHTML = window._s4Safe(_renderItems(forecast.forecast_60 || []));
+                f90.innerHTML = window._s4Safe(_renderItems(forecast.forecast_90 || []));
             };
 
             // Real API call with demo fallback
@@ -15323,7 +15333,7 @@ function _renderMonteCarloHeatmap(cascade) {
         html += '<div class="s4-pis-mc-ci-item"><strong>P95:</strong> ' + cis.P95.delay + ' days / $' + cis.P95.cost + 'K</div>';
         html += '</div>';
 
-        grid.innerHTML = html;
+        grid.innerHTML = window._s4Safe(html);
         legend.innerHTML =
             '<span class="s4-pis-mc-leg-item"><span class="s4-pis-mc-swatch s4-pis-mc-hot"></span> High (\u226512%)</span>' +
             '<span class="s4-pis-mc-leg-item"><span class="s4-pis-mc-swatch s4-pis-mc-warm"></span> Medium (6-11%)</span>' +
@@ -15434,7 +15444,7 @@ window._s4SCNConflictResolver = function(prefix) {
     html += '<button class="s4-scn-conflict-accept" onclick="if(typeof _toast===\'function\')_toast(\'All resolved values accepted and anchored\',\'success\');this.closest(\'.s4-scn-conflict-modal\').remove()"><i class="fas fa-check"></i> Accept All Resolutions</button>';
     html += '</div></div>';
 
-    ov.innerHTML = html;
+    ov.innerHTML = window._s4Safe(html);
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
 
@@ -15450,7 +15460,7 @@ window._s4SCNConflictResolver = function(prefix) {
             rHtml += '<div class="s4-scn-conflict-resolved"><i class="fas fa-magic"></i> <strong>AI Resolution:</strong> ' + _escH(c.resolved) + ' <span class="s4-scn-conflict-conf">' + c.confidence + '% confidence</span></div>';
             rHtml += '</div>';
         });
-        results.innerHTML = rHtml;
+        results.innerHTML = window._s4Safe(rHtml);
         var desc = ov.querySelector('.s4-scn-conflict-desc');
         if (desc) desc.textContent = conflicts.length + ' conflicts found and resolved with anchored evidence.';
     };
@@ -15702,7 +15712,7 @@ function _buildRTE(opts) {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.title = c.title;
-        btn.innerHTML = c.label ? '<i class="fas ' + c.icon + '" style="font-size:0.6rem"></i><span style="font-size:0.65rem;margin-left:2px">' + c.label + '</span>' : '<i class="fas ' + c.icon + '"></i>';
+        btn.innerHTML = window._s4Safe(c.label ? '<i class="fas ' + c.icon + '" style="font-size:0.6rem"></i><span style="font-size:0.65rem;margin-left:2px">' + c.label + '</span>' : '<i class="fas ' + c.icon + '"></i>');
         btn.onmousedown = function(e) { e.preventDefault(); }; // prevent blur
         btn.onclick = function(e) {
             e.preventDefault();
@@ -15796,14 +15806,14 @@ function _buildRTE(opts) {
         editor: editor,
         getHTML: function() { return editor.innerHTML; },
         getText: function() { return editor.innerText || editor.textContent || ''; },
-        setHTML: function(h) { editor.innerHTML = h; }
+        setHTML: function(h) { editor.innerHTML = window._s4Safe(h); }
     };
 }
 
 // ── HTML-to-plain-text converter (for mailto) ──
 function _htmlToPlain(html) {
     var tmp = document.createElement('div');
-    tmp.innerHTML = html;
+    tmp.innerHTML = window._s4Safe(html);
     // Convert <br> to newlines
     tmp.querySelectorAll('br').forEach(function(br) { br.replaceWith('\n'); });
     // Convert block elements to have newlines
@@ -15931,10 +15941,10 @@ function _importReceivedIntoComposer(toolId, toolName, bodyRTE, subjectInput) {
 
     var header = document.createElement('div');
     header.className = 's4-import-header';
-    header.innerHTML = '<h3><i class="fas fa-file-import"></i> Import Received Email</h3>';
+    header.innerHTML = window._s4Safe('<h3><i class="fas fa-file-import"></i> Import Received Email</h3>');
     var closeBtn = document.createElement('button');
     closeBtn.className = 's4-email-close';
-    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.innerHTML = window._s4Safe('<i class="fas fa-times"></i>');
     closeBtn.onclick = function() { ov.remove(); };
     header.appendChild(closeBtn);
     modal.appendChild(header);
@@ -15958,7 +15968,7 @@ function _importReceivedIntoComposer(toolId, toolName, bodyRTE, subjectInput) {
     var filePanel = document.createElement('div');
     var dropZone = document.createElement('div');
     dropZone.className = 's4-import-drop';
-    dropZone.innerHTML = '<i class="fas fa-cloud-arrow-up"></i>Drop .eml or .msg file here<br>or click to browse';
+    dropZone.innerHTML = window._s4Safe('<i class="fas fa-cloud-arrow-up"></i>Drop .eml or .msg file here<br>or click to browse');
     var fileInput = document.createElement('input');
     fileInput.type = 'file'; fileInput.accept = '.eml,.msg,.txt'; fileInput.style.display = 'none';
     var importedData = { subject: '', from: '', to: '', cc: '', body: '', bodyHTML: '' };
@@ -15986,7 +15996,7 @@ function _importReceivedIntoComposer(toolId, toolName, bodyRTE, subjectInput) {
 
     function _procFile(file) {
         var reader = new FileReader();
-        reader.onload = function(ev) { _parseEml(ev.target.result); dropZone.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i>Parsed: <b>' + _escH(importedData.subject || file.name) + '</b>'; };
+        reader.onload = function(ev) { _parseEml(ev.target.result); dropZone.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i>Parsed: <b>' + _escH(importedData.subject || file.name) + '</b>'); };
         reader.readAsText(file);
     }
     function _parseEml(text) {
@@ -16001,11 +16011,11 @@ function _importReceivedIntoComposer(toolId, toolName, bodyRTE, subjectInput) {
     var footer = document.createElement('div');
     footer.className = 's4-import-footer';
     var cancelImport = document.createElement('button');
-    cancelImport.innerHTML = '<i class="fas fa-times"></i> Cancel';
+    cancelImport.innerHTML = window._s4Safe('<i class="fas fa-times"></i> Cancel');
     cancelImport.onclick = function() { ov.remove(); };
     var importSaveBtn = document.createElement('button');
     importSaveBtn.className = 's4-import-save';
-    importSaveBtn.innerHTML = '<i class="fas fa-robot"></i> Import & AI Reply';
+    importSaveBtn.innerHTML = window._s4Safe('<i class="fas fa-robot"></i> Import & AI Reply');
     importSaveBtn.onclick = function() {
         if (activePanelKey === 'paste' && pasteArea.value.trim()) _parseEml(pasteArea.value);
         if (!importedData.subject && !importedData.body) { if (typeof _toast === 'function') _toast('No email content to import', 'warning'); return; }
@@ -16016,7 +16026,7 @@ function _importReceivedIntoComposer(toolId, toolName, bodyRTE, subjectInput) {
         // Call backend API for AI reply drafting
         var rawContent = importedData.body || '';
         if (importedData.from) rawContent = 'From: ' + importedData.from + '\nSubject: ' + (importedData.subject || '') + '\nTo: ' + (importedData.to || '') + '\n\n' + rawContent;
-        importSaveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AI drafting reply\u2026';
+        importSaveBtn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> AI drafting reply\u2026');
         fetch('/api/import-received-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -16080,10 +16090,10 @@ function _openEmailComposer(toolId) {
     // ── Header ──
     var header = document.createElement('div');
     header.className = 's4-email-header';
-    header.innerHTML = '<h2><i class="fas fa-envelope"></i> Prepare Email \u2014 ' + _escH(toolName) + '</h2>';
+    header.innerHTML = window._s4Safe('<h2><i class="fas fa-envelope"></i> Prepare Email \u2014 ' + _escH(toolName) + '</h2>');
     var closeBtn = document.createElement('button');
     closeBtn.className = 's4-email-close';
-    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.innerHTML = window._s4Safe('<i class="fas fa-times"></i>');
     closeBtn.onclick = function() { ov.remove(); };
     header.appendChild(closeBtn);
     modal.appendChild(header);
@@ -16126,7 +16136,7 @@ function _openEmailComposer(toolId) {
     var batchContainer = document.createElement('div');
     var addBatchBtn = document.createElement('button');
     addBatchBtn.className = 's4-email-add-batch';
-    addBatchBtn.innerHTML = '<i class="fas fa-users"></i> Add Recipient Batch';
+    addBatchBtn.innerHTML = window._s4Safe('<i class="fas fa-users"></i> Add Recipient Batch');
     addBatchBtn.onclick = function() {
         var bIdx = batches.length + 1;
         var sep = document.createElement('hr');
@@ -16162,7 +16172,7 @@ function _openEmailComposer(toolId) {
     // Subject
     var subjectField = document.createElement('div');
     subjectField.className = 's4-email-field';
-    subjectField.innerHTML = '<label>Subject</label>';
+    subjectField.innerHTML = window._s4Safe('<label>Subject</label>');
     var subjectInput = document.createElement('input');
     subjectInput.type = 'text';
     subjectInput.value = defaultSubject;
@@ -16173,9 +16183,9 @@ function _openEmailComposer(toolId) {
     var aiBar = document.createElement('div');
     aiBar.className = 's4-email-ai-bar';
     aiBar.style.cursor = 'pointer';
-    aiBar.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> <span>AI Assist \u2014 Click to auto-enhance email body</span>';
+    aiBar.innerHTML = window._s4Safe('<i class="fas fa-wand-magic-sparkles"></i> <span>AI Assist \u2014 Click to auto-enhance email body</span>');
     aiBar.onclick = function() {
-        aiBar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Enhancing with AI\u2026</span>';
+        aiBar.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> <span>Enhancing with AI\u2026</span>');
         var current = bodyRTE.getHTML();
         var sigHTML = sigRTE ? sigRTE.getHTML() : '';
         fetch('/api/prepare-email', {
@@ -16198,7 +16208,7 @@ function _openEmailComposer(toolId) {
                 bodyRTE.setHTML(res.bodyHTML);
                 if (res.subject) subjectInput.value = res.subject;
             }
-            aiBar.innerHTML = '<i class="fas fa-check-circle"></i> <span>AI-enhanced \u2014 email body updated</span>';
+            aiBar.innerHTML = window._s4Safe('<i class="fas fa-check-circle"></i> <span>AI-enhanced \u2014 email body updated</span>');
         }).catch(function() {
             // Graceful fallback: local enhancement if API unavailable
             var operatorName = document.getElementById('s4ApName') ? document.getElementById('s4ApName').textContent : 'S4 Operator';
@@ -16208,7 +16218,7 @@ function _openEmailComposer(toolId) {
                 '<p>Please review and provide feedback at your earliest convenience.</p>' +
                 '<p>Best regards,<br>' + _escH(operatorName) + '</p>';
             bodyRTE.setHTML(enhanced);
-            aiBar.innerHTML = '<i class="fas fa-check-circle"></i> <span>AI-enhanced \u2014 email body updated</span>';
+            aiBar.innerHTML = window._s4Safe('<i class="fas fa-check-circle"></i> <span>AI-enhanced \u2014 email body updated</span>');
         });
     };
     body.appendChild(aiBar);
@@ -16216,7 +16226,7 @@ function _openEmailComposer(toolId) {
     // Body — Rich Text Editor (UPGRADED from textarea)
     var bodyField = document.createElement('div');
     bodyField.className = 's4-email-field';
-    bodyField.innerHTML = '<label>Body</label>';
+    bodyField.innerHTML = window._s4Safe('<label>Body</label>');
     var bodyRTE = _buildRTE({ placeholder: 'Compose your email\u2026' });
     bodyRTE.setHTML(bodyContentHTML);
     bodyField.appendChild(bodyRTE.wrap);
@@ -16227,10 +16237,10 @@ function _openEmailComposer(toolId) {
     sigSection.className = 's4-email-sig-section';
     var sigHeader = document.createElement('div');
     sigHeader.className = 's4-email-sig-header';
-    sigHeader.innerHTML = '<label><i class="fas fa-signature" style="margin-right:4px"></i> Custom Signature (auto-appends to email body)</label>';
+    sigHeader.innerHTML = window._s4Safe('<label><i class="fas fa-signature" style="margin-right:4px"></i> Custom Signature (auto-appends to email body)</label>');
     var sigSaveBtn = document.createElement('button');
     sigSaveBtn.type = 'button';
-    sigSaveBtn.innerHTML = '<i class="fas fa-save"></i> Save Signature';
+    sigSaveBtn.innerHTML = window._s4Safe('<i class="fas fa-save"></i> Save Signature');
     sigSaveBtn.onclick = function() {
         _saveSignature(sigRTE.getHTML());
         if (typeof _toast === 'function') _toast('Signature saved', 'success');
@@ -16246,22 +16256,22 @@ function _openEmailComposer(toolId) {
     // Attachments
     var attachField = document.createElement('div');
     attachField.className = 's4-email-field';
-    attachField.innerHTML = '<label>Attachments</label>';
+    attachField.innerHTML = window._s4Safe('<label>Attachments</label>');
     var attachList = document.createElement('div');
     attachList.className = 's4-email-attach-list';
     // Auto-attach the current tool report
-    attachList.innerHTML = '<div class="s4-email-attach-tag"><i class="fas fa-file-alt"></i> ' + _escH(toolName) + '_Report.pdf</div>';
+    attachList.innerHTML = window._s4Safe('<div class="s4-email-attach-tag"><i class="fas fa-file-alt"></i> ' + _escH(toolName) + '_Report.pdf</div>');
     attachField.appendChild(attachList);
     var attachBtn = document.createElement('button');
     attachBtn.className = 's4-email-opt';
     attachBtn.style.marginTop = '8px';
-    attachBtn.innerHTML = '<i class="fas fa-paperclip"></i> Add Attachment';
+    attachBtn.innerHTML = window._s4Safe('<i class="fas fa-paperclip"></i> Add Attachment');
     attachBtn.onclick = function() {
         var name = prompt('Attachment filename (e.g. report.pdf):');
         if (name && name.trim()) {
             var tag = document.createElement('div');
             tag.className = 's4-email-attach-tag';
-            tag.innerHTML = '<i class="fas fa-file"></i> ' + _escH(name.trim());
+            tag.innerHTML = window._s4Safe('<i class="fas fa-file"></i> ' + _escH(name.trim()));
             attachList.appendChild(tag);
         }
     };
@@ -16271,7 +16281,7 @@ function _openEmailComposer(toolId) {
     importBtn.className = 's4-email-opt s4-email-import-inline';
     importBtn.style.marginTop = '8px';
     importBtn.style.marginLeft = '8px';
-    importBtn.innerHTML = '<i class="fas fa-file-import"></i> Import Received Email';
+    importBtn.innerHTML = window._s4Safe('<i class="fas fa-file-import"></i> Import Received Email');
     importBtn.onclick = function() {
         // Open import modal, then auto-AI-reply into this composer
         _importReceivedIntoComposer(toolId, toolName, bodyRTE, subjectInput);
@@ -16287,21 +16297,21 @@ function _openEmailComposer(toolId) {
     // Encrypt toggle
     var encryptBtn = document.createElement('button');
     encryptBtn.className = 's4-email-opt';
-    encryptBtn.innerHTML = '<i class="fas fa-lock"></i> Encrypt';
+    encryptBtn.innerHTML = window._s4Safe('<i class="fas fa-lock"></i> Encrypt');
     encryptBtn.onclick = function() { optState.encrypt = !optState.encrypt; encryptBtn.classList.toggle('active', optState.encrypt); };
     optRow.appendChild(encryptBtn);
 
     // Read Receipt toggle
     var receiptBtn = document.createElement('button');
     receiptBtn.className = 's4-email-opt';
-    receiptBtn.innerHTML = '<i class="fas fa-receipt"></i> Read Receipt';
+    receiptBtn.innerHTML = window._s4Safe('<i class="fas fa-receipt"></i> Read Receipt');
     receiptBtn.onclick = function() { optState.receipt = !optState.receipt; receiptBtn.classList.toggle('active', optState.receipt); };
     optRow.appendChild(receiptBtn);
 
     // Schedule Send toggle + datetime picker
     var scheduleBtn = document.createElement('button');
     scheduleBtn.className = 's4-email-opt';
-    scheduleBtn.innerHTML = '<i class="fas fa-clock"></i> Schedule Send';
+    scheduleBtn.innerHTML = window._s4Safe('<i class="fas fa-clock"></i> Schedule Send');
     var scheduleWrap = document.createElement('div');
     scheduleWrap.className = 's4-email-schedule-wrap';
     var scheduleLbl = document.createElement('label');
@@ -16341,7 +16351,7 @@ function _openEmailComposer(toolId) {
     // Save as Draft button (triggers immediate draft save)
     var draftBtn = document.createElement('button');
     draftBtn.className = 's4-email-opt';
-    draftBtn.innerHTML = '<i class="fas fa-bookmark"></i> Save as Draft';
+    draftBtn.innerHTML = window._s4Safe('<i class="fas fa-bookmark"></i> Save as Draft');
     draftBtn.onclick = function() {
         _saveSignature(sigRTE.getHTML());
         var email = _buildEmailObj('draft');
@@ -16426,12 +16436,12 @@ function _openEmailComposer(toolId) {
     footer.className = 's4-email-footer';
 
     var cancelBtn = document.createElement('button');
-    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+    cancelBtn.innerHTML = window._s4Safe('<i class="fas fa-times"></i> Cancel');
     cancelBtn.onclick = function() { ov.remove(); };
 
     var saveBtn = document.createElement('button');
     saveBtn.className = 's4-email-save';
-    saveBtn.innerHTML = '<i class="fas fa-shield-halved"></i> Save to Secure Emails';
+    saveBtn.innerHTML = window._s4Safe('<i class="fas fa-shield-halved"></i> Save to Secure Emails');
     saveBtn.onclick = function() {
         _saveSignature(sigRTE.getHTML());
         var type = (optState.schedule && scheduleInput.value) ? 'scheduled' : 'saved';
@@ -16467,7 +16477,7 @@ function _openEmailComposer(toolId) {
 
     var sendBtn = document.createElement('button');
     sendBtn.className = 's4-email-send';
-    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Open in Email Client';
+    sendBtn.innerHTML = window._s4Safe('<i class="fas fa-paper-plane"></i> Open in Email Client');
     sendBtn.onclick = function() {
         // Handle batch recipients — open mailto for each batch
         var allBatches = batches.length > 1 ? batches : [{ to: toState, cc: ccState, bcc: bccState }];
@@ -16519,7 +16529,7 @@ function _openEmailComposer(toolId) {
     // Download PDF button
     var pdfBtn = document.createElement('button');
     pdfBtn.className = 's4-email-pdf';
-    pdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+    pdfBtn.innerHTML = window._s4Safe('<i class="fas fa-file-pdf"></i> Download PDF');
     pdfBtn.onclick = function() {
         var fullHTML = _getFullHTML();
         var subjectText = subjectInput.value || 'S4 Email';
@@ -16539,7 +16549,7 @@ function _openEmailComposer(toolId) {
     // Copy for Email / Word button
     var copyBtn = document.createElement('button');
     copyBtn.className = 's4-email-copy';
-    copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy for Email / Word';
+    copyBtn.innerHTML = window._s4Safe('<i class="fas fa-copy"></i> Copy for Email / Word');
     copyBtn.onclick = function() {
         var fullHTML = _getFullHTML();
         var fullText = _getFullPlainText();
@@ -16592,9 +16602,9 @@ function _buildRecipientField(label, state) {
         state.chips.push(email);
         var chip = document.createElement('span');
         chip.className = 's4-email-chip';
-        chip.innerHTML = _escH(email) + ' ';
+        chip.innerHTML = window._s4Safe(_escH(email) + ' ');
         var rm = document.createElement('button');
-        rm.innerHTML = '<i class="fas fa-times"></i>';
+        rm.innerHTML = window._s4Safe('<i class="fas fa-times"></i>');
         rm.onclick = function() {
             var idx = state.chips.indexOf(email);
             if (idx !== -1) state.chips.splice(idx, 1);
@@ -16635,7 +16645,7 @@ function _injectEmailBtn(panelId) {
     if (!actionsList) return;
     var btn = document.createElement('button');
     btn.className = 's4-btn-secondary s4-email-dropdown-item';
-    btn.innerHTML = '<i class="fas fa-envelope"></i> Prepare Email';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-envelope"></i> Prepare Email');
     btn.onclick = function() { _openEmailComposer(panelId); };
     // Place after last primary action, or at the top if no primaries
     var primaries = actionsList.querySelectorAll('.s4-btn-primary');
@@ -16759,7 +16769,7 @@ function _renderVaultList(filterText) {
             '<button onclick="window._s4VaultAction(\'delete\',' + idx + ')" title="Delete"><i class="fas fa-trash-alt"></i></button>' +
             '</div></div></div>';
     });
-    container.innerHTML = html;
+    container.innerHTML = window._s4Safe(html);
 }
 
 window._s4VaultAction = function(action, idx) {
@@ -16810,7 +16820,7 @@ window._s4VaultAction = function(action, idx) {
             var subj = document.querySelector('.s4-email-modal input[type="text"]');
             var rteEditor = document.querySelector('.s4-email-modal .s4-rte-editor:not(.s4-sig-editor)');
             if (subj) subj.value = email.subject || '';
-            if (rteEditor) rteEditor.innerHTML = email.bodyHTML || _escH(email.body || '').replace(/\n/g, '<br>');
+            if (rteEditor) rteEditor.innerHTML = window._s4Safe(email.bodyHTML || _escH(email.body || '').replace(/\n/g, '<br>'));
         }, 200);
     } else if (action === 'aiReply') {
         _openEmailComposer(email.toolId || 'hub-analytics');
@@ -16826,7 +16836,7 @@ window._s4VaultAction = function(action, idx) {
                 body: JSON.stringify({ content: rawContent, toolName: email.toolName || '' })
             }).then(function(r) { return r.json(); }).then(function(res) {
                 if (rteEditor && res.aiReply && res.aiReply.bodyHTML) {
-                    rteEditor.innerHTML = res.aiReply.bodyHTML;
+                    rteEditor.innerHTML = window._s4Safe(res.aiReply.bodyHTML);
                     if (subj && res.aiReply.subject) subj.value = res.aiReply.subject;
                 } else {
                     _vaultAIReplyFallback(rteEditor, email);
@@ -16852,7 +16862,7 @@ function _vaultAIReplyFallback(rteEditor, email) {
         '<br><hr style="border:none;border-top:1px solid #ccc;margin:12px 0">' +
         '<p style="color:#6e6e73;font-size:0.82rem"><i>Original message:</i></p>' +
         (email.bodyHTML || _escH(email.body || '').replace(/\n/g, '<br>'));
-    rteEditor.innerHTML = aiDraft;
+    rteEditor.innerHTML = window._s4Safe(aiDraft);
 }
 
 window._s4RenderEmailVault = _renderVaultList;
@@ -16882,10 +16892,10 @@ window._s4ImportEmail = function() {
     // Header
     var header = document.createElement('div');
     header.className = 's4-import-header';
-    header.innerHTML = '<h3><i class="fas fa-file-import"></i> Import Email</h3>';
+    header.innerHTML = window._s4Safe('<h3><i class="fas fa-file-import"></i> Import Email</h3>');
     var closeBtn = document.createElement('button');
     closeBtn.className = 's4-email-close';
-    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.innerHTML = window._s4Safe('<i class="fas fa-times"></i>');
     closeBtn.onclick = function() { ov.remove(); };
     header.appendChild(closeBtn);
     modal.appendChild(header);
@@ -16911,7 +16921,7 @@ window._s4ImportEmail = function() {
     var filePanel = document.createElement('div');
     var dropZone = document.createElement('div');
     dropZone.className = 's4-import-drop';
-    dropZone.innerHTML = '<i class="fas fa-cloud-arrow-up"></i>Drop .eml or .msg file here<br>or click to browse';
+    dropZone.innerHTML = window._s4Safe('<i class="fas fa-cloud-arrow-up"></i>Drop .eml or .msg file here<br>or click to browse');
     var fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.eml,.msg,.txt';
@@ -16958,7 +16968,7 @@ window._s4ImportEmail = function() {
         var reader = new FileReader();
         reader.onload = function(ev) {
             _parseEmailText(ev.target.result);
-            dropZone.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i>Parsed: <b>' + _escH(importedData.subject || file.name) + '</b>';
+            dropZone.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i>Parsed: <b>' + _escH(importedData.subject || file.name) + '</b>');
         };
         reader.readAsText(file);
     }
@@ -16990,11 +17000,11 @@ window._s4ImportEmail = function() {
     var footer = document.createElement('div');
     footer.className = 's4-import-footer';
     var cancelBtn = document.createElement('button');
-    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+    cancelBtn.innerHTML = window._s4Safe('<i class="fas fa-times"></i> Cancel');
     cancelBtn.onclick = function() { ov.remove(); };
     var saveImportBtn = document.createElement('button');
     saveImportBtn.className = 's4-import-save';
-    saveImportBtn.innerHTML = '<i class="fas fa-download"></i> Import to Vault';
+    saveImportBtn.innerHTML = window._s4Safe('<i class="fas fa-download"></i> Import to Vault');
     saveImportBtn.onclick = function() {
         if (activePanelKey === 'paste' && pasteArea.value.trim()) {
             _parseEmailText(pasteArea.value);
@@ -17109,10 +17119,10 @@ window._s4OpenEmailCenter = function() {
     // ── Header ──
     var header = document.createElement('div');
     header.className = 's4-sec-header';
-    header.innerHTML = '<h2><i class="fas fa-envelope-open-text" style="color:#5856D6"></i> Secure Email Center</h2>';
+    header.innerHTML = window._s4Safe('<h2><i class="fas fa-envelope-open-text" style="color:#5856D6"></i> Secure Email Center</h2>');
     var closeBtn = document.createElement('button');
     closeBtn.className = 's4-email-close';
-    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.innerHTML = window._s4Safe('<i class="fas fa-times"></i>');
     closeBtn.onclick = function() { ov.remove(); };
     header.appendChild(closeBtn);
     modal.appendChild(header);
@@ -17123,12 +17133,12 @@ window._s4OpenEmailCenter = function() {
 
     var vaultTab = document.createElement('button');
     vaultTab.className = 's4-sec-tab active';
-    vaultTab.innerHTML = '<i class="fas fa-lock"></i> Vault';
+    vaultTab.innerHTML = window._s4Safe('<i class="fas fa-lock"></i> Vault');
     vaultTab.setAttribute('data-tab', 'vault');
 
     var composeTab = document.createElement('button');
     composeTab.className = 's4-sec-tab';
-    composeTab.innerHTML = '<i class="fas fa-pen-to-square"></i> Compose New';
+    composeTab.innerHTML = window._s4Safe('<i class="fas fa-pen-to-square"></i> Compose New');
     composeTab.setAttribute('data-tab', 'compose');
 
     tabBar.appendChild(vaultTab);
@@ -17156,7 +17166,7 @@ window._s4OpenEmailCenter = function() {
     // Import button
     var importBtn = document.createElement('button');
     importBtn.className = 's4-email-standalone-btn';
-    importBtn.innerHTML = '<i class="fas fa-file-import"></i> Import';
+    importBtn.innerHTML = window._s4Safe('<i class="fas fa-file-import"></i> Import');
     importBtn.onclick = function() { if (window._s4ImportEmail) window._s4ImportEmail(); };
     searchWrap.appendChild(importBtn);
     vaultPane.appendChild(searchWrap);
@@ -17262,7 +17272,7 @@ window._s4OpenEmailCenter = function() {
                 '<button onclick="window._s4VaultAction(\'delete\',' + idx + ')" title="Delete"><i class="fas fa-trash"></i></button>' +
                 '</div></div>';
         });
-        listEl.innerHTML = html;
+        listEl.innerHTML = window._s4Safe(html);
     }
 
     searchInput.oninput = function() { renderSecVault(); };
@@ -17477,7 +17487,7 @@ function _renderSHCResults(gaps, toolName) {
     var medCount = gaps.filter(function(g) { return g.severity === 'medium'; }).length;
     var lowCount = gaps.filter(function(g) { return g.severity === 'low'; }).length;
 
-    status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> Scan complete \u2014 ' + gaps.length + ' gap' + (gaps.length !== 1 ? 's' : '') + ' found in ' + _escH(toolName);
+    status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> Scan complete \u2014 ' + gaps.length + ' gap' + (gaps.length !== 1 ? 's' : '') + ' found in ' + _escH(toolName));
 
     var html = '<div class="s4-shc-summary">';
     html += '<div class="s4-shc-pill high">' + highCount + ' High</div>';
@@ -17508,22 +17518,22 @@ function _renderSHCResults(gaps, toolName) {
     html += '<button class="s4-shc-approve-all" onclick="window._s4ShcApproveAll()"><i class="fas fa-check-double"></i> Approve All Corrections</button>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
 }
 
 window._s4ShcApprove = function(btn, gapId) {
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Anchoring\u2026';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> Anchoring\u2026');
     fetch('/api/self-healing-compliance/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ gapId: gapId })
     }).then(function(r) { return r.json(); }).then(function(d) {
-        btn.innerHTML = '<i class="fas fa-lock" style="color:#34c759"></i> Anchored \u2014 ' + gapId;
+        btn.innerHTML = window._s4Safe('<i class="fas fa-lock" style="color:#34c759"></i> Anchored \u2014 ' + gapId);
         btn.classList.add('approved');
         btn.style.pointerEvents = 'none';
     }).catch(function() {
-        btn.innerHTML = '<i class="fas fa-lock" style="color:#34c759"></i> Anchored \u2014 ' + gapId;
+        btn.innerHTML = window._s4Safe('<i class="fas fa-lock" style="color:#34c759"></i> Anchored \u2014 ' + gapId);
         btn.classList.add('approved');
         btn.style.pointerEvents = 'none';
     });
@@ -17538,7 +17548,7 @@ window._s4ShcApproveAll = function() {
             var gapId = btn.getAttribute('onclick').match(/'([^']+)'\)/);
             gapId = gapId ? gapId[1] : 'gap';
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-lock" style="color:#34c759"></i> Anchored \u2014 ' + gapId;
+            btn.innerHTML = window._s4Safe('<i class="fas fa-lock" style="color:#34c759"></i> Anchored \u2014 ' + gapId);
             btn.classList.add('approved');
             btn.style.pointerEvents = 'none';
         }, delay);
@@ -17555,7 +17565,7 @@ function _injectSHCBtn(panelId) {
     if (!actionsList) return;
     var btn = document.createElement('button');
     btn.className = 's4-btn-secondary s4-shc-inject-btn';
-    btn.innerHTML = '<i class="fas fa-heartbeat"></i> Run Self-Healing Compliance Scan';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-heartbeat"></i> Run Self-Healing Compliance Scan');
     btn.onclick = function() { window._s4SelfHealingCompliance(panelId); };
     actionsList.appendChild(btn);
 }
@@ -17870,7 +17880,7 @@ function _renderAARContent(data, programName) {
     // Hash the content for cryptographic proof
     var rawContent = JSON.stringify(data);
     var finalize = function(hash) {
-        status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> After-Action Review generated and anchored';
+        status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> After-Action Review generated and anchored');
         content.style.display = 'block';
 
         var html = '<div class="s4-aar-section">';
@@ -17901,7 +17911,7 @@ function _renderAARContent(data, programName) {
         html += '<button onclick="this.closest(\'.s4-aar-overlay\').remove()">Close</button>';
         html += '</div>';
 
-        content.innerHTML = html;
+        content.innerHTML = window._s4Safe(html);
         if (typeof _toast === 'function') _toast('Immutable After-Action Review generated with cryptographic proof', 'success');
     };
 
@@ -17995,7 +18005,7 @@ function _renderCFIFResults(data, programName) {
     var results = document.getElementById('s4CfifResults');
     if (!status || !results) return;
 
-    status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> Funding impact analysis complete';
+    status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> Funding impact analysis complete');
     results.style.display = 'block';
 
     var riskClass = (data.overall_risk || '').toLowerCase().replace(/\s/g, '-');
@@ -18039,7 +18049,7 @@ function _renderCFIFResults(data, programName) {
     html += '<button onclick="this.closest(\'.s4-cfif-overlay\').remove()">Close</button>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
     if (typeof _toast === 'function') _toast('Congressional Funding Impact Forecast generated for ' + programName, 'success');
 }
 
@@ -18105,7 +18115,7 @@ function _renderSEMCResults(data) {
     var results = document.getElementById('s4SemcResults');
     if (!status || !results) return;
 
-    status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> Contract clause generated \u2014 ' + _escH(data.clause_id || 'SEMC');
+    status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> Contract clause generated \u2014 ' + _escH(data.clause_id || 'SEMC'));
     results.style.display = 'block';
 
     var html = '<div class="s4-semc-meta">';
@@ -18135,7 +18145,7 @@ function _renderSEMCResults(data) {
     html += '<button onclick="this.closest(\'.s4-semc-overlay\').remove()">Close</button>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
     if (typeof _toast === 'function') _toast('Self-executing contract clause generated', 'success');
 }
 
@@ -18195,7 +18205,7 @@ function _renderFLLKGResults(data) {
     var results = document.getElementById('s4FllkgResults');
     if (!status || !results) return;
 
-    status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> ' + (data.lessons || []).length + ' applicable lessons found from ' + (data.total_programs || 47) + ' programs';
+    status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> ' + (data.lessons || []).length + ' applicable lessons found from ' + (data.total_programs || 47) + ' programs');
     results.style.display = 'block';
 
     var html = '<div class="s4-fllkg-privacy"><i class="fas fa-user-shield"></i> ' + _escH(data.privacy_method || 'Privacy-preserving federation') + '</div>';
@@ -18219,12 +18229,12 @@ function _renderFLLKGResults(data) {
     html += '<button onclick="this.closest(\'.s4-fllkg-overlay\').remove()">Close</button>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
 }
 
 window._s4FllkgApply = function(btn, lessonId) {
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-check" style="color:#34c759"></i> Applied \u2014 ' + lessonId;
+    btn.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#34c759"></i> Applied \u2014 ' + lessonId);
     btn.style.pointerEvents = 'none';
     if (typeof _toast === 'function') _toast('Lesson ' + lessonId + ' applied to current program', 'success');
 };
@@ -18244,7 +18254,7 @@ window._s4QuantumSafeToggle = function(enabled) {
         if (panel) {
             var info = panel.querySelector('.s4-lpl-qsfa-info');
             if (info) {
-                info.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Re-anchoring critical records with CRYSTALS-Dilithium signatures\u2026';
+                info.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> Re-anchoring critical records with CRYSTALS-Dilithium signatures\u2026');
                 var _qsShowResult = function(count, algo, level, explorerItems) {
                     var explorerHTML = '';
                     if (explorerItems && explorerItems.length) {
@@ -18347,7 +18357,7 @@ function _renderSCIOResults(data) {
     var results = document.getElementById('s4ScioResults');
     if (!status || !results) return;
 
-    status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> Insurance optimization analysis complete \u2014 ' + (data.evidence_count || 0) + ' anchored records analyzed';
+    status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> Insurance optimization analysis complete \u2014 ' + (data.evidence_count || 0) + ' anchored records analyzed');
     results.style.display = 'block';
 
     var html = '<div class="s4-scio-summary">';
@@ -18376,7 +18386,7 @@ function _renderSCIOResults(data) {
     html += '<button onclick="this.closest(\'.s4-scio-overlay\').remove()">Close</button>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
     if (typeof _toast === 'function') _toast('Supply Chain Insurance optimization complete', 'success');
 }
 
@@ -18440,7 +18450,7 @@ function _renderVPSSResults(data) {
     var results = document.getElementById('s4VpssResults');
     if (!status || !results) return;
 
-    status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> Scorecard generated and signed \u2014 ' + _escH(data.scorecard_id || '');
+    status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> Scorecard generated and signed \u2014 ' + _escH(data.scorecard_id || ''));
     results.style.display = 'block';
 
     var html = '<div class="s4-vpss-sig"><i class="fas fa-lock"></i> Signature: <code>' + _escH((data.signature || '').substring(0, 24)) + '\u2026</code></div>';
@@ -18469,7 +18479,7 @@ function _renderVPSSResults(data) {
     html += '<button onclick="this.closest(\'.s4-vpss-overlay\').remove()">Close</button>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
     if (typeof _toast === 'function') _toast('Verifiable Performance Scorecard ready to share', 'success');
 }
 
@@ -18481,7 +18491,7 @@ window._s4MissionOutcomeCorrelation = function() {
     var container = document.getElementById('s4MoceContent');
     if (!container) return;
 
-    container.innerHTML = '<div class="s4-moce-loading"><i class="fas fa-spinner fa-spin"></i> Correlating anchored logistics data with mission success metrics\u2026</div>';
+    container.innerHTML = window._s4Safe('<div class="s4-moce-loading"><i class="fas fa-spinner fa-spin"></i> Correlating anchored logistics data with mission success metrics\u2026</div>');
 
     var prog = document.getElementById('s4LplProgram');
     var programName = prog ? (prog.options[prog.selectedIndex] ? prog.options[prog.selectedIndex].text : 'All Programs') : 'All Programs';
@@ -18536,7 +18546,7 @@ function _renderMOCEResults(container, data) {
     });
     html += '</div>';
 
-    container.innerHTML = html;
+    container.innerHTML = window._s4Safe(html);
     if (typeof _toast === 'function') _toast('Mission outcome correlations computed', 'success');
 }
 
@@ -18600,7 +18610,7 @@ function _renderMPCSResults(data) {
     var results = document.getElementById('s4MpcsResults');
     if (!status || !results) return;
 
-    status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> Cascade simulation complete \u2014 ' + (data.affected_programs || []).length + ' programs affected';
+    status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> Cascade simulation complete \u2014 ' + (data.affected_programs || []).length + ' programs affected');
     results.style.display = 'block';
 
     var html = '<div class="s4-mpcs-origin"><i class="fas fa-bullseye"></i> Origin: <strong>' + _escH(data.origin_program || '') + '</strong></div>';
@@ -18634,7 +18644,7 @@ function _renderMPCSResults(data) {
     html += '<button onclick="this.closest(\'.s4-mpcs-overlay\').remove()">Close</button>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
     if (typeof _toast === 'function') _toast('Multi-Program Cascade simulation complete', 'success');
 }
 
@@ -18692,7 +18702,7 @@ function _renderANMResults(data) {
     var results = document.getElementById('s4AnmResults');
     if (!status || !results) return;
 
-    status.innerHTML = '<i class="fas fa-check-circle" style="color:#34c759"></i> ' + (data.disputes || []).length + ' dispute(s) identified \u2014 mediations prepared';
+    status.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#34c759"></i> ' + (data.disputes || []).length + ' dispute(s) identified \u2014 mediations prepared');
     results.style.display = 'block';
 
     var html = '<div class="s4-anm-meta">';
@@ -18720,14 +18730,14 @@ function _renderANMResults(data) {
     html += '<button onclick="this.closest(\'.s4-anm-overlay\').remove()">Close</button>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
 }
 
 window._s4AnmAccept = function(btn, disputeId) {
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Anchoring\u2026';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> Anchoring\u2026');
     setTimeout(function() {
-        btn.innerHTML = '<i class="fas fa-lock" style="color:#34c759"></i> Resolution anchored \u2014 ' + disputeId;
+        btn.innerHTML = window._s4Safe('<i class="fas fa-lock" style="color:#34c759"></i> Resolution anchored \u2014 ' + disputeId);
         btn.style.pointerEvents = 'none';
         if (typeof _toast === 'function') _toast('Resolution for ' + disputeId + ' anchored to XRPL', 'success');
     }, 1000);
@@ -18884,7 +18894,7 @@ function _injectPLABtn(panelId) {
     if (!actionsList) return;
     var btn = document.createElement('button');
     btn.className = 's4-btn-secondary s4-pla-dropdown-item';
-    btn.innerHTML = '<i class="fas fa-vault"></i> One-Click Program Legacy Archive';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-vault"></i> One-Click Program Legacy Archive');
     btn.addEventListener('click', function(e) {
         e.stopPropagation();
         var openList = btn.closest('.s4-actions-list');
@@ -19082,7 +19092,7 @@ window._s4OpenMCC = function() {
     html += '</div>';
 
     html += '</div>';
-    ov.innerHTML = html;
+    ov.innerHTML = window._s4Safe(html);
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
     document.addEventListener('keydown', function _esc(e) { if (e.key === 'Escape') { ov.remove(); document.removeEventListener('keydown', _esc); } });
@@ -19205,16 +19215,16 @@ function _openTwoWaySync(toolName) {
     html += '</div>';
     html += '</div>';
 
-    ov.innerHTML = html;
+    ov.innerHTML = window._s4Safe(html);
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e) { if (e.target === ov) ov.remove(); });
 }
 
 window._s4TwoWaySyncPush = function(btn) {
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing\u2026';
+    btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin"></i> Syncing\u2026');
     setTimeout(function() {
-        btn.innerHTML = '<i class="fas fa-check"></i> Synced';
+        btn.innerHTML = window._s4Safe('<i class="fas fa-check"></i> Synced');
         btn.style.background = '#34c759';
         btn.style.borderColor = '#34c759';
         if (typeof _toast === 'function') _toast('Updates pushed to NSERC IDE and SharePoint', 'success');
@@ -19241,7 +19251,7 @@ function _injectTwoWaySync() {
 
         var link = document.createElement('button');
         link.className = 's4-twsync-link';
-        link.innerHTML = '<i class="fas fa-arrows-rotate"></i> Two-Way Sync with External System';
+        link.innerHTML = window._s4Safe('<i class="fas fa-arrows-rotate"></i> Two-Way Sync with External System');
         link.addEventListener('click', function(e) {
             e.stopPropagation();
             // Close the actions dropdown
@@ -19288,7 +19298,7 @@ function _wrapCollapsible(el, title, prefix, startOpen) {
 
     var hdr = document.createElement('div');
     hdr.className = prefix + '-collapsible-hdr' + (startOpen ? ' open' : '');
-    hdr.innerHTML = '<i class="fas fa-chevron-right"></i> ' + title;
+    hdr.innerHTML = window._s4Safe('<i class="fas fa-chevron-right"></i> ' + title);
 
     var body = document.createElement('div');
     body.className = prefix + '-collapsible-body' + (startOpen ? ' open' : '');
@@ -19444,7 +19454,7 @@ function _injectAutoAction() {
 
         var link = document.createElement('button');
         link.className = 's4-autoaction-link';
-        link.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Auto-Generate Next Action';
+        link.innerHTML = window._s4Safe('<i class="fas fa-wand-magic-sparkles"></i> Auto-Generate Next Action');
         link.addEventListener('click', function(e) {
             e.stopPropagation();
             // Close dropdown
@@ -19519,7 +19529,7 @@ function _buildBenchmarkPanel(prefix) {
     // Create the toggle row
     var row = document.createElement('div');
     row.className = 's4-bench-toggle-row';
-    row.innerHTML = '<label><input type="checkbox" id="' + prefix + 'BenchToggle" onchange="window._s4BenchmarkToggle(\'' + prefix + '\',this.checked)"> <i class="fas fa-chart-column"></i> Anonymous Program Benchmark</label>';
+    row.innerHTML = window._s4Safe('<label><input type="checkbox" id="' + prefix + 'BenchToggle" onchange="window._s4BenchmarkToggle(\'' + prefix + '\',this.checked)"> <i class="fas fa-chart-column"></i> Anonymous Program Benchmark</label>');
 
     // Create results panel
     var results = document.createElement('div');
@@ -19546,7 +19556,7 @@ function _buildBenchmarkPanel(prefix) {
     html += '<span><span class="s4-bench-legend-dot avg"></span> Industry Average</span>';
     html += '</div>';
 
-    results.innerHTML = html;
+    results.innerHTML = window._s4Safe(html);
 
     // Insert after SCN bar actions
     var scnBar = actionsEl.closest('.s4-scn-bar');

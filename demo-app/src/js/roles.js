@@ -56,7 +56,7 @@ function showRecommendedTools() {
         card.onmouseover = function(){ this.style.borderColor='rgba(0,170,255,0.6)';this.style.transform='translateY(-2px)'; };
         card.onmouseout = function(){ this.style.borderColor='';this.style.borderLeftColor='rgba(0,170,255,0.4)';this.style.transform='translateY(0)'; };
         card.onclick = (function(id){ return function(){ if(typeof openILSTool==='function') openILSTool(id); }; })(toolId);
-        card.innerHTML = '<div class="itc-icon" style="background:rgba(0,170,255,0.10);"><i class="fas '+icon+'" style="color:var(--accent,#00aaff);"></i></div><div><div class="itc-title">'+label+'</div><div class="itc-desc">Recommended for your role</div></div>';
+        card.innerHTML = window._s4Safe('<div class="itc-icon" style="background:rgba(0,170,255,0.10);"><i class="fas '+icon+'" style="color:var(--accent,#00aaff);"></i></div><div><div class="itc-title">'+label+'</div><div class="itc-desc">Recommended for your role</div></div>');
         grid.appendChild(card);
     }
     row.style.display = 'block';
@@ -118,7 +118,7 @@ function showRoleSelector() {
     detailsHtml += '</div></details>';
 
     var detailsContainer = document.createElement('div');
-    detailsContainer.innerHTML = detailsHtml;
+    detailsContainer.innerHTML = window._s4Safe(detailsHtml);
     contentDiv.appendChild(detailsContainer.firstElementChild);
 
     // Buttons
@@ -263,7 +263,7 @@ function updateRoleBadge() {
     }
     var icon = _currentRole ? (_s4Roles[_currentRole]?.icon || 'fa-user') : 'fa-user-cog';
     var label = _currentTitle || (_currentRole ? _s4Roles[_currentRole]?.label : 'Set Role');
-    badge.innerHTML = '<i class="fas ' + icon + '"></i> ' + label + ' <i class="fas fa-gear" style="font-size:0.6rem;opacity:0.6"></i>';
+    badge.innerHTML = window._s4Safe('<i class="fas ' + icon + '"></i> ' + label + ' <i class="fas fa-gear" style="font-size:0.6rem;opacity:0.6"></i>');
 }
 
 // Initialize role on load

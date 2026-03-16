@@ -90,7 +90,7 @@ function animateAccountCreation() {
     var doneEl = document.getElementById('onboardAcctDone');
     if (acctIdEl) acctIdEl.textContent = 'acct_' + Date.now().toString(36);
     setTimeout(function() {
-        if (statusEl) statusEl.innerHTML = '<i class="fas fa-check-circle" style="color:var(--green)"></i> Active';
+        if (statusEl) statusEl.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--green)"></i> Active');
         if (doneEl) doneEl.style.display = 'block';
     }, 1200);
 }
@@ -111,7 +111,7 @@ function animateWalletFunding() {
         if (xrpEl) xrpEl.textContent = '12.000000 XRP';
     }, 1200);
     setTimeout(function() {
-        if (trustEl) trustEl.innerHTML = 'Credits <i class="fas fa-check-circle" style="color:var(--green);margin-left:4px"></i>';
+        if (trustEl) trustEl.innerHTML = window._s4Safe('Credits <i class="fas fa-check-circle" style="color:var(--green);margin-left:4px"></i>');
         if (doneEl) doneEl.style.display = 'block';
     }, 1800);
 }

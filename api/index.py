@@ -1650,17 +1650,33 @@ for all HarborLink operations.
 
 class handler(BaseHTTPRequestHandler):
 
+    _ALLOWED_ORIGINS = {
+        "https://s4ledger.com",
+        "https://www.s4ledger.com",
+        "https://s4-ledger.vercel.app",
+        "http://localhost:8080",       # local preview server
+        "http://localhost:5173",       # vite dev server
+        "http://localhost:4173",       # vite preview
+    }
+
     def _cors_headers(self):
+        origin = self.headers.get("Origin", "")
+        allowed = origin if origin in self._ALLOWED_ORIGINS else "https://s4ledger.com"
         return {
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": allowed,
             "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization, X-API-Key",
+            "Vary": "Origin",
             "Content-Type": "application/json",
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
-            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
             "X-XSS-Protection": "1; mode=block",
             "Referrer-Policy": "strict-origin-when-cross-origin",
+            "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(self)",
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "Cross-Origin-Resource-Policy": "same-origin",
+            "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
         }
 
     def _send_json(self, data, status=200):

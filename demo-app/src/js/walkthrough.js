@@ -672,7 +672,7 @@ function _showWTStep() {
     // Render mock display
     if (display) {
         display.style.opacity = '0';
-        display.innerHTML = step.mock();
+        display.innerHTML = window._s4Safe(step.mock());
         setTimeout(function() { display.style.opacity = '1'; }, 100);
     }
 
@@ -889,7 +889,7 @@ function _resetFeedbackForm() {
     if (!drawer) return;
     var body = drawer.querySelector('.fb-body');
     if (body) {
-        body.innerHTML = _feedbackFormHTML();
+        body.innerHTML = window._s4Safe(_feedbackFormHTML());
         _initStarRating();
     }
 }
