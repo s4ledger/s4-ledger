@@ -3295,13 +3295,14 @@ details:not([style*="display:none"]) > *:not(summary){color:#444;font-size:0.84r
 }
 /* Brief stage (canvas area) — expand fully */
 .brief-stage{
-    padding:24px!important;
+    padding:16px 20px!important;
     min-height:0!important;
     flex:1!important;
+    justify-content:flex-start!important;
 }
 /* Brief canvas — allow it to scale bigger */
 .brief-canvas,#briefCanvas{
-    max-width:100%!important;
+    max-width:none!important;
 }
 /* Brief slide panel — wider for readability */
 .brief-slide-panel{

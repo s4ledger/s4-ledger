@@ -198,8 +198,8 @@
         css += '.brief-thumb{position:relative;cursor:pointer;margin-bottom:10px;border:2px solid rgba(0,0,0,0.05);border-radius:10px;overflow:hidden;transition:all 0.25s;background:rgba(0,0,0,0.015)}';
         css += '.brief-thumb:hover{border-color:rgba(0,170,255,0.25);transform:scale(1.03);box-shadow:0 4px 16px rgba(0,0,0,0.06)}';
         css += '.brief-thumb.active{border-color:' + a + ';box-shadow:0 0 20px rgba(0,170,255,0.2);transform:scale(1.03)}';
-        // Canvas stage
-        css += '.brief-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(0,170,255,0.02) 0%,rgba(240,240,245,0.5) 70%);padding:20px;overflow:auto;position:relative}';
+        // Canvas stage — flex-start vertically so format bar + canvas + notes stack from top
+        css += '.brief-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:radial-gradient(ellipse at center,rgba(0,170,255,0.02) 0%,rgba(240,240,245,0.5) 70%);padding:16px 20px;overflow:auto;position:relative}';
         css += '.brief-canvas{position:relative;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.1),0 0 0 1px rgba(0,0,0,0.08),0 0 80px rgba(0,170,255,0.04);overflow:hidden;transition:box-shadow 0.3s}';
         css += '.brief-canvas:hover{box-shadow:0 10px 40px rgba(0,0,0,0.12),0 0 0 1px rgba(0,0,0,0.1),0 0 100px rgba(0,170,255,0.06)}';
         // Format bar (floating)
@@ -1297,8 +1297,17 @@
         // ═══ CANVAS STAGE (center) ═══
         var sw = master.slideWidth || 960;
         var sh = master.slideHeight || 540;
-        var maxCanvasW = window.innerWidth - 220 - 180 - (_showComments || _showProps ? 260 : 0) - 80;
-        var scale = _canvasZoom * Math.min(1, maxCanvasW / sw, 520 / sh);
+        // Dynamic fit: compute available stage area from viewport minus panels
+        var sidebarW = 200; // .brief-sidebar
+        var slidePanelW = 200; // .brief-slide-panel (CSS override)
+        var rightPanelW = (_showComments || _showProps) ? 260 : 0;
+        var stagePadding = 48; // horizontal breathing room inside .brief-stage
+        var maxCanvasW = window.innerWidth - sidebarW - slidePanelW - rightPanelW - stagePadding;
+        // Vertical: viewport minus toolbar (~110px), format bar (~50px), notes (~80px), zoom bar (~50px), padding
+        var maxCanvasH = window.innerHeight - 340;
+        var fitScale = Math.min(maxCanvasW / sw, maxCanvasH / sh);
+        // Allow scaling above 1.0 on large screens so the slide fills the stage
+        var scale = _canvasZoom * Math.max(0.3, fitScale);
         html += '<div class="brief-stage">';
 
         // Floating format bar (above canvas)
@@ -1372,7 +1381,8 @@
         html += '</div>';
 
         // Slide notes
-        html += '<textarea id="briefSlideNotes" placeholder="Speaker notes\u2026" class="brief-notes" style="max-width:' + sw + 'px" onchange="briefUpdateNotes(this.value)">' + _esc((slide && slide.notes) || '') + '</textarea>';
+        var notesW = Math.round(sw * scale);
+        html += '<textarea id="briefSlideNotes" placeholder="Speaker notes\u2026" class="brief-notes" style="width:' + notesW + 'px;max-width:100%" onchange="briefUpdateNotes(this.value)">' + _esc((slide && slide.notes) || '') + '</textarea>';
         html += '</div>'; // end stage
 
         // ═══ CONTEXTUAL RIGHT PANEL ═══
@@ -3987,23 +3997,35 @@
 
     // ── Canvas Zoom ──
     function briefZoom(delta) {
+        if (delta === 0) {
+            // Reset = re-fit to stage
+            _canvasZoom = 1;
+            _renderBriefEditor();
+            return;
+        }
         _canvasZoom = Math.max(0.25, Math.min(3, _canvasZoom + delta));
         var canvas = document.getElementById('briefCanvas');
         if (canvas) {
-            canvas.style.transform = 'scale(' + _canvasZoom + ')';
-            canvas.style.transformOrigin = 'center center';
+            var master = (_activeBrief && _activeBrief.master) || DEFAULT_MASTER;
+            var sw = master.slideWidth || 960;
+            var sh = master.slideHeight || 540;
+            var sidebarW = 200, slidePanelW = 200;
+            var rightPanelW = (_showComments || _showProps) ? 260 : 0;
+            var maxW = window.innerWidth - sidebarW - slidePanelW - rightPanelW - 48;
+            var maxH = window.innerHeight - 340;
+            var fitScale = Math.min(maxW / sw, maxH / sh);
+            var newScale = _canvasZoom * Math.max(0.3, fitScale);
+            canvas.style.transform = 'scale(' + newScale.toFixed(3) + ')';
+            canvas.style.transformOrigin = 'top center';
         }
-        var zoomLabel = document.getElementById('briefZoomLevel');
+        var zoomLabel = document.querySelector('.brief-zoom-bar span');
         if (zoomLabel) zoomLabel.textContent = Math.round(_canvasZoom * 100) + '%';
     }
     window.briefZoom = briefZoom;
 
     function briefZoomReset() {
         _canvasZoom = 1;
-        var canvas = document.getElementById('briefCanvas');
-        if (canvas) { canvas.style.transform = 'scale(1)'; }
-        var zoomLabel = document.getElementById('briefZoomLevel');
-        if (zoomLabel) zoomLabel.textContent = '100%';
+        _renderBriefEditor();
     }
     window.briefZoomReset = briefZoomReset;
 
