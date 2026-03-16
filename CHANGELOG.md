@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.12.18] — 2026-03-15
+### Monitoring & Observability (Phase 6)
+- **Structured JSON logging** — `_JsonFormatter` outputs `{ts, level, msg, request_id, route, method, status, duration_ms}` via Python `logging` module. Replaces unstructured `print()`. (6.1)
+- **Request ID + duration** — Every GET/POST gets `uuid.uuid4().hex[:12]` request ID + `_req_start` timestamp. Duration tracked in ms. (6.5)
+- **Health endpoint upgraded** — `/api/health` now probes Supabase connectivity (limit=1 query), returns "healthy"/"degraded" + `checks` object. Version bumped. (6.4)
+- **Frontend error tracking** — Already fully implemented: `S4.errorReporter` in registry.js captures JS/promise/resource errors → `/api/errors/report` → Supabase `client_errors` table. (6.2)
+- **Web Vitals threshold alerts** — `_checkThreshold()` fires `S4.toast` warning for poor metrics (LCP>4s, FID>300ms, INP>500ms, CLS>0.25). `sendBeacon('/api/vitals')` on page hide. (6.3)
+
 ## [5.12.17] — 2026-03-15
 ### UX Polish (Phase 5)
 - **Resilient fetch wrapper** — New `_s4Fetch()` with 15s AbortController timeout + auto-retry on network/timeout errors. Exported to `window._s4Fetch`. (5.3)

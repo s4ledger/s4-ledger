@@ -12,10 +12,34 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse, parse_qs
 import hashlib
 import json
+import logging
 import os
 import re
 import hmac
 import time
+import uuid
+
+# ── Structured JSON logging (Phase 6.1) ──────────────────────────
+class _JsonFormatter(logging.Formatter):
+    def format(self, record):
+        entry = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "level": record.levelname,
+            "msg": record.getMessage(),
+        }
+        for attr in ("request_id", "route", "method", "status", "duration_ms", "ip"):
+            val = getattr(record, attr, None)
+            if val is not None:
+                entry[attr] = val
+        if record.exc_info and record.exc_info[1]:
+            entry["error"] = str(record.exc_info[1])
+        return json.dumps(entry, default=str)
+
+_handler = logging.StreamHandler()
+_handler.setFormatter(_JsonFormatter())
+logger = logging.getLogger("s4api")
+logger.addHandler(_handler)
+logger.setLevel(logging.INFO)
 
 # XRPL Testnet integration (graceful fallback if unavailable)
 try:
@@ -2045,12 +2069,21 @@ class handler(BaseHTTPRequestHandler):
         return True
 
     def _log_request(self, route, status=200):
+        duration_ms = round((time.time() - getattr(self, '_req_start', time.time())) * 1000, 1)
+        req_id = getattr(self, '_req_id', '-')
         _request_log.append({
             "time": datetime.now(timezone.utc).isoformat(),
             "route": route,
             "status": status,
             "method": self.command,
+            "ms": duration_ms,
+            "request_id": req_id,
         })
+        logger.info(
+            "%s %s %d %.1fms", self.command, route, status, duration_ms,
+            extra={"request_id": req_id, "route": route, "method": self.command,
+                   "status": status, "duration_ms": duration_ms}
+        )
         # Keep last 1000 entries
         if len(_request_log) > 1000:
             _request_log.pop(0)
@@ -2062,6 +2095,8 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        self._req_start = time.time()
+        self._req_id = uuid.uuid4().hex[:12]
         _hydrate_from_supabase()  # Cold-start recovery
         parsed = urlparse(self.path)
         route = self._route(parsed.path)
@@ -2074,12 +2109,26 @@ class handler(BaseHTTPRequestHandler):
         if route == "health":
             self._log_request("health")
             uptime = time.time() - API_START_TIME
+            # Actual connectivity checks (6.4)
+            db_ok = False
+            if SUPABASE_AVAILABLE:
+                try:
+                    probe = _supabase_request("records", method="GET", query_params="limit=1&select=id", timeout=3)
+                    db_ok = probe is not None
+                except Exception:
+                    db_ok = False
+            overall = "healthy" if (not SUPABASE_AVAILABLE or db_ok) else "degraded"
             self._send_json({
-                "status": "healthy",
+                "status": overall,
                 "uptime_seconds": round(uptime, 1),
                 "requests_served": len(_request_log),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
-                "version": "5.2.0",
+                "version": "5.12.17",
+                "request_id": self._req_id,
+                "checks": {
+                    "supabase": db_ok if SUPABASE_AVAILABLE else "not_configured",
+                    "xrpl_sdk": XRPL_AVAILABLE,
+                },
                 "tools": ["anchor", "anchor-composite", "anchor-batch", "verify", "verify-batch", "proof-chain", "custody-chain", "webhooks", "hash-file", "ils-workspace", "dmsms-tracker", "readiness-calculator", "parts-xref", "roi-calculator", "lifecycle-cost", "warranty-tracker", "audit-vault", "doc-library", "compliance-scorecard", "provisioning-ptd", "supply-chain-risk", "audit-reports", "contracts", "digital-thread", "predictive-maintenance", "org-records"],
             })
         elif route == "status":
@@ -3479,6 +3528,8 @@ class handler(BaseHTTPRequestHandler):
         })
 
     def do_POST(self):
+        self._req_start = time.time()
+        self._req_id = uuid.uuid4().hex[:12]
         _hydrate_from_supabase()  # Cold-start recovery
         parsed = urlparse(self.path)
         route = self._route(parsed.path)

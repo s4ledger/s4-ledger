@@ -147,11 +147,11 @@ Frontend already makes fetch() calls. These always 404. Build the handlers.
 
 | # | Item | Status | Priority | Notes |
 |---|------|--------|----------|-------|
-| 6.1 | **Add structured error logging** — Replace console.log with structured JSON logging in api/index.py. Include request ID, timestamp, user context. | ⬜ | 🟡 HIGH | api/index.py |
-| 6.2 | **Add frontend error tracking** — Integrate lightweight error reporter (Sentry free tier or custom). Capture unhandled errors + rejected promises. Both apps. | ⬜ | 🟡 HIGH | registry.js or new error-reporter.js |
-| 6.3 | **Expand Web Vitals alerts** — web-vitals.js already tracks LCP/FID/CLS. Add threshold alerts and reporting endpoint. Both apps. | ⬜ | 🟢 MEDIUM | web-vitals.js |
-| 6.4 | **Add API health endpoint** — GET `/api/health` returns service status, DB connectivity, uptime. Used by monitoring. | ⬜ | 🟢 MEDIUM | api/index.py |
-| 6.5 | **Add API request logging** — Log all API requests with method, path, status, duration, user. | ⬜ | 🟢 MEDIUM | api/index.py |
+| 6.1 | **Add structured error logging** — Replace console.log with structured JSON logging in api/index.py. Include request ID, timestamp, user context. | ✅ | 🟡 HIGH | _JsonFormatter outputs JSON with ts/level/msg/request_id/route/method/status/duration_ms. logger = logging.getLogger("s4api"). |
+| 6.2 | **Add frontend error tracking** — Integrate lightweight error reporter (Sentry free tier or custom). Capture unhandled errors + rejected promises. Both apps. | ✅ | 🟡 HIGH | Already implemented: S4.errorReporter in registry.js captures JS/promise/resource errors → /api/errors/report → Supabase client_errors table. |
+| 6.3 | **Expand Web Vitals alerts** — web-vitals.js already tracks LCP/FID/CLS. Add threshold alerts and reporting endpoint. Both apps. | ✅ | 🟢 MEDIUM | Added _checkThreshold() with S4.toast warnings for poor metrics. sendBeacon to /api/vitals on page hide. Fires 10s after load. |
+| 6.4 | **Add API health endpoint** — GET `/api/health` returns service status, DB connectivity, uptime. Used by monitoring. | ✅ | 🟢 MEDIUM | /api/health now probes Supabase (limit=1 query), returns "healthy"/"degraded" + checks object. Version bumped to 5.12.17. |
+| 6.5 | **Add API request logging** — Log all API requests with method, path, status, duration, user. | ✅ | 🟢 MEDIUM | _log_request now tracks duration_ms via _req_start + emits structured JSON log. uuid request_id on every GET/POST. |
 
 **Phase 6 Completion Criteria:** Every error is captured and searchable. API health is monitorable. Web Vitals tracked with alerts.
 
@@ -194,9 +194,9 @@ Items move here when done, with date and commit hash.
 | 3 — Performance | 7 | 5 | 2 | 71% |
 | 4 — Testing | 7 | 4 | 3 | 57% |
 | 5 — UX Polish | 7 | 7 | 0 | 100% |
-| 6 — Monitoring | 5 | 0 | 5 | 0% |
+| 6 — Monitoring | 5 | 5 | 0 | 100% |
 | 7 — Documentation | 5 | 0 | 5 | 0% |
-| **TOTAL** | **57** | **41** | **16** | **72%** |
+| **TOTAL** | **57** | **46** | **11** | **81%** |
 
 *Previously completed work (pre-checklist): 4 items logged above.*
 

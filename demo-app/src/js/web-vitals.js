@@ -108,4 +108,42 @@
         var pct = Math.round((score / count) * 100);
         return pct >= 90 ? 'Good' : pct >= 50 ? 'Needs Improvement' : 'Poor';
     }
+
+    // ── Threshold Alerts (6.3) ──────────────────────────────────────
+    var _alertFired = {};
+    function _checkThreshold(metric, value, good, poor) {
+        if (_alertFired[metric]) return;
+        if (value > poor) {
+            _alertFired[metric] = true;
+            console.warn('[S4 Vitals] POOR ' + metric + ': ' + value + ' (threshold: ' + poor + ')');
+            if (typeof S4 !== 'undefined' && S4.toast) {
+                S4.toast('Performance: ' + metric + ' is poor (' + Math.round(value) + 'ms)', 'warning', 6000);
+            }
+        }
+    }
+
+    // Check thresholds as values arrive
+    var _origLcp = Object.getOwnPropertyDescriptor(vitals, 'lcp') || {};
+    S4.vitals._checkAll = function() {
+        if (vitals.lcp !== null) _checkThreshold('LCP', vitals.lcp, 2500, 4000);
+        if (vitals.fid !== null) _checkThreshold('FID', vitals.fid, 100, 300);
+        if (vitals.inp !== null) _checkThreshold('INP', vitals.inp, 200, 500);
+        if (vitals.cls > 0.25) _checkThreshold('CLS', vitals.cls * 1000, 100, 250);
+    };
+    // Run threshold checks 10s after load (all CWV should be collected by then)
+    setTimeout(function() { S4.vitals._checkAll(); }, 10000);
+
+    // ── Beacon Report (6.3) — send vitals to /api/vitals on unload ──
+    window.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden' && vitals.lcp !== null) {
+            var payload = JSON.stringify({
+                ttfb: vitals.ttfb, lcp: vitals.lcp, fid: vitals.fid,
+                cls: parseFloat(vitals.cls.toFixed(4)), inp: vitals.inp,
+                grade: _grade(), url: location.pathname
+            });
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon('/api/vitals', payload);
+            }
+        }
+    });
 })();
