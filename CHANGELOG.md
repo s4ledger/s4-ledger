@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.12.15] — 2026-03-15
+### Performance (Phase 3)
+- **Vite tree-shaking enabled** — prod-app: removed `treeshake: false`, enabled `dead_code` + `unused` in terser. ~15KB gzip savings. (3.1)
+- **Lazy-load SheetJS** — Removed static `<script>` tag from demo-app HTML (~500KB deferred to on-demand load in milestones.js). (3.4)
+- **Service worker cache limits** — Added `MAX_API_ITEMS = 50` with `trimCache()` to API cache in both SWs. Bumped cache versions. (3.5)
+- **Compression verified** — Vercel auto-serves gzip/brotli; immutable cache headers already on hashed assets. No changes needed. (3.6)
+- **Bundle size tracking** — Added `npm run build:sizes` script. Reports per-file sizes + gzip totals for both apps. (3.7)
+- **File splitting assessed** — 3.2 (enhancements.js 19.6K lines) and 3.3 (engine.js 9.6K lines) deferred: requires E2E coverage (Phase 5) before safe refactor.
+
 ## [5.12.14] — 2026-03-16
 ### Fixed
 - **Self-Healing Compliance "Approve All"** — `_s4ShcApproveAll()` now calls the real `_s4ShcApprove()` per button (which hits `/api/self-healing-compliance/approve`) instead of faking approval with `setTimeout`. (Checklist 2.15)

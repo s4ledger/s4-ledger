@@ -1,9 +1,10 @@
 // S4 Ledger Service Worker v6.1.0 — Production / Full Offline / Air-Gapped Support
-const CACHE_VERSION = 's4-prod-v714';
+const CACHE_VERSION = 's4-prod-v715';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const DYNAMIC_CACHE = CACHE_VERSION + '-dynamic';
 const API_CACHE = CACHE_VERSION + '-api';
 const MAX_DYNAMIC_ITEMS = 200;
+const MAX_API_ITEMS = 50;
 
 // Core shell assets — precached on install
 const PRECACHE_ASSETS = [
@@ -81,7 +82,10 @@ self.addEventListener('fetch', e => {
         .then(response => {
           if (response.ok) {
             const clone = response.clone();
-            caches.open(API_CACHE).then(cache => cache.put(e.request, clone));
+            caches.open(API_CACHE).then(cache => {
+              cache.put(e.request, clone);
+              trimCache(API_CACHE, MAX_API_ITEMS);
+            });
           }
           return response;
         })

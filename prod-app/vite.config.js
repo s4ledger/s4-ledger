@@ -19,9 +19,9 @@ export default defineConfig({
     rollupOptions: {
       input: resolve(__dirname, 'src/index.html'),
 
-      // Disable tree-shaking — all functions are called via window.xyz exports
-      // and onclick handlers, which Rollup can't statically analyze
-      treeshake: false,
+      // Tree-shaking is safe: window.xyz = fn assignments are side-effectful
+      // and Rollup preserves them. Verified by demo-app which uses default
+      // treeshake: true with the same codebase.
 
       output: {
         // Split vendor chunks for better caching
@@ -59,8 +59,8 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        dead_code: false,
-        unused: false,
+        dead_code: true,
+        unused: true,
         side_effects: false,
         drop_console: true,   // Strip console.log in production
         drop_debugger: true,  // Strip debugger statements
