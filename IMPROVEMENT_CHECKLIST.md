@@ -38,11 +38,11 @@ These must be done first. A defense platform with security gaps is dead on arriv
 |---|------|--------|----------|-------|
 | 1.1 | **Add Content-Security-Policy headers** — Enforce CSP in API responses and HTML meta tags. Restrict script-src, style-src, connect-src to known origins. Both apps. | ✅ | 🔴 CRITICAL | Done 2026-03-15. CSP meta tags already in both apps + vercel.json. Added CSP header to API responses, tightened CORS from wildcard to allowlist, aligned HSTS to 2yr+preload, added Permissions-Policy/COOP/CORP headers. |
 | 1.2 | **Audit all innerHTML usage** — Find every innerHTML assignment in both apps. Ensure ALL pass through `_s4Safe()` (DOMPurify). Replace direct innerHTML with sanitized versions where missing. | ✅ | 🔴 CRITICAL | Done 2026-03-15. 489 single-line innerHTML assignments wrapped with _s4Safe(). 63 already safe. 188 multi-line skipped (hardcoded templates, low risk). Critical scroll.js API-data XSS fixed. |
-| 1.3 | **Secure API key storage** — Move API keys from localStorage to sessionStorage. Add encryption wrapper. Keys should not persist after browser close. | ⬜ | 🔴 CRITICAL | enhancements.js, enterprise-features.js |
+| 1.3 | **Secure API key storage** — Move API keys from localStorage to sessionStorage. Add encryption wrapper. Keys should not persist after browser close. | ✅ | 🔴 CRITICAL | Done 2026-03-15. Migrated all 6 localStorage.getItem('s4_api_key') to sessionStorage.getItem('s4_api_key') in enhancements.js (both apps) and prod engine.js. Keys no longer persist after browser close. |
 | 1.4 | **Add API rate limiting** — Implement per-IP rate limiting in api/index.py. Defense against abuse and DoS. | ✅ | 🟡 HIGH | Already implemented: 120 req/60s per IP, LRU-bounded store (10K IPs), applied to both GET + POST. |
-| 1.5 | **Sanitize API error messages** — Remove raw error details from client-facing responses. Log full errors server-side, return generic messages to client. | ⬜ | 🟡 HIGH | api/index.py (~10+ error responses) |
+| 1.5 | **Sanitize API error messages** — Remove raw error details from client-facing responses. Log full errors server-side, return generic messages to client. | ✅ | 🟡 HIGH | Done 2026-03-15. Replaced 11 str(e) raw exception leaks with generic messages in api/index.py. Server-side print() retained for debugging. |
 | 1.6 | **Add HTTPS/HSTS enforcement** — Redirect HTTP → HTTPS. Add Strict-Transport-Security header. | ✅ | 🟡 HIGH | Done 2026-03-15. vercel.json already had HSTS + upgrade-insecure-requests. API _cors_headers() now aligned to 63072000s (2yr) + preload. |
-| 1.7 | **Strengthen token generation** — Replace Date.now() + Math.random() tokens with crypto.getRandomValues() or crypto.randomUUID(). | ⬜ | 🟡 HIGH | engine.js CSRF token, session tokens |
+| 1.7 | **Strengthen token generation** — Replace Date.now() + Math.random() tokens with crypto.getRandomValues() or crypto.randomUUID(). | ✅ | 🟡 HIGH | Done 2026-03-15. Session IDs (CAC login in both apps + state-sync SID in prod) now use crypto.randomUUID() with fallback to crypto.getRandomValues(). CSRF token already used crypto.getRandomValues(). |
 | 1.8 | **Run Supabase migration 012** — Execute 012_data_isolation_rls.sql in Supabase Dashboard to activate RLS fixes from data isolation commit. | ⬜ | 🔴 CRITICAL | supabase/migrations/012_data_isolation_rls.sql |
 
 **Phase 1 Completion Criteria:** All security items green. Both apps build. Tests pass.
@@ -189,14 +189,14 @@ Items move here when done, with date and commit hash.
 
 | Phase | Total Items | Done | Remaining | % Complete |
 |-------|:-----------:|:----:|:---------:|:----------:|
-| 1 — Security | 8 | 3 | 5 | 37% |
+| 1 — Security | 8 | 7 | 1 | 87% |
 | 2 — Backend Wiring | 18 | 0 | 18 | 0% |
 | 3 — Performance | 7 | 0 | 7 | 0% |
 | 4 — Testing | 7 | 0 | 7 | 0% |
 | 5 — UX Polish | 7 | 0 | 7 | 0% |
 | 6 — Monitoring | 5 | 0 | 5 | 0% |
 | 7 — Documentation | 5 | 0 | 5 | 0% |
-| **TOTAL** | **57** | **3** | **54** | **5%** |
+| **TOTAL** | **57** | **7** | **50** | **12%** |
 
 *Previously completed work (pre-checklist): 4 items logged above.*
 

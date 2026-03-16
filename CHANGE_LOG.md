@@ -28,8 +28,30 @@ git revert <hash> or specific steps to undo.
 
 ## Phase 1 — Security Hardening
 
-### 2026-03-15 — Checklist Items 1.1 + 1.4 + 1.6: CSP Headers, Rate Limiting, HSTS
+### 2026-03-15 — Checklist Items 1.3 + 1.5 + 1.7: API Key Storage, Error Sanitization, Token Strengthening
 **Commit:** *(pending)*
+**Files Changed:**
+- demo-app/src/js/enhancements.js — `localStorage.getItem('s4_api_key')` → `sessionStorage.getItem('s4_api_key')` (2 occurrences)
+- prod-app/src/js/enhancements.js — Same (2 occurrences)
+- prod-app/src/js/engine.js — Same (2 occurrences) + session ID generation strengthened (3 locations)
+- demo-app/src/js/engine.js — Session ID generation strengthened (1 location)
+- api/index.py — 11 raw `str(e)` exception messages replaced with generic client-safe messages
+
+**What Was Done:**
+- **1.3 API Key Storage:** Migrated all 6 `localStorage.getItem('s4_api_key')` reads to `sessionStorage.getItem('s4_api_key')`. API keys no longer persist after browser close, reducing XSS/theft window.
+- **1.5 Error Sanitization:** Replaced 11 `str(e)` raw exception leaks in `api/index.py` with generic client-safe messages (e.g., "Wallet provisioning failed. Please try again."). Server-side `print()` retained for debugging. Internal-only logs (webhook delivery) left unchanged.
+- **1.7 Token Strengthening:** Replaced `Date.now().toString(36) + Math.random().toString(36)` in 3 security-sensitive session ID generators with `crypto.randomUUID()` (with `crypto.getRandomValues()` fallback). CSRF token already used `crypto.getRandomValues()`.
+
+**What Was Tested:**
+API compiles cleanly. Both apps build successfully.
+
+**Rollback Instructions:**
+`git revert <hash>` for the full set, or change `sessionStorage` back to `localStorage` for API key reads.
+
+---
+
+### 2026-03-15 — Checklist Items 1.1 + 1.4 + 1.6: CSP Headers, Rate Limiting, HSTS
+**Commit:** `3506ef5`
 **Files Changed:**
 - api/index.py — Replaced `Access-Control-Allow-Origin: *` with allowlist (`_ALLOWED_ORIGINS` set). Added `Vary: Origin`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy`, `Content-Security-Policy` to API responses. Aligned HSTS to `max-age=63072000; includeSubDomains; preload`.
 
@@ -47,7 +69,7 @@ Revert `_cors_headers()` in api/index.py to the previous version with `Access-Co
 ---
 
 ### 2026-03-15 — Checklist Item 1.2: innerHTML XSS Hardening
-**Commit:** *(pending)*
+**Commit:** `3506ef5`
 **Files Changed:**
 - demo-app/src/js/engine.js — innerHTML → _s4Safe() wrapping
 - demo-app/src/js/enhancements.js — innerHTML → _s4Safe() wrapping

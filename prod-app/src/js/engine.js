@@ -309,7 +309,7 @@ function simulateCacLogin() {
             sessionStorage.setItem('s4_authenticated', '1');
             sessionStorage.setItem('s4_auth_method', 'cac');
             // Set a CAC-scoped session_id (real PKI deployment will provide a user-specific ID)
-            localStorage.setItem('s4_session_id', 'cac_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8));
+            localStorage.setItem('s4_session_id', 'cac_' + (crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), function(b){ return b.toString(16).padStart(2,'0'); }).join('')));
             enterPlatformAfterAuth();
         }, 800);
     }, 1500);
@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Session ID — unique per browser, persists across reloads
     var SID = localStorage.getItem('s4_session_id');
     if (!SID) {
-        SID = 'sess_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
+        SID = 'sess_' + (crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), function(b){ return b.toString(16).padStart(2,'0'); }).join(''));
         localStorage.setItem('s4_session_id', SID);
     }
 
@@ -4590,7 +4590,7 @@ async function _fetchAISummary(d) {
         localStorage.setItem('s4_ai_session', aiSessionId);
         var resp = await fetch('/api/ai/rag', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-API-Key': localStorage.getItem('s4_api_key') || '' },
+            headers: { 'Content-Type': 'application/json', 'X-API-Key': sessionStorage.getItem('s4_api_key') || '' },
             body: JSON.stringify({ query: prompt, session_id: aiSessionId, tool_context: 'Export Summary', user_email: localStorage.getItem('s4_user_email') || '', document_content: JSON.stringify(payload), document_name: 'Program Summary Data' })
         });
         if (resp.ok) {
@@ -5121,7 +5121,7 @@ async function aiSend() {
         localStorage.setItem('s4_ai_session', aiSessionId);
         const resp = await fetch('/api/ai/rag', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-API-Key': localStorage.getItem('s4_api_key') || '' },
+            headers: { 'Content-Type': 'application/json', 'X-API-Key': sessionStorage.getItem('s4_api_key') || '' },
             body: JSON.stringify({
                 query: msg,
                 session_id: aiSessionId,

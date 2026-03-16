@@ -6378,7 +6378,7 @@ S4DB.init().then(function() { console.log('[S4DB] IndexedDB ready — offline-fi
 
 // ─── API Persistence Helper ─────────────────────────────────────
 function s4ApiSave(endpoint, data, storeName) {
-    var apiKey = localStorage.getItem('s4_api_key') || '';
+    var apiKey = sessionStorage.getItem('s4_api_key') || '';
     var headers = { 'Content-Type': 'application/json' };
     if (apiKey) headers['X-API-Key'] = apiKey;
 
@@ -6410,7 +6410,7 @@ function s4ApiSave(endpoint, data, storeName) {
 }
 
 function s4ApiGet(endpoint) {
-    var apiKey = localStorage.getItem('s4_api_key') || '';
+    var apiKey = sessionStorage.getItem('s4_api_key') || '';
     var headers = {};
     if (apiKey) headers['X-API-Key'] = apiKey;
     return fetch('/api/' + endpoint, { headers: headers }).then(function(r) { return r.json(); });

@@ -1297,7 +1297,7 @@ def _provision_wallet(email, plan="starter"):
         }
     except Exception as e:
         print(f"Wallet provisioning failed: {e}")
-        return {"error": str(e)}
+        return {"error": "Wallet provisioning failed. Please try again."}
 
 def _deliver_monthly_sls(email, plan=None):
     """Deliver monthly SLS allocation from Treasury to a subscriber's wallet.
@@ -1361,7 +1361,7 @@ def _deliver_monthly_sls(email, plan=None):
             return {"error": resp.result.get("engine_result_message", "unknown")}
     except Exception as e:
         print(f"Monthly SLS delivery failed: {e}")
-        return {"error": str(e)}
+        return {"error": "Monthly SLS delivery failed. Please try again."}
 
 def _deduct_anchor_fee(user_email=None, user_address=None):
     """Deduct 0.01 SLS anchor fee from the user's wallet → Treasury.
@@ -1404,7 +1404,7 @@ def _deduct_anchor_fee(user_email=None, user_address=None):
                         "hint": "Demo wallet fee deduction failed."}
         except Exception as e:
             print(f"Demo anchor fee deduction failed: {e}")
-            return {"error": str(e)}
+            return {"error": "Anchor fee deduction failed. Please try again."}
 
     # Look up user's wallet seed from custodial store
     wallet_seed = _get_wallet_seed(email=user_email, address=user_address)
@@ -1443,7 +1443,7 @@ def _deduct_anchor_fee(user_email=None, user_address=None):
                     "hint": "Insufficient SLS balance. Your monthly allocation may be exhausted."}
     except Exception as e:
         print(f"Anchor fee deduction failed: {e}")
-        return {"error": str(e)}
+        return {"error": "Anchor fee deduction failed. Please try again."}
 
 def _anchor_xrpl(hash_value, record_type="", branch="", user_email=None):
     """Submit a real anchor transaction to XRPL (AccountSet memo only).
@@ -2380,7 +2380,8 @@ class handler(BaseHTTPRequestHandler):
                     "explorer_url": explorer_base + address,
                 })
             except Exception as e:
-                self._send_json({"error": f"Account lookup failed: {str(e)}"}, 404)
+                print(f"Account lookup failed: {e}")
+                self._send_json({"error": "Account lookup failed. The address may be invalid or unfunded."}, 404)
 
         # ═══ HarborLink Integration — GET Endpoints ═══
 
@@ -2680,7 +2681,8 @@ class handler(BaseHTTPRequestHandler):
 
                 })
             except Exception as e:
-                self._send_json({"error": str(e)}, 500)
+                print(f"Treasury health check failed: {e}")
+                self._send_json({"error": "Treasury health check failed. Please try again."}, 500)
 
         # ═══ Full Persistence + Superior Platform GET Dispatch ═══
         elif route == "ils_uploads":
@@ -2889,7 +2891,7 @@ class handler(BaseHTTPRequestHandler):
                 "keyword": keyword or cpe,
                 "total_results": 0,
                 "vulnerabilities": [],
-                "error": f"NVD API error: {str(e)}",
+                "error": "NVD API request failed. The service may be temporarily unavailable.",
                 "source": "NVD (National Vulnerability Database)",
             })
 
@@ -3835,7 +3837,8 @@ class handler(BaseHTTPRequestHandler):
                 else:
                     self._send_json({"error": resp.result.get("engine_result_message", "unknown")}, 500)
             except Exception as e:
-                self._send_json({"error": str(e)}, 500)
+                print(f"SLS send failed: {e}")
+                self._send_json({"error": "SLS transfer failed. Please try again."}, 500)
 
         elif route == "stripe_checkout":
             self._log_request("stripe-checkout")
@@ -3880,7 +3883,8 @@ class handler(BaseHTTPRequestHandler):
                     session = json.loads(resp.read().decode())
                     self._send_json({"checkout_url": session.get("url"), "session_id": session.get("id")})
             except Exception as e:
-                self._send_json({"error": f"Checkout creation failed: {str(e)}"}, 500)
+                print(f"Checkout creation failed: {e}")
+                self._send_json({"error": "Checkout session creation failed. Please try again."}, 500)
             return
 
         elif route == "stripe_webhook":
@@ -3929,7 +3933,8 @@ class handler(BaseHTTPRequestHandler):
                     if not any(hmac.compare_digest(expected_sig, s) for s in signatures):
                         raise ValueError("Signature mismatch")
                 except Exception as e:
-                    self._send_json({"error": f"Webhook signature verification failed: {str(e)}"}, 401)
+                    print(f"Webhook signature verification failed: {e}")
+                    self._send_json({"error": "Webhook signature verification failed."}, 401)
                     return
 
             event_type = data.get("type", "")
@@ -5834,7 +5839,7 @@ class handler(BaseHTTPRequestHandler):
                 self._send_json({"status": "ok", "stored": stored})
             except Exception as e:
                 # Never fail on error reporting — just acknowledge
-                self._send_json({"status": "ok", "stored": 0, "note": str(e)[:200]})
+                self._send_json({"status": "ok", "stored": 0})
 
         # ═══════════════════════════════════════════════════════════════
         #  Living Program Ledger — AI-Powered Program Summary

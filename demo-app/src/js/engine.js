@@ -335,7 +335,7 @@ function simulateCacLogin() {
             sessionStorage.setItem('s4_authenticated', '1');
             sessionStorage.setItem('s4_auth_method', 'cac');
             // Set a CAC-scoped session_id
-            localStorage.setItem('s4_session_id', 'cac_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8));
+            localStorage.setItem('s4_session_id', 'cac_' + (crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), function(b){ return b.toString(16).padStart(2,'0'); }).join('')));
             enterPlatformAfterAuth();
         }, 800);
     }, 1500);
