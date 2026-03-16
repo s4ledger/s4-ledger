@@ -198,18 +198,19 @@
         css += '.brief-thumb{position:relative;cursor:pointer;margin-bottom:10px;border:2px solid rgba(0,0,0,0.05);border-radius:10px;overflow:hidden;transition:all 0.25s;background:rgba(0,0,0,0.015)}';
         css += '.brief-thumb:hover{border-color:rgba(0,170,255,0.25);transform:scale(1.03);box-shadow:0 4px 16px rgba(0,0,0,0.06)}';
         css += '.brief-thumb.active{border-color:' + a + ';box-shadow:0 0 20px rgba(0,170,255,0.2);transform:scale(1.03)}';
-        // Canvas stage — flex-start vertically so format bar + canvas + notes stack from top
-        css += '.brief-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:radial-gradient(ellipse at center,rgba(0,170,255,0.02) 0%,rgba(240,240,245,0.5) 70%);padding:16px 20px;overflow:auto;position:relative}';
+        // Canvas stage — flex column: format bar + scrollable canvas area + zoom + notes
+        css += '.brief-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:radial-gradient(ellipse at center,rgba(0,170,255,0.02) 0%,rgba(240,240,245,0.5) 70%);padding:12px 16px;overflow:hidden;position:relative;min-height:0}';
+        css += '.brief-canvas-wrap{flex:1;display:flex;flex-direction:column;align-items:center;overflow:auto;min-height:0;width:100%;padding:4px 0}';
         css += '.brief-canvas{position:relative;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.1),0 0 0 1px rgba(0,0,0,0.08),0 0 80px rgba(0,170,255,0.04);overflow:hidden;transition:box-shadow 0.3s}';
         css += '.brief-canvas:hover{box-shadow:0 10px 40px rgba(0,0,0,0.12),0 0 0 1px rgba(0,0,0,0.1),0 0 100px rgba(0,170,255,0.06)}';
-        // Format bar (floating)
-        css += '.brief-format-bar{display:flex;align-items:center;gap:3px;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:6px 12px;box-shadow:0 8px 32px rgba(0,0,0,0.06);flex-wrap:wrap}';
-        css += '.brief-fmt-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;color:' + ts + ';cursor:pointer;border-radius:8px;font-size:0.82rem;transition:all 0.15s}';
+        // Format bar (compact single-row ribbon)
+        css += '.brief-format-bar{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:3px 8px;box-shadow:0 4px 16px rgba(0,0,0,0.05);flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;flex-shrink:0}';
+        css += '.brief-fmt-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;color:' + ts + ';cursor:pointer;border-radius:6px;font-size:0.74rem;transition:all 0.15s;flex-shrink:0}';
         css += '.brief-fmt-btn:hover{background:rgba(0,0,0,0.04);color:' + tp + ';border-color:rgba(0,0,0,0.1)}';
         css += '.brief-fmt-btn.active{background:rgba(0,170,255,0.15);color:' + a + ';border-color:rgba(0,170,255,0.2)}';
-        css += '.brief-fmt-divider{width:1px;height:22px;background:rgba(0,0,0,0.04);margin:0 2px}';
+        css += '.brief-fmt-divider{width:1px;height:18px;background:rgba(0,0,0,0.04);margin:0 1px;flex-shrink:0}';
         // Properties panel
-        css += '.brief-props-panel{width:260px;min-width:240px;background:rgba(245,245,247,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-left:1px solid rgba(0,0,0,0.05);overflow-y:auto;padding:16px 12px;animation:briefSlideUp 0.2s ease}';
+        css += '.brief-props-panel{width:220px;min-width:200px;background:rgba(245,245,247,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-left:1px solid rgba(0,0,0,0.05);overflow-y:auto;padding:14px 10px;animation:briefSlideUp 0.2s ease}';
         css += '.brief-prop-group{margin-bottom:14px}';
         css += '.brief-prop-label{font-size:0.68rem;color:' + tm + ';text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}';
         css += '.brief-prop-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}';
@@ -236,7 +237,7 @@
         css += '.brief-rh-n{top:-4px;left:50%;margin-left:-4px;cursor:n-resize}.brief-rh-s{bottom:-4px;left:50%;margin-left:-4px;cursor:s-resize}';
         css += '.brief-rh-w{left:-4px;top:50%;margin-top:-4px;cursor:w-resize}.brief-rh-e{right:-4px;top:50%;margin-top:-4px;cursor:e-resize}';
         // Zoom controls
-        css += '.brief-zoom-bar{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:4px 12px;position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:50}';
+        css += '.brief-zoom-bar{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:3px 10px;flex-shrink:0;margin:4px 0 2px;z-index:50}';
         css += '.brief-zoom-btn{background:transparent;border:none;color:' + ts + ';cursor:pointer;padding:4px 6px;border-radius:6px;font-size:0.8rem;transition:all 0.15s}';
         css += '.brief-zoom-btn:hover{color:' + tp + ';background:rgba(0,0,0,0.035)}';
         // Classification banner
@@ -250,7 +251,7 @@
         css += '.brief-tip::after{content:attr(data-tip);position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:8px;background:rgba(245,245,247,0.92);color:' + tp + ';padding:5px 10px;border-radius:6px;font-size:0.72rem;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s;z-index:999}';
         css += '.brief-tip:hover::after{opacity:1}';
         // Notes
-        css += '.brief-notes{width:100%;height:56px;margin-top:12px;background:rgba(0,0,0,0.015);border:1px solid ' + bdr + ';border-radius:8px;color:' + ts + ';padding:8px 12px;font-size:0.8rem;resize:vertical;transition:border-color 0.2s}';
+        css += '.brief-notes{width:100%;height:48px;margin-top:4px;background:rgba(0,0,0,0.015);border:1px solid ' + bdr + ';border-radius:6px;color:' + ts + ';padding:6px 10px;font-size:0.78rem;resize:vertical;transition:border-color 0.2s;flex-shrink:0}';
         css += '.brief-notes:focus{border-color:rgba(0,170,255,0.3);outline:none}';
         // Header bar
         css += '.brief-header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(245,245,247,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid ' + bdr + ';gap:8px;flex-wrap:wrap}';
@@ -263,7 +264,7 @@
         css += '.brief-action-btn.danger{color:var(--red,#ff6b6b);border-color:rgba(255,107,107,0.2)}';
         css += '.brief-action-btn.danger:hover{background:rgba(255,107,107,0.1)}';
         // Comments panel
-        css += '.brief-comments{width:260px;min-width:220px;background:rgba(245,245,247,0.95);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-left:1px solid rgba(0,0,0,0.05);overflow-y:auto;padding:14px 10px;max-height:620px}';
+        css += '.brief-comments{width:220px;min-width:200px;background:rgba(245,245,247,0.95);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-left:1px solid rgba(0,0,0,0.05);overflow-y:auto;padding:14px 10px;max-height:none}';
         // Empty state
         css += '.brief-empty{text-align:center;padding:80px 24px}';
         css += '.brief-empty i{font-size:3.5rem;opacity:0.15;margin-bottom:20px;display:block}';
@@ -1300,11 +1301,11 @@
         // Dynamic fit: compute available stage area from viewport minus panels
         var sidebarW = 200; // .brief-sidebar
         var slidePanelW = 200; // .brief-slide-panel (CSS override)
-        var rightPanelW = (_showComments || _showProps) ? 260 : 0;
+        var rightPanelW = (_showComments || _showProps) ? 220 : 0;
         var stagePadding = 48; // horizontal breathing room inside .brief-stage
         var maxCanvasW = window.innerWidth - sidebarW - slidePanelW - rightPanelW - stagePadding;
-        // Vertical: viewport minus toolbar (~110px), format bar (~50px), notes (~80px), zoom bar (~50px), padding
-        var maxCanvasH = window.innerHeight - 340;
+        // Vertical: viewport minus header, format bar, zoom bar, notes, padding, parent chrome
+        var maxCanvasH = window.innerHeight - 300;
         var fitScale = Math.min(maxCanvasW / sw, maxCanvasH / sh);
         // Allow scaling above 1.0 on large screens so the slide fills the stage
         var scale = _canvasZoom * Math.max(0.3, fitScale);
@@ -1335,6 +1336,9 @@
         html += '<button class="brief-fmt-btn" onclick="briefSmartLayout()" title="Auto-Arrange"><i class="fas fa-magic"></i></button>';
         html += '<button class="brief-fmt-btn" onclick="briefDeleteElement()" title="Delete Selected" style="color:#ff6b6b"><i class="fas fa-trash"></i></button>';
         html += '</div>'; // end format bar
+
+        // Scrollable canvas area wrapper
+        html += '<div class="brief-canvas-wrap">';
 
         // Canvas
         html += '<div id="briefCanvas" class="brief-canvas" style="width:' + sw + 'px;height:' + sh + 'px;background:' + (master.bodyBg || '#fff') + ';transform:scale(' + scale.toFixed(3) + ');transform-origin:top center;cursor:' + (_annotationMode ? 'crosshair' : 'default') + '" onclick="briefCanvasClick(event)" onmousedown="briefCanvasMouseDown(event)" onmousemove="briefCanvasMouseMove(event)" onmouseup="briefCanvasMouseUp(event)">';
@@ -1379,6 +1383,8 @@
         html += '<button class="brief-zoom-btn" onclick="briefZoom(0.1)" title="Zoom In"><i class="fas fa-plus"></i></button>';
         html += '<button class="brief-zoom-btn" onclick="briefZoom(0)" title="Reset Zoom"><i class="fas fa-compress"></i></button>';
         html += '</div>';
+
+        html += '</div>'; // end canvas wrap
 
         // Slide notes
         var notesW = Math.round(sw * scale);
@@ -4010,9 +4016,9 @@
             var sw = master.slideWidth || 960;
             var sh = master.slideHeight || 540;
             var sidebarW = 200, slidePanelW = 200;
-            var rightPanelW = (_showComments || _showProps) ? 260 : 0;
+            var rightPanelW = (_showComments || _showProps) ? 220 : 0;
             var maxW = window.innerWidth - sidebarW - slidePanelW - rightPanelW - 48;
-            var maxH = window.innerHeight - 340;
+            var maxH = window.innerHeight - 300;
             var fitScale = Math.min(maxW / sw, maxH / sh);
             var newScale = _canvasZoom * Math.max(0.3, fitScale);
             canvas.style.transform = 'scale(' + newScale.toFixed(3) + ')';
