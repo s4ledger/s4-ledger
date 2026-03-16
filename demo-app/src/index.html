@@ -3806,6 +3806,18 @@
 <!-- ═══ BULLETPROOF: Self-contained ROI + Chart rendering ═══ -->
 <!-- ═══ ROUND 11: UNIVERSAL CHART REACTIVITY ENGINE ═══ -->
 
+    <!-- Pre-define _s4Safe fallback BEFORE the module loads.
+         Vite places static chunk imports at the top of the entry bundle,
+         so chunks (engine, enhancements, etc.) execute before the entry
+         body where DOMPurify sets up the real _s4Safe.  This passthrough
+         prevents TypeError during chunk evaluation; the module overwrites
+         it with the DOMPurify-backed version once its body runs. -->
+    <script>
+    if (!window._s4Safe) {
+      window._s4Safe = function(html) { return typeof html === 'string' ? html : ''; };
+    }
+    </script>
+
     <!-- S4 Ledger Modular JS (extracted from monolith) -->
     <script type="module" src="/main.js"></script>
 
