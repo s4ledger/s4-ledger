@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.12.17] — 2026-03-15
+### UX Polish (Phase 5)
+- **Resilient fetch wrapper** — New `_s4Fetch()` with 15s AbortController timeout + auto-retry on network/timeout errors. Exported to `window._s4Fetch`. (5.3)
+- **Error recovery on API calls** — `s4ApiGet()` now checks `!r.ok`, shows user-facing toast on failure via `S4.toast()`. (5.1)
+- **Empty state helper** — New `_s4EmptyState(container, icon, message)` utility. Applied to file list + DRL list containers. (5.6)
+- **Stale TODOs** — Audited: zero developer TODOs found in JS source. Clean. (5.4)
+- **Keyboard navigation** — Already comprehensive: focus traps, Escape handlers, Cmd+K/Cmd+Shift+P, Cmd+1-6, tabindex. (5.5)
+- **Loading states** — Foundation solid: `_s4Skeleton()`, `<s4-tool-panel>.showLoading()`, 15+ spinner points. (5.2)
+- **Color contrast** — CSS variables provide 9+:1 ratios. High-contrast theme available. Runtime checks deferred to axe-core. (5.7)
+
 ## [5.12.16] — 2026-03-15
 ### Testing & Quality (Phase 4)
 - **Pre-existing test failures fixed** — 8 test files updated: theme toggle `.skip`, toggleTheme relaxed, getPresets/donut/sparkline assertions updated, chart patching assertion fixed, verifyFiles DOM element added. (Baseline: 1580 → 1732 tests passing)

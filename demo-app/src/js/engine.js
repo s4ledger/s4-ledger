@@ -3165,7 +3165,7 @@ function renderToolFileList(toolId) {
     const list = document.getElementById(listId);
     if (!list) return;
     const files = toolUploadFiles[toolId];
-    if (!files.length) { list.innerHTML = ''; return; }
+    if (!files.length) { if (typeof _s4EmptyState === 'function') _s4EmptyState(list, 'fa-file-upload', 'No files uploaded yet. Drag & drop or click to upload.'); else list.innerHTML = ''; return; }
     list.innerHTML = files.map(f => {
         const sz = f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB';
         const icon = /\.xlsx?$/i.test(f.name) ? 'fa-file-excel' : /\.csv$/i.test(f.name) ? 'fa-file-csv' : /\.pdf$/i.test(f.name) ? 'fa-file-pdf' : /\.docx$/i.test(f.name) ? 'fa-file-word' : 'fa-file-alt';
@@ -3242,7 +3242,7 @@ function removeILSFile(id) {
 function renderFileList() {
     const list = document.getElementById('ilsFileList');
     if (!list) return;
-    if (!ilsFiles.length) { list.innerHTML = ''; return; }
+    if (!ilsFiles.length) { if (typeof _s4EmptyState === 'function') _s4EmptyState(list, 'fa-file-upload', 'No DRL files loaded. Upload or load a sample package.'); else list.innerHTML = ''; return; }
     list.innerHTML = ilsFiles.map(f => {
         const sz = f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB';
         const icon = /\.xlsx?$/i.test(f.name) ? 'fa-file-excel' : /\.csv$/i.test(f.name) ? 'fa-file-csv' : /\.pdf$/i.test(f.name) ? 'fa-file-pdf' : /\.docx$/i.test(f.name) ? 'fa-file-word' : 'fa-file-alt';

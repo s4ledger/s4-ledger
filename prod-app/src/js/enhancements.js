@@ -6413,8 +6413,50 @@ function s4ApiGet(endpoint) {
     var apiKey = sessionStorage.getItem('s4_api_key') || '';
     var headers = {};
     if (apiKey) headers['X-API-Key'] = apiKey;
-    return fetch('/api/' + endpoint, { headers: headers }).then(function(r) { return r.json(); });
+    return _s4Fetch('/api/' + endpoint, { headers: headers })
+        .then(function(r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+        })
+        .catch(function(err) {
+            if (typeof S4 !== 'undefined' && S4.toast) {
+                S4.toast('Request failed: ' + endpoint.split('/').pop() + ' — ' + err.message, 'error', 5000);
+            }
+            throw err;
+        });
 }
+
+// ─── Resilient Fetch Wrapper (5.3) ──────────────────────────────
+// Timeout after 15s. Auto-retry once on network error. AbortController-based.
+function _s4Fetch(url, options, _retried) {
+    var timeout = 15000;
+    var controller = new AbortController();
+    var timer = setTimeout(function() { controller.abort(); }, timeout);
+    var opts = Object.assign({}, options || {}, { signal: controller.signal });
+
+    return fetch(url, opts).then(function(r) {
+        clearTimeout(timer);
+        return r;
+    }).catch(function(err) {
+        clearTimeout(timer);
+        // Retry once on network/timeout error (not on HTTP errors)
+        if (!_retried && (err.name === 'AbortError' || err.name === 'TypeError')) {
+            return _s4Fetch(url, options, true);
+        }
+        throw err;
+    });
+}
+window._s4Fetch = _s4Fetch;
+
+// ─── Empty State Helper (5.6) ────────────────────────────────────
+function _s4EmptyState(container, icon, message) {
+    if (typeof container === 'string') container = document.getElementById(container);
+    if (!container) return;
+    container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-secondary,#94a3b8);font-size:0.95rem;">' +
+        '<i class="fas ' + (icon || 'fa-inbox') + '" style="font-size:2rem;margin-bottom:0.5rem;display:block;opacity:0.5;"></i>' +
+        '<p style="margin:0;">' + (message || 'No data available.') + '</p></div>';
+}
+window._s4EmptyState = _s4EmptyState;
 
 // ─── Offline Sync Worker ─────────────────────────────────────────
 function s4SyncOfflineQueue() {
