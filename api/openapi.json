@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "S4 Ledger API",
-    "version": "5.2.0",
+    "version": "5.12.18",
     "description": "S4 Ledger — Defense-grade blockchain-anchored logistics and supply chain integrity platform. 24+ integrated tools: cryptographic anchoring, ILS workspace, DMSMS monitoring, operational readiness, parts cross-reference, lifecycle cost, ROI analysis, warranty management, audit record vault, defense document library, compliance scorecard, provisioning/PTD management, supply chain risk engine, audit report generator, contract lifecycle management, digital thread bridge, predictive maintenance AI, PDF/CSV export engine, task collaboration, acquisition planner, program milestone tracker, program brief engine, and XRPL-based immutable record verification for defense and government supply chains.",
     "contact": {
       "name": "S4 Systems, LLC",
@@ -1646,6 +1646,589 @@
           }
         }
       }
+    },
+    "/api/ai-chat": {
+      "post": {
+        "summary": "AI Chat Assistant",
+        "description": "LLM-powered defense logistics assistant. Supports OpenAI, Anthropic (Claude), and Azure backends with session history.",
+        "operationId": "aiChat",
+        "tags": ["AI"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["message"],
+                "properties": {
+                  "message": { "type": "string", "description": "User message" },
+                  "session_id": { "type": "string", "description": "Optional session ID for conversation continuity" },
+                  "context": { "type": "object", "description": "Optional program/tool context" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "response": { "type": "string" },
+                    "session_id": { "type": "string" },
+                    "response_hash": { "type": "string", "description": "SHA-256 hash for AI audit trail" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/query": {
+      "post": {
+        "summary": "NLP Query",
+        "description": "Natural language query with intent detection and entity extraction for ILS tasks.",
+        "operationId": "aiQuery",
+        "tags": ["AI"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": { "type": "string" },
+                  "task_type": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Query result with detected intent and entities" }
+        }
+      }
+    },
+    "/api/ai/rag": {
+      "post": {
+        "summary": "RAG-Powered AI",
+        "description": "Retrieval-Augmented Generation with document chunk retrieval from Supabase vector store.",
+        "operationId": "aiRag",
+        "tags": ["AI"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": { "type": "string" },
+                  "program": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "RAG response with source chunks" }
+        }
+      }
+    },
+    "/api/ai/conversations": {
+      "get": {
+        "summary": "AI Conversation History",
+        "description": "Retrieve AI conversation history with timestamps and hashes.",
+        "operationId": "getAiConversations",
+        "tags": ["AI"],
+        "responses": {
+          "200": { "description": "List of AI conversations" }
+        }
+      }
+    },
+    "/api/living-ledger": {
+      "post": {
+        "summary": "Living Program Ledger",
+        "description": "AI-generated comprehensive program summary with track changes, foresight view, and mission outcome correlation.",
+        "operationId": "livingLedger",
+        "tags": ["Advanced Features"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["program"],
+                "properties": {
+                  "program": { "type": "string" },
+                  "action": { "type": "string", "enum": ["generate", "update", "export"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Living Ledger content" }
+        }
+      }
+    },
+    "/api/impact-simulator": {
+      "post": {
+        "summary": "Program Impact Simulator",
+        "description": "Cascade analysis showing how changes to one program element ripple across the entire program.",
+        "operationId": "impactSimulator",
+        "tags": ["Advanced Features"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["program"],
+                "properties": {
+                  "program": { "type": "string" },
+                  "change": { "type": "string" },
+                  "item": { "type": "string" },
+                  "magnitude": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Cascade risk analysis results" }
+        }
+      }
+    },
+    "/api/unified-brief": {
+      "post": {
+        "summary": "Unified Command Brief",
+        "description": "One-click executive briefing compiled from Living Program Ledger, Program Impact Simulator, and Secure Collaboration Network data.",
+        "operationId": "unifiedBrief",
+        "tags": ["Advanced Features"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["program"],
+                "properties": {
+                  "program": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Unified brief content" }
+        }
+      }
+    },
+    "/api/send-email": {
+      "post": {
+        "summary": "Send Email",
+        "description": "Send email via SendGrid from the Enterprise Vault.",
+        "operationId": "sendEmail",
+        "tags": ["Email"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["to", "subject", "body"],
+                "properties": {
+                  "to": { "type": "string" },
+                  "subject": { "type": "string" },
+                  "body": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Email sent" }
+        }
+      }
+    },
+    "/api/vault-emails": {
+      "get": {
+        "summary": "List Vault Emails",
+        "description": "List emails stored in the Enterprise Email Vault.",
+        "operationId": "listVaultEmails",
+        "tags": ["Email"],
+        "responses": {
+          "200": { "description": "List of vault emails" }
+        }
+      }
+    },
+    "/api/drl/update": {
+      "post": {
+        "summary": "Update DRL Cell",
+        "description": "Update a single Deficiency Review Log cell. Change is anchored to XRPL for audit trail.",
+        "operationId": "drlUpdate",
+        "tags": ["DRL"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["row_id", "field", "value"],
+                "properties": {
+                  "row_id": { "type": "string" },
+                  "field": { "type": "string" },
+                  "value": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Cell updated and anchored" }
+        }
+      }
+    },
+    "/api/drl/import": {
+      "post": {
+        "summary": "Bulk Import DRL Records",
+        "description": "Bulk import up to 500 DRL rows. Each row is individually anchored to XRPL.",
+        "operationId": "drlImport",
+        "tags": ["DRL"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["rows"],
+                "properties": {
+                  "rows": {
+                    "type": "array",
+                    "maxItems": 500,
+                    "items": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Import results with anchor hashes" }
+        }
+      }
+    },
+    "/api/documents": {
+      "get": {
+        "summary": "List Documents",
+        "description": "List documents with versioning support.",
+        "operationId": "getDocuments",
+        "tags": ["Persistence"],
+        "responses": {
+          "200": { "description": "List of documents" }
+        }
+      },
+      "post": {
+        "summary": "Create Document",
+        "description": "Create a new document with automatic version tracking.",
+        "operationId": "createDocument",
+        "tags": ["Persistence"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "content"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "program": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Document created" }
+        }
+      }
+    },
+    "/api/team": {
+      "get": {
+        "summary": "List Teams",
+        "description": "List all teams for the organization.",
+        "operationId": "getTeams",
+        "tags": ["Persistence"],
+        "responses": {
+          "200": { "description": "List of teams" }
+        }
+      },
+      "post": {
+        "summary": "Create Team",
+        "description": "Create a new team.",
+        "operationId": "createTeam",
+        "tags": ["Persistence"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Team created" }
+        }
+      }
+    },
+    "/api/sbom": {
+      "get": {
+        "summary": "List SBOM Entries",
+        "description": "List Software Bill of Materials entries.",
+        "operationId": "getSbom",
+        "tags": ["Persistence"],
+        "responses": {
+          "200": { "description": "List of SBOM entries" }
+        }
+      },
+      "post": {
+        "summary": "Create SBOM Entry",
+        "description": "Upload or create an SBOM entry (CycloneDX/SPDX).",
+        "operationId": "createSbom",
+        "tags": ["Persistence"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "format": { "type": "string", "enum": ["cyclonedx", "spdx"] },
+                  "content": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "SBOM entry created" }
+        }
+      }
+    },
+    "/api/sbom/scan": {
+      "get": {
+        "summary": "Scan SBOM for Vulnerabilities",
+        "description": "Scan SBOM components against the National Vulnerability Database (NVD).",
+        "operationId": "scanSbom",
+        "tags": ["Persistence"],
+        "responses": {
+          "200": { "description": "Vulnerability scan results" }
+        }
+      }
+    },
+    "/api/state/save": {
+      "post": {
+        "summary": "Save User State",
+        "description": "Save user UI state (tool selections, preferences, layout).",
+        "operationId": "saveState",
+        "tags": ["User State"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "state": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "State saved" }
+        }
+      }
+    },
+    "/api/state/load": {
+      "get": {
+        "summary": "Load User State",
+        "description": "Load previously saved UI state.",
+        "operationId": "loadState",
+        "tags": ["User State"],
+        "responses": {
+          "200": { "description": "Saved state object" }
+        }
+      }
+    },
+    "/api/errors/report": {
+      "post": {
+        "summary": "Report Client Errors",
+        "description": "Report client-side errors for monitoring. Accepts up to 20 errors per batch.",
+        "operationId": "reportErrors",
+        "tags": ["User State"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["errors"],
+                "properties": {
+                  "errors": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "message": { "type": "string" },
+                        "stack": { "type": "string" },
+                        "url": { "type": "string" },
+                        "timestamp": { "type": "string", "format": "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Errors reported" }
+        }
+      }
+    },
+    "/api/offline/queue": {
+      "get": {
+        "summary": "Offline Hash Queue",
+        "description": "View the offline hash queue — pending anchors waiting to be synced.",
+        "operationId": "getOfflineQueue",
+        "tags": ["Offline"],
+        "responses": {
+          "200": { "description": "Queue contents" }
+        }
+      }
+    },
+    "/api/offline/sync": {
+      "post": {
+        "summary": "Sync Offline Queue",
+        "description": "Sync all queued offline hashes to XRPL.",
+        "operationId": "syncOfflineQueue",
+        "tags": ["Offline"],
+        "responses": {
+          "200": { "description": "Sync results" }
+        }
+      }
+    },
+    "/api/checkout/create": {
+      "post": {
+        "summary": "Create Checkout Session",
+        "description": "Create a Stripe Checkout session for subscription or SLS token purchase.",
+        "operationId": "createCheckout",
+        "tags": ["Payments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["plan"],
+                "properties": {
+                  "plan": { "type": "string", "enum": ["starter", "professional", "enterprise"] },
+                  "quantity": { "type": "integer", "default": 1 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Stripe Checkout session URL" }
+        }
+      }
+    },
+    "/api/treasury/health": {
+      "get": {
+        "summary": "Treasury Health",
+        "description": "Treasury wallet health — XRP/SLS balances, reserve status, and alerts.",
+        "operationId": "getTreasuryHealth",
+        "tags": ["Wallet"],
+        "responses": {
+          "200": { "description": "Treasury health status" }
+        }
+      }
+    },
+    "/api/security/audit-trail": {
+      "get": {
+        "summary": "Security Audit Trail",
+        "description": "AI + verification audit trail with timestamps and hashes.",
+        "operationId": "getSecurityAuditTrail",
+        "tags": ["Security"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "200": { "description": "Audit trail entries" }
+        }
+      }
+    },
+    "/api/security/threat-model": {
+      "get": {
+        "summary": "Threat Model",
+        "description": "STRIDE threat model assessment with NIST SP 800-161 mapping.",
+        "operationId": "getThreatModel",
+        "tags": ["Security"],
+        "responses": {
+          "200": { "description": "Threat model assessment" }
+        }
+      }
+    },
+    "/api/security/dependency-audit": {
+      "get": {
+        "summary": "Dependency Audit",
+        "description": "CycloneDX SBOM-based dependency vulnerability audit.",
+        "operationId": "getDependencyAudit",
+        "tags": ["Security"],
+        "responses": {
+          "200": { "description": "Audit results" }
+        }
+      }
+    },
+    "/api/integrations/wawf": {
+      "post": {
+        "summary": "WAWF/ERP Webhook",
+        "description": "Receive and anchor external events from Wide Area Workflow or ERP systems.",
+        "operationId": "wawfWebhook",
+        "tags": ["Integration"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "event_type": { "type": "string" },
+                  "payload": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Event anchored" }
+        }
+      }
     }
   },
   "components": {
@@ -1679,6 +2262,16 @@
     { "name": "Database", "description": "Analysis storage and retrieval" },
     { "name": "Verification", "description": "Record integrity verification and tamper detection" },
     { "name": "Wallet", "description": "XRPL wallet provisioning, SLS token purchases, and balance queries" },
-    { "name": "HarborLink Integration", "description": "Integration endpoints for HarborLink: webhooks, composite anchoring, Merkle batching, proof chains, custody transfers, file hashing, bulk verification, and multi-tenant org isolation" }
+    { "name": "HarborLink Integration", "description": "Integration endpoints for HarborLink: webhooks, composite anchoring, Merkle batching, proof chains, custody transfers, file hashing, bulk verification, and multi-tenant org isolation" },
+    { "name": "AI", "description": "LLM-powered chat, NLP query, and RAG endpoints" },
+    { "name": "Advanced Features", "description": "Living Program Ledger, Impact Simulator, Unified Brief, and more" },
+    { "name": "Email", "description": "Enterprise Email Vault — send, draft, schedule, import" },
+    { "name": "DRL", "description": "Deficiency Review Log operations with XRPL anchoring" },
+    { "name": "Persistence", "description": "Supabase CRUD — documents, teams, SBOM, provenance" },
+    { "name": "User State", "description": "UI state persistence and error reporting" },
+    { "name": "Offline", "description": "Offline hash queue and sync" },
+    { "name": "Payments", "description": "Stripe checkout and webhook" },
+    { "name": "Security", "description": "Audit trail, threat model, dependency audit, ZKP" },
+    { "name": "Integration", "description": "WAWF/ERP external webhook receiver" }
   ]
 }

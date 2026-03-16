@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.12.19] — 2026-03-15
+### Documentation & Developer Experience (Phase 7)
+- **API Reference** — Comprehensive `docs/API_REFERENCE.md` documenting all 105+ endpoints: method, path, request/response, auth, error codes. Organized by category (System, Anchoring, ILS Tools, AI, Email, DRL, etc.). (7.1)
+- **OpenAPI spec expanded** — `api/openapi.json` updated from 45 to 75+ route definitions with new tags (AI, Advanced Features, Email, DRL, Persistence, Security, Offline, Payments, Integration). Version bumped to 5.12.18. (7.1)
+- **Developer onboarding guide** — `docs/DEVELOPER_GUIDE.md`: clone, install, run, test, deploy. Module inventory, build commands, env vars, coding conventions. First-day-productive goal. (7.2)
+- **README.md updated** — Route counts (90+ → 105+), tech stack (added testing stats), architecture diagram, documentation table (added 4 new docs). (7.3)
+- **Troubleshooting guide** — `docs/TROUBLESHOOTING.md`: build errors, runtime errors, test issues, deployment issues, VDI/offline environments, common dev mistakes. (7.4)
+- **Demo vs Prod guide** — `docs/DEMO_VS_PROD.md`: file-by-file comparison (14/18 identical), feature matrix, build config differences, development rules. (7.5)
+
 ## [5.12.18] — 2026-03-15
 ### Monitoring & Observability (Phase 6)
 - **Structured JSON logging** — `_JsonFormatter` outputs `{ts, level, msg, request_id, route, method, status, duration_ms}` via Python `logging` module. Replaces unstructured `print()`. (6.1)

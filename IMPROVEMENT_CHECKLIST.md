@@ -162,11 +162,11 @@ Frontend already makes fetch() calls. These always 404. Build the handlers.
 
 | # | Item | Status | Priority | Notes |
 |---|------|--------|----------|-------|
-| 7.1 | **Write API endpoint docs** — Document every endpoint in api/index.py: method, path, request body, response, error codes. Update openapi.json. | ⬜ | 🟡 HIGH | docs/ + api/openapi.json |
-| 7.2 | **Write developer onboarding guide** — How to clone, install, run, test. Both apps. First-day-productive goal. | ⬜ | 🟡 HIGH | docs/DEVELOPER_GUIDE.md |
-| 7.3 | **Update README.md** — Current state, architecture overview, quick start, contributing. | ⬜ | 🟢 MEDIUM | README.md |
-| 7.4 | **Add troubleshooting guide** — Common errors, debugging tips, environment issues. | ⬜ | 🟢 MEDIUM | docs/TROUBLESHOOTING.md |
-| 7.5 | **Document demo-app vs prod-app differences** — Clear guide on what differs, what's shared, and why both exist. | ⬜ | 🟢 MEDIUM | docs/ |
+| 7.1 | **Write API endpoint docs** — Document every endpoint in api/index.py: method, path, request body, response, error codes. Update openapi.json. | ✅ | 🟡 HIGH | docs/API_REFERENCE.md + openapi.json updated (45→75+ routes) |
+| 7.2 | **Write developer onboarding guide** — How to clone, install, run, test. Both apps. First-day-productive goal. | ✅ | 🟡 HIGH | docs/DEVELOPER_GUIDE.md |
+| 7.3 | **Update README.md** — Current state, architecture overview, quick start, contributing. | ✅ | 🟢 MEDIUM | README.md — updated route counts, tech stack, docs table |
+| 7.4 | **Add troubleshooting guide** — Common errors, debugging tips, environment issues. | ✅ | 🟢 MEDIUM | docs/TROUBLESHOOTING.md |
+| 7.5 | **Document demo-app vs prod-app differences** — Clear guide on what differs, what's shared, and why both exist. | ✅ | 🟢 MEDIUM | docs/DEMO_VS_PROD.md |
 
 **Phase 7 Completion Criteria:** New developer productive in < 1 day. Every API endpoint documented. README reflects current reality.
 
@@ -195,8 +195,8 @@ Items move here when done, with date and commit hash.
 | 4 — Testing | 7 | 4 | 3 | 57% |
 | 5 — UX Polish | 7 | 7 | 0 | 100% |
 | 6 — Monitoring | 5 | 5 | 0 | 100% |
-| 7 — Documentation | 5 | 0 | 5 | 0% |
-| **TOTAL** | **57** | **46** | **11** | **81%** |
+| 7 — Documentation | 5 | 5 | 0 | 100% |
+| **TOTAL** | **57** | **51** | **6** | **89%** |
 
 *Previously completed work (pre-checklist): 4 items logged above.*
 

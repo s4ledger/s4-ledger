@@ -260,7 +260,7 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 ```
 ┌──────────────────┐     ┌──────────────┐     ┌──────────────┐
 │  Defense System   │────▶│  S4 Ledger   │────▶│  XRP Ledger  │
-│  (3-M, GCSS,     │     │  API (90+    │     │  (Public,    │
+│  (3-M, GCSS,     │     │  API (105+   │     │  (Public,    │
 │   DPAS, etc.)    │     │  routes)     │     │  Immutable)  │
 └──────────────────┘     └──────────────┘     └──────────────┘
         │                       │                     │
@@ -276,11 +276,12 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 ### Tech Stack
 - **Frontend:** Vanilla JS SPA (40,000+ lines across engine, enhancements, navigation, and metrics modules), IndexedDB offline-first, Service Worker v6.0.0
-- **Backend:** Python serverless API (5,500+ lines, 90+ core routes + 14 major feature endpoints) on Vercel
+- **Backend:** Python serverless API (8,000+ lines, 105+ routes) on Vercel, structured JSON logging, request ID tracking
 - **Database:** Supabase PostgreSQL (43 tables, row-level security)
 - **Blockchain:** XRP Ledger Mainnet
 - **AI:** Claude API with RAG, rule-based ILS fallback, AI-enhanced summaries, email reply drafting
 - **File Parsers:** CSV, TSV, XLSX, PDF, DOCX, XML (CycloneDX/SPDX), JSON
+- **Testing:** Vitest (1,700+ unit tests), pytest (73+ tests), Playwright (36 E2E specs)
 
 ---
 
@@ -299,11 +300,15 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 | Document | Description |
 |---|---|
+| [Developer Guide](docs/DEVELOPER_GUIDE.md) | Clone, install, run, test — get productive in one day |
+| [API Reference](docs/API_REFERENCE.md) | Every endpoint: method, path, request/response, auth, error codes |
 | [SDK Documentation](sdk/) | Full Python SDK reference — 21 functions, 15 CLI commands, REST API |
 | [User Training Guide](docs/USER_TRAINING_GUIDE.md) | Step-by-step guide for every tool, feature, and workflow |
 | [API Examples](docs/api_examples.md) | Python, cURL, JavaScript code samples |
 | [Technical Specifications](docs/TECHNICAL_SPECS.md) | Architecture, security, and performance |
 | [Whitepaper](docs/WHITEPAPER.md) | Full protocol and token economics |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common errors, debugging tips, environment issues |
+| [Demo vs Prod](docs/DEMO_VS_PROD.md) | What differs between demo-app and prod-app |
 | [Production Readiness](docs/PRODUCTION_READINESS.md) | Production readiness checklist and status |
 | [Deployment Guide](docs/DEPLOYMENT_GUIDE.md) | Self-hosting and cloud deployment |
 | [Security Policy](SECURITY.md) | Vulnerability reporting and controls |
@@ -314,6 +319,6 @@ S4 Ledger covers all 12 ILS elements defined in MIL-STD-1388 / GEIA-STD-0007:
 
 Apache License 2.0 — see [LICENSE](LICENSE)
 
-**Version:** XRPL Mainnet Live | 23 ILS Tools + Major Features | 90+ Core API Routes + 14 Feature Endpoints | 43 Supabase Tables | $250K–$600K Savings per Program per Year | Offline-First PWA | Flankspeed/VDI Compatible
+**Version:** XRPL Mainnet Live | 23 ILS Tools + Major Features | 105+ API Routes | 43 Supabase Tables | $250K–$600K Savings per Program per Year | Offline-First PWA | Flankspeed/VDI Compatible
 
 © 2026 S4 Systems, LLC. Charleston, SC.
