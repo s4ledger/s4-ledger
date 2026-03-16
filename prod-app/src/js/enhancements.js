@@ -16785,10 +16785,20 @@ window._s4VaultAction = function(action, idx) {
         _saveVault(vault);
         _renderVaultList();
     } else if (action === 'delete') {
+        var deletedEmail = vault[idx];
         vault.splice(idx, 1);
         _saveVault(vault);
         _renderVaultList();
         if (typeof _toast === 'function') _toast('Email deleted from vault', 'info');
+        // Also delete from server
+        var emailId = deletedEmail && (deletedEmail.draft_id || deletedEmail.id);
+        if (emailId) {
+            fetch('/api/email-vault-delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email_id: emailId })
+            }).catch(function() { /* offline — already removed locally */ });
+        }
     } else if (action === 'mailto') {
         var to = (email.to || []).join(',');
         var cc = (email.cc || []).join(',');
@@ -17278,6 +17288,26 @@ window._s4OpenEmailCenter = function() {
     searchInput.oninput = function() { renderSecVault(); };
     renderSecVault();
 
+    // Hydrate from server (merge with localStorage, then re-render)
+    var apiKey = sessionStorage.getItem('s4_api_key') || '';
+    var hdrs = { 'Content-Type': 'application/json' };
+    if (apiKey) hdrs['X-API-Key'] = apiKey;
+    fetch('/api/vault-emails', { headers: hdrs }).then(function(r) {
+        return r.json();
+    }).then(function(d) {
+        if (d && d.emails && d.emails.length) {
+            var vault = _loadVault();
+            var existing = {};
+            vault.forEach(function(e) { if (e.id || e.draft_id) existing[e.id || e.draft_id] = true; });
+            var merged = false;
+            d.emails.forEach(function(e) {
+                var eid = e.draft_id || e.id;
+                if (eid && !existing[eid]) { vault.push(e); merged = true; }
+            });
+            if (merged) { _saveVault(vault); renderSecVault(); }
+        }
+    }).catch(function() { /* offline — localStorage already rendered */ });
+
     body.appendChild(vaultPane);
 
     // Compose pane
@@ -17547,13 +17577,10 @@ window._s4ShcApproveAll = function() {
         setTimeout(function() {
             var gapId = btn.getAttribute('onclick').match(/'([^']+)'\)/);
             gapId = gapId ? gapId[1] : 'gap';
-            btn.disabled = true;
-            btn.innerHTML = window._s4Safe('<i class="fas fa-lock" style="color:#34c759"></i> Anchored \u2014 ' + gapId);
-            btn.classList.add('approved');
-            btn.style.pointerEvents = 'none';
+            window._s4ShcApprove(btn, gapId);
         }, delay);
     });
-    if (typeof _toast === 'function') _toast('All corrections approved and anchored', 'success');
+    if (typeof _toast === 'function') _toast('Approving all corrections\u2026', 'info');
 };
 
 // Inject Self-Healing Compliance button into Audit Builder and Compliance Scorecard

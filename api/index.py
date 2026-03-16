@@ -1974,6 +1974,8 @@ class handler(BaseHTTPRequestHandler):
             return "import_received_email"
         if path == "/api/send-email":
             return "send_email"
+        if path == "/api/email-vault-delete":
+            return "email_vault_delete"
         if path == "/api/vault-emails":
             return "vault_emails"
         if path == "/api/cryptographic-mission-impact-ledger":
@@ -3453,6 +3455,27 @@ class handler(BaseHTTPRequestHandler):
             "message": "Email logged to Secure Email Vault. Use mailto link to open in email client.",
             "timestamp": now.isoformat(),
             "persisted": result is not None,
+        })
+
+    def _post_email_vault_delete(self, data):
+        """POST /api/email-vault-delete
+        Delete an email from the server-side Secure Email Vault.
+        Receives: { email_id: string, user_id: string (optional) }
+        """
+        email_id = data.get("email_id", "")
+        if not email_id:
+            self._send_json({"error": "email_id is required"}, 400)
+            return
+        user_id = data.get("user_id", self.headers.get("X-API-Key", "anonymous"))
+        result = _supabase_request(
+            "email_vault",
+            method="DELETE",
+            query_params=f"draft_id=eq.{email_id}&user_id=eq.{user_id}"
+        )
+        self._send_json({
+            "status": "deleted",
+            "email_id": email_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
 
     def do_POST(self):
@@ -6619,6 +6642,10 @@ class handler(BaseHTTPRequestHandler):
         elif route == "send_email":
             self._log_request("send-email")
             self._post_send_email(data)
+
+        elif route == "email_vault_delete":
+            self._log_request("email-vault-delete")
+            self._post_email_vault_delete(data)
 
         # ═══════════════════════════════════════════════════════════════
         #  Novel Feature 1 — Cryptographic Mission Impact Ledger

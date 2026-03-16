@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.12.14] — 2026-03-16
+### Fixed
+- **Self-Healing Compliance "Approve All"** — `_s4ShcApproveAll()` now calls the real `_s4ShcApprove()` per button (which hits `/api/self-healing-compliance/approve`) instead of faking approval with `setTimeout`. (Checklist 2.15)
+- **Email Vault Delete** — Built new `POST /api/email-vault-delete` backend endpoint. Wired frontend `delete` action to call it alongside localStorage removal. (Checklist 2.16)
+- **Vault-Emails Server Hydration** — `_s4OpenEmailCenter` now fetches `/api/vault-emails` on open, merges server-side emails by `draft_id`, and re-renders. Silent offline fallback. (Checklist 2.17)
+
+### Verified
+- **Phase 2 items 2.1–2.14, 2.18** — Audited and confirmed all were already fully wired with real `fetch()` calls to existing backend endpoints. Marked ✅ in checklist.
+
 ## [Post-v12 — March 2026] — Platform-Wide Feature Expansion
 ### Added
 - **Living Platform Ledger (LPL)** — Real-time platform health dashboard with readiness scoring, DMSMS tracking, and lifecycle cost integration across all 23 tools
