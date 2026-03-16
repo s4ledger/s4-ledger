@@ -700,6 +700,11 @@ describe('engine.js file upload handlers', () => {
 
   it('handleVerifyFileDrop', () => {
     if (typeof window.handleVerifyFileDrop === 'function') {
+      // verifyFiles needs #verifyFileResults DOM element
+      if (!document.getElementById('verifyFileResults')) {
+        const div = document.createElement('div'); div.id = 'verifyFileResults';
+        document.body.appendChild(div);
+      }
       try { window.handleVerifyFileDrop(mockFileEvent); } catch(e) {}
     }
     expect(true).toBe(true);
@@ -707,6 +712,10 @@ describe('engine.js file upload handlers', () => {
 
   it('handleVerifyFileSelect', () => {
     if (typeof window.handleVerifyFileSelect === 'function') {
+      if (!document.getElementById('verifyFileResults')) {
+        const div = document.createElement('div'); div.id = 'verifyFileResults';
+        document.body.appendChild(div);
+      }
       try { window.handleVerifyFileSelect(mockFileEvent); } catch(e) {}
     }
     expect(true).toBe(true);

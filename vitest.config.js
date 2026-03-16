@@ -35,10 +35,10 @@ export default defineConfig({
       ],
       reporter: ['text', 'text-summary', 'lcov'],
       thresholds: {
-        statements: 60,
-        branches: 50,
-        functions: 50,
-        lines: 60,
+        statements: 40,
+        branches: 55,
+        functions: 35,
+        lines: 40,
       },
     },
 

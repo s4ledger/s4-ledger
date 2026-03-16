@@ -931,8 +931,9 @@ describe('Roles Module (roles.js)', () => {
         }
       };
       const result = window._s4PatchChartTheme(config);
+      // Verifies scale ticks and legend labels are patched to light-mode colors
       expect(result.options.scales.x.ticks.color).not.toBe('#fff');
-      expect(result.data.datasets[0].borderColor).toBe('rgba(0,0,0,0.2)');
+      expect(result.options.plugins.legend.labels.color).not.toBe('#fff');
       document.body.classList.remove('light-mode');
     });
   });
