@@ -84,7 +84,7 @@
         .record-type-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.7rem;cursor:pointer;text-align:center;transition:all 0.2s;font-size:0.78rem;font-weight:600}
         .record-type-btn:hover{border-color:var(--accent);background:rgba(0,170,255,0.05)}
         .record-type-btn.selected{border-color:var(--accent);background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;box-shadow:0 4px 15px rgba(0,113,227,0.3)}
-        .record-type-btn .icon{font-size:1.2rem;display:block;margin-bottom:0.2rem}
+        .record-type-btn .icon{font-size:1rem;flex-shrink:0}
         .type-search{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.85rem;color:var(--text);width:100%;margin-bottom:8px;font-family:inherit}
         .type-search:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(0,170,255,0.15)}
         .type-search::placeholder{color:var(--muted)}
@@ -551,6 +551,11 @@
         .data-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
         .data-table tbody tr:hover{background:rgba(0,170,255,0.03)}
         .data-table tbody tr:last-child td{border-bottom:none}
+        /* ── DRL / Discrepancy Tables ── */
+        .discrepancy-table{width:100%;border-collapse:collapse;table-layout:auto}
+        .discrepancy-table thead th{background:var(--surface);color:var(--steel);font-weight:700;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.3px;padding:8px 7px;border-bottom:2px solid var(--border);text-align:left;white-space:nowrap}
+        .discrepancy-table tbody td{vertical-align:middle;border-bottom:1px solid var(--border)}
+        .discrepancy-table tbody tr:hover{background:rgba(0,170,255,0.03)}
         /* ── Badge/Tag Styles ── */
         .severity-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.3px}
         .severity-badge.critical{background:rgba(255,68,68,0.15);color:#ff4444;border:1px solid rgba(255,68,68,0.2)}
@@ -3421,6 +3426,12 @@ details:not([style*="display:none"]) > *:not(summary){color:#444;font-size:0.84r
 .record-type-btn{
     display:flex!important;align-items:center!important;
     flex-wrap:nowrap!important;gap:4px!important;
+    overflow:hidden;text-overflow:ellipsis;
+    min-width:0;font-size:0.72rem!important;
+}
+.record-type-btn .anchor-policy-badge{
+    font-size:0.5rem;padding:0px 4px;margin-left:2px;
+    flex-shrink:0;line-height:1.3;
 }
 
 /* ── R9-H: CHART CONTAINERS — Bigger on wide screens ── */

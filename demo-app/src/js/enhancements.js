@@ -7341,7 +7341,13 @@ function renderDrlStatusTable(prefix) {
         html += '<td style="padding:6px 5px;border-color:var(--border);text-align:center"><button onclick="drlShowHistory(' + idx + ')" style="font-size:.72rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--steel);cursor:pointer" title="View change history"><i class="fas fa-clock-rotate-left"></i></button></td>';
         html += '</tr>';
     });
-    tbody.innerHTML = window._s4Safe(html);
+    // DOMPurify parses in a <div> context which strips <tr>/<td> tags.
+    // Wrap in <table><tbody> so the browser parser keeps table structure intact.
+    var _sanitized = window._s4Safe('<table><tbody>' + html + '</tbody></table>');
+    var _tmp = document.createElement('div');
+    _tmp.innerHTML = _sanitized;
+    var _stb = _tmp.querySelector('tbody');
+    tbody.innerHTML = _stb ? _stb.innerHTML : html;
     // Update stats
     var pId = pre ? pre + 'Drl' : 'drl';
     var elTotal = document.getElementById(pId + 'Total');
