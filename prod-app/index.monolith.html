@@ -2194,6 +2194,11 @@ if (sessionStorage.getItem('s4_entered') === '1') {
                                 <span style="color:var(--accent)">&#10003;</span> No PII/CUI on-chain
                             </div>
                         </div>
+                        <div class="s4-card" style="margin-top:16px;">
+                            <h3 style="cursor:pointer" onclick="var c=document.getElementById('anchorPolicySettingsContainer');if(c){c.style.display=c.style.display==='none'?'block':'none';if(c.style.display==='block'&&typeof renderAnchorPolicySettings==='function')renderAnchorPolicySettings()}"><i class="fas fa-shield-alt"></i> Anchor Policy Settings <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--steel);margin-left:4px"></i></h3>
+                            <p style="font-size:0.85rem;color:var(--steel)">Configure auto-anchor, prompted, and manual record types for your organization.</p>
+                            <div id="anchorPolicySettingsContainer" style="display:none"></div>
+                        </div>
                     </div>
                 </div>
             </div>

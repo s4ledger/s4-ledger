@@ -655,6 +655,11 @@
                             <h3><i class="fas fa-shield-halved"></i> What Gets Stored On-Chain</h3>
                             <p style="font-size:0.85rem;color:var(--steel)"><strong>Only the SHA-256 hash</strong> of your record is stored on the XRP Ledger. No classified data, CUI, ITAR-controlled, or sensitive content ever touches the blockchain.</p>
                         </div>
+                        <div class="s4-card" style="margin-top:16px;">
+                            <h3 style="cursor:pointer" onclick="var c=document.getElementById('anchorPolicySettingsContainer');if(c){c.style.display=c.style.display==='none'?'block':'none';if(c.style.display==='block'&&typeof renderAnchorPolicySettings==='function')renderAnchorPolicySettings()}"><i class="fas fa-shield-alt"></i> Anchor Policy Settings <i class="fas fa-chevron-down" style="font-size:0.7rem;color:var(--steel);margin-left:4px"></i></h3>
+                            <p style="font-size:0.85rem;color:var(--steel)">Configure auto-anchor, prompted, and manual record types for your organization.</p>
+                            <div id="anchorPolicySettingsContainer" style="display:none"></div>
+                        </div>
                     </div>
                 </div>
             </div>

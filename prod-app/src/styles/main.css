@@ -3333,6 +3333,96 @@ details:not([style*="display:none"]) > *:not(summary){color:#444;font-size:0.84r
     margin:4px 0 2px!important;
 }
 
+/* ── ANCHOR POLICY SYSTEM — Badges, prompts, toasts ── */
+/* Policy badge in type picker grid */
+.anchor-policy-badge{
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:0.6rem;font-weight:700;letter-spacing:0.3px;
+    padding:1px 6px;border-radius:4px;margin-left:6px;
+    vertical-align:middle;white-space:nowrap;flex-shrink:0;
+}
+.anchor-policy-auto{background:rgba(0,204,136,0.12);color:#00cc88;border:1px solid rgba(0,204,136,0.25)}
+.anchor-policy-prompt{background:rgba(255,153,51,0.12);color:#ff9933;border:1px solid rgba(255,153,51,0.25)}
+.anchor-policy-manual{background:rgba(134,134,139,0.08);color:#86868b;border:1px solid rgba(134,134,139,0.15)}
+
+/* Policy indicator below anchor button */
+.s4-anchor-policy-indicator{
+    display:flex;align-items:center;gap:6px;
+    font-size:0.75rem;padding:6px 12px;margin-top:8px;
+    border-radius:8px;background:rgba(0,0,0,0.02);
+    border:1px solid rgba(0,0,0,0.05);
+}
+
+/* Auto-anchor toast */
+.s4-auto-anchor-toast{
+    position:fixed;top:20px;right:20px;z-index:99999;
+    display:flex;align-items:center;gap:8px;
+    padding:10px 18px;border-radius:10px;
+    background:rgba(255,255,255,0.97);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(0,204,136,0.3);
+    box-shadow:0 8px 32px rgba(0,0,0,0.1),0 0 0 1px rgba(0,204,136,0.1);
+    font-size:0.82rem;color:var(--text,#1d1d1f);
+    transform:translateX(120%);opacity:0;
+    transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s;
+}
+.s4-auto-anchor-toast.show{transform:translateX(0);opacity:1}
+
+/* Anchor prompt banner */
+.s4-anchor-prompt{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);
+    z-index:99999;opacity:0;
+    transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s;
+    max-width:680px;width:92%;
+}
+.s4-anchor-prompt.show{transform:translateX(-50%) translateY(0);opacity:1}
+.s4-anchor-prompt-inner{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 16px;border-radius:12px;
+    background:rgba(255,255,255,0.97);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(255,153,51,0.3);
+    box-shadow:0 12px 48px rgba(0,0,0,0.12),0 0 0 1px rgba(255,153,51,0.1);
+}
+.s4-anchor-prompt-text{flex:1;font-size:0.82rem;color:var(--text,#1d1d1f);line-height:1.4}
+.s4-anchor-prompt-btn{
+    padding:6px 14px;border-radius:8px;font-size:0.78rem;font-weight:600;
+    cursor:pointer;white-space:nowrap;border:1px solid transparent;
+    transition:all 0.15s;
+}
+.s4-anchor-prompt-yes{
+    background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(0,170,255,0.08));
+    border-color:rgba(0,170,255,0.3);color:#00aaff;
+}
+.s4-anchor-prompt-yes:hover{background:rgba(0,170,255,0.2);box-shadow:0 4px 16px rgba(0,170,255,0.15)}
+.s4-anchor-prompt-skip{
+    background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.08);
+    color:var(--muted,#86868b);
+}
+.s4-anchor-prompt-skip:hover{background:rgba(0,0,0,0.06);color:var(--text,#1d1d1f)}
+.s4-anchor-prompt-close{
+    background:none;border:none;color:var(--muted,#86868b);
+    cursor:pointer;padding:4px;font-size:0.9rem;line-height:1;flex-shrink:0;
+}
+.s4-anchor-prompt-close:hover{color:var(--text,#1d1d1f)}
+
+/* Policy settings panel */
+.s4-anchor-policy-settings{
+    padding:4px 0;
+}
+.s4-policy-row{
+    display:flex;align-items:center;gap:8px;
+    padding:6px 8px;border-radius:8px;margin-bottom:2px;
+    transition:background 0.15s;
+}
+.s4-policy-row:hover{background:rgba(0,0,0,0.025)}
+
+/* Record type btn — accommodate badge */
+.record-type-btn{
+    display:flex!important;align-items:center!important;
+    flex-wrap:nowrap!important;gap:4px!important;
+}
+
 /* ── R9-H: CHART CONTAINERS — Bigger on wide screens ── */
 @media(min-width:1200px){
     .ils-hub-panel .chart-container canvas{

@@ -1,12 +1,9 @@
-// S4 Ledger — engine
-// Extracted from monolith lines 4915-13160
-// 8244 lines
-
-// Ensure S4 global namespace is available in module scope
-var S4 = window.S4 = window.S4 || { version: '5.12.0', modules: {}, register: function(n,m){this.modules[n]=m;}, getModule: function(n){return this.modules[n]||null;} };
+// S4 Ledger Demo — engine
+// Extracted from monolith lines 4509-12767
+// 8257 lines
 
 // ======================================================================
-//  S4 LEDGER ENGINE — NAVY DEFENSE RECORD TYPES
+//  S4 LEDGER DEMO ENGINE — NAVY DEFENSE RECORD TYPES
 // ======================================================================
 
 // ── Classification level mapping ──
@@ -58,88 +55,117 @@ const BRANCHES = {
     JOINT:{name:"Joint / Cross-Branch",icon:"fa-medal",short:"Joint"},
 };
 
-// Compact: [label, icon, color, branch, system]
+// Compact: [label, icon, color, branch, system, anchorPolicy]
+// anchorPolicy: 'auto' = auto-anchor on finalize, 'prompt' = recommend anchor, 'manual' = user initiates
 const _RT = {
-USN_SUPPLY_RECEIPT:["Supply Chain Receipt","fa-box","#00aaff","USN","NAVSUP OneTouch"],
-USN_3M_MAINTENANCE:["3-M Maintenance Action","fa-wrench","#ffd700","USN","SKED/OARS"],
-USN_CASREP:["Casualty Report (CASREP)","fa-exclamation-triangle","#ff3333","USN","TYCOM"],
-USN_CDRL:["CDRL Delivery","fa-file-alt","#8ea4b8","USN","CDMD-OA"],
-USN_ORDNANCE:["Ordnance Lot Tracking","fa-bomb","#ff6b6b","USN","AESIP"],
-USN_DEPOT_REPAIR:["Depot Repair Record","fa-industry","#ff9933","USN","CNRMF"],
-USN_INSURV:["INSURV Inspection","fa-search","#66ccff","USN","NRCC"],
-USN_CALIBRATION:["TMDE Calibration","fa-ruler","#ff66aa","USN","METCAL"],
-USN_CONFIG:["Configuration Baseline","fa-cog","#00aaff","USN","CDMD-OA"],
-USN_CUSTODY:["Custody Transfer","fa-sync-alt","#00aaff","USN","DPAS"],
-USN_TDP:["Technical Data Package","fa-drafting-compass","#9945ff","USN","NAVSEA"],
-USN_COC:["Certificate of Conformance","fa-check-circle","#00cc88","USN","DCMA"],
-USN_SHIPALT:["Ship Alteration (SHIPALT)","fa-ship","#0077cc","USN","NAVSEA"],
-USN_PMS:["PMS/SKED Compliance","fa-clipboard-list","#44aa88","USN","3M/SKED"],
-USN_HME:["HM&E System Record","fa-bolt","#dd8844","USN","ENGSKED"],
-USN_COMBAT_SYS:["Combat Systems Cert","fa-crosshairs","#ff4444","USN","CSSQT"],
-USN_PROPULSION:["Propulsion Plant Exam","fa-fire","#ff6600","USN","INSURV"],
-USN_AVIATION:["Aviation Maintenance","fa-plane","#0088cc","USN","NALCOMIS"],
-USN_FLIGHT_OPS:["Flight Operations Record","fa-plane-departure","#3399ff","USN","NATOPS"],
-USN_SUBSAFE:["SUBSAFE Certification","fa-lock","#003366","USN","NAVSEA 07"],
-USN_DIVE_EQUIP:["Diving Equipment Inspection","fa-water","#006699","USN","NAVSEA 00C"],
-USN_MEDICAL:["Medical Equipment Cert","fa-hospital","#33cc66","USN","BUMED"],
-USN_QDR:["Quality Defect Report","fa-ban","#cc0000","USN","NAVSUP WSS"],
-USN_FIELDING:["Equipment Fielding","fa-ship","#00ddaa","USN","PMS"],
-USN_REACTOR:["Naval Reactor Test","fa-radiation","#ffcc00","USN","NAVSEA 08"],
-USN_DRL:["Data Requirements List (DRL)","fa-clipboard-list","#5599cc","USN","NAVSEA/PMS"],
-USN_DI:["Data Item Description (DID)","fa-file-contract","#4488bb","USN","CDMD-OA"],
-USN_VRS:["Vendor Recommended Spares","fa-box","#7799aa","USN","NAVICP/DLA"],
-USN_BUYLIST:["Buylist / Provisioning","fa-shopping-cart","#6688aa","USN","NAVSUP WSS"],
-USN_J1_ILS:["J-1 ILS Parameters / LORA","fa-file-alt","#336699","USN","PMS/ILS"],
-USN_J2_SE:["J-2 Support Equipment","fa-wrench","#337799","USN","PMS/ILS"],
-USN_J3_SUPPLY:["J-3 Supply Support","fa-box","#338899","USN","NAVSUP"],
-USN_J4_TECHDATA:["J-4 Technical Data","fa-book-open","#339999","USN","NAVSEA"],
-USN_J5_TRAINING:["J-5 Training","fa-graduation-cap","#33aa99","USN","NETC"],
-USN_J6_MANPOWER:["J-6 Manpower & Personnel","fa-users","#4488cc","USN","OPNAV N1"],
-USN_J7_FACILITIES:["J-7 Facilities","fa-hard-hat","#5577bb","USN","NAVFAC"],
-USN_J8_PHST:["J-8 PHS&T","fa-box","#6699cc","USN","NAVSUP"],
-USN_J9_SOFTWARE:["J-9 Computer Resources","fa-laptop","#4477aa","USN","SPAWAR/NAVWAR"],
-USN_J10_DESIGN:["J-10 Design Interface","fa-drafting-compass","#3366aa","USN","NAVSEA"],
-USN_J11_RAM:["J-11 RAM Analysis","fa-chart-line","#2255aa","USN","PMS/ILS"],
-USN_J12_ACQLOG:["J-12 Acquisition Logistics","fa-chart-bar","#2266bb","USN","PMS/ILS"],
-USN_J13_CM:["J-13 Configuration Mgmt","fa-cog","#3377cc","USN","CDMD-OA"],
-USN_J14_DISPOSAL:["J-14 Disposal","fa-trash-alt","#667788","USN","DRMS"],
-USN_BAM:["Budget Allowance Mgmt (BAM)","fa-money-bill-wave","#cc9933","USN","NAVSUP"],
-USN_TRANSFER_BOOK:["Transfer Book","fa-book","#5588aa","USN","Supply Officer"],
-USN_COTS_MANUAL:["COTS Manual / Documentation","fa-book","#4477bb","USN","NAVSEA"],
-USN_TM_INDEX:["Technical Manual Index","fa-address-card","#3366bb","USN","NAVSEA"],
-USN_PO_INDEX:["Purchase Order Index","fa-folder-open","#5588cc","USN","NAVSUP"],
-USN_PID:["Program Introduction Doc (PID)","fa-file-alt","#6699bb","USN","PMS"],
-USN_CONTRACT_MOD:["Contract Modification","fa-pen","#7788aa","USN","NAVSEA Contracts"],
-USN_CONFIG_MGMT:["Configuration Mgmt Record","fa-cog","#4466aa","USN","CDMD-OA"],
-USN_OUTFITTING:["Outfitting Requirements","fa-ship","#3355aa","USN","PMS/Outfitting"],
-USN_PURCHASE_REQ:["Purchase Request (PR)","fa-credit-card","#558899","USN","NAVSUP"],
-JOINT_NATO:["NATO STANAG Verification","fa-flag","#003399","JOINT","NATO"],
-JOINT_F35:["F-35 JSF Logistics","fa-plane","#1a1a2e","JOINT","ALIS/ODIN"],
-JOINT_MISSILE_DEF:["Missile Defense Record","fa-rocket","#4a0080","JOINT","MDA"],
-JOINT_CYBER:["Cyber Equipment Cert","fa-desktop","#00cc99","JOINT","CYBERCOM"],
-JOINT_INTEL:["Intelligence Equipment","fa-user-secret","#2d2d2d","JOINT","DIA"],
-JOINT_SPACE:["Space Command Asset","fa-satellite","#000066","JOINT","USSPACECOM"],
-JOINT_TRANSPORT:["TRANSCOM Logistics","fa-truck","#4a6741","JOINT","USTRANSCOM"],
-JOINT_CONTRACT:["Contract Deliverable","fa-pen","#b8860b","JOINT","DCMA"],
-JOINT_READINESS:["Readiness Report","fa-chart-line","#00ff88","JOINT","DRRS"],
-JOINT_DISPOSAL:["Joint Disposal Record","fa-trash-alt","#8b8682","JOINT","DLA"],
+USN_SUPPLY_RECEIPT:["Supply Chain Receipt","fa-box","#00aaff","USN","NAVSUP OneTouch","auto"],
+USN_3M_MAINTENANCE:["3-M Maintenance Action","fa-wrench","#ffd700","USN","SKED/OARS","auto"],
+USN_CASREP:["Casualty Report (CASREP)","fa-exclamation-triangle","#ff3333","USN","TYCOM","auto"],
+USN_CDRL:["CDRL Delivery","fa-file-alt","#8ea4b8","USN","CDMD-OA","auto"],
+USN_ORDNANCE:["Ordnance Lot Tracking","fa-bomb","#ff6b6b","USN","AESIP","auto"],
+USN_DEPOT_REPAIR:["Depot Repair Record","fa-industry","#ff9933","USN","CNRMF","prompt"],
+USN_INSURV:["INSURV Inspection","fa-search","#66ccff","USN","NRCC","prompt"],
+USN_CALIBRATION:["TMDE Calibration","fa-ruler","#ff66aa","USN","METCAL","auto"],
+USN_CONFIG:["Configuration Baseline","fa-cog","#00aaff","USN","CDMD-OA","auto"],
+USN_CUSTODY:["Custody Transfer","fa-sync-alt","#00aaff","USN","DPAS","auto"],
+USN_TDP:["Technical Data Package","fa-drafting-compass","#9945ff","USN","NAVSEA","prompt"],
+USN_COC:["Certificate of Conformance","fa-check-circle","#00cc88","USN","DCMA","auto"],
+USN_SHIPALT:["Ship Alteration (SHIPALT)","fa-ship","#0077cc","USN","NAVSEA","prompt"],
+USN_PMS:["PMS/SKED Compliance","fa-clipboard-list","#44aa88","USN","3M/SKED","prompt"],
+USN_HME:["HM&E System Record","fa-bolt","#dd8844","USN","ENGSKED","prompt"],
+USN_COMBAT_SYS:["Combat Systems Cert","fa-crosshairs","#ff4444","USN","CSSQT","prompt"],
+USN_PROPULSION:["Propulsion Plant Exam","fa-fire","#ff6600","USN","INSURV","prompt"],
+USN_AVIATION:["Aviation Maintenance","fa-plane","#0088cc","USN","NALCOMIS","prompt"],
+USN_FLIGHT_OPS:["Flight Operations Record","fa-plane-departure","#3399ff","USN","NATOPS","prompt"],
+USN_SUBSAFE:["SUBSAFE Certification","fa-lock","#003366","USN","NAVSEA 07","auto"],
+USN_DIVE_EQUIP:["Diving Equipment Inspection","fa-water","#006699","USN","NAVSEA 00C","prompt"],
+USN_MEDICAL:["Medical Equipment Cert","fa-hospital","#33cc66","USN","BUMED","prompt"],
+USN_QDR:["Quality Defect Report","fa-ban","#cc0000","USN","NAVSUP WSS","prompt"],
+USN_FIELDING:["Equipment Fielding","fa-ship","#00ddaa","USN","PMS","prompt"],
+USN_REACTOR:["Naval Reactor Test","fa-radiation","#ffcc00","USN","NAVSEA 08","auto"],
+USN_DRL:["Data Requirements List (DRL)","fa-clipboard-list","#5599cc","USN","NAVSEA/PMS","prompt"],
+USN_DI:["Data Item Description (DID)","fa-file-contract","#4488bb","USN","CDMD-OA","prompt"],
+USN_VRS:["Vendor Recommended Spares","fa-box","#7799aa","USN","NAVICP/DLA","manual"],
+USN_BUYLIST:["Buylist / Provisioning","fa-shopping-cart","#6688aa","USN","NAVSUP WSS","manual"],
+USN_J1_ILS:["J-1 ILS Parameters / LORA","fa-file-alt","#336699","USN","PMS/ILS","manual"],
+USN_J2_SE:["J-2 Support Equipment","fa-wrench","#337799","USN","PMS/ILS","manual"],
+USN_J3_SUPPLY:["J-3 Supply Support","fa-box","#338899","USN","NAVSUP","manual"],
+USN_J4_TECHDATA:["J-4 Technical Data","fa-book-open","#339999","USN","NAVSEA","manual"],
+USN_J5_TRAINING:["J-5 Training","fa-graduation-cap","#33aa99","USN","NETC","manual"],
+USN_J6_MANPOWER:["J-6 Manpower & Personnel","fa-users","#4488cc","USN","OPNAV N1","manual"],
+USN_J7_FACILITIES:["J-7 Facilities","fa-hard-hat","#5577bb","USN","NAVFAC","manual"],
+USN_J8_PHST:["J-8 PHS&T","fa-box","#6699cc","USN","NAVSUP","manual"],
+USN_J9_SOFTWARE:["J-9 Computer Resources","fa-laptop","#4477aa","USN","SPAWAR/NAVWAR","manual"],
+USN_J10_DESIGN:["J-10 Design Interface","fa-drafting-compass","#3366aa","USN","NAVSEA","manual"],
+USN_J11_RAM:["J-11 RAM Analysis","fa-chart-line","#2255aa","USN","PMS/ILS","manual"],
+USN_J12_ACQLOG:["J-12 Acquisition Logistics","fa-chart-bar","#2266bb","USN","PMS/ILS","manual"],
+USN_J13_CM:["J-13 Configuration Mgmt","fa-cog","#3377cc","USN","CDMD-OA","manual"],
+USN_J14_DISPOSAL:["J-14 Disposal","fa-trash-alt","#667788","USN","DRMS","manual"],
+USN_BAM:["Budget Allowance Mgmt (BAM)","fa-money-bill-wave","#cc9933","USN","NAVSUP","manual"],
+USN_TRANSFER_BOOK:["Transfer Book","fa-book","#5588aa","USN","Supply Officer","manual"],
+USN_COTS_MANUAL:["COTS Manual / Documentation","fa-book","#4477bb","USN","NAVSEA","manual"],
+USN_TM_INDEX:["Technical Manual Index","fa-address-card","#3366bb","USN","NAVSEA","manual"],
+USN_PO_INDEX:["Purchase Order Index","fa-folder-open","#5588cc","USN","NAVSUP","manual"],
+USN_PID:["Program Introduction Doc (PID)","fa-file-alt","#6699bb","USN","PMS","manual"],
+USN_CONTRACT_MOD:["Contract Modification","fa-pen","#7788aa","USN","NAVSEA Contracts","prompt"],
+USN_CONFIG_MGMT:["Configuration Mgmt Record","fa-cog","#4466aa","USN","CDMD-OA","auto"],
+USN_OUTFITTING:["Outfitting Requirements","fa-ship","#3355aa","USN","PMS/Outfitting","manual"],
+USN_PURCHASE_REQ:["Purchase Request (PR)","fa-credit-card","#558899","USN","NAVSUP","manual"],
+JOINT_NATO:["NATO STANAG Verification","fa-flag","#003399","JOINT","NATO","prompt"],
+JOINT_F35:["F-35 JSF Logistics","fa-plane","#1a1a2e","JOINT","ALIS/ODIN","prompt"],
+JOINT_MISSILE_DEF:["Missile Defense Record","fa-rocket","#4a0080","JOINT","MDA","prompt"],
+JOINT_CYBER:["Cyber Equipment Cert","fa-desktop","#00cc99","JOINT","CYBERCOM","prompt"],
+JOINT_INTEL:["Intelligence Equipment","fa-user-secret","#2d2d2d","JOINT","DIA","manual"],
+JOINT_SPACE:["Space Command Asset","fa-satellite","#000066","JOINT","USSPACECOM","manual"],
+JOINT_TRANSPORT:["TRANSCOM Logistics","fa-truck","#4a6741","JOINT","USTRANSCOM","manual"],
+JOINT_CONTRACT:["Contract Deliverable","fa-pen","#b8860b","JOINT","DCMA","prompt"],
+JOINT_READINESS:["Readiness Report","fa-chart-line","#00ff88","JOINT","DRRS","prompt"],
+JOINT_DISPOSAL:["Joint Disposal Record","fa-trash-alt","#8b8682","JOINT","DLA","manual"],
 };
 
 // Expand
 const RECORD_TYPES = {};
 for (const [k,v] of Object.entries(_RT)) {
-    RECORD_TYPES[k] = {label:v[0],icon:v[1],color:v[2],branch:v[3],system:v[4]};
+    RECORD_TYPES[k] = {label:v[0],icon:v[1],color:v[2],branch:v[3],system:v[4],anchorPolicy:v[5]||'manual'};
 }
 
+// ── Anchor Policy Helpers ──
+// Org-level overrides stored in localStorage — admin can promote/demote tiers
+const ANCHOR_POLICY_META = {
+    auto:  {label:'Auto-Anchor',  icon:'fa-shield-alt', color:'#00cc88', desc:'Anchored automatically on finalize'},
+    prompt:{label:'Recommended',   icon:'fa-bell',       color:'#ff9933', desc:'You\'ll be prompted to anchor'},
+    manual:{label:'Manual',        icon:'fa-hand-pointer',color:'#86868b', desc:'Anchor when you choose'}
+};
+function _getAnchorPolicy(recordType) {
+    var overrides = {};
+    try { overrides = JSON.parse(localStorage.getItem('s4_anchor_policy_overrides') || '{}'); } catch(e) {}
+    if (overrides[recordType]) return overrides[recordType];
+    var rt = RECORD_TYPES[recordType];
+    return (rt && rt.anchorPolicy) || 'manual';
+}
+function _setAnchorPolicyOverride(recordType, policy) {
+    var overrides = {};
+    try { overrides = JSON.parse(localStorage.getItem('s4_anchor_policy_overrides') || '{}'); } catch(e) {}
+    if (policy === (RECORD_TYPES[recordType] && RECORD_TYPES[recordType].anchorPolicy)) {
+        delete overrides[recordType]; // back to default, remove override
+    } else {
+        overrides[recordType] = policy;
+    }
+    try { localStorage.setItem('s4_anchor_policy_overrides', JSON.stringify(overrides)); } catch(e) {}
+}
+window._getAnchorPolicy = _getAnchorPolicy;
+window._setAnchorPolicyOverride = _setAnchorPolicyOverride;
+window.ANCHOR_POLICY_META = ANCHOR_POLICY_META;
+
 const SAMPLES = {
-    supply:{type:'USN_SUPPLY_RECEIPT',branch:'USN',text:`Supply Chain Receipt\nNSN: 5340-01-234-5678\nNomenclature: Valve, Gate, Carbon Steel\nContract: [Contract Number]\nCAGE Code: 1THK9\nQuantity Received: 50 EA\nCondition Code: A (Serviceable)\nInspection: FAT Pass\nReceiving Depot: Norfolk Naval Shipyard (NNSY)\nInspector: [Inspector Name]\nDate: 2026-02-10`},
-    maintenance:{type:'USN_3M_MAINTENANCE',branch:'USN',text:`Maintenance 3-M Action\nMRC: 2815-1.3.7\nEquipment: LM2500 Gas Turbine Engine\nHull Number: DDG-118\nAction: Oil sample analysis\nResults: Normal wear metals Fe:12ppm Cu:3ppm Al:2ppm\nTechnician: [Technician Name/Rate]\nVerified By: [Supervisor Name/Rate]\nNext Due: 2026-08-10\nSKED Status: Current`},
-    ordnance:{type:'USN_ORDNANCE',branch:'USN',text:`Ordnance Lot Tracking\nDODIC: A059 (5.56mm Ball M855)\nLot Number: [Lot Number]\nNSN: 1305-01-299-5564\nManufacturer: Winchester (CAGE: 97173)\nQuantity: 250,000 rounds\nProof Test: PASS (MIL-C-63989D)\nStorage: Weapons Station Earle, Magazine 14\nCustodian: [Custodian Name/Rate]\nDate: 2026-02-08`},
-    casrep:{type:'USN_CASREP',branch:'USN',text:`CASUALTY REPORT (CASREP)\nUnit: USS Porter (DDG-78)\nEquipment: AN/SPY-1D(V) Radar Transmitter\nSerial: [Serial Number]\nImpact: Degraded radar coverage\nReported By: [Reporting Officer]\nDate: 2026-02-10`},
-    custody:{type:'USN_CUSTODY',branch:'USN',text:`Chain of Custody Transfer\nEquipment: AN/SPY-1D(V) Transmitter Module\nSerial: [Serial Number]\nNSN: 5841-01-522-3401\nFrom: [Transferring Custodian]\nTo: [Receiving Activity]\nSeal: Tamper-evident #[Seal Number]\nDate: 2026-02-10`},
-    drl:{type:'USN_DRL',branch:'USN',text:`Data Requirements List (CDRL)\nContract: [Contract Number]\nCDRL Seq: A001\nDI Number: DI-ILSS-81495\nTitle: Integrated Logistics Support Plan\nFrequency: One-time with revisions\nDistribution: NAVSEA PMS 400D\nContractor: Huntington Ingalls Industries\nProgram: DDG-51 Flight III\nStatus: Submitted, under review\nDate: 2026-02-10`},
+    supply:{type:'USN_SUPPLY_RECEIPT',branch:'USN',text:`Supply Chain Receipt\nNSN: 5340-01-234-5678\nNomenclature: Valve, Gate, Carbon Steel\nContract: N00024-23-C-5501\nCAGE Code: 1THK9\nQuantity Received: 50 EA\nCondition Code: A (Serviceable)\nInspection: FAT Pass\nReceiving Depot: Norfolk Naval Shipyard (NNSY)\nInspector: QA-237 J. Martinez\nDate: 2026-02-10`},
+    maintenance:{type:'USN_3M_MAINTENANCE',branch:'USN',text:`Maintenance 3-M Action\nMRC: 2815-1.3.7\nEquipment: LM2500 Gas Turbine Engine\nHull Number: DDG-118\nAction: Oil sample analysis\nResults: Normal wear metals Fe:12ppm Cu:3ppm Al:2ppm\nTechnician: MM2(SW) Garcia\nVerified By: MMCS(SW) Thompson\nNext Due: 2026-08-10\nSKED Status: Current`},
+    ordnance:{type:'USN_ORDNANCE',branch:'USN',text:`Ordnance Lot Tracking\nDODIC: A059 (5.56mm Ball M855)\nLot Number: WCC-2025-1147-A\nNSN: 1305-01-299-5564\nManufacturer: Winchester (CAGE: 97173)\nQuantity: 250,000 rounds\nProof Test: PASS (MIL-C-63989D)\nStorage: Weapons Station Earle, Magazine 14\nCustodian: GMC(SW) Rodriguez\nDate: 2026-02-08`},
+    casrep:{type:'USN_CASREP',branch:'USN',text:`CASUALTY REPORT (CASREP)\nUnit: USS Porter (DDG-78)\nEquipment: AN/SPY-1D(V) Radar Transmitter\nSerial: SPY-TM-2019-04472\nImpact: Degraded radar coverage\nReported By: LCDR Pham, CSO\nDate: 2026-02-10`},
+    custody:{type:'USN_CUSTODY',branch:'USN',text:`Chain of Custody Transfer\nEquipment: AN/SPY-1D(V) Transmitter Module\nSerial: SPY-TM-2019-04472\nNSN: 5841-01-522-3401\nFrom: ET1(SW) Cooper, DDG-78\nTo: NAVSEA Det Norfolk, IMA\nSeal: Tamper-evident #TS-2026-0887\nDate: 2026-02-10`},
+    drl:{type:'USN_DRL',branch:'USN',text:`Data Requirements List (CDRL)\nContract: N00024-24-C-6200\nCDRL Seq: A001\nDI Number: DI-ILSS-81495\nTitle: Integrated Logistics Support Plan\nFrequency: One-time with revisions\nDistribution: NAVSEA PMS 400D\nContractor: Huntington Ingalls Industries\nProgram: DDG-51 Flight III\nStatus: Submitted, under review\nDate: 2026-02-10`},
     buylist:{type:'USN_BUYLIST',branch:'USN',text:`Buylist / Provisioning Record\nProgram: LCS Freedom-class\nPMS: PMS 501\nItem: Main Reduction Gear Oil Pump Assembly\nNSN: 4320-01-567-8901\nRecommended Qty: 4 EA per hull\nAcquisition Method: Sole Source (OEM)\nVendor: Rolls-Royce Naval Marine (CAGE: K2965)\nUnit Cost: $47,250.00\nJustification: Critical rotating machinery, no alternate source\nDate: 2026-02-09`},
-    transfer_book:{type:'USN_TRANSFER_BOOK',branch:'USN',text:`Transfer Book Entry\nUnit: Supply Department, USS Nimitz (CVN-68)\nAccount: OPTAR / EMRM\nJob Order: 68-2026-0195\nDescription: Transfer of ADP equipment to AIMD\nFrom: S-1 Division (Stock Control)\nTo: AIMD IM-3 Division\nQuantity: 12 laptops, 3 printers\nDocument Number: [Document Number]\nApproved By: [Approving Officer]\nDate: 2026-02-11`}
+    transfer_book:{type:'USN_TRANSFER_BOOK',branch:'USN',text:`Transfer Book Entry\nUnit: Supply Department, USS Nimitz (CVN-68)\nAccount: OPTAR / EMRM\nJob Order: 68-2026-0195\nDescription: Transfer of ADP equipment to AIMD\nFrom: S-1 Division (Stock Control)\nTo: AIMD IM-3 Division\nQuantity: 12 laptops, 3 printers\nDocument Number: N68836-6026-0195\nApproved By: LCDR Torres, Supply Officer\nDate: 2026-02-11`}
 };
 
 let currentBranch = 'USN';
@@ -148,23 +174,52 @@ let sessionRecords = [];
 let stats = {anchored:0,verified:0,types:new Set(),slsFees:0};
 window._s4Stats = stats;
 
-// ── SLS Balance Tracker ──
-// ── SLS Balance Tracker ── (SYNCHRONOUS — no requestAnimationFrame)
-function _updateSlsBalance() {
+// ── Demo SLS Balance Tracker ── (SYNCHRONOUS — no requestAnimationFrame)
+function _updateDemoSlsBalance() {
     if (typeof _syncSlsBar === 'function') _syncSlsBar();
+    var _tFallback = (window._onboardTiers && window._onboardTier) ? (window._onboardTiers[window._onboardTier]?.sls || 25000) : (parseInt(localStorage.getItem('s4_tier_allocation')) || 25000); var allocation = _demoSession ? (_demoSession.subscription?.sls_allocation || _tFallback) : _tFallback;
+    var spent = stats.slsFees || 0;
+    var remaining = Math.round((allocation - spent) * 100) / 100;
+    var bal = document.getElementById('demoSlsBalance');
+    if (bal) {
+        bal.textContent = remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' Credits';
+        bal.style.color = remaining < 100 ? '#ff3333' : '#c9a84c';
+    }
+    // Update persistent demo status bar
+    var bar = document.getElementById('demoStatusBar');
+    if (bar) {
+        bar.innerHTML = '<i class="fas fa-shield-halved" style="margin-right:6px;color:#00aaff;"></i>'
+            + '<strong style="color:#00aaff;">S4 Ledger</strong> '
+            + '<span style="margin:0 8px;color:rgba(255,255,255,0.2);">|</span>'
+            + '<span style="color:#c9a84c;">' + remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' Credits remaining</span>'
+            + '<span style="margin:0 8px;color:rgba(255,255,255,0.2);">|</span>'
+            + '<span style="color:#00aaff;">' + stats.anchored + ' anchor' + (stats.anchored !== 1 ? 's' : '') + '</span>'
+            + '<span style="margin:0 8px;color:rgba(255,255,255,0.2);">|</span>'
+            + '<span style="color:#8ea4b8;">0.01 Credits per anchor</span>';
+    }
+    // Update banner too
+    var banner = document.getElementById('demoBanner');
+    if (banner && banner.style.display !== 'none') {
+        var addr = _demoSession?.wallet?.address || '';
+        banner.innerHTML = '<i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong>S4 Ledger</strong> &mdash; '
+            + '<span style="color:#c9a84c;">' + remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' Credits</span> &bull; '
+            + stats.anchored + ' anchor' + (stats.anchored !== 1 ? 's' : '') + ' &bull; '
+            + '0.01 Credits per anchor &bull; '
+            + '<span style="color:var(--accent)">' + (addr ? addr.substring(0,6) + '...' + addr.slice(-4) : '') + '</span>';
+    }
 }
+
 
 
 // Flash toast showing SLS balance update
 function _flashSlsBalance(newBalance, fee) {
-    var existing = document.getElementById('slsFlashToast');
-    if (existing) existing.remove();
+    return; // Notifications disabled in demo-app
     var toast = document.createElement('div');
     toast.id = 'slsFlashToast';
     toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:99999;background:linear-gradient(135deg,rgba(0,170,255,0.15),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:16px 24px;font-size:0.9rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:slsToastIn 0.4s ease-out;min-width:260px;';
     toast.innerHTML = '<div style="font-weight:700;color:#c9a84c;margin-bottom:6px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-coins" style="margin-right:6px"></i>Credit Balance Updated</div>'
-        + '<div style="font-size:1.4rem;font-weight:800;color:#c9a84c;">' + _s4Safe(String(newBalance)) + ' <span style="font-size:0.8rem;font-weight:600;">Credits</span></div>'
-        + '<div style="font-size:0.78rem;color:#ff6b6b;margin-top:4px;">-' + _s4Safe(fee.toFixed(2)) + ' Credits (anchor fee)</div>';
+        + '<div style="font-size:1.4rem;font-weight:800;color:#c9a84c;">' + newBalance + ' <span style="font-size:0.8rem;font-weight:600;">Credits</span></div>'
+        + '<div style="font-size:0.78rem;color:#ff6b6b;margin-top:4px;">-' + fee.toFixed(2) + ' Credits (anchor fee)</div>';
     document.body.appendChild(toast);
     setTimeout(function() {
         toast.style.animation = 'slsToastOut 0.4s ease-in forwards';
@@ -176,11 +231,15 @@ function _flashSlsBalance(newBalance, fee) {
 var _flowBoxCollapsed = false;
 
 function collapseFlowBox() {
+    var panel = document.getElementById('demoPanel');
+    if (panel) { panel.style.display = 'none'; }
     _flowBoxCollapsed = true;
     _syncSlsBar();
 }
 
 function expandFlowBox() {
+    var panel = document.getElementById('demoPanel');
+    if (panel) { panel.style.display = 'block'; }
     _flowBoxCollapsed = false;
     _syncSlsBar();
 }
@@ -198,11 +257,10 @@ function toggleFlowBox() {
 }
 
 function _syncSlsBar() {
-    var allocation = window._s4TierAllocation || parseInt(localStorage.getItem('s4_tier_allocation')) || 25000;
+    var _tFallback = (window._onboardTiers && window._onboardTier) ? (window._onboardTiers[window._onboardTier]?.sls || 25000) : (parseInt(localStorage.getItem('s4_tier_allocation')) || 25000); var allocation = _demoSession ? (_demoSession.subscription?.sls_allocation || _tFallback) : _tFallback;
     var spent = stats.slsFees || 0;
     var remaining = Math.round((allocation - spent) * 100) / 100;
-    var plan = window._s4TierLabel || localStorage.getItem('s4_tier_label') || 'Starter';
-    plan = plan.replace(/\s*\(.*\)/, '');
+    var plan = _demoSession ? (_demoSession.subscription?.label || 'Starter') : 'Starter';
     var balText = remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' Credits';
     var balColor = remaining < 100 ? '#ff3333' : '#c9a84c';
     
@@ -211,7 +269,7 @@ function _syncSlsBar() {
     document.querySelectorAll('[id="slsBarAnchors"]').forEach(function(el) { el.textContent = stats.anchored || 0; });
     document.querySelectorAll('[id="slsBarSpent"]').forEach(function(el) { el.textContent = (spent).toFixed(2) + ' Credits'; });
     document.querySelectorAll('[id="slsBarPlan"]').forEach(function(el) { el.textContent = plan; });
-    // Also sync wallet tab SLS balance — update ALL instances
+    // Also sync wallet tab SLS balance in demo mode — update ALL instances
     document.querySelectorAll('[id="walletSLSBalance"]').forEach(function(el) { el.textContent = remaining.toLocaleString(undefined,{maximumFractionDigits:2}); });
     document.querySelectorAll('[id="walletAnchors"]').forEach(function(el) { if ((stats.anchored || 0) > 0) el.textContent = (Math.floor(remaining / 0.01)).toLocaleString(); });
     // Keep the visible wallet trigger button in sync
@@ -226,6 +284,11 @@ function _syncSlsBar() {
             setTimeout(function() { _wtBtn.style.boxShadow = ''; }, 2000);
         }
     }
+    // Update sidebar flow panel step 4 if it exists
+    var sidebarStep4 = document.getElementById('sidebarFlowStep4Status');
+    if (sidebarStep4 && stats.anchored > 0) {
+        sidebarStep4.innerHTML = window._s4Safe('<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px"></i> ' + stats.anchored + ' anchor' + (stats.anchored > 1 ? 's' : '') + ' (' + stats.slsFees.toFixed(2) + ' Credits)');
+    }
 }
 
 // ═══ Authentication Flow: DoW Consent → CAC/Login → Platform ═══
@@ -235,15 +298,9 @@ function startAuthFlow() {
         enterPlatformAfterAuth();
         return;
     }
-    // Show DoW consent banner → CAC login → onboarding → role selector
+    // Show DoW consent banner first
     var consent = document.getElementById('dodConsentBanner');
-    if (consent) {
-        consent.style.display = 'flex';
-        if (typeof _s4TrapFocus === 'function') _s4TrapFocus(consent);
-    } else {
-        // Fallback: consent banner not found, show CAC login directly
-        acceptDodConsent();
-    }
+    if (consent) { consent.style.display = 'flex'; if (typeof _s4TrapFocus === 'function') _s4TrapFocus(consent); }
 }
 
 /**
@@ -293,12 +350,10 @@ function switchLoginTab(tab) {
 }
 
 function simulateCacLogin() {
-    // CAC/PIV — Use Supabase magic link as a secure passwordless alternative
-    // In production with real DoW PKI, this would validate the X.509 certificate
     var modal = document.getElementById('cacLoginModal');
+    // Show loading state
     var btn = modal.querySelector('button[onclick*="simulateCacLogin"]');
     if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Reading CAC certificate...'); btn.disabled = true; }
-    // For now: simulate CAC auth (real CAC requires server-side PKI validation)
     setTimeout(function() {
         if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="margin-right:8px;"></i>Authenticated — DoW PKI Verified'); }
         setTimeout(function() {
@@ -308,172 +363,39 @@ function simulateCacLogin() {
             _clearS4UserData();
             sessionStorage.setItem('s4_authenticated', '1');
             sessionStorage.setItem('s4_auth_method', 'cac');
-            // Set a CAC-scoped session_id (real PKI deployment will provide a user-specific ID)
+            // Set a CAC-scoped session_id
             localStorage.setItem('s4_session_id', 'cac_' + (crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), function(b){ return b.toString(16).padStart(2,'0'); }).join('')));
             enterPlatformAfterAuth();
         }, 800);
     }, 1500);
 }
 
-// ═══ Real Supabase Account Authentication ═══
-var _isSignupMode = false;
-
-function toggleSignupMode() {
-    _isSignupMode = !_isSignupMode;
-    var btn = document.getElementById('btnAccountLogin');
-    var toggle = document.getElementById('signupToggle');
-    var errDiv = document.getElementById('loginAuthError');
-    if (errDiv) errDiv.style.display = 'none';
-    if (_isSignupMode) {
-        if (btn) btn.innerHTML = window._s4Safe('<i class="fas fa-user-plus" style="margin-right:8px;"></i>Create Account');
-        if (toggle) toggle.innerHTML = window._s4Safe('<span style="color:var(--steel);">Already have an account?</span> <a href="#" onclick="event.preventDefault();toggleSignupMode();" style="color:var(--accent);text-decoration:none;font-weight:600;">Sign in</a>');
-    } else {
-        if (btn) btn.innerHTML = window._s4Safe('<i class="fas fa-right-to-bracket" style="margin-right:8px;"></i>Sign In');
-        if (toggle) toggle.innerHTML = window._s4Safe('<span style="color:var(--steel);">No account?</span> <a href="#" onclick="event.preventDefault();toggleSignupMode();" style="color:var(--accent);text-decoration:none;font-weight:600;">Create one</a><span style="margin:0 8px;color:var(--muted);">|</span><a href="#" onclick="event.preventDefault();handlePasswordReset();" style="color:var(--accent);text-decoration:none;">Forgot password?</a>');
-    }
-}
-
-function _showAuthError(msg) {
-    var errDiv = document.getElementById('loginAuthError');
-    if (errDiv) { errDiv.textContent = msg; errDiv.style.display = 'block'; }
-}
-
-function handleAccountLogin() {
+function simulateAccountLogin() {
     var email = (document.getElementById('loginEmail') || {}).value || '';
     var pass = (document.getElementById('loginPassword') || {}).value || '';
-    var errDiv = document.getElementById('loginAuthError');
-    if (errDiv) errDiv.style.display = 'none';
-
-    if (!email) { _showAuthError('Please enter your email address.'); return; }
-    if (!pass || pass.length < 6) { _showAuthError('Password must be at least 6 characters.'); return; }
-
-    var btn = document.getElementById('btnAccountLogin');
-    var originalHTML = btn ? btn.innerHTML : '';
-    if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>' + (_isSignupMode ? 'Creating account...' : 'Authenticating...')); btn.disabled = true; }
-
-    if (!window._sbClient) {
-        // Fallback: Supabase client not loaded (CDN blocked, offline, etc.)
-        console.warn('[S4 Auth] Supabase client not available — falling back to offline mode');
-        if (btn) { btn.innerHTML = window._s4Safe(originalHTML); btn.disabled = false; }
-        _showAuthError('Auth service unavailable. Try again or use CAC login.');
-        return;
-    }
-
-    if (_isSignupMode) {
-        // ── SIGN UP ──
-        window._sbClient.auth.signUp({ email: email, password: pass }).then(function(result) {
-            if (result.error) {
-                if (btn) { btn.innerHTML = window._s4Safe(originalHTML); btn.disabled = false; }
-                _showAuthError(result.error.message || 'Signup failed. Try a different email.');
-                return;
-            }
-            // Signup successful — check if email confirmation is required
-            if (result.data.user && !result.data.session) {
-                if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-envelope" style="margin-right:8px;"></i>Check your email'); btn.disabled = false; }
-                _showAuthError('');
-                if (errDiv) errDiv.style.display = 'none';
-                if (typeof s4Notify === 'function') s4Notify('Account Created', 'Check your email for a confirmation link, then sign in.', 'success');
-                _isSignupMode = false;
-                toggleSignupMode(); // flip back to login mode
-            } else if (result.data.session) {
-                // Auto-confirmed (e.g., when email confirmations are disabled)
-                _onAuthSuccess(result.data.session, result.data.user);
-            }
-        });
-    } else {
-        // ── SIGN IN ──
-        window._sbClient.auth.signInWithPassword({ email: email, password: pass }).then(function(result) {
-            if (result.error) {
-                if (btn) { btn.innerHTML = window._s4Safe(originalHTML); btn.disabled = false; }
-                _showAuthError(result.error.message || 'Invalid email or password.');
-                return;
-            }
-            _onAuthSuccess(result.data.session, result.data.user);
-        });
-    }
-}
-
-function _onAuthSuccess(session, user) {
-    // Clear previous user data to prevent cross-user leakage on same browser
-    _clearS4UserData();
-    // Store real JWT so the API interceptor sends it with every /api/ call
-    if (session && session.access_token) {
-        sessionStorage.setItem('s4_auth_token', session.access_token);
-        sessionStorage.setItem('s4_refresh_token', session.refresh_token || '');
-    }
-    // Populate user identity keys that the rest of the app reads
-    if (user) {
-        localStorage.setItem('s4_user_email', user.email || '');
-        localStorage.setItem('s4_user_profile', JSON.stringify({
-            name: (user.user_metadata && user.user_metadata.full_name) || user.email.split('@')[0],
-            email: user.email,
-            org: (user.user_metadata && user.user_metadata.org) || 'S4 Ledger',
-            id: user.id
-        }));
-    }
-    // Set session flags
-    sessionStorage.setItem('s4_authenticated', '1');
-    sessionStorage.setItem('s4_auth_method', 'account');
-
-    // Use user ID as session_id for Supabase state sync (ties state to real user)
-    if (user && user.id) {
-        localStorage.setItem('s4_session_id', 'user_' + user.id);
-    }
-
-    // Close modal and enter platform
+    if (!email) { if (typeof _showNotif === 'function') _showNotif('Please enter your email or User ID.', 'warning'); return; }
     var modal = document.getElementById('cacLoginModal');
-    if (modal) modal.style.display = 'none';
-    if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
+    var btn = modal.querySelector('button[onclick*="simulateAccountLogin"]');
+    if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Authenticating...'); btn.disabled = true; }
+    setTimeout(function() {
+        if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="margin-right:8px;"></i>Signed In'); }
+        setTimeout(function() {
+            if (modal) modal.style.display = 'none';
+            if (typeof _s4ReleaseFocusTrap === 'function') _s4ReleaseFocusTrap();
+            // Clear previous user data to prevent cross-user leakage
+            _clearS4UserData();
+            sessionStorage.setItem('s4_authenticated', '1');
+            sessionStorage.setItem('s4_auth_method', 'account');
+            // Store user identity for data isolation
+            localStorage.setItem('s4_user_email', email);
+            localStorage.setItem('s4_session_id', 'user_' + email.replace(/[^a-zA-Z0-9]/g, '_'));
+            enterPlatformAfterAuth();
+        }, 600);
+    }, 1200);
+}
+
+function enterPlatform() {
     enterPlatformAfterAuth();
-
-    console.log('[S4 Auth] Authenticated as', user ? user.email : 'unknown');
-}
-
-function handlePasswordReset() {
-    var email = (document.getElementById('loginEmail') || {}).value || '';
-    if (!email) { _showAuthError('Enter your email first, then click "Forgot password?"'); return; }
-    if (!window._sbClient) { _showAuthError('Auth service unavailable.'); return; }
-    window._sbClient.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://s4ledger.com/prod-app/'
-    }).then(function(result) {
-        if (result.error) {
-            _showAuthError(result.error.message || 'Could not send reset email.');
-        } else {
-            if (typeof s4Notify === 'function') s4Notify('Password Reset', 'Check your email for a password reset link.', 'info');
-            var errDiv = document.getElementById('loginAuthError');
-            if (errDiv) errDiv.style.display = 'none';
-        }
-    });
-}
-
-// ═══ Auto-restore Supabase session on page load ═══
-(function _restoreSupabaseSession() {
-    if (!window._sbClient) return;
-    window._sbClient.auth.getSession().then(function(result) {
-        if (result.data && result.data.session) {
-            var session = result.data.session;
-            sessionStorage.setItem('s4_auth_token', session.access_token);
-            if (session.user) {
-                localStorage.setItem('s4_user_email', session.user.email || '');
-                if (session.user.id) localStorage.setItem('s4_session_id', 'user_' + session.user.id);
-            }
-            console.log('[S4 Auth] Session restored for', session.user ? session.user.email : 'unknown');
-        }
-    });
-    // Listen for auth state changes (token refresh, sign out, etc.)
-    window._sbClient.auth.onAuthStateChange(function(event, session) {
-        if (event === 'SIGNED_OUT') {
-            sessionStorage.removeItem('s4_auth_token');
-            sessionStorage.removeItem('s4_refresh_token');
-        } else if (session && session.access_token) {
-            sessionStorage.setItem('s4_auth_token', session.access_token);
-        }
-    });
-})();
-
-function simulateAccountLogin() {
-    // Legacy wrapper — redirect to real auth
-    handleAccountLogin();
 }
 
 /**
@@ -483,51 +405,16 @@ function simulateAccountLogin() {
  * @returns {void}
  */
 function enterPlatformAfterAuth() {
-    try {
-        var landing = document.getElementById('platformLanding');
-        var hero = document.querySelector('.hero');
-        var workspace = document.getElementById('platformWorkspace');
-        if (landing) landing.style.display = 'none';
-        if (hero) hero.style.display = 'none';
-        if (workspace) workspace.style.display = 'block';
-        sessionStorage.setItem('s4_entered', '1');
-        // Show onboarding wizard (which chains to role selector on close)
-        var onboardDone = sessionStorage.getItem('s4_onboard_done');
-        if (!onboardDone) {
-            // AI agent stays hidden until role selector closes (applyRole in roles.js shows it)
-            var aiWrap = document.getElementById('aiFloatWrapper');
-            if (aiWrap) aiWrap.style.display = 'none';
-            // Poll for window.showOnboarding — navigation chunk may load after engine chunk
-            var _onboardRetries = 0;
-            function _tryShowOnboarding() {
-                if (typeof window.showOnboarding === 'function') {
-                    window.showOnboarding();
-                } else if (_onboardRetries < 30) {
-                    _onboardRetries++;
-                    setTimeout(_tryShowOnboarding, 100);
-                } else {
-                    // Final fallback: directly show the overlay and initialize step 0
-                    var ov = document.getElementById('onboardOverlay');
-                    if (ov) ov.style.display = 'flex';
-                    var step0 = document.getElementById('onboardStep0');
-                    if (step0) step0.classList.add('active');
-                }
-            }
-            _tryShowOnboarding();
-        } else {
-            // Onboarding already complete — show AI agent immediately
-            var aiWrap = document.getElementById('aiFloatWrapper');
-            if (aiWrap) aiWrap.style.display = 'flex';
-            // Re-apply saved role if available
-            if (typeof window.applyRole === 'function' && sessionStorage.getItem('s4_user_role')) {
-                try { window.applyRole(); } catch(e) {}
-            }
-        }
-    } catch(e) {
-        console.error('[S4] enterPlatformAfterAuth error:', e);
-        // Even if something fails, try to show the workspace
-        var ws = document.getElementById('platformWorkspace');
-        if (ws) ws.style.display = 'block';
+    var _landing = document.getElementById('platformLanding');
+    if (_landing) _landing.style.display = 'none';
+    document.querySelector('.hero').style.display = 'none';
+    document.getElementById('platformWorkspace').style.display = 'block';
+    // AI agent stays hidden until role selector closes (applyRole in roles.js shows it)
+    var aiWrap = document.getElementById('aiFloatWrapper');
+    if (aiWrap) aiWrap.style.display = 'none';
+    sessionStorage.setItem('s4_entered', '1');
+    if (!sessionStorage.getItem('s4_onboard_done')) {
+        setTimeout(showOnboarding, 600);
     }
 }
 
@@ -538,26 +425,22 @@ function _clearS4UserData() {
     }).forEach(function(k) { localStorage.removeItem(k); });
 }
 
-// ═══ Logout / Reset Session ═══
-function logout() {
-    // Sign out of Supabase (invalidates JWT)
-    if (window._sbClient) {
-        window._sbClient.auth.signOut().catch(function(e) { console.warn('[S4 Auth] Sign out error:', e); });
-    }
+// ═══ Logout / Reset Demo Session ═══
+function resetDemoSession() {
     // Close wallet sidebar if open and clear cached content so re-open gets fresh data
     if (typeof closeWalletSidebar === 'function') closeWalletSidebar();
     var _wsBody = document.getElementById('walletSidebarBody');
     if (_wsBody) { _wsBody.innerHTML = ''; delete _wsBody.dataset.loaded; }
     // Close AI agent if open
-    var aiPanel = document.getElementById('aiFloatPanel');
-    if (aiPanel && aiPanel.classList.contains('open')) {
-        if (typeof window.toggleAiAgent === 'function') window.toggleAiAgent();
+    var aiPanel = document.getElementById('aiAgentWidget');
+    if (aiPanel && aiPanel.style.display !== 'none') {
+        if (typeof toggleAiAgent === 'function') toggleAiAgent();
     }
+    // Clear all S4 localStorage keys
     // Clear ALL S4 localStorage keys (comprehensive — covers all features)
     _clearS4UserData();
     // Reset in-memory tier state so timers don't show stale values
-    window._s4TierAllocation = 0;
-    window._s4TierLabel = '';
+    window._onboardTier = 'starter';
     // Reset module-scoped _onboardTier in onboarding.js to avoid stale tier on re-entry
     if (typeof window._resetOnboardTier === 'function') window._resetOnboardTier();
     // Clear role from sessionStorage (session-scoped)
@@ -569,17 +452,15 @@ function logout() {
     // Clear authentication so user must re-authenticate
     sessionStorage.removeItem('s4_authenticated');
     sessionStorage.removeItem('s4_auth_method');
-    sessionStorage.removeItem('s4_auth_token');
-    sessionStorage.removeItem('s4_refresh_token');
     // Clear onboarding so full flow re-triggers on next "Enter Platform"
     sessionStorage.removeItem('s4_onboard_done');
     // Reset in-memory state
+    _demoSession = null; window._demoSession = null;
     stats = {anchored:0, verified:0, types:new Set(), slsFees:0};
     window._s4Stats = stats; // Keep window ref in sync so metrics.js reads fresh stats
     sessionRecords = [];
     if (typeof s4Vault !== 'undefined') s4Vault = [];
     if (typeof s4ActionItems !== 'undefined') s4ActionItems = [];
-    // Clear role state (shared via window across chunks)
     window._currentRole = ''; window._currentTitle = ''; window._customVisibleTabs = null;
     // Return to landing page WITHOUT reload (no popup)
     var workspace = document.getElementById('platformWorkspace');
@@ -610,188 +491,39 @@ function logout() {
 
 // Initialize SLS balance display on page load
 document.addEventListener('DOMContentLoaded', function() {
-    _updateSlsBalance();
+    _updateDemoSlsBalance();
     // Reduced from 3s to 15s to prevent DOM flicker on rapid anchoring
-    setInterval(_updateSlsBalance, 15000);
+    setInterval(_updateDemoSlsBalance, 15000);
 });
 
 // ═══════════════════════════════════════════════════════════════════
-//  S4 SUPABASE STATE SYNC ENGINE — Persist ALL localStorage to Supabase
+//  DEMO APP — No Supabase sync. All data is browser-local only.
+//  Demo data lives in localStorage for the current browser session.
+//  Nothing is sent to the cloud. This is intentional.
 // ═══════════════════════════════════════════════════════════════════
-(function() {
-    'use strict';
 
-    // Session ID — unique per browser, persists across reloads
-    var SID = localStorage.getItem('s4_session_id');
-    if (!SID) {
-        SID = 'sess_' + (crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), function(b){ return b.toString(16).padStart(2,'0'); }).join(''));
-        localStorage.setItem('s4_session_id', SID);
-    }
-
-    // Keys to persist to Supabase (all meaningful state, no ephemeral UI)
-    var PERSIST_KEYS = [
-        's4_anchored_records', 's4_stats', 's4ActionItems', 's4NotifHistory',
-        's4_activity', 's4_anchor_chain', 's4_automation_rules', 's4_classification',
-        's4_crosslinks', 's4_custom_programs', 's4_custom_theme', 's4_dao_proposals',
-        's4_doc_notifications', 's4_doc_versions', 's4_evidence', 's4_favorites',
-        's4_notification_prefs', 's4_poam', 's4_readiness_trends', 's4_saved_analyses',
-        's4_sched_reports', 's4_selected_tier', 's4_stakes', 's4_submission_history',
-        's4_subscription', 's4_sync_log', 's4_templates', 's4_tenant', 's4_tenants',
-        's4_tour_completed', 's4_user_role', 's4_warranties', 's4_webhooks',
-        's4-theme', 's4_layout', 's4_language', 's4_getting_started_dismissed',
-        's4Vault', 's4Vault_admin', 's4Vault_auditor', 's4Vault_viewer',
-        's4_tool_card_order', 's4_offline_queue', 's4_offline_queue_enc', 's4_offline_last_sync'
-    ];
-
-    // Debounced sync queue
-    var _syncQueue = {};
-    var _syncTimer = null;
-    var _syncing = false;
-
-    function _shouldPersist(key) {
-        return PERSIST_KEYS.indexOf(key) >= 0 || key.startsWith('s4_') || key.startsWith('s4V') || key.startsWith('s4A') || key.startsWith('s4N');
-    }
-
-    function _flushSync() {
-        if (_syncing) return;
-        var entries = [];
-        var keys = Object.keys(_syncQueue);
-        if (keys.length === 0) return;
-        _syncing = true;
-        keys.forEach(function(key) {
-            entries.push({ key: key, value: _syncQueue[key] });
-        });
-        _syncQueue = {};
-        fetch('/api/state/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Session-ID': SID },
-            body: JSON.stringify({ session_id: SID, entries: entries })
-        }).then(function(r) { return r.json(); }).then(function(data) {
-            console.log('[S4 Sync] Saved ' + (data.saved || 0) + '/' + entries.length + ' state entries to Supabase');
-        }).catch(function(e) {
-            console.warn('[S4 Sync] Save failed (data safe in localStorage):', e.message);
-        }).finally(function() {
-            _syncing = false;
-            // If more items queued during sync, flush again
-            if (Object.keys(_syncQueue).length > 0) {
-                setTimeout(_flushSync, 500);
-            }
-        });
-    }
-
-    // Wrap localStorage.setItem to also queue Supabase sync
-    var _origSetItem = localStorage.setItem.bind(localStorage);
-    localStorage.setItem = function(key, value) {
-        _origSetItem(key, value);
-        if (_shouldPersist(key)) {
-            _syncQueue[key] = value;
-            clearTimeout(_syncTimer);
-            _syncTimer = setTimeout(_flushSync, 2000); // Debounce 2s
-        }
-    };
-
-    // Hydrate localStorage from Supabase on first load
-    var _hydrated = sessionStorage.getItem('s4_state_hydrated');
-    if (!_hydrated) {
-        fetch('/api/state/load?session_id=' + encodeURIComponent(SID), {
-            headers: { 'X-Session-ID': SID }
-        }).then(function(r) { return r.json(); }).then(function(data) {
-            if (data.state && data.count > 0) {
-                var restored = 0;
-                Object.keys(data.state).forEach(function(key) {
-                    // Only restore if localStorage doesn't already have newer data
-                    var existing = localStorage.getItem(key);
-                    if (!existing || existing === 'null' || existing === '[]' || existing === '{}') {
-                        _origSetItem(key, data.state[key]);
-                        restored++;
-                    }
-                });
-                console.log('[S4 Sync] Restored ' + restored + '/' + data.count + ' state entries from Supabase');
-                // Restore custom programs into PROGS + dropdowns
-                _restoreCustomPrograms();
-                // Refresh stats display
-                if (typeof loadStats === 'function') loadStats();
-                if (typeof updateStats === 'function') updateStats();
-                if (typeof updateTxLog === 'function') updateTxLog();
-            }
-            sessionStorage.setItem('s4_state_hydrated', '1');
-        }).catch(function(e) {
-            console.warn('[S4 Sync] Hydration skipped:', e.message);
-            sessionStorage.setItem('s4_state_hydrated', '1');
-        });
-    }
-
-    // Force sync on page unload (beacon API for reliability)
-    window.addEventListener('beforeunload', function() {
-        var entries = [];
-        // Collect explicit persist keys + any dynamic s4Vault_* keys
-        var allKeys = PERSIST_KEYS.slice();
-        Object.keys(localStorage).forEach(function(k) {
-            if (k.startsWith('s4Vault') && allKeys.indexOf(k) < 0) allKeys.push(k);
-        });
-        allKeys.forEach(function(key) {
-            var val = localStorage.getItem(key);
-            if (val && val !== 'null') {
-                entries.push({ key: key, value: val });
-            }
-        });
-        if (entries.length > 0) {
-            navigator.sendBeacon('/api/state/save', JSON.stringify({
-                session_id: SID,
-                entries: entries
-            }));
-        }
-    });
-
-    // Expose for manual sync
-    window.s4ForceSync = function() {
-        var entries = [];
-        PERSIST_KEYS.forEach(function(key) {
-            var val = localStorage.getItem(key);
-            if (val && val !== 'null') entries.push({ key: key, value: val });
-        });
-        _syncQueue = {};
-        entries.forEach(function(e) { _syncQueue[e.key] = e.value; });
-        _flushSync();
-    };
-
-    console.log('[S4 Sync] Supabase state sync engine initialized (session: ' + SID + ')');
-})();
-
-// ═══════════════════════════════════════════════════════════════════
-//  CUSTOM PROGRAM PERSISTENCE — Save & Restore across sessions
-// ═══════════════════════════════════════════════════════════════════
+// ═══ CUSTOM PROGRAM PERSISTENCE (localStorage only — no cloud) ═══
 function _saveCustomPrograms() {
     try {
         var customs = [];
         if (typeof PROGS !== 'undefined') {
             Object.keys(PROGS).forEach(function(key) {
-                if (key.startsWith('custom_')) {
-                    customs.push({ key: key, data: PROGS[key] });
-                }
+                if (key.startsWith('custom_')) customs.push({ key: key, data: PROGS[key] });
             });
         }
         localStorage.setItem('s4_custom_programs', JSON.stringify(customs));
-    } catch(e) { console.warn('[S4] Custom program save failed:', e); }
+    } catch(e) {}
 }
-
 function _restoreCustomPrograms() {
     try {
         var saved = JSON.parse(localStorage.getItem('s4_custom_programs') || '[]');
         if (!saved || !saved.length) return;
         saved.forEach(function(item) {
             if (!item.key || !item.data) return;
-            // Add back to PROGS
-            if (typeof PROGS !== 'undefined' && !PROGS[item.key]) {
-                PROGS[item.key] = item.data;
-            }
-            // Add back to all program dropdowns
+            if (typeof PROGS !== 'undefined' && !PROGS[item.key]) PROGS[item.key] = item.data;
             document.querySelectorAll('select[id$="Program"], select[id$="Platform"]').forEach(function(sel) {
-                // Check if already exists
                 var exists = false;
-                for (var i = 0; i < sel.options.length; i++) {
-                    if (sel.options[i].value === item.key) { exists = true; break; }
-                }
+                for (var i = 0; i < sel.options.length; i++) { if (sel.options[i].value === item.key) { exists = true; break; } }
                 if (!exists) {
                     var opt = document.createElement('option');
                     opt.value = item.key;
@@ -801,25 +533,105 @@ function _restoreCustomPrograms() {
             });
         });
         if (saved.length > 0) console.log('[S4] Restored ' + saved.length + ' custom program(s)');
-    } catch(e) { console.warn('[S4] Custom program restore failed:', e); }
+    } catch(e) {}
 }
-
-// Restore custom programs on DOM ready
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(_restoreCustomPrograms, 1500); // After dropdowns are populated
-});
+document.addEventListener('DOMContentLoaded', function() { setTimeout(_restoreCustomPrograms, 1500); });
 
 // ── localStorage cross-page record sync ──
 const S4_STORAGE_KEY = 's4_anchored_records';
-const S4_STATS_KEY = 's4_stats';
+const S4_STATS_KEY = 's4_demo_stats';
 function getLocalRecords() { try { return JSON.parse(localStorage.getItem(S4_STORAGE_KEY) || '[]'); } catch(e) { return []; } }
 function saveLocalRecord(rec) { const records = getLocalRecords(); records.push(rec); localStorage.setItem(S4_STORAGE_KEY, JSON.stringify(records)); }
 function saveStats() { localStorage.setItem(S4_STATS_KEY, JSON.stringify({anchored:stats.anchored,verified:stats.verified,types:[...stats.types],slsFees:stats.slsFees})); }
 
-// Calendar render on load
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() { if (typeof renderActionCalendar === 'function') renderActionCalendar(); }, 2000);
+// ═══ Pre-loaded Demo Data for All ILS Tools ═══
+function preloadAllILSDemoData() {
+    // Pre-load Gap Analysis with DDG-51 program
+    var progSel = document.getElementById('ilsProgram');
+    if (progSel && progSel.value === '') {
+        progSel.value = 'ddg51';
+        if (typeof onILSProgramChange === 'function') onILSProgramChange();
+    }
+    
+    // Pre-load DMSMS with a program
+    var dmsmsProg = document.getElementById('dmsmsProgram');
+    if (dmsmsProg && dmsmsProg.options.length > 1) {
+        dmsmsProg.selectedIndex = 1;
+        if (typeof loadDMSMSData === 'function') loadDMSMSData();
+    }
+    
+    // Pre-load Readiness
+    var readProg = document.getElementById('readinessProgram');
+    if (readProg && readProg.options.length > 1) {
+        readProg.selectedIndex = 1;
+        if (typeof loadReadinessData === 'function') loadReadinessData();
+    }
+    
+    // Pre-load Lifecycle Cost
+    var lcProg = document.getElementById('lifecycleProgram');
+    if (lcProg && lcProg.options.length > 1) {
+        lcProg.selectedIndex = 1;
+        if (typeof calcLifecycle === 'function') calcLifecycle();
+    }
+    
+    // Pre-load Compliance
+    var compProg = document.getElementById('complianceProgram');
+    if (compProg && compProg.options.length > 1) {
+        compProg.selectedIndex = 1;
+        if (typeof calcCompliance === 'function') calcCompliance();
+    }
+    
+    // Pre-load Risk Engine
+    var riskProg = document.getElementById('riskProgram');
+    if (riskProg && riskProg.options.length > 1) {
+        riskProg.selectedIndex = 1;
+        if (typeof loadRiskData === 'function') loadRiskData();
+    }
+    
+    // Pre-load Predictive Maintenance
+    var pdmProg = document.getElementById('pdmPlatform');
+    if (pdmProg && pdmProg.options.length > 1) {
+        pdmProg.selectedIndex = 1;
+        if (typeof loadPredictiveData === 'function') loadPredictiveData();
+    }
+    
+    // Seed Audit Vault with sample records if empty
+    if (typeof s4Vault !== 'undefined' && s4Vault.length === 0 && typeof addToVault === 'function') {
+        var sampleVault = [
+            {hash:'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',txHash:'TX8A3F29C1D4E507B612F84A9D03C71E562B8F6AD09E147C3850B2D6A7F91E043C',type:'DD1149',label:'DD Form 1149 (Requisition)',branch:'USN',icon:'fa-file-alt',content:'NAVSEA PMS 400D — DDG-51 Flight III spare parts requisition…',encrypted:false,timestamp:new Date(Date.now()-86400000*3).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',txHash:'TX7B4E38D2C5F608A723G95B0E14D82F673C9G7BE10F258D4961C3E7B8G02F154D',type:'DD250',label:'DD Form 250 (MIRR)',branch:'USN',icon:'fa-clipboard-check',content:'Material Inspection & Receiving Report — LCS-19 hull components…',encrypted:true,timestamp:new Date(Date.now()-86400000*2).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',txHash:'TX6C5F47E3D6G719B834H06C1F25E93G784D0H8CF21G369E5072D4F8C9H13G265E',type:'USN_SUPPLY_RECEIPT',label:'Supply Receipt',branch:'USN',icon:'fa-box-open',content:'CVN-78 AIMD supply receipt — APU turbine blade set…',encrypted:false,timestamp:new Date(Date.now()-86400000*1).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5',txHash:'TX5D6G56F4E7H820C945I17D2G36F04H895E1I9DG32H470F6183E5G9D0I24H376F',type:'CONTAINER_MANIFEST',label:'Container Manifest',branch:'JOINT',icon:'fa-ship',content:'Joint Logistics Over-the-Shore container manifest — USNS Watkins…',encrypted:false,timestamp:new Date(Date.now()-86400000*0.5).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'}
+        ];
+        sampleVault.forEach(function(r) { addToVault(r); });
+    }
+
+    // Pre-load Submissions & PTD with sample submission
+    var subBranch = document.getElementById('subBranch');
+    if (subBranch) subBranch.value = 'USN';
+    var subProg = document.getElementById('subProgram');
+    if (subProg && subProg.options.length > 1) {
+        subProg.selectedIndex = 1;
+        if (typeof onSubProgramChange === 'function') onSubProgramChange();
+    }
+    
+    // Pre-load the Anchor tab with a sample record type and text
+    var recInput = document.getElementById('recordInput');
+    if (recInput && !recInput.value) {
+        recInput.value = 'Supply Receipt\\nShip: USS Gerald R. Ford (CVN-78)\\nDate: ' + new Date().toISOString().split('T')[0] + '\\nDepartment: AIMD (Aircraft Intermediate Maintenance Department)\\nItem: F414-GE-400 Engine Hot Section Module\\nNSN: 2840-01-567-8901\\nQuantity: 2 EA\\nCondition: RFI (Ready for Issue)\\nSource: DLA Distribution Norfolk\\nDocument Number: N00189-6026-0147\\nReceipt Inspector: AT1 Johnson\\nVerified By: LCDR Torres, Supply Officer';
+        recInput.dispatchEvent(new Event('input'));
+    }
+
+    // Ensure dropdowns populated (Round 9 safety)
     if (typeof populateAllDropdowns === 'function') populateAllDropdowns();
+    console.log('[S4] Pre-loaded demo data into all ILS tools');
+}
+
+// Auto-run after page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(preloadAllILSDemoData, 3000);
+    // Force calendar render after preload (Round 9 safety)
+    setTimeout(function() { if (typeof renderActionCalendar === 'function') renderActionCalendar(); }, 3500);
 });
 
 function loadStats() {
@@ -846,7 +658,7 @@ function loadStats() {
     updateStats();
     updateTxLog();
     // Sync balance display with loaded stats
-    _updateSlsBalance();
+    _updateDemoSlsBalance();
 }
 
 async function sha256(text) {
@@ -884,7 +696,7 @@ function renderTypeGrid() {
         .filter(([k,v]) => !search || v.label.toLowerCase().includes(search) || k.toLowerCase().includes(search));
     document.getElementById('branchTypeCount').textContent = '(' + types.length + ' types)';
     grid.innerHTML = types.map(([key,t]) =>
-        '<div class="record-type-btn' + (key===selectedType?' selected':'') + '" data-type="'+key+'" onclick="selectType(\''+key+'\',this)" title="'+t.label+' \u2014 '+t.system+'"><span class="icon"><i class="fas '+t.icon+'" style="color:'+t.color+'"></i></span>'+t.label+'</div>'
+        '<div class="record-type-btn' + (key===selectedType?' selected':'') + '" data-type="'+key+'" onclick="selectType(\''+key+'\',this)" title="'+t.label+' \u2014 '+t.system+' \u2014 '+(_getAnchorPolicy(key)==='auto'?'Auto-anchored on finalize':_getAnchorPolicy(key)==='prompt'?'Anchor recommended':'Manual anchor')+'"><span class="icon"><i class="fas '+t.icon+'" style="color:'+t.color+'"></i></span>'+t.label+_getAnchorPolicyBadgeHTML(key)+'</div>'
     ).join('');
 }
 
@@ -903,6 +715,33 @@ function selectType(key, el) {
     }
     // Show classification banner
     showClassificationBanner(key);
+    // Show anchor policy indicator next to the anchor button
+    _updateAnchorBtnPolicy(key);
+}
+
+function _updateAnchorBtnPolicy(recordType) {
+    var policy = _getAnchorPolicy(recordType);
+    var meta = ANCHOR_POLICY_META[policy];
+    var indicator = document.getElementById('anchorPolicyIndicator');
+    if (!indicator) {
+        // Create indicator next to anchor button
+        var btn = document.getElementById('anchorBtn');
+        if (btn && btn.parentNode) {
+            var el = document.createElement('div');
+            el.id = 'anchorPolicyIndicator';
+            el.className = 's4-anchor-policy-indicator';
+            btn.parentNode.insertBefore(el, btn.nextSibling);
+            indicator = el;
+        }
+    }
+    if (indicator && meta) {
+        indicator.innerHTML = window._s4Safe(
+            '<i class="fas ' + meta.icon + '" style="color:' + meta.color + '"></i> ' +
+            '<span style="color:' + meta.color + ';font-weight:600">' + meta.label + '</span>' +
+            '<span style="color:var(--muted,#86868b)"> \u2014 ' + meta.desc + '</span>'
+        );
+        indicator.className = 's4-anchor-policy-indicator s4-anchor-policy-indicator-' + policy;
+    }
 }
 
 function generateRecordSample(key, info) {
@@ -974,11 +813,6 @@ function updateStats() {
     animateValue(document.getElementById('statVerified'), stats.verified);
     animateValue(document.getElementById('statTypes'), stats.types.size);
     animateValue(document.getElementById('statSlsFees'), stats.slsFees, 3);
-    // Show stat strip once there's any activity
-    var strip = document.getElementById('statsRow');
-    if (strip && (stats.verified > 0 || stats.anchored > 0 || stats.types.size > 0)) {
-        strip.style.display = '';
-    }
 }
 
 function showAnchorAnimation(hash, typeLabel, clfLevel) {
@@ -995,7 +829,7 @@ function showAnchorAnimation(hash, typeLabel, clfLevel) {
     document.getElementById('animFee').innerHTML = window._s4Safe('0.01 Credits &rarr; Treasury');
     overlay.style.display = 'flex';
     setTimeout(() => {
-        document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#00aaff"></i> ' + _esc(typeLabel) + ' Anchored Successfully on XRPL');
+        document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#00aaff"></i> ' + typeLabel + ' Anchored Successfully on XRPL');
         document.getElementById('animStatus').style.color = '#00aaff';
         document.getElementById('animSuccess').innerHTML = window._s4Safe('<span style="color:var(--green)">&#x2713; Immutable and verifiable on the XRP Ledger</span>');
     }, 2000);
@@ -1005,9 +839,7 @@ function hideAnchorAnimation() {
     document.getElementById('anchorOverlay').style.display = 'none';
 }
 
-// ═══ GENERIC ANCHOR-TO-LEDGER (for tools that use anchorToLedger(tool, label)) ═══
 async function anchorToLedger(toolName, label) {
-    // Gather a summary snapshot of the tool's visible content
     var panel = document.getElementById('hub-' + toolName);
     var content = label || (toolName + ' snapshot');
     if (panel) {
@@ -1015,10 +847,10 @@ async function anchorToLedger(toolName, label) {
         content = text.substring(0, 500);
     }
     var hash = await sha256(content);
-    var _anchorLabel = label || (toolName.charAt(0).toUpperCase() + toolName.slice(1));
-    showAnchorAnimation(hash, _anchorLabel, 'CUI');
+    showAnchorAnimation(hash, label || (toolName.charAt(0).toUpperCase() + toolName.slice(1)), 'CUI');
     var result = await _anchorToXRPL(hash, toolName.toUpperCase() + '_SNAPSHOT', content.substring(0, 100));
     stats.anchored++; stats.types.add(toolName.toUpperCase()); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
+    var _anchorLabel = label || (toolName.charAt(0).toUpperCase() + toolName.slice(1));
     sessionRecords.push({hash: hash, type: toolName.toUpperCase() + '_SNAPSHOT', branch: 'JOINT', timestamp: new Date().toISOString(), label: _anchorLabel, txHash: result.txHash});
     saveLocalRecord({hash: hash, record_type: toolName.toUpperCase() + '_SNAPSHOT', record_label: _anchorLabel, branch: 'JOINT', timestamp: new Date().toISOString(), timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee: 0.01, tx_hash: result.txHash, system: toolName, explorer_url: result.explorerUrl, network: result.network});
     updateTxLog();
@@ -1026,12 +858,186 @@ async function anchorToLedger(toolName, label) {
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ' + _esc(_anchorLabel) + ' Anchored Successfully on XRPL'); }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ' + _anchorLabel + ' Anchored Successfully on XRPL'); }, 2200);
     await new Promise(function(r){ setTimeout(r, 3500); });
     hideAnchorAnimation();
 }
 
 
+// ══════════════════════════════════════════════════════════════
+//  SLS Economic Flow — Account Setup
+// ══════════════════════════════════════════════════════════════
+//  Account provisioning handlers
+//    1. Set _demoMode = false  (line below)
+//    2. The demo panel, banner, and demo routing will all auto-hide
+//    3. Anchor calls will route to /api/anchor with user_email auth
+//    4. Optionally remove: #demoPanel HTML block, #demoBanner div
+// ══════════════════════════════════════════════════════════════
+let _demoSession = null;
+window._demoSession = null;
+let _demoMode = true;  // SET TO false WHEN STRIPE IS LIVE
+
+// Allow cross-chunk code (onboarding.js) to reset the module-scoped _demoSession
+window._resetDemoSession = function() {
+    _demoSession = null;
+    window._demoSession = null;
+};
+
+// Bridge: let cross-chunk code (onboarding.js) update the MODULE-scoped _demoSession allocation
+window._setDemoAllocation = function(alloc, label) {
+    if (_demoSession && _demoSession.subscription) {
+        _demoSession.subscription.sls_allocation = alloc;
+        _demoSession.subscription.label = label;
+    }
+    if (window._demoSession && window._demoSession.subscription) {
+        window._demoSession.subscription.sls_allocation = alloc;
+        window._demoSession.subscription.label = label;
+    }
+    _updateDemoSlsBalance();
+};
+
+async function _initDemoSession() {
+    if (_demoSession) return _demoSession;
+    const panel = document.getElementById('demoPanel');
+    const spinner = document.getElementById('demoProvSpinner');
+    // Panel visibility is controlled by wallet tab listener — don't force-show here
+    if (spinner) spinner.style.display = 'block';
+    try {
+        // NETWORK_DEPENDENT: Provision requires server — offline interceptor returns mock session
+        const resp = await fetch('/api/demo/provision', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name: 'Demo User', plan: (window._onboardTier || 'starter')})
+        });
+        if (resp.ok) {
+            const data = await resp.json();
+            _demoSession = data;
+            window._demoSession = data;
+            console.log('Demo session:', data.session_id);
+            const banner = document.getElementById('demoBanner');
+            if (banner) {
+                banner.style.display = 'none';
+                banner.innerHTML = '<i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong style="color:#fff;">S4 Ledger</strong> &mdash; '
+                    + (data.subscription?.label || 'Starter') + ' plan &bull; '
+                    + 'Per-anchor fee: 0.01 Credits (real on-chain) &bull; '
+                    + '<span style="color:#00aaff">rYourOrg...Prod</span> '
+                    + '&bull; <span style="text-decoration:underline;cursor:pointer">&#9660; View Details</span>';
+            }
+            _animateDemoSteps(data);
+            return data;
+        } else {
+            if (spinner) spinner.style.display = 'none';
+            _showDemoOffline();
+        }
+    } catch(e) {
+        console.warn('Demo provision failed:', e);
+        if (spinner) spinner.style.display = 'none';
+        _showDemoOffline();
+    }
+    return null;
+}
+
+function _showDemoOffline() {
+    // Ensure allocation is set even in offline mode
+    if (!_demoSession) _demoSession = {};
+    window._demoSession = _demoSession;
+    var _savedTier = localStorage.getItem('s4_selected_tier') || (window._onboardTier || 'starter');
+    var _tierLookup = window._onboardTiers || {pilot:{label:'Pilot',sls:100},starter:{label:'Starter',sls:25000},professional:{label:'Professional',sls:100000},enterprise:{label:'Enterprise',sls:500000}};
+    var _tierData = _tierLookup[_savedTier] || _tierLookup['starter'];
+    if (!_demoSession.subscription) _demoSession.subscription = {label:_tierData.label,sls_allocation:_tierData.sls};
+    window._demoSession = _demoSession;
+    document.getElementById('demoBanner').style.display = 'none';
+    document.getElementById('demoBanner').innerHTML = window._s4Safe('<i class="fas fa-shield-halved" style="color:#00aaff;margin-right:6px;"></i> <strong style="color:#fff;">S4 Ledger</strong> &mdash; Offline mode. Anchors are queued locally and will sync when connected.');
+    var panel = document.getElementById('demoPanel');
+    // Panel visibility controlled by wallet tab — don't force-show
+    // Show hypothetical balances
+    var xrpEl = document.getElementById('demoXrp');
+    var slsEl = document.getElementById('demoSls');
+    var stepsEl = document.getElementById('demoSteps');
+    if (xrpEl) xrpEl.textContent = '12.000000';
+    if (slsEl) slsEl.textContent = Math.round((_tierData.sls - (stats.slsFees || 0)) * 100) / 100;
+    var _offlineRemaining = Math.round((_tierData.sls - (stats.slsFees || 0)) * 100) / 100;
+    var sessionInfo = document.getElementById('demoSessionInfo');
+    if (sessionInfo) {
+        sessionInfo.style.display = 'block';
+        sessionInfo.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.78rem">'
+            + '<div><span style="color:var(--steel)">Session:</span> <span id="demoSessionId" style="color:#fff">demo_offline_' + Date.now().toString(36) + '</span></div>'
+            + '<div><span style="color:var(--steel)">Wallet:</span> <span id="demoWalletAddr" style="color:#c9a84c;font-family:monospace;font-size:0.72rem">rDemo...Offline</span></div>'
+            + '<div><span style="color:var(--steel)">XRP Balance:</span> <span style="color:var(--green)">12.000000 XRP</span></div>'
+            + '<div><span style="color:var(--steel)">Credits Balance:</span> <span id="demoSlsBalance" style="color:' + (_offlineRemaining < 100 ? '#ff3333' : 'var(--gold)') + '">' + _offlineRemaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' Credits</span></div>'
+            + '</div>';
+    }
+    // Set a local demo session so AI agent works
+    _demoSession = { session_id: 'demo_offline_' + Date.now(), xrp_balance: 12, sls_balance: _tierData.sls, subscription: {label: _tierData.label, sls_allocation: _tierData.sls} };
+    window._demoSession = _demoSession; // Keep window ref in sync with module-scoped var
+    // Immediately update all balance displays with the correct tier
+    _updateDemoSlsBalance();
+}
+
+function _animateDemoSteps(data) {
+    const spinner = document.getElementById('demoProvSpinner');
+    if (spinner) spinner.style.display = 'none';
+    setTimeout(() => {
+        const s1 = document.getElementById('demoStep1');
+        const s1s = document.getElementById('demoStep1Status');
+        if (s1) { s1.style.borderColor = 'rgba(0,170,255,0.6)'; s1.style.background = 'rgba(0,170,255,0.15)'; }
+        if (s1s) { s1s.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> Provisioned'); s1s.style.color = '#00aaff'; }
+    }, 300);
+    setTimeout(() => {
+        const s2 = document.getElementById('demoStep2');
+        const s2s = document.getElementById('demoStep2Status');
+        if (s2) { s2.style.borderColor = 'rgba(0,170,255,0.6)'; s2.style.background = 'rgba(0,170,255,0.15)'; }
+        if (s2s) { s2s.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> 12 XRP funded'); s2s.style.color = '#00aaff'; }
+    }, 800);
+    setTimeout(() => {
+        const s3 = document.getElementById('demoStep3');
+        const s3s = document.getElementById('demoStep3Status');
+        if (s3) { s3.style.borderColor = 'rgba(201,168,76,0.6)'; s3.style.background = 'rgba(201,168,76,0.12)'; }
+        const alloc = data.subscription?.sls_allocation?.toLocaleString() || ((window._onboardTiers && window._onboardTier && window._onboardTiers[window._onboardTier]) ? window._onboardTiers[window._onboardTier].sls.toLocaleString() : '25,000');
+        if (s3s) { s3s.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> ' + alloc + ' Credits'); s3s.style.color = '#c9a84c'; }
+    }, 1300);
+    setTimeout(() => {
+        const s4 = document.getElementById('demoStep4');
+        const s4s = document.getElementById('demoStep4Status');
+        if (s4) { s4.style.borderColor = 'rgba(0,170,255,0.6)'; s4.style.background = 'rgba(0,170,255,0.1)'; }
+        if (s4s) { s4s.innerHTML = window._s4Safe('<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px;"></i> Ready — anchor to trigger'); s4s.style.color = '#00aaff'; }
+    }, 1800);
+    setTimeout(() => {
+        const info = document.getElementById('demoSessionInfo');
+        if (info) info.style.display = 'block';
+        const sid = document.getElementById('demoSessionId');
+        const wal = document.getElementById('demoWalletAddr');
+        const plan = document.getElementById('demoPlanLabel');
+        const bal = document.getElementById('demoSlsBalance');
+        if (sid) sid.textContent = (data.session_id || '').substring(0, 12) + '...';
+        if (wal) wal.textContent = 'rYourOrg...Prod';
+        if (plan) plan.textContent = data.subscription?.label || 'Starter';
+        // Show balance accounting for any previously accumulated fees
+        var _initAlloc = data.subscription?.sls_allocation || ((window._onboardTiers && window._onboardTier && window._onboardTiers[window._onboardTier]) ? window._onboardTiers[window._onboardTier].sls : 25000);
+        var _initRemaining = Math.round((_initAlloc - (stats.slsFees || 0)) * 100) / 100;
+        if (bal) { bal.textContent = _initRemaining.toLocaleString(undefined,{maximumFractionDigits:2}) + ' Credits'; bal.style.color = _initRemaining < 100 ? '#ff3333' : '#c9a84c'; }
+        // Initialize status bar
+        _updateDemoSlsBalance();
+    }, 2200);
+}
+
+async function _checkDemoStatus() {
+    if (!_demoSession) { _initDemoSession(); return; }
+    try {
+        // NETWORK_DEPENDENT: Status check — gracefully fails offline
+        const resp = await fetch('/api/demo/status?session_id=' + encodeURIComponent(_demoSession.session_id));
+        if (resp.ok) {
+            const data = await resp.json();
+            const bal = document.getElementById('demoSlsBalance');
+            if (bal) bal.textContent = (data.sls_balance?.toLocaleString() || '') + ' Credits';
+            const s4s = document.getElementById('demoStep4Status');
+            const anchors = data.anchors_used || 0;
+            if (s4s && anchors > 0) {
+                s4s.innerHTML = window._s4Safe('<i class="fas fa-check" style="color:#00aaff;margin-right:3px;"></i> ' + anchors + ' anchor' + (anchors > 1 ? 's' : '') + ' (' + (anchors * 0.01).toFixed(2) + ' Credits)');
+            }
+        }
+    } catch(e) { console.warn('Demo status check failed:', e); }
+}
 async function _anchorToXRPL(hash, record_type, content_preview) {
     let txHash = null;
     let network = 'Pending';
@@ -1040,20 +1046,46 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
     let feeError = null;
     let anchorError = null;
     try {
-        // NETWORK_DEPENDENT: Production anchor — interceptor queues offline
-        var _userEmail = localStorage.getItem('s4_user_email') || '';
-        const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview, user_email: _userEmail})});
-        if (resp.ok) {
-            const result = await resp.json();
-            if (result.record) {
-                txHash = result.record.tx_hash || null;
-                network = result.record.network || network;
-                explorerUrl = result.record.explorer_url || null;
+        if (_demoMode) {
+            // Demo mode: always send demo@s4ledger.com for SLS fee deduction via ops wallet
+            const resp = await fetch('/api/anchor', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    hash, record_type, content_preview,
+                    session_id: _demoSession ? _demoSession.session_id : 'demo',
+                    user_email: 'demo@s4ledger.com'
+                })
+            });
+            if (resp.ok) {
+                const result = await resp.json();
+                if (result.record) {
+                    txHash = result.record.tx_hash || null;
+                    network = result.record.network || network;
+                    explorerUrl = result.record.explorer_url || null;
+                }
+                if (result.fee_transfer && result.fee_transfer.tx_hash) feeTxHash = result.fee_transfer.tx_hash;
+                if (result.fee_error) feeError = result.fee_error;
+            } else {
+                const errBody = await resp.json().catch(() => ({}));
+                anchorError = errBody.error || ('Anchor API returned ' + resp.status);
+                console.error('Anchor API error:', resp.status, anchorError);
             }
-            if (result.fee_transfer && result.fee_transfer.tx_hash) feeTxHash = result.fee_transfer.tx_hash;
-            if (result.fee_error) feeError = result.fee_error;
         } else {
-            anchorError = 'Anchor API returned ' + resp.status;
+            // NETWORK_DEPENDENT: Production anchor — interceptor queues offline
+            const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview})});
+            if (resp.ok) {
+                const result = await resp.json();
+                if (result.record) {
+                    txHash = result.record.tx_hash || null;
+                    network = result.record.network || network;
+                    explorerUrl = result.record.explorer_url || null;
+                }
+                if (result.fee_transfer && result.fee_transfer.tx_hash) feeTxHash = result.fee_transfer.tx_hash;
+                if (result.fee_error) feeError = result.fee_error;
+            } else {
+                anchorError = 'Anchor API returned ' + resp.status;
+            }
         }
     } catch(e) {
         console.error('Anchor fetch failed:', e);
@@ -1063,18 +1095,158 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
     if (!txHash) {
         txHash = 'LOCAL_' + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
         network = anchorError ? 'FAILED' : 'Pending';
-        if (anchorError && typeof _showNotif === 'function') {
+        // Only show network error notification if NOT in demo mode (suppress false-positive API failures)
+        if (anchorError && !_demoMode && typeof _showNotif === 'function') {
             _showNotif('Anchor may not have reached XRPL: ' + anchorError, 'warning');
         }
     }
     if (feeError) {
         console.warn('SLS fee deduction failed:', feeError);
-        if (typeof _showNotif === 'function') _showNotif('Credit fee issue: ' + feeError, 'warning');
+        // Suppress fee error in demo mode — expected when API is not live
+        if (!_demoMode && typeof _showNotif === 'function') _showNotif('Credit fee issue: ' + feeError, 'warning');
     } else if (feeTxHash) {
-        if (typeof _showNotif === 'function') _showNotif('0.01 Credit fee paid \u2714 TX: ' + feeTxHash.substring(0,16) + '\u2026', 'success');
+        if (typeof _showNotif === 'function') _showNotif('0.01 Credits deducted \u2714', 'success');
     }
+    // Auto-update SLS balance display after every anchor
+    if (typeof _updateDemoSlsBalance === 'function') try { _updateDemoSlsBalance(); } catch(e) {}
     return { txHash, network, explorerUrl, feeTxHash, feeError };
 }
+
+// ══════════════════════════════════════════════════════════════
+//  AUTO-ANCHOR & PROMPT ENGINE
+//  Tier 1 (auto): anchor silently on finalize, show toast
+//  Tier 2 (prompt): show inline banner after save
+//  Tier 3 (manual): existing behavior — user clicks Anchor button
+// ══════════════════════════════════════════════════════════════
+
+/**
+ * Called after anchorRecord() completes its save. Checks the policy for
+ * the record type. For 'auto', the anchor already happened (anchorRecord
+ * always anchors). For 'prompt', if user came through manual click this
+ * is a no-op. The policy mainly affects the type picker UI and the
+ * _showAnchorPrompt flow for tool-generated records.
+ */
+function _getAnchorPolicyBadgeHTML(recordType) {
+    var policy = _getAnchorPolicy(recordType);
+    var meta = ANCHOR_POLICY_META[policy];
+    if (!meta) return '';
+    return '<span class="anchor-policy-badge anchor-policy-' + policy + '" title="' + meta.desc + '"><i class="fas ' + meta.icon + '"></i> ' + meta.label + '</span>';
+}
+window._getAnchorPolicyBadgeHTML = _getAnchorPolicyBadgeHTML;
+
+/**
+ * Show a compact inline prompt banner for Tier 2 records.
+ * Returns a Promise that resolves true if user clicks Anchor, false if Skip.
+ */
+function _showAnchorPrompt(recordType, hash, content) {
+    return new Promise(function(resolve) {
+        var typeInfo = RECORD_TYPES[recordType] || {label: recordType};
+        var existing = document.getElementById('s4AnchorPrompt');
+        if (existing) existing.remove();
+        var div = document.createElement('div');
+        div.id = 's4AnchorPrompt';
+        div.className = 's4-anchor-prompt';
+        div.innerHTML = window._s4Safe(
+            '<div class="s4-anchor-prompt-inner">' +
+            '<i class="fas fa-bell" style="color:#ff9933;font-size:1rem;flex-shrink:0"></i>' +
+            '<div class="s4-anchor-prompt-text">' +
+            '<strong>Anchor recommended</strong> — ' + typeInfo.label + ' records benefit from immutable XRPL verification.' +
+            '</div>' +
+            '<button id="s4AnchorPromptYes" class="s4-anchor-prompt-btn s4-anchor-prompt-yes"><i class="fas fa-anchor"></i> Anchor to Ledger</button>' +
+            '<button id="s4AnchorPromptSkip" class="s4-anchor-prompt-btn s4-anchor-prompt-skip">Skip</button>' +
+            '<button id="s4AnchorPromptClose" class="s4-anchor-prompt-close"><i class="fas fa-times"></i></button>' +
+            '</div>'
+        );
+        document.body.appendChild(div);
+        requestAnimationFrame(function() { div.classList.add('show'); });
+        function cleanup(result) {
+            div.classList.remove('show');
+            setTimeout(function() { if (div.parentNode) div.remove(); }, 300);
+            resolve(result);
+        }
+        document.getElementById('s4AnchorPromptYes').onclick = function() { cleanup(true); };
+        document.getElementById('s4AnchorPromptSkip').onclick = function() { cleanup(false); };
+        document.getElementById('s4AnchorPromptClose').onclick = function() { cleanup(false); };
+        // Auto-dismiss after 15 seconds
+        setTimeout(function() { if (div.parentNode) cleanup(false); }, 15000);
+    });
+}
+window._showAnchorPrompt = _showAnchorPrompt;
+
+/**
+ * Show a brief auto-anchor toast notification.
+ */
+function _showAutoAnchorToast(typeLabel, txHash) {
+    var existing = document.getElementById('s4AutoAnchorToast');
+    if (existing) existing.remove();
+    var div = document.createElement('div');
+    div.id = 's4AutoAnchorToast';
+    div.className = 's4-auto-anchor-toast';
+    var shortTx = txHash ? (txHash.substring(0, 12) + '...') : '';
+    div.innerHTML = window._s4Safe(
+        '<i class="fas fa-shield-alt" style="color:#00cc88"></i> ' +
+        '<span><strong>Auto-anchored:</strong> ' + typeLabel + ' &rarr; XRPL</span>' +
+        (shortTx ? ' <span style="color:var(--muted);font-size:0.72rem">' + shortTx + '</span>' : '') +
+        ' <i class="fas fa-check-circle" style="color:#00cc88"></i>'
+    );
+    document.body.appendChild(div);
+    requestAnimationFrame(function() { div.classList.add('show'); });
+    setTimeout(function() {
+        div.classList.remove('show');
+        setTimeout(function() { if (div.parentNode) div.remove(); }, 400);
+    }, 4000);
+}
+window._showAutoAnchorToast = _showAutoAnchorToast;
+
+/**
+ * Anchor Policy Settings Panel — renders org-level override controls.
+ * Called from the settings/preferences area.
+ */
+function renderAnchorPolicySettings() {
+    var overrides = {};
+    try { overrides = JSON.parse(localStorage.getItem('s4_anchor_policy_overrides') || '{}'); } catch(e) {}
+    var html = '<div class="s4-anchor-policy-settings">';
+    html += '<div style="font-size:0.92rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:12px;display:flex;align-items:center;gap:8px"><i class="fas fa-shield-alt" style="color:#00aaff"></i>Anchor Policy Settings</div>';
+    html += '<div style="color:var(--muted,#86868b);font-size:0.78rem;margin-bottom:16px">Configure which record types are automatically anchored, prompted, or left manual. Changes apply to your organization.</div>';
+    // Summary bar
+    var autoCount = 0, promptCount = 0, manualCount = 0;
+    Object.keys(RECORD_TYPES).forEach(function(k) {
+        var p = _getAnchorPolicy(k);
+        if (p === 'auto') autoCount++;
+        else if (p === 'prompt') promptCount++;
+        else manualCount++;
+    });
+    html += '<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">';
+    html += '<div style="padding:6px 14px;border-radius:8px;background:rgba(0,204,136,0.1);border:1px solid rgba(0,204,136,0.2);font-size:0.78rem;font-weight:600;color:#00cc88"><i class="fas fa-shield-alt"></i> ' + autoCount + ' Auto</div>';
+    html += '<div style="padding:6px 14px;border-radius:8px;background:rgba(255,153,51,0.1);border:1px solid rgba(255,153,51,0.2);font-size:0.78rem;font-weight:600;color:#ff9933"><i class="fas fa-bell"></i> ' + promptCount + ' Prompt</div>';
+    html += '<div style="padding:6px 14px;border-radius:8px;background:rgba(134,134,139,0.1);border:1px solid rgba(134,134,139,0.2);font-size:0.78rem;font-weight:600;color:#86868b"><i class="fas fa-hand-pointer"></i> ' + manualCount + ' Manual</div>';
+    html += '</div>';
+    // Per-type controls
+    ['USN','JOINT'].forEach(function(branch) {
+        var types = Object.entries(RECORD_TYPES).filter(function(e) { return e[1].branch === branch; });
+        html += '<div style="font-size:0.8rem;font-weight:700;color:var(--text,#1d1d1f);margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">' + branch + ' Record Types</div>';
+        types.forEach(function(entry) {
+            var k = entry[0], t = entry[1];
+            var currentPolicy = _getAnchorPolicy(k);
+            var isOverridden = !!overrides[k];
+            html += '<div class="s4-policy-row">';
+            html += '<span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0"><i class="fas ' + t.icon + '" style="color:' + t.color + ';width:16px;text-align:center;flex-shrink:0"></i><span style="font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + t.label + '</span></span>';
+            html += '<select onchange="_setAnchorPolicyOverride(\'' + k + '\',this.value);renderAnchorPolicySettings()" style="font-size:0.72rem;padding:3px 6px;border-radius:6px;border:1px solid rgba(0,0,0,0.1);background:rgba(0,0,0,0.02);color:var(--text,#1d1d1f);cursor:pointer">';
+            ['auto','prompt','manual'].forEach(function(p) {
+                html += '<option value="' + p + '"' + (currentPolicy === p ? ' selected' : '') + '>' + ANCHOR_POLICY_META[p].label + '</option>';
+            });
+            html += '</select>';
+            if (isOverridden) html += '<span style="font-size:0.6rem;color:#ff9933;margin-left:4px" title="Overridden from default">*</span>';
+            html += '</div>';
+        });
+    });
+    html += '<button onclick="localStorage.removeItem(\'s4_anchor_policy_overrides\');renderAnchorPolicySettings()" style="margin-top:16px;padding:6px 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);background:rgba(0,0,0,0.02);color:var(--muted,#86868b);font-size:0.75rem;cursor:pointer"><i class="fas fa-undo"></i> Reset All to Defaults</button>';
+    html += '</div>';
+    var container = document.getElementById('anchorPolicySettingsContainer');
+    if (container) container.innerHTML = window._s4Safe(html);
+    return html;
+}
+window.renderAnchorPolicySettings = renderAnchorPolicySettings;
 
 /**
  * Anchor a record to the XRP Ledger.
@@ -1128,11 +1300,16 @@ async function anchorRecord() {
     updateStats();
     saveStats();
     if(typeof _s4RefreshCharts==='function') _s4RefreshCharts();
-    // Update SLS balance after anchor
-    // Auto-update SLS balance display
-    _updateSlsBalance();
+    // Pulse Demo Step 4 on each anchor & update SLS balance
+    var s4el = document.getElementById('demoStep4');
+    var s4s = document.getElementById('demoStep4Status');
+    if (s4el) { s4el.style.boxShadow = '0 0 20px rgba(0,170,255,0.4)'; setTimeout(function(){ s4el.style.boxShadow = 'none'; }, 2000); }
+    if (s4s) { s4s.innerHTML = window._s4Safe('<i class="fas fa-bolt" style="color:#00aaff;margin-right:3px;"></i> ' + stats.anchored + ' anchor' + (stats.anchored > 1 ? 's' : '') + ' (' + stats.slsFees.toFixed(2) + ' Credits)'); }
+    // Auto-update demo SLS balance display
+    _updateDemoSlsBalance();
     // Flash visible toast showing new balance
-    var _flAlloc = window._s4TierAllocation || parseInt(localStorage.getItem('s4_tier_allocation')) || 25000;
+    var _tFlFallback = (window._onboardTiers && window._onboardTier) ? (window._onboardTiers[window._onboardTier]?.sls || 25000) : (parseInt(localStorage.getItem('s4_tier_allocation')) || 25000);
+    var _flAlloc = _demoSession ? (_demoSession.subscription?.sls_allocation || _tFlFallback) : _tFlFallback;
     var _flRemaining = Math.round((_flAlloc - stats.slsFees) * 100) / 100;
     _flashSlsBalance(_flRemaining.toLocaleString(undefined,{maximumFractionDigits:2}), 0.01);
 
@@ -1141,8 +1318,11 @@ async function anchorRecord() {
     await new Promise(r => setTimeout(r, 400));
 
     const panel = document.getElementById('anchorResult');
+    var _anchorPolicyForType = _getAnchorPolicy(selectedType);
+    var _policyMeta = ANCHOR_POLICY_META[_anchorPolicyForType] || ANCHOR_POLICY_META.manual;
     panel.innerHTML = window._s4Safe('<div class="result-label">STATUS</div><div class="result-value" style="font-size:1rem;margin-bottom:0.8rem">\u2705 ' + typeInfo.label + ' Anchored Successfully on XRPL \u2014 Immutable and verifiable</div>'
         + '<div class="result-label">RECORD TYPE</div><div style="margin-bottom:0.5rem">' + _renderIcon(record.icon) + ' ' + typeInfo.label + ' (' + typeInfo.branch + ')</div>'
+        + '<div class="result-label">ANCHOR POLICY</div><div style="margin-bottom:0.5rem"><span class="anchor-policy-badge anchor-policy-' + _anchorPolicyForType + '" style="font-size:0.78rem;padding:3px 10px"><i class="fas ' + _policyMeta.icon + '"></i> ' + _policyMeta.label + '</span> <span style="color:var(--muted);font-size:0.78rem;margin-left:6px">' + _policyMeta.desc + '</span></div>'
         + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:8px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + '<i class="fas ' + CLF_META[clfLevel].icon + '" style="margin-right:4px"></i>' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
         + '<div class="result-label">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
         + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all;display:flex;align-items:center;gap:6px;flex-wrap:wrap">' + (explorerUrl ? '<a href="'+explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+txHash+' <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>' : '<span style="color:var(--muted)">'+txHash+'</span>') + '<button onclick="navigator.clipboard.writeText(\''+txHash+'\').then(function(){var b=this;b.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i> Copy TX Hash\';},1500);}.bind(this))" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);border-radius:6px;color:#00aaff;font-size:0.7rem;padding:2px 8px;cursor:pointer;font-weight:600;white-space:nowrap"><i class="fas fa-copy"></i> Copy TX Hash</button></div>'
@@ -1154,11 +1334,15 @@ async function anchorRecord() {
           : feeError ? '<span style="color:var(--warning)">0.01 Credits &mdash; Fee failed: ' + feeError + '</span>'
           : '0.01 Credits from your account &rarr; S4 Treasury') + '</div>');
     panel.classList.add('show');
+    // Fire auto-anchor toast for Tier 1 records
+    if (_anchorPolicyForType === 'auto') {
+        _showAutoAnchorToast(typeInfo.label, txHash);
+    }
     updateTxLog();
     btn.disabled = false;
     btn.innerHTML = window._s4Safe('<i class="fas fa-anchor"></i> Anchor to Ledger');
     // Redundant synchronous balance update AFTER animation to guarantee UI is current
-    _updateSlsBalance();
+    _updateDemoSlsBalance();
     _syncSlsBar();
     // Auto-refresh metrics after anchor (loadPerformanceMetrics is in metrics chunk)
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
@@ -1228,20 +1412,17 @@ function refreshVerifyRecents() {
             ago = diff < 60 ? diff + 's ago' : diff < 3600 ? Math.floor(diff/60) + 'm ago' : diff < 86400 ? Math.floor(diff/3600) + 'h ago' : Math.floor(diff/86400) + 'd ago';
         } catch(e) { ago = ''; }
         var hasFullContent = r.fullContent && r.fullContent.length > 0;
-        var _txH = r.txHash || '';
-        var _isLocal = _txH.indexOf('LOCAL_') === 0;
-        var _xrplBadge = '<span style="font-size:0.55rem;color:#34c759;background:rgba(52,199,89,0.1);padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700;letter-spacing:0.3px;vertical-align:middle"><i class="fas fa-check-circle"></i> XRPL</span>';
-        var _hashLine = '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.hash.substring(0,24) + '...';
-        if (_txH && !_isLocal) {
-            _hashLine += ' <a href="https://livenet.xrpl.org/transactions/' + _txH + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#00aaff;text-decoration:none;font-size:0.6rem"><i class="fas fa-external-link-alt"></i></a>';
-            _hashLine += ' <button onclick="event.stopPropagation();var t=this;navigator.clipboard.writeText(\'' + _txH + '\').then(function(){t.textContent=\'Copied\';setTimeout(function(){t.textContent=\'TX\';},1200);})" style="background:none;border:1px solid rgba(0,170,255,0.25);border-radius:3px;color:#00aaff;font-size:0.5rem;padding:0 3px;cursor:pointer;font-weight:600;vertical-align:middle" title="Copy TX Hash">TX</button>';
+        var _vrExplorer = '';
+        var _vrCopy = '';
+        if (r.txHash && !r.txHash.startsWith('LOCAL_')) {
+            _vrExplorer = '<a href="https://livenet.xrpl.org/transactions/' + r.txHash + '" target="_blank" rel="noopener" style="color:#00aaff;font-size:0.62rem;font-weight:600;text-decoration:none;white-space:nowrap;margin-left:4px"><i class="fas fa-external-link-alt"></i> XRPL</a>';
+            _vrCopy = '<button onclick="event.stopPropagation();navigator.clipboard.writeText(\'' + r.txHash + '\').then(function(){var b=this;this.textContent=\'Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i>\';},1200);}.bind(this))" style="background:none;border:1px solid rgba(0,170,255,0.2);border-radius:4px;color:#00aaff;font-size:0.58rem;padding:1px 4px;cursor:pointer;margin-left:2px" title="Copy TX Hash"><i class="fas fa-copy"></i></button>';
         }
-        _hashLine += '</div>';
         return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:4px;transition:all 0.2s;background:rgba(255,255,255,0.02);">'
             + '<span style="color:var(--accent);font-size:0.8rem;width:20px;text-align:center;display:inline-block">' + _renderIcon(r.icon) + '</span>'
             + '<div style="flex:1;min-width:0;cursor:pointer" onclick="loadRecordToVerify(' + idx + ')">'
-            + '<div style="font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + _esc(r.label) + _xrplBadge + '</div>'
-            + _hashLine
+            + '<div style="font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.label + ' <span style="font-size:0.6rem;font-weight:700;color:#34c759;background:rgba(52,199,89,0.12);padding:1px 6px;border-radius:4px;margin-left:4px;vertical-align:middle"><i class="fas fa-check-circle"></i> XRPL</span></div>'
+            + '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.hash.substring(0,24) + '...' + _vrExplorer + _vrCopy + '</div>'
             + '</div>'
             + '<span style="font-size:0.65rem;color:var(--steel);white-space:nowrap;">' + ago + '</span>'
             + '<button onclick="loadRecordToVerify(' + idx + ')" style="background:' + (hasFullContent ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.05)') + ';border:1px solid ' + (hasFullContent ? 'rgba(0,170,255,0.3)' : 'rgba(255,255,255,0.1)') + ';color:' + (hasFullContent ? 'var(--accent)' : 'var(--steel)') + ';border-radius:8px;padding:3px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="fas fa-eye" style="margin-right:3px"></i>View</button>'
@@ -1269,9 +1450,9 @@ function loadRecordToVerify(idx) {
             contentInput.value = r.content;
         }
     }
-    // Scroll to the verify form after tab switch
+    // Scroll to the verify form after a brief delay for tab switch
     setTimeout(function() {
-        var verifyCard = document.querySelector('#tabAnchor .s4-card');
+        var verifyCard = document.querySelector('#tabAnchor .demo-card');
         if (verifyCard) verifyCard.scrollIntoView({behavior:'smooth', block:'start'});
     }, 150);
     // Show notification
@@ -1404,7 +1585,7 @@ async function verifyFiles(fileList) {
 
     // Batch controls
     html += '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">';
-    html += '<button onclick="document.getElementById(\'verifyFileInput\').value=\'\';document.getElementById(\'verifyFileResults\').style.display=\'none\';" style="background:rgba(255,255,255,0.03);color:var(--steel);border:1px solid var(--border);padding:6px 14px;border-radius:8px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-redo"></i> Verify More Files</button>';
+    html += '<button onclick="document.getElementById(\'verifyFileInput\').value=\'\';document.getElementById(\'verifyFileResults\').style.display=\'none\';" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);padding:6px 14px;border-radius:8px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-redo"></i> Verify More Files</button>';
     if (matched > 0) {
         html += '<button onclick="exportVerificationReport()" style="background:rgba(0,170,255,0.12);color:var(--accent);border:1px solid rgba(0,170,255,0.3);padding:6px 14px;border-radius:8px;font-size:0.78rem;cursor:pointer;"><i class="fas fa-download"></i> Export Report</button>';
     }
@@ -1526,12 +1707,6 @@ function _renderIcon(ic) {
     return ic;
 }
 
-// HTML-entity escape for user/tool content injected into innerHTML
-function _esc(s) {
-    if (!s) return '';
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
 function updateTxLog() {
     const log = document.getElementById('txLog');
     if (!sessionRecords.length) return;
@@ -1539,18 +1714,15 @@ function updateTxLog() {
     for (let i = sessionRecords.length - 1; i >= 0; i--) {
         const r = sessionRecords[i];
         const time = new Date(r.timestamp).toLocaleTimeString('en-US',{hour12:false});
-        var _txH = r.txHash || '';
-        var _isLocal = _txH.indexOf('LOCAL_') === 0;
-        var _explorerLink = '';
-        if (_txH && !_isLocal) {
-            _explorerLink = '<a href="https://livenet.xrpl.org/transactions/' + _txH + '" target="_blank" rel="noopener" style="color:#00aaff;text-decoration:none;font-size:0.7rem;margin-left:4px" title="View on XRPL Explorer"><i class="fas fa-external-link-alt"></i> View on XRPL</a>';
+        var txHashShort = r.txHash ? r.txHash.substring(0,16) + '...' : '';
+        var explorerLink = '';
+        var copyBtn = '';
+        if (r.txHash && !r.txHash.startsWith('LOCAL_')) {
+            explorerLink = '<a href="https://livenet.xrpl.org/transactions/' + r.txHash + '" target="_blank" rel="noopener" style="color:#00aaff;font-size:0.68rem;font-weight:600;text-decoration:none;white-space:nowrap"><i class="fas fa-external-link-alt" style="margin-right:2px"></i>View on XRPL</a>';
+            copyBtn = '<button onclick="navigator.clipboard.writeText(\'' + r.txHash + '\').then(function(){var b=this;this.innerHTML=\'Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i>\';},1200);}.bind(this))" style="background:none;border:1px solid rgba(0,170,255,0.2);border-radius:4px;color:#00aaff;font-size:0.6rem;padding:1px 5px;cursor:pointer;margin-left:4px" title="Copy TX Hash"><i class="fas fa-copy"></i></button>';
         }
-        var _copyBtn = '';
-        if (_txH) {
-            _copyBtn = '<button onclick="event.stopPropagation();var t=this;navigator.clipboard.writeText(\'' + _txH + '\').then(function(){t.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied\';setTimeout(function(){t.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i> Copy TX Hash\';},1500);})" style="background:rgba(0,170,255,0.08);border:1px solid rgba(0,170,255,0.2);border-radius:5px;color:#00aaff;font-size:0.62rem;padding:1px 6px;cursor:pointer;font-weight:600;margin-left:4px;white-space:nowrap"><i class="fas fa-copy"></i> Copy TX Hash</button>';
-        }
-        var _badge = _isLocal ? '<span class="tx-badge anchored">Anchored</span>' : '<span class="tx-badge anchored" style="background:rgba(52,199,89,0.15);color:#34c759;border:1px solid rgba(52,199,89,0.3)"><i class="fas fa-check-circle" style="margin-right:3px"></i>Anchored on XRPL</span>';
-        log.innerHTML += window._s4Safe('<div class="tx-entry"><div class="tx-icon">' + _renderIcon(r.icon) + '</div><div class="tx-info"><div class="tx-type">' + _esc(r.label) + ' <span style="color:var(--muted);font-size:0.75rem">(' + _esc(r.branch) + ')</span></div><div class="tx-hash">' + r.hash.substring(0,32) + '...' + _explorerLink + _copyBtn + '</div></div><div>' + _badge + '<div class="tx-time">' + time + '</div></div></div>');
+        var txLine = txHashShort ? '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:1px">' + txHashShort + explorerLink + copyBtn + '</div>' : '';
+        log.innerHTML += window._s4Safe('<div class="tx-entry"><div class="tx-icon">' + _renderIcon(r.icon) + '</div><div class="tx-info"><div class="tx-type">' + r.label + ' <span style="color:var(--muted);font-size:0.75rem">(' + r.branch + ')</span></div><div class="tx-hash">' + r.hash.substring(0,32) + '...</div>' + txLine + '</div><div><span class="tx-badge anchored" style="background:rgba(52,199,89,0.15);color:#34c759;border:1px solid rgba(52,199,89,0.3);font-size:0.65rem;padding:2px 8px;border-radius:6px;font-weight:700"><i class="fas fa-check-circle" style="margin-right:3px"></i>Anchored on XRPL</span><div class="tx-time">' + time + '</div></div></div>');
     }
 }
 
@@ -2480,11 +2652,11 @@ const PROGS = {
         {s:'A002',di:'DI-ILSS-81494',t:'Planned Maintenance System',el:'maint',c:1},
         {s:'A003',di:'DI-ILSS-81493',t:'Provisioning Technical Documentation',el:'supply',c:1},
         {s:'A004',di:'DI-ILSS-81495',t:'Vendor Recommended Spares',el:'supply',c:1},
-        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals — Dive Systems',el:'techdata',c:1},
+        {s:'A005',di:'DI-TMSS-81000',t:'Technical Manuals \u2014 Dive Systems',el:'techdata',c:1},
         {s:'A006',di:'DI-CMAN-81250',t:'Configuration Status Accounting',el:'config',c:1},
-        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan — Dive Certification',el:'training',c:1},
+        {s:'A007',di:'DI-TRAN-81476',t:'Training Plan \u2014 Dive Certification',el:'training',c:1},
         {s:'A008',di:'DI-RELI-80255',t:'RAM / Safety Analysis',el:'ram',c:1},
-        {s:'A009',di:'DI-SESS-81519',t:'Support Equipment — Dive Lockers',el:'se',c:1},
+        {s:'A009',di:'DI-SESS-81519',t:'Support Equipment \u2014 Dive Lockers',el:'se',c:1},
         {s:'A010',di:'DI-MGMT-81466',t:'Program Management Plan',el:'ilsmgmt',c:0}
     ]},
     fa18:{name:'F/A-18E/F Super Hornet',ofc:'PMA-265',type:'Carrier-Based Strike Fighter',drls:[
@@ -2771,7 +2943,7 @@ function loadSelectedSampleDoc(docType) {
     const progKey = document.getElementById('ilsProgram').value;
     const prog = PROGS[progKey];
     if (!prog) { s4Notify('No Program Selected','Please select a program first.','warning'); return; }
-    var _sds = document.getElementById('sampleDocSelect'); if (_sds) _sds.selectedIndex = 0; // reset dropdown
+    document.getElementById('sampleDocSelect').selectedIndex = 0; // reset dropdown
 
     const statuses = ['Approved','Submitted','In Review','Overdue','Approved','Approved','Submitted','Approved'];
     const dates = ['2025-10-15','2025-12-01','2026-01-15','2026-02-01','2026-03-15','2025-11-20','2026-05-01','2025-09-01'];
@@ -3197,7 +3369,7 @@ function renderToolFileList(toolId) {
         const sz = f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB';
         const icon = /\.xlsx?$/i.test(f.name) ? 'fa-file-excel' : /\.csv$/i.test(f.name) ? 'fa-file-csv' : /\.pdf$/i.test(f.name) ? 'fa-file-pdf' : /\.docx$/i.test(f.name) ? 'fa-file-word' : 'fa-file-alt';
         return '<div class="ils-file-item"><div class="file-info"><i class="fas '+icon+'" style="color:var(--accent);margin-right:8px"></i>'
-            + '<span style="font-weight:600;color:#fff">'+_esc(f.name)+'</span></div>'
+            + '<span style="font-weight:600;color:#fff">'+f.name+'</span></div>'
             + '<div class="file-stats">'+f.rows+' rows detected \u00b7 '+sz+'</div>'
             + "<button class=\"file-remove\" onclick=\"removeToolFile('"+toolId+"','"+f.id+"')\">\u00d7</button></div>";
     }).join('');
@@ -3209,10 +3381,11 @@ function removeToolFile(toolId, fileId) {
 }
 
 
+
 function handleILSFiles(fileList) {
     Array.from(fileList).forEach(file => {
         const ext = file.name.split('.').pop().toLowerCase();
-        if (!['csv','xlsx','xls','txt','tsv','pdf','docx','doc','xml','json'].includes(ext)) { s4Notify('Unsupported File','File type .' + ext + ' is not supported.','warning'); return; }
+        if (!['csv','xlsx','xls','txt','tsv','pdf','docx','doc'].includes(ext)) { s4Notify('Unsupported File','File type .' + ext + ' is not supported.','warning'); return; }
         const reader = new FileReader();
         if (ext === 'pdf') {
             reader.onload = async e => {
@@ -3221,7 +3394,6 @@ function handleILSFiles(fileList) {
                 const records = extractRecords(parsed);
                 addILSFile(file.name, file.size, records, parsed.rows.length);
                 runAutoAnalysisOnUpload(file.name, parsed, records);
-                persistILSUpload(file.name, file.size, ext, parsed);
             };
             reader.readAsArrayBuffer(file);
         } else if (ext === 'docx') {
@@ -3230,7 +3402,6 @@ function handleILSFiles(fileList) {
                 const records = extractRecords(parsed);
                 addILSFile(file.name, file.size, records, parsed.rows.length);
                 runAutoAnalysisOnUpload(file.name, parsed, records);
-                persistILSUpload(file.name, file.size, ext, parsed);
             };
             reader.readAsArrayBuffer(file);
         } else if (ext === 'xlsx' || ext === 'xls') {
@@ -3240,48 +3411,8 @@ function handleILSFiles(fileList) {
                 const records = extractRecords(parsed);
                 addILSFile(file.name, file.size, records, parsed.rows.length);
                 runAutoAnalysisOnUpload(file.name, parsed, records);
-                persistILSUpload(file.name, file.size, ext, parsed);
             };
             reader.readAsArrayBuffer(file);
-        } else if (ext === 'xml') {
-            reader.onload = e => {
-                const text = e.target.result;
-                const parsed = parseXMLContent(text);
-                const records = extractRecords(parsed);
-                addILSFile(file.name, file.size, records, parsed.rows.length);
-                runAutoAnalysisOnUpload(file.name, parsed, records);
-                persistILSUpload(file.name, file.size, ext, parsed);
-            };
-            reader.readAsText(file);
-        } else if (ext === 'json') {
-            reader.onload = e => {
-                try {
-                    const obj = JSON.parse(e.target.result);
-                    let parsed = { headers: [], rows: [] };
-                    if (Array.isArray(obj)) {
-                        parsed.headers = obj.length > 0 ? Object.keys(obj[0]) : [];
-                        parsed.rows = obj;
-                    } else if (obj.components) {
-                        // CycloneDX JSON SBOM
-                        parsed.headers = ['name','version','type','purl','license'];
-                        parsed.rows = obj.components.map(c => ({name:c.name||'',version:c.version||'',type:c.type||'',purl:c.purl||'',license:(c.licenses||[]).map(l=>l.license?.id||l.license?.name||'').join(',')}));
-                        parsed.format = 'cyclonedx-json';
-                    } else if (obj.packages) {
-                        // SPDX JSON
-                        parsed.headers = ['name','versionInfo','supplier','licenseConcluded'];
-                        parsed.rows = obj.packages.map(p => ({name:p.name||'',versionInfo:p.versionInfo||'',supplier:p.supplier||'',licenseConcluded:p.licenseConcluded||''}));
-                        parsed.format = 'spdx-json';
-                    } else {
-                        parsed.headers = Object.keys(obj);
-                        parsed.rows = [obj];
-                    }
-                    const records = extractRecords(parsed);
-                    addILSFile(file.name, file.size, records, parsed.rows.length);
-                    runAutoAnalysisOnUpload(file.name, parsed, records);
-                    persistILSUpload(file.name, file.size, ext, parsed);
-                } catch(e) { s4Notify('JSON Error','Failed to parse JSON: ' + e.message,'error'); }
-            };
-            reader.readAsText(file);
         } else {
             reader.onload = e => {
                 const text = e.target.result;
@@ -3289,7 +3420,6 @@ function handleILSFiles(fileList) {
                 const records = extractRecords(parsed);
                 addILSFile(file.name, file.size, records, parsed.rows.length);
                 runAutoAnalysisOnUpload(file.name, parsed, records);
-                persistILSUpload(file.name, file.size, ext, parsed);
             };
             reader.readAsText(file);
         }
@@ -3316,7 +3446,7 @@ function renderFileList() {
         const sz = f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB';
         const icon = /\.xlsx?$/i.test(f.name) ? 'fa-file-excel' : /\.csv$/i.test(f.name) ? 'fa-file-csv' : /\.pdf$/i.test(f.name) ? 'fa-file-pdf' : /\.docx$/i.test(f.name) ? 'fa-file-word' : 'fa-file-alt';
         return '<div class="ils-file-item"><div class="file-info"><i class="fas '+icon+'" style="color:var(--accent);margin-right:8px"></i>'
-            + '<span style="font-weight:600;color:#fff">'+_esc(f.name)+'</span></div>'
+            + '<span style="font-weight:600;color:#fff">'+f.name+'</span></div>'
             + '<div class="file-stats">'+f.records.length+' DRL items detected from '+f.totalRows+' rows \u00b7 '+sz+'</div>'
             + '<button class="file-remove" onclick="removeILSFile(\''+f.id+'\')">\u00d7</button></div>';
     }).join('');
@@ -3441,95 +3571,6 @@ async function parseDOCXContent(arrayBuffer) {
         });
         return { headers: records.length ? Object.keys(records[0]) : ['Title'], rows: records.length ? records : lines.slice(0,50).map(l => ({Title: l.trim()})) };
     } catch(e) { console.error('DOCX parse error:', e); return { headers: ['Title'], rows: [{ Title: 'DOCX parsing error: ' + e.message }] }; }
-}
-
-// ── XML Parser (DOMParser) ──
-function parseXMLContent(text) {
-    try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/xml');
-        const parseError = doc.querySelector('parsererror');
-        if (parseError) {
-            return { headers: ['Error'], rows: [{ Error: 'XML parse error: ' + parseError.textContent.substring(0, 200) }] };
-        }
-        const records = [];
-        const headers = new Set();
-        // Handle CycloneDX SBOM format
-        const components = doc.querySelectorAll('component');
-        if (components.length > 0) {
-            components.forEach(comp => {
-                const row = {};
-                row['type'] = comp.getAttribute('type') || '';
-                ['name', 'version', 'description', 'group', 'publisher', 'purl', 'cpe'].forEach(tag => {
-                    const el = comp.querySelector(':scope > ' + tag);
-                    if (el) row[tag] = el.textContent.trim();
-                });
-                const licenseEl = comp.querySelector('license name, license id');
-                if (licenseEl) row['license'] = licenseEl.textContent.trim();
-                Object.keys(row).forEach(k => headers.add(k));
-                records.push(row);
-            });
-            return { headers: Array.from(headers), rows: records, format: 'cyclonedx' };
-        }
-        // Handle SPDX XML
-        const packages = doc.querySelectorAll('Package');
-        if (packages.length > 0) {
-            packages.forEach(pkg => {
-                const row = {};
-                ['name', 'versionInfo', 'supplier', 'downloadLocation', 'licenseConcluded', 'licenseDeclared', 'copyrightText'].forEach(tag => {
-                    const el = pkg.querySelector(tag);
-                    if (el) row[tag] = el.textContent.trim();
-                });
-                Object.keys(row).forEach(k => headers.add(k));
-                records.push(row);
-            });
-            return { headers: Array.from(headers), rows: records, format: 'spdx' };
-        }
-        // Generic XML: extract all leaf elements as rows
-        function extractLeafRows(node, depth) {
-            if (depth > 10) return;
-            const children = Array.from(node.children);
-            if (children.length === 0 && node.textContent.trim()) {
-                return;
-            }
-            // If all children are leaf elements of same tag, treat as table
-            const childTags = children.map(c => c.tagName);
-            const uniqueTags = [...new Set(childTags)];
-            if (uniqueTags.length === 1 && children.length > 1) {
-                // Repeated elements = rows
-                children.forEach(child => {
-                    const row = {};
-                    Array.from(child.children).forEach(cell => {
-                        row[cell.tagName] = cell.textContent.trim();
-                        headers.add(cell.tagName);
-                    });
-                    if (child.children.length === 0) {
-                        row[child.tagName] = child.textContent.trim();
-                        headers.add(child.tagName);
-                    }
-                    if (Object.keys(row).length > 0) records.push(row);
-                });
-            } else {
-                children.forEach(c => extractLeafRows(c, depth + 1));
-            }
-        }
-        extractLeafRows(doc.documentElement, 0);
-        if (records.length === 0) {
-            // Fallback: extract all text nodes
-            const allNodes = doc.querySelectorAll('*');
-            allNodes.forEach(n => {
-                if (n.children.length === 0 && n.textContent.trim()) {
-                    records.push({ Tag: n.tagName, Value: n.textContent.trim().substring(0, 500) });
-                    headers.add('Tag');
-                    headers.add('Value');
-                }
-            });
-        }
-        return { headers: Array.from(headers), rows: records, format: 'generic-xml' };
-    } catch(e) {
-        console.error('XML parse error:', e);
-        return { headers: ['Error'], rows: [{ Error: 'XML parsing error: ' + e.message }] };
-    }
 }
 
 // ══════════════════════════════════════════════════════════
@@ -3737,7 +3778,24 @@ function onILSProgramChange() {
     // ═══ REFRESH DATA FOR ALL TOOLS with new program context ═══
     // Generate program-specific DMSMS data
     if (typeof loadDMSMSData === 'function') { try { loadDMSMSData(); } catch(e){} }
-
+    else if (typeof dmsmsItems !== 'undefined') {
+        // Generate fresh DMSMS items based on program
+        var dmsmsData = [];
+        var partPool = [
+            {nsn:'5961-01-123-4567',nomen:'CAPACITOR,FIXED',cage:'1HP47',status:'Obsolete',alt:'5961-01-999-8888'},
+            {nsn:'5962-01-234-5678',nomen:'MICROCIRCUIT,DIGITAL',cage:'96214',status:'At-Risk (Diminishing)',alt:'5962-01-888-7777'},
+            {nsn:'5905-01-345-6789',nomen:'RESISTOR,FIXED',cage:'81205',status:'Active',alt:'—'},
+            {nsn:'5935-01-456-7890',nomen:'CONNECTOR,PLUG',cage:'77820',status:'EOL Planned',alt:'5935-01-777-6666'},
+            {nsn:'6625-01-567-8901',nomen:'OSCILLOSCOPE',cage:'30003',status:'Discontinued',alt:'6625-01-666-5555'},
+            {nsn:'5820-01-678-9012',nomen:'RADIO SET',cage:'13413',status:'At-Risk (Diminishing)',alt:'5820-01-555-4444'},
+            {nsn:'1270-01-789-0123',nomen:'SIGHT,FIRE CONTROL',cage:'11672',status:'Active',alt:'—'}
+        ];
+        var numItems = 4 + Math.floor(prog.name.length % 5);
+        for (var di = 0; di < Math.min(numItems, partPool.length); di++) {
+            dmsmsData.push(Object.assign({}, partPool[di], {program: prog.name}));
+        }
+        dmsmsItems = dmsmsData;
+    }
     // Refresh readiness, compliance, risk, lifecycle, predictive based on program
     if (typeof calcCompliance === 'function') { try { calcCompliance(); } catch(e){} }
     if (typeof loadRiskData === 'function') { try { loadRiskData(); } catch(e){} }
@@ -3932,10 +3990,10 @@ function renderILSActions(actions) {
 
 function renderActionItem(a) {
     return '<div class="ils-action-item '+(a.severity==='critical'?'critical':'warning')+'">'
-        + '<div class="action-header"><span class="action-title">'+_esc(a.id)+': '+_esc(a.title)+'</span><span class="action-owner">'+_esc(a.owner)+'</span></div>'
-        + '<div class="action-detail"><strong>Action:</strong> '+_esc(a.action)+'</div>'
-        + '<div class="action-detail"><strong>Est. Cost:</strong> '+formatCost(a.cost)+' &middot; <strong>Schedule Risk:</strong> '+_esc(a.schedule)
-        + (a.secondary ? ' &middot; <strong>Coord:</strong> '+_esc(a.secondary) : '') + '</div></div>';
+        + '<div class="action-header"><span class="action-title">'+a.id+': '+a.title+'</span><span class="action-owner">'+a.owner+'</span></div>'
+        + '<div class="action-detail"><strong>Action:</strong> '+a.action+'</div>'
+        + '<div class="action-detail"><strong>Est. Cost:</strong> '+formatCost(a.cost)+' &middot; <strong>Schedule Risk:</strong> '+a.schedule
+        + (a.secondary ? ' &middot; <strong>Coord:</strong> '+a.secondary : '') + '</div></div>';
 }
 
 function renderILSCost(actions, totalCost, critGaps) {
@@ -3976,7 +4034,7 @@ function renderILSResult() {
               + '<button onclick="saveImpactToNotes()" style="background:rgba(201,168,76,0.15);color:#c9a84c;border:1px solid rgba(201,168,76,0.35);border-radius:8px;padding:5px 12px;font-size:0.78rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s"><i class="fas fa-sticky-note"></i> Save to Notes</button>'
             + '</div>' : '')
         // ── Assign Responsible Person ──
-        + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin:0.8rem 0;display:flex;flex-wrap:wrap;align-items:center;gap:10px">'
+        + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin:0.8rem 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
           + '<label style="font-size:0.82rem;font-weight:600;color:var(--steel);white-space:nowrap"><i class="fas fa-user-check" style="color:var(--accent);margin-right:4px"></i> Assign Responsible Person</label>'
           + _buildAssignDropdownHTML('ilsResponsiblePerson')
         + '</div>'
@@ -3984,7 +4042,7 @@ function renderILSResult() {
     panel.classList.add('show');
     showPostActions();
     // Notify AI agent that analysis is available
-    if (typeof addAiMessage === 'function') addAiMessage('Analysis complete! <strong>' + _s4Safe(r.prog.name) + '</strong> scored <strong>' + r.pct + '%</strong> readiness with <strong>' + r.critGaps + ' critical gaps</strong>. Ask me anything about the results.', 'bot');
+    addAiMessage('Analysis complete! <strong>' + r.prog.name + '</strong> scored <strong>' + r.pct + '%</strong> readiness with <strong>' + r.critGaps + ' critical gaps</strong>. Ask me anything about the results.', 'bot');
 }
 
 // ── Report Generation ──
@@ -4067,7 +4125,7 @@ function generateILSReport() {
     const panel = document.getElementById('ilsResult');
     panel.innerHTML = '<div style="color:var(--accent);font-size:0.95rem;font-weight:700;margin-bottom:8px"><i class="fas fa-download"></i> Report downloaded!</div>'
         + '<pre style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;font-size:0.7rem;color:var(--steel);max-height:300px;overflow-y:auto;white-space:pre-wrap">' + rpt + '</pre>'
-        + '<button style="margin-top:8px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600" onclick="_copyILSResult(this)"><i class="fas fa-copy"></i> Copy to Clipboard</button>';
+        + '<button style="margin-top:8px;background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600" onclick="navigator.clipboard.writeText(document.querySelector(\'#ilsResult pre\').textContent).then(()=>this.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied!\')"><i class="fas fa-copy"></i> Copy to Clipboard</button>';
     panel.classList.add('show');
 }
 
@@ -4173,7 +4231,7 @@ async function anchorROI() {
     updateTxLog();
     addToVault({hash:hash, txHash:result.txHash, type:'ROI_REPORT', label:'S4 Ledger ROI Analysis', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     // Update SLS display
-    if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Analysis Anchored Successfully on XRPL'); }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -4305,7 +4363,8 @@ function saveImpactToNotes() {
 // Load saved notes on init
 try { _s4ImpactNotes = JSON.parse(localStorage.getItem('s4_impact_notes') || '[]'); } catch(e) { _s4ImpactNotes = []; }
 
-// ── Smart Directory Contacts ──
+// ── Assign Responsible Person (Smart Dropdown) ──
+// Default directory contacts for prod (Navy.mil suggestions) and demo
 const _s4DirectoryContacts = [
     { name: 'CDR James Mitchell', email: 'james.mitchell@navy.mil', role: 'Program Manager' },
     { name: 'LCDR Sarah Chen', email: 'sarah.chen@navy.mil', role: 'ILS Manager' },
@@ -4321,30 +4380,24 @@ const _s4DirectoryContacts = [
 const _MULTI_ASSIGN_TOOLS = new Set(['hub-reports','hub-compliance','hub-cdrl','hub-submissions','hub-actions','hub-analytics','hub-team']);
 
 function _getAssignContacts() {
-    let custom = [];
-    try { custom = JSON.parse(localStorage.getItem('s4_custom_contacts') || '[]'); } catch(e) {}
+    // Merge directory contacts with any custom-saved contacts
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem('s4_custom_contacts') || '[]'); } catch(e) {}
+    const all = _s4DirectoryContacts.concat(saved);
+    // Deduplicate by email
     const seen = new Set();
-    const merged = [];
-    [..._s4DirectoryContacts, ...custom].forEach(c => {
-        const key = (c.email || c.name).toLowerCase();
-        if (!seen.has(key)) { seen.add(key); merged.push(c); }
-    });
-    return merged;
+    return all.filter(c => { if (seen.has(c.email)) return false; seen.add(c.email); return true; });
 }
 
 function _buildAssignDropdownHTML(selectId) {
     const contacts = _getAssignContacts();
-    let html = '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:1">';
-    html += '<select id="' + selectId + '" onchange="assignResponsiblePerson(this.value)" style="flex:1;min-width:180px;padding:6px 10px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.82rem;color:var(--steel,#3a3a3c);background:var(--surface,#fff);cursor:pointer">';
-    html += '<option value="">\u2014 Select or type below \u2014</option>';
+    let html = '<select id="' + selectId + '" onchange="assignResponsiblePerson(this.value)" style="flex:1;padding:6px 10px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.82rem;color:var(--steel,#3a3a3c);background:var(--surface,#fff);cursor:pointer">';
+    html += '<option value="">— Select or type below —</option>';
     contacts.forEach(c => {
-        const val = c.name + ' - ' + c.email;
-        const label = c.name + (c.role ? ' (' + c.role + ')' : '') + (c.email ? ' \u2014 ' + c.email : '');
-        html += '<option value="' + val + '">' + label + '</option>';
+        html += '<option value="' + c.name + ' - ' + c.email + '">' + c.name + ' (' + c.role + ') — ' + c.email + '</option>';
     });
     html += '</select>';
-    html += '<input type="text" placeholder="Or type: Name - email@domain" onkeydown="if(event.key===\'Enter\'){assignResponsiblePerson(this.value);this.value=\'\';}" style="flex:1;min-width:180px;padding:6px 10px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.82rem;color:var(--steel,#3a3a3c);background:var(--surface,#fff)">';
-    html += '</div>';
+    html += '<input type="text" placeholder="Or type: Name - email@domain" style="flex:1;padding:6px 10px;border:1px solid var(--border,rgba(0,0,0,0.1));border-radius:8px;font-size:0.78rem;color:var(--steel,#3a3a3c);background:var(--surface,#fff);min-width:0" onkeydown="if(event.key===\'Enter\'){assignResponsiblePerson(this.value);this.value=\'\';}">';
     return html;
 }
 
@@ -4352,9 +4405,7 @@ function _buildSelectOptions() {
     const contacts = _getAssignContacts();
     let opts = '<option value="">\u2014 Select person \u2014</option>';
     contacts.forEach(c => {
-        const val = c.name + ' - ' + c.email;
-        const label = c.name + (c.role ? ' (' + c.role + ')' : '') + (c.email ? ' \u2014 ' + c.email : '');
-        opts += '<option value="' + val + '">' + label + '</option>';
+        opts += '<option value="' + c.name + ' - ' + c.email + '">' + c.name + ' (' + c.role + ') \u2014 ' + c.email + '</option>';
     });
     return opts;
 }
@@ -4366,13 +4417,16 @@ function _buildMultiAssignHTML(baseId) {
     const opts = _buildSelectOptions();
     let h = '';
     h += '<div id="' + baseId + '_wrap" style="width:100%">';
+    // Primary Responsible (required)
     h += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">';
     h += '<span style="' + tagBase + ';background:rgba(0,170,255,0.12);color:#0071e3">Primary</span>';
     h += '<select id="' + baseId + '_primary" onchange="assignResponsiblePerson(this.value,\'Primary Responsible\')" style="' + selStyle + '">' + opts + '</select>';
     h += '<input type="text" placeholder="Or type: Name - email@domain" onkeydown="if(event.key===\'Enter\'){assignResponsiblePerson(this.value,\'Primary Responsible\');this.value=\'\';}" style="' + inputStyle + '">';
     h += '</div>';
+    // Contributors area
     h += '<div id="' + baseId + '_contributors"></div>';
     h += '<a href="#" onclick="event.preventDefault();_addAssignRow(\'' + baseId + '\',\'Contributor\')" style="font-size:0.78rem;color:var(--accent,#00aaff);text-decoration:none;font-weight:600;display:inline-block;margin:4px 0"><i class="fas fa-plus" style="font-size:0.68rem;margin-right:3px"></i> Add Contributor</a>';
+    // Reviewer area
     h += '<div id="' + baseId + '_reviewers"></div>';
     h += '<a href="#" onclick="event.preventDefault();_addAssignRow(\'' + baseId + '\',\'Reviewer\')" style="font-size:0.78rem;color:#34c759;text-decoration:none;font-weight:600;display:inline-block;margin:4px 0 0 14px"><i class="fas fa-plus" style="font-size:0.68rem;margin-right:3px"></i> Add Reviewer</a>';
     h += '</div>';
@@ -4401,21 +4455,17 @@ function _addAssignRow(baseId, role) {
     container.appendChild(row);
 }
 
-// ── Assign Responsible Person ──
 function assignResponsiblePerson(person, role) {
     if (!person) return;
     const activePanel = document.querySelector('.ils-hub-panel[style*="display: block"], .ils-hub-panel[style*="display:block"]');
     const toolName = activePanel ? (activePanel.querySelector('h3')?.textContent?.trim() || 'Current Tool') : 'Current Tool';
-
     // Parse "Name - email" format
-    let personName = person;
-    let personEmail = '';
-    const sepIdx = person.indexOf(' - ');
-    if (sepIdx > 0) {
-        personName = person.substring(0, sepIdx).trim();
-        personEmail = person.substring(sepIdx + 3).trim();
+    let personName = person, personEmail = '';
+    const dashIdx = person.indexOf(' - ');
+    if (dashIdx > 0) {
+        personName = person.substring(0, dashIdx).trim();
+        personEmail = person.substring(dashIdx + 3).trim();
     }
-
     const assignment = {
         person: personName,
         email: personEmail,
@@ -4424,7 +4474,7 @@ function assignResponsiblePerson(person, role) {
         assignedAt: new Date().toISOString()
     };
     if (ilsResults) {
-        assignment.program = ilsResults.prog.name + (ilsResults.hull ? ' \u2014 ' + ilsResults.hull : '');
+        assignment.program = ilsResults.prog.name + (ilsResults.hull ? ' — ' + ilsResults.hull : '');
         assignment.readiness = ilsResults.pct + '%';
         assignment.criticalGaps = ilsResults.critGaps;
     }
@@ -4432,20 +4482,18 @@ function assignResponsiblePerson(person, role) {
     try { assignments = JSON.parse(localStorage.getItem('s4_assignments') || '[]'); } catch(e) {}
     assignments.push(assignment);
     try { localStorage.setItem('s4_assignments', JSON.stringify(assignments)); } catch(e) {}
-
-    // Save custom contact for future suggestions
-    if (personEmail && personEmail.includes('@')) {
-        let custom = [];
-        try { custom = JSON.parse(localStorage.getItem('s4_custom_contacts') || '[]'); } catch(e) {}
-        if (!custom.some(c => c.email === personEmail)) {
-            custom.push({ name: personName, email: personEmail, role: '' });
-            try { localStorage.setItem('s4_custom_contacts', JSON.stringify(custom)); } catch(e) {}
+    // Save custom contact for future suggestions if it has an email and isn't already in directory
+    if (personEmail && !_s4DirectoryContacts.some(c => c.email === personEmail)) {
+        let saved = [];
+        try { saved = JSON.parse(localStorage.getItem('s4_custom_contacts') || '[]'); } catch(e) {}
+        if (!saved.some(c => c.email === personEmail)) {
+            saved.push({ name: personName, email: personEmail, role: 'Custom' });
+            try { localStorage.setItem('s4_custom_contacts', JSON.stringify(saved)); } catch(e) {}
         }
     }
-
-    const displayLabel = personEmail ? personName + ' (' + personEmail + ')' : personName;
+    const displayName = personEmail ? personName + ' (' + personEmail + ')' : personName;
     const roleTag = role ? ' as ' + role : '';
-    s4Notify('Assigned', toolName + ' \u2013 ' + displayLabel + roleTag + '.', 'success');
+    s4Notify('Assigned', toolName + ' \u2013 ' + displayName + roleTag + '.', 'success');
 }
 
 // ── Program Status Summary Report (Executive-Ready) ──
@@ -4483,6 +4531,7 @@ function _buildSummaryData() {
         else { complianceNote = ilsResults.prog.name + ' readiness at ' + ilsResults.pct + '% \u2014 on track.'; }
     }
 
+    // Critical issues & risks
     let issues = [];
     if (ilsResults && ilsResults.actions) {
         ilsResults.actions.slice(0, 5).forEach(a => {
@@ -4495,12 +4544,14 @@ function _buildSummaryData() {
         }
     });
 
+    // Decisions: anchored vault records
     const decisions = vault.filter(v => v.verified).slice(0, 8).map(v => ({
         label: v.label || v.type || 'Record',
         date: v.timestamp ? new Date(v.timestamp).toLocaleDateString() : 'N/A',
         source: v.source || 'Anchored'
     }));
 
+    // Next steps
     let nextSteps = [];
     if (issues.length) nextSteps.push('Review and resolve ' + issues.length + ' open issue' + (issues.length !== 1 ? 's' : '') + ' identified in this period.');
     const unassigned = issues.filter(i => !recentAssignments.some(a => a.tool && i.desc.includes(a.tool)));
@@ -4586,16 +4637,14 @@ async function _fetchAISummary(d) {
         '## Next Steps (bullet list of actionable recommendations with owners/deadlines where possible). ' +
         'Data:\\n' + JSON.stringify(payload);
     try {
-        var aiSessionId = localStorage.getItem('s4_ai_session') || ('AI-' + Date.now().toString(36));
-        localStorage.setItem('s4_ai_session', aiSessionId);
-        var resp = await fetch('/api/ai/rag', {
+        var resp = await fetch('/api/ai-chat', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-API-Key': sessionStorage.getItem('s4_api_key') || '' },
-            body: JSON.stringify({ query: prompt, session_id: aiSessionId, tool_context: 'Export Summary', user_email: localStorage.getItem('s4_user_email') || '', document_content: JSON.stringify(payload), document_name: 'Program Summary Data' })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: prompt, conversation: [], tool_context: 'Export Summary', analysis_data: payload, document_content: JSON.stringify(payload), document_name: 'Program Summary Data' })
         });
         if (resp.ok) {
             var data = await resp.json();
-            if (data.response) {
+            if (data.response && !data.fallback) {
                 var parsed = _parseAIResponse(data.response);
                 if (parsed.execOverview) {
                     _cachedAISummary = parsed;
@@ -4604,25 +4653,7 @@ async function _fetchAISummary(d) {
                 }
             }
         }
-    } catch (e) { console.log('AI RAG API unavailable, trying legacy endpoint'); }
-    try {
-        var resp2 = await fetch('/api/ai-chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: prompt, conversation: [], tool_context: 'Export Summary', analysis_data: payload, document_content: JSON.stringify(payload), document_name: 'Program Summary Data' })
-        });
-        if (resp2.ok) {
-            var data2 = await resp2.json();
-            if (data2.response && !data2.fallback) {
-                var parsed2 = _parseAIResponse(data2.response);
-                if (parsed2.execOverview) {
-                    _cachedAISummary = parsed2;
-                    _cachedAIPeriod = periodKey;
-                    return parsed2;
-                }
-            }
-        }
-    } catch (e2) { console.log('AI chat API also unavailable, using mock fallback'); }
+    } catch (e) { console.log('AI summary API unavailable, using mock fallback'); }
     var mock = _getAIMockText();
     _cachedAISummary = mock;
     _cachedAIPeriod = periodKey;
@@ -4666,6 +4697,7 @@ async function exportProgramSummary() {
     }
 
     let html = '';
+    // Header
     html += '<div style="background:linear-gradient(135deg,rgba(0,170,255,0.04),rgba(0,113,227,0.06));border:1px solid rgba(0,170,255,0.12);border-radius:10px;padding:16px 20px;margin-bottom:16px">';
     html += '<div style="font-size:1.05rem;font-weight:800;color:var(--steel);letter-spacing:0.5px">S4 LEDGER \u2013 PROGRAM STATUS SUMMARY</div>';
     html += '<div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Report Generated: ' + d.now.toLocaleString() + '</div>';
@@ -4683,9 +4715,11 @@ async function exportProgramSummary() {
     const displayIssues = aiResult ? aiResult.issues : d.issues;
     const displayNextSteps = aiResult ? aiResult.nextSteps : d.nextSteps;
 
+    // EXECUTIVE OVERVIEW
     html += '<div style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-briefcase" style="color:var(--accent);margin-right:4px"></i> Executive Overview</div>';
     html += '<div style="background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.10);border-radius:8px;padding:12px 14px;font-size:0.82rem;color:var(--steel);line-height:1.65;margin-bottom:16px">' + displayOverview + '</div>';
 
+    // KEY HIGHLIGHTS
     html += '<div style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-chart-bar" style="color:var(--accent);margin-right:4px"></i> Key Highlights</div>';
     html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px">';
     html += '<div style="font-size:0.82rem;color:var(--steel);padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.04)">\u2022 Records Anchored & Verified: <strong>' + d.recs.length + ' / ' + stats.verified + '</strong>' + (d.recs.length > 0 && stats.verified >= d.recs.length ? ' (100% complete)' : '') + '</div>';
@@ -4693,6 +4727,7 @@ async function exportProgramSummary() {
     html += '<div style="font-size:0.82rem;color:var(--steel);padding:5px 0">\u2022 Estimated Program Impact: <strong style="color:#c9a84c">' + (d.totalImpact > 0 ? '$' + d.totalImpact.toLocaleString() : '$0') + '</strong> (savings or cost avoidance)</div>';
     html += '</div>';
 
+    // CRITICAL ISSUES & RISKS
     html += '<div style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-exclamation-triangle" style="color:#c9a84c;margin-right:4px"></i> Critical Issues & Risks</div>';
     html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px">';
     if (displayIssues.length) {
@@ -4707,6 +4742,7 @@ async function exportProgramSummary() {
     }
     html += '</div>';
 
+    // ACTIONS & OWNERSHIP
     html += '<div style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-user-check" style="color:var(--accent);margin-right:4px"></i> Actions & Ownership</div>';
     html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px">';
     if (d.recentAssignments.length) {
@@ -4722,6 +4758,7 @@ async function exportProgramSummary() {
     }
     html += '</div>';
 
+    // DECISIONS MADE
     html += '<div style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-gavel" style="color:var(--accent);margin-right:4px"></i> Decisions Made</div>';
     html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px">';
     if (d.decisions.length) {
@@ -4733,11 +4770,13 @@ async function exportProgramSummary() {
     }
     html += '</div>';
 
+    // NEXT STEPS
     html += '<div style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-arrow-right" style="color:var(--accent);margin-right:4px"></i> Next Steps</div>';
     html += '<div style="background:rgba(0,170,255,0.03);border:1px solid rgba(0,170,255,0.10);border-radius:8px;padding:12px 14px;font-size:0.82rem;color:var(--steel);line-height:1.65;margin-bottom:12px">';
     displayNextSteps.forEach(s => { html += '\u2022 ' + s + '<br>'; });
     html += '</div>';
 
+    // Footer
     html += '<div style="text-align:center;font-size:0.72rem;color:var(--muted);padding-top:8px;border-top:1px solid var(--border)">Generated by S4 Ledger | s4ledger.com</div>';
 
     document.getElementById('programSummaryBody').innerHTML = window._s4Safe(html);
@@ -4995,18 +5034,12 @@ function toggleAiAgent() {
     aiAgentOpen = !aiAgentOpen;
     const panel = document.getElementById('aiFloatPanel');
     if (panel) {
-        // Clear any stale inline display:none that may override CSS class
-        if (panel.style.display === 'none') panel.style.display = '';
         panel.classList.toggle('open', aiAgentOpen);
         if (aiAgentOpen) {
             setTimeout(() => document.getElementById('aiChatInput')?.focus(), 350);
         }
     }
 }
-
-// AI toggle buttons use onclick="toggleAiAgent()" in the HTML.
-// No duplicate addEventListener binding — that would cause a double-toggle
-// (open then immediately close) making the panel appear broken.
 
 // ── Context-Aware Quick Actions ──
 const AI_TOOL_CONTEXT = {
@@ -5022,7 +5055,7 @@ const AI_TOOL_CONTEXT = {
     'hub-risk':         {label:'Risk Engine',      icon:'fa-triangle-exclamation',buttons:[['What are the highest risk parts?','Top Risks'],['Show single-source dependencies','Single Source'],['Any GIDEP alerts?','GIDEP Alerts'],['Estimate risk cost impact','Cost Impact'],['What is supply chain risk?','Explain Risk'],['Draft risk mitigation plan','Risk Plan']]},
     'hub-reports':      {label:'Report Generator', icon:'fa-file-pdf',           buttons:[['Generate a full audit package','Full Audit'],['What compliance score do I have?','Compliance Score'],['Create a DCMA-ready report','DCMA Report'],['How are reports verified?','Report Verification'],['What report types are available?','Report Types']]},
     'hub-predictive':   {label:'Predictive Maint', icon:'fa-brain',             buttons:[['What failures are predicted?','Predictions'],['Show urgent maintenance needs','Urgent Items'],['How much can we save?','Cost Savings'],['What is MTBF trending?','MTBF Trends'],['Draft maintenance advisory','Maint Advisory'],['How does the AI model work?','Explain Model']]},
-    'hub-submissions':  {label:'Submissions & PTD',icon:'fa-file-circle-check', buttons:[['Run a sample analysis','Sample Analysis'],['What submission types are tracked?','Submission Types'],['How does the discrepancy engine work?','Discrepancy Engine'],['What red flags does it catch?','Red Flags'],['How much does this tool save?','Cost Savings'],['Show submission history','History'],['How does AI help with reviews?','AI Review'],['Draft a discrepancy report','Draft Report']]},
+    'hub-submissions':  {label:'Submissions & PTD',icon:'fa-file-circle-check', buttons:[['Run a demo analysis','Demo Analysis'],['What submission types are tracked?','Submission Types'],['How does the discrepancy engine work?','Discrepancy Engine'],['What red flags does it catch?','Red Flags'],['How much does this tool save?','Cost Savings'],['Show submission history','History'],['How does AI help with reviews?','AI Review'],['Draft a discrepancy report','Draft Report']]},
     'hub-sbom':         {label:'SBOM Viewer',      icon:'fa-cubes',             buttons:[['Scan for CVEs','CVE Scan'],['Show risk summary','Risk Summary'],['Check EO 14028 compliance','EO 14028'],['List all licenses','Licenses'],['Identify firmware components','Firmware'],['What is an SBOM?','Explain SBOM'],['Draft SBOM attestation','SBOM Attestation'],['Show supply chain risks','Supply Chain Risk']]},
     'hub-acquisition':  {label:'Acquisition Planner',icon:'fa-ship',              buttons:[['Summarize my acquisition plan','Summarize Plan'],['Which vessels are unfunded?','Unfunded Vessels'],['Show vessels in critical condition','Critical Condition'],['What ROH actions are overdue?','Overdue ROH'],['Draft a POM funding brief','POM Brief'],['Estimate total acquisition cost over 5 years','5-Year Cost'],['Compare hull lifecycle costs','Lifecycle Compare'],['Draft acquisition status memo','Status Memo']]},
     'hub-milestones':   {label:'Program Milestones',icon:'fa-flag-checkered',    buttons:[['Summarize my milestone status','Milestone Summary'],['Which vessels are delayed?','Delayed Vessels'],['Show vessels approaching OWLD','OWLD Risk'],['What trials are upcoming?','Upcoming Trials'],['Draft a milestone status brief','Status Brief'],['Compare planned vs actual delivery dates','Delivery Variance'],['List vessels by program','By Program'],['What is OWLD?','Explain OWLD']]}
@@ -5038,7 +5071,7 @@ function updateAiContext(panelId) {
     const toolLabel = document.getElementById('aiContextTool');
     if (toolLabel) toolLabel.textContent = ctx.label;
     const btnContainer = document.getElementById('aiQuickBtns');
-    if (btnContainer && ctx.buttons) {
+    if (btnContainer) {
         btnContainer.innerHTML = window._s4Safe(ctx.buttons.map(b => `<button class="ai-quick-btn" onclick="aiAsk('${b[0]}')">${b[1]}</button>`).join(''));
     }
 }
@@ -5046,7 +5079,7 @@ function updateAiContext(panelId) {
 document.addEventListener('DOMContentLoaded', () => {
     updateAiContext('hub-analysis');
     // AI agent starts HIDDEN — only shown after entering the platform
-    // (enterPlatformAfterAuth sets display='' and logout hides it)
+    // (enterPlatformAfterAuth sets display='' and resetDemoSession hides it)
     const aiW = document.getElementById('aiFloatWrapper');
     if (aiW) aiW.style.display = 'none';
 });
@@ -5116,24 +5149,15 @@ async function aiSend() {
         docName = 'Current tool input';
     }
     try {
-        // Use new AI RAG endpoint with session persistence
-        const aiSessionId = localStorage.getItem('s4_ai_session') || ('AI-' + Date.now().toString(36));
-        localStorage.setItem('s4_ai_session', aiSessionId);
-        const resp = await fetch('/api/ai/rag', {
+        // NETWORK_DEPENDENT: AI chat requires server — returns error offline
+        const resp = await fetch('/api/ai-chat', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-API-Key': sessionStorage.getItem('s4_api_key') || '' },
-            body: JSON.stringify({
-                query: msg,
-                session_id: aiSessionId,
-                tool_context: toolLabel,
-                user_email: localStorage.getItem('s4_user_email') || '',
-                document_content: docContent,
-                document_name: docName,
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg, conversation, tool_context: toolLabel, analysis_data: analysisSummary, document_content: docContent, document_name: docName })
         });
         if (resp.ok) {
             const data = await resp.json();
-            if (data.response) {
+            if (data.response && !data.fallback) {
                 let html = data.response
                     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\*(.+?)\*/g, '<em>$1</em>')
@@ -5141,41 +5165,12 @@ async function aiSend() {
                     .replace(/^## (.+)$/gm, '<h4>$1</h4>')
                     .replace(/^- (.+)$/gm, '\u2022 $1<br>')
                     .replace(/\n/g, '<br>');
-                if (data.model && data.model !== 'rule-based' && data.model !== 'rule-based-ils-v2') {
-                    html += '<div style="font-size:0.7rem;color:#666;margin-top:6px"><i class="fas fa-robot"></i> Powered by ' + data.model + (data.rag_context_used ? ' + RAG' : '') + '</div>';
-                }
                 const el = document.getElementById(thinkId);
                 if (el) el.querySelector('.ai-bubble').innerHTML = window._s4Safe(html);
                 responded = true;
             }
         }
-    } catch(e) { console.log('AI RAG API unavailable, using local patterns'); }
-
-    if (!responded) {
-        // Also try legacy endpoint
-        try {
-            const resp = await fetch('/api/ai-chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg, conversation, tool_context: toolLabel, analysis_data: analysisSummary })
-            });
-            if (resp.ok) {
-                const data = await resp.json();
-                if (data.response && !data.fallback) {
-                    let html = data.response
-                        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                        .replace(/^### (.+)$/gm, '<h5>$1</h5>')
-                        .replace(/^## (.+)$/gm, '<h4>$1</h4>')
-                        .replace(/^- (.+)$/gm, '\u2022 $1<br>')
-                        .replace(/\n/g, '<br>');
-                    const el = document.getElementById(thinkId);
-                    if (el) el.querySelector('.ai-bubble').innerHTML = window._s4Safe(html);
-                    responded = true;
-                }
-            }
-        } catch(e) {}
-    }
+    } catch(e) { console.log('AI chat API unavailable, using local patterns'); }
 
     if (!responded) {
         // Fallback to local pattern matching
@@ -5192,10 +5187,14 @@ function generateAiResponse(query) {
     // ── General platform queries that work on ANY tab, regardless of ILS state ──
     var q = query.toLowerCase().trim();
     if (/^(hi|hello|hey|greetings|good morning|good afternoon)/.test(q)) {
-        return 'Hello! I\'m the S4 Ledger AI Agent. I can help you with:\n\n• **Anchoring records** to the XRP Ledger\n• **Verifying** document integrity\n• **ILS analysis** and defense logistics\n• **Supply chain risk** assessment\n• **Credits** and pricing questions\n\nWhat would you like to do?';
+        return 'Hello! I\'m the S4 Ledger AI Agent. I can help you with:\n\n• **Anchoring records** to the XRP Ledger\n• **Verifying** document integrity\n• **ILS analysis** and defense logistics\n• **Supply chain risk** assessment\n• **SLS token** and pricing questions\n\nWhat would you like to do?';
     }
     if (/what.*mode|am i in.*mode|how.*work/.test(q)) {
-        return 'You can anchor records, verify hashes, and explore the full Anchor-S4 workspace. Each anchor creates a permanent, verifiable entry on the XRP Ledger.';
+        var demoInfo = '';
+        if (_demoMode && _demoSession) {
+            demoInfo += 'Your account has <strong style="color:#c9a84c">' + (_demoSession.sls_balance || '25,000') + ' Credits</strong> allocated. Each anchor costs 0.01 Credits, which is transferred to the S4 Treasury on the XRP Ledger.';
+        }
+        return demoInfo + '\n\nYou can anchor records, verify hashes, and explore the full Anchor-S4 workspace. Each anchor creates a permanent, verifiable entry on the XRP Ledger.';
     }
     if (/sls token|what is sls|sls price|token price|how much/.test(q)) {
         return '**Credits (SLS — Secure Logistics Standard)** is the utility token for S4 Ledger:\n\n• **Price:** $0.01 per Credit\n• **Anchor cost:** 0.01 Credits per record (~$0.0001)\n• **Tiers:** Pilot (free/100 Credits), Starter ($999/25K Credits), Professional ($2,499/100K Credits), Enterprise ($9,999/500K Credits)\n• **Issuer:** `r95GyZac4butvVcsTWUPpxzekmyzaHsTA5`\n• **Trade on:** [xMagnetic](https://xmagnetic.org/tokens/SLS+r95GyZac4butvVcsTWUPpxzekmyzaHsTA5)';
@@ -5271,12 +5270,12 @@ function generateAiResponse(query) {
     if (/di-?\d+|di number/.test(q)) return explainDINumber(q);
 
     // ── S4 LEDGER PRODUCT ──
-    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Credits<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>23+ ILS tools</strong> covering all 12 ILS elements per GEIA-STD-0007 / MIL-HDBK-502<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>Credits utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192Credits<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>54+ Navy record types</strong> for Navy programs<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.';
+    if (/what is s4|what.*s4 ledger|tell.*about s4|explain s4/.test(q)) return '<strong>S4 Ledger</strong> \u2014 Secure Logistics Standard<br><br>S4 Ledger is a blockchain-verified Integrated Logistics Support (ILS) platform built for defense organizations. It provides:<br><br>\u2022 <strong>23+ ILS tools</strong> covering all 12 ILS elements per GEIA-STD-0007 / MIL-HDBK-502<br>\u2022 <strong>XRPL blockchain anchoring</strong> \u2014 every record gets a tamper-proof SHA-256 hash on the XRP Ledger<br>\u2022 <strong>Credits utility token</strong> \u2014 $0.01 per anchor, purchased automatically via USD\u2192XRP\u2192Credits<br>\u2022 <strong>AI Agent</strong> \u2014 context-aware analysis across all tools<br>\u2022 <strong>54+ Navy record types</strong> for Navy programs<br>\u2022 <strong>Compliance scoring</strong> for CMMC, NIST 800-171, DFARS, FAR 46<br><br>S4 replaces legacy tools like ICAPS, COMPASS, and spreadsheet-based tracking with a single, auditable platform.';
 
     if (/how.*work|how.*anchor|how.*hash|how.*blockchain/.test(q)) return '<strong>How S4 Ledger Works:</strong><br><br>1. <strong>Upload or create a record</strong> \u2014 any ILS document, analysis, or data point<br>2. <strong>SHA-256 hash computed</strong> \u2014 a unique 64-character fingerprint of the content<br>3. <strong>Hash anchored to Ledger</strong> \u2014 written as a Memo on an XRP Ledger transaction<br>4. <strong>Transaction verified</strong> \u2014 XRPL validates within 3-5 seconds at ~$0.001 tx fee<br>5. <strong>Credit fee applied</strong> \u2014 0.01 Credits ($0.01) per anchor for network access<br><br>The original data stays on your device (never sent to blockchain). Only the hash is anchored. Anyone can independently verify a record by recomputing the hash and checking the XRPL transaction.<br><br><strong>Result:</strong> Tamper-proof, independently verifiable audit trail \u2014 1,500x cheaper than legacy verification.';
 
     // ── PRICING ──
-    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(0,170,255,0.2);border-radius:8px"><strong style="color:#00aaff">Pilot (Free)</strong><br>100 Credits/mo<br>10,000 anchors<br>All 23+ tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:8px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 Credits/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:8px"><strong style="color:#00aaff">Professional ($2,499/mo)</strong><br>100,000 Credits/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:8px"><strong style="color:#00aaff">Enterprise ($9,999/mo)</strong><br>500,000 Credits/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + Credits TrustLine setup. 0.01 Credits per anchor.';
+    if (/pricing|price|cost|subscription|plan|tier|how much/.test(q)) return '<strong>S4 Ledger Subscription Plans:</strong><br><br><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem"><div style="padding:8px;border:1px solid rgba(0,170,255,0.2);border-radius:8px"><strong style="color:#00aaff">Pilot (Free)</strong><br>100 Credits/mo<br>10,000 anchors<br>All 23+ tools</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.3);border-radius:8px"><strong style="color:#00aaff">Starter ($999/mo)</strong><br>25,000 Credits/mo<br>2.5M anchors<br>Full SDK + API</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:8px"><strong style="color:#00aaff">Professional ($2,499/mo)</strong><br>100,000 Credits/mo<br>10M anchors<br>Priority support</div><div style="padding:8px;border:1px solid rgba(0,170,255,0.15);border-radius:8px"><strong style="color:#00aaff">Enterprise ($9,999/mo)</strong><br>500,000 Credits/mo<br>Unlimited anchors<br>Dedicated support + SLA</div></div><br>Every plan includes automatic XRPL wallet provisioning + Credits TrustLine setup. $0.01 Credits per anchor.';
 
     // ── WALLETS & SLS ──
     if (/wallet|xrpl.*wallet|seed|family.*seed|trustline|trust.*line/.test(q)) return '<strong>XRPL Wallet & TrustLine Setup</strong><br><br>When you subscribe, S4 automatically:<br><br>1. <strong>Generates a secp256k1 wallet</strong> \u2014 your unique XRPL address + family seed (secret key)<br>2. <strong>Funds with XRP</strong> \u2014 covers the 12 XRP account reserve + TrustLine reserve<br>3. <strong>Sets up Credits TrustLine</strong> \u2014 pointed at the Credits issuer (<code>r95GyZac4butvVcsTWUPpxzekmyzaHsTA5</code>)<br>4. <strong>Credits delivered</strong> \u2014 from the Treasury wallet to your wallet<br><br><strong>Important:</strong><br>\u2022 TrustLines go to the <strong>Credits issuer</strong> (r95...) \u2014 this is the wallet that created the Credits token (SLS on XRPL)<br>\u2022 Credits are delivered from the <strong>Treasury</strong> (rMLm...) \u2014 this holds the circulating supply<br>\u2022 Your family seed is the ONLY way to access your wallet \u2014 save it securely<br>\u2022 Compatible with <strong>Xaman</strong> (formerly XUMM) for mobile wallet management';
@@ -5290,7 +5289,7 @@ function generateAiResponse(query) {
     if (/xrp.*ledger|what.*xrpl|why.*xrpl|which.*blockchain/.test(q)) return '<strong>Why XRPL (XRP Ledger)?</strong><br><br>S4 Ledger uses the XRP Ledger because it\'s:<br><br>\u2022 <strong>Fast:</strong> 3-5 second transaction finality<br>\u2022 <strong>Cheap:</strong> ~$0.001 per transaction (drops)<br>\u2022 <strong>Energy efficient:</strong> No mining \u2014 uses federated consensus<br>\u2022 <strong>Built-in DEX:</strong> Native token exchange for Credits liquidity<br>\u2022 <strong>Issued currencies:</strong> Native support for custom tokens like Credits<br>\u2022 <strong>TrustLines:</strong> Controlled token distribution<br>\u2022 <strong>Battle-tested:</strong> Operating since 2012, used by 150+ financial institutions<br><br>XRPL\'s low transaction cost makes it practical for micro-anchoring \u2014 1,500x cheaper than traditional verification methods.';
 
     // ── ILS TOOLS (23+ tools) ──
-    if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against GEIA-STD-0007 (formerly MIL-STD-1388) requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> for Navy programs. Results can be anchored to Ledger for audit purposes.<br><br><strong>Try it:</strong> Upload your program documents to run a full analysis.';
+    if (/gap.*analysis|upload.*doc|run.*analysis|how.*analysis|ils.*analysis/.test(q)) return '<strong>ILS Gap Analysis</strong><br><br>The core analysis tool evaluates your ILS package against GEIA-STD-0007 (formerly MIL-STD-1388) requirements:<br><br>1. <strong>Upload documents</strong> \u2014 PDFs, Word, Excel, CSV, text files<br>2. <strong>Auto-detection</strong> \u2014 identifies document types (LCSP, LSAR, PHS&T, DMSMS plans, etc.)<br>3. <strong>Full analysis</strong> \u2014 checks DRL coverage, checklist completion, 12 ILS elements<br>4. <strong>Findings engine</strong> \u2014 auto-detects data quality issues, missing requirements, discrepancies<br>5. <strong>Action items</strong> \u2014 generates prioritized actions with cost/schedule estimates<br><br>Supports <strong>462 defense programs</strong> for Navy programs. Results can be anchored to Ledger for audit purposes.<br><br><strong>Try it:</strong> Click "Load Full ILS Package" to see a complete demo analysis.';
 
     if (/action.*item|task|open.*action|todo/.test(q)) { const total = s4ActionItems.length; const done = s4ActionItems.filter(a=>a.done).length; return '<strong>Action Items Manager</strong><br><br>' + (total > 0 ? 'Current status: <strong>' + done + '/' + total + '</strong> complete (' + Math.round(done/total*100) + '%)<br><br>' : 'No action items yet. Run a gap analysis to generate prioritized actions.<br><br>') + 'The Action Items Manager tracks all ILS-related tasks generated by gap analysis, DMSMS reviews, readiness assessments, and manual entries. Each item includes:<br>\u2022 Severity (critical/warning/info)<br>\u2022 Responsible owner<br>\u2022 Cost and schedule impact estimates<br>\u2022 Due dates and status tracking<br>\u2022 Linkage to specific DI numbers and ILS elements'; }
 
@@ -5298,6 +5297,7 @@ function generateAiResponse(query) {
     if (/owld|obligation.*work.*limit|program.*milestone|vessel.*delay|delivery.*status|milestone.*status|milestone.*summary|milestone.*brief|delivery.*variance|milestone.*tracker/.test(q)) {
         if (/what.*owld|explain.*owld|owld.*mean/.test(q)) return '<strong>OWLD \u2014 Obligation Work Limiting Date</strong><br><br>The OWLD is the date when full financial responsibility for a vessel transfers from the acquisition command (e.g., PMS 300, PMS 325) to the operational fleet. It is typically calculated as <strong>~11 months after contract delivery</strong>.<br><br>\u2022 <strong>Before OWLD:</strong> Acquisition command funds warranty repairs, deficiency corrections, and post-delivery availabilities<br>\u2022 <strong>After OWLD:</strong> Fleet/TYCOM assumes all maintenance and repair funding responsibility<br>\u2022 <strong>Impact:</strong> Late deliveries shift OWLD, affecting fleet maintenance budgets and availability schedules<br><br>In S4 Ledger, OWLD Date is auto-calculated as contract delivery date + 11 months, and can be manually adjusted.';
         var milData = (typeof window._milData !== 'undefined') ? window._milData : [];
+        if (!milData.length && typeof _getMilDemoRecords === 'function') milData = _getMilDemoRecords();
         var delayed = milData.filter(function(r){ return r.delivery_status==='Delayed'; });
         var atRisk = milData.filter(function(r){ return r.delivery_status==='At Risk'; });
         var onTrack = milData.filter(function(r){ return r.delivery_status==='On Track'; });
@@ -5317,7 +5317,7 @@ function generateAiResponse(query) {
 
     if (/nsn|parts|cross.?ref|cage|fsc|parts.*lookup|part.*search|national.*stock/.test(q)) return '<strong>NSN / Parts Cross-Reference</strong><br><br>The Parts Cross-Reference tool is now part of <strong>HarborLink</strong>, S4 Systems\' collaboration portal. It provides NSN lookup, CAGE code search, manufacturer cross-referencing, alternate parts identification, and stock status tracking across 15+ major defense manufacturers.<br><br>All parts data anchored through S4 Ledger retains blockchain verification.';
 
-    if (/roi|return.*invest|savings|cost.*benefit|business.*case/.test(q)) return '<strong>ROI Calculator</strong><br><br>Shows S4 Ledger value proposition:<br><br>\u2022 <strong>Labor savings</strong> \u2014 eliminate manual reconciliation ($150K-$450K/yr)<br>\u2022 <strong>Error reduction</strong> \u2014 blockchain eliminates data integrity disputes<br>\u2022 <strong>Audit efficiency</strong> \u2014 60% faster audit preparation<br>\u2022 <strong>DMSMS savings</strong> \u2014 proactive obsolescence avoids costly emergency buys<br>\u2022 <strong>5-year projection</strong> \u2014 cumulative savings vs. legacy systems<br><br>At $0.01/anchor vs. $15/verification legacy cost, S4 delivers <strong>1,500x cost reduction</strong> for data verification.<br><br>For a typical program: <strong>$2.1M \u2014 $4.5M</strong> savings over 5 years.';
+    if (/roi|return.*invest|savings|cost.*benefit|business.*case/.test(q)) return '<strong>ROI Calculator</strong><br><br>Demonstrates S4 Ledger value proposition:<br><br>\u2022 <strong>Labor savings</strong> \u2014 eliminate manual reconciliation ($150K-$450K/yr)<br>\u2022 <strong>Error reduction</strong> \u2014 blockchain eliminates data integrity disputes<br>\u2022 <strong>Audit efficiency</strong> \u2014 60% faster audit preparation<br>\u2022 <strong>DMSMS savings</strong> \u2014 proactive obsolescence avoids costly emergency buys<br>\u2022 <strong>5-year projection</strong> \u2014 cumulative savings vs. legacy systems<br><br>At $0.01/anchor vs. $15/verification legacy cost, S4 delivers <strong>1,500x cost reduction</strong> for data verification.<br><br>For a typical program: <strong>$2.1M \u2014 $4.5M</strong> savings over 5 years.';
 
     if (/lifecycle|life.?cycle.*cost|lcc|total.*ownership|sustainment.*cost/.test(q)) return '<strong>Lifecycle Cost Estimator</strong><br><br>Models total ownership cost across the full system lifecycle:<br><br>\u2022 <strong>Acquisition costs</strong> \u2014 development, production, initial spares<br>\u2022 <strong>Operating costs</strong> \u2014 personnel, fuel, consumables<br>\u2022 <strong>Sustainment costs</strong> \u2014 maintenance, repair, overhaul (MRO)<br>\u2022 <strong>Disposal costs</strong> \u2014 demilitarization, environmental<br>\u2022 <strong>DMSMS impact</strong> \u2014 obsolescence-driven cost increases<br><br>Pre-loaded cost models for 462 defense platforms with adjustable parameters. Export to CSV or anchor to Ledger for auditable cost baselines.';
 
@@ -5347,7 +5347,7 @@ function generateAiResponse(query) {
             var ww = _subCache.discrepancies.filter(function(d){return d.severity==='warning'}).length;
             return '<strong>Submissions & PTD Analysis Results:</strong><br>Total discrepancies: <strong>' + _subCache.discrepancies.length + '</strong><br>Critical: <span style="color:#ff4444">' + cc + '</span> | Warnings: <span style="color:#ffa500">' + ww + '</span><br>Program: ' + (_subCache.meta.program || 'N/A') + '<br>Branch: ' + (_subCache.meta.branch || 'N/A') + '<br><br>Use "Analyze & Compare" for a different submission or "Export Discrepancy Report" to download findings.';
         }
-        return '<strong>Submissions &amp; PTD</strong><br><br>Analyzes vendor submissions against baseline data to detect discrepancies:<br><br>\u2022 <strong>Cost anomalies</strong> \u2014 >10-25% cost increases flagged<br>\u2022 <strong>Component changes</strong> \u2014 new/removed items detected<br>\u2022 <strong>CAGE code changes</strong> \u2014 manufacturer substitutions<br>\u2022 <strong>Source/vendor swaps</strong> \u2014 supply chain changes<br>\u2022 <strong>Lead time increases</strong> \u2014 >30 day threshold<br>\u2022 <strong>Status downgrades</strong> \u2014 Active\u2192Obsolete flags<br><br>Upload a CSV/Excel file to run discrepancy analysis on your data.';
+        return '<strong>Submissions &amp; PTD</strong><br><br>Analyzes vendor submissions against baseline data to detect discrepancies:<br><br>\u2022 <strong>Cost anomalies</strong> \u2014 >10-25% cost increases flagged<br>\u2022 <strong>Component changes</strong> \u2014 new/removed items detected<br>\u2022 <strong>CAGE code changes</strong> \u2014 manufacturer substitutions<br>\u2022 <strong>Source/vendor swaps</strong> \u2014 supply chain changes<br>\u2022 <strong>Lead time increases</strong> \u2014 >30 day threshold<br>\u2022 <strong>Status downgrades</strong> \u2014 Active\u2192Obsolete flags<br><br>Upload a CSV/Excel file or use "Run Demo Analysis" to see a full example with sample discrepancies.';
     }
 
     // ── DEFENSE STANDARDS ──
@@ -5362,7 +5362,7 @@ function generateAiResponse(query) {
     if (/dfars|252\.204|safeguard.*defense|covered.*defense/.test(q)) return '<strong>DFARS 252.204-7012</strong> \u2014 Safeguarding Covered Defense Information<br><br>Key requirements:<br>\u2022 Implement NIST SP 800-171 controls for CDI/CUI<br>\u2022 Report cyber incidents within 72 hours<br>\u2022 Preserve media and data for 90 days post-incident<br>\u2022 Flow down to subcontractors<br><br>S4\'s blockchain anchoring creates verifiable evidence of data integrity controls, directly supporting DFARS compliance.';
 
     // ── GENERAL HELP ──
-    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore Anchor-S4</strong> \u2014 23+ tools organized by function<br>3. <strong>Upload your documents</strong> \u2014 PDFs, Excel, Word, CSV \u2014 into Gap Analysis<br>4. <strong>Run a full analysis</strong> \u2014 the engine cross-references against ILS requirements<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.';
+    if (/get.*started|how.*begin|first.*step|new.*user|onboard/.test(q)) return '<strong>Getting Started with S4 Ledger</strong><br><br>1. <strong>Create an account</strong> at <a href="/s4-login/">s4-login</a> \u2014 wallet provisioned automatically<br>2. <strong>Explore Anchor-S4</strong> \u2014 23+ tools organized by function<br>3. <strong>Try a demo analysis</strong> \u2014 click "Load Full ILS Package" in Gap Analysis<br>4. <strong>Upload your own documents</strong> \u2014 PDFs, Excel, Word, CSV<br>5. <strong>Anchor your first record</strong> \u2014 creates your first blockchain-verified entry<br>6. <strong>Check your Compliance Scorecard</strong> \u2014 see how your posture improves<br>7. <strong>Ask the AI Agent anything</strong> \u2014 type questions right here<br><br><strong>Recommended flow:</strong> Start with Gap Analysis \u2192 review Action Items \u2192 address critical gaps \u2192 anchor findings.';
 
     if (/configure.*ai|api.*key|ai.*setup|enable.*ai|openai|anthropic|azure|groq|mistral/.test(q)) return '<strong>S4 AI Agent Configuration</strong><br><br>The AI Agent is a production-grade assistant powered by large language models (LLMs). It provides:<br><br>\u2022 <strong>Context-aware analysis</strong> across all 23+ ILS tools<br>\u2022 <strong>Natural language Q&A</strong> on defense logistics, supply chain, compliance, and more<br>\u2022 <strong>Document analysis &amp; summarization</strong> for uploaded files<br>\u2022 <strong>Real-time insights</strong> based on your loaded program data<br>\u2022 <strong>Custom report generation</strong> and memo drafting<br><br>The agent automatically adapts based on which ILS tool you\u2019re using and what data you\u2019ve loaded. Just type your question — the agent handles the rest.';
 
@@ -5386,7 +5386,7 @@ function generateAiResponse(query) {
     }
 
     // ── ACRONYMS & TERMS ──
-    if (/what.*lcsp|lcsp|life.*cycle.*sustain.*plan/.test(q)) return '<strong>Life Cycle Sustainment Plan (LCSP)</strong> \u2014 DI-ILSS-81490<br><br>The LCSP is the top-level ILS planning document that defines the sustainment strategy for the entire program lifecycle. It addresses all 12 ILS elements, establishes performance metrics (Ao, MTBF, MTTR), and is required per DoD Instruction 5000.02.<br><br>Upload your LCSP document in Gap Analysis for full element-by-element analysis.';
+    if (/what.*lcsp|lcsp|life.*cycle.*sustain.*plan/.test(q)) return '<strong>Life Cycle Sustainment Plan (LCSP)</strong> \u2014 DI-ILSS-81490<br><br>The LCSP is the top-level ILS planning document that defines the sustainment strategy for the entire program lifecycle. It addresses all 12 ILS elements, establishes performance metrics (Ao, MTBF, MTTR), and is required per DoD Instruction 5000.02.<br><br>Use "Load Full ILS Package" in Gap Analysis to see a sample LCSP structure.';
 
     if (/what.*lsar|lsar|logistics.*support.*analysis.*record/.test(q)) return '<strong>Logistics Support Analysis Record (LSAR)</strong><br><br>The LSAR is the central database for logistics data generated during the Logistics Support Analysis (LSA) process. It captures task analysis, failure modes, repair levels, support equipment requirements, and spares data per GEIA-STD-0007 (formerly MIL-STD-1388-2B).';
 
@@ -5482,12 +5482,28 @@ function generateAiResponse(query) {
     }
 
     // ── S4 PLATFORM QUESTIONS ──
-    if (/pricing|how\s*much|cost|subscription|plan/i.test(q)) return '<strong>S4 Ledger Pricing</strong><br><br>\u2022 <strong>Starter</strong> — $29/mo: 25,000 Credits, 5 users, all 23+ ILS tools<br>\u2022 <strong>Professional</strong> — $99/mo: 100,000 Credits, 25 users, API access, HarborLink<br>\u2022 <strong>Enterprise</strong> — $299/mo: 500,000 Credits, unlimited users, dedicated support, SSO<br>\u2022 <strong>Government</strong> — Custom: FedRAMP, IL4/5, on-prem option<br><br>Each anchor costs 0.01 Credits (~$0.0001). Credits = SLS (Secure Logistics Standard) utility token on XRPL.<br><br><a href="../s4-pricing/" style="color:#00aaff">View full pricing →</a>';
+    if (/pricing|how\s*much|cost|subscription|plan/i.test(q)) return '<strong>S4 Ledger Pricing</strong><br><br>\u2022 <strong>Starter</strong> — $29/mo: 25,000 Credits, 5 users, all 23+ ILS tools<br>\u2022 <strong>Professional</strong> — $99/mo: 100,000 Credits, 25 users, API access, HarborLink<br>\u2022 <strong>Enterprise</strong> — $299/mo: 500,000 Credits, unlimited users, dedicated support, SSO<br>\u2022 <strong>Government</strong> — Custom: FedRAMP, IL4/5, on-prem option<br><br>Each anchor costs 0.01 Credits (~$0.0001). Credits = SLS (Secure Logistics Standard), our utility token on XRPL.<br><br><a href="../s4-pricing/" style="color:#00aaff">View full pricing →</a>';
 
     if (/what\s*is\s*sls|sls\s*token|what.*sls/i.test(q)) return '<strong>Credits — SLS (Secure Logistics Standard)</strong><br><br>Credits are S4 Ledger\'s utility token on the XRP Ledger (XRPL). They power every action on the platform:<br>\u2022 <strong>0.01 Credits per anchor</strong> — ~$0.0001 per record<br>\u2022 100M fixed supply — deflationary model<br>\u2022 Issued on XRPL — fast, transparent, low-cost<br>\u2022 Purchased through your subscription plan<br>\u2022 Each anchor sends 0.01 Credits from your operational wallet to the Treasury wallet<br><br>Each anchor transfers 0.01 Credits from your operational wallet to the S4 Treasury on the XRP Ledger — fully verifiable on-chain.';
 
     if (/xrpl|xrp\s*ledger|blockchain|how.*anchor/i.test(q)) return '<strong>XRPL Blockchain Anchoring</strong><br><br>S4 Ledger uses the XRP Ledger for tamper-proof record verification:<br>\u2022 Your record content is hashed (SHA-256) client-side — <strong>zero data on-chain</strong><br>\u2022 The hash fingerprint is anchored as a Memo in an XRPL transaction<br>\u2022 Each anchor costs 0.01 Credits (transferred Ops Wallet → Treasury)<br>\u2022 The XRPL transaction hash is your immutable proof<br>\u2022 Anyone can verify: re-hash the content and compare to the on-chain Memo<br><br>XRPL was chosen for speed (~3-5 sec finality), low cost, and energy efficiency.';
 
+    if (/demo\s*mode|am\s*i\s*in\s*demo|what\s*mode/i.test(q)) {
+        var demoInfo = '';
+        if (_demoMode && _demoSession) {
+            var allocation = _demoSession.subscription?.sls_allocation || 25000;
+            var spent = stats.slsFees || 0;
+            var remaining = allocation - spent;
+            demoInfo += '<br><br><strong>Your Demo Session:</strong><br>';
+            demoInfo += '\u2022 Plan: ' + (_demoSession.subscription?.label || 'Starter') + '<br>';
+            demoInfo += '\u2022 Credits Allocated: ' + allocation.toLocaleString() + '<br>';
+            demoInfo += '\u2022 Credits Spent: ' + spent.toFixed(2) + ' (' + stats.anchored + ' anchors × 0.01 Credits)<br>';
+            demoInfo += '\u2022 Credits Remaining: <strong style="color:#c9a84c">' + remaining.toLocaleString(undefined,{maximumFractionDigits:2}) + '</strong><br>';
+            demoInfo += '\u2022 Wallet: ' + (_demoSession.wallet?.address?.substring(0,8) || '') + '...<br>';
+            demoInfo += '<br>Each anchor transfers <strong>0.01 Credits on the XRP Ledger</strong> from your operational wallet to the S4 Treasury. Your Credits balance updates in real time.';
+        }
+        return demoInfo;
+    }
 
     // ── RECOMMENDATIONS ──
     if (/recommend|suggest|should\s*i|best\s*(practice|way|approach)|advice/i.test(q)) {
@@ -5512,7 +5528,7 @@ function generateAiResponse(query) {
     if (/meaning\s*of\s*life|42/i.test(q)) return 'The answer is <strong>42</strong> — but in defense logistics, the real answer is <strong>keeping Ao above 90%</strong>. \uD83D\uDE04';
 
     // ── HELP / CAPABILITIES ──
-    if (/help|what\s*can\s*you\s*do|capabilities|features/i.test(q)) return '<strong>S4 Agent Capabilities:</strong><br><br><strong>\uD83D\uDD27 ILS & Defense:</strong><br>\u2022 Gap analysis interpretation & critical item triage<br>\u2022 DI number explanations (DI-001 through DI-044)<br>\u2022 CAR drafting, compliance checks, cost estimation<br>\u2022 Defense acronym definitions (CDRL, LCSP, DMSMS, etc.)<br>\u2022 MIL-STD and regulation guidance<br><br><strong>\uD83D\uDCCA Platform:</strong><br>\u2022 Anchoring help, verification, XRPL questions<br>\u2022 Credits and pricing info<br>\u2022 Session status and balance tracking<br>\u2022 Tool-specific guidance for all 23+ ILS tools<br><br><strong>\uD83E\uDD16 General:</strong><br>\u2022 Math calculations and unit conversions<br>\u2022 Date/time queries<br>\u2022 Recommendations and best practices<br>\u2022 General conversation and Q&A<br><br><em>Ask me anything — I can help with ILS analysis, defense logistics, compliance, and platform questions.</em>';
+    if (/help|what\s*can\s*you\s*do|capabilities|features/i.test(q)) return '<strong>S4 Agent Capabilities:</strong><br><br><strong>\uD83D\uDD27 ILS & Defense:</strong><br>\u2022 Gap analysis interpretation & critical item triage<br>\u2022 DI number explanations (DI-001 through DI-044)<br>\u2022 CAR drafting, compliance checks, cost estimation<br>\u2022 Defense acronym definitions (CDRL, LCSP, DMSMS, etc.)<br>\u2022 MIL-STD and regulation guidance<br><br><strong>\uD83D\uDCCA Platform:</strong><br>\u2022 Anchoring help, verification, XRPL questions<br>\u2022 Credits token and pricing info<br>\u2022 Demo mode status and balance tracking<br>\u2022 Tool-specific guidance for all 23+ ILS tools<br><br><strong>\uD83E\uDD16 General:</strong><br>\u2022 Math calculations and unit conversions<br>\u2022 Date/time queries<br>\u2022 Recommendations and best practices<br>\u2022 General conversation and Q&A<br><br><em>Ask me anything — I can help with ILS analysis, defense logistics, compliance, and platform questions.</em>';
 
     // ── GENERAL KNOWLEDGE PATTERNS ──
     // These make the agent useful even without an LLM API key
@@ -5685,7 +5701,6 @@ function explainDINumber(q) {
 const DMSMS_DATA = {};
 function generateDMSMSData(progKey) {
     const comp = PROG_COMPONENTS[progKey] || PROG_COMPONENTS.custom;
-    if (!comp || !comp.systems) return [];
     const statuses = ['Active','Active','Active','At Risk','At Risk','Obsolete','End of Life','Active','Watch','Active'];
     const severities = ['None','None','None','High','Medium','Critical','High','None','Low','None'];
     const resolutions = ['N/A','N/A','N/A','Seeking alternate source','Life-of-type buy planned','Bridge buy + redesign required','Last-time buy submitted','N/A','Monitoring vendor status','N/A'];
@@ -5738,8 +5753,8 @@ function loadDMSMSData() {
     });
     html += '</table></div>';
     document.getElementById('dmsmsResults').innerHTML = window._s4Safe(html);
-    // Action items disabled for prod — simulated data should not generate alerts
-    // generateDMSMSActions(progKey, data);
+    // Generate action items & notifications
+    generateDMSMSActions(progKey, data);
     // ── R12: Store chart data globally and trigger reactive chart update
     var _active = data.filter(function(d){ return d.status === 'Active'; }).length;
     var _atRisk = data.filter(function(d){ return d.status === 'At Risk'; }).length;
@@ -5832,16 +5847,16 @@ function calcReadiness() {
     let html = '<div style="background:rgba(0,170,255,0.05);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:8px 10px;font-size:0.82rem;">';
     html += '<div style="font-weight:700;color:#00aaff;margin-bottom:3px;font-size:0.82rem;">RAM Analysis: ' + sysName + '</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 6px;">';
-    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span>Ao</span><span style="color:' + (ao>=0.9?'#00aaff':ao>=0.75?'#ffa500':'#ff3333') + ';font-weight:700;">' + (ao*100).toFixed(2) + '%</span></div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span>Ai</span><span style="font-weight:600;">' + (ai*100).toFixed(2) + '%</span></div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span>Failure Rate (\u03BB)</span><span>' + lambda.toFixed(6) + '/hr</span></div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span>30-Day Reliability</span><span style="color:' + (missionReliability>=0.8?'#00aaff':'#ffa500') + ';font-weight:600;">' + (missionReliability*100).toFixed(1) + '%</span></div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span>Annual Failures</span><span>' + annualFailures.toFixed(1) + '</span></div>';
-    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span>Annual Downtime</span><span style="color:#ffa500;">' + annualDowntime.toFixed(0) + ' hrs</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span>Ao</span><span style="color:' + (ao>=0.9?'#00aaff':ao>=0.75?'#ffa500':'#ff3333') + ';font-weight:700;">' + (ao*100).toFixed(2) + '%</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span>Ai</span><span style="font-weight:600;">' + (ai*100).toFixed(2) + '%</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span>Failure Rate (\u03BB)</span><span>' + lambda.toFixed(6) + '/hr</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span>30-Day Reliability</span><span style="color:' + (missionReliability>=0.8?'#00aaff':'#ffa500') + ';font-weight:600;">' + (missionReliability*100).toFixed(1) + '%</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span>Annual Failures</span><span>' + annualFailures.toFixed(1) + '</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span>Annual Downtime</span><span style="color:#ffa500;">' + annualDowntime.toFixed(0) + ' hrs</span></div>';
     html += '</div>';
 
     // Assessment
-    html += '<div style="margin-top:4px;padding:4px 6px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);font-size:0.78rem;">';
+    html += '<div style="margin-top:4px;padding:4px 6px;border-radius:6px;background:rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.05);font-size:0.78rem;">';
     if (ao >= 0.95) html += '<span style="color:#00aaff;font-weight:700;">EXCELLENT</span> — Ao > 95% exceeds all readiness requirements.';
     else if (ao >= 0.90) html += '<span style="color:#00aaff;font-weight:700;">MEETS REQUIREMENTS</span> — Ao > 90% acceptable for most defense programs.';
     else if (ao >= 0.80) html += '<span style="color:#ffa500;font-weight:700;">MARGINAL</span> — Ao 80-90%. Consider reducing MLDT or improving MTTR.';
@@ -5858,8 +5873,8 @@ function calcReadiness() {
     // ── R12: Store Ao globally and trigger reactive chart update
     window._readinessAo = ao;
     if (typeof renderReadinessCharts === 'function') setTimeout(renderReadinessCharts, 200);
-    // Action items disabled for prod — simulated data should not generate alerts
-    // generateReadinessActions(progKey, sysName, ao, mtbf, mttr, mldt);
+    // Generate readiness action items
+    generateReadinessActions(progKey, sysName, ao, mtbf, mttr, mldt);
 }
 
 function exportReadiness() {
@@ -5912,7 +5927,7 @@ function showCustomProgramInput() {
         + '<div><label style="color:var(--steel);font-size:0.8rem;font-weight:600">Branch / Service</label><select id="customProgBranch" class="form-select" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;width:100%;margin-top:4px"><option value="USN">U.S. Navy</option><option value="USMC">U.S. Marine Corps</option><option value="USCG">U.S. Coast Guard</option></select></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(255,255,255,0.03);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">Cancel</button>'
+        + '<button onclick="document.getElementById(\'customProgramModal\').remove();document.getElementById(\'ilsProgram\').value=\'\'" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">Cancel</button>'
         + '<button onclick="applyCustomProgram()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">Apply Program</button>'
         + '</div></div>';
     document.body.appendChild(modal);
@@ -5951,7 +5966,7 @@ function applyCustomProgram() {
     var _cpm = document.getElementById('customProgramModal'); if (_cpm) _cpm.remove();
     // Initialize with GEIA-STD-0007 ILS checklist
     initILSChecklist('custom_' + name.replace(/\s+/g,'_'));
-    // Persist custom program to localStorage + Supabase
+    // Persist custom program to localStorage (demo — no cloud sync)
     if (typeof _saveCustomPrograms === 'function') _saveCustomPrograms();
     s4Notify('Custom Program', name + ' loaded with GEIA-STD-0007 ILS template', 'success');
 }
@@ -6059,10 +6074,7 @@ function initILSEngine() {
 // ── Toast Notifications ──
 let s4ToastQueue = [];
 function s4Notify(title, msg, type, actions, duration) {
-    type = type || 'info'; duration = duration || 8000;
-    /* Only show notifications when user is inside the platform workspace */
-    var ws = document.getElementById('platformWorkspace');
-    if (!ws || ws.style.display !== 'block') return;
+    return; // Notifications disabled in demo-app
     const container = document.getElementById('s4ToastContainer');
     if (!container) return;
     if (!container.getAttribute('aria-live')) { container.setAttribute('aria-live', 'polite'); container.setAttribute('role', 'status'); }
@@ -6103,11 +6115,6 @@ function toggleNotifPanel() {
 // ── Unified Action Items Store (localStorage-backed) ──
 let s4ActionItems;
 try { s4ActionItems = JSON.parse(localStorage.getItem('s4ActionItems') || '[]'); } catch(_e) { s4ActionItems = []; }
-// Purge auto-generated items from simulated data (DMSMS-, RDY-, LC- prefixed IDs)
-s4ActionItems = s4ActionItems.filter(function(a) {
-    return !/^(DMSMS-|RDY-|LC-)/.test(a.id);
-});
-localStorage.setItem('s4ActionItems', JSON.stringify(s4ActionItems));
 function saveActionItems() {
     localStorage.setItem('s4ActionItems', JSON.stringify(s4ActionItems));
     updateNotifBadge();
@@ -6254,7 +6261,7 @@ function openProdFeatures(){
   var list=document.getElementById('prodFeaturesList');
   var html='';
   _prodFeatures.forEach(function(g){
-    html+='<div style="margin-bottom:18px"><h5 style="color:var(--accent);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px"><i class="fas '+g.icon+'" style="margin-right:6px"></i>'+g.cat+'</h5>';
+    html+='<div style="margin-bottom:18px"><h5 style="color:#ffa500;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px"><i class="fas '+g.icon+'" style="margin-right:6px"></i>'+g.cat+'</h5>';
     g.items.forEach(function(f){
       html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin-bottom:4px;background:var(--surface);border-radius:8px;border:1px solid var(--border)">';
       html+='<div style="flex:1"><strong style="font-size:0.85rem">'+f.name+'</strong><p style="margin:2px 0 0;font-size:0.78rem;color:var(--steel)">'+f.desc+'</p></div>';
@@ -6355,14 +6362,14 @@ function renderActionTimeline() {
         var dateLabel = item.due ? item.due : (item.schedule || 'No date');
         html += '<div style="position:relative;margin-bottom:16px;padding:10px 14px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.1);border-radius:8px;border-left:3px solid ' + color + '">';
         html += '<div style="position:absolute;left:-24px;top:14px;width:12px;height:12px;border-radius:50%;background:' + color + ';border:2px solid var(--bg)"></div>';
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><strong style="color:#fff;font-size:0.85rem">' + _esc(item.title) + '</strong>';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><strong style="color:#fff;font-size:0.85rem">' + item.title + '</strong>';
         html += '<span style="font-size:0.72rem;color:' + color + ';font-weight:600">' + dateLabel + '</span></div>';
         html += '<div style="font-size:0.75rem;color:var(--steel)">';
         html += '<span class="ai-tag ' + (item.severity || 'info') + '" style="font-size:0.68rem;margin-right:6px">' + (item.severity || 'info').toUpperCase() + '</span>';
-        if (item.owner) html += '<span style="margin-right:8px"><i class="fas fa-user" style="margin-right:3px"></i>' + _esc(item.owner) + '</span>';
+        if (item.owner) html += '<span style="margin-right:8px"><i class="fas fa-user" style="margin-right:3px"></i>' + item.owner + '</span>';
         if (item.cost) html += '<span style="color:#ffa500">$' + (item.cost * 1000).toLocaleString() + '</span>';
         html += '</div>';
-        if (item.detail) html += '<div style="font-size:0.75rem;color:var(--muted);margin-top:4px;line-height:1.4">' + _esc(item.detail.substring(0, 120)) + (item.detail.length > 120 ? '...' : '') + '</div>';
+        if (item.detail) html += '<div style="font-size:0.75rem;color:var(--muted);margin-top:4px;line-height:1.4">' + item.detail.substring(0, 120) + (item.detail.length > 120 ? '...' : '') + '</div>';
         html += '</div>';
     });
     html += '</div>';
@@ -6505,8 +6512,6 @@ function switchHubTab(panelId, btn) {
     if (panelId === 'hub-readiness') { if (typeof loadReadinessData === 'function') loadReadinessData(); }
     if (panelId === 'hub-lifecycle') { if (typeof calcLifecycle === 'function') calcLifecycle(); }
     if (panelId === 'hub-analysis') { if (typeof initILSChecklist === 'function') initILSChecklist(); }
-    if (panelId === 'hub-analytics') { if (typeof s4Analytics !== 'undefined' && s4Analytics.renderDashboard) s4Analytics.renderDashboard('analyticsContent'); }
-    if (panelId === 'hub-team') { if (typeof s4Team !== 'undefined' && s4Team.getTeams) s4Team.getTeams().then(function(teams){ var el=document.getElementById('teamCount'); if(el) el.textContent=teams.length; }).catch(function(){}); }
     // Update floating AI agent context
     updateAiContext(panelId);
 }
@@ -6550,23 +6555,21 @@ function renderHubActions(filter) {
         if (!item || !item.id) return; // skip corrupt entries
         var eid = (item.id || '').replace(/'/g, "\\'");
         var isSelected = _actionSelected.has(item.id);
-        html += '<div class="action-item'+(item.done?' completed':'')+'">';
-        html += '<div class="ai-controls">';
-        html += '<input type="checkbox" '+(isSelected?'checked ':'')+' onchange="toggleActionSelect(\''+eid+'\',this.checked)" style="cursor:pointer;accent-color:#00aaff">';
-        html += '<div class="ai-check'+(item.done?' done':'')+'" onclick="toggleActionDone(\''+eid+'\');renderHubActions()" title="Toggle done"></div>';
-        html += '</div>';
+        html += '<div class="action-item'+(item.done?' completed':'')+'" style="position:relative">';
+        html += '<input type="checkbox" '+(isSelected?'checked ':'')+' onchange="toggleActionSelect(\''+eid+'\',this.checked)" style="margin-right:6px;cursor:pointer;accent-color:#00aaff">';
+        html += '<div class="ai-check'+(item.done?' done':'')+'" onclick="toggleActionDone(\''+eid+'\');renderHubActions()"></div>';
         html += '<div class="ai-body">';
-        html += '<div class="ai-title" style="display:flex;align-items:center;gap:6px">'+(sourceIcons[item.source]||'<i class="fas fa-thumbtack" style="color:var(--accent)"></i>')+' <span style="flex:1;cursor:text" ondblclick="inlineEditActionTitle(\''+eid+'\',this)" title="Double-click to edit title">'+_esc(item.title)+'</span>';
+        html += '<div class="ai-title" style="display:flex;align-items:center;gap:6px">'+(sourceIcons[item.source]||'<i class="fas fa-thumbtack" style="color:var(--accent)"></i>')+' <span style="flex:1;cursor:text" ondblclick="inlineEditActionTitle(\''+eid+'\',this)" title="Double-click to edit title">'+item.title+'</span>';
         html += '<button onclick="editActionItem(\''+eid+'\')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:2px 5px;opacity:0.5" title="Edit" onmouseover="this.style.opacity=1;this.style.color=\'#00aaff\'" onmouseout="this.style.opacity=0.5;this.style.color=\'var(--muted)\'"><i class="fas fa-pen-to-square"></i></button>';
         html += '<button onclick="deleteActionItem(\''+eid+'\')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:2px 5px;opacity:0.5" title="Delete" onmouseover="this.style.opacity=1;this.style.color=\'#ff6b6b\'" onmouseout="this.style.opacity=0.5;this.style.color=\'var(--muted)\'"><i class="fas fa-trash"></i></button>';
         html += '</div>';
         html += '<div class="ai-meta"><span class="ai-tag '+(item.severity||'info')+'">'+(item.severity||'info').toUpperCase()+'</span><span>'+(item.source||'').toUpperCase()+'</span>';
-        if (item.owner) html += '<span><i class="fas fa-user" style="margin-right:3px"></i>'+_esc(item.owner)+'</span>';
-        if (item.cost) html += '<span style="color:#ffa500">$'+(item.cost * 1000).toLocaleString()+'</span>';
+        if (item.owner) html += '<span><i class="fas fa-user" style="margin-right:3px"></i>'+item.owner+'</span>';
+        if (item.cost) html += '<span style="color:#ffa500">$'+(item.cost*1000).toLocaleString()+'</span>';
         if (item.due) html += '<span style="color:var(--accent)"><i class="fas fa-calendar-day" style="margin-right:3px"></i>'+item.due+'</span>';
         if (item.schedule) html += '<span><i class="fas fa-clock" style="margin-right:3px"></i>'+item.schedule+'</span>';
         html += '</div>';
-        if (item.detail) html += '<div style="color:var(--steel);font-size:0.78rem;margin-top:4px">'+_esc(item.detail)+'</div>';
+        if (item.detail) html += '<div style="color:var(--steel);font-size:0.78rem;margin-top:4px">'+item.detail+'</div>';
         html += '</div></div>';
     });
     container.innerHTML = window._s4Safe(html);
@@ -6655,7 +6658,7 @@ function refreshVaultMetrics() {
         breakdownEl.innerHTML = '<div style="margin-top:6px;font-weight:700;color:#00aaff;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Type Distribution</div>' +
             top.map(function(e) {
                 var pct = count > 0 ? ((e[1] / count) * 100).toFixed(0) : 0;
-                return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + e[0] + '</div><div style="width:80px;height:6px;background:var(--surface);border-radius:8px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:#00aaff;border-radius:8px"></div></div><div style="min-width:36px;text-align:right;color:#6e6e73">' + e[1] + '</div></div>';
+                return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + e[0] + '</div><div style="width:80px;height:6px;background:var(--surface);border-radius:8px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:#00aaff;border-radius:8px"></div></div><div style="min-width:36px;text-align:right;color:#ccc">' + e[1] + '</div></div>';
             }).join('') +
             (sorted.length > 8 ? '<div style="color:var(--muted);font-size:0.7rem;margin-top:4px">+' + (sorted.length - 8) + ' more types</div>' : '');
     } else if (breakdownEl) {
@@ -6713,8 +6716,8 @@ function renderVault() {
                 <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden">
                     <input type="checkbox" class="vault-cb" data-hash="${v.hash}" onchange="_updateBulkBar()" style="accent-color:#00aaff;cursor:pointer;flex-shrink:0">
                     <span style="font-size:0.95rem;flex-shrink:0;width:20px;text-align:center;line-height:1">${_renderIcon(v.icon)}</span>
-                    <strong style="color:#fff;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_esc(v.label || v.type)}</strong>
-                    <span style="font-size:0.72rem;color:var(--muted);flex-shrink:0;white-space:nowrap">${_esc(v.branch || '')}</span>
+                    <strong style="color:#fff;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.label || v.type}</strong>
+                    <span style="font-size:0.72rem;color:var(--muted);flex-shrink:0;white-space:nowrap">${v.branch || ''}</span>
                 </div>
                 <div style="display:flex;gap:6px;flex-shrink:0">
                     ${v.verified ? '<span class="vault-badge verified"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="vault-badge anchored"><i class="fas fa-anchor"></i> Anchored</span>'}
@@ -6722,11 +6725,11 @@ function renderVault() {
                 </div>
             </div>
             <div class="vault-hash"><i class="fas fa-fingerprint" style="margin-right:6px;opacity:0.6"></i>${v.hash}</div>
-            ${v.content ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:8px;padding:6px 10px;background:var(--surface);border-radius:8px"><i class="fas fa-file-lines" style="margin-right:6px;opacity:0.5"></i>' + _esc(v.content) + '</div>' : ''}
+            ${v.content ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:8px;padding:6px 10px;background:var(--surface);border-radius:8px"><i class="fas fa-file-lines" style="margin-right:6px;opacity:0.5"></i>' + v.content + '</div>' : ''}
             <div class="vault-meta">
                 <span><i class="fas fa-clock"></i> ${new Date(v.timestamp).toLocaleString()}</span>
                 <span><i class="fas fa-hashtag"></i> TX: ${v.explorerUrl ? '<a href="'+v.explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+(v.txHash||'').substring(0,16)+'… <i class="fas fa-external-link-alt" style="font-size:0.6rem"></i></a>' : (v.txHash||'').substring(0,16)+'...'}</span>
-                ${v.source ? '<span><i class="fas fa-tools"></i> ' + _esc(v.source) + '</span>' : ''}
+                ${v.source ? '<span><i class="fas fa-tools"></i> ' + v.source + '</span>' : ''}
                 <span><i class="fas fa-coins"></i> 0.01 Credits</span>
             </div>
         </div>
@@ -6938,16 +6941,16 @@ function runVaultStressTest() {
         if (resultsDiv) {
             var sizeEstimate = (new Blob([JSON.stringify(s4Vault)]).size / 1024).toFixed(1);
             resultsDiv.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px">'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + count.toLocaleString() + '</div><div style="color:#6e6e73;font-size:0.72rem">Records Generated</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + s4Vault.length.toLocaleString() + '</div><div style="color:#6e6e73;font-size:0.72rem">Total Vault Records</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + sizeEstimate + ' KB</div><div style="color:#6e6e73;font-size:0.72rem">Storage Used</div></div>'
-                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + totalMs.toFixed(0) + ' ms</div><div style="color:#6e6e73;font-size:0.72rem">Total Time</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + count.toLocaleString() + '</div><div style="color:#888;font-size:0.72rem">Records Generated</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + s4Vault.length.toLocaleString() + '</div><div style="color:#888;font-size:0.72rem">Total Vault Records</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + sizeEstimate + ' KB</div><div style="color:#888;font-size:0.72rem">Storage Used</div></div>'
+                + '<div style="padding:10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:8px"><div style="color:#00aaff;font-size:1.1rem;font-weight:700">' + totalMs.toFixed(0) + ' ms</div><div style="color:#888;font-size:0.72rem">Total Time</div></div>'
                 + '</div>'
                 + '<table style="width:100%;font-size:0.75rem;border-collapse:collapse">'
-                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#6e6e73">Record Generation</td><td style="padding:4px 8px;color:#fff;text-align:right">' + genMs.toFixed(1) + ' ms</td></tr>'
-                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#6e6e73">Array Merge</td><td style="padding:4px 8px;color:#fff;text-align:right">' + mergeMs.toFixed(1) + ' ms</td></tr>'
-                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#6e6e73">localStorage Save</td><td style="padding:4px 8px;color:#fff;text-align:right">' + saveMs.toFixed(1) + ' ms</td></tr>'
-                + '<tr><td style="padding:4px 8px;color:#6e6e73">DOM Render (page)</td><td style="padding:4px 8px;color:#fff;text-align:right">' + renderMs.toFixed(1) + ' ms</td></tr>'
+                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#888">Record Generation</td><td style="padding:4px 8px;color:#fff;text-align:right">' + genMs.toFixed(1) + ' ms</td></tr>'
+                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#888">Array Merge</td><td style="padding:4px 8px;color:#fff;text-align:right">' + mergeMs.toFixed(1) + ' ms</td></tr>'
+                + '<tr style="border-bottom:1px solid var(--border)"><td style="padding:4px 8px;color:#888">localStorage Save</td><td style="padding:4px 8px;color:#fff;text-align:right">' + saveMs.toFixed(1) + ' ms</td></tr>'
+                + '<tr><td style="padding:4px 8px;color:#888">DOM Render (page)</td><td style="padding:4px 8px;color:#fff;text-align:right">' + renderMs.toFixed(1) + ' ms</td></tr>'
                 + '</table>';
         }
         s4Notify('Stress Test Complete', count.toLocaleString() + ' records generated in ' + totalMs.toFixed(0) + 'ms. Total vault: ' + s4Vault.length.toLocaleString(), 'success');
@@ -6969,8 +6972,7 @@ function clearStressTestRecords() {
 
 // Workspace notification system
 function showWorkspaceNotification(title, detail) {
-    // Don't show notifications until user has navigated to a tool
-    if (!window._currentSection && !window._currentILSTool) return;
+    return; // Notifications disabled in demo-app
 
     const existing = document.querySelectorAll('.workspace-notification');
     existing.forEach(n => n.remove());
@@ -7006,7 +7008,7 @@ function showDocUpload() {
         + '<div id="newDocFileInfo" style="display:none;padding:8px;background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:8px;font-size:0.82rem;color:#00cc66"></div>'
         + '</div>'
         + '<div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'docUploadModal\').remove()" style="background:rgba(255,255,255,0.03);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer">Cancel</button>'
+        + '<button onclick="document.getElementById(\'docUploadModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer">Cancel</button>'
         + '<button onclick="addNewDoc()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">Add Document</button>'
         + '</div></div>';
     document.body.appendChild(modal);
@@ -7049,14 +7051,14 @@ function showDocVersionUpload() {
     modal.id = 'docVersionModal';
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
     modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto">'
-        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-code-branch" style="color:var(--accent);margin-right:8px"></i>Upload New Version</h3>'
+        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-code-branch" style="color:#00aaff;margin-right:8px"></i>Upload New Version</h3>'
         + '<p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Upload a revised version of an existing document. Our AI agent will analyze it for discrepancies, changes, errors, omissions, and cost modifications — then flag anything that needs attention.</p>'
         + '<select id="versionDocId" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;margin-bottom:12px"><option value="">Select document...</option>' + ids.map(function(i){return '<option value="'+i+'">'+i+' (v'+_docVersions[i].length+')</option>';}).join('') + '</select>'
         + '<textarea id="versionContent" rows="8" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;font-family:monospace;font-size:0.82rem;margin-bottom:12px" placeholder="Paste updated document content..."></textarea>'
         + '<input id="versionNote" style="background:#0a0e1a;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;width:100%;margin-bottom:12px" placeholder="Change notes (optional)">'
         + '<div style="display:flex;gap:10px;justify-content:flex-end">'
-        + '<button onclick="document.getElementById(\'docVersionModal\').remove()" style="background:rgba(255,255,255,0.03);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer">Cancel</button>'
-        + '<button onclick="uploadDocVersion()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">Upload & Analyze</button>'
+        + '<button onclick="document.getElementById(\'docVersionModal\').remove()" style="background:rgba(255,255,255,0.06);color:var(--steel);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer">Cancel</button>'
+        + '<button onclick="uploadDocVersion()" style="background:#00aaff;color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">Upload & Analyze</button>'
         + '</div></div>';
     document.body.appendChild(modal);
 }
@@ -7114,7 +7116,7 @@ function scanForRedFlags(content, docId) {
 }
 
 function showRedFlagAlert(docId, flags) {
-    var html = '<div style="position:fixed;top:80px;right:20px;background:#0d11175f5;border:2px solid #ff4444;border-radius:8px;padding:20px;max-width:400px;z-index:10001;animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(255,0,0,0.2)">'
+    var html = '<div style="position:fixed;top:80px;right:20px;background:#1a0a0a;border:2px solid #ff4444;border-radius:8px;padding:20px;max-width:400px;z-index:10001;animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(255,0,0,0.2)">'
         + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h4 style="color:#ff4444;margin:0"><i class="fas fa-flag"></i> Red Flags: '+docId+'</h4><button onclick="this.closest(\'div\').parentElement.remove()" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:1.2rem">&times;</button></div>';
     flags.forEach(function(f) {
         var col = f.severity === 'critical' ? '#ff0000' : f.severity === 'high' ? '#ff4444' : f.severity === 'medium' ? '#ff8800' : '#ffa500';
@@ -7131,12 +7133,12 @@ function showDiffResult(docId, diff, flags) {
     var modal = document.createElement('div');
     modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
     var html = '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto">'
-        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-brain" style="color:var(--accent);margin-right:8px"></i>Document Intelligence Analysis: '+docId+'</h3>'
+        + '<h3 style="color:#fff;margin:0 0 16px"><i class="fas fa-brain" style="color:#00aaff;margin-right:8px"></i>Document Intelligence Analysis: '+docId+'</h3>'
                 + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;color:var(--steel)"><i class="fas fa-robot" style="color:#00aaff;margin-right:6px"></i><strong style="color:#00aaff">S4 AI Agent:</strong> Analyzed document for discrepancies, unauthorized changes, errors, omissions, and cost modifications.</div>'
         + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">'
         + '<div style="background:rgba(0,204,102,0.06);border:1px solid rgba(0,204,102,0.2);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#00cc66">+'+diff.added+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Added</div></div>'
         + '<div style="background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:#ff4444">-'+diff.removed+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Removed</div></div>'
-        + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--accent)">~'+diff.changed+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Modified</div></div>'
+        + '<div style="background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--accent,#00aaff)">~'+diff.changed+'</div><div style="font-size:0.75rem;color:var(--steel)">Lines Modified</div></div>'
         + '</div>';
     if (flags.length > 0) {
         html += '<div style="background:rgba(255,0,0,0.04);border:1px solid rgba(255,68,68,0.2);border-radius:8px;padding:12px;margin-bottom:16px"><div style="color:#ff4444;font-weight:700;margin-bottom:8px"><i class="fas fa-flag"></i> Red Flags ('+flags.length+')</div>';
@@ -7144,7 +7146,7 @@ function showDiffResult(docId, diff, flags) {
         html += '</div>';
     }
     if (diff.details.length > 0) {
-        html += '<div style="background:#0a0e1a;border-radius:8px;padding:12px;font-family:monospace;font-size:0.78rem;max-height:250px;overflow-y:auto">';
+        html += '<div style="background:#050810;border-radius:8px;padding:12px;font-family:monospace;font-size:0.78rem;max-height:250px;overflow-y:auto">';
         diff.details.forEach(function(d) {
             if (d.type==='add') html += '<div style="color:#00cc66">+ L'+d.line+': '+d.text.substring(0,80)+'</div>';
             else if (d.type==='del') html += '<div style="color:#ff4444">- L'+d.line+': '+d.text.substring(0,80)+'</div>';
@@ -7277,7 +7279,7 @@ function calcCompliance() {
     if (vault === 0) recs.push('<i class="fas fa-arrow-right" style="color:var(--accent);margin-right:6px"></i> <strong>Anchor your first record</strong> to establish a tamper-proof audit trail and start building your compliance posture.');
     if (cmmc < 80) recs.push('<i class="fas fa-arrow-right" style="color:#e74c3c;margin-right:6px"></i> <strong>Increase anchored records</strong> — CMMC Level 2 requires demonstrable data integrity controls. Anchor 20+ records to reach 80%+ coverage.');
     if (encryptedCount < vault * 0.5 && vault > 0) recs.push('<i class="fas fa-arrow-right" style="color:#3498db;margin-right:6px"></i> <strong>Enable encryption</strong> on more records — over 50% of your records are unencrypted. CUI requires protection per NIST 800-171.');
-    if (ils < 70) recs.push('<i class="fas fa-arrow-right" style="color:var(--accent);margin-right:6px"></i> <strong>Use more ILS tools</strong> — run DMSMS checks, readiness calculations, and lifecycle estimates to improve GEIA-STD-0007 ILS compliance.');
+    if (ils < 70) recs.push('<i class="fas fa-arrow-right" style="color:var(--accent,#00aaff);margin-right:6px"></i> <strong>Use more ILS tools</strong> — run DMSMS checks, readiness calculations, and lifecycle estimates to improve GEIA-STD-0007 ILS compliance.');
     if (actions > 0 && actionsDone / actions < 0.5) recs.push('<i class="fas fa-arrow-right" style="color:var(--accent);margin-right:6px"></i> <strong>Resolve open action items</strong> — ' + (actions - actionsDone) + ' of ' + actions + ' items are still open. Completing these improves FAR 46 quality scores.');
     if (dmsmsRecords === 0) recs.push('<i class="fas fa-arrow-right" style="color:#ff6b6b;margin-right:6px"></i> <strong>Run a DMSMS analysis</strong> and anchor the results to demonstrate proactive obsolescence management per DoDI 4245.15.');
     if (recs.length === 0) recs.push('<i class="fas fa-check-circle" style="color:var(--accent);margin-right:6px"></i> <strong>Excellent compliance posture!</strong> Continue anchoring records and monitoring DMSMS, readiness, and warranty status.');
@@ -7482,8 +7484,8 @@ function renderEvidence() {
     if (empty) empty.style.display = 'none';
     list.innerHTML = window._s4Safe(_evidenceItems.map(function(e, i) {
         var icon = e.type.indexOf('pdf') >= 0 ? 'fa-file-pdf' : e.type.indexOf('image') >= 0 ? 'fa-file-image' : e.type.indexOf('sheet') >= 0 || e.filename.match(/\.xlsx?$/i) ? 'fa-file-excel' : 'fa-file';
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid var(--accent)">'
-            + '<i class="fas ' + icon + '" style="color:var(--accent);font-size:1rem;width:20px;text-align:center"></i>'
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid #ffa500">'
+            + '<i class="fas ' + icon + '" style="color:#ffa500;font-size:1rem;width:20px;text-align:center"></i>'
             + '<div style="flex:1;min-width:0"><div style="color:#fff;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + e.filename + '</div><div style="font-size:0.72rem;color:var(--steel)">' + e.control + ' | ' + e.size + ' | ' + new Date(e.timestamp).toLocaleDateString() + (e.hash ? ' | <span style="color:#00aaff">Hash: ' + e.hash + '</span>' : '') + '</div></div>'
             + '<span style="font-size:0.72rem;color:#00aaff;background:#00aaff11;padding:2px 6px;border-radius:8px">' + e.status + '</span>'
             + '<button onclick="removeEvidence(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Remove"><i class="fas fa-times"></i></button>'
@@ -7576,7 +7578,7 @@ function _getControlScore(c, vault, encrypted, actions, done) {
 function toggleAutoMonitor() {
     _autoMonitor = !_autoMonitor;
     var btn = document.getElementById('autoMonitorBtn');
-    if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-sync' + (_autoMonitor ? ' fa-spin' : '') + '"></i> Auto-Monitor: ' + (_autoMonitor ? 'ON' : 'OFF')); btn.style.background = _autoMonitor ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.06)'; btn.style.color = _autoMonitor ? '#00aaff' : (document.body.classList.contains('light-mode') ? '#1d1d1f' : '#888'); }
+    if (btn) { btn.innerHTML = window._s4Safe('<i class="fas fa-sync' + (_autoMonitor ? ' fa-spin' : '') + '"></i> Auto-Monitor: ' + (_autoMonitor ? 'ON' : 'OFF')); btn.style.background = _autoMonitor ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.06)'; btn.style.color = _autoMonitor ? '#00aaff' : '#fff'; }
     if (_autoMonitor) { _autoMonitorTimer = setInterval(runMonitoringScan, 30000); showWorkspaceNotification('Auto-monitoring enabled — scanning every 30s'); }
     else { clearInterval(_autoMonitorTimer); _autoMonitorTimer = null; showWorkspaceNotification('Auto-monitoring disabled'); }
 }
@@ -7660,10 +7662,16 @@ function populateDiffVersions() {
     // Pull from submission history in vault
     var subs = s4Vault ? s4Vault.filter(function(v) { return v.source === 'Submissions & PTD' || v.type === 'submission'; }) : [];
     if (subs.length < 2) {
-        selA.innerHTML = window._s4Safe('<option value="">Version A (Base)</option>');
-        selB.innerHTML = window._s4Safe('<option value="">Version B (New)</option>');
-        var hint = document.getElementById('diffOutput');
-        if (hint) hint.innerHTML = window._s4Safe('<div style="color:var(--steel);padding:12px;font-size:.82rem"><i class="fas fa-info-circle" style="margin-right:6px"></i>Anchor at least two submissions to the vault to enable version comparison.</div>');
+        // Generate demo versions
+        var demoVersions = [
+            { label: 'VRSL v1.0 — 2024-01-15', id: 'v1' },
+            { label: 'VRSL v1.1 — 2024-03-22', id: 'v2' },
+            { label: 'VRSL v2.0 — 2024-06-10', id: 'v3' },
+            { label: 'PTD v1.0 — 2024-02-01', id: 'v4' },
+            { label: 'PTD v1.1 — 2024-05-18', id: 'v5' }
+        ];
+        selA.innerHTML = window._s4Safe('<option value="">Version A (Base)</option>' + demoVersions.map(function(v) { return '<option value="' + v.id + '">' + v.label + '</option>'; }).join(''));
+        selB.innerHTML = window._s4Safe('<option value="">Version B (New)</option>' + demoVersions.map(function(v) { return '<option value="' + v.id + '">' + v.label + '</option>'; }).join(''));
     } else {
         var opts = subs.map(function(s, i) { return '<option value="sub' + i + '">' + (s.label || 'Submission') + ' — ' + new Date(s.timestamp).toLocaleDateString() + '</option>'; }).join('');
         selA.innerHTML = window._s4Safe('<option value="">Version A (Base)</option>' + opts);
@@ -7676,17 +7684,20 @@ function runVersionDiff() {
     var vB = document.getElementById('diffVersionB')?.value;
     var output = document.getElementById('diffOutput');
     if (!output) return;
-    if (!vA || !vB) { output.innerHTML = window._s4Safe('<div style="color:var(--accent);padding:12px">Please select both Version A and Version B to compare.</div>'); return; }
+    if (!vA || !vB) { output.innerHTML = window._s4Safe('<div style="color:#ffa500;padding:12px">Please select both Version A and Version B to compare.</div>'); return; }
     if (vA === vB) { output.innerHTML = window._s4Safe('<div style="color:var(--steel);padding:12px">Same version selected. No differences.</div>'); return; }
 
-    // Compare data from vault submissions
-    var diffs = [];
-    var subA = s4Vault ? s4Vault.find(function(v) { return ('sub' + s4Vault.indexOf(v)) === vA; }) : null;
-    var subB = s4Vault ? s4Vault.find(function(v) { return ('sub' + s4Vault.indexOf(v)) === vB; }) : null;
-    if (!subA || !subB) {
-        output.innerHTML = window._s4Safe('<div style="color:var(--steel);padding:12px"><i class="fas fa-info-circle" style="margin-right:6px"></i>Upload and anchor at least two submissions to the vault first, then select them here to compare.</div>');
-        return;
-    }
+    // Generate realistic diff output
+    var diffs = [
+        { field: 'NSN 5985-01-678-4321', type: 'modified', old: 'Qty: 12, Unit Price: $4,230.00', new_val: 'Qty: 14, Unit Price: $4,580.00' },
+        { field: 'NSN 2840-01-480-6710', type: 'added', old: '', new_val: 'LM2500 Turbine Blade — Qty: 6, Unit Price: $18,750.00' },
+        { field: 'NSN 1005-01-398-7722', type: 'removed', old: 'Mk 45 Barrel Liner — Discontinued', new_val: '' },
+        { field: 'NSN 6110-01-557-2288', type: 'modified', old: 'Lead Time: 90 days', new_val: 'Lead Time: 145 days' },
+        { field: 'NSN 5895-01-645-9012', type: 'modified', old: 'Source: Mercury Systems', new_val: 'Source: Mercury Systems (GIDEP Alert)' },
+        { field: 'Header — Submitter', type: 'modified', old: 'Huntington Ingalls Industries', new_val: 'HII Mission Technologies' },
+        { field: 'NSN 9515-01-320-4567', type: 'modified', old: 'Spec: MIL-S-16216K', new_val: 'Spec: MIL-S-16216L (Rev)' },
+        { field: 'NSN 1440-01-555-8790', type: 'added', old: '', new_val: 'MK 41 VLS Canister Seal — Qty: 24, Unit Price: $890.00' }
+    ];
 
     var html = '<div style="margin-bottom:8px;color:var(--steel);font-size:0.78rem"><strong>Comparing:</strong> ' + (document.getElementById('diffVersionA')?.selectedOptions[0]?.text||vA) + ' → ' + (document.getElementById('diffVersionB')?.selectedOptions[0]?.text||vB) + '</div>';
     html += '<div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:#00cc88;font-size:0.78rem"><i class="fas fa-plus-circle"></i> ' + diffs.filter(function(d){return d.type==='added'}).length + ' Added</span><span style="color:#ff6b6b;font-size:0.78rem"><i class="fas fa-minus-circle"></i> ' + diffs.filter(function(d){return d.type==='removed'}).length + ' Removed</span><span style="color:#ffa500;font-size:0.78rem"><i class="fas fa-pen-to-square"></i> ' + diffs.filter(function(d){return d.type==='modified'}).length + ' Modified</span></div>';
@@ -7813,7 +7824,7 @@ function renderScheduledReports() {
         var statusColor = r.active ? '#00aaff' : 'var(--steel)';
         return '<div style="display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid ' + statusColor + '">'
             + '<i class="fas fa-calendar-check" style="color:' + statusColor + '"></i>'
-            + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem">' + _esc(r.label) + ' <span style="color:var(--steel);font-size:0.72rem">(' + _esc(r.frequency) + ')</span></div><div style="font-size:0.72rem;color:var(--steel)">Next: ' + _esc(r.nextRun) + '</div></div>'
+            + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem">' + r.label + ' <span style="color:var(--steel);font-size:0.72rem">(' + r.frequency + ')</span></div><div style="font-size:0.72rem;color:var(--steel)">Next: ' + r.nextRun + '</div></div>'
             + '<button onclick="toggleScheduledReport(' + i + ')" style="background:none;border:none;color:' + (r.active ? '#00aaff' : 'var(--steel)') + ';cursor:pointer;font-size:0.78rem" title="Toggle"><i class="fas fa-' + (r.active ? 'toggle-on' : 'toggle-off') + '"></i></button>'
             + '<button onclick="removeScheduledReport(' + i + ')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.78rem" title="Delete"><i class="fas fa-trash"></i></button>'
             + '</div>';
@@ -7885,7 +7896,7 @@ function generateHeatMap() {
     var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">';
     categories.forEach(function(c) {
         var color = c.risk >= 80 ? '#ff3333' : c.risk >= 60 ? '#ff6b6b' : c.risk >= 40 ? '#ffa500' : '#00cc88';
-        var bg = c.risk >= 80 ? 'rgba(255,51,51,0.12)' : c.risk >= 60 ? 'rgba(255,107,107,0.08)' : c.risk >= 40 ? 'rgba(255,165,0,0.06)' : 'rgba(0,204,136,0.06)';
+        var bg = c.risk >= 80 ? 'rgba(255,51,51,0.12)' : c.risk >= 60 ? 'rgba(255,107,107,0.08)' : c.risk >= 40 ? 'rgba(201,168,76,0.06)' : 'rgba(0,204,136,0.06)';
         var label = c.risk >= 80 ? 'CRITICAL' : c.risk >= 60 ? 'HIGH' : c.risk >= 40 ? 'MODERATE' : 'LOW';
         html += '<div style="background:' + bg + ';border:1px solid ' + color + '33;border-radius:8px;padding:12px;text-align:center">';
         html += '<div style="font-size:1.4rem;font-weight:800;color:' + color + '">' + c.risk + '</div>';
@@ -7988,7 +7999,7 @@ function generateBudgetForecast() {
     var s4Savings = 0.12; // 12% reduction from S4 automation
 
     var html = '<table style="width:100%;border-collapse:collapse;font-size:0.78rem">';
-    html += '<thead><tr style="background:rgba(0,170,255,0.08);color:var(--accent)">';
+    html += '<thead><tr style="background:rgba(255,165,0,0.08);color:#ffa500">';
     html += '<th style="padding:8px;text-align:left">Year</th><th style="padding:8px;text-align:right">Procurement</th><th style="padding:8px;text-align:right">Sustainment</th><th style="padding:8px;text-align:right">DMSMS/Obsol.</th><th style="padding:8px;text-align:right">S4 Savings</th><th style="padding:8px;text-align:right;color:#fff">Net Forecast</th>';
     html += '</tr></thead><tbody>';
 
@@ -8010,8 +8021,8 @@ function generateBudgetForecast() {
         html += '<td style="padding:6px 8px;text-align:right;color:#fff;font-weight:600">$' + Math.round(net * 1000000).toLocaleString() + '</td>';
         html += '</tr>';
     }
-    html += '<tr style="border-top:2px solid rgba(0,170,255,0.3);font-weight:700">';
-    html += '<td style="padding:8px;color:var(--accent)">' + years + '-Year Total</td><td colspan="3"></td>';
+    html += '<tr style="border-top:2px solid rgba(201,168,76,0.3);font-weight:700">';
+    html += '<td style="padding:8px;color:#ffa500">' + years + '-Year Total</td><td colspan="3"></td>';
     html += '<td style="padding:8px;text-align:right;color:#00cc88">-$' + Math.round(totalSavings * 1000000).toLocaleString() + '</td>';
     html += '<td style="padding:8px;text-align:right;color:#fff;font-size:0.88rem">$' + Math.round(totalNet * 1000000).toLocaleString() + '</td>';
     html += '</tr></tbody></table>';
@@ -8035,6 +8046,10 @@ function runDocAIExtraction(input) {
     input.value = '';
 }
 
+function runDocAIDemoExtraction() {
+    var demoText = 'CDRL A003 — Vendor Recommended Spares List\nProgram: DDG-51 Flight III\nDate: 2024-06-15\nContract: N00024-22-C-6318\nCAGE: 27014 (Huntington Ingalls Industries)\n\nLine 001: NSN 5985-01-678-4321, SPY-6 T/R Module, Qty 12, Unit Price $4,230.00\nLine 002: NSN 2840-01-480-6710, LM2500 Turbine Blade, Qty 6, Unit Price $18,750.00\nLine 003: NSN 1440-01-555-8790, MK 41 VLS Rail, Qty 24, Unit Price $890.00\nLine 004: NSN 6110-01-557-2288, CIWS Phalanx Motor, Qty 3, Unit Price $42,500.00\n\nTotal Estimated Cost: $376,890.00\nSubmission prepared per GEIA-STD-0007 (formerly MIL-STD-1388-2B), DI-ALSS-81529A';
+    _extractFromText(demoText, 'CDRL_A003_DDG51_VRSL.txt');
+}
 
 function _extractFromText(text, filename) {
     var out = document.getElementById('docAIOutput');
@@ -8055,11 +8070,11 @@ function _extractFromText(text, filename) {
 
     var sections = [
         { label:'NSNs Detected', items:nsns, color:'#00aaff', icon:'fa-barcode' },
-        { label:'CAGE Codes', items:cages, color:'var(--accent)', icon:'fa-building' },
+        { label:'CAGE Codes', items:cages, color:'#ffa500', icon:'fa-building' },
         { label:'Dollar Amounts', items:dollars, color:'#00cc88', icon:'fa-dollar-sign' },
         { label:'Dates', items:dates, color:'#00aaff', icon:'fa-calendar' },
         { label:'Contract Numbers', items:contracts, color:'#ff6b6b', icon:'fa-file-contract' },
-        { label:'MIL-STD References', items:milSpecs, color:'var(--accent)', icon:'fa-shield-halved' },
+        { label:'MIL-STD References', items:milSpecs, color:'#ffa500', icon:'fa-shield-halved' },
         { label:'DI Codes', items:diCodes, color:'#00aaff', icon:'fa-hashtag' }
     ];
 
@@ -8080,68 +8095,21 @@ function _extractFromText(text, filename) {
 // ═══ TEMPLATE LIBRARY ═══
 // ═══════════════════════════════════════════════════════════════
 var _templates = [
-    // ── Contract Administration ──
-    { id:'TPL-001', name:'Corrective Action Request (CAR)', category:'contract', icon:'fa-file-circle-exclamation',
-      desc:'Standard CAR form per AS9100D / ISO 9001:2015 §10.2 for documenting nonconformances, performing root cause analysis (5-Why / Ishikawa), and tracking corrective & preventive actions through closure verification.',
-      fields:['CAR Number','Date Opened','Originator / Dept','Nonconformance Description (include clause, spec, or drawing violated)','Severity (Critical / Major / Minor / Observation)','Containment Actions Taken','Root Cause Analysis Method (5-Why, Fishbone, 8D)','Root Cause Statement','Corrective Action Plan','Preventive Action Plan','Responsible Party','Target Completion Date','Objective Evidence of Effectiveness','Verification Date','QA Sign-off'] },
-    { id:'TPL-002', name:'Engineering Change Proposal (ECP)', category:'engineering', icon:'fa-file-pen',
-      desc:'ECP template per MIL-STD-480B / EIA-649-1 for proposing Class I or Class II design changes to baselined configurations. Includes full impact analysis, cost/schedule trade-offs, and Configuration Control Board (CCB) routing.',
-      fields:['ECP Number','Date','Originating Activity / CAGE Code','ECP Classification (Class I / Class II)','Priority (Urgent / Routine / Emergency)','Title of Change','Affected CI / CSCI / HWCI','Current Configuration Baseline Reference','Description of Change','Need / Justification','Affected Documents (TDP, TM, drawings)','Developmental Test Impact','Production Impact','Logistics / Supportability Impact','Cost Impact (NRE, Recurring, Retrofit)','Schedule Impact (months)','Milestone Affected','Risk Assessment (probability × severity)','Trade-Off Analysis Summary','CCB Disposition','Implementing Activity','Effectivity (hull, tail, serial number)'] },
-    { id:'TPL-003', name:'CDRL / DID Compliance Tracker', category:'contract', icon:'fa-file-circle-check',
-      desc:'Contract Data Requirements List tracker per DI-MGMT-80004A. Maps each CDRL exhibit line item to its Data Item Description (DID), tracks submission status, government review cycle, and acceptance.',
-      fields:['CDRL Exhibit Line Item (e.g., A001)','DID Number (e.g., DI-ILSS-81495A)','Title','Frequency (One Time / Monthly / Quarterly / As Required)','First Submission Due Date','Contractor Submission Date','Distribution Statement','Government Reviewer','Review Status (Under Review / Approved / Rejected / Approved-as-Noted)','Government Action Due Date','Rejection Reason / Comments','Resubmission Date','Final Acceptance Date','Pages / File Size','Anchored to XRPL (Y/N)','TX Hash'] },
-    { id:'TPL-004', name:'Statement of Work (SOW)', category:'contract', icon:'fa-file-contract',
-      desc:'SOW template structured per MIL-HDBK-245D with standard DoW sections (1.0–6.0). Defines all contractor tasks, deliverables, acceptance criteria, and performance standards.',
-      fields:['Contract Number','Program Name','Contractor Name / CAGE Code','1.0 Scope — System Overview','1.1 Scope — Program Background','2.0 Applicable Documents — Government (MIL-STDs, specs)','2.1 Applicable Documents — Non-Government (SAE, IEEE)','3.0 Requirements — General','3.x Task Descriptions (one per task: Task Title, Description, Inputs, Outputs, Acceptance Criteria, Performance Std)','4.0 Deliverables — CDRL Cross-Reference Table','5.0 Period of Performance — Start/End Dates','5.1 Milestone Schedule','6.0 Place of Performance — Primary / Alternate Sites','Government-Furnished Property','Security Requirements (CUI, classified, NIST 800-171)','Quality Assurance Surveillance Plan (QASP) Reference','Key Personnel Requirements'] },
-    { id:'TPL-005', name:'Provisioning Parts List (PPL)', category:'logistics', icon:'fa-boxes-stacked',
-      desc:'PPL template per GEIA-STD-0007 for initial provisioning of repair parts, special tools, and test equipment. Includes Source, Maintenance & Recoverability (SMR) coding.',
-      fields:['PPL Line Item Number','NSN (National Stock Number)','Reference Designation','Part Number','CAGE Code','Nomenclature','Quantity Per Assembly (QPA)','Qty Per End Item','Unit of Issue','Unit Price','SMR Code (Source / Maintenance / Recoverability)','Essentiality Code (XA1, XB2, XD2, etc.)','Technical Manual Reference','Failure Rate (MTBF hours)','Recommended Initial Buy Qty','Shelf Life Code','Hazardous Material Code','Special Handling / Storage','Interchangeability / Substitutability'] },
-    { id:'TPL-006', name:'DMSMS Obsolescence Case Report', category:'engineering', icon:'fa-triangle-exclamation',
-      desc:'Obsolescence case report per SD-22 (DMSMS Management Guidance). Documents diminishing manufacturing sources, evaluates resolution alternatives, and tracks implementation through production/fielded systems.',
-      fields:['DMSMS Case Number','Date Opened','Affected NSN','Affected Part Number / CAGE Code','Nomenclature','Affected Weapon Systems / Platforms','Source of Notification (GIDEP, vendor, DLA)','Current Inventory Position (wholesale, retail, due-in)','Estimated Demand (annual)','Years of Supply Remaining','Impact Assessment (operational, safety, cost)','Resolution Alternatives Evaluated — (1) Existing Stock, (2) Substitute, (3) Redesign, (4) Emulation, (5) Aftermarket, (6) Reclamation, (7) Reverse Engineering','Selected Resolution with Justification','NRE Cost','Recurring Cost Delta','Implementation Timeline (months)','Design Authority Approval','Configuration Management Impact','Testing Required (Y/N, scope)','Risk if Unresolved'] },
-    { id:'TPL-007', name:'Supply Support Request (SSR)', category:'logistics', icon:'fa-truck',
-      desc:'SSR form per NAVSUPINST 4440.12 for requesting supply support for new, modified, or re-deployed equipment. Routes through Inventory Control Point (ICP) for range/depth determination.',
-      fields:['SSR Number','Date Submitted','Requesting Activity (UIC)','Equipment Name / Model','Equipment NSN','Manufacturer / CAGE Code','Quantity of Equipment Supported','Support Concept (Organic / Contract / Hybrid)','Maintenance Level (O, I, D)','Recommended Spares — NSN, Part Number, Nomenclature, Qty, Unit Price','Special Tools & Test Equipment Required','Technical Data / Publications Required','Training Plan (initial + sustaining)','Facilities / Infrastructure Requirements','Support Start Date','Point of Contact / Phone / Email'] },
-    { id:'TPL-008', name:'POA&M (Plan of Action & Milestones)', category:'compliance', icon:'fa-list-check',
-      desc:'POA&M template per NIST SP 800-53 Rev 5 / NIST SP 800-171 Rev 2 / CMMC Level 2. Tracks each identified security weakness from discovery through remediation with milestone-level granularity.',
-      fields:['POA&M Item Number','Date Identified','Source of Finding (assessment, audit, scan, incident)','NIST 800-171 Control / CMMC Practice ID','Weakness Title','Weakness Description','Risk Level (Very High / High / Moderate / Low)','Affected System / Asset','Scheduled Completion Date','Milestones (sub-tasks with individual due dates)','Milestone Status (Not Started / In Progress / Complete / Delayed)','Resources Required ($, personnel, tools)','Responsible POC','Vendor Dependencies','Cost Estimate','Actual Completion Date','Verification Method','Verifier','Residual Risk After Remediation','Comments / Delays'] },
-    { id:'TPL-009', name:'System Security Plan (SSP)', category:'compliance', icon:'fa-shield-halved',
-      desc:'SSP outline template per NIST SP 800-18 Rev 1 / NIST SP 800-171 Rev 2 for documenting how CUI protection controls are implemented within an information system authorization boundary.',
-      fields:['System Name / Identifier','System Owner / ISSO','Authorization Boundary Description','System Categorization (CUI / ITAR / classified)','Operational Status','General Description / Purpose','System Environment (cloud, on-prem, hybrid)','Network Diagram Reference','Ports, Protocols & Services','Information Types Processed','User Types & Access Levels','Interconnections to External Systems (ISAs)','Control Family Implementation — Access Control (3.1.x)','Control Family Implementation — Awareness & Training (3.2.x)','Control Family Implementation — Audit & Accountability (3.3.x)','Control Family Implementation — Identification & Authentication (3.5.x)','Control Family Implementation — Incident Response (3.6.x)','Control Family Implementation — Media Protection (3.8.x)','Control Family Implementation — System & Communications Protection (3.13.x)','Continuous Monitoring Strategy','Date of Last Assessment','Authorizing Official'] },
-    { id:'TPL-010', name:'Test & Evaluation Master Plan (TEMP)', category:'engineering', icon:'fa-flask',
-      desc:'TEMP template per DoDI 5000.89 / DoD 5000 series for developmental and operational test planning. Covers critical technical parameters, test design, resources, and exit criteria.',
-      fields:['Program Name','TEMP Version / Date','System Description','Critical Technical Parameters (CTPs) — Threshold & Objective','Critical Operational Issues (COIs)','Test Phases (DT&E, OT&E, LUT, IOT&E, FOT&E)','DT&E Test Events — Objectives, Resources, Schedule','OT&E Test Events — Objectives, Resources, Schedule','Live Fire Test & Evaluation (if applicable)','Test Limitations / Constraints','Modeling & Simulation Plan','Data Collection / Reduction / Analysis Plan','Success Criteria per Phase','Deficiency Severity Categories','Resources Required — Personnel, Ranges, Targets, Instrumentation','Schedule (months with milestones)','Risk Areas','Cybersecurity T&E Requirements','Interoperability Test Plan Reference','Evaluation Framework'] },
-    { id:'TPL-011', name:'Failure Review Board (FRB) Report', category:'engineering', icon:'fa-bug',
-      desc:'FRB report template per MIL-STD-1629A / DoW reliability practices for convening a formal review of mission-critical or safety-critical failures, determining root cause, and mandating corrective actions.',
-      fields:['FRB Report Number','Date of FRB Convening','FRB Chairperson / Members','System / Subsystem Affected','Serial Number / Lot','Failure Date / Time','Operating Hours at Failure','Failure Description (symptom, mode, effect)','Failure Environment (temp, humidity, vibration, sea state)','Visual / Physical Inspection Findings','Lab Analysis Results','Contributing Factors','Root Cause Determination','Failure Category (design, manufacturing, workmanship, wear-out, NFF)','Corrective Actions Required','Preventive Actions Required','Fleet / Lot Applicability','Retrofit / Inspection Screening Required','Target Implementation Date','Effectiveness Review Date'] },
-    { id:'TPL-012', name:'Warranty Claim & Tracking Form', category:'contract', icon:'fa-certificate',
-      desc:'Warranty claim template per FAR 46.7 / DFARS 246.7 for exercising contractor warranty provisions. Tracks claim from defect discovery through contractor disposition and credit/replacement.',
-      fields:['Claim Number','Contract Number','Contractor Name / CAGE Code','Contract Warranty Clause Reference','Item NSN','Item Part Number','Item Serial Number / Lot Number','Item Nomenclature','Warranty Start Date','Warranty Expiration Date','Date Defect Discovered','Defect Description','Mission Impact (Critical / Degraded / None)','Reporting Activity / UIC','Contractor Notified Date','Claim Type (Repair / Replace / Credit)','Estimated Claim Value','Government Shipping Date','Contractor Acknowledgment Date','Contractor Disposition Date','Resolution Description','Credit Amount / Replacement Tracking','Warranty Administrator Notes'] },
-    { id:'TPL-013', name:'Risk Assessment Matrix (5×5)', category:'compliance', icon:'fa-table-cells',
-      desc:'5×5 risk matrix template per DoW Risk, Issue, and Opportunity (RIO) Management Guide / MIL-STD-882E for scoring likelihood × consequence across cost, schedule, performance, and safety dimensions.',
-      fields:['Risk ID','Risk Title','Risk Description','Risk Category (Technical / Schedule / Cost / Programmatic)','Likelihood Score (1-5: Rare, Unlikely, Possible, Likely, Near Certain)','Cost Consequence Score (1-5)','Schedule Consequence Score (1-5)','Performance Consequence Score (1-5)','Safety Consequence Score (1-5)','Overall Risk Score (L × max C)','Risk Level (Low / Moderate / High / Very High)','Risk Trigger / Watch Items','Mitigation Strategy','Mitigation Owner','Mitigation Start Date','Mitigation Actions / Status','Residual Likelihood','Residual Consequence','Residual Risk Level','Risk Burn-Down Reference','Last Updated','Next Review Date'] },
-    { id:'TPL-014', name:'FRACAS Report', category:'engineering', icon:'fa-chart-bar',
-      desc:'Failure Reporting, Analysis & Corrective Action System (FRACAS) report template per MIL-STD-2155 / MIL-HDBK-2155. Provides closed-loop tracking from failure occurrence through corrective action verification.',
-      fields:['FRACAS Report Number','Date of Failure','System / End Item','Subsystem / Component','WBS Element','Part Number / NSN','Serial Number','Operating Hours at Failure','Cumulative Operating Hours','Failure Mode Description','Failure Effect (local, next higher, end)','Failure Detection Method','Environment at Failure','Preliminary Analysis Findings','Detailed Failure Analysis Method (DFA, SEM, X-ray, etc.)','Root Cause Classification (Design, Mfg, Workmanship, Wear, Overstress, NFF)','Corrective Action Description','Corrective Action Implementation Date','Effectivity (all units, specific serial range)','Verification Test Results','MTBF Impact','Trend Analysis (Is this a recurring failure mode?)','Related FRACAS Reports','Closure Date','Approval Authority'] },
-    { id:'TPL-015', name:'ILS Certification Checklist', category:'logistics', icon:'fa-clipboard-check',
-      desc:'ILS element verification checklist per MIL-STD-1388-1A / DoDI 5000.02 for certifying that all 12 ILS elements meet supportability requirements at each milestone (MS A, B, C, FRP).',
-      fields:['ILS Element','Sub-Element / Requirement','Applicable Regulation / MIL-STD','Milestone (MS A / MS B / MS C / FRP)','Requirement Description','Objective Evidence Document','Evidence Location / Reference','Assessment (Met / Partially Met / Not Met / N/A)','Gap Description (if not Met)','Corrective Action Required','Action Owner','Due Date','Certifier Name / Title','Certification Date','Remarks'] },
-    // ── Additional Templates ──
-    { id:'TPL-016', name:'Level of Repair Analysis (LORA)', category:'logistics', icon:'fa-wrench',
-      desc:'LORA template per MIL-STD-1390D for determining the economically optimal repair level (discard, organizational, intermediate, depot) for each repairable component.',
-      fields:['LORA Case ID','End Item / System','Indenture Level','NSN / Part Number / Nomenclature','Failure Rate (λ)','MTBF (hours)','Discard Cost','Organizational Repair Cost','Intermediate Repair Cost','Depot Repair Cost','Repair Turnaround Time per Level','Support Equipment Required per Level','Personnel Skill Required per Level','Recommended Maintenance Level','Cost-Benefit Summary','LSA Control Number','Approved By'] },
-    { id:'TPL-017', name:'DD Form 1423 — CDRL', category:'contract', icon:'fa-file-lines',
-      desc:'DD Form 1423-1 (Contract Data Requirements List) template. The official DoW form for specifying data deliverables, DIDs, distribution, and frequency required under contract.',
-      fields:['Block 1 — Contract Line Item No.','Block 2 — Title of Data Item','Block 3 — Subtitle','Block 4 — Authority (DID Number)','Block 5 — Contract Reference (SOW paragraph)','Block 6 — Requiring Office','Block 7 — DD 250 Req (inspection/acceptance)','Block 8 — APP Code','Block 9 — Distribution Statement','Block 10 — Frequency','Block 11 — As-of Date','Block 12 — Date of First Submission','Block 13 — Date of Subsequent Submissions','Block 14 — Distribution — Addressee, Copies','Block 15 — Total','Block 16 — Remarks','Tailoring Instructions'] },
-    { id:'TPL-018', name:'Maintenance Plan (MIL-STD-3034)', category:'logistics', icon:'fa-tools',
-      desc:'Maintenance plan template per MIL-STD-3034 for defining the maintenance concept, tasks, intervals, and resources for a weapon system across its lifecycle.',
-      fields:['System / Equipment Name','Maintenance Concept (2-Level, 3-Level)','Maintenance Level Definitions','Scheduled Maintenance Tasks — Task ID, Description, Interval, Man-Hours, Skill Level','Condition-Based Maintenance Tasks','Corrective Maintenance Tasks','Support Equipment Required','Special Tools Required','Consumable Materials','Personnel & Training Requirements','Technical Data / Publication References','Maintenance Manhour Forecast Ratio (MMH/FH)','Depot Repair Cycle Time','Supply Support Concept','Facilities Requirements'] },
-    { id:'TPL-019', name:'Cybersecurity Assessment Report', category:'compliance', icon:'fa-user-shield',
-      desc:'Cybersecurity assessment template aligned with NIST SP 800-171A / CMMC Assessment Guide for evaluating CUI protection practices across all 20+ control families (110 practices).',
-      fields:['Assessment Date','Assessor Name / Organization','Assessment Scope / Boundary','CMMC Target Level','3.1 Access Control — Finding per practice','3.2 Awareness & Training — Finding per practice','3.3 Audit & Accountability — Finding per practice','3.4 Configuration Management — Finding per practice','3.5 Identification & Authentication — Finding per practice','3.6 Incident Response — Finding per practice','3.7 Maintenance — Finding per practice','3.8 Media Protection — Finding per practice','3.9 Personnel Security — Finding per practice','3.10 Physical Protection — Finding per practice','3.11 Risk Assessment — Finding per practice','3.12 Security Assessment — Finding per practice','3.13 System & Comms Protection — Finding per practice','3.14 System & Info Integrity — Finding per practice','Overall Score (Met / Not Met / N/A per practice)','POA&M Items Generated','Executive Summary'] },
-    { id:'TPL-020', name:'Technical Data Package (TDP) Checklist', category:'engineering', icon:'fa-folder-open',
-      desc:'TDP adequacy checklist per MIL-DTL-31000B for verifying that a technical data package contains sufficient engineering data (drawings, specs, processes) for competitive procurement or organic manufacture.',
-      fields:['TDP Number / Revision','Weapon System','Procuring Activity','Item Description / NSN','Level of TDP (Conceptual, Development, Product)','Index of Drawings — Drawing No., Title, Size, Revision','Engineering Drawings — Adequacy Check (dims, tolerances, materials, finish)','Associated Lists (parts, materials, wire)','Specifications Referenced','Process / Manufacturing Data','Quality Assurance Provisions','Packaging Data','Interface Documents','GFE / GFI Requirements','Rights in Technical Data (DFARS 252.227-7013)','Deficiency List','Recommendation (Adequate / Inadequate / Adequate with Conditions)'] }
+    { id:'TPL-001', name:'Corrective Action Request (CAR)', category:'contract', icon:'fa-file-circle-exclamation', desc:'Standard CAR form for documenting nonconformances, root cause analysis, and corrective actions per AS9100/ISO 9001.', fields:['Nonconformance Description','Root Cause','Corrective Action','Prevention Plan','Due Date','Responsible Party'] },
+    { id:'TPL-002', name:'Engineering Change Proposal (ECP)', category:'engineering', icon:'fa-file-pen', desc:'ECP template per MIL-STD-480B for proposing design changes to baselined configurations.', fields:['Change Description','Affected Documents','Cost Impact','Schedule Impact','Risk Assessment','Approval Authority'] },
+    { id:'TPL-003', name:'CDRL Status Tracker', category:'contract', icon:'fa-file-circle-check', desc:'Contract Data Requirements List tracker for monitoring deliverable status across all CDRL line items.', fields:['CDRL Number','DI Number','Title','Due Date','Status','Submission Date','Government Action'] },
+    { id:'TPL-004', name:'Statement of Work (SOW)', category:'contract', icon:'fa-file-contract', desc:'SOW template with standard DoW sections for defining contractor work requirements.', fields:['Scope','Applicable Documents','Requirements','Deliverables','Period of Performance','Place of Performance'] },
+    { id:'TPL-005', name:'Provisioning Parts List (PPL)', category:'logistics', icon:'fa-boxes-stacked', desc:'PPL template per GEIA-STD-0007 (formerly MIL-STD-1388-2B) for initial provisioning of repair parts and special tools.', fields:['NSN','Part Number','Nomenclature','Qty Per Assembly','Unit Price','SMR Code','Source Code'] },
+    { id:'TPL-006', name:'DMSMS Case Report', category:'engineering', icon:'fa-triangle-exclamation', desc:'Obsolescence case report template for documenting DMSMS resolution actions per SD-22.', fields:['Part Affected','Impact Assessment','Resolution Options','Selected Resolution','Cost Estimate','Implementation Timeline'] },
+    { id:'TPL-007', name:'Supply Support Request (SSR)', category:'logistics', icon:'fa-truck', desc:'SSR form for requesting supply support for new/modified equipment per NAVSUP procedures.', fields:['Equipment Description','Support Concept','Repair Level','Spares Requirements','Technical Data','Training Requirements'] },
+    { id:'TPL-008', name:'POA&M Template', category:'compliance', icon:'fa-list-check', desc:'Plan of Action & Milestones template per NIST SP 800-53 for tracking security weaknesses and remediation.', fields:['Weakness ID','Description','NIST Control','Risk Level','Milestones','Due Date','Resources Required'] },
+    { id:'TPL-009', name:'System Security Plan (SSP)', category:'compliance', icon:'fa-shield-halved', desc:'SSP outline template per NIST SP 800-171 for documenting CUI security implementation.', fields:['System Description','Authorization Boundary','Control Implementation','Roles & Responsibilities','Incident Response','Continuous Monitoring'] },
+    { id:'TPL-010', name:'Test & Evaluation Plan', category:'engineering', icon:'fa-flask', desc:'T&E plan template for developmental and operational testing per DoD 5000 series.', fields:['Test Objectives','Test Design','Resources Required','Schedule','Data Collection','Success Criteria'] },
+    { id:'TPL-011', name:'Failure Review Board (FRB) Report', category:'engineering', icon:'fa-bug', desc:'FRB report template for documenting failure investigations, root cause, and corrective actions.', fields:['Failure Description','Investigation Findings','Root Cause','Contributing Factors','Corrective Actions','Effectiveness Verification'] },
+    { id:'TPL-012', name:'Warranty Claim Form', category:'contract', icon:'fa-certificate', desc:'Warranty claim template for exercising contractor warranty provisions per FAR/DFARS.', fields:['Contract Number','Item Description','Defect Description','Date Discovered','Warranty Period','Claim Amount'] },
+    { id:'TPL-013', name:'Risk Assessment Matrix', category:'compliance', icon:'fa-table-cells', desc:'5x5 risk matrix template per DoW Risk Management Framework for likelihood/consequence scoring.', fields:['Risk Description','Likelihood','Consequence','Risk Score','Mitigation Plan','Residual Risk'] },
+    { id:'TPL-014', name:'FRACAS Report', category:'engineering', icon:'fa-chart-bar', desc:'Failure Reporting, Analysis, and Corrective Action System report template per MIL-STD-2155.', fields:['Failure Mode','Affected System','Operating Hours','Environment','Analysis Method','Corrective Action'] },
+    { id:'TPL-015', name:'ILS Certification Checklist', category:'logistics', icon:'fa-clipboard-check', desc:'ILS element verification checklist per GEIA-STD-0007 for certifying supportability requirements are met.', fields:['ILS Element','Requirement','Evidence','Status','Certifier','Date'] }
 ];
 var _templateFilter = 'all';
 
@@ -8155,7 +8123,7 @@ function renderTemplates() {
     if (!list) return;
     var filtered = _templateFilter === 'all' ? _templates : _templates.filter(function(t) { return t.category === _templateFilter; });
     list.innerHTML = filtered.map(function(t) {
-        var catColor = t.category === 'contract' ? 'var(--accent)' : t.category === 'engineering' ? '#00aaff' : t.category === 'logistics' ? '#00aaff' : '#00cc88';
+        var catColor = t.category === 'contract' ? '#ffa500' : t.category === 'engineering' ? '#00aaff' : t.category === 'logistics' ? '#00aaff' : '#00cc88';
         return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px;margin-bottom:4px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid ' + catColor + '">'
             + '<i class="fas ' + t.icon + '" style="color:' + catColor + ';font-size:1.1rem;margin-top:2px"></i>'
             + '<div style="flex:1"><div style="color:#fff;font-size:0.82rem;font-weight:600">' + t.name + ' <span style="color:var(--steel);font-size:0.68rem;font-weight:400">' + t.id + '</span></div><div style="color:var(--steel);font-size:0.75rem;margin-top:2px">' + t.desc + '</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">' + t.fields.map(function(f) { return '<span style="background:' + catColor + '11;color:' + catColor + ';padding:1px 6px;border-radius:8px;font-size:0.68rem">' + f + '</span>'; }).join('') + '</div></div>'
@@ -8167,32 +8135,9 @@ function renderTemplates() {
 function downloadTemplate(tplId) {
     var tpl = _templates.find(function(t) { return t.id === tplId; });
     if (!tpl) return;
-    var catLabel = {contract:'CONTRACT ADMINISTRATION',engineering:'ENGINEERING',logistics:'LOGISTICS / SUPPLY',compliance:'COMPLIANCE / CYBERSECURITY'}[tpl.category]||tpl.category.toUpperCase();
-    var line = '═'.repeat(72);
-    var text = line + '\n' + tpl.name.toUpperCase() + '\n' + line + '\n';
-    text += 'Template ID : ' + tpl.id + '\n';
-    text += 'Category    : ' + catLabel + '\n';
-    text += 'Generated   : ' + new Date().toISOString() + '\n';
-    text += 'Reference   : ' + tpl.desc.split('.')[0] + '.\n';
-    text += line + '\n\n';
-    text += 'INSTRUCTIONS\n';
-    text += '────────────\n';
-    text += 'Complete each field below. Fields marked with (R) are required.\n';
-    text += 'Attach supporting documentation where indicated.\n\n';
-    var section = 0;
-    tpl.fields.forEach(function(f, i) {
-        var isSection = f.match(/^\d+\.\d?\s|^Block\s|^Control Family/);
-        if (isSection || (i > 0 && i % 6 === 0)) { section++; text += '\n── Section ' + section + ' ──\n\n'; }
-        text += (i+1) + '. ' + f + ': (R)\n   ________________________________________\n\n';
-    });
-    text += '\n' + line + '\n';
-    text += 'SIGNATURES / APPROVALS\n\n';
-    text += 'Prepared By  : ________________________  Date: __________\n';
-    text += 'Reviewed By  : ________________________  Date: __________\n';
-    text += 'Approved By  : ________________________  Date: __________\n';
-    text += '\n' + line + '\n';
-    text += 'Generated by S4 Ledger — Defense Logistics Platform\n';
-    text += 'https://s4ledger.com\n';
+    var text = tpl.name.toUpperCase() + '\n' + '='.repeat(tpl.name.length) + '\nTemplate ID: ' + tpl.id + '\nGenerated: ' + new Date().toISOString() + '\n\n';
+    tpl.fields.forEach(function(f, i) { text += (i+1) + '. ' + f + ':\n   [Enter ' + f.toLowerCase() + ' here]\n\n'; });
+    text += '\n---\nGenerated by S4 Ledger Template Library\n';
     var blob = new Blob([text], {type:'text/plain'});
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'S4_' + tpl.id + '_' + tpl.name.replace(/[^a-zA-Z0-9]/g, '_') + '.txt'; a.click();
     showWorkspaceNotification('Template downloaded: ' + tpl.name);
@@ -8374,10 +8319,10 @@ function generateReport() {
     const startDate = new Date(now.getTime() - period * 86400000);
 
     // Build preview
-    let html = '<div style="border:1px solid rgba(0,170,255,0.15);border-radius:8px;overflow:hidden;">';
-    html += '<div style="background:rgba(0,170,255,0.06);padding:16px;border-bottom:1px solid rgba(0,170,255,0.15);">';
+    let html = '<div style="border:1px solid rgba(201,168,76,0.2);border-radius:8px;overflow:hidden;">';
+    html += '<div style="background:rgba(0,170,255,0.06);padding:16px;border-bottom:1px solid rgba(201,168,76,0.2);">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-    html += '<div><span style="font-size:1.3rem;margin-right:8px;"><i class="fas '+(rt.icon||'fa-file')+'" style="color:'+(rt.color||'var(--accent)')+'"></i></span><strong style="color:#fff;font-size:1.05rem;">'+rt.title+'</strong></div>';
+    html += '<div><span style="font-size:1.3rem;margin-right:8px;">'+(rt.icon||'<i class="fas fa-file" style="color:'+(rt.color||'var(--accent)')+'"></i>')+'</span><strong style="color:#fff;font-size:1.05rem;">'+rt.title+'</strong></div>';
     html += '<span style="background:#00aaff22;color:#00aaff;padding:4px 10px;border-radius:8px;font-size:0.75rem;font-weight:600;">GENERATED</span></div>';
     html += '<div style="color:var(--text-muted);font-size:0.78rem;margin-top:6px;">Period: '+startDate.toLocaleDateString()+' — '+now.toLocaleDateString()+' | Records: '+totalRecords+' | Format: '+format.toUpperCase()+'</div></div>';
 
@@ -8664,7 +8609,7 @@ async function anchorPredictive() {
     const items = _pdmCache.items || generatePredictions(platform, 90, 85);
     const urgent = items.filter(i=>i.urgent).length;
     const totalCost = items.reduce((s,i)=>s+i.cost,0);
-    const content = 'S4 Ledger Predictive Maintenance Report | Platform: '+platform.toUpperCase()+' | Predictions: '+items.length+' | Urgent: '+urgent+' | Total Risk: $'+totalCost+'K | Generated: '+new Date().toISOString();
+    const content = 'S4 Ledger Predictive Maintenance Report | Platform: '+platform.toUpperCase()+' | Predictions: '+items.length+' | Urgent: '+urgent+' | Total Risk: $'+(totalCost*1000).toLocaleString()+' | Generated: '+new Date().toISOString();
     const hash = await sha256(content);
     showAnchorAnimation(hash, 'Predictive Maintenance Report', 'CUI');
     const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'predictive_maintenance', content.substring(0,100));
@@ -8746,6 +8691,174 @@ function parseCSVSubmission(raw) {
     });
 }
 
+function generateDemoSubmission(docType) {
+    // Realistic dummy data based on actual defense ILS submission patterns
+    const VRSL_DATA = [
+        {nsn:'5998-01-422-7891',partNumber:'6872843-1',nomenclature:'Circuit Card Assy, Radar Interface',cageCode:'53711',qty:4,unitPrice:12450.00,source:'OEM',leadTime:'120 days',status:'Active'},
+        {nsn:'5962-01-389-5523',partNumber:'74A929411-1003',nomenclature:'Semiconductor Device, Signal Processing',cageCode:'80058',qty:12,unitPrice:890.00,source:'OEM',leadTime:'90 days',status:'Active'},
+        {nsn:'5905-01-567-3421',partNumber:'MS90451-1',nomenclature:'Resistor, Fixed, Film (MIL-PRF-55342)',cageCode:'06324',qty:200,unitPrice:4.75,source:'DLA',leadTime:'14 days',status:'Active'},
+        {nsn:'5961-01-445-8832',partNumber:'M55342K06B10E',nomenclature:'Capacitor, Fixed, Ceramic (MIL-PRF-55681)',cageCode:'19139',qty:150,unitPrice:8.20,source:'DLA',leadTime:'21 days',status:'Active'},
+        {nsn:'5950-01-502-9901',partNumber:'TF4SX21ZZM',nomenclature:'Transformer, Power, 400Hz',cageCode:'81349',qty:2,unitPrice:18750.00,source:'OEM',leadTime:'180 days',status:'DMSMS Watch'},
+        {nsn:'5945-01-612-4478',partNumber:'K10P-11A15-120',nomenclature:'Relay, Electromagnetic (MIL-PRF-39016)',cageCode:'13499',qty:24,unitPrice:145.00,source:'OEM',leadTime:'45 days',status:'Active'},
+        {nsn:'5999-01-478-2201',partNumber:'M83723/75W2226N',nomenclature:'Connector, Plug, Electrical (MIL-DTL-83723)',cageCode:'77820',qty:36,unitPrice:287.50,source:'DLA',leadTime:'30 days',status:'Active'},
+        {nsn:'5930-01-539-7712',partNumber:'MS24659-23D',nomenclature:'Switch, Toggle (MIL-DTL-3950)',cageCode:'96214',qty:16,unitPrice:42.00,source:'DLA',leadTime:'14 days',status:'Active'},
+        {nsn:'5920-01-401-5567',partNumber:'F02A125V3.15A',nomenclature:'Fuse, Cartridge (MIL-PRF-23419)',cageCode:'35180',qty:100,unitPrice:3.50,source:'DLA',leadTime:'7 days',status:'Active'},
+        {nsn:'6210-01-588-9023',partNumber:'MS25010-4',nomenclature:'Indicator, Electrical (MIL-DTL-25010)',cageCode:'81349',qty:8,unitPrice:165.00,source:'OEM',leadTime:'60 days',status:'Active'},
+        {nsn:'6145-01-502-3345',partNumber:'M17/94-RG179',nomenclature:'Cable Assy, RF Coaxial (MIL-DTL-17)',cageCode:'14457',qty:20,unitPrice:425.00,source:'OEM',leadTime:'45 days',status:'Active'},
+        {nsn:'5963-01-620-1189',partNumber:'5962-0122002HXA',nomenclature:'IC, Digital, ASIC (Custom)',cageCode:'53711',qty:6,unitPrice:4580.00,source:'OEM',leadTime:'240 days',status:'Obsolete'},
+        {nsn:'5895-01-478-5501',partNumber:'7400508-123',nomenclature:'Receiver-Transmitter, UHF',cageCode:'80058',qty:2,unitPrice:87500.00,source:'OEM',leadTime:'270 days',status:'Active'},
+        {nsn:'4820-01-512-8867',partNumber:'S6164-60037-1',nomenclature:'Valve, Solenoid, Hydraulic',cageCode:'99286',qty:4,unitPrice:6200.00,source:'OEM',leadTime:'90 days',status:'Active'},
+        {nsn:'2840-01-489-3345',partNumber:'6859742',nomenclature:'Turbine Module, Gas (LM2500)',cageCode:'00000',qty:1,unitPrice:945000.00,source:'OEM',leadTime:'365 days',status:'Active'},
+        {nsn:'3110-01-567-4401',partNumber:'MS21920-40',nomenclature:'Bearing, Roller, Cylindrical',cageCode:'81349',qty:8,unitPrice:890.00,source:'DLA',leadTime:'30 days',status:'Active'},
+        {nsn:'5340-01-423-7789',partNumber:'MS29513-236',nomenclature:'Packing, Preformed (O-Ring)',cageCode:'96214',qty:500,unitPrice:2.10,source:'DLA',leadTime:'7 days',status:'Active'},
+        {nsn:'4730-01-501-2234',partNumber:'AN924-20D',nomenclature:'Coupling, Hose, Quick Disconnect',cageCode:'35180',qty:12,unitPrice:78.00,source:'DLA',leadTime:'14 days',status:'Active'},
+        {nsn:'5331-01-489-5578',partNumber:'NSA-MS29512-08',nomenclature:'Gasket, Metallic',cageCode:'81349',qty:24,unitPrice:165.00,source:'DLA',leadTime:'21 days',status:'Active'},
+        {nsn:'4320-01-534-8901',partNumber:'S6164-80012',nomenclature:'Pump, Centrifugal, Seawater Service',cageCode:'99286',qty:2,unitPrice:34500.00,source:'OEM',leadTime:'180 days',status:'Active'},
+        {nsn:'6105-01-578-2267',partNumber:'GE-MQ90-1200',nomenclature:'Generator, Ship Service (SSGTG)',cageCode:'00000',qty:1,unitPrice:450000.00,source:'OEM',leadTime:'365 days',status:'Active'},
+        {nsn:'5999-01-612-3390',partNumber:'D38999/26WJ61SN',nomenclature:'Connector, Receptacle (MIL-DTL-38999)',cageCode:'77820',qty:48,unitPrice:312.00,source:'DLA',leadTime:'30 days',status:'Active'},
+        {nsn:'5962-01-512-8834',partNumber:'SMJ320C50PQM',nomenclature:'Microprocessor, 32-Bit DSP',cageCode:'53711',qty:10,unitPrice:2340.00,source:'OEM',leadTime:'120 days',status:'DMSMS Watch'},
+        {nsn:'5910-01-534-2201',partNumber:'M39006/22-0660',nomenclature:'Capacitor, Fixed, Wet Tantalum',cageCode:'19139',qty:30,unitPrice:95.00,source:'DLA',leadTime:'45 days',status:'Active'},
+        {nsn:'5945-01-501-3378',partNumber:'MIL-R-39016/48-001',nomenclature:'Relay, Solid State',cageCode:'13499',qty:18,unitPrice:425.00,source:'OEM',leadTime:'60 days',status:'Active'},
+        {nsn:'2990-01-489-6612',partNumber:'NAVSEA-STA-074',nomenclature:'Ship Fuel Oil Service System Component Kit',cageCode:'99286',qty:4,unitPrice:8900.00,source:'OEM',leadTime:'90 days',status:'Active'},
+        {nsn:'4810-01-556-7834',partNumber:'S6164-40023-2',nomenclature:'Valve, Gate, Seawater',cageCode:'99286',qty:6,unitPrice:5600.00,source:'OEM',leadTime:'120 days',status:'Active'},
+        {nsn:'5895-01-567-9023',partNumber:'AN/SPS-73(V)18',nomenclature:'Radar Navigation Display Unit',cageCode:'80058',qty:1,unitPrice:125000.00,source:'OEM',leadTime:'240 days',status:'Active'},
+        {nsn:'5820-01-489-1156',partNumber:'RT-1694/U',nomenclature:'Radio Set, VHF/UHF',cageCode:'13499',qty:3,unitPrice:42000.00,source:'OEM',leadTime:'180 days',status:'Active'},
+        {nsn:'5999-01-534-4490',partNumber:'M55302/68-B22S',nomenclature:'Connector, Fiber Optic',cageCode:'77820',qty:24,unitPrice:156.00,source:'DLA',leadTime:'30 days',status:'Active'},
+    ];
+
+    const IUID_DATA = [
+        {uid:'0013E841AF.3501.6872843-1.001',serialNumber:'SN-DDG-RAD-0024',partNumber:'6872843-1',nomenclature:'Circuit Card Assy, Radar Interface',acquisitionCost:12450.00,condition:'New',location:'Norfolk NAVSTA'},
+        {uid:'0013E841AF.3501.LM2500-GEN.001',serialNumber:'SN-LM2500-4478',partNumber:'6859742',nomenclature:'Turbine Module, Gas (LM2500)',acquisitionCost:945000.00,condition:'New',location:'Ingalls Shipbuilding'},
+        {uid:'0013E841AF.3501.SSGTG.001',serialNumber:'SN-SSGTG-1201',partNumber:'GE-MQ90-1200',nomenclature:'Generator, Ship Service',acquisitionCost:450000.00,condition:'New',location:'Bath Iron Works'},
+        {uid:'0013E841AF.3501.NAV-RDR.001',serialNumber:'SN-SPS73-V18-003',partNumber:'AN/SPS-73(V)18',nomenclature:'Radar Navigation Display',acquisitionCost:125000.00,condition:'New',location:'San Diego NAVSTA'},
+        {uid:'0013E841AF.3501.RT1694.001',serialNumber:'SN-RADIO-VHF-012',partNumber:'RT-1694/U',nomenclature:'Radio Set VHF/UHF',acquisitionCost:42000.00,condition:'Serviceable',location:'Pearl Harbor'},
+        {uid:'0013E841AF.3501.RCVR-TX.001',serialNumber:'SN-UHF-RX-044',partNumber:'7400508-123',nomenclature:'Receiver-Transmitter UHF',acquisitionCost:87500.00,condition:'New',location:'Norfolk NAVSTA'},
+        {uid:'0013E841AF.3501.PUMP-SW.001',serialNumber:'SN-PUMP-CEN-008',partNumber:'S6164-80012',nomenclature:'Pump, Centrifugal, Seawater',acquisitionCost:34500.00,condition:'Serviceable',location:'Bremerton'},
+        {uid:'0013E841AF.3501.VALVE-SW.001',serialNumber:'SN-VALVE-GT-019',partNumber:'S6164-40023-2',nomenclature:'Valve, Gate, Seawater',acquisitionCost:5600.00,condition:'New',location:'San Diego NAVSTA'},
+        {uid:'0013E841AF.3501.SOL-VLV.001',serialNumber:'SN-SOL-HYD-006',partNumber:'S6164-60037-1',nomenclature:'Valve Solenoid Hydraulic',acquisitionCost:6200.00,condition:'Repairable',location:'Mayport'},
+        {uid:'0013E841AF.3501.XFMR-PWR.001',serialNumber:'SN-XFMR-400-003',partNumber:'TF4SX21ZZM',nomenclature:'Transformer Power 400Hz',acquisitionCost:18750.00,condition:'New',location:'Norfolk NAVSTA'},
+        {uid:'0013E841AF.3501.DSP-PROC.001',serialNumber:'SN-DSP32-010',partNumber:'SMJ320C50PQM',nomenclature:'Microprocessor 32-Bit DSP',acquisitionCost:2340.00,condition:'Serviceable',location:'San Diego NAVSTA'},
+        {uid:'0013E841AF.3501.ASIC-CCA.001',serialNumber:'SN-ASIC-CUST-002',partNumber:'5962-0122002HXA',nomenclature:'IC Digital ASIC Custom',acquisitionCost:4580.00,condition:'Repairable',location:'Bremerton'},
+    ];
+
+    const CONFIG_DATA = [
+        {drawingNumber:'S9086-TX-STM-010/CH-074',revision:'Rev F',title:'NSTM Chapter 074 - Gaskets & Packing',effectivity:'All DDG-51 Class',status:'Released',pages:42,changeNotice:''},
+        {drawingNumber:'S9086-TX-STM-010/CH-262',revision:'Rev D',title:'NSTM Chapter 262 - Lubricating Oil',effectivity:'All DDG-51 Class',status:'Released',pages:38,changeNotice:''},
+        {drawingNumber:'803-7187231',revision:'Rev C',title:'Main Propulsion System Piping Arrangement',effectivity:'DDG-123 thru DDG-137',status:'Released',pages:12,changeNotice:'ECN-2026-0042'},
+        {drawingNumber:'803-7187445',revision:'Rev B',title:'Electrical One-Line Diagram, SSGTG',effectivity:'DDG-128 thru DDG-137',status:'In Review',pages:8,changeNotice:'ECN-2026-0051'},
+        {drawingNumber:'803-7188012',revision:'Rev A',title:'Combat System Integration Diagram (AEGIS)',effectivity:'DDG-131 thru DDG-137',status:'Draft',pages:24,changeNotice:''},
+        {drawingNumber:'S9086-TX-STM-010/CH-541',revision:'Rev E',title:'NSTM Chapter 541 - Ship Fuel & Fuel Systems',effectivity:'All DDG-51 Class',status:'Released',pages:56,changeNotice:''},
+        {drawingNumber:'803-7189901',revision:'Rev B',title:'HVAC Arrangement, Forward Machinery Room',effectivity:'DDG-128 thru DDG-137',status:'Released',pages:6,changeNotice:'ECN-2025-0198'},
+        {drawingNumber:'803-7190234',revision:'Rev A',title:'Weapons Elevator Hydraulic System',effectivity:'DDG-131 thru DDG-137',status:'In Review',pages:14,changeNotice:'ECN-2026-0063'},
+    ];
+
+    const BOM_DATA = [
+        {lineItem:1,partNumber:'6859742',nomenclature:'Turbine Module Gas (LM2500)',qty:4,unitPrice:945000.00,totalPrice:3780000.00,make_buy:'Buy',vendor:'GE Marine'},
+        {lineItem:2,partNumber:'GE-MQ90-1200',nomenclature:'Generator Ship Service SSGTG',qty:4,unitPrice:450000.00,totalPrice:1800000.00,make_buy:'Buy',vendor:'GE Marine'},
+        {lineItem:3,partNumber:'AN/SPS-73(V)18',nomenclature:'Navigation Radar Display',qty:2,unitPrice:125000.00,totalPrice:250000.00,make_buy:'Buy',vendor:'Raytheon'},
+        {lineItem:4,partNumber:'RT-1694/U',nomenclature:'Radio Set VHF/UHF',qty:6,unitPrice:42000.00,totalPrice:252000.00,make_buy:'Buy',vendor:'L3Harris'},
+        {lineItem:5,partNumber:'7400508-123',nomenclature:'Receiver-Transmitter UHF',qty:4,unitPrice:87500.00,totalPrice:350000.00,make_buy:'Buy',vendor:'Raytheon'},
+        {lineItem:6,partNumber:'S6164-80012',nomenclature:'Pump Centrifugal Seawater',qty:8,unitPrice:34500.00,totalPrice:276000.00,make_buy:'Buy',vendor:'Crane Naval'},
+        {lineItem:7,partNumber:'S6164-40023-2',nomenclature:'Valve Gate Seawater',qty:12,unitPrice:5600.00,totalPrice:67200.00,make_buy:'Buy',vendor:'Crane Naval'},
+        {lineItem:8,partNumber:'S6164-60037-1',nomenclature:'Valve Solenoid Hydraulic',qty:8,unitPrice:6200.00,totalPrice:49600.00,make_buy:'Buy',vendor:'Moog Inc'},
+        {lineItem:9,partNumber:'TF4SX21ZZM',nomenclature:'Transformer Power 400Hz',qty:6,unitPrice:18750.00,totalPrice:112500.00,make_buy:'Buy',vendor:'SL Power'},
+        {lineItem:10,partNumber:'6872843-1',nomenclature:'Circuit Card Assy Radar IF',qty:12,unitPrice:12450.00,totalPrice:149400.00,make_buy:'Buy',vendor:'Raytheon'},
+        {lineItem:11,partNumber:'SMJ320C50PQM',nomenclature:'Microprocessor 32-Bit DSP',qty:24,unitPrice:2340.00,totalPrice:56160.00,make_buy:'Buy',vendor:'Texas Instruments'},
+        {lineItem:12,partNumber:'5962-0122002HXA',nomenclature:'IC Digital ASIC Custom',qty:18,unitPrice:4580.00,totalPrice:82440.00,make_buy:'Make',vendor:'(Manufactured)'},
+        {lineItem:13,partNumber:'K10P-11A15-120',nomenclature:'Relay Electromagnetic',qty:48,unitPrice:145.00,totalPrice:6960.00,make_buy:'Buy',vendor:'TE Connectivity'},
+        {lineItem:14,partNumber:'D38999/26WJ61SN',nomenclature:'Connector Receptacle',qty:96,unitPrice:312.00,totalPrice:29952.00,make_buy:'Buy',vendor:'Amphenol'},
+        {lineItem:15,partNumber:'MS21920-40',nomenclature:'Bearing Roller Cylindrical',qty:16,unitPrice:890.00,totalPrice:14240.00,make_buy:'Buy',vendor:'Timken'},
+        {lineItem:16,partNumber:'M83723/75W2226N',nomenclature:'Connector Plug Electrical',qty:72,unitPrice:287.50,totalPrice:20700.00,make_buy:'Buy',vendor:'Glenair'},
+        {lineItem:17,partNumber:'NSA-MS29512-08',nomenclature:'Gasket Metallic',qty:200,unitPrice:165.00,totalPrice:33000.00,make_buy:'Buy',vendor:'Garlock'},
+        {lineItem:18,partNumber:'M17/94-RG179',nomenclature:'Cable Assy RF Coaxial',qty:40,unitPrice:425.00,totalPrice:17000.00,make_buy:'Buy',vendor:'Times Microwave'},
+        {lineItem:19,partNumber:'NAVSEA-STA-074',nomenclature:'Fuel Oil Service Kit',qty:8,unitPrice:8900.00,totalPrice:71200.00,make_buy:'Buy',vendor:'Parker Hannifin'},
+        {lineItem:20,partNumber:'MS29513-236',nomenclature:'Packing Preformed O-Ring',qty:1000,unitPrice:2.10,totalPrice:2100.00,make_buy:'Buy',vendor:'Parker Hannifin'},
+    ];
+
+    const ECP_DATA = [
+        {ecpNumber:'ECP-2026-0042',title:'Main Reduction Gear Bearing Upgrade',classification:'Class I',priority:'Urgent',affectedSystems:'LM2500 MRG Assy',costImpact:182000,status:'Under Review',dateSubmitted:'2026-01-15'},
+        {ecpNumber:'ECP-2026-0039',title:'AEGIS Display Console Firmware Update',classification:'Class II',priority:'Routine',affectedSystems:'AN/SPY-6 Display',costImpact:45000,status:'Approved',dateSubmitted:'2026-01-08'},
+        {ecpNumber:'ECP-2026-0044',title:'Hull Coating Change - Advanced Anti-Fouling',classification:'Class I',priority:'High',affectedSystems:'Hull Underwater Body',costImpact:890000,status:'Under Review',dateSubmitted:'2026-01-22'},
+        {ecpNumber:'ECP-2026-0036',title:'CIWS Phalanx RAM Upgrade Kit',classification:'Class I',priority:'Urgent',affectedSystems:'Mk 15 CIWS',costImpact:1250000,status:'Pending Board',dateSubmitted:'2026-01-04'},
+        {ecpNumber:'ECP-2026-0048',title:'Fiber Optic Backbone Cable Replacement',classification:'Class II',priority:'Routine',affectedSystems:'Ship LAN Infrastructure',costImpact:125000,status:'Approved',dateSubmitted:'2026-02-01'},
+        {ecpNumber:'ECP-2026-0051',title:'Diesel Generator Exhaust Stack Modification',classification:'Class I',priority:'High',affectedSystems:'Ship Service DG',costImpact:67000,status:'Under Review',dateSubmitted:'2026-02-10'},
+        {ecpNumber:'ECP-2025-0198',title:'HVAC Chiller Refrigerant Change R-134a to R-513A',classification:'Class II',priority:'Routine',affectedSystems:'HVAC Central Plant',costImpact:38000,status:'Implemented',dateSubmitted:'2025-11-15'},
+        {ecpNumber:'ECP-2026-0053',title:'Weapons Elevator Hydraulic Valve Redesign',classification:'Class I',priority:'Urgent',affectedSystems:'Mk 41 VLS Handling',costImpact:92000,status:'Pending Board',dateSubmitted:'2026-02-14'}
+    ];
+    const CDRL_DATA = [
+        {cdrlNumber:'A001',diNumber:'DI-ILSS-81495A',title:'Integrated Logistics Support Plan',frequency:'One Time',status:'Submitted',dueDate:'2026-03-15',pages:145},
+        {cdrlNumber:'A002',diNumber:'DI-ILSS-81496',title:'Level of Repair Analysis (LORA)',frequency:'One Time',status:'Overdue',dueDate:'2026-01-30',pages:89},
+        {cdrlNumber:'A003',diNumber:'DI-ILSS-81497',title:'Provisioning Parts List (PPL)',frequency:'Quarterly',status:'Submitted',dueDate:'2026-02-28',pages:234},
+        {cdrlNumber:'A004',diNumber:'DI-ILSS-81498',title:'SERD',frequency:'One Time',status:'In Progress',dueDate:'2026-04-15',pages:0},
+        {cdrlNumber:'A005',diNumber:'DI-SESS-81517',title:'FMECA',frequency:'One Time',status:'Submitted',dueDate:'2026-02-01',pages:312},
+        {cdrlNumber:'A006',diNumber:'DI-ALSS-81529',title:'RCM Analysis',frequency:'One Time',status:'Rejected',dueDate:'2026-01-15',pages:178},
+        {cdrlNumber:'A007',diNumber:'DI-TMSS-80527B',title:'Technical Manual - Operator (IETM)',frequency:'As Required',status:'Under Review',dueDate:'2026-06-01',pages:450},
+        {cdrlNumber:'A008',diNumber:'DI-TMSS-80528B',title:'Technical Manual - Maintenance (IETM)',frequency:'As Required',status:'In Progress',dueDate:'2026-07-15',pages:0}
+    ];
+    const types = { VRSL: ()=>VRSL_DATA.map(d=>({...d})), IUID: ()=>IUID_DATA.map(d=>({...d})), CONFIG_DWG: ()=>CONFIG_DATA.map(d=>({...d})), BOM: ()=>BOM_DATA.map(d=>({...d})), ECP: ()=>ECP_DATA.map(d=>({...d})), CDRL: ()=>CDRL_DATA.map(d=>({...d})) };
+    return (types[docType] || types.VRSL)();
+}
+
+function generateDemoBaseline(items, docType) {
+    // Generate realistic "previous submission" with specific known differences
+    return items.map((item, i) => {
+        const prev = {...item};
+        // Price was lower in previous submission (OEM raised prices)
+        if (i % 4 === 0 && prev.unitPrice) prev.unitPrice = +(prev.unitPrice * 0.82).toFixed(2);
+        // Quantity changed (customer adjusted spares depth)
+        if (i % 6 === 0 && prev.qty) prev.qty = prev.qty + Math.floor(Math.random()*8)+2;
+        // Source changed (was OEM, now aftermarket or vice versa)
+        if (i % 8 === 0 && prev.source) prev.source = prev.source === 'OEM' ? 'DLA' : 'OEM';
+        // CAGE code changed (different manufacturer in previous)
+        if (i % 10 === 0 && prev.cageCode) prev.cageCode = '99999';
+        // Status downgraded (was Active, now DMSMS Watch in current)
+        if (i % 7 === 0 && prev.status && prev.status !== 'Active') prev.status = 'Active';
+        // Lead time increased significantly
+        if (i % 5 === 0 && prev.leadTime) { const days = parseInt(prev.leadTime)||60; prev.leadTime = Math.max(14, days - 45) + ' days'; }
+        // Drawing revision changed
+        if (i % 3 === 0 && prev.revision) { const r = prev.revision.charCodeAt(4); prev.revision = 'Rev ' + String.fromCharCode(Math.max(65, r-1)); }
+        // Vendor changed
+        if (i % 9 === 0 && prev.vendor) prev.vendor = 'Previous Vendor Inc';
+        // Condition changed (IUID)
+        if (i % 5 === 0 && prev.condition) prev.condition = prev.condition === 'New' ? 'Serviceable' : 'New';
+        return prev;
+    });
+}
+
+function runSubmissionDemo() {
+    const docType = document.getElementById('subDocType').value;
+    const items = generateDemoSubmission(docType);
+    const baseline = generateDemoBaseline(items, docType);
+    // Add 3 items that were in baseline but "removed" in current
+    const removed = Array.from({length:3}, (_, i) => ({
+        partNumber: 'PN-REMOVED-' + (i+1), nomenclature: 'Discontinued Component ' + (i+1),
+        nsn: '0000-00-000-000' + i, unitPrice: +(Math.random()*300+50).toFixed(2), qty: Math.floor(Math.random()*10)+1,
+        status: 'Active', source: 'OEM'
+    }));
+    // Add 4 items that are "new" (not in baseline)
+    items.push(...Array.from({length:4}, (_, i) => ({
+        partNumber: 'PN-NEW-' + (i+1), nomenclature: 'New Component Added ' + (i+1),
+        nsn: '9999-99-999-999' + i, unitPrice: +(Math.random()*1000+100).toFixed(2), qty: Math.floor(Math.random()*20)+1,
+        status: 'Active', source: 'Aftermarket', _isNew: true
+    })));
+
+    _subCache.items = items;
+    _subCache.baseline = [...baseline, ...removed];
+    const _subProgKey = document.getElementById('subProgram').value;
+    const _subPlat = window.S4_PLATFORMS && S4_PLATFORMS[_subProgKey];
+    const _subProgName = _subPlat ? _subPlat.n : (_subProgKey === 'CUSTOM' ? (document.getElementById('subCustomPlatform').value || 'Custom Platform') : _subProgKey);
+    _subCache.meta = {
+        program: _subProgName,
+        programKey: _subProgKey,
+        branch: _subPlat ? _subPlat.b : (document.getElementById('subBranch').value || 'JOINT'),
+        docType, vendor: _subPlat ? (_subPlat.p || 'Huntington Ingalls Industries') : 'Demo OEM Vendor',
+        timestamp: new Date().toISOString()
+    };
+
+    document.getElementById('subUploadZone').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="font-size:2rem;color:#00aaff;display:block;margin-bottom:4px"></i><div style="color:#00aaff;font-weight:600">Demo ' + (SUBMISSION_TYPES[docType]||docType) + '</div><div style="color:var(--steel);font-size:.78rem">' + items.length + ' current records vs ' + _subCache.baseline.length + ' baseline records loaded</div>');
+
+    runDiscrepancyEngine();
+}
 
 function analyzeSubmission() {
     if (!_subCache.items.length) {
@@ -8756,13 +8869,13 @@ function analyzeSubmission() {
                 _subCache.items = pasteData.startsWith('[') ? JSON.parse(pasteData) : parseCSVSubmission(pasteData);
             } catch(e) { showWorkspaceNotification('Could not parse pasted data'); return; }
         } else {
-            showWorkspaceNotification('Upload a file or paste data first to run analysis');
+            showWorkspaceNotification('Upload a file or paste data first, or click "Run Demo Analysis"');
             return;
         }
     }
-    // No synthetic baseline — user must upload both current and baseline files
+    // Generate synthetic baseline if none exists
     if (!_subCache.baseline.length) {
-        _subCache.baseline = _subCache.items.map(function(item) { return Object.assign({}, item); });
+        _subCache.baseline = generateDemoBaseline(_subCache.items, document.getElementById('subDocType').value);
     }
     _subCache.meta = {
         program: (function(){ var k=document.getElementById('subProgram').value; var p=window.S4_PLATFORMS&&S4_PLATFORMS[k]; return p?p.n:(k==='CUSTOM'?(document.getElementById('subCustomPlatform').value||'Custom Platform'):k); })(),
@@ -8929,7 +9042,7 @@ function renderDiscrepancyTable(discrepancies) {
         '<td style="padding:5px 8px;border-color:var(--border);color:#fff">' + d.category + '</td>' +
         '<td style="padding:5px 8px;border-color:var(--border);font-family:monospace;font-size:.75rem">' + d.item + '</td>' +
         '<td style="padding:5px 8px;border-color:var(--border)">' + d.issue + '</td>' +
-        '<td style="padding:5px 8px;border-color:var(--border);color:#6e6e73">' + d.previous + '</td>' +
+        '<td style="padding:5px 8px;border-color:var(--border);color:#888">' + d.previous + '</td>' +
         '<td style="padding:5px 8px;border-color:var(--border);color:#fff">' + d.current + '</td>' +
         '<td style="padding:5px 8px;border-color:var(--border);color:' + (sevColors[d.severity]||'#888') + '">' + (d.impact||'') + '</td>' +
     '</tr>').join(''));
@@ -9030,10 +9143,10 @@ async function anchorSubmissionReview() {
     saveLocalRecord({hash, record_type:'SUBMISSION_REVIEW', record_label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Submissions & PTD', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Submissions & PTD', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').textContent = 'Submissions & PTD Anchored Successfully on XRPL — ' + _subCache.discrepancies.length + ' discrepancies recorded on-chain'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').textContent = 'Submissions & PTD Anchored Successfully on XRPL — ' + _subCache.discrepancies.length + ' discrepancies recorded'; document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
-    if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
 }
 
 // ═══ LIFECYCLE COST ESTIMATOR ═══
@@ -9064,10 +9177,10 @@ function calcLifecycle() {
     if (output) {
         output.innerHTML = '<div style="padding:8px 10px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;font-size:0.82rem;">' +
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 6px;margin-bottom:4px">' +
-            '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--steel)">Acquisition</span><strong style="color:#fff">' + fmt(totalAcq) + '</strong></div>' +
-            '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--steel)">Sustainment</span><strong style="color:#fff">' + fmt(totalSust) + '</strong></div>' +
-            '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--steel)">DMSMS (4%)</span><strong style="color:#fff">' + fmt(dmsmsCost) + '</strong></div>' +
-            '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--steel)">Tech Refresh</span><strong style="color:#fff">' + fmt(techRefresh) + '</strong></div>' +
+            '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span style="color:var(--steel)">Acquisition</span><strong style="color:var(--text,#1d1d1f)">' + fmt(totalAcq) + '</strong></div>' +
+            '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span style="color:var(--steel)">Sustainment</span><strong style="color:var(--text,#1d1d1f)">' + fmt(totalSust) + '</strong></div>' +
+            '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span style="color:var(--steel)">DMSMS (4%)</span><strong style="color:var(--text,#1d1d1f)">' + fmt(dmsmsCost) + '</strong></div>' +
+            '<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)"><span style="color:var(--steel)">Tech Refresh</span><strong style="color:var(--text,#1d1d1f)">' + fmt(techRefresh) + '</strong></div>' +
             '</div>' +
             '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px;background:rgba(0,170,255,0.06);border-radius:6px">' +
             '<span style="color:#00aaff;font-weight:700;font-size:0.78rem"><i class="fas fa-chart-line" style="margin-right:4px"></i>S4 Savings</span>' +
@@ -9093,9 +9206,9 @@ async function anchorLifecycle() {
     sessionRecords.push({hash:hash, type:'LIFECYCLE_COST', branch:'JOINT', timestamp:new Date().toISOString(), label:'Lifecycle Cost Analysis: ' + program, txHash:result.txHash});
     saveLocalRecord({hash:hash, record_type:'LIFECYCLE_COST', record_label:'Lifecycle Cost Analysis: ' + program, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'Lifecycle Cost', explorer_url:result.explorerUrl, network:result.network});
     updateTxLog();
-    addToVault({hash:hash, txHash:result.txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost Analysis: ' + program, branch:'JOINT', icon:'<i class="fas fa-clock"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Cost Estimator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    addToVault({hash:hash, txHash:result.txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost Analysis: ' + program, branch:'JOINT', icon:'fa-clock', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Cost Estimator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     
-    if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis Anchored Successfully on XRPL'); }, 2200);
@@ -9182,10 +9295,10 @@ async function anchorSBOM() {
     sessionRecords.push({hash:hash, type:'SBOM_SNAPSHOT', branch:'JOINT', timestamp:new Date().toISOString(), label:'SBOM: ' + program, txHash:result.txHash, content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text});
     saveLocalRecord({hash:hash, record_type:'SBOM_SNAPSHOT', record_label:'SBOM: ' + program, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'SBOM Viewer', explorer_url:result.explorerUrl, network:result.network});
     updateTxLog();
-    addToVault({hash:hash, txHash:result.txHash, type:'SBOM_SNAPSHOT', label:'SBOM: ' + program, branch:'JOINT', icon:'<i class="fas fa-microchip"></i>', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'SBOM Viewer', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    addToVault({hash:hash, txHash:result.txHash, type:'SBOM_SNAPSHOT', label:'SBOM: ' + program, branch:'JOINT', icon:'fa-microchip', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'SBOM Viewer', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     
     document.getElementById('sbomAnchored').textContent = _sbomData.length;
-    if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Anchored Successfully on XRPL'); }, 2200);
@@ -9205,9 +9318,9 @@ async function anchorGFP() {
     sessionRecords.push({hash:hash, type:'GFP_RECORD', branch:'JOINT', timestamp:new Date().toISOString(), label:'GFP Record', txHash:result.txHash, content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text});
     saveLocalRecord({hash:hash, record_type:'GFP_RECORD', record_label:'GFP Record', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'GFP Tracker', explorer_url:result.explorerUrl, network:result.network});
     updateTxLog();
-    addToVault({hash:hash, txHash:result.txHash, type:'GFP_RECORD', label:'GFP Record', branch:'JOINT', icon:'<i class="fas fa-box"></i>', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'GFP Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    addToVault({hash:hash, txHash:result.txHash, type:'GFP_RECORD', label:'GFP Record', branch:'JOINT', icon:'fa-box', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'GFP Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     
-    if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record Anchored Successfully on XRPL'); }, 2200);
@@ -9226,9 +9339,9 @@ async function anchorCDRL() {
     sessionRecords.push({hash:hash, type:'CDRL_RECORD', branch:'JOINT', timestamp:new Date().toISOString(), label:'CDRL Deliverable', txHash:result.txHash, content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text});
     saveLocalRecord({hash:hash, record_type:'CDRL_RECORD', record_label:'CDRL Deliverable', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'CDRL Tracker', explorer_url:result.explorerUrl, network:result.network});
     updateTxLog();
-    addToVault({hash:hash, txHash:result.txHash, type:'CDRL_RECORD', label:'CDRL Deliverable', branch:'JOINT', icon:'<i class="fas fa-file-contract"></i>', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'CDRL Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    addToVault({hash:hash, txHash:result.txHash, type:'CDRL_RECORD', label:'CDRL Deliverable', branch:'JOINT', icon:'fa-file-contract', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'CDRL Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     
-    if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable Anchored Successfully on XRPL'); }, 2200);
@@ -9247,9 +9360,9 @@ async function anchorContract() {
     sessionRecords.push({hash:hash, type:'CONTRACT_RECORD', branch:'JOINT', timestamp:new Date().toISOString(), label:'Contract Record', txHash:result.txHash, content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text});
     saveLocalRecord({hash:hash, record_type:'CONTRACT_RECORD', record_label:'Contract Record', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'Contract Admin', explorer_url:result.explorerUrl, network:result.network});
     updateTxLog();
-    addToVault({hash:hash, txHash:result.txHash, type:'CONTRACT_RECORD', label:'Contract Record', branch:'JOINT', icon:'<i class="fas fa-file-signature"></i>', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Contract Admin', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    addToVault({hash:hash, txHash:result.txHash, type:'CONTRACT_RECORD', label:'Contract Record', branch:'JOINT', icon:'fa-file-signature', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Contract Admin', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     
-    if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record Anchored Successfully on XRPL'); }, 2200);
@@ -9268,9 +9381,9 @@ async function anchorChain() {
     sessionRecords.push({hash:hash, type:'SUPPLY_CHAIN', branch:'JOINT', timestamp:new Date().toISOString(), label:'Supply Chain Record', txHash:result.txHash, content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text});
     saveLocalRecord({hash:hash, record_type:'SUPPLY_CHAIN', record_label:'Supply Chain Record', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'Supply Chain', explorer_url:result.explorerUrl, network:result.network});
     updateTxLog();
-    addToVault({hash:hash, txHash:result.txHash, type:'SUPPLY_CHAIN', label:'Supply Chain Record', branch:'JOINT', icon:'<i class="fas fa-link"></i>', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Supply Chain Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    addToVault({hash:hash, txHash:result.txHash, type:'SUPPLY_CHAIN', label:'Supply Chain Record', branch:'JOINT', icon:'fa-link', content:text.substring(0,100)+(text.length>100?'...':''), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Supply Chain Tracker', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     
-    if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
+    if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain Record Anchored Successfully on XRPL'); }, 2200);
@@ -9312,6 +9425,42 @@ function loadSubmissionHistory() {
     }).join(''));
 }
 
+function downloadSampleFile(docType) {
+    var csv = '';
+    if (docType === 'VRS') {
+        csv = 'NSN,Part_Number,Nomenclature,CAGE_Code,Qty,Unit_Price,Source,Lead_Time_Days,Status\n';
+        var d = generateDemoSubmission('VRSL');
+        d.forEach(function(r){ csv += r.nsn+','+r.partNumber+',"'+r.nomenclature+'",'+r.cageCode+','+r.qty+','+r.unitPrice+','+r.source+','+r.leadTime+','+r.status+'\n'; });
+    } else if (docType === 'IUID') {
+        csv = 'UID,Serial_Number,Part_Number,Nomenclature,Acquisition_Cost,Condition,Location\n';
+        var d = generateDemoSubmission('IUID');
+        d.forEach(function(r){ csv += r.uid+','+r.serialNumber+','+r.partNumber+',"'+r.nomenclature+'",'+r.acquisitionCost+','+r.condition+',"'+r.location+'"\n'; });
+    } else if (docType === 'BOM') {
+        csv = 'Line_Item,Part_Number,Nomenclature,Qty,Unit_Price,Total_Price,Make_Buy,Vendor\n';
+        var d = generateDemoSubmission('BOM');
+        d.forEach(function(r){ csv += r.lineItem+','+r.partNumber+',"'+r.nomenclature+'",'+r.qty+','+r.unitPrice+','+r.totalPrice+','+r.make_buy+',"'+r.vendor+'"\n'; });
+    } else if (docType === 'CONFIG_DWG') {
+        csv = 'Drawing_Number,Revision,Title,Effectivity,Status,Pages,Change_Notice\n';
+        var d = generateDemoSubmission('CONFIG_DWG');
+        d.forEach(function(r){ csv += '"'+r.drawingNumber+'",'+r.revision+',"'+r.title+'","'+r.effectivity+'",'+r.status+','+r.pages+','+(r.changeNotice||'')+'\n'; });
+    } else if (docType === 'ECP') {
+        csv = 'ECP_Number,Title,Classification,Priority,Affected_Systems,Cost_Impact,Status,Date_Submitted\n';
+        csv += 'ECP-2026-0042,"Main Reduction Gear Bearing Upgrade",Class I,Urgent,"LM2500 MRG Assy",$182000,Under Review,2026-01-15\n';
+        csv += 'ECP-2026-0039,"AEGIS Display Console Firmware Update",Class II,Routine,"AN/SPY-6 Display",$45000,Approved,2026-01-08\n';
+        csv += 'ECP-2026-0044,"Hull Coating Change - Advanced Anti-Fouling",Class I,High,"Hull Underwater Body",$890000,Under Review,2026-01-22\n';
+        csv += 'ECP-2026-0036,"CIWS Phalanx RAM Upgrade Kit",Class I,Urgent,"Mk 15 CIWS",$1250000,Pending Board,2026-01-04\n';
+        csv += 'ECP-2026-0048,"Fiber Optic Backbone Cable Replacement",Class II,Routine,"Ship LAN Infrastructure",$125000,Approved,2026-02-01\n';
+        csv += 'ECP-2026-0051,"Diesel Generator Exhaust Stack Modification",Class I,High,"Ship Service DG",$67000,Under Review,2026-02-10\n';
+        csv += 'ECP-2025-0198,"HVAC Chiller Refrigerant Change",Class II,Routine,"HVAC Central Plant",$38000,Implemented,2025-11-15\n';
+        csv += 'ECP-2026-0053,"Weapons Elevator Hydraulic Valve Redesign",Class I,Urgent,"Mk 41 VLS Handling",$92000,Pending Board,2026-02-14\n';
+    }
+    var blob = new Blob([csv], {type:'text/csv'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'S4_Submissions_PTD_Sample_' + docType + '_Submission.csv';
+    a.click();
+    showWorkspaceNotification('Downloaded sample ' + docType + ' submission file');
+}
 
 function handleSubFileDrop(e) {
     e.preventDefault();
@@ -9333,7 +9482,7 @@ function clearSubmissionReview() {
     document.getElementById('subDiscrepancyTable').innerHTML = '';
     document.getElementById('subResultsContainer').style.display = 'none';
     document.getElementById('subAiSummary').style.display = 'none';
-    document.getElementById('subUploadZone').innerHTML = window._s4Safe('<i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:var(--accent);margin-bottom:8px;display:block"></i><div style="color:var(--accent);font-weight:600;font-size:.9rem">Upload Submission Data</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF, or paste data below</div><div style="color:var(--steel);font-size:.72rem;margin-top:2px">Drag & drop or click to browse</div>');
+    document.getElementById('subUploadZone').innerHTML = window._s4Safe('<i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:var(--accent,#00aaff);margin-bottom:8px;display:block"></i><div style="color:var(--accent,#00aaff);font-weight:600;font-size:.9rem">Upload Submission Data</div><div style="color:var(--steel);font-size:.78rem;margin-top:4px">CSV, Excel (.xlsx), XML, JSON, PDF, or paste data below</div><div style="color:var(--steel);font-size:.72rem;margin-top:2px">Drag & drop or click to browse</div>');
     document.getElementById('subVendor').value = '';
     document.getElementById('subCustomPlatform').value = '';
     document.getElementById('subCustomDocType').value = '';
@@ -9356,14 +9505,22 @@ function initHub() {
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     renderTypeGrid();
+    loadSample('supply');
     initILSEngine();
     // Restore action items from localStorage
     renderHubActions();
     updateNotifBadge();
     // Initialize workspace
     initHub();
-    // Landing page always shows first — no auto-enter
-    // User clicks "Enter Platform" to proceed
+    // Auto-enter platform for returning users
+    if (sessionStorage.getItem('s4_entered') === '1') {
+        var ws = document.getElementById('platformWorkspace');
+        var hero = document.querySelector('.hero');
+        var landing = document.getElementById('platformLanding');
+        if (ws) ws.style.display = 'block';
+        if (hero) hero.style.display = 'none';
+        if (landing) landing.style.display = 'none';
+    }
     // Set default calendar date
     const calDate = document.getElementById('calEventDate');
     if (calDate) calDate.value = new Date().toISOString().split('T')[0];
@@ -9412,13 +9569,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     handleHash();
     window.addEventListener('hashchange', handleHash);
-
+    // Demo Mode init — Remove after Stripe is live
+    if (typeof _demoMode !== 'undefined' && _demoMode) { _initDemoSession(); }
 });
 
 // === Window exports for inline event handlers ===
+window._checkDemoStatus = _checkDemoStatus;
 window._updateBulkBar = _updateBulkBar;
+window._updateAnchorBtnPolicy = _updateAnchorBtnPolicy;
+window.RECORD_TYPES = RECORD_TYPES;
 window.acceptDodConsent = acceptDodConsent;
-window.enterPlatformAfterAuth = enterPlatformAfterAuth;
 window.addNewDoc = addNewDoc;
 window.addPOAM = addPOAM;
 window.addScheduledReport = addScheduledReport;
@@ -9445,6 +9605,7 @@ window.calcLifecycle = calcLifecycle;
 window.exportLifecycle = exportLifecycle;
 window.loadSBOMData = loadSBOMData;
 window.exportSBOM = exportSBOM;
+window.hideAnchorAnimation = hideAnchorAnimation;
 window.applyCustomProgram = applyCustomProgram;
 window.attachEvidence = attachEvidence;
 window.bulkActionDelete = bulkActionDelete;
@@ -9474,6 +9635,7 @@ window.deletePOAM = deletePOAM;
 window.dismissToast = dismissToast;
 window.downloadExecSummary = downloadExecSummary;
 window.downloadReport = downloadReport;
+window.downloadSampleFile = downloadSampleFile;
 window.downloadTemplate = downloadTemplate;
 window.editActionItem = editActionItem;
 window.editPOAM = editPOAM;
@@ -9502,7 +9664,6 @@ window.generateHeatMap = generateHeatMap;
 window.generateILSReport = generateILSReport;
 window.generateRemediationPlans = generateRemediationPlans;
 window.generateReport = generateReport;
-window.handleAccountLogin = handleAccountLogin;
 window.handleDocFileSelect = handleDocFileSelect;
 window.handleILSFiles = handleILSFiles;
 window.handleSubFileDrop = handleSubFileDrop;
@@ -9510,18 +9671,15 @@ window.handleSubFileUpload = handleSubFileUpload;
 window.handleToolUpload = handleToolUpload;
 window.handleVerifyFileDrop = handleVerifyFileDrop;
 window.handleVerifyFileSelect = handleVerifyFileSelect;
-window.hideAnchorAnimation = hideAnchorAnimation;
 window.inlineEditActionTitle = inlineEditActionTitle;
 window.loadDMSMSData = loadDMSMSData;
 window.loadPredictiveData = loadPredictiveData;
 window.loadReadinessData = loadReadinessData;
 window.loadRecordToVerify = loadRecordToVerify;
 window.loadRiskData = loadRiskData;
-window.loadSamplePackage = loadSamplePackage;
 window.loadSample = loadSample;
-window.logout = logout;
-window._updateSlsBalance = _updateSlsBalance;
-window._syncSlsBar = _syncSlsBar;
+window.loadSamplePackage = loadSamplePackage;
+window.loadSelectedSampleDoc = loadSelectedSampleDoc;
 window.onILSProgramChange = onILSProgramChange;
 window.onSubProgramChange = onSubProgramChange;
 window.openProdFeatures = openProdFeatures;
@@ -9533,11 +9691,14 @@ window.removeScheduledReport = removeScheduledReport;
 window.removeToolFile = removeToolFile;
 window.renderDocLibrary = renderDocLibrary;
 window.renderTypeGrid = renderTypeGrid;
+window.resetDemoSession = resetDemoSession;
 window.resetVerify = resetVerify;
 window.runAnomalyDetection = runAnomalyDetection;
+window.runDocAIDemoExtraction = runDocAIDemoExtraction;
 window.runDocAIExtraction = runDocAIExtraction;
 window.runFullILSAnalysis = runFullILSAnalysis;
 window.runMonitoringScan = runMonitoringScan;
+window.runSubmissionDemo = runSubmissionDemo;
 window.runVaultStressTest = runVaultStressTest;
 window.runVersionDiff = runVersionDiff;
 window.saveActionFromModal = saveActionFromModal;
@@ -9550,6 +9711,7 @@ window.setDocCat = setDocCat;
 window.showAddActionModal = showAddActionModal;
 window.showDocUpload = showDocUpload;
 window.showDocVersionUpload = showDocVersionUpload;
+window.simulateAccountLogin = simulateAccountLogin;
 window.simulateCacLogin = simulateCacLogin;
 window.smartPrioritizeActions = smartPrioritizeActions;
 window.startAuthFlow = startAuthFlow;
@@ -9564,21 +9726,22 @@ window.toggleAutoMonitor = toggleAutoMonitor;
 window.toggleComplianceSection = toggleComplianceSection;
 window.toggleFlowBox = toggleFlowBox;
 window.toggleScheduledReport = toggleScheduledReport;
-window.toggleSignupMode = toggleSignupMode;
 window.toggleVaultSelectAll = toggleVaultSelectAll;
 window.uploadDocVersion = uploadDocVersion;
 window.vaultPageNext = vaultPageNext;
+window.enterPlatform = enterPlatform;
 window.vaultPagePrev = vaultPagePrev;
 window.verifyAllVault = verifyAllVault;
 window.verifyRecord = verifyRecord;
 window.generateAiResponse = generateAiResponse;
-window.handlePasswordReset = handlePasswordReset;
 window.refreshVerifyRecents = refreshVerifyRecents;
+window._initDemoSession = _initDemoSession;
+window._updateDemoSlsBalance = _updateDemoSlsBalance;
+window._syncSlsBar = _syncSlsBar;
 // Cross-chunk exports — needed by metrics/enhancements chunks
 window._vaultKey = _vaultKey;
 window.getLocalRecords = getLocalRecords;
 window._anchorToXRPL = _anchorToXRPL;
-window.anchorToLedger = anchorToLedger;
 window.showAnchorAnimation = showAnchorAnimation;
 window.hideAnchorAnimation = hideAnchorAnimation;
 window.updateStats = updateStats;
@@ -9596,6 +9759,7 @@ window.updateAiContext = updateAiContext;
 window.renderVault = renderVault;
 window.loadStats = loadStats;
 window.showWorkspaceNotification = showWorkspaceNotification;
+window.anchorToLedger = anchorToLedger;
 window.showLeadershipSummary = showLeadershipSummary;
 window.exportLeadershipSummary = exportLeadershipSummary;
 window.exportProgramSummary = exportProgramSummary;
@@ -9609,3 +9773,4 @@ window._buildAssignDropdownHTML = _buildAssignDropdownHTML;
 window._buildMultiAssignHTML = _buildMultiAssignHTML;
 window._addAssignRow = _addAssignRow;
 window._MULTI_ASSIGN_TOOLS = _MULTI_ASSIGN_TOOLS;
+window._getAssignContacts = _getAssignContacts;

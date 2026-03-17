@@ -55,78 +55,107 @@ const BRANCHES = {
     JOINT:{name:"Joint / Cross-Branch",icon:"fa-medal",short:"Joint"},
 };
 
-// Compact: [label, icon, color, branch, system]
+// Compact: [label, icon, color, branch, system, anchorPolicy]
+// anchorPolicy: 'auto' = auto-anchor on finalize, 'prompt' = recommend anchor, 'manual' = user initiates
 const _RT = {
-USN_SUPPLY_RECEIPT:["Supply Chain Receipt","fa-box","#00aaff","USN","NAVSUP OneTouch"],
-USN_3M_MAINTENANCE:["3-M Maintenance Action","fa-wrench","#ffd700","USN","SKED/OARS"],
-USN_CASREP:["Casualty Report (CASREP)","fa-exclamation-triangle","#ff3333","USN","TYCOM"],
-USN_CDRL:["CDRL Delivery","fa-file-alt","#8ea4b8","USN","CDMD-OA"],
-USN_ORDNANCE:["Ordnance Lot Tracking","fa-bomb","#ff6b6b","USN","AESIP"],
-USN_DEPOT_REPAIR:["Depot Repair Record","fa-industry","#ff9933","USN","CNRMF"],
-USN_INSURV:["INSURV Inspection","fa-search","#66ccff","USN","NRCC"],
-USN_CALIBRATION:["TMDE Calibration","fa-ruler","#ff66aa","USN","METCAL"],
-USN_CONFIG:["Configuration Baseline","fa-cog","#00aaff","USN","CDMD-OA"],
-USN_CUSTODY:["Custody Transfer","fa-sync-alt","#00aaff","USN","DPAS"],
-USN_TDP:["Technical Data Package","fa-drafting-compass","#9945ff","USN","NAVSEA"],
-USN_COC:["Certificate of Conformance","fa-check-circle","#00cc88","USN","DCMA"],
-USN_SHIPALT:["Ship Alteration (SHIPALT)","fa-ship","#0077cc","USN","NAVSEA"],
-USN_PMS:["PMS/SKED Compliance","fa-clipboard-list","#44aa88","USN","3M/SKED"],
-USN_HME:["HM&E System Record","fa-bolt","#dd8844","USN","ENGSKED"],
-USN_COMBAT_SYS:["Combat Systems Cert","fa-crosshairs","#ff4444","USN","CSSQT"],
-USN_PROPULSION:["Propulsion Plant Exam","fa-fire","#ff6600","USN","INSURV"],
-USN_AVIATION:["Aviation Maintenance","fa-plane","#0088cc","USN","NALCOMIS"],
-USN_FLIGHT_OPS:["Flight Operations Record","fa-plane-departure","#3399ff","USN","NATOPS"],
-USN_SUBSAFE:["SUBSAFE Certification","fa-lock","#003366","USN","NAVSEA 07"],
-USN_DIVE_EQUIP:["Diving Equipment Inspection","fa-water","#006699","USN","NAVSEA 00C"],
-USN_MEDICAL:["Medical Equipment Cert","fa-hospital","#33cc66","USN","BUMED"],
-USN_QDR:["Quality Defect Report","fa-ban","#cc0000","USN","NAVSUP WSS"],
-USN_FIELDING:["Equipment Fielding","fa-ship","#00ddaa","USN","PMS"],
-USN_REACTOR:["Naval Reactor Test","fa-radiation","#ffcc00","USN","NAVSEA 08"],
-USN_DRL:["Data Requirements List (DRL)","fa-clipboard-list","#5599cc","USN","NAVSEA/PMS"],
-USN_DI:["Data Item Description (DID)","fa-file-contract","#4488bb","USN","CDMD-OA"],
-USN_VRS:["Vendor Recommended Spares","fa-box","#7799aa","USN","NAVICP/DLA"],
-USN_BUYLIST:["Buylist / Provisioning","fa-shopping-cart","#6688aa","USN","NAVSUP WSS"],
-USN_J1_ILS:["J-1 ILS Parameters / LORA","fa-file-alt","#336699","USN","PMS/ILS"],
-USN_J2_SE:["J-2 Support Equipment","fa-wrench","#337799","USN","PMS/ILS"],
-USN_J3_SUPPLY:["J-3 Supply Support","fa-box","#338899","USN","NAVSUP"],
-USN_J4_TECHDATA:["J-4 Technical Data","fa-book-open","#339999","USN","NAVSEA"],
-USN_J5_TRAINING:["J-5 Training","fa-graduation-cap","#33aa99","USN","NETC"],
-USN_J6_MANPOWER:["J-6 Manpower & Personnel","fa-users","#4488cc","USN","OPNAV N1"],
-USN_J7_FACILITIES:["J-7 Facilities","fa-hard-hat","#5577bb","USN","NAVFAC"],
-USN_J8_PHST:["J-8 PHS&T","fa-box","#6699cc","USN","NAVSUP"],
-USN_J9_SOFTWARE:["J-9 Computer Resources","fa-laptop","#4477aa","USN","SPAWAR/NAVWAR"],
-USN_J10_DESIGN:["J-10 Design Interface","fa-drafting-compass","#3366aa","USN","NAVSEA"],
-USN_J11_RAM:["J-11 RAM Analysis","fa-chart-line","#2255aa","USN","PMS/ILS"],
-USN_J12_ACQLOG:["J-12 Acquisition Logistics","fa-chart-bar","#2266bb","USN","PMS/ILS"],
-USN_J13_CM:["J-13 Configuration Mgmt","fa-cog","#3377cc","USN","CDMD-OA"],
-USN_J14_DISPOSAL:["J-14 Disposal","fa-trash-alt","#667788","USN","DRMS"],
-USN_BAM:["Budget Allowance Mgmt (BAM)","fa-money-bill-wave","#cc9933","USN","NAVSUP"],
-USN_TRANSFER_BOOK:["Transfer Book","fa-book","#5588aa","USN","Supply Officer"],
-USN_COTS_MANUAL:["COTS Manual / Documentation","fa-book","#4477bb","USN","NAVSEA"],
-USN_TM_INDEX:["Technical Manual Index","fa-address-card","#3366bb","USN","NAVSEA"],
-USN_PO_INDEX:["Purchase Order Index","fa-folder-open","#5588cc","USN","NAVSUP"],
-USN_PID:["Program Introduction Doc (PID)","fa-file-alt","#6699bb","USN","PMS"],
-USN_CONTRACT_MOD:["Contract Modification","fa-pen","#7788aa","USN","NAVSEA Contracts"],
-USN_CONFIG_MGMT:["Configuration Mgmt Record","fa-cog","#4466aa","USN","CDMD-OA"],
-USN_OUTFITTING:["Outfitting Requirements","fa-ship","#3355aa","USN","PMS/Outfitting"],
-USN_PURCHASE_REQ:["Purchase Request (PR)","fa-credit-card","#558899","USN","NAVSUP"],
-JOINT_NATO:["NATO STANAG Verification","fa-flag","#003399","JOINT","NATO"],
-JOINT_F35:["F-35 JSF Logistics","fa-plane","#1a1a2e","JOINT","ALIS/ODIN"],
-JOINT_MISSILE_DEF:["Missile Defense Record","fa-rocket","#4a0080","JOINT","MDA"],
-JOINT_CYBER:["Cyber Equipment Cert","fa-desktop","#00cc99","JOINT","CYBERCOM"],
-JOINT_INTEL:["Intelligence Equipment","fa-user-secret","#2d2d2d","JOINT","DIA"],
-JOINT_SPACE:["Space Command Asset","fa-satellite","#000066","JOINT","USSPACECOM"],
-JOINT_TRANSPORT:["TRANSCOM Logistics","fa-truck","#4a6741","JOINT","USTRANSCOM"],
-JOINT_CONTRACT:["Contract Deliverable","fa-pen","#b8860b","JOINT","DCMA"],
-JOINT_READINESS:["Readiness Report","fa-chart-line","#00ff88","JOINT","DRRS"],
-JOINT_DISPOSAL:["Joint Disposal Record","fa-trash-alt","#8b8682","JOINT","DLA"],
+USN_SUPPLY_RECEIPT:["Supply Chain Receipt","fa-box","#00aaff","USN","NAVSUP OneTouch","auto"],
+USN_3M_MAINTENANCE:["3-M Maintenance Action","fa-wrench","#ffd700","USN","SKED/OARS","auto"],
+USN_CASREP:["Casualty Report (CASREP)","fa-exclamation-triangle","#ff3333","USN","TYCOM","auto"],
+USN_CDRL:["CDRL Delivery","fa-file-alt","#8ea4b8","USN","CDMD-OA","auto"],
+USN_ORDNANCE:["Ordnance Lot Tracking","fa-bomb","#ff6b6b","USN","AESIP","auto"],
+USN_DEPOT_REPAIR:["Depot Repair Record","fa-industry","#ff9933","USN","CNRMF","prompt"],
+USN_INSURV:["INSURV Inspection","fa-search","#66ccff","USN","NRCC","prompt"],
+USN_CALIBRATION:["TMDE Calibration","fa-ruler","#ff66aa","USN","METCAL","auto"],
+USN_CONFIG:["Configuration Baseline","fa-cog","#00aaff","USN","CDMD-OA","auto"],
+USN_CUSTODY:["Custody Transfer","fa-sync-alt","#00aaff","USN","DPAS","auto"],
+USN_TDP:["Technical Data Package","fa-drafting-compass","#9945ff","USN","NAVSEA","prompt"],
+USN_COC:["Certificate of Conformance","fa-check-circle","#00cc88","USN","DCMA","auto"],
+USN_SHIPALT:["Ship Alteration (SHIPALT)","fa-ship","#0077cc","USN","NAVSEA","prompt"],
+USN_PMS:["PMS/SKED Compliance","fa-clipboard-list","#44aa88","USN","3M/SKED","prompt"],
+USN_HME:["HM&E System Record","fa-bolt","#dd8844","USN","ENGSKED","prompt"],
+USN_COMBAT_SYS:["Combat Systems Cert","fa-crosshairs","#ff4444","USN","CSSQT","prompt"],
+USN_PROPULSION:["Propulsion Plant Exam","fa-fire","#ff6600","USN","INSURV","prompt"],
+USN_AVIATION:["Aviation Maintenance","fa-plane","#0088cc","USN","NALCOMIS","prompt"],
+USN_FLIGHT_OPS:["Flight Operations Record","fa-plane-departure","#3399ff","USN","NATOPS","prompt"],
+USN_SUBSAFE:["SUBSAFE Certification","fa-lock","#003366","USN","NAVSEA 07","auto"],
+USN_DIVE_EQUIP:["Diving Equipment Inspection","fa-water","#006699","USN","NAVSEA 00C","prompt"],
+USN_MEDICAL:["Medical Equipment Cert","fa-hospital","#33cc66","USN","BUMED","prompt"],
+USN_QDR:["Quality Defect Report","fa-ban","#cc0000","USN","NAVSUP WSS","prompt"],
+USN_FIELDING:["Equipment Fielding","fa-ship","#00ddaa","USN","PMS","prompt"],
+USN_REACTOR:["Naval Reactor Test","fa-radiation","#ffcc00","USN","NAVSEA 08","auto"],
+USN_DRL:["Data Requirements List (DRL)","fa-clipboard-list","#5599cc","USN","NAVSEA/PMS","prompt"],
+USN_DI:["Data Item Description (DID)","fa-file-contract","#4488bb","USN","CDMD-OA","prompt"],
+USN_VRS:["Vendor Recommended Spares","fa-box","#7799aa","USN","NAVICP/DLA","manual"],
+USN_BUYLIST:["Buylist / Provisioning","fa-shopping-cart","#6688aa","USN","NAVSUP WSS","manual"],
+USN_J1_ILS:["J-1 ILS Parameters / LORA","fa-file-alt","#336699","USN","PMS/ILS","manual"],
+USN_J2_SE:["J-2 Support Equipment","fa-wrench","#337799","USN","PMS/ILS","manual"],
+USN_J3_SUPPLY:["J-3 Supply Support","fa-box","#338899","USN","NAVSUP","manual"],
+USN_J4_TECHDATA:["J-4 Technical Data","fa-book-open","#339999","USN","NAVSEA","manual"],
+USN_J5_TRAINING:["J-5 Training","fa-graduation-cap","#33aa99","USN","NETC","manual"],
+USN_J6_MANPOWER:["J-6 Manpower & Personnel","fa-users","#4488cc","USN","OPNAV N1","manual"],
+USN_J7_FACILITIES:["J-7 Facilities","fa-hard-hat","#5577bb","USN","NAVFAC","manual"],
+USN_J8_PHST:["J-8 PHS&T","fa-box","#6699cc","USN","NAVSUP","manual"],
+USN_J9_SOFTWARE:["J-9 Computer Resources","fa-laptop","#4477aa","USN","SPAWAR/NAVWAR","manual"],
+USN_J10_DESIGN:["J-10 Design Interface","fa-drafting-compass","#3366aa","USN","NAVSEA","manual"],
+USN_J11_RAM:["J-11 RAM Analysis","fa-chart-line","#2255aa","USN","PMS/ILS","manual"],
+USN_J12_ACQLOG:["J-12 Acquisition Logistics","fa-chart-bar","#2266bb","USN","PMS/ILS","manual"],
+USN_J13_CM:["J-13 Configuration Mgmt","fa-cog","#3377cc","USN","CDMD-OA","manual"],
+USN_J14_DISPOSAL:["J-14 Disposal","fa-trash-alt","#667788","USN","DRMS","manual"],
+USN_BAM:["Budget Allowance Mgmt (BAM)","fa-money-bill-wave","#cc9933","USN","NAVSUP","manual"],
+USN_TRANSFER_BOOK:["Transfer Book","fa-book","#5588aa","USN","Supply Officer","manual"],
+USN_COTS_MANUAL:["COTS Manual / Documentation","fa-book","#4477bb","USN","NAVSEA","manual"],
+USN_TM_INDEX:["Technical Manual Index","fa-address-card","#3366bb","USN","NAVSEA","manual"],
+USN_PO_INDEX:["Purchase Order Index","fa-folder-open","#5588cc","USN","NAVSUP","manual"],
+USN_PID:["Program Introduction Doc (PID)","fa-file-alt","#6699bb","USN","PMS","manual"],
+USN_CONTRACT_MOD:["Contract Modification","fa-pen","#7788aa","USN","NAVSEA Contracts","prompt"],
+USN_CONFIG_MGMT:["Configuration Mgmt Record","fa-cog","#4466aa","USN","CDMD-OA","auto"],
+USN_OUTFITTING:["Outfitting Requirements","fa-ship","#3355aa","USN","PMS/Outfitting","manual"],
+USN_PURCHASE_REQ:["Purchase Request (PR)","fa-credit-card","#558899","USN","NAVSUP","manual"],
+JOINT_NATO:["NATO STANAG Verification","fa-flag","#003399","JOINT","NATO","prompt"],
+JOINT_F35:["F-35 JSF Logistics","fa-plane","#1a1a2e","JOINT","ALIS/ODIN","prompt"],
+JOINT_MISSILE_DEF:["Missile Defense Record","fa-rocket","#4a0080","JOINT","MDA","prompt"],
+JOINT_CYBER:["Cyber Equipment Cert","fa-desktop","#00cc99","JOINT","CYBERCOM","prompt"],
+JOINT_INTEL:["Intelligence Equipment","fa-user-secret","#2d2d2d","JOINT","DIA","manual"],
+JOINT_SPACE:["Space Command Asset","fa-satellite","#000066","JOINT","USSPACECOM","manual"],
+JOINT_TRANSPORT:["TRANSCOM Logistics","fa-truck","#4a6741","JOINT","USTRANSCOM","manual"],
+JOINT_CONTRACT:["Contract Deliverable","fa-pen","#b8860b","JOINT","DCMA","prompt"],
+JOINT_READINESS:["Readiness Report","fa-chart-line","#00ff88","JOINT","DRRS","prompt"],
+JOINT_DISPOSAL:["Joint Disposal Record","fa-trash-alt","#8b8682","JOINT","DLA","manual"],
 };
 
 // Expand
 const RECORD_TYPES = {};
 for (const [k,v] of Object.entries(_RT)) {
-    RECORD_TYPES[k] = {label:v[0],icon:v[1],color:v[2],branch:v[3],system:v[4]};
+    RECORD_TYPES[k] = {label:v[0],icon:v[1],color:v[2],branch:v[3],system:v[4],anchorPolicy:v[5]||'manual'};
 }
+
+// ── Anchor Policy Helpers ──
+// Org-level overrides stored in localStorage — admin can promote/demote tiers
+const ANCHOR_POLICY_META = {
+    auto:  {label:'Auto-Anchor',  icon:'fa-shield-alt', color:'#00cc88', desc:'Anchored automatically on finalize'},
+    prompt:{label:'Recommended',   icon:'fa-bell',       color:'#ff9933', desc:'You\'ll be prompted to anchor'},
+    manual:{label:'Manual',        icon:'fa-hand-pointer',color:'#86868b', desc:'Anchor when you choose'}
+};
+function _getAnchorPolicy(recordType) {
+    var overrides = {};
+    try { overrides = JSON.parse(localStorage.getItem('s4_anchor_policy_overrides') || '{}'); } catch(e) {}
+    if (overrides[recordType]) return overrides[recordType];
+    var rt = RECORD_TYPES[recordType];
+    return (rt && rt.anchorPolicy) || 'manual';
+}
+function _setAnchorPolicyOverride(recordType, policy) {
+    var overrides = {};
+    try { overrides = JSON.parse(localStorage.getItem('s4_anchor_policy_overrides') || '{}'); } catch(e) {}
+    if (policy === (RECORD_TYPES[recordType] && RECORD_TYPES[recordType].anchorPolicy)) {
+        delete overrides[recordType]; // back to default, remove override
+    } else {
+        overrides[recordType] = policy;
+    }
+    try { localStorage.setItem('s4_anchor_policy_overrides', JSON.stringify(overrides)); } catch(e) {}
+}
+window._getAnchorPolicy = _getAnchorPolicy;
+window._setAnchorPolicyOverride = _setAnchorPolicyOverride;
+window.ANCHOR_POLICY_META = ANCHOR_POLICY_META;
 
 const SAMPLES = {
     supply:{type:'USN_SUPPLY_RECEIPT',branch:'USN',text:`Supply Chain Receipt\nNSN: 5340-01-234-5678\nNomenclature: Valve, Gate, Carbon Steel\nContract: N00024-23-C-5501\nCAGE Code: 1THK9\nQuantity Received: 50 EA\nCondition Code: A (Serviceable)\nInspection: FAT Pass\nReceiving Depot: Norfolk Naval Shipyard (NNSY)\nInspector: QA-237 J. Martinez\nDate: 2026-02-10`},
@@ -667,7 +696,7 @@ function renderTypeGrid() {
         .filter(([k,v]) => !search || v.label.toLowerCase().includes(search) || k.toLowerCase().includes(search));
     document.getElementById('branchTypeCount').textContent = '(' + types.length + ' types)';
     grid.innerHTML = types.map(([key,t]) =>
-        '<div class="record-type-btn' + (key===selectedType?' selected':'') + '" data-type="'+key+'" onclick="selectType(\''+key+'\',this)" title="'+t.label+' \u2014 '+t.system+'"><span class="icon"><i class="fas '+t.icon+'" style="color:'+t.color+'"></i></span>'+t.label+'</div>'
+        '<div class="record-type-btn' + (key===selectedType?' selected':'') + '" data-type="'+key+'" onclick="selectType(\''+key+'\',this)" title="'+t.label+' \u2014 '+t.system+' \u2014 '+(_getAnchorPolicy(key)==='auto'?'Auto-anchored on finalize':_getAnchorPolicy(key)==='prompt'?'Anchor recommended':'Manual anchor')+'"><span class="icon"><i class="fas '+t.icon+'" style="color:'+t.color+'"></i></span>'+t.label+_getAnchorPolicyBadgeHTML(key)+'</div>'
     ).join('');
 }
 
@@ -686,6 +715,33 @@ function selectType(key, el) {
     }
     // Show classification banner
     showClassificationBanner(key);
+    // Show anchor policy indicator next to the anchor button
+    _updateAnchorBtnPolicy(key);
+}
+
+function _updateAnchorBtnPolicy(recordType) {
+    var policy = _getAnchorPolicy(recordType);
+    var meta = ANCHOR_POLICY_META[policy];
+    var indicator = document.getElementById('anchorPolicyIndicator');
+    if (!indicator) {
+        // Create indicator next to anchor button
+        var btn = document.getElementById('anchorBtn');
+        if (btn && btn.parentNode) {
+            var el = document.createElement('div');
+            el.id = 'anchorPolicyIndicator';
+            el.className = 's4-anchor-policy-indicator';
+            btn.parentNode.insertBefore(el, btn.nextSibling);
+            indicator = el;
+        }
+    }
+    if (indicator && meta) {
+        indicator.innerHTML = window._s4Safe(
+            '<i class="fas ' + meta.icon + '" style="color:' + meta.color + '"></i> ' +
+            '<span style="color:' + meta.color + ';font-weight:600">' + meta.label + '</span>' +
+            '<span style="color:var(--muted,#86868b)"> \u2014 ' + meta.desc + '</span>'
+        );
+        indicator.className = 's4-anchor-policy-indicator s4-anchor-policy-indicator-' + policy;
+    }
 }
 
 function generateRecordSample(key, info) {
@@ -1056,6 +1112,142 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
     return { txHash, network, explorerUrl, feeTxHash, feeError };
 }
 
+// ══════════════════════════════════════════════════════════════
+//  AUTO-ANCHOR & PROMPT ENGINE
+//  Tier 1 (auto): anchor silently on finalize, show toast
+//  Tier 2 (prompt): show inline banner after save
+//  Tier 3 (manual): existing behavior — user clicks Anchor button
+// ══════════════════════════════════════════════════════════════
+
+/**
+ * Called after anchorRecord() completes its save. Checks the policy for
+ * the record type. For 'auto', the anchor already happened (anchorRecord
+ * always anchors). For 'prompt', if user came through manual click this
+ * is a no-op. The policy mainly affects the type picker UI and the
+ * _showAnchorPrompt flow for tool-generated records.
+ */
+function _getAnchorPolicyBadgeHTML(recordType) {
+    var policy = _getAnchorPolicy(recordType);
+    var meta = ANCHOR_POLICY_META[policy];
+    if (!meta) return '';
+    return '<span class="anchor-policy-badge anchor-policy-' + policy + '" title="' + meta.desc + '"><i class="fas ' + meta.icon + '"></i> ' + meta.label + '</span>';
+}
+window._getAnchorPolicyBadgeHTML = _getAnchorPolicyBadgeHTML;
+
+/**
+ * Show a compact inline prompt banner for Tier 2 records.
+ * Returns a Promise that resolves true if user clicks Anchor, false if Skip.
+ */
+function _showAnchorPrompt(recordType, hash, content) {
+    return new Promise(function(resolve) {
+        var typeInfo = RECORD_TYPES[recordType] || {label: recordType};
+        var existing = document.getElementById('s4AnchorPrompt');
+        if (existing) existing.remove();
+        var div = document.createElement('div');
+        div.id = 's4AnchorPrompt';
+        div.className = 's4-anchor-prompt';
+        div.innerHTML = window._s4Safe(
+            '<div class="s4-anchor-prompt-inner">' +
+            '<i class="fas fa-bell" style="color:#ff9933;font-size:1rem;flex-shrink:0"></i>' +
+            '<div class="s4-anchor-prompt-text">' +
+            '<strong>Anchor recommended</strong> — ' + typeInfo.label + ' records benefit from immutable XRPL verification.' +
+            '</div>' +
+            '<button id="s4AnchorPromptYes" class="s4-anchor-prompt-btn s4-anchor-prompt-yes"><i class="fas fa-anchor"></i> Anchor to Ledger</button>' +
+            '<button id="s4AnchorPromptSkip" class="s4-anchor-prompt-btn s4-anchor-prompt-skip">Skip</button>' +
+            '<button id="s4AnchorPromptClose" class="s4-anchor-prompt-close"><i class="fas fa-times"></i></button>' +
+            '</div>'
+        );
+        document.body.appendChild(div);
+        requestAnimationFrame(function() { div.classList.add('show'); });
+        function cleanup(result) {
+            div.classList.remove('show');
+            setTimeout(function() { if (div.parentNode) div.remove(); }, 300);
+            resolve(result);
+        }
+        document.getElementById('s4AnchorPromptYes').onclick = function() { cleanup(true); };
+        document.getElementById('s4AnchorPromptSkip').onclick = function() { cleanup(false); };
+        document.getElementById('s4AnchorPromptClose').onclick = function() { cleanup(false); };
+        // Auto-dismiss after 15 seconds
+        setTimeout(function() { if (div.parentNode) cleanup(false); }, 15000);
+    });
+}
+window._showAnchorPrompt = _showAnchorPrompt;
+
+/**
+ * Show a brief auto-anchor toast notification.
+ */
+function _showAutoAnchorToast(typeLabel, txHash) {
+    var existing = document.getElementById('s4AutoAnchorToast');
+    if (existing) existing.remove();
+    var div = document.createElement('div');
+    div.id = 's4AutoAnchorToast';
+    div.className = 's4-auto-anchor-toast';
+    var shortTx = txHash ? (txHash.substring(0, 12) + '...') : '';
+    div.innerHTML = window._s4Safe(
+        '<i class="fas fa-shield-alt" style="color:#00cc88"></i> ' +
+        '<span><strong>Auto-anchored:</strong> ' + typeLabel + ' &rarr; XRPL</span>' +
+        (shortTx ? ' <span style="color:var(--muted);font-size:0.72rem">' + shortTx + '</span>' : '') +
+        ' <i class="fas fa-check-circle" style="color:#00cc88"></i>'
+    );
+    document.body.appendChild(div);
+    requestAnimationFrame(function() { div.classList.add('show'); });
+    setTimeout(function() {
+        div.classList.remove('show');
+        setTimeout(function() { if (div.parentNode) div.remove(); }, 400);
+    }, 4000);
+}
+window._showAutoAnchorToast = _showAutoAnchorToast;
+
+/**
+ * Anchor Policy Settings Panel — renders org-level override controls.
+ * Called from the settings/preferences area.
+ */
+function renderAnchorPolicySettings() {
+    var overrides = {};
+    try { overrides = JSON.parse(localStorage.getItem('s4_anchor_policy_overrides') || '{}'); } catch(e) {}
+    var html = '<div class="s4-anchor-policy-settings">';
+    html += '<div style="font-size:0.92rem;font-weight:700;color:var(--text,#1d1d1f);margin-bottom:12px;display:flex;align-items:center;gap:8px"><i class="fas fa-shield-alt" style="color:#00aaff"></i>Anchor Policy Settings</div>';
+    html += '<div style="color:var(--muted,#86868b);font-size:0.78rem;margin-bottom:16px">Configure which record types are automatically anchored, prompted, or left manual. Changes apply to your organization.</div>';
+    // Summary bar
+    var autoCount = 0, promptCount = 0, manualCount = 0;
+    Object.keys(RECORD_TYPES).forEach(function(k) {
+        var p = _getAnchorPolicy(k);
+        if (p === 'auto') autoCount++;
+        else if (p === 'prompt') promptCount++;
+        else manualCount++;
+    });
+    html += '<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">';
+    html += '<div style="padding:6px 14px;border-radius:8px;background:rgba(0,204,136,0.1);border:1px solid rgba(0,204,136,0.2);font-size:0.78rem;font-weight:600;color:#00cc88"><i class="fas fa-shield-alt"></i> ' + autoCount + ' Auto</div>';
+    html += '<div style="padding:6px 14px;border-radius:8px;background:rgba(255,153,51,0.1);border:1px solid rgba(255,153,51,0.2);font-size:0.78rem;font-weight:600;color:#ff9933"><i class="fas fa-bell"></i> ' + promptCount + ' Prompt</div>';
+    html += '<div style="padding:6px 14px;border-radius:8px;background:rgba(134,134,139,0.1);border:1px solid rgba(134,134,139,0.2);font-size:0.78rem;font-weight:600;color:#86868b"><i class="fas fa-hand-pointer"></i> ' + manualCount + ' Manual</div>';
+    html += '</div>';
+    // Per-type controls
+    ['USN','JOINT'].forEach(function(branch) {
+        var types = Object.entries(RECORD_TYPES).filter(function(e) { return e[1].branch === branch; });
+        html += '<div style="font-size:0.8rem;font-weight:700;color:var(--text,#1d1d1f);margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">' + branch + ' Record Types</div>';
+        types.forEach(function(entry) {
+            var k = entry[0], t = entry[1];
+            var currentPolicy = _getAnchorPolicy(k);
+            var isOverridden = !!overrides[k];
+            html += '<div class="s4-policy-row">';
+            html += '<span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0"><i class="fas ' + t.icon + '" style="color:' + t.color + ';width:16px;text-align:center;flex-shrink:0"></i><span style="font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + t.label + '</span></span>';
+            html += '<select onchange="_setAnchorPolicyOverride(\'' + k + '\',this.value);renderAnchorPolicySettings()" style="font-size:0.72rem;padding:3px 6px;border-radius:6px;border:1px solid rgba(0,0,0,0.1);background:rgba(0,0,0,0.02);color:var(--text,#1d1d1f);cursor:pointer">';
+            ['auto','prompt','manual'].forEach(function(p) {
+                html += '<option value="' + p + '"' + (currentPolicy === p ? ' selected' : '') + '>' + ANCHOR_POLICY_META[p].label + '</option>';
+            });
+            html += '</select>';
+            if (isOverridden) html += '<span style="font-size:0.6rem;color:#ff9933;margin-left:4px" title="Overridden from default">*</span>';
+            html += '</div>';
+        });
+    });
+    html += '<button onclick="localStorage.removeItem(\'s4_anchor_policy_overrides\');renderAnchorPolicySettings()" style="margin-top:16px;padding:6px 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);background:rgba(0,0,0,0.02);color:var(--muted,#86868b);font-size:0.75rem;cursor:pointer"><i class="fas fa-undo"></i> Reset All to Defaults</button>';
+    html += '</div>';
+    var container = document.getElementById('anchorPolicySettingsContainer');
+    if (container) container.innerHTML = window._s4Safe(html);
+    return html;
+}
+window.renderAnchorPolicySettings = renderAnchorPolicySettings;
+
 /**
  * Anchor a record to the XRP Ledger.
  * Computes SHA-256 hash of the input (text or uploaded file), posts the
@@ -1126,8 +1318,11 @@ async function anchorRecord() {
     await new Promise(r => setTimeout(r, 400));
 
     const panel = document.getElementById('anchorResult');
+    var _anchorPolicyForType = _getAnchorPolicy(selectedType);
+    var _policyMeta = ANCHOR_POLICY_META[_anchorPolicyForType] || ANCHOR_POLICY_META.manual;
     panel.innerHTML = window._s4Safe('<div class="result-label">STATUS</div><div class="result-value" style="font-size:1rem;margin-bottom:0.8rem">\u2705 ' + typeInfo.label + ' Anchored Successfully on XRPL \u2014 Immutable and verifiable</div>'
         + '<div class="result-label">RECORD TYPE</div><div style="margin-bottom:0.5rem">' + _renderIcon(record.icon) + ' ' + typeInfo.label + ' (' + typeInfo.branch + ')</div>'
+        + '<div class="result-label">ANCHOR POLICY</div><div style="margin-bottom:0.5rem"><span class="anchor-policy-badge anchor-policy-' + _anchorPolicyForType + '" style="font-size:0.78rem;padding:3px 10px"><i class="fas ' + _policyMeta.icon + '"></i> ' + _policyMeta.label + '</span> <span style="color:var(--muted);font-size:0.78rem;margin-left:6px">' + _policyMeta.desc + '</span></div>'
         + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:8px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + '<i class="fas ' + CLF_META[clfLevel].icon + '" style="margin-right:4px"></i>' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
         + '<div class="result-label">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
         + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all;display:flex;align-items:center;gap:6px;flex-wrap:wrap">' + (explorerUrl ? '<a href="'+explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+txHash+' <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>' : '<span style="color:var(--muted)">'+txHash+'</span>') + '<button onclick="navigator.clipboard.writeText(\''+txHash+'\').then(function(){var b=this;b.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i> Copy TX Hash\';},1500);}.bind(this))" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);border-radius:6px;color:#00aaff;font-size:0.7rem;padding:2px 8px;cursor:pointer;font-weight:600;white-space:nowrap"><i class="fas fa-copy"></i> Copy TX Hash</button></div>'
@@ -1139,6 +1334,10 @@ async function anchorRecord() {
           : feeError ? '<span style="color:var(--warning)">0.01 Credits &mdash; Fee failed: ' + feeError + '</span>'
           : '0.01 Credits from your account &rarr; S4 Treasury') + '</div>');
     panel.classList.add('show');
+    // Fire auto-anchor toast for Tier 1 records
+    if (_anchorPolicyForType === 'auto') {
+        _showAutoAnchorToast(typeInfo.label, txHash);
+    }
     updateTxLog();
     btn.disabled = false;
     btn.innerHTML = window._s4Safe('<i class="fas fa-anchor"></i> Anchor to Ledger');
@@ -9377,6 +9576,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // === Window exports for inline event handlers ===
 window._checkDemoStatus = _checkDemoStatus;
 window._updateBulkBar = _updateBulkBar;
+window._updateAnchorBtnPolicy = _updateAnchorBtnPolicy;
+window.RECORD_TYPES = RECORD_TYPES;
 window.acceptDodConsent = acceptDodConsent;
 window.addNewDoc = addNewDoc;
 window.addPOAM = addPOAM;
