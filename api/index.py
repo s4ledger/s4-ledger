@@ -3527,14 +3527,11 @@ class handler(BaseHTTPRequestHandler):
             return self._do_post_inner()
         except Exception as exc:
             import traceback
-            tb = traceback.format_exc()
-            print(f"do_POST CRASH: {exc}\n{tb}")
+            logger.error("do_POST unhandled: %s\n%s", exc, traceback.format_exc())
             try:
-                self._send_json({"error": str(exc), "trace": tb[:2000]}, 500)
+                self._send_json({"error": "Internal server error"}, 500)
             except Exception:
-                self.send_response(500)
-                self.end_headers()
-                self.wfile.write(b'{"error":"catastrophic"}')
+                pass
 
     def _do_post_inner(self):
         # Explicit re-imports: Vercel Python 3.12 treats module-level names as
