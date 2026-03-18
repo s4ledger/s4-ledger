@@ -3537,6 +3537,7 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(b'{"error":"catastrophic"}')
 
     def _do_post_inner(self):
+        import time  # Explicit re-import: Vercel Python 3.12 treats `time` as local
         self._req_start = time.time()
         self._req_id = uuid.uuid4().hex[:12]
         _hydrate_from_supabase()  # Cold-start recovery
@@ -4002,7 +4003,6 @@ class handler(BaseHTTPRequestHandler):
                     if not timestamp or not signatures:
                         raise ValueError("Missing timestamp or signature")
                     # Verify timestamp tolerance (5 minutes)
-                    import time
                     if abs(time.time() - int(timestamp)) > 300:
                         raise ValueError("Webhook timestamp too old")
                     # Compute expected signature
