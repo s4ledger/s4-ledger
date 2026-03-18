@@ -3537,7 +3537,12 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(b'{"error":"catastrophic"}')
 
     def _do_post_inner(self):
-        import time  # Explicit re-import: Vercel Python 3.12 treats `time` as local
+        # Explicit re-imports: Vercel Python 3.12 treats module-level names as
+        # local in extremely large methods, causing UnboundLocalError.
+        import time, uuid, hashlib, json, re, hmac, os
+        import urllib.request, urllib.error
+        from datetime import datetime, timedelta, timezone
+        from urllib.parse import urlparse, parse_qs
         self._req_start = time.time()
         self._req_id = uuid.uuid4().hex[:12]
         _hydrate_from_supabase()  # Cold-start recovery
