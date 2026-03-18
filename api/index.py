@@ -1,6 +1,6 @@
 """
 S4 Ledger — Defense Record Metrics API (Vercel Serverless)
-Real XRPL Testnet integration with graceful fallback.
+Real XRPL Mainnet integration with graceful fallback.
 64+ Navy & Joint defense record types (supports any custom type), 600 pre-seeded records.
 Supabase integration for persistence (optional, graceful fallback).
 API key authentication support.
@@ -41,10 +41,10 @@ logger = logging.getLogger("s4api")
 logger.addHandler(_handler)
 logger.setLevel(logging.INFO)
 
-# XRPL Testnet integration (graceful fallback if unavailable)
+# XRPL Mainnet integration (graceful fallback if unavailable)
 try:
     from xrpl.clients import JsonRpcClient
-    from xrpl.wallet import generate_faucet_wallet, Wallet
+    from xrpl.wallet import Wallet
     from xrpl.models import Memo, Payment, AccountSet, IssuedCurrencyAmount
     from xrpl.transaction import submit_and_wait
     try:
@@ -995,14 +995,12 @@ def _aggregate_metrics(records):
     }
 
 # ═══════════════════════════════════════════════════════════════════════
-#  XRPL ANCHOR ENGINE — Testnet + Mainnet Support
+#  XRPL ANCHOR ENGINE — Mainnet
 # ═══════════════════════════════════════════════════════════════════════
 
-XRPL_NETWORK = os.environ.get("XRPL_NETWORK", "testnet")  # "testnet" or "mainnet"
-XRPL_TESTNET_URL = "https://s.altnet.rippletest.net:51234"
-XRPL_MAINNET_URL = "https://xrplcluster.com"
-XRPL_EXPLORER_TESTNET = "https://testnet.xrpl.org/transactions/"
-XRPL_EXPLORER_MAINNET = "https://livenet.xrpl.org/transactions/"
+XRPL_NETWORK = "mainnet"
+XRPL_URL = "https://xrplcluster.com"
+XRPL_EXPLORER = "https://livenet.xrpl.org/transactions/"
 SLS_TREASURY_ADDRESS = "rMLmkrxpadq5z6oTDmq8GhQj9LKjf1KLqJ"
 SLS_ISSUER_ADDRESS = "r95GyZac4butvVcsTWUPpxzekmyzaHsTA5"  # SLS token issuer
 SLS_ANCHOR_FEE = "0.01"  # SLS fee per anchor (0.01 SLS = $0.01)
@@ -1018,8 +1016,7 @@ def _init_xrpl():
     if not XRPL_AVAILABLE or _xrpl_client is not None:
         return
     try:
-        url = XRPL_MAINNET_URL if XRPL_NETWORK == "mainnet" else XRPL_TESTNET_URL
-        _xrpl_client = JsonRpcClient(url)
+        _xrpl_client = JsonRpcClient(XRPL_URL)
         # Issuer wallet — signs anchor AccountSet transactions (XRPL_WALLET_SEED)
         seed = (os.environ.get("XRPL_WALLET_SEED") or "").strip()
         if seed:
@@ -1029,8 +1026,6 @@ def _init_xrpl():
             except Exception as ew:
                 print(f"Issuer wallet load failed: {ew}")
                 _xrpl_init_error = f"Issuer wallet: {ew}"
-        elif XRPL_NETWORK != "mainnet":
-            _xrpl_wallet = generate_faucet_wallet(_xrpl_client, debug=False)
         else:
             print("WARNING: XRPL_WALLET_SEED not set — anchor AccountSet disabled, SLS fee still active")
             _xrpl_init_error = "XRPL_WALLET_SEED not set"
@@ -1045,7 +1040,7 @@ def _init_xrpl():
             except Exception as et:
                 print(f"Treasury wallet load failed: {et}")
                 _xrpl_init_error = (_xrpl_init_error or "") + f" | Treasury: {et}"
-        elif XRPL_NETWORK == "mainnet":
+        else:
             print("WARNING: XRPL_TREASURY_SEED not set — wallet provisioning and SLS delivery disabled")
         # Demo/Ops wallet — used as the demo custodial wallet for showcasing anchor fees
         # Remove after Stripe is live and real custodial wallets are provisioned
@@ -1281,7 +1276,7 @@ def _provision_wallet(email, plan="starter"):
         # 5. Store wallet seed in Supabase for custodial anchor fee signing
         _store_wallet(email, new_wallet.address, new_wallet.seed, plan)
 
-        explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
+        explorer_base = XRPL_EXPLORER
 
         return {
             "success": True,
@@ -1372,7 +1367,7 @@ def _deliver_monthly_sls(email, plan=None):
         )
         resp = submit_and_wait(payment, _xrpl_client, _xrpl_treasury_wallet)
         if resp.is_successful():
-            explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
+            explorer_base = XRPL_EXPLORER
             return {
                 "success": True,
                 "sls_delivered": sls_amount,
@@ -1495,7 +1490,7 @@ def _anchor_xrpl(hash_value, record_type="", branch="", user_email=None):
         response = submit_and_wait(tx, _xrpl_client, _xrpl_wallet)
         if response.is_successful():
             tx_hash = response.result["hash"]
-            explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
+            explorer_base = XRPL_EXPLORER
             result = {
                 "tx_hash": tx_hash,
                 "ledger_index": response.result.get("ledger_index"),
@@ -2167,8 +2162,8 @@ class handler(BaseHTTPRequestHandler):
             self._send_json({"branches": BRANCHES, "categories": RECORD_CATEGORIES, "grouped": grouped})
         elif route == "xrpl_status":
             _init_xrpl()
-            explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
-            endpoint = XRPL_MAINNET_URL if XRPL_NETWORK == "mainnet" else XRPL_TESTNET_URL
+            explorer_base = XRPL_EXPLORER
+            endpoint = XRPL_URL
             self._send_json({
                 "xrpl_available": XRPL_AVAILABLE,
                 "connected": _xrpl_client is not None,
@@ -2182,16 +2177,16 @@ class handler(BaseHTTPRequestHandler):
                     "XRPL_WALLET_SEED": bool(os.environ.get("XRPL_WALLET_SEED")),
                     "XRPL_TREASURY_SEED": bool(os.environ.get("XRPL_TREASURY_SEED")),
                     "XRPL_DEMO_SEED": bool(os.environ.get("XRPL_DEMO_SEED")),
-                    "XRPL_NETWORK": os.environ.get("XRPL_NETWORK", "(default: testnet)"),
+                    "XRPL_NETWORK": XRPL_NETWORK,
                 },
                 "init_error": _xrpl_init_error,
-                "note": f"Real XRPL {XRPL_NETWORK.capitalize()} transactions. Verify at {'livenet' if XRPL_NETWORK == 'mainnet' else 'testnet'}.xrpl.org"
+                "note": f"Real XRPL Mainnet transactions. Verify at livenet.xrpl.org"
             })
         elif route == "infrastructure":
             self._send_json({
                 "infrastructure": {
                     "api": {"status": "operational", "version": "5.2.0", "framework": "BaseHTTPRequestHandler", "tools": 27, "platforms": 462},
-                    "xrpl": {"available": XRPL_AVAILABLE, "network": XRPL_NETWORK, "endpoint": XRPL_MAINNET_URL if XRPL_NETWORK == "mainnet" else XRPL_TESTNET_URL},
+                    "xrpl": {"available": XRPL_AVAILABLE, "network": XRPL_NETWORK, "endpoint": XRPL_URL},
                     "database": {"provider": "Supabase" if SUPABASE_AVAILABLE else "In-Memory", "connected": SUPABASE_AVAILABLE, "url": SUPABASE_URL[:30] + "..." if SUPABASE_URL else None},
                     "auth": {"enabled": True, "methods": ["API Key", "Bearer Token"], "master_key_set": bool(os.environ.get("S4_API_MASTER_KEY"))},
                     "compliance": {
@@ -2419,7 +2414,7 @@ class handler(BaseHTTPRequestHandler):
                         break
 
                 anchors_available = int(float(sls_balance) / float(SLS_ANCHOR_FEE)) if float(sls_balance) > 0 else 0
-                explorer_base = (XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET).replace("/transactions/", "/accounts/")
+                explorer_base = (XRPL_EXPLORER).replace("/transactions/", "/accounts/")
 
                 self._send_json({
                     "address": address,
@@ -2712,7 +2707,7 @@ class handler(BaseHTTPRequestHandler):
                 xrp_low = xrp_balance < 100
                 sls_low = float(sls_balance) < 10000
                 provisions_remaining = int(xrp_balance / float(XRP_ACCOUNT_RESERVE)) if xrp_balance > 0 else 0
-                explorer_base = (XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET).replace("/transactions/", "/accounts/")
+                explorer_base = (XRPL_EXPLORER).replace("/transactions/", "/accounts/")
                 alerts = []
                 if xrp_low:
                     alerts.append(f"XRP LOW — Treasury can only fund {provisions_remaining} more wallets. Top up XRP.")
@@ -3650,7 +3645,7 @@ class handler(BaseHTTPRequestHandler):
                 if found:
                     chain_hash = found[0].get("hash", "")
                     anchored_at = found[0].get("timestamp", "")
-                    explorer_url = found[0].get("explorer_url") or (XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET) + tx_hash
+                    explorer_url = found[0].get("explorer_url") or (XRPL_EXPLORER) + tx_hash
             elif expected_hash:
                 chain_hash = expected_hash
             else:
@@ -3660,7 +3655,7 @@ class handler(BaseHTTPRequestHandler):
                     chain_hash = found[0].get("hash", "")
                     tx_hash = found[0].get("tx_hash", "")
                     anchored_at = found[0].get("timestamp", "")
-                    explorer_url = found[0].get("explorer_url") or (XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET) + tx_hash
+                    explorer_url = found[0].get("explorer_url") or (XRPL_EXPLORER) + tx_hash
 
             if chain_hash is None:
                 status = "NOT_FOUND"
@@ -3837,7 +3832,7 @@ class handler(BaseHTTPRequestHandler):
                     "Install Xaman (formerly XUMM) to view your wallet on mobile — import using your family seed.",
                 ],
                 "xaman_url": "https://xaman.app",
-                "explorer_url": (XRPL_EXPLORER_MAINNET if XRPL_NETWORK == 'mainnet' else XRPL_EXPLORER_TESTNET).replace('/transactions/', '/accounts/') + result['wallet']['address'],
+                "explorer_url": (XRPL_EXPLORER).replace('/transactions/', '/accounts/') + result['wallet']['address'],
             }
             self._send_json(result)
 
@@ -3899,7 +3894,7 @@ class handler(BaseHTTPRequestHandler):
                 )
                 resp = submit_and_wait(payment, _xrpl_client, _xrpl_treasury_wallet)
                 if resp.is_successful():
-                    explorer_base = XRPL_EXPLORER_MAINNET if XRPL_NETWORK == "mainnet" else XRPL_EXPLORER_TESTNET
+                    explorer_base = XRPL_EXPLORER
                     self._send_json({
                         "success": True,
                         "sls_delivered": str(sls_amount),
@@ -7339,8 +7334,7 @@ class handler(BaseHTTPRequestHandler):
             try:
                 tx_hash = self._anchor_xrpl(archive_hash)
                 if tx_hash:
-                    net = "testnet" if "testnet" in XRPL_NETWORK else "mainnet"
-                    explorer_url = f"https://{net}.xrpl.org/transactions/{tx_hash}"
+                    explorer_url = XRPL_EXPLORER + tx_hash
             except Exception:
                 pass
 

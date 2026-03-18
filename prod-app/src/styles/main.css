@@ -2410,7 +2410,9 @@ button:disabled,button[disabled],.btn:disabled{opacity:0.45!important;cursor:not
 .vault-record:hover{border-color:rgba(0,113,227,0.2)!important;box-shadow:0 8px 28px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.03)!important}
 .vault-hash{background:#f0f2f5!important;border-radius:6px!important;padding:6px 10px!important;font-family:'SF Mono','JetBrains Mono',monospace!important;font-size:0.78rem!important;color:#0071e3!important;word-break:break-all}
 .vault-badge{border-radius:20px!important;font-size:0.7rem!important;font-weight:600!important;padding:2px 10px!important}
-.vault-meta,.vault-meta *{color:#6e6e73!important;font-size:0.78rem!important}
+.vault-meta,.vault-meta span{color:#6e6e73!important;font-size:0.78rem!important}
+.vault-meta a{color:#00aaff!important}
+.vault-meta a:hover{opacity:0.85}
 
 /* Onboarding overlay — premium glass */
 .onboard-overlay{background:rgba(245,245,247,0.92)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}

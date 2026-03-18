@@ -39,9 +39,7 @@ function loadWalletData() {
     document.getElementById('walletAddress').textContent = walletData.wallet.address;
     document.getElementById('seedRevealed').textContent = walletData.wallet.seed;
 
-    const explorerBase = (walletData.wallet.network === 'mainnet')
-        ? 'https://livenet.xrpl.org/accounts/'
-        : 'https://testnet.xrpl.org/accounts/';
+    const explorerBase = 'https://livenet.xrpl.org/accounts/';
     document.getElementById('demoWalletExplorer').href = explorerBase + walletData.wallet.address;
 
     // Fetch live balance
