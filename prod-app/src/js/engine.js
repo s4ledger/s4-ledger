@@ -860,10 +860,7 @@ async function anchorToLedger(toolName, label) {
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     // Build success message with XRPL explorer link
-    var _txLink = '';
-    if (result.explorerUrl && result.txHash && !result.txHash.startsWith('LOCAL_')) {
-        _txLink = ' <a href="' + result.explorerUrl + '" target="_blank" rel="noopener" style="color:#00aaff;font-size:0.72rem;text-decoration:none;margin-left:6px"><i class="fas fa-external-link-alt"></i> View on XRPL</a>';
-    }
+    var _txLink = _xrplLinkHtml(result);
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ' + _anchorLabel + ' Anchored Successfully on XRPL' + _txLink); }, 2200);
     // Fire auto-anchor toast
     var _toolPolicy = _getAnchorPolicy(_recType);
@@ -1216,19 +1213,18 @@ window._showAutoAnchorToast = _showAutoAnchorToast;
  * @param {{txHash:string,explorerUrl:string}} result - Return value from _anchorToXRPL
  */
 function _postAnchorToolHook(label, recType, result) {
-    // Fire auto-anchor toast for Tier 1 types
+    // Fire auto-anchor toast for Tier 1 (auto) types only
     var policy = _getAnchorPolicy(recType);
     if (policy === 'auto') _showAutoAnchorToast(label, result.txHash);
-    // Append XRPL link to animation status bar if present
-    var animStatus = document.getElementById('animStatus');
-    if (animStatus && result.explorerUrl && result.txHash && !result.txHash.startsWith('LOCAL_')) {
-        var _current = animStatus.innerHTML;
-        if (_current.indexOf('fa-external-link-alt') === -1) {
-            animStatus.innerHTML = window._s4Safe(_current + ' <a href="' + result.explorerUrl + '" target="_blank" rel="noopener" style="color:#00aaff;font-size:0.72rem;text-decoration:none;margin-left:6px"><i class="fas fa-external-link-alt"></i> View on XRPL</a>');
-        }
-    }
 }
 window._postAnchorToolHook = _postAnchorToolHook;
+
+/** Build clickable XRPL explorer link HTML from an anchor result. Returns '' when no valid link. */
+function _xrplLinkHtml(result) {
+    var url = result.explorerUrl || (result.txHash && /^[0-9A-Fa-f]{64}$/.test(result.txHash) ? 'https://livenet.xrpl.org/transactions/' + result.txHash : '');
+    if (!url) return '';
+    return ' <a href="' + url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;color:#00aaff;font-size:0.78rem;text-decoration:none;margin-left:8px;background:rgba(0,170,255,0.1);padding:3px 12px;border-radius:6px;border:1px solid rgba(0,170,255,0.2);font-weight:600;white-space:nowrap"><i class="fas fa-external-link-alt"></i> View on XRPL</a>';
+}
 
 /**
  * Anchor Policy Settings Panel — renders org-level override controls.
@@ -1357,7 +1353,7 @@ async function anchorRecord() {
         + '<div class="result-label">ANCHOR POLICY</div><div style="margin-bottom:0.5rem"><span class="anchor-policy-badge anchor-policy-' + _anchorPolicyForType + '" style="font-size:0.78rem;padding:3px 10px"><i class="fas ' + _policyMeta.icon + '"></i> ' + _policyMeta.label + '</span> <span style="color:var(--muted);font-size:0.78rem;margin-left:6px">' + _policyMeta.desc + '</span></div>'
         + '<div class="result-label">CLASSIFICATION</div><div style="margin-bottom:0.5rem"><span style="padding:3px 12px;border-radius:8px;font-size:0.8rem;font-weight:800;letter-spacing:0.5px;color:' + CLF_META[clfLevel].color + ';border:1px solid ' + CLF_META[clfLevel].color + '30;background:' + CLF_META[clfLevel].color + '15">' + '<i class="fas ' + CLF_META[clfLevel].icon + '" style="margin-right:4px"></i>' + CLF_META[clfLevel].label + '</span> <span style="color:var(--muted);font-size:0.8rem;margin-left:6px">' + CLF_META[clfLevel].desc + '</span></div>'
         + '<div class="result-label">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
-        + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all;display:flex;align-items:center;gap:6px;flex-wrap:wrap">' + (explorerUrl ? '<a href="'+explorerUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+txHash+' <i class="fas fa-external-link-alt" style="font-size:0.7rem"></i></a>' : '<span style="color:var(--muted)">'+txHash+'</span>') + '<button onclick="navigator.clipboard.writeText(\''+txHash+'\').then(function(){var b=this;b.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i> Copy TX Hash\';},1500);}.bind(this))" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);border-radius:6px;color:#00aaff;font-size:0.7rem;padding:2px 8px;cursor:pointer;font-weight:600;white-space:nowrap"><i class="fas fa-copy"></i> Copy TX Hash</button></div>'
+        + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="color:var(--muted)">' + txHash + '</span>' + _xrplLinkHtml({txHash, explorerUrl}) + '<button onclick="navigator.clipboard.writeText(\''+txHash+'\').then(function(){var b=this;b.innerHTML=\'<i class=\\\'fas fa-check\\\'></i> Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i> Copy TX Hash\';},1500);}.bind(this))" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.25);border-radius:6px;color:#00aaff;font-size:0.7rem;padding:2px 8px;cursor:pointer;font-weight:600;white-space:nowrap"><i class="fas fa-copy"></i> Copy TX Hash</button></div>'
             + '<div class="result-label">NETWORK</div><div style="margin-bottom:0.5rem">' + (network === 'mainnet' ? '<span style="color:#00aaff;font-weight:700"><i class="fas fa-globe" style="margin-right:4px"></i>XRPL Mainnet</span>' : '<span style="color:var(--muted)">' + (network||'Pending') + '</span>') + '</div>'
         + '<div class="result-label">SYSTEM</div><div style="margin-bottom:0.5rem">' + (typeInfo.system||'N/A') + '</div>'
         + '<div class="result-label">ENCRYPTED</div><div style="margin-bottom:0.5rem">' + (encrypt ? '<i class="fas fa-lock" style="color:var(--accent)"></i> Yes (CUI protected)' : '\uD83D\uDD13 No (plaintext hash)') + '</div>'
@@ -1401,7 +1397,7 @@ function refreshVerifyRecents() {
         var vr = vaultSource[j];
         if (vr.hash && !seen[vr.hash]) {
             seen[vr.hash] = true;
-            records.push({hash:vr.hash, label:vr.label||vr.type||'Record', icon:vr.icon||'fa-file', branch:vr.branch||'JOINT', timestamp:vr.timestamp, txHash:vr.txHash||'', content:vr.content||'', fullContent:vr.fullContent||''});
+            records.push({hash:vr.hash, label:vr.label||vr.type||'Record', icon:vr.icon||'fa-file', branch:vr.branch||'JOINT', timestamp:vr.timestamp, txHash:vr.txHash||'', explorerUrl:vr.explorerUrl||'', content:vr.content||'', fullContent:vr.fullContent||''});
         }
     }
     // Session records second (current session — adds any not yet in vault)
@@ -1410,7 +1406,7 @@ function refreshVerifyRecents() {
             var sr = sessionRecords[i];
             if (sr.hash && !seen[sr.hash]) {
                 seen[sr.hash] = true;
-                records.push({hash:sr.hash, label:sr.label||sr.type||'Record', icon:sr.icon||'fa-file', branch:sr.branch||'JOINT', timestamp:sr.timestamp, txHash:sr.txHash||'', content:sr.content||'', fullContent:sr.fullContent||''});
+                records.push({hash:sr.hash, label:sr.label||sr.type||'Record', icon:sr.icon||'fa-file', branch:sr.branch||'JOINT', timestamp:sr.timestamp, txHash:sr.txHash||'', explorerUrl:sr.explorerUrl||'', content:sr.content||'', fullContent:sr.fullContent||''});
             }
         }
     }
@@ -1422,7 +1418,7 @@ function refreshVerifyRecents() {
                 var ur = _unscopedVault[u];
                 if (ur.hash && !seen[ur.hash]) {
                     seen[ur.hash] = true;
-                    records.push({hash:ur.hash, label:ur.label||ur.type||'Record', icon:ur.icon||'fa-file', branch:ur.branch||'JOINT', timestamp:ur.timestamp, txHash:ur.txHash||'', content:ur.content||'', fullContent:ur.fullContent||''});
+                    records.push({hash:ur.hash, label:ur.label||ur.type||'Record', icon:ur.icon||'fa-file', branch:ur.branch||'JOINT', timestamp:ur.timestamp, txHash:ur.txHash||'', explorerUrl:ur.explorerUrl||'', content:ur.content||'', fullContent:ur.fullContent||''});
                 }
             }
         } catch(e) {}
@@ -1446,8 +1442,9 @@ function refreshVerifyRecents() {
         var hasFullContent = r.fullContent && r.fullContent.length > 0;
         var _vrExplorer = '';
         var _vrCopy = '';
-        if (r.txHash && !r.txHash.startsWith('LOCAL_') && /^[0-9A-Fa-f]{64}$/.test(r.txHash)) {
-            _vrExplorer = '<a href="https://livenet.xrpl.org/transactions/' + r.txHash + '" target="_blank" rel="noopener" style="color:#00aaff;font-size:0.62rem;font-weight:600;text-decoration:none;white-space:nowrap;margin-left:4px"><i class="fas fa-external-link-alt"></i> XRPL</a>';
+        var _vrUrl = r.explorerUrl || (r.txHash && /^[0-9A-Fa-f]{64}$/.test(r.txHash) ? 'https://livenet.xrpl.org/transactions/' + r.txHash : '');
+        if (_vrUrl) {
+            _vrExplorer = '<a href="' + _vrUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;color:#00aaff;font-size:0.65rem;font-weight:600;text-decoration:none;white-space:nowrap;margin-left:6px;background:rgba(0,170,255,0.08);padding:1px 8px;border-radius:4px;border:1px solid rgba(0,170,255,0.15)"><i class="fas fa-external-link-alt"></i> View on XRPL</a>';
             _vrCopy = '<button onclick="event.stopPropagation();navigator.clipboard.writeText(\'' + r.txHash + '\').then(function(){var b=this;this.textContent=\'Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i>\';},1200);}.bind(this))" style="background:none;border:1px solid rgba(0,170,255,0.2);border-radius:4px;color:#00aaff;font-size:0.58rem;padding:1px 4px;cursor:pointer;margin-left:2px" title="Copy TX Hash"><i class="fas fa-copy"></i></button>';
         }
         return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:4px;transition:all 0.2s;background:rgba(255,255,255,0.02);">'
@@ -1508,17 +1505,15 @@ async function verifyRecord() {
     updateStats();
     saveStats();
     const panel = document.getElementById('verifyResult');
-    let matchHtml = '';
     let effectiveHash = hash;
+    let match = false;
+    let vaultMatch = null;
+    let vaultRecord = null;
+
     if (expected) {
-        let match = hash.toLowerCase() === expected.toLowerCase();
-        // If text hash doesn't match, check if the expected hash exists in vault/session records directly
-        // (handles file-uploaded records where binary hash differs from re-hashed textarea text)
-        let vaultMatch = null;
+        match = hash.toLowerCase() === expected.toLowerCase();
         if (!match) {
-            // Check session records for the expected hash
             vaultMatch = sessionRecords.find(r => r.hash && r.hash.toLowerCase() === expected.toLowerCase());
-            // Check audit vault too
             if (!vaultMatch && typeof s4Vault !== 'undefined') {
                 vaultMatch = s4Vault.find(r => r.hash && r.hash.toLowerCase() === expected.toLowerCase());
             }
@@ -1527,22 +1522,177 @@ async function verifyRecord() {
                 effectiveHash = expected;
             }
         }
-        matchHtml = '<div class="result-label">EXPECTED</div><div style="color:var(--muted);word-break:break-all;margin-bottom:0.5rem">' + expected + '</div>'
-            + '<div class="result-label">MATCH</div><div class="result-value ' + (match?'':'error') + '" style="font-size:1.1rem">'
-            + (match && vaultMatch ? '\u2705 VERIFIED \u2014 Hash found in vault. Record integrity confirmed.' + '<div style="font-size:0.78rem;color:var(--steel);margin-top:6px"><i class="fas fa-info-circle" style="margin-right:4px"></i>This record was anchored from a file upload. Use File Verification for byte-level re-verification.</div>'
-            : match ? '\u2705 VERIFIED \u2014 Hashes match. Record integrity confirmed.'
-            : '\u274C MISMATCH \u2014 Record altered or wrong hash.') + '</div>';
     }
+    // Find the vault record for this hash (for displaying XRPL link and anchor details)
+    if (typeof s4Vault !== 'undefined') {
+        vaultRecord = s4Vault.find(r => r.hash && (r.hash.toLowerCase() === effectiveHash.toLowerCase() || r.hash.toLowerCase() === hash.toLowerCase()));
+    }
+    if (!vaultRecord) {
+        vaultRecord = sessionRecords.find(r => r.hash && (r.hash.toLowerCase() === effectiveHash.toLowerCase() || r.hash.toLowerCase() === hash.toLowerCase()));
+    }
+
+    // Build XRPL transaction link for the matched record
+    var _vrTxUrl = '';
+    var _vrTxLink = '';
+    if (vaultRecord) {
+        _vrTxUrl = vaultRecord.explorerUrl || (vaultRecord.txHash && /^[0-9A-Fa-f]{64}$/.test(vaultRecord.txHash) ? 'https://livenet.xrpl.org/transactions/' + vaultRecord.txHash : '');
+    }
+    if (_vrTxUrl) {
+        _vrTxLink = '<a href="' + _vrTxUrl + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;color:#00aaff;font-size:0.82rem;text-decoration:none;background:rgba(0,170,255,0.1);padding:4px 14px;border-radius:8px;border:1px solid rgba(0,170,255,0.2);font-weight:600;white-space:nowrap;margin-top:6px"><i class="fas fa-external-link-alt"></i> View Transaction on XRPL</a>';
+    }
+
+    var resultHtml = '<div class="result-label">COMPUTED SHA-256 <button class="copy-btn" onclick="copyHash(\'' + effectiveHash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + effectiveHash + '</div>';
+
+    if (expected && match) {
+        // ── VERIFIED: Integrity confirmed ──
+        resultHtml += '<div style="background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);border-radius:12px;padding:16px;margin:12px 0">'
+            + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-shield-alt" style="color:#34c759;font-size:1.3rem"></i><strong style="color:#34c759;font-size:1.05rem">INTEGRITY VERIFIED</strong></div>'
+            + '<div style="color:var(--steel);font-size:0.85rem;line-height:1.6">'
+            + (vaultMatch ? 'Hash found in audit vault. This record was anchored from a file upload — the cryptographic fingerprint matches the original. Use File Verification for byte-level re-verification.'
+            : 'The SHA-256 hash of this content exactly matches the anchored hash. <strong>This record has not been modified</strong> since it was anchored to the XRPL blockchain.') + '</div>'
+            + '<div style="font-size:0.8rem;color:var(--muted);margin-top:8px"><i class="fas fa-check-circle" style="color:#34c759;margin-right:4px"></i>No signs of tampering, alteration, or data corruption detected.</div>'
+            + '</div>';
+        // Show matched record details
+        if (vaultRecord) {
+            resultHtml += '<div class="result-label" style="margin-top:0.5rem">ANCHORED RECORD</div>'
+                + '<div style="background:var(--surface);border-radius:10px;padding:12px;margin-bottom:8px">'
+                + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' + (vaultRecord.icon ? '<span style="color:var(--accent)">' + _renderIcon(vaultRecord.icon) + '</span>' : '') + '<strong style="color:#fff">' + (vaultRecord.label || vaultRecord.type || 'Record') + '</strong><span style="color:var(--muted);font-size:0.78rem">' + (vaultRecord.branch || '') + '</span></div>'
+                + (vaultRecord.timestamp ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:4px"><i class="fas fa-clock" style="margin-right:4px;opacity:0.6"></i>Anchored: ' + new Date(vaultRecord.timestamp).toLocaleString() + '</div>' : '')
+                + (vaultRecord.txHash ? '<div style="font-size:0.72rem;color:var(--muted);margin-bottom:4px;word-break:break-all"><i class="fas fa-hashtag" style="margin-right:4px;opacity:0.6"></i>TX: ' + vaultRecord.txHash + '</div>' : '')
+                + (_vrTxLink ? '<div>' + _vrTxLink + '</div>' : '')
+                + '</div>';
+        }
+    } else if (expected && !match) {
+        // ── MISMATCH: Integrity failure ──
+        resultHtml += '<div style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.25);border-radius:12px;padding:16px;margin:12px 0">'
+            + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-exclamation-triangle" style="color:#ff3b30;font-size:1.3rem"></i><strong style="color:#ff3b30;font-size:1.05rem">INTEGRITY FAILURE — RECORD MODIFIED</strong></div>'
+            + '<div style="color:var(--steel);font-size:0.85rem;line-height:1.6">The SHA-256 hash of this content <strong>does not match</strong> the expected anchored hash. This means the record has been <strong>altered, corrupted, or replaced</strong> since it was originally anchored.</div>'
+            + '</div>';
+        // Security risk assessment
+        resultHtml += '<div class="result-label"><i class="fas fa-shield-alt" style="color:#ff3b30;margin-right:4px"></i>SECURITY RISK ASSESSMENT</div>'
+            + '<div style="background:rgba(255,59,48,0.04);border:1px solid rgba(255,59,48,0.12);border-radius:10px;padding:14px;margin-bottom:12px">'
+            + '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,48,0.12);color:#ff3b30;padding:3px 12px;border-radius:6px;font-size:0.82rem;font-weight:700;margin-bottom:10px"><i class="fas fa-radiation"></i> HIGH RISK</div>'
+            + '<div style="font-size:0.82rem;color:var(--steel);line-height:1.7">'
+            + '<strong>What this means:</strong><ul style="margin:6px 0 0 16px;padding:0">'
+            + '<li>The data you are viewing is <strong>NOT the same data</strong> that was originally anchored to the blockchain</li>'
+            + '<li>Any character change — even a single space or letter — produces a completely different hash</li>'
+            + '<li>The anchored hash on the XRPL represents the <strong>authentic original version</strong></li>'
+            + '</ul></div></div>';
+        // Possible causes
+        resultHtml += '<div class="result-label"><i class="fas fa-search" style="color:var(--accent);margin-right:4px"></i>AI INTEGRITY ANALYSIS</div>'
+            + '<div id="verifyAiAnalysis" style="background:var(--surface);border-radius:10px;padding:14px;margin-bottom:12px">'
+            + '<div style="color:var(--accent);font-size:0.82rem"><i class="fas fa-spinner fa-spin" style="margin-right:6px"></i>Analyzing possible causes...</div></div>';
+        // Recommended actions
+        resultHtml += '<div class="result-label"><i class="fas fa-clipboard-list" style="color:#ffa500;margin-right:4px"></i>RECOMMENDED ACTIONS</div>'
+            + '<div style="font-size:0.82rem;color:var(--steel);line-height:1.8;padding-left:4px">'
+            + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">1.</span><strong>Locate the original record</strong> — retrieve the unmodified version from your secure backup or document management system</div>'
+            + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">2.</span><strong>Compare versions</strong> — use a diff tool to identify exactly what changed between the original and current versions</div>'
+            + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">3.</span><strong>Check access logs</strong> — review who had access to this record and when modifications were made</div>'
+            + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">4.</span><strong>Report the discrepancy</strong> — notify your security officer and document the integrity failure</div>'
+            + '<div><span style="color:#ff3b30;font-weight:700;margin-right:6px">5.</span><strong>Re-anchor if intentional</strong> — if the changes were authorized, anchor the updated version to create a new immutable record</div>'
+            + '</div>';
+        // Show the hash comparison
+        resultHtml += '<div class="result-label" style="margin-top:12px">HASH COMPARISON</div>'
+            + '<div style="font-size:0.78rem;margin-bottom:4px"><strong style="color:var(--steel)">Expected (anchored):</strong></div><div style="color:#ff3b30;word-break:break-all;font-family:monospace;font-size:0.75rem;background:rgba(255,59,48,0.06);padding:6px 10px;border-radius:6px;margin-bottom:6px">' + expected + '</div>'
+            + '<div style="font-size:0.78rem;margin-bottom:4px"><strong style="color:var(--steel)">Computed (current):</strong></div><div style="color:var(--muted);word-break:break-all;font-family:monospace;font-size:0.75rem;background:var(--surface);padding:6px 10px;border-radius:6px">' + hash + '</div>';
+        // Show XRPL link for the original anchor if found
+        if (vaultRecord && _vrTxLink) {
+            resultHtml += '<div class="result-label" style="margin-top:10px">ORIGINAL ANCHOR</div>'
+                + '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:4px">View the original anchor transaction to confirm the authentic hash stored on-chain:</div>'
+                + '<div>' + _vrTxLink + '</div>';
+        }
+    }
+    // Session match
     const sessionMatch = sessionRecords.find(r => r.hash === effectiveHash) || sessionRecords.find(r => r.hash === hash);
-    let sessionHtml = '';
-    if (sessionMatch) {
-        sessionHtml = '<div class="result-label" style="margin-top:0.8rem">SESSION MATCH</div>'
-            + '<div style="color:var(--accent)"><i class="fas fa-check-circle"></i> Found in session \u2014 ' + _renderIcon(sessionMatch.icon) + ' ' + sessionMatch.label + ' anchored at ' + new Date(sessionMatch.timestamp).toLocaleTimeString() + '</div>';
+    if (sessionMatch && !(expected && match && vaultRecord)) {
+        resultHtml += '<div class="result-label" style="margin-top:0.8rem">SESSION MATCH</div>'
+            + '<div style="color:var(--accent)"><i class="fas fa-check-circle"></i> Found in session — ' + _renderIcon(sessionMatch.icon) + ' ' + sessionMatch.label + ' anchored at ' + new Date(sessionMatch.timestamp).toLocaleTimeString() + '</div>';
     }
-    panel.innerHTML = window._s4Safe('<div class="result-label">COMPUTED SHA-256 <button class="copy-btn" onclick="copyHash(\'' + effectiveHash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + effectiveHash + '</div>' + matchHtml + sessionHtml
-        + '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)">To verify on-chain: compare this hash with the MemoData field of the anchor transaction.</div>'
-        + '<button onclick="resetVerify()" style="margin-top:12px;background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:8px 18px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit;transition:all 0.2s"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another Record</button>');
+    // Tip when no expected hash provided
+    if (!expected) {
+        resultHtml += '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)"><i class="fas fa-info-circle" style="margin-right:4px"></i>To verify integrity: paste the original anchored hash in the "Expected Hash" field and click Verify again. Or view a record from "Recently Anchored Records" below.</div>';
+    }
+    resultHtml += '<button onclick="resetVerify()" style="margin-top:14px;background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:8px 18px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit;transition:all 0.2s"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another Record</button>';
+    panel.innerHTML = window._s4Safe(resultHtml);
     panel.classList.add('show');
+    // Run AI analysis for mismatch asynchronously
+    if (expected && !match) {
+        _runVerifyAiAnalysis(hash, expected, input, vaultRecord);
+    }
+}
+
+/** AI-powered integrity analysis for hash mismatches */
+async function _runVerifyAiAnalysis(computedHash, expectedHash, inputContent, vaultRecord) {
+    var el = document.getElementById('verifyAiAnalysis');
+    if (!el) return;
+    // Build local analysis first (always available)
+    var localAnalysis = _buildLocalIntegrityAnalysis(inputContent, vaultRecord);
+    // Try AI backend for deeper analysis
+    try {
+        var prompt = 'You are a defense logistics data integrity analyst for S4 Ledger. A user verified a record and the SHA-256 hash DOES NOT MATCH the anchored hash. '
+            + 'This means the record content has been modified since it was originally anchored to the XRPL blockchain. '
+            + 'Analyze the situation and provide: '
+            + '1. Most likely cause of the mismatch (be specific and practical) '
+            + '2. Security implications and risk level '
+            + '3. What data or information may be at risk '
+            + '4. Exactly what steps the user should take to investigate and resolve this '
+            + 'Keep your response under 200 words. Be direct and authoritative. '
+            + 'Context: Record type: ' + (vaultRecord ? (vaultRecord.label || vaultRecord.type) : 'Unknown') + '. '
+            + 'Branch: ' + (vaultRecord ? (vaultRecord.branch || 'N/A') : 'N/A') + '. '
+            + 'Original anchor date: ' + (vaultRecord ? new Date(vaultRecord.timestamp).toLocaleString() : 'Unknown') + '. '
+            + 'Content preview (first 200 chars): ' + inputContent.substring(0, 200);
+        var resp = await fetch('/api/ai-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: prompt, conversation: [], tool_context: 'Verify Integrity Mismatch' })
+        });
+        if (resp.ok) {
+            var data = await resp.json();
+            if (data.response && !data.fallback) {
+                el.innerHTML = window._s4Safe('<div style="font-size:0.82rem;color:var(--steel);line-height:1.7">'
+                    + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><i class="fas fa-robot" style="color:var(--accent)"></i><strong style="color:#fff">S4 AI Agent Analysis</strong></div>'
+                    + data.response.replace(/\n/g, '<br>') + '</div>');
+                return;
+            }
+        }
+    } catch (e) { /* AI unavailable, use local analysis */ }
+    // Fallback: local intelligent analysis
+    el.innerHTML = window._s4Safe(localAnalysis);
+}
+
+/** Builds local integrity analysis without AI backend */
+function _buildLocalIntegrityAnalysis(inputContent, vaultRecord) {
+    var causes = [];
+    var contentLen = inputContent.length;
+    var originalContent = vaultRecord ? (vaultRecord.fullContent || vaultRecord.content || '') : '';
+    // Analyze possible causes based on available data
+    if (originalContent && contentLen !== originalContent.length) {
+        var diff = contentLen - originalContent.length;
+        causes.push({icon:'fa-text-width', title:'Content length changed', desc:'Current content is ' + Math.abs(diff) + ' characters ' + (diff > 0 ? 'longer' : 'shorter') + ' than the anchored version (' + originalContent.length + ' → ' + contentLen + ' chars). This suggests ' + (Math.abs(diff) < 10 ? 'minor edits (whitespace, punctuation, or small text changes)' : Math.abs(diff) < 100 ? 'moderate edits (paragraphs added or removed)' : 'significant rewrite or replacement of content') + '.'});
+    } else if (originalContent && contentLen === originalContent.length) {
+        causes.push({icon:'fa-exchange-alt', title:'Same-length modification', desc:'Content is the same length but produces a different hash. Even a single character substitution (e.g., changing a letter, number, or symbol) will produce a completely different hash.'});
+    }
+    if (!originalContent) {
+        causes.push({icon:'fa-file-alt', title:'Content modification', desc:'The content you entered does not match the original anchored content. Any difference — even a single character, space, or line break — produces a completely different cryptographic hash.'});
+    }
+    causes.push({icon:'fa-keyboard', title:'Copy/paste artifacts', desc:'Text copied from documents, emails, or web pages may include hidden formatting, extra whitespace, or encoded characters that differ from the original.'});
+    causes.push({icon:'fa-code', title:'Encoding differences', desc:'Different line endings (Windows CRLF vs. Unix LF), character encoding (UTF-8 vs. ASCII), or BOM markers can alter the hash even when text appears identical.'});
+    if (vaultRecord && vaultRecord.source === 'Pre-loaded Sample') {
+        causes.push({icon:'fa-database', title:'Sample record', desc:'This is a pre-loaded sample record. The content preview in the vault may be truncated or simplified compared to what you entered.'});
+    }
+    var html = '<div style="font-size:0.82rem;color:var(--steel);line-height:1.7">'
+        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px"><i class="fas fa-robot" style="color:var(--accent)"></i><strong style="color:#fff">S4 AI Agent Analysis</strong><span style="font-size:0.68rem;color:var(--muted);background:rgba(255,255,255,0.04);padding:1px 8px;border-radius:4px">Local Mode</span></div>'
+        + '<div style="margin-bottom:8px"><strong>Most likely causes of this integrity failure:</strong></div>';
+    causes.forEach(function(c, i) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:8px;padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:3px solid ' + (i === 0 ? '#ff3b30' : 'var(--muted)') + '">'
+            + '<i class="fas ' + c.icon + '" style="color:' + (i === 0 ? '#ff3b30' : 'var(--accent)') + ';margin-top:2px;flex-shrink:0;width:16px;text-align:center"></i>'
+            + '<div><strong>' + c.title + '</strong><div style="color:var(--muted);font-size:0.78rem;margin-top:2px">' + c.desc + '</div></div></div>';
+    });
+    html += '<div style="margin-top:10px;padding:10px;background:rgba(0,170,255,0.04);border-radius:8px;border:1px solid rgba(0,170,255,0.1)">'
+        + '<strong style="color:var(--accent)"><i class="fas fa-lightbulb" style="margin-right:4px"></i>How to determine exactly what changed:</strong>'
+        + '<div style="color:var(--muted);font-size:0.78rem;margin-top:4px">Use a text diff tool (like diffchecker.com) to compare the original content with the current version character-by-character. The blockchain hash on the XRPL is the source of truth — it represents the exact content at the time of anchoring.</div>'
+        + '</div></div>';
+    return html;
 }
 
 function resetVerify() {
@@ -4264,7 +4414,7 @@ async function anchorROI() {
     addToVault({hash:hash, txHash:result.txHash, type:'ROI_REPORT', label:'S4 Ledger ROI Analysis', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     // Update SLS display
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Analysis Anchored Successfully on XRPL'); }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Analysis Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('S4 Ledger ROI Analysis', 'ROI_REPORT', result);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -4305,15 +4455,17 @@ async function anchorILSReport() {
     saveStats();
 
     _postAnchorToolHook('ILS Gap Analysis Report', 'ILS_GAP_ANALYSIS', {txHash, explorerUrl, network});
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ILS Gap Analysis Report Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     await new Promise(r => setTimeout(r, 3200));
     hideAnchorAnimation();
     await new Promise(r => setTimeout(r, 400));
 
     const panel = document.getElementById('ilsResult');
+    var _ilsTxLink = _xrplLinkHtml({txHash, explorerUrl});
     panel.innerHTML = '<div class="result-label">ILS REPORT ANCHORED TO LEDGER</div>'
         + '<div style="color:var(--accent);font-weight:700;margin:0.5rem 0"><i class="fas fa-check-circle"></i> Report hash anchored successfully!</div>'
         + '<div class="result-label" style="margin-top:0.8rem">SHA-256 HASH</div><div class="hash-display">' + hash + '</div>'
-        + '<div class="result-label">TX HASH</div><div style="color:var(--muted);margin-bottom:0.5rem;word-break:break-all">' + txHash + '</div>'
+        + '<div class="result-label">TX HASH</div><div style="margin-bottom:0.5rem;word-break:break-all;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="color:var(--muted)">' + txHash + '</span>' + _ilsTxLink + '</div>'
         + '<div class="result-label">PROGRAM</div><div style="margin-bottom:0.5rem">' + ilsResults.prog.name + (ilsResults.hull?' ('+ilsResults.hull+')':'') + '</div>'
         + '<div class="result-label">READINESS</div><div style="margin-bottom:0.5rem;color:'+(ilsResults.pct>=80?'var(--green)':ilsResults.pct>=50?'#ffa500':'var(--red)')+';font-weight:700">' + ilsResults.pct + '%</div>'
         + '<div class="result-label">CREDIT FEE</div><div>0.01 Credits from your account \u2192 S4 Treasury</div>'
@@ -5821,7 +5973,7 @@ async function anchorDMSMS() {
     saveLocalRecord({hash, record_type:'DMSMS_REPORT', record_label:'DMSMS Obsolescence Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'DMSMS Tracker', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS Obsolescence Check Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS Obsolescence Check Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('DMSMS Obsolescence Report', 'DMSMS_REPORT', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -5940,7 +6092,7 @@ async function anchorReadiness() {
     saveLocalRecord({hash, record_type:'RAM_REPORT', record_label:'RAM Readiness Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Readiness Calculator', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Readiness Score Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Readiness Score Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('RAM Readiness Report', 'RAM_REPORT', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -6766,7 +6918,8 @@ function renderVault() {
             ${v.content ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:8px;padding:6px 10px;background:var(--surface);border-radius:8px"><i class="fas fa-file-lines" style="margin-right:6px;opacity:0.5"></i>' + v.content + '</div>' : ''}
             <div class="vault-meta">
                 <span><i class="fas fa-clock"></i> ${new Date(v.timestamp).toLocaleString()}</span>
-                <span><i class="fas fa-hashtag"></i> TX: ${_vaultTxUrl ? '<a href="'+_vaultTxUrl+'" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">'+(v.txHash||'').substring(0,16)+'… <i class="fas fa-external-link-alt" style="font-size:0.6rem"></i></a>' : (v.txHash||'').substring(0,16)+'...'}</span>
+                <span><i class="fas fa-hashtag"></i> TX: ${(v.txHash||'').substring(0,16)}${v.txHash ? '…' : ''}</span>
+                ${_vaultTxUrl ? '<a href="'+_vaultTxUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;color:#00aaff;font-size:0.72rem;text-decoration:none;background:rgba(0,170,255,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(0,170,255,0.15);font-weight:600;white-space:nowrap"><i class="fas fa-external-link-alt"></i> View on XRPL</a>' : (v.txHash && v.txHash.startsWith('LOCAL_') ? '<span style="font-size:0.68rem;color:var(--muted);background:rgba(255,255,255,0.04);padding:2px 8px;border-radius:4px">Local/Demo</span>' : '')}
                 ${v.source ? '<span><i class="fas fa-tools"></i> ' + v.source + '</span>' : ''}
                 <span><i class="fas fa-coins"></i> 0.01 Credits</span>
             </div>
@@ -7368,7 +7521,7 @@ async function anchorCompliance() {
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'compliance_scorecard', record_label:'Compliance Scorecard', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Compliance Scorecard', explorer_url: explorerUrl, network});
     updateTxLog();
-    setTimeout(()=>{ var st = document.getElementById('animStatus'); if(st) { st.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Compliance Scorecard Anchored Successfully on XRPL'); st.style.color = '#00aaff'; } }, 2200);
+    setTimeout(()=>{ var st = document.getElementById('animStatus'); if(st) { st.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Compliance Scorecard Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); st.style.color = '#00aaff'; } }, 2200);
     _postAnchorToolHook('Compliance Scorecard', 'compliance_scorecard', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -8318,7 +8471,7 @@ async function anchorRisk() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'risk_report', record_label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'risk_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Supply Chain Risk Report', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Risk Report Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Risk Report Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Supply Chain Risk Report', 'risk_report', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -8430,7 +8583,7 @@ async function anchorReport() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'audit_report', record_label:r.title, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'audit_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Audit Report', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Audit Report Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Audit Report Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Audit Report', 'audit_report', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -8660,7 +8813,7 @@ async function anchorPredictive() {
     saveLocalRecord({hash, tx_hash:txHash, record_type:'predictive_maintenance', record_label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
     sessionRecords.push({hash, type:'predictive_maintenance', branch:'JOINT', timestamp:new Date().toISOString(), label:'Predictive Maintenance', txHash});
     updateTxLog();
-    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Predictive Maintenance Anchored Successfully on XRPL'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Predictive Maintenance Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Predictive Maintenance', 'predictive_maintenance', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
@@ -9185,7 +9338,7 @@ async function anchorSubmissionReview() {
     saveLocalRecord({hash, record_type:'SUBMISSION_REVIEW', record_label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Submissions & PTD', explorer_url: explorerUrl, network});
     updateTxLog();
     addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Submissions & PTD', fee:0.01, explorerUrl, network});
-    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Submissions & PTD Anchored — ' + _subCache.discrepancies.length + ' discrepancies recorded'); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
+    setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Submissions & PTD Anchored — ' + _subCache.discrepancies.length + ' discrepancies recorded' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Submissions & PTD Analysis', 'SUBMISSION_REVIEW', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -9254,7 +9407,7 @@ async function anchorLifecycle() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis Anchored Successfully on XRPL'); }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('Lifecycle Cost Analysis', 'LIFECYCLE_COST', result);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -9345,7 +9498,7 @@ async function anchorSBOM() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Anchored Successfully on XRPL'); }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('SBOM', 'SBOM_SNAPSHOT', result);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -9368,7 +9521,7 @@ async function anchorGFP() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record Anchored Successfully on XRPL'); }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('GFP Record', 'GFP_RECORD', result);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -9390,7 +9543,7 @@ async function anchorCDRL() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable Anchored Successfully on XRPL'); }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('CDRL Deliverable', 'CDRL_RECORD', result);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -9412,7 +9565,7 @@ async function anchorContract() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record Anchored Successfully on XRPL'); }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('Contract Record', 'CONTRACT_RECORD', result);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
@@ -9434,7 +9587,7 @@ async function anchorChain() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
-    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain Record Anchored Successfully on XRPL'); }, 2200);
+    setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain Record Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('Supply Chain Record', 'SUPPLY_CHAIN', result);
     await new Promise(r => setTimeout(r, 3500));
     hideAnchorAnimation();
