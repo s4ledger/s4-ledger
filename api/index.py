@@ -3523,6 +3523,20 @@ class handler(BaseHTTPRequestHandler):
         })
 
     def do_POST(self):
+        try:
+            return self._do_post_inner()
+        except Exception as exc:
+            import traceback
+            tb = traceback.format_exc()
+            print(f"do_POST CRASH: {exc}\n{tb}")
+            try:
+                self._send_json({"error": str(exc), "trace": tb[:2000]}, 500)
+            except Exception:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(b'{"error":"catastrophic"}')
+
+    def _do_post_inner(self):
         self._req_start = time.time()
         self._req_id = uuid.uuid4().hex[:12]
         _hydrate_from_supabase()  # Cold-start recovery
