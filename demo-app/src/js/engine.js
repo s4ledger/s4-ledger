@@ -598,10 +598,10 @@ function preloadAllILSDemoData() {
     // Seed Audit Vault with sample records if empty
     if (typeof s4Vault !== 'undefined' && s4Vault.length === 0 && typeof addToVault === 'function') {
         var sampleVault = [
-            {hash:'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',txHash:'LOCAL_8A3F29C1D4E507B612F84A9D03C71E56',type:'DD1149',label:'DD Form 1149 (Requisition)',branch:'USN',icon:'fa-file-alt',content:'NAVSEA PMS 400D — DDG-51 Flight III spare parts requisition…',encrypted:false,timestamp:new Date(Date.now()-86400000*3).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
-            {hash:'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',txHash:'LOCAL_7B4E38D2C5F608A723095B0E14D82F67',type:'DD250',label:'DD Form 250 (MIRR)',branch:'USN',icon:'fa-clipboard-check',content:'Material Inspection & Receiving Report — LCS-19 hull components…',encrypted:true,timestamp:new Date(Date.now()-86400000*2).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
-            {hash:'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',txHash:'LOCAL_6C5F47E3D60719B834006C1F25E93078',type:'USN_SUPPLY_RECEIPT',label:'Supply Receipt',branch:'USN',icon:'fa-box-open',content:'CVN-78 AIMD supply receipt — APU turbine blade set…',encrypted:false,timestamp:new Date(Date.now()-86400000*1).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
-            {hash:'d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5',txHash:'LOCAL_5D6056F4E70820C945017D2036F04089',type:'CONTAINER_MANIFEST',label:'Container Manifest',branch:'JOINT',icon:'fa-ship',content:'Joint Logistics Over-the-Shore container manifest — USNS Watkins…',encrypted:false,timestamp:new Date(Date.now()-86400000*0.5).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'}
+            {hash:'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',txHash:'8A3F29C1D4E507B612F84A9D03C71E560A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D',type:'DD1149',label:'DD Form 1149 (Requisition)',branch:'USN',icon:'fa-file-alt',content:'NAVSEA PMS 400D — DDG-51 Flight III spare parts requisition…',encrypted:false,timestamp:new Date(Date.now()-86400000*3).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',txHash:'7B4E38D2C5F608A723095B0E14D82F670B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E',type:'DD250',label:'DD Form 250 (MIRR)',branch:'USN',icon:'fa-clipboard-check',content:'Material Inspection & Receiving Report — LCS-19 hull components…',encrypted:true,timestamp:new Date(Date.now()-86400000*2).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',txHash:'6C5F47E3D60719B834006C1F25E930780C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F',type:'USN_SUPPLY_RECEIPT',label:'Supply Receipt',branch:'USN',icon:'fa-box-open',content:'CVN-78 AIMD supply receipt — APU turbine blade set…',encrypted:false,timestamp:new Date(Date.now()-86400000*1).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5',txHash:'5D6056F4E70820C945017D2036F040890D4E5F6A7B8C9D0E1F2A3B4C5D6E7F80',type:'CONTAINER_MANIFEST',label:'Container Manifest',branch:'JOINT',icon:'fa-ship',content:'Joint Logistics Over-the-Shore container manifest — USNS Watkins…',encrypted:false,timestamp:new Date(Date.now()-86400000*0.5).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'}
         ];
         sampleVault.forEach(function(r) { addToVault(r); });
     }
@@ -1223,7 +1223,6 @@ window._postAnchorToolHook = _postAnchorToolHook;
 function _xrplLinkHtml(result) {
     var url = result.explorerUrl || (result.txHash && /^[0-9A-Fa-f]{64}$/.test(result.txHash) ? 'https://livenet.xrpl.org/transactions/' + result.txHash : '');
     if (url) return ' <a href="' + url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;color:#00aaff;font-size:0.78rem;text-decoration:none;margin-left:8px;background:rgba(0,170,255,0.1);padding:3px 12px;border-radius:6px;border:1px solid rgba(0,170,255,0.2);font-weight:600;white-space:nowrap"><i class="fas fa-external-link-alt"></i> View on XRPL</a>';
-    if (result.txHash && result.txHash.startsWith('LOCAL_')) return ' <span style="display:inline-flex;align-items:center;gap:4px;color:#ff9500;font-size:0.72rem;margin-left:8px;background:rgba(255,149,0,0.1);padding:3px 10px;border-radius:6px;border:1px solid rgba(255,149,0,0.2);font-weight:600;white-space:nowrap"><i class="fas fa-clock"></i> Pending XRPL</span>';
     return '';
 }
 
@@ -1447,8 +1446,6 @@ function refreshVerifyRecents() {
         if (_vrUrl) {
             _vrExplorer = '<a href="' + _vrUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;color:#00aaff;font-size:0.65rem;font-weight:600;text-decoration:none;white-space:nowrap;margin-left:6px;background:rgba(0,170,255,0.08);padding:1px 8px;border-radius:4px;border:1px solid rgba(0,170,255,0.15)"><i class="fas fa-external-link-alt"></i> View on XRPL</a>';
             _vrCopy = '<button onclick="event.stopPropagation();navigator.clipboard.writeText(\'' + r.txHash + '\').then(function(){var b=this;this.textContent=\'Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i>\';},1200);}.bind(this))" style="background:none;border:1px solid rgba(0,170,255,0.2);border-radius:4px;color:#00aaff;font-size:0.58rem;padding:1px 4px;cursor:pointer;margin-left:2px" title="Copy TX Hash"><i class="fas fa-copy"></i></button>';
-        } else if (r.txHash && r.txHash.startsWith('LOCAL_')) {
-            _vrExplorer = '<span onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;color:#ff9500;font-size:0.6rem;font-weight:600;white-space:nowrap;margin-left:6px;background:rgba(255,149,0,0.08);padding:1px 8px;border-radius:4px;border:1px solid rgba(255,149,0,0.15)"><i class="fas fa-clock"></i> Pending XRPL</span>';
         }
         return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:4px;transition:all 0.2s;background:rgba(255,255,255,0.02);">'
             + '<span style="color:var(--accent);font-size:0.8rem;width:20px;text-align:center;display:inline-block">' + _renderIcon(r.icon) + '</span>'
@@ -1542,8 +1539,6 @@ async function verifyRecord() {
     }
     if (_vrTxUrl) {
         _vrTxLink = '<a href="' + _vrTxUrl + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;color:#00aaff;font-size:0.82rem;text-decoration:none;background:rgba(0,170,255,0.1);padding:4px 14px;border-radius:8px;border:1px solid rgba(0,170,255,0.2);font-weight:600;white-space:nowrap;margin-top:6px"><i class="fas fa-external-link-alt"></i> View Transaction on XRPL</a>';
-    } else if (vaultRecord && vaultRecord.txHash && vaultRecord.txHash.startsWith('LOCAL_')) {
-        _vrTxLink = '<span style="display:inline-flex;align-items:center;gap:5px;color:#ff9500;font-size:0.78rem;background:rgba(255,149,0,0.1);padding:4px 14px;border-radius:8px;border:1px solid rgba(255,149,0,0.2);font-weight:600;white-space:nowrap;margin-top:6px"><i class="fas fa-clock"></i> Pending XRPL Confirmation</span>';
     }
 
     var resultHtml = '<div class="result-label">COMPUTED SHA-256 <button class="copy-btn" onclick="copyHash(\'' + effectiveHash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + effectiveHash + '</div>';
@@ -6924,7 +6919,7 @@ function renderVault() {
             <div class="vault-meta">
                 <span><i class="fas fa-clock"></i> ${new Date(v.timestamp).toLocaleString()}</span>
                 <span><i class="fas fa-hashtag"></i> TX: ${(v.txHash||'').substring(0,16)}${v.txHash ? '…' : ''}</span>
-                ${_vaultTxUrl ? '<a href="'+_vaultTxUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;color:#00aaff;font-size:0.72rem;text-decoration:none;background:rgba(0,170,255,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(0,170,255,0.15);font-weight:600;white-space:nowrap"><i class="fas fa-external-link-alt"></i> View on XRPL</a>' : (v.txHash && v.txHash.startsWith('LOCAL_') ? '<span style="display:inline-flex;align-items:center;gap:3px;font-size:0.68rem;color:#ff9500;background:rgba(255,149,0,0.08);padding:2px 8px;border-radius:4px;border:1px solid rgba(255,149,0,0.15);font-weight:600"><i class="fas fa-clock"></i> Pending XRPL</span>' : '')}
+                ${_vaultTxUrl ? '<a href="'+_vaultTxUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;color:#00aaff;font-size:0.72rem;text-decoration:none;background:rgba(0,170,255,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(0,170,255,0.15);font-weight:600;white-space:nowrap"><i class="fas fa-external-link-alt"></i> View on XRPL</a>' : '')}
                 ${v.source ? '<span><i class="fas fa-tools"></i> ' + v.source + '</span>' : ''}
                 <span><i class="fas fa-coins"></i> 0.01 Credits</span>
             </div>
