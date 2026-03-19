@@ -3818,8 +3818,40 @@
     </div>
 </div>
 
+<!-- ══ FULL DOCUMENT VIEWER MODAL ══ -->
+<div id="docViewerModal" class="modal-overlay" onclick="if(event.target===this)closeDocViewer()">
+    <div class="modal-box" style="position:relative;max-width:860px;width:95vw;max-height:90vh;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:12px;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:10px">
+                <div id="docViewerIcon" style="width:36px;height:36px;border-radius:8px;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1rem"><i class="fas fa-file-alt"></i></div>
+                <div>
+                    <h4 id="docViewerTitle" style="margin:0;font-size:1rem">Document Viewer</h4>
+                    <div id="docViewerMeta" style="font-size:0.72rem;color:var(--muted)"></div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+                <button onclick="copyDocContent()" title="Copy to clipboard" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:6px;padding:6px 12px;cursor:pointer;font-size:0.78rem;font-family:inherit"><i class="fas fa-copy"></i> Copy</button>
+                <button onclick="closeDocViewer()" style="background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1">&times;</button>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-shrink:0">
+            <input type="text" id="docViewerSearch" placeholder="Search in document..." oninput="searchInDocViewer()" style="flex:1;padding:8px 12px;font-size:0.82rem;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:6px;color:#fff;font-family:inherit">
+            <span id="docViewerSearchCount" style="align-self:center;font-size:0.72rem;color:var(--muted);min-width:60px;text-align:center"></span>
+        </div>
+        <div id="docViewerHashBar" style="background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:6px;padding:8px 12px;margin-bottom:10px;flex-shrink:0;display:flex;align-items:center;gap:8px">
+            <i class="fas fa-fingerprint" style="color:var(--accent)"></i>
+            <span style="font-size:0.72rem;color:var(--steel)">SHA-256:</span>
+            <code id="docViewerHash" style="font-size:0.72rem;color:var(--accent);word-break:break-all"></code>
+        </div>
+        <div id="docViewerBody" style="flex:1;overflow-y:auto;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:8px;padding:20px;font-size:0.85rem;line-height:1.7;color:#e0e0e0;white-space:pre-wrap;word-wrap:break-word;font-family:'Courier New',monospace;min-height:200px"></div>
+        <div id="docViewerFooter" style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);margin-top:10px;flex-shrink:0">
+            <div style="font-size:0.72rem;color:var(--muted)"><span id="docViewerCharCount"></span> characters &bull; <span id="docViewerLineCount"></span> lines</div>
+            <div style="font-size:0.72rem;color:var(--steel)"><i class="fas fa-shield-halved" style="color:#34c759;margin-right:4px"></i>Content verified on-chain</div>
+        </div>
+    </div>
+</div>
+
 </main>
-<footer class="site-footer" role="contentinfo" style="border-top:1px solid var(--border);padding:40px 24px 30px;margin-top:3rem">
     <div class="footer-grid" style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:30px">
         <div>
             <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:700;font-size:1.1rem;margin-bottom:12px">
@@ -3984,7 +4016,10 @@
                 if (tabLink) { try { new bootstrap.Tab(tabLink).show(); } catch(e){} }
             }
             _currentSection = sectionId;
-            if (sectionId === 'sectionVerify' && typeof window.refreshVerifyRecents === 'function') try { window.refreshVerifyRecents(); } catch(e) {}
+            if (sectionId === 'sectionVerify') {
+                if (typeof window.populateVerifyVaultList === 'function') try { window.populateVerifyVaultList(); } catch(e) {}
+                if (typeof window.refreshVerifyRecents === 'function') try { window.refreshVerifyRecents(); } catch(e) {}
+            }
             if (sectionId === 'sectionMetrics' && typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
             if (sectionId === 'sectionILS') {
                 var subHub = document.getElementById('ilsSubHub');

@@ -409,6 +409,8 @@ function enterPlatformAfterAuth() {
     if (_landing) _landing.style.display = 'none';
     document.querySelector('.hero').style.display = 'none';
     document.getElementById('platformWorkspace').style.display = 'block';
+    // Reload vault for the newly authenticated user (vault key depends on email)
+    if (typeof reloadVaultForRole === 'function') reloadVaultForRole();
     // AI agent stays hidden until role selector closes (applyRole in roles.js shows it)
     var aiWrap = document.getElementById('aiFloatWrapper');
     if (aiWrap) aiWrap.style.display = 'none';
@@ -419,8 +421,11 @@ function enterPlatformAfterAuth() {
 }
 
 // ═══ Clear S4 User Data — prevents cross-user leakage on same browser ═══
+// Preserves vault data (s4Vault_*) so records persist across sessions for each user.
 function _clearS4UserData() {
     Object.keys(localStorage).filter(function(k) {
+        // Keep vault records (s4Vault_*) — those are scoped by email+role and should persist
+        if (k.startsWith('s4Vault')) return false;
         return k.startsWith('s4_') || k.startsWith('s4V') || k.startsWith('s4A') || k.startsWith('s4N');
     }).forEach(function(k) { localStorage.removeItem(k); });
 }
@@ -436,9 +441,10 @@ function resetDemoSession() {
     if (aiPanel && aiPanel.style.display !== 'none') {
         if (typeof toggleAiAgent === 'function') toggleAiAgent();
     }
-    // Clear all S4 localStorage keys
     // Clear ALL S4 localStorage keys (comprehensive — covers all features)
     _clearS4UserData();
+    // Also clear vault data and seed flags for a full demo reset
+    Object.keys(localStorage).filter(function(k) { return k.startsWith('s4Vault'); }).forEach(function(k) { localStorage.removeItem(k); });
     // Reset in-memory tier state so timers don't show stale values
     window._onboardTier = 'starter';
     // Reset module-scoped _onboardTier in onboarding.js to avoid stale tier on re-entry
@@ -595,13 +601,15 @@ function preloadAllILSDemoData() {
         if (typeof loadPredictiveData === 'function') loadPredictiveData();
     }
     
-    // Seed Audit Vault with sample records if empty
-    if (typeof s4Vault !== 'undefined' && s4Vault.length === 0 && typeof addToVault === 'function') {
+    // Seed Audit Vault with sample records if empty and not previously seeded for this user
+    var _seedKey = _vaultKey() + '_seeded';
+    if (typeof s4Vault !== 'undefined' && s4Vault.length === 0 && typeof addToVault === 'function' && !localStorage.getItem(_seedKey)) {
+        localStorage.setItem(_seedKey, '1');
         var sampleVault = [
-            {hash:'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',txHash:'8A3F29C1D4E507B612F84A9D03C71E560A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D',type:'DD1149',label:'DD Form 1149 (Requisition)',branch:'USN',icon:'fa-file-alt',content:'NAVSEA PMS 400D — DDG-51 Flight III spare parts requisition…',encrypted:false,timestamp:new Date(Date.now()-86400000*3).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
-            {hash:'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',txHash:'7B4E38D2C5F608A723095B0E14D82F670B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E',type:'DD250',label:'DD Form 250 (MIRR)',branch:'USN',icon:'fa-clipboard-check',content:'Material Inspection & Receiving Report — LCS-19 hull components…',encrypted:true,timestamp:new Date(Date.now()-86400000*2).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
-            {hash:'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',txHash:'6C5F47E3D60719B834006C1F25E930780C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F',type:'USN_SUPPLY_RECEIPT',label:'Supply Receipt',branch:'USN',icon:'fa-box-open',content:'CVN-78 AIMD supply receipt — APU turbine blade set…',encrypted:false,timestamp:new Date(Date.now()-86400000*1).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
-            {hash:'d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5',txHash:'5D6056F4E70820C945017D2036F040890D4E5F6A7B8C9D0E1F2A3B4C5D6E7F80',type:'CONTAINER_MANIFEST',label:'Container Manifest',branch:'JOINT',icon:'fa-ship',content:'Joint Logistics Over-the-Shore container manifest — USNS Watkins…',encrypted:false,timestamp:new Date(Date.now()-86400000*0.5).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'}
+            {hash:'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',txHash:'8A3F29C1D4E507B612F84A9D03C71E560A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D',type:'DD1149',label:'DD Form 1149 (Requisition)',branch:'USN',icon:'fa-file-alt',content:'NAVSEA PMS 400D — DDG-51 Flight III spare parts requisition…',fullContent:'DD FORM 1149 — REQUISITION AND INVOICE/SHIPPING DOCUMENT\n\nFrom: NAVSEA PMS 400D (DDG-51 Program Office)\nTo: DLA Distribution Norfolk, VA 23511\nDate Prepared: ' + new Date(Date.now()-86400000*3).toISOString().split('T')[0] + '\nRequisition Number: N00024-6029-0483\nPriority: 02 (Urgent)\nProject Code: 463 (DDG-51 Flight III)\n\nLine Items:\n1. NSN 2040-01-584-7823 | Shaft Seal Assembly, Main Reduction Gear | Qty: 4 EA | Unit Price: $12,450.00\n2. NSN 5330-01-492-6157 | O-Ring Kit, LM2500 Gas Turbine | Qty: 12 SET | Unit Price: $890.00\n3. NSN 1680-01-557-3920 | Blade, Controllable Pitch Propeller | Qty: 2 EA | Unit Price: $87,600.00\n4. NSN 6625-01-601-4482 | Sensor, Vibration Analysis Module | Qty: 8 EA | Unit Price: $3,200.00\n\nTotal Estimated Cost: $236,680.00\nFund Code: 17-1804/5011\nSignal Code: A (Ship to requisitioner)\nShip To: USS Jack H. Lucas (DDG-125), BAE Systems Shipyard, Pascagoula, MS\n\nAuthorized By: CAPT R.M. Henderson, Program Manager DDG-51\nDate: ' + new Date(Date.now()-86400000*3).toISOString().split('T')[0] + '\n\nRemarks: Critical path items for DDG-125 post-shakedown availability (PSA). Expedite delivery required NLT 30 days from requisition date. All items must meet NAVSEA 009-32 material specifications.',encrypted:false,timestamp:new Date(Date.now()-86400000*3).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',txHash:'7B4E38D2C5F608A723095B0E14D82F670B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E',type:'DD250',label:'DD Form 250 (MIRR)',branch:'USN',icon:'fa-clipboard-check',content:'Material Inspection & Receiving Report — LCS-19 hull components…',fullContent:'DD FORM 250 — MATERIAL INSPECTION AND RECEIVING REPORT (MIRR)\n\nContract Number: N00024-22-C-5201\nShipment Number: 014\nDate Shipped: ' + new Date(Date.now()-86400000*2).toISOString().split('T')[0] + '\nInvoice Number: FMM-2024-08-0947\n\nContractor: Fincantieri Marinette Marine\nAddress: 1600 Ely Street, Marinette, WI 54143\nShip To: Naval Station Mayport, Jacksonville, FL 32228\nMark For: USS Cooperstown (LCS-23)\n\nItem | Description | Qty | Unit | Unit Price | Amount\n-----|-------------|-----|------|-----------|-------\n001  | Hull Section, Mid-Body Module 3A | 1 EA | $2,480,000.00 | $2,480,000.00\n002  | Waterjet Steering Module Assembly | 2 EA | $347,000.00 | $694,000.00\n003  | Aluminum Superstructure Panel Set | 1 LOT | $1,125,000.00 | $1,125,000.00\n004  | Auxiliary Systems Pipe Spool Kit | 1 LOT | $218,500.00 | $218,500.00\n\nTotal: $4,517,500.00\n\nInspection: Source inspection completed per DCMA instruction. All items conform to contract specifications and applicable drawings.\n\nQuality Assurance Representative: J.T. Morrison, DCMA\nReceiving Officer: LT K.W. Park, USN\nAcceptance Date: ' + new Date(Date.now()-86400000*2).toISOString().split('T')[0],encrypted:true,timestamp:new Date(Date.now()-86400000*2).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',txHash:'6C5F47E3D60719B834006C1F25E930780C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F',type:'USN_SUPPLY_RECEIPT',label:'Supply Receipt',branch:'USN',icon:'fa-box-open',content:'CVN-78 AIMD supply receipt — APU turbine blade set…',fullContent:'NAVAL SUPPLY RECEIPT — AIRCRAFT INTERMEDIATE MAINTENANCE DEPARTMENT\n\nShip: USS Gerald R. Ford (CVN-78)\nDepartment: AIMD (IM-4 Power Plants Division)\nDate: ' + new Date(Date.now()-86400000*1).toISOString().split('T')[0] + '\nReceipt Number: CVN78-AIMD-2024-0892\n\nReceived From: DLA Distribution Cherry Point, NC\nCarrier: AMC Flight MCC-7842\nAirbill: AMC-2024-10-2847\n\nItem Received:\nNomenclature: Turbine Blade Set, 1st Stage High Pressure\nNSN: 2840-01-567-8901\nPart Number: F414-3A-1047-BLD\nSerial Numbers: TB-44821 through TB-44824\nQuantity: 4 EA (1 complete set)\nCondition Code: A (Serviceable/Issuable)\nUnit Price: $42,750.00\nTotal Value: $171,000.00\n\nApplication: F414-GE-400 Engine (F/A-18E/F Super Hornet)\nMAF Reference: CVN78-MAF-2024-4271\nWork Unit Code: 72-530-00\n\nStorage Location: AIMD Storeroom 3-142-2L, Bin A-47\nShelf Life: N/A (Metallic component)\nSpecial Handling: Protective packaging maintained per NAVSUP 4998 Ch. 9\n\nReceipt Inspector: AT1(AW) M.J. Johnson\nSupply PO: LTJG S.R. Williams\nVerified By: LCDR A.M. Torres, Supply Officer\n\nRemarks: Critical path item for CVN-78 F414 engine hot section repair. Matches open CASREP N78-2024-0156. Notify AMDO immediately for scheduling.',encrypted:false,timestamp:new Date(Date.now()-86400000*1).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'},
+            {hash:'d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5',txHash:'5D6056F4E70820C945017D2036F040890D4E5F6A7B8C9D0E1F2A3B4C5D6E7F80',type:'CONTAINER_MANIFEST',label:'Container Manifest',branch:'JOINT',icon:'fa-ship',content:'Joint Logistics Over-the-Shore container manifest — USNS Watkins…',fullContent:'JOINT LOGISTICS OVER-THE-SHORE (JLOTS) CONTAINER MANIFEST\n\nVessel: USNS PFC Dewayne T. Williams (T-AK-3009)\nVoyage: WPS-2024-17\nPort of Origin: Naval Weapons Station Earle, NJ\nDestination: Camp Humphreys, Republic of Korea (via Busan)\nDate: ' + new Date(Date.now()-86400000*0.5).toISOString().split('T')[0] + '\nManifest Number: SDDC-MF-2024-29471\n\nContainer | Type | Contents | Weight (lbs) | Cube (ft³) | Hazmat\n----------|------|----------|-------------|-----------|-------\nMSKU-7294817 | 20ft GP | MRE Cases (Menu 1-24), 2,400 cs | 38,400 | 1,080 | No\nTRLU-4483920 | 40ft HC | Tentage, DRASH Systems XB Series | 31,200 | 2,580 | No\nTCNU-5527143 | 20ft GP | Medical Supplies, Class VIII | 22,800 | 940 | Yes (UN1851)\nCMAU-8831056 | 40ft RF | Frozen Rations, Prime Vendor | 42,100 | 2,300 | No\nMSKU-6619274 | 20ft GP | Ammunition, 5.56mm Ball M855A1 | 44,000 | 680 | Yes (UN0012, 1.4S)\nHLXU-3302918 | 40ft OT | Generator Sets, MEP-1070 (3 ea) | 47,500 | 2,400 | No\n\nTotal Containers: 6\nTotal Weight: 226,000 lbs\nTotal Cube: 9,980 ft³\nHazmat Containers: 2\n\nTransportation Control Number: V7NK-CVW-YQ47\nTransportation Account Code: 21-62045-F7-466\nDODAAC Shipper: W25G1N\nDODAAC Consignee: W6ERKF\n\nPrepared By: SSG D.L. Martinez, 597th Transportation Brigade\nVerified By: MAJ C.R. Thompson, SDDC Pacific\nApproved By: COL J.W. Barrett, J4 USFK',encrypted:false,timestamp:new Date(Date.now()-86400000*0.5).toISOString(),source:'Pre-loaded Sample',fee:0.01,network:'mainnet'}
         ];
         sampleVault.forEach(function(r) { addToVault(r); });
     }
@@ -1745,7 +1753,8 @@ function selectVaultRecord(idx) {
         info.innerHTML = '<div style="margin-bottom:4px"><strong>' + (r.label || r.type || 'Record') + '</strong></div>'
             + '<div style="font-family:monospace;font-size:0.75rem;color:var(--muted);margin-bottom:4px">Hash: ' + r.hash.substring(0, 32) + '...</div>'
             + (r.timestamp ? '<div style="font-size:0.75rem;color:var(--steel)"><i class="fas fa-clock" style="margin-right:4px"></i>Anchored: ' + new Date(r.timestamp).toLocaleString() + '</div>' : '')
-            + (hasDoc ? '<div style="font-size:0.72rem;color:#34c759;margin-top:4px"><i class="fas fa-check-circle" style="margin-right:4px"></i>Full document stored (' + r.fullContent.length.toLocaleString() + ' chars)</div>' : '<div style="font-size:0.72rem;color:#ff9500;margin-top:4px"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>Hash only — upload the original file in Step 3 to compare</div>');
+            + (hasDoc ? '<div style="font-size:0.72rem;color:#34c759;margin-top:4px"><i class="fas fa-check-circle" style="margin-right:4px"></i>Full document stored (' + r.fullContent.length.toLocaleString() + ' chars)</div>' : '<div style="font-size:0.72rem;color:#ff9500;margin-top:4px"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>Hash only — upload the original file in Step 3 to compare</div>')
+            + '<button onclick="openDocViewer(' + idx + ')" style="margin-top:8px;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.25);color:var(--accent);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:0.82rem;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:6px"><i class="fas fa-expand"></i>View Full Document</button>';
     }
     // Highlight selected item
     document.querySelectorAll('.verify-vault-item').forEach(function(el) {
@@ -1771,6 +1780,143 @@ function clearVerifySelection() {
     if (nextBtn) nextBtn.disabled = true;
     document.querySelectorAll('.verify-vault-item').forEach(function(el) { el.style.background = ''; el.style.borderLeft = '3px solid transparent'; });
 }
+
+/** Open the full document viewer modal */
+function openDocViewer(idx) {
+    var records = window._verifyVaultRecords || (typeof s4Vault !== 'undefined' ? s4Vault : []);
+    var r = records[idx];
+    if (!r) return;
+    var content = r.fullContent || r.content || '';
+    var modal = document.getElementById('docViewerModal');
+    if (!modal) return;
+    // Populate header
+    var titleEl = document.getElementById('docViewerTitle');
+    if (titleEl) titleEl.textContent = r.label || r.type || 'Document';
+    var metaEl = document.getElementById('docViewerMeta');
+    if (metaEl) {
+        var parts = [];
+        if (r.branch) parts.push(r.branch);
+        if (r.type) parts.push(r.type);
+        if (r.timestamp) parts.push('Anchored ' + new Date(r.timestamp).toLocaleString());
+        metaEl.textContent = parts.join(' · ');
+    }
+    var iconEl = document.getElementById('docViewerIcon');
+    if (iconEl) iconEl.innerHTML = r.icon ? _renderIcon(r.icon) : '<i class="fas fa-file-alt"></i>';
+    // Hash
+    var hashEl = document.getElementById('docViewerHash');
+    if (hashEl) hashEl.textContent = r.hash || '—';
+    // Body content — detect and format structured data
+    var bodyEl = document.getElementById('docViewerBody');
+    if (bodyEl) {
+        var formatted = _formatDocContent(content);
+        bodyEl.innerHTML = formatted;
+        bodyEl.scrollTop = 0;
+    }
+    // Footer stats
+    var charEl = document.getElementById('docViewerCharCount');
+    if (charEl) charEl.textContent = content.length.toLocaleString();
+    var lineEl = document.getElementById('docViewerLineCount');
+    if (lineEl) lineEl.textContent = content.split('\n').length.toLocaleString();
+    // Clear search
+    var searchInput = document.getElementById('docViewerSearch');
+    if (searchInput) searchInput.value = '';
+    var searchCount = document.getElementById('docViewerSearchCount');
+    if (searchCount) searchCount.textContent = '';
+    // Store content reference for copy/search
+    window._docViewerContent = content;
+    // Show modal
+    modal.classList.add('active');
+}
+window.openDocViewer = openDocViewer;
+
+/** Format document content for display — handles JSON, CSV, tabular, and plain text */
+function _formatDocContent(text) {
+    if (!text) return '<span style="color:var(--muted);font-style:italic">No document content available</span>';
+    // Escape HTML for safe rendering
+    var escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Try to detect JSON
+    var trimmed = text.trim();
+    if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+        try {
+            var parsed = JSON.parse(trimmed);
+            escaped = JSON.stringify(parsed, null, 2).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return '<div style="color:#4ecdc4">' + escaped + '</div>';
+        } catch(e) {}
+    }
+    // Detect table-like content (lines with pipes or tab separators)
+    var lines = escaped.split('\n');
+    var pipeLines = lines.filter(function(l) { return l.indexOf('|') > -1; }).length;
+    if (pipeLines > lines.length * 0.4 && pipeLines > 2) {
+        return lines.map(function(line) {
+            if (line.match(/^[\s|:-]+$/)) return '<div style="border-bottom:1px solid rgba(0,170,255,0.15);margin:2px 0"></div>';
+            return '<div>' + line.replace(/\|/g, '<span style="color:rgba(0,170,255,0.4)">|</span>') + '</div>';
+        }).join('');
+    }
+    // Highlight key:value patterns
+    escaped = escaped.replace(/^([A-Za-z][A-Za-z0-9 _-]{0,40}):\s/gm, '<span style="color:#00aaff;font-weight:600">$1:</span> ');
+    return escaped;
+}
+
+/** Close the document viewer modal */
+function closeDocViewer() {
+    var modal = document.getElementById('docViewerModal');
+    if (modal) modal.classList.remove('active');
+}
+window.closeDocViewer = closeDocViewer;
+
+/** Copy document content to clipboard */
+function copyDocContent() {
+    var content = window._docViewerContent || '';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(content);
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = content;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+    }
+    if (typeof s4Notify === 'function') s4Notify('Copied', 'Document content copied to clipboard.', 'success');
+}
+window.copyDocContent = copyDocContent;
+
+/** Search within the document viewer */
+function searchInDocViewer() {
+    var input = document.getElementById('docViewerSearch');
+    var body = document.getElementById('docViewerBody');
+    var countEl = document.getElementById('docViewerSearchCount');
+    if (!input || !body) return;
+    var query = input.value.trim();
+    if (!query) {
+        body.innerHTML = _formatDocContent(window._docViewerContent || '');
+        if (countEl) countEl.textContent = '';
+        return;
+    }
+    var content = window._docViewerContent || '';
+    var formatted = _formatDocContent(content);
+    // Count and highlight matches (case-insensitive)
+    var escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var regex = new RegExp('(' + escapedQuery + ')', 'gi');
+    var matchCount = (content.match(regex) || []).length;
+    if (countEl) countEl.textContent = matchCount > 0 ? matchCount + ' found' : 'No matches';
+    // Highlight in the rendered content
+    formatted = formatted.replace(regex, '<mark style="background:#ff0;color:#000;border-radius:2px;padding:0 1px">$1</mark>');
+    body.innerHTML = formatted;
+}
+window.searchInDocViewer = searchInDocViewer;
+
+/** Open document viewer from the audit vault tab (uses s4Vault index) */
+function openVaultDocViewer(vaultIdx) {
+    var r = s4Vault[vaultIdx];
+    if (!r) return;
+    // Temporarily set _verifyVaultRecords to s4Vault so openDocViewer works
+    var prev = window._verifyVaultRecords;
+    window._verifyVaultRecords = s4Vault;
+    openDocViewer(vaultIdx);
+    window._verifyVaultRecords = prev;
+}
+window.openVaultDocViewer = openVaultDocViewer;
 
 /** Handle Step 1 Next — advances to Step 2 with blockchain hash retrieval */
 function verifyStepNext(fromStep) {
@@ -7992,6 +8138,8 @@ function addToVault(record) {
     refreshVaultMetrics();
     // Keep Digital Thread dropdown in sync with vault
     if (typeof window.populateDigitalThreadDropdown === 'function') window.populateDigitalThreadDropdown();
+    // Keep verify vault list in sync so newly anchored records appear immediately
+    if (typeof populateVerifyVaultList === 'function') populateVerifyVaultList();
     // Show workspace notification
     showWorkspaceNotification('Record saved to Audit Vault', record.label || record.type);
 }
@@ -8113,6 +8261,7 @@ function renderVault() {
             + '<span><i class="fas fa-clock"></i> ' + new Date(v.timestamp).toLocaleString() + '</span>'
             + '<span><i class="fas fa-hashtag"></i> TX: ' + (v.txHash||'').substring(0,16) + (v.txHash ? '…' : '') + '</span>'
             + (_vaultTxUrl ? '<a href="'+_vaultTxUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;color:#00aaff;font-size:0.72rem;text-decoration:none;background:rgba(0,170,255,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(0,170,255,0.15);font-weight:600;white-space:nowrap"><i class="fas fa-external-link-alt"></i> View on XRPL</a>' : '')
+            + '<button onclick="openVaultDocViewer(' + (startIdx + i) + ')" style="display:inline-flex;align-items:center;gap:4px;color:#34c759;font-size:0.72rem;background:rgba(52,199,89,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(52,199,89,0.15);font-weight:600;white-space:nowrap;cursor:pointer;font-family:inherit"><i class="fas fa-expand"></i> View Document</button>'
             + (v.source ? '<span><i class="fas fa-tools"></i> ' + v.source + '</span>' : '')
             + '<span><i class="fas fa-coins"></i> 0.01 Credits</span>'
             + '</div></div>';
