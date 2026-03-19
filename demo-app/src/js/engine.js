@@ -1481,7 +1481,7 @@ function loadRecordToVerify(idx) {
     }
     // Scroll to the verify form after a brief delay for tab switch
     setTimeout(function() {
-        var verifyCard = document.querySelector('#tabAnchor .demo-card');
+        var verifyCard = document.querySelector('#tabAnchor .s4-card');
         if (verifyCard) verifyCard.scrollIntoView({behavior:'smooth', block:'start'});
     }, 150);
     // Show notification
@@ -6888,33 +6888,31 @@ function renderVault() {
     // Disable per-record animations when more than 200 records for performance
     var useAnim = items.length <= 200;
 
-    container.innerHTML = window._s4Safe(pageItems.map((v, i) => {
+    container.innerHTML = window._s4Safe(pageItems.map(function(v, i) {
         var _vaultTxUrl = v.explorerUrl || (v.txHash && /^[0-9A-Fa-f]{64}$/.test(v.txHash) ? 'https://livenet.xrpl.org/transactions/'+v.txHash : '');
-        return `
-        <div class="vault-record"${useAnim ? ' style="animation:slideUp 0.3s ease"' : ''}>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
-                <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden">
-                    <input type="checkbox" class="vault-cb" data-hash="${v.hash}" onchange="_updateBulkBar()" style="accent-color:#00aaff;cursor:pointer;flex-shrink:0">
-                    <span style="font-size:0.95rem;flex-shrink:0;width:20px;text-align:center;line-height:1">${_renderIcon(v.icon)}</span>
-                    <strong style="color:#fff;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.label || v.type}</strong>
-                    <span style="font-size:0.72rem;color:var(--muted);flex-shrink:0;white-space:nowrap">${v.branch || ''}</span>
-                </div>
-                <div style="display:flex;gap:6px;flex-shrink:0">
-                    ${v.verified ? '<span class="vault-badge verified"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="vault-badge anchored"><i class="fas fa-anchor"></i> Anchored</span>'}
-                    ${v.encrypted ? '<span class="vault-badge" style="background:rgba(0,170,255,0.06);color:var(--accent);border:1px solid rgba(0,170,255,0.15)"><i class="fas fa-lock"></i> Encrypted</span>' : ''}
-                </div>
-            </div>
-            <div class="vault-hash"><i class="fas fa-fingerprint" style="margin-right:6px;opacity:0.6"></i>${v.hash}</div>
-            ${v.content ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:8px;padding:6px 10px;background:var(--surface);border-radius:8px"><i class="fas fa-file-lines" style="margin-right:6px;opacity:0.5"></i>' + v.content + '</div>' : ''}
-            <div class="vault-meta">
-                <span><i class="fas fa-clock"></i> ${new Date(v.timestamp).toLocaleString()}</span>
-                <span><i class="fas fa-hashtag"></i> TX: ${(v.txHash||'').substring(0,16)}${v.txHash ? '…' : ''}</span>
-                ${_vaultTxUrl ? '<a href="'+_vaultTxUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;color:#00aaff;font-size:0.72rem;text-decoration:none;background:rgba(0,170,255,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(0,170,255,0.15);font-weight:600;white-space:nowrap"><i class="fas fa-external-link-alt"></i> View on XRPL</a>' : '')}
-                ${v.source ? '<span><i class="fas fa-tools"></i> ' + v.source + '</span>' : ''}
-                <span><i class="fas fa-coins"></i> 0.01 Credits</span>
-            </div>
-        </div>
-    `}).join(''));
+        var h = '<div class="vault-record"' + (useAnim ? ' style="animation:slideUp 0.3s ease"' : '') + '>'
+            + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">'
+            + '<div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden">'
+            + '<input type="checkbox" class="vault-cb" data-hash="' + v.hash + '" onchange="_updateBulkBar()" style="accent-color:#00aaff;cursor:pointer;flex-shrink:0">'
+            + '<span style="font-size:0.95rem;flex-shrink:0;width:20px;text-align:center;line-height:1">' + _renderIcon(v.icon) + '</span>'
+            + '<strong style="color:#fff;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (v.label || v.type) + '</strong>'
+            + '<span style="font-size:0.72rem;color:var(--muted);flex-shrink:0;white-space:nowrap">' + (v.branch || '') + '</span>'
+            + '</div>'
+            + '<div style="display:flex;gap:6px;flex-shrink:0">'
+            + (v.verified ? '<span class="vault-badge verified"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="vault-badge anchored"><i class="fas fa-anchor"></i> Anchored</span>')
+            + (v.encrypted ? '<span class="vault-badge" style="background:rgba(0,170,255,0.06);color:var(--accent);border:1px solid rgba(0,170,255,0.15)"><i class="fas fa-lock"></i> Encrypted</span>' : '')
+            + '</div></div>'
+            + '<div class="vault-hash"><i class="fas fa-fingerprint" style="margin-right:6px;opacity:0.6"></i>' + v.hash + '</div>'
+            + (v.content ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:8px;padding:6px 10px;background:var(--surface);border-radius:8px"><i class="fas fa-file-lines" style="margin-right:6px;opacity:0.5"></i>' + v.content + '</div>' : '')
+            + '<div class="vault-meta">'
+            + '<span><i class="fas fa-clock"></i> ' + new Date(v.timestamp).toLocaleString() + '</span>'
+            + '<span><i class="fas fa-hashtag"></i> TX: ' + (v.txHash||'').substring(0,16) + (v.txHash ? '…' : '') + '</span>'
+            + (_vaultTxUrl ? '<a href="'+_vaultTxUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;color:#00aaff;font-size:0.72rem;text-decoration:none;background:rgba(0,170,255,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(0,170,255,0.15);font-weight:600;white-space:nowrap"><i class="fas fa-external-link-alt"></i> View on XRPL</a>' : '')
+            + (v.source ? '<span><i class="fas fa-tools"></i> ' + v.source + '</span>' : '')
+            + '<span><i class="fas fa-coins"></i> 0.01 Credits</span>'
+            + '</div></div>';
+        return h;
+    }).join(''));
 
     var renderMs = (performance.now() - t0).toFixed(1);
     _updateVaultPagination();

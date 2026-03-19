@@ -67,8 +67,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/prod-app/dist/assets/index-ChfdsYPt.js"></script>
-  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-DFkdVi51.js">
+  <script type="module" crossorigin src="/prod-app/dist/assets/index-BpeS-Deu.js"></script>
+  <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/engine-CdTi-Jff.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/navigation-ZUqzvPOk.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/metrics-CAoTgYm3.js">
   <link rel="modulepreload" crossorigin href="/prod-app/dist/assets/enhancements-f1XqyDtC.js">
@@ -1872,8 +1872,8 @@
                         <div id="threatAssessment" style="font-size:0.78rem;color:var(--steel);line-height:1.5;"></div>
                     </div>
                     <!-- Risk Table -->
-                    <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(0,170,255,0.15);border-radius:8px;">
-                        <table style="width:100%;border-collapse:collapse;">
+                    <div style="max-height:400px;overflow-y:auto;overflow-x:auto;border:1px solid rgba(0,170,255,0.15);border-radius:8px;">
+                        <table style="width:100%;border-collapse:collapse;min-width:600px;">
                             <thead style="position:sticky;top:0;background:#fff;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:var(--steel);border-bottom:2px solid var(--border);text-align:left;">Part / NSN</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:var(--steel);border-bottom:2px solid var(--border);text-align:left;">Supplier</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:var(--steel);border-bottom:2px solid var(--border);text-align:center;">Risk Score</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:var(--steel);border-bottom:2px solid var(--border);text-align:left;">Risk Factors</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:var(--steel);border-bottom:2px solid var(--border);text-align:center;">ETA Impact</th></tr></thead>
                             <tbody id="riskTableBody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">Click a program to load risk analysis...</td></tr></tbody>
                         </table>
@@ -1944,7 +1944,7 @@
                                 </select>
                                 <button onclick="generateBudgetForecast()" class="s4-btn-primary btn btn-sm hover-lift" style="background:linear-gradient(135deg,#0071e3,#00aaff);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.82rem"><i class="fas fa-chart-line"></i> Forecast</button>
                             </div>
-                            <div id="budgetForecastOutput"></div>
+                            <div id="budgetForecastOutput" style="overflow-x:auto"></div>
                         </div>
                     </div>
 
@@ -2115,8 +2115,8 @@
                         <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;"><div style="font-size:1.6rem;font-weight:800;color:var(--accent)" id="pdmAccuracy">0%</div><div style="font-size:0.72rem;color:var(--text-muted)">Model Accuracy</div></div></div>
                     </div>
                     <!-- Predictions Table -->
-                    <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(0,170,255,0.15);border-radius:8px;">
-                        <table style="width:100%;border-collapse:collapse;">
+                    <div style="max-height:400px;overflow-y:auto;overflow-x:auto;border:1px solid rgba(0,170,255,0.15);border-radius:8px;">
+                        <table style="width:100%;border-collapse:collapse;min-width:600px;">
                             <thead style="position:sticky;top:0;background:#fff;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:left;">System / Component</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:left;">Failure Mode</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:center;">Confidence</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:center;">ETA</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,212,170,0.2);text-align:right;">Cost if Unplanned</th></tr></thead>
                             <tbody id="pdmTableBody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-muted)">Select a fleet to load predictive analysis...</td></tr></tbody>
                         </table>
@@ -2172,8 +2172,8 @@
                         <div class="col-md-3 col-6"><div style="text-align:center;padding:12px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;"><div style="font-size:1.6rem;font-weight:800;color:var(--accent)" id="sbomAnchored">0</div><div style="font-size:0.72rem;color:var(--text-muted)">Anchored</div></div></div>
                     </div>
                     <!-- SBOM Table -->
-                    <div style="max-height:400px;overflow-y:auto;border:1px solid rgba(0,170,255,0.2);border-radius:8px;">
-                        <table style="width:100%;border-collapse:collapse;">
+                    <div style="max-height:400px;overflow-x:auto;overflow-y:auto;border:1px solid rgba(0,170,255,0.2);border-radius:8px;">
+                        <table style="width:100%;border-collapse:collapse;min-width:600px;">
                             <thead style="position:sticky;top:0;background:#fff;z-index:1;"><tr><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:left;">Component</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:left;">Version</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">Type</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">CVEs</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">License</th><th style="padding:10px 8px;font-size:0.78rem;text-transform:uppercase;color:#00aaff;border-bottom:2px solid rgba(0,170,255,0.2);text-align:center;">Status</th></tr></thead>
                             <tbody id="sbomTableBody"><tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Select a platform to load SBOM data...</td></tr></tbody>
                         </table>
