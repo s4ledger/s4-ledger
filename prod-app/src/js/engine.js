@@ -1515,16 +1515,6 @@ async function verifyRecord() {
 
     if (expected) {
         match = hash.toLowerCase() === expected.toLowerCase();
-        if (!match) {
-            vaultMatch = sessionRecords.find(r => r.hash && r.hash.toLowerCase() === expected.toLowerCase());
-            if (!vaultMatch && typeof s4Vault !== 'undefined') {
-                vaultMatch = s4Vault.find(r => r.hash && r.hash.toLowerCase() === expected.toLowerCase());
-            }
-            if (vaultMatch) {
-                match = true;
-                effectiveHash = expected;
-            }
-        }
     }
     // Find the vault record for this hash (for displaying XRPL link and anchor details)
     if (typeof s4Vault !== 'undefined') {
@@ -5926,7 +5916,7 @@ function loadDMSMSData() {
     document.getElementById('dmsmsCost').textContent = '$' + (totalCost * 1000).toLocaleString();
 
     const statusColors = {Active:'#00aaff','At Risk':'#ffa500',Obsolete:'#ff3333','End of Life':'#ff6666',Watch:'#ffcc00'};
-    let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
+    let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.82rem;min-width:700px">';
     html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:var(--steel);"><th style="padding:8px;text-align:left;">System</th><th>NSN</th><th>Manufacturer</th><th>Status</th><th>Severity</th><th>Lead Time</th><th>Est. Cost</th><th>Alternate</th><th>End of Support</th></tr>';
     data.forEach(d => {
         const color = statusColors[d.status] || '#fff';
@@ -8050,7 +8040,7 @@ function generateFleetComparison() {
     programs[0].actions = Math.max(actions, programs[0].actions);
     programs[0].resolved = Math.max(done, programs[0].resolved);
 
-    var html = '<table style="width:100%;border-collapse:collapse;font-size:0.78rem">';
+    var html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:600px">';
     html += '<thead><tr style="background:rgba(0,170,255,0.08);color:#00aaff">';
     html += '<th style="padding:8px;text-align:left">Program</th><th style="padding:8px;text-align:center">Compliance</th><th style="padding:8px;text-align:center">Readiness</th><th style="padding:8px;text-align:center">Risk</th><th style="padding:8px;text-align:center">Actions</th><th style="padding:8px;text-align:center">DMSMS</th><th style="padding:8px;text-align:right">Savings</th>';
     html += '</tr></thead><tbody>';
@@ -8068,7 +8058,7 @@ function generateFleetComparison() {
         html += '<td style="padding:8px;text-align:right;color:#00aaff;font-weight:600">' + p.savings + '</td>';
         html += '</tr>';
     });
-    html += '</tbody></table>';
+    html += '</tbody></table></div>';
     out.innerHTML = window._s4Safe(html);
     showWorkspaceNotification('Fleet comparison generated — ' + programs.length + ' programs');
 }
@@ -8195,7 +8185,7 @@ function generateBudgetForecast() {
     var obsolescenceGrowth = 0.045; // 4.5% annual
     var s4Savings = 0.12; // 12% reduction from S4 automation
 
-    var html = '<table style="width:100%;border-collapse:collapse;font-size:0.78rem">';
+    var html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:550px">';
     html += '<thead><tr style="background:rgba(255,165,0,0.08);color:#ffa500">';
     html += '<th style="padding:8px;text-align:left">Year</th><th style="padding:8px;text-align:right">Procurement</th><th style="padding:8px;text-align:right">Sustainment</th><th style="padding:8px;text-align:right">DMSMS/Obsol.</th><th style="padding:8px;text-align:right">S4 Savings</th><th style="padding:8px;text-align:right;color:#fff">Net Forecast</th>';
     html += '</tr></thead><tbody>';
@@ -8222,7 +8212,7 @@ function generateBudgetForecast() {
     html += '<td style="padding:8px;color:#ffa500">' + years + '-Year Total</td><td colspan="3"></td>';
     html += '<td style="padding:8px;text-align:right;color:#00cc88">-$' + Math.round(totalSavings * 1000000).toLocaleString() + '</td>';
     html += '<td style="padding:8px;text-align:right;color:#fff;font-size:0.88rem">$' + Math.round(totalNet * 1000000).toLocaleString() + '</td>';
-    html += '</tr></tbody></table>';
+    html += '</tr></tbody></table></div>';
     html += '<div style="margin-top:8px;font-size:0.72rem;color:var(--steel)">Forecast assumes ' + (inflationRate*100).toFixed(1) + '% annual inflation, ' + (obsolescenceGrowth*100).toFixed(1) + '% obsolescence growth, and ' + (s4Savings*100) + '% S4 automation savings. Adjust inputs in Lifecycle Cost Calculator for program-specific projections.</div>';
     out.innerHTML = window._s4Safe(html);
     showWorkspaceNotification(years + '-year budget forecast generated — $' + Math.round(totalSavings * 1000000).toLocaleString() + ' in projected savings');
