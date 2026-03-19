@@ -34,6 +34,18 @@ DOMPurify.setConfig({
  */
 function s4Safe(dirty) {
     if (typeof dirty !== 'string') return '';
+    // Table-fragment fix: DOMPurify parses HTML inside a <div>, so bare
+    // <tr>/<td>/<th>/<thead>/<tbody> tags are stripped by the browser's
+    // parser (they're only valid inside <table>).  Detect table fragments,
+    // wrap them in a <table> context for sanitization, then unwrap.
+    var isTableFragment = /^\s*<(tr|td|th|thead|tbody|tfoot)[\s>]/i.test(dirty);
+    if (isTableFragment) {
+        var wrapped = '<table><tbody>' + dirty + '</tbody></table>';
+        var clean  = DOMPurify.sanitize(wrapped);
+        // Extract content between the wrapper tags
+        var m = clean.match(/<tbody>([\s\S]*)<\/tbody>/i);
+        return m ? m[1] : clean;
+    }
     return DOMPurify.sanitize(dirty);
 }
 
