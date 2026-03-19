@@ -4051,6 +4051,7 @@ class handler(BaseHTTPRequestHandler):
 
         elif route == "ai_chat":
             self._log_request("ai-chat")
+            now = datetime.now(timezone.utc)
             # ═══ AI Agent — LLM-Powered Defense Logistics Assistant ═══
             # Proxies to OpenAI/Anthropic/Azure with a defense-specific system prompt.
             # Falls back to structured response if no API key configured.
@@ -4142,7 +4143,31 @@ class handler(BaseHTTPRequestHandler):
                     ai_response = None
 
             if ai_response:
-                self._send_json({"response": ai_response, "provider": "llm", "fallback": False})
+                # Hash and audit-trail the AI response
+                response_hash = hashlib.sha256(ai_response.encode()).hexdigest()
+                ai_entry = {
+                    "timestamp": now.isoformat(),
+                    "query": data.get("message", "")[:200],
+                    "intent": "ai_chat",
+                    "entities": {},
+                    "response_hash": response_hash,
+                    "tool_context": tool_context or "ai_chat",
+                    "anchored": False,
+                    "entity_count": 0,
+                }
+                _ai_audit_log.append(ai_entry)
+                _persist_ai_audit(ai_entry)
+                if len(_ai_audit_log) > 1000:
+                    _ai_audit_log.pop(0)
+
+                self._send_json({
+                    "response": ai_response,
+                    "provider": "llm",
+                    "fallback": False,
+                    "response_hash": response_hash,
+                    "audit_logged": True,
+                    "timestamp": now.isoformat(),
+                })
             else:
                 # No LLM available — return signal for client-side fallback
                 self._send_json({"response": None, "provider": "none", "fallback": True, "message": "No AI provider configured. Using local pattern matching."})

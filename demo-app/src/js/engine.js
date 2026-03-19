@@ -5344,6 +5344,11 @@ async function aiSend() {
                 const el = document.getElementById(thinkId);
                 if (el) el.querySelector('.ai-bubble').innerHTML = window._s4Safe(html);
                 responded = true;
+
+                // Enterprise audit trail — log AI response hash
+                if (data.response_hash && typeof S4 !== 'undefined' && S4.auditTimeline) {
+                    S4.auditTimeline.logCustom('info', 'AI Chat response logged — hash: ' + data.response_hash.substring(0, 12) + '…');
+                }
             }
         }
     } catch(e) { console.log('AI chat API unavailable, using local patterns'); }
