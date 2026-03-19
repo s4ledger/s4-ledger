@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S4 Ledger — Independent Record Verification</title>
+<meta name="description" content="Verify the integrity of any S4 Ledger record against the XRP Ledger blockchain. No account required.">
+<link rel="icon" type="image/png" href="/s4-assets/favicon.png">
+<style>
+:root { --bg: #0a0a0f; --surface: #14141f; --border: rgba(255,255,255,0.08); --accent: #00aaff; --green: #34c759; --red: #ff3b30; --steel: #b0b8c4; --muted: #636e7b; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #e8e8ed; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+.header { padding: 24px; text-align: center; border-bottom: 1px solid var(--border); width: 100%; }
+.header h1 { font-size: 1.1rem; color: var(--accent); letter-spacing: 1px; }
+.header p { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+.container { max-width: 680px; width: 100%; padding: 24px 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+.tx-info { margin-bottom: 16px; }
+.tx-info .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.tx-info .value { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem; color: var(--steel); word-break: break-all; }
+.tx-info .value a { color: var(--accent); text-decoration: none; }
+.tx-info .value a:hover { text-decoration: underline; }
+.hash-display { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; background: rgba(0,170,255,0.06); border: 1px solid rgba(0,170,255,0.15); border-radius: 8px; padding: 10px 14px; word-break: break-all; color: var(--accent); margin: 8px 0; }
+textarea { width: 100%; min-height: 140px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: #e8e8ed; font-family: inherit; font-size: 0.85rem; resize: vertical; outline: none; transition: border-color 0.2s; }
+textarea:focus { border-color: rgba(0,170,255,0.4); }
+.drop-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 24px; text-align: center; color: var(--muted); font-size: 0.82rem; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); color: var(--accent); background: rgba(0,170,255,0.04); }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #0095e0; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.result { border-radius: 12px; padding: 16px; margin-top: 16px; }
+.result-match { background: rgba(52,199,89,0.08); border: 1px solid rgba(52,199,89,0.2); }
+.result-mismatch { background: rgba(255,59,48,0.08); border: 1px solid rgba(255,59,48,0.25); }
+.result h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.footer { margin-top: auto; padding: 20px; text-align: center; font-size: 0.72rem; color: var(--muted); border-top: 1px solid var(--border); width: 100%; }
+.status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; }
+.badge-loading { background: rgba(0,170,255,0.1); color: var(--accent); }
+.badge-found { background: rgba(52,199,89,0.1); color: var(--green); }
+.badge-error { background: rgba(255,59,48,0.1); color: var(--red); }
+.info-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.info-item { flex: 1; min-width: 140px; }
+@media (max-width: 480px) { .container { padding: 16px 10px; } .card { padding: 14px; } }
+</style>
+</head>
+<body>
+<div class="header">
+    <h1>S4 LEDGER — INDEPENDENT VERIFICATION</h1>
+    <p>Verify record integrity against the XRP Ledger blockchain. No account required.</p>
+</div>
+<div class="container">
+    <div class="card" id="txCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <strong style="font-size:0.88rem">Blockchain Record</strong>
+            <span class="status-badge badge-loading" id="txStatus"><span class="spinner"></span> Loading…</span>
+        </div>
+        <div class="tx-info">
+            <div class="label">Transaction Hash</div>
+            <div class="value" id="txHash">—</div>
+        </div>
+        <div class="info-row">
+            <div class="info-item tx-info">
+                <div class="label">Network</div>
+                <div class="value" id="txNetwork">—</div>
+            </div>
+            <div class="info-item tx-info">
+                <div class="label">Anchored</div>
+                <div class="value" id="txDate">—</div>
+            </div>
+        </div>
+        <div class="tx-info" style="margin-top:10px">
+            <div class="label">On-Chain Digital Fingerprint (SHA-256)</div>
+            <div class="hash-display" id="onChainHash">—</div>
+        </div>
+    </div>
+
+    <div class="card" id="verifyCard" style="display:none">
+        <strong style="font-size:0.88rem;display:block;margin-bottom:12px">Verify This Record</strong>
+        <p style="font-size:0.82rem;color:var(--steel);margin-bottom:12px">Paste the original record content or upload the file to verify it has not been modified.</p>
+        <div class="drop-zone" id="dropZone">
+            <div>📄 Drop a file here or <strong>click to upload</strong></div>
+            <input type="file" id="fileInput" style="display:none">
+        </div>
+        <textarea id="contentInput" placeholder="Or paste the record content here…"></textarea>
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+            <button class="btn btn-primary" id="verifyBtn" onclick="doVerify()">Verify Integrity</button>
+            <span style="font-size:0.72rem;color:var(--muted)">Verification is performed entirely in your browser</span>
+        </div>
+        <div id="verifyResult"></div>
+    </div>
+
+    <div class="card" id="errorCard" style="display:none">
+        <div style="color:var(--red);display:flex;align-items:center;gap:8px">
+            <span style="font-size:1.2rem">⚠️</span>
+            <div>
+                <strong>Could not load transaction</strong>
+                <div style="font-size:0.82rem;color:var(--steel);margin-top:4px" id="errorMsg">The transaction hash may be invalid or the XRPL node is temporarily unavailable.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    S4 Ledger &copy; 2025 — Blockchain-Secured Defense Logistics<br>
+    This verification is independent and trustless. No data is sent to S4 servers.
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var XRPL_API = 'https://xrplcluster.com';
+    var txHashFromUrl = '';
+
+    // Extract tx hash from URL path: /v/{txHash}
+    var pathParts = window.location.pathname.split('/').filter(Boolean);
+    if (pathParts.length >= 2 && pathParts[0] === 'v') {
+        txHashFromUrl = pathParts[1];
+    }
+
+    if (!txHashFromUrl || !/^[0-9A-Fa-f]{64}$/.test(txHashFromUrl)) {
+        showError('Invalid or missing transaction hash in the URL. Expected format: /v/{64-character hex hash}');
+        return;
+    }
+
+    document.getElementById('txHash').innerHTML = '<a href="https://livenet.xrpl.org/transactions/' + txHashFromUrl + '" target="_blank" rel="noopener">' + txHashFromUrl + '</a>';
+
+    // Fetch transaction from XRPL
+    fetchTransaction(txHashFromUrl);
+
+    async function fetchTransaction(hash) {
+        try {
+            var resp = await fetch(XRPL_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    method: 'tx',
+                    params: [{ transaction: hash, binary: false }]
+                })
+            });
+            if (!resp.ok) throw new Error('XRPL node returned ' + resp.status);
+            var data = await resp.json();
+            if (data.result && data.result.status === 'success' && data.result.validated) {
+                processTransaction(data.result);
+            } else if (data.result && data.result.error) {
+                showError('Transaction not found: ' + (data.result.error_message || data.result.error));
+            } else {
+                showError('Transaction not found or not yet validated on the XRP Ledger.');
+            }
+        } catch(e) {
+            showError('Could not connect to the XRP Ledger: ' + e.message);
+        }
+    }
+
+    function processTransaction(tx) {
+        document.getElementById('txNetwork').textContent = 'XRP Ledger (Mainnet) ✓';
+        // Parse date from ripple epoch (946684800 offset)
+        if (tx.date) {
+            var d = new Date((tx.date + 946684800) * 1000);
+            document.getElementById('txDate').textContent = d.toLocaleString() + ' UTC';
+        }
+        // Extract hash from Memos
+        var onChainHash = '';
+        if (tx.Memos && tx.Memos.length > 0) {
+            for (var i = 0; i < tx.Memos.length; i++) {
+                var memo = tx.Memos[i].Memo;
+                if (memo && memo.MemoData) {
+                    try {
+                        var decoded = hexToStr(memo.MemoData);
+                        // MemoData may be JSON with a hash field, or the hash itself
+                        if (/^[0-9a-f]{64}$/i.test(decoded)) {
+                            onChainHash = decoded;
+                            break;
+                        }
+                        try {
+                            var parsed = JSON.parse(decoded);
+                            if (parsed.hash && /^[0-9a-f]{64}$/i.test(parsed.hash)) {
+                                onChainHash = parsed.hash;
+                                break;
+                            }
+                        } catch(e2) {
+                            // Check if the decoded string contains a SHA-256 hash
+                            var hashMatch = decoded.match(/[0-9a-f]{64}/i);
+                            if (hashMatch) { onChainHash = hashMatch[0]; break; }
+                        }
+                    } catch(e) { /* skip undecodable memo */ }
+                }
+            }
+        }
+
+        if (!onChainHash) {
+            showError('No SHA-256 hash found in the transaction memo data. This may not be an S4 Ledger anchor transaction.');
+            return;
+        }
+
+        document.getElementById('onChainHash').textContent = onChainHash.toLowerCase();
+        window._onChainHash = onChainHash.toLowerCase();
+        document.getElementById('txStatus').className = 'status-badge badge-found';
+        document.getElementById('txStatus').innerHTML = '✓ Verified on-chain';
+        document.getElementById('verifyCard').style.display = '';
+    }
+
+    function showError(msg) {
+        document.getElementById('txStatus').className = 'status-badge badge-error';
+        document.getElementById('txStatus').innerHTML = '✗ Error';
+        document.getElementById('errorCard').style.display = '';
+        document.getElementById('errorMsg').textContent = msg;
+    }
+
+    function hexToStr(hex) {
+        var str = '';
+        for (var i = 0; i < hex.length; i += 2) {
+            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+        }
+        return str;
+    }
+
+    // File drop zone
+    var dropZone = document.getElementById('dropZone');
+    var fileInput = document.getElementById('fileInput');
+    dropZone.addEventListener('click', function() { fileInput.click(); });
+    dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault(); dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) loadFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', function() { if (fileInput.files.length > 0) loadFile(fileInput.files[0]); });
+
+    function loadFile(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('contentInput').value = e.target.result;
+            dropZone.innerHTML = '<div>✓ Loaded: <strong>' + escHtml(file.name) + '</strong> (' + (file.size / 1024).toFixed(1) + ' KB)</div>';
+        };
+        reader.readAsText(file);
+    }
+
+    function escHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    // SHA-256 (Web Crypto API)
+    async function sha256(text) {
+        var enc = new TextEncoder().encode(text);
+        var buf = await crypto.subtle.digest('SHA-256', enc);
+        return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+
+    // Verify
+    window.doVerify = async function() {
+        var content = document.getElementById('contentInput').value.trim();
+        if (!content) { alert('Please paste content or upload a file to verify.'); return; }
+        var btn = document.getElementById('verifyBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Verifying…';
+        var computedHash = await sha256(content);
+        var onChain = window._onChainHash || '';
+        var match = computedHash.toLowerCase() === onChain.toLowerCase();
+        var resultDiv = document.getElementById('verifyResult');
+        if (match) {
+            resultDiv.innerHTML = '<div class="result result-match">'
+                + '<h3 style="color:var(--green)"><span style="font-size:1.3rem">✓</span> INTEGRITY VERIFIED</h3>'
+                + '<p style="color:var(--steel);font-size:0.85rem;line-height:1.6">This record is <strong>authentic and has not been modified</strong> since it was secured on the blockchain.</p>'
+                + '<div style="margin-top:10px;font-size:0.78rem;color:var(--muted)"><strong>Computed fingerprint:</strong></div>'
+                + '<div style="font-family:monospace;font-size:0.72rem;color:var(--green);word-break:break-all;margin-top:4px">' + computedHash + '</div>'
+                + '<div style="margin-top:6px;font-size:0.78rem;color:var(--muted)"><strong>On-chain fingerprint:</strong></div>'
+                + '<div style="font-family:monospace;font-size:0.72rem;color:var(--green);word-break:break-all;margin-top:4px">' + onChain + '</div>'
+                + '</div>';
+        } else {
+            resultDiv.innerHTML = '<div class="result result-mismatch">'
+                + '<h3 style="color:var(--red)"><span style="font-size:1.3rem">⚠️</span> SECURITY ALERT — Record Modified</h3>'
+                + '<p style="color:var(--steel);font-size:0.85rem;line-height:1.6">This record has been <strong>changed since it was originally secured</strong>. The content does not match what was anchored to the blockchain.</p>'
+                + '<div style="margin-top:10px;font-size:0.78rem;color:var(--muted)"><strong>Computed fingerprint:</strong></div>'
+                + '<div style="font-family:monospace;font-size:0.72rem;color:var(--red);word-break:break-all;margin-top:4px">' + computedHash + '</div>'
+                + '<div style="margin-top:6px;font-size:0.78rem;color:var(--muted)"><strong>On-chain fingerprint:</strong></div>'
+                + '<div style="font-family:monospace;font-size:0.72rem;color:var(--accent);word-break:break-all;margin-top:4px">' + onChain + '</div>'
+                + '</div>';
+        }
+        btn.disabled = false;
+        btn.innerHTML = 'Verify Integrity';
+    };
+})();
+</script>
+</body>
+</html>

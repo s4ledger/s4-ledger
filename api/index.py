@@ -174,6 +174,11 @@ def _persist_record(record):
         "org_id": record.get("org_id", ""),
         "source_system": record.get("source_system", ""),
     }
+    # Tier 3: Version chain columns (gracefully ignored if columns don't exist)
+    if record.get("parent_tx_hash"):
+        row["parent_tx_hash"] = record["parent_tx_hash"]
+    if record.get("version_number") and record["version_number"] != 1:
+        row["version_number"] = record["version_number"]
     result = _sb_upsert("records", row)
     if result is None:
         print(f"Record persist failed for {row['record_id']} — in-memory only")
@@ -3590,6 +3595,12 @@ class handler(BaseHTTPRequestHandler):
                 "record_id": data.get("record_id", f"REC-{hashlib.sha256(hash_value.encode()).hexdigest()[:12].upper()}"),
                 "source_system": data.get("source_system", ""),
             }
+            # Tier 3: Version chain — link to parent if re-anchoring
+            parent_tx = data.get("parent_tx_hash", "")
+            if parent_tx and isinstance(parent_tx, str) and len(parent_tx) <= 128:
+                record["parent_tx_hash"] = parent_tx.strip()
+                # Determine version number from parent
+                record["version_number"] = int(data.get("version_number", 2))
             _live_records.append(record)
             _persist_record(record)
 
@@ -7962,6 +7973,75 @@ class handler(BaseHTTPRequestHandler):
                 "explorer_url": explorer_url or "",
                 "approved_at": now.isoformat() + "Z",
             })
+
+        # ── Tier 3: Access Event Logging ──────────────────────────────
+        elif route == "access-event":
+            self._log_request("access-event")
+            record_id = str(data.get("record_id", "")).strip()[:100]
+            record_hash = str(data.get("record_hash", "")).strip()[:128]
+            event_type = str(data.get("event_type", "")).strip()[:50]
+            actor = str(data.get("actor", "")).strip()[:200]
+            actor_role = str(data.get("actor_role", "")).strip()[:100]
+            details = data.get("details", {})
+            if not record_id or not event_type or not actor:
+                self._send_json({"error": "record_id, event_type, and actor are required"}, 400)
+                return
+            allowed_types = {"view", "export", "share", "verify", "modify", "anchor", "re_anchor", "verify_attempt", "verify_complete"}
+            if event_type not in allowed_types:
+                self._send_json({"error": f"event_type must be one of: {', '.join(sorted(allowed_types))}"}, 400)
+                return
+            row = {
+                "record_id": record_id,
+                "record_hash": record_hash,
+                "event_type": event_type,
+                "actor": actor,
+                "actor_role": actor_role or None,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "details": json.dumps(details) if isinstance(details, dict) else "{}",
+            }
+            _sb_insert("access_events", row)
+            self._send_json({"ok": True, "event_type": event_type, "record_id": record_id})
+
+        # ── Tier 3: Record History / Chain of Custody ─────────────────
+        elif route == "record-history":
+            self._log_request("record-history")
+            record_id = str(data.get("record_id", "")).strip()[:100]
+            if not record_id:
+                self._send_json({"error": "record_id is required"}, 400)
+                return
+            events = []
+            # Merge access_events, proof_chains, and verify_audit_log
+            try:
+                sb = _get_supabase()
+                if sb:
+                    # Access events
+                    ae = sb.table("access_events").select("*").eq("record_id", record_id).order("timestamp", desc=False).limit(200).execute()
+                    for row in (ae.data or []):
+                        events.append({
+                            "source": "access",
+                            "event_type": row.get("event_type", ""),
+                            "actor": row.get("actor", ""),
+                            "actor_role": row.get("actor_role"),
+                            "timestamp": row.get("timestamp", ""),
+                            "details": row.get("details", {}),
+                        })
+                    # Proof chain events
+                    pc = sb.table("proof_chains").select("*").eq("record_id", record_id).order("timestamp", desc=False).limit(200).execute()
+                    for row in (pc.data or []):
+                        events.append({
+                            "source": "proof_chain",
+                            "event_type": row.get("event_type", ""),
+                            "actor": row.get("actor", ""),
+                            "timestamp": row.get("timestamp", ""),
+                            "hash": row.get("hash", ""),
+                            "tx_hash": row.get("tx_hash", ""),
+                            "details": row.get("metadata", {}),
+                        })
+                    # Sort merged events by timestamp
+                    events.sort(key=lambda e: e.get("timestamp", ""))
+            except Exception as e:
+                print(f"[record-history] DB error: {e}")
+            self._send_json({"ok": True, "record_id": record_id, "events": events, "count": len(events)})
 
         else:
             self._send_json({"error": "Not found", "path": self.path}, 404)

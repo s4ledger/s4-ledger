@@ -506,6 +506,18 @@
       "destination": "/api"
     },
     {
+      "source": "/api/access-event",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/record-history",
+      "destination": "/api"
+    },
+    {
+      "source": "/v/:path*",
+      "destination": "/verify/index.html"
+    },
+    {
       "source": "/demo",
       "destination": "/prod-app/demo.html"
     },

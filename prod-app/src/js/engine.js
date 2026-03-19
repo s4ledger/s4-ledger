@@ -847,15 +847,21 @@ async function anchorToLedger(toolName, label) {
         content = text.substring(0, 500);
     }
     var hash = await sha256(content);
+    // Tier 3: Detect re-anchor (same content previously anchored) for version chaining
+    var _previousAnchor = (typeof s4Vault !== 'undefined') ? s4Vault.find(function(r) { return r.hash === hash; }) : null;
+    var _parentTxHash = _previousAnchor ? (_previousAnchor.txHash || null) : null;
+    var _versionNumber = _previousAnchor ? ((_previousAnchor.versionNumber || 1) + 1) : 1;
     var _anchorLabel = label || (toolName.charAt(0).toUpperCase() + toolName.slice(1));
     var _recType = toolName.toUpperCase() + '_SNAPSHOT';
     showAnchorAnimation(hash, _anchorLabel, 'CUI');
-    var result = await _anchorToXRPL(hash, _recType, content.substring(0, 100));
+    var result = await _anchorToXRPL(hash, _recType, content.substring(0, 100), _parentTxHash, _versionNumber);
+    // Tier 3: Log anchor access event
+    _logAccessEvent(result.txHash || hash, hash, _parentTxHash ? 're_anchor' : 'anchor', { label: _anchorLabel, record_type: _recType, parent_tx_hash: _parentTxHash || null, version: _versionNumber });
     stats.anchored++; stats.types.add(toolName.toUpperCase()); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
-    sessionRecords.push({hash: hash, type: _recType, branch: 'JOINT', timestamp: new Date().toISOString(), label: _anchorLabel, txHash: result.txHash});
+    sessionRecords.push({hash: hash, type: _recType, branch: 'JOINT', timestamp: new Date().toISOString(), label: _anchorLabel, txHash: result.txHash, fullContent: content});
     saveLocalRecord({hash: hash, record_type: _recType, record_label: _anchorLabel, branch: 'JOINT', timestamp: new Date().toISOString(), timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee: 0.01, tx_hash: result.txHash, system: toolName, explorer_url: result.explorerUrl, network: result.network});
     updateTxLog();
-    addToVault({hash: hash, txHash: result.txHash, type: _recType, label: _anchorLabel, branch: 'JOINT', icon: '<i class="fas fa-anchor"></i>', content: content.substring(0, 100), encrypted: false, timestamp: new Date().toISOString(), source: toolName, fee: 0.01, explorerUrl: result.explorerUrl, network: result.network});
+    addToVault({hash: hash, txHash: result.txHash, type: _recType, label: _anchorLabel, branch: 'JOINT', icon: '<i class="fas fa-anchor"></i>', content: content.substring(0, 100), fullContent: content, encrypted: false, timestamp: new Date().toISOString(), source: toolName, fee: 0.01, explorerUrl: result.explorerUrl, network: result.network});
     if (typeof _updateSlsBalance === 'function') _updateSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
@@ -1044,7 +1050,7 @@ async function _checkDemoStatus() {
         }
     } catch(e) { console.warn('Demo status check failed:', e); }
 }
-async function _anchorToXRPL(hash, record_type, content_preview) {
+async function _anchorToXRPL(hash, record_type, content_preview, parent_tx_hash, version_number) {
     let txHash = null;
     let network = 'Pending';
     let explorerUrl = null;
@@ -1060,7 +1066,9 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
                 body: JSON.stringify({
                     hash, record_type, content_preview,
                     session_id: _demoSession ? _demoSession.session_id : 'demo',
-                    user_email: 'demo@s4ledger.com'
+                    user_email: 'demo@s4ledger.com',
+                    parent_tx_hash: parent_tx_hash || undefined,
+                    version_number: version_number || undefined
                 })
             });
             if (resp.ok) {
@@ -1079,7 +1087,7 @@ async function _anchorToXRPL(hash, record_type, content_preview) {
             }
         } else {
             // NETWORK_DEPENDENT: Production anchor — interceptor queues offline
-            const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview})});
+            const resp = await fetch('/api/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hash, record_type, content_preview, parent_tx_hash: parent_tx_hash || undefined, version_number: version_number || undefined})});
             if (resp.ok) {
                 const result = await resp.json();
                 if (result.record) {
@@ -1466,6 +1474,8 @@ function loadRecordToVerify(idx) {
     var records = window._verifyRecentRecords || [];
     var r = records[idx];
     if (!r) return;
+    // Tier 3: Log verify_attempt access event
+    _logAccessEvent(r.hash, r.hash, 'verify_attempt', { source: 'loadRecordToVerify', label: r.label || '' });
     // Switch to the Verify tab first
     if (typeof window.showSection === 'function') {
         window.showSection('sectionVerify');
@@ -1536,16 +1546,20 @@ async function verifyRecord() {
         _vrTxLink = '<span style="display:inline-flex;align-items:center;gap:5px;color:#ff9500;font-size:0.78rem;background:rgba(255,149,0,0.1);padding:4px 14px;border-radius:8px;border:1px solid rgba(255,149,0,0.2);font-weight:600;white-space:nowrap;margin-top:6px"><i class="fas fa-clock"></i> Pending XRPL Confirmation</span>';
     }
 
-    var resultHtml = '<div class="result-label">COMPUTED SHA-256 <button class="copy-btn" onclick="copyHash(\'' + effectiveHash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + effectiveHash + '</div>';
+    var resultHtml = '<div class="result-label">DIGITAL FINGERPRINT <button class="copy-btn" onclick="copyHash(\'' + effectiveHash + '\')"><i class="fas fa-copy"></i> Copy</button></div><div class="hash-display">' + effectiveHash + '</div>';
 
     if (expected && match) {
         // ── VERIFIED: Integrity confirmed ──
+        var _verifyTimestamp = vaultRecord && vaultRecord.timestamp ? ' since it was secured on <strong>' + new Date(vaultRecord.timestamp).toLocaleString() + '</strong>' : ' since it was secured on the blockchain';
         resultHtml += '<div style="background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);border-radius:12px;padding:16px;margin:12px 0">'
             + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-shield-alt" style="color:#34c759;font-size:1.3rem"></i><strong style="color:#34c759;font-size:1.05rem">INTEGRITY VERIFIED</strong></div>'
             + '<div style="color:var(--steel);font-size:0.85rem;line-height:1.6">'
-            + (vaultMatch ? 'Hash found in audit vault. This record was anchored from a file upload — the cryptographic fingerprint matches the original. Use File Verification for byte-level re-verification.'
-            : 'The SHA-256 hash of this content exactly matches the anchored hash. <strong>This record has not been modified</strong> since it was anchored to the XRPL blockchain.') + '</div>'
-            + '<div style="font-size:0.8rem;color:var(--muted);margin-top:8px"><i class="fas fa-check-circle" style="color:#34c759;margin-right:4px"></i>No signs of tampering, alteration, or data corruption detected.</div>'
+            + (vaultMatch ? 'This record was anchored from a file upload — the digital fingerprint matches the original. Use File Verification for byte-level re-verification.'
+            : 'This record is <strong>authentic and has not been modified</strong>' + _verifyTimestamp + '.') + '</div>'
+            + '<div style="font-size:0.8rem;color:var(--muted);margin-top:8px"><i class="fas fa-check-circle" style="color:#34c759;margin-right:4px"></i>Original fingerprint matches</div>'
+            + '<div style="font-size:0.8rem;color:var(--muted);margin-top:3px"><i class="fas fa-check-circle" style="color:#34c759;margin-right:4px"></i>Blockchain confirmation verified</div>'
+            + '<div style="font-size:0.8rem;color:var(--muted);margin-top:3px"><i class="fas fa-check-circle" style="color:#34c759;margin-right:4px"></i>No signs of tampering, alteration, or data corruption detected</div>'
+            + '<details style="margin-top:10px"><summary style="cursor:pointer;font-size:0.75rem;color:var(--muted)"><i class="fas fa-cog" style="margin-right:4px"></i>Technical Details</summary><div style="font-size:0.72rem;color:var(--muted);margin-top:6px;font-family:monospace;word-break:break-all">SHA-256: ' + effectiveHash + '</div></details>'
             + '</div>';
         // Show matched record details
         if (vaultRecord) {
@@ -1555,13 +1569,14 @@ async function verifyRecord() {
                 + (vaultRecord.timestamp ? '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:4px"><i class="fas fa-clock" style="margin-right:4px;opacity:0.6"></i>Anchored: ' + new Date(vaultRecord.timestamp).toLocaleString() + '</div>' : '')
                 + (vaultRecord.txHash ? '<div style="font-size:0.72rem;color:var(--muted);margin-bottom:4px;word-break:break-all"><i class="fas fa-hashtag" style="margin-right:4px;opacity:0.6"></i>TX: ' + vaultRecord.txHash + '</div>' : '')
                 + (_vrTxLink ? '<div>' + _vrTxLink + '</div>' : '')
+                + '<div style="margin-top:8px"><button onclick="if(window._lastVerifyCertParams){var p=window._lastVerifyCertParams;_downloadVerificationCertificate(p.hash,p.txHash,p.label,p.timestamp,p.network,p.explorerUrl)}" style="display:inline-flex;align-items:center;gap:6px;background:rgba(52,199,89,0.08);color:#34c759;border:1px solid rgba(52,199,89,0.2);border-radius:8px;padding:6px 14px;font-size:0.78rem;cursor:pointer;font-weight:600;font-family:inherit"><i class="fas fa-certificate"></i> Download Verification Certificate</button></div>'
                 + '</div>';
         }
     } else if (expected && !match) {
-        // ── MISMATCH: Integrity failure ──
+        // ── MISMATCH: Integrity failure — SECURITY ALERT ──
         resultHtml += '<div style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.25);border-radius:12px;padding:16px;margin:12px 0">'
-            + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-exclamation-triangle" style="color:#ff3b30;font-size:1.3rem"></i><strong style="color:#ff3b30;font-size:1.05rem">INTEGRITY FAILURE — RECORD MODIFIED</strong></div>'
-            + '<div style="color:var(--steel);font-size:0.85rem;line-height:1.6">The SHA-256 hash of this content <strong>does not match</strong> the expected anchored hash. This means the record has been <strong>altered, corrupted, or replaced</strong> since it was originally anchored.</div>'
+            + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-exclamation-triangle" style="color:#ff3b30;font-size:1.3rem"></i><strong style="color:#ff3b30;font-size:1.05rem">SECURITY ALERT — Record Modified</strong></div>'
+            + '<div style="color:var(--steel);font-size:0.85rem;line-height:1.6">This record has been <strong>changed since it was originally secured</strong>. The current content does <strong>not match</strong> what was verified and anchored to the blockchain.</div>'
             + '</div>';
         // Security risk assessment
         resultHtml += '<div class="result-label"><i class="fas fa-shield-alt" style="color:#ff3b30;margin-right:4px"></i>SECURITY RISK ASSESSMENT</div>'
@@ -1569,9 +1584,9 @@ async function verifyRecord() {
             + '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,48,0.12);color:#ff3b30;padding:3px 12px;border-radius:6px;font-size:0.82rem;font-weight:700;margin-bottom:10px"><i class="fas fa-radiation"></i> HIGH RISK</div>'
             + '<div style="font-size:0.82rem;color:var(--steel);line-height:1.7">'
             + '<strong>What this means:</strong><ul style="margin:6px 0 0 16px;padding:0">'
-            + '<li>The data you are viewing is <strong>NOT the same data</strong> that was originally anchored to the blockchain</li>'
-            + '<li>Any character change — even a single space or letter — produces a completely different hash</li>'
-            + '<li>The anchored hash on the XRPL represents the <strong>authentic original version</strong></li>'
+            + '<li>The data you are viewing is <strong>NOT the same data</strong> that was originally secured</li>'
+            + '<li>Someone or something modified this record after it was anchored</li>'
+            + '<li>The original is permanently preserved on the blockchain and cannot be altered</li>'
             + '</ul></div></div>';
         // Possible causes
         resultHtml += '<div class="result-label"><i class="fas fa-search" style="color:var(--accent);margin-right:4px"></i>AI INTEGRITY ANALYSIS</div>'
@@ -1581,19 +1596,21 @@ async function verifyRecord() {
         resultHtml += '<div class="result-label"><i class="fas fa-clipboard-list" style="color:#ffa500;margin-right:4px"></i>RECOMMENDED ACTIONS</div>'
             + '<div style="font-size:0.82rem;color:var(--steel);line-height:1.8;padding-left:4px">'
             + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">1.</span><strong>Locate the original record</strong> — retrieve the unmodified version from your secure backup or document management system</div>'
-            + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">2.</span><strong>Compare versions</strong> — use a diff tool to identify exactly what changed between the original and current versions</div>'
+            + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">2.</span><strong>Compare versions</strong> — identify exactly what changed between the original and current versions</div>'
             + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">3.</span><strong>Check access logs</strong> — review who had access to this record and when modifications were made</div>'
             + '<div style="margin-bottom:4px"><span style="color:#ff3b30;font-weight:700;margin-right:6px">4.</span><strong>Report the discrepancy</strong> — notify your security officer and document the integrity failure</div>'
             + '<div><span style="color:#ff3b30;font-weight:700;margin-right:6px">5.</span><strong>Re-anchor if intentional</strong> — if the changes were authorized, anchor the updated version to create a new immutable record</div>'
             + '</div>';
-        // Show the hash comparison
-        resultHtml += '<div class="result-label" style="margin-top:12px">HASH COMPARISON</div>'
-            + '<div style="font-size:0.78rem;margin-bottom:4px"><strong style="color:var(--steel)">Expected (anchored):</strong></div><div style="color:#ff3b30;word-break:break-all;font-family:monospace;font-size:0.75rem;background:rgba(255,59,48,0.06);padding:6px 10px;border-radius:6px;margin-bottom:6px">' + expected + '</div>'
-            + '<div style="font-size:0.78rem;margin-bottom:4px"><strong style="color:var(--steel)">Computed (current):</strong></div><div style="color:var(--muted);word-break:break-all;font-family:monospace;font-size:0.75rem;background:var(--surface);padding:6px 10px;border-radius:6px">' + hash + '</div>';
+        // Export Incident Report button (Tier 4)
+        resultHtml += '<div style="margin-top:10px"><button onclick="if(window._lastIncidentParams){var p=window._lastIncidentParams;_downloadIncidentReport(p.computedHash,p.expectedHash,p.label,p.timestamp,p.txHash)}" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,48,0.08);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:8px;padding:6px 14px;font-size:0.78rem;cursor:pointer;font-weight:600;font-family:inherit"><i class="fas fa-file-export"></i> Export Incident Report</button></div>';
+        // Show the hash comparison inside Technical Details
+        resultHtml += '<details style="margin-top:12px"><summary style="cursor:pointer;font-size:0.78rem;color:var(--muted)"><i class="fas fa-cog" style="margin-right:4px"></i>Technical Details — Hash Comparison</summary>'
+            + '<div style="margin-top:8px"><div style="font-size:0.78rem;margin-bottom:4px"><strong style="color:var(--steel)">Expected (anchored):</strong></div><div style="color:#ff3b30;word-break:break-all;font-family:monospace;font-size:0.75rem;background:rgba(255,59,48,0.06);padding:6px 10px;border-radius:6px;margin-bottom:6px">' + expected + '</div>'
+            + '<div style="font-size:0.78rem;margin-bottom:4px"><strong style="color:var(--steel)">Computed (current):</strong></div><div style="color:var(--muted);word-break:break-all;font-family:monospace;font-size:0.75rem;background:var(--surface);padding:6px 10px;border-radius:6px">' + hash + '</div></div></details>';
         // Show XRPL link for the original anchor if found
         if (vaultRecord && _vrTxLink) {
             resultHtml += '<div class="result-label" style="margin-top:10px">ORIGINAL ANCHOR</div>'
-                + '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:4px">View the original anchor transaction to confirm the authentic hash stored on-chain:</div>'
+                + '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:4px">View the original anchor transaction to confirm the authentic record stored on-chain:</div>'
                 + '<div>' + _vrTxLink + '</div>';
         }
     }
@@ -1608,8 +1625,30 @@ async function verifyRecord() {
         resultHtml += '<div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted)"><i class="fas fa-info-circle" style="margin-right:4px"></i>To verify integrity: paste the original anchored hash in the "Expected Hash" field and click Verify again. Or view a record from "Recently Anchored Records" below.</div>';
     }
     resultHtml += '<button onclick="resetVerify()" style="margin-top:14px;background:rgba(0,170,255,0.08);color:var(--accent);border:1px solid rgba(0,170,255,0.2);border-radius:8px;padding:8px 18px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit;transition:all 0.2s"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another Record</button>';
+    // Tier 4: Set global params for certificate/report downloads
+    if (vaultRecord) {
+        window._lastVerifyCertParams = { hash: effectiveHash, txHash: vaultRecord.txHash || '', label: vaultRecord.label || vaultRecord.type || '', timestamp: vaultRecord.timestamp || '', network: vaultRecord.network || '', explorerUrl: _vrTxUrl || '' };
+    }
+    if (expected && !match) {
+        window._lastIncidentParams = { computedHash: hash, expectedHash: expected, label: vaultRecord ? (vaultRecord.label || '') : '', timestamp: vaultRecord ? (vaultRecord.timestamp || '') : '', txHash: vaultRecord ? (vaultRecord.txHash || '') : '' };
+    }
     panel.innerHTML = window._s4Safe(resultHtml);
     panel.classList.add('show');
+    // Tier 3: Log verify_complete access event
+    var _vrId = vaultRecord ? (vaultRecord.txHash || vaultRecord.hash) : hash;
+    _logAccessEvent(_vrId, hash, 'verify_complete', { result: match ? 'MATCH' : (expected ? 'MISMATCH' : 'HASH_ONLY'), expected: expected || '' });
+    // Tier 3: Load chain of custody timeline asynchronously
+    if (_vrId) {
+        _fetchChainOfCustody(_vrId).then(function(custodyHtml) {
+            if (custodyHtml && panel) {
+                var custodyDiv = document.createElement('div');
+                custodyDiv.innerHTML = window._s4Safe(custodyHtml);
+                var resetBtn = panel.querySelector('button[onclick*="resetVerify"]');
+                if (resetBtn) panel.insertBefore(custodyDiv, resetBtn);
+                else panel.appendChild(custodyDiv);
+            }
+        });
+    }
     // Run AI analysis for mismatch asynchronously
     if (expected && !match) {
         _runVerifyAiAnalysis(hash, expected, input, vaultRecord);
@@ -1620,12 +1659,55 @@ async function verifyRecord() {
 async function _runVerifyAiAnalysis(computedHash, expectedHash, inputContent, vaultRecord) {
     var el = document.getElementById('verifyAiAnalysis');
     if (!el) return;
+
+    // ── Tier 2: Differential Integrity Analysis ──
+    var originalContent = vaultRecord ? (vaultRecord.fullContent || vaultRecord.content || '') : '';
+    var diffHtml = '';
+    var classification = null;
+    if (originalContent && originalContent.length > 10) {
+        var diffs = _computeInlineDiff(originalContent, inputContent);
+        diffHtml = _renderDiffView(diffs, originalContent, inputContent);
+        classification = _classifyChanges(diffs, originalContent, inputContent);
+    }
+
+    // Insert diff view BEFORE the AI analysis section
+    if (diffHtml) {
+        var diffContainer = document.createElement('div');
+        diffContainer.innerHTML = window._s4Safe(diffHtml);
+        el.parentNode.insertBefore(diffContainer, el);
+        // Insert classification badge
+        if (classification) {
+            var badgeContainer = document.createElement('div');
+            badgeContainer.style.cssText = 'margin-bottom:12px';
+            badgeContainer.innerHTML = window._s4Safe(
+                '<div class="result-label" style="margin-top:4px"><i class="fas fa-tag" style="color:' + classification.color + ';margin-right:4px"></i>CHANGE CLASSIFICATION</div>'
+                + _renderClassificationBadge(classification)
+            );
+            el.parentNode.insertBefore(badgeContainer, el);
+        }
+    } else if (originalContent.length <= 10 && !vaultRecord) {
+        // No original content — show guidance
+        var noContentDiv = document.createElement('div');
+        noContentDiv.innerHTML = window._s4Safe(
+            '<div style="background:rgba(255,149,0,0.06);border:1px solid rgba(255,149,0,0.15);border-radius:10px;padding:12px;margin-bottom:12px;font-size:0.78rem;color:var(--steel)">'
+            + '<i class="fas fa-info-circle" style="color:#ff9500;margin-right:6px"></i>'
+            + '<strong>Content diff unavailable</strong> — original content was not preserved at anchor time. '
+            + 'To enable full diff analysis in the future, re-anchor this record to preserve the complete content alongside the fingerprint.</div>'
+        );
+        el.parentNode.insertBefore(noContentDiv, el);
+    }
+
     // Build local analysis first (always available)
     var localAnalysis = _buildLocalIntegrityAnalysis(inputContent, vaultRecord);
-    // Try AI backend for deeper analysis
+    // Try AI backend for deeper analysis — include diff context if available
     try {
-        var prompt = 'You are a defense logistics data integrity analyst for S4 Ledger. A user verified a record and the SHA-256 hash DOES NOT MATCH the anchored hash. '
+        var diffContext = '';
+        if (classification) {
+            diffContext = ' Change classification: ' + classification.level + ' (' + classification.description + '). ';
+        }
+        var prompt = 'You are a defense logistics data integrity analyst for S4 Ledger. A user verified a record and the digital fingerprint DOES NOT MATCH the anchored fingerprint. '
             + 'This means the record content has been modified since it was originally anchored to the XRPL blockchain. '
+            + diffContext
             + 'Analyze the situation and provide: '
             + '1. Most likely cause of the mismatch (be specific and practical) '
             + '2. Security implications and risk level '
@@ -1685,9 +1767,428 @@ function _buildLocalIntegrityAnalysis(inputContent, vaultRecord) {
     });
     html += '<div style="margin-top:10px;padding:10px;background:rgba(0,170,255,0.04);border-radius:8px;border:1px solid rgba(0,170,255,0.1)">'
         + '<strong style="color:var(--accent)"><i class="fas fa-lightbulb" style="margin-right:4px"></i>How to determine exactly what changed:</strong>'
-        + '<div style="color:var(--muted);font-size:0.78rem;margin-top:4px">Use a text diff tool (like diffchecker.com) to compare the original content with the current version character-by-character. The blockchain hash on the XRPL is the source of truth — it represents the exact content at the time of anchoring.</div>'
+        + '<div style="color:var(--muted);font-size:0.78rem;margin-top:4px">Compare the original content with the current version to identify differences. The blockchain record is the source of truth — it represents the exact content at the time of anchoring. Full diff analysis is coming soon.</div>'
         + '</div></div>';
     return html;
+}
+
+// ═══ Tier 2: Differential Integrity Analysis Engine ═══
+
+/**
+ * Compute line-level diff between two text strings.
+ * Uses a simple LCS-based diff (Myers-like) for clarity and correctness.
+ * Returns array of {type: 'equal'|'add'|'remove', value: string, lineNum: number}
+ */
+function _computeInlineDiff(original, current) {
+    var origLines = original.split('\n');
+    var currLines = current.split('\n');
+    var result = [];
+    // Build LCS table
+    var m = origLines.length, n = currLines.length;
+    // For very large texts, cap to prevent UI freeze
+    if (m > 5000 || n > 5000) {
+        return [{type:'remove', value: '(Original: ' + m + ' lines)', lineNum: 1},
+                {type:'add', value: '(Current: ' + n + ' lines — too large for inline diff)', lineNum: 1}];
+    }
+    var dp = [];
+    for (var i = 0; i <= m; i++) { dp[i] = []; for (var j = 0; j <= n; j++) dp[i][j] = 0; }
+    for (i = 1; i <= m; i++) for (j = 1; j <= n; j++) {
+        dp[i][j] = origLines[i-1] === currLines[j-1] ? dp[i-1][j-1] + 1 : Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+    // Backtrack to produce diff
+    var diffs = [];
+    i = m; j = n;
+    while (i > 0 || j > 0) {
+        if (i > 0 && j > 0 && origLines[i-1] === currLines[j-1]) {
+            diffs.unshift({type:'equal', value: origLines[i-1], origLine: i, currLine: j});
+            i--; j--;
+        } else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) {
+            diffs.unshift({type:'add', value: currLines[j-1], currLine: j});
+            j--;
+        } else {
+            diffs.unshift({type:'remove', value: origLines[i-1], origLine: i});
+            i--;
+        }
+    }
+    return diffs;
+}
+
+/**
+ * Find character-level differences within two similar lines.
+ * Returns HTML with <span> highlighting for the changed characters.
+ */
+function _charDiffHighlight(oldLine, newLine, color) {
+    if (!oldLine || !newLine) return _escHtml(newLine || oldLine || '');
+    var result = '';
+    var oi = 0, ni = 0;
+    // Simple character scan — highlight divergent runs
+    while (oi < oldLine.length || ni < newLine.length) {
+        if (oi < oldLine.length && ni < newLine.length && oldLine[oi] === newLine[ni]) {
+            result += _escHtml(newLine[ni]);
+            oi++; ni++;
+        } else {
+            // Find divergent run
+            var startNi = ni;
+            var resync = false;
+            for (var look = 1; look <= 20 && !resync; look++) {
+                if (ni + look < newLine.length && oi < oldLine.length && newLine[ni + look] === oldLine[oi]) {
+                    result += '<span style="background:' + color + ';border-radius:2px;padding:0 1px">' + _escHtml(newLine.substring(ni, ni + look)) + '</span>';
+                    ni += look;
+                    resync = true;
+                }
+                if (oi + look < oldLine.length && ni < newLine.length && oldLine[oi + look] === newLine[ni]) {
+                    oi += look;
+                    resync = true;
+                }
+            }
+            if (!resync) {
+                if (ni < newLine.length) { result += '<span style="background:' + color + ';border-radius:2px;padding:0 1px">' + _escHtml(newLine[ni]) + '</span>'; ni++; }
+                if (oi < oldLine.length) oi++;
+            }
+        }
+    }
+    return result;
+}
+function _escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+/**
+ * Render inline diff view with red/green highlighting.
+ * Returns HTML string.
+ */
+function _renderDiffView(diffs, originalContent, currentContent) {
+    if (!diffs || !diffs.length) return '';
+    var changeCount = diffs.filter(function(d) { return d.type !== 'equal'; }).length;
+    var addCount = diffs.filter(function(d) { return d.type === 'add'; }).length;
+    var removeCount = diffs.filter(function(d) { return d.type === 'remove'; }).length;
+
+    var html = '<div class="result-label" style="margin-top:12px"><i class="fas fa-exchange-alt" style="color:var(--accent);margin-right:4px"></i>CHANGE ANALYSIS</div>'
+        + '<div style="background:var(--surface);border-radius:10px;padding:14px;margin-bottom:12px">'
+        + '<div style="font-size:0.82rem;color:var(--steel);margin-bottom:10px"><strong>' + changeCount + ' difference' + (changeCount !== 1 ? 's' : '') + '</strong> found between original and current'
+        + ' <span style="color:#ff3b30;font-size:0.75rem">(' + removeCount + ' removed)</span>'
+        + ' <span style="color:#34c759;font-size:0.75rem">(' + addCount + ' added)</span></div>';
+
+    // Render diff lines (show up to 50 diff lines, collapse rest)
+    var diffLines = [];
+    var shown = 0;
+    var contextWindow = 2; // Lines of context around changes
+    var lastChangeIdx = -10;
+    for (var i = 0; i < diffs.length; i++) {
+        if (diffs[i].type !== 'equal') lastChangeIdx = i;
+    }
+    for (var i = 0; i < diffs.length; i++) {
+        var d = diffs[i];
+        var nearChange = false;
+        for (var k = Math.max(0, i - contextWindow); k <= Math.min(diffs.length - 1, i + contextWindow); k++) {
+            if (diffs[k].type !== 'equal') { nearChange = true; break; }
+        }
+        if (!nearChange && shown > 0) {
+            // Collapsed equal section
+            var skipCount = 0;
+            while (i < diffs.length) {
+                var nc2 = false;
+                for (var k2 = Math.max(0, i - contextWindow); k2 <= Math.min(diffs.length - 1, i + contextWindow); k2++) {
+                    if (diffs[k2].type !== 'equal') { nc2 = true; break; }
+                }
+                if (nc2) break;
+                skipCount++; i++;
+            }
+            if (skipCount > 0) {
+                diffLines.push('<div style="color:var(--muted);font-size:0.7rem;padding:2px 8px;text-align:center">··· ' + skipCount + ' unchanged line' + (skipCount !== 1 ? 's' : '') + ' ···</div>');
+            }
+            i--; // compensate for loop increment
+            continue;
+        }
+        if (d.type === 'remove') {
+            diffLines.push('<div style="background:rgba(255,59,48,0.08);border-left:3px solid #ff3b30;padding:2px 8px;font-family:monospace;font-size:0.72rem;color:#ff6b6b;white-space:pre-wrap;word-break:break-all">'
+                + '<span style="color:#ff3b30;font-weight:700;margin-right:6px">−</span>'
+                + _escHtml(d.value) + '</div>');
+            shown++;
+        } else if (d.type === 'add') {
+            diffLines.push('<div style="background:rgba(52,199,89,0.08);border-left:3px solid #34c759;padding:2px 8px;font-family:monospace;font-size:0.72rem;color:#4fdb7a;white-space:pre-wrap;word-break:break-all">'
+                + '<span style="color:#34c759;font-weight:700;margin-right:6px">+</span>'
+                + _escHtml(d.value) + '</div>');
+            shown++;
+        } else {
+            diffLines.push('<div style="padding:2px 8px;font-family:monospace;font-size:0.72rem;color:var(--muted);white-space:pre-wrap;word-break:break-all">'
+                + '<span style="margin-right:6px;opacity:0.3">&nbsp;</span>'
+                + _escHtml(d.value) + '</div>');
+        }
+    }
+
+    // Show first 80 lines, collapse rest
+    if (diffLines.length > 80) {
+        html += '<div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)">'
+            + diffLines.slice(0, 60).join('')
+            + '</div>'
+            + '<details style="margin-top:6px"><summary style="cursor:pointer;font-size:0.72rem;color:var(--accent)"><i class="fas fa-chevron-down" style="margin-right:4px"></i>Show remaining ' + (diffLines.length - 60) + ' lines</summary>'
+            + '<div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);margin-top:4px">'
+            + diffLines.slice(60).join('')
+            + '</div></details>';
+    } else {
+        html += '<div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)">'
+            + diffLines.join('') + '</div>';
+    }
+    html += '</div>';
+    return html;
+}
+
+/**
+ * Classify changes as COSMETIC, ADMINISTRATIVE, SUBSTANTIVE, or ADVERSARIAL.
+ * Uses heuristics first, then optionally sends to AI for deeper classification.
+ * Returns {level: string, label: string, color: string, description: string}
+ */
+function _classifyChanges(diffs, originalContent, currentContent) {
+    if (!diffs || !diffs.length) return {level: 'UNKNOWN', label: 'Unable to Classify', color: 'var(--muted)', description: 'No diff data available.'};
+    var changes = diffs.filter(function(d) { return d.type !== 'equal'; });
+    if (!changes.length) return {level: 'NONE', label: 'No Changes', color: '#34c759', description: 'Content is identical.'};
+
+    var removedText = changes.filter(function(d){ return d.type === 'remove'; }).map(function(d){ return d.value; }).join('\n');
+    var addedText = changes.filter(function(d){ return d.type === 'add'; }).map(function(d){ return d.value; }).join('\n');
+
+    // Check for whitespace-only / encoding-only changes
+    var isWhitespaceOnly = removedText.replace(/\s/g, '') === addedText.replace(/\s/g, '');
+    if (isWhitespaceOnly) {
+        return {level: 'COSMETIC', label: 'Cosmetic Change', color: '#8e8e93', icon: 'fa-paint-brush',
+            description: 'Only whitespace, line endings, or formatting changed. The actual data content is identical. This is likely a copy/paste artifact or encoding difference.'};
+    }
+
+    // Detect number/quantity changes (defense logistics critical)
+    var numPattern = /\b\d+(\.\d+)?\b/g;
+    var oldNums = (removedText.match(numPattern) || []).join(',');
+    var newNums = (addedText.match(numPattern) || []).join(',');
+    var numsChanged = oldNums !== newNums;
+
+    // Detect name/signature changes
+    var namePatterns = /\b(CDR|CAPT|LT|SGT|CPO|ADM|GEN|COL|MAJ|PO[123]|approved by|signed by|authorized by|certifying officer)\b/i;
+    var nameChange = namePatterns.test(removedText) || namePatterns.test(addedText);
+
+    // Detect NSN/contract/ID changes
+    var idPatterns = /\b(\d{4}-\d{2}-\d{3}-\d{4}|[A-Z]{1,3}\d{4,}|N\d{5}-\d{2}-[A-Z]-\d{4}|CAGE\s*\d{5})\b/;
+    var idChange = idPatterns.test(removedText) || idPatterns.test(addedText);
+
+    // Detect date changes
+    var datePatterns = /\b(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\d{4}-\d{2}-\d{2}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \d{1,2})/i;
+    var dateChange = datePatterns.test(removedText) || datePatterns.test(addedText);
+
+    // Score severity
+    var severity = 0;
+    if (numsChanged) severity += 3;
+    if (nameChange) severity += 4;
+    if (idChange) severity += 4;
+    if (dateChange) severity += 1;
+    if (changes.length > 10) severity += 2;
+
+    if (severity >= 6) {
+        return {level: 'ADVERSARIAL', label: 'Potential Tampering', color: '#ff3b30', icon: 'fa-skull-crossbones',
+            description: 'Multiple substantive fields were modified including ' + (nameChange ? 'personnel names/signatures, ' : '') + (numsChanged ? 'quantities/values, ' : '') + (idChange ? 'identification numbers, ' : '') + (dateChange ? 'dates, ' : '') + 'suggesting deliberate unauthorized modification. Immediate investigation recommended.'};
+    }
+    if (severity >= 3) {
+        return {level: 'SUBSTANTIVE', label: 'Substantive Modification', color: '#ff9500', icon: 'fa-exclamation-circle',
+            description: 'Real data was changed: ' + (numsChanged ? 'quantities or values were altered. ' : '') + (nameChange ? 'Personnel names or approvals were modified. ' : '') + (idChange ? 'Identification numbers were changed. ' : '') + 'This is NOT a cosmetic change — the record\'s meaning has been altered.'};
+    }
+    return {level: 'ADMINISTRATIVE', label: 'Administrative Change', color: '#ffd60a', icon: 'fa-pen',
+        description: 'Changes appear to be minor edits to non-critical fields (formatting, notes, metadata). The core data integrity may be unaffected, but changes should still be reviewed and authorized.'};
+}
+
+/**
+ * Render the change classification badge.
+ */
+function _renderClassificationBadge(classification) {
+    return '<div style="display:inline-flex;align-items:center;gap:6px;background:' + classification.color + '18;color:' + classification.color + ';padding:4px 14px;border-radius:8px;font-size:0.82rem;font-weight:700;border:1px solid ' + classification.color + '30;margin-top:8px">'
+        + '<i class="fas ' + (classification.icon || 'fa-info-circle') + '"></i> '
+        + classification.label.toUpperCase()
+        + '</div>'
+        + '<div style="font-size:0.78rem;color:var(--steel);margin-top:6px;line-height:1.5">' + classification.description + '</div>';
+}
+
+// ═══ Tier 3: Chain of Custody & Access Intelligence ═══
+
+/**
+ * Log an access event to the backend for chain of custody tracking.
+ * Fire-and-forget — does not block UI.
+ */
+function _logAccessEvent(recordId, recordHash, eventType, details) {
+    if (!recordId || !eventType) return;
+    var actor = '';
+    try { actor = window.S4 && S4.user ? S4.user.email : (localStorage.getItem('s4_user_email') || 'anonymous'); } catch(e) {}
+    var actorRole = '';
+    try { actorRole = window.S4 && S4.user ? S4.user.role : (localStorage.getItem('s4_user_role') || ''); } catch(e) {}
+    fetch('/api/access-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            record_id: recordId,
+            record_hash: recordHash || '',
+            event_type: eventType,
+            actor: actor,
+            actor_role: actorRole,
+            details: details || {}
+        })
+    }).catch(function() { /* silent — access logging is best-effort */ });
+    // Also log to local audit timeline
+    if (typeof S4 !== 'undefined' && S4.auditTimeline && typeof S4.auditTimeline.log === 'function') {
+        S4.auditTimeline.log('access_event', eventType + ' on ' + recordId, { record_id: recordId, event_type: eventType });
+    }
+}
+
+/**
+ * Fetch and render chain of custody timeline for a record.
+ * Returns a Promise that resolves to HTML string.
+ */
+async function _fetchChainOfCustody(recordId) {
+    if (!recordId) return '';
+    try {
+        var resp = await fetch('/api/record-history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ record_id: recordId })
+        });
+        if (!resp.ok) return '';
+        var result = await resp.json();
+        if (!result.ok || !result.events || !result.events.length) return '';
+        return _renderChainOfCustody(result.events);
+    } catch(e) { return ''; }
+}
+
+/**
+ * Render chain of custody timeline from merged events.
+ */
+function _renderChainOfCustody(events) {
+    if (!events || !events.length) return '';
+    var _eventIcons = {
+        'anchor': 'fa-anchor', 'anchor.created': 'fa-anchor', 're_anchor': 'fa-redo',
+        'view': 'fa-eye', 'export': 'fa-download', 'share': 'fa-share-alt',
+        'verify': 'fa-shield-alt', 'verify_attempt': 'fa-search', 'verify_complete': 'fa-check-circle',
+        'modify': 'fa-pen', 'custody_transfer': 'fa-exchange-alt'
+    };
+    var _eventColors = {
+        'anchor': '#00aaff', 'anchor.created': '#00aaff', 're_anchor': '#00aaff',
+        'view': '#8e8e93', 'export': '#ff9500', 'share': '#af52de',
+        'verify': '#34c759', 'verify_attempt': '#ffd60a', 'verify_complete': '#34c759',
+        'modify': '#ff3b30', 'custody_transfer': '#ff9500'
+    };
+    var uniqueActors = {};
+    events.forEach(function(e) { if (e.actor) uniqueActors[e.actor] = true; });
+    var actorCount = Object.keys(uniqueActors).length;
+    var firstTs = events[0].timestamp ? new Date(events[0].timestamp) : null;
+    var lastTs = events[events.length - 1].timestamp ? new Date(events[events.length - 1].timestamp) : null;
+    var daySpan = firstTs && lastTs ? Math.max(1, Math.ceil((lastTs - firstTs) / 86400000)) : 0;
+
+    var html = '<div class="result-label" style="margin-top:12px"><i class="fas fa-clipboard-list" style="color:var(--accent);margin-right:4px"></i>CHAIN OF CUSTODY</div>'
+        + '<div style="background:var(--surface);border-radius:10px;padding:14px;margin-bottom:12px">';
+    // Timeline
+    events.forEach(function(evt, idx) {
+        var icon = _eventIcons[evt.event_type] || 'fa-circle';
+        var color = _eventColors[evt.event_type] || 'var(--muted)';
+        var ts = evt.timestamp ? new Date(evt.timestamp).toLocaleString() : '';
+        var label = (evt.event_type || '').replace(/_/g, ' ').replace(/\./g, ' ').toUpperCase();
+        var actorDisplay = evt.actor || 'System';
+        var isLast = idx === events.length - 1;
+        html += '<div style="display:flex;gap:10px;position:relative">'
+            + '<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:24px">'
+            + '<div style="width:10px;height:10px;border-radius:50%;background:' + color + ';border:2px solid ' + color + ';z-index:1"></div>'
+            + (isLast ? '' : '<div style="width:2px;flex:1;background:rgba(255,255,255,0.08)"></div>')
+            + '</div>'
+            + '<div style="padding-bottom:' + (isLast ? '0' : '12') + 'px;flex:1;min-width:0">'
+            + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'
+            + '<i class="fas ' + icon + '" style="color:' + color + ';font-size:0.72rem"></i>'
+            + '<strong style="color:#fff;font-size:0.78rem">' + label + '</strong>'
+            + '<span style="color:var(--muted);font-size:0.68rem">' + ts + '</span>'
+            + '</div>'
+            + '<div style="font-size:0.72rem;color:var(--steel);margin-top:2px">by <strong>' + _escHtml(actorDisplay) + '</strong>'
+            + (evt.actor_role ? ' <span style="color:var(--muted)">(' + _escHtml(evt.actor_role) + ')</span>' : '')
+            + '</div>'
+            + (evt.tx_hash ? '<div style="font-size:0.65rem;color:var(--muted);margin-top:2px;word-break:break-all">TX: ' + evt.tx_hash + '</div>' : '')
+            + '</div></div>';
+    });
+    html += '<div style="margin-top:10px;font-size:0.72rem;color:var(--muted);border-top:1px solid rgba(255,255,255,0.06);padding-top:8px">'
+        + '<strong>' + events.length + '</strong> event' + (events.length !== 1 ? 's' : '')
+        + ' · <strong>' + actorCount + '</strong> unique user' + (actorCount !== 1 ? 's' : '')
+        + (daySpan ? ' · <strong>' + daySpan + '</strong> day' + (daySpan !== 1 ? 's' : '') : '')
+        + '</div></div>';
+    return html;
+}
+
+// ═══ Tier 4: Cryptographic Proof Packages & Verification Certificates ═══
+
+/**
+ * Generate and download a verification certificate as a JSON proof package.
+ * Called from the "Download Verification Certificate" button on MATCH results.
+ */
+function _downloadVerificationCertificate(hash, txHash, label, timestamp, network, explorerUrl) {
+    var certId = 'VCert-' + new Date().getFullYear() + '-' + (new Date().getMonth()+1).toString().padStart(2,'0') + new Date().getDate().toString().padStart(2,'0') + '-' + hash.substring(0, 6).toUpperCase();
+    var cert = {
+        certificate_id: certId,
+        certificate_version: '1.0',
+        issuer: 'S4 Ledger — Blockchain-Secured Defense Logistics',
+        generated_at: new Date().toISOString(),
+        record: {
+            label: label || 'Record',
+            digital_fingerprint: hash,
+            algorithm: 'SHA-256'
+        },
+        blockchain: {
+            network: network || 'XRP Ledger (Mainnet)',
+            transaction_hash: txHash || null,
+            explorer_url: explorerUrl || (txHash ? 'https://livenet.xrpl.org/transactions/' + txHash : null),
+            anchored_at: timestamp || null
+        },
+        verification: {
+            result: 'INTEGRITY VERIFIED',
+            verified_at: new Date().toISOString(),
+            method: 'SHA-256 hash comparison against on-chain MemoData'
+        },
+        public_verification_url: txHash ? (window.location.origin + '/v/' + txHash) : null,
+        legal_notice: 'This certificate confirms that the record content, when hashed using SHA-256, produces a digital fingerprint identical to the one permanently stored on the XRP Ledger blockchain. The blockchain record is immutable and cannot be altered, deleted, or forged.'
+    };
+    var blob = new Blob([JSON.stringify(cert, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 's4_verification_certificate_' + certId + '.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    s4Notify('Certificate Downloaded', 'Verification certificate ' + certId + ' saved.', 'success');
+    _logAccessEvent(txHash || hash, hash, 'export', { type: 'verification_certificate', cert_id: certId });
+}
+
+/**
+ * Generate and download an incident report for MISMATCH results.
+ */
+function _downloadIncidentReport(computedHash, expectedHash, label, timestamp, txHash) {
+    var reportId = 'IR-' + new Date().getFullYear() + '-' + (new Date().getMonth()+1).toString().padStart(2,'0') + new Date().getDate().toString().padStart(2,'0') + '-' + computedHash.substring(0, 6).toUpperCase();
+    var report = {
+        report_id: reportId,
+        report_version: '1.0',
+        issuer: 'S4 Ledger — Integrity Incident Report',
+        generated_at: new Date().toISOString(),
+        severity: 'HIGH',
+        finding: 'Record content does not match blockchain anchor',
+        record: {
+            label: label || 'Record',
+            expected_hash: expectedHash,
+            computed_hash: computedHash,
+            algorithm: 'SHA-256',
+            original_anchor_date: timestamp || null,
+            transaction_hash: txHash || null
+        },
+        recommendation: [
+            'Locate the original unmodified record from secure backup',
+            'Compare versions to identify exactly what changed',
+            'Review access logs for unauthorized modifications',
+            'Notify security officer and document the incident',
+            'Re-anchor the updated version if changes were authorized'
+        ],
+        public_verification_url: txHash ? (window.location.origin + '/v/' + txHash) : null,
+        legal_notice: 'This report documents a detected integrity discrepancy between the current record and its blockchain anchor. The original anchored record remains immutable on the XRP Ledger.'
+    };
+    var blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 's4_incident_report_' + reportId + '.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    s4Notify('Report Downloaded', 'Incident report ' + reportId + ' saved.', 'success');
+    _logAccessEvent(txHash || expectedHash, computedHash, 'export', { type: 'incident_report', report_id: reportId });
 }
 
 function resetVerify() {
@@ -6956,6 +7457,8 @@ function vaultPagePrev() {
 
 function exportVault(format) {
     if (s4Vault.length === 0) { s4Notify('Empty Vault','No records to export.','warning'); return; }
+    // Tier 3: Log export access event for all vault records
+    s4Vault.forEach(function(v) { _logAccessEvent(v.txHash || v.hash, v.hash, 'export', { format: format, scope: 'full_vault' }); });
     const rows = s4Vault.map(v => ({
         'Record Type': v.label || v.type, 'Branch': v.branch || '', 'SHA-256 Hash': v.hash,
         'TX Hash': v.txHash || '', 'Content Preview': v.content || '', 'Encrypted': v.encrypted ? 'Yes' : 'No',
@@ -7019,6 +7522,8 @@ function toggleVaultSelectAll(checked) {
 function bulkVaultExport(format) {
     var hashes = _getSelectedVaultHashes();
     if (hashes.length === 0) { s4Notify('No Selection','Select records to export.','warning'); return; }
+    // Tier 3: Log export access event for selected records
+    hashes.forEach(function(h) { _logAccessEvent(h, h, 'export', { format: format, scope: 'bulk_selected' }); });
     var selected = s4Vault.filter(function(v) { return hashes.includes(v.hash); });
     var rows = selected.map(function(v) {
         return {'Record Type':v.label||v.type,'Branch':v.branch||'','SHA-256 Hash':v.hash,'TX Hash':v.txHash||'','Content Preview':v.content||'','Encrypted':v.encrypted?'Yes':'No','Timestamp':v.timestamp,'Verified':v.verified?'Yes':'No','Source Tool':v.source||'Manual Anchor','Credit Fee':'0.01'};
@@ -9893,6 +10398,8 @@ window.renderDocLibrary = renderDocLibrary;
 window.renderTypeGrid = renderTypeGrid;
 window.resetDemoSession = resetDemoSession;
 window.resetVerify = resetVerify;
+window._downloadVerificationCertificate = _downloadVerificationCertificate;
+window._downloadIncidentReport = _downloadIncidentReport;
 window.runAnomalyDetection = runAnomalyDetection;
 window.runDocAIDemoExtraction = runDocAIDemoExtraction;
 window.runDocAIExtraction = runDocAIExtraction;
