@@ -509,65 +509,153 @@
 
                 <!-- ═══ VERIFY FORM ═══ -->
                 <div class="row" id="verifyFormSection">
-                    <div class="col-lg-7">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-shield-halved"></i> Verify Records</h3>
-<p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload or paste the original record to verify its hash matches what was anchored on XRPL.</p>
-<details class="hiw-verify-details" style="display:none;margin-top:8px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:8px 0;font-size:0.8rem;font-weight:700;color:#00aaff;">How It Works</summary>
-                        <p style="font-size:0.82rem;color:var(--steel);margin-bottom:6px;">The Verify Records tool lets you prove that any document or data has not been tampered with since it was anchored to the blockchain.</p>
-                        <ol style="font-size:0.8rem;color:var(--steel);padding-left:18px;margin-bottom:8px;">
-                            <li><strong>Upload or paste</strong> — Drop any file or paste text content. S4 computes the SHA-256 hash entirely in your browser — the file never leaves your device.</li>
-                            <li><strong>Compare hashes</strong> — S4 checks the computed hash against all records anchored in your vault and on the XRPL ledger.</li>
-                            <li><strong>Get proof</strong> — If the hash matches, the record is verified as unaltered. S4 shows the original anchor timestamp, XRPL transaction ID, and explorer link.</li>
-                            <li><strong>Batch verify</strong> — Upload multiple files at once. S4 verifies each file independently and reports results in a summary table.</li>
-                        </ol>
-                        <p style="font-size:0.8rem;color:var(--steel);margin-bottom:8px;"><strong>How S4 saves you money:</strong> Traditional document verification requires notaries, legal review, and manual chain-of-custody checks costing <strong>$50-$500 per document</strong>. S4 verifies any file in <strong style="color:#00cc66">under 3 seconds</strong> for free — saving <strong style="color:#00cc66">$250,000+/year</strong> across large programs with hundreds of auditable records.</p>
-                    </details>
-
-                            <!-- FILE UPLOAD VERIFICATION -->
-                            <label><i class="fas fa-file-upload" style="color:var(--accent);margin-right:4px;"></i> Upload File(s) to Verify</label>
-                            <div id="verifyDropZone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--accent)';this.style.background='rgba(0,170,255,0.08)'" ondragleave="this.style.borderColor='rgba(0,170,255,0.25)';this.style.background='rgba(0,170,255,0.03)'" ondrop="handleVerifyFileDrop(event)" onclick="document.getElementById('verifyFileInput').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:8px;padding:24px;text-align:center;cursor:pointer;margin-bottom:16px;background:rgba(0,170,255,0.03);transition:all 0.3s;">
-                                <i class="fas fa-shield-halved" style="font-size:1.8rem;color:var(--accent);margin-bottom:8px;display:block;"></i>
-                                <div style="color:var(--accent);font-weight:600;font-size:0.88rem;">Drop file(s) here to verify integrity</div>
-                                <div style="color:var(--steel);font-size:0.78rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, images, contracts &mdash; any file type</div>
-                                <div style="color:var(--muted);font-size:0.72rem;margin-top:6px;">The file is hashed locally &mdash; <strong>never uploaded to any server</strong></div>
-                                <input type="file" id="verifyFileInput" style="display:none" onchange="handleVerifyFileSelect(event)" multiple>
-                            </div>
-                            <div id="verifyFileResults" style="display:none;margin-bottom:16px;"></div>
-
-                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-                                <div style="flex:1;height:1px;background:var(--border);"></div>
-                                <span style="color:var(--muted);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;">or paste text</span>
-                                <div style="flex:1;height:1px;background:var(--border);"></div>
+                    <div class="col-12">
+                        <div class="s4-card" style="padding:0;overflow:hidden;">
+                            <!-- Step Progress Bar -->
+                            <div id="verifyStepBar" style="display:flex;background:rgba(0,0,0,0.25);border-bottom:1px solid var(--border);padding:0;">
+                                <button class="verify-step-tab active" id="vstep1Btn" onclick="showVerifyStep(1)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid var(--accent);cursor:pointer;color:#fff;font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s"><i class="fas fa-search" style="display:block;font-size:1rem;margin-bottom:4px;color:var(--accent)"></i>1. Select Record</button>
+                                <button class="verify-step-tab" id="vstep2Btn" onclick="showVerifyStep(2)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s" disabled><i class="fas fa-link" style="display:block;font-size:1rem;margin-bottom:4px"></i>2. Pull Hash</button>
+                                <button class="verify-step-tab" id="vstep3Btn" onclick="showVerifyStep(3)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s" disabled><i class="fas fa-shield-halved" style="display:block;font-size:1rem;margin-bottom:4px"></i>3. Verify</button>
+                                <button class="verify-step-tab" id="vstep4Btn" onclick="showVerifyStep(4)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s" disabled><i class="fas fa-exchange-alt" style="display:block;font-size:1rem;margin-bottom:4px"></i>4. Compare</button>
+                                <button class="verify-step-tab" id="vstep5Btn" onclick="showVerifyStep(5)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s" disabled><i class="fas fa-robot" style="display:block;font-size:1rem;margin-bottom:4px"></i>5. AI Fix</button>
                             </div>
 
-                            <label>Record Content</label>
-                            <textarea id="verifyInput" aria-label="Record content to verify" placeholder="Paste the original defense record content here..."></textarea>
-                            <label class="mt-2">Expected Hash (optional)</label>
-                            <input type="text" id="verifyHash" aria-label="SHA-256 hash to compare" placeholder="SHA-256 hash to compare against">
-                            <button class="btn-gold mt-3" onclick="verifyRecord()"><i class="fas fa-check-circle"></i> Verify Integrity</button>
-                            <div class="result-panel" id="verifyResult"></div>
+                            <!-- STEP 1: Select a record to verify -->
+                            <div id="verifyStep1" class="verify-step-panel" style="padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-search" style="color:var(--accent);margin-right:8px"></i>Step 1: Select a Record to Verify</h3>
+                                <p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Choose a record from the vault, upload a file, or paste text content to begin verification.</p>
+
+                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+                                    <button onclick="showVerifySource('vault')" id="vsrcVault" class="verify-source-btn active" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:rgba(0,170,255,0.08);border:2px solid rgba(0,170,255,0.3);border-radius:12px;cursor:pointer;color:var(--accent);font-size:0.82rem;font-weight:600;transition:all 0.2s">
+                                        <i class="fas fa-vault" style="font-size:1.5rem"></i>
+                                        From Vault
+                                        <span style="font-size:0.7rem;color:var(--steel);font-weight:400">Pick an anchored record</span>
+                                    </button>
+                                    <button onclick="showVerifySource('file')" id="vsrcFile" class="verify-source-btn" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;color:var(--steel);font-size:0.82rem;font-weight:600;transition:all 0.2s">
+                                        <i class="fas fa-file-upload" style="font-size:1.5rem"></i>
+                                        Upload File
+                                        <span style="font-size:0.7rem;font-weight:400">PDF, Excel, Word, any type</span>
+                                    </button>
+                                    <button onclick="showVerifySource('text')" id="vsrcText" class="verify-source-btn" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;color:var(--steel);font-size:0.82rem;font-weight:600;transition:all 0.2s">
+                                        <i class="fas fa-paste" style="font-size:1.5rem"></i>
+                                        Paste Text
+                                        <span style="font-size:0.7rem;font-weight:400">Paste or type content</span>
+                                    </button>
+                                </div>
+
+                                <!-- Vault Source -->
+                                <div id="vsrcVaultPanel" style="margin-bottom:16px;">
+                                    <label style="font-size:0.82rem;font-weight:600;color:var(--steel);margin-bottom:8px;display:block"><i class="fas fa-vault" style="color:var(--accent);margin-right:6px"></i>Select an anchored record from the vault:</label>
+                                    <div id="verifyVaultList" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.15);padding:4px;">
+                                        <div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">Loading vault records...</div>
+                                    </div>
+                                </div>
+
+                                <!-- File Source (hidden initially) -->
+                                <div id="vsrcFilePanel" style="display:none;margin-bottom:16px;">
+                                    <div id="verifyDropZone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--accent)';this.style.background='rgba(0,170,255,0.08)'" ondragleave="this.style.borderColor='rgba(0,170,255,0.25)';this.style.background='rgba(0,170,255,0.03)'" ondrop="handleVerifyFileDrop(event)" onclick="document.getElementById('verifyFileInput').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:8px;padding:24px;text-align:center;cursor:pointer;background:rgba(0,170,255,0.03);transition:all 0.3s;">
+                                        <i class="fas fa-shield-halved" style="font-size:1.8rem;color:var(--accent);margin-bottom:8px;display:block;"></i>
+                                        <div style="color:var(--accent);font-weight:600;font-size:0.88rem;">Drop file(s) here to verify integrity</div>
+                                        <div style="color:var(--steel);font-size:0.78rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, images, contracts &mdash; any file type</div>
+                                        <div style="color:var(--muted);font-size:0.72rem;margin-top:6px;">The file is hashed locally &mdash; <strong>never uploaded to any server</strong></div>
+                                        <input type="file" id="verifyFileInput" style="display:none" onchange="handleVerifyFileSelect(event)" multiple>
+                                    </div>
+                                    <div id="verifyFileResults" style="display:none;margin-top:12px;"></div>
+                                </div>
+
+                                <!-- Text Source (hidden initially) -->
+                                <div id="vsrcTextPanel" style="display:none;margin-bottom:16px;">
+                                    <label><i class="fas fa-paste" style="color:var(--accent);margin-right:4px"></i> Paste Record Content</label>
+                                    <textarea id="verifyInput" aria-label="Record content to verify" placeholder="Paste the original defense record content here..." style="min-height:120px;"></textarea>
+                                    <label class="mt-2">Expected Hash (optional)</label>
+                                    <input type="text" id="verifyHash" aria-label="SHA-256 hash to compare" placeholder="SHA-256 hash to compare against">
+                                </div>
+
+                                <!-- Selected record preview -->
+                                <div id="verifySelectedPreview" style="display:none;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:10px;padding:14px;margin-bottom:16px;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                                        <strong style="color:#fff;font-size:0.88rem"><i class="fas fa-check-circle" style="color:var(--accent);margin-right:6px"></i>Record Selected</strong>
+                                        <button onclick="clearVerifySelection()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.78rem"><i class="fas fa-times"></i> Clear</button>
+                                    </div>
+                                    <div id="verifySelectedInfo" style="font-size:0.82rem;color:var(--steel)"></div>
+                                </div>
+
+                                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+                                    <button onclick="verifyStepNext(1)" id="vstep1Next" class="btn-accent" style="padding:10px 24px;font-size:0.88rem" disabled><i class="fas fa-arrow-right" style="margin-right:6px"></i>Next: Pull Blockchain Hash</button>
+                                </div>
+                            </div>
+
+                            <!-- STEP 2: Pull Blockchain Hash -->
+                            <div id="verifyStep2" class="verify-step-panel" style="display:none;padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-link" style="color:var(--accent);margin-right:8px"></i>Step 2: Blockchain Hash Retrieved</h3>
+                                <p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">The SHA-256 hash was pulled from the XRPL blockchain. This is the immutable fingerprint of the original record.</p>
+                                <div id="verifyStep2Content" style="margin-bottom:16px"></div>
+                                <div style="display:flex;justify-content:space-between;gap:10px;margin-top:8px">
+                                    <button onclick="showVerifyStep(1)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--steel);border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit"><i class="fas fa-arrow-left" style="margin-right:6px"></i>Back</button>
+                                    <button onclick="runVerifyIntegrity()" class="btn-accent" style="padding:10px 24px;font-size:0.88rem"><i class="fas fa-shield-halved" style="margin-right:6px"></i>Verify Integrity Now</button>
+                                </div>
+                            </div>
+
+                            <!-- STEP 3: Verification Result -->
+                            <div id="verifyStep3" class="verify-step-panel" style="display:none;padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:8px"></i>Step 3: Integrity Verification Result</h3>
+                                <div id="verifyStep3Content"></div>
+                                <div id="verifyStep3Actions" style="display:flex;justify-content:space-between;gap:10px;margin-top:16px"></div>
+                            </div>
+
+                            <!-- STEP 4: Deep Comparison -->
+                            <div id="verifyStep4" class="verify-step-panel" style="display:none;padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-exchange-alt" style="color:#ff9500;margin-right:8px"></i>Step 4: Deep Document Comparison</h3>
+                                <p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Side-by-side comparison showing exactly what changed &mdash; page, line, and character level.</p>
+                                <div id="verifyStep4Content"></div>
+                                <div style="display:flex;justify-content:space-between;gap:10px;margin-top:16px">
+                                    <button onclick="showVerifyStep(3)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--steel);border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit"><i class="fas fa-arrow-left" style="margin-right:6px"></i>Back to Result</button>
+                                    <button onclick="showVerifyStep(5)" id="vstep4Next" class="btn-accent" style="padding:10px 24px;font-size:0.88rem"><i class="fas fa-robot" style="margin-right:6px"></i>Get AI Fix Analysis</button>
+                                </div>
+                            </div>
+
+                            <!-- STEP 5: AI Fix Analysis -->
+                            <div id="verifyStep5" class="verify-step-panel" style="display:none;padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-robot" style="color:var(--accent);margin-right:8px"></i>Step 5: AI Exact-Fix Analysis</h3>
+                                <p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">AI pinpoints every change and provides the exact fix to restore the record to its original verified state.</p>
+                                <div id="verifyStep5Content"></div>
+                                <div style="display:flex;justify-content:space-between;gap:10px;margin-top:16px">
+                                    <button onclick="showVerifyStep(4)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--steel);border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit"><i class="fas fa-arrow-left" style="margin-right:6px"></i>Back to Comparison</button>
+                                    <div style="display:flex;gap:10px">
+                                        <button onclick="if(window._lastIncidentParams){var p=window._lastIncidentParams;_downloadIncidentReport(p.computedHash,p.expectedHash,p.label,p.timestamp,p.txHash)}" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,48,0.08);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:8px;padding:8px 16px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit"><i class="fas fa-file-export"></i> Export Incident Report</button>
+                                        <button onclick="resetVerifyWorkflow()" class="btn-accent" style="padding:8px 20px;font-size:0.85rem"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another Record</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-5">
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row" style="margin-top:16px;">
+                    <div class="col-lg-6">
                         <div class="s4-card">
-                            <h3><i class="fas fa-question-circle"></i> Verification Use Cases</h3>
-                            <div style="font-size:0.85rem;line-height:1.8;color:var(--steel)">
-                                <div><strong>Supply Chain:</strong> Confirm parts receipt hasn't been altered</div>
-                                <div><strong>CDRL:</strong> Verify contractor delivered exact document version</div>
-                                <div><strong>Maintenance:</strong> Prove 3-M actions logged as-performed</div>
-                                <div><strong>Ordnance:</strong> Validate lot tracking since manufacture</div>
-                                <div><strong>Config:</strong> Confirm system baseline hasn't drifted</div>
-                                <div><strong>Audit:</strong> Demonstrate tamper-proof trail to inspectors</div>
+                            <h3><i class="fas fa-bolt" style="color:var(--accent)"></i> Quick Verify</h3>
+                            <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Skip the step-by-step wizard and verify instantly.</p>
+                            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                                <button onclick="quickVerifyFromVault()" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit"><i class="fas fa-vault"></i> Verify Vault Record</button>
+                                <button onclick="showVerifySource('file');showVerifyStep(1)" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit"><i class="fas fa-file-upload"></i> Verify File Upload</button>
+                                <button onclick="bulkVerifyFromVault()" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit"><i class="fas fa-shield-halved"></i> Bulk Verify All</button>
                             </div>
                         </div>
-                        <!-- Recently Anchored Records — click to verify -->
-                        <div class="s4-card" style="margin-top:16px;">
-                            <h3><i class="fas fa-clock-rotate-left" style="color:var(--accent);"></i> Recently Anchored Records</h3>
-                            <p style="color:var(--steel);font-size:0.82rem;margin-bottom:10px;">Click any record to auto-fill its hash for verification.</p>
-                            <div id="verifyRecentAnchors" style="max-height:320px;overflow-y:auto;">
-                                <div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">No anchored records yet. Anchor a record first to see it here.</div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="s4-card">
+                            <h3><i class="fas fa-question-circle"></i> How It Works</h3>
+                            <div style="font-size:0.82rem;line-height:1.8;color:var(--steel)">
+                                <div><strong style="color:var(--accent)">1.</strong> Select a record &mdash; from vault, file upload, or paste text</div>
+                                <div><strong style="color:var(--accent)">2.</strong> S4 pulls the anchored hash from XRPL blockchain</div>
+                                <div><strong style="color:var(--accent)">3.</strong> Re-computes the hash on your current document</div>
+                                <div><strong style="color:var(--accent)">4.</strong> If mismatch &mdash; deep comparison shows every change</div>
+                                <div><strong style="color:var(--accent)">5.</strong> AI tells you exactly what to fix to restore the original</div>
+                            </div>
+                            <div style="margin-top:10px;padding:8px 12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:8px;font-size:0.78rem;color:var(--steel)">
+                                <i class="fas fa-lock" style="color:#34c759;margin-right:6px"></i><strong>Only the SHA-256 hash is on the blockchain.</strong> Your data stays in the encrypted vault. The hash is a one-way fingerprint &mdash; it cannot reconstruct your document.
                             </div>
                         </div>
                     </div>

@@ -844,7 +844,7 @@ async function anchorToLedger(toolName, label) {
     var content = label || (toolName + ' snapshot');
     if (panel) {
         var text = panel.innerText || '';
-        content = text.substring(0, 500);
+        content = text.substring(0, 500).trim();
     }
     var hash = await sha256(content);
     // Tier 3: Detect re-anchor (same content previously anchored) for version chaining
@@ -1477,26 +1477,30 @@ function loadRecordToVerify(idx) {
     if (typeof window.showSection === 'function') {
         window.showSection('sectionVerify');
     }
-    // Auto-fill the verify hash field
+    // Route into the new step-by-step workflow
+    _verifyWorkflow.record = r;
+    _verifyWorkflow.vaultRecord = r;
+    _verifyWorkflow.hash = r.hash;
+    _verifyWorkflow.inputContent = r.fullContent || r.content || '';
+    _verifyWorkflow.source = 'vault';
+    _verifyWorkflow.step = 2;
+    showVerifyStep(2);
+    _renderStep2BlockchainHash();
+    // Also fill legacy fields for backward compatibility
     var hashInput = document.getElementById('verifyHash');
     if (hashInput) hashInput.value = r.hash;
-    // Load full content if available, otherwise load truncated preview
     var contentInput = document.getElementById('verifyInput');
     if (contentInput) {
-        if (r.fullContent && r.fullContent.length > 0) {
-            contentInput.value = r.fullContent;
-        } else if (r.content && r.content.length > 0) {
-            contentInput.value = r.content;
-        }
+        if (r.fullContent && r.fullContent.length > 0) contentInput.value = r.fullContent;
+        else if (r.content && r.content.length > 0) contentInput.value = r.content;
     }
     // Scroll to the verify form after a brief delay for tab switch
     setTimeout(function() {
         var verifyCard = document.querySelector('#tabAnchor .s4-card');
         if (verifyCard) verifyCard.scrollIntoView({behavior:'smooth', block:'start'});
     }, 150);
-    // Show notification
     var hasDoc = r.fullContent && r.fullContent.length > 0;
-    if (typeof showWorkspaceNotification === 'function') showWorkspaceNotification(hasDoc ? 'Full document loaded — click Verify Integrity to re-verify' : 'Record hash loaded — paste original content or upload file to verify', hasDoc ? 'success' : 'info');
+    if (typeof showWorkspaceNotification === 'function') showWorkspaceNotification(hasDoc ? 'Full document loaded — click Verify Integrity' : 'Record hash loaded — upload file to verify', hasDoc ? 'success' : 'info');
 }
 
 // Refresh on tab switch to Verify
@@ -1649,6 +1653,706 @@ async function verifyRecord() {
         _runVerifyAiAnalysis(hash, expected, input, vaultRecord);
     }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// ═══ STEP-BY-STEP VERIFICATION WORKFLOW ENGINE ═══
+// ═══════════════════════════════════════════════════════════════
+// State for the multi-step verification workflow
+var _verifyWorkflow = { step: 1, record: null, hash: null, vaultRecord: null, fileHash: null, inputContent: null, source: 'vault' };
+
+/** Show a specific step in the verification wizard */
+function showVerifyStep(n) {
+    for (var i = 1; i <= 5; i++) {
+        var panel = document.getElementById('verifyStep' + i);
+        var btn = document.getElementById('vstep' + i + 'Btn');
+        if (panel) panel.style.display = i === n ? 'block' : 'none';
+        if (btn) {
+            btn.style.borderBottomColor = i === n ? 'var(--accent)' : 'transparent';
+            btn.style.color = i <= _verifyWorkflow.step ? '#fff' : 'var(--muted)';
+            btn.querySelector('i').style.color = i === n ? 'var(--accent)' : (i <= _verifyWorkflow.step ? 'var(--steel)' : '');
+            btn.disabled = i > _verifyWorkflow.step;
+            if (i === n) btn.classList.add('active'); else btn.classList.remove('active');
+        }
+    }
+}
+
+/** Switch between vault/file/text source panels in Step 1 */
+function showVerifySource(src) {
+    _verifyWorkflow.source = src;
+    ['vault','file','text'].forEach(function(s) {
+        var panel = document.getElementById('vsrc' + s.charAt(0).toUpperCase() + s.slice(1) + 'Panel');
+        var btn = document.getElementById('vsrc' + s.charAt(0).toUpperCase() + s.slice(1));
+        if (panel) panel.style.display = s === src ? 'block' : 'none';
+        if (btn) {
+            btn.style.borderColor = s === src ? 'rgba(0,170,255,0.3)' : 'rgba(255,255,255,0.1)';
+            btn.style.background = s === src ? 'rgba(0,170,255,0.08)' : 'rgba(255,255,255,0.03)';
+            btn.style.color = s === src ? 'var(--accent)' : 'var(--steel)';
+            if (s === src) btn.classList.add('active'); else btn.classList.remove('active');
+        }
+    });
+    if (src === 'vault') populateVerifyVaultList();
+}
+
+/** Populate the vault record list in Step 1 */
+function populateVerifyVaultList() {
+    var container = document.getElementById('verifyVaultList');
+    if (!container) return;
+    var records = (typeof s4Vault !== 'undefined' ? s4Vault : []).concat(sessionRecords || []);
+    // Deduplicate by hash
+    var seen = {};
+    records = records.filter(function(r) {
+        if (!r || !r.hash || seen[r.hash]) return false;
+        seen[r.hash] = true;
+        return true;
+    });
+    if (!records.length) {
+        container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">No anchored records yet. Anchor a record first.</div>';
+        return;
+    }
+    container.innerHTML = records.slice(0, 50).map(function(r, idx) {
+        var hasDoc = r.fullContent && r.fullContent.length > 0;
+        var ago = r.timestamp ? _timeAgo(new Date(r.timestamp)) : '';
+        return '<div class="verify-vault-item" data-idx="' + idx + '" onclick="selectVaultRecord(' + idx + ')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:background 0.15s;border-radius:6px" onmouseover="this.style.background=\'rgba(0,170,255,0.06)\'" onmouseout="this.style.background=\'transparent\'">'
+            + '<div style="width:32px;height:32px;border-radius:8px;background:' + (hasDoc ? 'rgba(0,170,255,0.1)' : 'rgba(255,255,255,0.05)') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:' + (hasDoc ? 'var(--accent)' : 'var(--muted)') + ';font-size:0.9rem">' + (r.icon ? _renderIcon(r.icon) : '<i class="fas fa-file-alt"></i>') + '</span></div>'
+            + '<div style="flex:1;min-width:0">'
+            + '<div style="font-size:0.8rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (r.label || r.type || 'Record') + '</div>'
+            + '<div style="font-size:0.68rem;color:var(--muted);font-family:monospace">' + r.hash.substring(0, 20) + '...</div>'
+            + '</div>'
+            + '<div style="text-align:right;flex-shrink:0">'
+            + '<div style="font-size:0.68rem;color:var(--steel)">' + ago + '</div>'
+            + (hasDoc ? '<div style="font-size:0.6rem;color:#34c759;margin-top:2px"><i class="fas fa-check-circle"></i> Full doc</div>' : '<div style="font-size:0.6rem;color:var(--muted);margin-top:2px">Hash only</div>')
+            + '</div></div>';
+    }).join('');
+    // Store for later reference
+    window._verifyVaultRecords = records;
+}
+
+/** Select a vault record for verification */
+function selectVaultRecord(idx) {
+    var records = window._verifyVaultRecords || [];
+    var r = records[idx];
+    if (!r) return;
+    _verifyWorkflow.record = r;
+    _verifyWorkflow.vaultRecord = r;
+    _verifyWorkflow.hash = r.hash;
+    _verifyWorkflow.inputContent = r.fullContent || r.content || '';
+    // Show selected preview
+    var preview = document.getElementById('verifySelectedPreview');
+    var info = document.getElementById('verifySelectedInfo');
+    if (preview) preview.style.display = 'block';
+    if (info) {
+        var hasDoc = r.fullContent && r.fullContent.length > 0;
+        info.innerHTML = '<div style="margin-bottom:4px"><strong>' + (r.label || r.type || 'Record') + '</strong></div>'
+            + '<div style="font-family:monospace;font-size:0.75rem;color:var(--muted);margin-bottom:4px">Hash: ' + r.hash.substring(0, 32) + '...</div>'
+            + (r.timestamp ? '<div style="font-size:0.75rem;color:var(--steel)"><i class="fas fa-clock" style="margin-right:4px"></i>Anchored: ' + new Date(r.timestamp).toLocaleString() + '</div>' : '')
+            + (hasDoc ? '<div style="font-size:0.72rem;color:#34c759;margin-top:4px"><i class="fas fa-check-circle" style="margin-right:4px"></i>Full document stored (' + r.fullContent.length.toLocaleString() + ' chars)</div>' : '<div style="font-size:0.72rem;color:#ff9500;margin-top:4px"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i>Hash only — upload the original file in Step 3 to compare</div>');
+    }
+    // Highlight selected item
+    document.querySelectorAll('.verify-vault-item').forEach(function(el) {
+        el.style.background = el.getAttribute('data-idx') === String(idx) ? 'rgba(0,170,255,0.1)' : '';
+        el.style.borderLeft = el.getAttribute('data-idx') === String(idx) ? '3px solid var(--accent)' : '3px solid transparent';
+    });
+    // Enable Next button
+    var nextBtn = document.getElementById('vstep1Next');
+    if (nextBtn) nextBtn.disabled = false;
+    // Log access
+    _logAccessEvent(r.hash, r.hash, 'verify_select', { source: 'vault_list', label: r.label || '' });
+}
+
+/** Clear the current verification selection */
+function clearVerifySelection() {
+    _verifyWorkflow.record = null;
+    _verifyWorkflow.vaultRecord = null;
+    _verifyWorkflow.hash = null;
+    _verifyWorkflow.inputContent = null;
+    var preview = document.getElementById('verifySelectedPreview');
+    if (preview) preview.style.display = 'none';
+    var nextBtn = document.getElementById('vstep1Next');
+    if (nextBtn) nextBtn.disabled = true;
+    document.querySelectorAll('.verify-vault-item').forEach(function(el) { el.style.background = ''; el.style.borderLeft = '3px solid transparent'; });
+}
+
+/** Handle Step 1 Next — advances to Step 2 with blockchain hash retrieval */
+function verifyStepNext(fromStep) {
+    if (fromStep === 1) {
+        var src = _verifyWorkflow.source;
+        // Validate input based on source
+        if (src === 'vault' && !_verifyWorkflow.record) {
+            if (typeof s4Notify === 'function') s4Notify('Select a Record', 'Choose a record from the vault before continuing.', 'warning');
+            return;
+        }
+        if (src === 'text') {
+            var textInput = document.getElementById('verifyInput');
+            var hashInput = document.getElementById('verifyHash');
+            if (textInput && textInput.value.trim()) {
+                _verifyWorkflow.inputContent = textInput.value.trim();
+                if (hashInput && hashInput.value.trim()) _verifyWorkflow.hash = hashInput.value.trim();
+            } else {
+                if (typeof s4Notify === 'function') s4Notify('Missing Content', 'Paste record content to verify.', 'warning');
+                return;
+            }
+            // Try to find vault record by hash
+            if (_verifyWorkflow.hash && typeof s4Vault !== 'undefined') {
+                _verifyWorkflow.vaultRecord = s4Vault.find(function(r) { return r.hash && r.hash.toLowerCase() === _verifyWorkflow.hash.toLowerCase(); });
+            }
+        }
+        if (src === 'file' && !_verifyWorkflow.fileHash) {
+            if (typeof s4Notify === 'function') s4Notify('Upload a File', 'Drop or select a file to verify.', 'warning');
+            return;
+        }
+        // Advance to Step 2
+        _verifyWorkflow.step = Math.max(_verifyWorkflow.step, 2);
+        showVerifyStep(2);
+        _renderStep2BlockchainHash();
+    }
+}
+
+/** Render Step 2: Show blockchain hash retrieval */
+async function _renderStep2BlockchainHash() {
+    var container = document.getElementById('verifyStep2Content');
+    if (!container) return;
+    var r = _verifyWorkflow.vaultRecord || _verifyWorkflow.record;
+    var anchoredHash = _verifyWorkflow.hash || (r ? r.hash : null);
+    var txHash = r ? (r.txHash || '') : '';
+    var explorerUrl = r ? (r.explorerUrl || (txHash && /^[0-9A-Fa-f]{64}$/.test(txHash) ? 'https://livenet.xrpl.org/transactions/' + txHash : '')) : '';
+    var hasFullDoc = _verifyWorkflow.inputContent && _verifyWorkflow.inputContent.length > 10;
+    var html = '';
+    // Blockchain hash display
+    html += '<div style="background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><i class="fas fa-cube" style="color:var(--accent);font-size:1.1rem"></i><strong style="color:#fff">Anchored Hash (Blockchain)</strong></div>'
+        + '<div style="font-family:monospace;font-size:0.82rem;color:var(--accent);word-break:break-all;background:rgba(0,170,255,0.06);padding:10px 14px;border-radius:8px;border:1px solid rgba(0,170,255,0.15)">' + (anchoredHash || 'N/A') + '</div>'
+        + (txHash ? '<div style="margin-top:8px;font-size:0.75rem;color:var(--muted)"><i class="fas fa-hashtag" style="margin-right:4px"></i>XRPL TX: ' + txHash.substring(0, 24) + '...'
+            + (explorerUrl ? ' <a href="' + explorerUrl + '" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;margin-left:6px"><i class="fas fa-external-link-alt"></i> View on XRPL</a>' : '') + '</div>' : '')
+        + '</div>';
+    // Record metadata
+    if (r) {
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'
+            + '<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Record Type</div><div style="font-size:0.88rem;color:#fff;font-weight:600">' + (r.label || r.type || 'Record') + '</div></div>'
+            + '<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Anchored</div><div style="font-size:0.88rem;color:#fff;font-weight:600">' + (r.timestamp ? new Date(r.timestamp).toLocaleString() : 'Unknown') + '</div></div>'
+            + '</div>';
+    }
+    // Document storage status
+    html += '<div style="background:' + (hasFullDoc ? 'rgba(52,199,89,0.06)' : 'rgba(255,149,0,0.06)') + ';border:1px solid ' + (hasFullDoc ? 'rgba(52,199,89,0.15)' : 'rgba(255,149,0,0.15)') + ';border-radius:10px;padding:12px;margin-bottom:16px">'
+        + '<div style="display:flex;align-items:center;gap:8px">'
+        + '<i class="fas ' + (hasFullDoc ? 'fa-check-circle' : 'fa-exclamation-circle') + '" style="color:' + (hasFullDoc ? '#34c759' : '#ff9500') + ';font-size:1.1rem"></i>'
+        + '<div><strong style="color:#fff;font-size:0.88rem">' + (hasFullDoc ? 'Original Document Available' : 'Full Document Not Stored') + '</strong>'
+        + '<div style="font-size:0.78rem;color:var(--steel)">' + (hasFullDoc ? 'The complete original document (' + _verifyWorkflow.inputContent.length.toLocaleString() + ' chars) is stored in the vault for comparison.' : 'Only the hash was stored. Upload the original file below to verify and compare.') + '</div>'
+        + '</div></div></div>';
+    // If no full doc, show upload prompt
+    if (!hasFullDoc) {
+        html += '<div style="margin-bottom:16px">'
+            + '<label style="font-size:0.82rem;font-weight:600;color:var(--steel);margin-bottom:8px;display:block"><i class="fas fa-file-upload" style="color:var(--accent);margin-right:6px"></i>Upload the current document to compare:</label>'
+            + '<div id="step2DropZone" ondragover="event.preventDefault();this.style.borderColor=\'var(--accent)\'" ondragleave="this.style.borderColor=\'rgba(0,170,255,0.25)\'" ondrop="_handleStep2FileDrop(event)" onclick="document.getElementById(\'step2FileInput\').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:8px;padding:20px;text-align:center;cursor:pointer;background:rgba(0,170,255,0.03)">'
+            + '<i class="fas fa-cloud-upload-alt" style="font-size:1.3rem;color:var(--accent)"></i>'
+            + '<div style="color:var(--accent);font-size:0.82rem;font-weight:600;margin-top:6px">Drop file here or click to upload</div>'
+            + '<input type="file" id="step2FileInput" style="display:none" onchange="_handleStep2FileSelect(event)">'
+            + '</div></div>';
+    }
+    container.innerHTML = window._s4Safe(html);
+}
+
+/** Handle file drop in Step 2 */
+function _handleStep2FileDrop(e) {
+    e.preventDefault(); e.stopPropagation();
+    var zone = document.getElementById('step2DropZone');
+    if (zone) { zone.style.borderColor = 'rgba(0,170,255,0.25)'; zone.style.background = 'rgba(0,170,255,0.03)'; }
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        _processStep2File(e.dataTransfer.files[0]);
+    }
+}
+function _handleStep2FileSelect(e) {
+    if (e.target.files && e.target.files.length > 0) _processStep2File(e.target.files[0]);
+}
+async function _processStep2File(file) {
+    var reader = new FileReader();
+    reader.onload = async function(ev) {
+        var buf = ev.target.result;
+        var hash = await sha256Binary(buf);
+        // Also try text hash for text files
+        var textHash = null;
+        if (file.type.startsWith('text/') || /\.(txt|csv|json|xml|md|html|js|py|yml|yaml)$/i.test(file.name)) {
+            try {
+                var textReader = new FileReader();
+                var textContent = await new Promise(function(resolve) { textReader.onload = function(e) { resolve(e.target.result); }; textReader.readAsText(file); });
+                textHash = await sha256(textContent);
+                _verifyWorkflow.inputContent = textContent;
+            } catch(e) { /* ignore */ }
+        }
+        _verifyWorkflow.fileHash = hash;
+        _verifyWorkflow._fileTextHash = textHash;
+        var zone = document.getElementById('step2DropZone');
+        if (zone) {
+            zone.innerHTML = '<i class="fas fa-check-circle" style="font-size:1.3rem;color:#34c759"></i>'
+                + '<div style="color:#34c759;font-size:0.82rem;font-weight:600;margin-top:6px">' + file.name + ' loaded</div>'
+                + '<div style="font-size:0.72rem;color:var(--muted);margin-top:4px;font-family:monospace">' + hash.substring(0,24) + '...</div>';
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+/** Run the full integrity verification (Step 2 → Step 3) */
+async function runVerifyIntegrity() {
+    var r = _verifyWorkflow.vaultRecord || _verifyWorkflow.record;
+    var anchoredHash = _verifyWorkflow.hash || (r ? r.hash : null);
+    var content = _verifyWorkflow.inputContent || '';
+    var source = _verifyWorkflow.source;
+    // Compute current hash
+    var currentHash = null;
+    if (source === 'file' || _verifyWorkflow.fileHash) {
+        currentHash = _verifyWorkflow.fileHash;
+        // Also try text hash match
+        if (currentHash !== anchoredHash && _verifyWorkflow._fileTextHash) {
+            currentHash = _verifyWorkflow._fileTextHash;
+        }
+    } else if (content) {
+        currentHash = await sha256(content);
+    }
+    if (!currentHash && !anchoredHash) {
+        if (typeof s4Notify === 'function') s4Notify('No Data', 'No content or file to verify.', 'warning');
+        return;
+    }
+    var match = currentHash && anchoredHash && currentHash.toLowerCase() === anchoredHash.toLowerCase();
+    // If there's a vault record with fullContent but user hasn't modified anything, auto-verify using stored content
+    if (!currentHash && r && r.fullContent) {
+        currentHash = await sha256(r.fullContent);
+        content = r.fullContent;
+        match = currentHash.toLowerCase() === anchoredHash.toLowerCase();
+    }
+    stats.verified++; updateStats(); saveStats();
+    _verifyWorkflow.step = Math.max(_verifyWorkflow.step, 3);
+    _verifyWorkflow._match = match;
+    _verifyWorkflow._currentHash = currentHash;
+    _verifyWorkflow._anchoredHash = anchoredHash;
+    showVerifyStep(3);
+    _renderStep3Result(match, currentHash, anchoredHash, r, content);
+    // Log access
+    var _vrId = r ? (r.txHash || r.hash) : (anchoredHash || currentHash);
+    _logAccessEvent(_vrId, currentHash, 'verify_complete', { result: match ? 'MATCH' : 'MISMATCH', expected: anchoredHash || '' });
+    // Set cert/incident params
+    if (r) window._lastVerifyCertParams = { hash: anchoredHash, txHash: r.txHash || '', label: r.label || r.type || '', timestamp: r.timestamp || '', network: r.network || '', explorerUrl: r.explorerUrl || '' };
+    if (!match) window._lastIncidentParams = { computedHash: currentHash, expectedHash: anchoredHash, label: r ? (r.label || '') : '', timestamp: r ? (r.timestamp || '') : '', txHash: r ? (r.txHash || '') : '' };
+}
+
+/** Render Step 3: Verification result */
+function _renderStep3Result(match, currentHash, anchoredHash, vaultRecord, content) {
+    var container = document.getElementById('verifyStep3Content');
+    var actions = document.getElementById('verifyStep3Actions');
+    if (!container) return;
+    var explorerUrl = vaultRecord ? (vaultRecord.explorerUrl || (vaultRecord.txHash && /^[0-9A-Fa-f]{64}$/.test(vaultRecord.txHash) ? 'https://livenet.xrpl.org/transactions/' + vaultRecord.txHash : '')) : '';
+    var html = '';
+    if (match) {
+        // ═══ INTEGRITY VERIFIED ═══
+        html += '<div style="background:rgba(52,199,89,0.06);border:2px solid rgba(52,199,89,0.25);border-radius:16px;padding:24px;text-align:center;margin-bottom:16px">'
+            + '<div style="width:64px;height:64px;border-radius:50%;background:rgba(52,199,89,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><i class="fas fa-shield-alt" style="font-size:1.8rem;color:#34c759"></i></div>'
+            + '<div style="font-size:1.2rem;font-weight:700;color:#34c759;margin-bottom:6px">INTEGRITY VERIFIED</div>'
+            + '<div style="font-size:0.88rem;color:var(--steel)">This record is <strong>authentic and unmodified</strong> since it was secured on the blockchain.</div>'
+            + '</div>';
+        // Hash comparison (both match)
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+            + '<div style="background:rgba(52,199,89,0.04);border:1px solid rgba(52,199,89,0.15);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:#34c759;margin-bottom:6px;font-weight:600"><i class="fas fa-cube" style="margin-right:4px"></i>BLOCKCHAIN HASH</div><div style="font-family:monospace;font-size:0.72rem;color:var(--steel);word-break:break-all">' + (anchoredHash || '') + '</div></div>'
+            + '<div style="background:rgba(52,199,89,0.04);border:1px solid rgba(52,199,89,0.15);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:#34c759;margin-bottom:6px;font-weight:600"><i class="fas fa-file-alt" style="margin-right:4px"></i>CURRENT HASH</div><div style="font-family:monospace;font-size:0.72rem;color:var(--steel);word-break:break-all">' + (currentHash || '') + '</div></div>'
+            + '</div>';
+        // Checkmarks
+        html += '<div style="font-size:0.82rem;color:var(--steel);line-height:2">'
+            + '<div><i class="fas fa-check-circle" style="color:#34c759;margin-right:6px"></i>Original fingerprint matches blockchain anchor</div>'
+            + '<div><i class="fas fa-check-circle" style="color:#34c759;margin-right:6px"></i>No signs of tampering, alteration, or corruption</div>'
+            + '<div><i class="fas fa-check-circle" style="color:#34c759;margin-right:6px"></i>Document integrity confirmed' + (vaultRecord && vaultRecord.timestamp ? ' since ' + new Date(vaultRecord.timestamp).toLocaleString() : '') + '</div>'
+            + '</div>';
+        // Anchor details
+        if (vaultRecord) {
+            html += '<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:16px">'
+                + '<div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;font-weight:600">ANCHOR DETAILS</div>'
+                + '<div style="font-size:0.82rem;color:var(--steel);line-height:1.8">'
+                + '<div><strong>Record:</strong> ' + (vaultRecord.label || vaultRecord.type || 'Unknown') + '</div>'
+                + (vaultRecord.timestamp ? '<div><strong>Anchored:</strong> ' + new Date(vaultRecord.timestamp).toLocaleString() + '</div>' : '')
+                + (vaultRecord.txHash ? '<div><strong>TX:</strong> <span style="font-family:monospace;font-size:0.75rem">' + vaultRecord.txHash.substring(0, 32) + '...</span></div>' : '')
+                + (explorerUrl ? '<div style="margin-top:6px"><a href="' + explorerUrl + '" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:0.82rem"><i class="fas fa-external-link-alt" style="margin-right:4px"></i>View on XRPL Explorer</a></div>' : '')
+                + '</div></div>';
+        }
+        // Actions for verified result
+        if (actions) {
+            actions.innerHTML = '<button onclick="showVerifyStep(1)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--steel);border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit"><i class="fas fa-arrow-left" style="margin-right:6px"></i>Back</button>'
+                + '<div style="display:flex;gap:10px">'
+                + '<button onclick="if(window._lastVerifyCertParams){var p=window._lastVerifyCertParams;_downloadVerificationCertificate(p.hash,p.txHash,p.label,p.timestamp,p.network,p.explorerUrl)}" style="display:inline-flex;align-items:center;gap:6px;background:rgba(52,199,89,0.08);color:#34c759;border:1px solid rgba(52,199,89,0.2);border-radius:8px;padding:10px 16px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit"><i class="fas fa-certificate"></i> Download Certificate</button>'
+                + '<button onclick="resetVerifyWorkflow()" class="btn-accent" style="padding:10px 20px;font-size:0.85rem"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another</button>'
+                + '</div>';
+        }
+    } else {
+        // ═══ MISMATCH — SECURITY ALERT ═══
+        html += '<div style="background:rgba(255,59,48,0.06);border:2px solid rgba(255,59,48,0.25);border-radius:16px;padding:24px;text-align:center;margin-bottom:16px">'
+            + '<div style="width:64px;height:64px;border-radius:50%;background:rgba(255,59,48,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><i class="fas fa-exclamation-triangle" style="font-size:1.8rem;color:#ff3b30"></i></div>'
+            + '<div style="font-size:1.2rem;font-weight:700;color:#ff3b30;margin-bottom:6px">SECURITY ALERT — Record Modified</div>'
+            + '<div style="font-size:0.88rem;color:var(--steel)">This record has been <strong>changed since it was originally secured</strong>. The content does <strong>not match</strong> the blockchain anchor.</div>'
+            + '</div>';
+        // Hash comparison (mismatch)
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+            + '<div style="background:rgba(52,199,89,0.04);border:1px solid rgba(52,199,89,0.15);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:#34c759;margin-bottom:6px;font-weight:600"><i class="fas fa-cube" style="margin-right:4px"></i>ORIGINAL (BLOCKCHAIN)</div><div style="font-family:monospace;font-size:0.72rem;color:var(--steel);word-break:break-all">' + (anchoredHash || '') + '</div></div>'
+            + '<div style="background:rgba(255,59,48,0.04);border:1px solid rgba(255,59,48,0.15);border-radius:10px;padding:12px"><div style="font-size:0.72rem;color:#ff3b30;margin-bottom:6px;font-weight:600"><i class="fas fa-file-alt" style="margin-right:4px"></i>CURRENT (MODIFIED)</div><div style="font-family:monospace;font-size:0.72rem;color:var(--steel);word-break:break-all">' + (currentHash || '') + '</div></div>'
+            + '</div>';
+        // Risk assessment
+        html += '<div style="background:rgba(255,59,48,0.04);border:1px solid rgba(255,59,48,0.12);border-radius:10px;padding:14px;margin-bottom:12px">'
+            + '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,48,0.12);color:#ff3b30;padding:3px 12px;border-radius:6px;font-size:0.82rem;font-weight:700;margin-bottom:10px"><i class="fas fa-radiation"></i> HIGH RISK — Data Integrity Compromised</div>'
+            + '<div style="font-size:0.82rem;color:var(--steel);line-height:1.7">'
+            + '<ul style="margin:4px 0 0 16px;padding:0">'
+            + '<li>The data you have is <strong>NOT the same</strong> as what was originally secured</li>'
+            + '<li>Someone or something modified this record after it was anchored</li>'
+            + '<li>The original is permanently preserved on the blockchain and cannot be altered</li></ul></div></div>';
+        // Can we do deep comparison?
+        var originalContent = vaultRecord ? (vaultRecord.fullContent || vaultRecord.content || '') : '';
+        var canCompare = originalContent && originalContent.length > 10 && content && content.length > 0;
+        // Actions for mismatch result
+        if (actions) {
+            var backBtn = '<button onclick="showVerifyStep(2)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--steel);border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit"><i class="fas fa-arrow-left" style="margin-right:6px"></i>Back</button>';
+            if (canCompare) {
+                // Enable Step 4
+                _verifyWorkflow.step = Math.max(_verifyWorkflow.step, 4);
+                actions.innerHTML = backBtn + '<button onclick="runDeepComparison()" class="btn-accent" style="padding:10px 24px;font-size:0.88rem;background:rgba(255,149,0,0.15);border-color:rgba(255,149,0,0.3);color:#ff9500"><i class="fas fa-exchange-alt" style="margin-right:6px"></i>Deep Document Comparison</button>';
+            } else {
+                actions.innerHTML = backBtn + '<div style="display:flex;gap:10px">'
+                    + '<button onclick="if(window._lastIncidentParams){var p=window._lastIncidentParams;_downloadIncidentReport(p.computedHash,p.expectedHash,p.label,p.timestamp,p.txHash)}" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,48,0.08);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:8px;padding:10px 16px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit"><i class="fas fa-file-export"></i> Export Incident Report</button>'
+                    + '<button onclick="resetVerifyWorkflow()" class="btn-accent" style="padding:10px 20px;font-size:0.85rem"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another</button></div>';
+            }
+        }
+    }
+    container.innerHTML = window._s4Safe(html);
+}
+
+/** Run deep document comparison (Step 4) — line by line diff with page detection */
+function runDeepComparison() {
+    var r = _verifyWorkflow.vaultRecord;
+    if (!r) return;
+    var original = r.fullContent || r.content || '';
+    var current = _verifyWorkflow.inputContent || '';
+    _verifyWorkflow.step = Math.max(_verifyWorkflow.step, 4);
+    showVerifyStep(4);
+    var container = document.getElementById('verifyStep4Content');
+    if (!container) return;
+    // Use existing diff engine
+    var diffs = _computeInlineDiff(original, current);
+    var classification = _classifyChanges(diffs, original, current);
+    var html = '';
+    // Summary stats
+    var additions = diffs.filter(function(d) { return d.type === 'add'; }).length;
+    var removals = diffs.filter(function(d) { return d.type === 'remove'; }).length;
+    var unchanged = diffs.filter(function(d) { return d.type === 'equal'; }).length;
+    var totalLines = additions + removals + unchanged;
+    html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">'
+        + '<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#ff3b30">' + (additions + removals) + '</div><div style="font-size:0.72rem;color:var(--muted);margin-top:2px">Changes</div></div>'
+        + '<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#ff3b30">' + removals + '</div><div style="font-size:0.72rem;color:var(--muted);margin-top:2px">Removed</div></div>'
+        + '<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#34c759">' + additions + '</div><div style="font-size:0.72rem;color:var(--muted);margin-top:2px">Added</div></div>'
+        + '<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.4rem;font-weight:700;color:var(--steel)">' + unchanged + '</div><div style="font-size:0.72rem;color:var(--muted);margin-top:2px">Unchanged</div></div>'
+        + '</div>';
+    // Classification badge
+    if (classification) {
+        html += '<div style="margin-bottom:16px">' + _renderClassificationBadge(classification) + '</div>';
+    }
+    // Page-level location mapping (estimate ~50 lines per page)
+    var LINES_PER_PAGE = 50;
+    var changedPages = {};
+    var lineCounter = 0;
+    diffs.forEach(function(d) {
+        if (d.type === 'remove' || d.type === 'add') {
+            var page = Math.floor(lineCounter / LINES_PER_PAGE) + 1;
+            if (!changedPages[page]) changedPages[page] = { adds: 0, removes: 0, lines: [] };
+            changedPages[page][d.type === 'add' ? 'adds' : 'removes']++;
+            changedPages[page].lines.push(lineCounter + 1);
+        }
+        if (d.type !== 'add') lineCounter++; // additions don't advance original line count
+    });
+    var pageKeys = Object.keys(changedPages);
+    if (pageKeys.length > 0) {
+        html += '<div style="margin-bottom:16px"><div style="font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:8px"><i class="fas fa-file-lines" style="color:#ff9500;margin-right:6px"></i>Changes by Page (est. 50 lines/page)</div>';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+        pageKeys.forEach(function(p) {
+            var pg = changedPages[p];
+            html += '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.15);border-radius:8px;padding:6px 12px;font-size:0.78rem">'
+                + '<strong style="color:#ff3b30">Page ' + p + '</strong>'
+                + '<span style="color:var(--muted)">' + (pg.removes + pg.adds) + ' change' + (pg.removes + pg.adds > 1 ? 's' : '') + ' (lines ' + pg.lines[0] + '-' + pg.lines[pg.lines.length - 1] + ')</span></div>';
+        });
+        html += '</div></div>';
+    }
+    // Side-by-side diff using the existing engine
+    var diffView = _renderDiffView(diffs, original, current);
+    html += '<div style="margin-bottom:12px"><div style="font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:8px"><i class="fas fa-columns" style="color:var(--accent);margin-right:6px"></i>Side-by-Side Comparison</div>' + diffView + '</div>';
+    // Character-level detail for first few changes
+    var charDiffs = [];
+    for (var i = 0; i < diffs.length && charDiffs.length < 5; i++) {
+        if (diffs[i].type === 'remove' && i + 1 < diffs.length && diffs[i + 1].type === 'add') {
+            charDiffs.push({ original: diffs[i].value, modified: diffs[i + 1].value, line: diffs[i].lineNum || i + 1 });
+            i++; // skip the 'add' since we paired it
+        }
+    }
+    if (charDiffs.length > 0) {
+        html += '<div style="margin-bottom:12px"><div style="font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:8px"><i class="fas fa-microscope" style="color:var(--accent);margin-right:6px"></i>Character-Level Changes (first ' + charDiffs.length + ')</div>';
+        charDiffs.forEach(function(cd) {
+            var charHighlight = _charDiffHighlight(cd.original, cd.modified);
+            html += '<div style="background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;font-family:monospace;font-size:0.78rem">'
+                + '<div style="color:var(--muted);font-size:0.68rem;margin-bottom:6px">Line ' + cd.line + '</div>'
+                + '<div style="margin-bottom:4px"><span style="color:#ff3b30;margin-right:6px;font-weight:700">−</span>' + charHighlight.original + '</div>'
+                + '<div><span style="color:#34c759;margin-right:6px;font-weight:700">+</span>' + charHighlight.modified + '</div></div>';
+        });
+        html += '</div>';
+    }
+    container.innerHTML = window._s4Safe(html);
+    // Enable Step 5
+    _verifyWorkflow.step = Math.max(_verifyWorkflow.step, 5);
+    var nextBtn = document.getElementById('vstep4Next');
+    if (nextBtn) nextBtn.disabled = false;
+}
+
+/** Run AI exact-fix analysis (Step 5) */
+function runAiFixAnalysis() {
+    var r = _verifyWorkflow.vaultRecord;
+    var original = r ? (r.fullContent || r.content || '') : '';
+    var current = _verifyWorkflow.inputContent || '';
+    showVerifyStep(5);
+    var container = document.getElementById('verifyStep5Content');
+    if (!container) return;
+    // Generate diff data
+    var diffs = original.length > 10 ? _computeInlineDiff(original, current) : [];
+    var classification = diffs.length ? _classifyChanges(diffs, original, current) : null;
+    // Build exact fix instructions
+    var additions = diffs.filter(function(d) { return d.type === 'add'; });
+    var removals = diffs.filter(function(d) { return d.type === 'remove'; });
+    var html = '';
+    // Header
+    html += '<div style="background:rgba(0,170,255,0.04);border:2px solid rgba(0,170,255,0.15);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center">'
+        + '<div style="width:56px;height:56px;border-radius:50%;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 10px"><i class="fas fa-robot" style="font-size:1.5rem;color:var(--accent)"></i></div>'
+        + '<div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px">AI Exact-Fix Analysis</div>'
+        + '<div style="font-size:0.82rem;color:var(--steel)">Here is exactly what was changed and how to restore the original verified record.</div></div>';
+    if (diffs.length === 0 || !original || original.length <= 10) {
+        html += '<div style="background:rgba(255,149,0,0.06);border:1px solid rgba(255,149,0,0.15);border-radius:10px;padding:14px;font-size:0.85rem;color:var(--steel)">'
+            + '<i class="fas fa-info-circle" style="color:#ff9500;margin-right:6px"></i>'
+            + 'Full content diff not available for this record. The original content was not stored at anchor time. '
+            + 'To restore this record: locate the original version from your backup system, then re-anchor to create a fresh verified copy.</div>';
+    } else {
+        // Fix summary
+        html += '<div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">'
+            + '<div style="font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:10px"><i class="fas fa-wrench" style="color:var(--accent);margin-right:6px"></i>Fix Summary</div>'
+            + '<div style="font-size:0.85rem;color:var(--steel);line-height:1.8">'
+            + '<div><strong>' + removals.length + '</strong> line' + (removals.length !== 1 ? 's' : '') + ' were <span style="color:#ff3b30">removed or modified</span></div>'
+            + '<div><strong>' + additions.length + '</strong> line' + (additions.length !== 1 ? 's' : '') + ' were <span style="color:#34c759">added</span></div>'
+            + (classification ? '<div>Change type: <strong style="color:' + classification.color + '">' + classification.level + '</strong> — ' + classification.description + '</div>' : '')
+            + '</div></div>';
+        // Exact fix instructions (line by line)
+        html += '<div style="margin-bottom:16px"><div style="font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:10px"><i class="fas fa-list-check" style="color:#34c759;margin-right:6px"></i>Step-by-Step Fix Instructions</div>';
+        var fixNum = 0;
+        var LINES_PER_PAGE = 50;
+        for (var i = 0; i < diffs.length && fixNum < 30; i++) {
+            var d = diffs[i];
+            if (d.type === 'equal') continue;
+            fixNum++;
+            var page = Math.floor(((d.lineNum || i) - 1) / LINES_PER_PAGE) + 1;
+            if (d.type === 'remove' && i + 1 < diffs.length && diffs[i + 1].type === 'add') {
+                // Paired change — line was modified
+                var next = diffs[i + 1];
+                html += '<div style="background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">'
+                    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:rgba(255,149,0,0.12);color:#ff9500;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700">FIX #' + fixNum + '</span><span style="font-size:0.75rem;color:var(--muted)">Page ' + page + ', Line ' + (d.lineNum || i + 1) + '</span></div>'
+                    + '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:6px"><strong>Change:</strong> This line was modified</div>'
+                    + '<div style="font-family:monospace;font-size:0.75rem;margin-bottom:4px"><span style="color:#ff3b30">− </span><span style="background:rgba(255,59,48,0.08);padding:2px 4px;border-radius:3px;color:var(--steel)">' + _escHtml(d.value.substring(0, 200)) + '</span></div>'
+                    + '<div style="font-family:monospace;font-size:0.75rem"><span style="color:#34c759">+ </span><span style="background:rgba(52,199,89,0.08);padding:2px 4px;border-radius:3px;color:var(--steel)">' + _escHtml(next.value.substring(0, 200)) + '</span></div>'
+                    + '<div style="font-size:0.75rem;color:var(--accent);margin-top:6px"><i class="fas fa-arrow-right" style="margin-right:4px"></i><strong>To fix:</strong> Revert this line back to the original (red) version</div>'
+                    + '</div>';
+                i++; // skip paired add
+            } else if (d.type === 'remove') {
+                html += '<div style="background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">'
+                    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:rgba(255,59,48,0.12);color:#ff3b30;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700">FIX #' + fixNum + '</span><span style="font-size:0.75rem;color:var(--muted)">Page ' + page + ', Line ' + (d.lineNum || i + 1) + '</span></div>'
+                    + '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:6px"><strong>Deleted Line:</strong> This line was removed from the document</div>'
+                    + '<div style="font-family:monospace;font-size:0.75rem"><span style="color:#ff3b30">− </span><span style="background:rgba(255,59,48,0.08);padding:2px 4px;border-radius:3px;color:var(--steel)">' + _escHtml(d.value.substring(0, 200)) + '</span></div>'
+                    + '<div style="font-size:0.75rem;color:var(--accent);margin-top:6px"><i class="fas fa-arrow-right" style="margin-right:4px"></i><strong>To fix:</strong> Re-insert this line at this position</div></div>';
+            } else if (d.type === 'add') {
+                html += '<div style="background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">'
+                    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:rgba(52,199,89,0.12);color:#34c759;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700">FIX #' + fixNum + '</span><span style="font-size:0.75rem;color:var(--muted)">Page ' + page + ', Line ' + (d.lineNum || i + 1) + '</span></div>'
+                    + '<div style="font-size:0.78rem;color:var(--steel);margin-bottom:6px"><strong>Inserted Line:</strong> This line was added to the document</div>'
+                    + '<div style="font-family:monospace;font-size:0.75rem"><span style="color:#34c759">+ </span><span style="background:rgba(52,199,89,0.08);padding:2px 4px;border-radius:3px;color:var(--steel)">' + _escHtml(d.value.substring(0, 200)) + '</span></div>'
+                    + '<div style="font-size:0.75rem;color:var(--accent);margin-top:6px"><i class="fas fa-arrow-right" style="margin-right:4px"></i><strong>To fix:</strong> Remove this line — it was not in the original</div></div>';
+            }
+        }
+        if (fixNum >= 30) {
+            html += '<div style="text-align:center;padding:10px;color:var(--muted);font-size:0.82rem">... and ' + (removals.length + additions.length - 30) + ' more changes. Export the full incident report for complete details.</div>';
+        }
+        html += '</div>';
+        // Restore original button
+        html += '<div style="background:rgba(52,199,89,0.04);border:1px solid rgba(52,199,89,0.15);border-radius:12px;padding:16px;margin-bottom:12px">'
+            + '<div style="font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:8px"><i class="fas fa-download" style="color:#34c759;margin-right:6px"></i>Restore Original Document</div>'
+            + '<div style="font-size:0.82rem;color:var(--steel);margin-bottom:12px">Download the original verified content exactly as it was when anchored to the blockchain.</div>'
+            + '<button onclick="_downloadOriginalContent()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(52,199,89,0.1);color:#34c759;border:1px solid rgba(52,199,89,0.25);border-radius:8px;padding:10px 18px;font-size:0.85rem;cursor:pointer;font-weight:600;font-family:inherit"><i class="fas fa-file-download"></i> Download Original Record</button></div>';
+    }
+    // Try AI backend for deeper analysis
+    _tryAiDeepAnalysis(container, html, diffs, classification, r, current);
+}
+
+/** Try AI backend for enhanced analysis, fall back to local */
+async function _tryAiDeepAnalysis(container, baseHtml, diffs, classification, vaultRecord, currentContent) {
+    container.innerHTML = window._s4Safe(baseHtml + '<div id="aiDeepLoading" style="text-align:center;padding:16px"><i class="fas fa-spinner fa-spin" style="color:var(--accent);font-size:1.2rem"></i><div style="color:var(--steel);font-size:0.82rem;margin-top:8px">Running AI deep analysis...</div></div>');
+    try {
+        var diffContext = classification ? 'Classification: ' + classification.level + ' (' + classification.description + '). ' : '';
+        var prompt = 'You are a defense logistics data integrity analyst. A document was modified after blockchain anchoring. '
+            + diffContext
+            + 'Changes found: ' + diffs.filter(function(d){return d.type!=='equal';}).length + ' lines changed. '
+            + 'Analyze: 1) Most likely cause 2) Security implications 3) Exact remediation steps. Keep under 150 words. Be direct.';
+        var resp = await fetch('/api/ai-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: prompt, conversation: [], tool_context: 'Deep Fix Analysis' }) });
+        var el = document.getElementById('aiDeepLoading');
+        if (resp.ok) {
+            var data = await resp.json();
+            if (data.response && !data.fallback && el) {
+                el.innerHTML = '<div style="background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:12px;padding:16px">'
+                    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><i class="fas fa-robot" style="color:var(--accent)"></i><strong style="color:#fff">S4 AI Deep Analysis</strong></div>'
+                    + '<div style="font-size:0.85rem;color:var(--steel);line-height:1.7">' + data.response.replace(/\n/g, '<br>') + '</div></div>';
+                return;
+            }
+        }
+        if (el) el.remove();
+    } catch (e) {
+        var el2 = document.getElementById('aiDeepLoading');
+        if (el2) el2.remove();
+    }
+}
+
+/** Download original content from vault as a text file */
+function _downloadOriginalContent() {
+    var r = _verifyWorkflow.vaultRecord;
+    if (!r || !r.fullContent) {
+        if (typeof s4Notify === 'function') s4Notify('Not Available', 'Original content not stored for this record.', 'warning');
+        return;
+    }
+    var blob = new Blob([r.fullContent], { type: 'text/plain' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'S4_Original_' + (r.label || r.type || 'Record').replace(/[^a-zA-Z0-9]/g, '_') + '_' + new Date().toISOString().split('T')[0] + '.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    if (typeof showWorkspaceNotification === 'function') showWorkspaceNotification('Original verified document downloaded');
+}
+
+/** Reset the verification workflow back to Step 1 */
+function resetVerifyWorkflow() {
+    _verifyWorkflow = { step: 1, record: null, hash: null, vaultRecord: null, fileHash: null, inputContent: null, source: 'vault' };
+    showVerifyStep(1);
+    // Reset all step buttons
+    for (var i = 2; i <= 5; i++) {
+        var btn = document.getElementById('vstep' + i + 'Btn');
+        if (btn) { btn.disabled = true; btn.style.color = 'var(--muted)'; btn.style.borderBottomColor = 'transparent'; }
+    }
+    clearVerifySelection();
+    populateVerifyVaultList();
+    // Clear text/file inputs
+    var textInput = document.getElementById('verifyInput');
+    if (textInput) textInput.value = '';
+    var hashInput = document.getElementById('verifyHash');
+    if (hashInput) hashInput.value = '';
+    showVerifySource('vault');
+}
+
+/** Quick verify: pick most recent vault record and auto-run full workflow */
+function quickVerifyFromVault() {
+    var records = (typeof s4Vault !== 'undefined' ? s4Vault : []).concat(sessionRecords || []);
+    if (!records.length) {
+        if (typeof s4Notify === 'function') s4Notify('No Records', 'No anchored records to verify. Anchor a record first.', 'info');
+        return;
+    }
+    // Auto-select most recent record with fullContent
+    var r = records.find(function(rec) { return rec.fullContent && rec.fullContent.length > 0; }) || records[0];
+    _verifyWorkflow.record = r;
+    _verifyWorkflow.vaultRecord = r;
+    _verifyWorkflow.hash = r.hash;
+    _verifyWorkflow.inputContent = r.fullContent || r.content || '';
+    _verifyWorkflow.step = 3;
+    showVerifyStep(3);
+    runVerifyIntegrity();
+}
+
+/** Bulk verify all vault records */
+function bulkVerifyFromVault() {
+    var records = (typeof s4Vault !== 'undefined' ? s4Vault : []).filter(function(r) { return r.fullContent && r.fullContent.length > 0; });
+    if (!records.length) {
+        if (typeof s4Notify === 'function') s4Notify('No Records', 'No records with stored content available for bulk verification.', 'info');
+        return;
+    }
+    // Show results in Step 3
+    _verifyWorkflow.step = 3;
+    showVerifyStep(3);
+    var container = document.getElementById('verifyStep3Content');
+    var actions = document.getElementById('verifyStep3Actions');
+    if (!container) return;
+    container.innerHTML = '<div style="text-align:center;padding:24px"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;color:var(--accent)"></i><div style="color:var(--steel);font-size:0.88rem;margin-top:10px">Verifying ' + records.length + ' records...</div></div>';
+    // Verify each record
+    (async function() {
+        var results = [];
+        for (var i = 0; i < records.length; i++) {
+            var r = records[i];
+            var computed = await sha256(r.fullContent);
+            results.push({ record: r, match: computed.toLowerCase() === r.hash.toLowerCase(), computed: computed });
+        }
+        var matched = results.filter(function(r) { return r.match; }).length;
+        var mismatched = results.filter(function(r) { return !r.match; }).length;
+        var html = '<div style="margin-bottom:16px">'
+            + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+            + '<div style="background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:12px;padding:16px;text-align:center"><div style="font-size:2rem;font-weight:700;color:#34c759">' + matched + '</div><div style="font-size:0.82rem;color:var(--steel)">Verified</div></div>'
+            + '<div style="background:' + (mismatched > 0 ? 'rgba(255,59,48,0.06)' : 'rgba(255,255,255,0.03)') + ';border:1px solid ' + (mismatched > 0 ? 'rgba(255,59,48,0.15)' : 'var(--border)') + ';border-radius:12px;padding:16px;text-align:center"><div style="font-size:2rem;font-weight:700;color:' + (mismatched > 0 ? '#ff3b30' : 'var(--steel)') + '">' + mismatched + '</div><div style="font-size:0.82rem;color:var(--steel)">Tampered</div></div>'
+            + '</div></div>';
+        // Results table
+        html += '<div style="max-height:400px;overflow-y:auto">';
+        results.forEach(function(res) {
+            var icon = res.match ? '<i class="fas fa-shield-alt" style="color:#34c759"></i>' : '<i class="fas fa-exclamation-triangle" style="color:#ff3b30"></i>';
+            html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)">'
+                + '<div style="width:28px;text-align:center">' + icon + '</div>'
+                + '<div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (res.record.label || res.record.type || 'Record') + '</div>'
+                + '<div style="font-size:0.68rem;color:var(--muted);font-family:monospace">' + res.record.hash.substring(0, 20) + '...</div></div>'
+                + '<span style="font-size:0.78rem;font-weight:600;color:' + (res.match ? '#34c759' : '#ff3b30') + '">' + (res.match ? 'VERIFIED' : 'TAMPERED') + '</span></div>';
+        });
+        html += '</div>';
+        container.innerHTML = window._s4Safe(html);
+        if (actions) {
+            actions.innerHTML = '<button onclick="resetVerifyWorkflow()" class="btn-accent" style="padding:10px 20px;font-size:0.85rem"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Start Over</button>';
+        }
+        stats.verified += records.length; updateStats(); saveStats();
+    })();
+}
+
+/** Initialize the verification vault list when stepping into Step 1 */
+(function() {
+    var _origShowSection = window.showSection;
+    if (typeof _origShowSection === 'function') {
+        window.showSection = function(s) {
+            _origShowSection(s);
+            if (s === 'sectionVerify') { populateVerifyVaultList(); }
+        };
+    }
+    // Also populate on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() { if (document.getElementById('verifyVaultList')) populateVerifyVaultList(); }, 500);
+    });
+})();
+
+// Also connect the existing file upload handlers to the workflow
+var _origHandleVerifyFileDrop = window.handleVerifyFileDrop;
+var _origHandleVerifyFileSelect = window.handleVerifyFileSelect;
+
+// Hook file verification into the workflow state
+function _hookFileVerifyToWorkflow(file, hash) {
+    _verifyWorkflow.fileHash = hash;
+    _verifyWorkflow.source = 'file';
+    var nextBtn = document.getElementById('vstep1Next');
+    if (nextBtn) nextBtn.disabled = false;
+    // Try to find matching vault record
+    if (typeof s4Vault !== 'undefined') {
+        _verifyWorkflow.vaultRecord = s4Vault.find(function(r) { return r.hash && r.hash.toLowerCase() === hash.toLowerCase(); });
+        if (_verifyWorkflow.vaultRecord) _verifyWorkflow.hash = _verifyWorkflow.vaultRecord.hash;
+    }
+    if (!_verifyWorkflow.hash) {
+        _verifyWorkflow.hash = hash; // Use computed hash as the anchor for comparison
+    }
+}
+
+// Wire up the step 5 button click
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.closest && e.target.closest('#vstep4Next')) {
+        runAiFixAnalysis();
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════
 
 /** AI-powered integrity analysis for hash mismatches */
 async function _runVerifyAiAnalysis(computedHash, expectedHash, inputContent, vaultRecord) {
@@ -2188,14 +2892,7 @@ function _downloadIncidentReport(computedHash, expectedHash, label, timestamp, t
 }
 
 function resetVerify() {
-    document.getElementById('verifyInput').value = '';
-    document.getElementById('verifyHash').value = '';
-    var panel = document.getElementById('verifyResult');
-    if (panel) { panel.innerHTML = ''; panel.classList.remove('show'); }
-    // Also reset file verification drop zone if it exists
-    var fileResult = document.getElementById('verifyFileResults');
-    if (fileResult) { fileResult.innerHTML = ''; fileResult.classList.remove('show'); }
-    document.getElementById('verifyInput').focus();
+    resetVerifyWorkflow();
 }
 
 
@@ -4899,11 +5596,11 @@ async function anchorROI() {
     showAnchorAnimation(hash, 'ROI Analysis Report', 'CUI');
     stats.anchored++; stats.types.add('ROI_REPORT'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
     var result = await _anchorToXRPL(hash, 'ROI_REPORT', text.substring(0,100));
-    var rec = {hash:hash, type:'ROI_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'S4 Ledger ROI Analysis', txHash:result.txHash};
+    var rec = {hash:hash, type:'ROI_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'S4 Ledger ROI Analysis', txHash:result.txHash, content:text.substring(0,100), fullContent:text};
     sessionRecords.push(rec);
     saveLocalRecord({hash:hash, record_type:'ROI_REPORT', record_label:'S4 Ledger ROI Analysis', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'ROI Calculator', explorer_url:result.explorerUrl, network:result.network});
     updateTxLog();
-    addToVault({hash:hash, txHash:result.txHash, type:'ROI_REPORT', label:'S4 Ledger ROI Analysis', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    addToVault({hash:hash, txHash:result.txHash, type:'ROI_REPORT', label:'S4 Ledger ROI Analysis', branch:'JOINT', icon:'<i class="fas fa-dollar-sign"></i>', content:text.substring(0,100), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'ROI Calculator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     // Update SLS display
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Analysis Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
@@ -4930,7 +5627,8 @@ async function anchorILSReport() {
     const record = {
         type:'ILS_GAP_ANALYSIS', label:'ILS Gap Analysis Report', icon:'\uD83E\uDDE0', branch:'JOINT',
         hash, txHash, encrypted:false, timestamp:new Date().toISOString(),
-        content:'ILS Analysis: ' + ilsResults.prog.name + ' — ' + ilsResults.pct + '% readiness'
+        content:'ILS Analysis: ' + ilsResults.prog.name + ' — ' + ilsResults.pct + '% readiness',
+        fullContent: reportStr
     };
     sessionRecords.push(record);
     saveLocalRecord({
@@ -4939,7 +5637,7 @@ async function anchorILSReport() {
         timestamp_display: new Date().toISOString().replace('T',' ').substring(0,19) + ' UTC',
         fee:0.01, tx_hash:txHash, system:'Anchor-S4'
     });
-    addToVault({hash, txHash, type:'ILS_GAP_ANALYSIS', label:'ILS Gap Analysis Report', branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:'ILS Analysis: '+ilsResults.prog.name+' — '+ilsResults.pct+'% readiness', encrypted:false, timestamp:new Date().toISOString(), source:'ILS Gap Analysis', fee:0.01, explorerUrl, network});
+    addToVault({hash, txHash, type:'ILS_GAP_ANALYSIS', label:'ILS Gap Analysis Report', branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:'ILS Analysis: '+ilsResults.prog.name+' — '+ilsResults.pct+'% readiness', fullContent: reportStr, encrypted:false, timestamp:new Date().toISOString(), source:'ILS Gap Analysis', fee:0.01, explorerUrl, network});
     stats.anchored++;
     stats.types.add('ILS_GAP_ANALYSIS');
     stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100;
@@ -6465,11 +7163,11 @@ async function anchorDMSMS() {
     showAnchorAnimation(hash, 'DMSMS Report', 'CUI');
     stats.anchored++; stats.types.add('DMSMS_REPORT'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
     const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'DMSMS_REPORT', text.substring(0,100));
-    const rec = {hash, type:'DMSMS_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'DMSMS Obsolescence Report', txHash};
+    const rec = {hash, type:'DMSMS_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'DMSMS Obsolescence Report', txHash, content:text.substring(0,100), fullContent:text};
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'DMSMS_REPORT', record_label:'DMSMS Obsolescence Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'DMSMS Tracker', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01, explorerUrl, network});
+    addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS Obsolescence Check Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('DMSMS Obsolescence Report', 'DMSMS_REPORT', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3500));
@@ -6584,11 +7282,11 @@ async function anchorReadiness() {
     showAnchorAnimation(hash, 'RAM Readiness Report', 'CUI');
     stats.anchored++; stats.types.add('RAM_REPORT'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
     const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'RAM_REPORT', text.substring(0,100));
-    const rec = {hash, type:'RAM_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'RAM Readiness Report', txHash};
+    const rec = {hash, type:'RAM_REPORT', branch:'JOINT', timestamp:new Date().toISOString(), label:'RAM Readiness Report', txHash, content:text.substring(0,100), fullContent:text};
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'RAM_REPORT', record_label:'RAM Readiness Report', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Readiness Calculator', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01, explorerUrl, network});
+    addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Readiness Score Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('RAM Readiness Report', 'RAM_REPORT', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3500));
@@ -8014,9 +8712,9 @@ async function anchorCompliance() {
     showAnchorAnimation(hash, 'Compliance Scorecard', 'CUI');
     const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'compliance_scorecard', content.substring(0,100));
 
-    addToVault({hash, txHash, type:'compliance_scorecard', label:'Compliance Scorecard', branch:'JOINT', icon:'<i class="fas fa-shield-alt"></i>', content: content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Compliance Scorecard', fee:0.01, explorerUrl, network});
+    addToVault({hash, txHash, type:'compliance_scorecard', label:'Compliance Scorecard', branch:'JOINT', icon:'<i class="fas fa-shield-alt"></i>', content: content.substring(0,100), fullContent:content, encrypted:false, timestamp:new Date().toISOString(), source:'Compliance Scorecard', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; stats.types.add('compliance_scorecard'); updateStats(); saveStats();
-    const rec = {hash, type:'compliance_scorecard', branch:'JOINT', timestamp:new Date().toISOString(), label:'Compliance Scorecard', txHash};
+    const rec = {hash, type:'compliance_scorecard', branch:'JOINT', timestamp:new Date().toISOString(), label:'Compliance Scorecard', txHash, content:content.substring(0,100), fullContent:content};
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'compliance_scorecard', record_label:'Compliance Scorecard', branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Compliance Scorecard', explorer_url: explorerUrl, network});
     updateTxLog();
@@ -8965,10 +9663,10 @@ async function anchorRisk() {
     showAnchorAnimation(hash, 'Supply Chain Risk Report', 'CUI');
     const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'risk_report', content.substring(0,100));
 
-    addToVault({hash, txHash, type:'risk_report', label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'AI Supply Chain Risk Engine', fee:0.01, explorerUrl, network});
+    addToVault({hash, txHash, type:'risk_report', label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:content.substring(0,100), fullContent:content, encrypted:false, timestamp:new Date().toISOString(), source:'AI Supply Chain Risk Engine', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; stats.types.add('risk_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'risk_report', record_label:'Supply Chain Risk Report — '+prog.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
-    sessionRecords.push({hash, type:'risk_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Supply Chain Risk Report', txHash});
+    sessionRecords.push({hash, type:'risk_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Supply Chain Risk Report', txHash, content:content.substring(0,100), fullContent:content});
     updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Risk Report Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Supply Chain Risk Report', 'risk_report', {txHash, explorerUrl, network});
@@ -9077,10 +9775,10 @@ async function anchorReport() {
     showAnchorAnimation(hash, 'Audit Report Hash', 'CUI');
     const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'audit_report', content.substring(0,100));
 
-    addToVault({hash, txHash, type:'audit_report', label:r.title+' — Score: '+r.score+'%', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Audit Report Generator', fee:0.01, explorerUrl, network});
+    addToVault({hash, txHash, type:'audit_report', label:r.title+' — Score: '+r.score+'%', branch:'JOINT', icon:'<i class="fas fa-clipboard-list"></i>', content:content.substring(0,100), fullContent:content, encrypted:false, timestamp:new Date().toISOString(), source:'Audit Report Generator', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; stats.types.add('audit_report'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'audit_report', record_label:r.title, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
-    sessionRecords.push({hash, type:'audit_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Audit Report', txHash});
+    sessionRecords.push({hash, type:'audit_report', branch:'JOINT', timestamp:new Date().toISOString(), label:'Audit Report', txHash, content:content.substring(0,100), fullContent:content});
     updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Audit Report Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Audit Report', 'audit_report', {txHash, explorerUrl, network});
@@ -9307,10 +10005,10 @@ async function anchorPredictive() {
     showAnchorAnimation(hash, 'Predictive Maintenance Report', 'CUI');
     const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'predictive_maintenance', content.substring(0,100));
 
-    addToVault({hash, txHash, type:'predictive_maintenance', label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:content.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Predictive Maintenance AI', fee:0.01, explorerUrl, network});
+    addToVault({hash, txHash, type:'predictive_maintenance', label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', icon:'<i class="fas fa-brain"></i>', content:content.substring(0,100), fullContent:content, encrypted:false, timestamp:new Date().toISOString(), source:'Predictive Maintenance AI', fee:0.01, explorerUrl, network});
     stats.anchored++; stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; stats.types.add('predictive_maintenance'); updateStats(); saveStats();
     saveLocalRecord({hash, tx_hash:txHash, record_type:'predictive_maintenance', record_label:'Predictive Maintenance — '+platform.toUpperCase(), branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toLocaleString(), fee:0.01, explorer_url: explorerUrl, network});
-    sessionRecords.push({hash, type:'predictive_maintenance', branch:'JOINT', timestamp:new Date().toISOString(), label:'Predictive Maintenance', txHash});
+    sessionRecords.push({hash, type:'predictive_maintenance', branch:'JOINT', timestamp:new Date().toISOString(), label:'Predictive Maintenance', txHash, content:content.substring(0,100), fullContent:content});
     updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Predictive Maintenance Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Predictive Maintenance', 'predictive_maintenance', {txHash, explorerUrl, network});
@@ -9832,11 +10530,11 @@ async function anchorSubmissionReview() {
     showAnchorAnimation(hash, 'Submissions & PTD Analysis — ' + docTypeLabel, 'CUI');
     const {txHash, explorerUrl, network} = await _anchorToXRPL(hash, 'SUBMISSION_REVIEW', text.substring(0,100));
     stats.anchored++; stats.types.add('SUBMISSION_REVIEW'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
-    const rec = {hash, type:'SUBMISSION_REVIEW', branch:meta.branch, timestamp:new Date().toISOString(), label:'Submissions & PTD Analysis: ' + docTypeLabel, txHash};
+    const rec = {hash, type:'SUBMISSION_REVIEW', branch:meta.branch, timestamp:new Date().toISOString(), label:'Submissions & PTD Analysis: ' + docTypeLabel, txHash, content:text.substring(0,100), fullContent:text};
     sessionRecords.push(rec);
     saveLocalRecord({hash, record_type:'SUBMISSION_REVIEW', record_label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:txHash, system:'Submissions & PTD', explorer_url: explorerUrl, network});
     updateTxLog();
-    addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Submissions & PTD', fee:0.01, explorerUrl, network});
+    addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, icon:'<i class="fas fa-file-alt"></i>', content:text.substring(0,100), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Submissions & PTD', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Submissions & PTD Anchored — ' + _subCache.discrepancies.length + ' discrepancies recorded' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Submissions & PTD Analysis', 'SUBMISSION_REVIEW', {txHash, explorerUrl, network});
     await new Promise(r => setTimeout(r, 3500));
@@ -9898,10 +10596,10 @@ async function anchorLifecycle() {
     var result = await _anchorToXRPL(hash, 'LIFECYCLE_COST', text.substring(0,100));
     stats.anchored++; stats.types.add('LIFECYCLE_COST'); stats.slsFees = Math.round((stats.slsFees + 0.01) * 100) / 100; updateStats(); saveStats();
     
-    sessionRecords.push({hash:hash, type:'LIFECYCLE_COST', branch:'JOINT', timestamp:new Date().toISOString(), label:'Lifecycle Cost Analysis: ' + program, txHash:result.txHash});
+    sessionRecords.push({hash:hash, type:'LIFECYCLE_COST', branch:'JOINT', timestamp:new Date().toISOString(), label:'Lifecycle Cost Analysis: ' + program, txHash:result.txHash, content:text.substring(0,100), fullContent:text});
     saveLocalRecord({hash:hash, record_type:'LIFECYCLE_COST', record_label:'Lifecycle Cost Analysis: ' + program, branch:'JOINT', timestamp:new Date().toISOString(), timestamp_display:new Date().toISOString().replace('T',' ').substring(0,19)+' UTC', fee:0.01, tx_hash:result.txHash, system:'Lifecycle Cost', explorer_url:result.explorerUrl, network:result.network});
     updateTxLog();
-    addToVault({hash:hash, txHash:result.txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost Analysis: ' + program, branch:'JOINT', icon:'fa-clock', content:text.substring(0,100), encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Cost Estimator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
+    addToVault({hash:hash, txHash:result.txHash, type:'LIFECYCLE_COST', label:'Lifecycle Cost Analysis: ' + program, branch:'JOINT', icon:'<i class="fas fa-clock"></i>', content:text.substring(0,100), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Lifecycle Cost Estimator', fee:0.01, explorerUrl:result.explorerUrl, network:result.network});
     
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     if (typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
@@ -10394,6 +11092,21 @@ window.renderDocLibrary = renderDocLibrary;
 window.renderTypeGrid = renderTypeGrid;
 window.resetDemoSession = resetDemoSession;
 window.resetVerify = resetVerify;
+window.resetVerifyWorkflow = resetVerifyWorkflow;
+window.showVerifyStep = showVerifyStep;
+window.showVerifySource = showVerifySource;
+window.selectVaultRecord = selectVaultRecord;
+window.clearVerifySelection = clearVerifySelection;
+window.verifyStepNext = verifyStepNext;
+window.runVerifyIntegrity = runVerifyIntegrity;
+window.runDeepComparison = runDeepComparison;
+window.runAiFixAnalysis = runAiFixAnalysis;
+window.quickVerifyFromVault = quickVerifyFromVault;
+window.bulkVerifyFromVault = bulkVerifyFromVault;
+window.populateVerifyVaultList = populateVerifyVaultList;
+window._downloadOriginalContent = _downloadOriginalContent;
+window._handleStep2FileDrop = _handleStep2FileDrop;
+window._handleStep2FileSelect = _handleStep2FileSelect;
 window._downloadVerificationCertificate = _downloadVerificationCertificate;
 window._downloadIncidentReport = _downloadIncidentReport;
 window.runAnomalyDetection = runAnomalyDetection;
