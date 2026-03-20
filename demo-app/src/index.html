@@ -507,6 +507,21 @@
                     <div class="breadcrumb-text">Verify & Anchor Records</div>
                 </div>
 
+                <!-- ═══ RECORD HUB — Anchored Records List ═══ -->
+                <div class="s4-card" id="verifyRecordHub" style="margin-bottom:20px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                        <h3 style="margin:0;font-size:1.1rem;font-weight:800;"><i class="fas fa-vault" style="color:var(--accent);margin-right:8px;"></i>Anchored Records</h3>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <input type="text" id="recordHubSearch" placeholder="Search records..." oninput="filterRecordHub()" style="background:rgba(0,0,0,0.15);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.78rem;color:#fff;width:180px;font-family:inherit;">
+                            <span id="recordHubCount" style="font-size:0.72rem;color:var(--steel);white-space:nowrap;"></span>
+                        </div>
+                    </div>
+                    <p style="color:var(--steel);font-size:0.82rem;margin-bottom:14px;">Browse all anchored records. Click <strong>View Document</strong> to read the full record, or <strong>Verify</strong> to check integrity against the blockchain.</p>
+                    <div id="verifyRecentAnchors" style="max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.1);padding:6px;">
+                        <div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">Loading anchored records...</div>
+                    </div>
+                </div>
+
                 <!-- ═══ VERIFY FORM ═══ -->
                 <div class="row" id="verifyFormSection">
                     <div class="col-12">

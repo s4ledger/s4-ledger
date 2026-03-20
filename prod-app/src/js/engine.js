@@ -1394,10 +1394,9 @@ function refreshVerifyRecents() {
     // Combine vault + session records, deduplicate by hash
     var seen = {};
     var records = [];
-    // Read vault directly from localStorage for maximum freshness (role-scoped)
-    var _vk = 's4Vault' + (window._currentRole ? '_' + window._currentRole : '');
+    // Use _vaultKey() for correct email+role scoped key
     var _freshVault = [];
-    try { _freshVault = JSON.parse(localStorage.getItem(_vk) || '[]'); } catch(e) {}
+    try { _freshVault = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(e) {}
     // Also check in-memory s4Vault as a second source
     var vaultSource = _freshVault.length > 0 ? _freshVault : (typeof s4Vault !== 'undefined' && Array.isArray(s4Vault) ? s4Vault : []);
     for (var j = 0; j < Math.min(vaultSource.length, 30); j++) {
@@ -1436,37 +1435,79 @@ function refreshVerifyRecents() {
     window._verifyRecentRecords = records;
     // If container isn't in the DOM yet, just store and return
     if (!container) return;
+    // Update count badge
+    var countEl = document.getElementById('recordHubCount');
+    if (countEl) countEl.textContent = records.length + ' record' + (records.length !== 1 ? 's' : '');
     if (records.length === 0) {
-        container.innerHTML = window._s4Safe('<div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">No anchored records yet. Anchor a record first to see it here.</div>');
+        container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem;"><i class="fas fa-inbox" style="font-size:1.5rem;display:block;margin-bottom:10px;color:var(--border);"></i>No anchored records yet.<br><span style="font-size:0.78rem">Anchor a record below to see it here.</span></div>';
         return;
     }
-    container.innerHTML = window._s4Safe(records.slice(0, 20).map(function(r, idx) {
+    container.innerHTML = records.slice(0, 30).map(function(r, idx) {
         var ago = '';
         try {
             var diff = Math.floor((Date.now() - new Date(r.timestamp).getTime()) / 1000);
             ago = diff < 60 ? diff + 's ago' : diff < 3600 ? Math.floor(diff/60) + 'm ago' : diff < 86400 ? Math.floor(diff/3600) + 'h ago' : Math.floor(diff/86400) + 'd ago';
         } catch(e) { ago = ''; }
         var hasFullContent = r.fullContent && r.fullContent.length > 0;
-        var _vrExplorer = '';
-        var _vrCopy = '';
         var _vrUrl = r.explorerUrl || (r.txHash && /^[0-9A-Fa-f]{64}$/.test(r.txHash) ? 'https://livenet.xrpl.org/transactions/' + r.txHash : '');
-        if (_vrUrl) {
-            _vrExplorer = '<a href="' + _vrUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;color:#00aaff;font-size:0.65rem;font-weight:600;text-decoration:none;white-space:nowrap;margin-left:6px;background:rgba(0,170,255,0.08);padding:1px 8px;border-radius:4px;border:1px solid rgba(0,170,255,0.15)"><i class="fas fa-external-link-alt"></i> View on XRPL</a>';
-            _vrCopy = '<button onclick="event.stopPropagation();navigator.clipboard.writeText(\'' + r.txHash + '\').then(function(){var b=this;this.textContent=\'Copied\';setTimeout(function(){b.innerHTML=\'<i class=\\\'fas fa-copy\\\'></i>\';},1200);}.bind(this))" style="background:none;border:1px solid rgba(0,170,255,0.2);border-radius:4px;color:#00aaff;font-size:0.58rem;padding:1px 4px;cursor:pointer;margin-left:2px" title="Copy TX Hash"><i class="fas fa-copy"></i></button>';
-        } else if (r.txHash && r.txHash.startsWith('LOCAL_')) {
-            _vrExplorer = '<span onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;color:#ff9500;font-size:0.6rem;font-weight:600;white-space:nowrap;margin-left:6px;background:rgba(255,149,0,0.08);padding:1px 8px;border-radius:4px;border:1px solid rgba(255,149,0,0.15)"><i class="fas fa-clock"></i> Pending XRPL</span>';
-        }
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:4px;transition:all 0.2s;background:rgba(255,255,255,0.02);">'
-            + '<span style="color:var(--accent);font-size:0.8rem;width:20px;text-align:center;display:inline-block">' + _renderIcon(r.icon) + '</span>'
-            + '<div style="flex:1;min-width:0;cursor:pointer" onclick="loadRecordToVerify(' + idx + ')">'
-            + '<div style="font-size:0.78rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.label + ' <span style="font-size:0.6rem;font-weight:700;color:#34c759;background:rgba(52,199,89,0.12);padding:1px 6px;border-radius:4px;margin-left:4px;vertical-align:middle"><i class="fas fa-check-circle"></i> XRPL</span></div>'
-            + '<div style="font-size:0.65rem;color:var(--muted);font-family:monospace;display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + r.hash.substring(0,24) + '...' + _vrExplorer + _vrCopy + '</div>'
+        var xrplBadge = _vrUrl
+            ? '<a href="' + _vrUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;color:#34c759;font-size:0.62rem;font-weight:700;text-decoration:none;background:rgba(52,199,89,0.1);padding:2px 8px;border-radius:4px;border:1px solid rgba(52,199,89,0.2)"><i class="fas fa-check-circle"></i> XRPL Verified</a>'
+            : '<span style="display:inline-flex;align-items:center;gap:3px;color:var(--accent);font-size:0.62rem;font-weight:700;background:rgba(0,170,255,0.08);padding:2px 8px;border-radius:4px;border:1px solid rgba(0,170,255,0.15)"><i class="fas fa-anchor"></i> Anchored</span>';
+        var docBadge = hasFullContent
+            ? '<span style="font-size:0.62rem;color:#34c759;background:rgba(52,199,89,0.08);padding:2px 8px;border-radius:4px;border:1px solid rgba(52,199,89,0.15)"><i class="fas fa-file-alt"></i> Full Doc (' + Math.round(r.fullContent.length/1000) + 'K)</span>'
+            : '<span style="font-size:0.62rem;color:var(--muted);background:rgba(255,255,255,0.03);padding:2px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.06)"><i class="fas fa-fingerprint"></i> Hash Only</span>';
+        return '<div class="record-hub-card" data-label="' + (r.label || '').toLowerCase() + '" data-hash="' + r.hash + '" style="display:flex;align-items:stretch;gap:12px;padding:12px 14px;border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:6px;transition:all 0.2s;background:rgba(255,255,255,0.02);position:relative">'
+            // Left: Icon
+            + '<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,170,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:var(--accent);font-size:1rem">' + (r.icon ? _renderIcon(r.icon) : '<i class="fas fa-file-alt"></i>') + '</span></div>'
+            // Center: Info
+            + '<div style="flex:1;min-width:0;">'
+            + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap">'
+            + '<span style="font-size:0.85rem;font-weight:700;color:#fff;">' + (r.label || r.type || 'Record') + '</span>'
+            + xrplBadge + docBadge
             + '</div>'
-            + '<span style="font-size:0.65rem;color:var(--steel);white-space:nowrap;">' + ago + '</span>'
-            + '<button onclick="loadRecordToVerify(' + idx + ')" style="background:' + (hasFullContent ? 'rgba(0,170,255,0.15)' : 'rgba(255,255,255,0.05)') + ';border:1px solid ' + (hasFullContent ? 'rgba(0,170,255,0.3)' : 'rgba(255,255,255,0.1)') + ';color:' + (hasFullContent ? 'var(--accent)' : 'var(--steel)') + ';border-radius:8px;padding:3px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="fas fa-eye" style="margin-right:3px"></i>View</button>'
+            + '<div style="font-size:0.68rem;color:var(--muted);font-family:monospace;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">SHA-256: ' + r.hash.substring(0,32) + '...</div>'
+            + (r.branch ? '<span style="font-size:0.62rem;color:var(--steel);background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px;margin-right:6px">' + r.branch + '</span>' : '')
+            + '<span style="font-size:0.62rem;color:var(--steel)">' + ago + '</span>'
+            + (r.txHash ? '<span style="font-size:0.6rem;color:var(--muted);font-family:monospace;margin-left:6px">TX: ' + r.txHash.substring(0,12) + '...</span>' : '')
+            + '</div>'
+            // Right: Action buttons
+            + '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;justify-content:center;min-width:120px;">'
+            + (hasFullContent ? '<button onclick="openRecordHubDoc(' + idx + ')" style="display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;background:rgba(0,170,255,0.12);border:1px solid rgba(0,170,255,0.3);color:var(--accent);border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap"><i class="fas fa-book-open"></i> View Document</button>' : '')
+            + '<button onclick="loadRecordToVerify(' + idx + ')" style="display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);color:#34c759;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap"><i class="fas fa-shield-halved"></i> Verify</button>'
+            + '</div>'
             + '</div>';
-    }).join(''));
+    }).join('');
 }
+
+/** Open the full document viewer from the Record Hub */
+function openRecordHubDoc(idx) {
+    var records = window._verifyRecentRecords || [];
+    var r = records[idx];
+    if (!r) return;
+    var prev = window._verifyVaultRecords;
+    window._verifyVaultRecords = records;
+    openDocViewer(idx);
+    window._verifyVaultRecords = prev;
+}
+window.openRecordHubDoc = openRecordHubDoc;
+
+/** Filter record hub cards by search text */
+function filterRecordHub() {
+    var query = (document.getElementById('recordHubSearch') || {}).value || '';
+    query = query.toLowerCase().trim();
+    var cards = document.querySelectorAll('.record-hub-card');
+    var visible = 0;
+    cards.forEach(function(card) {
+        var label = card.getAttribute('data-label') || '';
+        var hash = card.getAttribute('data-hash') || '';
+        var show = !query || label.indexOf(query) > -1 || hash.indexOf(query) > -1;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    var countEl = document.getElementById('recordHubCount');
+    if (countEl && query) countEl.textContent = visible + ' of ' + cards.length + ' records';
+}
+window.filterRecordHub = filterRecordHub;
 
 function loadRecordToVerify(idx) {
     var records = window._verifyRecentRecords || [];
@@ -2050,6 +2091,17 @@ async function runVerifyIntegrity() {
     // Log access
     var _vrId = r ? (r.txHash || r.hash) : (anchoredHash || currentHash);
     _logAccessEvent(_vrId, currentHash, 'verify_complete', { result: match ? 'MATCH' : 'MISMATCH', expected: anchoredHash || '' });
+    // Load chain of custody timeline into Step 3
+    if (_vrId && typeof _fetchChainOfCustody === 'function') {
+        _fetchChainOfCustody(_vrId).then(function(custodyHtml) {
+            var step3 = document.getElementById('verifyStep3Content');
+            if (custodyHtml && step3) {
+                var custodyDiv = document.createElement('div');
+                custodyDiv.innerHTML = custodyHtml;
+                step3.appendChild(custodyDiv);
+            }
+        });
+    }
     // Set cert/incident params
     if (r) window._lastVerifyCertParams = { hash: anchoredHash, txHash: r.txHash || '', label: r.label || r.type || '', timestamp: r.timestamp || '', network: r.network || '', explorerUrl: r.explorerUrl || '' };
     if (!match) window._lastIncidentParams = { computedHash: currentHash, expectedHash: anchoredHash, label: r ? (r.label || '') : '', timestamp: r ? (r.timestamp || '') : '', txHash: r ? (r.txHash || '') : '' };
