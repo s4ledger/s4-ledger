@@ -652,111 +652,83 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="row" style="margin-top:16px;">
-                    <div class="col-lg-6">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-bolt" style="color:var(--accent)"></i> Quick Verify</h3>
-                            <p style="color:var(--steel);font-size:0.82rem;margin-bottom:12px">Skip the step-by-step wizard and verify instantly.</p>
-                            <div style="display:flex;gap:10px;flex-wrap:wrap">
-                                <button onclick="quickVerifyFromVault()" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit"><i class="fas fa-vault"></i> Verify Vault Record</button>
-                                <button onclick="showVerifySource('file');showVerifyStep(1)" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit"><i class="fas fa-file-upload"></i> Verify File Upload</button>
-                                <button onclick="bulkVerifyFromVault()" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.2);border-radius:8px;color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:inherit"><i class="fas fa-shield-halved"></i> Bulk Verify All</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-question-circle"></i> How It Works</h3>
-                            <div style="font-size:0.82rem;line-height:1.8;color:var(--steel)">
-                                <div><strong style="color:var(--accent)">1.</strong> Select a record &mdash; from vault, file upload, or paste text</div>
-                                <div><strong style="color:var(--accent)">2.</strong> S4 pulls the anchored hash from XRPL blockchain</div>
-                                <div><strong style="color:var(--accent)">3.</strong> Re-computes the hash on your current document</div>
-                                <div><strong style="color:var(--accent)">4.</strong> If mismatch &mdash; deep comparison shows every change</div>
-                                <div><strong style="color:var(--accent)">5.</strong> AI tells you exactly what to fix to restore the original</div>
-                            </div>
-                            <div style="margin-top:10px;padding:8px 12px;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.15);border-radius:8px;font-size:0.78rem;color:var(--steel)">
-                                <i class="fas fa-lock" style="color:#34c759;margin-right:6px"></i><strong>Only the SHA-256 hash is on the blockchain.</strong> Your data stays in the encrypted vault. The hash is a one-way fingerprint &mdash; it cannot reconstruct your document.
-                            </div>
-                        </div>
-                    </div>
+                <!-- Quick Actions — compact inline bar -->
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;margin-bottom:24px;">
+                    <span style="color:var(--muted);font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Quick:</span>
+                    <button onclick="quickVerifyFromVault()" style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;color:var(--accent);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s"><i class="fas fa-vault"></i> Verify Latest</button>
+                    <button onclick="showVerifySource('file');showVerifyStep(1)" style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;color:var(--accent);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s"><i class="fas fa-file-upload"></i> Upload &amp; Verify</button>
+                    <button onclick="bulkVerifyFromVault()" style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;color:var(--accent);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s"><i class="fas fa-shield-halved"></i> Bulk Verify All</button>
+                    <div style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:0.68rem;color:var(--steel);"><i class="fas fa-lock" style="color:#34c759;"></i> Only hashes touch the blockchain</div>
                 </div>
 
                 <!-- ═══ DIVIDER ═══ -->
-                <div style="display:flex;align-items:center;gap:16px;margin:32px 0;">
+                <div style="display:flex;align-items:center;gap:16px;margin:8px 0 24px;">
                     <div style="flex:1;height:1px;background:var(--border);"></div>
-                    <span style="color:var(--muted);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;">or anchor new records</span>
+                    <span style="color:var(--muted);font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Anchor</span>
                     <div style="flex:1;height:1px;background:var(--border);"></div>
                 </div>
 
                 <!-- ═══ ANCHOR FORM ═══ -->
-                <div class="row" id="anchorFormSection">
-                    <div class="col-lg-7">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-anchor"></i> Anchor a Record</h3>
-<details class="hiw-anchor-details" style="display:none;margin-top:8px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:8px 0;font-size:0.8rem;font-weight:700;color:#00aaff;">How It Works</summary>
-                        <p style="font-size:0.82rem;color:var(--steel);margin-bottom:6px;">The Anchor tool writes an immutable, timestamped proof of any defense record to the XRP Ledger — creating a tamper-proof audit trail.</p>
-                        <ol style="font-size:0.8rem;color:var(--steel);padding-left:18px;margin-bottom:8px;">
-                            <li><strong>Select branch &amp; type</strong> — Choose your military branch and record type (maintenance logs, supply receipts, CDRLs, ordnance tracking, etc.).</li>
-                            <li><strong>Paste or upload</strong> — Enter record content or upload a file. S4 generates a SHA-256 hash locally — data never leaves your browser.</li>
-                            <li><strong>Anchor to XRPL</strong> — S4 writes the hash as a Memo in a real XRPL transaction on Mainnet. Cost: 0.01 Credits per anchor (~$0.0001).</li>
-                            <li><strong>Get proof</strong> — Receive a live XRPL transaction ID, explorer link, and timestamp. The record is now independently verifiable by anyone, forever.</li>
-                        </ol>
-                        <p style="font-size:0.8rem;color:var(--steel);margin-bottom:8px;"><strong>How S4 saves you money:</strong> Traditional notarization and certification costs <strong>$50-$200 per record</strong> with turnarounds of days or weeks. S4 anchors any record in <strong style="color:#00cc66">under 4 seconds</strong> at <strong style="color:#00cc66">$0.0001</strong> each — replacing <strong style="color:#00cc66">$50,000+ annually</strong> in notary and records certification costs per program.</p>
-                    </details>
-                            <label>1. Select Military Branch</label>
-                            <div class="branch-tabs" id="branchTabs">
+                <div id="anchorFormSection">
+                    <div class="s4-card" style="padding:0;overflow:hidden;">
+                        <!-- Anchor Header Bar — mirrors verify step bar style -->
+                        <div style="display:flex;align-items:center;gap:12px;background:rgba(0,0,0,0.25);border-bottom:1px solid var(--border);padding:14px 24px;">
+                            <i class="fas fa-anchor" style="font-size:1.1rem;color:var(--accent)"></i>
+                            <div>
+                                <div style="color:#fff;font-weight:800;font-size:0.95rem;">Anchor a Record</div>
+                                <div style="color:var(--muted);font-size:0.72rem;">Create tamper-proof blockchain proof for any defense record</div>
+                            </div>
+                            <div style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:0.68rem;color:var(--steel);background:rgba(0,170,255,0.06);padding:4px 10px;border-radius:6px;border:1px solid rgba(0,170,255,0.12);"><i class="fas fa-bolt" style="color:var(--accent);"></i> 0.01 SLS per anchor</div>
+                        </div>
+
+                        <div style="padding:24px;">
+                            <!-- Step 1: Branch -->
+                            <label style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;display:block;"><i class="fas fa-flag" style="color:var(--accent);margin-right:6px;"></i>Military Branch</label>
+                            <div class="branch-tabs" id="branchTabs" style="margin-bottom:20px;">
                                 <button class="branch-tab active" onclick="selectBranch('USN',this)"><i class="fas fa-anchor"></i> U.S. Navy</button>
                             </div>
-                            <label>2. Choose Record Type <span class="branch-count" id="branchTypeCount"></span></label>
-                            <input class="type-search" type="text" id="typeSearch" placeholder="Search record types..." oninput="renderTypeGrid()">
-                            <div class="record-type-grid" id="recordTypeGrid"></div>
+
+                            <!-- Step 2: Record Type -->
+                            <label style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;display:block;"><i class="fas fa-tag" style="color:var(--accent);margin-right:6px;"></i>Record Type <span class="branch-count" id="branchTypeCount"></span></label>
+                            <input class="type-search" type="text" id="typeSearch" placeholder="Search record types..." oninput="renderTypeGrid()" style="margin-bottom:8px;">
+                            <div class="record-type-grid" id="recordTypeGrid" style="margin-bottom:20px;"></div>
 
                             <div class="clf-banner" id="clfBanner"><span class="clf-icon"></span><span class="clf-badge" id="clfBadge"></span><span class="clf-text" id="clfText"></span></div>
 
-                            <label>3. Upload file or enter record content</label>
-                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;">
-                                <i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--accent);margin-bottom:6px;display:block;"></i>
-                                <div style="color:var(--steel);font-size:0.82rem;">Drag &amp; drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div>
-                                <div style="color:var(--muted);font-size:0.72rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, TXT &mdash; any file type</div>
+                            <!-- Step 3: Content -->
+                            <label style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;display:block;"><i class="fas fa-file-alt" style="color:var(--accent);margin-right:6px;"></i>Record Content</label>
+                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;">
+                                <i class="fas fa-cloud-upload-alt" style="font-size:1.3rem;color:var(--accent);margin-bottom:4px;display:block;"></i>
+                                <div style="color:var(--steel);font-size:0.82rem;">Drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div>
+                                <div style="color:var(--muted);font-size:0.68rem;margin-top:3px;">PDF, Excel, Word, CSV, JSON, images &mdash; any file type</div>
                                 <input type="file" id="fileUploadInput" style="display:none" onchange="handleFileSelect(event)">
                                 <div id="dropFileName" style="display:none;margin-top:8px;color:var(--accent);font-weight:600;font-size:0.82rem;"></div>
                             </div>
-                            <textarea id="recordInput" placeholder="Or paste/type your defense logistics record here..." oninput="this.dataset.autoFilled='false'"></textarea>
-                            <div class="mt-2 mb-3">
-                                <span style="color:var(--muted);font-size:0.8rem">Try a sample:</span>
+                            <textarea id="recordInput" placeholder="Or paste/type your defense logistics record here..." oninput="this.dataset.autoFilled='false'" style="margin-bottom:8px;"></textarea>
+                            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+                                <span style="color:var(--muted);font-size:0.75rem;">Samples:</span>
                                 <span class="sample-btn" onclick="loadSample('supply')">Supply Receipt</span>
                                 <span class="sample-btn" onclick="loadSample('maintenance')">3-M Maint</span>
                                 <span class="sample-btn" onclick="loadSample('ordnance')">Ordnance Lot</span>
                                 <span class="sample-btn" onclick="loadSample('casrep')">CASREP</span>
                                 <span class="sample-btn" onclick="loadSample('custody')">Custody Transfer</span>
                             </div>
-                            <div class="d-flex gap-2 align-items-center">
-                                <label class="form-check-label" style="font-size:0.85rem">
-                                    <input type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px"> Encrypt before hashing (CUI protection)
+
+                            <!-- Options + Action row -->
+                            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                                <label class="form-check-label" style="font-size:0.82rem;color:var(--steel);cursor:pointer;">
+                                    <input type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px;accent-color:#00aaff;"> Encrypt before hashing <span style="color:var(--muted);font-size:0.72rem;">(CUI protection)</span>
                                 </label>
+                                <button class="btn-accent" onclick="anchorRecord()" id="anchorBtn" style="padding:10px 28px;font-size:0.88rem;"><i class="fas fa-anchor" style="margin-right:6px;"></i>Anchor to Ledger</button>
                             </div>
-                            <button class="btn-accent mt-3" onclick="anchorRecord()" id="anchorBtn"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+
                             <div class="result-panel" id="anchorResult"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-diagram-project"></i> Anchor Flow</h3>
-                            <div style="font-size:0.9rem;line-height:2">
-                                <div><span style="color:var(--accent);font-weight:700">1.</span> Select branch &amp; record type</div>
-                                <div><span style="color:var(--accent);font-weight:700">2.</span> Enter or paste record content</div>
-                                <div><span style="color:var(--accent);font-weight:700">3.</span> Optional: encrypt for CUI protection</div>
-                                <div><span style="color:var(--accent);font-weight:700">4.</span> SHA-256 hash computed client-side</div>
-                                <div><span style="color:var(--accent);font-weight:700">5.</span> Hash anchored to XRPL memo field</div>
-                                <div><span style="color:var(--accent);font-weight:700">6.</span> $SLS micro-fee (0.01) paid to treasury</div>
-                                <div><span style="color:var(--accent);font-weight:700">7.</span> Record appears in Live Metrics dashboard</div>
+
+                            <!-- Security note — matches verify section style -->
+                            <div style="margin-top:16px;padding:8px 12px;background:rgba(52,199,89,0.04);border:1px solid rgba(52,199,89,0.12);border-radius:8px;font-size:0.72rem;color:var(--steel);display:flex;align-items:center;gap:8px;">
+                                <i class="fas fa-lock" style="color:#34c759;flex-shrink:0;"></i>
+                                <span><strong>Only the SHA-256 hash</strong> is stored on the XRPL blockchain. Your data stays in the encrypted vault &mdash; never uploaded to any server.</span>
                             </div>
-                        </div>
-                        <div class="s4-card" style="margin-top:16px;">
-                            <h3><i class="fas fa-shield-halved"></i> What Gets Stored On-Chain</h3>
-                            <p style="font-size:0.85rem;color:var(--steel)"><strong>Only the SHA-256 hash</strong> of your record is stored on the XRP Ledger. No classified data, CUI, ITAR-controlled, or sensitive content ever touches the blockchain.</p>
                         </div>
                     </div>
                 </div>
@@ -4293,10 +4265,11 @@
                 if (existing) { existing.style.display = 'flex'; return; }
                 var roles = [
                     { key: 'admin', icon: 'fa-user-shield', title: 'Administrator', desc: 'Full platform access. All ILS tools, compliance, risk management, and system configuration.' },
-                    { key: 'logistics', icon: 'fa-truck', title: 'Logistics Manager', desc: 'Supply chain, readiness, DMSMS, lifecycle, and fleet management tools.' },
-                    { key: 'auditor', icon: 'fa-magnifying-glass', title: 'Compliance Auditor', desc: 'Compliance scoring, evidence collection, FedRAMP, audit reports, and POAM tracking.' },
-                    { key: 'analyst', icon: 'fa-chart-line', title: 'Data Analyst', desc: 'Metrics, ROI analysis, budget forecasting, fleet comparisons, and reporting.' },
-                    { key: 'operator', icon: 'fa-anchor', title: 'Field Operator', desc: 'Record anchoring, verification, document vault, and offline queue.' }
+                    { key: 'ils_manager', icon: 'fa-clipboard-list', title: 'ILS Manager', desc: 'Full ILS tool suite — gap analysis, compliance, risk, readiness, and briefing tools.' },
+                    { key: 'supply_chain', icon: 'fa-truck', title: 'Supply Chain', desc: 'Readiness, provisioning, risk, lifecycle, and milestone tracking.' },
+                    { key: 'auditor', icon: 'fa-shield-halved', title: 'Auditor / Compliance', desc: 'Compliance scorecard, audit vault, evidence collection, and submissions.' },
+                    { key: 'dmsms_analyst', icon: 'fa-microchip', title: 'DMSMS Analyst', desc: 'DMSMS tracking, obsolescence management, risk, and lifecycle tools.' },
+                    { key: 'contracts', icon: 'fa-file-contract', title: 'Contract Specialist', desc: 'ROI analysis, submissions, CDRL tracking, and document management.' }
                 ];
                 var html = '<div id="roleSelectorOverlay" style="position:fixed;inset:0;background:rgba(255,255,255,0.98);z-index:10001;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s;backdrop-filter:blur(8px);">';
                 html += '<div style="background:var(--card,#0f1318);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:28px;max-width:680px;width:94%;max-height:85vh;overflow-y:auto;">';
@@ -4316,8 +4289,10 @@
             };
             window._selectRole = function(role) {
                 sessionStorage.setItem('s4_user_role', role);
-                sessionStorage.setItem('s4_user_role', role);
-                sessionStorage.setItem('s4_user_title', role.charAt(0).toUpperCase() + role.slice(1));
+                window._currentRole = role;
+                // Build a readable title from the role key
+                var titleMap = {admin:'Administrator',ils_manager:'ILS Manager',supply_chain:'Supply Chain',auditor:'Auditor / Compliance',dmsms_analyst:'DMSMS Analyst',contracts:'Contract Specialist'};
+                sessionStorage.setItem('s4_user_title', titleMap[role] || role.charAt(0).toUpperCase() + role.slice(1));
                 var ov = document.getElementById('roleSelectorOverlay');
                 if (ov) ov.remove();
                 // Apply role to module system if available
