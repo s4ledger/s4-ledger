@@ -602,7 +602,10 @@ function preloadAllILSDemoData() {
     }
     
     // Seed Audit Vault — delegates to _seedVaultIfEmpty (runs correctly with current user+role key)
-    if (typeof _seedVaultIfEmpty === 'function') _seedVaultIfEmpty();
+    if (typeof _seedVaultIfEmpty === 'function') _seedVaultIfEmpty().then(function() {
+        if (typeof populateVerifyVaultList === 'function') populateVerifyVaultList();
+        if (typeof refreshVerifyRecents === 'function') refreshVerifyRecents();
+    });
 
     // Pre-load Submissions & PTD with sample submission
     var subBranch = document.getElementById('subBranch');
@@ -1452,6 +1455,8 @@ function refreshVerifyRecents() {
         var _vrUrl = r.explorerUrl || (r.txHash && /^[0-9A-Fa-f]{64}$/.test(r.txHash) ? 'https://livenet.xrpl.org/transactions/' + r.txHash : '');
         var xrplBadge = _vrUrl
             ? '<a href="' + _vrUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;color:#34c759;font-size:0.62rem;font-weight:700;text-decoration:none;background:rgba(52,199,89,0.1);padding:2px 8px;border-radius:4px;border:1px solid rgba(52,199,89,0.2)"><i class="fas fa-check-circle"></i> XRPL Verified</a>'
+            : (r.txHash && r.txHash.startsWith('LOCAL_'))
+            ? '<span style="display:inline-flex;align-items:center;gap:3px;color:#ff9500;font-size:0.62rem;font-weight:700;background:rgba(255,149,0,0.08);padding:2px 8px;border-radius:4px;border:1px solid rgba(255,149,0,0.15)"><i class="fas fa-clock"></i> Pending XRPL</span>'
             : '<span style="display:inline-flex;align-items:center;gap:3px;color:var(--accent);font-size:0.62rem;font-weight:700;background:rgba(0,170,255,0.08);padding:2px 8px;border-radius:4px;border:1px solid rgba(0,170,255,0.15)"><i class="fas fa-anchor"></i> Anchored</span>';
         var docBadge = hasFullContent
             ? '<span style="font-size:0.62rem;color:#34c759;background:rgba(52,199,89,0.08);padding:2px 8px;border-radius:4px;border:1px solid rgba(52,199,89,0.15)"><i class="fas fa-file-alt"></i> Full Doc (' + Math.round(r.fullContent.length/1000) + 'K)</span>'
@@ -1740,7 +1745,15 @@ function showVerifySource(src) {
 function populateVerifyVaultList() {
     var container = document.getElementById('verifyVaultList');
     if (!container) return;
-    var records = (typeof s4Vault !== 'undefined' ? s4Vault : []).concat(sessionRecords || []);
+    // Read fresh from localStorage (same strategy as refreshVerifyRecents)
+    var _freshVault = [];
+    try { _freshVault = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(e) {}
+    var vaultSource = _freshVault.length > 0 ? _freshVault : (typeof s4Vault !== 'undefined' && Array.isArray(s4Vault) ? s4Vault : []);
+    // Fallback: un-scoped vault key (covers role-change edge case)
+    if (vaultSource.length === 0 && window._currentRole) {
+        try { var _unscopedVault = JSON.parse(localStorage.getItem('s4Vault') || '[]'); if (_unscopedVault.length > 0) vaultSource = _unscopedVault; } catch(e) {}
+    }
+    var records = vaultSource.concat(sessionRecords || []);
     // Deduplicate by hash
     var seen = {};
     records = records.filter(function(r) {
@@ -8144,11 +8157,11 @@ let s4Vault;
 try { s4Vault = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(_e) { s4Vault = []; }
 function saveVault() { localStorage.setItem(_vaultKey(), JSON.stringify(s4Vault)); }
 // Called when the user switches roles — loads that role's vault and re-renders
-function reloadVaultForRole() {
+async function reloadVaultForRole() {
     try { s4Vault = JSON.parse(localStorage.getItem(_vaultKey()) || '[]'); } catch(_e) { s4Vault = []; }
     window.s4Vault = s4Vault;
     // Seed sample records if vault is empty for this user+role
-    _seedVaultIfEmpty();
+    await _seedVaultIfEmpty();
     // Upgrade old records that are missing fullContent
     _upgradeVaultRecords();
     if (typeof renderVault === 'function') renderVault();
@@ -8159,12 +8172,18 @@ function reloadVaultForRole() {
 }
 
 /** Seed sample vault records if vault is empty and not previously seeded for this user+role key */
-function _seedVaultIfEmpty() {
+async function _seedVaultIfEmpty() {
     var _seedKey = _vaultKey() + '_seeded';
     if (s4Vault.length > 0 || localStorage.getItem(_seedKey)) return;
     localStorage.setItem(_seedKey, '1');
     var sampleVault = _getSampleVaultRecords();
-    sampleVault.forEach(function(r) { if (typeof addToVault === 'function') addToVault(r); });
+    for (var i = 0; i < sampleVault.length; i++) {
+        var r = sampleVault[i];
+        if (r.fullContent && typeof sha256 === 'function') {
+            try { r.hash = await sha256(r.fullContent); } catch(e) {}
+        }
+        if (typeof addToVault === 'function') addToVault(r);
+    }
 }
 
 /** Returns the 4 sample vault records with full document content (LOCAL_ prefix for txHash) */
