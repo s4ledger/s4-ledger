@@ -198,6 +198,9 @@ function onRoleToolToggle() {
 }
 
 function applyRole() {
+    // Sync from sessionStorage in case _selectRole() set it directly
+    var _storedRole = sessionStorage.getItem('s4_user_role') || '';
+    if (_storedRole && _storedRole !== _currentRole) _currentRole = _storedRole;
     var title = document.getElementById('roleTitle')?.value?.trim() || '';
     _currentTitle = title;
     window._currentTitle = title;
