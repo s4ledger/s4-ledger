@@ -64,11 +64,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-CemrBoCd.js"></script>
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-DDHAhXyb.js">
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-DyA-Yi56.js"></script>
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-CLIpuiVs.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-Dzta8s5g.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-BJ9Z7WtE.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-CRGt_Xh-.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-dqgyIJ5G.js">
   <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-D_un2QYL.css">
 </head>
 <body class="light-mode">
@@ -1013,20 +1013,44 @@
                     <input type="text" class="ils-search" id="ilsToolSearch" placeholder="Search tools..." oninput="searchILSTools(this.value)" autocomplete="off" spellcheck="false" aria-label="Search ILS tools">
                 </div>
                 <div id="s4TodaysChainBar" style="display:none;margin-bottom:10px;padding:8px 14px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:10px;"></div>
+
+                <!-- Anchor Policy Explanation -->
+                <details style="margin-bottom:14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden">
+                    <summary style="cursor:pointer;padding:12px 16px;font-size:0.82rem;font-weight:700;color:var(--steel);display:flex;align-items:center;gap:8px;user-select:none"><i class="fas fa-info-circle" style="color:var(--accent)"></i> Anchor Policy Guide &mdash; Auto-Anchor, Recommended &amp; Manual</summary>
+                    <div style="padding:0 16px 16px;font-size:0.8rem;color:var(--steel);line-height:1.6">
+                        <p style="margin-bottom:10px">Every ILS tool in S4 Ledger has an <strong style="color:#fff">anchor policy</strong> that determines when records are committed to the XRP Ledger for immutable verification. Policies balance compliance rigor with operational flexibility.</p>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px">
+                            <div style="background:rgba(0,204,136,0.06);border:1px solid rgba(0,204,136,0.2);border-radius:10px;padding:12px">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-weight:700;color:#00cc88;font-size:0.82rem"><i class="fas fa-shield-alt"></i> Auto-Anchor</div>
+                                <div style="font-size:0.76rem;color:var(--steel)">Records are <strong>automatically anchored</strong> to the XRPL when finalized. Used for compliance-critical outputs where an audit trail is mandatory &mdash; scorecards, audit reports, CDRL submissions, and provisioning data. No user intervention required.</div>
+                            </div>
+                            <div style="background:rgba(255,153,51,0.06);border:1px solid rgba(255,153,51,0.2);border-radius:10px;padding:12px">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-weight:700;color:#ff9933;font-size:0.82rem"><i class="fas fa-bell"></i> Recommended</div>
+                                <div style="font-size:0.76rem;color:var(--steel)">A prompt recommends anchoring when results are generated. Used for operational analyses where a blockchain record adds significant value &mdash; risk assessments, readiness scores, lifecycle costs, and supply chain provenance. Users may skip or defer.</div>
+                            </div>
+                            <div style="background:rgba(134,134,139,0.06);border:1px solid rgba(134,134,139,0.2);border-radius:10px;padding:12px">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-weight:700;color:#86868b;font-size:0.82rem"><i class="fas fa-hand-pointer"></i> Manual</div>
+                                <div style="font-size:0.76rem;color:var(--steel)">Anchoring is available but fully user-initiated via the tool's anchor button. Used for exploratory outputs, internal calculations, and drafts where anchoring is optional. Every tool retains a manual anchor button regardless of its policy.</div>
+                            </div>
+                        </div>
+                        <p style="font-size:0.76rem;color:var(--muted);margin:0"><i class="fas fa-cog" style="margin-right:4px"></i> Organization admins can override any tool's policy in <strong>Settings &rsaquo; Anchor Policy</strong>. All policies can be promoted, demoted, or restored to defaults.</p>
+                    </div>
+                </details>
+
                 <div class="ils-sub-hub" id="ilsSubHub" style="display:grid !important;">
                     <div class="ils-tool-card" data-category="compliance" onclick="openILSTool('hub-compliance')">
                         <span class="itc-icon"><i class="fas fa-shield-halved" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Compliance Scorecard</div>
+                        <div class="itc-title">Compliance Scorecard <span class="anchor-policy-badge anchor-policy-auto"><i class="fas fa-shield-alt"></i> Auto-Anchor</span></div>
                         <div class="itc-desc">NIST 800-171 / CMMC compliance scoring with gap identification.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-analysis')">
                         <span class="itc-icon"><i class="fas fa-chart-line" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Gap Finder</div>
+                        <div class="itc-title">Gap Finder <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Identify logistics gaps across readiness, parts, and support elements for any platform.</div>
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-actions')" style="position:relative">
                         <span class="itc-icon"><i class="fas fa-tasks" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Task Prioritizer <span id="actionItemBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#ff4444;color:var(--text,#1d1d1f);font-size:0.65rem;font-weight:800;min-width:20px;height:20px;border-radius:8px;padding:0 6px;margin-left:6px;vertical-align:middle"></span></div>
+                        <div class="itc-title">Task Prioritizer <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span> <span id="actionItemBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#ff4444;color:var(--text,#1d1d1f);font-size:0.65rem;font-weight:800;min-width:20px;height:20px;border-radius:8px;padding:0 6px;margin-left:6px;vertical-align:middle"></span></div>
                         <div class="itc-desc">Track ILS action items, corrective actions, and follow-ups with deadlines.</div>
                     </div>
                     <div class="ils-tool-card" data-category="compliance" onclick="openILSTool('hub-vault')">
@@ -1036,98 +1060,98 @@
                     </div>
                     <div class="ils-tool-card" data-category="compliance" onclick="openILSTool('hub-reports')">
                         <span class="itc-icon"><i class="fas fa-file-alt" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Audit Builder</div>
+                        <div class="itc-title">Audit Builder <span class="anchor-policy-badge anchor-policy-auto"><i class="fas fa-shield-alt"></i> Auto-Anchor</span></div>
                         <div class="itc-desc">Generate ILS reports for audits, reviews, and compliance submissions.</div>
                     </div>
                     <div class="ils-tool-card" data-category="supply-chain" onclick="openILSTool('hub-risk')">
                         <span class="itc-icon"><i class="fas fa-triangle-exclamation" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Risk Radar</div>
+                        <div class="itc-title">Risk Radar <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">AI-powered supply chain risk assessment with threat scoring and mitigation.</div>
                     </div>
                     <div class="ils-tool-card" data-category="documents" onclick="openILSTool('hub-docs')">
                         <span class="itc-icon"><i class="fas fa-book" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Document Library</div>
+                        <div class="itc-title">Document Library <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Manage technical manuals, drawings, and provisioning documents.</div>
                     </div>
                     <div class="ils-tool-card" data-category="documents" onclick="openILSTool('hub-submissions')">
                         <span class="itc-icon"><i class="fas fa-paper-plane" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Submissions Hub</div>
+                        <div class="itc-title">Submissions Hub <span class="anchor-policy-badge anchor-policy-auto"><i class="fas fa-shield-alt"></i> Auto-Anchor</span></div>
                         <div class="itc-desc">Manage provisioning technical data and CDRL submissions.</div>
                     </div>
                     <div class="ils-tool-card" data-category="documents" onclick="openILSTool('hub-cdrl')">
                         <span class="itc-icon"><i class="fas fa-clipboard-check" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Deliverables Tracker</div>
+                        <div class="itc-title">Deliverables Tracker <span class="anchor-policy-badge anchor-policy-auto"><i class="fas fa-shield-alt"></i> Auto-Anchor</span></div>
                         <div class="itc-desc">Contract Data Requirements List validation — DI format checks and content analysis.</div>
                     </div>
                     <div class="ils-tool-card" data-category="documents" onclick="openILSTool('hub-contract')">
                         <span class="itc-icon"><i class="fas fa-file-contract" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Contract Analyzer</div>
+                        <div class="itc-title">Contract Analyzer <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">AI-powered clause extraction — FAR/DFARS, CDRL detection, and obligation mapping.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-dmsms')">
                         <span class="itc-icon"><i class="fas fa-exclamation-triangle" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Obsolescence Alert</div>
+                        <div class="itc-title">Obsolescence Alert <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Track diminishing manufacturing sources and material shortages with risk alerts.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-readiness')">
                         <span class="itc-icon"><i class="fas fa-chart-line" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Readiness Score</div>
+                        <div class="itc-title">Readiness Score <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Compute operational availability (Ao/Ai), MTBF, and readiness metrics.</div>
                     </div>
                     <div class="ils-tool-card" data-category="supply-chain" onclick="openILSTool('hub-sbom')">
                         <span class="itc-icon"><i class="fas fa-microchip" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">SBOM Scanner</div>
+                        <div class="itc-title">SBOM Scanner <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Software Bill of Materials — track components, CVEs, and blockchain attestation.</div>
                     </div>
                     <div class="ils-tool-card" data-category="supply-chain" onclick="openILSTool('hub-gfp')">
                         <span class="itc-icon"><i class="fas fa-boxes-stacked" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Property Custodian</div>
+                        <div class="itc-title">Property Custodian <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Government-Furnished Property tracking — DD 1662, inventory management, and accountability.</div>
                     </div>
                     <div class="ils-tool-card" data-category="supply-chain" onclick="openILSTool('hub-provenance')">
                         <span class="itc-icon"><i class="fas fa-link" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Chain of Custody</div>
+                        <div class="itc-title">Chain of Custody <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Blockchain-verified chain of custody — QR codes and custody transfer tracking.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-lifecycle')">
                         <span class="itc-icon"><i class="fas fa-clock" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Lifecycle Cost Estimator</div>
+                        <div class="itc-title">Lifecycle Cost Estimator <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Total lifecycle cost estimation including procurement, sustainment, and disposal.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-roi')">
                         <span class="itc-icon"><i class="fas fa-dollar-sign" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">ROI Calculator</div>
+                        <div class="itc-title">ROI Calculator <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Calculate return on investment for defense logistics and ILS investments.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-predictive')">
                         <span class="itc-icon"><i class="fas fa-brain" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Maintenance Predictor</div>
+                        <div class="itc-title">Maintenance Predictor <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">AI-driven failure prediction and maintenance scheduling optimization.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-analytics')">
                         <span class="itc-icon"><i class="fas fa-chart-pie" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Program Overview</div>
+                        <div class="itc-title">Program Overview <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Multi-program dashboard — aggregate metrics, trends, and comparative analysis.</div>
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-team')">
                         <span class="itc-icon"><i class="fas fa-users-gear" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Team Manager</div>
+                        <div class="itc-title">Team Manager <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Multi-tenant team operations — invitations, roles, and access control.</div>
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-acquisition')">
                         <span class="itc-icon"><i class="fas fa-ship" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Fleet Optimizer</div>
+                        <div class="itc-title">Fleet Optimizer <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Multi-year service craft acquisition tracker — hull lifecycle, POM funding, ROH, and material condition.</div>
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-milestones')">
                         <span class="itc-icon"><i class="fas fa-flag-checkered" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Milestone Monitor</div>
+                        <div class="itc-title">Milestone Monitor <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Track vessel construction milestones — contract award through delivery, OWLD variance, and Gantt timeline.</div>
                     </div>
 
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-brief')">
                         <span class="itc-icon"><i class="fas fa-briefcase" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Brief Composer</div>
+                        <div class="itc-title">Brief Composer <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Create slide-based briefs — POM, PB, ILSMT, ILSMP, IPR, Milestone Review — with templates, editing, and PPTX import.</div>
                     </div>
 

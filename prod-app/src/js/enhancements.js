@@ -7495,13 +7495,10 @@ function exportDrlStatusCSV(prefix) {
 }
 
 function anchorDrlStatus() {
-    if (typeof window._anchorToXRPL === 'function') {
-        if (typeof window.showAnchorAnimation === 'function') window.showAnchorAnimation(null, 'DRL/DI Status Tracker');
-        window._anchorToXRPL('DRL/DI Status Tracker Snapshot', 'drl_status_record').finally(function() {
-            if (typeof window.hideAnchorAnimation === 'function') window.hideAnchorAnimation();
-        });
+    if (typeof window.anchorToLedger === 'function') {
+        window.anchorToLedger('drl_status', 'DRL/DI Status Tracker');
     } else if (typeof S4 !== 'undefined' && S4.toast) {
-        S4.toast('DRL/DI Status Tracker Anchored Successfully on XRPL', 'success');
+        S4.toast('XRPL anchor function not available.', 'warning');
     }
 }
 

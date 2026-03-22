@@ -832,7 +832,7 @@ function showAnchorAnimation(hash, typeLabel, clfLevel) {
     setTimeout(() => {
         document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:#00aaff"></i> ' + typeLabel + ' Anchored Successfully on XRPL');
         document.getElementById('animStatus').style.color = '#00aaff';
-        document.getElementById('animSuccess').innerHTML = window._s4Safe('<span style="color:var(--green)">&#x2713; Immutable and verifiable on the XRP Ledger</span>');
+        document.getElementById('animSuccess').innerHTML = window._s4Safe('<span style="color:var(--green)">&#x2713; Immutable and verifiable on the XRP Ledger</span><div style="margin-top:12px"><button onclick="hideAnchorAnimation()" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.3);color:#00aaff;padding:8px 24px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background=\'rgba(0,170,255,0.2)\'" onmouseout="this.style.background=\'rgba(0,170,255,0.1)\'"><i class="fas fa-check" style="margin-right:6px"></i>Done</button></div>');
     }, 2000);
 }
 
@@ -872,8 +872,6 @@ async function anchorToLedger(toolName, label) {
     // Fire auto-anchor toast
     var _toolPolicy = _getAnchorPolicy(_recType);
     if (_toolPolicy === 'auto') _showAutoAnchorToast(_anchorLabel, result.txHash);
-    await new Promise(function(r){ setTimeout(r, 3500); });
-    hideAnchorAnimation();
 }
 
 
@@ -1351,9 +1349,7 @@ async function anchorRecord() {
     var _flRemaining = Math.round((_flAlloc - stats.slsFees) * 100) / 100;
     _flashSlsBalance(_flRemaining.toLocaleString(undefined,{maximumFractionDigits:2}), 0.01);
 
-    await new Promise(r => setTimeout(r, 3200));
-    hideAnchorAnimation();
-    await new Promise(r => setTimeout(r, 400));
+    await new Promise(r => setTimeout(r, 2400));
 
     const panel = document.getElementById('anchorResult');
     var _anchorPolicyForType = _getAnchorPolicy(selectedType);
@@ -1766,7 +1762,8 @@ function populateVerifyVaultList() {
     }
     container.innerHTML = records.slice(0, 50).map(function(r, idx) {
         var hasDoc = r.fullContent && r.fullContent.length > 0;
-        var ago = r.timestamp ? _timeAgo(new Date(r.timestamp)) : '';
+        var ago = '';
+        try { var _d = Math.floor((Date.now() - new Date(r.timestamp).getTime()) / 1000); ago = _d < 60 ? _d + 's ago' : _d < 3600 ? Math.floor(_d/60) + 'm ago' : _d < 86400 ? Math.floor(_d/3600) + 'h ago' : Math.floor(_d/86400) + 'd ago'; } catch(e) {}
         return '<div class="verify-vault-item" data-idx="' + idx + '" onclick="selectVaultRecord(' + idx + ')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:background 0.15s;border-radius:6px" onmouseover="this.style.background=\'rgba(0,170,255,0.06)\'" onmouseout="this.style.background=\'transparent\'">'
             + '<div style="width:32px;height:32px;border-radius:8px;background:' + (hasDoc ? 'rgba(0,170,255,0.1)' : 'rgba(255,255,255,0.05)') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:' + (hasDoc ? 'var(--accent)' : 'var(--muted)') + ';font-size:0.9rem">' + (r.icon ? _renderIcon(r.icon) : '<i class="fas fa-file-alt"></i>') + '</span></div>'
             + '<div style="flex:1;min-width:0">'
@@ -5809,8 +5806,6 @@ async function anchorROI() {
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ROI Analysis Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('S4 Ledger ROI Analysis', 'ROI_REPORT', result);
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 async function anchorILSReport() {
@@ -5850,9 +5845,7 @@ async function anchorILSReport() {
 
     _postAnchorToolHook('ILS Gap Analysis Report', 'ILS_GAP_ANALYSIS', {txHash, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> ILS Gap Analysis Report Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
-    await new Promise(r => setTimeout(r, 3200));
-    hideAnchorAnimation();
-    await new Promise(r => setTimeout(r, 400));
+    await new Promise(r => setTimeout(r, 2400));
 
     const panel = document.getElementById('ilsResult');
     var _ilsTxLink = _xrplLinkHtml({txHash, explorerUrl});
@@ -7374,8 +7367,6 @@ async function anchorDMSMS() {
     addToVault({hash, txHash, type:'DMSMS_REPORT', label:'DMSMS Obsolescence Report', branch:'JOINT', icon:'<i class="fas fa-exclamation-triangle"></i>', content:text.substring(0,100), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'DMSMS Tracker', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> DMSMS Obsolescence Check Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('DMSMS Obsolescence Report', 'DMSMS_REPORT', {txHash, explorerUrl, network});
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 // ═══ OPERATIONAL READINESS CALCULATOR ═══
@@ -7493,8 +7484,6 @@ async function anchorReadiness() {
     addToVault({hash, txHash, type:'RAM_REPORT', label:'RAM Readiness Report', branch:'JOINT', icon:'<i class="fas fa-chart-bar"></i>', content:text.substring(0,100), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Readiness Calculator', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Readiness Score Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('RAM Readiness Report', 'RAM_REPORT', {txHash, explorerUrl, network});
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 
@@ -8973,7 +8962,6 @@ async function anchorCompliance() {
     updateTxLog();
     setTimeout(()=>{ var st = document.getElementById('animStatus'); if(st) { st.innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Compliance Scorecard Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); st.style.color = '#00aaff'; } }, 2200);
     _postAnchorToolHook('Compliance Scorecard', 'compliance_scorecard', {txHash, explorerUrl, network});
-    await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -9923,7 +9911,6 @@ async function anchorRisk() {
     updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Risk Report Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Supply Chain Risk Report', 'risk_report', {txHash, explorerUrl, network});
-    await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -10035,7 +10022,6 @@ async function anchorReport() {
     updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Audit Report Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Audit Report', 'audit_report', {txHash, explorerUrl, network});
-    await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -10265,7 +10251,6 @@ async function anchorPredictive() {
     updateTxLog();
     setTimeout(()=>{ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Predictive Maintenance Anchored Successfully on XRPL' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Predictive Maintenance', 'predictive_maintenance', {txHash, explorerUrl, network});
-    await new Promise(r => setTimeout(r, 3200)); hideAnchorAnimation();
 }
 
 // ══ SUBMISSION REVIEW & DISCREPANCY ANALYZER ══
@@ -10790,8 +10775,6 @@ async function anchorSubmissionReview() {
     addToVault({hash, txHash, type:'SUBMISSION_REVIEW', label:'Submissions & PTD Analysis: ' + docTypeLabel, branch:meta.branch, icon:'<i class="fas fa-file-alt"></i>', content:text.substring(0,100), fullContent:text, encrypted:false, timestamp:new Date().toISOString(), source:'Submissions & PTD', fee:0.01, explorerUrl, network});
     setTimeout(() => { document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Submissions & PTD Anchored — ' + _subCache.discrepancies.length + ' discrepancies recorded' + _xrplLinkHtml({txHash, explorerUrl})); document.getElementById('animStatus').style.color = '#00aaff'; }, 2200);
     _postAnchorToolHook('Submissions & PTD Analysis', 'SUBMISSION_REVIEW', {txHash, explorerUrl, network});
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
     if (typeof _updateDemoSlsBalance === 'function') _updateDemoSlsBalance();
 }
 
@@ -10859,8 +10842,6 @@ async function anchorLifecycle() {
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Lifecycle Cost Analysis Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('Lifecycle Cost Analysis', 'LIFECYCLE_COST', result);
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 function exportLifecycle() {
@@ -10950,8 +10931,6 @@ async function anchorSBOM() {
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> SBOM Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('SBOM', 'SBOM_SNAPSHOT', result);
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 // ═══ ADDITIONAL ILS ANCHOR FUNCTIONS ═══
@@ -10973,8 +10952,6 @@ async function anchorGFP() {
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> GFP Record Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('GFP Record', 'GFP_RECORD', result);
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 async function anchorCDRL() {
@@ -10995,8 +10972,6 @@ async function anchorCDRL() {
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> CDRL Deliverable Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('CDRL Deliverable', 'CDRL_RECORD', result);
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 async function anchorContract() {
@@ -11017,8 +10992,6 @@ async function anchorContract() {
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Contract Record Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('Contract Record', 'CONTRACT_RECORD', result);
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 async function anchorChain() {
@@ -11039,8 +11012,6 @@ async function anchorChain() {
     if (typeof refreshVerifyRecents === 'function') try { refreshVerifyRecents(); } catch(e) {}
     setTimeout(function(){ document.getElementById('animStatus').innerHTML = window._s4Safe('<i class="fas fa-check-circle" style="color:var(--accent)"></i> Supply Chain Record Anchored Successfully on XRPL' + _xrplLinkHtml(result)); }, 2200);
     _postAnchorToolHook('Supply Chain Record', 'SUPPLY_CHAIN', result);
-    await new Promise(r => setTimeout(r, 3500));
-    hideAnchorAnimation();
 }
 
 function exportDiscrepancyReport() {

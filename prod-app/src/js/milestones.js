@@ -1184,15 +1184,8 @@
     //  ANCHOR TO XRPL
     // ============================================================
     function anchorMilestones() {
-        if (typeof anchorToXRPL === 'function') {
-            var payload = JSON.stringify(_milData.map(function(r) {
-                var clean = {};
-                MIL_COLUMNS.forEach(function(c) { clean[c.key] = r[c.key] || ''; });
-                clean.program_name = r.program_name;
-                clean.owld_date = r.owld_date;
-                return clean;
-            }));
-            anchorToXRPL(payload, 'Program Milestones');
+        if (typeof window.anchorToLedger === 'function') {
+            window.anchorToLedger('milestones', 'Program Milestones');
         } else if (typeof S4 !== 'undefined' && S4.toast) {
             S4.toast('XRPL anchor function not available.', 'warning');
         }

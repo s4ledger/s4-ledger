@@ -2158,15 +2158,9 @@
     // ================================================================
     function briefAnchor() {
         if (!_activeBrief) return;
-        var content = JSON.stringify(_activeBrief.slides);
-        if (typeof window.anchorRecord === 'function') {
-            var hash = _sha256(content);
-            _activeBrief.anchor_hash = hash;
-            _isDirty = true;
-            _saveBrief(_activeBrief, function () {
-                window.anchorRecord('brief', hash, { title: _activeBrief.title, type: _activeBrief.brief_type, slides: _activeBrief.slides.length });
-                _toast('Brief anchored to Ledger', 'success');
-            });
+        if (typeof window.anchorToLedger === 'function') {
+            window.anchorToLedger('brief', 'Brief: ' + (_activeBrief.title || 'Untitled'));
+            _toast('Brief anchored to Ledger', 'success');
         } else {
             _toast('Anchor function not available', 'warning');
         }

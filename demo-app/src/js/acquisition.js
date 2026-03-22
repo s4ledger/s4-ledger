@@ -734,12 +734,9 @@
 
     // -- Anchor Hash --
     function anchorAcquisitionPlan() {
-        if (typeof window._anchorToXRPL === 'function') {
-            if (typeof window.showAnchorAnimation === 'function') window.showAnchorAnimation();
-            window._anchorToXRPL('Acquisition Plan Record', 'acquisition_plan').finally(function () {
-                if (typeof window.hideAnchorAnimation === 'function') window.hideAnchorAnimation();
-            });
-        } else if (typeof S4 !== 'undefined' && S4.toast) { S4.toast('Acquisition plan prepared for XRPL anchoring.', 'info'); }
+        if (typeof window.anchorToLedger === 'function') {
+            window.anchorToLedger('acquisition_plan', 'Acquisition Plan');
+        } else if (typeof S4 !== 'undefined' && S4.toast) { S4.toast('XRPL anchor function not available.', 'warning'); }
     }
     window.anchorAcquisitionPlan = anchorAcquisitionPlan;
 
