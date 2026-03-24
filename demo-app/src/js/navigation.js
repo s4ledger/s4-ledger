@@ -608,6 +608,10 @@ function _buildLedgerContent(body) {
         +   '<div class="ws-notify-sub">Get notified when anchors complete, verifications finish, or credits run low.</div>'
         + '</div>'
 
+        // ── Anchor Policy Settings ──
+        + '<div class="ws-section-label"><i class="fas fa-shield-alt" style="margin-right:5px;color:#00cc88;font-size:0.65rem"></i>Anchor Policy</div>'
+        + '<div id="anchorPolicySettingsContainer"></div>'
+
         // ── iOS / Mobile App Coming Soon ──
         + '<div class="ws-ios-card">'
         +   '<div class="ws-ios-icon"><i class="fas fa-mobile-alt"></i></div>'
@@ -718,6 +722,11 @@ function _buildLedgerContent(body) {
     });
 
     body.dataset.loaded = 'true';
+
+    // Render anchor policy settings if container was injected
+    if (typeof window.renderAnchorPolicySettings === 'function') {
+        setTimeout(function() { window.renderAnchorPolicySettings(); }, 100);
+    }
 }
 
 window._populateUnifiedLedger = function() {

@@ -132,9 +132,9 @@ for (const [k,v] of Object.entries(_RT)) {
 // ── Anchor Policy Helpers ──
 // Org-level overrides stored in localStorage — admin can promote/demote tiers
 const ANCHOR_POLICY_META = {
-    auto:  {label:'Auto-Anchor',  icon:'fa-shield-alt', color:'#00cc88', desc:'Anchored automatically on finalize'},
-    prompt:{label:'Recommended',   icon:'fa-bell',       color:'#ff9933', desc:'You\'ll be prompted to anchor'},
-    manual:{label:'Manual',        icon:'fa-hand-pointer',color:'#86868b', desc:'Anchor when you choose'}
+    auto:  {label:'Auto-Anchor',  icon:'fa-shield-alt', color:'#00cc88', desc:'Persistent prompt appears — confirm with one click'},
+    prompt:{label:'Recommended',   icon:'fa-bell',       color:'#ff9933', desc:'You\'ll be prompted to anchor — can dismiss'},
+    manual:{label:'Manual',        icon:'fa-hand-pointer',color:'#86868b', desc:'Anchor when you choose via the anchor button'}
 };
 function _getAnchorPolicy(recordType) {
     var overrides = {};
@@ -1146,6 +1146,77 @@ function _getAnchorPolicyBadgeHTML(recordType) {
     return '<span class="anchor-policy-badge anchor-policy-' + policy + '" title="' + meta.desc + '"><i class="fas ' + meta.icon + '"></i> ' + meta.label + '</span>';
 }
 window._getAnchorPolicyBadgeHTML = _getAnchorPolicyBadgeHTML;
+
+/**
+ * Tool → anchor mapping. Each entry: { recordType, anchorFn, label }
+ * Used by _showToolAnchorBanner to know which function to call.
+ */
+var _TOOL_ANCHOR_MAP = {
+    'hub-compliance':  {recordType:'compliance_scorecard', anchorFn:'anchorCompliance',       label:'Compliance Scorecard'},
+    'hub-reports':     {recordType:'audit_report',         anchorFn:'anchorReport',            label:'Audit Report'},
+    'hub-submissions': {recordType:'SUBMISSION_REVIEW',    anchorFn:'anchorSubmissionReview',  label:'Submission Review'},
+    'hub-cdrl':        {recordType:'CDRL_RECORD',          anchorFn:'anchorCDRL',              label:'CDRL Deliverable'},
+    'hub-analysis':    {recordType:'ILS_GAP_ANALYSIS',     anchorFn:'anchorILSReport',         label:'ILS Gap Analysis'},
+    'hub-risk':        {recordType:'risk_report',          anchorFn:'anchorRisk',              label:'Risk Assessment'},
+    'hub-contract':    {recordType:'CONTRACT_RECORD',      anchorFn:'anchorContract',          label:'Contract Analysis'},
+    'hub-dmsms':       {recordType:'DMSMS_REPORT',         anchorFn:'anchorDMSMS',             label:'DMSMS Report'},
+    'hub-readiness':   {recordType:'RAM_REPORT',           anchorFn:'anchorReadiness',         label:'Readiness Score'},
+    'hub-sbom':        {recordType:'SBOM_SNAPSHOT',        anchorFn:'anchorSBOM',              label:'SBOM Scan'},
+    'hub-gfp':         {recordType:'GFP_RECORD',           anchorFn:'anchorGFP',               label:'Property Record'},
+    'hub-provenance':  {recordType:'SUPPLY_CHAIN_RECORD',  anchorFn:'anchorChain',             label:'Chain of Custody'},
+    'hub-lifecycle':   {recordType:'LIFECYCLE_COST',       anchorFn:'anchorLifecycle',         label:'Lifecycle Cost Estimate'},
+    'hub-roi':         {recordType:'ROI_REPORT',           anchorFn:'anchorROI',               label:'ROI Analysis'},
+    'hub-predictive':  {recordType:'PREDICTIVE_REPORT',    anchorFn:'anchorPredictive',        label:'Predictive Maintenance'}
+};
+
+/**
+ * Show a persistent inline anchor policy banner at the top of a tool panel.
+ * Auto: Green, prominent — persists until user clicks Confirm.
+ * Prompt: Orange, softer — persists until Anchor or Not Now.
+ * Manual: No banner shown.
+ */
+function _showToolAnchorBanner(panelId) {
+    var mapping = _TOOL_ANCHOR_MAP[panelId];
+    if (!mapping) return;
+    var policy = _getAnchorPolicy(mapping.recordType);
+    if (policy === 'manual') return;
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    // Remove any existing banner in this panel
+    var old = panel.querySelector('.s4-tool-anchor-banner');
+    if (old) old.remove();
+    var meta = ANCHOR_POLICY_META[policy];
+    var isAuto = policy === 'auto';
+    var borderColor = isAuto ? 'rgba(0,204,136,0.35)' : 'rgba(255,153,51,0.35)';
+    var bgColor = isAuto ? 'rgba(0,204,136,0.06)' : 'rgba(255,153,51,0.06)';
+    var iconColor = meta.color;
+    var icon = isAuto ? 'fa-shield-alt' : 'fa-bell';
+    var title = isAuto ? 'Ready to anchor' : 'Anchoring recommended';
+    var desc = isAuto
+        ? 'This record will be committed to the XRP Ledger for immutable verification. Confirm when ready.'
+        : mapping.label + ' records benefit from blockchain verification. Anchor now or dismiss.';
+    var confirmLabel = isAuto ? 'Confirm Anchor' : 'Anchor to XRPL';
+    var dismissHtml = isAuto ? '' : ' <button class="s4-tool-banner-dismiss" onclick="this.closest(\'.s4-tool-anchor-banner\').remove()" style="padding:5px 12px;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;border:1px solid rgba(134,134,139,0.2);background:rgba(134,134,139,0.06);color:#86868b;white-space:nowrap;transition:all 0.15s">Not Now</button>';
+    var banner = document.createElement('div');
+    banner.className = 's4-tool-anchor-banner';
+    banner.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:14px;border-radius:12px;background:' + bgColor + ';border:1px solid ' + borderColor + ';animation:fadeIn 0.3s ease';
+    banner.innerHTML = window._s4Safe(
+        '<i class="fas ' + icon + '" style="color:' + iconColor + ';font-size:1.1rem;flex-shrink:0"></i>'
+        + '<div style="flex:1;min-width:0">'
+        + '<div style="font-size:0.82rem;font-weight:700;color:' + iconColor + ';margin-bottom:2px">' + title + '</div>'
+        + '<div style="font-size:0.75rem;color:var(--muted,#86868b);line-height:1.4">' + desc + '</div>'
+        + '</div>'
+        + '<button onclick="if(typeof window.' + mapping.anchorFn + '===\'function\'){this.closest(\'.s4-tool-anchor-banner\').remove();window.' + mapping.anchorFn + '();}" style="padding:6px 16px;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;border:1px solid ' + borderColor + ';background:linear-gradient(135deg,' + bgColor + ',' + bgColor + ');color:' + iconColor + ';white-space:nowrap;transition:all 0.15s">' + confirmLabel + '</button>'
+        + dismissHtml
+    );
+    // Insert at the top of the panel
+    if (panel.firstChild) {
+        panel.insertBefore(banner, panel.firstChild);
+    } else {
+        panel.appendChild(banner);
+    }
+}
+window._showToolAnchorBanner = _showToolAnchorBanner;
 
 /**
  * Show a compact inline prompt banner for Tier 2 records.
@@ -8088,6 +8159,8 @@ function switchHubTab(panelId, btn) {
     if (panelId === 'hub-readiness') { if (typeof loadReadinessData === 'function') loadReadinessData(); }
     if (panelId === 'hub-lifecycle') { if (typeof calcLifecycle === 'function') calcLifecycle(); }
     if (panelId === 'hub-analysis') { if (typeof initILSChecklist === 'function') initILSChecklist(); }
+    // Show anchor policy banner for auto/recommended tools
+    setTimeout(function() { _showToolAnchorBanner(panelId); }, 400);
     // Update floating AI agent context
     updateAiContext(panelId);
 }
