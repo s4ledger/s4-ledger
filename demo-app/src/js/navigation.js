@@ -608,9 +608,15 @@ function _buildLedgerContent(body) {
         +   '<div class="ws-notify-sub">Get notified when anchors complete, verifications finish, or credits run low.</div>'
         + '</div>'
 
-        // ── Anchor Policy Settings ──
-        + '<div class="ws-section-label"><i class="fas fa-shield-alt" style="margin-right:5px;color:#00cc88;font-size:0.65rem"></i>Anchor Policy</div>'
-        + '<div id="anchorPolicySettingsContainer"></div>'
+        // ── Anchor Policy Button ──
+        + '<button class="ws-anchor-policy-btn" onclick="if(typeof window._openAnchorPolicyModal===\'function\')window._openAnchorPolicyModal()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;margin-top:8px;border-radius:12px;border:1px solid rgba(0,204,136,0.2);background:rgba(0,204,136,0.04);cursor:pointer;transition:all 0.15s;text-align:left">'
+        +   '<i class="fas fa-shield-alt" style="color:#00cc88;font-size:0.9rem;flex-shrink:0"></i>'
+        +   '<div style="flex:1;min-width:0">'
+        +     '<div style="font-size:0.8rem;font-weight:700;color:var(--text,#1d1d1f)">Anchor Policy</div>'
+        +     '<div style="font-size:0.7rem;color:var(--muted,#86868b);margin-top:1px">Configure auto-anchor, recommended &amp; manual record types</div>'
+        +   '</div>'
+        +   '<i class="fas fa-chevron-right" style="color:var(--muted,#86868b);font-size:0.7rem;flex-shrink:0"></i>'
+        + '</button>'
 
         // ── iOS / Mobile App Coming Soon ──
         + '<div class="ws-ios-card">'
@@ -722,11 +728,6 @@ function _buildLedgerContent(body) {
     });
 
     body.dataset.loaded = 'true';
-
-    // Render anchor policy settings if container was injected
-    if (typeof window.renderAnchorPolicySettings === 'function') {
-        setTimeout(function() { window.renderAnchorPolicySettings(); }, 100);
-    }
 }
 
 window._populateUnifiedLedger = function() {

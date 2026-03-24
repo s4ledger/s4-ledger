@@ -1306,6 +1306,40 @@ function _xrplLinkHtml(result) {
 }
 
 /**
+ * Open anchor policy settings in a modal popup.
+ */
+function _openAnchorPolicyModal() {
+    var existing = document.getElementById('s4AnchorPolicyModal');
+    if (existing) existing.remove();
+    var overlay = document.createElement('div');
+    overlay.id = 's4AnchorPolicyModal';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:fadeIn 0.2s ease';
+    overlay.onclick = function(e) { if (e.target === overlay) _closeAnchorPolicyModal(); };
+    var modal = document.createElement('div');
+    modal.style.cssText = 'width:92%;max-width:560px;max-height:80vh;overflow-y:auto;border-radius:16px;background:var(--card-bg,#fff);border:1px solid var(--border,rgba(0,0,0,0.08));box-shadow:0 24px 80px rgba(0,0,0,0.25);padding:24px;position:relative';
+    // Close button
+    var closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.style.cssText = 'position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted,#86868b);cursor:pointer;font-size:1rem;padding:4px;z-index:1';
+    closeBtn.onclick = _closeAnchorPolicyModal;
+    modal.appendChild(closeBtn);
+    // Settings container
+    var container = document.createElement('div');
+    container.id = 'anchorPolicySettingsContainer';
+    modal.appendChild(container);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    renderAnchorPolicySettings();
+}
+window._openAnchorPolicyModal = _openAnchorPolicyModal;
+
+function _closeAnchorPolicyModal() {
+    var el = document.getElementById('s4AnchorPolicyModal');
+    if (el) el.remove();
+}
+window._closeAnchorPolicyModal = _closeAnchorPolicyModal;
+
+/**
  * Anchor Policy Settings Panel — renders org-level override controls.
  * Called from the settings/preferences area.
  */
