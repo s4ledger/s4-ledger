@@ -1371,8 +1371,9 @@ function renderAnchorPolicySettings() {
             var currentPolicy = _getAnchorPolicy(k);
             var isOverridden = !!overrides[k];
             html += '<div class="s4-policy-row">';
-            html += '<span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0"><i class="fas ' + t.icon + '" style="color:' + t.color + ';width:16px;text-align:center;flex-shrink:0"></i><span style="font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + t.label + '</span></span>';
-            html += '<select onchange="_setAnchorPolicyOverride(\'' + k + '\',this.value);renderAnchorPolicySettings()" style="font-size:0.72rem;padding:3px 6px;border-radius:6px;border:1px solid rgba(0,0,0,0.1);background:rgba(0,0,0,0.02);color:var(--text,#1d1d1f);cursor:pointer">';
+            html += '<i class="fas ' + t.icon + '" style="color:' + t.color + ';width:20px;text-align:center;flex-shrink:0;font-size:0.85rem"></i>';
+            html += '<span style="font-size:0.78rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + t.label + '</span>';
+            html += '<select onchange="_setAnchorPolicyOverride(\'' + k + '\',this.value);renderAnchorPolicySettings()" style="font-size:0.72rem;padding:3px 6px;border-radius:6px;border:1px solid rgba(0,0,0,0.1);background:rgba(0,0,0,0.02);color:var(--text,#1d1d1f);cursor:pointer;flex-shrink:0">';
             ['auto','prompt','manual'].forEach(function(p) {
                 html += '<option value="' + p + '"' + (currentPolicy === p ? ' selected' : '') + '>' + ANCHOR_POLICY_META[p].label + '</option>';
             });
