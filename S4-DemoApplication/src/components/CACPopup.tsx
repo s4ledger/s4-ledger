@@ -19,12 +19,12 @@ export default function CACPopup({ onAuthenticated }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 animate-fadeIn">
-      <div className="bg-surface border border-border rounded-card p-8 max-w-md w-full mx-4 text-center animate-slideUp">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 animate-fadeIn">
+      <div className="bg-white border border-border rounded-card p-8 max-w-md w-full mx-4 text-center animate-slideUp">
         <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent/20 flex items-center justify-center">
           <i className="fas fa-id-card text-accent text-3xl"></i>
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">CAC Authentication</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">CAC Authentication</h2>
         <p className="text-steel mb-6">
           Insert your Common Access Card to access the S4 Ledger Deliverables Tracker.
         </p>

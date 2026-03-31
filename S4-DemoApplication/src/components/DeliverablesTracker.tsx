@@ -82,16 +82,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   }
 
   return (
-    <div className="min-h-screen bg-[#0d0d0f] text-white">
+    <div className="min-h-screen bg-[#f5f5f7] text-gray-900">
       {/* Top Bar */}
       <header className="bg-surface border-b border-border px-6 py-4">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
-              <i className="fas fa-shield-alt text-white text-sm"></i>
-            </div>
+            <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" className="h-9 w-auto" />
             <div>
-              <h1 className="text-lg font-bold text-white leading-tight">S4 Ledger · Deliverables Tracker</h1>
+              <h1 className="text-lg font-bold text-gray-900 leading-tight">S4 Ledger · Deliverables Tracker</h1>
               <p className="text-steel text-xs">{role} View · FOUO Simulation</p>
             </div>
           </div>
@@ -117,24 +115,24 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       {/* Stats Row */}
       <div className="max-w-[1600px] mx-auto px-6 py-4">
         <div className="grid grid-cols-5 gap-3">
-          <div className="bg-surface border border-border rounded-card p-4">
+          <div className="bg-white border border-border rounded-card p-4">
             <p className="text-steel text-xs uppercase tracking-wide">Total CDRLs</p>
-            <p className="text-2xl font-bold text-white mt-1">{stats.total}</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
           </div>
-          <div className="bg-surface border border-green-500/30 rounded-card p-4">
+          <div className="bg-white border border-green-500/30 rounded-card p-4">
             <p className="text-green-400 text-xs uppercase tracking-wide">Approved</p>
             <p className="text-2xl font-bold text-green-400 mt-1">{stats.green}</p>
           </div>
-          <div className="bg-surface border border-yellow-500/30 rounded-card p-4">
+          <div className="bg-white border border-yellow-500/30 rounded-card p-4">
             <p className="text-yellow-400 text-xs uppercase tracking-wide">In Review</p>
             <p className="text-2xl font-bold text-yellow-400 mt-1">{stats.yellow}</p>
           </div>
-          <div className="bg-surface border border-red-500/30 rounded-card p-4">
+          <div className="bg-white border border-red-500/30 rounded-card p-4">
             <p className="text-red-400 text-xs uppercase tracking-wide">Overdue</p>
             <p className="text-2xl font-bold text-red-400 mt-1">{stats.red}</p>
           </div>
-          <div className="bg-surface border border-accent/30 rounded-card p-4">
-            <p className="text-accent text-xs uppercase tracking-wide">Anchored</p>
+          <div className="bg-white border border-accent/30 rounded-card p-4">
+            <p className="text-accent text-xs uppercase tracking-wide">Sealed</p>
             <p className="text-2xl font-bold text-accent mt-1">{stats.anchored}</p>
           </div>
         </div>
@@ -150,10 +148,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               placeholder="Search deliverables…"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-surface border border-border rounded-lg pl-9 pr-4 py-2 text-white text-sm placeholder:text-steel/50 focus:outline-none focus:border-accent"
+              className="w-full bg-white border border-border rounded-lg pl-9 pr-4 py-2 text-gray-900 text-sm placeholder:text-steel/50 focus:outline-none focus:border-accent"
             />
           </div>
-          <div className="flex items-center gap-1 bg-surface border border-border rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-white border border-border rounded-lg p-1">
             {(['all', 'green', 'yellow', 'red'] as const).map(s => (
               <button
                 key={s}
@@ -167,7 +165,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       : s === 'yellow'
                       ? 'bg-yellow-500/20 text-yellow-400'
                       : 'bg-red-500/20 text-red-400'
-                    : 'text-steel hover:text-white'
+                    : 'text-steel hover:text-gray-900'
                 }`}
               >
                 {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
@@ -179,14 +177,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             className="flex items-center gap-2 px-3 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-lg text-accent text-xs font-medium transition-all"
           >
             <i className="fas fa-link"></i>
-            Anchor All
+            Seal All
           </button>
         </div>
       </div>
 
       {/* Table */}
       <div className="max-w-[1600px] mx-auto px-6 pb-8">
-        <div className="bg-surface border border-border rounded-card overflow-hidden">
+        <div className="bg-white border border-border rounded-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -198,7 +196,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <th
                       key={col.key}
                       onClick={() => handleSort(col.key)}
-                      className={`${col.width} px-3 py-3 text-left text-xs font-semibold text-steel uppercase tracking-wider cursor-pointer hover:text-white transition-colors`}
+                      className={`${col.width} px-3 py-3 text-left text-xs font-semibold text-steel uppercase tracking-wider cursor-pointer hover:text-gray-900 transition-colors`}
                     >
                       {col.label}
                       {sortCol === col.key && (
@@ -218,10 +216,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 {filtered.map((row, idx) => (
                   <tr
                     key={row.id}
-                    className={`${rowClass(row.status)} border-b border-border/50 hover:bg-white/5 transition-colors`}
+                    className={`${rowClass(row.status)} border-b border-border/50 hover:bg-black/[0.03] transition-colors`}
                   >
                     <td className="px-3 py-3 text-steel font-mono text-xs">{idx + 1}</td>
-                    <td className="px-3 py-3 font-medium text-white">{row.title}</td>
+                    <td className="px-3 py-3 font-medium text-gray-900">{row.title}</td>
                     <td className="px-3 py-3 font-mono text-xs text-steel">{row.diNumber}</td>
                     <td className="px-3 py-3 text-xs">{row.contractDueFinish}</td>
                     <td className="px-3 py-3 text-xs">{row.calculatedDueDate}</td>

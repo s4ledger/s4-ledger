@@ -11,7 +11,7 @@ export function generatePDF(
   const now = new Date()
 
   // Header
-  doc.setFillColor(13, 13, 15)
+  doc.setFillColor(0, 122, 255)
   doc.rect(0, 0, 297, 25, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(16)
@@ -28,7 +28,7 @@ export function generatePDF(
 
   doc.setTextColor(50, 50, 50)
   doc.setFontSize(10)
-  doc.text(`Total: ${data.length}  |  Approved: ${green}  |  In Review: ${yellow}  |  Overdue: ${red}  |  Anchored: ${anchoredCount}`, 14, 33)
+  doc.text(`Total: ${data.length}  |  Approved: ${green}  |  In Review: ${yellow}  |  Overdue: ${red}  |  Sealed: ${anchoredCount}`, 14, 33)
 
   // Table
   const tableData = data.map(row => [

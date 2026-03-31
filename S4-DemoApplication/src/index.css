@@ -2,15 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── S4 Global Tokens ── */
+/* ── S4 Global Tokens — Light Mode Only ── */
 :root {
   --accent: #007AFF;
-  --surface: #1c1c1e;
-  --surface-2: #2c2c2e;
-  --surface-3: #3a3a3c;
-  --border: rgba(255,255,255,0.08);
-  --steel: #8b8fa3;
-  --text: #f5f5f7;
+  --surface: #ffffff;
+  --surface-2: #f5f5f7;
+  --surface-3: #e8e8ed;
+  --border: rgba(0,0,0,0.08);
+  --steel: #6e6e73;
+  --text: #1d1d1f;
   --green: #34c759;
   --red: #ff3b30;
   --yellow: #ff9500;
@@ -18,7 +18,7 @@
 }
 
 body {
-  background: #0d0d0f;
+  background: #f5f5f7;
   color: var(--text);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
@@ -26,8 +26,8 @@ body {
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
 
 /* ── Animations ── */
 @keyframes fadeIn {
@@ -47,14 +47,14 @@ body {
 .animate-slide-up { animation: slideUp 0.4s ease; }
 
 /* ── Row Colors ── */
-.row-green { background: rgba(52, 199, 89, 0.06); border-left: 3px solid #34c759; }
-.row-yellow { background: rgba(255, 149, 0, 0.06); border-left: 3px solid #ff9500; }
-.row-red { background: rgba(255, 59, 48, 0.06); border-left: 3px solid #ff3b30; }
+.row-green { background: rgba(52, 199, 89, 0.08); border-left: 3px solid #34c759; }
+.row-yellow { background: rgba(255, 149, 0, 0.08); border-left: 3px solid #ff9500; }
+.row-red { background: rgba(255, 59, 48, 0.08); border-left: 3px solid #ff3b30; }
 
 /* ── Modal Backdrop ── */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center;
   animation: fadeIn 0.2s ease;
 }
@@ -64,7 +64,7 @@ body {
 .s4-tooltip::after {
   content: attr(data-tip);
   position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-  background: #2c2c2e; color: #f5f5f7; font-size: 0.7rem; padding: 4px 8px;
+  background: #1d1d1f; color: #f5f5f7; font-size: 0.7rem; padding: 4px 8px;
   border-radius: 6px; white-space: nowrap; pointer-events: none;
   opacity: 0; transition: opacity 0.15s;
 }

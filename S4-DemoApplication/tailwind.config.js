@@ -5,9 +5,9 @@ export default {
     extend: {
       colors: {
         accent: '#007AFF',
-        surface: '#1c1c1e',
-        steel: '#8b8fa3',
-        border: 'rgba(255,255,255,0.08)',
+        surface: '#ffffff',
+        steel: '#6e6e73',
+        border: 'rgba(0,0,0,0.08)',
         green: { s4: '#34c759' },
         red: { s4: '#ff3b30' },
         yellow: { s4: '#ff9500' },

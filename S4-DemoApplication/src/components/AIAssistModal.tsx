@@ -40,7 +40,7 @@ function generateAnalysis(row: CDRLRow | null, allData: CDRLRow[]): string[] {
       lines.push(`Submitted: ${row.actualSubmissionDate}`)
       lines.push(`Reviewed in ${row.calendarDaysToReview} calendar days.`)
       lines.push(``)
-      lines.push(`No action required. Record is eligible for blockchain anchoring.`)
+      lines.push(`No action required. Record is eligible for Ledger Seal.`)
     }
   } else {
     const redCount = allData.filter(r => r.status === 'red').length
@@ -118,7 +118,7 @@ export default function AIAssistModal({ row, allData, onClose }: Props) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div
-        className="bg-surface border border-border rounded-card p-6 max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col animate-slideUp"
+        className="bg-white border border-border rounded-card p-6 max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col animate-slideUp"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
@@ -127,18 +127,18 @@ export default function AIAssistModal({ row, allData, onClose }: Props) {
               <i className="fas fa-brain text-accent"></i>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">AI Analysis</h3>
+              <h3 className="text-lg font-bold text-gray-900">AI Analysis</h3>
               <p className="text-steel text-xs">
                 {row ? `${row.id} — ${row.title}` : 'Full Portfolio Assessment'}
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="text-steel hover:text-white transition-colors">
+          <button onClick={onClose} className="text-steel hover:text-gray-900 transition-colors">
             <i className="fas fa-times"></i>
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-black/30 rounded-lg p-4 font-mono text-xs leading-relaxed">
+        <div className="flex-1 overflow-y-auto bg-[#f5f5f7] rounded-lg p-4 font-mono text-xs leading-relaxed">
           {lines.slice(0, displayedLines).map((line, i) => (
             <div key={i} className={line === '' ? 'h-3' : 'text-green-400'}>
               {line}
@@ -152,7 +152,7 @@ export default function AIAssistModal({ row, allData, onClose }: Props) {
         <div className="flex justify-end mt-4 gap-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-border rounded-lg text-sm text-steel transition-all"
+            className="px-4 py-2 bg-black/[0.03] hover:bg-black/[0.06] border border-border rounded-lg text-sm text-steel transition-all"
           >
             Close
           </button>

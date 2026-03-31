@@ -35,7 +35,7 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div
-        className="bg-surface border border-border rounded-card p-6 max-w-xl w-full mx-4 animate-slideUp"
+        className="bg-white border border-border rounded-card p-6 max-w-xl w-full mx-4 animate-slideUp"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
@@ -51,11 +51,11 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
               }`}></i>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Integrity Verification</h3>
+              <h3 className="text-lg font-bold text-gray-900">Integrity Verification</h3>
               <p className="text-steel text-xs">{row.id} — {row.title}</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-steel hover:text-white transition-colors">
+          <button onClick={onClose} className="text-steel hover:text-gray-900 transition-colors">
             <i className="fas fa-times"></i>
           </button>
         </div>
@@ -81,8 +81,8 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
                 </div>
                 <p className="text-steel text-xs">
                   {match
-                    ? 'The current record hash matches the hash anchored on the XRP Ledger.'
-                    : 'The current record hash does NOT match the anchored hash. Investigate immediately.'}
+                    ? 'The current record hash matches the hash sealed on the XRP Ledger.'
+                    : 'The current record hash does NOT match the sealed hash. Investigate immediately.'}
                 </p>
               </div>
             )}
@@ -91,24 +91,24 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
               <div className="p-4 rounded-lg border bg-yellow-500/10 border-yellow-500/30">
                 <div className="flex items-center gap-2">
                   <i className="fas fa-info-circle text-yellow-400"></i>
-                  <span className="font-semibold text-yellow-400">Not Yet Anchored</span>
+                  <span className="font-semibold text-yellow-400">Not Yet Sealed</span>
                 </div>
                 <p className="text-steel text-xs mt-1">
-                  This record has not been anchored to the blockchain. Anchor it first to enable verification.
+                  This record has not been sealed to the ledger. Seal it first to enable verification.
                 </p>
               </div>
             )}
 
-            <div className="bg-black/30 rounded-lg p-4 space-y-3 text-xs font-mono">
+            <div className="bg-[#f5f5f7] rounded-lg p-4 space-y-3 text-xs font-mono">
               <div>
                 <p className="text-steel mb-1">Current SHA-256 Hash:</p>
-                <p className="text-white break-all">{currentHash}</p>
+                <p className="text-gray-900 break-all">{currentHash}</p>
               </div>
               {anchor && (
                 <>
                   <div>
-                    <p className="text-steel mb-1">Anchored Hash:</p>
-                    <p className="text-white break-all">{anchor.hash}</p>
+                    <p className="text-steel mb-1">Sealed Hash:</p>
+                    <p className="text-gray-900 break-all">{anchor.hash}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -117,15 +117,15 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
                     </div>
                     <div>
                       <p className="text-steel mb-1">Ledger Index:</p>
-                      <p className="text-white">{anchor.ledgerIndex.toLocaleString()}</p>
+                      <p className="text-gray-900">{anchor.ledgerIndex.toLocaleString()}</p>
                     </div>
                     <div>
                       <p className="text-steel mb-1">Network:</p>
-                      <p className="text-white">{anchor.network}</p>
+                      <p className="text-gray-900">{anchor.network}</p>
                     </div>
                     <div>
-                      <p className="text-steel mb-1">Anchored At:</p>
-                      <p className="text-white">{new Date(anchor.timestamp).toLocaleString()}</p>
+                      <p className="text-steel mb-1">Sealed At:</p>
+                      <p className="text-gray-900">{new Date(anchor.timestamp).toLocaleString()}</p>
                     </div>
                   </div>
                 </>
@@ -137,7 +137,7 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
         <div className="flex justify-end mt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-border rounded-lg text-sm text-steel transition-all"
+            className="px-4 py-2 bg-black/[0.03] hover:bg-black/[0.06] border border-border rounded-lg text-sm text-steel transition-all"
           >
             Close
           </button>
