@@ -113,7 +113,16 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <p className="text-steel mb-1">TX Hash:</p>
-                      <p className="text-accent break-all">{anchor.txHash}</p>
+                      {anchor.explorerUrl ? (
+                        <a
+                          href={anchor.explorerUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent hover:underline break-all"
+                        >{anchor.txHash}</a>
+                      ) : (
+                        <p className="text-accent break-all">{anchor.txHash}</p>
+                      )}
                     </div>
                     <div>
                       <p className="text-steel mb-1">Ledger Index:</p>
@@ -128,6 +137,12 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
                       <p className="text-gray-900">{new Date(anchor.timestamp).toLocaleString()}</p>
                     </div>
                   </div>
+                  {anchor.slsFee && (
+                    <div className="mt-2 pt-2 border-t border-border/50">
+                      <p className="text-steel mb-1">Anchor Fee:</p>
+                      <p className="text-gray-900">{anchor.slsFee} SLS</p>
+                    </div>
+                  )}
                 </>
               )}
             </div>

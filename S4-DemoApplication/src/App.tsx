@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import { AuthStage, UserRole, CDRLRow, AnchorRecord } from './types'
 import { sampleData } from './data/sampleData'
 import { hashRow } from './utils/hash'
-import { simulateAnchor } from './utils/xrpl'
+import { anchorToXRPL } from './utils/xrpl'
 import CACPopup from './components/CACPopup'
 import WelcomeCard from './components/WelcomeCard'
 import RoleSelector from './components/RoleSelector'
@@ -21,7 +21,7 @@ export default function App() {
     setAnchoring(prev => new Set(prev).add(row.id))
     try {
       const hash = await hashRow(row as unknown as Record<string, unknown>)
-      const record = await simulateAnchor(row.id, hash)
+      const record = await anchorToXRPL(row.id, hash, row.title)
       setAnchors(prev => ({ ...prev, [row.id]: record }))
     } finally {
       setAnchoring(prev => {

@@ -19,6 +19,8 @@ export interface AnchorRecord {
   txHash: string
   ledgerIndex: number
   network: string
+  explorerUrl: string | null
+  slsFee: string | null
 }
 
 export interface VerifyResult {
