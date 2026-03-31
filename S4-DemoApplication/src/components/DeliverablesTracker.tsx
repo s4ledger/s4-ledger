@@ -9,11 +9,13 @@ import ReportModal from './ReportModal'
 import ExternalSyncModal from './ExternalSyncModal'
 import NotificationsPanel from './NotificationsPanel'
 import EmailComposer from './EmailComposer'
+import WorkflowProgressPopup from './WorkflowProgressPopup'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, recordExternalFeed, getAuditLog } from '../utils/auditTrail'
 import { simulateExternalSync, SyncNotification, SyncStatus } from '../utils/externalSync'
+import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 
 interface Props {
   data: CDRLRow[]
@@ -90,6 +92,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(true)
   const [syncToast, setSyncToast] = useState<string | null>(null)
   const [emailNotification, setEmailNotification] = useState<SyncNotification | null>(null)
+  const [workflowRow, setWorkflowRow] = useState<CDRLRow | null>(null)
   const autoSyncRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   /* ─── Hull-filtered base data ──────────────────────────────── */
@@ -266,6 +269,25 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
   function handleMarkAllRead() {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+  }
+
+  /** Build a SyncNotification shell so the EmailComposer can render for a workflow row */
+  function handleWorkflowEmail(row: CDRLRow) {
+    const party = getRACIParty(row)
+    const n: SyncNotification = {
+      id: `wf-${row.id}-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      title: `${row.id} — Workflow Status Update`,
+      body: `Current status: ${row.status === 'green' ? 'Approved' : row.status === 'yellow' ? 'In Review' : 'Overdue'}. Responsible: ${party}. ${row.notes.slice(0, 100)}`,
+      priority: row.status === 'red' ? 'critical' : row.status === 'yellow' ? 'medium' : 'low',
+      rowId: row.id,
+      rowTitle: row.title,
+      stakeholders: ['Program Manager', 'Contracting Officer', party === 'Shipbuilder' ? 'Quality Assurance' : party],
+      read: true,
+      changes: [{ rowId: row.id, rowTitle: row.title, field: 'Workflow Update', oldValue: '', newValue: row.notes.slice(0, 80), source: 'DRL Workflow Progress' }],
+    }
+    setEmailNotification(n)
+    setWorkflowRow(null)
   }
 
   function handleUpdateNotes(rowId: string, notes: string) {
@@ -504,16 +526,16 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
           </div>
           <div className="bg-white border border-green-500/30 rounded-card p-4">
-            <p className="text-green-400 text-xs uppercase tracking-wide">Approved</p>
-            <p className="text-2xl font-bold text-green-400 mt-1">{stats.green}</p>
+            <p className="text-green-600 text-xs uppercase tracking-wide">Approved</p>
+            <p className="text-2xl font-bold text-green-600 mt-1">{stats.green}</p>
           </div>
           <div className="bg-white border border-yellow-500/30 rounded-card p-4">
-            <p className="text-yellow-400 text-xs uppercase tracking-wide">In Review</p>
-            <p className="text-2xl font-bold text-yellow-400 mt-1">{stats.yellow}</p>
+            <p className="text-yellow-600 text-xs uppercase tracking-wide">In Review</p>
+            <p className="text-2xl font-bold text-yellow-600 mt-1">{stats.yellow}</p>
           </div>
           <div className="bg-white border border-red-500/30 rounded-card p-4">
-            <p className="text-red-400 text-xs uppercase tracking-wide">Overdue</p>
-            <p className="text-2xl font-bold text-red-400 mt-1">{stats.red}</p>
+            <p className="text-red-500 text-xs uppercase tracking-wide">Overdue</p>
+            <p className="text-2xl font-bold text-red-500 mt-1">{stats.red}</p>
           </div>
           <div className="bg-white border border-accent/30 rounded-card p-4">
             <p className="text-accent text-xs uppercase tracking-wide">Sealed</p>
@@ -614,18 +636,18 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       {/* Table */}
       <div className="max-w-[1600px] mx-auto px-6 pb-8">
         <div className="bg-white border border-border rounded-card overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[calc(100vh-380px)]">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="sticky top-0 z-20 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
                 <tr className="border-b border-border">
-                  <th className="w-[50px] px-3 py-3 text-left text-xs font-semibold text-steel uppercase tracking-wider">
+                  <th className="w-[50px] px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
                     #
                   </th>
                   {columns.map(col => (
                     <th
                       key={col.key}
                       onClick={() => handleSort(col.key)}
-                      className={`${col.width} px-3 py-3 text-left text-xs font-semibold text-steel uppercase tracking-wider cursor-pointer hover:text-gray-900 transition-colors`}
+                      className={`${col.width} px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:text-gray-900 transition-colors bg-white`}
                     >
                       {col.label}
                       {sortCol === col.key && (
@@ -633,10 +655,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       )}
                     </th>
                   ))}
-                  <th className="w-[80px] px-3 py-3 text-center text-xs font-semibold text-steel uppercase tracking-wider">
+                  <th className="w-[80px] px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
                     Trust
                   </th>
-                  <th className="w-[50px] px-3 py-3 text-center text-xs font-semibold text-steel uppercase tracking-wider">
+                  <th className="w-[50px] px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
                     <i className="fas fa-bolt text-accent"></i>
                   </th>
                 </tr>
@@ -645,9 +667,15 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 {filtered.map((row, idx) => (
                   <tr
                     key={row.id}
-                    className={`${rowClass(row.status)} border-b border-border/50 hover:bg-black/[0.03] transition-colors`}
+                    className={`${rowClass(row.status)} border-b border-border/50 hover:bg-black/[0.04] hover:shadow-[inset_0_0_0_1px_rgba(0,122,255,0.08)] transition-all cursor-pointer`}
+                    onClick={e => {
+                      const el = e.target as HTMLElement
+                      // Skip if user is editing content, clicking buttons, or clicking notes cell
+                      if (el.isContentEditable || el.tagName === 'BUTTON' || el.tagName === 'I' || el.closest('button') || el.closest('[data-no-workflow]')) return
+                      setWorkflowRow(row)
+                    }}
                   >
-                    <td className="px-3 py-3 text-steel font-mono text-xs">{idx + 1}</td>
+                    <td className="px-3 py-3 text-gray-500 font-mono text-xs">{idx + 1}</td>
                     <td
                       className="px-3 py-3 font-medium text-gray-900"
                       contentEditable
@@ -655,18 +683,23 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       onBlur={e => handleCellEdit(row.id, 'title', e.currentTarget.textContent || '')}
                     >{row.title}</td>
                     <td
-                      className="px-3 py-3 font-mono text-xs text-steel relative"
+                      className="px-3 py-3 font-mono text-xs text-gray-500 relative"
                       onMouseEnter={() => setHoveredDI(row.id)}
                       onMouseLeave={() => setHoveredDI(null)}
                     >
-                      <span
-                        className="cursor-help border-b border-dashed border-steel/40"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={e => handleCellEdit(row.id, 'diNumber', e.currentTarget.textContent || '')}
-                      >
-                        {row.diNumber}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="cursor-help border-b border-dashed border-steel/40"
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={e => handleCellEdit(row.id, 'diNumber', e.currentTarget.textContent || '')}
+                        >
+                          {row.diNumber}
+                        </span>
+                        <span className={`inline-flex items-center px-1.5 py-px text-[8px] font-semibold uppercase rounded border leading-tight ${getRACIColor(getRACIParty(row))}`}>
+                          {getRACIParty(row).length > 8 ? getRACIParty(row).slice(0, 3) : getRACIParty(row)}
+                        </span>
+                      </div>
                       {hoveredDI === row.id && (contractRefs[row.id] || contractRequirements[row.id]) && (
                         <div className={`absolute left-0 z-50 w-72 bg-white border border-border text-gray-900 text-xs rounded-lg p-3 shadow-xl pointer-events-none ${
                           idx < 2 ? 'top-full mt-2' : 'bottom-full mb-2'
@@ -711,7 +744,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       onBlur={e => handleCellEdit(row.id, 'actualSubmissionDate', e.currentTarget.textContent || '')}
                     >{row.actualSubmissionDate || '—'}</td>
                     <td
-                      className={`px-3 py-3 text-xs text-center font-semibold ${row.received === 'Yes' ? 'text-green-400' : 'text-red-400'}`}
+                      className={`px-3 py-3 text-xs text-center font-semibold ${row.received === 'Yes' ? 'text-green-600' : 'text-red-500'}`}
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={e => handleCellEdit(row.id, 'received', e.currentTarget.textContent || '')}
@@ -723,8 +756,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       onBlur={e => handleCellEdit(row.id, 'calendarDaysToReview', e.currentTarget.textContent || '')}
                     >{row.calendarDaysToReview !== null ? row.calendarDaysToReview : '—'}</td>
                     <td
+                      data-no-workflow
                       className="px-3 py-3 text-xs text-steel max-w-[180px] cursor-pointer group"
-                      onClick={() => setNotesRow(row)}
+                      onClick={e => { e.stopPropagation(); setNotesRow(row) }}
                     >
                       <div className="truncate group-hover:text-accent transition-colors" title="Click to view full remarks">
                         {aiInsights[row.id]?.conciseNote || row.notes || '—'}
@@ -804,6 +838,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="max-w-[1600px] mx-auto px-6 pb-6">
+        <div className="flex items-center justify-center gap-2 py-3">
+          <i className="fas fa-shield-alt text-accent/40 text-[10px]"></i>
+          <p className="text-[11px] text-steel/60">All data sealed to Ledger — immutable trust layer active</p>
         </div>
       </div>
 
@@ -888,6 +930,19 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           notification={emailNotification}
           role={role}
           onClose={() => setEmailNotification(null)}
+        />
+      )}
+
+      {/* Workflow Progress Popup */}
+      {workflowRow && (
+        <WorkflowProgressPopup
+          row={workflowRow}
+          anchors={anchors}
+          role={role}
+          aiInsight={aiInsights[workflowRow.id]}
+          onUpdateNotes={handleUpdateNotes}
+          onSendEmail={handleWorkflowEmail}
+          onClose={() => setWorkflowRow(null)}
         />
       )}
 
