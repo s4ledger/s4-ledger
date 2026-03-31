@@ -11,7 +11,7 @@ import DeliverablesTracker from './components/DeliverablesTracker'
 export default function App() {
   const [stage, setStage] = useState<AuthStage>('cac')
   const [role, setRole] = useState<UserRole>('Program Manager')
-  const [data] = useState<CDRLRow[]>(sampleData)
+  const [data, setData] = useState<CDRLRow[]>(sampleData)
   const [anchors, setAnchors] = useState<Record<string, AnchorRecord>>({})
   const [anchoring, setAnchoring] = useState<Set<string>>(new Set())
 
@@ -70,6 +70,7 @@ export default function App() {
       onAnchor={handleAnchor}
       onAnchorAll={handleAnchorAll}
       onVerify={handleVerify}
+      onDataUpdate={setData}
     />
   )
 }

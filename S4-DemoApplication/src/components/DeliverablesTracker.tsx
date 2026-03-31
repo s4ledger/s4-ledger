@@ -1,9 +1,11 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { CDRLRow, UserRole, AnchorRecord } from '../types'
 import AIAssistModal from './AIAssistModal'
 import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
 import { generatePDF } from '../utils/pdf'
+import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
+import { contractRequirements } from '../data/contractData'
 
 interface Props {
   data: CDRLRow[]
@@ -12,6 +14,7 @@ interface Props {
   onAnchor: (row: CDRLRow) => void
   onAnchorAll: () => void
   onVerify: (row: CDRLRow) => void
+  onDataUpdate: (data: CDRLRow[]) => void
 }
 
 const columns = [
@@ -26,7 +29,7 @@ const columns = [
   { key: 'notes', label: 'NOTES', width: 'w-[12%]' },
 ]
 
-export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify }: Props) {
+export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onDataUpdate }: Props) {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red'>('all')
   const [sortCol, setSortCol] = useState<string | null>(null)
@@ -35,6 +38,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [aiRow, setAiRow] = useState<CDRLRow | null>(null)
   const [verifyRow, setVerifyRow] = useState<CDRLRow | null>(null)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
+  const [comparing, setComparing] = useState(false)
+  const [compareProgress, setCompareProgress] = useState(0)
+  const [compareSummary, setCompareSummary] = useState<ComparisonSummary | null>(null)
+  const [contractRefs, setContractRefs] = useState<Record<string, string>>({})
+  const [hoveredDI, setHoveredDI] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
     let rows = [...data]
@@ -66,6 +74,32 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     anchored: Object.keys(anchors).length,
   }), [data, anchors])
 
+  const handleCompare = useCallback(async () => {
+    if (comparing) return
+    setComparing(true)
+    setCompareProgress(0)
+    setCompareSummary(null)
+
+    const refs: Record<string, string> = {}
+    const updatedData = [...data]
+
+    const summary = await runContractComparison(data, (result: ComparisonResult, index: number) => {
+      setCompareProgress(index + 1)
+      refs[result.rowId] = result.contractRef
+      // Update the row's notes and status
+      updatedData[index] = {
+        ...updatedData[index],
+        notes: result.remarks,
+        status: result.status,
+      }
+    })
+
+    setContractRefs(refs)
+    onDataUpdate(updatedData)
+    setCompareSummary(summary)
+    setComparing(false)
+  }, [comparing, data, onDataUpdate])
+
   function handleSort(key: string) {
     if (sortCol === key) {
       setSortAsc(!sortAsc)
@@ -94,6 +128,23 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={handleCompare}
+              disabled={comparing}
+              className="flex items-center gap-2 px-4 py-2 bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 rounded-lg text-green-600 text-sm font-medium transition-all disabled:opacity-60"
+            >
+              {comparing ? (
+                <>
+                  <i className="fas fa-spinner fa-spin"></i>
+                  Comparing ({compareProgress}/{data.length})…
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-file-contract"></i>
+                  Compare to Contract
+                </>
+              )}
+            </button>
             <button
               onClick={() => { setAiRow(null); setShowAI(true) }}
               className="flex items-center gap-2 px-4 py-2 bg-accent/15 hover:bg-accent/25 border border-accent/30 rounded-lg text-accent text-sm font-medium transition-all"
@@ -137,6 +188,40 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           </div>
         </div>
       </div>
+
+      {/* Contract Comparison Summary Banner */}
+      {compareSummary && (
+        <div className="max-w-[1600px] mx-auto px-6 pb-3">
+          <div className="bg-white border border-accent/20 rounded-card p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-accent/15 flex items-center justify-center">
+                <i className="fas fa-file-contract text-accent text-sm"></i>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">
+                  Contractual Guidance Comparison Complete
+                </p>
+                <p className="text-xs text-steel">
+                  <span className="text-green-500 font-medium">{compareSummary.compliant} fully compliant</span>
+                  {compareSummary.needsAttention > 0 && (
+                    <>, <span className="text-yellow-500 font-medium">{compareSummary.needsAttention} need attention</span></>
+                  )}
+                  {compareSummary.critical > 0 && (
+                    <>, <span className="text-red-500 font-medium">{compareSummary.critical} critical</span></>
+                  )}
+                  {' '}— AI remarks generated from full Attachment J-2 contract requirements.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setCompareSummary(null)}
+              className="text-steel hover:text-gray-900 transition-colors text-xs px-2"
+            >
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Controls */}
       <div className="max-w-[1600px] mx-auto px-6 pb-3">
@@ -220,7 +305,31 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   >
                     <td className="px-3 py-3 text-steel font-mono text-xs">{idx + 1}</td>
                     <td className="px-3 py-3 font-medium text-gray-900">{row.title}</td>
-                    <td className="px-3 py-3 font-mono text-xs text-steel">{row.diNumber}</td>
+                    <td
+                      className="px-3 py-3 font-mono text-xs text-steel relative"
+                      onMouseEnter={() => setHoveredDI(row.id)}
+                      onMouseLeave={() => setHoveredDI(null)}
+                    >
+                      <span className="cursor-help border-b border-dashed border-steel/40">
+                        {row.diNumber}
+                      </span>
+                      {hoveredDI === row.id && (contractRefs[row.id] || contractRequirements[row.id]) && (
+                        <div className="absolute left-0 bottom-full mb-2 z-50 w-72 bg-[#1d1d1f] text-white text-xs rounded-lg p-3 shadow-xl pointer-events-none">
+                          <p className="font-semibold text-accent mb-1">
+                            <i className="fas fa-file-contract mr-1"></i>
+                            Contract Reference
+                          </p>
+                          <p className="leading-relaxed">
+                            {contractRefs[row.id] || contractRequirements[row.id]?.summaryRule || 'No reference available'}
+                          </p>
+                          {contractRequirements[row.id] && (
+                            <p className="mt-1.5 text-steel text-[10px]">
+                              {contractRequirements[row.id].block} · {contractRequirements[row.id].frequency} · {contractRequirements[row.id].submittalMethod}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </td>
                     <td className="px-3 py-3 text-xs">{row.contractDueFinish}</td>
                     <td className="px-3 py-3 text-xs">{row.calculatedDueDate}</td>
                     <td className="px-3 py-3 text-xs text-steel">{row.submittalGuidance}</td>
