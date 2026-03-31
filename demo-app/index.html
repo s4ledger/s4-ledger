@@ -64,12 +64,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <!-- CSS is imported via main.js and extracted by Vite -->
-  <script type="module" crossorigin src="/demo-app/dist/assets/index-CEpnT-fY.js"></script>
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-D187khl9.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-CCoDbRrg.js">
+  <script type="module" crossorigin src="/demo-app/dist/assets/index-BnzT6eSA.js"></script>
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/engine-Cpbm55U8.js">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/navigation-Dm-KIe9i.js">
   <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/metrics-BJ9Z7WtE.js">
-  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-CRGt_Xh-.js">
-  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-CxE-OUe1.css">
+  <link rel="modulepreload" crossorigin href="/demo-app/dist/assets/enhancements-dqgyIJ5G.js">
+  <link rel="stylesheet" crossorigin href="/demo-app/dist/assets/index-D_un2QYL.css">
 </head>
 <body class="light-mode">
 <!-- Light mode always on -->
@@ -513,147 +513,222 @@
                     <div class="breadcrumb-text">Verify & Anchor Records</div>
                 </div>
 
-                <!-- ═══ VERIFY FORM ═══ -->
-                <div class="row" id="verifyFormSection">
-                    <div class="col-lg-7">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-shield-halved"></i> Verify Records</h3>
-<p style="color:var(--steel);font-size:0.9rem;margin-bottom:1rem">Upload or paste the original record to verify its hash matches what was anchored on XRPL.</p>
-<details class="hiw-verify-details" style="display:none;margin-top:8px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:8px 0;font-size:0.8rem;font-weight:700;color:#00aaff;">How It Works</summary>
-                        <p style="font-size:0.82rem;color:var(--steel);margin-bottom:6px;">The Verify Records tool lets you prove that any document or data has not been tampered with since it was anchored to the blockchain.</p>
-                        <ol style="font-size:0.8rem;color:var(--steel);padding-left:18px;margin-bottom:8px;">
-                            <li><strong>Upload or paste</strong> — Drop any file or paste text content. S4 computes the SHA-256 hash entirely in your browser — the file never leaves your device.</li>
-                            <li><strong>Compare hashes</strong> — S4 checks the computed hash against all records anchored in your vault and on the XRPL ledger.</li>
-                            <li><strong>Get proof</strong> — If the hash matches, the record is verified as unaltered. S4 shows the original anchor timestamp, XRPL transaction ID, and explorer link.</li>
-                            <li><strong>Batch verify</strong> — Upload multiple files at once. S4 verifies each file independently and reports results in a summary table.</li>
-                        </ol>
-                        <p style="font-size:0.8rem;color:var(--steel);margin-bottom:8px;"><strong>How S4 saves you money:</strong> Traditional document verification requires notaries, legal review, and manual chain-of-custody checks costing <strong>$50-$500 per document</strong>. S4 verifies any file in <strong style="color:#00cc66">under 3 seconds</strong> for free — saving <strong style="color:#00cc66">$250,000+/year</strong> across large programs with hundreds of auditable records.</p>
-                    </details>
-
-                            <!-- FILE UPLOAD VERIFICATION -->
-                            <label><i class="fas fa-file-upload" style="color:var(--accent);margin-right:4px;"></i> Upload File(s) to Verify</label>
-                            <div id="verifyDropZone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--accent)';this.style.background='rgba(0,170,255,0.08)'" ondragleave="this.style.borderColor='rgba(0,170,255,0.25)';this.style.background='rgba(0,170,255,0.03)'" ondrop="handleVerifyFileDrop(event)" onclick="document.getElementById('verifyFileInput').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:8px;padding:24px;text-align:center;cursor:pointer;margin-bottom:16px;background:rgba(0,170,255,0.03);transition:all 0.3s;">
-                                <i class="fas fa-shield-halved" style="font-size:1.8rem;color:var(--accent);margin-bottom:8px;display:block;"></i>
-                                <div style="color:var(--accent);font-weight:600;font-size:0.88rem;">Drop file(s) here to verify integrity</div>
-                                <div style="color:var(--steel);font-size:0.78rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, images, contracts &mdash; any file type</div>
-                                <div style="color:var(--muted);font-size:0.72rem;margin-top:6px;">The file is hashed locally &mdash; <strong>never uploaded to any server</strong></div>
-                                <input type="file" id="verifyFileInput" style="display:none" onchange="handleVerifyFileSelect(event)" multiple>
-                            </div>
-                            <div id="verifyFileResults" style="display:none;margin-bottom:16px;"></div>
-
-                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-                                <div style="flex:1;height:1px;background:var(--border);"></div>
-                                <span style="color:var(--muted);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;">or paste text</span>
-                                <div style="flex:1;height:1px;background:var(--border);"></div>
-                            </div>
-
-                            <label>Record Content</label>
-                            <textarea id="verifyInput" aria-label="Record content to verify" placeholder="Paste the original defense record content here..."></textarea>
-                            <label class="mt-2">Expected Hash (optional)</label>
-                            <input type="text" id="verifyHash" aria-label="SHA-256 hash to compare" placeholder="SHA-256 hash to compare against">
-                            <button class="btn-gold mt-3" onclick="verifyRecord()"><i class="fas fa-check-circle"></i> Verify Integrity</button>
-                            <div class="result-panel" id="verifyResult"></div>
+                <!-- ═══ RECORD HUB — Anchored Records List ═══ -->
+                <div class="s4-card" id="verifyRecordHub" style="margin-bottom:20px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                        <h3 style="margin:0;font-size:1.1rem;font-weight:800;"><i class="fas fa-vault" style="color:var(--accent);margin-right:8px;"></i>Anchored Records</h3>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <input type="text" id="recordHubSearch" placeholder="Search records..." oninput="filterRecordHub()" style="background:rgba(0,0,0,0.15);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.78rem;color:#fff;width:180px;font-family:inherit;">
+                            <span id="recordHubCount" style="font-size:0.72rem;color:var(--steel);white-space:nowrap;"></span>
                         </div>
                     </div>
-                    <div class="col-lg-5">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-question-circle"></i> Verification Use Cases</h3>
-                            <div style="font-size:0.85rem;line-height:1.8;color:var(--steel)">
-                                <div><strong>Supply Chain:</strong> Confirm parts receipt hasn't been altered</div>
-                                <div><strong>CDRL:</strong> Verify contractor delivered exact document version</div>
-                                <div><strong>Maintenance:</strong> Prove 3-M actions logged as-performed</div>
-                                <div><strong>Ordnance:</strong> Validate lot tracking since manufacture</div>
-                                <div><strong>Config:</strong> Confirm system baseline hasn't drifted</div>
-                                <div><strong>Audit:</strong> Demonstrate tamper-proof trail to inspectors</div>
+                    <p style="color:var(--steel);font-size:0.82rem;margin-bottom:14px;">Browse all anchored records. Click <strong>View Document</strong> to read the full record, or <strong>Verify</strong> to check integrity against the blockchain.</p>
+                    <div id="verifyRecentAnchors" style="max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.1);padding:6px;">
+                        <div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">Loading anchored records...</div>
+                    </div>
+                </div>
+
+                <!-- ═══ VERIFY FORM ═══ -->
+                <div class="row" id="verifyFormSection">
+                    <div class="col-12">
+                        <div class="s4-card" style="padding:0;overflow:hidden;">
+                            <!-- Step Progress Bar -->
+                            <div id="verifyStepBar" style="display:flex;background:rgba(0,0,0,0.25);border-bottom:1px solid var(--border);padding:0;">
+                                <button class="verify-step-tab active" id="vstep1Btn" onclick="showVerifyStep(1)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid var(--accent);cursor:pointer;color:#fff;font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s"><i class="fas fa-search" style="display:block;font-size:1rem;margin-bottom:4px;color:var(--accent)"></i>1. Select Record</button>
+                                <button class="verify-step-tab" id="vstep2Btn" onclick="showVerifyStep(2)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s" disabled><i class="fas fa-link" style="display:block;font-size:1rem;margin-bottom:4px"></i>2. Pull Hash</button>
+                                <button class="verify-step-tab" id="vstep3Btn" onclick="showVerifyStep(3)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s" disabled><i class="fas fa-shield-halved" style="display:block;font-size:1rem;margin-bottom:4px"></i>3. Verify</button>
+                                <button class="verify-step-tab" id="vstep4Btn" onclick="showVerifyStep(4)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s" disabled><i class="fas fa-exchange-alt" style="display:block;font-size:1rem;margin-bottom:4px"></i>4. Compare</button>
+                                <button class="verify-step-tab" id="vstep5Btn" onclick="showVerifyStep(5)" style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);font-size:0.78rem;font-weight:700;text-align:center;transition:all 0.2s" disabled><i class="fas fa-robot" style="display:block;font-size:1rem;margin-bottom:4px"></i>5. AI Fix</button>
                             </div>
-                        </div>
-                        <!-- Recently Anchored Records — click to verify -->
-                        <div class="s4-card" style="margin-top:16px;">
-                            <h3><i class="fas fa-clock-rotate-left" style="color:var(--accent);"></i> Recently Anchored Records</h3>
-                            <p style="color:var(--steel);font-size:0.82rem;margin-bottom:10px;">Click any record to auto-fill its hash for verification.</p>
-                            <div id="verifyRecentAnchors" style="max-height:320px;overflow-y:auto;">
-                                <div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">No anchored records yet. Anchor a record first to see it here.</div>
+
+                            <!-- STEP 1: Select a record to verify -->
+                            <div id="verifyStep1" class="verify-step-panel" style="padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-search" style="color:var(--accent);margin-right:8px"></i>Step 1: Select a Record to Verify</h3>
+                                <p style="color:var(--steel);font-size:0.85rem;margin-bottom:20px">Choose a record from the vault, upload a file, or paste text content to begin verification.</p>
+
+                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+                                    <button onclick="showVerifySource('vault')" id="vsrcVault" class="verify-source-btn active" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:rgba(0,170,255,0.08);border:2px solid rgba(0,170,255,0.3);border-radius:12px;cursor:pointer;color:var(--accent);font-size:0.82rem;font-weight:600;transition:all 0.2s">
+                                        <i class="fas fa-vault" style="font-size:1.5rem"></i>
+                                        From Vault
+                                        <span style="font-size:0.7rem;color:var(--steel);font-weight:400">Pick an anchored record</span>
+                                    </button>
+                                    <button onclick="showVerifySource('file')" id="vsrcFile" class="verify-source-btn" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;color:var(--steel);font-size:0.82rem;font-weight:600;transition:all 0.2s">
+                                        <i class="fas fa-file-upload" style="font-size:1.5rem"></i>
+                                        Upload File
+                                        <span style="font-size:0.7rem;font-weight:400">PDF, Excel, Word, any type</span>
+                                    </button>
+                                    <button onclick="showVerifySource('text')" id="vsrcText" class="verify-source-btn" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;color:var(--steel);font-size:0.82rem;font-weight:600;transition:all 0.2s">
+                                        <i class="fas fa-paste" style="font-size:1.5rem"></i>
+                                        Paste Text
+                                        <span style="font-size:0.7rem;font-weight:400">Paste or type content</span>
+                                    </button>
+                                </div>
+
+                                <!-- Vault Source -->
+                                <div id="vsrcVaultPanel" style="margin-bottom:16px;">
+                                    <label style="font-size:0.82rem;font-weight:600;color:var(--steel);margin-bottom:8px;display:block"><i class="fas fa-vault" style="color:var(--accent);margin-right:6px"></i>Select an anchored record from the vault:</label>
+                                    <div id="verifyVaultList" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.15);padding:4px;">
+                                        <div style="color:var(--muted);text-align:center;padding:1.5rem;font-size:0.82rem;">Loading vault records...</div>
+                                    </div>
+                                </div>
+
+                                <!-- File Source (hidden initially) -->
+                                <div id="vsrcFilePanel" style="display:none;margin-bottom:16px;">
+                                    <div id="verifyDropZone" ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--accent)';this.style.background='rgba(0,170,255,0.08)'" ondragleave="this.style.borderColor='rgba(0,170,255,0.25)';this.style.background='rgba(0,170,255,0.03)'" ondrop="handleVerifyFileDrop(event)" onclick="document.getElementById('verifyFileInput').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:8px;padding:24px;text-align:center;cursor:pointer;background:rgba(0,170,255,0.03);transition:all 0.3s;">
+                                        <i class="fas fa-shield-halved" style="font-size:1.8rem;color:var(--accent);margin-bottom:8px;display:block;"></i>
+                                        <div style="color:var(--accent);font-weight:600;font-size:0.88rem;">Drop file(s) here to verify integrity</div>
+                                        <div style="color:var(--steel);font-size:0.78rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, images, contracts &mdash; any file type</div>
+                                        <div style="color:var(--muted);font-size:0.72rem;margin-top:6px;">The file is hashed locally &mdash; <strong>never uploaded to any server</strong></div>
+                                        <input type="file" id="verifyFileInput" style="display:none" onchange="handleVerifyFileSelect(event)" multiple>
+                                    </div>
+                                    <div id="verifyFileResults" style="display:none;margin-top:12px;"></div>
+                                </div>
+
+                                <!-- Text Source (hidden initially) -->
+                                <div id="vsrcTextPanel" style="display:none;margin-bottom:16px;">
+                                    <label><i class="fas fa-paste" style="color:var(--accent);margin-right:4px"></i> Paste Record Content</label>
+                                    <textarea id="verifyInput" aria-label="Record content to verify" placeholder="Paste the original defense record content here..." style="min-height:120px;"></textarea>
+                                    <label class="mt-2">Expected Hash (optional)</label>
+                                    <input type="text" id="verifyHash" aria-label="SHA-256 hash to compare" placeholder="SHA-256 hash to compare against">
+                                </div>
+
+                                <!-- Selected record preview -->
+                                <div id="verifySelectedPreview" style="display:none;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:10px;padding:14px;margin-bottom:16px;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                                        <strong style="color:#fff;font-size:0.88rem"><i class="fas fa-check-circle" style="color:var(--accent);margin-right:6px"></i>Record Selected</strong>
+                                        <button onclick="clearVerifySelection()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.78rem"><i class="fas fa-times"></i> Clear</button>
+                                    </div>
+                                    <div id="verifySelectedInfo" style="font-size:0.82rem;color:var(--steel)"></div>
+                                </div>
+
+                                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+                                    <button onclick="verifyStepNext(1)" id="vstep1Next" class="btn-accent" style="padding:10px 24px;font-size:0.88rem" disabled><i class="fas fa-arrow-right" style="margin-right:6px"></i>Next: Pull Blockchain Hash</button>
+                                </div>
+                            </div>
+
+                            <!-- STEP 2: Pull Blockchain Hash -->
+                            <div id="verifyStep2" class="verify-step-panel" style="display:none;padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-link" style="color:var(--accent);margin-right:8px"></i>Step 2: Blockchain Hash Retrieved</h3>
+                                <p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">The SHA-256 hash was pulled from the XRPL blockchain. This is the immutable fingerprint of the original record.</p>
+                                <div id="verifyStep2Content" style="margin-bottom:16px"></div>
+                                <div style="display:flex;justify-content:space-between;gap:10px;margin-top:8px">
+                                    <button onclick="showVerifyStep(1)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--steel);border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit"><i class="fas fa-arrow-left" style="margin-right:6px"></i>Back</button>
+                                    <button onclick="runVerifyIntegrity()" class="btn-accent" style="padding:10px 24px;font-size:0.88rem"><i class="fas fa-shield-halved" style="margin-right:6px"></i>Verify Integrity Now</button>
+                                </div>
+                            </div>
+
+                            <!-- STEP 3: Verification Result -->
+                            <div id="verifyStep3" class="verify-step-panel" style="display:none;padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:8px"></i>Step 3: Integrity Verification Result</h3>
+                                <div id="verifyStep3Content"></div>
+                                <div id="verifyStep3Actions" style="display:flex;justify-content:space-between;gap:10px;margin-top:16px"></div>
+                            </div>
+
+                            <!-- STEP 4: Deep Comparison -->
+                            <div id="verifyStep4" class="verify-step-panel" style="display:none;padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-exchange-alt" style="color:#ff9500;margin-right:8px"></i>Step 4: Deep Document Comparison</h3>
+                                <p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">Side-by-side comparison showing exactly what changed &mdash; page, line, and character level.</p>
+                                <div id="verifyStep4Content"></div>
+                                <div style="display:flex;justify-content:space-between;gap:10px;margin-top:16px">
+                                    <button onclick="showVerifyStep(3)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--steel);border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit"><i class="fas fa-arrow-left" style="margin-right:6px"></i>Back to Result</button>
+                                    <button onclick="showVerifyStep(5)" id="vstep4Next" class="btn-accent" style="padding:10px 24px;font-size:0.88rem"><i class="fas fa-robot" style="margin-right:6px"></i>Get AI Fix Analysis</button>
+                                </div>
+                            </div>
+
+                            <!-- STEP 5: AI Fix Analysis -->
+                            <div id="verifyStep5" class="verify-step-panel" style="display:none;padding:24px;">
+                                <h3 style="margin-bottom:4px"><i class="fas fa-robot" style="color:var(--accent);margin-right:8px"></i>Step 5: AI Exact-Fix Analysis</h3>
+                                <p style="color:var(--steel);font-size:0.85rem;margin-bottom:16px">AI pinpoints every change and provides the exact fix to restore the record to its original verified state.</p>
+                                <div id="verifyStep5Content"></div>
+                                <div style="display:flex;justify-content:space-between;gap:10px;margin-top:16px">
+                                    <button onclick="showVerifyStep(4)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--steel);border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;font-family:inherit"><i class="fas fa-arrow-left" style="margin-right:6px"></i>Back to Comparison</button>
+                                    <div style="display:flex;gap:10px">
+                                        <button onclick="if(window._lastIncidentParams){var p=window._lastIncidentParams;_downloadIncidentReport(p.computedHash,p.expectedHash,p.label,p.timestamp,p.txHash)}" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,48,0.08);color:#ff3b30;border:1px solid rgba(255,59,48,0.2);border-radius:8px;padding:8px 16px;font-size:0.82rem;cursor:pointer;font-weight:600;font-family:inherit"><i class="fas fa-file-export"></i> Export Incident Report</button>
+                                        <button onclick="resetVerifyWorkflow()" class="btn-accent" style="padding:8px 20px;font-size:0.85rem"><i class="fas fa-rotate-right" style="margin-right:6px"></i>Verify Another Record</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Quick Actions — compact inline bar -->
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;margin-bottom:24px;">
+                    <span style="color:var(--muted);font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Quick:</span>
+                    <button onclick="quickVerifyFromVault()" style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;color:var(--accent);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s"><i class="fas fa-vault"></i> Verify Latest</button>
+                    <button onclick="showVerifySource('file');showVerifyStep(1)" style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;color:var(--accent);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s"><i class="fas fa-file-upload"></i> Upload &amp; Verify</button>
+                    <button onclick="bulkVerifyFromVault()" style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:rgba(0,170,255,0.06);border:1px solid rgba(0,170,255,0.15);border-radius:8px;color:var(--accent);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s"><i class="fas fa-shield-halved"></i> Bulk Verify All</button>
+                    <div style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:0.68rem;color:var(--steel);"><i class="fas fa-lock" style="color:#34c759;"></i> Only hashes touch the blockchain</div>
+                </div>
+
                 <!-- ═══ DIVIDER ═══ -->
-                <div style="display:flex;align-items:center;gap:16px;margin:32px 0;">
+                <div style="display:flex;align-items:center;gap:16px;margin:8px 0 24px;">
                     <div style="flex:1;height:1px;background:var(--border);"></div>
-                    <span style="color:var(--muted);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;">or anchor new records</span>
+                    <span style="color:var(--muted);font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Anchor</span>
                     <div style="flex:1;height:1px;background:var(--border);"></div>
                 </div>
 
                 <!-- ═══ ANCHOR FORM ═══ -->
-                <div class="row" id="anchorFormSection">
-                    <div class="col-lg-7">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-anchor"></i> Anchor a Record</h3>
-<details class="hiw-anchor-details" style="display:none;margin-top:8px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:0 12px;">
-                        <summary style="cursor:pointer;padding:8px 0;font-size:0.8rem;font-weight:700;color:#00aaff;">How It Works</summary>
-                        <p style="font-size:0.82rem;color:var(--steel);margin-bottom:6px;">The Anchor tool writes an immutable, timestamped proof of any defense record to the XRP Ledger — creating a tamper-proof audit trail.</p>
-                        <ol style="font-size:0.8rem;color:var(--steel);padding-left:18px;margin-bottom:8px;">
-                            <li><strong>Select branch &amp; type</strong> — Choose your military branch and record type (maintenance logs, supply receipts, CDRLs, ordnance tracking, etc.).</li>
-                            <li><strong>Paste or upload</strong> — Enter record content or upload a file. S4 generates a SHA-256 hash locally — data never leaves your browser.</li>
-                            <li><strong>Anchor to XRPL</strong> — S4 writes the hash as a Memo in a real XRPL transaction on Mainnet. Cost: 0.01 Credits per anchor (~$0.0001).</li>
-                            <li><strong>Get proof</strong> — Receive a live XRPL transaction ID, explorer link, and timestamp. The record is now independently verifiable by anyone, forever.</li>
-                        </ol>
-                        <p style="font-size:0.8rem;color:var(--steel);margin-bottom:8px;"><strong>How S4 saves you money:</strong> Traditional notarization and certification costs <strong>$50-$200 per record</strong> with turnarounds of days or weeks. S4 anchors any record in <strong style="color:#00cc66">under 4 seconds</strong> at <strong style="color:#00cc66">$0.0001</strong> each — replacing <strong style="color:#00cc66">$50,000+ annually</strong> in notary and records certification costs per program.</p>
-                    </details>
-                            <label>1. Select Military Branch</label>
-                            <div class="branch-tabs" id="branchTabs">
+                <div id="anchorFormSection">
+                    <div class="s4-card" style="padding:0;overflow:hidden;">
+                        <!-- Anchor Header Bar — mirrors verify step bar style -->
+                        <div style="display:flex;align-items:center;gap:12px;background:rgba(0,0,0,0.25);border-bottom:1px solid var(--border);padding:14px 24px;">
+                            <i class="fas fa-anchor" style="font-size:1.1rem;color:var(--accent)"></i>
+                            <div>
+                                <div style="color:#fff;font-weight:800;font-size:0.95rem;">Anchor a Record</div>
+                                <div style="color:var(--muted);font-size:0.72rem;">Create tamper-proof blockchain proof for any defense record</div>
+                            </div>
+                            <div style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:0.68rem;color:var(--steel);background:rgba(0,170,255,0.06);padding:4px 10px;border-radius:6px;border:1px solid rgba(0,170,255,0.12);"><i class="fas fa-bolt" style="color:var(--accent);"></i> 0.01 SLS per anchor</div>
+                        </div>
+
+                        <div style="padding:24px;">
+                            <!-- Step 1: Branch -->
+                            <label style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;display:block;"><i class="fas fa-flag" style="color:var(--accent);margin-right:6px;"></i>Military Branch</label>
+                            <div class="branch-tabs" id="branchTabs" style="margin-bottom:20px;">
                                 <button class="branch-tab active" onclick="selectBranch('USN',this)"><i class="fas fa-anchor"></i> U.S. Navy</button>
                             </div>
-                            <label>2. Choose Record Type <span class="branch-count" id="branchTypeCount"></span></label>
-                            <input class="type-search" type="text" id="typeSearch" placeholder="Search record types..." oninput="renderTypeGrid()">
-                            <div class="record-type-grid" id="recordTypeGrid"></div>
+
+                            <!-- Step 2: Record Type -->
+                            <label style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;display:block;"><i class="fas fa-tag" style="color:var(--accent);margin-right:6px;"></i>Record Type <span class="branch-count" id="branchTypeCount"></span></label>
+                            <input class="type-search" type="text" id="typeSearch" placeholder="Search record types..." oninput="renderTypeGrid()" style="margin-bottom:8px;">
+                            <div class="record-type-grid" id="recordTypeGrid" style="margin-bottom:20px;"></div>
 
                             <div class="clf-banner" id="clfBanner"><span class="clf-icon"></span><span class="clf-badge" id="clfBadge"></span><span class="clf-text" id="clfText"></span></div>
 
-                            <label>3. Upload file or enter record content</label>
-                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.3);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;">
-                                <i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:var(--accent);margin-bottom:6px;display:block;"></i>
-                                <div style="color:var(--steel);font-size:0.82rem;">Drag &amp; drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div>
-                                <div style="color:var(--muted);font-size:0.72rem;margin-top:4px;">PDF, Excel, Word, CSV, JSON, TXT &mdash; any file type</div>
+                            <!-- Step 3: Content -->
+                            <label style="font-size:0.82rem;font-weight:700;color:var(--steel);margin-bottom:8px;display:block;"><i class="fas fa-file-alt" style="color:var(--accent);margin-right:6px;"></i>Record Content</label>
+                            <div id="dropZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileUploadInput').click()" style="border:2px dashed rgba(0,170,255,0.25);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;background:rgba(0,170,255,0.03);transition:all 0.3s;">
+                                <i class="fas fa-cloud-upload-alt" style="font-size:1.3rem;color:var(--accent);margin-bottom:4px;display:block;"></i>
+                                <div style="color:var(--steel);font-size:0.82rem;">Drop a file here or <span style="color:var(--accent);text-decoration:underline;">click to browse</span></div>
+                                <div style="color:var(--muted);font-size:0.68rem;margin-top:3px;">PDF, Excel, Word, CSV, JSON, images &mdash; any file type</div>
                                 <input type="file" id="fileUploadInput" style="display:none" onchange="handleFileSelect(event)">
                                 <div id="dropFileName" style="display:none;margin-top:8px;color:var(--accent);font-weight:600;font-size:0.82rem;"></div>
                             </div>
-                            <textarea id="recordInput" placeholder="Or paste/type your defense logistics record here..." oninput="this.dataset.autoFilled='false'"></textarea>
-                            <div class="mt-2 mb-3">
-                                <span style="color:var(--muted);font-size:0.8rem">Try a sample:</span>
+                            <textarea id="recordInput" placeholder="Or paste/type your defense logistics record here..." oninput="this.dataset.autoFilled='false'" style="margin-bottom:8px;"></textarea>
+                            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+                                <span style="color:var(--muted);font-size:0.75rem;">Samples:</span>
                                 <span class="sample-btn" onclick="loadSample('supply')">Supply Receipt</span>
                                 <span class="sample-btn" onclick="loadSample('maintenance')">3-M Maint</span>
                                 <span class="sample-btn" onclick="loadSample('ordnance')">Ordnance Lot</span>
                                 <span class="sample-btn" onclick="loadSample('casrep')">CASREP</span>
                                 <span class="sample-btn" onclick="loadSample('custody')">Custody Transfer</span>
                             </div>
-                            <div class="d-flex gap-2 align-items-center">
-                                <label class="form-check-label" style="font-size:0.85rem">
-                                    <input type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px"> Encrypt before hashing (CUI protection)
+
+                            <!-- Options + Action row -->
+                            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                                <label class="form-check-label" style="font-size:0.82rem;color:var(--steel);cursor:pointer;">
+                                    <input type="checkbox" id="encryptCheck" checked style="width:auto!important;margin-right:6px;accent-color:#00aaff;"> Encrypt before hashing <span style="color:var(--muted);font-size:0.72rem;">(CUI protection)</span>
                                 </label>
+                                <button class="btn-accent" onclick="anchorRecord()" id="anchorBtn" style="padding:10px 28px;font-size:0.88rem;"><i class="fas fa-anchor" style="margin-right:6px;"></i>Anchor to Ledger</button>
                             </div>
-                            <button class="btn-accent mt-3" onclick="anchorRecord()" id="anchorBtn"><i class="fas fa-anchor"></i> Anchor to Ledger</button>
+
                             <div class="result-panel" id="anchorResult"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="s4-card">
-                            <h3><i class="fas fa-diagram-project"></i> Anchor Flow</h3>
-                            <div style="font-size:0.9rem;line-height:2">
-                                <div><span style="color:var(--accent);font-weight:700">1.</span> Select branch &amp; record type</div>
-                                <div><span style="color:var(--accent);font-weight:700">2.</span> Enter or paste record content</div>
-                                <div><span style="color:var(--accent);font-weight:700">3.</span> Optional: encrypt for CUI protection</div>
-                                <div><span style="color:var(--accent);font-weight:700">4.</span> SHA-256 hash computed client-side</div>
-                                <div><span style="color:var(--accent);font-weight:700">5.</span> Hash anchored to XRPL memo field</div>
-                                <div><span style="color:var(--accent);font-weight:700">6.</span> $SLS micro-fee (0.01) paid to treasury</div>
-                                <div><span style="color:var(--accent);font-weight:700">7.</span> Record appears in Live Metrics dashboard</div>
+
+                            <!-- Security note — matches verify section style -->
+                            <div style="margin-top:16px;padding:8px 12px;background:rgba(52,199,89,0.04);border:1px solid rgba(52,199,89,0.12);border-radius:8px;font-size:0.72rem;color:var(--steel);display:flex;align-items:center;gap:8px;">
+                                <i class="fas fa-lock" style="color:#34c759;flex-shrink:0;"></i>
+                                <span><strong>Only the SHA-256 hash</strong> is stored on the XRPL blockchain. Your data stays in the encrypted vault &mdash; never uploaded to any server.</span>
                             </div>
-                        </div>
-                        <div class="s4-card" style="margin-top:16px;">
-                            <h3><i class="fas fa-shield-halved"></i> What Gets Stored On-Chain</h3>
-                            <p style="font-size:0.85rem;color:var(--steel)"><strong>Only the SHA-256 hash</strong> of your record is stored on the XRP Ledger. No classified data, CUI, ITAR-controlled, or sensitive content ever touches the blockchain.</p>
                         </div>
                     </div>
                 </div>
@@ -938,20 +1013,44 @@
                     <input type="text" class="ils-search" id="ilsToolSearch" placeholder="Search tools..." oninput="searchILSTools(this.value)" autocomplete="off" spellcheck="false" aria-label="Search ILS tools">
                 </div>
                 <div id="s4TodaysChainBar" style="display:none;margin-bottom:10px;padding:8px 14px;background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:10px;"></div>
+
+                <!-- Anchor Policy Explanation -->
+                <details style="margin-bottom:14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden">
+                    <summary style="cursor:pointer;padding:12px 16px;font-size:0.82rem;font-weight:700;color:var(--steel);display:flex;align-items:center;gap:8px;user-select:none"><i class="fas fa-info-circle" style="color:var(--accent)"></i> Anchor Policy Guide &mdash; Auto-Anchor, Recommended &amp; Manual</summary>
+                    <div style="padding:0 16px 16px;font-size:0.8rem;color:var(--steel);line-height:1.6">
+                        <p style="margin-bottom:10px">Every ILS tool in S4 Ledger has an <strong style="color:#fff">anchor policy</strong> that determines when records are committed to the XRP Ledger for immutable verification. Policies balance compliance rigor with operational flexibility.</p>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px">
+                            <div style="background:rgba(0,204,136,0.06);border:1px solid rgba(0,204,136,0.2);border-radius:10px;padding:12px">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-weight:700;color:#00cc88;font-size:0.82rem"><i class="fas fa-shield-alt"></i> Auto-Anchor</div>
+                                <div style="font-size:0.76rem;color:var(--steel)">A <strong>persistent prompt appears</strong> at the top of the tool when output is generated &mdash; just click <em>Confirm Anchor</em> to commit to the XRPL. The prompt stays visible until you act, so you never miss it even if you step away. Used for compliance-critical outputs like scorecards, audit reports, CDRL submissions, and provisioning data.</div>
+                            </div>
+                            <div style="background:rgba(255,153,51,0.06);border:1px solid rgba(255,153,51,0.2);border-radius:10px;padding:12px">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-weight:700;color:#ff9933;font-size:0.82rem"><i class="fas fa-bell"></i> Recommended</div>
+                                <div style="font-size:0.76rem;color:var(--steel)">A prompt recommends anchoring when results are generated. Used for operational analyses where a blockchain record adds significant value &mdash; risk assessments, readiness scores, lifecycle costs, and supply chain provenance. Users may skip or defer.</div>
+                            </div>
+                            <div style="background:rgba(134,134,139,0.06);border:1px solid rgba(134,134,139,0.2);border-radius:10px;padding:12px">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-weight:700;color:#86868b;font-size:0.82rem"><i class="fas fa-hand-pointer"></i> Manual</div>
+                                <div style="font-size:0.76rem;color:var(--steel)">Anchoring is available but fully user-initiated via the tool's anchor button. Used for exploratory outputs, internal calculations, and drafts where anchoring is optional. Every tool retains a manual anchor button regardless of its policy.</div>
+                            </div>
+                        </div>
+                        <p style="font-size:0.76rem;color:var(--muted);margin:0"><i class="fas fa-cog" style="margin-right:4px"></i> Organization admins can override any tool's policy in the <strong>Ledger Account sidebar</strong> (click the wallet icon, top-right) under <strong>Anchor Policy</strong>. All policies can be promoted, demoted, or restored to defaults.</p>
+                    </div>
+                </details>
+
                 <div class="ils-sub-hub" id="ilsSubHub" style="display:grid !important;">
                     <div class="ils-tool-card" data-category="compliance" onclick="openILSTool('hub-compliance')">
                         <span class="itc-icon"><i class="fas fa-shield-halved" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Compliance Scorecard</div>
+                        <div class="itc-title">Compliance Scorecard <span class="anchor-policy-badge anchor-policy-auto"><i class="fas fa-shield-alt"></i> Auto-Anchor</span></div>
                         <div class="itc-desc">NIST 800-171 / CMMC compliance scoring with gap identification.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-analysis')">
                         <span class="itc-icon"><i class="fas fa-chart-line" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Gap Finder</div>
+                        <div class="itc-title">Gap Finder <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Identify logistics gaps across readiness, parts, and support elements for any platform.</div>
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-actions')" style="position:relative">
                         <span class="itc-icon"><i class="fas fa-tasks" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Task Prioritizer <span id="actionItemBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#ff4444;color:var(--text,#1d1d1f);font-size:0.65rem;font-weight:800;min-width:20px;height:20px;border-radius:8px;padding:0 6px;margin-left:6px;vertical-align:middle"></span></div>
+                        <div class="itc-title">Task Prioritizer <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span> <span id="actionItemBadge" style="display:inline-flex;align-items:center;justify-content:center;background:#ff4444;color:var(--text,#1d1d1f);font-size:0.65rem;font-weight:800;min-width:20px;height:20px;border-radius:8px;padding:0 6px;margin-left:6px;vertical-align:middle"></span></div>
                         <div class="itc-desc">Track ILS action items, corrective actions, and follow-ups with deadlines.</div>
                     </div>
                     <div class="ils-tool-card" data-category="compliance" onclick="openILSTool('hub-vault')">
@@ -961,98 +1060,98 @@
                     </div>
                     <div class="ils-tool-card" data-category="compliance" onclick="openILSTool('hub-reports')">
                         <span class="itc-icon"><i class="fas fa-file-alt" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Audit Builder</div>
+                        <div class="itc-title">Audit Builder <span class="anchor-policy-badge anchor-policy-auto"><i class="fas fa-shield-alt"></i> Auto-Anchor</span></div>
                         <div class="itc-desc">Generate ILS reports for audits, reviews, and compliance submissions.</div>
                     </div>
                     <div class="ils-tool-card" data-category="supply-chain" onclick="openILSTool('hub-risk')">
                         <span class="itc-icon"><i class="fas fa-triangle-exclamation" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Risk Radar</div>
+                        <div class="itc-title">Risk Radar <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">AI-powered supply chain risk assessment with threat scoring and mitigation.</div>
                     </div>
                     <div class="ils-tool-card" data-category="documents" onclick="openILSTool('hub-docs')">
                         <span class="itc-icon"><i class="fas fa-book" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Document Library</div>
+                        <div class="itc-title">Document Library <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Manage technical manuals, drawings, and provisioning documents.</div>
                     </div>
                     <div class="ils-tool-card" data-category="documents" onclick="openILSTool('hub-submissions')">
                         <span class="itc-icon"><i class="fas fa-paper-plane" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Submissions Hub</div>
+                        <div class="itc-title">Submissions Hub <span class="anchor-policy-badge anchor-policy-auto"><i class="fas fa-shield-alt"></i> Auto-Anchor</span></div>
                         <div class="itc-desc">Manage provisioning technical data and CDRL submissions.</div>
                     </div>
                     <div class="ils-tool-card" data-category="documents" onclick="openILSTool('hub-cdrl')">
                         <span class="itc-icon"><i class="fas fa-clipboard-check" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Deliverables Tracker</div>
+                        <div class="itc-title">Deliverables Tracker <span class="anchor-policy-badge anchor-policy-auto"><i class="fas fa-shield-alt"></i> Auto-Anchor</span></div>
                         <div class="itc-desc">Contract Data Requirements List validation — DI format checks and content analysis.</div>
                     </div>
                     <div class="ils-tool-card" data-category="documents" onclick="openILSTool('hub-contract')">
                         <span class="itc-icon"><i class="fas fa-file-contract" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Contract Analyzer</div>
+                        <div class="itc-title">Contract Analyzer <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">AI-powered clause extraction — FAR/DFARS, CDRL detection, and obligation mapping.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-dmsms')">
                         <span class="itc-icon"><i class="fas fa-exclamation-triangle" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Obsolescence Alert</div>
+                        <div class="itc-title">Obsolescence Alert <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Track diminishing manufacturing sources and material shortages with risk alerts.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-readiness')">
                         <span class="itc-icon"><i class="fas fa-chart-line" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Readiness Score</div>
+                        <div class="itc-title">Readiness Score <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Compute operational availability (Ao/Ai), MTBF, and readiness metrics.</div>
                     </div>
                     <div class="ils-tool-card" data-category="supply-chain" onclick="openILSTool('hub-sbom')">
                         <span class="itc-icon"><i class="fas fa-microchip" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">SBOM Scanner</div>
+                        <div class="itc-title">SBOM Scanner <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Software Bill of Materials — track components, CVEs, and blockchain attestation.</div>
                     </div>
                     <div class="ils-tool-card" data-category="supply-chain" onclick="openILSTool('hub-gfp')">
                         <span class="itc-icon"><i class="fas fa-boxes-stacked" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Property Custodian</div>
+                        <div class="itc-title">Property Custodian <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Government-Furnished Property tracking — DD 1662, inventory management, and accountability.</div>
                     </div>
                     <div class="ils-tool-card" data-category="supply-chain" onclick="openILSTool('hub-provenance')">
                         <span class="itc-icon"><i class="fas fa-link" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Chain of Custody</div>
+                        <div class="itc-title">Chain of Custody <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Blockchain-verified chain of custody — QR codes and custody transfer tracking.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-lifecycle')">
                         <span class="itc-icon"><i class="fas fa-clock" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Lifecycle Cost Estimator</div>
+                        <div class="itc-title">Lifecycle Cost Estimator <span class="anchor-policy-badge anchor-policy-prompt"><i class="fas fa-bell"></i> Recommended</span></div>
                         <div class="itc-desc">Total lifecycle cost estimation including procurement, sustainment, and disposal.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-roi')">
                         <span class="itc-icon"><i class="fas fa-dollar-sign" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">ROI Calculator</div>
+                        <div class="itc-title">ROI Calculator <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Calculate return on investment for defense logistics and ILS investments.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-predictive')">
                         <span class="itc-icon"><i class="fas fa-brain" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Maintenance Predictor</div>
+                        <div class="itc-title">Maintenance Predictor <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">AI-driven failure prediction and maintenance scheduling optimization.</div>
                     </div>
                     <div class="ils-tool-card" data-category="analysis" onclick="openILSTool('hub-analytics')">
                         <span class="itc-icon"><i class="fas fa-chart-pie" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Program Overview</div>
+                        <div class="itc-title">Program Overview <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Multi-program dashboard — aggregate metrics, trends, and comparative analysis.</div>
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-team')">
                         <span class="itc-icon"><i class="fas fa-users-gear" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Team Manager</div>
+                        <div class="itc-title">Team Manager <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Multi-tenant team operations — invitations, roles, and access control.</div>
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-acquisition')">
                         <span class="itc-icon"><i class="fas fa-ship" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Fleet Optimizer</div>
+                        <div class="itc-title">Fleet Optimizer <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Multi-year service craft acquisition tracker — hull lifecycle, POM funding, ROH, and material condition.</div>
                     </div>
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-milestones')">
                         <span class="itc-icon"><i class="fas fa-flag-checkered" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Milestone Monitor</div>
+                        <div class="itc-title">Milestone Monitor <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Track vessel construction milestones — contract award through delivery, OWLD variance, and Gantt timeline.</div>
                     </div>
 
                     <div class="ils-tool-card" data-category="operations" onclick="openILSTool('hub-brief')">
                         <span class="itc-icon"><i class="fas fa-briefcase" style="color:var(--accent);"></i></span>
-                        <div class="itc-title">Brief Composer</div>
+                        <div class="itc-title">Brief Composer <span class="anchor-policy-badge anchor-policy-manual"><i class="fas fa-hand-pointer"></i> Manual</span></div>
                         <div class="itc-desc">Create slide-based briefs — POM, PB, ILSMT, ILSMP, IPR, Milestone Review — with templates, editing, and PPTX import.</div>
                     </div>
 
@@ -3733,6 +3832,39 @@
     </div>
 </div>
 
+<!-- ══ FULL DOCUMENT VIEWER MODAL ══ -->
+<div id="docViewerModal" class="modal-overlay" onclick="if(event.target===this)closeDocViewer()">
+    <div class="modal-box" style="position:relative;max-width:860px;width:95vw;max-height:90vh;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:12px;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:10px">
+                <div id="docViewerIcon" style="width:36px;height:36px;border-radius:8px;background:rgba(0,170,255,0.1);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1rem"><i class="fas fa-file-alt"></i></div>
+                <div>
+                    <h4 id="docViewerTitle" style="margin:0;font-size:1rem">Document Viewer</h4>
+                    <div id="docViewerMeta" style="font-size:0.72rem;color:var(--muted)"></div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+                <button onclick="copyDocContent()" title="Copy to clipboard" style="background:rgba(0,170,255,0.1);border:1px solid rgba(0,170,255,0.2);color:var(--accent);border-radius:6px;padding:6px 12px;cursor:pointer;font-size:0.78rem;font-family:inherit"><i class="fas fa-copy"></i> Copy</button>
+                <button onclick="closeDocViewer()" style="background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1">&times;</button>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-shrink:0">
+            <input type="text" id="docViewerSearch" placeholder="Search in document..." oninput="searchInDocViewer()" style="flex:1;padding:8px 12px;font-size:0.82rem;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:6px;color:#fff;font-family:inherit">
+            <span id="docViewerSearchCount" style="align-self:center;font-size:0.72rem;color:var(--muted);min-width:60px;text-align:center"></span>
+        </div>
+        <div id="docViewerHashBar" style="background:rgba(0,170,255,0.04);border:1px solid rgba(0,170,255,0.12);border-radius:6px;padding:8px 12px;margin-bottom:10px;flex-shrink:0;display:flex;align-items:center;gap:8px">
+            <i class="fas fa-fingerprint" style="color:var(--accent)"></i>
+            <span style="font-size:0.72rem;color:var(--steel)">SHA-256:</span>
+            <code id="docViewerHash" style="font-size:0.72rem;color:var(--accent);word-break:break-all"></code>
+        </div>
+        <div id="docViewerBody" style="flex:1;overflow-y:auto;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:8px;padding:20px;font-size:0.85rem;line-height:1.7;color:#e0e0e0;white-space:pre-wrap;word-wrap:break-word;font-family:'Courier New',monospace;min-height:200px"></div>
+        <div id="docViewerFooter" style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);margin-top:10px;flex-shrink:0">
+            <div style="font-size:0.72rem;color:var(--muted)"><span id="docViewerCharCount"></span> characters &bull; <span id="docViewerLineCount"></span> lines</div>
+            <div style="font-size:0.72rem;color:var(--steel)"><i class="fas fa-shield-halved" style="color:#34c759;margin-right:4px"></i>Content verified on-chain</div>
+        </div>
+    </div>
+</div>
+
 </main>
 <footer class="site-footer" role="contentinfo" style="border-top:1px solid var(--border);padding:40px 24px 30px;margin-top:3rem">
     <div class="footer-grid" style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:30px">
@@ -3910,7 +4042,10 @@
                 if (tabLink) { try { new bootstrap.Tab(tabLink).show(); } catch(e){} }
             }
             _currentSection = sectionId;
-            if (sectionId === 'sectionVerify' && typeof window.refreshVerifyRecents === 'function') try { window.refreshVerifyRecents(); } catch(e) {}
+            if (sectionId === 'sectionVerify') {
+                if (typeof window.populateVerifyVaultList === 'function') try { window.populateVerifyVaultList(); } catch(e) {}
+                if (typeof window.refreshVerifyRecents === 'function') try { window.refreshVerifyRecents(); } catch(e) {}
+            }
             if (sectionId === 'sectionMetrics' && typeof window.loadPerformanceMetrics === 'function') try { window.loadPerformanceMetrics(); } catch(e) {}
             if (sectionId === 'sectionILS') {
                 var subHub = document.getElementById('ilsSubHub');
@@ -4154,10 +4289,11 @@
                 if (existing) { existing.style.display = 'flex'; return; }
                 var roles = [
                     { key: 'admin', icon: 'fa-user-shield', title: 'Administrator', desc: 'Full platform access. All ILS tools, compliance, risk management, and system configuration.' },
-                    { key: 'logistics', icon: 'fa-truck', title: 'Logistics Manager', desc: 'Supply chain, readiness, DMSMS, lifecycle, and fleet management tools.' },
-                    { key: 'auditor', icon: 'fa-magnifying-glass', title: 'Compliance Auditor', desc: 'Compliance scoring, evidence collection, FedRAMP, audit reports, and POAM tracking.' },
-                    { key: 'analyst', icon: 'fa-chart-line', title: 'Data Analyst', desc: 'Metrics, ROI analysis, budget forecasting, fleet comparisons, and reporting.' },
-                    { key: 'operator', icon: 'fa-anchor', title: 'Field Operator', desc: 'Record anchoring, verification, document vault, and offline queue.' }
+                    { key: 'ils_manager', icon: 'fa-clipboard-list', title: 'ILS Manager', desc: 'Full ILS tool suite — gap analysis, compliance, risk, readiness, and briefing tools.' },
+                    { key: 'supply_chain', icon: 'fa-truck', title: 'Supply Chain', desc: 'Readiness, provisioning, risk, lifecycle, and milestone tracking.' },
+                    { key: 'auditor', icon: 'fa-shield-halved', title: 'Auditor / Compliance', desc: 'Compliance scorecard, audit vault, evidence collection, and submissions.' },
+                    { key: 'dmsms_analyst', icon: 'fa-microchip', title: 'DMSMS Analyst', desc: 'DMSMS tracking, obsolescence management, risk, and lifecycle tools.' },
+                    { key: 'contracts', icon: 'fa-file-contract', title: 'Contract Specialist', desc: 'ROI analysis, submissions, CDRL tracking, and document management.' }
                 ];
                 var html = '<div id="roleSelectorOverlay" style="position:fixed;inset:0;background:rgba(255,255,255,0.98);z-index:10001;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s;backdrop-filter:blur(8px);">';
                 html += '<div style="background:var(--card,#0f1318);border:1px solid rgba(0,170,255,0.15);border-radius:8px;padding:28px;max-width:680px;width:94%;max-height:85vh;overflow-y:auto;">';
@@ -4177,8 +4313,10 @@
             };
             window._selectRole = function(role) {
                 sessionStorage.setItem('s4_user_role', role);
-                sessionStorage.setItem('s4_user_role', role);
-                sessionStorage.setItem('s4_user_title', role.charAt(0).toUpperCase() + role.slice(1));
+                window._currentRole = role;
+                // Build a readable title from the role key
+                var titleMap = {admin:'Administrator',ils_manager:'ILS Manager',supply_chain:'Supply Chain',auditor:'Auditor / Compliance',dmsms_analyst:'DMSMS Analyst',contracts:'Contract Specialist'};
+                sessionStorage.setItem('s4_user_title', titleMap[role] || role.charAt(0).toUpperCase() + role.slice(1));
                 var ov = document.getElementById('roleSelectorOverlay');
                 if (ov) ov.remove();
                 // Apply role to module system if available
