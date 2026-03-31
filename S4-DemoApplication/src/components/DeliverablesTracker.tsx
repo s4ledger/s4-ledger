@@ -17,6 +17,15 @@ interface Props {
   onDataUpdate: (data: CDRLRow[]) => void
 }
 
+/* ─── Hull parser: extracts "(Hull X)" from title ────────────── */
+function getHull(title: string): string | null {
+  const m = title.match(/\(Hull\s*(\d+)\)/i)
+  return m ? m[1] : null
+}
+
+const HULL_TABS = ['all', '1', '2', '3', '4', '5'] as const
+type HullFilter = typeof HULL_TABS[number]
+
 const columns = [
   { key: 'title', label: 'S4 DRL(S) TITLE / REVISIONS', width: 'w-[22%]' },
   { key: 'diNumber', label: 'DI NUMBER', width: 'w-[11%]' },
@@ -47,9 +56,16 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [notesRow, setNotesRow] = useState<CDRLRow | null>(null)
   const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> | null>(null)
   const [showReport, setShowReport] = useState(false)
+  const [hullFilter, setHullFilter] = useState<HullFilter>('all')
+
+  /* ─── Hull-filtered base data ──────────────────────────────── */
+  const hullData = useMemo(() => {
+    if (hullFilter === 'all') return data
+    return data.filter(r => getHull(r.title) === hullFilter)
+  }, [data, hullFilter])
 
   const filtered = useMemo(() => {
-    let rows = [...data]
+    let rows = [...hullData]
     if (filterStatus !== 'all') rows = rows.filter(r => r.status === filterStatus)
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -68,15 +84,29 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       })
     }
     return rows
-  }, [data, filterStatus, search, sortCol, sortAsc])
+  }, [hullData, filterStatus, search, sortCol, sortAsc])
 
   const stats = useMemo(() => ({
-    total: data.length,
-    green: data.filter(r => r.status === 'green').length,
-    yellow: data.filter(r => r.status === 'yellow').length,
-    red: data.filter(r => r.status === 'red').length,
-    anchored: Object.keys(anchors).length,
-  }), [data, anchors])
+    total: hullData.length,
+    green: hullData.filter(r => r.status === 'green').length,
+    yellow: hullData.filter(r => r.status === 'yellow').length,
+    red: hullData.filter(r => r.status === 'red').length,
+    anchored: hullData.filter(r => anchors[r.id]).length,
+  }), [hullData, anchors])
+
+  /* ─── Hull summary (shown when a specific hull is selected) ── */
+  const hullSummary = useMemo(() => {
+    if (hullFilter === 'all') return null
+    const total = hullData.length
+    const green = hullData.filter(r => r.status === 'green').length
+    const red = hullData.filter(r => r.status === 'red').length
+    const sealed = hullData.filter(r => anchors[r.id]).length
+    const pctComplete = total > 0 ? Math.round((green / total) * 100) : 0
+    const nextDue = hullData
+      .filter(r => r.status !== 'green')
+      .sort((a, b) => a.contractDueFinish.localeCompare(b.contractDueFinish))[0]
+    return { total, green, red, sealed, pctComplete, nextDue }
+  }, [hullFilter, hullData, anchors])
 
   const handleCompare = useCallback(async () => {
     if (comparing) return
@@ -86,22 +116,25 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
     // Save original notes/status before overwriting
     const origMap: Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> = {}
-    data.forEach(r => { origMap[r.id] = { notes: r.notes, status: r.status } })
+    hullData.forEach(r => { origMap[r.id] = { notes: r.notes, status: r.status } })
     setOriginalNotes(origMap)
 
     const refs: Record<string, string> = {}
     const findingsMap: Record<string, string[]> = {}
     const updatedData = [...data]
 
-    const summary = await runContractComparison(data, (result: ComparisonResult, index: number) => {
+    const summary = await runContractComparison(hullData, (result: ComparisonResult, index: number) => {
       setCompareProgress(index + 1)
       refs[result.rowId] = result.contractRef
       findingsMap[result.rowId] = result.findings
       // Update the row's notes and status
-      updatedData[index] = {
-        ...updatedData[index],
-        notes: result.remarks,
-        status: result.status,
+      const dataIdx = updatedData.findIndex(r => r.id === result.rowId)
+      if (dataIdx !== -1) {
+        updatedData[dataIdx] = {
+          ...updatedData[dataIdx],
+          notes: result.remarks,
+          status: result.status,
+        }
       }
     })
 
@@ -110,7 +143,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     onDataUpdate(updatedData)
     setCompareSummary(summary)
     setComparing(false)
-  }, [comparing, data, onDataUpdate])
+  }, [comparing, data, hullData, onDataUpdate])
 
   function handleSort(key: string) {
     if (sortCol === key) {
@@ -174,7 +207,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               {comparing ? (
                 <>
                   <i className="fas fa-spinner fa-spin"></i>
-                  Comparing ({compareProgress}/{data.length})…
+                  Comparing ({compareProgress}/{hullData.length})…
                 </>
               ) : (
                 <>
@@ -200,6 +233,74 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           </div>
         </div>
       </header>
+
+      {/* Hull Filter Tabs */}
+      <div className="bg-surface border-b border-border">
+        <div className="max-w-[1600px] mx-auto px-6">
+          <div className="flex items-center gap-1 py-2">
+            {HULL_TABS.map(h => {
+              const label = h === 'all' ? 'All Hulls' : `Hull ${h}`
+              const count = h === 'all' ? data.length : data.filter(r => getHull(r.title) === h).length
+              const isActive = hullFilter === h
+              return (
+                <button
+                  key={h}
+                  onClick={() => setHullFilter(h)}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg transition-all ${
+                    isActive
+                      ? 'bg-accent text-white shadow-sm'
+                      : 'text-steel hover:text-gray-900 hover:bg-black/[0.04]'
+                  }`}
+                >
+                  {h !== 'all' && <i className="fas fa-ship text-[10px]"></i>}
+                  {label}
+                  <span className={`ml-0.5 text-[10px] ${isActive ? 'text-white/70' : 'text-steel/60'}`}>
+                    ({count})
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Hull Summary Section (visible when specific hull selected) */}
+      {hullSummary && (
+        <div className="max-w-[1600px] mx-auto px-6 pt-4">
+          <div className="bg-white border border-accent/20 rounded-card p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-accent/15 flex items-center justify-center">
+                  <i className="fas fa-ship text-accent text-sm"></i>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900">Hull {hullFilter} Summary</h3>
+                  <p className="text-[11px] text-steel">
+                    {hullSummary.total} deliverables assigned · {hullSummary.green} approved · {hullSummary.red} overdue · {hullSummary.sealed} sealed
+                  </p>
+                </div>
+              </div>
+              {hullSummary.nextDue && (
+                <div className="text-right">
+                  <p className="text-[10px] text-steel uppercase tracking-wide">Next Critical Due</p>
+                  <p className="text-sm font-semibold text-gray-900">{hullSummary.nextDue.contractDueFinish}</p>
+                  <p className="text-[10px] text-steel truncate max-w-[180px]">{hullSummary.nextDue.title}</p>
+                </div>
+              )}
+            </div>
+            {/* Progress bar */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-500 rounded-full transition-all duration-500"
+                  style={{ width: `${hullSummary.pctComplete}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold text-gray-900 w-10 text-right">{hullSummary.pctComplete}%</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats Row */}
       <div className="max-w-[1600px] mx-auto px-6 py-4">
@@ -307,7 +408,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             ))}
           </div>
           <button
-            onClick={onAnchorAll}
+            onClick={() => { hullData.filter(r => !anchors[r.id]).forEach(r => onAnchor(r)) }}
             className="flex items-center gap-2 px-3 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-lg text-accent text-xs font-medium transition-all"
           >
             <i className="fas fa-link"></i>
@@ -495,11 +596,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       )}
       {showReport && (
         <ReportModal
-          data={data}
+          data={hullData}
           anchors={anchors}
           role={role}
           rowFindings={rowFindings}
           contractRefs={contractRefs}
+          hullFilter={hullFilter === 'all' ? undefined : `Hull ${hullFilter}`}
           onClose={() => setShowReport(false)}
         />
       )}

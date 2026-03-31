@@ -8,10 +8,11 @@ interface Props {
   role: UserRole
   rowFindings: Record<string, string[]>
   contractRefs: Record<string, string>
+  hullFilter?: string
   onClose: () => void
 }
 
-export default function ReportModal({ data, anchors, role, rowFindings, contractRefs, onClose }: Props) {
+export default function ReportModal({ data, anchors, role, rowFindings, contractRefs, hullFilter, onClose }: Props) {
   const [report, setReport] = useState<WeeklyReportResult | null>(null)
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -43,7 +44,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
       await new Promise(r => setTimeout(r, 400 + Math.random() * 300))
     }
 
-    const result = generateWeeklyReport(data, anchors, role, rowFindings, contractRefs)
+    const result = generateWeeklyReport(data, anchors, role, rowFindings, contractRefs, hullFilter)
     setReport(result)
     setGenerating(false)
   }
@@ -61,7 +62,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
   function handleEmail() {
     if (!report) return
     const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-    const subject = encodeURIComponent(`S4 Systems DRL Weekly Status Report — ${dateStr}`)
+    const subject = encodeURIComponent(`S4 Systems DRL Weekly Status Report${hullFilter ? ` — ${hullFilter}` : ''} — ${dateStr}`)
     const body = encodeURIComponent(
       `Please find attached the S4 Systems DRL Weekly Status Report for ${dateStr}.\n\n` +
       `Summary:\n` +
@@ -95,7 +96,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
             </div>
             <div>
               <h3 className="text-base font-bold text-gray-900">Generate Weekly PDF Report</h3>
-              <p className="text-steel text-xs">AI-powered S4 Systems DRL Weekly Status Report</p>
+              <p className="text-steel text-xs">AI-powered S4 Systems DRL Weekly Status Report{hullFilter ? ` — ${hullFilter}` : ''}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-steel hover:text-gray-900 transition-colors">

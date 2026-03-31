@@ -186,12 +186,14 @@ export function generateWeeklyReport(
   role: UserRole,
   rowFindings: Record<string, string[]>,
   contractRefs: Record<string, string>,
+  hullFilter?: string,
 ): WeeklyReportResult {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
   const now = new Date()
   const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
   const isoDate = now.toISOString().slice(0, 10)
   const analysis = generateAIAnalysis(data, anchors)
+  const hullLabel = hullFilter ?? 'All Hulls'
   let y = 0
 
   /* ═══ PAGE 1: Title Page ═══════════════════════════════════════ */
@@ -207,7 +209,7 @@ export function generateWeeklyReport(
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(200, 220, 255)
-  doc.text(`Prepared: ${dateStr}  ·  Role: ${role}  ·  Classification: FOUO Simulation`, M, 43)
+  doc.text(`Prepared: ${dateStr}  ·  Role: ${role}  ·  Scope: ${hullLabel}  ·  Classification: FOUO Simulation`, M, 43)
 
   // Summary banner
   y = 60
@@ -623,7 +625,8 @@ export function generateWeeklyReport(
   addFooters(doc, dateStr)
 
   const blob = doc.output('blob')
-  const filename = `S4_DRL_Weekly_Report_${isoDate}.pdf`
+  const hullSuffix = hullFilter ? `_${hullFilter.replace(/\s+/g, '_')}` : ''
+  const filename = `S4_DRL_Weekly_Report${hullSuffix}_${isoDate}.pdf`
   return { blob, filename }
 }
 
