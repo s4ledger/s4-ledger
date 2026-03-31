@@ -3,7 +3,7 @@ import { CDRLRow, UserRole, AnchorRecord } from '../types'
 import AIAssistModal from './AIAssistModal'
 import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
-import { generatePDF } from '../utils/pdf'
+import ReportModal from './ReportModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 
@@ -46,6 +46,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [rowFindings, setRowFindings] = useState<Record<string, string[]>>({})
   const [notesRow, setNotesRow] = useState<CDRLRow | null>(null)
   const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> | null>(null)
+  const [showReport, setShowReport] = useState(false)
 
   const filtered = useMemo(() => {
     let rows = [...data]
@@ -190,11 +191,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               AI Assist
             </button>
             <button
-              onClick={() => generatePDF(data, anchors, role)}
+              onClick={() => setShowReport(true)}
               className="flex items-center gap-2 px-4 py-2 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium transition-all"
             >
               <i className="fas fa-file-pdf"></i>
-              PDF Report
+              Generate Weekly PDF Report
             </button>
           </div>
         </div>
@@ -490,6 +491,16 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           row={verifyRow}
           anchor={anchors[verifyRow.id]}
           onClose={() => setVerifyRow(null)}
+        />
+      )}
+      {showReport && (
+        <ReportModal
+          data={data}
+          anchors={anchors}
+          role={role}
+          rowFindings={rowFindings}
+          contractRefs={contractRefs}
+          onClose={() => setShowReport(false)}
         />
       )}
 
