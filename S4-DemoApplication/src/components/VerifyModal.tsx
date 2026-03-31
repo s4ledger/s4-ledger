@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { CDRLRow, AnchorRecord } from '../types'
 import { hashRow } from '../utils/hash'
+import { recordVerification } from '../utils/auditTrail'
 
 interface Props {
   row: CDRLRow
@@ -27,7 +28,9 @@ export default function VerifyModal({ row, anchor, onReseal, onClose }: Props) {
       await new Promise(r => setTimeout(r, 1000))
 
       if (anchor) {
-        setMatch(hash === anchor.hash)
+        const isMatch = hash === anchor.hash
+        setMatch(isMatch)
+        recordVerification(row, isMatch, hash, anchor.hash, anchor.txHash)
       } else {
         setMatch(null)
       }

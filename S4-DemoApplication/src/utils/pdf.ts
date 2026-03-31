@@ -3,6 +3,7 @@ import autoTable from 'jspdf-autotable'
 import { CDRLRow, AnchorRecord, UserRole } from '../types'
 import { contractRequirements } from '../data/contractData'
 import { AIRowInsight } from './aiAnalysis'
+import { getAuditSummary, getAuditLog } from './auditTrail'
 
 /* ─── Color palette ──────────────────────────────────────────────── */
 const ACCENT: [number, number, number] = [0, 122, 255]
@@ -622,6 +623,59 @@ export function generateWeeklyReport(
       margin: { left: M, right: M },
     })
     y = getY(doc) + 6
+  }
+
+  /* ═══ Audit Trail Summary ══════════════════════════════════════ */
+  {
+    const rowIds = data.map(r => r.id)
+    const auditSummary = getAuditSummary(rowIds)
+    const recentEvents = getAuditLog()
+      .filter(e => rowIds.includes(e.rowId))
+      .slice(-6)
+      .reverse()
+
+    y += 12
+    if (y > 150) { doc.addPage(); addPageHeader(doc, 'S4 Systems DRL Weekly Status Report', dateStr, role, W); y = 28 }
+
+    y = sectionHeading(doc, y, 'AUDIT TRAIL SUMMARY')
+
+    // Summary stats bar
+    doc.setFillColor(...LIGHT_BG)
+    doc.roundedRect(M, y, W - 2 * M, 10, 1, 1, 'F')
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...TEXT)
+    const auditLine = `Total Seals: ${auditSummary.totalSeals}  ·  Verifications: ${auditSummary.totalVerifications}  ·  Edits Tracked: ${auditSummary.totalEdits}  ·  Trust Status: ${auditSummary.trustStatus}`
+    doc.text(auditLine, M + 4, y + 6.5)
+    y += 14
+
+    if (recentEvents.length > 0) {
+      const auditBody = recentEvents.map(evt => [
+        new Date(evt.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        evt.rowId,
+        evt.type,
+        evt.description.slice(0, 80),
+        evt.aiSummary.slice(0, 60),
+      ])
+
+      autoTable(doc, {
+        startY: y,
+        head: [['Date', 'CDRL', 'Event', 'Description', 'AI Summary']],
+        body: auditBody,
+        theme: 'grid',
+        styles: { fontSize: 6.5, cellPadding: 1.5, textColor: TEXT },
+        headStyles: { fillColor: ACCENT, textColor: WHITE, fontStyle: 'bold', fontSize: 6.5 },
+        columnStyles: {
+          0: { cellWidth: 22 },
+          1: { cellWidth: 20 },
+          2: { cellWidth: 28 },
+          3: { cellWidth: 100 },
+          4: { cellWidth: 84 },
+        },
+        margin: { left: M, right: M },
+      })
+      y = getY(doc) + 6
+    }
   }
 
   /* ═══ Bar chart visualization ══════════════════════════════════ */

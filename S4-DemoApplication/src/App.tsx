@@ -3,6 +3,7 @@ import { AuthStage, UserRole, CDRLRow, AnchorRecord } from './types'
 import { sampleData } from './data/sampleData'
 import { hashRow } from './utils/hash'
 import { anchorToXRPL } from './utils/xrpl'
+import { recordSeal, recordReseal } from './utils/auditTrail'
 import CACPopup from './components/CACPopup'
 import WelcomeCard from './components/WelcomeCard'
 import RoleSelector from './components/RoleSelector'
@@ -23,6 +24,7 @@ export default function App() {
       const hash = await hashRow(row as unknown as Record<string, unknown>)
       const record = await anchorToXRPL(row.id, hash, row.title)
       setAnchors(prev => ({ ...prev, [row.id]: record }))
+      recordSeal(row, record)
     } finally {
       setAnchoring(prev => {
         const next = new Set(prev)
@@ -38,6 +40,7 @@ export default function App() {
       const hash = await hashRow(row as unknown as Record<string, unknown>)
       const record = await anchorToXRPL(row.id, hash, row.title)
       setAnchors(prev => ({ ...prev, [row.id]: record }))
+      recordReseal(row, record)
     } finally {
       setAnchoring(prev => {
         const next = new Set(prev)

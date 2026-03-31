@@ -141,6 +141,8 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
               'Section 2: Full Detailed List grouped by status with AI remarks',
               'Section 3: RACI Responsibility Matrix (Shipbuilder, SDM, Lead Reviewer, PM, QA)',
               'Section 4: Weekly Progress & Efficiency Analysis with time/cost savings',
+              'AI-Prioritized Next Actions with target dates',
+              'Audit Trail Summary with recent seal/verify/edit events',
               'Status Distribution visualization',
               'XRPL ledger verification proof on every page',
             ].map((item, i) => (

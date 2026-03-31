@@ -1,13 +1,15 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { CDRLRow, UserRole, AnchorRecord } from '../types'
 import AIAssistModal from './AIAssistModal'
 import AINextActionsPanel from './AINextActionsPanel'
+import AuditTrailSidebar from './AuditTrailSidebar'
 import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
 import ReportModal from './ReportModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
+import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
 
 interface Props {
   data: CDRLRow[]
@@ -64,6 +66,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [resealToast, setResealToast] = useState<string | null>(null)
   const [showAIPanel, setShowAIPanel] = useState(false)
   const [aiInsights, setAiInsights] = useState<Record<string, AIRowInsight>>({})
+  const [showAudit, setShowAudit] = useState(false)
+  const [auditRowId, setAuditRowId] = useState<string | null>(null)
+  const [auditRowTitle, setAuditRowTitle] = useState<string | undefined>(undefined)
+  const [auditVersion, setAuditVersion] = useState(0) // bump to force re-render
+  const seededRef = useRef(false)
 
   /* ─── Hull-filtered base data ──────────────────────────────── */
   const hullData = useMemo(() => {
@@ -161,6 +168,28 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }
   }
 
+  /* ─── Seed audit history on first load ─────────────────── */
+  useEffect(() => {
+    if (!seededRef.current) {
+      seedAuditHistory(data, anchors)
+      seededRef.current = true
+    }
+  }, [data, anchors])
+
+  function openAuditGlobal() {
+    setAuditRowId(null)
+    setAuditRowTitle(undefined)
+    setAuditVersion(v => v + 1)
+    setShowAudit(true)
+  }
+
+  function openAuditForRow(row: CDRLRow) {
+    setAuditRowId(row.id)
+    setAuditRowTitle(row.title)
+    setAuditVersion(v => v + 1)
+    setShowAudit(true)
+  }
+
   /* ─── Generate AI insights for all rows ───────────────── */
   const refreshAIInsights = useCallback(() => {
     const insights: Record<string, AIRowInsight> = {}
@@ -176,8 +205,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   }, [refreshAIInsights])
 
   function handleUpdateNotes(rowId: string, notes: string) {
+    const row = data.find(r => r.id === rowId)
+    if (row) recordAIRemarkUpdate(row, notes)
     const updated = data.map(r => r.id === rowId ? { ...r, notes } : r)
     onDataUpdate(updated)
+    setAuditVersion(v => v + 1)
   }
 
   function handleRestoreNotes() {
@@ -195,6 +227,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   }
 
   function handleCellEdit(rowId: string, field: keyof CDRLRow, value: string) {
+    const row = data.find(r => r.id === rowId)
+    if (row) {
+      const oldVal = String(row[field] ?? '')
+      if (oldVal !== value) {
+        recordEdit(row, field, oldVal, value)
+        setAuditVersion(v => v + 1)
+      }
+    }
     // Track that this sealed row was edited
     if (anchors[rowId]) {
       setEditedSinceSeal(prev => new Set(prev).add(rowId))
@@ -274,6 +314,17 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             >
               <i className="fas fa-bolt"></i>
               Next Actions
+            </button>
+            <button
+              onClick={openAuditGlobal}
+              className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
+                showAudit && !auditRowId
+                  ? 'bg-gray-900 text-white border-gray-900'
+                  : 'bg-black/[0.04] hover:bg-black/[0.08] border-border text-steel'
+              }`}
+            >
+              <i className="fas fa-history"></i>
+              Audit Trail
             </button>
             <button
               onClick={() => setShowReport(true)}
@@ -599,6 +650,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       )}
                     </td>
                     <td className="px-3 py-3 text-center">
+                      <div className="flex items-center justify-center gap-1">
                       {anchors[row.id] ? (
                         editedSinceSeal.has(row.id) ? (
                           <button
@@ -618,6 +670,18 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       ) : (
                         <span className="text-steel/40 text-xs">—</span>
                       )}
+                      <button
+                        onClick={() => openAuditForRow(row)}
+                        className={`w-5 h-5 rounded inline-flex items-center justify-center transition-all ${
+                          anchors[row.id]
+                            ? 'text-steel/50 hover:text-accent hover:bg-accent/10'
+                            : 'text-transparent group-hover:text-steel/30 group-hover:hover:text-accent group-hover:hover:bg-accent/10'
+                        }`}
+                        title="View Audit Trail"
+                      >
+                        <i className="fas fa-history text-[9px]"></i>
+                      </button>
+                      </div>
                     </td>
                     <td className="px-3 py-3 text-center relative">
                       <button
@@ -671,6 +735,15 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         editedSinceSeal={editedSinceSeal}
         visible={showAIPanel}
         onClose={() => setShowAIPanel(false)}
+      />
+
+      {/* Audit Trail Sidebar */}
+      <AuditTrailSidebar
+        visible={showAudit}
+        rowId={auditRowId}
+        rowTitle={auditRowTitle}
+        onClose={() => setShowAudit(false)}
+        key={`audit-${auditVersion}`}
       />
       {verifyRow && (
         <VerifyModal
