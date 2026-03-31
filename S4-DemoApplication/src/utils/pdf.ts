@@ -59,7 +59,7 @@ function addFooters(doc: jsPDF, dateStr: string) {
     doc.setFontSize(6.5)
     doc.setTextColor(...STEEL)
     doc.text(
-      `All data verified and sealed to Ledger as of ${dateStr}  ·  XRPL Testnet Anchored  ·  S4 Ledger™ DRL Weekly Status Report`,
+      `All data verified and sealed to Ledger as of ${dateStr}  ·  XRPL Mainnet Anchored  ·  S4 Ledger™ DRL Weekly Status Report`,
       W / 2, 204, { align: 'center' }
     )
     doc.text(`Page ${i} of ${pages}`, W - M, 204, { align: 'right' })
@@ -243,7 +243,7 @@ export function generateWeeklyReport(
     { color: GREEN, bg: BG_GREEN, label: 'Green — Completed / Verified', desc: 'Deliverable received on time, accepted per DD Form 1423, no corrective action required.' },
     { color: YELLOW, bg: BG_YELLOW, label: 'Yellow — In Review / Minor Issues', desc: 'Deliverable submitted but with minor variance, open RIDs, or exceeding Gov\'t review window.' },
     { color: RED, bg: BG_RED, label: 'Red — Overdue / Delinquent', desc: 'Deliverable not submitted or significantly late. May warrant Cure Notice per FAR 52.249-8.' },
-    { color: ACCENT, bg: [230, 242, 255] as [number, number, number], label: 'Sealed to Ledger', desc: 'Data hash anchored to XRPL Testnet — tamper-evident, independently verifiable integrity proof.' },
+    { color: ACCENT, bg: [230, 242, 255] as [number, number, number], label: 'Sealed to Ledger', desc: 'Data hash anchored to XRPL Mainnet — tamper-evident, independently verifiable integrity proof.' },
   ]
   legendItems.forEach(item => {
     if (y > 185) { doc.addPage(); addPageHeader(doc, 'S4 Systems DRL Weekly Status Report', dateStr, role, W); y = 30 }
@@ -274,7 +274,7 @@ export function generateWeeklyReport(
     `items tracked in the S4 Ledger Deliverables Tracker. As of ${dateStr}, ${analysis.green.length} deliverables ` +
     `(${Math.round(analysis.green.length / data.length * 100)}%) are fully compliant, ${analysis.yellow.length} are under active review ` +
     `with minor issues, and ${analysis.red.length} are classified as overdue/delinquent per DD Form 1423 Block 14 criteria. ` +
-    `${analysis.sealed} deliverables have been cryptographically sealed to the XRPL Testnet ledger, providing tamper-evident ` +
+    `${analysis.sealed} deliverables have been cryptographically sealed to the XRPL Mainnet ledger, providing tamper-evident ` +
     `integrity verification. The on-time submission rate is ${analysis.onTimeRate}%. Average government review cycle is ` +
     `${analysis.avgReviewDays} calendar days. All contractual references are modeled on Attachment J-2 / DD Form 1423 standards ` +
     `per DFARS and NAVSEA/PMS 300 standing instructions.`,

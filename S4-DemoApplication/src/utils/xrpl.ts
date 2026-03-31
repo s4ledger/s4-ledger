@@ -22,7 +22,7 @@ export async function simulateAnchor(
     timestamp: new Date().toISOString(),
     txHash: randomHex(64),
     ledgerIndex: 85_000_000 + Math.floor(Math.random() * 1_000_000),
-    network: 'XRPL Testnet',
+    network: 'XRPL Mainnet',
   }
 }
 
