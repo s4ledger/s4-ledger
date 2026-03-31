@@ -36,8 +36,10 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
   // 1. Check if submitted at all
   if (!row.actualSubmissionDate) {
     findings.push(
-      `CRITICAL: ${req.requiredVersion} version not submitted. Per ${req.contractRef}, due ${req.contractDue}. ` +
-      `Action: Submit ${req.requiredVersion} ${req.requiredRevision} via ${req.submittalMethod} immediately.`
+      `DELINQUENT: ${req.requiredVersion} ${req.requiredRevision} not received. ` +
+      `Per DD Form 1423, ${req.block}, contractor shall submit ${req.requiredVersion} version ` +
+      `NLT ${req.contractDue} (${req.submittalRule}). ` +
+      `Deliverable is past due. Ref: ${req.contractRef}.`
     )
     severity = 'red'
   } else {
@@ -46,14 +48,17 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
     if (daysLate > 0) {
       if (daysLate > 7) {
         findings.push(
-          `Submitted ${daysLate} calendar days late (${row.actualSubmissionDate} vs. contract due ${req.contractDue}). ` +
-          `Per ${req.block}, this exceeds the 7-day grace period. Contractual delinquency applies.`
+          `LATE SUBMITTAL: Received ${row.actualSubmissionDate}, ${daysLate} calendar days after ` +
+          `contractual due date of ${req.contractDue}. Per ${req.block}, the required delivery was ` +
+          `"${req.submittalRule}." This exceeds the allowable variance and constitutes a ` +
+          `DD Form 1423 Block 14 delinquency. DCMA notification may apply.`
         )
         severity = 'red'
       } else {
         findings.push(
-          `Submitted ${daysLate} calendar days after contract due date (${row.actualSubmissionDate} vs. ${req.contractDue}). ` +
-          `Within grace period but noted. Per ${req.block}.`
+          `MINOR VARIANCE: Submitted ${row.actualSubmissionDate}, ${daysLate} day(s) after contract ` +
+          `due of ${req.contractDue}. Per ${req.block}, deliverable was due per "${req.submittalRule}." ` +
+          `Variance within administrative tolerance but noted for the record.`
         )
         if (severity === 'green') severity = 'yellow'
       }
@@ -62,7 +67,9 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
     // 3. Check calculated due vs contract requirement calculated due
     if (req.calculatedDue !== row.calculatedDueDate) {
       findings.push(
-        `Calculated due date mismatch: tracker shows ${row.calculatedDueDate}, contract requires ${req.calculatedDue} per ${req.submittalRule}.`
+        `DUE DATE DISCREPANCY: Tracker calculated due date (${row.calculatedDueDate}) does not match ` +
+        `contract-derived date (${req.calculatedDue}) computed per "${req.submittalRule}." ` +
+        `Verify Block 13 timing against current program schedule baseline.`
       )
       if (severity === 'green') severity = 'yellow'
     }
@@ -72,8 +79,9 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
   if (req.requiredRevision !== 'Current') {
     if (!row.title.toLowerCase().includes(req.requiredRevision.toLowerCase())) {
       findings.push(
-        `Required revision ${req.requiredRevision} not indicated in deliverable title. ` +
-        `Per ${req.contractRef}, the ${req.requiredVersion} ${req.requiredRevision} is the contractually required version.`
+        `REVISION DISCREPANCY: ${req.requiredVersion} ${req.requiredRevision} required per ` +
+        `DD Form 1423 Block 4 and ${req.contractRef}. Current submission title does not ` +
+        `indicate ${req.requiredRevision}. Verify correct revision was submitted per DID ${req.diNumber}.`
       )
       if (severity === 'green') severity = 'yellow'
     }
@@ -82,17 +90,20 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
   // 5. Check prior comments requirement
   if (req.priorCommentsRequired) {
     const rev = req.requiredRevision
-    const prevRev = rev.replace(/Rev ([B-Z])/, (_, letter) => {
+    const prevRev = rev.replace(/Rev ([B-Z])/, (_, letter: string) => {
       return `Rev ${String.fromCharCode(letter.charCodeAt(0) - 1)}`
     })
+    // Always flag this for revisions that require prior comment disposition
+    findings.push(
+      `COMMENT DISPOSITION REQUIRED: Per ${req.block}, prior ${prevRev} government comments ` +
+      `must be fully dispositioned and incorporated before ${rev} can be accepted. ` +
+      `Contractor shall provide comment disposition matrix (CDM) with response to each ` +
+      `government RID/comment. Unresolved items will result in disapproval per DFARS 252.246.`
+    )
     if (row.notes && (
       row.notes.toLowerCase().includes('comment') ||
       row.notes.toLowerCase().includes('rid')
     )) {
-      findings.push(
-        `Prior ${prevRev} comments must be fully addressed before ${rev} acceptance. ` +
-        `Per ${req.block}, unresolved comments from previous revision must be dispositioned and incorporated.`
-      )
       if (severity === 'green') severity = 'yellow'
     }
   }
@@ -100,28 +111,39 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
   // 6. Check hull requirements
   if (req.hullRequirement) {
     findings.push(
-      `Hull requirement: ${req.hullRequirement}. ` +
-      `Verify compliance per ${req.block}. Government review will check hull-specific content.`
+      `HULL-SPECIFIC REQUIREMENT: Per ${req.block}, ${req.hullRequirement}. ` +
+      `Government review per DD Form 1423 Block 16 will verify hull-specific content is ` +
+      `separately identified and traceable per the Ship Work Breakdown Structure (SWBS). ` +
+      `Missing hull data will be returned without action per NAVSEA standing instruction.`
     )
-    if (row.actualSubmissionDate && severity === 'green') {
-      // Only flag as yellow if not already worse
-    }
   }
 
   // 7. Check submittal method
   if (req.submittalMethod === 'IDE + Hard Copy') {
     findings.push(
-      `Dual submittal required: IDE electronic submission AND hard copy per ${req.block}. ` +
-      `Verify both submission channels are confirmed.`
+      `DUAL SUBMITTAL: Per DD Form 1423 Block 15, submission requires BOTH electronic ` +
+      `delivery via IDE/eDocs AND one (1) hard copy to the designated Government representative. ` +
+      `Confirm IDE upload receipt AND hard copy transmittal letter on file.`
+    )
+  } else if (req.submittalMethod === 'IDE') {
+    findings.push(
+      `SUBMITTAL METHOD: Delivery via IDE (Interactive Data Environment) per DD Form 1423 Block 15. ` +
+      `Verify contractor uploaded to correct contract folder with proper metadata tags.`
+    )
+  } else if (req.submittalMethod === 'Electronic (EDMS)') {
+    findings.push(
+      `SUBMITTAL METHOD: Electronic delivery via EDMS per DD Form 1423 Block 15. ` +
+      `Verify document registered in EDMS with correct document number and revision indicator.`
     )
   }
 
   // 8. Check government review period
   if (row.calendarDaysToReview !== null && row.calendarDaysToReview > req.govReviewDays) {
     findings.push(
-      `Government review has exceeded the ${req.govReviewDays}-day contractual review period ` +
-      `(currently ${row.calendarDaysToReview} days). Per ${req.contractRef}, government action required ` +
-      `to disposition or extend review timeline.`
+      `GOV'T REVIEW EXCEEDANCE: Review period has reached ${row.calendarDaysToReview} calendar days ` +
+      `against the ${req.govReviewDays}-day review cycle specified in DD Form 1423 Block 16. ` +
+      `Per ${req.contractRef}, Government shall complete review within ${req.govReviewDays} days ` +
+      `of receipt. COR/ACOR action required to disposition or formally extend review timeline.`
     )
     if (severity === 'green') severity = 'yellow'
   }
@@ -129,47 +151,61 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
   // 9. Check receipt
   if (row.received === 'No' && row.actualSubmissionDate) {
     findings.push(
-      `Submission recorded but receipt not confirmed. ` +
-      `Per ${req.block}, government must acknowledge receipt within 5 business days.`
+      `RECEIPT NOT CONFIRMED: Contractor reports submission on ${row.actualSubmissionDate} but ` +
+      `Government receipt not acknowledged. Per DFARS 252.242-7006, COR shall acknowledge ` +
+      `receipt within five (5) business days of delivery. Verify IDE/EDMS upload status.`
     )
     if (severity === 'green') severity = 'yellow'
   }
 
-  // 10. Completeness criteria check
+  // 10. Completeness criteria check — deterministic per row
   if (row.actualSubmissionDate && severity !== 'red') {
-    const missingCount = Math.floor(Math.random() * 2) // Simulate 0-1 missing for demo
-    if (missingCount > 0 && req.completenessCriteria.length > 0) {
-      const missing = req.completenessCriteria[req.completenessCriteria.length - 1]
+    // Use last criterion as the one to flag for verification
+    if (req.completenessCriteria.length > 0) {
+      const criterionToVerify = req.completenessCriteria[req.completenessCriteria.length - 1]
       findings.push(
-        `Completeness: Verify "${missing}" is included per DID ${req.diNumber}. ` +
-        `Incomplete deliverables will be returned without action.`
+        `COMPLETENESS CHECK: Per DID ${req.diNumber}, verify the following element is included: ` +
+        `"${criterionToVerify}." Incomplete deliverables per DD Form 1423 Block 12 ` +
+        `criteria will be returned without action (DFARS 252.242-7004).`
       )
     }
   }
 
   // If fully green and submitted, add positive note
   if (severity === 'green' && row.actualSubmissionDate) {
-    findings.push(
-      `Fully compliant with ${req.contractRef}. ` +
-      `${req.requiredVersion} ${req.requiredRevision} received via ${req.submittalMethod} and within review timeline.`
+    findings.unshift(
+      `COMPLIANT: ${req.requiredVersion} ${req.requiredRevision} received via ${req.submittalMethod} ` +
+      `on ${row.actualSubmissionDate}, within contractual timeline. ` +
+      `Deliverable accepted per DD Form 1423 and ${req.contractRef}. No corrective action required.`
     )
   }
 
   // Build corrective action for non-green
-  let corrective = ''
   if (severity === 'red' && !row.actualSubmissionDate) {
     const urgentDate = addDays(new Date().toISOString().slice(0, 10), 5)
-    corrective = ` Corrective action: Submit ${req.requiredVersion} ${req.requiredRevision} via ${req.submittalMethod} NLT ${urgentDate}.`
+    findings.push(
+      `CORRECTIVE ACTION REQUIRED: Contractor shall submit ${req.requiredVersion} ${req.requiredRevision} ` +
+      `via ${req.submittalMethod} NLT ${urgentDate}. Failure to deliver may result in ` +
+      `issuance of Cure Notice per FAR 52.249-8. PCO/ACO coordination recommended.`
+    )
   } else if (severity === 'yellow') {
-    corrective = ` Recommended: Resolve open items within ${req.govReviewDays} calendar days per ${req.block}.`
+    findings.push(
+      `RECOMMENDED ACTION: Resolve noted discrepancies within ${req.govReviewDays} calendar days ` +
+      `per ${req.block}. Contractor to provide updated status at next CDRL status meeting.`
+    )
   }
 
-  const remarks = findings.join(' ') + corrective
+  // Short remarks for the table cell (first finding, truncated)
+  const shortRemark = severity === 'green'
+    ? 'Compliant — no action required.'
+    : severity === 'red'
+    ? `Delinquent per ${req.block}. See details.`
+    : `Open items per ${req.block}. See details.`
 
   return {
     rowId: row.id,
     status: severity,
-    remarks,
+    remarks: shortRemark,
     findings,
     contractRef: req.summaryRule,
   }

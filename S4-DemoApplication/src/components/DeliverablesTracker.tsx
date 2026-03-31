@@ -43,6 +43,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [compareSummary, setCompareSummary] = useState<ComparisonSummary | null>(null)
   const [contractRefs, setContractRefs] = useState<Record<string, string>>({})
   const [hoveredDI, setHoveredDI] = useState<string | null>(null)
+  const [rowFindings, setRowFindings] = useState<Record<string, string[]>>({})
+  const [notesRow, setNotesRow] = useState<CDRLRow | null>(null)
 
   const filtered = useMemo(() => {
     let rows = [...data]
@@ -81,11 +83,13 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     setCompareSummary(null)
 
     const refs: Record<string, string> = {}
+    const findingsMap: Record<string, string[]> = {}
     const updatedData = [...data]
 
     const summary = await runContractComparison(data, (result: ComparisonResult, index: number) => {
       setCompareProgress(index + 1)
       refs[result.rowId] = result.contractRef
+      findingsMap[result.rowId] = result.findings
       // Update the row's notes and status
       updatedData[index] = {
         ...updatedData[index],
@@ -95,6 +99,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     })
 
     setContractRefs(refs)
+    setRowFindings(findingsMap)
     onDataUpdate(updatedData)
     setCompareSummary(summary)
     setComparing(false)
@@ -340,7 +345,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <td className="px-3 py-3 text-xs text-center">
                       {row.calendarDaysToReview !== null ? row.calendarDaysToReview : '—'}
                     </td>
-                    <td className="px-3 py-3 text-xs text-steel">{row.notes}</td>
+                    <td
+                      className="px-3 py-3 text-xs text-steel max-w-[180px] cursor-pointer group"
+                      onClick={() => setNotesRow(row)}
+                    >
+                      <div className="truncate group-hover:text-accent transition-colors" title="Click to view full remarks">
+                        {row.notes || '—'}
+                      </div>
+                    </td>
                     <td className="px-3 py-3 text-center">
                       {anchors[row.id] ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-500/15 text-green-400 rounded text-xs">
@@ -398,6 +410,85 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           anchor={anchors[verifyRow.id]}
           onClose={() => setVerifyRow(null)}
         />
+      )}
+
+      {/* Notes Detail Popup */}
+      {notesRow && (
+        <div className="modal-backdrop" onClick={() => setNotesRow(null)}>
+          <div
+            className="bg-white border border-border rounded-card p-6 max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col animate-slideUp"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                  notesRow.status === 'green' ? 'bg-green-500/15' :
+                  notesRow.status === 'yellow' ? 'bg-yellow-500/15' : 'bg-red-500/15'
+                }`}>
+                  <i className={`fas ${
+                    notesRow.status === 'green' ? 'fa-check-circle text-green-500' :
+                    notesRow.status === 'yellow' ? 'fa-exclamation-circle text-yellow-500' :
+                    'fa-exclamation-triangle text-red-500'
+                  }`}></i>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-gray-900">Contractual Guidance & Recommended Actions</h3>
+                  <p className="text-steel text-xs">{notesRow.id} — {notesRow.title}</p>
+                </div>
+              </div>
+              <button onClick={() => setNotesRow(null)} className="text-steel hover:text-gray-900 transition-colors">
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+
+            {/* Contract reference banner */}
+            {contractRefs[notesRow.id] && (
+              <div className="bg-accent/5 border border-accent/15 rounded-lg px-4 py-2.5 mb-4">
+                <p className="text-xs font-semibold text-accent mb-0.5">
+                  <i className="fas fa-file-contract mr-1.5"></i>Contract Reference
+                </p>
+                <p className="text-xs text-gray-700 leading-relaxed">{contractRefs[notesRow.id]}</p>
+              </div>
+            )}
+
+            {/* Findings list */}
+            <div className="flex-1 overflow-y-auto space-y-3">
+              {rowFindings[notesRow.id] && rowFindings[notesRow.id].length > 0 ? (
+                rowFindings[notesRow.id].map((finding, i) => {
+                  const isCompliant = finding.startsWith('COMPLIANT:')
+                  const isCritical = finding.startsWith('DELINQUENT:') || finding.startsWith('LATE SUBMITTAL:') || finding.startsWith('CORRECTIVE ACTION')
+                  const isWarning = finding.startsWith('MINOR VARIANCE:') || finding.startsWith('DUE DATE') || finding.startsWith('REVISION') || finding.startsWith('RECEIPT') || finding.startsWith('GOV\'T REVIEW') || finding.startsWith('RECOMMENDED')
+                  return (
+                    <div
+                      key={i}
+                      className={`rounded-lg border px-4 py-3 text-xs leading-relaxed ${
+                        isCompliant ? 'bg-green-50 border-green-200 text-green-800' :
+                        isCritical ? 'bg-red-50 border-red-200 text-red-800' :
+                        isWarning ? 'bg-yellow-50 border-yellow-200 text-yellow-800' :
+                        'bg-gray-50 border-gray-200 text-gray-700'
+                      }`}
+                    >
+                      {finding}
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-xs text-gray-600 leading-relaxed">
+                  {notesRow.notes || 'No remarks available. Run "Compare to Contract" to generate AI-powered contractual guidance.'}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end mt-4 pt-3 border-t border-border">
+              <button
+                onClick={() => setNotesRow(null)}
+                className="px-4 py-2 bg-black/[0.03] hover:bg-black/[0.06] border border-border rounded-lg text-sm text-steel transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
