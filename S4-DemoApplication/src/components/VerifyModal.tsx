@@ -5,17 +5,21 @@ import { hashRow } from '../utils/hash'
 interface Props {
   row: CDRLRow
   anchor: AnchorRecord | undefined
+  onReseal: (row: CDRLRow) => Promise<void>
   onClose: () => void
 }
 
-export default function VerifyModal({ row, anchor, onClose }: Props) {
+export default function VerifyModal({ row, anchor, onReseal, onClose }: Props) {
   const [currentHash, setCurrentHash] = useState<string>('')
   const [verifying, setVerifying] = useState(true)
   const [match, setMatch] = useState<boolean | null>(null)
+  const [resealing, setResealing] = useState(false)
+  const [resealSuccess, setResealSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     async function verify() {
       setVerifying(true)
+      setResealSuccess(null)
       const hash = await hashRow(row as unknown as Record<string, unknown>)
       setCurrentHash(hash)
 
@@ -31,6 +35,17 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
     }
     verify()
   }, [row, anchor])
+
+  async function handleReseal() {
+    setResealing(true)
+    try {
+      await onReseal(row)
+      setMatch(true)
+      setResealSuccess(new Date().toLocaleString())
+    } finally {
+      setResealing(false)
+    }
+  }
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -67,7 +82,18 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
           </div>
         ) : (
           <div className="space-y-4">
-            {match !== null && (
+            {/* Re-seal success */}
+            {resealSuccess && (
+              <div className="p-4 rounded-lg border bg-green-500/10 border-green-500/30">
+                <div className="flex items-center gap-2 mb-1">
+                  <i className="fas fa-shield-alt text-green-500"></i>
+                  <span className="font-semibold text-green-600">Record re-sealed successfully. Trust restored.</span>
+                </div>
+                <p className="text-steel text-xs">New seal timestamp: {resealSuccess}</p>
+              </div>
+            )}
+
+            {match !== null && !resealSuccess && (
               <div className={`p-4 rounded-lg border ${
                 match
                   ? 'bg-green-500/10 border-green-500/30'
@@ -82,8 +108,27 @@ export default function VerifyModal({ row, anchor, onClose }: Props) {
                 <p className="text-steel text-xs">
                   {match
                     ? 'The current record hash matches the hash sealed on the XRP Ledger.'
-                    : 'The current record hash does NOT match the sealed hash. Investigate immediately.'}
+                    : 'The current record hash does NOT match the sealed hash. You can re-seal to create a new immutable version.'}
                 </p>
+                {match === false && (
+                  <button
+                    onClick={handleReseal}
+                    disabled={resealing}
+                    className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent/90 rounded-lg text-white text-sm font-semibold transition-all disabled:opacity-60"
+                  >
+                    {resealing ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin"></i>
+                        Re-Sealing…
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-shield-alt"></i>
+                        Re-Seal This Record
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             )}
 

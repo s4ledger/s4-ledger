@@ -32,6 +32,21 @@ export default function App() {
     }
   }, [anchors, anchoring])
 
+  const handleReseal = useCallback(async (row: CDRLRow) => {
+    setAnchoring(prev => new Set(prev).add(row.id))
+    try {
+      const hash = await hashRow(row as unknown as Record<string, unknown>)
+      const record = await anchorToXRPL(row.id, hash, row.title)
+      setAnchors(prev => ({ ...prev, [row.id]: record }))
+    } finally {
+      setAnchoring(prev => {
+        const next = new Set(prev)
+        next.delete(row.id)
+        return next
+      })
+    }
+  }, [])
+
   const handleAnchorAll = useCallback(async () => {
     const unanchored = data.filter(r => !anchors[r.id] && !anchoring.has(r.id))
     for (const row of unanchored) {
@@ -70,6 +85,7 @@ export default function App() {
       onAnchor={handleAnchor}
       onAnchorAll={handleAnchorAll}
       onVerify={handleVerify}
+      onReseal={handleReseal}
       onDataUpdate={setData}
     />
   )

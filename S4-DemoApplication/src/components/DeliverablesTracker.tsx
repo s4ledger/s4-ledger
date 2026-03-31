@@ -14,6 +14,7 @@ interface Props {
   onAnchor: (row: CDRLRow) => void
   onAnchorAll: () => void
   onVerify: (row: CDRLRow) => void
+  onReseal: (row: CDRLRow) => Promise<void>
   onDataUpdate: (data: CDRLRow[]) => void
 }
 
@@ -38,7 +39,7 @@ const columns = [
   { key: 'notes', label: 'NOTES', width: 'w-[12%]' },
 ]
 
-export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onDataUpdate }: Props) {
+export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate }: Props) {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red'>('all')
   const [sortCol, setSortCol] = useState<string | null>(null)
@@ -57,6 +58,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> | null>(null)
   const [showReport, setShowReport] = useState(false)
   const [hullFilter, setHullFilter] = useState<HullFilter>('all')
+  const [editedSinceSeal, setEditedSinceSeal] = useState<Set<string>>(new Set())
+  const [resealToast, setResealToast] = useState<string | null>(null)
 
   /* ─── Hull-filtered base data ──────────────────────────────── */
   const hullData = useMemo(() => {
@@ -169,6 +172,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   }
 
   function handleCellEdit(rowId: string, field: keyof CDRLRow, value: string) {
+    // Track that this sealed row was edited
+    if (anchors[rowId]) {
+      setEditedSinceSeal(prev => new Set(prev).add(rowId))
+    }
     const updated = data.map(r => {
       if (r.id !== rowId) return r
       if (field === 'calendarDaysToReview') {
@@ -184,6 +191,17 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     if (status === 'red') return 'row-red'
     if (status === 'yellow') return 'row-yellow'
     return 'row-green'
+  }
+
+  async function handleRowReseal(row: CDRLRow) {
+    await onReseal(row)
+    setEditedSinceSeal(prev => {
+      const next = new Set(prev)
+      next.delete(row.id)
+      return next
+    })
+    setResealToast(row.id)
+    setTimeout(() => setResealToast(null), 4000)
   }
 
   return (
@@ -538,10 +556,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     </td>
                     <td className="px-3 py-3 text-center">
                       {anchors[row.id] ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-500/15 text-green-400 rounded text-xs">
-                          <i className="fas fa-check-circle text-[10px]"></i>
-                          Verified
-                        </span>
+                        editedSinceSeal.has(row.id) ? (
+                          <button
+                            onClick={() => handleRowReseal(row)}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-accent/15 hover:bg-accent/25 border border-accent/30 text-accent rounded text-xs font-medium transition-all"
+                            title="Record edited since last seal — click to re-seal"
+                          >
+                            <i className="fas fa-shield-alt text-[10px]"></i>
+                            Re-Seal
+                          </button>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-500/15 text-green-400 rounded text-xs">
+                            <i className="fas fa-check-circle text-[10px]"></i>
+                            Verified
+                          </span>
+                        )
                       ) : (
                         <span className="text-steel/40 text-xs">—</span>
                       )}
@@ -591,6 +620,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         <VerifyModal
           row={verifyRow}
           anchor={anchors[verifyRow.id]}
+          onReseal={async (row) => {
+            await handleRowReseal(row)
+          }}
           onClose={() => setVerifyRow(null)}
         />
       )}
@@ -680,6 +712,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Re-seal success toast */}
+      {resealToast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
+          <div className="bg-white border border-green-500/30 shadow-xl rounded-card px-5 py-3.5 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center">
+              <i className="fas fa-shield-alt text-green-500 text-sm"></i>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-900">Record re-sealed successfully</p>
+              <p className="text-xs text-steel">Trust restored. {resealToast} now has a fresh Ledger Seal.</p>
             </div>
           </div>
         </div>
