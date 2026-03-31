@@ -1,6 +1,6 @@
 import { AnchorRecord } from '../types'
 
-const ANCHOR_API = '/api/demo/anchor'
+const ANCHOR_API = '/api/anchor'
 
 /**
  * Anchor a data hash to the XRPL via the S4 Ledger backend API.
@@ -38,7 +38,7 @@ export async function anchorToXRPL(
         ledgerIndex: xrpl.ledger_index || rec.ledger_index || 0,
         network: rec.network || 'XRPL',
         explorerUrl: xrpl.explorer_url || rec.explorer_url || null,
-        slsFee: result.fee_transfer ? result.fee_transfer.amount : null,
+        slsFee: result.fee_transfer ? String(result.fee_transfer.amount) : (rec.fee ? String(rec.fee) : null),
       }
     }
 
