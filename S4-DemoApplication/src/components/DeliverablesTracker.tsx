@@ -5,6 +5,7 @@ import AINextActionsPanel from './AINextActionsPanel'
 import AuditTrailSidebar from './AuditTrailSidebar'
 import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
+import MismatchModal from './MismatchModal'
 import ReportModal from './ReportModal'
 import ExternalSyncModal from './ExternalSyncModal'
 import NotificationsPanel from './NotificationsPanel'
@@ -57,6 +58,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [showAI, setShowAI] = useState(false)
   const [aiRow, setAiRow] = useState<CDRLRow | null>(null)
   const [verifyRow, setVerifyRow] = useState<CDRLRow | null>(null)
+  const [mismatchRow, setMismatchRow] = useState<CDRLRow | null>(null)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [comparing, setComparing] = useState(false)
   const [compareProgress, setCompareProgress] = useState(0)
@@ -885,7 +887,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           onReseal={async (row) => {
             await handleRowReseal(row)
           }}
+          onShowMismatch={() => {
+            setMismatchRow(verifyRow)
+            setVerifyRow(null)
+          }}
           onClose={() => setVerifyRow(null)}
+        />
+      )}
+      {mismatchRow && anchors[mismatchRow.id] && (
+        <MismatchModal
+          row={mismatchRow}
+          anchor={anchors[mismatchRow.id]}
+          onReseal={async (row) => {
+            await handleRowReseal(row)
+          }}
+          onClose={() => setMismatchRow(null)}
         />
       )}
       {showReport && (

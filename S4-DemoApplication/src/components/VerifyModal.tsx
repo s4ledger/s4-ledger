@@ -8,9 +8,10 @@ interface Props {
   anchor: AnchorRecord | undefined
   onReseal: (row: CDRLRow) => Promise<void>
   onClose: () => void
+  onShowMismatch?: () => void
 }
 
-export default function VerifyModal({ row, anchor, onReseal, onClose }: Props) {
+export default function VerifyModal({ row, anchor, onReseal, onClose, onShowMismatch }: Props) {
   const [currentHash, setCurrentHash] = useState<string>('')
   const [verifying, setVerifying] = useState(true)
   const [match, setMatch] = useState<boolean | null>(null)
@@ -114,23 +115,34 @@ export default function VerifyModal({ row, anchor, onReseal, onClose }: Props) {
                     : 'The current record hash does NOT match the sealed hash. You can re-seal to create a new immutable version.'}
                 </p>
                 {match === false && (
-                  <button
-                    onClick={handleReseal}
-                    disabled={resealing}
-                    className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent/90 rounded-lg text-white text-sm font-semibold transition-all disabled:opacity-60"
-                  >
-                    {resealing ? (
-                      <>
-                        <i className="fas fa-spinner fa-spin"></i>
-                        Re-Sealing…
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-shield-alt"></i>
-                        Re-Seal This Record
-                      </>
+                  <div className="flex items-center gap-2 mt-3">
+                    {onShowMismatch && (
+                      <button
+                        onClick={onShowMismatch}
+                        className="flex items-center gap-2 px-4 py-2.5 bg-red-500 hover:bg-red-600 rounded-lg text-white text-sm font-semibold transition-all"
+                      >
+                        <i className="fas fa-columns"></i>
+                        View Detailed Comparison
+                      </button>
                     )}
-                  </button>
+                    <button
+                      onClick={handleReseal}
+                      disabled={resealing}
+                      className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent/90 rounded-lg text-white text-sm font-semibold transition-all disabled:opacity-60"
+                    >
+                      {resealing ? (
+                        <>
+                          <i className="fas fa-spinner fa-spin"></i>
+                          Re-Sealing…
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-shield-alt"></i>
+                          Re-Seal This Record
+                        </>
+                      )}
+                    </button>
+                  </div>
                 )}
               </div>
             )}

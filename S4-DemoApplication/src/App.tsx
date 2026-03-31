@@ -4,6 +4,7 @@ import { sampleData } from './data/sampleData'
 import { hashRow } from './utils/hash'
 import { anchorToXRPL } from './utils/xrpl'
 import { recordSeal, recordReseal } from './utils/auditTrail'
+import { storeSealed } from './utils/sealedVault'
 import CACPopup from './components/CACPopup'
 import WelcomeCard from './components/WelcomeCard'
 import RoleSelector from './components/RoleSelector'
@@ -24,6 +25,7 @@ export default function App() {
       const hash = await hashRow(row as unknown as Record<string, unknown>)
       const record = await anchorToXRPL(row.id, hash, row.title)
       setAnchors(prev => ({ ...prev, [row.id]: record }))
+      storeSealed(row.id, row)
       recordSeal(row, record)
     } finally {
       setAnchoring(prev => {
@@ -40,6 +42,7 @@ export default function App() {
       const hash = await hashRow(row as unknown as Record<string, unknown>)
       const record = await anchorToXRPL(row.id, hash, row.title)
       setAnchors(prev => ({ ...prev, [row.id]: record }))
+      storeSealed(row.id, row)
       recordReseal(row, record)
     } finally {
       setAnchoring(prev => {
