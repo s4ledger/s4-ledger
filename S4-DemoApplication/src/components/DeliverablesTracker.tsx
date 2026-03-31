@@ -45,6 +45,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [hoveredDI, setHoveredDI] = useState<string | null>(null)
   const [rowFindings, setRowFindings] = useState<Record<string, string[]>>({})
   const [notesRow, setNotesRow] = useState<CDRLRow | null>(null)
+  const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> | null>(null)
 
   const filtered = useMemo(() => {
     let rows = [...data]
@@ -82,6 +83,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     setCompareProgress(0)
     setCompareSummary(null)
 
+    // Save original notes/status before overwriting
+    const origMap: Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> = {}
+    data.forEach(r => { origMap[r.id] = { notes: r.notes, status: r.status } })
+    setOriginalNotes(origMap)
+
     const refs: Record<string, string> = {}
     const findingsMap: Record<string, string[]> = {}
     const updatedData = [...data]
@@ -112,6 +118,32 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       setSortCol(key)
       setSortAsc(true)
     }
+  }
+
+  function handleRestoreNotes() {
+    if (!originalNotes) return
+    const restored = data.map(r => ({
+      ...r,
+      notes: originalNotes[r.id]?.notes ?? r.notes,
+      status: originalNotes[r.id]?.status ?? r.status,
+    }))
+    onDataUpdate(restored)
+    setOriginalNotes(null)
+    setCompareSummary(null)
+    setRowFindings({})
+    setContractRefs({})
+  }
+
+  function handleCellEdit(rowId: string, field: keyof CDRLRow, value: string) {
+    const updated = data.map(r => {
+      if (r.id !== rowId) return r
+      if (field === 'calendarDaysToReview') {
+        const num = value.trim() === '' || value.trim() === '—' ? null : parseInt(value, 10)
+        return { ...r, [field]: isNaN(num as number) ? null : num }
+      }
+      return { ...r, [field]: value }
+    })
+    onDataUpdate(updated)
   }
 
   function rowClass(status: string) {
@@ -218,12 +250,23 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setCompareSummary(null)}
-              className="text-steel hover:text-gray-900 transition-colors text-xs px-2"
-            >
-              <i className="fas fa-times"></i>
-            </button>
+            <div className="flex items-center gap-2">
+              {originalNotes && (
+                <button
+                  onClick={handleRestoreNotes}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-steel/10 hover:bg-steel/20 border border-steel/20 rounded-lg text-steel text-xs font-medium transition-all"
+                >
+                  <i className="fas fa-undo text-[10px]"></i>
+                  Restore Original Notes
+                </button>
+              )}
+              <button
+                onClick={() => setCompareSummary(null)}
+                className="text-steel hover:text-gray-900 transition-colors text-xs px-2"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -309,22 +352,34 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     className={`${rowClass(row.status)} border-b border-border/50 hover:bg-black/[0.03] transition-colors`}
                   >
                     <td className="px-3 py-3 text-steel font-mono text-xs">{idx + 1}</td>
-                    <td className="px-3 py-3 font-medium text-gray-900">{row.title}</td>
+                    <td
+                      className="px-3 py-3 font-medium text-gray-900"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={e => handleCellEdit(row.id, 'title', e.currentTarget.textContent || '')}
+                    >{row.title}</td>
                     <td
                       className="px-3 py-3 font-mono text-xs text-steel relative"
                       onMouseEnter={() => setHoveredDI(row.id)}
                       onMouseLeave={() => setHoveredDI(null)}
                     >
-                      <span className="cursor-help border-b border-dashed border-steel/40">
+                      <span
+                        className="cursor-help border-b border-dashed border-steel/40"
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={e => handleCellEdit(row.id, 'diNumber', e.currentTarget.textContent || '')}
+                      >
                         {row.diNumber}
                       </span>
                       {hoveredDI === row.id && (contractRefs[row.id] || contractRequirements[row.id]) && (
-                        <div className="absolute left-0 bottom-full mb-2 z-50 w-72 bg-[#1d1d1f] text-white text-xs rounded-lg p-3 shadow-xl pointer-events-none">
+                        <div className={`absolute left-0 z-50 w-72 bg-white border border-border text-gray-900 text-xs rounded-lg p-3 shadow-xl pointer-events-none ${
+                          idx < 2 ? 'top-full mt-2' : 'bottom-full mb-2'
+                        }`}>
                           <p className="font-semibold text-accent mb-1">
                             <i className="fas fa-file-contract mr-1"></i>
                             Contract Reference
                           </p>
-                          <p className="leading-relaxed">
+                          <p className="leading-relaxed text-gray-700">
                             {contractRefs[row.id] || contractRequirements[row.id]?.summaryRule || 'No reference available'}
                           </p>
                           {contractRequirements[row.id] && (
@@ -335,16 +390,42 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                         </div>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-xs">{row.contractDueFinish}</td>
-                    <td className="px-3 py-3 text-xs">{row.calculatedDueDate}</td>
-                    <td className="px-3 py-3 text-xs text-steel">{row.submittalGuidance}</td>
-                    <td className="px-3 py-3 text-xs">{row.actualSubmissionDate || '—'}</td>
-                    <td className={`px-3 py-3 text-xs text-center font-semibold ${row.received === 'Yes' ? 'text-green-400' : 'text-red-400'}`}>
-                      {row.received}
-                    </td>
-                    <td className="px-3 py-3 text-xs text-center">
-                      {row.calendarDaysToReview !== null ? row.calendarDaysToReview : '—'}
-                    </td>
+                    <td
+                      className="px-3 py-3 text-xs"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={e => handleCellEdit(row.id, 'contractDueFinish', e.currentTarget.textContent || '')}
+                    >{row.contractDueFinish}</td>
+                    <td
+                      className="px-3 py-3 text-xs"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={e => handleCellEdit(row.id, 'calculatedDueDate', e.currentTarget.textContent || '')}
+                    >{row.calculatedDueDate}</td>
+                    <td
+                      className="px-3 py-3 text-xs text-steel"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={e => handleCellEdit(row.id, 'submittalGuidance', e.currentTarget.textContent || '')}
+                    >{row.submittalGuidance}</td>
+                    <td
+                      className="px-3 py-3 text-xs"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={e => handleCellEdit(row.id, 'actualSubmissionDate', e.currentTarget.textContent || '')}
+                    >{row.actualSubmissionDate || '—'}</td>
+                    <td
+                      className={`px-3 py-3 text-xs text-center font-semibold ${row.received === 'Yes' ? 'text-green-400' : 'text-red-400'}`}
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={e => handleCellEdit(row.id, 'received', e.currentTarget.textContent || '')}
+                    >{row.received}</td>
+                    <td
+                      className="px-3 py-3 text-xs text-center"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={e => handleCellEdit(row.id, 'calendarDaysToReview', e.currentTarget.textContent || '')}
+                    >{row.calendarDaysToReview !== null ? row.calendarDaysToReview : '—'}</td>
                     <td
                       className="px-3 py-3 text-xs text-steel max-w-[180px] cursor-pointer group"
                       onClick={() => setNotesRow(row)}
