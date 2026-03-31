@@ -1,0 +1,28 @@
+{
+  "name": "s4-demo-application",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "S4 Ledger — Deliverables Tracker (Standalone Application)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.7.0",
+    "vite": "^6.2.0"
+  }
+}

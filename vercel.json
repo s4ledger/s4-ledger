@@ -5,7 +5,7 @@
       "maxDuration": 30
     }
   },
-  "buildCommand": "cd prod-app && npm install && npm run build && cd ../demo-app && npm install && npm run build && cd .. && cp demo-app/dist/index.html demo-app/index.html && rm -f demo-app/index.monolith.html demo-app/demo.html prod-app/index.html",
+  "buildCommand": "bash build.sh",
   "cleanUrls": true,
   "headers": [
     {
@@ -77,6 +77,15 @@
     },
     {
       "source": "/demo-app/dist/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/S4-DemoApplication/dist/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -524,6 +533,14 @@
     {
       "source": "/demo.html",
       "destination": "/prod-app/demo.html"
+    },
+    {
+      "source": "/S4-DemoApplication",
+      "destination": "/S4-DemoApplication/dist/index.html"
+    },
+    {
+      "source": "/S4-DemoApplication/",
+      "destination": "/S4-DemoApplication/dist/index.html"
     },
     {
       "source": "/demo-app",

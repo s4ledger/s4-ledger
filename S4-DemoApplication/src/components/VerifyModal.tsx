@@ -1,0 +1,148 @@
+import { useState, useEffect } from 'react'
+import { CDRLRow, AnchorRecord } from '../types'
+import { hashRow } from '../utils/hash'
+
+interface Props {
+  row: CDRLRow
+  anchor: AnchorRecord | undefined
+  onClose: () => void
+}
+
+export default function VerifyModal({ row, anchor, onClose }: Props) {
+  const [currentHash, setCurrentHash] = useState<string>('')
+  const [verifying, setVerifying] = useState(true)
+  const [match, setMatch] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    async function verify() {
+      setVerifying(true)
+      const hash = await hashRow(row as unknown as Record<string, unknown>)
+      setCurrentHash(hash)
+
+      // Simulate verification delay
+      await new Promise(r => setTimeout(r, 1000))
+
+      if (anchor) {
+        setMatch(hash === anchor.hash)
+      } else {
+        setMatch(null)
+      }
+      setVerifying(false)
+    }
+    verify()
+  }, [row, anchor])
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div
+        className="bg-surface border border-border rounded-card p-6 max-w-xl w-full mx-4 animate-slideUp"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+              match === null ? 'bg-steel/20' : match ? 'bg-green-500/20' : 'bg-red-500/20'
+            }`}>
+              <i className={`fas ${
+                verifying ? 'fa-spinner fa-spin text-steel' :
+                match ? 'fa-check-circle text-green-400' :
+                match === false ? 'fa-exclamation-triangle text-red-400' :
+                'fa-question-circle text-steel'
+              }`}></i>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Integrity Verification</h3>
+              <p className="text-steel text-xs">{row.id} — {row.title}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-steel hover:text-white transition-colors">
+            <i className="fas fa-times"></i>
+          </button>
+        </div>
+
+        {verifying ? (
+          <div className="flex items-center justify-center py-8 gap-3 text-steel">
+            <i className="fas fa-spinner fa-spin"></i>
+            <span>Computing hash and verifying against blockchain…</span>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {match !== null && (
+              <div className={`p-4 rounded-lg border ${
+                match
+                  ? 'bg-green-500/10 border-green-500/30'
+                  : 'bg-red-500/10 border-red-500/30'
+              }`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <i className={`fas ${match ? 'fa-check-circle text-green-400' : 'fa-exclamation-triangle text-red-400'}`}></i>
+                  <span className={`font-semibold ${match ? 'text-green-400' : 'text-red-400'}`}>
+                    {match ? 'VERIFIED — Record is tamper-free' : 'MISMATCH — Record may have been altered'}
+                  </span>
+                </div>
+                <p className="text-steel text-xs">
+                  {match
+                    ? 'The current record hash matches the hash anchored on the XRP Ledger.'
+                    : 'The current record hash does NOT match the anchored hash. Investigate immediately.'}
+                </p>
+              </div>
+            )}
+
+            {!anchor && (
+              <div className="p-4 rounded-lg border bg-yellow-500/10 border-yellow-500/30">
+                <div className="flex items-center gap-2">
+                  <i className="fas fa-info-circle text-yellow-400"></i>
+                  <span className="font-semibold text-yellow-400">Not Yet Anchored</span>
+                </div>
+                <p className="text-steel text-xs mt-1">
+                  This record has not been anchored to the blockchain. Anchor it first to enable verification.
+                </p>
+              </div>
+            )}
+
+            <div className="bg-black/30 rounded-lg p-4 space-y-3 text-xs font-mono">
+              <div>
+                <p className="text-steel mb-1">Current SHA-256 Hash:</p>
+                <p className="text-white break-all">{currentHash}</p>
+              </div>
+              {anchor && (
+                <>
+                  <div>
+                    <p className="text-steel mb-1">Anchored Hash:</p>
+                    <p className="text-white break-all">{anchor.hash}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-steel mb-1">TX Hash:</p>
+                      <p className="text-accent break-all">{anchor.txHash}</p>
+                    </div>
+                    <div>
+                      <p className="text-steel mb-1">Ledger Index:</p>
+                      <p className="text-white">{anchor.ledgerIndex.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-steel mb-1">Network:</p>
+                      <p className="text-white">{anchor.network}</p>
+                    </div>
+                    <div>
+                      <p className="text-steel mb-1">Anchored At:</p>
+                      <p className="text-white">{new Date(anchor.timestamp).toLocaleString()}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-border rounded-lg text-sm text-steel transition-all"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
