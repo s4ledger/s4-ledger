@@ -6,10 +6,14 @@ import AuditTrailSidebar from './AuditTrailSidebar'
 import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
 import ReportModal from './ReportModal'
+import ExternalSyncModal from './ExternalSyncModal'
+import NotificationsPanel from './NotificationsPanel'
+import EmailComposer from './EmailComposer'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
-import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
+import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, recordExternalFeed, getAuditLog } from '../utils/auditTrail'
+import { simulateExternalSync, SyncNotification, SyncStatus } from '../utils/externalSync'
 
 interface Props {
   data: CDRLRow[]
@@ -71,6 +75,22 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [auditRowTitle, setAuditRowTitle] = useState<string | undefined>(undefined)
   const [auditVersion, setAuditVersion] = useState(0) // bump to force re-render
   const seededRef = useRef(false)
+
+  /* ─── External Sync & Notifications state ──────────────────── */
+  const [showSync, setShowSync] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [notifications, setNotifications] = useState<SyncNotification[]>([])
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    connected: true,
+    lastSync: null,
+    totalSyncs: 0,
+    changesSynced: 0,
+    isOnline: true,
+  })
+  const [autoSyncEnabled, setAutoSyncEnabled] = useState(true)
+  const [syncToast, setSyncToast] = useState<string | null>(null)
+  const [emailNotification, setEmailNotification] = useState<SyncNotification | null>(null)
+  const autoSyncRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   /* ─── Hull-filtered base data ──────────────────────────────── */
   const hullData = useMemo(() => {
@@ -204,6 +224,50 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     refreshAIInsights()
   }, [refreshAIInsights])
 
+  /* ─── External Sync Handler ────────────────────────────── */
+  const handleExternalSync = useCallback(() => {
+    if (!syncStatus.isOnline) return
+    const { changes, notifications: newNotifs, updatedRows } = simulateExternalSync(data, role)
+    // Record each change in audit trail
+    changes.forEach(c => {
+      const row = data.find(r => r.id === c.rowId)
+      if (row) recordExternalFeed(row, c.source, `${c.field}: ${c.newValue.slice(0, 60)}`)
+    })
+    onDataUpdate(updatedRows)
+    setNotifications(prev => [...newNotifs, ...prev])
+    setSyncStatus(prev => ({
+      ...prev,
+      lastSync: new Date().toISOString(),
+      totalSyncs: prev.totalSyncs + 1,
+      changesSynced: prev.changesSynced + changes.length,
+    }))
+    setAuditVersion(v => v + 1)
+    setSyncToast(`${changes.length} update${changes.length !== 1 ? 's' : ''} synced from NSERC IDE`)
+    setTimeout(() => setSyncToast(null), 4000)
+  }, [data, role, syncStatus.isOnline, onDataUpdate])
+
+  /* ─── Auto-sync interval (5 minutes) ──────────────────── */
+  useEffect(() => {
+    if (autoSyncEnabled && syncStatus.isOnline) {
+      autoSyncRef.current = setInterval(handleExternalSync, 5 * 60 * 1000)
+    }
+    return () => {
+      if (autoSyncRef.current) clearInterval(autoSyncRef.current)
+    }
+  }, [autoSyncEnabled, syncStatus.isOnline, handleExternalSync])
+
+  function handleToggleOffline() {
+    setSyncStatus(prev => ({ ...prev, isOnline: !prev.isOnline }))
+  }
+
+  function handleMarkNotifRead(id: string) {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
+  }
+
+  function handleMarkAllRead() {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+  }
+
   function handleUpdateNotes(rowId: string, notes: string) {
     const row = data.find(r => r.id === rowId)
     if (row) recordAIRemarkUpdate(row, notes)
@@ -326,6 +390,33 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               <i className="fas fa-history"></i>
               Audit Trail
             </button>
+            <button
+              onClick={() => setShowSync(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 rounded-lg text-purple-600 text-sm font-medium transition-all"
+            >
+              <i className="fas fa-database"></i>
+              Sync
+              {syncStatus.lastSync && (
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              )}
+            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`flex items-center justify-center w-9 h-9 border rounded-lg text-sm transition-all ${
+                  showNotifications
+                    ? 'bg-accent text-white border-accent'
+                    : 'bg-black/[0.04] hover:bg-black/[0.08] border-border text-steel'
+                }`}
+              >
+                <i className="fas fa-bell"></i>
+              </button>
+              {notifications.filter(n => !n.read).length > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center px-1 bg-red-500 text-white text-[10px] font-bold rounded-full">
+                  {notifications.filter(n => !n.read).length}
+                </span>
+              )}
+            </div>
             <button
               onClick={() => setShowReport(true)}
               className="flex items-center gap-2 px-4 py-2 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium transition-all"
@@ -768,6 +859,38 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         />
       )}
 
+      {/* External Sync Modal */}
+      {showSync && (
+        <ExternalSyncModal
+          syncStatus={syncStatus}
+          autoSyncEnabled={autoSyncEnabled}
+          onToggleAutoSync={() => setAutoSyncEnabled(prev => !prev)}
+          onManualSync={handleExternalSync}
+          onToggleOffline={handleToggleOffline}
+          onClose={() => setShowSync(false)}
+        />
+      )}
+
+      {/* Notifications Panel */}
+      {showNotifications && (
+        <NotificationsPanel
+          notifications={notifications}
+          onMarkRead={handleMarkNotifRead}
+          onMarkAllRead={handleMarkAllRead}
+          onSendEmail={n => { setEmailNotification(n); setShowNotifications(false) }}
+          onClose={() => setShowNotifications(false)}
+        />
+      )}
+
+      {/* Email Composer */}
+      {emailNotification && (
+        <EmailComposer
+          notification={emailNotification}
+          role={role}
+          onClose={() => setEmailNotification(null)}
+        />
+      )}
+
       {/* Notes Detail Popup */}
       {notesRow && (
         <div className="modal-backdrop" onClick={() => setNotesRow(null)}>
@@ -857,6 +980,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <div>
               <p className="text-sm font-semibold text-gray-900">Record re-sealed successfully</p>
               <p className="text-xs text-steel">Trust restored. {resealToast} now has a fresh Ledger Seal.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sync success toast */}
+      {syncToast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
+          <div className="bg-white border border-purple-500/30 shadow-xl rounded-card px-5 py-3.5 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center">
+              <i className="fas fa-database text-purple-500 text-sm"></i>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-900">External Sync Complete</p>
+              <p className="text-xs text-steel">{syncToast}</p>
             </div>
           </div>
         </div>

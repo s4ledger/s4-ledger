@@ -645,7 +645,8 @@ export function generateWeeklyReport(
     doc.setFontSize(8)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(...TEXT)
-    const auditLine = `Total Seals: ${auditSummary.totalSeals}  ·  Verifications: ${auditSummary.totalVerifications}  ·  Edits Tracked: ${auditSummary.totalEdits}  ·  Trust Status: ${auditSummary.trustStatus}`
+    const externalFeeds = getAuditLog().filter(e => rowIds.includes(e.rowId) && e.type === 'External Data Feed').length
+    const auditLine = `Total Seals: ${auditSummary.totalSeals}  ·  Verifications: ${auditSummary.totalVerifications}  ·  Edits Tracked: ${auditSummary.totalEdits}  ·  External Syncs: ${externalFeeds}  ·  Trust Status: ${auditSummary.trustStatus}`
     doc.text(auditLine, M + 4, y + 6.5)
     y += 14
 
