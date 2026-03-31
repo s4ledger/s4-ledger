@@ -1,11 +1,13 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { CDRLRow, UserRole, AnchorRecord } from '../types'
 import AIAssistModal from './AIAssistModal'
+import AINextActionsPanel from './AINextActionsPanel'
 import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
 import ReportModal from './ReportModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
+import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 
 interface Props {
   data: CDRLRow[]
@@ -60,6 +62,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [hullFilter, setHullFilter] = useState<HullFilter>('all')
   const [editedSinceSeal, setEditedSinceSeal] = useState<Set<string>>(new Set())
   const [resealToast, setResealToast] = useState<string | null>(null)
+  const [showAIPanel, setShowAIPanel] = useState(false)
+  const [aiInsights, setAiInsights] = useState<Record<string, AIRowInsight>>({})
 
   /* ─── Hull-filtered base data ──────────────────────────────── */
   const hullData = useMemo(() => {
@@ -157,6 +161,25 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }
   }
 
+  /* ─── Generate AI insights for all rows ───────────────── */
+  const refreshAIInsights = useCallback(() => {
+    const insights: Record<string, AIRowInsight> = {}
+    data.forEach(r => {
+      insights[r.id] = analyzeRow(r, anchors, editedSinceSeal)
+    })
+    setAiInsights(insights)
+  }, [data, anchors, editedSinceSeal])
+
+  /* ─── Auto-generate insights on load and data change ──── */
+  useEffect(() => {
+    refreshAIInsights()
+  }, [refreshAIInsights])
+
+  function handleUpdateNotes(rowId: string, notes: string) {
+    const updated = data.map(r => r.id === rowId ? { ...r, notes } : r)
+    onDataUpdate(updated)
+  }
+
   function handleRestoreNotes() {
     if (!originalNotes) return
     const restored = data.map(r => ({
@@ -239,7 +262,18 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               className="flex items-center gap-2 px-4 py-2 bg-accent/15 hover:bg-accent/25 border border-accent/30 rounded-lg text-accent text-sm font-medium transition-all"
             >
               <i className="fas fa-brain"></i>
-              AI Assist
+              AI Insights
+            </button>
+            <button
+              onClick={() => setShowAIPanel(!showAIPanel)}
+              className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
+                showAIPanel
+                  ? 'bg-accent text-white border-accent'
+                  : 'bg-accent/15 hover:bg-accent/25 border-accent/30 text-accent'
+              }`}
+            >
+              <i className="fas fa-bolt"></i>
+              Next Actions
             </button>
             <button
               onClick={() => setShowReport(true)}
@@ -551,8 +585,18 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       onClick={() => setNotesRow(row)}
                     >
                       <div className="truncate group-hover:text-accent transition-colors" title="Click to view full remarks">
-                        {row.notes || '—'}
+                        {aiInsights[row.id]?.conciseNote || row.notes || '—'}
                       </div>
+                      {aiInsights[row.id] && (
+                        <span className={`inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded ${
+                          aiInsights[row.id].priority === 'Critical' ? 'bg-red-500/15 text-red-500' :
+                          aiInsights[row.id].priority === 'High' ? 'bg-orange-500/15 text-orange-500' :
+                          aiInsights[row.id].priority === 'Medium' ? 'bg-yellow-500/15 text-yellow-500' :
+                          'bg-green-500/15 text-green-500'
+                        }`}>
+                          {aiInsights[row.id].priority}
+                        </span>
+                      )}
                     </td>
                     <td className="px-3 py-3 text-center">
                       {anchors[row.id] ? (
@@ -613,9 +657,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         <AIAssistModal
           row={aiRow}
           allData={data}
+          anchors={anchors}
+          editedSinceSeal={editedSinceSeal}
+          onUpdateNotes={handleUpdateNotes}
           onClose={() => { setShowAI(false); setAiRow(null) }}
         />
       )}
+
+      {/* AI Next Actions Panel */}
+      <AINextActionsPanel
+        data={data}
+        anchors={anchors}
+        editedSinceSeal={editedSinceSeal}
+        visible={showAIPanel}
+        onClose={() => setShowAIPanel(false)}
+      />
       {verifyRow && (
         <VerifyModal
           row={verifyRow}
@@ -634,6 +690,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           rowFindings={rowFindings}
           contractRefs={contractRefs}
           hullFilter={hullFilter === 'all' ? undefined : `Hull ${hullFilter}`}
+          aiInsights={aiInsights}
           onClose={() => setShowReport(false)}
         />
       )}

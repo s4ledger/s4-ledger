@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CDRLRow, AnchorRecord, UserRole } from '../types'
 import { generateWeeklyReport, WeeklyReportResult } from '../utils/pdf'
+import { AIRowInsight } from '../utils/aiAnalysis'
 
 interface Props {
   data: CDRLRow[]
@@ -9,10 +10,11 @@ interface Props {
   rowFindings: Record<string, string[]>
   contractRefs: Record<string, string>
   hullFilter?: string
+  aiInsights?: Record<string, AIRowInsight>
   onClose: () => void
 }
 
-export default function ReportModal({ data, anchors, role, rowFindings, contractRefs, hullFilter, onClose }: Props) {
+export default function ReportModal({ data, anchors, role, rowFindings, contractRefs, hullFilter, aiInsights, onClose }: Props) {
   const [report, setReport] = useState<WeeklyReportResult | null>(null)
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -44,7 +46,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
       await new Promise(r => setTimeout(r, 400 + Math.random() * 300))
     }
 
-    const result = generateWeeklyReport(data, anchors, role, rowFindings, contractRefs, hullFilter)
+    const result = generateWeeklyReport(data, anchors, role, rowFindings, contractRefs, hullFilter, aiInsights)
     setReport(result)
     setGenerating(false)
   }

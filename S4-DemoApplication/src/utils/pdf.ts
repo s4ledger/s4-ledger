@@ -2,6 +2,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { CDRLRow, AnchorRecord, UserRole } from '../types'
 import { contractRequirements } from '../data/contractData'
+import { AIRowInsight } from './aiAnalysis'
 
 /* ─── Color palette ──────────────────────────────────────────────── */
 const ACCENT: [number, number, number] = [0, 122, 255]
@@ -187,6 +188,7 @@ export function generateWeeklyReport(
   rowFindings: Record<string, string[]>,
   contractRefs: Record<string, string>,
   hullFilter?: string,
+  aiInsights?: Record<string, AIRowInsight>,
 ): WeeklyReportResult {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
   const now = new Date()
@@ -568,6 +570,59 @@ export function generateWeeklyReport(
     W - 2 * M - 8,
   )
   doc.text(effText, M + 4, y + 11)
+
+  /* ═══ AI Next Actions Section ══════════════════════════════════ */
+  if (aiInsights && Object.keys(aiInsights).length > 0) {
+    y += 38
+    if (y > 140) { doc.addPage(); addPageHeader(doc, 'S4 Systems DRL Weekly Status Report', dateStr, role, W); y = 28 }
+
+    y = sectionHeading(doc, y, 'AI-PRIORITIZED NEXT ACTIONS')
+
+    // Gather and sort insights by priority
+    const priorityOrder: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 }
+    const sortedInsights = Object.entries(aiInsights)
+      .map(([id, ins]) => ({ id, ...ins }))
+      .sort((a, b) => (priorityOrder[a.priority] ?? 3) - (priorityOrder[b.priority] ?? 3))
+      .slice(0, 8) // top 8 for the report
+
+    const aiTableBody = sortedInsights.map(ins => {
+      const row = data.find(r => r.id === ins.id)
+      return [
+        ins.id,
+        row?.title?.slice(0, 35) ?? '',
+        ins.priority,
+        ins.nextActions[0]?.action?.slice(0, 60) ?? '',
+        ins.nextActions[0]?.dueDate ?? '',
+      ]
+    })
+
+    autoTable(doc, {
+      startY: y,
+      head: [['CDRL ID', 'Title', 'Priority', 'Next Action', 'Target Date']],
+      body: aiTableBody,
+      theme: 'grid',
+      styles: { fontSize: 7, cellPadding: 2, textColor: TEXT },
+      headStyles: { fillColor: ACCENT, textColor: WHITE, fontStyle: 'bold', fontSize: 7 },
+      columnStyles: {
+        0: { cellWidth: 22 },
+        1: { cellWidth: 50 },
+        2: { cellWidth: 22 },
+        3: { cellWidth: 130 },
+        4: { cellWidth: 30 },
+      },
+      didParseCell(hookData) {
+        if (hookData.section === 'body' && hookData.column.index === 2) {
+          const val = String(hookData.cell.raw)
+          if (val === 'Critical') { hookData.cell.styles.textColor = RED; hookData.cell.styles.fontStyle = 'bold' }
+          else if (val === 'High') { hookData.cell.styles.textColor = [234, 125, 0]; hookData.cell.styles.fontStyle = 'bold' }
+          else if (val === 'Medium') { hookData.cell.styles.textColor = YELLOW; hookData.cell.styles.fontStyle = 'bold' }
+          else { hookData.cell.styles.textColor = GREEN }
+        }
+      },
+      margin: { left: M, right: M },
+    })
+    y = getY(doc) + 6
+  }
 
   /* ═══ Bar chart visualization ══════════════════════════════════ */
   y += 38
