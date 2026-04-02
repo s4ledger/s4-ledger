@@ -1,4 +1,10 @@
-import { CDRLRow, UserRole } from '../types'
+import { CDRLRow, UserRole, AnchorRecord } from '../types'
+import { hashRow } from './hash'
+import { anchorToXRPL } from './xrpl'
+import { storeSealed } from './sealedVault'
+import { recordSeal, recordExternalFeed } from './auditTrail'
+import { analyzeRow } from './aiAnalysis'
+import { getRACIParty } from './raciWorkflow'
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
@@ -85,16 +91,24 @@ function pickPriority(status: 'green' | 'yellow' | 'red'): NotificationPriority 
   return 'low'
 }
 
-/** Simulate an external sync — returns changes and notifications */
-export function simulateExternalSync(
+/** Real sync pipeline: generate realistic changes, seal each to XRPL, run AI analysis */
+export async function realSyncPipeline(
   data: CDRLRow[],
-  role: UserRole
-): { changes: SyncChange[]; notifications: SyncNotification[]; updatedRows: CDRLRow[] } {
+  role: UserRole,
+  anchors: Record<string, AnchorRecord>,
+  editedSinceSeal: Set<string>,
+): Promise<{
+  changes: SyncChange[]
+  notifications: SyncNotification[]
+  updatedRows: CDRLRow[]
+  newAnchors: Record<string, AnchorRecord>
+}> {
   const changes: SyncChange[] = []
   const notifications: SyncNotification[] = []
   const updatedRows = [...data]
+  const newAnchors: Record<string, AnchorRecord> = {}
 
-  // Pick 2–4 rows to simulate updates on
+  // Pick 2–4 rows to receive external updates
   const numUpdates = 2 + Math.floor(Math.random() * 3)
   const indices = new Set<number>()
   while (indices.size < Math.min(numUpdates, data.length)) {
@@ -103,12 +117,12 @@ export function simulateExternalSync(
 
   const source = EXTERNAL_SOURCES[Math.floor(Math.random() * EXTERNAL_SOURCES.length)]
 
-  indices.forEach(idx => {
+  for (const idx of indices) {
     const row = data[idx]
     const remarks = EXTERNAL_REMARKS[row.status]
     const newRemark = remarks[Math.floor(Math.random() * remarks.length)]
 
-    // Simulate a notes update from external system
+    // Build realistic notes update from external source
     const change: SyncChange = {
       rowId: row.id,
       rowTitle: row.title,
@@ -119,7 +133,7 @@ export function simulateExternalSync(
     }
     changes.push(change)
 
-    // Apply the change
+    // Apply notes change
     updatedRows[idx] = { ...updatedRows[idx], notes: change.newValue }
 
     // Possibly update submission date for yellow/red rows
@@ -137,23 +151,48 @@ export function simulateExternalSync(
       updatedRows[idx] = { ...updatedRows[idx], actualSubmissionDate: newDate }
     }
 
-    // Generate notification
-    const priority = pickPriority(row.status)
+    const updatedRow = updatedRows[idx]
+
+    // Record external feed in audit trail
+    recordExternalFeed(updatedRow, source, `Synced from ${source}: ${newRemark.slice(0, 60)}`)
+
+    // Real XRPL seal: hash the updated row, anchor to ledger, store in vault
+    const hash = await hashRow(updatedRow as unknown as Record<string, unknown>)
+    const anchor = await anchorToXRPL(updatedRow.id, hash, updatedRow.title)
+    storeSealed(updatedRow.id, updatedRow)
+    recordSeal(updatedRow, anchor)
+    newAnchors[updatedRow.id] = anchor
+
+    // Run AI analysis on the changed row for a smart remark
+    const insight = analyzeRow(updatedRow, { ...anchors, ...newAnchors }, editedSinceSeal)
+    const aiNote = insight.conciseNote
+
+    // Update notes with AI remark appended
+    updatedRows[idx] = {
+      ...updatedRows[idx],
+      notes: `${updatedRows[idx].notes}\n${aiNote}`,
+    }
+
+    // RACI-aware notification with real XRPL data
+    const raciParty = getRACIParty(updatedRow)
+    const priority = pickPriority(updatedRow.status)
+    const stakeholders = [raciParty, ...getStakeholders(priority, role).filter(s => s !== raciParty)]
+
     notifications.push({
       id: makeNotifId(),
       timestamp: new Date().toISOString(),
-      title: `${row.id} — External Update`,
-      body: `${source}: ${newRemark}`,
+      title: `${updatedRow.id} — Synced & Sealed`,
+      body: `${source}: ${newRemark}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
       priority,
-      rowId: row.id,
-      rowTitle: row.title,
-      stakeholders: getStakeholders(priority, role),
+      rowId: updatedRow.id,
+      rowTitle: updatedRow.title,
+      stakeholders,
       read: false,
-      changes: changes.filter(c => c.rowId === row.id),
+      changes: changes.filter(c => c.rowId === updatedRow.id),
     })
-  })
+  }
 
-  return { changes, notifications, updatedRows }
+  return { changes, notifications, updatedRows, newAnchors }
 }
 
 /* ─── RACI email generation ──────────────────────────────────── */

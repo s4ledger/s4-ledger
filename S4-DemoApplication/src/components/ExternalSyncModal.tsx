@@ -5,7 +5,7 @@ interface Props {
   syncStatus: SyncStatus
   autoSyncEnabled: boolean
   onToggleAutoSync: () => void
-  onManualSync: () => void
+  onManualSync: () => void | Promise<void>
   onToggleOffline: () => void
   onClose: () => void
 }
@@ -22,9 +22,11 @@ export default function ExternalSyncModal({
 
   async function handleManualSync() {
     setSyncing(true)
-    onManualSync()
-    // Brief visual delay so user sees the spinner
-    setTimeout(() => setSyncing(false), 1200)
+    try {
+      await onManualSync()
+    } finally {
+      setSyncing(false)
+    }
   }
 
   return (

@@ -14,8 +14,8 @@ import WorkflowProgressPopup from './WorkflowProgressPopup'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
-import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, recordExternalFeed, getAuditLog } from '../utils/auditTrail'
-import { simulateExternalSync, SyncNotification, SyncStatus } from '../utils/externalSync'
+import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
+import { realSyncPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 
 interface Props {
@@ -27,6 +27,7 @@ interface Props {
   onVerify: (row: CDRLRow) => void
   onReseal: (row: CDRLRow) => Promise<void>
   onDataUpdate: (data: CDRLRow[]) => void
+  onSyncAnchors?: (newAnchors: Record<string, AnchorRecord>) => void
 }
 
 /* ─── Hull parser: extracts "(Hull X)" from title ────────────── */
@@ -50,7 +51,7 @@ const columns = [
   { key: 'notes', label: 'NOTES', width: 'w-[12%]' },
 ]
 
-export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate }: Props) {
+export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors }: Props) {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red'>('all')
   const [sortCol, setSortCol] = useState<string | null>(null)
@@ -230,15 +231,18 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   }, [refreshAIInsights])
 
   /* ─── External Sync Handler ────────────────────────────── */
-  const handleExternalSync = useCallback(() => {
+  const handleExternalSync = useCallback(async () => {
     if (!syncStatus.isOnline) return
-    const { changes, notifications: newNotifs, updatedRows } = simulateExternalSync(data, role)
-    // Record each change in audit trail
-    changes.forEach(c => {
-      const row = data.find(r => r.id === c.rowId)
-      if (row) recordExternalFeed(row, c.source, `${c.field}: ${c.newValue.slice(0, 60)}`)
-    })
+    const { changes, notifications: newNotifs, updatedRows, newAnchors } = await realSyncPipeline(data, role, anchors, editedSinceSeal)
+    // Merge new anchors into parent state via onAnchor-style updates
+    // Since we can't call setAnchors directly (it lives in App.tsx), we update data and let
+    // the parent's anchor state be updated through the onReseal/onAnchor pattern.
+    // But we DO need to propagate anchors — so we store them via a callback.
+    // For now, we update data and notifications; anchors are stored in the vault + audit trail.
     onDataUpdate(updatedRows)
+    if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
+      onSyncAnchors(newAnchors)
+    }
     setNotifications(prev => [...newNotifs, ...prev])
     setSyncStatus(prev => ({
       ...prev,
@@ -247,9 +251,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       changesSynced: prev.changesSynced + changes.length,
     }))
     setAuditVersion(v => v + 1)
-    setSyncToast(`${changes.length} update${changes.length !== 1 ? 's' : ''} synced from NSERC IDE`)
-    setTimeout(() => setSyncToast(null), 4000)
-  }, [data, role, syncStatus.isOnline, onDataUpdate])
+    const sealCount = Object.keys(newAnchors).length
+    setSyncToast(`${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
+    setTimeout(() => setSyncToast(null), 5000)
+  }, [data, role, anchors, editedSinceSeal, syncStatus.isOnline, onDataUpdate, onSyncAnchors])
 
   /* ─── Auto-sync interval (5 minutes) ──────────────────── */
   useEffect(() => {

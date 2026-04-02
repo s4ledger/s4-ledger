@@ -93,6 +93,7 @@ export default function App() {
       onVerify={handleVerify}
       onReseal={handleReseal}
       onDataUpdate={setData}
+      onSyncAnchors={(newAnchors) => setAnchors(prev => ({ ...prev, ...newAnchors }))}
     />
   )
 }
