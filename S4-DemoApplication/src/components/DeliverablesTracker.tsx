@@ -11,6 +11,7 @@ import ExternalSyncModal from './ExternalSyncModal'
 import NotificationsPanel from './NotificationsPanel'
 import EmailComposer from './EmailComposer'
 import WorkflowProgressPopup from './WorkflowProgressPopup'
+import ProfileDashboard from './ProfileDashboard'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
@@ -111,6 +112,22 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [showManualCraftModal, setShowManualCraftModal] = useState(false)
   const [manualCraftType, setManualCraftType] = useState('')
   const [addingCraft, setAddingCraft] = useState(false)
+
+  /* ─── Tools dropdown & Profile state ────────────────────────── */
+  const [showToolsMenu, setShowToolsMenu] = useState(false)
+  const [showProfile, setShowProfile] = useState(false)
+  const toolsMenuRef = useRef<HTMLDivElement>(null)
+
+  /* close tools dropdown on outside click */
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target as Node)) {
+        setShowToolsMenu(false)
+      }
+    }
+    if (showToolsMenu) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showToolsMenu])
 
   /* ─── Derive unique platforms from data ─────────────────────── */
   const platforms = useMemo(() => {
@@ -453,63 +470,80 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               <p className="text-steel text-xs">{role} View · FOUO Simulation</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleCompare}
-              disabled={comparing}
-              className="flex items-center gap-2 px-4 py-2 bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 rounded-lg text-green-600 text-sm font-medium transition-all disabled:opacity-60"
-            >
-              {comparing ? (
-                <>
-                  <i className="fas fa-spinner fa-spin"></i>
-                  Comparing ({compareProgress}/{hullData.length})…
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-file-contract"></i>
-                  Compare to Contract
-                </>
+          <div className="flex items-center gap-2">
+            {/* ─── Tools Dropdown ────────────────────────────── */}
+            <div className="relative" ref={toolsMenuRef}>
+              <button
+                onClick={() => setShowToolsMenu(!showToolsMenu)}
+                className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
+                  showToolsMenu
+                    ? 'bg-gray-900 text-white border-gray-900'
+                    : 'bg-black/[0.04] hover:bg-black/[0.08] border-border text-gray-900'
+                }`}
+              >
+                <i className="fas fa-th"></i>
+                Tools
+                <i className={`fas fa-chevron-down text-[10px] transition-transform ${showToolsMenu ? 'rotate-180' : ''}`}></i>
+                {comparing && <i className="fas fa-spinner fa-spin text-green-500 ml-1"></i>}
+                {syncStatus.lastSync && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse ml-1"></span>}
+              </button>
+              {showToolsMenu && (
+                <div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-xl shadow-xl border border-border py-1 z-50">
+                  <button
+                    onClick={() => { handleCompare(); setShowToolsMenu(false) }}
+                    disabled={comparing}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  >
+                    <i className="fas fa-file-contract text-green-500 w-4 text-center"></i>
+                    <span className="font-medium">
+                      {comparing ? `Comparing (${compareProgress}/${hullData.length})…` : 'Compare to Contract'}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => { setAiRow(null); setShowAI(true); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-brain text-accent w-4 text-center"></i>
+                    <span className="font-medium">AI Insights</span>
+                  </button>
+                  <button
+                    onClick={() => { setShowAIPanel(!showAIPanel); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-bolt text-accent w-4 text-center"></i>
+                    <span className="font-medium">Next Actions</span>
+                    {showAIPanel && <span className="ml-auto text-accent text-xs font-semibold">ON</span>}
+                  </button>
+                  <div className="border-t border-border my-1"></div>
+                  <button
+                    onClick={() => { openAuditGlobal(); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-history text-steel w-4 text-center"></i>
+                    <span className="font-medium">Audit Trail</span>
+                    {showAudit && !auditRowId && <span className="ml-auto text-green-500 text-xs font-semibold">OPEN</span>}
+                  </button>
+                  <button
+                    onClick={() => { setShowSync(true); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-database text-purple-500 w-4 text-center"></i>
+                    <span className="font-medium">Sync</span>
+                    {syncStatus.lastSync && <span className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>}
+                  </button>
+                  <div className="border-t border-border my-1"></div>
+                  <button
+                    onClick={() => { setShowReport(true); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-file-pdf text-red-400 w-4 text-center"></i>
+                    <span className="font-medium">Generate Weekly PDF Report</span>
+                  </button>
+                </div>
               )}
-            </button>
-            <button
-              onClick={() => { setAiRow(null); setShowAI(true) }}
-              className="flex items-center gap-2 px-4 py-2 bg-accent/15 hover:bg-accent/25 border border-accent/30 rounded-lg text-accent text-sm font-medium transition-all"
-            >
-              <i className="fas fa-brain"></i>
-              AI Insights
-            </button>
-            <button
-              onClick={() => setShowAIPanel(!showAIPanel)}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
-                showAIPanel
-                  ? 'bg-accent text-white border-accent'
-                  : 'bg-accent/15 hover:bg-accent/25 border-accent/30 text-accent'
-              }`}
-            >
-              <i className="fas fa-bolt"></i>
-              Next Actions
-            </button>
-            <button
-              onClick={openAuditGlobal}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
-                showAudit && !auditRowId
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-black/[0.04] hover:bg-black/[0.08] border-border text-steel'
-              }`}
-            >
-              <i className="fas fa-history"></i>
-              Audit Trail
-            </button>
-            <button
-              onClick={() => setShowSync(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 rounded-lg text-purple-600 text-sm font-medium transition-all"
-            >
-              <i className="fas fa-database"></i>
-              Sync
-              {syncStatus.lastSync && (
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-              )}
-            </button>
+            </div>
+
+            {/* ─── Notifications Bell (separate) ────────────── */}
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
@@ -527,12 +561,13 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 </span>
               )}
             </div>
+
+            {/* ─── Profile Button ────────────────────────────── */}
             <button
-              onClick={() => setShowReport(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium transition-all"
+              onClick={() => setShowProfile(true)}
+              className="flex items-center justify-center w-9 h-9 border rounded-lg text-sm transition-all bg-black/[0.04] hover:bg-black/[0.08] border-border text-steel"
             >
-              <i className="fas fa-file-pdf"></i>
-              Generate Weekly PDF Report
+              <i className="fas fa-user-circle"></i>
             </button>
           </div>
         </div>
@@ -1294,6 +1329,18 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             </div>
           </div>
         </div>
+      )}
+
+      {/* Profile Dashboard */}
+      {showProfile && (
+        <ProfileDashboard
+          role={role}
+          data={hullData}
+          anchors={anchors}
+          syncStatus={syncStatus}
+          notifications={notifications}
+          onClose={() => setShowProfile(false)}
+        />
       )}
     </div>
   )
