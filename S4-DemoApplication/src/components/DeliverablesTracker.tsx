@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { DRLRow, UserRole, AnchorRecord } from '../types'
+import { DRLRow, UserRole, AnchorRecord, Organization } from '../types'
 import AIAssistModal from './AIAssistModal'
 import AINextActionsPanel from './AINextActionsPanel'
 import AuditTrailSidebar from './AuditTrailSidebar'
@@ -18,6 +18,7 @@ import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
+import { getDefaultOrg, getPermissions, OrgPermissions } from '../utils/permissions'
 import { PMS300_CRAFT_LABELS } from '../services/nsercIdeService'
 
 interface Props {
@@ -117,6 +118,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [showToolsMenu, setShowToolsMenu] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
   const toolsMenuRef = useRef<HTMLDivElement>(null)
+
+  /* ─── Organization tier & permissions ───────────────────────── */
+  const [org, setOrg] = useState<Organization>(() => getDefaultOrg(role))
+  const perms: OrgPermissions = useMemo(() => getPermissions(org), [org])
 
   /* close tools dropdown on outside click */
   useEffect(() => {
@@ -382,7 +387,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       id: `wf-${row.id}-${Date.now()}`,
       timestamp: new Date().toISOString(),
       title: `${row.id} — Workflow Status Update`,
-      body: `Current status: ${row.status === 'green' ? 'Approved' : row.status === 'yellow' ? 'In Review' : 'Overdue'}. Responsible: ${party}. ${row.notes.slice(0, 100)}`,
+      body: `Current status: ${row.status === 'green' ? 'Completed' : row.status === 'yellow' ? 'In Review' : 'Overdue'}. Responsible: ${party}. ${row.notes.slice(0, 100)}`,
       priority: row.status === 'red' ? 'critical' : row.status === 'yellow' ? 'medium' : 'low',
       rowId: row.id,
       rowTitle: row.title,
@@ -467,10 +472,20 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" className="h-9 w-auto" />
             <div>
               <h1 className="text-lg font-bold text-gray-900 leading-tight">S4 Ledger · Deliverables Tracker</h1>
-              <p className="text-steel text-xs">{role} View · FOUO Simulation</p>
+              <p className="text-steel text-xs">{role} View · {org} Tier · FOUO Simulation</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {/* ─── Organization Tier Selector ─────────────────── */}
+            <select
+              value={org}
+              onChange={e => setOrg(e.target.value as Organization)}
+              className="px-3 py-2 border border-border rounded-lg text-xs font-medium bg-black/[0.04] hover:bg-black/[0.08] text-gray-900 cursor-pointer transition-all"
+            >
+              <option value="Government">Government</option>
+              <option value="Shipbuilder">Shipbuilder</option>
+              <option value="Subcontractor">Subcontractor</option>
+            </select>
             {/* ─── Tools Dropdown ────────────────────────────── */}
             <div className="relative" ref={toolsMenuRef}>
               <button
@@ -489,6 +504,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               </button>
               {showToolsMenu && (
                 <div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-xl shadow-xl border border-border py-1 z-50">
+                  {perms.canCompareContract && (
                   <button
                     onClick={() => { handleCompare(); setShowToolsMenu(false) }}
                     disabled={comparing}
@@ -499,6 +515,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       {comparing ? `Comparing (${compareProgress}/${hullData.length})…` : 'Compare to Contract'}
                     </span>
                   </button>
+                  )}
+                  {perms.canUseAI && (
                   <button
                     onClick={() => { setAiRow(null); setShowAI(true); setShowToolsMenu(false) }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
@@ -506,6 +524,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <i className="fas fa-brain text-accent w-4 text-center"></i>
                     <span className="font-medium">AI Insights</span>
                   </button>
+                  )}
+                  {perms.canUseAI && (
                   <button
                     onClick={() => { setShowAIPanel(!showAIPanel); setShowToolsMenu(false) }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
@@ -514,7 +534,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <span className="font-medium">Next Actions</span>
                     {showAIPanel && <span className="ml-auto text-accent text-xs font-semibold">ON</span>}
                   </button>
+                  )}
                   <div className="border-t border-border my-1"></div>
+                  {perms.canViewFullAudit && (
                   <button
                     onClick={() => { openAuditGlobal(); setShowToolsMenu(false) }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
@@ -523,22 +545,27 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <span className="font-medium">Audit Trail</span>
                     {showAudit && !auditRowId && <span className="ml-auto text-green-500 text-xs font-semibold">OPEN</span>}
                   </button>
+                  )}
+                  {perms.canSync && (
                   <button
                     onClick={() => { setShowSync(true); setShowToolsMenu(false) }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
                   >
                     <i className="fas fa-database text-purple-500 w-4 text-center"></i>
-                    <span className="font-medium">Sync</span>
+                    <span className="font-medium">Sync{perms.syncReadOnly ? ' (Read-Only)' : ''}</span>
                     {syncStatus.lastSync && <span className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>}
                   </button>
+                  )}
                   <div className="border-t border-border my-1"></div>
+                  {perms.canGenerateReport && (
                   <button
                     onClick={() => { setShowReport(true); setShowToolsMenu(false) }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
                   >
                     <i className="fas fa-file-pdf text-red-400 w-4 text-center"></i>
-                    <span className="font-medium">Generate Weekly PDF Report</span>
+                    <span className="font-medium">Generate Weekly PDF Report{perms.reportRedacted ? ' (Redacted)' : ''}</span>
                   </button>
+                  )}
                 </div>
               )}
             </div>
@@ -629,6 +656,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   })}
 
                   {/* Divider + Add Craft option */}
+                  {perms.canManageCraft && (
+                  <>
                   <div className="border-t border-border" />
                   <button
                     onClick={() => { setShowAddCraft(false); setShowManualCraftModal(true) }}
@@ -637,6 +666,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <i className="fas fa-plus-circle text-xs w-4 text-center"></i>
                     Add Craft Manually…
                   </button>
+                  </>
+                  )}
                 </div>
               )}
             </div>
@@ -754,7 +785,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 <div>
                   <h3 className="text-sm font-bold text-gray-900">{hullSummary.label} Summary</h3>
                   <p className="text-[11px] text-steel">
-                    {hullSummary.total} deliverables assigned · {hullSummary.green} approved · {hullSummary.red} overdue · {hullSummary.sealed} sealed
+                    {hullSummary.total} deliverables assigned · {hullSummary.green} completed · {hullSummary.red} overdue · {hullSummary.sealed} sealed
                   </p>
                 </div>
               </div>
@@ -788,7 +819,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
           </div>
           <div className="bg-white border border-green-500/30 rounded-card p-4">
-            <p className="text-green-600 text-xs uppercase tracking-wide">Approved</p>
+            <p className="text-green-600 text-xs uppercase tracking-wide">Completed</p>
             <p className="text-2xl font-bold text-green-600 mt-1">{stats.green}</p>
           </div>
           <div className="bg-white border border-yellow-500/30 rounded-card p-4">
@@ -885,6 +916,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               </button>
             ))}
           </div>
+          {perms.canVerify && (
           <button
             onClick={() => { hullData.filter(r => !anchors[r.id]).forEach(r => onAnchor(r)) }}
             className="flex items-center gap-2 px-3 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-lg text-accent text-xs font-medium transition-all"
@@ -892,6 +924,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <i className="fas fa-link"></i>
             Seal All
           </button>
+          )}
         </div>
       </div>
 
@@ -1071,6 +1104,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       </div>
                     </td>
                     <td className="px-3 py-3 text-center relative">
+                      {perms.canVerify ? (
+                      <>
                       <button
                         onClick={() => setActiveMenu(activeMenu === row.id ? null : row.id)}
                         className="w-7 h-7 rounded-md bg-accent/10 hover:bg-accent/25 text-accent transition-all inline-flex items-center justify-center"
@@ -1086,6 +1121,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                           onAIAssist={() => { setAiRow(row); setShowAI(true); setActiveMenu(null) }}
                           onClose={() => setActiveMenu(null)}
                         />
+                      )}
+                      </>
+                      ) : (
+                        <span className="text-steel/30 text-[10px]">—</span>
                       )}
                     </td>
                   </tr>

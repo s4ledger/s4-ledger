@@ -223,7 +223,7 @@ export function generateWeeklyReport(
 
   const bannerItems = [
     { label: 'Total DRLs', value: String(data.length), color: TEXT },
-    { label: 'Approved', value: String(analysis.green.length), color: GREEN },
+    { label: 'Completed', value: String(analysis.green.length), color: GREEN },
     { label: 'In Review', value: String(analysis.yellow.length), color: YELLOW },
     { label: 'Overdue', value: String(analysis.red.length), color: RED },
     { label: 'Sealed to Ledger', value: String(analysis.sealed), color: ACCENT },
@@ -369,7 +369,7 @@ export function generateWeeklyReport(
   y = sectionHeading(doc, y, 'SECTION 2: DETAILED DRL LIST — ALL ITEMS BY STATUS')
 
   const groups: { label: string; status: string; color: [number, number, number]; rows: DRLRow[] }[] = [
-    { label: 'Completed / Approved', status: 'green', color: GREEN, rows: data.filter(r => r.status === 'green') },
+    { label: 'Completed', status: 'green', color: GREEN, rows: data.filter(r => r.status === 'green') },
     { label: 'In Review', status: 'yellow', color: YELLOW, rows: data.filter(r => r.status === 'yellow') },
     { label: 'Overdue / Delinquent', status: 'red', color: RED, rows: data.filter(r => r.status === 'red') },
   ]
@@ -691,7 +691,7 @@ export function generateWeeklyReport(
   const total = data.length || 1
 
   const segments = [
-    { label: 'Approved', count: analysis.green.length, color: GREEN },
+    { label: 'Completed', count: analysis.green.length, color: GREEN },
     { label: 'In Review', count: analysis.yellow.length, color: YELLOW },
     { label: 'Overdue', count: analysis.red.length, color: RED },
   ]

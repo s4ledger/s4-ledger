@@ -79,14 +79,14 @@ export function getWorkflowStages(row: DRLRow): WorkflowStage[] {
   }
 
   // Stage 3: Final Disposition (Program Manager)
-  const approved = row.status === 'green' && received
+  const completed = row.status === 'green' && received
   const stage3: WorkflowStage = {
     label: 'Final Disposition (PM)',
     responsible: 'Program Manager',
-    status: !reviewDone ? 'Pending' : (approved ? 'Completed' : 'In Progress'),
-    date: approved ? today : null,
-    comments: approved
-      ? 'Approved — no further action required'
+    status: !reviewDone ? 'Pending' : (completed ? 'Completed' : 'In Progress'),
+    date: completed ? today : null,
+    comments: completed
+      ? 'Completed — no further action required'
       : (!reviewDone ? 'Awaiting review completion' : 'Disposition pending PM decision'),
   }
 
@@ -94,10 +94,10 @@ export function getWorkflowStages(row: DRLRow): WorkflowStage[] {
   const stage4: WorkflowStage = {
     label: 'Return to Shipbuilder',
     responsible: 'Shipbuilder',
-    status: approved ? 'Completed' : (isOverdue ? 'Overdue' : 'Pending'),
-    date: approved ? today : null,
-    comments: approved
-      ? 'Approved — deliverable accepted'
+    status: completed ? 'Completed' : (isOverdue ? 'Overdue' : 'Pending'),
+    date: completed ? today : null,
+    comments: completed
+      ? 'Completed — deliverable accepted'
       : (isOverdue
         ? 'Corrective action required — resubmittal needed'
         : (isReview ? 'May require comments incorporation' : 'Awaiting workflow completion')),

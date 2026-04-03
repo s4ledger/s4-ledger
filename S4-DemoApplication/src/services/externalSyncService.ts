@@ -283,7 +283,7 @@ async function fetchPMS300Items(
 const PMS300_REMARKS: Record<string, string[]> = {
   green: [
     'PMS 300 review complete — deliverable accepted, no further action required per PMS 300 DRL.',
-    'Approved by PMS 300 Program Office — revision incorporated per contract modification P00012.',
+    'Accepted by PMS 300 Program Office — revision incorporated per contract modification P00012.',
     'Final acceptance recorded in NSERC IDE — Contracting Officer concurrence obtained.',
   ],
   yellow: [

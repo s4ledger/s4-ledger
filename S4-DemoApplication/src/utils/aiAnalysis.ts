@@ -114,7 +114,7 @@ export function analyzeRow(
         `via ${req.submittalMethod}, within contractual timeline. Accepted per DD Form 1423, ${req.contractRef}. ` +
         `${isSealed ? 'Cryptographic hash verified and sealed to XRPL.' : 'Eligible for Ledger Seal.'} ` +
         `No corrective action required.`
-      : `Approved. Submitted ${row.actualSubmissionDate}. ${isSealed ? 'Sealed to ledger.' : 'Ready for seal.'}`
+      : `Completed. Submitted ${row.actualSubmissionDate}. ${isSealed ? 'Sealed to ledger.' : 'Ready for seal.'}`
   }
 
   /* ─── Changes since seal ────────────────────────────────── */
@@ -288,7 +288,7 @@ export function analyzePortfolio(
   const green = data.filter(r => r.status === 'green').length
   const yellow = data.filter(r => r.status === 'yellow').length
   const sealed = data.filter(r => anchors[r.id]).length
-  const trendSummary = `${green} of ${data.length} DRLs approved (${Math.round(green / data.length * 100)}%). ` +
+  const trendSummary = `${green} of ${data.length} DRLs completed (${Math.round(green / data.length * 100)}%). ` +
     `${yellow} under active review. ${redCount} overdue. ${sealed} sealed to ledger. ` +
     `On-time rate: ${Math.round(data.filter(r => r.actualSubmissionDate && new Date(r.actualSubmissionDate) <= new Date(r.contractDueFinish)).length / (data.filter(r => r.actualSubmissionDate).length || 1) * 100)}%.`
 

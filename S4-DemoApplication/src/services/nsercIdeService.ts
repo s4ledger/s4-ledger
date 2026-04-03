@@ -380,7 +380,7 @@ export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): DRLRow {
 const ATTACHMENT_J2_REMARKS: Record<string, string[]> = {
   green: [
     'Per Attachment J-2, Exhibit A — deliverable accepted by PMS 300 Program Office. Government review complete, no further action required.',
-    'Approved per PMS 300 DRL Attachment J-2 requirements. Contracting Officer concurrence obtained. Revision incorporated per contract modification P00012.',
+    'Accepted per PMS 300 DRL Attachment J-2 requirements. Contracting Officer concurrence obtained. Revision incorporated per contract modification P00012.',
     'Final acceptance recorded in NSERC IDE per Attachment J-2 submittal schedule. Distribution list updated.',
   ],
   yellow: [

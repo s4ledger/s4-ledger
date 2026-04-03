@@ -11,7 +11,7 @@ export const sampleData: DRLRow[] = [
     actualSubmissionDate: '2025-01-10',
     received: 'Yes',
     calendarDaysToReview: 12,
-    notes: 'Approved with minor comments incorporated.',
+    notes: 'Completed with minor comments incorporated.',
     status: 'green',
   },
   {
@@ -50,7 +50,7 @@ export const sampleData: DRLRow[] = [
     actualSubmissionDate: '2025-02-28',
     received: 'Yes',
     calendarDaysToReview: 7,
-    notes: 'Approved. No action required.',
+    notes: 'Completed. No action required.',
     status: 'green',
   },
   {
@@ -154,7 +154,7 @@ export const sampleData: DRLRow[] = [
     actualSubmissionDate: '2025-05-28',
     received: 'Yes',
     calendarDaysToReview: 8,
-    notes: 'Verified against EVM data. Approved.',
+    notes: 'Verified against EVM data. Completed.',
     status: 'green',
   },
 ]

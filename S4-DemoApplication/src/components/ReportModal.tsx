@@ -69,7 +69,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
       `Please find attached the S4 Systems DRL Weekly Status Report for ${dateStr}.\n\n` +
       `Summary:\n` +
       `• Total DRLs: ${stats.total}\n` +
-      `• Approved: ${stats.green}\n` +
+      `• Completed: ${stats.green}\n` +
       `• In Review: ${stats.yellow}\n` +
       `• Overdue: ${stats.red}\n` +
       `• Sealed to Ledger: ${stats.sealed}\n\n` +
@@ -114,7 +114,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
           </div>
           <div className="bg-green-50 rounded-lg p-2.5 text-center">
             <p className="text-lg font-bold text-green-500">{stats.green}</p>
-            <p className="text-[10px] text-green-600 uppercase tracking-wide">Approved</p>
+            <p className="text-[10px] text-green-600 uppercase tracking-wide">Completed</p>
           </div>
           <div className="bg-yellow-50 rounded-lg p-2.5 text-center">
             <p className="text-lg font-bold text-yellow-500">{stats.yellow}</p>
