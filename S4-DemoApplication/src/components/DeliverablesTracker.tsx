@@ -18,7 +18,7 @@ import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
-import { getDefaultOrg, getPermissions, OrgPermissions } from '../utils/permissions'
+import { getDefaultOrg, getPermissions, getMaskedView, OrgPermissions, MaskedStatus } from '../utils/permissions'
 import { PMS300_CRAFT_LABELS } from '../services/nsercIdeService'
 
 interface Props {
@@ -62,7 +62,7 @@ const columns = [
 
 export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors }: Props) {
   const [search, setSearch] = useState('')
-  const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red'>('all')
+  const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red' | 'pending'>('all')
   const [sortCol, setSortCol] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(true)
   const [showAI, setShowAI] = useState(false)
@@ -178,9 +178,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     return rows
   }, [data, platformFilter, hullFilter])
 
+  /** Get the display status for a row based on current org tier */
+  const maskedStatus = useCallback((row: DRLRow): MaskedStatus => {
+    return getMaskedView(row, org).displayStatus
+  }, [org])
+
   const filtered = useMemo(() => {
     let rows = [...hullData]
-    if (filterStatus !== 'all') rows = rows.filter(r => r.status === filterStatus)
+    if (filterStatus !== 'all') rows = rows.filter(r => maskedStatus(r) === filterStatus)
     if (search.trim()) {
       const q = search.toLowerCase()
       rows = rows.filter(r =>
@@ -198,32 +203,34 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       })
     }
     return rows
-  }, [hullData, filterStatus, search, sortCol, sortAsc])
+  }, [hullData, filterStatus, search, sortCol, sortAsc, maskedStatus])
 
   const stats = useMemo(() => ({
     total: hullData.length,
-    green: hullData.filter(r => r.status === 'green').length,
-    yellow: hullData.filter(r => r.status === 'yellow').length,
-    red: hullData.filter(r => r.status === 'red').length,
+    green: hullData.filter(r => maskedStatus(r) === 'green').length,
+    yellow: hullData.filter(r => maskedStatus(r) === 'yellow').length,
+    red: hullData.filter(r => maskedStatus(r) === 'red').length,
+    pending: hullData.filter(r => maskedStatus(r) === 'pending').length,
     anchored: hullData.filter(r => anchors[r.id]).length,
-  }), [hullData, anchors])
+  }), [hullData, anchors, maskedStatus])
 
   /* ─── Summary (shown when a specific platform/hull is selected) ─ */
   const hullSummary = useMemo(() => {
     if (platformFilter === 'all') return null
     const total = hullData.length
-    const green = hullData.filter(r => r.status === 'green').length
-    const red = hullData.filter(r => r.status === 'red').length
+    const green = hullData.filter(r => maskedStatus(r) === 'green').length
+    const red = hullData.filter(r => maskedStatus(r) === 'red').length
+    const pending = hullData.filter(r => maskedStatus(r) === 'pending').length
     const sealed = hullData.filter(r => anchors[r.id]).length
     const pctComplete = total > 0 ? Math.round((green / total) * 100) : 0
     const nextDue = hullData
-      .filter(r => r.status !== 'green')
+      .filter(r => maskedStatus(r) !== 'green' && maskedStatus(r) !== 'pending')
       .sort((a, b) => a.contractDueFinish.localeCompare(b.contractDueFinish))[0]
     const label = hullFilter !== 'all'
       ? `${platformFilter} — ${hullFilter}`
       : platformFilter
-    return { total, green, red, sealed, pctComplete, nextDue, label }
-  }, [platformFilter, hullFilter, hullData, anchors])
+    return { total, green, red, pending, sealed, pctComplete, nextDue, label }
+  }, [platformFilter, hullFilter, hullData, anchors, maskedStatus])
 
   const handleCompare = useCallback(async () => {
     if (comparing) return
@@ -446,9 +453,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     onDataUpdate(updated)
   }
 
-  function rowClass(status: string) {
+  function rowClass(status: MaskedStatus) {
     if (status === 'red') return 'row-red'
     if (status === 'yellow') return 'row-yellow'
+    if (status === 'pending') return '' // neutral — no tinted background
     return 'row-green'
   }
 
@@ -472,20 +480,24 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" className="h-9 w-auto" />
             <div>
               <h1 className="text-lg font-bold text-gray-900 leading-tight">S4 Ledger · Deliverables Tracker</h1>
-              <p className="text-steel text-xs">{role} View · {org} Tier · FOUO Simulation</p>
+              <p className="text-steel text-xs">{role} View · {org} · FOUO Simulation</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {/* ─── Organization Tier Selector ─────────────────── */}
-            <select
-              value={org}
-              onChange={e => setOrg(e.target.value as Organization)}
-              className="px-3 py-2 border border-border rounded-lg text-xs font-medium bg-black/[0.04] hover:bg-black/[0.08] text-gray-900 cursor-pointer transition-all"
-            >
-              <option value="Government">Government</option>
-              <option value="Shipbuilder">Shipbuilder</option>
-              <option value="Subcontractor">Subcontractor</option>
-            </select>
+            <div className="relative">
+              <button
+                onClick={() => {
+                  const tiers: Organization[] = ['Government', 'Contractor', 'Shipbuilder']
+                  const idx = tiers.indexOf(org)
+                  setOrg(tiers[(idx + 1) % tiers.length])
+                }}
+                className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all bg-black/[0.04] hover:bg-black/[0.08] border-border text-gray-900"
+              >
+                <i className={`fas ${org === 'Government' ? 'fa-landmark' : org === 'Contractor' ? 'fa-hard-hat' : 'fa-industry'} text-xs`}></i>
+                {org}
+              </button>
+            </div>
             {/* ─── Tools Dropdown ────────────────────────────── */}
             <div className="relative" ref={toolsMenuRef}>
               <button
@@ -785,7 +797,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 <div>
                   <h3 className="text-sm font-bold text-gray-900">{hullSummary.label} Summary</h3>
                   <p className="text-[11px] text-steel">
-                    {hullSummary.total} deliverables assigned · {hullSummary.green} completed · {hullSummary.red} overdue · {hullSummary.sealed} sealed
+                    {hullSummary.total} deliverables assigned · {hullSummary.green} completed{hullSummary.pending > 0 ? ` · ${hullSummary.pending} pending review` : ''} · {hullSummary.red} overdue · {hullSummary.sealed} sealed
                   </p>
                 </div>
               </div>
@@ -813,7 +825,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Stats Row */}
       <div className="max-w-[1600px] mx-auto px-6 py-4">
-        <div className="grid grid-cols-5 gap-3">
+        <div className={`grid ${stats.pending > 0 ? 'grid-cols-6' : 'grid-cols-5'} gap-3`}>
           <div className="bg-white border border-border rounded-card p-4">
             <p className="text-steel text-xs uppercase tracking-wide">Total DRLs</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
@@ -822,6 +834,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <p className="text-green-600 text-xs uppercase tracking-wide">Completed</p>
             <p className="text-2xl font-bold text-green-600 mt-1">{stats.green}</p>
           </div>
+          {stats.pending > 0 && (
+          <div className="bg-white border border-accent/30 rounded-card p-4">
+            <p className="text-accent text-xs uppercase tracking-wide">Pending Review</p>
+            <p className="text-2xl font-bold text-accent mt-1">{stats.pending}</p>
+          </div>
+          )}
           <div className="bg-white border border-yellow-500/30 rounded-card p-4">
             <p className="text-yellow-600 text-xs uppercase tracking-wide">In Review</p>
             <p className="text-2xl font-bold text-yellow-600 mt-1">{stats.yellow}</p>
@@ -896,23 +914,25 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             />
           </div>
           <div className="flex items-center gap-1 bg-white border border-border rounded-lg p-1">
-            {(['all', 'green', 'yellow', 'red'] as const).map(s => (
+            {(['all', 'green', ...(stats.pending > 0 ? ['pending'] as const : []), 'yellow', 'red'] as const).map(s => (
               <button
                 key={s}
-                onClick={() => setFilterStatus(s)}
+                onClick={() => setFilterStatus(s as typeof filterStatus)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                   filterStatus === s
                     ? s === 'all'
                       ? 'bg-accent text-white'
                       : s === 'green'
                       ? 'bg-green-500/20 text-green-400'
+                      : s === 'pending'
+                      ? 'bg-accent/20 text-accent'
                       : s === 'yellow'
                       ? 'bg-yellow-500/20 text-yellow-400'
                       : 'bg-red-500/20 text-red-400'
                     : 'text-steel hover:text-gray-900'
                 }`}
               >
-                {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+                {s === 'all' ? 'All' : s === 'pending' ? 'Pending Review' : s.charAt(0).toUpperCase() + s.slice(1)}
               </button>
             ))}
           </div>
@@ -959,10 +979,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row, idx) => (
+                {filtered.map((row, idx) => {
+                  const masked = getMaskedView(row, org)
+                  return (
                   <tr
                     key={row.id}
-                    className={`${rowClass(row.status)} border-b border-border/50 hover:bg-black/[0.04] hover:shadow-[inset_0_0_0_1px_rgba(0,122,255,0.08)] transition-all cursor-pointer`}
+                    className={`${rowClass(masked.displayStatus)} border-b border-border/50 hover:bg-black/[0.04] hover:shadow-[inset_0_0_0_1px_rgba(0,122,255,0.08)] transition-all cursor-pointer`}
                     onClick={e => {
                       const el = e.target as HTMLElement
                       // Skip if user is editing content, clicking buttons, or clicking notes cell
@@ -1056,9 +1078,15 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       onClick={e => { e.stopPropagation(); setNotesRow(row) }}
                     >
                       <div className="truncate group-hover:text-accent transition-colors" title="Click to view full remarks">
-                        {aiInsights[row.id]?.conciseNote || row.notes || '—'}
+                        {masked.displayStatus === 'pending'
+                          ? masked.displayNotes
+                          : (aiInsights[row.id]?.conciseNote || row.notes || '—')}
                       </div>
-                      {aiInsights[row.id] && (
+                      {masked.displayStatus === 'pending' ? (
+                        <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-accent/10 text-accent">
+                          Pending Review
+                        </span>
+                      ) : aiInsights[row.id] ? (
                         <span className={`inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded ${
                           aiInsights[row.id].priority === 'Critical' ? 'bg-red-500/15 text-red-500' :
                           aiInsights[row.id].priority === 'High' ? 'bg-orange-500/15 text-orange-500' :
@@ -1067,7 +1095,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                         }`}>
                           {aiInsights[row.id].priority}
                         </span>
-                      )}
+                      ) : null}
                     </td>
                     <td className="px-3 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
@@ -1128,7 +1156,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       )}
                     </td>
                   </tr>
-                ))}
+                  )
+                })}
                 {filtered.length === 0 && (
                   <tr>
                     <td colSpan={12} className="px-6 py-12 text-center text-steel">

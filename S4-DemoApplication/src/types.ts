@@ -35,6 +35,6 @@ export interface VerifyResult {
 
 export type UserRole = 'Program Manager' | 'Contracting Officer' | 'Quality Assurance' | 'Logistics Specialist'
 
-export type Organization = 'Government' | 'Shipbuilder' | 'Subcontractor'
+export type Organization = 'Government' | 'Contractor' | 'Shipbuilder'
 
 export type AuthStage = 'cac' | 'welcome' | 'role' | 'tracker'

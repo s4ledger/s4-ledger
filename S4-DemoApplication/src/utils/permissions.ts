@@ -1,20 +1,18 @@
-import { Organization, UserRole } from '../types'
+import { DRLRow, Organization, UserRole } from '../types'
 
 /* ═══════════════════════════════════════════════════════════════
-   Organization-Based Access Tiers (Option B)
+   Organization-Based Access Tiers
    ═══════════════════════════════════════════════════════════════
-   Controls what each organization tier can see and do.
-   Government sees everything. Shipbuilder sees own program data
-   with restricted gov notes. Subcontractor sees assigned DRLs only.
+   Government — Full access, sees everything
+   Contractor — Works for/with Gov't, nearly identical access
+   Shipbuilder — Sees their own responsibility clearly. When the
+     ball is in the Gov't/Contractor court (submitted but review
+     overdue or in-review), the status is masked to a neutral
+     "Submitted — Pending Review" so they never see Gov't delays.
    ═══════════════════════════════════════════════════════════════ */
 
 export interface OrgPermissions {
-  /** Organization tier */
   org: Organization
-  /** Can view all DRL rows (false = assigned DRLs only) */
-  viewAllRows: boolean
-  /** Which DRL fields are editable */
-  editableFields: readonly string[]
   /** Can verify / seal records */
   canVerify: boolean
   /** Can run AI Insights */
@@ -31,10 +29,8 @@ export interface OrgPermissions {
   syncReadOnly: boolean
   /** Can add / manage craft and hulls */
   canManageCraft: boolean
-  /** Can see government review notes */
+  /** Can see government internal notes */
   canViewGovNotes: boolean
-  /** Can see contractor internal notes */
-  canViewContractorNotes: boolean
   /** Can compare against contract */
   canCompareContract: boolean
 }
@@ -43,8 +39,6 @@ export interface OrgPermissions {
 const ORG_PERMISSIONS: Record<Organization, OrgPermissions> = {
   Government: {
     org: 'Government',
-    viewAllRows: true,
-    editableFields: ['notes', 'status', 'actualSubmissionDate', 'received', 'calendarDaysToReview', 'submittalGuidance', 'contractDueFinish', 'calculatedDueDate'],
     canVerify: true,
     canUseAI: true,
     canGenerateReport: true,
@@ -54,13 +48,23 @@ const ORG_PERMISSIONS: Record<Organization, OrgPermissions> = {
     syncReadOnly: false,
     canManageCraft: true,
     canViewGovNotes: true,
-    canViewContractorNotes: true,
+    canCompareContract: true,
+  },
+  Contractor: {
+    org: 'Contractor',
+    canVerify: true,
+    canUseAI: true,
+    canGenerateReport: true,
+    reportRedacted: false,
+    canViewFullAudit: true,
+    canSync: true,
+    syncReadOnly: false,
+    canManageCraft: true,
+    canViewGovNotes: true,
     canCompareContract: true,
   },
   Shipbuilder: {
     org: 'Shipbuilder',
-    viewAllRows: true,
-    editableFields: ['notes', 'actualSubmissionDate', 'received'],
     canVerify: false,
     canUseAI: true,
     canGenerateReport: true,
@@ -70,23 +74,6 @@ const ORG_PERMISSIONS: Record<Organization, OrgPermissions> = {
     syncReadOnly: true,
     canManageCraft: false,
     canViewGovNotes: false,
-    canViewContractorNotes: true,
-    canCompareContract: false,
-  },
-  Subcontractor: {
-    org: 'Subcontractor',
-    viewAllRows: false,
-    editableFields: ['notes'],
-    canVerify: false,
-    canUseAI: false,
-    canGenerateReport: false,
-    reportRedacted: true,
-    canViewFullAudit: false,
-    canSync: false,
-    syncReadOnly: true,
-    canManageCraft: false,
-    canViewGovNotes: false,
-    canViewContractorNotes: false,
     canCompareContract: false,
   },
 }
@@ -95,8 +82,8 @@ const ORG_PERMISSIONS: Record<Organization, OrgPermissions> = {
 const ROLE_ORG_MAP: Record<UserRole, Organization> = {
   'Program Manager': 'Government',
   'Contracting Officer': 'Government',
-  'Quality Assurance': 'Government',
-  'Logistics Specialist': 'Shipbuilder',
+  'Quality Assurance': 'Contractor',
+  'Logistics Specialist': 'Contractor',
 }
 
 /** Get the default organization for a role */
@@ -109,12 +96,66 @@ export function getPermissions(org: Organization): OrgPermissions {
   return ORG_PERMISSIONS[org]
 }
 
-/** Get permissions for a role (via its default org mapping) */
-export function getPermissionsForRole(role: UserRole): OrgPermissions {
-  return ORG_PERMISSIONS[ROLE_ORG_MAP[role]]
+/* ─── Shipbuilder Status Masking ──────────────────────────────
+   Determines what status the Shipbuilder should see for a DRL.
+
+   Logic:
+   - Green (completed) → show green (everyone sees this)
+   - Not submitted yet + overdue → show red (Shipbuilder's fault)
+   - Not submitted yet + in review/yellow → show yellow (still on
+     Shipbuilder to finish, just flagged)
+   - Submitted (received=Yes) BUT status is yellow or red →
+     the delay is on Gov't/Contractor side. Mask to 'pending'
+     so Shipbuilder never sees Gov't is behind.
+   ─────────────────────────────────────────────────────────── */
+
+export type MaskedStatus = 'green' | 'yellow' | 'red' | 'pending'
+
+export interface MaskedDRLView {
+  /** Display status for this row */
+  displayStatus: MaskedStatus
+  /** Notes to show (may be redacted) */
+  displayNotes: string
+  /** Label text for the status */
+  statusLabel: string
 }
 
-/** Check if a specific field is editable for the given org */
-export function canEditField(org: Organization, field: string): boolean {
-  return ORG_PERMISSIONS[org].editableFields.includes(field)
+/** Is this DRL "in the Gov't/Contractor court"? i.e., Shipbuilder submitted it */
+function isInGovtCourt(row: DRLRow): boolean {
+  return row.received === 'Yes' && row.actualSubmissionDate !== ''
+}
+
+/** Get the masked view of a DRL for the Shipbuilder */
+export function getMaskedView(row: DRLRow, org: Organization): MaskedDRLView {
+  // Government and Contractor see everything as-is
+  if (org !== 'Shipbuilder') {
+    return {
+      displayStatus: row.status,
+      displayNotes: row.notes,
+      statusLabel: row.status === 'green' ? 'Completed' : row.status === 'yellow' ? 'In Review' : 'Overdue',
+    }
+  }
+
+  // Shipbuilder view
+  if (row.status === 'green') {
+    return { displayStatus: 'green', displayNotes: row.notes, statusLabel: 'Completed' }
+  }
+
+  if (isInGovtCourt(row)) {
+    // Shipbuilder submitted it, but Gov't/Contractor side is yellow or red.
+    // Mask to neutral "pending" — don't reveal Gov't delays.
+    return {
+      displayStatus: 'pending',
+      displayNotes: 'Submitted — under government review.',
+      statusLabel: 'Submitted — Pending Review',
+    }
+  }
+
+  // Not submitted or not received — this is the Shipbuilder's responsibility
+  if (row.status === 'red') {
+    return { displayStatus: 'red', displayNotes: row.notes, statusLabel: 'Overdue — Action Required' }
+  }
+
+  // Yellow + not yet submitted/received → still on Shipbuilder
+  return { displayStatus: 'yellow', displayNotes: row.notes, statusLabel: 'In Progress' }
 }
