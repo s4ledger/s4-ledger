@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DraggableModal from './DraggableModal'
 import { DRLRow, AnchorRecord, UserRole } from '../types'
 import { generateWeeklyReport, WeeklyReportResult } from '../utils/pdf'
 import { AIRowInsight } from '../utils/aiAnalysis'
@@ -85,11 +86,8 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white border border-border rounded-card p-6 max-w-xl w-full mx-4 animate-slideUp"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={580}>
+      <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
@@ -200,6 +198,6 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
           </div>
         )}
       </div>
-    </div>
+    </DraggableModal>
   )
 }

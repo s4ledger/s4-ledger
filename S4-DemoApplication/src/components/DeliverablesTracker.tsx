@@ -13,6 +13,7 @@ import EmailComposer from './EmailComposer'
 import WorkflowProgressPopup from './WorkflowProgressPopup'
 import ProfileDashboard from './ProfileDashboard'
 import PermissionsModal from './PermissionsModal'
+import DraggableModal from './DraggableModal'
 import CellEditModal from './CellEditModal'
 import type { CellEditTarget } from './CellEditModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
@@ -721,11 +722,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Manual Craft Entry Modal */}
       {showManualCraftModal && (
-        <div className="modal-backdrop" onClick={() => { setShowManualCraftModal(false); setManualCraftType('') }}>
-          <div
-            className="bg-white border border-border rounded-card p-6 max-w-md w-full mx-4 animate-slideUp"
-            onClick={e => e.stopPropagation()}
-          >
+        <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={440}>
+          <div className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-accent/15 flex items-center justify-center">
@@ -784,7 +782,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               )}
             </button>
           </div>
-        </div>
+        </DraggableModal>
       )}
 
       {/* Craft Summary Section (visible when specific platform selected) */}
@@ -1321,11 +1319,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Notes Detail Popup */}
       {notesRow && (
-        <div className="modal-backdrop" onClick={() => setNotesRow(null)}>
-          <div
-            className="bg-white border border-border rounded-card p-6 max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col animate-slideUp"
-            onClick={e => e.stopPropagation()}
-          >
+        <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={640}>
+          <div className="p-6 max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
@@ -1395,7 +1390,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               </button>
             </div>
           </div>
-        </div>
+        </DraggableModal>
       )}
 
       {/* Re-seal success toast */}

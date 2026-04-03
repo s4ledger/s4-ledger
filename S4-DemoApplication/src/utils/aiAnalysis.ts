@@ -1,5 +1,6 @@
 import { DRLRow, AnchorRecord } from '../types'
 import { contractRequirements } from '../data/contractData'
+import { chatWithAI, AIChatMessage } from './aiService'
 
 /* ─── Types ──────────────────────────────────────────────────────── */
 export type Priority = 'Critical' | 'High' | 'Medium' | 'Low'
@@ -304,8 +305,50 @@ export function analyzePortfolio(
   }
 }
 
-/* ─── Simulated chat response ────────────────────────────────────── */
-export function generateChatResponse(userMessage: string, row: DRLRow, currentInsight: AIRowInsight): string {
+/* ─── Chat response — calls real AI, falls back to local ─────────── */
+export async function generateChatResponse(
+  userMessage: string,
+  row: DRLRow,
+  currentInsight: AIRowInsight,
+  chatHistory?: AIChatMessage[],
+): Promise<string> {
+  // Build context about the current row for the AI
+  const rowContext = `Current DRL row: ${row.id} "${row.title}", status=${row.status}, ` +
+    `contractDue=${row.contractDueFinish}, actualSubmission=${row.actualSubmissionDate || 'none'}, ` +
+    `received=${row.received}, reviewDays=${row.calendarDaysToReview ?? 'N/A'}, ` +
+    `priority=${currentInsight.priority}. ` +
+    `Status assessment: ${currentInsight.statusExplanation}`
+
+  const fullMessage = `Context: ${rowContext}\n\nUser question: ${userMessage}`
+
+  try {
+    const result = await chatWithAI({
+      message: fullMessage,
+      conversation: chatHistory,
+      tool_context: 'drl_tracker',
+      analysis_data: {
+        rowId: row.id,
+        title: row.title,
+        status: row.status,
+        priority: currentInsight.priority,
+        contractDueFinish: row.contractDueFinish,
+        actualSubmissionDate: row.actualSubmissionDate,
+      },
+    })
+
+    if (!result.fallback && result.response) {
+      return result.response
+    }
+  } catch {
+    // Fall through to local logic
+  }
+
+  // Local fallback — pattern matching
+  return generateLocalChatResponse(userMessage, row, currentInsight)
+}
+
+/* ─── Local fallback chat (original pattern-matching logic) ──────── */
+function generateLocalChatResponse(userMessage: string, row: DRLRow, currentInsight: AIRowInsight): string {
   const msg = userMessage.toLowerCase()
 
   if (msg.includes('deadline') || msg.includes('due date') || msg.includes('when')) {

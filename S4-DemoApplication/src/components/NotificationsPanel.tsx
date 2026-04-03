@@ -1,3 +1,4 @@
+import DraggableModal from './DraggableModal'
 import { SyncNotification } from '../utils/externalSync'
 
 interface Props {
@@ -35,9 +36,8 @@ export default function NotificationsPanel({
   const unread = notifications.filter(n => !n.read).length
 
   return (
-    <div
-      className="fixed top-14 right-4 z-50 w-[400px] max-h-[70vh] bg-white border border-border rounded-card shadow-2xl flex flex-col animate-slideUp"
-    >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={400} zIndex={50}>
+      <div className="flex flex-col max-h-[70vh]">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
@@ -131,6 +131,7 @@ export default function NotificationsPanel({
           </p>
         </div>
       )}
-    </div>
+      </div>
+    </DraggableModal>
   )
 }

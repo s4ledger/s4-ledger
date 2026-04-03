@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import DraggableModal from './DraggableModal'
 import { AuditEvent, AuditSummary, getAuditLog, getAuditLogForRow, getAuditSummary } from '../utils/auditTrail'
 
 interface Props {
@@ -54,7 +55,8 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, onClose }:
   const ts = trustStyles[summary.trustColor]
 
   return (
-    <div className="fixed top-0 right-0 h-full w-[420px] bg-white border-l border-border shadow-xl z-40 flex flex-col animate-slideUp">
+    <DraggableModal className="bg-white border-l border-border shadow-xl" defaultWidth={420} zIndex={40}>
+      <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-white">
         <div className="flex items-center gap-2.5">
@@ -219,6 +221,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, onClose }:
           Immutable audit trail · Cryptographically linked to XRPL
         </p>
       </div>
-    </div>
+      </div>
+    </DraggableModal>
   )
 }

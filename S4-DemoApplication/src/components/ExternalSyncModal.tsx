@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DraggableModal from './DraggableModal'
 import { SyncStatus } from '../utils/externalSync'
 
 interface Props {
@@ -30,11 +31,8 @@ export default function ExternalSyncModal({
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white border border-border rounded-card p-6 max-w-lg w-full mx-4 animate-slideUp"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={520}>
+      <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
@@ -159,6 +157,6 @@ export default function ExternalSyncModal({
           </div>
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

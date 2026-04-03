@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import DraggableModal from './DraggableModal'
 import { DRLRow, AnchorRecord } from '../types'
 import { hashRow } from '../utils/hash'
 import { recordVerification } from '../utils/auditTrail'
@@ -52,11 +53,8 @@ export default function VerifyModal({ row, anchor, onReseal, onClose, onShowMism
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white border border-border rounded-card p-6 max-w-xl w-full mx-4 animate-slideUp"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={580}>
+      <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
@@ -218,6 +216,6 @@ export default function VerifyModal({ row, anchor, onReseal, onClose, onShowMism
           </button>
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

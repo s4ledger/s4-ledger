@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import DraggableModal from './DraggableModal'
 import { DRLRow, AnchorRecord } from '../types'
 import { analyzePortfolio, AIPortfolioSummary } from '../utils/aiAnalysis'
 
@@ -34,7 +35,8 @@ export default function AINextActionsPanel({ data, anchors, editedSinceSeal, vis
   if (!visible) return null
 
   return (
-    <div className="fixed top-0 right-0 h-full w-[380px] bg-white border-l border-border shadow-xl z-40 flex flex-col animate-slideUp">
+    <DraggableModal className="bg-white border-l border-border shadow-xl" defaultWidth={380} zIndex={40}>
+      <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-border">
         <div className="flex items-center gap-2">
@@ -131,6 +133,7 @@ export default function AINextActionsPanel({ data, anchors, editedSinceSeal, vis
           <i className="fas fa-brain text-accent mr-1"></i>Auto-generated from contract data & seal history
         </p>
       </div>
-    </div>
+      </div>
+    </DraggableModal>
   )
 }

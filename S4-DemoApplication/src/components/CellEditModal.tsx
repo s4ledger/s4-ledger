@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
+import DraggableModal from './DraggableModal'
 import { DRLRow, ColumnKey, AnchorRecord } from '../types'
 import { AIRowInsight } from '../utils/aiAnalysis'
+import { chatWithAI } from '../utils/aiService'
 
 interface CellEditTarget {
   row: DRLRow
@@ -19,8 +21,8 @@ interface Props {
   onClose: () => void
 }
 
-/* ── AI suggestion generator (simulated) ─────────────────────── */
-function generateAISuggestion(target: CellEditTarget, insight: AIRowInsight | null): string | null {
+/* ── Local AI suggestion (instant fallback) ──────────────────── */
+function generateLocalAISuggestion(target: CellEditTarget, insight: AIRowInsight | null): string | null {
   const { colKey, row } = target
 
   if (colKey === 'notes' || colKey === 'govNotes' || colKey === 'shipbuilderNotes') {
@@ -84,14 +86,41 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
   const [applied, setApplied] = useState(false)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
+  const [aiLoading, setAiLoading] = useState(false)
+
   useEffect(() => {
-    // Simulate brief AI processing
-    const timer = setTimeout(() => {
-      const suggestion = generateAISuggestion(target, aiInsight)
-      setAiSuggestion(suggestion)
-      if (suggestion) setShowSuggestion(true)
-    }, 400)
-    return () => clearTimeout(timer)
+    // Show local suggestion immediately as fallback
+    const localSuggestion = generateLocalAISuggestion(target, aiInsight)
+    setAiSuggestion(localSuggestion)
+    if (localSuggestion) setShowSuggestion(true)
+
+    // Then try real AI for a better suggestion
+    let cancelled = false
+    const prompt = `I'm editing the "${target.label}" field for DRL item ${target.row.id} "${target.row.title}" ` +
+      `(status: ${target.row.status}, current value: "${target.value}"). ` +
+      `Provide a concise, specific suggestion for what this field should contain. ` +
+      `Keep your response to 1-2 sentences max. Just give the suggestion text, no explanation.`
+
+    setAiLoading(true)
+    chatWithAI({
+      message: prompt,
+      tool_context: 'cell_edit',
+      analysis_data: {
+        rowId: target.row.id,
+        colKey: target.colKey,
+        status: target.row.status,
+        currentValue: target.value,
+      },
+    }).then(result => {
+      if (!cancelled && !result.fallback && result.response) {
+        setAiSuggestion(result.response)
+        setShowSuggestion(true)
+      }
+    }).finally(() => {
+      if (!cancelled) setAiLoading(false)
+    })
+
+    return () => { cancelled = true }
   }, [target, aiInsight])
 
   useEffect(() => {
@@ -134,11 +163,8 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
     : 'text-steel'
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden animate-[scaleIn_0.15s_ease]"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white rounded-xl shadow-2xl" defaultWidth={520}>
+      <div className="overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 border-b border-border bg-gray-50/50">
           <div className="flex items-center justify-between">
@@ -228,8 +254,10 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
             <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-3">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <i className="fas fa-lightbulb text-blue-500 text-xs"></i>
-                  <span className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide">AI Suggestion</span>
+                  <i className={`fas ${aiLoading ? 'fa-spinner fa-spin' : 'fa-lightbulb'} text-blue-500 text-xs`}></i>
+                  <span className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide">
+                    {aiLoading ? 'AI Thinking…' : 'AI Suggestion'}
+                  </span>
                 </div>
                 {target.editable && !applied && (
                   <button
@@ -277,6 +305,6 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
           </div>
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

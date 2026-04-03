@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DraggableModal from './DraggableModal'
 import { SyncNotification, generateEmailBody } from '../utils/externalSync'
 import { UserRole } from '../types'
 
@@ -26,11 +27,8 @@ export default function EmailComposer({ notification, role, onClose }: Props) {
 
   if (sent) {
     return (
-      <div className="modal-backdrop" onClick={onClose}>
-        <div
-          className="bg-white border border-border rounded-card p-6 max-w-lg w-full mx-4 animate-slideUp text-center"
-          onClick={e => e.stopPropagation()}
-        >
+      <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={480}>
+        <div className="p-6 text-center">
           <div className="w-14 h-14 mx-auto rounded-2xl bg-green-500/15 flex items-center justify-center mb-4">
             <i className="fas fa-check-circle text-green-500 text-2xl"></i>
           </div>
@@ -48,16 +46,13 @@ export default function EmailComposer({ notification, role, onClose }: Props) {
             Done
           </button>
         </div>
-      </div>
+      </DraggableModal>
     )
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white border border-border rounded-card p-6 max-w-2xl w-full mx-4 max-h-[85vh] flex flex-col animate-slideUp"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={720}>
+      <div className="p-6 max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -160,6 +155,6 @@ export default function EmailComposer({ notification, role, onClose }: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DraggableModal from './DraggableModal'
 import { DRLRow, AnchorRecord } from '../types'
 import { diffRow, analyzeMismatch, getSealed } from '../utils/sealedVault'
 
@@ -34,11 +35,8 @@ export default function MismatchModal({ row, anchor, onReseal, onClose }: Props)
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white border border-border rounded-card p-6 max-w-3xl w-full mx-4 animate-slideUp max-h-[90vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={860}>
+      <div className="p-6 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
@@ -176,6 +174,6 @@ export default function MismatchModal({ row, anchor, onReseal, onClose }: Props)
           </button>
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

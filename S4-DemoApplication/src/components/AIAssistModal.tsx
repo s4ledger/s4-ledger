@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import DraggableModal from './DraggableModal'
 import { DRLRow, AnchorRecord } from '../types'
 import { AIRowInsight, analyzeRow, analyzePortfolio, generateChatResponse, AIPortfolioSummary } from '../utils/aiAnalysis'
 
@@ -65,10 +66,14 @@ export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, 
     setChatHistory(prev => [...prev, { role: 'user', text: userMsg }])
     setChatLoading(true)
 
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 500))
-    const response = generateChatResponse(userMsg, row, insight)
-    setChatHistory(prev => [...prev, { role: 'ai', text: response }])
-    setChatLoading(false)
+    try {
+      const response = await generateChatResponse(userMsg, row, insight, chatHistory)
+      setChatHistory(prev => [...prev, { role: 'ai', text: response }])
+    } catch {
+      setChatHistory(prev => [...prev, { role: 'ai', text: 'Sorry, I encountered an error. Please try again.' }])
+    } finally {
+      setChatLoading(false)
+    }
   }
 
   function handleSave() {
@@ -81,11 +86,8 @@ export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, 
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white border border-border rounded-card p-6 max-w-3xl w-full mx-4 max-h-[85vh] flex flex-col animate-slideUp"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={860}>
+      <div className="p-6 max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -303,6 +305,6 @@ export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, 
           </button>
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DraggableModal from './DraggableModal'
 import { UserRole, DRLRow, AnchorRecord } from '../types'
 import { SyncStatus, SyncNotification } from '../utils/externalSync'
 
@@ -29,8 +30,8 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
   ]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-border overflow-hidden max-h-[85vh] flex flex-col">
+    <DraggableModal className="bg-white rounded-2xl shadow-2xl border border-border overflow-hidden" defaultWidth={720}>
+      <div className="max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-white">
           <div className="flex items-center gap-3">
@@ -272,6 +273,6 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
           )}
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

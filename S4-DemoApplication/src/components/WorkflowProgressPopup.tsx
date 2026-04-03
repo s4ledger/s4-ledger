@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DraggableModal from './DraggableModal'
 import { DRLRow, AnchorRecord, UserRole } from '../types'
 import { getWorkflowStages, getRACIParty, StageStatus, WorkflowStage } from '../utils/raciWorkflow'
 import { AIRowInsight } from '../utils/aiAnalysis'
@@ -58,11 +59,8 @@ export default function WorkflowProgressPopup({
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white border border-border rounded-card w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col animate-slideUp shadow-2xl"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={960}>
+      <div className="max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-border flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -250,6 +248,6 @@ export default function WorkflowProgressPopup({
           </div>
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

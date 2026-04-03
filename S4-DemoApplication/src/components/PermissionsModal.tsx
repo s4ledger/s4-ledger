@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DraggableModal from './DraggableModal'
 import { Organization, UserRole, ColumnKey } from '../types'
 import { OrgPermissions, ContractorGrants } from '../utils/permissions'
 import { CONTRACTOR_GRANTABLE_COLUMNS } from '../utils/spreadsheetConfigs'
@@ -38,11 +39,8 @@ export default function PermissionsModal({ role, org, perms, contractorGrants, o
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="bg-white border border-border rounded-card p-0 max-w-lg w-full mx-4 animate-slideUp overflow-hidden"
-        onClick={e => e.stopPropagation()}
-      >
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl overflow-hidden" defaultWidth={520}>
+      <div>
         {/* Header */}
         <div className="bg-gray-50 border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
@@ -293,6 +291,6 @@ export default function PermissionsModal({ role, org, perms, contractorGrants, o
           </button>
         </div>
       </div>
-    </div>
+    </DraggableModal>
   )
 }

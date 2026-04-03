@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DraggableModal from './DraggableModal'
 
 interface Props {
   onAuthenticated: () => void
@@ -19,8 +20,8 @@ export default function CACPopup({ onAuthenticated }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 animate-fadeIn">
-      <div className="bg-white border border-border rounded-card p-8 max-w-md w-full mx-4 text-center animate-slideUp">
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={440}>
+      <div className="p-8 text-center">
         <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent/20 flex items-center justify-center">
           <i className="fas fa-id-card text-accent text-3xl"></i>
         </div>
@@ -57,6 +58,6 @@ export default function CACPopup({ onAuthenticated }: Props) {
           DoD PKI · NIPR · FOUO Simulation Environment
         </p>
       </div>
-    </div>
+    </DraggableModal>
   )
 }
