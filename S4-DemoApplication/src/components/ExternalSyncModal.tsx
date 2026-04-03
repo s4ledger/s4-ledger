@@ -1,12 +1,27 @@
 import { useState } from 'react'
 import { SyncStatus } from '../utils/externalSync'
 
+const PMS300_CRAFT_OPTIONS = [
+  '40ft Patrol Boat',
+  '11m RHIB',
+  'Harbor Tug (YTB)',
+  'Utility Boat (UB)',
+  'Force Protection Boat',
+  'Diving Support Platform',
+  'Steel Workboat',
+  'Spill Response Craft',
+  'HSMST Drone',
+  '8m NSW RHIB',
+  'Barracks Barge (APL)',
+  'Floating Dry Dock (AFDL)',
+]
+
 interface Props {
   syncStatus: SyncStatus
   autoSyncEnabled: boolean
   onToggleAutoSync: () => void
   onManualSync: () => void | Promise<void>
-  onSimulateNewHull: () => void | Promise<void>
+  onManualCraft: (craftName: string) => void | Promise<void>
   onToggleOffline: () => void
   onClose: () => void
 }
@@ -16,12 +31,13 @@ export default function ExternalSyncModal({
   autoSyncEnabled,
   onToggleAutoSync,
   onManualSync,
-  onSimulateNewHull,
+  onManualCraft,
   onToggleOffline,
   onClose,
 }: Props) {
   const [syncing, setSyncing] = useState(false)
-  const [simulating, setSimulating] = useState(false)
+  const [selectedCraft, setSelectedCraft] = useState('')
+  const [addingCraft, setAddingCraft] = useState(false)
 
   async function handleManualSync() {
     setSyncing(true)
@@ -32,13 +48,14 @@ export default function ExternalSyncModal({
     }
   }
 
-  async function handleSimulateNewHull() {
-    setSimulating(true)
+  async function handleAddCraft() {
+    if (!selectedCraft) return
+    setAddingCraft(true)
     try {
-      await onSimulateNewHull()
+      await onManualCraft(selectedCraft)
     } finally {
-      setSimulating(false)
-      onClose()
+      setAddingCraft(false)
+      setSelectedCraft('')
     }
   }
 
@@ -56,7 +73,7 @@ export default function ExternalSyncModal({
             </div>
             <div>
               <h3 className="text-base font-bold text-gray-900">External Database Sync</h3>
-              <p className="text-steel text-xs">NSERC IDE (PMS 300) · Constellation-class DRL</p>
+              <p className="text-steel text-xs">NSERC IDE (PMS 300) · Service Craft & Small Boats</p>
             </div>
           </div>
           <button onClick={onClose} className="text-steel hover:text-gray-900 transition-colors">
@@ -136,7 +153,7 @@ export default function ExternalSyncModal({
         {/* Manual Sync Button */}
         <button
           onClick={handleManualSync}
-          disabled={syncing || simulating || !syncStatus.isOnline}
+          disabled={syncing || addingCraft || !syncStatus.isOnline}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent hover:bg-accent/90 disabled:bg-accent/50 text-white rounded-lg text-sm font-medium transition-all"
         >
           {syncing ? (
@@ -152,24 +169,33 @@ export default function ExternalSyncModal({
           )}
         </button>
 
-        {/* Simulate New Hull/Craft */}
-        <button
-          onClick={handleSimulateNewHull}
-          disabled={syncing || simulating}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 mt-2 bg-transparent hover:bg-gray-50 border border-border text-steel hover:text-gray-900 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
-        >
-          {simulating ? (
-            <>
-              <i className="fas fa-spinner fa-spin text-[10px]"></i>
-              Generating New Hull…
-            </>
-          ) : (
-            <>
-              <i className="fas fa-ship text-[10px]"></i>
-              Simulate New Hull/Craft
-            </>
-          )}
-        </button>
+        {/* Manual Craft Entry (offline fallback) */}
+        <div className="mt-3 p-3 bg-gray-50 border border-border rounded-lg">
+          <p className="text-xs font-medium text-gray-700 mb-2">
+            <i className="fas fa-plus-circle mr-1 text-steel"></i>
+            Add Craft Manually
+          </p>
+          <div className="flex gap-2">
+            <select
+              value={selectedCraft}
+              onChange={e => setSelectedCraft(e.target.value)}
+              disabled={syncing || addingCraft}
+              className="flex-1 text-xs border border-border rounded-md px-2 py-1.5 bg-white text-gray-900 disabled:opacity-50"
+            >
+              <option value="">Select craft type…</option>
+              {PMS300_CRAFT_OPTIONS.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <button
+              onClick={handleAddCraft}
+              disabled={!selectedCraft || syncing || addingCraft}
+              className="px-3 py-1.5 bg-accent hover:bg-accent/90 disabled:bg-accent/40 text-white rounded-md text-xs font-medium transition-colors"
+            >
+              {addingCraft ? <i className="fas fa-spinner fa-spin"></i> : 'Add'}
+            </button>
+          </div>
+        </div>
 
         {!syncStatus.isOnline && (
           <p className="text-xs text-orange-500 text-center mt-2">

@@ -399,8 +399,30 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-/* ── New-hull row templates for simulation ───────────────────── */
-const NEW_HULL_ROW_TEMPLATES: Omit<CDRLRow, 'id' | 'title' | 'notes' | 'status'>[] = [
+/* ── PMS 300 Service Craft & Small Boats registry ────────────── */
+
+/**
+ * Real PMS 300 (U.S. Navy & FMS Boats and Craft) service craft types.
+ * Managed under PEO Ships — includes patrol boats, RIBs, harbor tugs,
+ * utility boats, diving support, force protection, seaborne targets, etc.
+ */
+const PMS300_CRAFT_REGISTRY: { label: string; desc: string }[] = [
+  { label: '40ft Patrol Boat',       desc: 'Force Protection patrol craft' },
+  { label: '11m RHIB',               desc: 'Expeditionary Rigid Hull Inflatable Boat' },
+  { label: 'Harbor Tug (YTB)',       desc: 'Large harbor tug — yard & district craft' },
+  { label: 'Utility Boat (UB)',      desc: 'General-purpose harbor utility craft' },
+  { label: 'Force Protection Boat',  desc: 'Security & force protection craft' },
+  { label: 'Diving Support Platform',desc: 'Diving operations support vessel' },
+  { label: 'Steel Workboat',         desc: 'Multi-purpose steel workboat' },
+  { label: 'Spill Response Craft',   desc: 'Oil-spill response & containment vessel' },
+  { label: 'HSMST Drone',            desc: 'High-Speed Maneuvering Surface Target' },
+  { label: '8m NSW RHIB',            desc: 'Naval Special Warfare 8-meter service support craft' },
+  { label: 'Barracks Barge (APL)',   desc: 'Non-self-propelled barracks craft' },
+  { label: 'Floating Dry Dock (AFDL)', desc: 'Small auxiliary floating dry dock' },
+]
+
+/** New-craft row templates for simulation */
+const NEW_CRAFT_ROW_TEMPLATES: Omit<CDRLRow, 'id' | 'title' | 'notes' | 'status'>[] = [
   {
     diNumber: 'DI-SESS-81521',
     contractDueFinish: '2026-06-30',
@@ -439,7 +461,7 @@ const NEW_HULL_ROW_TEMPLATES: Omit<CDRLRow, 'id' | 'title' | 'notes' | 'status'>
   },
 ]
 
-const NEW_HULL_TITLES = [
+const NEW_CRAFT_TITLES = [
   'Systems Engineering Plan (SEP)',
   'Integrated Logistics Support Plan (ILSP)',
   'Test and Evaluation Master Plan (TEMP)',
@@ -450,25 +472,53 @@ const NEW_HULL_TITLES = [
   'Software Development Plan (SDP)',
 ]
 
-/** Detect the highest hull number in the current dataset */
+/**
+ * Detect which PMS 300 craft labels already exist in the dataset.
+ * Returns the set of craft strings found (e.g., "Hull 1", "11m RHIB").
+ */
+export function detectExistingCrafts(rows: CDRLRow[]): Set<string> {
+  const crafts = new Set<string>()
+  for (const row of rows) {
+    const m = row.title.match(/\(([^)]+)\)\s*$/)
+    if (m) crafts.add(m[1].trim())
+  }
+  return crafts
+}
+
+/** Detect the highest hull number in the current dataset (for backward compat) */
 export function detectMaxHull(rows: CDRLRow[]): number {
   let max = 0
   for (const row of rows) {
-    const m = row.title.match(/\(Hull\s*(\d+)\)/i)
+    const m = row.title.match(/\bHull\s*(\d+)\b/i)
     if (m) max = Math.max(max, parseInt(m[1], 10))
   }
   return max
 }
 
+/** Get the next PMS 300 service craft type not yet in the dataset */
+export function getNextPMS300Craft(currentRows: CDRLRow[]): { craftLabel: string; desc: string } {
+  const existing = detectExistingCrafts(currentRows)
+
+  // Find the next craft from the registry not yet present
+  for (const craft of PMS300_CRAFT_REGISTRY) {
+    if (!existing.has(craft.label)) {
+      return { craftLabel: craft.label, desc: craft.desc }
+    }
+  }
+
+  // All registry types present — cycle with a numeric suffix
+  const idx = existing.size % PMS300_CRAFT_REGISTRY.length
+  const base = PMS300_CRAFT_REGISTRY[idx]
+  const suffix = Math.floor(existing.size / PMS300_CRAFT_REGISTRY.length) + 1
+  return { craftLabel: `${base.label} #${suffix + 1}`, desc: base.desc }
+}
+
 /**
- * Generate new-hull rows deterministically (always produces rows).
- * Used by the "Simulate New Hull/Craft" action and also callable
- * from the sync pipeline when forceNewHull is true.
+ * Generate new PMS 300 service craft rows.
+ * Always produces 2-4 rows for the next available craft type.
  */
-export function generateNewHullRows(currentRows: CDRLRow[]): CDRLRow[] {
-  const maxHull = detectMaxHull(currentRows)
-  const newHullNum = maxHull + 1
-  const hullLabel = `Hull ${newHullNum}`
+export function generateNewCraftRows(currentRows: CDRLRow[]): { rows: CDRLRow[]; craftLabel: string } {
+  const nextCraft = getNextPMS300Craft(currentRows)
   const maxId = currentRows.reduce((m, r) => {
     const n = parseInt(r.id.replace(/\D/g, ''), 10)
     return isNaN(n) ? m : Math.max(m, n)
@@ -477,8 +527,8 @@ export function generateNewHullRows(currentRows: CDRLRow[]): CDRLRow[] {
   const newCount = 2 + Math.floor(Math.random() * 3) // 2-4 rows
   const rows: CDRLRow[] = []
   for (let i = 0; i < newCount; i++) {
-    const template = NEW_HULL_ROW_TEMPLATES[i % NEW_HULL_ROW_TEMPLATES.length]
-    const titleBase = NEW_HULL_TITLES[i % NEW_HULL_TITLES.length]
+    const template = NEW_CRAFT_ROW_TEMPLATES[i % NEW_CRAFT_ROW_TEMPLATES.length]
+    const titleBase = NEW_CRAFT_TITLES[i % NEW_CRAFT_TITLES.length]
     const rowId = `CDRL-${String(maxId + 1 + i).padStart(3, '0')}`
     const status: CDRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
     const remarks = ATTACHMENT_J2_REMARKS[status]
@@ -486,8 +536,38 @@ export function generateNewHullRows(currentRows: CDRLRow[]): CDRLRow[] {
     rows.push({
       ...template,
       id: rowId,
-      title: `${titleBase} Rev A (${hullLabel})`,
-      notes: `[Synced from NSERC IDE (PMS 300)] New craft detected — ${hullLabel}. ${pickRandom(remarks)}`,
+      title: `${titleBase} Rev A (${nextCraft.craftLabel})`,
+      notes: `[Synced from NSERC IDE (PMS 300)] New service craft detected — ${nextCraft.craftLabel}: ${nextCraft.desc}. ${pickRandom(remarks)}`,
+      status,
+    })
+  }
+  return { rows, craftLabel: nextCraft.craftLabel }
+}
+
+/**
+ * Generate rows for a manually entered craft (offline/fallback).
+ * @param craftName - User-provided label, e.g. "Harbor Tug (YTB)"
+ */
+export function generateManualCraftRows(currentRows: CDRLRow[], craftName: string): CDRLRow[] {
+  const maxId = currentRows.reduce((m, r) => {
+    const n = parseInt(r.id.replace(/\D/g, ''), 10)
+    return isNaN(n) ? m : Math.max(m, n)
+  }, 0)
+
+  const rows: CDRLRow[] = []
+  const count = 3
+  for (let i = 0; i < count; i++) {
+    const template = NEW_CRAFT_ROW_TEMPLATES[i % NEW_CRAFT_ROW_TEMPLATES.length]
+    const titleBase = NEW_CRAFT_TITLES[i % NEW_CRAFT_TITLES.length]
+    const rowId = `CDRL-${String(maxId + 1 + i).padStart(3, '0')}`
+    const status: CDRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
+    const remarks = ATTACHMENT_J2_REMARKS[status]
+
+    rows.push({
+      ...template,
+      id: rowId,
+      title: `${titleBase} Rev A (${craftName})`,
+      notes: `[Manual Entry — NSERC IDE Offline] New craft: ${craftName}. ${pickRandom(remarks)}`,
       status,
     })
   }
@@ -531,14 +611,12 @@ function simulatePMS300Updates(
     return updated
   })
 
-  // ── Occasionally introduce a brand-new hull/craft ────────────
-  // ~30% chance per sync to detect a new hull from NSERC IDE
-  const newHullRows: CDRLRow[] = []
-  if (Math.random() < 0.3) {
-    newHullRows.push(...generateNewHullRows(currentRows))
-  }
+  // ── Always detect new service craft from NSERC IDE ────────────
+  // PMS 300 manages a wide portfolio — each sync discovers craft in the pipeline
+  const newCraftResult = generateNewCraftRows(currentRows)
+  const newCraftRows = newCraftResult.rows
 
-  const allRows = [...updatedExistingRows, ...newHullRows]
+  const allRows = [...updatedExistingRows, ...newCraftRows]
 
   return {
     isReal: false,
@@ -547,8 +625,8 @@ function simulatePMS300Updates(
     fetchedAt: new Date().toISOString(),
     warnings: [
       'Synced from NSERC IDE (PMS 300) — simulation active until Azure AD credentials are provisioned.',
-      ...(newHullRows.length > 0
-        ? [`New craft/hull detected: ${newHullRows.length} new rows from NSERC IDE (PMS 300).`]
+      ...(newCraftRows.length > 0
+        ? [`New service craft detected: ${newCraftResult.craftLabel} — ${newCraftRows.length} new deliverable rows.`]
         : []),
     ],
   }

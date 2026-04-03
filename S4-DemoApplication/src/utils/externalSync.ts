@@ -5,7 +5,7 @@ import { storeSealed } from './sealedVault'
 import { recordSeal, recordExternalFeed } from './auditTrail'
 import { analyzeRow } from './aiAnalysis'
 import { getRACIParty } from './raciWorkflow'
-import { fetchLatestDRLUpdates, NSERCSyncResult, generateNewHullRows, detectMaxHull } from '../services/nsercIdeService'
+import { fetchLatestDRLUpdates, NSERCSyncResult, generateNewCraftRows, generateManualCraftRows, detectExistingCrafts } from '../services/nsercIdeService'
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
@@ -92,18 +92,14 @@ export async function realSyncPipeline(
   notifications: SyncNotification[]
   updatedRows: CDRLRow[]
   newAnchors: Record<string, AnchorRecord>
-  newHullDetected: string | null
+  newCraftDetected: string | null
 }> {
   const changes: SyncChange[] = []
   const notifications: SyncNotification[] = []
   const updatedRows = [...data]
   const newAnchors: Record<string, AnchorRecord> = {}
-  const existingHulls = new Set<string>()
-  for (const r of data) {
-    const m = r.title.match(/\(Hull\s*(\d+)\)/i)
-    if (m) existingHulls.add(m[1])
-  }
-  let newHullDetected: string | null = null
+  const existingCrafts = detectExistingCrafts(data)
+  let newCraftDetected: string | null = null
 
   // Build a lookup so we can match returned rows to current rows by id
   const rowIndexById = new Map<string, number>()
@@ -115,7 +111,7 @@ export async function realSyncPipeline(
     serviceResult = await fetchLatestDRLUpdates(data)
   } catch (e) {
     console.error('[realSyncPipeline] NSERC IDE (PMS 300) service error, aborting sync:', e)
-    return { changes, notifications, updatedRows, newAnchors, newHullDetected: null }
+    return { changes, notifications, updatedRows, newAnchors, newCraftDetected: null }
   }
 
   // ── Step 2: Process result from NSERC IDE (PMS 300) ──
@@ -136,11 +132,11 @@ export async function realSyncPipeline(
       updatedRows.push(extRow)
       rowIndexById.set(extRow.id, newIdx)
 
-      // Track new hull detection
-      const hullMatch = extRow.title.match(/\(Hull\s*(\d+)\)/i)
-      if (hullMatch && !existingHulls.has(hullMatch[1])) {
-        newHullDetected = hullMatch[1]
-        existingHulls.add(hullMatch[1])
+      // Track new craft detection
+      const craftMatch = extRow.title.match(/\(([^)]+)\)\s*$/)
+      if (craftMatch && !existingCrafts.has(craftMatch[1].trim())) {
+        newCraftDetected = craftMatch[1].trim()
+        existingCrafts.add(newCraftDetected)
       }
 
       // Record every field as a "new" change
@@ -157,11 +153,11 @@ export async function realSyncPipeline(
         })
       }
 
-      // Audit: "New craft/hull detected and sealed from NSERC IDE (PMS 300)"
+      // Audit: "New service craft detected and sealed from NSERC IDE (PMS 300)"
       recordExternalFeed(
         extRow,
         `${source} [${modeLabel}]`,
-        `${modeLabel}: New craft/hull detected and sealed from ${source} — ${extRow.title}`,
+        `${modeLabel}: New service craft detected and sealed from ${source} — ${extRow.title}`,
       )
 
       // Seal the new row to XRPL (0.01 SLS)
@@ -178,7 +174,7 @@ export async function realSyncPipeline(
         notes: `${updatedRows[newIdx].notes}\n${insight.conciseNote}`,
       }
 
-      // RACI notification for new craft/hull
+      // RACI notification for new service craft
       const raciParty = getRACIParty(extRow)
       const priority = pickPriority(extRow.status)
       const stakeholders = [raciParty, ...getStakeholders(priority, role).filter(s => s !== raciParty)]
@@ -186,8 +182,9 @@ export async function realSyncPipeline(
       notifications.push({
         id: makeNotifId(),
         timestamp: new Date().toISOString(),
-        title: `${extRow.id} — New craft/hull detected from NSERC IDE (PMS 300)`,
-        body: `New craft/hull detected and sealed from NSERC IDE (PMS 300) [${modeLabel}]: ${extRow.title}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
+        title: `${extRow.id} — New service craft detected from NSERC IDE (PMS 300)`,
+        body: `New service craft detected and sealed from NSERC IDE (PMS 300) [${modeLabel}]: ${extRow.title}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
+
         priority,
         rowId: extRow.id,
         rowTitle: extRow.title,
@@ -270,15 +267,17 @@ export async function realSyncPipeline(
     })
   }
 
-  return { changes, notifications, updatedRows, newAnchors, newHullDetected }
+  return { changes, notifications, updatedRows, newAnchors, newCraftDetected }
 }
 
 /**
- * Force-generate a new hull/craft from NSERC IDE simulation.
- * Always produces new rows — used by the "Simulate New Hull/Craft" action.
+ * Generate rows for a manually entered craft (offline / fallback).
+ * Creates deliverable rows for a user-provided craft name, seals them,
+ * and runs AI analysis.
  */
-export async function simulateNewHullPipeline(
+export async function manualCraftPipeline(
   data: CDRLRow[],
+  craftName: string,
   role: UserRole,
   anchors: Record<string, AnchorRecord>,
   editedSinceSeal: Set<string>,
@@ -287,30 +286,18 @@ export async function simulateNewHullPipeline(
   notifications: SyncNotification[]
   updatedRows: CDRLRow[]
   newAnchors: Record<string, AnchorRecord>
-  newHullDetected: string | null
+  newCraftDetected: string
 }> {
-  const newRows = generateNewHullRows(data)
-  const maxHull = detectMaxHull(data)
-  const newHullNum = maxHull + 1
+  const newRows = generateManualCraftRows(data, craftName)
 
-  // Build a synthetic NSERCSyncResult with only the new rows
-  const fakeResult: NSERCSyncResult = {
-    isReal: false,
-    source: 'NSERC IDE (PMS 300)',
-    rows: newRows,
-    fetchedAt: new Date().toISOString(),
-    warnings: [`New craft/hull detected: ${newRows.length} new rows for Hull ${newHullNum} from NSERC IDE (PMS 300).`],
-  }
-
-  // Feed these rows through the same pipeline logic
   const changes: SyncChange[] = []
   const notifications: SyncNotification[] = []
   const updatedRows = [...data]
   const newAnchors: Record<string, AnchorRecord> = {}
-  const { isReal, source, rows: externalRows } = fakeResult
-  const modeLabel = 'Simulated Sync'
+  const modeLabel = 'Manual Entry'
+  const source = 'Manual (NSERC IDE Offline)'
 
-  for (const extRow of externalRows) {
+  for (const extRow of newRows) {
     const newIdx = updatedRows.length
     updatedRows.push(extRow)
 
@@ -323,14 +310,14 @@ export async function simulateNewHullPipeline(
         oldValue: '',
         newValue: String(extRow[field] ?? ''),
         source,
-        isReal,
+        isReal: false,
       })
     }
 
     recordExternalFeed(
       extRow,
       `${source} [${modeLabel}]`,
-      `${modeLabel}: New craft/hull detected and sealed from ${source} — ${extRow.title}`,
+      `${modeLabel}: New service craft added — ${extRow.title}`,
     )
 
     const hash = await hashRow(extRow as unknown as Record<string, unknown>)
@@ -352,15 +339,15 @@ export async function simulateNewHullPipeline(
     notifications.push({
       id: makeNotifId(),
       timestamp: new Date().toISOString(),
-      title: `${extRow.id} — New craft/hull detected from NSERC IDE (PMS 300)`,
-      body: `New craft/hull detected and sealed from NSERC IDE (PMS 300) [${modeLabel}]: ${extRow.title}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
+      title: `${extRow.id} — Manual craft added: ${craftName}`,
+      body: `Manual craft entry: ${extRow.title}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
       priority,
       rowId: extRow.id,
       rowTitle: extRow.title,
       stakeholders,
       read: false,
       changes: changes.filter(c => c.rowId === extRow.id),
-      isReal,
+      isReal: false,
     })
   }
 
@@ -369,7 +356,7 @@ export async function simulateNewHullPipeline(
     notifications,
     updatedRows,
     newAnchors,
-    newHullDetected: String(newHullNum),
+    newCraftDetected: craftName,
   }
 }
 

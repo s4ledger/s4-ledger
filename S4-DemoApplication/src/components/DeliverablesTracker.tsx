@@ -15,7 +15,7 @@ import { runContractComparison, ComparisonResult, ComparisonSummary } from '../u
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
-import { realSyncPipeline, simulateNewHullPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
+import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 
 interface Props {
@@ -30,13 +30,19 @@ interface Props {
   onSyncAnchors?: (newAnchors: Record<string, AnchorRecord>) => void
 }
 
-/* ─── Hull parser: extracts "(Hull X)" from title ────────────── */
-function getHull(title: string): string | null {
-  const m = title.match(/\(Hull\s*(\d+)\)/i)
-  return m ? m[1] : null
+/* ─── Craft parser: extracts parenthesized craft label from title ─ */
+function getCraft(title: string): string | null {
+  // Matches "(Hull 1)", "(SC Mercy)", "(T-AH 19)", "(FFG 62)", etc.
+  const m = title.match(/\(([^)]+)\)\s*$/)
+  return m ? m[1].trim() : null
 }
 
-const HULL_TABS_DEFAULT = ['1', '2', '3', '4', '5']
+/** Sort craft labels: numbered hulls first (numerically), then alpha */
+function craftSortKey(c: string): string {
+  const hm = c.match(/^Hull\s*(\d+)$/i)
+  if (hm) return `0-${hm[1].padStart(4, '0')}`
+  return `1-${c}`
+}
 
 const columns = [
   { key: 'title', label: 'S4 DRL(S) TITLE / REVISIONS', width: 'w-[22%]' },
@@ -97,21 +103,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [workflowRow, setWorkflowRow] = useState<CDRLRow | null>(null)
   const autoSyncRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  /* ─── Dynamic hull tabs derived from data ──────────────────── */
-  const hullTabs = useMemo(() => {
-    const hullSet = new Set<string>(HULL_TABS_DEFAULT)
+  /* ─── Dynamic craft tabs derived from data ──────────────────── */
+  const craftTabs = useMemo(() => {
+    const craftSet = new Set<string>()
     for (const row of data) {
-      const h = getHull(row.title)
-      if (h) hullSet.add(h)
+      const c = getCraft(row.title)
+      if (c) craftSet.add(c)
     }
-    const sorted = Array.from(hullSet).sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
+    const sorted = Array.from(craftSet).sort((a, b) => craftSortKey(a).localeCompare(craftSortKey(b)))
     return ['all', ...sorted]
   }, [data])
 
-  /* ─── Hull-filtered base data ──────────────────────────────── */
+  /* ─── Craft-filtered base data ─────────────────────────────── */
   const hullData = useMemo(() => {
     if (hullFilter === 'all') return data
-    return data.filter(r => getHull(r.title) === hullFilter)
+    return data.filter(r => getCraft(r.title) === hullFilter)
   }, [data, hullFilter])
 
   const filtered = useMemo(() => {
@@ -243,7 +249,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   /* ─── External Sync Handler ────────────────────────────── */
   const handleExternalSync = useCallback(async () => {
     if (!syncStatus.isOnline) return
-    const { changes, notifications: newNotifs, updatedRows, newAnchors, newHullDetected } = await realSyncPipeline(data, role, anchors, editedSinceSeal)
+    const { changes, notifications: newNotifs, updatedRows, newAnchors, newCraftDetected } = await realSyncPipeline(data, role, anchors, editedSinceSeal)
     onDataUpdate(updatedRows)
     if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
       onSyncAnchors(newAnchors)
@@ -257,9 +263,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }))
     setAuditVersion(v => v + 1)
     const sealCount = Object.keys(newAnchors).length
-    if (newHullDetected) {
-      setSyncToast(`NSERC IDE (PMS 300): New Hull ${newHullDetected} detected — ${changes.length} update${changes.length !== 1 ? 's' : ''} synced, ${sealCount} sealed to XRPL`)
-      setHullFilter(newHullDetected)
+    if (newCraftDetected) {
+      setSyncToast(`NSERC IDE (PMS 300): New craft "${newCraftDetected}" detected — ${changes.length} update${changes.length !== 1 ? 's' : ''} synced, ${sealCount} sealed to XRPL`)
+      setHullFilter(newCraftDetected)
     } else {
       setSyncToast(`NSERC IDE (PMS 300): ${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
     }
@@ -276,9 +282,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }
   }, [autoSyncEnabled, syncStatus.isOnline, handleExternalSync])
 
-  /* ─── Simulate New Hull/Craft (manual trigger) ─────────── */
-  const handleSimulateNewHull = useCallback(async () => {
-    const { changes, notifications: newNotifs, updatedRows, newAnchors, newHullDetected } = await simulateNewHullPipeline(data, role, anchors, editedSinceSeal)
+  /* ─── Manual Craft Entry (offline fallback) ──────────── */
+  const handleManualCraft = useCallback(async (craftName: string) => {
+    const { changes, notifications: newNotifs, updatedRows, newAnchors, newCraftDetected } = await manualCraftPipeline(data, craftName, role, anchors, editedSinceSeal)
     onDataUpdate(updatedRows)
     if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
       onSyncAnchors(newAnchors)
@@ -292,8 +298,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }))
     setAuditVersion(v => v + 1)
     const sealCount = Object.keys(newAnchors).length
-    setSyncToast(`NSERC IDE (PMS 300): New Hull ${newHullDetected} detected — ${sealCount} new row${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
-    if (newHullDetected) setHullFilter(newHullDetected)
+    setSyncToast(`Manual Entry: ${newCraftDetected} added — ${sealCount} new row${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
+    if (newCraftDetected) setHullFilter(newCraftDetected)
     setTimeout(() => setSyncToast(null), 5000)
   }, [data, role, anchors, editedSinceSeal, onDataUpdate, onSyncAnchors])
 
@@ -489,25 +495,25 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         </div>
       </header>
 
-      {/* Hull Filter Tabs */}
+      {/* Craft Filter Tabs */}
       <div className="bg-surface border-b border-border">
         <div className="max-w-[1600px] mx-auto px-6">
-          <div className="flex items-center gap-1 py-2">
-            {hullTabs.map(h => {
-              const label = h === 'all' ? 'All Hulls' : `Hull ${h}`
-              const count = h === 'all' ? data.length : data.filter(r => getHull(r.title) === h).length
-              const isActive = hullFilter === h
+          <div className="flex items-center gap-1 py-2 overflow-x-auto">
+            {craftTabs.map(c => {
+              const label = c === 'all' ? 'All Craft' : c
+              const count = c === 'all' ? data.length : data.filter(r => getCraft(r.title) === c).length
+              const isActive = hullFilter === c
               return (
                 <button
-                  key={h}
-                  onClick={() => setHullFilter(h)}
-                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg transition-all ${
+                  key={c}
+                  onClick={() => setHullFilter(c)}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg transition-all whitespace-nowrap ${
                     isActive
                       ? 'bg-accent text-white shadow-sm'
                       : 'text-steel hover:text-gray-900 hover:bg-black/[0.04]'
                   }`}
                 >
-                  {h !== 'all' && <i className="fas fa-ship text-[10px]"></i>}
+                  {c !== 'all' && <i className="fas fa-ship text-[10px]"></i>}
                   {label}
                   <span className={`ml-0.5 text-[10px] ${isActive ? 'text-white/70' : 'text-steel/60'}`}>
                     ({count})
@@ -519,7 +525,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         </div>
       </div>
 
-      {/* Hull Summary Section (visible when specific hull selected) */}
+      {/* Craft Summary Section (visible when specific craft selected) */}
       {hullSummary && (
         <div className="max-w-[1600px] mx-auto px-6 pt-4">
           <div className="bg-white border border-accent/20 rounded-card p-4">
@@ -529,7 +535,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   <i className="fas fa-ship text-accent text-sm"></i>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">Hull {hullFilter} Summary</h3>
+                  <h3 className="text-sm font-bold text-gray-900">{hullFilter} Summary</h3>
                   <p className="text-[11px] text-steel">
                     {hullSummary.total} deliverables assigned · {hullSummary.green} approved · {hullSummary.red} overdue · {hullSummary.sealed} sealed
                   </p>
@@ -961,7 +967,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           autoSyncEnabled={autoSyncEnabled}
           onToggleAutoSync={() => setAutoSyncEnabled(prev => !prev)}
           onManualSync={handleExternalSync}
-          onSimulateNewHull={handleSimulateNewHull}
+          onManualCraft={handleManualCraft}
           onToggleOffline={handleToggleOffline}
           onClose={() => setShowSync(false)}
         />
