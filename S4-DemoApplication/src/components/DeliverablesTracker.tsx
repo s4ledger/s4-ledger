@@ -17,6 +17,7 @@ import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
+import { PMS300_CRAFT_LABELS } from '../services/nsercIdeService'
 
 interface Props {
   data: CDRLRow[]
@@ -30,18 +31,19 @@ interface Props {
   onSyncAnchors?: (newAnchors: Record<string, AnchorRecord>) => void
 }
 
-/* ─── Craft parser: extracts parenthesized craft label from title ─ */
-function getCraft(title: string): string | null {
-  // Matches "(Hull 1)", "(SC Mercy)", "(T-AH 19)", "(FFG 62)", etc.
-  const m = title.match(/\(([^)]+)\)\s*$/)
-  return m ? m[1].trim() : null
-}
-
-/** Sort craft labels: numbered hulls first (numerically), then alpha */
-function craftSortKey(c: string): string {
-  const hm = c.match(/^Hull\s*(\d+)$/i)
-  if (hm) return `0-${hm[1].padStart(4, '0')}`
-  return `1-${c}`
+/* ─── Craft+Hull parser: extracts (Platform — Hull N) from title ─ */
+function parseCraftHull(title: string): { platform: string; hull: string } | null {
+  const idx = title.lastIndexOf('(')
+  if (idx === -1) return null
+  const end = title.lastIndexOf(')')
+  if (end <= idx) return null
+  const inner = title.slice(idx + 1, end).trim()
+  const dashIdx = inner.indexOf('—')
+  if (dashIdx === -1) return null
+  const platform = inner.slice(0, dashIdx).trim()
+  const hull = inner.slice(dashIdx + 1).trim()
+  if (!platform || !hull) return null
+  return { platform, hull }
 }
 
 const columns = [
@@ -75,6 +77,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [notesRow, setNotesRow] = useState<CDRLRow | null>(null)
   const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> | null>(null)
   const [showReport, setShowReport] = useState(false)
+  const [platformFilter, setPlatformFilter] = useState<string>('all')
   const [hullFilter, setHullFilter] = useState<string>('all')
   const [editedSinceSeal, setEditedSinceSeal] = useState<Set<string>>(new Set())
   const [resealToast, setResealToast] = useState<string | null>(null)
@@ -103,22 +106,54 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [workflowRow, setWorkflowRow] = useState<CDRLRow | null>(null)
   const autoSyncRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  /* ─── Dynamic craft tabs derived from data ──────────────────── */
-  const craftTabs = useMemo(() => {
-    const craftSet = new Set<string>()
+  /* ─── Manual craft add state ────────────────────────────────── */
+  const [showAddCraft, setShowAddCraft] = useState(false)
+  const [manualCraftType, setManualCraftType] = useState('')
+  const [addingCraft, setAddingCraft] = useState(false)
+
+  /* ─── Derive unique platforms from data ─────────────────────── */
+  const platforms = useMemo(() => {
+    const platformSet = new Set<string>()
     for (const row of data) {
-      const c = getCraft(row.title)
-      if (c) craftSet.add(c)
+      const parsed = parseCraftHull(row.title)
+      if (parsed) platformSet.add(parsed.platform)
     }
-    const sorted = Array.from(craftSet).sort((a, b) => craftSortKey(a).localeCompare(craftSortKey(b)))
-    return ['all', ...sorted]
+    return Array.from(platformSet).sort()
   }, [data])
 
-  /* ─── Craft-filtered base data ─────────────────────────────── */
+  /* ─── Derive hull tabs for the selected platform ────────────── */
+  const hullTabs = useMemo(() => {
+    if (platformFilter === 'all') return ['all']
+    const hullSet = new Set<string>()
+    for (const row of data) {
+      const parsed = parseCraftHull(row.title)
+      if (parsed && parsed.platform === platformFilter) {
+        hullSet.add(parsed.hull)
+      }
+    }
+    const sorted = Array.from(hullSet).sort((a, b) => {
+      const na = parseInt(a.replace(/\D/g, ''), 10) || 0
+      const nb = parseInt(b.replace(/\D/g, ''), 10) || 0
+      return na - nb
+    })
+    return ['all', ...sorted]
+  }, [data, platformFilter])
+
+  /* ─── Platform + hull filtered base data ────────────────────── */
   const hullData = useMemo(() => {
-    if (hullFilter === 'all') return data
-    return data.filter(r => getCraft(r.title) === hullFilter)
-  }, [data, hullFilter])
+    if (platformFilter === 'all') return data
+    let rows = data.filter(r => {
+      const parsed = parseCraftHull(r.title)
+      return parsed && parsed.platform === platformFilter
+    })
+    if (hullFilter !== 'all') {
+      rows = rows.filter(r => {
+        const parsed = parseCraftHull(r.title)
+        return parsed && parsed.hull === hullFilter
+      })
+    }
+    return rows
+  }, [data, platformFilter, hullFilter])
 
   const filtered = useMemo(() => {
     let rows = [...hullData]
@@ -150,9 +185,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     anchored: hullData.filter(r => anchors[r.id]).length,
   }), [hullData, anchors])
 
-  /* ─── Hull summary (shown when a specific hull is selected) ── */
+  /* ─── Summary (shown when a specific platform/hull is selected) ─ */
   const hullSummary = useMemo(() => {
-    if (hullFilter === 'all') return null
+    if (platformFilter === 'all') return null
     const total = hullData.length
     const green = hullData.filter(r => r.status === 'green').length
     const red = hullData.filter(r => r.status === 'red').length
@@ -161,8 +196,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     const nextDue = hullData
       .filter(r => r.status !== 'green')
       .sort((a, b) => a.contractDueFinish.localeCompare(b.contractDueFinish))[0]
-    return { total, green, red, sealed, pctComplete, nextDue }
-  }, [hullFilter, hullData, anchors])
+    const label = hullFilter !== 'all'
+      ? `${platformFilter} — ${hullFilter}`
+      : platformFilter
+    return { total, green, red, sealed, pctComplete, nextDue, label }
+  }, [platformFilter, hullFilter, hullData, anchors])
 
   const handleCompare = useCallback(async () => {
     if (comparing) return
@@ -265,7 +303,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     const sealCount = Object.keys(newAnchors).length
     if (newCraftDetected) {
       setSyncToast(`NSERC IDE (PMS 300): New craft "${newCraftDetected}" detected — ${changes.length} update${changes.length !== 1 ? 's' : ''} synced, ${sealCount} sealed to XRPL`)
-      setHullFilter(newCraftDetected)
+      setPlatformFilter(newCraftDetected)
+      setHullFilter('all')
     } else {
       setSyncToast(`NSERC IDE (PMS 300): ${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
     }
@@ -299,7 +338,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     setAuditVersion(v => v + 1)
     const sealCount = Object.keys(newAnchors).length
     setSyncToast(`Manual Entry: ${newCraftDetected} added — ${sealCount} new row${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
-    if (newCraftDetected) setHullFilter(newCraftDetected)
+    if (newCraftDetected) {
+      setPlatformFilter(newCraftDetected)
+      setHullFilter('all')
+    }
     setTimeout(() => setSyncToast(null), 5000)
   }, [data, role, anchors, editedSinceSeal, onDataUpdate, onSyncAnchors])
 
@@ -495,37 +537,104 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         </div>
       </header>
 
-      {/* Craft Filter Tabs */}
+      {/* Platform/Craft Filter Bar */}
       <div className="bg-surface border-b border-border">
         <div className="max-w-[1600px] mx-auto px-6">
-          <div className="flex items-center gap-1 py-2 overflow-x-auto">
-            {craftTabs.map(c => {
-              const label = c === 'all' ? 'All Craft' : c
-              const count = c === 'all' ? data.length : data.filter(r => getCraft(r.title) === c).length
-              const isActive = hullFilter === c
-              return (
-                <button
-                  key={c}
-                  onClick={() => setHullFilter(c)}
-                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg transition-all whitespace-nowrap ${
-                    isActive
-                      ? 'bg-accent text-white shadow-sm'
-                      : 'text-steel hover:text-gray-900 hover:bg-black/[0.04]'
-                  }`}
-                >
-                  {c !== 'all' && <i className="fas fa-ship text-[10px]"></i>}
-                  {label}
-                  <span className={`ml-0.5 text-[10px] ${isActive ? 'text-white/70' : 'text-steel/60'}`}>
-                    ({count})
-                  </span>
-                </button>
-              )
-            })}
+          <div className="flex items-center gap-3 py-2">
+            {/* Platform Dropdown */}
+            <select
+              value={platformFilter}
+              onChange={e => { setPlatformFilter(e.target.value); setHullFilter('all') }}
+              className="text-xs font-medium border border-border rounded-lg px-3 py-2 bg-white text-gray-900 focus:outline-none focus:border-accent min-w-[180px]"
+            >
+              <option value="all">All Platforms ({data.length})</option>
+              {platforms.map(p => {
+                const count = data.filter(r => { const pr = parseCraftHull(r.title); return pr && pr.platform === p }).length
+                return <option key={p} value={p}>{p} ({count})</option>
+              })}
+            </select>
+
+            {/* Hull Tabs (shown when a specific platform is selected) */}
+            {platformFilter !== 'all' && hullTabs.length > 1 && (
+              <div className="flex items-center gap-1 overflow-x-auto">
+                {hullTabs.map(h => {
+                  const label = h === 'all' ? 'All Hulls' : h
+                  const count = h === 'all'
+                    ? data.filter(r => { const pr = parseCraftHull(r.title); return pr && pr.platform === platformFilter }).length
+                    : data.filter(r => { const pr = parseCraftHull(r.title); return pr && pr.platform === platformFilter && pr.hull === h }).length
+                  const isActive = hullFilter === h
+                  return (
+                    <button
+                      key={h}
+                      onClick={() => setHullFilter(h)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all whitespace-nowrap ${
+                        isActive
+                          ? 'bg-accent text-white shadow-sm'
+                          : 'text-steel hover:text-gray-900 hover:bg-black/[0.04]'
+                      }`}
+                    >
+                      <i className="fas fa-anchor text-[10px]"></i>
+                      {label}
+                      <span className={`ml-0.5 text-[10px] ${isActive ? 'text-white/70' : 'text-steel/60'}`}>
+                        ({count})
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Add Craft Button & Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowAddCraft(!showAddCraft)}
+                className="flex items-center gap-1.5 px-3 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-lg text-accent text-xs font-medium transition-all"
+              >
+                <i className="fas fa-plus text-[10px]"></i>
+                Add Craft
+              </button>
+              {showAddCraft && (
+                <div className="absolute right-0 top-full mt-1 z-50 bg-white border border-border rounded-lg shadow-xl p-3 w-64">
+                  <p className="text-xs font-semibold text-gray-700 mb-2">Add PMS 300 Craft</p>
+                  <select
+                    value={manualCraftType}
+                    onChange={e => setManualCraftType(e.target.value)}
+                    disabled={addingCraft}
+                    className="w-full text-xs border border-border rounded-md px-2 py-1.5 bg-white text-gray-900 mb-2 disabled:opacity-50"
+                  >
+                    <option value="">Select craft type…</option>
+                    {PMS300_CRAFT_LABELS.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={async () => {
+                      if (!manualCraftType) return
+                      setAddingCraft(true)
+                      try {
+                        await handleManualCraft(manualCraftType)
+                      } finally {
+                        setAddingCraft(false)
+                        setManualCraftType('')
+                        setShowAddCraft(false)
+                      }
+                    }}
+                    disabled={!manualCraftType || addingCraft}
+                    className="w-full px-3 py-1.5 bg-accent hover:bg-accent/90 disabled:bg-accent/40 text-white rounded-md text-xs font-medium transition-colors"
+                  >
+                    {addingCraft ? <><i className="fas fa-spinner fa-spin mr-1"></i>Adding…</> : 'Add to Tracker'}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Craft Summary Section (visible when specific craft selected) */}
+      {/* Craft Summary Section (visible when specific platform selected) */}
       {hullSummary && (
         <div className="max-w-[1600px] mx-auto px-6 pt-4">
           <div className="bg-white border border-accent/20 rounded-card p-4">
@@ -535,7 +644,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   <i className="fas fa-ship text-accent text-sm"></i>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">{hullFilter} Summary</h3>
+                  <h3 className="text-sm font-bold text-gray-900">{hullSummary.label} Summary</h3>
                   <p className="text-[11px] text-steel">
                     {hullSummary.total} deliverables assigned · {hullSummary.green} approved · {hullSummary.red} overdue · {hullSummary.sealed} sealed
                   </p>
@@ -954,7 +1063,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           role={role}
           rowFindings={rowFindings}
           contractRefs={contractRefs}
-          hullFilter={hullFilter === 'all' ? undefined : `Hull ${hullFilter}`}
+          hullFilter={platformFilter === 'all' ? undefined : platformFilter}
           aiInsights={aiInsights}
           onClose={() => setShowReport(false)}
         />
@@ -967,7 +1076,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           autoSyncEnabled={autoSyncEnabled}
           onToggleAutoSync={() => setAutoSyncEnabled(prev => !prev)}
           onManualSync={handleExternalSync}
-          onManualCraft={handleManualCraft}
           onToggleOffline={handleToggleOffline}
           onClose={() => setShowSync(false)}
         />

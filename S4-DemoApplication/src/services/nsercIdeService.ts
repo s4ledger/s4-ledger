@@ -409,17 +409,20 @@ function pickRandom<T>(arr: T[]): T {
 const PMS300_CRAFT_REGISTRY: { label: string; desc: string }[] = [
   { label: '40ft Patrol Boat',       desc: 'Force Protection patrol craft' },
   { label: '11m RHIB',               desc: 'Expeditionary Rigid Hull Inflatable Boat' },
-  { label: 'Harbor Tug (YTB)',       desc: 'Large harbor tug — yard & district craft' },
-  { label: 'Utility Boat (UB)',      desc: 'General-purpose harbor utility craft' },
+  { label: 'Harbor Tug YTB',         desc: 'Large harbor tug — yard & district craft' },
+  { label: 'Utility Boat UB',        desc: 'General-purpose harbor utility craft' },
   { label: 'Force Protection Boat',  desc: 'Security & force protection craft' },
   { label: 'Diving Support Platform',desc: 'Diving operations support vessel' },
   { label: 'Steel Workboat',         desc: 'Multi-purpose steel workboat' },
   { label: 'Spill Response Craft',   desc: 'Oil-spill response & containment vessel' },
   { label: 'HSMST Drone',            desc: 'High-Speed Maneuvering Surface Target' },
   { label: '8m NSW RHIB',            desc: 'Naval Special Warfare 8-meter service support craft' },
-  { label: 'Barracks Barge (APL)',   desc: 'Non-self-propelled barracks craft' },
-  { label: 'Floating Dry Dock (AFDL)', desc: 'Small auxiliary floating dry dock' },
+  { label: 'Barracks Barge APL',     desc: 'Non-self-propelled barracks craft' },
+  { label: 'Floating Dry Dock AFDL', desc: 'Small auxiliary floating dry dock' },
 ]
+
+/** Exported list of PMS 300 craft labels for UI dropdowns */
+export const PMS300_CRAFT_LABELS = PMS300_CRAFT_REGISTRY.map(c => c.label)
 
 /** New-craft row templates for simulation */
 const NEW_CRAFT_ROW_TEMPLATES: Omit<CDRLRow, 'id' | 'title' | 'notes' | 'status'>[] = [
@@ -473,16 +476,46 @@ const NEW_CRAFT_TITLES = [
 ]
 
 /**
- * Detect which PMS 300 craft labels already exist in the dataset.
- * Returns the set of craft strings found (e.g., "Hull 1", "11m RHIB").
+ * Parse a title's trailing (Platform — Hull N) group into platform and hull.
+ * Returns null if no craft+hull tag is found.
+ */
+function parseCraftTag(title: string): { platform: string; hull: string } | null {
+  const idx = title.lastIndexOf('(')
+  if (idx === -1) return null
+  const end = title.lastIndexOf(')')
+  if (end <= idx) return null
+  const inner = title.slice(idx + 1, end).trim()
+  const dashIdx = inner.indexOf('—')
+  if (dashIdx === -1) return null
+  const platform = inner.slice(0, dashIdx).trim()
+  const hull = inner.slice(dashIdx + 1).trim()
+  if (!platform || !hull) return null
+  return { platform, hull }
+}
+
+/**
+ * Detect which PMS 300 platform types already exist in the dataset.
  */
 export function detectExistingCrafts(rows: CDRLRow[]): Set<string> {
-  const crafts = new Set<string>()
+  const platforms = new Set<string>()
   for (const row of rows) {
-    const m = row.title.match(/\(([^)]+)\)\s*$/)
-    if (m) crafts.add(m[1].trim())
+    const parsed = parseCraftTag(row.title)
+    if (parsed) platforms.add(parsed.platform)
   }
-  return crafts
+  return platforms
+}
+
+/** Get the highest hull number for a given platform type in the dataset */
+export function getMaxHullForPlatform(rows: CDRLRow[], platform: string): number {
+  let max = 0
+  for (const row of rows) {
+    const parsed = parseCraftTag(row.title)
+    if (parsed && parsed.platform === platform) {
+      const hm = parsed.hull.match(/(\d+)/)
+      if (hm) max = Math.max(max, parseInt(hm[1], 10))
+    }
+  }
+  return max
 }
 
 /** Detect the highest hull number in the current dataset (for backward compat) */
@@ -515,10 +548,12 @@ export function getNextPMS300Craft(currentRows: CDRLRow[]): { craftLabel: string
 
 /**
  * Generate new PMS 300 service craft rows.
- * Always produces 2-4 rows for the next available craft type.
+ * Always produces 2-4 rows for the next available craft type at Hull 1,
+ * or adds a new hull number to an existing craft type.
  */
 export function generateNewCraftRows(currentRows: CDRLRow[]): { rows: CDRLRow[]; craftLabel: string } {
   const nextCraft = getNextPMS300Craft(currentRows)
+  const hullNum = getMaxHullForPlatform(currentRows, nextCraft.craftLabel) + 1
   const maxId = currentRows.reduce((m, r) => {
     const n = parseInt(r.id.replace(/\D/g, ''), 10)
     return isNaN(n) ? m : Math.max(m, n)
@@ -536,8 +571,8 @@ export function generateNewCraftRows(currentRows: CDRLRow[]): { rows: CDRLRow[];
     rows.push({
       ...template,
       id: rowId,
-      title: `${titleBase} Rev A (${nextCraft.craftLabel})`,
-      notes: `[Synced from NSERC IDE (PMS 300)] New service craft detected — ${nextCraft.craftLabel}: ${nextCraft.desc}. ${pickRandom(remarks)}`,
+      title: `${titleBase} Rev A (${nextCraft.craftLabel} — Hull ${hullNum})`,
+      notes: `[Synced from NSERC IDE (PMS 300)] New service craft detected — ${nextCraft.craftLabel} Hull ${hullNum}: ${nextCraft.desc}. ${pickRandom(remarks)}`,
       status,
     })
   }
@@ -546,9 +581,11 @@ export function generateNewCraftRows(currentRows: CDRLRow[]): { rows: CDRLRow[];
 
 /**
  * Generate rows for a manually entered craft (offline/fallback).
- * @param craftName - User-provided label, e.g. "Harbor Tug (YTB)"
+ * Auto-detects next hull number for the given craft type.
+ * @param craftName - Platform label, e.g. "Harbor Tug YTB"
  */
 export function generateManualCraftRows(currentRows: CDRLRow[], craftName: string): CDRLRow[] {
+  const hullNum = getMaxHullForPlatform(currentRows, craftName) + 1
   const maxId = currentRows.reduce((m, r) => {
     const n = parseInt(r.id.replace(/\D/g, ''), 10)
     return isNaN(n) ? m : Math.max(m, n)
@@ -566,8 +603,8 @@ export function generateManualCraftRows(currentRows: CDRLRow[], craftName: strin
     rows.push({
       ...template,
       id: rowId,
-      title: `${titleBase} Rev A (${craftName})`,
-      notes: `[Manual Entry — NSERC IDE Offline] New craft: ${craftName}. ${pickRandom(remarks)}`,
+      title: `${titleBase} Rev A (${craftName} — Hull ${hullNum})`,
+      notes: `[Manual Entry — NSERC IDE Offline] New craft: ${craftName} Hull ${hullNum}. ${pickRandom(remarks)}`,
       status,
     })
   }

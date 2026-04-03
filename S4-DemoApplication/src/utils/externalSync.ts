@@ -132,11 +132,17 @@ export async function realSyncPipeline(
       updatedRows.push(extRow)
       rowIndexById.set(extRow.id, newIdx)
 
-      // Track new craft detection
-      const craftMatch = extRow.title.match(/\(([^)]+)\)\s*$/)
-      if (craftMatch && !existingCrafts.has(craftMatch[1].trim())) {
-        newCraftDetected = craftMatch[1].trim()
-        existingCrafts.add(newCraftDetected)
+      // Track new craft detection — extract platform from (Platform — Hull N)
+      const craftIdx = extRow.title.lastIndexOf('(')
+      const craftEnd = extRow.title.lastIndexOf(')')
+      if (craftIdx !== -1 && craftEnd > craftIdx) {
+        const inner = extRow.title.slice(craftIdx + 1, craftEnd).trim()
+        const dashPos = inner.indexOf('—')
+        const platform = dashPos !== -1 ? inner.slice(0, dashPos).trim() : inner
+        if (!existingCrafts.has(platform)) {
+          newCraftDetected = platform
+          existingCrafts.add(platform)
+        }
       }
 
       // Record every field as a "new" change

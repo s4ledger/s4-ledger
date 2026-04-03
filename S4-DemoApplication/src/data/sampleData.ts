@@ -3,7 +3,7 @@ import { CDRLRow } from '../types'
 export const sampleData: CDRLRow[] = [
   {
     id: 'CDRL-001',
-    title: 'Systems Engineering Plan (SEP) Rev B (Hull 1)',
+    title: 'Systems Engineering Plan (SEP) Rev B (40ft Patrol Boat — Hull 1)',
     diNumber: 'DI-MGMT-81024A',
     contractDueFinish: '2025-01-15',
     calculatedDueDate: '2025-01-15',
@@ -16,7 +16,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-002',
-    title: 'Test and Evaluation Master Plan (TEMP) Rev A (Hull 1)',
+    title: 'Test and Evaluation Master Plan (TEMP) Rev A (40ft Patrol Boat — Hull 1)',
     diNumber: 'DI-TMSS-80301C',
     contractDueFinish: '2025-02-01',
     calculatedDueDate: '2025-02-01',
@@ -29,7 +29,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-003',
-    title: 'Integrated Logistics Support Plan (ILSP) (Hull 2)',
+    title: 'Integrated Logistics Support Plan (ILSP) (11m RHIB — Hull 1)',
     diNumber: 'DI-ALSS-81529',
     contractDueFinish: '2025-02-15',
     calculatedDueDate: '2025-02-15',
@@ -42,7 +42,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-004',
-    title: 'Software Development Plan (SDP) Rev C (Hull 1)',
+    title: 'Software Development Plan (SDP) Rev C (40ft Patrol Boat — Hull 2)',
     diNumber: 'DI-IPSC-81427A',
     contractDueFinish: '2025-03-01',
     calculatedDueDate: '2025-03-01',
@@ -55,7 +55,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-005',
-    title: 'Configuration Management Plan (CMP) (Hull 2)',
+    title: 'Configuration Management Plan (CMP) (11m RHIB — Hull 1)',
     diNumber: 'DI-CMAN-80858B',
     contractDueFinish: '2025-03-10',
     calculatedDueDate: '2025-03-10',
@@ -68,7 +68,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-006',
-    title: 'Reliability Program Plan (RPP) (Hull 3)',
+    title: 'Reliability Program Plan (RPP) (Harbor Tug YTB — Hull 1)',
     diNumber: 'DI-RELI-81315',
     contractDueFinish: '2025-03-15',
     calculatedDueDate: '2025-03-15',
@@ -81,7 +81,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-007',
-    title: 'Quality Assurance Plan (QAP) Rev B (Hull 2)',
+    title: 'Quality Assurance Plan (QAP) Rev B (11m RHIB — Hull 2)',
     diNumber: 'DI-QCIC-80123A',
     contractDueFinish: '2025-04-01',
     calculatedDueDate: '2025-04-01',
@@ -94,7 +94,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-008',
-    title: 'Technical Performance Measurement Report',
+    title: 'Technical Performance Measurement Report (40ft Patrol Boat — Hull 2)',
     diNumber: 'DI-MGMT-81466',
     contractDueFinish: '2025-04-15',
     calculatedDueDate: '2025-04-15',
@@ -107,7 +107,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-009',
-    title: 'Interface Control Document (ICD) Rev A (Hull 3)',
+    title: 'Interface Control Document (ICD) Rev A (Harbor Tug YTB — Hull 1)',
     diNumber: 'DI-SESS-81248A',
     contractDueFinish: '2025-04-30',
     calculatedDueDate: '2025-04-30',
@@ -120,7 +120,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-010',
-    title: 'Failure Mode Effects & Criticality Analysis (Hull 4)',
+    title: 'Failure Mode Effects & Criticality Analysis (Utility Boat UB — Hull 1)',
     diNumber: 'DI-RELI-80531A',
     contractDueFinish: '2025-05-01',
     calculatedDueDate: '2025-05-01',
@@ -133,7 +133,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-011',
-    title: 'Training Plan Rev A (Hull 3)',
+    title: 'Training Plan Rev A (Harbor Tug YTB — Hull 2)',
     diNumber: 'DI-ILSS-80890',
     contractDueFinish: '2025-05-15',
     calculatedDueDate: '2025-05-15',
@@ -146,7 +146,7 @@ export const sampleData: CDRLRow[] = [
   },
   {
     id: 'CDRL-012',
-    title: 'Contractor Cost Data Report (CCDR)',
+    title: 'Contractor Cost Data Report (CCDR) (Utility Boat UB — Hull 1)',
     diNumber: 'DI-FNCL-81565',
     contractDueFinish: '2025-06-01',
     calculatedDueDate: '2025-06-01',
