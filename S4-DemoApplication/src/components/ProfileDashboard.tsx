@@ -14,7 +14,7 @@ interface Props {
 export default function ProfileDashboard({ role, data, anchors, syncStatus, notifications, onClose }: Props) {
   const [tab, setTab] = useState<'overview' | 'tasks' | 'history' | 'settings'>('overview')
 
-  const sealedCount = Object.keys(anchors).length
+  const verifiedCount = Object.keys(anchors).length
   const totalRows = data.length
   const overdue = data.filter(r => r.status === 'red').length
   const atRisk = data.filter(r => r.status === 'yellow').length
@@ -24,7 +24,7 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
   const tabs = [
     { id: 'overview' as const, label: 'Overview', icon: 'fa-user' },
     { id: 'tasks' as const, label: 'Tasks', icon: 'fa-tasks' },
-    { id: 'history' as const, label: 'Seal History', icon: 'fa-link' },
+    { id: 'history' as const, label: 'Audit History', icon: 'fa-history' },
     { id: 'settings' as const, label: 'Settings', icon: 'fa-cog' },
   ]
 
@@ -32,17 +32,17 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-border overflow-hidden max-h-[85vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-gray-900 to-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-white">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-accent/20 border-2 border-accent flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-accent/10 border-2 border-accent/30 flex items-center justify-center">
               <i className="fas fa-user-shield text-accent"></i>
             </div>
             <div>
-              <h2 className="text-white font-semibold text-lg leading-tight">User Profile</h2>
-              <p className="text-gray-400 text-xs">{role} · PMS 300 Program Office</p>
+              <h2 className="text-gray-900 font-semibold text-lg leading-tight">User Profile</h2>
+              <p className="text-steel text-xs">{role} · PMS 300 Program Office</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-steel hover:text-gray-900 transition-colors">
             <i className="fas fa-times text-lg"></i>
           </button>
         </div>
@@ -94,8 +94,8 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
               {/* Stats Grid */}
               <div className="grid grid-cols-4 gap-3">
                 <div className="bg-green-50 rounded-xl p-3 border border-green-200 text-center">
-                  <p className="text-2xl font-bold text-green-600">{sealedCount}</p>
-                  <p className="text-xs text-green-700">Sealed</p>
+                  <p className="text-2xl font-bold text-green-600">{verifiedCount}</p>
+                  <p className="text-xs text-green-700">Verified</p>
                 </div>
                 <div className="bg-blue-50 rounded-xl p-3 border border-blue-200 text-center">
                   <p className="text-2xl font-bold text-blue-600">{totalRows}</p>
@@ -157,12 +157,12 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
                   </div>
                 </div>
               )}
-              {sealedCount < totalRows && (
+              {verifiedCount < totalRows && (
                 <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-200 rounded-xl">
-                  <i className="fas fa-link text-blue-500 mt-0.5"></i>
+                  <i className="fas fa-shield-alt text-blue-500 mt-0.5"></i>
                   <div>
-                    <p className="text-sm font-medium text-blue-700">Seal {totalRows - sealedCount} remaining deliverable{totalRows - sealedCount > 1 ? 's' : ''}</p>
-                    <p className="text-xs text-blue-600 mt-0.5">Anchor to XRPL for tamper-evident integrity verification</p>
+                    <p className="text-sm font-medium text-blue-700">Verify {totalRows - verifiedCount} remaining deliverable{totalRows - verifiedCount > 1 ? 's' : ''}</p>
+                    <p className="text-xs text-blue-600 mt-0.5">Record integrity verification for tamper-evident audit trail</p>
                   </div>
                 </div>
               )}
@@ -184,7 +184,7 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
                   </div>
                 </div>
               )}
-              {overdue === 0 && atRisk === 0 && sealedCount >= totalRows && unreadNotifs === 0 && (
+              {overdue === 0 && atRisk === 0 && verifiedCount >= totalRows && unreadNotifs === 0 && (
                 <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-xl">
                   <i className="fas fa-trophy text-green-500"></i>
                   <p className="text-sm text-green-700 font-medium">All clear — no outstanding tasks</p>
@@ -195,18 +195,18 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
 
           {tab === 'history' && (
             <div className="space-y-2">
-              <p className="text-xs text-steel mb-2">XRPL seal records for this session</p>
+              <p className="text-xs text-steel mb-2">Integrity verification records for this session</p>
               {Object.keys(anchors).length === 0 ? (
-                <p className="text-sm text-steel italic py-4 text-center">No seals recorded yet</p>
+                <p className="text-sm text-steel italic py-4 text-center">No verification records yet</p>
               ) : (
                 Object.values(anchors).map(a => {
                   const row = data.find(r => r.id === a.rowId)
                   return (
                     <div key={a.rowId} className="flex items-center gap-3 p-3 bg-gray-50 border border-border rounded-xl text-sm">
-                      <i className="fas fa-link text-accent"></i>
+                      <i className="fas fa-check-double text-accent"></i>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{row?.title ?? a.rowId}</p>
-                        <p className="text-xs text-steel truncate">Tx: {a.txHash}</p>
+                        <p className="text-xs text-steel truncate">Record ID: {a.txHash}</p>
                       </div>
                       <p className="text-xs text-steel whitespace-nowrap">{new Date(a.timestamp).toLocaleString()}</p>
                     </div>
@@ -242,17 +242,17 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
                 </div>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 border border-border">
-                <h3 className="text-sm font-semibold mb-3">XRPL Wallet</h3>
+                <h3 className="text-sm font-semibold mb-3">Verification Ledger</h3>
                 <div className="text-sm space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-steel">Network:</span>
-                    <span className="font-medium">Testnet</span>
+                    <span className="font-medium">S4 Production</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-steel">Fee per seal:</span>
+                    <span className="text-steel">Fee per record:</span>
                     <span className="font-medium">0.01 SLS</span>
                   </div>
-                  <p className="text-xs text-steel mt-2">Wallet is auto-funded via Testnet faucet per session</p>
+                  <p className="text-xs text-steel mt-2">Integrity records are written to the S4 Ledger verification layer</p>
                 </div>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 border border-border">
