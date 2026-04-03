@@ -13,6 +13,8 @@ import EmailComposer from './EmailComposer'
 import WorkflowProgressPopup from './WorkflowProgressPopup'
 import ProfileDashboard from './ProfileDashboard'
 import PermissionsModal from './PermissionsModal'
+import CellEditModal from './CellEditModal'
+import type { CellEditTarget } from './CellEditModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
@@ -108,6 +110,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [showToolsMenu, setShowToolsMenu] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
   const [showPermissions, setShowPermissions] = useState(false)
+  const [cellEditTarget, setCellEditTarget] = useState<CellEditTarget | null>(null)
   const toolsMenuRef = useRef<HTMLDivElement>(null)
 
   /* ─── Organization tier & permissions ───────────────────────── */
@@ -993,21 +996,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     {spreadsheetColumns.map(col => {
                       const fieldVal = row[col.field]
                       const displayVal = fieldVal !== null && fieldVal !== undefined ? String(fieldVal) : '—'
+                      const openCell = (e: React.MouseEvent) => { e.stopPropagation(); setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? '') }) }
 
                       // Special rendering for diNumber (shows RACI badge + contract ref tooltip)
                       if (col.key === 'diNumber') {
                         return (
                           <td
                             key={col.key}
-                            className="px-3 py-3 font-mono text-xs text-gray-500 relative"
+                            className="px-3 py-3 font-mono text-xs text-gray-500 relative cursor-pointer"
+                            data-no-workflow
+                            onClick={openCell}
                             onMouseEnter={() => setHoveredDI(row.id)}
                             onMouseLeave={() => setHoveredDI(null)}
                           >
                             <div className="flex items-center gap-1.5">
-                              <span
-                                className="cursor-help border-b border-dashed border-steel/40"
-                                {...(col.editable ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLSpanElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
-                              >
+                              <span className="border-b border-dashed border-steel/40">
                                 {row.diNumber}
                               </span>
                               <span className={`inline-flex items-center px-1.5 py-px text-[8px] font-semibold uppercase rounded border leading-tight ${getRACIColor(getRACIParty(row))}`}>
@@ -1038,35 +1041,35 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
                       // Special rendering for notes-type columns (notes, govNotes, shipbuilderNotes)
                       if (col.key === 'notes' || col.key === 'govNotes' || col.key === 'shipbuilderNotes') {
-                        const noteVal = col.key === 'notes' && masked.displayStatus === 'pending'
+                        const isMainNotes = col.key === 'notes'
+                        const noteVal = isMainNotes && masked.displayStatus === 'pending'
                           ? masked.displayNotes
-                          : col.key === 'notes'
+                          : isMainNotes
                           ? (aiInsights[row.id]?.conciseNote || row.notes || '—')
                           : (displayVal || '—')
-                        const isNotesCol = col.key === 'notes'
+                        const insight = aiInsights[row.id]
                         return (
                           <td
                             key={col.key}
                             data-no-workflow
                             className="px-3 py-3 text-xs text-steel max-w-[180px] cursor-pointer group"
-                            onClick={isNotesCol ? (e => { e.stopPropagation(); setNotesRow(row) }) : undefined}
-                            {...(col.editable && col.key !== 'notes' ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLTableCellElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                            onClick={e => { e.stopPropagation(); openCell(e); }}
                           >
-                            <div className="truncate group-hover:text-accent transition-colors" title={isNotesCol ? 'Click to view full remarks' : undefined}>
+                            <div className="truncate group-hover:text-accent transition-colors" title="Click to view / edit">
                               {noteVal}
                             </div>
-                            {isNotesCol && masked.displayStatus === 'pending' ? (
+                            {isMainNotes && masked.displayStatus === 'pending' ? (
                               <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-blue-500/10 text-blue-500">
                                 Pending
                               </span>
-                            ) : isNotesCol && aiInsights[row.id] ? (
+                            ) : insight ? (
                               <span className={`inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded ${
-                                aiInsights[row.id].priority === 'Critical' ? 'bg-red-500/15 text-red-500' :
-                                aiInsights[row.id].priority === 'High' ? 'bg-orange-500/15 text-orange-500' :
-                                aiInsights[row.id].priority === 'Medium' ? 'bg-yellow-500/15 text-yellow-500' :
+                                insight.priority === 'Critical' ? 'bg-red-500/15 text-red-500' :
+                                insight.priority === 'High' ? 'bg-orange-500/15 text-orange-500' :
+                                insight.priority === 'Medium' ? 'bg-yellow-500/15 text-yellow-500' :
                                 'bg-green-500/15 text-green-500'
                               }`}>
-                                {aiInsights[row.id].priority}
+                                {insight.priority}
                               </span>
                             ) : null}
                           </td>
@@ -1078,8 +1081,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                         return (
                           <td
                             key={col.key}
-                            className={`px-3 py-3 text-xs text-center font-semibold ${row.received === 'Yes' ? 'text-green-600' : 'text-red-500'}`}
-                            {...(col.editable ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLTableCellElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                            data-no-workflow
+                            className={`px-3 py-3 text-xs text-center font-semibold cursor-pointer hover:bg-accent/5 transition-colors ${row.received === 'Yes' ? 'text-green-600' : 'text-red-500'}`}
+                            onClick={openCell}
                           >{row.received}</td>
                         )
                       }
@@ -1092,7 +1096,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                           : party === 'Shipbuilder' ? 'bg-purple-500/10 text-purple-600 border-purple-200'
                           : 'bg-gray-100 text-steel border-gray-200'
                         return (
-                          <td key={col.key} className="px-3 py-3 text-xs text-center">
+                          <td key={col.key} data-no-workflow className="px-3 py-3 text-xs text-center cursor-pointer hover:bg-accent/5 transition-colors" onClick={openCell}>
                             <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded border ${partyColor}`}>
                               {party === 'Government' ? 'Gov\'t' : party === 'Shipbuilder' ? 'SB' : party === 'Contractor' ? 'Contr' : party}
                             </span>
@@ -1105,8 +1109,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                         return (
                           <td
                             key={col.key}
-                            className="px-3 py-3 font-medium text-gray-900"
-                            {...(col.editable ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLTableCellElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                            data-no-workflow
+                            className="px-3 py-3 font-medium text-gray-900 cursor-pointer hover:bg-accent/5 transition-colors"
+                            onClick={openCell}
                           >{row.title}</td>
                         )
                       }
@@ -1115,8 +1120,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       return (
                         <td
                           key={col.key}
-                          className={`px-3 py-3 text-xs ${col.key === 'submittalGuidance' ? 'text-steel' : ''} ${col.key === 'calendarDaysToReview' ? 'text-center' : ''}`}
-                          {...(col.editable ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLTableCellElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                          data-no-workflow
+                          className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors ${col.key === 'submittalGuidance' ? 'text-steel' : ''} ${col.key === 'calendarDaysToReview' ? 'text-center' : ''}`}
+                          onClick={openCell}
                         >{displayVal}</td>
                       )
                     })}
@@ -1444,6 +1450,17 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           onChangeOrg={setOrg}
           onUpdateContractorGrants={setContractorGrants}
           onClose={() => setShowPermissions(false)}
+        />
+      )}
+
+      {/* Cell Edit Modal — AI-assisted editing for all roles */}
+      {cellEditTarget && (
+        <CellEditModal
+          target={cellEditTarget}
+          aiInsight={aiInsights[cellEditTarget.row.id] || null}
+          anchor={anchors[cellEditTarget.row.id]}
+          onSave={(rowId, field, value) => handleCellEdit(rowId, field, value)}
+          onClose={() => setCellEditTarget(null)}
         />
       )}
     </div>
