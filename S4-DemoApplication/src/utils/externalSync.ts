@@ -5,7 +5,7 @@ import { storeSealed } from './sealedVault'
 import { recordSeal, recordExternalFeed } from './auditTrail'
 import { analyzeRow } from './aiAnalysis'
 import { getRACIParty } from './raciWorkflow'
-import { fetchLatestDRLUpdates, NSERCSyncResult } from '../services/nsercIdeService'
+import { fetchLatestDRLUpdates, NSERCSyncResult, generateNewHullRows, detectMaxHull } from '../services/nsercIdeService'
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
@@ -92,11 +92,18 @@ export async function realSyncPipeline(
   notifications: SyncNotification[]
   updatedRows: CDRLRow[]
   newAnchors: Record<string, AnchorRecord>
+  newHullDetected: string | null
 }> {
   const changes: SyncChange[] = []
   const notifications: SyncNotification[] = []
   const updatedRows = [...data]
   const newAnchors: Record<string, AnchorRecord> = {}
+  const existingHulls = new Set<string>()
+  for (const r of data) {
+    const m = r.title.match(/\(Hull\s*(\d+)\)/i)
+    if (m) existingHulls.add(m[1])
+  }
+  let newHullDetected: string | null = null
 
   // Build a lookup so we can match returned rows to current rows by id
   const rowIndexById = new Map<string, number>()
@@ -108,7 +115,7 @@ export async function realSyncPipeline(
     serviceResult = await fetchLatestDRLUpdates(data)
   } catch (e) {
     console.error('[realSyncPipeline] NSERC IDE (PMS 300) service error, aborting sync:', e)
-    return { changes, notifications, updatedRows, newAnchors }
+    return { changes, notifications, updatedRows, newAnchors, newHullDetected: null }
   }
 
   // ── Step 2: Process result from NSERC IDE (PMS 300) ──
@@ -128,6 +135,13 @@ export async function realSyncPipeline(
       const newIdx = updatedRows.length
       updatedRows.push(extRow)
       rowIndexById.set(extRow.id, newIdx)
+
+      // Track new hull detection
+      const hullMatch = extRow.title.match(/\(Hull\s*(\d+)\)/i)
+      if (hullMatch && !existingHulls.has(hullMatch[1])) {
+        newHullDetected = hullMatch[1]
+        existingHulls.add(hullMatch[1])
+      }
 
       // Record every field as a "new" change
       const fieldsToLog: (keyof CDRLRow)[] = ['title', 'notes', 'status', 'diNumber']
@@ -256,7 +270,107 @@ export async function realSyncPipeline(
     })
   }
 
-  return { changes, notifications, updatedRows, newAnchors }
+  return { changes, notifications, updatedRows, newAnchors, newHullDetected }
+}
+
+/**
+ * Force-generate a new hull/craft from NSERC IDE simulation.
+ * Always produces new rows — used by the "Simulate New Hull/Craft" action.
+ */
+export async function simulateNewHullPipeline(
+  data: CDRLRow[],
+  role: UserRole,
+  anchors: Record<string, AnchorRecord>,
+  editedSinceSeal: Set<string>,
+): Promise<{
+  changes: SyncChange[]
+  notifications: SyncNotification[]
+  updatedRows: CDRLRow[]
+  newAnchors: Record<string, AnchorRecord>
+  newHullDetected: string | null
+}> {
+  const newRows = generateNewHullRows(data)
+  const maxHull = detectMaxHull(data)
+  const newHullNum = maxHull + 1
+
+  // Build a synthetic NSERCSyncResult with only the new rows
+  const fakeResult: NSERCSyncResult = {
+    isReal: false,
+    source: 'NSERC IDE (PMS 300)',
+    rows: newRows,
+    fetchedAt: new Date().toISOString(),
+    warnings: [`New craft/hull detected: ${newRows.length} new rows for Hull ${newHullNum} from NSERC IDE (PMS 300).`],
+  }
+
+  // Feed these rows through the same pipeline logic
+  const changes: SyncChange[] = []
+  const notifications: SyncNotification[] = []
+  const updatedRows = [...data]
+  const newAnchors: Record<string, AnchorRecord> = {}
+  const { isReal, source, rows: externalRows } = fakeResult
+  const modeLabel = 'Simulated Sync'
+
+  for (const extRow of externalRows) {
+    const newIdx = updatedRows.length
+    updatedRows.push(extRow)
+
+    const fieldsToLog: (keyof CDRLRow)[] = ['title', 'notes', 'status', 'diNumber']
+    for (const field of fieldsToLog) {
+      changes.push({
+        rowId: extRow.id,
+        rowTitle: extRow.title,
+        field,
+        oldValue: '',
+        newValue: String(extRow[field] ?? ''),
+        source,
+        isReal,
+      })
+    }
+
+    recordExternalFeed(
+      extRow,
+      `${source} [${modeLabel}]`,
+      `${modeLabel}: New craft/hull detected and sealed from ${source} — ${extRow.title}`,
+    )
+
+    const hash = await hashRow(extRow as unknown as Record<string, unknown>)
+    const anchor = await anchorToXRPL(extRow.id, hash, extRow.title)
+    storeSealed(extRow.id, extRow)
+    recordSeal(extRow, anchor)
+    newAnchors[extRow.id] = anchor
+
+    const insight = analyzeRow(extRow, { ...anchors, ...newAnchors }, editedSinceSeal)
+    updatedRows[newIdx] = {
+      ...updatedRows[newIdx],
+      notes: `${updatedRows[newIdx].notes}\n${insight.conciseNote}`,
+    }
+
+    const raciParty = getRACIParty(extRow)
+    const priority = pickPriority(extRow.status)
+    const stakeholders = [raciParty, ...getStakeholders(priority, role).filter(s => s !== raciParty)]
+
+    notifications.push({
+      id: makeNotifId(),
+      timestamp: new Date().toISOString(),
+      title: `${extRow.id} — New craft/hull detected from NSERC IDE (PMS 300)`,
+      body: `New craft/hull detected and sealed from NSERC IDE (PMS 300) [${modeLabel}]: ${extRow.title}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
+      priority,
+      rowId: extRow.id,
+      rowTitle: extRow.title,
+      stakeholders,
+      read: false,
+      changes: changes.filter(c => c.rowId === extRow.id),
+      isReal,
+    })
+  }
+
+  return {
+    changes,
+    notifications,
+    updatedRows,
+    newAnchors,
+    newHullDetected: String(newHullNum),
+  }
 }
 
 /* ─── RACI email generation ──────────────────────────────────── */

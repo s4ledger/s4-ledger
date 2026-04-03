@@ -15,7 +15,7 @@ import { runContractComparison, ComparisonResult, ComparisonSummary } from '../u
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
-import { realSyncPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
+import { realSyncPipeline, simulateNewHullPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 
 interface Props {
@@ -243,12 +243,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   /* ─── External Sync Handler ────────────────────────────── */
   const handleExternalSync = useCallback(async () => {
     if (!syncStatus.isOnline) return
-    const { changes, notifications: newNotifs, updatedRows, newAnchors } = await realSyncPipeline(data, role, anchors, editedSinceSeal)
-    // Merge new anchors into parent state via onAnchor-style updates
-    // Since we can't call setAnchors directly (it lives in App.tsx), we update data and let
-    // the parent's anchor state be updated through the onReseal/onAnchor pattern.
-    // But we DO need to propagate anchors — so we store them via a callback.
-    // For now, we update data and notifications; anchors are stored in the vault + audit trail.
+    const { changes, notifications: newNotifs, updatedRows, newAnchors, newHullDetected } = await realSyncPipeline(data, role, anchors, editedSinceSeal)
     onDataUpdate(updatedRows)
     if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
       onSyncAnchors(newAnchors)
@@ -262,7 +257,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }))
     setAuditVersion(v => v + 1)
     const sealCount = Object.keys(newAnchors).length
-    setSyncToast(`NSERC IDE (PMS 300): ${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
+    if (newHullDetected) {
+      setSyncToast(`NSERC IDE (PMS 300): New Hull ${newHullDetected} detected — ${changes.length} update${changes.length !== 1 ? 's' : ''} synced, ${sealCount} sealed to XRPL`)
+      setHullFilter(newHullDetected)
+    } else {
+      setSyncToast(`NSERC IDE (PMS 300): ${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
+    }
     setTimeout(() => setSyncToast(null), 5000)
   }, [data, role, anchors, editedSinceSeal, syncStatus.isOnline, onDataUpdate, onSyncAnchors])
 
@@ -275,6 +275,27 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       if (autoSyncRef.current) clearInterval(autoSyncRef.current)
     }
   }, [autoSyncEnabled, syncStatus.isOnline, handleExternalSync])
+
+  /* ─── Simulate New Hull/Craft (manual trigger) ─────────── */
+  const handleSimulateNewHull = useCallback(async () => {
+    const { changes, notifications: newNotifs, updatedRows, newAnchors, newHullDetected } = await simulateNewHullPipeline(data, role, anchors, editedSinceSeal)
+    onDataUpdate(updatedRows)
+    if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
+      onSyncAnchors(newAnchors)
+    }
+    setNotifications(prev => [...newNotifs, ...prev])
+    setSyncStatus(prev => ({
+      ...prev,
+      lastSync: new Date().toISOString(),
+      totalSyncs: prev.totalSyncs + 1,
+      changesSynced: prev.changesSynced + changes.length,
+    }))
+    setAuditVersion(v => v + 1)
+    const sealCount = Object.keys(newAnchors).length
+    setSyncToast(`NSERC IDE (PMS 300): New Hull ${newHullDetected} detected — ${sealCount} new row${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
+    if (newHullDetected) setHullFilter(newHullDetected)
+    setTimeout(() => setSyncToast(null), 5000)
+  }, [data, role, anchors, editedSinceSeal, onDataUpdate, onSyncAnchors])
 
   function handleToggleOffline() {
     setSyncStatus(prev => ({ ...prev, isOnline: !prev.isOnline }))
@@ -940,6 +961,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           autoSyncEnabled={autoSyncEnabled}
           onToggleAutoSync={() => setAutoSyncEnabled(prev => !prev)}
           onManualSync={handleExternalSync}
+          onSimulateNewHull={handleSimulateNewHull}
           onToggleOffline={handleToggleOffline}
           onClose={() => setShowSync(false)}
         />

@@ -6,6 +6,7 @@ interface Props {
   autoSyncEnabled: boolean
   onToggleAutoSync: () => void
   onManualSync: () => void | Promise<void>
+  onSimulateNewHull: () => void | Promise<void>
   onToggleOffline: () => void
   onClose: () => void
 }
@@ -15,10 +16,12 @@ export default function ExternalSyncModal({
   autoSyncEnabled,
   onToggleAutoSync,
   onManualSync,
+  onSimulateNewHull,
   onToggleOffline,
   onClose,
 }: Props) {
   const [syncing, setSyncing] = useState(false)
+  const [simulating, setSimulating] = useState(false)
 
   async function handleManualSync() {
     setSyncing(true)
@@ -26,6 +29,16 @@ export default function ExternalSyncModal({
       await onManualSync()
     } finally {
       setSyncing(false)
+    }
+  }
+
+  async function handleSimulateNewHull() {
+    setSimulating(true)
+    try {
+      await onSimulateNewHull()
+    } finally {
+      setSimulating(false)
+      onClose()
     }
   }
 
@@ -123,7 +136,7 @@ export default function ExternalSyncModal({
         {/* Manual Sync Button */}
         <button
           onClick={handleManualSync}
-          disabled={syncing || !syncStatus.isOnline}
+          disabled={syncing || simulating || !syncStatus.isOnline}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent hover:bg-accent/90 disabled:bg-accent/50 text-white rounded-lg text-sm font-medium transition-all"
         >
           {syncing ? (
@@ -135,6 +148,25 @@ export default function ExternalSyncModal({
             <>
               <i className="fas fa-sync-alt"></i>
               Import Latest Submissions
+            </>
+          )}
+        </button>
+
+        {/* Simulate New Hull/Craft */}
+        <button
+          onClick={handleSimulateNewHull}
+          disabled={syncing || simulating}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 mt-2 bg-transparent hover:bg-gray-50 border border-border text-steel hover:text-gray-900 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
+        >
+          {simulating ? (
+            <>
+              <i className="fas fa-spinner fa-spin text-[10px]"></i>
+              Generating New Hull…
+            </>
+          ) : (
+            <>
+              <i className="fas fa-ship text-[10px]"></i>
+              Simulate New Hull/Craft
             </>
           )}
         </button>
