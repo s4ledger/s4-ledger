@@ -108,6 +108,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
   /* ─── Manual craft add state ────────────────────────────────── */
   const [showAddCraft, setShowAddCraft] = useState(false)
+  const [showManualCraftModal, setShowManualCraftModal] = useState(false)
   const [manualCraftType, setManualCraftType] = useState('')
   const [addingCraft, setAddingCraft] = useState(false)
 
@@ -540,19 +541,70 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       {/* Platform/Craft Filter Bar */}
       <div className="bg-surface border-b border-border">
         <div className="max-w-[1600px] mx-auto px-6">
-          <div className="flex items-center gap-3 py-2">
-            {/* Platform Dropdown */}
-            <select
-              value={platformFilter}
-              onChange={e => { setPlatformFilter(e.target.value); setHullFilter('all') }}
-              className="text-xs font-medium border border-border rounded-lg px-3 py-2 bg-white text-gray-900 focus:outline-none focus:border-accent min-w-[180px]"
-            >
-              <option value="all">All Platforms ({data.length})</option>
-              {platforms.map(p => {
-                const count = data.filter(r => { const pr = parseCraftHull(r.title); return pr && pr.platform === p }).length
-                return <option key={p} value={p}>{p} ({count})</option>
-              })}
-            </select>
+          <div className="flex items-center gap-2 py-2">
+            {/* Platform Dropdown (custom, styled like toolbar buttons) */}
+            <div className="relative">
+              <button
+                onClick={() => setShowAddCraft(!showAddCraft)}
+                className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
+                  platformFilter !== 'all'
+                    ? 'bg-accent text-white border-accent'
+                    : 'bg-black/[0.04] hover:bg-black/[0.08] border-border text-gray-900'
+                }`}
+              >
+                <i className="fas fa-ship text-xs"></i>
+                {platformFilter === 'all' ? 'All Platforms' : platformFilter}
+                <i className={`fas fa-chevron-down text-[10px] ml-1 transition-transform ${showAddCraft ? 'rotate-180' : ''}`}></i>
+              </button>
+              {showAddCraft && (
+                <div
+                  className="absolute left-0 top-full mt-1 z-50 bg-white border border-border rounded-lg shadow-xl w-72 overflow-hidden"
+                >
+                  {/* All Platforms option */}
+                  <button
+                    onClick={() => { setPlatformFilter('all'); setHullFilter('all'); setShowAddCraft(false) }}
+                    className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition-colors ${
+                      platformFilter === 'all' ? 'bg-accent/10 text-accent font-semibold' : 'text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <i className="fas fa-th-list text-xs text-steel w-4 text-center"></i>
+                    All Platforms
+                    <span className="ml-auto text-xs text-steel">({data.length})</span>
+                  </button>
+
+                  {/* Divider */}
+                  <div className="border-t border-border" />
+
+                  {/* Synced platforms */}
+                  {platforms.map(p => {
+                    const count = data.filter(r => { const pr = parseCraftHull(r.title); return pr && pr.platform === p }).length
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => { setPlatformFilter(p); setHullFilter('all'); setShowAddCraft(false) }}
+                        className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition-colors ${
+                          platformFilter === p ? 'bg-accent/10 text-accent font-semibold' : 'text-gray-900 hover:bg-gray-50'
+                        }`}
+                      >
+                        <i className="fas fa-ship text-xs text-steel w-4 text-center"></i>
+                        {p}
+                        <span className="ml-auto text-xs text-steel">({count})</span>
+                      </button>
+                    )
+                  })}
+
+                  {/* Divider + Add Craft option */}
+                  <div className="border-t border-border" />
+                  <button
+                    onClick={() => { setShowAddCraft(false); setShowManualCraftModal(true) }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left text-accent hover:bg-accent/5 transition-colors font-medium"
+                  >
+                    <i className="fas fa-plus-circle text-xs w-4 text-center"></i>
+                    Add Craft Manually…
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Hull Tabs (shown when a specific platform is selected) */}
             {platformFilter !== 'all' && hullTabs.length > 1 && (
@@ -567,7 +619,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <button
                       key={h}
                       onClick={() => setHullFilter(h)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all whitespace-nowrap ${
+                      className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg transition-all whitespace-nowrap ${
                         isActive
                           ? 'bg-accent text-white shadow-sm'
                           : 'text-steel hover:text-gray-900 hover:bg-black/[0.04]'
@@ -583,56 +635,77 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 })}
               </div>
             )}
-
-            {/* Spacer */}
-            <div className="flex-1" />
-
-            {/* Add Craft Button & Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setShowAddCraft(!showAddCraft)}
-                className="flex items-center gap-1.5 px-3 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-lg text-accent text-xs font-medium transition-all"
-              >
-                <i className="fas fa-plus text-[10px]"></i>
-                Add Craft
-              </button>
-              {showAddCraft && (
-                <div className="absolute right-0 top-full mt-1 z-50 bg-white border border-border rounded-lg shadow-xl p-3 w-64">
-                  <p className="text-xs font-semibold text-gray-700 mb-2">Add PMS 300 Craft</p>
-                  <select
-                    value={manualCraftType}
-                    onChange={e => setManualCraftType(e.target.value)}
-                    disabled={addingCraft}
-                    className="w-full text-xs border border-border rounded-md px-2 py-1.5 bg-white text-gray-900 mb-2 disabled:opacity-50"
-                  >
-                    <option value="">Select craft type…</option>
-                    {PMS300_CRAFT_LABELS.map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={async () => {
-                      if (!manualCraftType) return
-                      setAddingCraft(true)
-                      try {
-                        await handleManualCraft(manualCraftType)
-                      } finally {
-                        setAddingCraft(false)
-                        setManualCraftType('')
-                        setShowAddCraft(false)
-                      }
-                    }}
-                    disabled={!manualCraftType || addingCraft}
-                    className="w-full px-3 py-1.5 bg-accent hover:bg-accent/90 disabled:bg-accent/40 text-white rounded-md text-xs font-medium transition-colors"
-                  >
-                    {addingCraft ? <><i className="fas fa-spinner fa-spin mr-1"></i>Adding…</> : 'Add to Tracker'}
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
+
+      {/* Manual Craft Entry Modal */}
+      {showManualCraftModal && (
+        <div className="modal-backdrop" onClick={() => { setShowManualCraftModal(false); setManualCraftType('') }}>
+          <div
+            className="bg-white border border-border rounded-card p-6 max-w-md w-full mx-4 animate-slideUp"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-accent/15 flex items-center justify-center">
+                  <i className="fas fa-ship text-accent text-sm"></i>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-gray-900">Add PMS 300 Craft</h3>
+                  <p className="text-steel text-xs">Manually add a service craft when NSERC IDE is offline</p>
+                </div>
+              </div>
+              <button onClick={() => { setShowManualCraftModal(false); setManualCraftType('') }} className="text-steel hover:text-gray-900 transition-colors">
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <p className="text-xs text-steel mb-3">Select a PMS 300 craft type. Hull number will be assigned automatically.</p>
+            <div className="space-y-2">
+              {PMS300_CRAFT_LABELS.map(c => {
+                const exists = platforms.includes(c)
+                return (
+                  <button
+                    key={c}
+                    onClick={() => setManualCraftType(c)}
+                    disabled={addingCraft}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-left transition-all border ${
+                      manualCraftType === c
+                        ? 'bg-accent/10 border-accent/40 text-accent font-medium'
+                        : 'border-border text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <i className={`fas fa-ship text-xs ${manualCraftType === c ? 'text-accent' : 'text-steel'} w-4 text-center`}></i>
+                    {c}
+                    {exists && <span className="ml-auto text-[10px] text-steel bg-gray-100 px-1.5 py-0.5 rounded">active</span>}
+                  </button>
+                )
+              })}
+            </div>
+            <button
+              onClick={async () => {
+                if (!manualCraftType) return
+                setAddingCraft(true)
+                try {
+                  await handleManualCraft(manualCraftType)
+                } finally {
+                  setAddingCraft(false)
+                  setManualCraftType('')
+                  setShowManualCraftModal(false)
+                }
+              }}
+              disabled={!manualCraftType || addingCraft}
+              className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-3 bg-accent hover:bg-accent/90 disabled:bg-accent/40 text-white rounded-lg text-sm font-medium transition-all"
+            >
+              {addingCraft ? (
+                <><i className="fas fa-spinner fa-spin"></i> Adding Craft…</>
+              ) : (
+                <><i className="fas fa-plus"></i> Add to Tracker</>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Craft Summary Section (visible when specific platform selected) */}
       {hullSummary && (
