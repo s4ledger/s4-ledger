@@ -5,6 +5,7 @@ import { storeSealed } from './sealedVault'
 import { recordSeal, recordExternalFeed } from './auditTrail'
 import { analyzeRow } from './aiAnalysis'
 import { getRACIParty } from './raciWorkflow'
+import { performRealSync, SyncServiceResult } from '../services/externalSyncService'
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
@@ -15,6 +16,8 @@ export interface SyncChange {
   oldValue: string
   newValue: string
   source: string
+  /** Whether this change came from a real API or simulation */
+  isReal: boolean
 }
 
 export type NotificationPriority = 'critical' | 'high' | 'medium' | 'low'
@@ -30,6 +33,8 @@ export interface SyncNotification {
   stakeholders: string[]
   read: boolean
   changes: SyncChange[]
+  /** Whether this notification was triggered by a real API sync */
+  isReal: boolean
 }
 
 export interface SyncStatus {
@@ -40,37 +45,11 @@ export interface SyncStatus {
   isOnline: boolean
 }
 
-/* ─── Deterministic simulation: NSERC IDE external feed ─────── */
+/* ─── Helpers ────────────────────────────────────────────────── */
 
 let notifCounter = 0
 function makeNotifId(): string {
   return `notif-${++notifCounter}-${Date.now()}`
-}
-
-const EXTERNAL_SOURCES = [
-  'NSERC IDE Portal',
-  'DCMA eStar Gateway',
-  'PMS 515 Data Feed',
-  'Navy ERP Interface',
-]
-
-/** Deterministic remarks from external systems */
-const EXTERNAL_REMARKS: Record<string, string[]> = {
-  green: [
-    'Approved — government review complete, no further action required.',
-    'Final deliverable accepted per CDRL requirements.',
-    'Revision incorporated — Contracting Officer approved.',
-  ],
-  yellow: [
-    'Pending government review — response expected within 15 calendar days.',
-    'Minor comments returned — contractor resubmittal requested.',
-    'Under technical evaluation by NAVSEA engineering division.',
-  ],
-  red: [
-    'Delinquent — past contractual due date, DCMA cure notice in progress.',
-    'Rejected — significant deficiencies identified, resubmittal required.',
-    'Overdue submittal — escalated to Program Manager for corrective action.',
-  ],
 }
 
 /** Maps role to RACI stakeholders for a given priority level */
@@ -91,7 +70,17 @@ function pickPriority(status: 'green' | 'yellow' | 'red'): NotificationPriority 
   return 'low'
 }
 
-/** Real sync pipeline: generate realistic changes, seal each to XRPL, run AI analysis */
+/* ─── Real Sync Pipeline ────────────────────────────────────── */
+
+/**
+ * Production-ready sync pipeline.
+ *
+ * 1. Calls performRealSync() from the service layer (tries real API, falls back to simulation).
+ * 2. Diffs returned rows against current data.
+ * 3. Seals each changed row to XRPL (real 0.01 SLS deduction).
+ * 4. Runs AI analysis, logs to audit trail, generates RACI-aware notifications.
+ * 5. Audit trail and notifications clearly distinguish "Simulated Sync" vs "Real Sync".
+ */
 export async function realSyncPipeline(
   data: CDRLRow[],
   role: UserRole,
@@ -108,88 +97,101 @@ export async function realSyncPipeline(
   const updatedRows = [...data]
   const newAnchors: Record<string, AnchorRecord> = {}
 
-  // Pick 2–4 rows to receive external updates
-  const numUpdates = 2 + Math.floor(Math.random() * 3)
-  const indices = new Set<number>()
-  while (indices.size < Math.min(numUpdates, data.length)) {
-    indices.add(Math.floor(Math.random() * data.length))
+  // Build a lookup so we can match returned rows to current rows by id
+  const rowIndexById = new Map<string, number>()
+  data.forEach((r, i) => rowIndexById.set(r.id, i))
+
+  // ── Step 1: Call the service layer (real API → fallback to simulation) ──
+  let serviceResults: SyncServiceResult[]
+  try {
+    serviceResults = await performRealSync(data)
+  } catch (e) {
+    console.error('[realSyncPipeline] Service layer error, aborting sync:', e)
+    return { changes, notifications, updatedRows, newAnchors }
   }
 
-  const source = EXTERNAL_SOURCES[Math.floor(Math.random() * EXTERNAL_SOURCES.length)]
+  // ── Step 2: Process each result set (NSERC IDE, DCMA eStar, etc.) ──
+  for (const result of serviceResults) {
+    const { isReal, source, rows: externalRows, warnings } = result
+    const modeLabel = isReal ? 'Real Sync' : 'Simulated Sync'
 
-  for (const idx of indices) {
-    const row = data[idx]
-    const remarks = EXTERNAL_REMARKS[row.status]
-    const newRemark = remarks[Math.floor(Math.random() * remarks.length)]
-
-    // Build realistic notes update from external source
-    const change: SyncChange = {
-      rowId: row.id,
-      rowTitle: row.title,
-      field: 'notes',
-      oldValue: row.notes,
-      newValue: `[${source}] ${newRemark}`,
-      source,
+    if (warnings.length > 0) {
+      console.info(`[${modeLabel}] ${source} warnings:`, warnings)
     }
-    changes.push(change)
 
-    // Apply notes change
-    updatedRows[idx] = { ...updatedRows[idx], notes: change.newValue }
+    for (const extRow of externalRows) {
+      const idx = rowIndexById.get(extRow.id)
+      if (idx === undefined) continue // external row not in our dataset
 
-    // Possibly update submission date for yellow/red rows
-    if (row.status !== 'green' && Math.random() > 0.5) {
-      const today = new Date()
-      const newDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-      changes.push({
-        rowId: row.id,
-        rowTitle: row.title,
-        field: 'actualSubmissionDate',
-        oldValue: row.actualSubmissionDate || '—',
-        newValue: newDate,
-        source,
+      const currentRow = updatedRows[idx]
+
+      // Diff: detect which fields actually changed
+      const fieldsToCheck: (keyof CDRLRow)[] = ['notes', 'actualSubmissionDate', 'status', 'received']
+      let hasChanges = false
+
+      for (const field of fieldsToCheck) {
+        const oldVal = String(currentRow[field] ?? '')
+        const newVal = String(extRow[field] ?? '')
+        if (oldVal !== newVal) {
+          changes.push({
+            rowId: extRow.id,
+            rowTitle: extRow.title,
+            field,
+            oldValue: oldVal,
+            newValue: newVal,
+            source,
+            isReal,
+          })
+          hasChanges = true
+        }
+      }
+
+      if (!hasChanges) continue
+
+      // Apply the external row's changes
+      updatedRows[idx] = { ...currentRow, ...extRow }
+      const updatedRow = updatedRows[idx]
+
+      // ── Step 3: Audit Trail — clearly tagged as Real or Simulated ──
+      recordExternalFeed(
+        updatedRow,
+        `${source} [${modeLabel}]`,
+        `${modeLabel}: Synced from ${source} — ${(extRow.notes || '').slice(0, 60)}`,
+      )
+
+      // ── Step 4: Real XRPL seal (0.01 SLS) for every changed row ──
+      const hash = await hashRow(updatedRow as unknown as Record<string, unknown>)
+      const anchor = await anchorToXRPL(updatedRow.id, hash, updatedRow.title)
+      storeSealed(updatedRow.id, updatedRow)
+      recordSeal(updatedRow, anchor)
+      newAnchors[updatedRow.id] = anchor
+
+      // ── Step 5: AI analysis ──
+      const insight = analyzeRow(updatedRow, { ...anchors, ...newAnchors }, editedSinceSeal)
+      updatedRows[idx] = {
+        ...updatedRows[idx],
+        notes: `${updatedRows[idx].notes}\n${insight.conciseNote}`,
+      }
+
+      // ── Step 6: RACI-aware notification ──
+      const raciParty = getRACIParty(updatedRow)
+      const priority = pickPriority(updatedRow.status)
+      const stakeholders = [raciParty, ...getStakeholders(priority, role).filter(s => s !== raciParty)]
+
+      notifications.push({
+        id: makeNotifId(),
+        timestamp: new Date().toISOString(),
+        title: `${updatedRow.id} — ${modeLabel}: Synced & Sealed`,
+        body: `${source} [${modeLabel}]: ${(extRow.notes || '').split(']').pop()?.trim() || 'Updated'}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
+        priority,
+        rowId: updatedRow.id,
+        rowTitle: updatedRow.title,
+        stakeholders,
+        read: false,
+        changes: changes.filter(c => c.rowId === updatedRow.id),
+        isReal,
       })
-      updatedRows[idx] = { ...updatedRows[idx], actualSubmissionDate: newDate }
     }
-
-    const updatedRow = updatedRows[idx]
-
-    // Record external feed in audit trail
-    recordExternalFeed(updatedRow, source, `Synced from ${source}: ${newRemark.slice(0, 60)}`)
-
-    // Real XRPL seal: hash the updated row, anchor to ledger, store in vault
-    const hash = await hashRow(updatedRow as unknown as Record<string, unknown>)
-    const anchor = await anchorToXRPL(updatedRow.id, hash, updatedRow.title)
-    storeSealed(updatedRow.id, updatedRow)
-    recordSeal(updatedRow, anchor)
-    newAnchors[updatedRow.id] = anchor
-
-    // Run AI analysis on the changed row for a smart remark
-    const insight = analyzeRow(updatedRow, { ...anchors, ...newAnchors }, editedSinceSeal)
-    const aiNote = insight.conciseNote
-
-    // Update notes with AI remark appended
-    updatedRows[idx] = {
-      ...updatedRows[idx],
-      notes: `${updatedRows[idx].notes}\n${aiNote}`,
-    }
-
-    // RACI-aware notification with real XRPL data
-    const raciParty = getRACIParty(updatedRow)
-    const priority = pickPriority(updatedRow.status)
-    const stakeholders = [raciParty, ...getStakeholders(priority, role).filter(s => s !== raciParty)]
-
-    notifications.push({
-      id: makeNotifId(),
-      timestamp: new Date().toISOString(),
-      title: `${updatedRow.id} — Synced & Sealed`,
-      body: `${source}: ${newRemark}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
-      priority,
-      rowId: updatedRow.id,
-      rowTitle: updatedRow.title,
-      stakeholders,
-      read: false,
-      changes: changes.filter(c => c.rowId === updatedRow.id),
-    })
   }
 
   return { changes, notifications, updatedRows, newAnchors }

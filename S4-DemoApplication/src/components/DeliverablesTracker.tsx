@@ -291,7 +291,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       rowTitle: row.title,
       stakeholders: ['Program Manager', 'Contracting Officer', party === 'Shipbuilder' ? 'Quality Assurance' : party],
       read: true,
-      changes: [{ rowId: row.id, rowTitle: row.title, field: 'Workflow Update', oldValue: '', newValue: row.notes.slice(0, 80), source: 'DRL Workflow Progress' }],
+      changes: [{ rowId: row.id, rowTitle: row.title, field: 'Workflow Update', oldValue: '', newValue: row.notes.slice(0, 80), source: 'DRL Workflow Progress', isReal: false }],
+      isReal: false,
     }
     setEmailNotification(n)
     setWorkflowRow(null)
