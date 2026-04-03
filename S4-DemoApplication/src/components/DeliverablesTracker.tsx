@@ -36,8 +36,7 @@ function getHull(title: string): string | null {
   return m ? m[1] : null
 }
 
-const HULL_TABS = ['all', '1', '2', '3', '4', '5'] as const
-type HullFilter = typeof HULL_TABS[number]
+const HULL_TABS_DEFAULT = ['1', '2', '3', '4', '5']
 
 const columns = [
   { key: 'title', label: 'S4 DRL(S) TITLE / REVISIONS', width: 'w-[22%]' },
@@ -70,7 +69,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [notesRow, setNotesRow] = useState<CDRLRow | null>(null)
   const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> | null>(null)
   const [showReport, setShowReport] = useState(false)
-  const [hullFilter, setHullFilter] = useState<HullFilter>('all')
+  const [hullFilter, setHullFilter] = useState<string>('all')
   const [editedSinceSeal, setEditedSinceSeal] = useState<Set<string>>(new Set())
   const [resealToast, setResealToast] = useState<string | null>(null)
   const [showAIPanel, setShowAIPanel] = useState(false)
@@ -97,6 +96,17 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [emailNotification, setEmailNotification] = useState<SyncNotification | null>(null)
   const [workflowRow, setWorkflowRow] = useState<CDRLRow | null>(null)
   const autoSyncRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  /* ─── Dynamic hull tabs derived from data ──────────────────── */
+  const hullTabs = useMemo(() => {
+    const hullSet = new Set<string>(HULL_TABS_DEFAULT)
+    for (const row of data) {
+      const h = getHull(row.title)
+      if (h) hullSet.add(h)
+    }
+    const sorted = Array.from(hullSet).sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
+    return ['all', ...sorted]
+  }, [data])
 
   /* ─── Hull-filtered base data ──────────────────────────────── */
   const hullData = useMemo(() => {
@@ -462,7 +472,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       <div className="bg-surface border-b border-border">
         <div className="max-w-[1600px] mx-auto px-6">
           <div className="flex items-center gap-1 py-2">
-            {HULL_TABS.map(h => {
+            {hullTabs.map(h => {
               const label = h === 'all' ? 'All Hulls' : `Hull ${h}`
               const count = h === 'all' ? data.length : data.filter(r => getHull(r.title) === h).length
               const isActive = hullFilter === h

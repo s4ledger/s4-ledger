@@ -121,7 +121,70 @@ export async function realSyncPipeline(
 
   for (const extRow of externalRows) {
     const idx = rowIndexById.get(extRow.id)
-    if (idx === undefined) continue // external row not in our dataset
+
+    // ── NEW ROW: ID not in current dataset → new craft/hull from NSERC IDE ──
+    if (idx === undefined) {
+      // Append the new row to the end of the table
+      const newIdx = updatedRows.length
+      updatedRows.push(extRow)
+      rowIndexById.set(extRow.id, newIdx)
+
+      // Record every field as a "new" change
+      const fieldsToLog: (keyof CDRLRow)[] = ['title', 'notes', 'status', 'diNumber']
+      for (const field of fieldsToLog) {
+        changes.push({
+          rowId: extRow.id,
+          rowTitle: extRow.title,
+          field,
+          oldValue: '',
+          newValue: String(extRow[field] ?? ''),
+          source,
+          isReal,
+        })
+      }
+
+      // Audit: "New craft/hull detected and sealed from NSERC IDE (PMS 300)"
+      recordExternalFeed(
+        extRow,
+        `${source} [${modeLabel}]`,
+        `${modeLabel}: New craft/hull detected and sealed from ${source} — ${extRow.title}`,
+      )
+
+      // Seal the new row to XRPL (0.01 SLS)
+      const hash = await hashRow(extRow as unknown as Record<string, unknown>)
+      const anchor = await anchorToXRPL(extRow.id, hash, extRow.title)
+      storeSealed(extRow.id, extRow)
+      recordSeal(extRow, anchor)
+      newAnchors[extRow.id] = anchor
+
+      // AI analysis on the new row
+      const insight = analyzeRow(extRow, { ...anchors, ...newAnchors }, editedSinceSeal)
+      updatedRows[newIdx] = {
+        ...updatedRows[newIdx],
+        notes: `${updatedRows[newIdx].notes}\n${insight.conciseNote}`,
+      }
+
+      // RACI notification for new craft/hull
+      const raciParty = getRACIParty(extRow)
+      const priority = pickPriority(extRow.status)
+      const stakeholders = [raciParty, ...getStakeholders(priority, role).filter(s => s !== raciParty)]
+
+      notifications.push({
+        id: makeNotifId(),
+        timestamp: new Date().toISOString(),
+        title: `${extRow.id} — New craft/hull detected from NSERC IDE (PMS 300)`,
+        body: `New craft/hull detected and sealed from NSERC IDE (PMS 300) [${modeLabel}]: ${extRow.title}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
+        priority,
+        rowId: extRow.id,
+        rowTitle: extRow.title,
+        stakeholders,
+        read: false,
+        changes: changes.filter(c => c.rowId === extRow.id),
+        isReal,
+      })
+
+      continue
+    }
 
     const currentRow = updatedRows[idx]
 

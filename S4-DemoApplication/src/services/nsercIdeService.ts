@@ -399,6 +399,67 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
+/* ── New-hull row templates for simulation ───────────────────── */
+const NEW_HULL_ROW_TEMPLATES: Omit<CDRLRow, 'id' | 'title' | 'notes' | 'status'>[] = [
+  {
+    diNumber: 'DI-SESS-81521',
+    contractDueFinish: '2026-06-30',
+    calculatedDueDate: '2026-06-30',
+    submittalGuidance: 'Submit via IDE 30 days prior to PDR',
+    actualSubmissionDate: '',
+    received: 'No',
+    calendarDaysToReview: null,
+  },
+  {
+    diNumber: 'DI-MGMT-81466',
+    contractDueFinish: '2026-07-15',
+    calculatedDueDate: '2026-07-15',
+    submittalGuidance: 'Monthly — 10th of each month',
+    actualSubmissionDate: '',
+    received: 'No',
+    calendarDaysToReview: null,
+  },
+  {
+    diNumber: 'DI-ILSS-80890',
+    contractDueFinish: '2026-08-01',
+    calculatedDueDate: '2026-08-01',
+    submittalGuidance: 'Submit 90 days prior to IOT&E',
+    actualSubmissionDate: '',
+    received: 'No',
+    calendarDaysToReview: null,
+  },
+  {
+    diNumber: 'DI-RELI-80531A',
+    contractDueFinish: '2026-09-01',
+    calculatedDueDate: '2026-09-01',
+    submittalGuidance: 'Submit with TEMP update',
+    actualSubmissionDate: '',
+    received: 'No',
+    calendarDaysToReview: null,
+  },
+]
+
+const NEW_HULL_TITLES = [
+  'Systems Engineering Plan (SEP)',
+  'Integrated Logistics Support Plan (ILSP)',
+  'Test and Evaluation Master Plan (TEMP)',
+  'Configuration Management Plan (CMP)',
+  'Reliability Program Plan (RPP)',
+  'Training Plan',
+  'Quality Assurance Plan (QAP)',
+  'Software Development Plan (SDP)',
+]
+
+/** Detect the highest hull number in the current dataset */
+function detectMaxHull(rows: CDRLRow[]): number {
+  let max = 0
+  for (const row of rows) {
+    const m = row.title.match(/\(Hull\s*(\d+)\)/i)
+    if (m) max = Math.max(max, parseInt(m[1], 10))
+  }
+  return max
+}
+
 function simulatePMS300Updates(
   currentRows: CDRLRow[],
   craft?: string,
@@ -419,7 +480,7 @@ function simulatePMS300Updates(
     indices.add(Math.floor(Math.random() * eligible.length))
   }
 
-  const rows = Array.from(indices).map(idx => {
+  const updatedExistingRows = Array.from(indices).map(idx => {
     const row = eligible[idx]
     const remarks = ATTACHMENT_J2_REMARKS[row.status]
     const newNote = `[Synced from NSERC IDE (PMS 300)] ${pickRandom(remarks)}`
@@ -436,11 +497,49 @@ function simulatePMS300Updates(
     return updated
   })
 
+  // ── Occasionally introduce a brand-new hull/craft ────────────
+  // ~30% chance per sync to detect a new hull from NSERC IDE
+  const newHullRows: CDRLRow[] = []
+  if (Math.random() < 0.3) {
+    const maxHull = detectMaxHull(currentRows)
+    const newHullNum = maxHull + 1
+    const hullLabel = `Hull ${newHullNum}`
+    const maxId = currentRows.reduce((m, r) => {
+      const n = parseInt(r.id.replace(/\D/g, ''), 10)
+      return isNaN(n) ? m : Math.max(m, n)
+    }, 0)
+
+    // Generate 2-4 new rows for the new hull
+    const newCount = 2 + Math.floor(Math.random() * 3)
+    for (let i = 0; i < newCount; i++) {
+      const template = NEW_HULL_ROW_TEMPLATES[i % NEW_HULL_ROW_TEMPLATES.length]
+      const titleBase = NEW_HULL_TITLES[i % NEW_HULL_TITLES.length]
+      const rowId = `CDRL-${String(maxId + 1 + i).padStart(3, '0')}`
+      const status: CDRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
+      const remarks = ATTACHMENT_J2_REMARKS[status]
+
+      newHullRows.push({
+        ...template,
+        id: rowId,
+        title: `${titleBase} Rev A (${hullLabel})`,
+        notes: `[Synced from NSERC IDE (PMS 300)] New craft detected — ${hullLabel}. ${pickRandom(remarks)}`,
+        status,
+      })
+    }
+  }
+
+  const allRows = [...updatedExistingRows, ...newHullRows]
+
   return {
     isReal: false,
     source: 'NSERC IDE (PMS 300)',
-    rows,
+    rows: allRows,
     fetchedAt: new Date().toISOString(),
-    warnings: ['Synced from NSERC IDE (PMS 300) — simulation active until Azure AD credentials are provisioned.'],
+    warnings: [
+      'Synced from NSERC IDE (PMS 300) — simulation active until Azure AD credentials are provisioned.',
+      ...(newHullRows.length > 0
+        ? [`New craft/hull detected: ${newHullRows.length} new rows from NSERC IDE (PMS 300).`]
+        : []),
+    ],
   }
 }
