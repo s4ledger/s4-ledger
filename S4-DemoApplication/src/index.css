@@ -50,6 +50,7 @@ body {
 .row-green { background: rgba(52, 199, 89, 0.08); border-left: 3px solid #34c759; }
 .row-yellow { background: rgba(255, 149, 0, 0.08); border-left: 3px solid #ff9500; }
 .row-red { background: rgba(255, 59, 48, 0.08); border-left: 3px solid #ff3b30; }
+.row-pending { background: rgba(59, 130, 246, 0.06); border-left: 3px solid #3b82f6; }
 
 /* ── Modal Backdrop ── */
 .modal-backdrop {

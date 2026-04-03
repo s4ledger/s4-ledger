@@ -64,9 +64,10 @@ function getStakeholders(priority: NotificationPriority, _role: UserRole): strin
   return base
 }
 
-function pickPriority(status: 'green' | 'yellow' | 'red'): NotificationPriority {
+function pickPriority(status: 'green' | 'yellow' | 'red' | 'pending'): NotificationPriority {
   if (status === 'red') return 'critical'
   if (status === 'yellow') return 'medium'
+  if (status === 'pending') return 'low'
   return 'low'
 }
 

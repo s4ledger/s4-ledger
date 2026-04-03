@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { DRLRow, UserRole, AnchorRecord, Organization } from '../types'
+import { DRLRow, UserRole, AnchorRecord, Organization, ColumnKey } from '../types'
 import AIAssistModal from './AIAssistModal'
 import AINextActionsPanel from './AINextActionsPanel'
 import AuditTrailSidebar from './AuditTrailSidebar'
@@ -12,13 +12,15 @@ import NotificationsPanel from './NotificationsPanel'
 import EmailComposer from './EmailComposer'
 import WorkflowProgressPopup from './WorkflowProgressPopup'
 import ProfileDashboard from './ProfileDashboard'
+import PermissionsModal from './PermissionsModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
-import { getDefaultOrg, getPermissions, getMaskedView, OrgPermissions, MaskedStatus } from '../utils/permissions'
+import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrants, OrgPermissions, MaskedStatus, ContractorGrants } from '../utils/permissions'
+import { getSpreadsheetConfig, getContractorColumnsWithGrants, CONTRACTOR_GRANTABLE_COLUMNS } from '../utils/spreadsheetConfigs'
 import { PMS300_CRAFT_LABELS } from '../services/nsercIdeService'
 
 interface Props {
@@ -48,18 +50,6 @@ function parseCraftHull(title: string): { platform: string; hull: string } | nul
   return { platform, hull }
 }
 
-const columns = [
-  { key: 'title', label: 'S4 DRL(S) TITLE / REVISIONS', width: 'w-[22%]' },
-  { key: 'diNumber', label: 'DI NUMBER', width: 'w-[11%]' },
-  { key: 'contractDueFinish', label: 'CONTRACT DUE: FINISH', width: 'w-[10%]' },
-  { key: 'calculatedDueDate', label: 'CALCULATED DUE DATE', width: 'w-[10%]' },
-  { key: 'submittalGuidance', label: 'SUBMITTAL GUIDANCE', width: 'w-[13%]' },
-  { key: 'actualSubmissionDate', label: 'ACTUAL SUBMISSION DATE', width: 'w-[10%]' },
-  { key: 'received', label: 'RCVD', width: 'w-[5%]' },
-  { key: 'calendarDaysToReview', label: 'CAL DAYS TO REVIEW', width: 'w-[7%]' },
-  { key: 'notes', label: 'NOTES', width: 'w-[12%]' },
-]
-
 export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors }: Props) {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red' | 'pending'>('all')
@@ -77,7 +67,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [hoveredDI, setHoveredDI] = useState<string | null>(null)
   const [rowFindings, setRowFindings] = useState<Record<string, string[]>>({})
   const [notesRow, setNotesRow] = useState<DRLRow | null>(null)
-  const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> | null>(null)
+  const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' | 'pending' }> | null>(null)
   const [showReport, setShowReport] = useState(false)
   const [platformFilter, setPlatformFilter] = useState<string>('all')
   const [hullFilter, setHullFilter] = useState<string>('all')
@@ -117,11 +107,23 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   /* ─── Tools dropdown & Profile state ────────────────────────── */
   const [showToolsMenu, setShowToolsMenu] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
+  const [showPermissions, setShowPermissions] = useState(false)
   const toolsMenuRef = useRef<HTMLDivElement>(null)
 
   /* ─── Organization tier & permissions ───────────────────────── */
   const [org, setOrg] = useState<Organization>(() => getDefaultOrg(role))
   const perms: OrgPermissions = useMemo(() => getPermissions(org), [org])
+  const [contractorGrants, setContractorGrants] = useState<ContractorGrants>(() => getDefaultContractorGrants())
+
+  /* ─── Dynamic spreadsheet columns per org ───────────────────── */
+  const spreadsheetColumns = useMemo(() => {
+    if (org === 'Contractor') {
+      return getContractorColumnsWithGrants(contractorGrants.grantedColumns)
+    }
+    return getSpreadsheetConfig(org).columns
+  }, [org, contractorGrants])
+
+  const spreadsheetLabel = useMemo(() => getSpreadsheetConfig(org).label, [org])
 
   /* close tools dropdown on outside click */
   useEffect(() => {
@@ -239,7 +241,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     setCompareSummary(null)
 
     // Save original notes/status before overwriting
-    const origMap: Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> = {}
+    const origMap: Record<string, { notes: string; status: 'green' | 'yellow' | 'red' | 'pending' }> = {}
     hullData.forEach(r => { origMap[r.id] = { notes: r.notes, status: r.status } })
     setOriginalNotes(origMap)
 
@@ -394,7 +396,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       id: `wf-${row.id}-${Date.now()}`,
       timestamp: new Date().toISOString(),
       title: `${row.id} — Workflow Status Update`,
-      body: `Current status: ${row.status === 'green' ? 'Completed' : row.status === 'yellow' ? 'In Review' : 'Overdue'}. Responsible: ${party}. ${row.notes.slice(0, 100)}`,
+      body: `Current status: ${row.status === 'green' ? 'Completed' : row.status === 'yellow' ? 'Compliance Issue' : row.status === 'pending' ? 'Pending Review' : 'Overdue'}. Responsible: ${party}. ${row.notes.slice(0, 100)}`,
       priority: row.status === 'red' ? 'critical' : row.status === 'yellow' ? 'medium' : 'low',
       rowId: row.id,
       rowTitle: row.title,
@@ -456,7 +458,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   function rowClass(status: MaskedStatus) {
     if (status === 'red') return 'row-red'
     if (status === 'yellow') return 'row-yellow'
-    if (status === 'pending') return '' // neutral — no tinted background
+    if (status === 'pending') return 'row-pending'
     return 'row-green'
   }
 
@@ -479,23 +481,20 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           <div className="flex items-center gap-3">
             <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" className="h-9 w-auto" />
             <div>
-              <h1 className="text-lg font-bold text-gray-900 leading-tight">S4 Ledger · Deliverables Tracker</h1>
+              <h1 className="text-lg font-bold text-gray-900 leading-tight">S4 Ledger · {spreadsheetLabel}</h1>
               <p className="text-steel text-xs">{role} View · {org} · FOUO Simulation</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* ─── Organization Tier Selector ─────────────────── */}
+            {/* ─── Permissions & Org Button ───────────────────── */}
             <div className="relative">
               <button
-                onClick={() => {
-                  const tiers: Organization[] = ['Government', 'Contractor', 'Shipbuilder']
-                  const idx = tiers.indexOf(org)
-                  setOrg(tiers[(idx + 1) % tiers.length])
-                }}
+                onClick={() => setShowPermissions(true)}
                 className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all bg-black/[0.04] hover:bg-black/[0.08] border-border text-gray-900"
               >
                 <i className={`fas ${org === 'Government' ? 'fa-landmark' : org === 'Contractor' ? 'fa-hard-hat' : 'fa-industry'} text-xs`}></i>
                 {org}
+                <i className="fas fa-lock text-[10px] text-steel/50 ml-0.5"></i>
               </button>
             </div>
             {/* ─── Tools Dropdown ────────────────────────────── */}
@@ -825,7 +824,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Stats Row */}
       <div className="max-w-[1600px] mx-auto px-6 py-4">
-        <div className={`grid ${stats.pending > 0 ? 'grid-cols-6' : 'grid-cols-5'} gap-3`}>
+        <div className="grid grid-cols-6 gap-3">
           <div className="bg-white border border-border rounded-card p-4">
             <p className="text-steel text-xs uppercase tracking-wide">Total DRLs</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
@@ -834,14 +833,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <p className="text-green-600 text-xs uppercase tracking-wide">Completed</p>
             <p className="text-2xl font-bold text-green-600 mt-1">{stats.green}</p>
           </div>
-          {stats.pending > 0 && (
-          <div className="bg-white border border-accent/30 rounded-card p-4">
-            <p className="text-accent text-xs uppercase tracking-wide">Pending Review</p>
-            <p className="text-2xl font-bold text-accent mt-1">{stats.pending}</p>
+          <div className="bg-white border border-blue-400/30 rounded-card p-4">
+            <p className="text-blue-500 text-xs uppercase tracking-wide">Pending</p>
+            <p className="text-2xl font-bold text-blue-500 mt-1">{stats.pending}</p>
           </div>
-          )}
           <div className="bg-white border border-yellow-500/30 rounded-card p-4">
-            <p className="text-yellow-600 text-xs uppercase tracking-wide">In Review</p>
+            <p className="text-yellow-600 text-xs uppercase tracking-wide">Compliance Issue</p>
             <p className="text-2xl font-bold text-yellow-600 mt-1">{stats.yellow}</p>
           </div>
           <div className="bg-white border border-red-500/30 rounded-card p-4">
@@ -914,7 +911,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             />
           </div>
           <div className="flex items-center gap-1 bg-white border border-border rounded-lg p-1">
-            {(['all', 'green', ...(stats.pending > 0 ? ['pending'] as const : []), 'yellow', 'red'] as const).map(s => (
+            {(['all', 'green', 'pending', 'yellow', 'red'] as const).map(s => (
               <button
                 key={s}
                 onClick={() => setFilterStatus(s as typeof filterStatus)}
@@ -925,14 +922,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       : s === 'green'
                       ? 'bg-green-500/20 text-green-400'
                       : s === 'pending'
-                      ? 'bg-accent/20 text-accent'
+                      ? 'bg-blue-500/20 text-blue-500'
                       : s === 'yellow'
                       ? 'bg-yellow-500/20 text-yellow-400'
                       : 'bg-red-500/20 text-red-400'
                     : 'text-steel hover:text-gray-900'
                 }`}
               >
-                {s === 'all' ? 'All' : s === 'pending' ? 'Pending Review' : s.charAt(0).toUpperCase() + s.slice(1)}
+                {s === 'all' ? 'All' : s === 'pending' ? 'Pending' : s === 'yellow' ? 'Compliance' : s.charAt(0).toUpperCase() + s.slice(1)}
               </button>
             ))}
           </div>
@@ -958,7 +955,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   <th className="w-[50px] px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
                     #
                   </th>
-                  {columns.map(col => (
+                  {spreadsheetColumns.map(col => (
                     <th
                       key={col.key}
                       onClick={() => handleSort(col.key)}
@@ -993,110 +990,136 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     }}
                   >
                     <td className="px-3 py-3 text-gray-500 font-mono text-xs">{idx + 1}</td>
-                    <td
-                      className="px-3 py-3 font-medium text-gray-900"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={e => handleCellEdit(row.id, 'title', e.currentTarget.textContent || '')}
-                    >{row.title}</td>
-                    <td
-                      className="px-3 py-3 font-mono text-xs text-gray-500 relative"
-                      onMouseEnter={() => setHoveredDI(row.id)}
-                      onMouseLeave={() => setHoveredDI(null)}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className="cursor-help border-b border-dashed border-steel/40"
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={e => handleCellEdit(row.id, 'diNumber', e.currentTarget.textContent || '')}
-                        >
-                          {row.diNumber}
-                        </span>
-                        <span className={`inline-flex items-center px-1.5 py-px text-[8px] font-semibold uppercase rounded border leading-tight ${getRACIColor(getRACIParty(row))}`}>
-                          {getRACIParty(row).length > 8 ? getRACIParty(row).slice(0, 3) : getRACIParty(row)}
-                        </span>
-                      </div>
-                      {hoveredDI === row.id && (contractRefs[row.id] || contractRequirements[row.id]) && (
-                        <div className={`absolute left-0 z-50 w-72 bg-white border border-border text-gray-900 text-xs rounded-lg p-3 shadow-xl pointer-events-none ${
-                          idx < 2 ? 'top-full mt-2' : 'bottom-full mb-2'
-                        }`}>
-                          <p className="font-semibold text-accent mb-1">
-                            <i className="fas fa-file-contract mr-1"></i>
-                            Contract Reference
-                          </p>
-                          <p className="leading-relaxed text-gray-700">
-                            {contractRefs[row.id] || contractRequirements[row.id]?.summaryRule || 'No reference available'}
-                          </p>
-                          {contractRequirements[row.id] && (
-                            <p className="mt-1.5 text-steel text-[10px]">
-                              {contractRequirements[row.id].block} · {contractRequirements[row.id].frequency} · {contractRequirements[row.id].submittalMethod}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </td>
-                    <td
-                      className="px-3 py-3 text-xs"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={e => handleCellEdit(row.id, 'contractDueFinish', e.currentTarget.textContent || '')}
-                    >{row.contractDueFinish}</td>
-                    <td
-                      className="px-3 py-3 text-xs"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={e => handleCellEdit(row.id, 'calculatedDueDate', e.currentTarget.textContent || '')}
-                    >{row.calculatedDueDate}</td>
-                    <td
-                      className="px-3 py-3 text-xs text-steel"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={e => handleCellEdit(row.id, 'submittalGuidance', e.currentTarget.textContent || '')}
-                    >{row.submittalGuidance}</td>
-                    <td
-                      className="px-3 py-3 text-xs"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={e => handleCellEdit(row.id, 'actualSubmissionDate', e.currentTarget.textContent || '')}
-                    >{row.actualSubmissionDate || '—'}</td>
-                    <td
-                      className={`px-3 py-3 text-xs text-center font-semibold ${row.received === 'Yes' ? 'text-green-600' : 'text-red-500'}`}
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={e => handleCellEdit(row.id, 'received', e.currentTarget.textContent || '')}
-                    >{row.received}</td>
-                    <td
-                      className="px-3 py-3 text-xs text-center"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={e => handleCellEdit(row.id, 'calendarDaysToReview', e.currentTarget.textContent || '')}
-                    >{row.calendarDaysToReview !== null ? row.calendarDaysToReview : '—'}</td>
-                    <td
-                      data-no-workflow
-                      className="px-3 py-3 text-xs text-steel max-w-[180px] cursor-pointer group"
-                      onClick={e => { e.stopPropagation(); setNotesRow(row) }}
-                    >
-                      <div className="truncate group-hover:text-accent transition-colors" title="Click to view full remarks">
-                        {masked.displayStatus === 'pending'
+                    {spreadsheetColumns.map(col => {
+                      const fieldVal = row[col.field]
+                      const displayVal = fieldVal !== null && fieldVal !== undefined ? String(fieldVal) : '—'
+
+                      // Special rendering for diNumber (shows RACI badge + contract ref tooltip)
+                      if (col.key === 'diNumber') {
+                        return (
+                          <td
+                            key={col.key}
+                            className="px-3 py-3 font-mono text-xs text-gray-500 relative"
+                            onMouseEnter={() => setHoveredDI(row.id)}
+                            onMouseLeave={() => setHoveredDI(null)}
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className="cursor-help border-b border-dashed border-steel/40"
+                                {...(col.editable ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLSpanElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                              >
+                                {row.diNumber}
+                              </span>
+                              <span className={`inline-flex items-center px-1.5 py-px text-[8px] font-semibold uppercase rounded border leading-tight ${getRACIColor(getRACIParty(row))}`}>
+                                {getRACIParty(row).length > 8 ? getRACIParty(row).slice(0, 3) : getRACIParty(row)}
+                              </span>
+                            </div>
+                            {hoveredDI === row.id && (contractRefs[row.id] || contractRequirements[row.id]) && (
+                              <div className={`absolute left-0 z-50 w-72 bg-white border border-border text-gray-900 text-xs rounded-lg p-3 shadow-xl pointer-events-none ${
+                                idx < 2 ? 'top-full mt-2' : 'bottom-full mb-2'
+                              }`}>
+                                <p className="font-semibold text-accent mb-1">
+                                  <i className="fas fa-file-contract mr-1"></i>
+                                  Contract Reference
+                                </p>
+                                <p className="leading-relaxed text-gray-700">
+                                  {contractRefs[row.id] || contractRequirements[row.id]?.summaryRule || 'No reference available'}
+                                </p>
+                                {contractRequirements[row.id] && (
+                                  <p className="mt-1.5 text-steel text-[10px]">
+                                    {contractRequirements[row.id].block} · {contractRequirements[row.id].frequency} · {contractRequirements[row.id].submittalMethod}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                        )
+                      }
+
+                      // Special rendering for notes-type columns (notes, govNotes, shipbuilderNotes)
+                      if (col.key === 'notes' || col.key === 'govNotes' || col.key === 'shipbuilderNotes') {
+                        const noteVal = col.key === 'notes' && masked.displayStatus === 'pending'
                           ? masked.displayNotes
-                          : (aiInsights[row.id]?.conciseNote || row.notes || '—')}
-                      </div>
-                      {masked.displayStatus === 'pending' ? (
-                        <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-accent/10 text-accent">
-                          Pending Review
-                        </span>
-                      ) : aiInsights[row.id] ? (
-                        <span className={`inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded ${
-                          aiInsights[row.id].priority === 'Critical' ? 'bg-red-500/15 text-red-500' :
-                          aiInsights[row.id].priority === 'High' ? 'bg-orange-500/15 text-orange-500' :
-                          aiInsights[row.id].priority === 'Medium' ? 'bg-yellow-500/15 text-yellow-500' :
-                          'bg-green-500/15 text-green-500'
-                        }`}>
-                          {aiInsights[row.id].priority}
-                        </span>
-                      ) : null}
-                    </td>
+                          : col.key === 'notes'
+                          ? (aiInsights[row.id]?.conciseNote || row.notes || '—')
+                          : (displayVal || '—')
+                        const isNotesCol = col.key === 'notes'
+                        return (
+                          <td
+                            key={col.key}
+                            data-no-workflow
+                            className="px-3 py-3 text-xs text-steel max-w-[180px] cursor-pointer group"
+                            onClick={isNotesCol ? (e => { e.stopPropagation(); setNotesRow(row) }) : undefined}
+                            {...(col.editable && col.key !== 'notes' ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLTableCellElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                          >
+                            <div className="truncate group-hover:text-accent transition-colors" title={isNotesCol ? 'Click to view full remarks' : undefined}>
+                              {noteVal}
+                            </div>
+                            {isNotesCol && masked.displayStatus === 'pending' ? (
+                              <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-blue-500/10 text-blue-500">
+                                Pending
+                              </span>
+                            ) : isNotesCol && aiInsights[row.id] ? (
+                              <span className={`inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded ${
+                                aiInsights[row.id].priority === 'Critical' ? 'bg-red-500/15 text-red-500' :
+                                aiInsights[row.id].priority === 'High' ? 'bg-orange-500/15 text-orange-500' :
+                                aiInsights[row.id].priority === 'Medium' ? 'bg-yellow-500/15 text-yellow-500' :
+                                'bg-green-500/15 text-green-500'
+                              }`}>
+                                {aiInsights[row.id].priority}
+                              </span>
+                            ) : null}
+                          </td>
+                        )
+                      }
+
+                      // Special rendering for received column (color-coded)
+                      if (col.key === 'received') {
+                        return (
+                          <td
+                            key={col.key}
+                            className={`px-3 py-3 text-xs text-center font-semibold ${row.received === 'Yes' ? 'text-green-600' : 'text-red-500'}`}
+                            {...(col.editable ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLTableCellElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                          >{row.received}</td>
+                        )
+                      }
+
+                      // Special rendering for responsibleParty column (badge)
+                      if (col.key === 'responsibleParty') {
+                        const party = row.responsibleParty || '—'
+                        const partyColor = party === 'Government' ? 'bg-blue-500/10 text-blue-600 border-blue-200'
+                          : party === 'Contractor' ? 'bg-orange-500/10 text-orange-600 border-orange-200'
+                          : party === 'Shipbuilder' ? 'bg-purple-500/10 text-purple-600 border-purple-200'
+                          : 'bg-gray-100 text-steel border-gray-200'
+                        return (
+                          <td key={col.key} className="px-3 py-3 text-xs text-center">
+                            <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded border ${partyColor}`}>
+                              {party === 'Government' ? 'Gov\'t' : party === 'Shipbuilder' ? 'SB' : party === 'Contractor' ? 'Contr' : party}
+                            </span>
+                          </td>
+                        )
+                      }
+
+                      // Special rendering for title (font-medium)
+                      if (col.key === 'title') {
+                        return (
+                          <td
+                            key={col.key}
+                            className="px-3 py-3 font-medium text-gray-900"
+                            {...(col.editable ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLTableCellElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                          >{row.title}</td>
+                        )
+                      }
+
+                      // Default rendering for other columns
+                      return (
+                        <td
+                          key={col.key}
+                          className={`px-3 py-3 text-xs ${col.key === 'submittalGuidance' ? 'text-steel' : ''} ${col.key === 'calendarDaysToReview' ? 'text-center' : ''}`}
+                          {...(col.editable ? { contentEditable: true, suppressContentEditableWarning: true, onBlur: (e: React.FocusEvent<HTMLTableCellElement>) => handleCellEdit(row.id, col.field, e.currentTarget.textContent || '') } : {})}
+                        >{displayVal}</td>
+                      )
+                    })}
                     <td className="px-3 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
                       {anchors[row.id] ? (
@@ -1408,6 +1431,19 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           syncStatus={syncStatus}
           notifications={notifications}
           onClose={() => setShowProfile(false)}
+        />
+      )}
+
+      {/* Permissions Modal */}
+      {showPermissions && (
+        <PermissionsModal
+          role={role}
+          org={org}
+          perms={perms}
+          contractorGrants={contractorGrants}
+          onChangeOrg={setOrg}
+          onUpdateContractorGrants={setContractorGrants}
+          onClose={() => setShowPermissions(false)}
         />
       )}
     </div>

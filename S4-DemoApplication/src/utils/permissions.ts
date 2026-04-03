@@ -1,14 +1,30 @@
-import { DRLRow, Organization, UserRole } from '../types'
+import { DRLRow, Organization, UserRole, ColumnKey } from '../types'
 
 /* ═══════════════════════════════════════════════════════════════
-   Organization-Based Access Tiers
+   Interoperable Multi-Spreadsheet Permissions
    ═══════════════════════════════════════════════════════════════
-   Government — Full access, sees everything
-   Contractor — Works for/with Gov't, nearly identical access
-   Shipbuilder — Sees their own responsibility clearly. When the
-     ball is in the Gov't/Contractor court (submitted but review
-     overdue or in-review), the status is masked to a neutral
-     "Submitted — Pending Review" so they never see Gov't delays.
+   Three distinct spreadsheets — one shared database.
+
+   Government  — Full picture. Sees every column, every note,
+                 every status. Can configure Contractor access.
+   Contractor  — Nearly full access. Gov't can grant/revoke
+                 specific columns via the Permissions Modal.
+   Shipbuilder — Their own purpose-built spreadsheet. Can view
+                 and edit their fields. Cannot see Gov't internal
+                 notes or Gov't-side delays. Status is masked so
+                 yellow/red only appear when it's THEIR issue.
+
+   Four-Status System:
+     Green   — Good. No action needed.
+     Yellow  — Compliance issue (non-compliance, prior comments
+               not addressed, open RIDs, contract issues).
+     Red     — Overdue. Not submitted by the responsible party.
+     Pending — Under review or coming due in next 30 days.
+               (blue/grey in UI)
+
+   All edits from any org write to the shared database and are
+   visible in other org spreadsheets per their permission scope.
+   NSERC IDE sync is another data input into the same database.
    ═══════════════════════════════════════════════════════════════ */
 
 export interface OrgPermissions {
@@ -96,17 +112,26 @@ export function getPermissions(org: Organization): OrgPermissions {
   return ORG_PERMISSIONS[org]
 }
 
-/* ─── Shipbuilder Status Masking ──────────────────────────────
-   Determines what status the Shipbuilder should see for a DRL.
+/* ─── Status Display for Each Organization ────────────────────
+   Determines what status each org sees for a DRL based on
+   who is responsible for the current action.
 
-   Logic:
-   - Green (completed) → show green (everyone sees this)
-   - Not submitted yet + overdue → show red (Shipbuilder's fault)
-   - Not submitted yet + in review/yellow → show yellow (still on
-     Shipbuilder to finish, just flagged)
-   - Submitted (received=Yes) BUT status is yellow or red →
-     the delay is on Gov't/Contractor side. Mask to 'pending'
-     so Shipbuilder never sees Gov't is behind.
+   Four statuses:
+     green   — Completed / accepted, no action needed
+     yellow  — Compliance issue (non-compliance, comments not
+               addressed, open RIDs, contract issues)
+     red     — Overdue — not submitted by responsible party
+     pending — Under review or coming due in 30 days (blue/grey)
+
+   Masking rules for Shipbuilder:
+   - Green → green (everyone sees this)
+   - Pending → pending (neutral — under review or coming due)
+   - Yellow where Shipbuilder is responsible → yellow (fix it)
+   - Yellow where Gov't/Contractor is responsible → pending
+     (Shipbuilder doesn't see Gov't compliance issues)
+   - Red where Shipbuilder is responsible → red (their fault)
+   - Red where Gov't/Contractor is responsible → pending
+     (mask Gov't delays)
    ─────────────────────────────────────────────────────────── */
 
 export type MaskedStatus = 'green' | 'yellow' | 'red' | 'pending'
@@ -114,48 +139,101 @@ export type MaskedStatus = 'green' | 'yellow' | 'red' | 'pending'
 export interface MaskedDRLView {
   /** Display status for this row */
   displayStatus: MaskedStatus
-  /** Notes to show (may be redacted) */
+  /** Notes to show (may be redacted for Shipbuilder) */
   displayNotes: string
   /** Label text for the status */
   statusLabel: string
 }
 
-/** Is this DRL "in the Gov't/Contractor court"? i.e., Shipbuilder submitted it */
+/**
+ * Determine if the responsibility for this DRL is on the Gov't/Contractor side.
+ * True when:
+ * - Shipbuilder submitted it (received=Yes) and it's in review
+ * - OR the responsibleParty field explicitly says Government/Contractor
+ */
 function isInGovtCourt(row: DRLRow): boolean {
+  // Explicit responsible party field takes priority
+  if (row.responsibleParty === 'Government' || row.responsibleParty === 'Contractor') {
+    return true
+  }
+  // If submitted and received, ball is in Gov't court for review
   return row.received === 'Yes' && row.actualSubmissionDate !== ''
 }
 
-/** Get the masked view of a DRL for the Shipbuilder */
+/** Get the masked view of a DRL for the given org */
 export function getMaskedView(row: DRLRow, org: Organization): MaskedDRLView {
   // Government and Contractor see everything as-is
   if (org !== 'Shipbuilder') {
+    const labelMap: Record<string, string> = {
+      green: 'Completed',
+      yellow: 'Compliance Issue',
+      red: 'Overdue',
+      pending: 'Pending Review',
+    }
     return {
       displayStatus: row.status,
       displayNotes: row.notes,
-      statusLabel: row.status === 'green' ? 'Completed' : row.status === 'yellow' ? 'In Review' : 'Overdue',
+      statusLabel: labelMap[row.status] || row.status,
     }
   }
 
-  // Shipbuilder view
+  // ── Shipbuilder view ──
+
+  // Green is always green
   if (row.status === 'green') {
     return { displayStatus: 'green', displayNotes: row.notes, statusLabel: 'Completed' }
   }
 
-  if (isInGovtCourt(row)) {
-    // Shipbuilder submitted it, but Gov't/Contractor side is yellow or red.
-    // Mask to neutral "pending" — don't reveal Gov't delays.
-    return {
-      displayStatus: 'pending',
-      displayNotes: 'Submitted — under government review.',
-      statusLabel: 'Submitted — Pending Review',
+  // Pending is always pending (under review or coming due)
+  if (row.status === 'pending') {
+    return { displayStatus: 'pending', displayNotes: row.shipbuilderNotes || 'Under review — no action required.', statusLabel: 'Pending Review' }
+  }
+
+  // Yellow — compliance issue
+  if (row.status === 'yellow') {
+    if (isInGovtCourt(row)) {
+      // Gov't/Contractor has the compliance issue — mask from Shipbuilder
+      return {
+        displayStatus: 'pending',
+        displayNotes: row.shipbuilderNotes || 'Submitted — under review.',
+        statusLabel: 'Submitted — Pending Review',
+      }
     }
+    // Shipbuilder's compliance issue — they need to see it
+    return { displayStatus: 'yellow', displayNotes: row.shipbuilderNotes || row.notes, statusLabel: 'Compliance Issue — Action Required' }
   }
 
-  // Not submitted or not received — this is the Shipbuilder's responsibility
+  // Red — overdue
   if (row.status === 'red') {
-    return { displayStatus: 'red', displayNotes: row.notes, statusLabel: 'Overdue — Action Required' }
+    if (isInGovtCourt(row)) {
+      // Gov't is behind — mask from Shipbuilder
+      return {
+        displayStatus: 'pending',
+        displayNotes: row.shipbuilderNotes || 'Submitted — under government review.',
+        statusLabel: 'Submitted — Pending Review',
+      }
+    }
+    // Shipbuilder is behind — show red
+    return { displayStatus: 'red', displayNotes: row.shipbuilderNotes || row.notes, statusLabel: 'Overdue — Action Required' }
   }
 
-  // Yellow + not yet submitted/received → still on Shipbuilder
-  return { displayStatus: 'yellow', displayNotes: row.notes, statusLabel: 'In Progress' }
+  // Fallback
+  return { displayStatus: row.status, displayNotes: row.notes, statusLabel: row.status }
+}
+
+/* ─── Contractor Permission Grants ────────────────────────────
+   Government can dynamically grant Contractor access to
+   additional columns beyond their base spreadsheet.
+   ─────────────────────────────────────────────────────────── */
+
+export interface ContractorGrants {
+  /** Additional columns Gov't has granted to Contractor */
+  grantedColumns: Set<ColumnKey>
+}
+
+/** Default Contractor grants (Gov't starts with these active) */
+export function getDefaultContractorGrants(): ContractorGrants {
+  return {
+    grantedColumns: new Set<ColumnKey>(),
+  }
 }
