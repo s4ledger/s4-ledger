@@ -1,7 +1,7 @@
-import { CDRLRow } from '../types'
+import { DRLRow } from '../types'
 
 interface Props {
-  row: CDRLRow
+  row: DRLRow
   isAnchored: boolean
   onAnchor: () => void
   onVerify: () => void

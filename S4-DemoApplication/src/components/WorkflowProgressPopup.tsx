@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { CDRLRow, AnchorRecord, UserRole } from '../types'
+import { DRLRow, AnchorRecord, UserRole } from '../types'
 import { getWorkflowStages, getRACIParty, StageStatus, WorkflowStage } from '../utils/raciWorkflow'
 import { AIRowInsight } from '../utils/aiAnalysis'
 
 interface Props {
-  row: CDRLRow
+  row: DRLRow
   anchors: Record<string, AnchorRecord>
   role: UserRole
   aiInsight?: AIRowInsight
   onUpdateNotes: (rowId: string, notes: string) => void
-  onSendEmail: (row: CDRLRow) => void
+  onSendEmail: (row: DRLRow) => void
   onClose: () => void
 }
 

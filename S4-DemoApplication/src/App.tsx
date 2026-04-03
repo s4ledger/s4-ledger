@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { AuthStage, UserRole, CDRLRow, AnchorRecord } from './types'
+import { AuthStage, UserRole, DRLRow, AnchorRecord } from './types'
 import { sampleData } from './data/sampleData'
 import { hashRow } from './utils/hash'
 import { anchorToXRPL } from './utils/xrpl'
@@ -13,11 +13,11 @@ import DeliverablesTracker from './components/DeliverablesTracker'
 export default function App() {
   const [stage, setStage] = useState<AuthStage>('cac')
   const [role, setRole] = useState<UserRole>('Program Manager')
-  const [data, setData] = useState<CDRLRow[]>(sampleData)
+  const [data, setData] = useState<DRLRow[]>(sampleData)
   const [anchors, setAnchors] = useState<Record<string, AnchorRecord>>({})
   const [anchoring, setAnchoring] = useState<Set<string>>(new Set())
 
-  const handleAnchor = useCallback(async (row: CDRLRow) => {
+  const handleAnchor = useCallback(async (row: DRLRow) => {
     if (anchors[row.id] || anchoring.has(row.id)) return
 
     setAnchoring(prev => new Set(prev).add(row.id))
@@ -36,7 +36,7 @@ export default function App() {
     }
   }, [anchors, anchoring])
 
-  const handleReseal = useCallback(async (row: CDRLRow) => {
+  const handleReseal = useCallback(async (row: DRLRow) => {
     setAnchoring(prev => new Set(prev).add(row.id))
     try {
       const hash = await hashRow(row as unknown as Record<string, unknown>)
@@ -60,7 +60,7 @@ export default function App() {
     }
   }, [data, anchors, anchoring, handleAnchor])
 
-  const handleVerify = useCallback((_row: CDRLRow) => {
+  const handleVerify = useCallback((_row: DRLRow) => {
     // Verify is handled inside DeliverablesTracker via VerifyModal
   }, [])
 

@@ -1,4 +1,4 @@
-import { CDRLRow, UserRole, AnchorRecord } from '../types'
+import { DRLRow, UserRole, AnchorRecord } from '../types'
 import { hashRow } from './hash'
 import { anchorToXRPL } from './xrpl'
 import { storeSealed } from './sealedVault'
@@ -83,14 +83,14 @@ function pickPriority(status: 'green' | 'yellow' | 'red'): NotificationPriority 
  * 5. Audit trail and notifications tagged "Synced from NSERC IDE (PMS 300)".
  */
 export async function realSyncPipeline(
-  data: CDRLRow[],
+  data: DRLRow[],
   role: UserRole,
   anchors: Record<string, AnchorRecord>,
   editedSinceSeal: Set<string>,
 ): Promise<{
   changes: SyncChange[]
   notifications: SyncNotification[]
-  updatedRows: CDRLRow[]
+  updatedRows: DRLRow[]
   newAnchors: Record<string, AnchorRecord>
   newCraftDetected: string | null
 }> {
@@ -146,7 +146,7 @@ export async function realSyncPipeline(
       }
 
       // Record every field as a "new" change
-      const fieldsToLog: (keyof CDRLRow)[] = ['title', 'notes', 'status', 'diNumber']
+      const fieldsToLog: (keyof DRLRow)[] = ['title', 'notes', 'status', 'diNumber']
       for (const field of fieldsToLog) {
         changes.push({
           rowId: extRow.id,
@@ -206,7 +206,7 @@ export async function realSyncPipeline(
     const currentRow = updatedRows[idx]
 
     // Diff: detect which fields actually changed
-    const fieldsToCheck: (keyof CDRLRow)[] = ['notes', 'actualSubmissionDate', 'status', 'received']
+    const fieldsToCheck: (keyof DRLRow)[] = ['notes', 'actualSubmissionDate', 'status', 'received']
     let hasChanges = false
 
     for (const field of fieldsToCheck) {
@@ -282,7 +282,7 @@ export async function realSyncPipeline(
  * and runs AI analysis.
  */
 export async function manualCraftPipeline(
-  data: CDRLRow[],
+  data: DRLRow[],
   craftName: string,
   role: UserRole,
   anchors: Record<string, AnchorRecord>,
@@ -290,7 +290,7 @@ export async function manualCraftPipeline(
 ): Promise<{
   changes: SyncChange[]
   notifications: SyncNotification[]
-  updatedRows: CDRLRow[]
+  updatedRows: DRLRow[]
   newAnchors: Record<string, AnchorRecord>
   newCraftDetected: string
 }> {
@@ -307,7 +307,7 @@ export async function manualCraftPipeline(
     const newIdx = updatedRows.length
     updatedRows.push(extRow)
 
-    const fieldsToLog: (keyof CDRLRow)[] = ['title', 'notes', 'status', 'diNumber']
+    const fieldsToLog: (keyof DRLRow)[] = ['title', 'notes', 'status', 'diNumber']
     for (const field of fieldsToLog) {
       changes.push({
         rowId: extRow.id,

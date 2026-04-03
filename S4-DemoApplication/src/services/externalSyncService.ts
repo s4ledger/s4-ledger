@@ -2,13 +2,13 @@
  * NSERC IDE External Sync Service — PMS 300 DRL Connection Layer
  *
  * Production-ready integration for the Naval Sea Systems Command (NAVSEA)
- * NSERC Integrated Data Environment, specifically the PMS 300 (Constellation-
- * class Frigate) DRL / CDRL SharePoint site hosted in the DoD Microsoft 365
+ * NSERC Integrated Data Environment, specifically the PMS 300 (U.S. Navy
+ * & FMS Boats and Craft) DRL SharePoint site hosted in the DoD Microsoft 365
  * tenant.
  *
  * This module contains the real Microsoft Graph API / SharePoint REST
  * endpoints that will be used in production. Today it returns simulated
- * data in the correct CDRLRow shape; when production Azure AD credentials
+ * data in the correct DRLRow shape; when production Azure AD credentials
  * are provisioned, the real fetch calls below will activate automatically.
  *
  * ──────────────────────────────────────────────────────────────────
@@ -16,7 +16,7 @@
  *
  *   Site:  https://graph.microsoft.com/v1.0/sites/{pms300-site-id}
  *   List:  /sites/{pms300-site-id}/lists/{drl-list-id}/items
- *   Query: ?$expand=fields($select=CDRL_ID,Title,DI_Number,Contract_Due,
+ *   Query: ?$expand=fields($select=DRL_ID,Title,DI_Number,Contract_Due,
  *           Calc_Due_Date,Submittal_Guide,Actual_Sub_Date,Received,
  *           Cal_Days_Review,Notes,Status,Revision,Comments)&$top=500
  *
@@ -29,7 +29,7 @@
  * ──────────────────────────────────────────────────────────────────
  */
 
-import { CDRLRow } from '../types'
+import { DRLRow } from '../types'
 
 /* ═══════════════════════════════════════════════════════════════
    §1  PMS 300 NSERC IDE Configuration
@@ -42,7 +42,7 @@ interface PMS300SyncConfig {
   clientId: string
   /** SharePoint site ID for the PMS 300 NSERC IDE DRL site */
   pms300SiteId: string
-  /** SharePoint list ID containing the PMS 300 CDRL / DRL records */
+  /** SharePoint list ID containing the PMS 300 DRL / DRL records */
   drlListId: string
   /** Microsoft Graph base URL */
   graphBaseUrl: string
@@ -73,7 +73,7 @@ export interface SyncServiceResult {
   /** Always 'NSERC IDE (PMS 300)' for this service */
   source: SyncSource
   /** Rows returned from the PMS 300 DRL SharePoint list */
-  rows: CDRLRow[]
+  rows: DRLRow[]
   /** ISO timestamp of the fetch */
   fetchedAt: string
   /** Any non-fatal warnings */
@@ -152,7 +152,7 @@ async function acquirePMS300Token(config: PMS300SyncConfig): Promise<string | nu
  * Production endpoint:
  *   GET https://graph.microsoft.com/v1.0
  *       /sites/{pms300SiteId}/lists/{drlListId}/items
- *       ?$expand=fields($select=CDRL_ID,Title,DI_Number,Contract_Due,
+ *       ?$expand=fields($select=DRL_ID,Title,DI_Number,Contract_Due,
  *         Calc_Due_Date,Submittal_Guide,Actual_Sub_Date,Received,
  *         Cal_Days_Review,Notes,Status,Revision,Comments)
  *       &$top=500
@@ -164,7 +164,7 @@ async function acquirePMS300Token(config: PMS300SyncConfig): Promise<string | nu
  *   ConsistencyLevel: eventual        (required for $filter on indexed cols)
  *
  * SharePoint field mapping (PMS 300 DRL list):
- *   fields.CDRL_ID          -> row.id
+ *   fields.DRL_ID          -> row.id
  *   fields.Title             -> row.title
  *   fields.DI_Number         -> row.diNumber
  *   fields.Contract_Due      -> row.contractDueFinish
@@ -181,7 +181,7 @@ async function acquirePMS300Token(config: PMS300SyncConfig): Promise<string | nu
 async function fetchPMS300Items(
   _config: PMS300SyncConfig,
   token: string | null,
-  currentRows: CDRLRow[],
+  currentRows: DRLRow[],
 ): Promise<SyncServiceResult> {
   if (token) {
     // ┌─────────────────────────────────────────────────────────────┐
@@ -190,7 +190,7 @@ async function fetchPMS300Items(
     // │  const url =                                                 │
     // │    `${config.graphBaseUrl}/sites/${config.pms300SiteId}`     │
     // │    + `/lists/${config.drlListId}/items`                      │
-    // │    + `?$expand=fields($select=CDRL_ID,Title,DI_Number,`     │
+    // │    + `?$expand=fields($select=DRL_ID,Title,DI_Number,`     │
     // │    + `Contract_Due,Calc_Due_Date,Submittal_Guide,`          │
     // │    + `Actual_Sub_Date,Received,Cal_Days_Review,`            │
     // │    + `Notes,Status,Revision,Comments)`                       │
@@ -231,17 +231,17 @@ async function fetchPMS300Items(
    ═══════════════════════════════════════════════════════════════ */
 
 /**
- * TODO: PRODUCTION — Normalize a PMS 300 SharePoint list item to CDRLRow.
+ * TODO: PRODUCTION — Normalize a PMS 300 SharePoint list item to DRLRow.
  *
  * interface PMS300SharePointItem {
  *   id: string
  *   fields: {
- *     CDRL_ID: string              // e.g. "CDRL-001"
+ *     DRL_ID: string              // e.g. "DRL-001"
  *     Title: string                // e.g. "ILS Management Plan (Hull 1)"
  *     DI_Number: string            // e.g. "DI-ILSS-80555A"
  *     Contract_Due: string         // ISO date, e.g. "2026-06-15"
  *     Calc_Due_Date: string        // ISO date
- *     Submittal_Guide: string      // e.g. "IAW CDRL A001, Block 16"
+ *     Submittal_Guide: string      // e.g. "IAW DRL A001, Block 16"
  *     Actual_Sub_Date: string | null
  *     Received: string             // e.g. "Yes" | "No" | "Partial"
  *     Cal_Days_Review: number | null
@@ -253,13 +253,13 @@ async function fetchPMS300Items(
  *   }
  * }
  *
- * function normalizePMS300Item(item: PMS300SharePointItem): CDRLRow {
+ * function normalizePMS300Item(item: PMS300SharePointItem): DRLRow {
  *   const rev = item.fields.Revision ? ` (${item.fields.Revision})` : ''
  *   const comments = item.fields.Comments
  *     ? `\nPMS 300 Comment: ${item.fields.Comments}`
  *     : ''
  *   return {
- *     id: item.fields.CDRL_ID,
+ *     id: item.fields.DRL_ID,
  *     title: item.fields.Title + rev,
  *     diNumber: item.fields.DI_Number,
  *     contractDueFinish: item.fields.Contract_Due,
@@ -269,7 +269,7 @@ async function fetchPMS300Items(
  *     received: item.fields.Received,
  *     calendarDaysToReview: item.fields.Cal_Days_Review,
  *     notes: item.fields.Notes + comments,
- *     status: item.fields.Status.toLowerCase() as CDRLRow['status'],
+ *     status: item.fields.Status.toLowerCase() as DRLRow['status'],
  *   }
  * }
  */
@@ -278,21 +278,21 @@ async function fetchPMS300Items(
    §6  PMS 300 Simulation Layer
    ═══════════════════════════════════════════════════════════════
    Active until real Azure AD credentials are provisioned.
-   Uses realistic PMS 300 Constellation-class contractual language. */
+   Uses realistic PMS 300 PMS 300 Boats & Craft contractual language. */
 
 const PMS300_REMARKS: Record<string, string[]> = {
   green: [
-    'PMS 300 review complete — deliverable accepted, no further action required per Constellation-class DRL.',
+    'PMS 300 review complete — deliverable accepted, no further action required per PMS 300 DRL.',
     'Approved by PMS 300 Program Office — revision incorporated per contract modification P00012.',
     'Final acceptance recorded in NSERC IDE — Contracting Officer concurrence obtained.',
   ],
   yellow: [
     'PMS 300: Under government review — response expected within 15 calendar days per DFARS 252.242-7006.',
     'PMS 300: Minor comments returned by NAVSEA technical authority — contractor resubmittal requested within 30 days.',
-    'PMS 300: Technical evaluation in progress by Constellation-class engineering division.',
+    'PMS 300: Technical evaluation in progress by PMS 300 engineering division.',
   ],
   red: [
-    'PMS 300: Delinquent — past contractual due date per Constellation-class DRL. Cure notice under consideration.',
+    'PMS 300: Delinquent — past contractual due date per PMS 300 DRL. Cure notice under consideration.',
     'PMS 300: Rejected — significant deficiencies per MIL-STD-1916 sampling. Full resubmittal required.',
     'PMS 300: Overdue submittal — escalated to PMS 300 Program Manager for corrective action coordination.',
   ],
@@ -302,7 +302,7 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-function simulatePMS300Response(currentRows: CDRLRow[]): SyncServiceResult {
+function simulatePMS300Response(currentRows: DRLRow[]): SyncServiceResult {
   // Pick 2-4 rows to receive simulated PMS 300 NSERC IDE updates
   const count = 2 + Math.floor(Math.random() * 3)
   const indices = new Set<number>()
@@ -352,7 +352,7 @@ function simulatePMS300Response(currentRows: CDRLRow[]): SyncServiceResult {
  * @returns Single-element array with SyncServiceResult from NSERC IDE (PMS 300)
  */
 export async function performRealSync(
-  currentRows: CDRLRow[],
+  currentRows: DRLRow[],
   config: PMS300SyncConfig = PMS300_CONFIG,
 ): Promise<SyncServiceResult[]> {
   // Step 1: Acquire Azure AD token for PMS 300 SharePoint site

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { CDRLRow, AnchorRecord } from '../types'
+import { DRLRow, AnchorRecord } from '../types'
 import { analyzePortfolio, AIPortfolioSummary } from '../utils/aiAnalysis'
 
 interface Props {
-  data: CDRLRow[]
+  data: DRLRow[]
   anchors: Record<string, AnchorRecord>
   editedSinceSeal: Set<string>
   visible: boolean

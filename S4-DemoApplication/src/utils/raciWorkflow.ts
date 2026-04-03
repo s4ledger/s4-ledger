@@ -1,4 +1,4 @@
-import { CDRLRow } from '../types'
+import { DRLRow } from '../types'
 
 /* ─── RACI party for each DRL ────────────────────────────────── */
 
@@ -19,7 +19,7 @@ const DI_RACI: Record<string, RACIParty> = {
   'DI-MISC-80508A':  'Program Manager',
 }
 
-export function getRACIParty(row: CDRLRow): RACIParty {
+export function getRACIParty(row: DRLRow): RACIParty {
   return DI_RACI[row.diNumber] || (row.status === 'red' ? 'Program Manager' : 'Shipbuilder')
 }
 
@@ -45,7 +45,7 @@ export interface WorkflowStage {
   comments: string
 }
 
-export function getWorkflowStages(row: CDRLRow): WorkflowStage[] {
+export function getWorkflowStages(row: DRLRow): WorkflowStage[] {
   const submitted = !!row.actualSubmissionDate && row.actualSubmissionDate !== '—'
   const received = row.received === 'Yes'
   const isOverdue = row.status === 'red'

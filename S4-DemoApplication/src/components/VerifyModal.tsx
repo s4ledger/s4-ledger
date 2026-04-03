@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { CDRLRow, AnchorRecord } from '../types'
+import { DRLRow, AnchorRecord } from '../types'
 import { hashRow } from '../utils/hash'
 import { recordVerification } from '../utils/auditTrail'
 
 interface Props {
-  row: CDRLRow
+  row: DRLRow
   anchor: AnchorRecord | undefined
-  onReseal: (row: CDRLRow) => Promise<void>
+  onReseal: (row: DRLRow) => Promise<void>
   onClose: () => void
   onShowMismatch?: () => void
 }

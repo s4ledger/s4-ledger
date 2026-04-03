@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import { CDRLRow, AnchorRecord, UserRole } from '../types'
+import { DRLRow, AnchorRecord, UserRole } from '../types'
 import { contractRequirements } from '../data/contractData'
 import { AIRowInsight } from './aiAnalysis'
 import { getAuditSummary, getAuditLog } from './auditTrail'
@@ -69,13 +69,13 @@ function addFooters(doc: jsPDF, dateStr: string) {
 }
 
 /* ─── Priority sort: red first, then yellow, then green ────────── */
-function prioritySort(a: CDRLRow, b: CDRLRow): number {
+function prioritySort(a: DRLRow, b: DRLRow): number {
   const order: Record<string, number> = { red: 0, yellow: 1, green: 2 }
   return (order[a.status] ?? 1) - (order[b.status] ?? 1)
 }
 
 /* ─── AI analysis helpers (deterministic, no API needed) ─────── */
-function generateAIAnalysis(data: CDRLRow[], anchors: Record<string, AnchorRecord>) {
+function generateAIAnalysis(data: DRLRow[], anchors: Record<string, AnchorRecord>) {
   const green = data.filter(r => r.status === 'green')
   const yellow = data.filter(r => r.status === 'yellow')
   const red = data.filter(r => r.status === 'red')
@@ -110,7 +110,7 @@ function generateAIAnalysis(data: CDRLRow[], anchors: Record<string, AnchorRecor
   }
 }
 
-function getRowAnalysis(row: CDRLRow, anchors: Record<string, AnchorRecord>): string {
+function getRowAnalysis(row: DRLRow, anchors: Record<string, AnchorRecord>): string {
   const req = contractRequirements[row.id]
   if (!req) return 'No contractual requirement mapped. Manual review recommended.'
 
@@ -142,10 +142,10 @@ function getRowAnalysis(row: CDRLRow, anchors: Record<string, AnchorRecord>): st
   }
   if (req.priorCommentsRequired) issues.push('Prior comment disposition required')
   return `${issues.join('; ') || 'Under review'}. Per ${req.block}, resolve within ${req.govReviewDays} calendar days. ` +
-    `Contractor to provide updated status at next CDRL meeting. Ref: ${req.contractRef}.`
+    `Contractor to provide updated status at next DRL meeting. Ref: ${req.contractRef}.`
 }
 
-function getRecommendedActions(row: CDRLRow): string[] {
+function getRecommendedActions(row: DRLRow): string[] {
   const req = contractRequirements[row.id]
   if (!req) return ['Coordinate with Contracting Officer to map requirement.']
 
@@ -170,7 +170,7 @@ function getRecommendedActions(row: CDRLRow): string[] {
   if (row.calendarDaysToReview !== null && row.calendarDaysToReview > req.govReviewDays) {
     actions.push(`Government review is past ${req.govReviewDays}-day limit. COR action required.`)
   }
-  actions.push(`Track resolution at next weekly CDRL status meeting.`)
+  actions.push(`Track resolution at next weekly DRL status meeting.`)
   return actions
 }
 
@@ -183,7 +183,7 @@ export interface WeeklyReportResult {
 }
 
 export function generateWeeklyReport(
-  data: CDRLRow[],
+  data: DRLRow[],
   anchors: Record<string, AnchorRecord>,
   role: UserRole,
   rowFindings: Record<string, string[]>,
@@ -222,7 +222,7 @@ export function generateWeeklyReport(
   doc.roundedRect(M, y, W - 2 * M, 18, 2, 2, 'S')
 
   const bannerItems = [
-    { label: 'Total CDRLs', value: String(data.length), color: TEXT },
+    { label: 'Total DRLs', value: String(data.length), color: TEXT },
     { label: 'Approved', value: String(analysis.green.length), color: GREEN },
     { label: 'In Review', value: String(analysis.yellow.length), color: YELLOW },
     { label: 'Overdue', value: String(analysis.red.length), color: RED },
@@ -275,7 +275,7 @@ export function generateWeeklyReport(
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(...TEXT)
   const execLines = doc.splitTextToSize(
-    `This report provides a comprehensive weekly status of all ${data.length} Contract Data Requirements List (CDRL) ` +
+    `This report provides a comprehensive weekly status of all ${data.length} Data Requirements List (DRL) ` +
     `items tracked in the S4 Ledger Deliverables Tracker. As of ${dateStr}, ${analysis.green.length} deliverables ` +
     `(${Math.round(analysis.green.length / data.length * 100)}%) are fully compliant, ${analysis.yellow.length} are under active review ` +
     `with minor issues, and ${analysis.red.length} are classified as overdue/delinquent per DD Form 1423 Block 14 criteria. ` +
@@ -368,7 +368,7 @@ export function generateWeeklyReport(
   y = 28
   y = sectionHeading(doc, y, 'SECTION 2: DETAILED DRL LIST — ALL ITEMS BY STATUS')
 
-  const groups: { label: string; status: string; color: [number, number, number]; rows: CDRLRow[] }[] = [
+  const groups: { label: string; status: string; color: [number, number, number]; rows: DRLRow[] }[] = [
     { label: 'Completed / Approved', status: 'green', color: GREEN, rows: data.filter(r => r.status === 'green') },
     { label: 'In Review', status: 'yellow', color: YELLOW, rows: data.filter(r => r.status === 'yellow') },
     { label: 'Overdue / Delinquent', status: 'red', color: RED, rows: data.filter(r => r.status === 'red') },
@@ -506,10 +506,10 @@ export function generateWeeklyReport(
 
   // Progress comparison table
   const progressData = [
-    ['CDRLs Submitted', String(analysis.lastWeekSubmitted), String(analysis.submitted), analysis.submitted > analysis.lastWeekSubmitted ? '+' + (analysis.submitted - analysis.lastWeekSubmitted) : '—'],
-    ['CDRLs Completed (Green)', String(analysis.lastWeekCompleted), String(analysis.green.length), analysis.green.length > analysis.lastWeekCompleted ? '+' + (analysis.green.length - analysis.lastWeekCompleted) : '—'],
-    ['CDRLs In Review (Yellow)', String(Math.max(0, analysis.yellow.length + 1)), String(analysis.yellow.length), analysis.yellow.length < analysis.yellow.length + 1 ? '-1' : '—'],
-    ['CDRLs Overdue (Red)', String(Math.min(data.length, analysis.red.length + 1)), String(analysis.red.length), analysis.red.length < analysis.red.length + 1 ? '-1 (improved)' : '—'],
+    ['DRLs Submitted', String(analysis.lastWeekSubmitted), String(analysis.submitted), analysis.submitted > analysis.lastWeekSubmitted ? '+' + (analysis.submitted - analysis.lastWeekSubmitted) : '—'],
+    ['DRLs Completed (Green)', String(analysis.lastWeekCompleted), String(analysis.green.length), analysis.green.length > analysis.lastWeekCompleted ? '+' + (analysis.green.length - analysis.lastWeekCompleted) : '—'],
+    ['DRLs In Review (Yellow)', String(Math.max(0, analysis.yellow.length + 1)), String(analysis.yellow.length), analysis.yellow.length < analysis.yellow.length + 1 ? '-1' : '—'],
+    ['DRLs Overdue (Red)', String(Math.min(data.length, analysis.red.length + 1)), String(analysis.red.length), analysis.red.length < analysis.red.length + 1 ? '-1 (improved)' : '—'],
     ['Sealed to Ledger', String(Math.max(0, analysis.sealed - 2)), String(analysis.sealed), analysis.sealed > 0 ? '+' + Math.min(2, analysis.sealed) : '—'],
     ['On-Time Rate', `${Math.max(0, analysis.onTimeRate - 5)}%`, `${analysis.onTimeRate}%`, analysis.onTimeRate > 0 ? `+${Math.min(5, analysis.onTimeRate)}%` : '—'],
     ['Avg Review Cycle', `${(analysis.avgReviewDays + 2.1).toFixed(1)} days`, `${analysis.avgReviewDays} days`, `-2.1 days`],
@@ -599,7 +599,7 @@ export function generateWeeklyReport(
 
     autoTable(doc, {
       startY: y,
-      head: [['CDRL ID', 'Title', 'Priority', 'Next Action', 'Target Date']],
+      head: [['DRL ID', 'Title', 'Priority', 'Next Action', 'Target Date']],
       body: aiTableBody,
       theme: 'grid',
       styles: { fontSize: 7, cellPadding: 2, textColor: TEXT },
@@ -661,7 +661,7 @@ export function generateWeeklyReport(
 
       autoTable(doc, {
         startY: y,
-        head: [['Date', 'CDRL', 'Event', 'Description', 'AI Summary']],
+        head: [['Date', 'DRL', 'Event', 'Description', 'AI Summary']],
         body: auditBody,
         theme: 'grid',
         styles: { fontSize: 6.5, cellPadding: 1.5, textColor: TEXT },
@@ -742,7 +742,7 @@ export function generateWeeklyReport(
 
 /* ═══ Legacy simple PDF (kept for backward compat) ═══════════════ */
 export function generatePDF(
-  data: CDRLRow[],
+  data: DRLRow[],
   anchors: Record<string, AnchorRecord>,
   role: UserRole,
 ) {

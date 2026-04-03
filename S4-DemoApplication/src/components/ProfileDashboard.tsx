@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { UserRole, CDRLRow, AnchorRecord } from '../types'
+import { UserRole, DRLRow, AnchorRecord } from '../types'
 import { SyncStatus, SyncNotification } from '../utils/externalSync'
 
 interface Props {
   role: UserRole
-  data: CDRLRow[]
+  data: DRLRow[]
   anchors: Record<string, AnchorRecord>
   syncStatus: SyncStatus
   notifications: SyncNotification[]

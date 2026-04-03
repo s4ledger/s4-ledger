@@ -1,4 +1,4 @@
-import { CDRLRow, AnchorRecord } from '../types'
+import { DRLRow, AnchorRecord } from '../types'
 
 /* ─── Event types ────────────────────────────────────────────── */
 export type AuditEventType =
@@ -52,7 +52,7 @@ export function clearAuditLog(): void {
 
 /* ─── Record events ──────────────────────────────────────────── */
 
-export function recordSeal(row: CDRLRow, anchor: AnchorRecord): void {
+export function recordSeal(row: DRLRow, anchor: AnchorRecord): void {
   auditLog.push({
     id: makeId(),
     rowId: row.id,
@@ -66,7 +66,7 @@ export function recordSeal(row: CDRLRow, anchor: AnchorRecord): void {
   })
 }
 
-export function recordReseal(row: CDRLRow, anchor: AnchorRecord): void {
+export function recordReseal(row: DRLRow, anchor: AnchorRecord): void {
   auditLog.push({
     id: makeId(),
     rowId: row.id,
@@ -80,7 +80,7 @@ export function recordReseal(row: CDRLRow, anchor: AnchorRecord): void {
   })
 }
 
-export function recordVerification(row: CDRLRow, match: boolean, currentHash: string, anchoredHash: string, txHash: string): void {
+export function recordVerification(row: DRLRow, match: boolean, currentHash: string, anchoredHash: string, txHash: string): void {
   if (match) {
     auditLog.push({
       id: makeId(),
@@ -110,7 +110,7 @@ export function recordVerification(row: CDRLRow, match: boolean, currentHash: st
   }
 }
 
-export function recordEdit(row: CDRLRow, field: string, oldValue: string, newValue: string): void {
+export function recordEdit(row: DRLRow, field: string, oldValue: string, newValue: string): void {
   if (oldValue === newValue) return
   auditLog.push({
     id: makeId(),
@@ -124,7 +124,7 @@ export function recordEdit(row: CDRLRow, field: string, oldValue: string, newVal
   })
 }
 
-export function recordAIRemarkUpdate(row: CDRLRow, remark: string): void {
+export function recordAIRemarkUpdate(row: DRLRow, remark: string): void {
   auditLog.push({
     id: makeId(),
     rowId: row.id,
@@ -136,7 +136,7 @@ export function recordAIRemarkUpdate(row: CDRLRow, remark: string): void {
   })
 }
 
-export function recordExternalFeed(row: CDRLRow, feedSource: string, feedDetail: string): void {
+export function recordExternalFeed(row: DRLRow, feedSource: string, feedDetail: string): void {
   auditLog.push({
     id: makeId(),
     rowId: row.id,
@@ -149,7 +149,7 @@ export function recordExternalFeed(row: CDRLRow, feedSource: string, feedDetail:
 }
 
 /* ─── Seed simulated history for demo rows ───────────────────── */
-export function seedAuditHistory(data: CDRLRow[], anchors: Record<string, AnchorRecord>): void {
+export function seedAuditHistory(data: DRLRow[], anchors: Record<string, AnchorRecord>): void {
   if (auditLog.length > 0) return // already seeded
 
   const baseDate = new Date('2026-03-15T09:00:00Z')
@@ -164,7 +164,7 @@ export function seedAuditHistory(data: CDRLRow[], anchors: Record<string, Anchor
       timestamp: feedDate.toISOString(),
       type: 'External Data Feed',
       description: `NSERC IDE (PMS 300): ${row.id} registered in Integrated Data Environment. Submittal tracking initiated.`,
-      aiSummary: `PMS 300 deliverable entered NSERC IDE tracking — automated monitoring active for Constellation-class contract compliance.`,
+      aiSummary: `PMS 300 deliverable entered NSERC IDE tracking — automated monitoring active for PMS 300 Boats & Craft contract compliance.`,
     })
 
     // If anchored, add seal event
@@ -202,7 +202,7 @@ export function seedAuditHistory(data: CDRLRow[], anchors: Record<string, Anchor
 
 /* ─── Helpers ────────────────────────────────────────────────── */
 
-function generateEditSummary(row: CDRLRow, field: string, _oldValue: string, _newValue: string): string {
+function generateEditSummary(row: DRLRow, field: string, _oldValue: string, _newValue: string): string {
   const fieldLabels: Record<string, string> = {
     title: 'deliverable title',
     diNumber: 'DI number',

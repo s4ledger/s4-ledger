@@ -5,7 +5,7 @@
 
 export interface ContractRequirement {
   diNumber: string
-  cdrlId: string
+  drlId: string
   title: string
   /** Attachment J-2 block reference */
   block: string
@@ -14,7 +14,7 @@ export interface ContractRequirement {
   /** Required revision */
   requiredRevision: string
   /** Submittal method */
-  submittalMethod: 'IDE' | 'CDRL Package' | 'Electronic (EDMS)' | 'IDE + Hard Copy'
+  submittalMethod: 'IDE' | 'DRL Package' | 'Electronic (EDMS)' | 'IDE + Hard Copy'
   /** Frequency of submission */
   frequency: 'ONE/R' | 'Monthly' | 'Quarterly' | 'As Required' | 'Per Event'
   /** Contract due date */
@@ -38,9 +38,9 @@ export interface ContractRequirement {
 }
 
 export const contractRequirements: Record<string, ContractRequirement> = {
-  'CDRL-001': {
+  'DRL-001': {
     diNumber: 'DI-MGMT-81024A',
-    cdrlId: 'CDRL-001',
+    drlId: 'DRL-001',
     title: 'Systems Engineering Plan (SEP)',
     block: 'Block 4, Attachment J-2',
     requiredVersion: 'FINAL',
@@ -63,9 +63,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Rev B must address all Rev A government comments',
     ],
   },
-  'CDRL-002': {
+  'DRL-002': {
     diNumber: 'DI-TMSS-80301C',
-    cdrlId: 'CDRL-002',
+    drlId: 'DRL-002',
     title: 'Test and Evaluation Master Plan (TEMP)',
     block: 'Block 6, Attachment J-2',
     requiredVersion: 'PRELIMINARY',
@@ -81,16 +81,16 @@ export const contractRequirements: Record<string, ContractRequirement> = {
     contractRef: 'SOW §4.2.1, DID DI-TMSS-80301C, Attachment J-2 Block 6',
     summaryRule: 'PRELIM Rev A via IDE, 60 days before CDR. Hull 1 & 2 test matrices required.',
     completenessCriteria: [
-      'Test matrix for all CDRLs',
+      'Test matrix for all DRLs',
       'Hull 1 specific test procedures',
       'Hull 2 specific test procedures',
       'Integration test schedule',
       'DT&E and OT&E strategy',
     ],
   },
-  'CDRL-003': {
+  'DRL-003': {
     diNumber: 'DI-ALSS-81529',
-    cdrlId: 'CDRL-003',
+    drlId: 'DRL-003',
     title: 'Integrated Logistics Support Plan (ILSP)',
     block: 'Block 5, Attachment J-2',
     requiredVersion: 'FINAL',
@@ -113,9 +113,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Training requirements integration',
     ],
   },
-  'CDRL-004': {
+  'DRL-004': {
     diNumber: 'DI-IPSC-81427A',
-    cdrlId: 'CDRL-004',
+    drlId: 'DRL-004',
     title: 'Software Development Plan (SDP)',
     block: 'Block 4, Attachment J-2',
     requiredVersion: 'FINAL',
@@ -138,9 +138,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Integration and test strategy',
     ],
   },
-  'CDRL-005': {
+  'DRL-005': {
     diNumber: 'DI-CMAN-80858B',
-    cdrlId: 'CDRL-005',
+    drlId: 'DRL-005',
     title: 'Configuration Management Plan (CMP)',
     block: 'Block 4, Attachment J-2',
     requiredVersion: 'FINAL',
@@ -163,9 +163,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Baseline management plan',
     ],
   },
-  'CDRL-006': {
+  'DRL-006': {
     diNumber: 'DI-RELI-81315',
-    cdrlId: 'CDRL-006',
+    drlId: 'DRL-006',
     title: 'Reliability Program Plan (RPP)',
     block: 'Block 7, Attachment J-2',
     requiredVersion: 'FINAL',
@@ -188,9 +188,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Failure reporting and corrective action (FRACAS) plan',
     ],
   },
-  'CDRL-007': {
+  'DRL-007': {
     diNumber: 'DI-QCIC-80123A',
-    cdrlId: 'CDRL-007',
+    drlId: 'DRL-007',
     title: 'Quality Assurance Plan (QAP)',
     block: 'Block 8, Attachment J-2',
     requiredVersion: 'FINAL',
@@ -213,9 +213,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Supplier quality flow-down requirements',
     ],
   },
-  'CDRL-008': {
+  'DRL-008': {
     diNumber: 'DI-MGMT-81466',
-    cdrlId: 'CDRL-008',
+    drlId: 'DRL-008',
     title: 'Technical Performance Measurement Report',
     block: 'Block 9, Attachment J-2',
     requiredVersion: 'FINAL',
@@ -238,9 +238,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Trend analysis and forecasting',
     ],
   },
-  'CDRL-009': {
+  'DRL-009': {
     diNumber: 'DI-SESS-81248A',
-    cdrlId: 'CDRL-009',
+    drlId: 'DRL-009',
     title: 'Interface Control Document (ICD)',
     block: 'Block 10, Attachment J-2',
     requiredVersion: 'PRELIMINARY',
@@ -263,9 +263,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'All TBDs must be resolved or have resolution plan',
     ],
   },
-  'CDRL-010': {
+  'DRL-010': {
     diNumber: 'DI-RELI-80531A',
-    cdrlId: 'CDRL-010',
+    drlId: 'DRL-010',
     title: 'Failure Mode Effects & Criticality Analysis',
     block: 'Block 7, Attachment J-2',
     requiredVersion: 'FINAL',
@@ -288,9 +288,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Risk priority numbers for all failure modes',
     ],
   },
-  'CDRL-011': {
+  'DRL-011': {
     diNumber: 'DI-ILSS-80890',
-    cdrlId: 'CDRL-011',
+    drlId: 'DRL-011',
     title: 'Training Plan',
     block: 'Block 11, Attachment J-2',
     requiredVersion: 'PRELIMINARY',
@@ -313,9 +313,9 @@ export const contractRequirements: Record<string, ContractRequirement> = {
       'Instructor qualification requirements',
     ],
   },
-  'CDRL-012': {
+  'DRL-012': {
     diNumber: 'DI-FNCL-81565',
-    cdrlId: 'CDRL-012',
+    drlId: 'DRL-012',
     title: 'Contractor Cost Data Report (CCDR)',
     block: 'Block 12, Attachment J-2',
     requiredVersion: 'FINAL',

@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { CDRLRow, AnchorRecord } from '../types'
+import { DRLRow, AnchorRecord } from '../types'
 import { AIRowInsight, analyzeRow, analyzePortfolio, generateChatResponse, AIPortfolioSummary } from '../utils/aiAnalysis'
 
 interface Props {
-  row: CDRLRow | null
-  allData: CDRLRow[]
+  row: DRLRow | null
+  allData: DRLRow[]
   anchors: Record<string, AnchorRecord>
   editedSinceSeal: Set<string>
   onUpdateNotes: (rowId: string, notes: string) => void

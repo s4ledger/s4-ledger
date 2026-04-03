@@ -1,12 +1,12 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- *  NSERC IDE Service — PMS 300 Constellation-class Frigate
+ *  NSERC IDE Service — PMS 300 U.S. Navy & FMS Boats and Craft
  *  Production-Ready Microsoft Graph API / SharePoint REST Integration
  * ═══════════════════════════════════════════════════════════════════
  *
  * This is the definitive service layer for connecting S4 Ledger's
  * Deliverables Tracker to the NAVSEA NSERC Integrated Data Environment
- * for PMS 300 (Constellation-class Frigate program).
+ * for PMS 300 (U.S. Navy & FMS Boats and Craft program).
  *
  * ── Architecture ────────────────────────────────────────────────
  *
@@ -19,7 +19,7 @@
  *   nsercIdeService.fetchLatestDRLUpdates() ← GET SharePoint list items
  *        │                                     via Microsoft Graph API
  *        ▼
- *   nsercIdeService.mapNSERCDataToTrackerRow()  ← Normalize to CDRLRow
+ *   nsercIdeService.mapNSERCDataToTrackerRow()  ← Normalize to DRLRow
  *        │
  *        ▼
  *   [externalSync.ts realSyncPipeline()]    ← Diff, Seal, AI, RACI
@@ -34,7 +34,7 @@
  *
  *   DRL metadata list (per craft):
  *     /sites/{pms300-site-id}/lists/{drl-list-id}/items
- *     ?$expand=fields($select=CDRL_ID,Title,DI_Number,Contract_Due,
+ *     ?$expand=fields($select=DRL_ID,Title,DI_Number,Contract_Due,
  *       Calc_Due_Date,Submittal_Guide,Actual_Sub_Date,Received,
  *       Cal_Days_Review,Notes,Status,Revision,Comments,
  *       Craft,Platform,Attachment_J2_Ref)
@@ -47,7 +47,7 @@
  *
  *   Document library (for actual file retrieval, future):
  *     /sites/{pms300-site-id}/drives/{drive-id}/root:/{folder-path}:/children
- *     e.g. /sites/.../drives/.../root:/PMS300/Hull1/CDRLs:/children
+ *     e.g. /sites/.../drives/.../root:/PMS300/Hull1/DRLs:/children
  *
  *   Authentication:
  *     Azure AD OAuth2 client-credentials (server-to-server):
@@ -60,7 +60,7 @@
  *     Required Graph API permissions:
  *       Sites.Read.All          (read SharePoint site/list content)
  *       Sites.ReadWrite.All     (future: write-back sync status)
- *       Files.Read.All          (future: download CDRL documents)
+ *       Files.Read.All          (future: download DRL documents)
  *
  *     User-delegated (CAC/PIV) alternative:
  *       @azure/msal-browser acquireTokenSilent
@@ -68,9 +68,9 @@
  *
  * ── Attachment J-2 Reference ───────────────────────────────────
  *
- *   The PMS 300 Constellation-class contract includes Attachment J-2
+ *   The PMS 300 PMS 300 Boats & Craft contract includes Attachment J-2
  *   (Contract Data Requirements List), which defines:
- *     - CDRL exhibit line items (A001 through A0XX)
+ *     - DRL exhibit line items (A001 through A0XX)
  *     - DI Numbers per MIL-STD/DI-form
  *     - Submittal frequency, distribution, and approval authority
  *     - Government review periods (typically 30 calendar days)
@@ -81,7 +81,7 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-import { CDRLRow } from '../types'
+import { DRLRow } from '../types'
 
 /* ═══════════════════════════════════════════════════════════════
    §1  Configuration
@@ -96,7 +96,7 @@ interface NSERCIdeConfig {
   pms300SiteId: string
   /** SharePoint list ID for DRL metadata records */
   drlListId: string
-  /** SharePoint drive ID for CDRL document library (future) */
+  /** SharePoint drive ID for DRL document library (future) */
   documentDriveId: string
   /** Microsoft Graph API base URL */
   graphBaseUrl: string
@@ -116,7 +116,7 @@ const NSERC_CONFIG: NSERCIdeConfig = {
   clientId:        'TODO_S4_LEDGER_APP_CLIENT_ID',
   pms300SiteId:    'TODO_PMS300_NSERC_SITE_ID',
   drlListId:       'TODO_PMS300_DRL_LIST_ID',
-  documentDriveId: 'TODO_PMS300_CDRL_DRIVE_ID',
+  documentDriveId: 'TODO_PMS300_DRL_DRIVE_ID',
   graphBaseUrl:    'https://graph.microsoft.com/v1.0',
 }
 
@@ -128,7 +128,7 @@ const NSERC_CONFIG: NSERCIdeConfig = {
 export interface NSERCSharePointItem {
   id: string
   fields: {
-    CDRL_ID: string
+    DRL_ID: string
     Title: string
     DI_Number: string
     Contract_Due: string
@@ -155,7 +155,7 @@ export interface NSERCSyncResult {
   /** Always 'NSERC IDE (PMS 300)' */
   source: 'NSERC IDE (PMS 300)'
   /** Normalized rows ready for the Deliverables Tracker */
-  rows: CDRLRow[]
+  rows: DRLRow[]
   /** ISO timestamp of the fetch */
   fetchedAt: string
   /** Non-fatal warnings (e.g. simulation mode active) */
@@ -250,7 +250,7 @@ export async function connectToNSERCIDE(
  * Production endpoint:
  *   GET https://graph.microsoft.com/v1.0
  *       /sites/{pms300SiteId}/lists/{drlListId}/items
- *       ?$expand=fields($select=CDRL_ID,Title,DI_Number,Contract_Due,
+ *       ?$expand=fields($select=DRL_ID,Title,DI_Number,Contract_Due,
  *         Calc_Due_Date,Submittal_Guide,Actual_Sub_Date,Received,
  *         Cal_Days_Review,Notes,Status,Revision,Comments,
  *         Craft,Platform,Attachment_J2_Ref)
@@ -264,7 +264,7 @@ export async function connectToNSERCIDE(
  *   ConsistencyLevel: eventual
  */
 export async function fetchLatestDRLUpdates(
-  currentRows: CDRLRow[],
+  currentRows: DRLRow[],
   craft?: string,
   connection?: NSERCConnection,
 ): Promise<NSERCSyncResult> {
@@ -282,7 +282,7 @@ export async function fetchLatestDRLUpdates(
     // │    `${conn.config.graphBaseUrl}`                               │
     // │    + `/sites/${conn.config.pms300SiteId}`                     │
     // │    + `/lists/${conn.config.drlListId}/items`                  │
-    // │    + `?$expand=fields($select=CDRL_ID,Title,DI_Number,`      │
+    // │    + `?$expand=fields($select=DRL_ID,Title,DI_Number,`      │
     // │    + `Contract_Due,Calc_Due_Date,Submittal_Guide,`           │
     // │    + `Actual_Sub_Date,Received,Cal_Days_Review,`             │
     // │    + `Notes,Status,Revision,Comments,`                        │
@@ -302,7 +302,7 @@ export async function fetchLatestDRLUpdates(
     // │    `NSERC IDE Graph API ${resp.status}: ${resp.statusText}`); │
     // │                                                                │
     // │  const data = await resp.json();                               │
-    // │  const rows: CDRLRow[] = data.value.map(                      │
+    // │  const rows: DRLRow[] = data.value.map(                      │
     // │    (item: NSERCSharePointItem) => mapNSERCDataToTrackerRow(   │
     // │      item                                                      │
     // │    )                                                           │
@@ -328,11 +328,11 @@ export async function fetchLatestDRLUpdates(
    ═══════════════════════════════════════════════════════════════ */
 
 /**
- * Normalize a raw NSERC IDE SharePoint list item into the CDRLRow
+ * Normalize a raw NSERC IDE SharePoint list item into the DRLRow
  * shape used by the Deliverables Tracker.
  *
  * Maps PMS 300 DRL SharePoint columns → tracker columns:
- *   fields.CDRL_ID            → id
+ *   fields.DRL_ID            → id
  *   fields.Title              → title (+ Revision suffix if present)
  *   fields.DI_Number          → diNumber
  *   fields.Contract_Due       → contractDueFinish
@@ -345,7 +345,7 @@ export async function fetchLatestDRLUpdates(
  *   fields.Status             → status (lowercase)
  *   fields.Craft              → (encoded in title for Hull tracking)
  */
-export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): CDRLRow {
+export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): DRLRow {
   const rev = item.fields.Revision ? ` (${item.fields.Revision})` : ''
   const craftTag = item.fields.Craft ? ` (${item.fields.Craft})` : ''
   const j2Ref = item.fields.Attachment_J2_Ref
@@ -356,7 +356,7 @@ export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): CDRLRow {
     : ''
 
   return {
-    id: item.fields.CDRL_ID,
+    id: item.fields.DRL_ID,
     title: item.fields.Title + rev + craftTag,
     diNumber: item.fields.DI_Number,
     contractDueFinish: item.fields.Contract_Due,
@@ -366,7 +366,7 @@ export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): CDRLRow {
     received: item.fields.Received,
     calendarDaysToReview: item.fields.Cal_Days_Review,
     notes: j2Ref + item.fields.Notes + comments,
-    status: item.fields.Status.toLowerCase() as CDRLRow['status'],
+    status: item.fields.Status.toLowerCase() as DRLRow['status'],
   }
 }
 
@@ -374,19 +374,19 @@ export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): CDRLRow {
    §6  Simulation Layer — PMS 300 Attachment J-2 Language
    ═══════════════════════════════════════════════════════════════
    Active until real Azure AD credentials are provisioned.
-   Uses realistic PMS 300 Constellation-class contractual language
+   Uses realistic PMS 300 PMS 300 Boats & Craft contractual language
    referencing Attachment J-2 (Contract Data Requirements List). */
 
 const ATTACHMENT_J2_REMARKS: Record<string, string[]> = {
   green: [
     'Per Attachment J-2, Exhibit A — deliverable accepted by PMS 300 Program Office. Government review complete, no further action required.',
-    'Approved per Constellation-class DRL Attachment J-2 requirements. Contracting Officer concurrence obtained. Revision incorporated per contract modification P00012.',
+    'Approved per PMS 300 DRL Attachment J-2 requirements. Contracting Officer concurrence obtained. Revision incorporated per contract modification P00012.',
     'Final acceptance recorded in NSERC IDE per Attachment J-2 submittal schedule. Distribution list updated.',
   ],
   yellow: [
     'Per Attachment J-2, Block 16 — under PMS 300 government review. Response expected within 30 calendar days per DFARS 252.242-7006.',
     'PMS 300 NAVSEA technical authority returned minor comments per Attachment J-2 review criteria. Contractor resubmittal requested within 30 days.',
-    'Technical evaluation in progress per Attachment J-2, Exhibit A review timeline. Constellation-class engineering division coordinating.',
+    'Technical evaluation in progress per Attachment J-2, Exhibit A review timeline. PMS 300 engineering division coordinating.',
   ],
   red: [
     'DELINQUENT per Attachment J-2 submittal schedule — past contractual due date. PMS 300 Program Manager notified. Cure notice under DFARS 252.249-8711 consideration.',
@@ -425,7 +425,7 @@ const PMS300_CRAFT_REGISTRY: { label: string; desc: string }[] = [
 export const PMS300_CRAFT_LABELS = PMS300_CRAFT_REGISTRY.map(c => c.label)
 
 /** New-craft row templates for simulation */
-const NEW_CRAFT_ROW_TEMPLATES: Omit<CDRLRow, 'id' | 'title' | 'notes' | 'status'>[] = [
+const NEW_CRAFT_ROW_TEMPLATES: Omit<DRLRow, 'id' | 'title' | 'notes' | 'status'>[] = [
   {
     diNumber: 'DI-SESS-81521',
     contractDueFinish: '2026-06-30',
@@ -496,7 +496,7 @@ function parseCraftTag(title: string): { platform: string; hull: string } | null
 /**
  * Detect which PMS 300 platform types already exist in the dataset.
  */
-export function detectExistingCrafts(rows: CDRLRow[]): Set<string> {
+export function detectExistingCrafts(rows: DRLRow[]): Set<string> {
   const platforms = new Set<string>()
   for (const row of rows) {
     const parsed = parseCraftTag(row.title)
@@ -506,7 +506,7 @@ export function detectExistingCrafts(rows: CDRLRow[]): Set<string> {
 }
 
 /** Get the highest hull number for a given platform type in the dataset */
-export function getMaxHullForPlatform(rows: CDRLRow[], platform: string): number {
+export function getMaxHullForPlatform(rows: DRLRow[], platform: string): number {
   let max = 0
   for (const row of rows) {
     const parsed = parseCraftTag(row.title)
@@ -519,7 +519,7 @@ export function getMaxHullForPlatform(rows: CDRLRow[], platform: string): number
 }
 
 /** Detect the highest hull number in the current dataset (for backward compat) */
-export function detectMaxHull(rows: CDRLRow[]): number {
+export function detectMaxHull(rows: DRLRow[]): number {
   let max = 0
   for (const row of rows) {
     const m = row.title.match(/\bHull\s*(\d+)\b/i)
@@ -529,7 +529,7 @@ export function detectMaxHull(rows: CDRLRow[]): number {
 }
 
 /** Get the next PMS 300 service craft type not yet in the dataset */
-export function getNextPMS300Craft(currentRows: CDRLRow[]): { craftLabel: string; desc: string } {
+export function getNextPMS300Craft(currentRows: DRLRow[]): { craftLabel: string; desc: string } {
   const existing = detectExistingCrafts(currentRows)
 
   // Find the next craft from the registry not yet present
@@ -551,7 +551,7 @@ export function getNextPMS300Craft(currentRows: CDRLRow[]): { craftLabel: string
  * Always produces 2-4 rows for the next available craft type at Hull 1,
  * or adds a new hull number to an existing craft type.
  */
-export function generateNewCraftRows(currentRows: CDRLRow[]): { rows: CDRLRow[]; craftLabel: string } {
+export function generateNewCraftRows(currentRows: DRLRow[]): { rows: DRLRow[]; craftLabel: string } {
   const nextCraft = getNextPMS300Craft(currentRows)
   const hullNum = getMaxHullForPlatform(currentRows, nextCraft.craftLabel) + 1
   const maxId = currentRows.reduce((m, r) => {
@@ -560,12 +560,12 @@ export function generateNewCraftRows(currentRows: CDRLRow[]): { rows: CDRLRow[];
   }, 0)
 
   const newCount = 2 + Math.floor(Math.random() * 3) // 2-4 rows
-  const rows: CDRLRow[] = []
+  const rows: DRLRow[] = []
   for (let i = 0; i < newCount; i++) {
     const template = NEW_CRAFT_ROW_TEMPLATES[i % NEW_CRAFT_ROW_TEMPLATES.length]
     const titleBase = NEW_CRAFT_TITLES[i % NEW_CRAFT_TITLES.length]
-    const rowId = `CDRL-${String(maxId + 1 + i).padStart(3, '0')}`
-    const status: CDRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
+    const rowId = `DRL-${String(maxId + 1 + i).padStart(3, '0')}`
+    const status: DRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
     const remarks = ATTACHMENT_J2_REMARKS[status]
 
     rows.push({
@@ -584,20 +584,20 @@ export function generateNewCraftRows(currentRows: CDRLRow[]): { rows: CDRLRow[];
  * Auto-detects next hull number for the given craft type.
  * @param craftName - Platform label, e.g. "Harbor Tug YTB"
  */
-export function generateManualCraftRows(currentRows: CDRLRow[], craftName: string): CDRLRow[] {
+export function generateManualCraftRows(currentRows: DRLRow[], craftName: string): DRLRow[] {
   const hullNum = getMaxHullForPlatform(currentRows, craftName) + 1
   const maxId = currentRows.reduce((m, r) => {
     const n = parseInt(r.id.replace(/\D/g, ''), 10)
     return isNaN(n) ? m : Math.max(m, n)
   }, 0)
 
-  const rows: CDRLRow[] = []
+  const rows: DRLRow[] = []
   const count = 3
   for (let i = 0; i < count; i++) {
     const template = NEW_CRAFT_ROW_TEMPLATES[i % NEW_CRAFT_ROW_TEMPLATES.length]
     const titleBase = NEW_CRAFT_TITLES[i % NEW_CRAFT_TITLES.length]
-    const rowId = `CDRL-${String(maxId + 1 + i).padStart(3, '0')}`
-    const status: CDRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
+    const rowId = `DRL-${String(maxId + 1 + i).padStart(3, '0')}`
+    const status: DRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
     const remarks = ATTACHMENT_J2_REMARKS[status]
 
     rows.push({
@@ -612,7 +612,7 @@ export function generateManualCraftRows(currentRows: CDRLRow[], craftName: strin
 }
 
 function simulatePMS300Updates(
-  currentRows: CDRLRow[],
+  currentRows: DRLRow[],
   craft?: string,
 ): NSERCSyncResult {
   // Filter to specific craft if requested

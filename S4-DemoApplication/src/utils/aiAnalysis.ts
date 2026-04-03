@@ -1,4 +1,4 @@
-import { CDRLRow, AnchorRecord } from '../types'
+import { DRLRow, AnchorRecord } from '../types'
 import { contractRequirements } from '../data/contractData'
 
 /* ─── Types ──────────────────────────────────────────────────────── */
@@ -48,7 +48,7 @@ function today(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-function getPriority(row: CDRLRow, isSealed: boolean, editedSinceSeal: boolean): Priority {
+function getPriority(row: DRLRow, isSealed: boolean, editedSinceSeal: boolean): Priority {
   if (row.status === 'red' && !row.actualSubmissionDate) return 'Critical'
   if (row.status === 'red') return 'High'
   if (editedSinceSeal) return 'High'
@@ -65,7 +65,7 @@ function getHull(title: string): string | null {
 
 /* ─── Row-level analysis ─────────────────────────────────────────── */
 export function analyzeRow(
-  row: CDRLRow,
+  row: DRLRow,
   anchors: Record<string, AnchorRecord>,
   editedSinceSeal: Set<string>,
 ): AIRowInsight {
@@ -131,7 +131,7 @@ export function analyzeRow(
   if (row.status === 'red' && !row.actualSubmissionDate) {
     programImpact = req
       ? `This delinquent deliverable may delay the ${req.frequency === 'ONE/R' ? 'program milestone' : 'reporting cycle'} ` +
-        `and create cascading risk across dependent CDRLs. ${hull ? `Hull ${hull} schedule directly impacted. ` : ''}` +
+        `and create cascading risk across dependent DRLs. ${hull ? `Hull ${hull} schedule directly impacted. ` : ''}` +
         `Estimated cost impact: $${(Math.floor(Math.random() * 50) + 20)}K in delayed reviews and rework. ` +
         `Government review queue blocked until receipt.`
       : `Missing deliverable creates schedule and cost risk.`
@@ -177,7 +177,7 @@ export function analyzeRow(
     }
     nextActions.push(
       { action: `Resolve all open items and approve/disapprove per ${req?.block || 'Block 4'}`, dueDate: resolveDate },
-      { action: 'Track resolution at next weekly CDRL status meeting', dueDate: addBusinessDays(todayStr, 5) },
+      { action: 'Track resolution at next weekly DRL status meeting', dueDate: addBusinessDays(todayStr, 5) },
     )
   } else {
     if (!isSealed) {
@@ -248,7 +248,7 @@ export function analyzeRow(
 
 /* ─── Portfolio-level analysis ───────────────────────────────────── */
 export function analyzePortfolio(
-  data: CDRLRow[],
+  data: DRLRow[],
   anchors: Record<string, AnchorRecord>,
   editedSinceSeal: Set<string>,
 ): AIPortfolioSummary {
@@ -305,7 +305,7 @@ export function analyzePortfolio(
 }
 
 /* ─── Simulated chat response ────────────────────────────────────── */
-export function generateChatResponse(userMessage: string, row: CDRLRow, currentInsight: AIRowInsight): string {
+export function generateChatResponse(userMessage: string, row: DRLRow, currentInsight: AIRowInsight): string {
   const msg = userMessage.toLowerCase()
 
   if (msg.includes('deadline') || msg.includes('due date') || msg.includes('when')) {

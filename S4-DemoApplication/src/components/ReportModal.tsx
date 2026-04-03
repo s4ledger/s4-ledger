@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { CDRLRow, AnchorRecord, UserRole } from '../types'
+import { DRLRow, AnchorRecord, UserRole } from '../types'
 import { generateWeeklyReport, WeeklyReportResult } from '../utils/pdf'
 import { AIRowInsight } from '../utils/aiAnalysis'
 
 interface Props {
-  data: CDRLRow[]
+  data: DRLRow[]
   anchors: Record<string, AnchorRecord>
   role: UserRole
   rowFindings: Record<string, string[]>
@@ -68,7 +68,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
     const body = encodeURIComponent(
       `Please find attached the S4 Systems DRL Weekly Status Report for ${dateStr}.\n\n` +
       `Summary:\n` +
-      `• Total CDRLs: ${stats.total}\n` +
+      `• Total DRLs: ${stats.total}\n` +
       `• Approved: ${stats.green}\n` +
       `• In Review: ${stats.yellow}\n` +
       `• Overdue: ${stats.red}\n` +

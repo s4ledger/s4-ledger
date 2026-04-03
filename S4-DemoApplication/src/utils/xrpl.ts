@@ -18,7 +18,7 @@ export async function anchorToXRPL(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         hash,
-        record_type: 'CDRL_DELIVERABLE',
+        record_type: 'DRL_DELIVERABLE',
         content_preview: contentPreview || rowId,
         session_id: `s4demo-${Date.now()}`,
         user_email: 'demo@s4ledger.com',

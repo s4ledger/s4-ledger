@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { CDRLRow, UserRole, AnchorRecord } from '../types'
+import { DRLRow, UserRole, AnchorRecord } from '../types'
 import AIAssistModal from './AIAssistModal'
 import AINextActionsPanel from './AINextActionsPanel'
 import AuditTrailSidebar from './AuditTrailSidebar'
@@ -21,14 +21,14 @@ import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 import { PMS300_CRAFT_LABELS } from '../services/nsercIdeService'
 
 interface Props {
-  data: CDRLRow[]
+  data: DRLRow[]
   role: UserRole
   anchors: Record<string, AnchorRecord>
-  onAnchor: (row: CDRLRow) => void
+  onAnchor: (row: DRLRow) => void
   onAnchorAll: () => void
-  onVerify: (row: CDRLRow) => void
-  onReseal: (row: CDRLRow) => Promise<void>
-  onDataUpdate: (data: CDRLRow[]) => void
+  onVerify: (row: DRLRow) => void
+  onReseal: (row: DRLRow) => Promise<void>
+  onDataUpdate: (data: DRLRow[]) => void
   onSyncAnchors?: (newAnchors: Record<string, AnchorRecord>) => void
 }
 
@@ -65,9 +65,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [sortCol, setSortCol] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(true)
   const [showAI, setShowAI] = useState(false)
-  const [aiRow, setAiRow] = useState<CDRLRow | null>(null)
-  const [verifyRow, setVerifyRow] = useState<CDRLRow | null>(null)
-  const [mismatchRow, setMismatchRow] = useState<CDRLRow | null>(null)
+  const [aiRow, setAiRow] = useState<DRLRow | null>(null)
+  const [verifyRow, setVerifyRow] = useState<DRLRow | null>(null)
+  const [mismatchRow, setMismatchRow] = useState<DRLRow | null>(null)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [comparing, setComparing] = useState(false)
   const [compareProgress, setCompareProgress] = useState(0)
@@ -75,7 +75,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [contractRefs, setContractRefs] = useState<Record<string, string>>({})
   const [hoveredDI, setHoveredDI] = useState<string | null>(null)
   const [rowFindings, setRowFindings] = useState<Record<string, string[]>>({})
-  const [notesRow, setNotesRow] = useState<CDRLRow | null>(null)
+  const [notesRow, setNotesRow] = useState<DRLRow | null>(null)
   const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' }> | null>(null)
   const [showReport, setShowReport] = useState(false)
   const [platformFilter, setPlatformFilter] = useState<string>('all')
@@ -104,7 +104,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(true)
   const [syncToast, setSyncToast] = useState<string | null>(null)
   const [emailNotification, setEmailNotification] = useState<SyncNotification | null>(null)
-  const [workflowRow, setWorkflowRow] = useState<CDRLRow | null>(null)
+  const [workflowRow, setWorkflowRow] = useState<DRLRow | null>(null)
   const autoSyncRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   /* ─── Manual craft add state ────────────────────────────────── */
@@ -281,7 +281,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     setShowAudit(true)
   }
 
-  function openAuditForRow(row: CDRLRow) {
+  function openAuditForRow(row: DRLRow) {
     setAuditRowId(row.id)
     setAuditRowTitle(row.title)
     setAuditVersion(v => v + 1)
@@ -376,7 +376,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   }
 
   /** Build a SyncNotification shell so the EmailComposer can render for a workflow row */
-  function handleWorkflowEmail(row: CDRLRow) {
+  function handleWorkflowEmail(row: DRLRow) {
     const party = getRACIParty(row)
     const n: SyncNotification = {
       id: `wf-${row.id}-${Date.now()}`,
@@ -417,7 +417,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     setContractRefs({})
   }
 
-  function handleCellEdit(rowId: string, field: keyof CDRLRow, value: string) {
+  function handleCellEdit(rowId: string, field: keyof DRLRow, value: string) {
     const row = data.find(r => r.id === rowId)
     if (row) {
       const oldVal = String(row[field] ?? '')
@@ -447,7 +447,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     return 'row-green'
   }
 
-  async function handleRowReseal(row: CDRLRow) {
+  async function handleRowReseal(row: DRLRow) {
     await onReseal(row)
     setEditedSinceSeal(prev => {
       const next = new Set(prev)
@@ -784,7 +784,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       <div className="max-w-[1600px] mx-auto px-6 py-4">
         <div className="grid grid-cols-5 gap-3">
           <div className="bg-white border border-border rounded-card p-4">
-            <p className="text-steel text-xs uppercase tracking-wide">Total CDRLs</p>
+            <p className="text-steel text-xs uppercase tracking-wide">Total DRLs</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
           </div>
           <div className="bg-white border border-green-500/30 rounded-card p-4">

@@ -1,29 +1,29 @@
-import { CDRLRow } from '../types'
+import { DRLRow } from '../types'
 
 /**
  * Sealed Data Vault — stores a snapshot of each row at the time it was sealed.
  * Enables cell-by-cell comparison when a mismatch is detected during verification.
  */
 
-const vault: Record<string, CDRLRow> = {}
+const vault: Record<string, DRLRow> = {}
 
 /** Store a deep copy of the row at seal time. */
-export function storeSealed(rowId: string, row: CDRLRow): void {
+export function storeSealed(rowId: string, row: DRLRow): void {
   vault[rowId] = JSON.parse(JSON.stringify(row))
 }
 
 /** Retrieve the sealed snapshot for a row, or null if never sealed. */
-export function getSealed(rowId: string): CDRLRow | null {
+export function getSealed(rowId: string): DRLRow | null {
   return vault[rowId] ? JSON.parse(JSON.stringify(vault[rowId])) : null
 }
 
 /** Compare current row to sealed snapshot. Returns changed fields. */
 export function diffRow(
-  current: CDRLRow,
-  sealed: CDRLRow,
+  current: DRLRow,
+  sealed: DRLRow,
 ): { field: string; label: string; sealed: string; current: string }[] {
   const fieldLabels: Record<string, string> = {
-    id: 'CDRL ID',
+    id: 'DRL ID',
     title: 'Title',
     diNumber: 'DI Number',
     contractDueFinish: 'Contract Due/Finish',
@@ -39,8 +39,8 @@ export function diffRow(
   const diffs: { field: string; label: string; sealed: string; current: string }[] = []
 
   for (const key of Object.keys(fieldLabels)) {
-    const sVal = String(sealed[key as keyof CDRLRow] ?? '')
-    const cVal = String(current[key as keyof CDRLRow] ?? '')
+    const sVal = String(sealed[key as keyof DRLRow] ?? '')
+    const cVal = String(current[key as keyof DRLRow] ?? '')
     if (sVal !== cVal) {
       diffs.push({
         field: key,
@@ -56,7 +56,7 @@ export function diffRow(
 
 /** Generate deterministic AI analysis of the mismatch. */
 export function analyzeMismatch(
-  row: CDRLRow,
+  row: DRLRow,
   diffs: { field: string; label: string; sealed: string; current: string }[],
 ): { summary: string; risk: 'Low' | 'Medium' | 'High'; recommendation: string } {
   if (diffs.length === 0) {

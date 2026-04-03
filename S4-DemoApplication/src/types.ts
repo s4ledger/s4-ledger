@@ -1,4 +1,4 @@
-export interface CDRLRow {
+export interface DRLRow {
   id: string
   title: string
   diNumber: string

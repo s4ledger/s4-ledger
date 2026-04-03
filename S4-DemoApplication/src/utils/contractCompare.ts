@@ -1,4 +1,4 @@
-import { CDRLRow } from '../types'
+import { DRLRow } from '../types'
 import { contractRequirements, ContractRequirement } from '../data/contractData'
 
 export interface ComparisonResult {
@@ -29,7 +29,7 @@ function addDays(date: string, days: number): string {
   return d.toISOString().slice(0, 10)
 }
 
-function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
+function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
   const findings: string[] = []
   let severity: 'green' | 'yellow' | 'red' = 'green'
 
@@ -191,7 +191,7 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
   } else if (severity === 'yellow') {
     findings.push(
       `RECOMMENDED ACTION: Resolve noted discrepancies within ${req.govReviewDays} calendar days ` +
-      `per ${req.block}. Contractor to provide updated status at next CDRL status meeting.`
+      `per ${req.block}. Contractor to provide updated status at next DRL status meeting.`
     )
   }
 
@@ -215,7 +215,7 @@ function compareRow(row: CDRLRow, req: ContractRequirement): ComparisonResult {
  * Simulate AI-powered contractual comparison with typewriter delay per row.
  */
 export async function runContractComparison(
-  data: CDRLRow[],
+  data: DRLRow[],
   onRowComplete?: (result: ComparisonResult, index: number) => void,
 ): Promise<ComparisonSummary> {
   const results: ComparisonResult[] = []
