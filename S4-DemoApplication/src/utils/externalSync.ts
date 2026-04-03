@@ -5,7 +5,7 @@ import { storeSealed } from './sealedVault'
 import { recordSeal, recordExternalFeed } from './auditTrail'
 import { analyzeRow } from './aiAnalysis'
 import { getRACIParty } from './raciWorkflow'
-import { performRealSync, SyncServiceResult } from '../services/externalSyncService'
+import { fetchLatestDRLUpdates, NSERCSyncResult } from '../services/nsercIdeService'
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
@@ -73,13 +73,14 @@ function pickPriority(status: 'green' | 'yellow' | 'red'): NotificationPriority 
 /* ─── Real Sync Pipeline ────────────────────────────────────── */
 
 /**
- * Production-ready sync pipeline.
+ * Production-ready sync pipeline for NSERC IDE (PMS 300).
  *
- * 1. Calls performRealSync() from the service layer (tries real API, falls back to simulation).
+ * 1. Calls nsercIdeService.fetchLatestDRLUpdates() (real API when credentials
+ *    are provisioned, simulation fallback otherwise).
  * 2. Diffs returned rows against current data.
  * 3. Seals each changed row to XRPL (real 0.01 SLS deduction).
  * 4. Runs AI analysis, logs to audit trail, generates RACI-aware notifications.
- * 5. Audit trail and notifications clearly distinguish "Simulated Sync" vs "Real Sync".
+ * 5. Audit trail and notifications tagged "Synced from NSERC IDE (PMS 300)".
  */
 export async function realSyncPipeline(
   data: CDRLRow[],
@@ -101,97 +102,95 @@ export async function realSyncPipeline(
   const rowIndexById = new Map<string, number>()
   data.forEach((r, i) => rowIndexById.set(r.id, i))
 
-  // ── Step 1: Call the service layer (real API → fallback to simulation) ──
-  let serviceResults: SyncServiceResult[]
+  // ── Step 1: Call nsercIdeService.fetchLatestDRLUpdates() ──
+  let serviceResult: NSERCSyncResult
   try {
-    serviceResults = await performRealSync(data)
+    serviceResult = await fetchLatestDRLUpdates(data)
   } catch (e) {
-    console.error('[realSyncPipeline] Service layer error, aborting sync:', e)
+    console.error('[realSyncPipeline] NSERC IDE (PMS 300) service error, aborting sync:', e)
     return { changes, notifications, updatedRows, newAnchors }
   }
 
   // ── Step 2: Process result from NSERC IDE (PMS 300) ──
-  for (const result of serviceResults) {
-    const { isReal, source, rows: externalRows, warnings } = result
-    const modeLabel = isReal ? 'Real Sync' : 'Simulated Sync'
+  const { isReal, source, rows: externalRows, warnings } = serviceResult
+  const modeLabel = isReal ? 'Real Sync' : 'Simulated Sync'
 
-    if (warnings.length > 0) {
-      console.info(`[${modeLabel}] ${source} warnings:`, warnings)
+  if (warnings.length > 0) {
+    console.info(`[NSERC IDE (PMS 300)] ${modeLabel} warnings:`, warnings)
+  }
+
+  for (const extRow of externalRows) {
+    const idx = rowIndexById.get(extRow.id)
+    if (idx === undefined) continue // external row not in our dataset
+
+    const currentRow = updatedRows[idx]
+
+    // Diff: detect which fields actually changed
+    const fieldsToCheck: (keyof CDRLRow)[] = ['notes', 'actualSubmissionDate', 'status', 'received']
+    let hasChanges = false
+
+    for (const field of fieldsToCheck) {
+      const oldVal = String(currentRow[field] ?? '')
+      const newVal = String(extRow[field] ?? '')
+      if (oldVal !== newVal) {
+        changes.push({
+          rowId: extRow.id,
+          rowTitle: extRow.title,
+          field,
+          oldValue: oldVal,
+          newValue: newVal,
+          source,
+          isReal,
+        })
+        hasChanges = true
+      }
     }
 
-    for (const extRow of externalRows) {
-      const idx = rowIndexById.get(extRow.id)
-      if (idx === undefined) continue // external row not in our dataset
+    if (!hasChanges) continue
 
-      const currentRow = updatedRows[idx]
+    // Apply the external row's changes
+    updatedRows[idx] = { ...currentRow, ...extRow }
+    const updatedRow = updatedRows[idx]
 
-      // Diff: detect which fields actually changed
-      const fieldsToCheck: (keyof CDRLRow)[] = ['notes', 'actualSubmissionDate', 'status', 'received']
-      let hasChanges = false
+    // ── Step 3: Audit Trail — tagged "Synced from NSERC IDE (PMS 300)" ──
+    recordExternalFeed(
+      updatedRow,
+      `${source} [${modeLabel}]`,
+      `${modeLabel}: Synced from ${source} — ${(extRow.notes || '').slice(0, 60)}`,
+    )
 
-      for (const field of fieldsToCheck) {
-        const oldVal = String(currentRow[field] ?? '')
-        const newVal = String(extRow[field] ?? '')
-        if (oldVal !== newVal) {
-          changes.push({
-            rowId: extRow.id,
-            rowTitle: extRow.title,
-            field,
-            oldValue: oldVal,
-            newValue: newVal,
-            source,
-            isReal,
-          })
-          hasChanges = true
-        }
-      }
+    // ── Step 4: Real XRPL seal (0.01 SLS) for every changed row ──
+    const hash = await hashRow(updatedRow as unknown as Record<string, unknown>)
+    const anchor = await anchorToXRPL(updatedRow.id, hash, updatedRow.title)
+    storeSealed(updatedRow.id, updatedRow)
+    recordSeal(updatedRow, anchor)
+    newAnchors[updatedRow.id] = anchor
 
-      if (!hasChanges) continue
-
-      // Apply the external row's changes
-      updatedRows[idx] = { ...currentRow, ...extRow }
-      const updatedRow = updatedRows[idx]
-
-      // ── Step 3: Audit Trail — clearly tagged as Real or Simulated ──
-      recordExternalFeed(
-        updatedRow,
-        `${source} [${modeLabel}]`,
-        `${modeLabel}: Synced from ${source} — ${(extRow.notes || '').slice(0, 60)}`,
-      )
-
-      // ── Step 4: Real XRPL seal (0.01 SLS) for every changed row ──
-      const hash = await hashRow(updatedRow as unknown as Record<string, unknown>)
-      const anchor = await anchorToXRPL(updatedRow.id, hash, updatedRow.title)
-      storeSealed(updatedRow.id, updatedRow)
-      recordSeal(updatedRow, anchor)
-      newAnchors[updatedRow.id] = anchor
-
-      // ── Step 5: AI analysis ──
-      const insight = analyzeRow(updatedRow, { ...anchors, ...newAnchors }, editedSinceSeal)
-      updatedRows[idx] = {
-        ...updatedRows[idx],
-        notes: `${updatedRows[idx].notes}\n${insight.conciseNote}`,
-      }
-
-      // ── Step 6: RACI-aware notification ──
-      const raciParty = getRACIParty(updatedRow)
-      const priority = pickPriority(updatedRow.status)
-      const stakeholders = [raciParty, ...getStakeholders(priority, role).filter(s => s !== raciParty)]
-
-      notifications.push({
-        id: makeNotifId(),
-        timestamp: new Date().toISOString(),
-        title: `${updatedRow.id} — ${modeLabel}: Synced & Sealed`,
-        body: `${source} [${modeLabel}]: ${(extRow.notes || '').split(']').pop()?.trim() || 'Updated'}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
-        priority,
-        rowId: updatedRow.id,
-        rowTitle: updatedRow.title,
-        stakeholders,
-        read: false,
-        changes: changes.filter(c => c.rowId === updatedRow.id),
-        isReal,
-      })
+    // ── Step 5: AI analysis ──
+    const insight = analyzeRow(updatedRow, { ...anchors, ...newAnchors }, editedSinceSeal)
+    updatedRows[idx] = {
+      ...updatedRows[idx],
+      notes: `${updatedRows[idx].notes}\n${insight.conciseNote}`,
     }
+
+    // ── Step 6: RACI-aware notification ──
+    const raciParty = getRACIParty(updatedRow)
+    const priority = pickPriority(updatedRow.status)
+    const stakeholders = [raciParty, ...getStakeholders(priority, role).filter(s => s !== raciParty)]
+
+    notifications.push({
+      id: makeNotifId(),
+      timestamp: new Date().toISOString(),
+      title: `${updatedRow.id} — Synced from NSERC IDE (PMS 300)`,
+      body: `Synced from NSERC IDE (PMS 300) [${modeLabel}]: ${(extRow.notes || '').split(']').pop()?.trim() || 'Updated'}\nSealed to XRPL — TX: ${anchor.txHash.slice(0, 16)}…${anchor.explorerUrl ? ' (verified)' : ''}`,
+      priority,
+      rowId: updatedRow.id,
+      rowTitle: updatedRow.title,
+      stakeholders,
+      read: false,
+      changes: changes.filter(c => c.rowId === updatedRow.id),
+      isReal,
+    })
   }
 
   return { changes, notifications, updatedRows, newAnchors }
