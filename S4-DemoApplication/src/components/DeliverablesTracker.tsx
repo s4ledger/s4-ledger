@@ -252,7 +252,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }))
     setAuditVersion(v => v + 1)
     const sealCount = Object.keys(newAnchors).length
-    setSyncToast(`${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
+    setSyncToast(`NSERC IDE (PMS 300): ${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
     setTimeout(() => setSyncToast(null), 5000)
   }, [data, role, anchors, editedSinceSeal, syncStatus.isOnline, onDataUpdate, onSyncAnchors])
 

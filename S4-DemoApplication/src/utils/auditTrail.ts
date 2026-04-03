@@ -163,8 +163,8 @@ export function seedAuditHistory(data: CDRLRow[], anchors: Record<string, Anchor
       rowTitle: row.title,
       timestamp: feedDate.toISOString(),
       type: 'External Data Feed',
-      description: `NSERC IDE: ${row.id} registered in Integrated Data Environment. Submittal tracking initiated.`,
-      aiSummary: `Deliverable entered external tracking — automated monitoring active for contract compliance.`,
+      description: `NSERC IDE (PMS 300): ${row.id} registered in Integrated Data Environment. Submittal tracking initiated.`,
+      aiSummary: `PMS 300 deliverable entered NSERC IDE tracking — automated monitoring active for Constellation-class contract compliance.`,
     })
 
     // If anchored, add seal event

@@ -43,7 +43,7 @@ export default function ExternalSyncModal({
             </div>
             <div>
               <h3 className="text-base font-bold text-gray-900">External Database Sync</h3>
-              <p className="text-steel text-xs">NSERC IDE · DCMA eStar · Navy ERP</p>
+              <p className="text-steel text-xs">NSERC IDE (PMS 300) · Constellation-class DRL</p>
             </div>
           </div>
           <button onClick={onClose} className="text-steel hover:text-gray-900 transition-colors">
@@ -150,7 +150,7 @@ export default function ExternalSyncModal({
         <div className="mt-4 pt-4 border-t border-border">
           <p className="text-[10px] text-steel uppercase tracking-wide mb-2">Connected Data Sources</p>
           <div className="space-y-1.5">
-            {['NSERC IDE Portal', 'DCMA eStar Gateway', 'PMS 515 Data Feed', 'Navy ERP Interface'].map(src => (
+            {['NSERC IDE (PMS 300)'].map(src => (
               <div key={src} className="flex items-center gap-2 text-xs text-gray-700">
                 <span className={`w-1.5 h-1.5 rounded-full ${syncStatus.isOnline ? 'bg-green-500' : 'bg-gray-300'}`}></span>
                 {src}
