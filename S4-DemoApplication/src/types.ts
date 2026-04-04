@@ -1,5 +1,30 @@
+/* ─── Portfolio Hierarchy: Program → Contract → DRL ───────── */
+
+export interface Program {
+  id: string
+  name: string
+  shortName: string                // e.g. "PMS 300"
+  description: string
+  programManager: string
+  contracts: Contract[]
+}
+
+export interface Contract {
+  id: string
+  programId: string
+  contractNumber: string           // e.g. "N00024-23-C-6200"
+  title: string
+  contractor: string
+  shipbuilder: string
+  awardDate: string
+  popEnd: string                   // period of performance end
+  totalValue: string               // e.g. "$45.2M"
+  status: 'active' | 'closeout' | 'complete'
+}
+
 export interface DRLRow {
   id: string
+  contractId?: string              // links row to a specific contract
   title: string
   diNumber: string
   contractDueFinish: string

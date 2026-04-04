@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { AuthStage, UserRole, DRLRow, AnchorRecord } from './types'
 import { sampleData } from './data/sampleData'
+import { assignContractIds, fmsContractData, getContractById } from './data/portfolioData'
 import { hashRow } from './utils/hash'
 import { anchorToXRPL } from './utils/xrpl'
 import { recordSeal, recordReseal } from './utils/auditTrail'
@@ -12,14 +13,28 @@ import CACPopup from './components/CACPopup'
 import WelcomeCard from './components/WelcomeCard'
 import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
+import PortfolioDashboard from './components/PortfolioDashboard'
 
 export default function App() {
   const { session, profile, user, loading: authLoading, isDemo } = useAuth()
   const [stage, setStage] = useState<AuthStage>('cac')
   const [role, setRole] = useState<UserRole>('Program Manager')
-  const [data, setData] = useState<DRLRow[]>(sampleData)
+  const [data, setData] = useState<DRLRow[]>(() => [
+    ...assignContractIds(sampleData),
+    ...fmsContractData,
+  ])
   const [anchors, setAnchors] = useState<Record<string, AnchorRecord>>({})
   const [anchoring, setAnchoring] = useState<Set<string>>(new Set())
+  const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
+  const [showPortfolio, setShowPortfolio] = useState(true)
+
+  // Filter data to selected contract (or show all)
+  const filteredData = useMemo(() => {
+    if (!selectedContractId) return data
+    return data.filter(r => r.contractId === selectedContractId)
+  }, [data, selectedContractId])
+
+  const selectedContract = selectedContractId ? getContractById(selectedContractId) : null
 
   const handleAnchor = useCallback(async (row: DRLRow) => {
     if (anchors[row.id] || anchoring.has(row.id)) return
@@ -95,21 +110,39 @@ export default function App() {
     return <LoginScreen />
   }
 
-  // ── Authenticated user → skip demo flow, go straight to tracker ──
+  // ── Authenticated user → portfolio + tracker ──
   if (session && profile) {
     const authRole = profile.role
     return (
-      <DeliverablesTracker
-        data={data}
-        role={authRole}
-        anchors={anchors}
-        onAnchor={handleAnchor}
-        onAnchorAll={handleAnchorAll}
-        onVerify={handleVerify}
-        onReseal={handleReseal}
-        onDataUpdate={setData}
-        onSyncAnchors={(newAnchors) => setAnchors(prev => ({ ...prev, ...newAnchors }))}
-      />
+      <>
+        {showPortfolio && (
+          <PortfolioDashboard
+            allData={data}
+            selectedContractId={selectedContractId}
+            onSelectContract={(cid) => { setSelectedContractId(cid); setShowPortfolio(true) }}
+            onViewAll={() => setSelectedContractId(null)}
+          />
+        )}
+        <DeliverablesTracker
+          data={filteredData}
+          role={authRole}
+          anchors={anchors}
+          onAnchor={handleAnchor}
+          onAnchorAll={handleAnchorAll}
+          onVerify={handleVerify}
+          onReseal={handleReseal}
+          onDataUpdate={(updated) => {
+            setData(prev => {
+              const updatedIds = new Set(updated.map(r => r.id))
+              return [...prev.filter(r => !updatedIds.has(r.id)), ...updated]
+            })
+          }}
+          onSyncAnchors={(newAnchors) => setAnchors(prev => ({ ...prev, ...newAnchors }))}
+          selectedContract={selectedContract ?? undefined}
+          onTogglePortfolio={() => setShowPortfolio(v => !v)}
+          showPortfolio={showPortfolio}
+        />
+      </>
     )
   }
 
@@ -134,16 +167,34 @@ export default function App() {
   }
 
   return (
-    <DeliverablesTracker
-      data={data}
-      role={role}
-      anchors={anchors}
-      onAnchor={handleAnchor}
-      onAnchorAll={handleAnchorAll}
-      onVerify={handleVerify}
-      onReseal={handleReseal}
-      onDataUpdate={setData}
-      onSyncAnchors={(newAnchors) => setAnchors(prev => ({ ...prev, ...newAnchors }))}
-    />
+    <>
+      {showPortfolio && (
+        <PortfolioDashboard
+          allData={data}
+          selectedContractId={selectedContractId}
+          onSelectContract={(cid) => { setSelectedContractId(cid); setShowPortfolio(true) }}
+          onViewAll={() => setSelectedContractId(null)}
+        />
+      )}
+      <DeliverablesTracker
+        data={filteredData}
+        role={role}
+        anchors={anchors}
+        onAnchor={handleAnchor}
+        onAnchorAll={handleAnchorAll}
+        onVerify={handleVerify}
+        onReseal={handleReseal}
+        onDataUpdate={(updated) => {
+          setData(prev => {
+            const updatedIds = new Set(updated.map(r => r.id))
+            return [...prev.filter(r => !updatedIds.has(r.id)), ...updated]
+          })
+        }}
+        onSyncAnchors={(newAnchors) => setAnchors(prev => ({ ...prev, ...newAnchors }))}
+        selectedContract={selectedContract ?? undefined}
+        onTogglePortfolio={() => setShowPortfolio(v => !v)}
+        showPortfolio={showPortfolio}
+      />
+    </>
   )
 }

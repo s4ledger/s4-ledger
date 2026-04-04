@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { DRLRow, UserRole, AnchorRecord, Organization, ColumnKey } from '../types'
+import { DRLRow, UserRole, AnchorRecord, Organization, ColumnKey, Contract } from '../types'
 import { useAuth } from '../contexts/AuthContext'
 import AIAssistModal from './AIAssistModal'
 import AINextActionsPanel from './AINextActionsPanel'
@@ -41,6 +41,9 @@ interface Props {
   onReseal: (row: DRLRow) => Promise<void>
   onDataUpdate: (data: DRLRow[]) => void
   onSyncAnchors?: (newAnchors: Record<string, AnchorRecord>) => void
+  selectedContract?: Contract
+  onTogglePortfolio?: () => void
+  showPortfolio?: boolean
 }
 
 /* ─── Craft+Hull parser: extracts (Platform — Hull N) from title ─ */
@@ -58,7 +61,7 @@ function parseCraftHull(title: string): { platform: string; hull: string } | nul
   return { platform, hull }
 }
 
-export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors }: Props) {
+export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors, selectedContract, onTogglePortfolio, showPortfolio }: Props) {
   const { updateProfile, profile, user } = useAuth()
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red' | 'pending'>('all')
@@ -519,8 +522,25 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" className="h-9 w-auto" />
             <div>
               <h1 className="text-lg font-bold text-gray-900 leading-tight">S4 Ledger · {spreadsheetLabel}</h1>
-              <p className="text-steel text-xs">{role} View · {org} · FOUO Simulation</p>
+              <p className="text-steel text-xs">
+                {role} View · {org} · FOUO Simulation
+                {selectedContract && (
+                  <span className="ml-2 text-blue-600 font-medium">
+                    · {selectedContract.contractNumber}
+                  </span>
+                )}
+              </p>
             </div>
+            {onTogglePortfolio && (
+              <button
+                onClick={onTogglePortfolio}
+                className="ml-2 px-2.5 py-1.5 text-xs font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors"
+                title={showPortfolio ? 'Hide Portfolio Dashboard' : 'Show Portfolio Dashboard'}
+              >
+                <i className={`fas fa-${showPortfolio ? 'chevron-up' : 'chart-bar'} mr-1`}></i>
+                Portfolio
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {/* ─── Permissions & Org Button ───────────────────── */}
@@ -852,6 +872,32 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               </div>
               <span className="text-xs font-semibold text-gray-900 w-10 text-right">{hullSummary.pctComplete}%</span>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contract Info Banner (when specific contract selected) */}
+      {selectedContract && (
+        <div className="max-w-[1600px] mx-auto px-6 pt-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                <i className="fas fa-file-contract text-blue-600 text-sm"></i>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{selectedContract.title}</p>
+                <p className="text-xs text-gray-500">
+                  {selectedContract.contractNumber} · {selectedContract.contractor} · {selectedContract.totalValue} · POP ends {selectedContract.popEnd}
+                </p>
+              </div>
+            </div>
+            <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+              selectedContract.status === 'active' ? 'bg-emerald-100 text-emerald-700'
+                : selectedContract.status === 'closeout' ? 'bg-amber-100 text-amber-700'
+                : 'bg-gray-100 text-gray-600'
+            }`}>
+              {selectedContract.status}
+            </span>
           </div>
         </div>
       )}
