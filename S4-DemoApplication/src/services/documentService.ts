@@ -109,7 +109,7 @@ export async function uploadDocument(params: {
   // Persist metadata to Supabase
   if (userId) {
     try {
-      const { data, error } = await supabase.from('documents').insert({
+      const { data, error } = await supabase.from('drl_documents').insert({
         row_id: rowId,
         file_name: file.name,
         file_type: file.type,
@@ -139,7 +139,7 @@ export async function uploadDocument(params: {
 export async function getDocumentsForRow(rowId: string): Promise<DocumentAttachment[]> {
   try {
     const { data, error } = await supabase
-      .from('documents')
+      .from('drl_documents')
       .select('*')
       .eq('row_id', rowId)
       .order('created_at', { ascending: false })
@@ -168,7 +168,7 @@ export function getDocumentCountsSync(): Record<string, number> {
 export async function getDocumentCounts(): Promise<Record<string, number>> {
   try {
     const { data, error } = await supabase
-      .from('documents')
+      .from('drl_documents')
       .select('row_id')
 
     if (!error && data && data.length > 0) {
@@ -274,7 +274,7 @@ Respond ONLY with the JSON object, no markdown formatting.`
     // Persist analysis to Supabase
     if (doc.id && !doc.id.startsWith('mem-')) {
       try {
-        await supabase.from('documents').update({
+        await supabase.from('drl_documents').update({
           ai_analysis: analysis,
           ai_analyzed_at: new Date().toISOString(),
         }).eq('id', doc.id)
@@ -303,7 +303,7 @@ export async function deleteDocument(doc: DocumentAttachment): Promise<boolean> 
 
   // Remove metadata from Supabase
   if (doc.id && !doc.id.startsWith('mem-')) {
-    await supabase.from('documents').delete().eq('id', doc.id)
+    await supabase.from('drl_documents').delete().eq('id', doc.id)
   }
 
   // Remove from memory

@@ -2,7 +2,7 @@
 -- Supports file uploads linked to DRL rows with AI analysis results
 
 -- ── Documents metadata table ─────────────────────────────────
-CREATE TABLE IF NOT EXISTS public.documents (
+CREATE TABLE IF NOT EXISTS public.drl_documents (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   row_id TEXT NOT NULL,                          -- DRL row ID (e.g. 'DRL-001')
   file_name TEXT NOT NULL,
@@ -21,44 +21,44 @@ CREATE TABLE IF NOT EXISTS public.documents (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_documents_row_id ON public.documents(row_id);
-CREATE INDEX IF NOT EXISTS idx_documents_uploaded_by ON public.documents(uploaded_by);
+CREATE INDEX IF NOT EXISTS idx_drl_documents_row_id ON public.drl_documents(row_id);
+CREATE INDEX IF NOT EXISTS idx_drl_documents_uploaded_by ON public.drl_documents(uploaded_by);
 
 -- ── Row Level Security ───────────────────────────────────────
-ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.drl_documents ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated users can read all documents
-CREATE POLICY "Authenticated users can read documents"
-  ON public.documents FOR SELECT
+CREATE POLICY "Authenticated users can read drl_documents"
+  ON public.drl_documents FOR SELECT
   TO authenticated
   USING (true);
 
 -- Authenticated users can insert their own documents
-CREATE POLICY "Users can upload documents"
-  ON public.documents FOR INSERT
+CREATE POLICY "Users can upload drl_documents"
+  ON public.drl_documents FOR INSERT
   TO authenticated
   WITH CHECK (auth.uid() = uploaded_by);
 
 -- Authenticated users can update their own documents (e.g. AI analysis results)
-CREATE POLICY "Users can update own documents"
-  ON public.documents FOR UPDATE
+CREATE POLICY "Users can update own drl_documents"
+  ON public.drl_documents FOR UPDATE
   TO authenticated
   USING (auth.uid() = uploaded_by);
 
 -- Authenticated users can delete their own documents
-CREATE POLICY "Users can delete own documents"
-  ON public.documents FOR DELETE
+CREATE POLICY "Users can delete own drl_documents"
+  ON public.drl_documents FOR DELETE
   TO authenticated
   USING (auth.uid() = uploaded_by);
 
 -- Demo mode: allow anonymous inserts/reads when uploaded_by is NULL
-CREATE POLICY "Demo mode document insert"
-  ON public.documents FOR INSERT
+CREATE POLICY "Demo mode drl_document insert"
+  ON public.drl_documents FOR INSERT
   TO anon
   WITH CHECK (uploaded_by IS NULL);
 
-CREATE POLICY "Demo mode document read"
-  ON public.documents FOR SELECT
+CREATE POLICY "Demo mode drl_document read"
+  ON public.drl_documents FOR SELECT
   TO anon
   USING (uploaded_by IS NULL);
 
