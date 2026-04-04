@@ -5,12 +5,15 @@ import { hashRow } from './utils/hash'
 import { anchorToXRPL } from './utils/xrpl'
 import { recordSeal, recordReseal } from './utils/auditTrail'
 import { storeSealed } from './utils/sealedVault'
+import { useAuth } from './contexts/AuthContext'
+import LoginScreen from './components/LoginScreen'
 import CACPopup from './components/CACPopup'
 import WelcomeCard from './components/WelcomeCard'
 import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
 
 export default function App() {
+  const { session, profile, loading: authLoading, isDemo } = useAuth()
   const [stage, setStage] = useState<AuthStage>('cac')
   const [role, setRole] = useState<UserRole>('Program Manager')
   const [data, setData] = useState<DRLRow[]>(sampleData)
@@ -64,6 +67,42 @@ export default function App() {
     // Verify is handled inside DeliverablesTracker via VerifyModal
   }, [])
 
+  // ── Auth loading state ──
+  if (authLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center">
+          <i className="fas fa-shield-alt text-accent text-3xl mb-4 block"></i>
+          <i className="fas fa-spinner fa-spin text-accent text-lg"></i>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Not authenticated and not in demo mode → show login ──
+  if (!session && !isDemo) {
+    return <LoginScreen />
+  }
+
+  // ── Authenticated user → skip demo flow, go straight to tracker ──
+  if (session && profile) {
+    const authRole = profile.role
+    return (
+      <DeliverablesTracker
+        data={data}
+        role={authRole}
+        anchors={anchors}
+        onAnchor={handleAnchor}
+        onAnchorAll={handleAnchorAll}
+        onVerify={handleVerify}
+        onReseal={handleReseal}
+        onDataUpdate={setData}
+        onSyncAnchors={(newAnchors) => setAnchors(prev => ({ ...prev, ...newAnchors }))}
+      />
+    )
+  }
+
+  // ── Demo mode → existing flow ──
   if (stage === 'cac') {
     return <CACPopup onAuthenticated={() => setStage('welcome')} />
   }

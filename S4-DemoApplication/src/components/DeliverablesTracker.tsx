@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { DRLRow, UserRole, AnchorRecord, Organization, ColumnKey } from '../types'
+import { useAuth } from '../contexts/AuthContext'
 import AIAssistModal from './AIAssistModal'
 import AINextActionsPanel from './AINextActionsPanel'
 import AuditTrailSidebar from './AuditTrailSidebar'
@@ -54,6 +55,7 @@ function parseCraftHull(title: string): { platform: string; hull: string } | nul
 }
 
 export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors }: Props) {
+  const { updateProfile, profile } = useAuth()
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red' | 'pending'>('all')
   const [sortCol, setSortCol] = useState<string | null>(null)
@@ -115,9 +117,15 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const toolsMenuRef = useRef<HTMLDivElement>(null)
 
   /* ─── Organization tier & permissions ───────────────────────── */
-  const [org, setOrg] = useState<Organization>(() => getDefaultOrg(role))
+  const [org, setOrgInternal] = useState<Organization>(() => profile?.organization ?? getDefaultOrg(role))
   const perms: OrgPermissions = useMemo(() => getPermissions(org), [org])
   const [contractorGrants, setContractorGrants] = useState<ContractorGrants>(() => getDefaultContractorGrants())
+
+  /** Wrap setOrg to persist to user profile when authenticated */
+  const setOrg = useCallback((newOrg: Organization) => {
+    setOrgInternal(newOrg)
+    updateProfile(role, newOrg)
+  }, [role, updateProfile])
 
   /* ─── Dynamic spreadsheet columns per org ───────────────────── */
   const spreadsheetColumns = useMemo(() => {

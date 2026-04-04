@@ -2,6 +2,7 @@ import { useState } from 'react'
 import DraggableModal from './DraggableModal'
 import { UserRole, DRLRow, AnchorRecord } from '../types'
 import { SyncStatus, SyncNotification } from '../utils/externalSync'
+import { useAuth } from '../contexts/AuthContext'
 
 interface Props {
   role: UserRole
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function ProfileDashboard({ role, data, anchors, syncStatus, notifications, onClose }: Props) {
+  const { session, profile, signOut, isDemo } = useAuth()
   const [tab, setTab] = useState<'overview' | 'tasks' | 'history' | 'settings'>('overview')
 
   const verifiedCount = Object.keys(anchors).length
@@ -39,8 +41,14 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
               <i className="fas fa-user-shield text-accent"></i>
             </div>
             <div>
-              <h2 className="text-gray-900 font-semibold text-lg leading-tight">User Profile</h2>
-              <p className="text-steel text-xs">{role} · PMS 300 Program Office</p>
+              <h2 className="text-gray-900 font-semibold text-lg leading-tight">
+                {profile?.display_name || 'User Profile'}
+              </h2>
+              <p className="text-steel text-xs">
+                {role} · PMS 300 Program Office
+                {!isDemo && session && <span className="ml-1 text-green-500">· Authenticated</span>}
+                {isDemo && <span className="ml-1 text-yellow-500">· Demo Mode</span>}
+              </p>
             </div>
           </div>
           <button onClick={onClose} className="text-steel hover:text-gray-900 transition-colors">
@@ -261,13 +269,29 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
                 <div className="text-sm space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-steel">Authentication:</span>
-                    <span className="font-medium">CAC / PIV Simulated</span>
+                    <span className="font-medium">
+                      {session ? 'Supabase Auth (Email/Password)' : 'Demo Mode (Simulated)'}
+                    </span>
                   </div>
+                  {session && profile && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-steel">Email:</span>
+                      <span className="font-medium">{profile.email}</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
                     <span className="text-steel">Role:</span>
                     <span className="font-medium">{role}</span>
                   </div>
                 </div>
+                {session && (
+                  <button
+                    onClick={async () => { await signOut(); onClose() }}
+                    className="mt-3 w-full py-2 px-4 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
+                  >
+                    <i className="fas fa-sign-out-alt"></i>Sign Out
+                  </button>
+                )}
               </div>
             </div>
           )}
