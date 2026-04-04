@@ -66,7 +66,7 @@ CREATE POLICY "Demo mode drl_document read"
 -- Note: Create the storage bucket via Supabase Dashboard > Storage:
 --   Bucket name: drl-documents
 --   Public: false (private)
---   File size limit: 2GB
+--   File size limit: 50MB
 --   Allowed MIME types: application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 --     application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv, image/png, image/jpeg,
 --     application/zip, application/x-zip-compressed, application/x-7z-compressed, application/gzip

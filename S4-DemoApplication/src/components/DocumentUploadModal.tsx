@@ -154,7 +154,7 @@ export default function DocumentUploadModal({ rowId, rowTitle, diNumber, onClose
                     Drag & drop a file or click to browse
                   </p>
                   <p className="text-[10px] text-steel">
-                    PDF, DOCX, XLSX, CSV, PNG, JPEG, ZIP · Max 2 GB
+                    PDF, DOCX, XLSX, CSV, PNG, JPEG, ZIP · Max 50 MB
                   </p>
                 </>
               )}

@@ -34,14 +34,14 @@ const ALLOWED_TYPES = [
   'application/gzip',
 ]
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024 // 2 GB
+const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50 MB
 
 export function validateFile(file: File): string | null {
   if (!ALLOWED_TYPES.includes(file.type)) {
     return `Unsupported file type: ${file.type}. Supported: PDF, DOCX, XLSX, CSV, PNG, JPEG, ZIP, 7Z, GZ.`
   }
   if (file.size > MAX_FILE_SIZE) {
-    return `File too large (${formatFileSize(file.size)}). Maximum: 2 GB.`
+    return `File too large (${formatFileSize(file.size)}). Maximum: 50 MB.`
   }
   return null
 }
