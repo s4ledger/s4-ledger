@@ -28,16 +28,20 @@ const ALLOWED_TYPES = [
   'image/png',
   'image/jpeg',
   'image/jpg',
+  'application/zip',
+  'application/x-zip-compressed',
+  'application/x-7z-compressed',
+  'application/gzip',
 ]
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50 MB
+const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024 // 2 GB
 
 export function validateFile(file: File): string | null {
   if (!ALLOWED_TYPES.includes(file.type)) {
-    return `Unsupported file type: ${file.type}. Supported: PDF, DOCX, XLSX, CSV, PNG, JPEG.`
+    return `Unsupported file type: ${file.type}. Supported: PDF, DOCX, XLSX, CSV, PNG, JPEG, ZIP, 7Z, GZ.`
   }
   if (file.size > MAX_FILE_SIZE) {
-    return `File too large (${formatFileSize(file.size)}). Maximum: 50 MB.`
+    return `File too large (${formatFileSize(file.size)}). Maximum: 2 GB.`
   }
   return null
 }

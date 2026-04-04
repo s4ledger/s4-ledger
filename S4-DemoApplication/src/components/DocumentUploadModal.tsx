@@ -125,7 +125,7 @@ export default function DocumentUploadModal({ rowId, rowTitle, diNumber, onClose
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.docx,.xlsx,.csv,.png,.jpg,.jpeg"
+                accept=".pdf,.docx,.xlsx,.csv,.png,.jpg,.jpeg,.zip,.7z,.gz"
                 className="hidden"
                 onChange={e => {
                   const f = e.target.files?.[0]
@@ -154,7 +154,7 @@ export default function DocumentUploadModal({ rowId, rowTitle, diNumber, onClose
                     Drag & drop a file or click to browse
                   </p>
                   <p className="text-[10px] text-steel">
-                    PDF, DOCX, XLSX, CSV, PNG, JPEG · Max 50 MB
+                    PDF, DOCX, XLSX, CSV, PNG, JPEG, ZIP · Max 2 GB
                   </p>
                 </>
               )}
