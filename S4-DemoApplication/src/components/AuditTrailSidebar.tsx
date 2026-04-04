@@ -57,7 +57,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, onClose }:
   const ts = trustStyles[summary.trustColor]
 
   return (
-    <DraggableModal className="bg-white border-l border-border shadow-xl" defaultWidth={420} zIndex={40}>
+    <DraggableModal className="bg-white border-l border-border shadow-xl" defaultWidth={420} zIndex={40} position="right" backdrop={false}>
       <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-white">

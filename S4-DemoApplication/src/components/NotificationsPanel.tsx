@@ -36,7 +36,7 @@ export default function NotificationsPanel({
   const unread = notifications.filter(n => !n.read).length
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={400} zIndex={50}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={400} zIndex={50} position="top-right" backdrop={false}>
       <div className="flex flex-col max-h-[70vh]">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">

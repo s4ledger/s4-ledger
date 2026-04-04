@@ -35,7 +35,7 @@ export default function AINextActionsPanel({ data, anchors, editedSinceSeal, vis
   if (!visible) return null
 
   return (
-    <DraggableModal className="bg-white border-l border-border shadow-xl" defaultWidth={380} zIndex={40}>
+    <DraggableModal className="bg-white border-l border-border shadow-xl" defaultWidth={380} zIndex={40} position="right" backdrop={false}>
       <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-border">

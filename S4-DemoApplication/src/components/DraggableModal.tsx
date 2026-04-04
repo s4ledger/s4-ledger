@@ -2,45 +2,41 @@ import { useState, useRef, useCallback, useEffect, ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
-  /** Initial width class or px — overridden once user resizes */
+  /** Initial width in px — overridden once user resizes */
   defaultWidth?: number
   defaultHeight?: number
   minWidth?: number
   minHeight?: number
-  /** If true, start centered on screen */
+  /** Starting position: center (default), right sidebar, or top-right dropdown */
+  position?: 'center' | 'right' | 'top-right'
+  /** @deprecated Use position instead */
   centered?: boolean
   /** Extra classes on the inner panel */
   className?: string
   /** zIndex for the backdrop */
   zIndex?: number
+  /** Whether to show the backdrop overlay */
+  backdrop?: boolean
 }
 
-/**
- * A wrapper that makes any modal draggable (by its header area)
- * and resizable (via a corner handle). Works with the existing
- * modal-backdrop pattern.
- *
- * Usage:
- *   <DraggableModal>
- *     <div className="your-modal-panel">…</div>
- *   </DraggableModal>
- *
- * The FIRST child element that has [data-drag-handle] will be the
- * drag handle. If none is found, the entire top 48px is draggable.
- */
 export default function DraggableModal({
   children,
   defaultWidth,
   defaultHeight,
   minWidth = 320,
   minHeight = 200,
-  centered = true,
+  position = 'center',
+  centered,
   className = '',
   zIndex = 1000,
+  backdrop = true,
 }: Props) {
+  // Resolve position — if old centered prop is explicitly false, treat as center anyway
+  const pos_mode = centered === false ? 'center' : position
+
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Position state — null means "centered"
+  // Position state — null means "use default position from pos_mode"
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
   // Size state — null means "use natural/default size"
   const [size, setSize] = useState<{ w: number; h: number } | null>(
@@ -57,17 +53,8 @@ export default function DraggableModal({
   const resizeStart = useRef({ x: 0, y: 0 })
   const sizeStart = useRef({ w: 0, h: 0 })
 
-  // Initialize centered position on mount
-  useEffect(() => {
-    if (centered && !pos && containerRef.current) {
-      const el = containerRef.current
-      const rect = el.getBoundingClientRect()
-      setPos({
-        x: Math.max(0, (window.innerWidth - rect.width) / 2),
-        y: Math.max(0, (window.innerHeight - rect.height) / 2),
-      })
-    }
-  }, [centered, pos])
+  // No centering useEffect needed — CSS handles initial position.
+  // pos only gets set when user drags.
 
   /* ─── Drag handlers ─────────────────────────────────────────── */
   const onDragStart = useCallback((e: React.MouseEvent) => {
@@ -144,18 +131,31 @@ export default function DraggableModal({
     }
   }, [onDragMove, onResizeMove, onDragEnd, onResizeEnd])
 
+  /* ─── Compute default position styles ─────────────────────── */
+  function getDefaultPosStyle(): React.CSSProperties {
+    if (pos) return { left: pos.x, top: pos.y }
+    switch (pos_mode) {
+      case 'right':
+        return { right: 0, top: 0, height: '100vh' }
+      case 'top-right':
+        return { right: 16, top: 60 }
+      default: // 'center'
+        return { left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }
+    }
+  }
+
   const style: React.CSSProperties = {
     position: 'fixed',
-    ...(pos ? { left: pos.x, top: pos.y } : { left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }),
-    ...(size ? { width: size.w, height: size.h } : {}),
+    ...getDefaultPosStyle(),
+    ...(size ? { width: size.w, height: size.h } : defaultWidth ? { width: defaultWidth } : {}),
     zIndex: zIndex + 1,
-    maxHeight: '95vh',
+    maxHeight: pos_mode === 'right' ? '100vh' : '95vh',
     maxWidth: '95vw',
   }
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+      className={backdrop ? 'fixed inset-0 bg-black/40 backdrop-blur-sm' : 'fixed inset-0'}
       style={{ zIndex }}
     >
       <div
