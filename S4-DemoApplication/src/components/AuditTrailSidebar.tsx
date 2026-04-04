@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import DraggableModal from './DraggableModal'
+import DiffViewer from './DiffViewer'
 import { AuditEvent, AuditSummary, getAuditLog, getAuditLogForRow, getAuditSummary } from '../utils/auditTrail'
 
 interface Props {
@@ -35,6 +36,7 @@ function formatDateFull(iso: string): string {
 }
 
 export default function AuditTrailSidebar({ visible, rowId, rowTitle, onClose }: Props) {
+  const [activeTab, setActiveTab] = useState<'audit' | 'changes'>('audit')
   const events = useMemo<AuditEvent[]>(() => {
     if (!visible) return []
     const raw = rowId ? getAuditLogForRow(rowId) : getAuditLog()
@@ -74,6 +76,36 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, onClose }:
           <i className="fas fa-times text-sm"></i>
         </button>
       </div>
+
+      {/* Tab Bar */}
+      <div className="flex border-b border-border bg-white">
+        <button
+          onClick={() => setActiveTab('audit')}
+          className={`flex-1 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
+            activeTab === 'audit'
+              ? 'text-accent border-b-2 border-accent bg-accent/5'
+              : 'text-steel hover:text-gray-700'
+          }`}
+        >
+          <i className="fas fa-history mr-1.5 text-[10px]"></i>Audit Trail
+        </button>
+        <button
+          onClick={() => setActiveTab('changes')}
+          className={`flex-1 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
+            activeTab === 'changes'
+              ? 'text-accent border-b-2 border-accent bg-accent/5'
+              : 'text-steel hover:text-gray-700'
+          }`}
+        >
+          <i className="fas fa-code-branch mr-1.5 text-[10px]"></i>Change History
+        </button>
+      </div>
+
+      {/* Change History Tab */}
+      {activeTab === 'changes' ? (
+        <DiffViewer rowId={rowId ?? null} rowTitle={rowTitle} />
+      ) : (
+      <>
 
       {/* Trust Status Banner */}
       <div className={`mx-5 mt-4 rounded-lg border px-4 py-3 ${ts.bg} ${ts.border}`}>
@@ -215,6 +247,8 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, onClose }:
       </div>
 
       {/* Footer */}
+      </>
+      )}
       <div className="px-5 py-3 border-t border-border bg-gray-50/50">
         <p className="text-[10px] text-steel text-center">
           <i className="fas fa-lock text-accent/60 mr-1"></i>

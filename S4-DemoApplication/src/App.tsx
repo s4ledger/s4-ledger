@@ -4,6 +4,7 @@ import { sampleData } from './data/sampleData'
 import { hashRow } from './utils/hash'
 import { anchorToXRPL } from './utils/xrpl'
 import { recordSeal, recordReseal } from './utils/auditTrail'
+import { recordChange } from './utils/changeLog'
 import { storeSealed } from './utils/sealedVault'
 import { useAuth } from './contexts/AuthContext'
 import LoginScreen from './components/LoginScreen'
@@ -13,7 +14,7 @@ import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
 
 export default function App() {
-  const { session, profile, loading: authLoading, isDemo } = useAuth()
+  const { session, profile, user, loading: authLoading, isDemo } = useAuth()
   const [stage, setStage] = useState<AuthStage>('cac')
   const [role, setRole] = useState<UserRole>('Program Manager')
   const [data, setData] = useState<DRLRow[]>(sampleData)
@@ -30,6 +31,11 @@ export default function App() {
       setAnchors(prev => ({ ...prev, [row.id]: record }))
       storeSealed(row.id, row)
       recordSeal(row, record)
+      recordChange({
+        userId: user?.id, userEmail: user?.email, userRole: role, userOrg: profile?.organization,
+        rowId: row.id, rowTitle: row.title, field: 'seal',
+        oldValue: null, newValue: record.txHash, changeType: 'seal',
+      })
     } finally {
       setAnchoring(prev => {
         const next = new Set(prev)
@@ -47,6 +53,11 @@ export default function App() {
       setAnchors(prev => ({ ...prev, [row.id]: record }))
       storeSealed(row.id, row)
       recordReseal(row, record)
+      recordChange({
+        userId: user?.id, userEmail: user?.email, userRole: role, userOrg: profile?.organization,
+        rowId: row.id, rowTitle: row.title, field: 'reseal',
+        oldValue: null, newValue: record.txHash, changeType: 'reseal',
+      })
     } finally {
       setAnchoring(prev => {
         const next = new Set(prev)

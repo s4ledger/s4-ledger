@@ -21,6 +21,7 @@ import { runContractComparison, ComparisonResult, ComparisonSummary } from '../u
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
+import { recordChange } from '../utils/changeLog'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrants, OrgPermissions, MaskedStatus, ContractorGrants } from '../utils/permissions'
@@ -55,7 +56,7 @@ function parseCraftHull(title: string): { platform: string; hull: string } | nul
 }
 
 export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors }: Props) {
-  const { updateProfile, profile } = useAuth()
+  const { updateProfile, profile, user } = useAuth()
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red' | 'pending'>('all')
   const [sortCol, setSortCol] = useState<string | null>(null)
@@ -423,7 +424,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
   function handleUpdateNotes(rowId: string, notes: string) {
     const row = data.find(r => r.id === rowId)
-    if (row) recordAIRemarkUpdate(row, notes)
+    if (row) {
+      recordAIRemarkUpdate(row, notes)
+      recordChange({
+        userId: user?.id, userEmail: user?.email, userRole: role, userOrg: profile?.organization,
+        rowId: row.id, rowTitle: row.title, field: 'notes',
+        oldValue: row.notes, newValue: notes, changeType: 'ai_remark',
+      })
+    }
     const updated = data.map(r => r.id === rowId ? { ...r, notes } : r)
     onDataUpdate(updated)
     setAuditVersion(v => v + 1)
@@ -449,6 +457,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       const oldVal = String(row[field] ?? '')
       if (oldVal !== value) {
         recordEdit(row, field, oldVal, value)
+        recordChange({
+          userId: user?.id, userEmail: user?.email, userRole: role, userOrg: profile?.organization,
+          rowId: row.id, rowTitle: row.title, field: String(field),
+          oldValue: oldVal, newValue: value, changeType: 'edit',
+        })
         setAuditVersion(v => v + 1)
       }
     }

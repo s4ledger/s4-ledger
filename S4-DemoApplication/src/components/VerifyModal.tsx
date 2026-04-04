@@ -3,6 +3,8 @@ import DraggableModal from './DraggableModal'
 import { DRLRow, AnchorRecord } from '../types'
 import { hashRow } from '../utils/hash'
 import { recordVerification } from '../utils/auditTrail'
+import { recordChange } from '../utils/changeLog'
+import { useAuth } from '../contexts/AuthContext'
 
 interface Props {
   row: DRLRow
@@ -13,6 +15,7 @@ interface Props {
 }
 
 export default function VerifyModal({ row, anchor, onReseal, onClose, onShowMismatch }: Props) {
+  const { user, profile } = useAuth()
   const [currentHash, setCurrentHash] = useState<string>('')
   const [verifying, setVerifying] = useState(true)
   const [match, setMatch] = useState<boolean | null>(null)
@@ -33,6 +36,11 @@ export default function VerifyModal({ row, anchor, onReseal, onClose, onShowMism
         const isMatch = hash === anchor.hash
         setMatch(isMatch)
         recordVerification(row, isMatch, hash, anchor.hash, anchor.txHash)
+        recordChange({
+          userId: user?.id, userEmail: user?.email, userRole: profile?.role, userOrg: profile?.organization,
+          rowId: row.id, rowTitle: row.title, field: 'verify',
+          oldValue: anchor.hash, newValue: isMatch ? 'MATCH' : 'MISMATCH', changeType: 'verify',
+        })
       } else {
         setMatch(null)
       }
