@@ -83,3 +83,33 @@ export interface SpreadsheetConfig {
   label: string
   columns: ColumnConfig[]
 }
+
+/* ─── Document Attachments ────────────────────────────────── */
+
+export type DocumentType = 'di_submittal' | 'sow_reference' | 'correspondence' | 'general'
+
+export interface DocumentAttachment {
+  id: string
+  row_id: string
+  file_name: string
+  file_type: string           // MIME type
+  file_size: number           // bytes
+  storage_path: string | null // Supabase Storage path
+  blob_url?: string           // in-memory URL for demo mode
+  uploaded_by_email: string | null
+  uploaded_by_role: string | null
+  uploaded_by_org: string | null
+  ai_analysis: AIDocAnalysis | null
+  ai_analyzed_at: string | null
+  notes: string | null
+  document_type: DocumentType
+  created_at: string
+}
+
+export interface AIDocAnalysis {
+  summary: string
+  compliance_items: { requirement: string; status: 'met' | 'partial' | 'missing'; detail: string }[]
+  compliance_score: number    // 0-100
+  recommendations: string[]
+  extracted_text_preview: string
+}

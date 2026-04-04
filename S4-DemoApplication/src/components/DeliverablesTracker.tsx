@@ -16,12 +16,15 @@ import ProfileDashboard from './ProfileDashboard'
 import PermissionsModal from './PermissionsModal'
 import DraggableModal from './DraggableModal'
 import CellEditModal from './CellEditModal'
+import DocumentUploadModal from './DocumentUploadModal'
+import DocumentPanel from './DocumentPanel'
 import type { CellEditTarget } from './CellEditModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
 import { recordChange } from '../utils/changeLog'
+import { getDocumentCounts } from '../services/documentService'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrants, OrgPermissions, MaskedStatus, ContractorGrants } from '../utils/permissions'
@@ -115,6 +118,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [showProfile, setShowProfile] = useState(false)
   const [showPermissions, setShowPermissions] = useState(false)
   const [cellEditTarget, setCellEditTarget] = useState<CellEditTarget | null>(null)
+  const [docUploadRow, setDocUploadRow] = useState<DRLRow | null>(null)
+  const [docPanelRow, setDocPanelRow] = useState<DRLRow | null>(null)
+  const [docCounts, setDocCounts] = useState<Record<string, number>>({})
+  const [docRefreshKey, setDocRefreshKey] = useState(0)
   const toolsMenuRef = useRef<HTMLDivElement>(null)
 
   /* ─── Organization tier & permissions ───────────────────────── */
@@ -148,6 +155,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     if (showToolsMenu) document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showToolsMenu])
+
+  /* Load document counts on mount */
+  useEffect(() => {
+    getDocumentCounts().then(setDocCounts)
+  }, [])
 
   /* ─── Derive unique platforms from data ─────────────────────── */
   const platforms = useMemo(() => {
@@ -1177,6 +1189,18 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       >
                         <i className="fas fa-history text-[9px]"></i>
                       </button>
+                      <button
+                        onClick={() => setDocPanelRow(row)}
+                        className="relative w-5 h-5 rounded inline-flex items-center justify-center text-steel/50 hover:text-accent hover:bg-accent/10 transition-all"
+                        title="Documents"
+                      >
+                        <i className="fas fa-paperclip text-[9px]"></i>
+                        {docCounts[row.id] > 0 && (
+                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-accent text-white text-[7px] font-bold rounded-full flex items-center justify-center">
+                            {docCounts[row.id]}
+                          </span>
+                        )}
+                      </button>
                       </div>
                     </td>
                     <td className="px-3 py-3 text-center relative">
@@ -1477,6 +1501,32 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           anchor={anchors[cellEditTarget.row.id]}
           onSave={(rowId, field, value) => handleCellEdit(rowId, field, value)}
           onClose={() => setCellEditTarget(null)}
+        />
+      )}
+
+      {/* Document Upload Modal */}
+      {docUploadRow && (
+        <DocumentUploadModal
+          rowId={docUploadRow.id}
+          rowTitle={docUploadRow.title}
+          diNumber={docUploadRow.diNumber}
+          onClose={() => setDocUploadRow(null)}
+          onUploaded={() => {
+            setDocCounts(prev => ({ ...prev, [docUploadRow.id]: (prev[docUploadRow.id] || 0) + 1 }))
+            setDocRefreshKey(k => k + 1)
+          }}
+        />
+      )}
+
+      {/* Document Panel */}
+      {docPanelRow && (
+        <DocumentPanel
+          rowId={docPanelRow.id}
+          rowTitle={docPanelRow.title}
+          diNumber={docPanelRow.diNumber}
+          refreshKey={docRefreshKey}
+          onClose={() => setDocPanelRow(null)}
+          onUpload={() => { setDocUploadRow(docPanelRow); setDocPanelRow(null) }}
         />
       )}
     </div>
