@@ -102,7 +102,7 @@ export function joinCollaboration(
     config: { presence: { key: user.userId } },
   })
 
-  // ── Presence sync ──
+  // ── Presence sync (only updates real users, simulated merged by component) ──
   channel.on('presence', { event: 'sync' }, () => {
     if (!channel) return
     const state = channel.presenceState<PresenceUser>()
@@ -113,7 +113,9 @@ export function joinCollaboration(
         users.push(presences[0] as unknown as PresenceUser)
       }
     }
-    onPresenceChange?.(users)
+    // Merge with simulated users so presence sync doesn't wipe them out
+    const sim = simulatedPresence.length > 0 ? [...simulatedPresence] : []
+    onPresenceChange?.([...users, ...sim])
   })
 
   // ── Broadcast receive ──
@@ -221,9 +223,7 @@ let simulationTimers: ReturnType<typeof setTimeout>[] = []
 let simulatedPresence: PresenceUser[] = []
 
 export function startCollabSimulation(
-  realUsers: PresenceUser[],
   rowIds: string[],
-  onUpdate: (users: PresenceUser[]) => void,
   onToast: (msg: string) => void,
 ): void {
   stopCollabSimulation()
@@ -242,7 +242,6 @@ export function startCollabSimulation(
     color: AVATAR_COLORS[i % AVATAR_COLORS.length],
   }))
 
-  onUpdate([...realUsers, ...simulatedPresence])
   onToast(`${simulatedPresence.length} team members joined the session`)
 
   // Simulate activity — periodically change focus/editing
@@ -269,12 +268,16 @@ export function startCollabSimulation(
       simulatedPresence[idx] = { ...user, focusedRowId: rowIds[Math.floor(Math.random() * rowIds.length)], editingCell: null, lastSeen: new Date().toISOString() }
     }
 
-    onUpdate([...realUsers, ...simulatedPresence])
     const nextDelay = 4000 + Math.random() * 6000 // 4-10 seconds
     simulationTimers.push(setTimeout(tick, nextDelay))
   }
 
   simulationTimers.push(setTimeout(tick, 2000))
+}
+
+/** Get current simulated users (call from component to merge with real presence) */
+export function getSimulatedUsers(): PresenceUser[] {
+  return [...simulatedPresence]
 }
 
 export function stopCollabSimulation(): void {

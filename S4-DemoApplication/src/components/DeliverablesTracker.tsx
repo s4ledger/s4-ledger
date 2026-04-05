@@ -20,6 +20,7 @@ import DocumentUploadModal from './DocumentUploadModal'
 import DocumentPanel from './DocumentPanel'
 import SpreadsheetImportModal from './SpreadsheetImportModal'
 import AnomalyDashboard from './AnomalyDashboard'
+import ChatPanel from './ChatPanel'
 import type { ImportAuditInfo } from './SpreadsheetImportModal'
 import PresenceBar from './PresenceBar'
 import type { CellEditTarget } from './CellEditModal'
@@ -39,6 +40,7 @@ import {
   broadcastChange,
   startCollabSimulation,
   stopCollabSimulation,
+  getSimulatedUsers,
   type PresenceUser,
   type BroadcastEvent,
 } from '../services/realtimeService'
@@ -148,10 +150,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [collabUsers, setCollabUsers] = useState<PresenceUser[]>([])
   const [collabToast, setCollabToast] = useState<string | null>(null)
   const collabJoinedRef = useRef(false)
+  const demoUserIdRef = useRef(`demo-${Math.random().toString(36).slice(2, 8)}`)
 
   /* ─── Spreadsheet Import state ──────────────────────────────── */
   const [showImport, setShowImport] = useState(false)
   const [showAnomaly, setShowAnomaly] = useState(false)
+  const [showChat, setShowChat] = useState(false)
   const [lastPersist, setLastPersist] = useState<string | null>(null)
 
   /* ─── Zoom & Excel-like editing state ────────────────────────── */
@@ -425,7 +429,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     collabJoinedRef.current = true
 
     try {
-      const userId = user?.id || `demo-${Math.random().toString(36).slice(2, 8)}`
+      const userId = user?.id || demoUserIdRef.current
       const displayName = profile?.display_name || role
 
       joinCollaboration(
@@ -442,14 +446,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       )
 
       // Auto-start collaboration simulation in demo mode
-      // (simulates real team members working alongside the user)
       setTimeout(() => {
         const rowIds = data.map(r => r.id)
         if (rowIds.length > 0) {
           startCollabSimulation(
-            [],
             rowIds,
-            setCollabUsers,
             (msg) => { setCollabToast(msg); setTimeout(() => setCollabToast(null), 3000) },
           )
         }
@@ -463,6 +464,20 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       leaveCollaboration().catch(() => {})
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Poll simulated users and merge with real presence (avoids race condition)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const sim = getSimulatedUsers()
+      if (sim.length > 0) {
+        setCollabUsers(prev => {
+          const real = prev.filter(u => !u.userId.startsWith('sim-'))
+          return [...real, ...sim]
+        })
+      }
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
 
   /* ─── Manual Craft Entry (offline fallback) ──────────── */
   const handleManualCraft = useCallback(async (craftName: string) => {
@@ -717,7 +732,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] text-gray-900">
+    <div className="min-h-screen bg-[#f5f5f7] text-gray-900 flex">
+      {/* Main content area */}
+      <div className="flex-1 min-w-0">
       {/* Top Bar */}
       <header className="bg-surface border-b border-border px-6 py-4">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
@@ -746,7 +763,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             )}
             {/* Real-Time Presence */}
             <div className="ml-3">
-              <PresenceBar users={collabUsers} currentUserId={user?.id || 'demo'} />
+              <PresenceBar users={collabUsers} currentUserId={user?.id || demoUserIdRef.current} />
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -861,6 +878,19 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 </div>
               )}
             </div>
+
+            {/* ─── Chat Button ──────────────────────────────── */}
+            <button
+              onClick={() => setShowChat(!showChat)}
+              className={`flex items-center justify-center w-9 h-9 border rounded-lg text-sm transition-all ${
+                showChat
+                  ? 'bg-accent text-white border-accent'
+                  : 'bg-black/[0.04] hover:bg-black/[0.08] border-border text-steel'
+              }`}
+              title="S4 Chat — AI, Team, Agents"
+            >
+              <i className="fas fa-comments"></i>
+            </button>
 
             {/* ─── Notifications Bell (separate) ────────────── */}
             <div className="relative">
@@ -1912,6 +1942,22 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           anchors={anchors}
           editedSinceSeal={editedSinceSeal}
           onClose={() => setShowAnomaly(false)}
+        />
+      )}
+      </div>
+
+      {/* S4 Chat Panel — AI, Team, Agents */}
+      {showChat && (
+        <ChatPanel
+          data={hullData}
+          anchors={anchors}
+          aiInsights={aiInsights}
+          role={role}
+          org={org}
+          userId={user?.id || demoUserIdRef.current}
+          displayName={profile?.display_name || role}
+          collabUsers={collabUsers}
+          onClose={() => setShowChat(false)}
         />
       )}
     </div>
