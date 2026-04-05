@@ -11,7 +11,7 @@ import ReportModal from './ReportModal'
 import ExternalSyncModal from './ExternalSyncModal'
 import NotificationsPanel from './NotificationsPanel'
 import EmailComposer from './EmailComposer'
-import WorkflowProgressPopup from './WorkflowProgressPopup'
+import WorkflowProgressPopup from './WorkflowProgressPopup_v2'
 import ProfileDashboard from './ProfileDashboard'
 import PermissionsModal from './PermissionsModal'
 import DraggableModal from './DraggableModal'
@@ -24,6 +24,7 @@ import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
 import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
 import { recordChange } from '../utils/changeLog'
+import type { WorkflowState } from '../utils/workflowEngine'
 import { getDocumentCounts } from '../services/documentService'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
@@ -448,6 +449,22 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       })
     }
     const updated = data.map(r => r.id === rowId ? { ...r, notes } : r)
+    onDataUpdate(updated)
+    setAuditVersion(v => v + 1)
+  }
+
+  function handleWorkflowTransition(rowId: string, updatedState: WorkflowState) {
+    const row = data.find(r => r.id === rowId)
+    if (!row) return
+    const lastRecord = updatedState.history[updatedState.history.length - 1]
+    recordChange({
+      userId: user?.id, userEmail: user?.email, userRole: role, userOrg: profile?.organization,
+      rowId, rowTitle: row.title, field: 'workflowState',
+      oldValue: row.workflowState?.currentStage || 'draft',
+      newValue: `${updatedState.currentStage} (${lastRecord?.action || 'transition'})`,
+      changeType: 'edit',
+    })
+    const updated = data.map(r => r.id === rowId ? { ...r, workflowState: updatedState } : r)
     onDataUpdate(updated)
     setAuditVersion(v => v + 1)
   }
@@ -1404,6 +1421,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           aiInsight={aiInsights[workflowRow.id]}
           onUpdateNotes={handleUpdateNotes}
           onSendEmail={handleWorkflowEmail}
+          onWorkflowTransition={handleWorkflowTransition}
           onClose={() => setWorkflowRow(null)}
         />
       )}

@@ -1,3 +1,5 @@
+import type { WorkflowState } from './utils/workflowEngine'
+
 /* ─── Portfolio Hierarchy: Program → Contract → DRL ───────── */
 
 export interface Program {
@@ -41,6 +43,8 @@ export interface DRLRow {
   govNotes?: string
   /** Which org is responsible for the current action */
   responsibleParty?: Organization
+  /** Configurable workflow state machine */
+  workflowState?: WorkflowState
 }
 
 export interface AnchorRecord {
