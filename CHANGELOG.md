@@ -1,5 +1,14 @@
 # Changelog
 
+## [7.0.1] — 2026-04-05
+### S4-DemoApplication — Offline Sync & Collaboration Cleanup
+- **Merged offline sync into existing Sync modal** — Removed separate `OfflineSyncIndicator` from header. Offline queue count, pending changes detail, and last local save time now display inside the existing External Database Sync modal (`Tools → Sync`). One sync system, not two.
+- **Auto-start collaboration simulation** — Simulated team members (CDR Martinez, Lisa Chen, etc.) now appear automatically ~3 seconds after page load. No manual "Simulate Users" button — just like production where real users would naturally appear.
+- **Removed "Simulate Users" button** from Tools dropdown. Simulation cleanup runs automatically on component unmount.
+
+### Commits
+- `6e0abcf` Fix: merge offline sync into existing Sync modal, auto-start collaboration simulation
+
 ## [7.0.0] — 2026-04-05
 ### S4-DemoApplication — Enhancement #8: Offline-First with Sync Queue
 - **IndexedDB persistence** (`src/services/offlineStore.ts`) — Full offline data store using browser IndexedDB. Persists all DRL rows, anchor records, and a sync queue of pending changes. Auto-hydrates on page load — data and anchors survive browser refresh. Online/offline detection via `navigator.onLine` + event listeners with auto-sync triggers.
