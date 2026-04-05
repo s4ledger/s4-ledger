@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.5.0] — 2026-04-05
+### S4-DemoApplication — AI Anomaly Detection
+- **Anomaly detection engine** (`src/utils/anomalyDetection.ts`) — 8 automated detection rules: status regression, edit velocity spikes, SLA breaches, bulk change detection, compliance drift, unsealed edits, missing submissions, and overdue reviews. Severity classification (critical/warning/info) with intelligent sorting.
+- **AI-powered recommendations** — Each detected anomaly can be enriched with AI analysis via `chatWithAI()`, with fallback recommendations per anomaly type for offline/fallback scenarios.
+- **Anomaly Dashboard UI** (`src/components/AnomalyDashboard.tsx`) — Draggable modal with summary cards (critical/warning/info/total counts), clickable severity filters, expandable anomaly detail with affected rows and AI recommendations. Search + date filter matching existing UI pattern immediately.
+- **Tools menu integration** — "AI Anomaly Detection" button added to Tools dropdown (requires `canUseAI` permission). Shows "OPEN" badge when active.
+- **Auto-scan on open** — Dashboard automatically runs a full scan on mount, analyzing all deliverables, audit trail, and change history.
+
+### Commits
+- `65e4264` Add AI Anomaly Detection: engine + dashboard with 8 detection rules, AI recommendations, severity filtering, search/date filters
+
 ## [6.4.0] — 2026-04-05
 ### S4-DemoApplication — Audit & Change History Enhancements
 - **Profile audit history aligned** — Profile popup's Audit History tab now shows the same full audit trail + change history as the Tools sidebar. Sub-tabs for Audit Trail and Change History with counts. Search bar + date picker. Clickable entries with detail popups including before/after diffs, S4 Ledger Trust Layer info, and AI analysis. Trust summary bar with seal/verification/edit/mismatch counts.
