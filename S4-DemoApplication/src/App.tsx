@@ -8,6 +8,7 @@ import { recordSeal, recordReseal } from './utils/auditTrail'
 import { recordChange } from './utils/changeLog'
 import { storeSealed } from './utils/sealedVault'
 import { useAuth } from './contexts/AuthContext'
+import { initOfflineStore, persistRows, persistAnchors, loadPersistedRows, loadPersistedAnchors, setMeta } from './services/offlineStore'
 import LoginScreen from './components/LoginScreen'
 import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
@@ -63,6 +64,37 @@ export default function App() {
   const [anchoring, setAnchoring] = useState<Set<string>>(new Set())
   const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
   const [showPortfolio, setShowPortfolio] = useState(false)
+
+  // ── Offline-First: hydrate from IndexedDB on mount ─────────
+  useEffect(() => {
+    (async () => {
+      try {
+        await initOfflineStore()
+        const storedRows = await loadPersistedRows()
+        if (storedRows && storedRows.length > 0) {
+          setData(storedRows)
+        }
+        const storedAnchors = await loadPersistedAnchors()
+        if (storedAnchors) {
+          setAnchors(storedAnchors)
+        }
+      } catch (e) {
+        console.warn('Offline store hydration failed:', e)
+      }
+    })()
+  }, [])
+
+  // ── Offline-First: persist data to IndexedDB on change ─────
+  useEffect(() => {
+    persistRows(data).catch(() => {})
+    setMeta('lastPersist', new Date().toISOString()).catch(() => {})
+  }, [data])
+
+  useEffect(() => {
+    if (Object.keys(anchors).length > 0) {
+      persistAnchors(anchors).catch(() => {})
+    }
+  }, [anchors])
 
   // Persist workflow states to localStorage whenever data changes
   useEffect(() => {

@@ -20,6 +20,7 @@ import DocumentUploadModal from './DocumentUploadModal'
 import DocumentPanel from './DocumentPanel'
 import SpreadsheetImportModal from './SpreadsheetImportModal'
 import AnomalyDashboard from './AnomalyDashboard'
+import OfflineSyncIndicator from './OfflineSyncIndicator'
 import type { ImportAuditInfo } from './SpreadsheetImportModal'
 import PresenceBar from './PresenceBar'
 import type { CellEditTarget } from './CellEditModal'
@@ -37,10 +38,14 @@ import {
   startEditing,
   stopEditing,
   broadcastChange,
+  startCollabSimulation,
+  stopCollabSimulation,
+  isSimulationRunning,
   type PresenceUser,
   type BroadcastEvent,
 } from '../services/realtimeService'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
+import { enqueueChange, isOnline as checkOnline, getMeta } from '../services/offlineStore'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrants, OrgPermissions, MaskedStatus, ContractorGrants } from '../utils/permissions'
 import { getSpreadsheetConfig, getContractorColumnsWithGrants, CONTRACTOR_GRANTABLE_COLUMNS } from '../utils/spreadsheetConfigs'
@@ -149,6 +154,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   /* ─── Spreadsheet Import state ──────────────────────────────── */
   const [showImport, setShowImport] = useState(false)
   const [showAnomaly, setShowAnomaly] = useState(false)
+  const [lastPersist, setLastPersist] = useState<string | null>(null)
 
   /* ─── Zoom & Excel-like editing state ────────────────────────── */
   const [zoomLevel, setZoomLevel] = useState(100)
@@ -410,6 +416,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }
   }, [autoSyncEnabled, syncStatus.isOnline, handleExternalSync])
 
+  /* ─── Offline Store: load last persist time ─────────────── */
+  useEffect(() => {
+    getMeta<string>('lastPersist').then(v => { if (v) setLastPersist(v) }).catch(() => {})
+  }, [])
+
   /* ─── Real-Time Collaboration lifecycle ─────────────────── */
   useEffect(() => {
     if (collabJoinedRef.current) return
@@ -560,6 +571,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           rowId: row.id, rowTitle: row.title, field: String(field),
           oldValue: oldVal, newValue: value, changeType: 'edit',
         })
+        // Queue for offline sync
+        enqueueChange({
+          rowId: row.id, field: String(field),
+          oldValue: oldVal, newValue: value,
+          timestamp: new Date().toISOString(),
+          userEmail: user?.email || null,
+        }).catch(() => {})
+        setLastPersist(new Date().toISOString())
         setAuditVersion(v => v + 1)
         // Broadcast edit to other connected users
         broadcastChange({
@@ -727,6 +746,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 <i className="fas fa-lock text-[10px] text-steel/50 ml-0.5"></i>
               </button>
             </div>
+            {/* ─── Offline Sync Indicator ─────────────────────── */}
+            <OfflineSyncIndicator lastPersist={lastPersist} />
             {/* ─── Tools Dropdown ────────────────────────────── */}
             <div className="relative" ref={toolsMenuRef}>
               <button
@@ -824,6 +845,29 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     {showAnomaly && <span className="ml-auto text-red-500 text-xs font-semibold">OPEN</span>}
                   </button>
                   )}
+                  <div className="border-t border-border my-1"></div>
+                  <button
+                    onClick={() => {
+                      if (isSimulationRunning()) {
+                        stopCollabSimulation()
+                        setCollabUsers(prev => prev.filter(u => !u.userId.startsWith('sim-')))
+                        setCollabToast(null)
+                      } else {
+                        startCollabSimulation(
+                          collabUsers.filter(u => !u.userId.startsWith('sim-')),
+                          hullData.map(r => r.id),
+                          setCollabUsers,
+                          (msg) => { setCollabToast(msg); setTimeout(() => setCollabToast(null), 3000) },
+                        )
+                      }
+                      setShowToolsMenu(false)
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className={`fas ${isSimulationRunning() ? 'fa-user-slash' : 'fa-users'} text-cyan-500 w-4 text-center`}></i>
+                    <span className="font-medium">{isSimulationRunning() ? 'Stop Simulation' : 'Simulate Users'}</span>
+                    {isSimulationRunning() && <span className="ml-auto text-cyan-500 text-xs font-semibold">LIVE</span>}
+                  </button>
                 </div>
               )}
             </div>

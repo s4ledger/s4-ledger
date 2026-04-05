@@ -206,3 +206,83 @@ export async function broadcastChange(event: Omit<BroadcastEvent, 'timestamp'>):
 export function getCurrentPresence(): PresenceUser | null {
   return currentPresence
 }
+
+/* ─── Collaboration Simulation (Demo Mode) ───────────────────── */
+
+const SIMULATED_USERS: Array<{ displayName: string; role: UserRole; organization: Organization }> = [
+  { displayName: 'CDR J. Martinez', role: 'Program Manager', organization: 'Government' },
+  { displayName: 'Lisa Chen', role: 'Contracting Officer', organization: 'Government' },
+  { displayName: 'Mike Torres', role: 'Quality Assurance', organization: 'Contractor' },
+  { displayName: 'Sarah Kim', role: 'Logistics Specialist', organization: 'Government' },
+  { displayName: 'Rob Jenkins', role: 'Shipbuilder Representative', organization: 'Shipbuilder' },
+]
+
+let simulationTimers: ReturnType<typeof setTimeout>[] = []
+let simulatedPresence: PresenceUser[] = []
+
+export function startCollabSimulation(
+  realUsers: PresenceUser[],
+  rowIds: string[],
+  onUpdate: (users: PresenceUser[]) => void,
+  onToast: (msg: string) => void,
+): void {
+  stopCollabSimulation()
+
+  const count = 3 + Math.floor(Math.random() * 3) // 3-5 users
+  const picked = [...SIMULATED_USERS].sort(() => Math.random() - 0.5).slice(0, count)
+
+  simulatedPresence = picked.map((u, i) => ({
+    userId: `sim-${i}-${Date.now()}`,
+    displayName: u.displayName,
+    role: u.role,
+    organization: u.organization,
+    focusedRowId: rowIds[Math.floor(Math.random() * rowIds.length)] || null,
+    editingCell: null,
+    lastSeen: new Date().toISOString(),
+    color: AVATAR_COLORS[i % AVATAR_COLORS.length],
+  }))
+
+  onUpdate([...realUsers, ...simulatedPresence])
+  onToast(`${simulatedPresence.length} team members joined the session`)
+
+  // Simulate activity — periodically change focus/editing
+  function tick() {
+    if (simulatedPresence.length === 0) return
+    const idx = Math.floor(Math.random() * simulatedPresence.length)
+    const user = simulatedPresence[idx]
+    const action = Math.random()
+
+    if (action < 0.3 && user.editingCell) {
+      // Stop editing
+      const field = user.editingCell.field
+      simulatedPresence[idx] = { ...user, editingCell: null, lastSeen: new Date().toISOString() }
+      onToast(`${user.displayName} finished editing ${field}`)
+    } else if (action < 0.6 && rowIds.length > 0) {
+      // Start editing a cell
+      const rowId = rowIds[Math.floor(Math.random() * rowIds.length)]
+      const fields = ['notes', 'status', 'actualSubmissionDate', 'shipbuilderNotes', 'govNotes']
+      const field = fields[Math.floor(Math.random() * fields.length)]
+      simulatedPresence[idx] = { ...user, editingCell: { rowId, field }, focusedRowId: rowId, lastSeen: new Date().toISOString() }
+      onToast(`${user.displayName} is editing ${field}`)
+    } else if (rowIds.length > 0) {
+      // Change focus
+      simulatedPresence[idx] = { ...user, focusedRowId: rowIds[Math.floor(Math.random() * rowIds.length)], editingCell: null, lastSeen: new Date().toISOString() }
+    }
+
+    onUpdate([...realUsers, ...simulatedPresence])
+    const nextDelay = 4000 + Math.random() * 6000 // 4-10 seconds
+    simulationTimers.push(setTimeout(tick, nextDelay))
+  }
+
+  simulationTimers.push(setTimeout(tick, 2000))
+}
+
+export function stopCollabSimulation(): void {
+  for (const t of simulationTimers) clearTimeout(t)
+  simulationTimers = []
+  simulatedPresence = []
+}
+
+export function isSimulationRunning(): boolean {
+  return simulatedPresence.length > 0
+}
