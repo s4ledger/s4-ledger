@@ -107,7 +107,8 @@ function DonutChart({ stats, size = 160 }: { stats: ReturnType<typeof computeHea
 /* ─── Bar Chart (per-contract comparison) ──────────────────── */
 function ContractBarChart({ dataByContract }: { dataByContract: Record<string, DRLRow[]> }) {
   const bars = contracts.map(c => ({
-    label: c.contractNumber.split('-').slice(-1)[0],
+    label: c.contractNumber,
+    shortLabel: c.contractNumber.split('-').slice(-1)[0],
     title: c.title,
     stats: computeHealthStats(dataByContract[c.id] || []),
   }))
@@ -115,18 +116,37 @@ function ContractBarChart({ dataByContract }: { dataByContract: Record<string, D
   const maxItems = Math.max(...bars.map(b => b.stats.total), 1)
 
   return (
-    <div className="flex items-end gap-4 h-32">
+    <div className="flex items-end justify-center gap-10" style={{ height: '140px' }}>
       {bars.map((bar, i) => {
-        const height = (bar.stats.total / maxItems) * 100
+        const barHeight = Math.max((bar.stats.total / maxItems) * 100, 8)
+        const total = bar.stats.total || 1
+        const segments = [
+          { count: bar.stats.green, color: '#10b981' },
+          { count: bar.stats.yellow, color: '#fbbf24' },
+          { count: bar.stats.red, color: '#ef4444' },
+          { count: bar.stats.pending, color: '#94a3b8' },
+        ].filter(s => s.count > 0)
+
         return (
-          <div key={i} className="flex flex-col items-center flex-1">
-            <div className="w-full flex flex-col-reverse rounded-t-md overflow-hidden" style={{ height: `${height}%` }}>
-              {bar.stats.green > 0 && <div className="bg-emerald-500" style={{ flex: bar.stats.green }} />}
-              {bar.stats.yellow > 0 && <div className="bg-amber-400" style={{ flex: bar.stats.yellow }} />}
-              {bar.stats.red > 0 && <div className="bg-red-500" style={{ flex: bar.stats.red }} />}
-              {bar.stats.pending > 0 && <div className="bg-slate-300" style={{ flex: bar.stats.pending }} />}
+          <div key={i} className="flex flex-col items-center" style={{ width: '100px' }}>
+            <span className="text-xs font-bold text-gray-700 mb-1">{bar.stats.total}</span>
+            <div
+              className="w-full rounded-t-md overflow-hidden"
+              style={{ height: `${barHeight}%` }}
+            >
+              {segments.map((seg, j) => (
+                <div
+                  key={j}
+                  style={{
+                    height: `${(seg.count / total) * 100}%`,
+                    backgroundColor: seg.color,
+                    minHeight: '2px',
+                  }}
+                />
+              ))}
             </div>
-            <span className="text-[10px] text-gray-500 mt-1.5 font-medium">{bar.label}</span>
+            <span className="text-[10px] text-gray-500 mt-1.5 font-medium">{bar.shortLabel}</span>
+            <span className="text-[9px] text-gray-400 truncate max-w-[100px]" title={bar.title}>{bar.title.split(' ').slice(0, 3).join(' ')}</span>
           </div>
         )
       })}
