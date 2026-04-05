@@ -27,12 +27,16 @@ export interface WorkflowStageDef {
   label: string
   description: string
   responsible: Organization
+  /** FontAwesome icon class representing this stage's function */
+  icon: string
   /** SLA in calendar days from entering this stage */
   slaDays: number | null
   /** Fields that must be non-empty before leaving this stage */
   requiredFields?: (keyof DRLRow)[]
   /** Stage order for timeline display (0-based) */
   order: number
+  /** If true, only shown in timeline when visited or current */
+  conditionalDisplay?: boolean
 }
 
 export interface WorkflowTransition {
@@ -93,6 +97,7 @@ const STANDARD_DRL_TEMPLATE: WorkflowTemplate = {
       label: 'Draft / Preparation',
       description: 'Shipbuilder prepares and drafts the deliverable for submission',
       responsible: 'Shipbuilder',
+      icon: 'fa-pen-to-square',
       slaDays: null,
       order: 0,
     },
@@ -101,6 +106,7 @@ const STANDARD_DRL_TEMPLATE: WorkflowTemplate = {
       label: 'Submitted',
       description: 'Deliverable has been submitted by the Shipbuilder for review',
       responsible: 'Shipbuilder',
+      icon: 'fa-paper-plane',
       slaDays: null,
       requiredFields: ['actualSubmissionDate'],
       order: 1,
@@ -110,6 +116,7 @@ const STANDARD_DRL_TEMPLATE: WorkflowTemplate = {
       label: 'Under Review',
       description: 'Contractor / SDM is reviewing the submitted deliverable',
       responsible: 'Contractor',
+      icon: 'fa-magnifying-glass',
       slaDays: 30,
       order: 2,
     },
@@ -118,6 +125,7 @@ const STANDARD_DRL_TEMPLATE: WorkflowTemplate = {
       label: 'Final Disposition',
       description: 'Program Manager makes the final accept/reject decision',
       responsible: 'Government',
+      icon: 'fa-gavel',
       slaDays: 14,
       order: 3,
     },
@@ -126,32 +134,38 @@ const STANDARD_DRL_TEMPLATE: WorkflowTemplate = {
       label: 'Revision Required',
       description: 'Deliverable returned to Shipbuilder for corrections and resubmission',
       responsible: 'Shipbuilder',
+      icon: 'fa-rotate-left',
       slaDays: 21,
-      order: 2.5,  // displayed between review and disposition
+      order: 4,
+      conditionalDisplay: true,
     },
     {
       id: 'resubmitted',
       label: 'Resubmitted',
       description: 'Revised deliverable resubmitted for re-review',
       responsible: 'Shipbuilder',
+      icon: 'fa-paper-plane',
       slaDays: null,
-      order: 2.7,
+      order: 5,
+      conditionalDisplay: true,
     },
     {
       id: 'accepted',
       label: 'Accepted',
       description: 'Deliverable accepted — no further action required',
       responsible: 'Government',
+      icon: 'fa-circle-check',
       slaDays: null,
-      order: 4,
+      order: 6,
     },
     {
       id: 'rejected',
       label: 'Rejected',
       description: 'Deliverable rejected — contract action may be required',
       responsible: 'Government',
+      icon: 'fa-circle-xmark',
       slaDays: null,
-      order: 5,
+      order: 7,
     },
   ],
   transitions: [
@@ -251,6 +265,7 @@ const EXPEDITED_TEMPLATE: WorkflowTemplate = {
       label: 'Draft / Preparation',
       description: 'Shipbuilder prepares deliverable',
       responsible: 'Shipbuilder',
+      icon: 'fa-pen-to-square',
       slaDays: null,
       order: 0,
     },
@@ -259,6 +274,7 @@ const EXPEDITED_TEMPLATE: WorkflowTemplate = {
       label: 'Submitted for Approval',
       description: 'Deliverable submitted directly to Government for approval',
       responsible: 'Shipbuilder',
+      icon: 'fa-paper-plane',
       slaDays: null,
       order: 1,
     },
@@ -267,6 +283,7 @@ const EXPEDITED_TEMPLATE: WorkflowTemplate = {
       label: 'Government Review',
       description: 'Government reviews and makes final disposition',
       responsible: 'Government',
+      icon: 'fa-gavel',
       slaDays: 7,
       order: 2,
     },
@@ -275,6 +292,7 @@ const EXPEDITED_TEMPLATE: WorkflowTemplate = {
       label: 'Accepted',
       description: 'Deliverable accepted',
       responsible: 'Government',
+      icon: 'fa-circle-check',
       slaDays: null,
       order: 3,
     },
@@ -283,6 +301,7 @@ const EXPEDITED_TEMPLATE: WorkflowTemplate = {
       label: 'Rejected',
       description: 'Deliverable rejected',
       responsible: 'Government',
+      icon: 'fa-circle-xmark',
       slaDays: null,
       order: 4,
     },
@@ -292,6 +311,7 @@ const EXPEDITED_TEMPLATE: WorkflowTemplate = {
       label: 'Under Review',
       description: 'N/A for expedited',
       responsible: 'Contractor',
+      icon: 'fa-magnifying-glass',
       slaDays: null,
       order: -1,
     },
@@ -300,6 +320,7 @@ const EXPEDITED_TEMPLATE: WorkflowTemplate = {
       label: 'Revision Required',
       description: 'N/A for expedited',
       responsible: 'Shipbuilder',
+      icon: 'fa-rotate-left',
       slaDays: null,
       order: -1,
     },
@@ -308,6 +329,7 @@ const EXPEDITED_TEMPLATE: WorkflowTemplate = {
       label: 'Resubmitted',
       description: 'N/A for expedited',
       responsible: 'Shipbuilder',
+      icon: 'fa-paper-plane',
       slaDays: null,
       order: -1,
     },
@@ -494,9 +516,32 @@ export function isTerminal(state: WorkflowState): boolean {
 /** Get the active (visible) stages for timeline display, sorted by order */
 export function getTimelineStages(state: WorkflowState): WorkflowStageDef[] {
   const template = getTemplate(state.templateId)
-  // Filter out stubs with order < 0, sort by order
+
+  // Determine which terminal stage to show (only the actual outcome, not both)
+  const isInTerminal = template.terminalStages.includes(state.currentStage)
+
   return template.stages
-    .filter(s => s.order >= 0)
+    .filter(s => {
+      // Remove stubs with order < 0
+      if (s.order < 0) return false
+
+      // Terminal stages: only show the one that matches the outcome (or both if not yet terminal)
+      if (template.terminalStages.includes(s.id)) {
+        if (isInTerminal) {
+          return s.id === state.currentStage  // only show the actual outcome
+        }
+        // Not terminal yet — show accepted as the "target" stage, hide rejected
+        return s.id === 'accepted'
+      }
+
+      // Conditional stages (revision_required, resubmitted): only show if visited or current
+      if (s.conditionalDisplay) {
+        if (s.id === state.currentStage) return true
+        return state.history.some(h => h.to === s.id || h.from === s.id)
+      }
+
+      return true
+    })
     .sort((a, b) => a.order - b.order)
 }
 
@@ -515,19 +560,30 @@ export function getStageDisplayStatus(
   const currentDef = template.stages.find(s => s.id === state.currentStage)
   if (!currentDef) return 'upcoming'
 
+  // Current stage
   if (stageDef.id === state.currentStage) return 'current'
 
-  // Check if stage was visited in history
-  const wasVisited = state.history.some(h => h.to === stageDef.id || h.from === stageDef.id)
+  // Check if this stage was ever transitioned INTO
+  const wasVisited = state.history.some(h => h.to === stageDef.id)
 
-  // Terminal stages
+  // Terminal states — everything before the terminal is completed or skipped
   if (template.terminalStages.includes(state.currentStage)) {
-    if (stageDef.id === state.currentStage) return 'current'
     if (wasVisited) return 'completed'
+    // Stages before current order that weren't visited are skipped
+    if (stageDef.order < currentDef.order) return 'skipped'
     return 'skipped'
   }
 
-  if (wasVisited && stageDef.order < currentDef.order) return 'completed'
+  // For revision loop stages: if the item is past review/disposition and
+  // this is a revision/resubmitted stage, check if it's actually been used
+  if (stageDef.conditionalDisplay) {
+    if (wasVisited && stageDef.order < currentDef.order) return 'completed'
+    if (wasVisited) return 'completed'  // was visited but now past it in a loop
+    return 'upcoming'
+  }
+
+  // Standard forward progression
+  if (wasVisited) return 'completed'
   if (stageDef.order < currentDef.order) return 'completed'
   return 'upcoming'
 }

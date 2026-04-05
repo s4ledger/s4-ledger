@@ -35,25 +35,28 @@ interface Props {
 
 type StageDisplayStatus = 'completed' | 'current' | 'upcoming' | 'skipped' | 'accepted' | 'rejected'
 
+/** Colors for the stage circle based on status */
 function stageDisplayColor(status: StageDisplayStatus, slaBreach: boolean) {
-  if (status === 'accepted') return { dot: 'bg-green-500', text: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', ring: 'ring-green-500/20' }
-  if (status === 'rejected') return { dot: 'bg-red-500', text: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', ring: 'ring-red-500/20' }
-  if (status === 'completed') return { dot: 'bg-green-500', text: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', ring: 'ring-green-500/20' }
-  if (status === 'current' && slaBreach) return { dot: 'bg-red-500', text: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', ring: 'ring-red-500/20' }
-  if (status === 'current') return { dot: 'bg-blue-500', text: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', ring: 'ring-blue-500/20' }
-  if (status === 'skipped') return { dot: 'bg-gray-200', text: 'text-gray-400', bg: 'bg-gray-50', border: 'border-gray-100', ring: 'ring-gray-200' }
-  return { dot: 'bg-gray-300', text: 'text-gray-500', bg: 'bg-white', border: 'border-gray-200', ring: 'ring-gray-200' }
+  if (status === 'accepted') return { bg: 'bg-green-100', border: 'border-green-500', text: 'text-green-600', ring: 'ring-4 ring-green-500/30' }
+  if (status === 'rejected') return { bg: 'bg-red-100', border: 'border-red-500', text: 'text-red-600', ring: 'ring-4 ring-red-500/30' }
+  if (status === 'completed') return { bg: 'bg-green-50', border: 'border-green-400', text: 'text-green-600', ring: '' }
+  if (status === 'current' && slaBreach) return { bg: 'bg-red-50', border: 'border-red-400', text: 'text-red-600', ring: 'ring-4 ring-red-500/20' }
+  if (status === 'current') return { bg: 'bg-blue-50', border: 'border-blue-400', text: 'text-blue-600', ring: 'ring-4 ring-blue-500/20' }
+  if (status === 'skipped') return { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-300', ring: '' }
+  // upcoming
+  return { bg: 'bg-white', border: 'border-gray-300', text: 'text-gray-400', ring: '' }
 }
 
-function stageIcon(status: StageDisplayStatus, slaBreach: boolean): { class: string; prefix: string } {
-  if (status === 'accepted') return { class: 'fa-circle-check', prefix: 'fas' }
-  if (status === 'rejected') return { class: 'fa-circle-xmark', prefix: 'fas' }
-  if (status === 'completed') return { class: 'fa-check', prefix: 'fas' }
-  if (status === 'current' && slaBreach) return { class: 'fa-triangle-exclamation', prefix: 'fas' }
-  if (status === 'current') return { class: 'fa-spinner fa-pulse', prefix: 'fas' }
-  if (status === 'skipped') return { class: 'fa-xmark', prefix: 'fas' }
-  // upcoming — use outline circle so it's visually distinct
-  return { class: 'fa-circle', prefix: 'far' }
+/** Simple status-based icon for each stage */
+function stageIcon(status: StageDisplayStatus, slaBreach: boolean): string {
+  if (status === 'accepted') return 'fas fa-circle-check'
+  if (status === 'rejected') return 'fas fa-circle-xmark'
+  if (status === 'completed') return 'fas fa-check'
+  if (status === 'current' && slaBreach) return 'fas fa-triangle-exclamation'
+  if (status === 'current') return 'fas fa-spinner fa-pulse'
+  if (status === 'skipped') return 'fas fa-minus'
+  // upcoming
+  return 'far fa-circle'
 }
 
 function transitionButtonClasses(variant: WorkflowTransition['variant']): string {
@@ -270,7 +273,7 @@ export default function WorkflowProgressPopup({
                 }
                 const isCurrent = rawStatus === 'current'
                 const c = stageDisplayColor(displayStatus, isCurrent && slaBreach)
-                const icon = stageIcon(displayStatus, isCurrent && slaBreach)
+                const iconClass = stageIcon(displayStatus, isCurrent && slaBreach)
                 const isLast = i === timelineStages.length - 1
 
                 return (
@@ -284,10 +287,8 @@ export default function WorkflowProgressPopup({
                     )}
                     <div className="flex flex-col items-center text-center">
                       {/* Stage circle */}
-                      <div className={`w-8 h-8 rounded-full ${c.bg} border-2 ${c.border} flex items-center justify-center z-10 relative ${
-                        isCurrent ? `ring-4 ${c.ring}` : ''
-                      }`}>
-                        <i className={`${icon.prefix} ${icon.class} text-xs ${c.text}`}></i>
+                      <div className={`w-8 h-8 rounded-full ${c.bg} border-2 ${c.border} flex items-center justify-center z-10 relative ${c.ring}`}>
+                        <i className={`${iconClass} text-xs ${c.text}`}></i>
                       </div>
                       {/* Label */}
                       <p className={`text-[11px] font-semibold mt-2 leading-tight px-1 ${
