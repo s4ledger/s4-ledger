@@ -11,6 +11,22 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [signupSuccess, setSignupSuccess] = useState(false)
+  const [cacStep, setCacStep] = useState<'idle' | 'detecting' | 'reading' | 'done'>('idle')
+
+  function handleCACLogin() {
+    setCacStep('detecting')
+    setError(null)
+    setTimeout(() => {
+      setCacStep('reading')
+      setTimeout(() => {
+        setCacStep('done')
+        setTimeout(() => {
+          setCacStep('idle')
+          enterDemo()
+        }, 800)
+      }, 1200)
+    }, 1000)
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -74,6 +90,36 @@ export default function LoginScreen() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900">S4 Ledger</h2>
             <p className="text-steel text-sm mt-1">Deliverables Tracker</p>
+          </div>
+
+          {/* CAC / PIV Authentication */}
+          <button
+            onClick={handleCACLogin}
+            disabled={cacStep !== 'idle'}
+            className="w-full py-3 px-4 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-700 text-white font-semibold rounded-lg text-sm transition-all flex items-center justify-center gap-2.5 mb-1"
+          >
+            {cacStep === 'idle' && (
+              <><i className="fas fa-id-card"></i> Sign In with CAC / PIV</>
+            )}
+            {cacStep === 'detecting' && (
+              <><i className="fas fa-spinner fa-spin"></i> Detecting smart card reader…</>
+            )}
+            {cacStep === 'reading' && (
+              <><i className="fas fa-microchip"></i> Reading DoD PKI certificate…</>
+            )}
+            {cacStep === 'done' && (
+              <><i className="fas fa-check-circle text-green-400"></i> CAC authenticated</>
+            )}
+          </button>
+          <p className="text-[10px] text-steel text-center mb-5">
+            Common Access Card · DoD PKI · NIPR/SIPR
+          </p>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex-1 h-px bg-border"></div>
+            <span className="text-[11px] text-steel uppercase tracking-wider font-medium">or sign in with email</span>
+            <div className="flex-1 h-px bg-border"></div>
           </div>
 
           {/* Tab Switcher */}
@@ -174,7 +220,7 @@ export default function LoginScreen() {
             Try Demo Mode
           </button>
           <p className="text-[10px] text-steel text-center mt-2">
-            No account required. Explore all features with sample data.
+            No account or CAC required. Explore all features with sample data.
           </p>
         </div>
       </DraggableModal>
