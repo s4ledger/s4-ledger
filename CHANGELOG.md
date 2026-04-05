@@ -1,5 +1,21 @@
 # Changelog
 
+## [7.0.0] — 2026-04-05
+### S4-DemoApplication — Enhancement #8: Offline-First with Sync Queue
+- **IndexedDB persistence** (`src/services/offlineStore.ts`) — Full offline data store using browser IndexedDB. Persists all DRL rows, anchor records, and a sync queue of pending changes. Auto-hydrates on page load — data and anchors survive browser refresh. Online/offline detection via `navigator.onLine` + event listeners with auto-sync triggers.
+- **Sync queue** — Every cell edit is queued with row ID, field, old/new values, timestamp, and user email. Queue persists across sessions. Pending changes are visible in the sync indicator panel. "Clear synced" button for queue management.
+- **OfflineSyncIndicator** (`src/components/OfflineSyncIndicator.tsx`) — Visual status badge in header: green "Synced" when online with empty queue, blue "N queued" when changes pending, amber "Offline" when disconnected. Expandable panel with connection/queued/last-save cards, pending changes list with field-level detail, and "Sync Now" button.
+- **App.tsx integration** — Data hydrated from IndexedDB on mount (falls back to sampleData). Every `data` and `anchors` state change auto-persists to IndexedDB. `lastPersist` timestamp tracked for UI display.
+- **Offline edit queuing** — `handleCellEdit` now enqueues every edit to the offline sync queue automatically, ensuring no changes are lost even in disconnected environments (shipyard floor, SCIF, underway).
+
+### S4-DemoApplication — Collaboration Simulation
+- **Simulate Users** (`Tools → Simulate Users`) — Demo button that spawns 3-5 simulated team members (CDR Martinez, Lisa Chen, Mike Torres, Sarah Kim, Rob Jenkins) with realistic presence behavior. Simulated users change focus between rows, start/stop editing random cells, and generate real-time toast notifications. Lets you see the full multi-user collaboration UI (PresenceBar avatars, editing indicators, Live badge) without needing multiple browsers.
+- **Stop Simulation** — Toggle button to remove simulated users and return to normal operation.
+- **realtimeService.ts** — Added `startCollabSimulation()`, `stopCollabSimulation()`, `isSimulationRunning()` functions.
+
+### Commits
+- `69f6e79` Enhancement #8: Offline-First with Sync Queue + Collaboration Simulation
+
 ## [6.5.0] — 2026-04-05
 ### S4-DemoApplication — AI Anomaly Detection
 - **Anomaly detection engine** (`src/utils/anomalyDetection.ts`) — 8 automated detection rules: status regression, edit velocity spikes, SLA breaches, bulk change detection, compliance drift, unsealed edits, missing submissions, and overdue reviews. Severity classification (critical/warning/info) with intelligent sorting.
