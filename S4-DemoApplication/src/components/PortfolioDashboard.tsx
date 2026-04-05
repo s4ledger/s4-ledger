@@ -6,6 +6,7 @@ interface Props {
   allData: DRLRow[]
   onSelectContract: (contractId: string) => void
   onViewAll: () => void
+  onBack: () => void
   selectedContractId: string | null
 }
 
@@ -41,6 +42,94 @@ function HealthBar({ stats }: { stats: ReturnType<typeof computeHealthStats> }) 
       {stats.yellow > 0 && <div className="bg-amber-400" style={{ width: pct(stats.yellow) }} />}
       {stats.red > 0 && <div className="bg-red-500" style={{ width: pct(stats.red) }} />}
       {stats.pending > 0 && <div className="bg-slate-300" style={{ width: pct(stats.pending) }} />}
+    </div>
+  )
+}
+
+/* ─── SVG Donut Chart ──────────────────────────────────────── */
+function DonutChart({ stats, size = 160 }: { stats: ReturnType<typeof computeHealthStats>; size?: number }) {
+  const cx = size / 2
+  const cy = size / 2
+  const radius = (size - 24) / 2
+  const circumference = 2 * Math.PI * radius
+
+  if (stats.total === 0) {
+    return (
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={cx} cy={cy} r={radius} fill="none" stroke="#e5e7eb" strokeWidth={18} />
+        <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" className="text-sm font-semibold fill-gray-400">0</text>
+      </svg>
+    )
+  }
+
+  const segments = [
+    { count: stats.green, color: '#10b981' },
+    { count: stats.yellow, color: '#fbbf24' },
+    { count: stats.red, color: '#ef4444' },
+    { count: stats.pending, color: '#94a3b8' },
+  ].filter(s => s.count > 0)
+
+  let offset = 0
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {segments.map((seg, i) => {
+        const pct = seg.count / stats.total
+        const dash = pct * circumference
+        const gap = circumference - dash
+        const currentOffset = offset
+        offset += dash
+        return (
+          <circle
+            key={i}
+            cx={cx}
+            cy={cy}
+            r={radius}
+            fill="none"
+            stroke={seg.color}
+            strokeWidth={18}
+            strokeDasharray={`${dash} ${gap}`}
+            strokeDashoffset={-currentOffset}
+            strokeLinecap="butt"
+            transform={`rotate(-90 ${cx} ${cy})`}
+          />
+        )
+      })}
+      <text x={cx} y={cy - 6} textAnchor="middle" dominantBaseline="central" className="text-2xl font-bold fill-gray-900">
+        {stats.total}
+      </text>
+      <text x={cx} y={cy + 14} textAnchor="middle" dominantBaseline="central" className="text-[10px] fill-gray-400 uppercase tracking-wider">
+        items
+      </text>
+    </svg>
+  )
+}
+
+/* ─── Bar Chart (per-contract comparison) ──────────────────── */
+function ContractBarChart({ dataByContract }: { dataByContract: Record<string, DRLRow[]> }) {
+  const bars = contracts.map(c => ({
+    label: c.contractNumber.split('-').slice(-1)[0],
+    title: c.title,
+    stats: computeHealthStats(dataByContract[c.id] || []),
+  }))
+
+  const maxItems = Math.max(...bars.map(b => b.stats.total), 1)
+
+  return (
+    <div className="flex items-end gap-4 h-32">
+      {bars.map((bar, i) => {
+        const height = (bar.stats.total / maxItems) * 100
+        return (
+          <div key={i} className="flex flex-col items-center flex-1">
+            <div className="w-full flex flex-col-reverse rounded-t-md overflow-hidden" style={{ height: `${height}%` }}>
+              {bar.stats.green > 0 && <div className="bg-emerald-500" style={{ flex: bar.stats.green }} />}
+              {bar.stats.yellow > 0 && <div className="bg-amber-400" style={{ flex: bar.stats.yellow }} />}
+              {bar.stats.red > 0 && <div className="bg-red-500" style={{ flex: bar.stats.red }} />}
+              {bar.stats.pending > 0 && <div className="bg-slate-300" style={{ flex: bar.stats.pending }} />}
+            </div>
+            <span className="text-[10px] text-gray-500 mt-1.5 font-medium">{bar.label}</span>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -98,8 +187,8 @@ function ContractCard({
   )
 }
 
-/* ─── Main PortfolioDashboard ──────────────────────────────── */
-export default function PortfolioDashboard({ allData, onSelectContract, onViewAll, selectedContractId }: Props) {
+/* ─── Main PortfolioDashboard (full-page) ──────────────────── */
+export default function PortfolioDashboard({ allData, onSelectContract, onViewAll, onBack, selectedContractId }: Props) {
   // Group data by contract
   const dataByContract = useMemo(() => {
     const map: Record<string, DRLRow[]> = {}
@@ -124,50 +213,79 @@ export default function PortfolioDashboard({ allData, onSelectContract, onViewAl
   }, [])
 
   return (
-    <div className="bg-gray-50 border-b border-gray-200">
-      {/* ── Portfolio KPI Strip ── */}
-      <div className="px-6 pt-4 pb-3">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">Portfolio Dashboard</h2>
-            <p className="text-xs text-gray-500">
-              {programs.length} programs · {contracts.length} contracts · {allData.length} deliverables
-            </p>
-          </div>
+    <div className="min-h-screen bg-[#f5f5f7] text-gray-900">
+      {/* ── Top Bar with back button ── */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="max-w-[1600px] mx-auto flex items-center gap-4">
           <button
-            onClick={onViewAll}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-              !selectedContractId
-                ? 'bg-blue-600 text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-            }`}
+            onClick={onBack}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            All Contracts
+            <i className="fas fa-arrow-left text-xs"></i>
+            Back to DRL Tracker
           </button>
+          <div className="h-6 w-px bg-gray-200" />
+          <div className="flex items-center gap-3">
+            <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" className="h-8 w-auto" />
+            <div>
+              <h1 className="text-lg font-bold text-gray-900 leading-tight">Portfolio Dashboard</h1>
+              <p className="text-xs text-gray-500">
+                {programs.length} program · {contracts.length} contracts · {allData.length} deliverables
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-[1600px] mx-auto px-6 py-6 space-y-6">
+        {/* ── KPI Strip + Charts Row ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* KPI Cards */}
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+              <KPICard label="Total Items" value={portfolioStats.total} color="text-gray-900" />
+              <KPICard label="Completed" value={portfolioStats.green} subtext={`${portfolioStats.completionRate}%`} color="text-emerald-600" />
+              <KPICard label="Issues" value={portfolioStats.yellow} color="text-amber-600" />
+              <KPICard label="Overdue" value={portfolioStats.red} subtext={`${portfolioStats.overdueRate}%`} color="text-red-600" />
+              <KPICard label="Pending" value={portfolioStats.pending} color="text-slate-500" />
+            </div>
+            <HealthBar stats={portfolioStats} />
+
+            {/* Contract status bar chart */}
+            <div className="bg-white rounded-lg border border-gray-200 p-5 mt-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">Deliverable Status by Contract</h3>
+              <ContractBarChart dataByContract={dataByContract} />
+              <div className="flex gap-4 mt-3 text-[10px] text-gray-500">
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" /> Completed</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-amber-400 inline-block" /> Issues</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-red-500 inline-block" /> Overdue</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-slate-300 inline-block" /> Pending</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Donut Chart */}
+          <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col items-center justify-center">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Overall Status Distribution</h3>
+            <DonutChart stats={portfolioStats} size={180} />
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 mt-5 text-xs">
+              <span className="flex items-center gap-2"><StatusDot status="green" /> Completed ({portfolioStats.green})</span>
+              <span className="flex items-center gap-2"><StatusDot status="yellow" /> Issues ({portfolioStats.yellow})</span>
+              <span className="flex items-center gap-2"><StatusDot status="red" /> Overdue ({portfolioStats.red})</span>
+              <span className="flex items-center gap-2"><StatusDot status="pending" /> Pending ({portfolioStats.pending})</span>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-3">
-          <KPICard label="Total Items" value={portfolioStats.total} color="text-gray-900" />
-          <KPICard label="Completed" value={portfolioStats.green} subtext={`${portfolioStats.completionRate}%`} color="text-emerald-600" />
-          <KPICard label="Issues" value={portfolioStats.yellow} color="text-amber-600" />
-          <KPICard label="Overdue" value={portfolioStats.red} subtext={`${portfolioStats.overdueRate}%`} color="text-red-600" />
-          <KPICard label="Pending" value={portfolioStats.pending} color="text-slate-500" />
-          <KPICard label="Contracts" value={contracts.filter(c => c.status === 'active').length} subtext="active" color="text-blue-600" />
-        </div>
-
-        <HealthBar stats={portfolioStats} />
-      </div>
-
-      {/* ── Contract Cards by Program ── */}
-      <div className="px-6 pb-4">
+        {/* ── Contract Cards by Program ── */}
         {programGroups.map(({ program, contracts: pgmContracts }) => (
-          <div key={program.id} className="mb-3 last:mb-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">{program.shortName}</span>
-              <span className="text-xs text-gray-400">— {program.name}</span>
+          <div key={program.id}>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-sm font-bold text-gray-800 uppercase tracking-wider">{program.shortName}</span>
+              <span className="text-sm text-gray-500">— {program.name}</span>
               <span className="text-xs text-gray-400 ml-auto">{pgmContracts.length} contract{pgmContracts.length !== 1 ? 's' : ''}</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {pgmContracts.map(contract => (
                 <ContractCard
                   key={contract.id}

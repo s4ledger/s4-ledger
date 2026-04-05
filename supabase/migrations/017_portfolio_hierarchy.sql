@@ -59,15 +59,13 @@ CREATE POLICY "Demo mode contract read"
 
 -- ── Seed default programs ─────────────────────────────────
 INSERT INTO public.programs (id, name, short_name, description, program_manager) VALUES
-  ('PGM-001', 'U.S. Navy & FMS Boats and Craft', 'PMS 300', 'Boats & Craft acquisition and sustainment for the U.S. Navy and Foreign Military Sales', 'CAPT J. Richardson'),
-  ('PGM-002', 'Coastal Patrol Craft Program', 'CPC', 'Next-generation coastal patrol craft for allied nations under FMS', 'CDR L. Alvarez')
+  ('PGM-001', 'U.S. Navy & FMS Boats and Craft', 'PMS 300', 'Boats & Craft acquisition and sustainment for the U.S. Navy and Foreign Military Sales', 'CAPT J. Richardson')
 ON CONFLICT (id) DO NOTHING;
 
 -- ── Seed default contracts ────────────────────────────────
 INSERT INTO public.contracts (id, program_id, contract_number, title, contractor, shipbuilder, award_date, pop_end, total_value, status) VALUES
   ('CTR-001', 'PGM-001', 'N00024-23-C-6200', 'Patrol Boat & RHIB Multi-Hull Acquisition', 'Maritime Defense Systems, Inc.', 'Gulf Coast Shipyard', '2023-06-15', '2027-12-31', '$45.2M', 'active'),
-  ('CTR-002', 'PGM-001', 'N00024-24-C-3100', 'Harbor Tug & Utility Craft Services', 'Atlantic Marine Corp.', 'Chesapeake Shipbuilding', '2024-01-20', '2028-06-30', '$28.7M', 'active'),
-  ('CTR-003', 'PGM-002', 'N00024-25-C-1500', 'FMS Coastal Patrol Craft — Phase I', 'Sentinel Maritime LLC', 'Bollinger Shipyards', '2025-03-01', '2029-09-30', '$62.4M', 'active')
+  ('CTR-002', 'PGM-001', 'N00024-24-C-3100', 'Harbor Tug & Utility Craft Services', 'Atlantic Marine Corp.', 'Chesapeake Shipbuilding', '2024-01-20', '2028-06-30', '$28.7M', 'active')
 ON CONFLICT (id) DO NOTHING;
 
 -- Note: DRL rows in the frontend will reference contract_id via the in-memory data model.
