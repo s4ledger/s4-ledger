@@ -43,6 +43,8 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
   const [selectedEvent, setSelectedEvent] = useState<AuditEvent | null>(null)
   const [aiDetailAnalysis, setAiDetailAnalysis] = useState<string | null>(null)
   const [aiDetailLoading, setAiDetailLoading] = useState(false)
+  const [auditSearch, setAuditSearch] = useState('')
+  const [auditDateFilter, setAuditDateFilter] = useState('')
   const events = useMemo<AuditEvent[]>(() => {
     if (!visible) return []
     const raw = rowId ? getAuditLogForRow(rowId) : getAuditLog()
@@ -52,6 +54,25 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
   const summary = useMemo<AuditSummary>(() => {
     return getAuditSummary(rowId ? [rowId] : undefined)
   }, [rowId, events])
+
+  const filteredEvents = useMemo(() => {
+    let result = events
+    if (auditSearch) {
+      const q = auditSearch.toLowerCase()
+      result = result.filter(e =>
+        e.type.toLowerCase().includes(q) ||
+        e.description.toLowerCase().includes(q) ||
+        (e.aiSummary && e.aiSummary.toLowerCase().includes(q)) ||
+        e.rowId.toLowerCase().includes(q) ||
+        (e.rowTitle && e.rowTitle.toLowerCase().includes(q)) ||
+        (e.txHash && e.txHash.toLowerCase().includes(q))
+      )
+    }
+    if (auditDateFilter) {
+      result = result.filter(e => e.timestamp.startsWith(auditDateFilter))
+    }
+    return result
+  }, [events, auditSearch, auditDateFilter])
 
   if (!visible) return null
 
@@ -144,7 +165,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
 
       {/* Change History Tab */}
       {activeTab === 'changes' ? (
-        <DiffViewer rowId={rowId ?? null} rowTitle={rowTitle} />
+        <DiffViewer rowId={rowId ?? null} rowTitle={rowTitle} anchors={anchors} />
       ) : (
       <>
 
@@ -174,16 +195,48 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
         </div>
       </div>
 
+      {/* Event search & date filter */}
+      <div className="px-5 pt-3 space-y-2">
+        <div className="relative">
+          <i className="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-steel/40 text-[10px]"></i>
+          <input
+            type="text"
+            value={auditSearch}
+            onChange={e => setAuditSearch(e.target.value)}
+            placeholder="Search events (type, description, row…)"
+            className="w-full pl-7 pr-3 py-1.5 text-[11px] bg-white border border-border rounded-md text-gray-700 focus:outline-none focus:border-accent placeholder:text-steel/40"
+          />
+          {auditSearch && (
+            <button onClick={() => setAuditSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-steel/40 hover:text-steel">
+              <i className="fas fa-times text-[9px]"></i>
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="month"
+            value={auditDateFilter}
+            onChange={e => setAuditDateFilter(e.target.value)}
+            className="flex-1 text-[11px] bg-white border border-border rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:border-accent"
+          />
+          {auditDateFilter && (
+            <button onClick={() => setAuditDateFilter('')} className="text-[10px] text-steel hover:text-accent">
+              <i className="fas fa-times"></i>
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Event count */}
       <div className="px-5 pt-4 pb-2">
         <p className="text-[10px] uppercase tracking-wider font-bold text-steel">
-          Timeline · {events.length} event{events.length !== 1 ? 's' : ''}
+          Timeline · {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
         </p>
       </div>
 
       {/* Timeline */}
       <div className="flex-1 overflow-y-auto px-5 pb-4">
-        {events.length === 0 ? (
+        {filteredEvents.length === 0 ? (
           <div className="text-center py-12">
             <i className="fas fa-history text-steel/30 text-2xl mb-2"></i>
             <p className="text-xs text-steel">No audit events recorded yet.</p>
@@ -195,9 +248,9 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
             <div className="absolute left-[15px] top-0 bottom-0 w-px bg-border"></div>
 
             <div className="space-y-0.5">
-              {events.map((evt, i) => {
+              {filteredEvents.map((evt, i) => {
                 const style = EVENT_ICONS[evt.type] || EVENT_ICONS.Edited
-                const prevEvt = events[i - 1]
+                const prevEvt = filteredEvents[i - 1]
                 const showDateHeader = !prevEvt || formatDate(evt.timestamp) !== formatDate(prevEvt.timestamp)
 
                 return (
@@ -262,7 +315,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
                                 rel="noopener noreferrer"
                                 className="text-[10px] text-accent hover:text-accent/80 font-medium transition-colors"
                               >
-                                View on XRPL <i className="fas fa-external-link-alt text-[8px]"></i>
+                                Verify on Ledger <i className="fas fa-external-link-alt text-[8px]"></i>
                               </a>
                             )}
                           </div>
@@ -345,7 +398,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <i className="fas fa-shield-alt text-green-600 text-sm"></i>
-                    <span className="text-xs font-bold text-green-800 uppercase tracking-wider">XRPL Trust Layer</span>
+                    <span className="text-xs font-bold text-green-800 uppercase tracking-wider">S4 Ledger Trust Layer</span>
                     <span className={`ml-auto text-[9px] font-bold px-2 py-0.5 rounded-full ${
                       evt.type === 'Mismatch Detected'
                         ? 'bg-red-100 text-red-700'
@@ -428,7 +481,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
                       className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
                     >
                       <i className="fas fa-external-link-alt text-[10px]"></i>
-                      Verify on XRPL Explorer
+                      Verify on Ledger <i className="fas fa-arrow-right text-[8px] ml-0.5"></i>
                     </a>
                   )}
                 </div>
@@ -524,7 +577,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
                 <div className="border border-border rounded-xl overflow-hidden">
                   <div className="px-4 py-2.5 bg-gray-50 border-b border-border flex items-center gap-2">
                     <i className="fas fa-link text-green-500 text-xs"></i>
-                    <span className="text-[10px] font-bold text-gray-800 uppercase tracking-wider">Ledger Seal for This Record</span>
+                    <span className="text-[10px] font-bold text-gray-800 uppercase tracking-wider">S4 Ledger Seal for This Record</span>
                   </div>
                   <div className="p-4 space-y-2 text-xs">
                     <div className="grid grid-cols-2 gap-2">
@@ -549,7 +602,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent hover:bg-accent/90 text-white text-[10px] font-semibold rounded-md transition-colors"
                       >
                         <i className="fas fa-external-link-alt text-[8px]"></i>
-                        Verify on XRPL Explorer
+                        Verify on Ledger
                       </a>
                     )}
                   </div>
@@ -581,7 +634,7 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
       <div className="px-5 py-3 border-t border-border bg-gray-50/50">
         <p className="text-[10px] text-steel text-center">
           <i className="fas fa-lock text-accent/60 mr-1"></i>
-          Immutable audit trail · Cryptographically linked to XRPL
+          S4 Ledger Trust Layer · Immutable Audit Trail
         </p>
       </div>
       </div>

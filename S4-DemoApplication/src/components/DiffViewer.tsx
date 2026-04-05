@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { ChangeEntry, getChangesForRow, getAllChanges } from '../utils/changeLog'
+import { AnchorRecord } from '../types'
+import { chatWithAI } from '../utils/aiService'
 
 interface Props {
   rowId: string | null  // null = global view
   rowTitle?: string
+  anchors?: Record<string, AnchorRecord>
 }
 
 const TYPE_STYLES: Record<string, { icon: string; color: string; label: string }> = {
@@ -25,11 +28,21 @@ function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 }
 
-export default function DiffViewer({ rowId, rowTitle }: Props) {
+function formatDateFull(iso: string): string {
+  const d = new Date(iso)
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+}
+
+export default function DiffViewer({ rowId, rowTitle, anchors }: Props) {
   const [entries, setEntries] = useState<ChangeEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [filterField, setFilterField] = useState<string>('all')
   const [filterType, setFilterType] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [dateFilter, setDateFilter] = useState('')
+  const [selectedEntry, setSelectedEntry] = useState<ChangeEntry | null>(null)
+  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null)
+  const [aiLoading, setAiLoading] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -55,6 +68,22 @@ export default function DiffViewer({ rowId, rowTitle }: Props) {
   const filtered = entries.filter(e => {
     if (filterField !== 'all' && e.field_label !== filterField) return false
     if (filterType !== 'all' && e.change_type !== filterType) return false
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase()
+      const matchesSearch =
+        e.field_label.toLowerCase().includes(q) ||
+        e.row_id.toLowerCase().includes(q) ||
+        e.row_title.toLowerCase().includes(q) ||
+        (e.old_value || '').toLowerCase().includes(q) ||
+        (e.new_value || '').toLowerCase().includes(q) ||
+        (e.user_email || '').toLowerCase().includes(q) ||
+        (e.user_role || '').toLowerCase().includes(q)
+      if (!matchesSearch) return false
+    }
+    if (dateFilter) {
+      const entryDate = e.created_at.slice(0, dateFilter.length)
+      if (!entryDate.startsWith(dateFilter)) return false
+    }
     return true
   })
 
@@ -66,8 +95,43 @@ export default function DiffViewer({ rowId, rowTitle }: Props) {
     groups[date].push(e)
   }
 
+  function openChangeDetail(entry: ChangeEntry) {
+    setSelectedEntry(entry)
+    setAiAnalysis(null)
+    setAiLoading(true)
+
+    const anchor = anchors?.[entry.row_id]
+    const sealContext = anchor
+      ? `This record is sealed on the S4 Ledger (tx: ${anchor.txHash}, ledger index: ${anchor.ledgerIndex}).`
+      : 'This record has not been sealed to the ledger yet.'
+
+    const changeContext = entry.old_value && entry.new_value
+      ? `The field "${entry.field_label}" was changed from "${entry.old_value}" to "${entry.new_value}".`
+      : entry.new_value
+      ? `The field "${entry.field_label}" was set to "${entry.new_value}".`
+      : `The field "${entry.field_label}" was cleared.`
+
+    const prompt = `Analyze this data change for a government program manager and provide recommended next actions.\n` +
+      `Change type: ${entry.change_type}\n` +
+      `Record: ${entry.row_id} — "${entry.row_title}"\n` +
+      `${changeContext}\n` +
+      `Changed by: ${entry.user_email || 'Unknown'} (${entry.user_role || 'Unknown role'})\n` +
+      `${sealContext}\n\n` +
+      `Provide: (1) impact assessment in 1-2 sentences, (2) data integrity implications, ` +
+      `(3) 2-3 specific recommended next actions as bullet points. Professional Navy/DoD tone.`
+
+    chatWithAI({ message: prompt, tool_context: 'change_analysis' })
+      .then(res => {
+        setAiAnalysis(res.response || 'Change recorded in audit trail.')
+      })
+      .catch(() => {
+        setAiAnalysis('Change recorded in audit trail. Review the before/after comparison and verify data integrity if this record is sealed.')
+      })
+      .finally(() => setAiLoading(false))
+  }
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       {/* Header */}
       <div className="px-4 py-3 border-b border-border bg-gray-50/50">
         <div className="flex items-center gap-2 mb-2">
@@ -82,6 +146,22 @@ export default function DiffViewer({ rowId, rowTitle }: Props) {
         {rowTitle && (
           <p className="text-[11px] text-steel mb-2">{rowId} — {rowTitle}</p>
         )}
+        {/* Search */}
+        <div className="relative mb-2">
+          <i className="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-steel/40 text-[10px]"></i>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search changes (field, value, user, row…)"
+            className="w-full pl-7 pr-3 py-1.5 text-[11px] bg-white border border-border rounded-md text-gray-700 focus:outline-none focus:border-accent placeholder:text-steel/40"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-steel/40 hover:text-steel">
+              <i className="fas fa-times text-[9px]"></i>
+            </button>
+          )}
+        </div>
         {/* Filters */}
         <div className="flex gap-2">
           <select
@@ -102,6 +182,17 @@ export default function DiffViewer({ rowId, rowTitle }: Props) {
               <option key={t} value={t}>{TYPE_STYLES[t]?.label || t}</option>
             ))}
           </select>
+          <input
+            type="month"
+            value={dateFilter}
+            onChange={e => setDateFilter(e.target.value)}
+            className="text-[11px] bg-white border border-border rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:border-accent"
+          />
+          {dateFilter && (
+            <button onClick={() => setDateFilter('')} className="text-[10px] text-steel hover:text-accent">
+              <i className="fas fa-times"></i>
+            </button>
+          )}
         </div>
       </div>
 
@@ -141,7 +232,11 @@ export default function DiffViewer({ rowId, rowTitle }: Props) {
                         <div className="absolute left-[7px] top-5 bottom-0 w-px bg-border"></div>
                       )}
 
-                      <div className="bg-white border border-border rounded-lg px-3 py-2">
+                      <div
+                        className="bg-white border border-border rounded-lg px-3 py-2 cursor-pointer hover:border-accent/40 hover:bg-accent/5 transition-all"
+                        onClick={() => openChangeDetail(entry)}
+                        title="Click for detailed view"
+                      >
                         {/* Meta row */}
                         <div className="flex items-center gap-2 mb-1">
                           <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${style.color}`}>
@@ -200,6 +295,138 @@ export default function DiffViewer({ rowId, rowTitle }: Props) {
           ))
         )}
       </div>
+
+      {/* ── Detail Popup Overlay ── */}
+      {selectedEntry && (() => {
+        const e = selectedEntry
+        const anchor = anchors?.[e.row_id]
+        const style = TYPE_STYLES[e.change_type] || TYPE_STYLES.update
+        return (
+          <div className="absolute inset-0 z-50 bg-white overflow-y-auto">
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-border px-4 py-3 flex items-center gap-3 z-10">
+              <button
+                onClick={() => { setSelectedEntry(null); setAiAnalysis(null) }}
+                className="text-steel hover:text-accent transition-colors"
+              >
+                <i className="fas fa-arrow-left text-sm"></i>
+              </button>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${style.color}`}>
+                    {style.label}
+                  </span>
+                  <span className="text-xs font-semibold text-navy truncate">{e.field_label}</span>
+                </div>
+                <p className="text-[10px] text-steel mt-0.5">
+                  Row {e.row_id}{e.row_title ? ` · ${e.row_title}` : ''} · {new Date(e.created_at).toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 space-y-4">
+              {/* Before / After */}
+              <div className="bg-gray-50 border border-border rounded-lg p-3">
+                <h4 className="text-[10px] font-bold text-navy uppercase tracking-wider mb-2">
+                  <i className="fas fa-exchange-alt mr-1"></i> Before vs. After
+                </h4>
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-[9px] font-bold text-red-400 uppercase">Before</span>
+                    <div className="mt-0.5 text-[11px] text-red-700 bg-red-50 border border-red-100 rounded px-2 py-1.5 break-words whitespace-pre-wrap">
+                      {e.old_value || '(empty)'}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-bold text-green-500 uppercase">After</span>
+                    <div className="mt-0.5 text-[11px] text-green-800 bg-green-50 border border-green-100 rounded px-2 py-1.5 break-words whitespace-pre-wrap">
+                      {e.new_value || '(empty)'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* S4 Ledger Trust Layer */}
+              {anchor && (
+                <div className="bg-gradient-to-r from-accent/5 to-navy/5 border border-accent/20 rounded-lg p-3">
+                  <h4 className="text-[10px] font-bold text-navy uppercase tracking-wider mb-2">
+                    <i className="fas fa-shield-alt mr-1"></i> S4 Ledger Trust Layer
+                  </h4>
+                  <div className="space-y-1.5 text-[11px]">
+                    <div className="flex items-center gap-2">
+                      <span className="text-steel">Tx Hash:</span>
+                      <span className="font-mono text-[10px] text-navy break-all">{anchor.txHash}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-steel">Ledger Index:</span>
+                      <span className="font-mono text-[10px] text-navy">{anchor.ledgerIndex}</span>
+                    </div>
+                    {anchor.explorerUrl && (
+                      <a
+                        href={anchor.explorerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-accent hover:text-accent/80 mt-1"
+                      >
+                        <i className="fas fa-external-link-alt"></i> Verify on Ledger
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* AI Analysis */}
+              <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-3">
+                <h4 className="text-[10px] font-bold text-navy uppercase tracking-wider mb-2">
+                  <i className="fas fa-robot mr-1"></i> AI Analysis &amp; Recommended Next Actions
+                </h4>
+                {aiLoading ? (
+                  <div className="flex items-center gap-2 text-[11px] text-steel py-2">
+                    <i className="fas fa-spinner fa-spin"></i> Analyzing change…
+                  </div>
+                ) : aiAnalysis ? (
+                  <p className="text-[11px] text-gray-700 leading-relaxed whitespace-pre-wrap">{aiAnalysis}</p>
+                ) : (
+                  <p className="text-[11px] text-steel italic">Analysis unavailable</p>
+                )}
+              </div>
+
+              {/* Metadata */}
+              <div className="bg-gray-50 border border-border rounded-lg p-3">
+                <h4 className="text-[10px] font-bold text-navy uppercase tracking-wider mb-2">
+                  <i className="fas fa-info-circle mr-1"></i> Entry Metadata
+                </h4>
+                <div className="grid grid-cols-2 gap-y-1.5 text-[11px]">
+                  <span className="text-steel">Change ID</span>
+                  <span className="font-mono text-[10px] text-navy">{e.id}</span>
+                  <span className="text-steel">Timestamp</span>
+                  <span className="text-navy">{new Date(e.created_at).toLocaleString()}</span>
+                  {e.user_email && <>
+                    <span className="text-steel">User</span>
+                    <span className="text-navy">{e.user_email}</span>
+                  </>}
+                  {e.user_role && <>
+                    <span className="text-steel">Role</span>
+                    <span className="text-navy">{e.user_role}</span>
+                  </>}
+                  {e.user_org && <>
+                    <span className="text-steel">Organization</span>
+                    <span className="text-navy">{e.user_org}</span>
+                  </>}
+                </div>
+              </div>
+
+              {/* Back button */}
+              <button
+                onClick={() => { setSelectedEntry(null); setAiAnalysis(null) }}
+                className="w-full py-2 text-[11px] font-semibold text-accent hover:bg-accent/5 border border-accent/20 rounded-lg transition-colors"
+              >
+                <i className="fas fa-arrow-left mr-1.5"></i> Back to Change History
+              </button>
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }
