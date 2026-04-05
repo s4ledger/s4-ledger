@@ -104,52 +104,51 @@ function DonutChart({ stats, size = 160 }: { stats: ReturnType<typeof computeHea
   )
 }
 
-/* ─── Bar Chart (per-contract comparison) ──────────────────── */
+/* ─── Horizontal Bar Chart (per-contract comparison) ───────── */
 function ContractBarChart({ dataByContract }: { dataByContract: Record<string, DRLRow[]> }) {
-  const bars = contracts.map(c => ({
-    label: c.contractNumber,
-    shortLabel: c.contractNumber.split('-').slice(-1)[0],
-    title: c.title,
+  const rows = contracts.map(c => ({
+    contractNumber: c.contractNumber,
+    shortTitle: c.title.length > 40 ? c.title.slice(0, 37) + '…' : c.title,
     stats: computeHealthStats(dataByContract[c.id] || []),
   }))
 
-  const maxItems = Math.max(...bars.map(b => b.stats.total), 1)
+  const maxItems = Math.max(...rows.map(r => r.stats.total), 1)
+
+  const categories = [
+    { key: 'green' as const, label: 'Completed', color: '#10b981', bg: 'bg-emerald-500' },
+    { key: 'yellow' as const, label: 'Issues', color: '#fbbf24', bg: 'bg-amber-400' },
+    { key: 'red' as const, label: 'Overdue', color: '#ef4444', bg: 'bg-red-500' },
+    { key: 'pending' as const, label: 'Pending', color: '#94a3b8', bg: 'bg-slate-400' },
+  ]
 
   return (
-    <div className="flex items-end justify-center gap-10" style={{ height: '140px' }}>
-      {bars.map((bar, i) => {
-        const barHeight = Math.max((bar.stats.total / maxItems) * 100, 8)
-        const total = bar.stats.total || 1
-        const segments = [
-          { count: bar.stats.green, color: '#10b981' },
-          { count: bar.stats.yellow, color: '#fbbf24' },
-          { count: bar.stats.red, color: '#ef4444' },
-          { count: bar.stats.pending, color: '#94a3b8' },
-        ].filter(s => s.count > 0)
-
-        return (
-          <div key={i} className="flex flex-col items-center" style={{ width: '100px' }}>
-            <span className="text-xs font-bold text-gray-700 mb-1">{bar.stats.total}</span>
-            <div
-              className="w-full rounded-t-md overflow-hidden"
-              style={{ height: `${barHeight}%` }}
-            >
-              {segments.map((seg, j) => (
-                <div
-                  key={j}
-                  style={{
-                    height: `${(seg.count / total) * 100}%`,
-                    backgroundColor: seg.color,
-                    minHeight: '2px',
-                  }}
-                />
-              ))}
-            </div>
-            <span className="text-[10px] text-gray-500 mt-1.5 font-medium">{bar.shortLabel}</span>
-            <span className="text-[9px] text-gray-400 truncate max-w-[100px]" title={bar.title}>{bar.title.split(' ').slice(0, 3).join(' ')}</span>
+    <div className="space-y-5">
+      {rows.map((row, i) => (
+        <div key={i}>
+          <div className="flex items-baseline justify-between mb-2">
+            <span className="text-xs font-semibold text-gray-800">{row.contractNumber}</span>
+            <span className="text-[10px] text-gray-400">{row.shortTitle}</span>
           </div>
-        )
-      })}
+          <div className="space-y-1.5">
+            {categories.map(cat => {
+              const count = row.stats[cat.key]
+              const pct = maxItems > 0 ? (count / maxItems) * 100 : 0
+              return (
+                <div key={cat.key} className="flex items-center gap-2">
+                  <span className="text-[10px] text-gray-500 w-[62px] text-right">{cat.label}</span>
+                  <div className="flex-1 bg-gray-100 rounded-full h-4 relative overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${Math.max(pct, count > 0 ? 4 : 0)}%`, backgroundColor: cat.color }}
+                    />
+                  </div>
+                  <span className="text-xs font-bold text-gray-700 w-5 text-right">{count}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -275,12 +274,6 @@ export default function PortfolioDashboard({ allData, onSelectContract, onViewAl
             <div className="bg-white rounded-lg border border-gray-200 p-5 mt-4">
               <h3 className="text-sm font-semibold text-gray-700 mb-4">Deliverable Status by Contract</h3>
               <ContractBarChart dataByContract={dataByContract} />
-              <div className="flex gap-4 mt-3 text-[10px] text-gray-500">
-                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" /> Completed</span>
-                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-amber-400 inline-block" /> Issues</span>
-                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-red-500 inline-block" /> Overdue</span>
-                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-slate-300 inline-block" /> Pending</span>
-              </div>
             </div>
           </div>
 
