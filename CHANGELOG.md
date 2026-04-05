@@ -2,12 +2,14 @@
 
 ## [6.4.0] — 2026-04-05
 ### S4-DemoApplication — Audit & Change History Enhancements
-- **Search + date filters** — Both Audit Trail and Change History tabs now have a search bar + date picker. Search filters across event type, description, field name, values, user, row ID/title. Date picker filters to exact day. "Clear all" / "Clear filters" links reset everything.
+- **Profile audit history aligned** — Profile popup's Audit History tab now shows the same full audit trail + change history as the Tools sidebar. Sub-tabs for Audit Trail and Change History with counts. Search bar + date picker. Clickable entries with detail popups including before/after diffs, S4 Ledger Trust Layer info, and AI analysis. Trust summary bar with seal/verification/edit/mismatch counts.
+- **Search + date filters** — Both Audit Trail and Change History tabs (in Tools sidebar) now have a search bar + date picker. Search filters across event type, description, field name, values, user, row ID/title. Date picker filters to exact day. "Clear all" / "Clear filters" links reset everything.
 - **DiffViewer detail popup** — Clicking any Change History entry opens a full overlay with: untruncated before/after comparison, S4 Ledger Trust Layer block (tx hash, ledger index, "Verify on Ledger" link), AI Analysis & Recommended Next Actions, and entry metadata (user, role, org, timestamp).
 - **S4 Ledger branding** — Renamed all "XRPL Trust Layer" references to "S4 Ledger Trust Layer", "View on XRPL" → "Verify on Ledger" throughout AuditTrailSidebar.
 - **Search/date UI polish** — Side-by-side search + date layout, calendar icon on date picker, consistent sizing across both tabs.
 
 ### Commits
+- `7839a03` Align Profile audit history with Tools audit trail: full event log, change history, search/date filters, clickable detail popups with AI analysis
 - `f257d41` Fix search/date filter UI: side-by-side layout, date picker with calendar icon, clear-all button
 - `7b55861` Search + date filters for Audit Trail & Change History, DiffViewer detail popup, S4 Ledger branding
 
