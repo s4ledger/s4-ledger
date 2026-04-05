@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, Component, type ErrorInfo, type ReactNode } from 'react'
 import { AuthStage, UserRole, DRLRow, AnchorRecord } from './types'
 import { sampleData } from './data/sampleData'
 import { assignContractIds, getContractById } from './data/portfolioData'
@@ -14,6 +14,31 @@ import WelcomeCard from './components/WelcomeCard'
 import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
 import PortfolioDashboard from './components/PortfolioDashboard'
+
+/* ─── Error Boundary ──────────────────────────────────────────── */
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  constructor(props: { children: ReactNode }) {
+    super(props)
+    this.state = { error: null }
+  }
+  static getDerivedStateFromError(error: Error) { return { error } }
+  componentDidCatch(error: Error, info: ErrorInfo) { console.error('S4 ErrorBoundary:', error, info) }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-50 p-8">
+          <div className="max-w-xl bg-white rounded-xl shadow-lg border border-red-200 p-6">
+            <h2 className="text-lg font-bold text-red-600 mb-2"><i className="fas fa-exclamation-triangle mr-2"></i>Application Error</h2>
+            <p className="text-sm text-gray-700 mb-3">Something went wrong. Please refresh the page or clear your browser cache.</p>
+            <pre className="text-xs bg-gray-100 rounded p-3 overflow-auto max-h-40 text-red-700 mb-4">{this.state.error.message}{'\n'}{this.state.error.stack}</pre>
+            <button onClick={() => { localStorage.removeItem('s4_workflow_states'); window.location.reload() }} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700">Clear Cache &amp; Reload</button>
+          </div>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
 
 export default function App() {
   const { session, profile, user, loading: authLoading, isDemo } = useAuth()
@@ -148,16 +173,17 @@ export default function App() {
       )
     }
     return (
-      <DeliverablesTracker
-        data={filteredData}
-        role={authRole}
-        anchors={anchors}
-        onAnchor={handleAnchor}
-        onAnchorAll={handleAnchorAll}
-        onVerify={handleVerify}
-        onReseal={handleReseal}
-        onDataUpdate={(updated) => {
-          setData(prev => {
+      <ErrorBoundary>
+        <DeliverablesTracker
+          data={filteredData}
+          role={authRole}
+          anchors={anchors}
+          onAnchor={handleAnchor}
+          onAnchorAll={handleAnchorAll}
+          onVerify={handleVerify}
+          onReseal={handleReseal}
+          onDataUpdate={(updated) => {
+            setData(prev => {
             const updatedMap = new Map(updated.map(r => [r.id, r]))
             return prev.map(r => updatedMap.get(r.id) ?? r)
           })
@@ -166,6 +192,7 @@ export default function App() {
         selectedContract={selectedContract ?? undefined}
         onTogglePortfolio={() => setShowPortfolio(true)}
       />
+      </ErrorBoundary>
     )
   }
 
@@ -190,7 +217,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <ErrorBoundary>
       {showPortfolio ? (
         <PortfolioDashboard
           allData={data}
@@ -219,6 +246,6 @@ export default function App() {
           onTogglePortfolio={() => setShowPortfolio(true)}
         />
       )}
-    </>
+    </ErrorBoundary>
   )
 }

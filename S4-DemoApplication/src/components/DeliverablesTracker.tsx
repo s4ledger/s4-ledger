@@ -402,23 +402,27 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     if (collabJoinedRef.current) return
     collabJoinedRef.current = true
 
-    const userId = user?.id || `demo-${Math.random().toString(36).slice(2, 8)}`
-    const displayName = profile?.display_name || role
+    try {
+      const userId = user?.id || `demo-${Math.random().toString(36).slice(2, 8)}`
+      const displayName = profile?.display_name || role
 
-    joinCollaboration(
-      { userId, displayName, role, organization: org },
-      {
-        onPresenceChange: (users: PresenceUser[]) => setCollabUsers(users),
-        onBroadcast: (event: BroadcastEvent) => {
-          if (event.type === 'cell_edit') {
-            setCollabToast(`${event.sender.displayName} updated ${(event.payload as Record<string, string>).field || 'a field'}`)
-            setTimeout(() => setCollabToast(null), 3000)
-          }
+      joinCollaboration(
+        { userId, displayName, role, organization: org },
+        {
+          onPresenceChange: (users: PresenceUser[]) => setCollabUsers(users),
+          onBroadcast: (event: BroadcastEvent) => {
+            if (event.type === 'cell_edit') {
+              setCollabToast(`${event.sender.displayName} updated ${(event.payload as Record<string, string>).field || 'a field'}`)
+              setTimeout(() => setCollabToast(null), 3000)
+            }
+          },
         },
-      },
-    )
+      )
+    } catch (e) {
+      console.warn('Real-time collaboration unavailable:', e)
+    }
 
-    return () => { leaveCollaboration() }
+    return () => { leaveCollaboration().catch(() => {}) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ─── Manual Craft Entry (offline fallback) ──────────── */
