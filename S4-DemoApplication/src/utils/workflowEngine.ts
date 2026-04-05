@@ -417,21 +417,34 @@ export function inferWorkflowState(row: DRLRow): WorkflowState {
   } else if (row.status === 'red' && !submitted) {
     stage = 'draft'  // overdue but never submitted
   } else if (row.status === 'yellow' && reviewed) {
-    stage = 'disposition'
+    stage = 'revision_required'  // comments/RIDs → needs Shipbuilder action
   } else if (row.status === 'yellow' && submitted) {
     stage = 'under_review'
+  } else if (row.status === 'pending' && submitted && received) {
+    stage = 'under_review'  // submitted, received, pending Gov't review
   } else if (row.status === 'pending' && submitted) {
     stage = 'submitted'  // pending = awaiting review start
   } else if (submitted) {
     stage = 'submitted'
   }
 
-  // Safely parse enteredStageAt — use actualSubmissionDate only if it's a valid date
+  // Determine the most accurate enteredStageAt:
+  // 1. Submitted items → use submission date
+  // 2. Not-yet-submitted → use calculatedDueDate or contractDueFinish (for SLA tracking)
   let enteredStageAt = new Date().toISOString()
   if (submitted) {
     const parsed = new Date(row.actualSubmissionDate)
     if (!isNaN(parsed.getTime())) {
       enteredStageAt = parsed.toISOString()
+    }
+  } else {
+    // For items still in draft, use the due date so SLA timer reflects reality
+    const dueStr = row.calculatedDueDate || row.contractDueFinish
+    if (dueStr) {
+      const parsed = new Date(dueStr)
+      if (!isNaN(parsed.getTime())) {
+        enteredStageAt = parsed.toISOString()
+      }
     }
   }
 
@@ -441,6 +454,69 @@ export function inferWorkflowState(row: DRLRow): WorkflowState {
     enteredStageAt,
     history: [],
   }
+}
+
+/** Check if a DRL item is contractually overdue (due date has passed and not yet accepted/rejected) */
+export function isContractOverdue(row: DRLRow): boolean {
+  const dueStr = row.calculatedDueDate || row.contractDueFinish
+  if (!dueStr) return false
+  const due = new Date(dueStr)
+  if (isNaN(due.getTime())) return false
+  return due.getTime() < Date.now()
+}
+
+/** Get the number of calendar days overdue (positive = overdue, negative = days remaining) */
+export function getContractOverdueDays(row: DRLRow): number | null {
+  const dueStr = row.calculatedDueDate || row.contractDueFinish
+  if (!dueStr) return null
+  const due = new Date(dueStr)
+  if (isNaN(due.getTime())) return null
+  return Math.floor((Date.now() - due.getTime()) / (1000 * 60 * 60 * 24))
+}
+
+/**
+ * Get the appropriate status badge for the workflow popup, relative to the viewing org.
+ * Returns { label, color } for the badge.
+ *
+ * Rules:
+ * - Terminal stages → COMPLETE / CLOSED (no org-specific logic)
+ * - If contract due date passed AND viewer's org is the stage's responsible → OVERDUE (red)
+ * - If contract due date passed AND viewer's org is NOT responsible → AWAITING [responsible] (amber)
+ * - If not overdue, stage is active for the responsible org → ACTIVE / PENDING
+ */
+export function getWorkflowBadge(
+  row: DRLRow,
+  state: WorkflowState,
+  viewerOrg: Organization,
+): { label: string; color: 'green' | 'red' | 'amber' | 'blue' | 'gray' } {
+  const template = getTemplate(state.templateId)
+
+  // Terminal stages
+  if (template.terminalStages.includes(state.currentStage)) {
+    return state.currentStage === 'accepted'
+      ? { label: 'COMPLETE', color: 'green' }
+      : { label: 'CLOSED', color: 'red' }
+  }
+
+  const currentStageDef = template.stages.find(s => s.id === state.currentStage)
+  const responsibleOrg = currentStageDef?.responsible || 'Government'
+  const overdue = isContractOverdue(row)
+  const overdueDays = getContractOverdueDays(row)
+
+  if (overdue && overdueDays !== null) {
+    if (viewerOrg === responsibleOrg) {
+      // Viewer's org is responsible and it's overdue → they need to act
+      return { label: `OVERDUE ${overdueDays}d`, color: 'red' }
+    }
+    // Viewer's org is NOT responsible — show who they're waiting on
+    return { label: `AWAITING ${responsibleOrg.toUpperCase()}`, color: 'amber' }
+  }
+
+  // Not overdue — check if viewer's org is the responsible party
+  if (viewerOrg === responsibleOrg) {
+    return { label: 'ACTIVE', color: 'blue' }
+  }
+  return { label: `PENDING — ${responsibleOrg}`, color: 'gray' }
 }
 
 /** Get available transitions for current state + user's org */

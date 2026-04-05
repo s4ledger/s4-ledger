@@ -18,6 +18,7 @@ import DraggableModal from './DraggableModal'
 import CellEditModal from './CellEditModal'
 import DocumentUploadModal from './DocumentUploadModal'
 import DocumentPanel from './DocumentPanel'
+import PresenceBar from './PresenceBar'
 import type { CellEditTarget } from './CellEditModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
@@ -26,6 +27,16 @@ import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from 
 import { recordChange } from '../utils/changeLog'
 import type { WorkflowState } from '../utils/workflowEngine'
 import { getDocumentCounts } from '../services/documentService'
+import {
+  joinCollaboration,
+  leaveCollaboration,
+  updateFocus,
+  startEditing,
+  stopEditing,
+  broadcastChange,
+  type PresenceUser,
+  type BroadcastEvent,
+} from '../services/realtimeService'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrants, OrgPermissions, MaskedStatus, ContractorGrants } from '../utils/permissions'
@@ -126,6 +137,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [docCounts, setDocCounts] = useState<Record<string, number>>({})
   const [docRefreshKey, setDocRefreshKey] = useState(0)
   const toolsMenuRef = useRef<HTMLDivElement>(null)
+
+  /* ─── Real-Time Collaboration state ─────────────────────────── */
+  const [collabUsers, setCollabUsers] = useState<PresenceUser[]>([])
+  const [collabToast, setCollabToast] = useState<string | null>(null)
+  const collabJoinedRef = useRef(false)
 
   /* ─── Organization tier & permissions ───────────────────────── */
   const [org, setOrgInternal] = useState<Organization>(() => profile?.organization ?? getDefaultOrg(role))
@@ -381,6 +397,30 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     }
   }, [autoSyncEnabled, syncStatus.isOnline, handleExternalSync])
 
+  /* ─── Real-Time Collaboration lifecycle ─────────────────── */
+  useEffect(() => {
+    if (collabJoinedRef.current) return
+    collabJoinedRef.current = true
+
+    const userId = user?.id || `demo-${Math.random().toString(36).slice(2, 8)}`
+    const displayName = profile?.display_name || role
+
+    joinCollaboration(
+      { userId, displayName, role, organization: org },
+      {
+        onPresenceChange: (users: PresenceUser[]) => setCollabUsers(users),
+        onBroadcast: (event: BroadcastEvent) => {
+          if (event.type === 'cell_edit') {
+            setCollabToast(`${event.sender.displayName} updated ${(event.payload as Record<string, string>).field || 'a field'}`)
+            setTimeout(() => setCollabToast(null), 3000)
+          }
+        },
+      },
+    )
+
+    return () => { leaveCollaboration() }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   /* ─── Manual Craft Entry (offline fallback) ──────────── */
   const handleManualCraft = useCallback(async (craftName: string) => {
     const { changes, notifications: newNotifs, updatedRows, newAnchors, newCraftDetected } = await manualCraftPipeline(data, craftName, role, anchors, editedSinceSeal)
@@ -466,6 +506,16 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     const updated = data.map(r => r.id === rowId ? { ...r, workflowState: updatedState } : r)
     onDataUpdate(updated)
     setAuditVersion(v => v + 1)
+    // Broadcast workflow transition to other users
+    broadcastChange({
+      type: 'workflow_transition',
+      payload: { rowId, stage: updatedState.currentStage, action: lastRecord?.action || 'transition', rowTitle: row.title },
+      sender: {
+        userId: user?.id || 'demo',
+        displayName: profile?.display_name || role,
+        organization: org,
+      },
+    })
   }
 
   function handleRestoreNotes() {
@@ -494,6 +544,17 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           oldValue: oldVal, newValue: value, changeType: 'edit',
         })
         setAuditVersion(v => v + 1)
+        // Broadcast edit to other connected users
+        broadcastChange({
+          type: 'cell_edit',
+          payload: { rowId, field: String(field), value, oldValue: oldVal, rowTitle: row.title },
+          sender: {
+            userId: user?.id || 'demo',
+            displayName: profile?.display_name || role,
+            organization: org,
+          },
+        })
+        stopEditing()
       }
     }
     // Track that this sealed row was edited
@@ -557,6 +618,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 Portfolio
               </button>
             )}
+            {/* Real-Time Presence */}
+            <div className="ml-3">
+              <PresenceBar users={collabUsers} currentUserId={user?.id || 'demo'} />
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {/* ─── Permissions & Org Button ───────────────────── */}
@@ -1089,7 +1154,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     {spreadsheetColumns.map(col => {
                       const fieldVal = row[col.field]
                       const displayVal = fieldVal !== null && fieldVal !== undefined ? String(fieldVal) : '—'
-                      const openCell = (e: React.MouseEvent) => { e.stopPropagation(); setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? '') }) }
+                      const openCell = (e: React.MouseEvent) => { e.stopPropagation(); startEditing(row.id, col.key); setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? '') }) }
 
                       // Special rendering for diNumber (shows RACI badge + contract ref tooltip)
                       if (col.key === 'diNumber') {
@@ -1531,6 +1596,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         </div>
       )}
 
+      {/* Collaboration toast */}
+      {collabToast && (
+        <div className="fixed bottom-6 left-6 z-50 animate-slideUp">
+          <div className="bg-white border border-blue-500/30 shadow-xl rounded-card px-5 py-3.5 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
+              <i className="fas fa-users text-blue-500 text-sm"></i>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-900">Real-Time Update</p>
+              <p className="text-xs text-steel">{collabToast}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Profile Dashboard */}
       {showProfile && (
         <ProfileDashboard
@@ -1563,7 +1643,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           aiInsight={aiInsights[cellEditTarget.row.id] || null}
           anchor={anchors[cellEditTarget.row.id]}
           onSave={(rowId, field, value) => handleCellEdit(rowId, field, value)}
-          onClose={() => setCellEditTarget(null)}
+          onClose={() => { setCellEditTarget(null); stopEditing() }}
         />
       )}
 

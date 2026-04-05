@@ -56,7 +56,7 @@ function makeNotifId(): string {
 function getStakeholders(priority: NotificationPriority, _role: UserRole): string[] {
   const base = ['Program Manager']
   if (priority === 'critical' || priority === 'high') {
-    return [...base, 'Contracting Officer', 'Quality Assurance', 'Logistics Specialist']
+    return [...base, 'Contracting Officer', 'Quality Assurance', 'Logistics Specialist', 'Shipbuilder Representative']
   }
   if (priority === 'medium') {
     return [...base, 'Contracting Officer', 'Quality Assurance']

@@ -25,6 +25,11 @@ const roles: { role: UserRole; icon: string; desc: string }[] = [
     icon: 'fa-truck',
     desc: 'Monitor supply-chain deliverables and submission timelines.',
   },
+  {
+    role: 'Shipbuilder Representative',
+    icon: 'fa-helmet-safety',
+    desc: 'Draft and submit deliverables, respond to revision requests, and track compliance.',
+  },
 ]
 
 export default function RoleSelector({ onSelect }: Props) {

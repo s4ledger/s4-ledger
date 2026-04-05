@@ -100,6 +100,7 @@ const ROLE_ORG_MAP: Record<UserRole, Organization> = {
   'Contracting Officer': 'Government',
   'Quality Assurance': 'Contractor',
   'Logistics Specialist': 'Contractor',
+  'Shipbuilder Representative': 'Shipbuilder',
 }
 
 /** Get the default organization for a role */

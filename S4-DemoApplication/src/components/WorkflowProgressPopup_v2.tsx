@@ -15,6 +15,9 @@ import {
   getSLADaysRemaining,
   isSLABreached,
   isTerminal,
+  isContractOverdue,
+  getContractOverdueDays,
+  getWorkflowBadge,
   getTemplate,
   WORKFLOW_TEMPLATES,
 } from '../utils/workflowEngine'
@@ -100,6 +103,9 @@ export default function WorkflowProgressPopup({
   const slaDaysLeft = getSLADaysRemaining(workflowState)
   const terminal = isTerminal(workflowState)
   const currentStageDef = template.stages.find(s => s.id === workflowState.currentStage)
+  const contractOverdue = isContractOverdue(row)
+  const overdueDays = getContractOverdueDays(row)
+  const badge = getWorkflowBadge(row, workflowState, org)
 
   function handleTransition(transition: WorkflowTransition) {
     if (transition.requiresComment && !transitionComment.trim()) {
@@ -140,12 +146,12 @@ export default function WorkflowProgressPopup({
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
               terminal && workflowState.currentStage === 'accepted' ? 'bg-green-500/15' :
               terminal && workflowState.currentStage === 'rejected' ? 'bg-red-500/15' :
-              slaBreach ? 'bg-red-500/15' : 'bg-blue-500/15'
+              contractOverdue || slaBreach ? 'bg-red-500/15' : 'bg-blue-500/15'
             }`}>
               <i className={`fas fa-project-diagram ${
                 terminal && workflowState.currentStage === 'accepted' ? 'text-green-500' :
                 terminal && workflowState.currentStage === 'rejected' ? 'text-red-500' :
-                slaBreach ? 'text-red-500' : 'text-blue-500'
+                contractOverdue || slaBreach ? 'text-red-500' : 'text-blue-500'
               }`}></i>
             </div>
             <div>
@@ -178,6 +184,8 @@ export default function WorkflowProgressPopup({
           <div className={`rounded-lg border p-4 flex items-center justify-between ${
             terminal && workflowState.currentStage === 'accepted' ? 'bg-green-50 border-green-200' :
             terminal && workflowState.currentStage === 'rejected' ? 'bg-red-50 border-red-200' :
+            badge.color === 'red' ? 'bg-red-50 border-red-200' :
+            badge.color === 'amber' ? 'bg-amber-50 border-amber-200' :
             slaBreach ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200'
           }`}>
             <div>
@@ -185,22 +193,32 @@ export default function WorkflowProgressPopup({
                 <span className={`text-sm font-bold ${
                   terminal && workflowState.currentStage === 'accepted' ? 'text-green-700' :
                   terminal && workflowState.currentStage === 'rejected' ? 'text-red-700' :
+                  badge.color === 'red' ? 'text-red-700' :
+                  badge.color === 'amber' ? 'text-amber-700' :
                   slaBreach ? 'text-red-700' : 'text-blue-700'
                 }`}>
                   {currentStageDef?.label || workflowState.currentStage}
                 </span>
-                {terminal && (
-                  <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded ${
-                    workflowState.currentStage === 'accepted' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
-                  }`}>
-                    {workflowState.currentStage === 'accepted' ? 'COMPLETE' : 'CLOSED'}
-                  </span>
-                )}
+                {/* Role-relative status badge */}
+                <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded ${
+                  badge.color === 'green' ? 'bg-green-200 text-green-800' :
+                  badge.color === 'red' ? 'bg-red-200 text-red-800' :
+                  badge.color === 'amber' ? 'bg-amber-200 text-amber-800' :
+                  badge.color === 'gray' ? 'bg-gray-200 text-gray-700' :
+                  'bg-blue-200 text-blue-800'
+                }`}>
+                  {badge.label}
+                </span>
               </div>
               <p className="text-xs text-gray-600 mt-0.5">{currentStageDef?.description}</p>
               <p className="text-[10px] text-gray-400 mt-1">
                 Responsible: <span className="font-medium text-gray-600">{currentStageDef?.responsible}</span>
-                {slaDaysLeft !== null && (
+                {contractOverdue && overdueDays !== null && !terminal && (
+                  <span className="ml-3 font-medium text-red-500">
+                    Contract overdue by {overdueDays} day{overdueDays !== 1 ? 's' : ''}
+                  </span>
+                )}
+                {!contractOverdue && slaDaysLeft !== null && (
                   <span className={`ml-3 font-medium ${slaDaysLeft < 0 ? 'text-red-500' : slaDaysLeft <= 3 ? 'text-amber-500' : 'text-gray-500'}`}>
                     {slaDaysLeft < 0
                       ? `SLA breached by ${Math.abs(slaDaysLeft)} day${Math.abs(slaDaysLeft) !== 1 ? 's' : ''}`

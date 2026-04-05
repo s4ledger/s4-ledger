@@ -68,7 +68,7 @@ export interface VerifyResult {
   txHash: string
 }
 
-export type UserRole = 'Program Manager' | 'Contracting Officer' | 'Quality Assurance' | 'Logistics Specialist'
+export type UserRole = 'Program Manager' | 'Contracting Officer' | 'Quality Assurance' | 'Logistics Specialist' | 'Shipbuilder Representative'
 
 export type Organization = 'Government' | 'Contractor' | 'Shipbuilder'
 
