@@ -33,20 +33,27 @@ interface Props {
 
 /* ─── Stage display helpers ──────────────────────────────────── */
 
-function stageDisplayColor(status: 'completed' | 'current' | 'upcoming' | 'skipped', slaBreach: boolean) {
+type StageDisplayStatus = 'completed' | 'current' | 'upcoming' | 'skipped' | 'accepted' | 'rejected'
+
+function stageDisplayColor(status: StageDisplayStatus, slaBreach: boolean) {
+  if (status === 'accepted') return { dot: 'bg-green-500', text: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', ring: 'ring-green-500/20' }
+  if (status === 'rejected') return { dot: 'bg-red-500', text: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', ring: 'ring-red-500/20' }
   if (status === 'completed') return { dot: 'bg-green-500', text: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', ring: 'ring-green-500/20' }
   if (status === 'current' && slaBreach) return { dot: 'bg-red-500', text: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', ring: 'ring-red-500/20' }
   if (status === 'current') return { dot: 'bg-blue-500', text: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', ring: 'ring-blue-500/20' }
   if (status === 'skipped') return { dot: 'bg-gray-200', text: 'text-gray-400', bg: 'bg-gray-50', border: 'border-gray-100', ring: 'ring-gray-200' }
-  return { dot: 'bg-gray-300', text: 'text-gray-400', bg: 'bg-gray-50', border: 'border-gray-200', ring: 'ring-gray-200' }
+  return { dot: 'bg-gray-300', text: 'text-gray-500', bg: 'bg-white', border: 'border-gray-200', ring: 'ring-gray-200' }
 }
 
-function stageIcon(status: 'completed' | 'current' | 'upcoming' | 'skipped', slaBreach: boolean): string {
-  if (status === 'completed') return 'fa-check'
-  if (status === 'current' && slaBreach) return 'fa-exclamation-triangle'
-  if (status === 'current') return 'fa-circle-notch fa-spin'
-  if (status === 'skipped') return 'fa-minus'
-  return 'fa-circle'
+function stageIcon(status: StageDisplayStatus, slaBreach: boolean): { class: string; prefix: string } {
+  if (status === 'accepted') return { class: 'fa-circle-check', prefix: 'fas' }
+  if (status === 'rejected') return { class: 'fa-circle-xmark', prefix: 'fas' }
+  if (status === 'completed') return { class: 'fa-check', prefix: 'fas' }
+  if (status === 'current' && slaBreach) return { class: 'fa-triangle-exclamation', prefix: 'fas' }
+  if (status === 'current') return { class: 'fa-spinner fa-pulse', prefix: 'fas' }
+  if (status === 'skipped') return { class: 'fa-xmark', prefix: 'fas' }
+  // upcoming — use outline circle so it's visually distinct
+  return { class: 'fa-circle', prefix: 'far' }
 }
 
 function transitionButtonClasses(variant: WorkflowTransition['variant']): string {
@@ -255,8 +262,13 @@ export default function WorkflowProgressPopup({
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Workflow Timeline</h3>
             <div className="flex items-start gap-0">
               {timelineStages.map((stageDef, i) => {
-                const displayStatus = getStageDisplayStatus(workflowState, stageDef)
-                const isCurrent = displayStatus === 'current'
+                const rawStatus = getStageDisplayStatus(workflowState, stageDef)
+                // Resolve terminal stages to accepted/rejected for proper icons
+                let displayStatus: StageDisplayStatus = rawStatus
+                if (rawStatus === 'current' && terminal) {
+                  displayStatus = workflowState.currentStage === 'rejected' ? 'rejected' : 'accepted'
+                }
+                const isCurrent = rawStatus === 'current'
                 const c = stageDisplayColor(displayStatus, isCurrent && slaBreach)
                 const icon = stageIcon(displayStatus, isCurrent && slaBreach)
                 const isLast = i === timelineStages.length - 1
@@ -266,7 +278,8 @@ export default function WorkflowProgressPopup({
                     {/* Connector line */}
                     {!isLast && (
                       <div className={`absolute top-4 left-[calc(50%+16px)] right-0 h-0.5 ${
-                        displayStatus === 'completed' ? 'bg-green-400' : 'bg-gray-200'
+                        displayStatus === 'completed' || displayStatus === 'accepted' ? 'bg-green-400'
+                          : displayStatus === 'rejected' ? 'bg-red-300' : 'bg-gray-200'
                       }`} />
                     )}
                     <div className="flex flex-col items-center text-center">
@@ -274,7 +287,7 @@ export default function WorkflowProgressPopup({
                       <div className={`w-8 h-8 rounded-full ${c.bg} border-2 ${c.border} flex items-center justify-center z-10 relative ${
                         isCurrent ? `ring-4 ${c.ring}` : ''
                       }`}>
-                        <i className={`fas ${icon} text-xs ${c.text}`}></i>
+                        <i className={`${icon.prefix} ${icon.class} text-xs ${c.text}`}></i>
                       </div>
                       {/* Label */}
                       <p className={`text-[11px] font-semibold mt-2 leading-tight px-1 ${
@@ -285,11 +298,14 @@ export default function WorkflowProgressPopup({
                       {/* Status badge */}
                       {displayStatus !== 'upcoming' && displayStatus !== 'skipped' && (
                         <span className={`mt-1.5 px-2 py-0.5 text-[9px] font-bold uppercase rounded ${c.bg} ${c.text} border ${c.border}`}>
-                          {isCurrent && slaBreach ? 'SLA BREACH' : displayStatus === 'completed' ? 'Done' : 'Active'}
+                          {isCurrent && slaBreach ? 'SLA BREACH'
+                            : displayStatus === 'accepted' ? 'Accepted'
+                            : displayStatus === 'rejected' ? 'Rejected'
+                            : displayStatus === 'completed' ? 'Done' : 'Active'}
                         </span>
                       )}
                       {/* SLA indicator for current stage */}
-                      {isCurrent && slaDaysLeft !== null && !slaBreach && (
+                      {isCurrent && slaDaysLeft !== null && !slaBreach && !terminal && (
                         <p className="text-[10px] text-amber-500 mt-1 font-medium">{slaDaysLeft}d left</p>
                       )}
                     </div>
