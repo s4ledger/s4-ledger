@@ -1567,6 +1567,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         visible={showAudit}
         rowId={auditRowId}
         rowTitle={auditRowTitle}
+        anchors={anchors}
         onClose={() => setShowAudit(false)}
         key={`audit-${auditVersion}`}
       />
