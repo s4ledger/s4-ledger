@@ -146,7 +146,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   /* ─── Zoom & Excel-like editing state ────────────────────────── */
   const [zoomLevel, setZoomLevel] = useState(100)
   const [selectedCell, setSelectedCell] = useState<{ rowIdx: number; colIdx: number } | null>(null)
-  const [inlineEdit, setInlineEdit] = useState<{ rowIdx: number; colIdx: number; value: string } | null>(null)
   const [undoStack, setUndoStack] = useState<Array<{ rowId: string; field: keyof DRLRow; oldValue: string; newValue: string }>>([])
   const tableRef = useRef<HTMLDivElement>(null)
 
@@ -583,36 +582,21 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     onDataUpdate(updated)
   }
 
-  /* ─── Excel-like: inline edit commit & undo ─────────────────── */
-  function commitInlineEdit(moveTo?: 'down' | 'right' | 'left') {
-    if (!inlineEdit) return
-    const row = filtered[inlineEdit.rowIdx]
-    const col = spreadsheetColumns[inlineEdit.colIdx]
-    if (row && col && col.editable) {
-      const oldVal = String(row[col.field] ?? '')
-      if (oldVal !== inlineEdit.value) {
-        setUndoStack(prev => [...prev.slice(-49), { rowId: row.id, field: col.field, oldValue: oldVal, newValue: inlineEdit.value }])
-        handleCellEdit(row.id, col.field, inlineEdit.value)
-      }
-    }
-    setInlineEdit(null)
-    if (moveTo && selectedCell) {
-      if (moveTo === 'down' && selectedCell.rowIdx < filtered.length - 1) {
-        setSelectedCell({ rowIdx: selectedCell.rowIdx + 1, colIdx: selectedCell.colIdx })
-      } else if (moveTo === 'right' && selectedCell.colIdx < spreadsheetColumns.length - 1) {
-        setSelectedCell({ rowIdx: selectedCell.rowIdx, colIdx: selectedCell.colIdx + 1 })
-      } else if (moveTo === 'left' && selectedCell.colIdx > 0) {
-        setSelectedCell({ rowIdx: selectedCell.rowIdx, colIdx: selectedCell.colIdx - 1 })
-      }
-    }
-    tableRef.current?.focus()
-  }
-
+  /* ─── Undo & keyboard nav ────────────────────────────────── */
   function undoLastEdit() {
     if (undoStack.length === 0) return
     const last = undoStack[undoStack.length - 1]
     setUndoStack(prev => prev.slice(0, -1))
     handleCellEdit(last.rowId, last.field, last.oldValue)
+  }
+
+  function openCellPopup(rowIdx: number, colIdx: number) {
+    const row = filtered[rowIdx]
+    const col = spreadsheetColumns[colIdx]
+    if (row && col) {
+      startEditing(row.id, col.key)
+      setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? '') })
+    }
   }
 
   function handleTableKeyDown(e: React.KeyboardEvent) {
@@ -623,7 +607,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       return
     }
     // Ctrl/Cmd+C → copy selected cell value
-    if ((e.ctrlKey || e.metaKey) && e.key === 'c' && selectedCell && !inlineEdit) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'c' && selectedCell) {
       const row = filtered[selectedCell.rowIdx]
       const col = spreadsheetColumns[selectedCell.colIdx]
       if (row && col) {
@@ -632,8 +616,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       }
       return
     }
-    // Inline edit active — Enter/Escape/Tab handled by input itself
-    if (inlineEdit) return
 
     if (!selectedCell) return
 
@@ -658,16 +640,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       }
     } else if (e.key === 'Enter' || e.key === 'F2') {
       e.preventDefault()
-      const row = filtered[selectedCell.rowIdx]
-      const col = spreadsheetColumns[selectedCell.colIdx]
-      if (row && col) {
-        if (e.key === 'F2') {
-          startEditing(row.id, col.key)
-          setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? '') })
-        } else if (col.editable) {
-          setInlineEdit({ rowIdx: selectedCell.rowIdx, colIdx: selectedCell.colIdx, value: String(row[col.field] ?? '') })
-        }
-      }
+      openCellPopup(selectedCell.rowIdx, selectedCell.colIdx)
     } else if (e.key === 'Escape') {
       setSelectedCell(null)
     } else if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -680,11 +653,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           setUndoStack(prev => [...prev.slice(-49), { rowId: row.id, field: col.field, oldValue: oldVal, newValue: '' }])
           handleCellEdit(row.id, col.field, '')
         }
-      }
-    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      const col = spreadsheetColumns[selectedCell.colIdx]
-      if (col && col.editable) {
-        setInlineEdit({ rowIdx: selectedCell.rowIdx, colIdx: selectedCell.colIdx, value: e.key })
       }
     }
   }
@@ -1263,11 +1231,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             </button>
           </div>
           <div className="flex items-center gap-2 text-[10px] text-steel/70">
-            <span className="px-1.5 py-0.5 bg-gray-100 rounded font-mono">Click</span><span>select</span>
+            <span className="px-1.5 py-0.5 bg-gray-100 rounded font-mono">Click</span><span>edit cell</span>
             <span className="text-steel/30">|</span>
-            <span className="px-1.5 py-0.5 bg-gray-100 rounded font-mono">Dbl-click</span><span>edit</span>
-            <span className="text-steel/30">|</span>
-            <span className="px-1.5 py-0.5 bg-gray-100 rounded font-mono">F2</span><span>AI editor</span>
+            <span className="px-1.5 py-0.5 bg-gray-100 rounded font-mono">Arrows</span><span>navigate</span>
             <span className="text-steel/30">|</span>
             <span className="px-1.5 py-0.5 bg-gray-100 rounded font-mono">{navigator.platform?.includes('Mac') ? '⌘' : 'Ctrl'}+Z</span><span>undo</span>
             {undoStack.length > 0 && (
@@ -1289,9 +1255,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             ref={tableRef}
             tabIndex={0}
             onKeyDown={handleTableKeyDown}
-            className="overflow-x-auto max-h-[calc(100vh-420px)] focus:outline-none"
-            style={zoomLevel !== 100 ? { zoom: `${zoomLevel / 100}` } : undefined}
+            className="overflow-auto max-h-[calc(100vh-420px)] focus:outline-none"
           >
+            <div style={zoomLevel !== 100 ? { transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top left', width: `${10000 / zoomLevel}%` } : undefined}>
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-20 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
                 <tr className="border-b border-border">
@@ -1337,35 +1303,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       const fieldVal = row[col.field]
                       const displayVal = fieldVal !== null && fieldVal !== undefined ? String(fieldVal) : '—'
                       const isSelected = selectedCell?.rowIdx === idx && selectedCell?.colIdx === colI
-                      const isEditing = inlineEdit?.rowIdx === idx && inlineEdit?.colIdx === colI
-                      const selectCell = (e: React.MouseEvent) => { e.stopPropagation(); setSelectedCell({ rowIdx: idx, colIdx: colI }); setInlineEdit(null); tableRef.current?.focus() }
-                      const dblClickCell = (e: React.MouseEvent) => {
-                        e.stopPropagation()
-                        if (col.editable) {
-                          setSelectedCell({ rowIdx: idx, colIdx: colI })
-                          setInlineEdit({ rowIdx: idx, colIdx: colI, value: String(row[col.field] ?? '') })
-                        } else {
-                          startEditing(row.id, col.key)
-                          setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? '') })
-                        }
-                      }
+                      const openCell = (e: React.MouseEvent) => { e.stopPropagation(); setSelectedCell({ rowIdx: idx, colIdx: colI }); startEditing(row.id, col.key); setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? '') }) }
                       const selClass = isSelected ? ' ring-2 ring-accent ring-inset z-10 relative' : ''
-                      const inlineInput = isEditing ? (
-                        <input
-                          autoFocus
-                          type="text"
-                          value={inlineEdit.value}
-                          onChange={e => setInlineEdit(prev => prev ? { ...prev, value: e.target.value } : prev)}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); commitInlineEdit('down') }
-                            else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setInlineEdit(null); tableRef.current?.focus() }
-                            else if (e.key === 'Tab') { e.preventDefault(); e.stopPropagation(); commitInlineEdit(e.shiftKey ? 'left' : 'right') }
-                          }}
-                          onBlur={() => commitInlineEdit()}
-                          className="w-full bg-white border-2 border-accent rounded px-1 py-0 text-xs focus:outline-none"
-                          onClick={e => e.stopPropagation()}
-                        />
-                      ) : null
 
                       // Special rendering for diNumber (shows RACI badge + contract ref tooltip)
                       if (col.key === 'diNumber') {
@@ -1374,12 +1313,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                             key={col.key}
                             className={`px-3 py-3 font-mono text-xs text-gray-500 relative cursor-pointer${selClass}`}
                             data-no-workflow
-                            onClick={selectCell}
-                            onDoubleClick={dblClickCell}
+                            onClick={openCell}
                             onMouseEnter={() => setHoveredDI(row.id)}
                             onMouseLeave={() => setHoveredDI(null)}
                           >
-                            {isEditing ? inlineInput : (
                             <div className="flex items-center gap-1.5">
                               <span className="border-b border-dashed border-steel/40">
                                 {row.diNumber}
@@ -1388,7 +1325,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                                 {getRACIParty(row).length > 8 ? getRACIParty(row).slice(0, 3) : getRACIParty(row)}
                               </span>
                             </div>
-                            )}
                             {hoveredDI === row.id && (contractRefs[row.id] || contractRequirements[row.id]) && (
                               <div className={`absolute left-0 z-50 w-72 bg-white border border-border text-gray-900 text-xs rounded-lg p-3 shadow-xl pointer-events-none ${
                                 idx < 2 ? 'top-full mt-2' : 'bottom-full mb-2'
@@ -1425,14 +1361,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                             key={col.key}
                             data-no-workflow
                             className={`px-3 py-3 text-xs text-steel max-w-[180px] cursor-pointer group${selClass}`}
-                            onClick={selectCell}
-                            onDoubleClick={dblClickCell}
+                            onClick={e => { e.stopPropagation(); openCell(e) }}
                           >
-                            {isEditing ? inlineInput : (
-                            <div className="truncate group-hover:text-accent transition-colors" title="Double-click to edit">
+                            <div className="truncate group-hover:text-accent transition-colors" title="Click to edit">
                               {noteVal}
                             </div>
-                            )}
                             {isMainNotes && masked.displayStatus === 'pending' ? (
                               <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-blue-500/10 text-blue-500">
                                 Pending
@@ -1458,9 +1391,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                             key={col.key}
                             data-no-workflow
                             className={`px-3 py-3 text-xs text-center font-semibold cursor-pointer hover:bg-accent/5 transition-colors ${row.received === 'Yes' ? 'text-green-600' : 'text-red-500'}${selClass}`}
-                            onClick={selectCell}
-                            onDoubleClick={dblClickCell}
-                          >{isEditing ? inlineInput : row.received}</td>
+                            onClick={openCell}
+                          >{row.received}</td>
                         )
                       }
 
@@ -1472,12 +1404,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                           : party === 'Shipbuilder' ? 'bg-purple-500/10 text-purple-600 border-purple-200'
                           : 'bg-gray-100 text-steel border-gray-200'
                         return (
-                          <td key={col.key} data-no-workflow className={`px-3 py-3 text-xs text-center cursor-pointer hover:bg-accent/5 transition-colors${selClass}`} onClick={selectCell} onDoubleClick={dblClickCell}>
-                            {isEditing ? inlineInput : (
+                          <td key={col.key} data-no-workflow className={`px-3 py-3 text-xs text-center cursor-pointer hover:bg-accent/5 transition-colors${selClass}`} onClick={openCell}>
                             <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded border ${partyColor}`}>
                               {party === 'Government' ? 'Gov\'t' : party === 'Shipbuilder' ? 'SB' : party === 'Contractor' ? 'Contr' : party}
                             </span>
-                            )}
                           </td>
                         )
                       }
@@ -1489,9 +1419,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                             key={col.key}
                             data-no-workflow
                             className={`px-3 py-3 font-medium text-gray-900 cursor-pointer hover:bg-accent/5 transition-colors${selClass}`}
-                            onClick={selectCell}
-                            onDoubleClick={dblClickCell}
-                          >{isEditing ? inlineInput : row.title}</td>
+                            onClick={openCell}
+                          >{row.title}</td>
                         )
                       }
 
@@ -1501,9 +1430,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                           key={col.key}
                           data-no-workflow
                           className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors ${col.key === 'submittalGuidance' ? 'text-steel' : ''} ${col.key === 'calendarDaysToReview' ? 'text-center' : ''}${selClass}`}
-                          onClick={selectCell}
-                          onDoubleClick={dblClickCell}
-                        >{isEditing ? inlineInput : displayVal}</td>
+                          onClick={openCell}
+                        >{displayVal}</td>
                       )
                     })}
                     <td className="px-3 py-3 text-center">
@@ -1588,6 +1516,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 )}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </div>

@@ -85,8 +85,42 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
   const [aiSuggestion, setAiSuggestion] = useState<string | null>(null)
   const [applied, setApplied] = useState(false)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const richRef = useRef<HTMLDivElement>(null)
+  const [useRichEdit, setUseRichEdit] = useState(false)
 
   const [aiLoading, setAiLoading] = useState(false)
+
+  /* ─── Formatting commands ──────────────────────────────────── */
+  function execFormat(cmd: string, val?: string) {
+    richRef.current?.focus()
+    document.execCommand(cmd, false, val)
+  }
+
+  function toggleRichEdit() {
+    if (!useRichEdit) {
+      setUseRichEdit(true)
+      // Initialize rich editor with current plain text
+      requestAnimationFrame(() => {
+        if (richRef.current) {
+          richRef.current.innerText = value
+          richRef.current.focus()
+          // Move cursor to end
+          const range = document.createRange()
+          range.selectNodeContents(richRef.current)
+          range.collapse(false)
+          const sel = window.getSelection()
+          sel?.removeAllRanges()
+          sel?.addRange(range)
+        }
+      })
+    } else {
+      // Switch back to plain text, extract text content
+      if (richRef.current) {
+        setValue(richRef.current.innerText)
+      }
+      setUseRichEdit(false)
+    }
+  }
 
   useEffect(() => {
     // Show local suggestion immediately as fallback
@@ -131,7 +165,8 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
   }, [target.editable])
 
   function handleSave() {
-    onSave(target.row.id, target.field, value)
+    const saveValue = useRichEdit && richRef.current ? richRef.current.innerText : value
+    onSave(target.row.id, target.field, saveValue)
     onClose()
   }
 
@@ -205,18 +240,85 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
         <div className="px-5 py-4 space-y-4">
           {/* Current / editable value */}
           <div>
-            <label className="text-[11px] font-semibold text-steel uppercase tracking-wide mb-1.5 block">
-              {target.editable ? 'Edit Value' : 'Current Value'}
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] font-semibold text-steel uppercase tracking-wide">
+                {target.editable ? 'Edit Value' : 'Current Value'}
+              </label>
+              {target.editable && (
+                <button
+                  onClick={toggleRichEdit}
+                  className={`text-[10px] font-medium px-2 py-0.5 rounded-md border transition-colors ${
+                    useRichEdit
+                      ? 'bg-accent/10 border-accent/30 text-accent'
+                      : 'bg-gray-50 border-border text-steel hover:text-gray-700'
+                  }`}
+                >
+                  <i className={`fas ${useRichEdit ? 'fa-code' : 'fa-font'} mr-1`}></i>
+                  {useRichEdit ? 'Plain Text' : 'Rich Edit'}
+                </button>
+              )}
+            </div>
+
+            {/* Formatting Toolbar — visible when rich edit is active */}
+            {target.editable && useRichEdit && (
+              <div className="flex items-center gap-0.5 mb-1.5 p-1 bg-gray-50 border border-border rounded-lg">
+                <button onClick={() => execFormat('bold')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Bold (Ctrl+B)">
+                  <i className="fas fa-bold text-xs"></i>
+                </button>
+                <button onClick={() => execFormat('italic')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Italic (Ctrl+I)">
+                  <i className="fas fa-italic text-xs"></i>
+                </button>
+                <button onClick={() => execFormat('underline')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Underline (Ctrl+U)">
+                  <i className="fas fa-underline text-xs"></i>
+                </button>
+                <button onClick={() => execFormat('strikeThrough')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Strikethrough">
+                  <i className="fas fa-strikethrough text-xs"></i>
+                </button>
+                <div className="w-px h-5 bg-border mx-1"></div>
+                <button onClick={() => execFormat('justifyLeft')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Align Left">
+                  <i className="fas fa-align-left text-xs"></i>
+                </button>
+                <button onClick={() => execFormat('justifyCenter')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Align Center">
+                  <i className="fas fa-align-center text-xs"></i>
+                </button>
+                <button onClick={() => execFormat('justifyRight')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Align Right">
+                  <i className="fas fa-align-right text-xs"></i>
+                </button>
+                <div className="w-px h-5 bg-border mx-1"></div>
+                <button onClick={() => execFormat('insertUnorderedList')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Bullet List">
+                  <i className="fas fa-list-ul text-xs"></i>
+                </button>
+                <button onClick={() => execFormat('insertOrderedList')} className="w-7 h-7 rounded hover:bg-gray-200 text-gray-600 inline-flex items-center justify-center transition-colors" title="Numbered List">
+                  <i className="fas fa-list-ol text-xs"></i>
+                </button>
+                <div className="w-px h-5 bg-border mx-1"></div>
+                <button onClick={() => execFormat('removeFormat')} className="w-7 h-7 rounded hover:bg-gray-200 text-steel inline-flex items-center justify-center transition-colors" title="Clear Formatting">
+                  <i className="fas fa-eraser text-xs"></i>
+                </button>
+              </div>
+            )}
+
             {target.editable ? (
-              <textarea
-                ref={inputRef}
-                value={value}
-                onChange={e => setValue(e.target.value)}
-                rows={target.colKey === 'notes' || target.colKey === 'govNotes' || target.colKey === 'shipbuilderNotes' ? 4 : 2}
-                className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent resize-none transition-all"
-                placeholder={`Enter ${target.label.toLowerCase()}…`}
-              />
+              useRichEdit ? (
+                <div
+                  ref={richRef}
+                  contentEditable
+                  className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all min-h-[60px] max-h-[200px] overflow-y-auto"
+                  style={{ whiteSpace: 'pre-wrap' }}
+                  onInput={() => {
+                    if (richRef.current) setValue(richRef.current.innerText)
+                  }}
+                />
+              ) : (
+                <textarea
+                  ref={inputRef}
+                  value={value}
+                  onChange={e => setValue(e.target.value)}
+                  rows={target.colKey === 'notes' || target.colKey === 'govNotes' || target.colKey === 'shipbuilderNotes' ? 4 : 2}
+                  className="w-full px-3 py-2 text-sm text-gray-900 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent resize-none transition-all"
+                  placeholder={`Enter ${target.label.toLowerCase()}…`}
+                />
+              )
             ) : (
               <div className="w-full px-3 py-2 text-sm text-gray-700 bg-gray-50 border border-border rounded-lg min-h-[40px]">
                 {target.value || '—'}
