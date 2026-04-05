@@ -146,28 +146,39 @@ export default function DiffViewer({ rowId, rowTitle, anchors }: Props) {
         {rowTitle && (
           <p className="text-[11px] text-steel mb-2">{rowId} — {rowTitle}</p>
         )}
-        {/* Search */}
-        <div className="relative mb-2">
-          <i className="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-steel/40 text-[10px]"></i>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search changes (field, value, user, row…)"
-            className="w-full pl-7 pr-3 py-1.5 text-[11px] bg-white border border-border rounded-md text-gray-700 focus:outline-none focus:border-accent placeholder:text-steel/40"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-steel/40 hover:text-steel">
-              <i className="fas fa-times text-[9px]"></i>
-            </button>
-          )}
+        {/* Search + Date row */}
+        <div className="flex gap-2 mb-2">
+          <div className="relative flex-1">
+            <i className="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-steel/40 text-[10px]"></i>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search changes…"
+              className="w-full pl-7 pr-7 py-1.5 text-[11px] bg-white border border-border rounded-md text-gray-700 focus:outline-none focus:border-accent placeholder:text-steel/40"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-steel/40 hover:text-steel">
+                <i className="fas fa-times text-[9px]"></i>
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <i className="fas fa-calendar-alt absolute left-2 top-1/2 -translate-y-1/2 text-steel/40 text-[10px] pointer-events-none"></i>
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={e => setDateFilter(e.target.value)}
+              className="pl-6 pr-1 py-1.5 text-[11px] bg-white border border-border rounded-md text-gray-700 focus:outline-none focus:border-accent w-[130px]"
+            />
+          </div>
         </div>
-        {/* Filters */}
-        <div className="flex gap-2">
+        {/* Field + Type filters */}
+        <div className="flex items-center gap-2">
           <select
             value={filterField}
             onChange={e => setFilterField(e.target.value)}
-            className="text-[11px] bg-white border border-border rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:border-accent"
+            className="flex-1 text-[11px] bg-white border border-border rounded-md px-2 py-1.5 text-gray-700 focus:outline-none focus:border-accent"
           >
             <option value="all">All Fields</option>
             {uniqueFields.map(f => <option key={f} value={f}>{f}</option>)}
@@ -175,22 +186,19 @@ export default function DiffViewer({ rowId, rowTitle, anchors }: Props) {
           <select
             value={filterType}
             onChange={e => setFilterType(e.target.value)}
-            className="text-[11px] bg-white border border-border rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:border-accent"
+            className="flex-1 text-[11px] bg-white border border-border rounded-md px-2 py-1.5 text-gray-700 focus:outline-none focus:border-accent"
           >
             <option value="all">All Types</option>
             {uniqueTypes.map(t => (
               <option key={t} value={t}>{TYPE_STYLES[t]?.label || t}</option>
             ))}
           </select>
-          <input
-            type="month"
-            value={dateFilter}
-            onChange={e => setDateFilter(e.target.value)}
-            className="text-[11px] bg-white border border-border rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:border-accent"
-          />
-          {dateFilter && (
-            <button onClick={() => setDateFilter('')} className="text-[10px] text-steel hover:text-accent">
-              <i className="fas fa-times"></i>
+          {(searchQuery || dateFilter || filterField !== 'all' || filterType !== 'all') && (
+            <button
+              onClick={() => { setSearchQuery(''); setDateFilter(''); setFilterField('all'); setFilterType('all') }}
+              className="text-[10px] text-accent hover:text-accent/70 font-medium whitespace-nowrap"
+            >
+              Clear all
             </button>
           )}
         </div>
