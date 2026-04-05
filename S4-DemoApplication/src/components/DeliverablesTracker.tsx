@@ -18,6 +18,8 @@ import DraggableModal from './DraggableModal'
 import CellEditModal from './CellEditModal'
 import DocumentUploadModal from './DocumentUploadModal'
 import DocumentPanel from './DocumentPanel'
+import SpreadsheetImportModal from './SpreadsheetImportModal'
+import type { ImportAuditInfo } from './SpreadsheetImportModal'
 import PresenceBar from './PresenceBar'
 import type { CellEditTarget } from './CellEditModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
@@ -142,6 +144,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [collabUsers, setCollabUsers] = useState<PresenceUser[]>([])
   const [collabToast, setCollabToast] = useState<string | null>(null)
   const collabJoinedRef = useRef(false)
+
+  /* ─── Spreadsheet Import state ──────────────────────────────── */
+  const [showImport, setShowImport] = useState(false)
 
   /* ─── Zoom & Excel-like editing state ────────────────────────── */
   const [zoomLevel, setZoomLevel] = useState(100)
@@ -800,6 +805,13 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <span className="font-medium">Generate Weekly PDF Report{perms.reportRedacted ? ' (Redacted)' : ''}</span>
                   </button>
                   )}
+                  <button
+                    onClick={() => { setShowImport(true); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-file-import text-blue-500 w-4 text-center"></i>
+                    <span className="font-medium">Import Spreadsheet</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -1821,6 +1833,27 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           refreshKey={docRefreshKey}
           onClose={() => setDocPanelRow(null)}
           onUpload={() => { setDocUploadRow(docPanelRow); setDocPanelRow(null) }}
+        />
+      )}
+
+      {/* Spreadsheet Import Modal */}
+      {showImport && (
+        <SpreadsheetImportModal
+          existingData={data}
+          contractId={selectedContract?.id || 'default'}
+          userRole={role}
+          userEmail={user?.email || undefined}
+          userOrg={profile?.organization || undefined}
+          onImport={(newRows, auditInfo) => {
+            const merged = [...data, ...newRows]
+            onDataUpdate(merged)
+            // Auto-seal each imported row
+            for (const row of newRows) {
+              onAnchor(row)
+            }
+            setShowImport(false)
+          }}
+          onClose={() => setShowImport(false)}
         />
       )}
     </div>
