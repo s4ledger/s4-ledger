@@ -19,6 +19,7 @@ import CellEditModal from './CellEditModal'
 import DocumentUploadModal from './DocumentUploadModal'
 import DocumentPanel from './DocumentPanel'
 import SpreadsheetImportModal from './SpreadsheetImportModal'
+import AnomalyDashboard from './AnomalyDashboard'
 import type { ImportAuditInfo } from './SpreadsheetImportModal'
 import PresenceBar from './PresenceBar'
 import type { CellEditTarget } from './CellEditModal'
@@ -147,6 +148,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
   /* ─── Spreadsheet Import state ──────────────────────────────── */
   const [showImport, setShowImport] = useState(false)
+  const [showAnomaly, setShowAnomaly] = useState(false)
 
   /* ─── Zoom & Excel-like editing state ────────────────────────── */
   const [zoomLevel, setZoomLevel] = useState(100)
@@ -812,6 +814,16 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     <i className="fas fa-file-import text-blue-500 w-4 text-center"></i>
                     <span className="font-medium">Import Spreadsheet</span>
                   </button>
+                  {perms.canUseAI && (
+                  <button
+                    onClick={() => { setShowAnomaly(true); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-shield-alt text-red-400 w-4 text-center"></i>
+                    <span className="font-medium">AI Anomaly Detection</span>
+                    {showAnomaly && <span className="ml-auto text-red-500 text-xs font-semibold">OPEN</span>}
+                  </button>
+                  )}
                 </div>
               )}
             </div>
@@ -1855,6 +1867,16 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             setShowImport(false)
           }}
           onClose={() => setShowImport(false)}
+        />
+      )}
+
+      {/* AI Anomaly Detection Dashboard */}
+      {showAnomaly && (
+        <AnomalyDashboard
+          data={hullData}
+          anchors={anchors}
+          editedSinceSeal={editedSinceSeal}
+          onClose={() => setShowAnomaly(false)}
         />
       )}
     </div>
