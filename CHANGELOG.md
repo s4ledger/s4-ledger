@@ -1,5 +1,22 @@
 # Changelog
 
+## [8.0.0] — 2026-04-06
+### S4-DemoApplication — S4 Chat: AI Assistant, Team Messaging & Custom AI Agents
+- **AI Chat tab** — Full-context AI assistant prominent on the tool page. Aware of all deliverables, anchors, and audit data. Suggestion prompts on first load. Powered by `chatWithAI()` with local fallback for overdue items, status summaries, attention-needed analysis, change history, and draft generation.
+- **Team Chat tab** — Microsoft Teams-style channel messaging. 4 default channels (General, Hardware, Software, Documentation). Online users list from collaboration presence. Message priority system: normal, urgent (amber), critical (red) with visual indicators. @mention parsing. 7 pre-populated demo messages from simulated team members.
+- **Custom AI Agents tab** — Agent gallery with 3 built-in agents (Compliance Monitor, Status Briefer, Contract Advisor). Users can create custom agents with name, description, focus area, and custom instructions. Per-agent chat interface with AI integration and specialized fallback responses.
+- **Chat button in header** — New chat icon between Tools dropdown and Notifications bell. Toggles a 380px collapsible right-side panel.
+- **ChatPanel component** (`src/components/ChatPanel.tsx`) — 792-line unified component with 3 tabs (AI, Team, Agents) and sub-components for each.
+- **Chat service** (`src/services/chatService.ts`) — Supabase Realtime broadcast-based team messaging, channel management, agent type definitions, simulated demo messages.
+
+### S4-DemoApplication — Collaboration Simulation Bug Fixes
+- **Fixed race condition** — Supabase presence sync and simulation tick were both calling `setCollabUsers`, overwriting each other. Presence sync now merges simulated users. Component polls `getSimulatedUsers()` every 2s and merges.
+- **Fixed stale closure** — `startCollabSimulation` was called with `realUsers=[]` captured forever. Removed `realUsers` parameter entirely; simulation manages its own `simulatedPresence` array.
+- **Fixed userId mismatch** — `joinCollaboration` generated `"demo-k3f9x2"` but PresenceBar checked `"demo"`. Now uses stable `demoUserIdRef` shared across join and render.
+
+### Commits
+- `b413fe4` S4 Chat: AI assistant, Team messaging, Custom AI Agents + fix collab simulation
+
 ## [7.0.1] — 2026-04-05
 ### S4-DemoApplication — Offline Sync & Collaboration Cleanup
 - **Merged offline sync into existing Sync modal** — Removed separate `OfflineSyncIndicator` from header. Offline queue count, pending changes detail, and last local save time now display inside the existing External Database Sync modal (`Tools → Sync`). One sync system, not two.
