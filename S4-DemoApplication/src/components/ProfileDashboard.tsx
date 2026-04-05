@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function ProfileDashboard({ role, data, anchors, syncStatus, notifications, onClose }: Props) {
-  const { session, profile, signOut, isDemo } = useAuth()
+  const { session, profile, signOut, exitDemo, isDemo } = useAuth()
   const [tab, setTab] = useState<'overview' | 'tasks' | 'history' | 'settings'>('overview')
 
   const verifiedCount = Object.keys(anchors).length
@@ -83,11 +83,19 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-steel text-xs">Name</span>
-                    <p className="font-medium">CAC Authenticated User</p>
+                    <p className="font-medium">{profile?.display_name || (isDemo ? 'Demo User' : 'Authenticated User')}</p>
+                  </div>
+                  <div>
+                    <span className="text-steel text-xs">Email</span>
+                    <p className="font-medium truncate">{profile?.email || (isDemo ? 'demo@s4ledger.com' : '—')}</p>
                   </div>
                   <div>
                     <span className="text-steel text-xs">Role</span>
                     <p className="font-medium">{role}</p>
+                  </div>
+                  <div>
+                    <span className="text-steel text-xs">Organization</span>
+                    <p className="font-medium">{profile?.organization || '—'}</p>
                   </div>
                   <div>
                     <span className="text-steel text-xs">Program</span>
@@ -95,8 +103,14 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
                   </div>
                   <div>
                     <span className="text-steel text-xs">Access Level</span>
-                    <p className="font-medium">FOUO Simulation</p>
+                    <p className="font-medium">{isDemo ? 'Demo Mode' : 'FOUO Simulation'}</p>
                   </div>
+                  {profile?.last_login && (
+                    <div className="col-span-2">
+                      <span className="text-steel text-xs">Last Login</span>
+                      <p className="font-medium">{new Date(profile.last_login).toLocaleString()}</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -284,14 +298,21 @@ export default function ProfileDashboard({ role, data, anchors, syncStatus, noti
                     <span className="font-medium">{role}</span>
                   </div>
                 </div>
-                {session && (
+                {session ? (
                   <button
                     onClick={async () => { await signOut(); onClose() }}
                     className="mt-3 w-full py-2 px-4 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
                   >
                     <i className="fas fa-sign-out-alt"></i>Sign Out
                   </button>
-                )}
+                ) : isDemo ? (
+                  <button
+                    onClick={() => { exitDemo(); onClose() }}
+                    className="mt-3 w-full py-2 px-4 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
+                  >
+                    <i className="fas fa-sign-out-alt"></i>Exit Demo &amp; Sign In
+                  </button>
+                ) : null}
               </div>
             </div>
           )}

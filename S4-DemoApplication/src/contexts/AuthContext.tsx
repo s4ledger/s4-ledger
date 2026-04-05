@@ -32,6 +32,8 @@ interface AuthState {
   signOut: () => Promise<void>
   /** Enter demo mode (skip real auth) */
   enterDemo: () => void
+  /** Exit demo mode (return to login screen) */
+  exitDemo: () => void
   /** Update the user's role/org in their profile */
   updateProfile: (role: UserRole, org: Organization) => Promise<void>
 }
@@ -160,6 +162,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsDemo(true)
   }, [])
 
+  const exitDemo = useCallback(() => {
+    setIsDemo(false)
+    setProfile(null)
+  }, [])
+
   const updateProfile = useCallback(async (role: UserRole, org: Organization) => {
     if (profile) {
       const updated = { ...profile, role, organization: org }
@@ -192,6 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signOut,
       enterDemo,
+      exitDemo,
       updateProfile,
     }}>
       {children}

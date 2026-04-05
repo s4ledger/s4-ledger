@@ -72,7 +72,7 @@ export type UserRole = 'Program Manager' | 'Contracting Officer' | 'Quality Assu
 
 export type Organization = 'Government' | 'Contractor' | 'Shipbuilder'
 
-export type AuthStage = 'cac' | 'welcome' | 'role' | 'tracker'
+export type AuthStage = 'role' | 'tracker'
 
 /* ─── Spreadsheet Column Configuration ────────────────────────
    Each org gets a structurally different spreadsheet with its

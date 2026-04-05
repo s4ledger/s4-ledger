@@ -9,8 +9,6 @@ import { recordChange } from './utils/changeLog'
 import { storeSealed } from './utils/sealedVault'
 import { useAuth } from './contexts/AuthContext'
 import LoginScreen from './components/LoginScreen'
-import CACPopup from './components/CACPopup'
-import WelcomeCard from './components/WelcomeCard'
 import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
 import PortfolioDashboard from './components/PortfolioDashboard'
@@ -42,8 +40,13 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
 
 export default function App() {
   const { session, profile, user, loading: authLoading, isDemo } = useAuth()
-  const [stage, setStage] = useState<AuthStage>('cac')
+  const [stage, setStage] = useState<AuthStage>('role')
   const [role, setRole] = useState<UserRole>('Program Manager')
+
+  // Reset demo stage when entering/exiting demo mode
+  useEffect(() => {
+    if (isDemo) setStage('role')
+  }, [isDemo])
   const [data, setData] = useState<DRLRow[]>(() => {
     const rows = assignContractIds(sampleData)
     // Restore persisted workflow states from localStorage
@@ -196,15 +199,7 @@ export default function App() {
     )
   }
 
-  // ── Demo mode → existing flow ──
-  if (stage === 'cac') {
-    return <CACPopup onAuthenticated={() => setStage('welcome')} />
-  }
-
-  if (stage === 'welcome') {
-    return <WelcomeCard onContinue={() => setStage('role')} />
-  }
-
+  // ── Demo mode → role selection then tracker ──
   if (stage === 'role') {
     return (
       <RoleSelector
