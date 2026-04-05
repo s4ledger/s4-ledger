@@ -104,10 +104,8 @@ export default function WorkflowProgressPopup({
       userEmail,
       org,
       transitionComment.trim(),
+      row.id,
     )
-    // Fill rowId in the last history record
-    const lastRecord = newState.history[newState.history.length - 1]
-    if (lastRecord) lastRecord.rowId = row.id
 
     setWorkflowState(newState)
     setTransitionComment('')
@@ -148,7 +146,7 @@ export default function WorkflowProgressPopup({
           <div className="flex items-center gap-2">
             {isSealed && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold uppercase rounded-md">
-                <i className="fas fa-check-circle text-[9px]"></i> Sealed
+                <i className="fas fa-check-circle text-[9px]"></i> Verified
               </span>
             )}
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-500/10 text-blue-600 text-[10px] font-bold uppercase rounded-md">
@@ -413,7 +411,7 @@ export default function WorkflowProgressPopup({
         <div className="px-6 py-3.5 border-t border-border flex items-center justify-between flex-shrink-0 bg-gray-50/50">
           <p className="text-[10px] text-gray-400">
             <i className="fas fa-shield-alt mr-1"></i>
-            All data sealed to Ledger — immutable trust layer active
+            All data verified to Ledger — immutable trust layer active
           </p>
           <div className="flex items-center gap-2">
             <button

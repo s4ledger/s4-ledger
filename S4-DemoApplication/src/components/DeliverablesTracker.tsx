@@ -44,7 +44,6 @@ interface Props {
   onSyncAnchors?: (newAnchors: Record<string, AnchorRecord>) => void
   selectedContract?: Contract
   onTogglePortfolio?: () => void
-  showPortfolio?: boolean
 }
 
 /* ─── Craft+Hull parser: extracts (Platform — Hull N) from title ─ */
@@ -62,7 +61,7 @@ function parseCraftHull(title: string): { platform: string; hull: string } | nul
   return { platform, hull }
 }
 
-export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors, selectedContract, onTogglePortfolio, showPortfolio }: Props) {
+export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors, selectedContract, onTogglePortfolio }: Props) {
   const { updateProfile, profile, user } = useAuth()
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red' | 'pending'>('all')
@@ -552,9 +551,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               <button
                 onClick={onTogglePortfolio}
                 className="ml-2 px-2.5 py-1.5 text-xs font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors"
-                title={showPortfolio ? 'Hide Portfolio Dashboard' : 'Show Portfolio Dashboard'}
+                title="View Portfolio Dashboard"
               >
-                <i className={`fas fa-${showPortfolio ? 'chevron-up' : 'chart-bar'} mr-1`}></i>
+                <i className="fas fa-chart-bar mr-1"></i>
                 Portfolio
               </button>
             )}

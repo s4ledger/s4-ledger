@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { AuthStage, UserRole, DRLRow, AnchorRecord } from './types'
 import { sampleData } from './data/sampleData'
 import { assignContractIds, getContractById } from './data/portfolioData'
@@ -19,11 +19,37 @@ export default function App() {
   const { session, profile, user, loading: authLoading, isDemo } = useAuth()
   const [stage, setStage] = useState<AuthStage>('cac')
   const [role, setRole] = useState<UserRole>('Program Manager')
-  const [data, setData] = useState<DRLRow[]>(() => assignContractIds(sampleData))
+  const [data, setData] = useState<DRLRow[]>(() => {
+    const rows = assignContractIds(sampleData)
+    // Restore persisted workflow states from localStorage
+    try {
+      const stored = localStorage.getItem('s4_workflow_states')
+      if (stored) {
+        const states: Record<string, unknown> = JSON.parse(stored)
+        return rows.map(r => states[r.id] ? { ...r, workflowState: states[r.id] as DRLRow['workflowState'] } : r)
+      }
+    } catch { /* ignore */ }
+    return rows
+  })
   const [anchors, setAnchors] = useState<Record<string, AnchorRecord>>({})
   const [anchoring, setAnchoring] = useState<Set<string>>(new Set())
   const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
   const [showPortfolio, setShowPortfolio] = useState(false)
+
+  // Persist workflow states to localStorage whenever data changes
+  useEffect(() => {
+    const states: Record<string, unknown> = {}
+    let hasAny = false
+    for (const row of data) {
+      if (row.workflowState) {
+        states[row.id] = row.workflowState
+        hasAny = true
+      }
+    }
+    if (hasAny) {
+      localStorage.setItem('s4_workflow_states', JSON.stringify(states))
+    }
+  }, [data])
 
   // Filter data to selected contract (or show all)
   const filteredData = useMemo(() => {
@@ -132,14 +158,13 @@ export default function App() {
         onReseal={handleReseal}
         onDataUpdate={(updated) => {
           setData(prev => {
-            const updatedIds = new Set(updated.map(r => r.id))
-            return [...prev.filter(r => !updatedIds.has(r.id)), ...updated]
+            const updatedMap = new Map(updated.map(r => [r.id, r]))
+            return prev.map(r => updatedMap.get(r.id) ?? r)
           })
         }}
         onSyncAnchors={(newAnchors) => setAnchors(prev => ({ ...prev, ...newAnchors }))}
         selectedContract={selectedContract ?? undefined}
         onTogglePortfolio={() => setShowPortfolio(true)}
-        showPortfolio={showPortfolio}
       />
     )
   }
@@ -185,14 +210,13 @@ export default function App() {
           onReseal={handleReseal}
           onDataUpdate={(updated) => {
             setData(prev => {
-              const updatedIds = new Set(updated.map(r => r.id))
-              return [...prev.filter(r => !updatedIds.has(r.id)), ...updated]
+              const updatedMap = new Map(updated.map(r => [r.id, r]))
+              return prev.map(r => updatedMap.get(r.id) ?? r)
             })
           }}
           onSyncAnchors={(newAnchors) => setAnchors(prev => ({ ...prev, ...newAnchors }))}
           selectedContract={selectedContract ?? undefined}
           onTogglePortfolio={() => setShowPortfolio(true)}
-          showPortfolio={showPortfolio}
         />
       )}
     </>

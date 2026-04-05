@@ -386,22 +386,37 @@ export function inferWorkflowState(row: DRLRow): WorkflowState {
 
   if (row.status === 'green' && received) {
     stage = 'accepted'
+  } else if (row.status === 'green' && submitted) {
+    stage = 'disposition'  // submitted and green but not marked received yet
+  } else if (row.status === 'red' && reviewed) {
+    stage = 'disposition'  // overdue, reviewed, awaiting final decision
   } else if (row.status === 'red' && submitted) {
-    stage = 'revision_required'
+    stage = 'under_review'  // overdue and submitted — still under review
   } else if (row.status === 'red' && !submitted) {
     stage = 'draft'  // overdue but never submitted
   } else if (row.status === 'yellow' && reviewed) {
     stage = 'disposition'
   } else if (row.status === 'yellow' && submitted) {
     stage = 'under_review'
+  } else if (row.status === 'pending' && submitted) {
+    stage = 'submitted'  // pending = awaiting review start
   } else if (submitted) {
     stage = 'submitted'
+  }
+
+  // Safely parse enteredStageAt — use actualSubmissionDate only if it's a valid date
+  let enteredStageAt = new Date().toISOString()
+  if (submitted) {
+    const parsed = new Date(row.actualSubmissionDate)
+    if (!isNaN(parsed.getTime())) {
+      enteredStageAt = parsed.toISOString()
+    }
   }
 
   return {
     currentStage: stage,
     templateId,
-    enteredStageAt: row.actualSubmissionDate || new Date().toISOString(),
+    enteredStageAt,
     history: [],
   }
 }
@@ -424,10 +439,11 @@ export function executeTransition(
   performedBy: string,
   performedByOrg: Organization,
   comment: string = '',
+  rowId: string = '',
 ): WorkflowState {
   const record: WorkflowTransitionRecord = {
     id: `WFT-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-    rowId: '',  // filled by caller
+    rowId,
     from: transition.from,
     to: transition.to,
     action: transition.action,

@@ -243,6 +243,15 @@ export default function PortfolioDashboard({ allData, onSelectContract, onViewAl
             <i className="fas fa-arrow-left text-xs"></i>
             Back to DRL Tracker
           </button>
+          {selectedContractId && (
+            <button
+              onClick={() => { onViewAll(); onBack() }}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+            >
+              <i className="fas fa-th-list text-xs"></i>
+              View All Deliverables
+            </button>
+          )}
           <div className="h-6 w-px bg-gray-200" />
           <div className="flex items-center gap-3">
             <img src="/s4-assets/S4Ledger_logo.png" alt="S4 Ledger" className="h-8 w-auto" />
