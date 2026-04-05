@@ -1,5 +1,46 @@
 # Changelog
 
+## [6.4.0] — 2026-04-05
+### S4-DemoApplication — Audit & Change History Enhancements
+- **Search + date filters** — Both Audit Trail and Change History tabs now have a search bar + date picker. Search filters across event type, description, field name, values, user, row ID/title. Date picker filters to exact day. "Clear all" / "Clear filters" links reset everything.
+- **DiffViewer detail popup** — Clicking any Change History entry opens a full overlay with: untruncated before/after comparison, S4 Ledger Trust Layer block (tx hash, ledger index, "Verify on Ledger" link), AI Analysis & Recommended Next Actions, and entry metadata (user, role, org, timestamp).
+- **S4 Ledger branding** — Renamed all "XRPL Trust Layer" references to "S4 Ledger Trust Layer", "View on XRPL" → "Verify on Ledger" throughout AuditTrailSidebar.
+- **Search/date UI polish** — Side-by-side search + date layout, calendar icon on date picker, consistent sizing across both tabs.
+
+### Commits
+- `f257d41` Fix search/date filter UI: side-by-side layout, date picker with calendar icon, clear-all button
+- `7b55861` Search + date filters for Audit Trail & Change History, DiffViewer detail popup, S4 Ledger branding
+
+## [6.3.0] — 2026-04-05
+### S4-DemoApplication — Audit Detail Popup + Spreadsheet Import
+- **Audit detail popup** — Click any audit event for a detailed overlay showing S4 Ledger Trust Layer info (tx hash, ledger index, explorer link), before/after comparison for edit events, and AI-generated analysis with recommended next actions.
+- **Enterprise spreadsheet import** — SheetJS-powered import pipeline with column auto-mapping, preview/validation wizard, and auto-seal on import. Accessible from Tools menu.
+- **Commits:** `6f454d2`, `51eda6f`
+
+## [6.2.0] — 2026-04-04
+### S4-DemoApplication — Spreadsheet Editing & Formatting
+- **Zoom controls** — Transform-scale zoom (box stays fixed), restored cell popups on click.
+- **Formatting toolbar** — Bold/Italic/Underline/Align/Lists added to cell editor.
+- **Excel-like editing** — Cell selection, inline edit, keyboard navigation (arrow keys, Tab, Enter), undo support.
+- **Column width normalization** — Min-width on all spreadsheet configs for consistent cell sizes.
+- **Commits:** `a38faaa`, `5b73449`, `b9c80e8`
+
+## [6.1.0] — 2026-04-04
+### S4-DemoApplication — Auth & Collaboration
+- **CAC/PIV sign-in** — Added DoD Common Access Card login option to login screen.
+- **Auth flow fixes** — Removed fake CAC popup, added proper logout/exit demo flows, per-user profile data.
+- **ErrorBoundary** — Defensive try-catch wrapping for real-time collaboration module.
+- **Real-Time Collaboration** (Enhancement #24) — Supabase Realtime Presence + Broadcast channels, role-relative overdue badges (OVERDUE/AWAITING/ACTIVE/PENDING per viewer org), Shipbuilder Representative role.
+- **Commits:** `0a80e27`, `b236a92`, `c131525`, `7e8276b`
+
+## [6.0.0] — 2026-04-04
+### S4-DemoApplication — Workflow Engine & Portfolio Dashboard
+- **Enhancement #23: Configurable Workflow Engine** — Full state machine with WorkflowTemplate, WorkflowState, transitions, SLA tracking. Standard DRL Review (8 stages, revision loop, 30/14/21-day SLAs) and Expedited Review (5 stages, 7-day SLA) templates. Role-gated action buttons, SLA countdown, transition history log.
+- **Enhancement #22: Portfolio Dashboard** — PMS 300 only, full-page view with back button, SVG donut chart (status distribution), horizontal grouped bar chart (deliverable status by contract).
+- **Workflow timeline overhaul** — Simple status icons (check/spinner/circle/X), conditional revision stages, correct display logic.
+- **Bugfix pass** — 8 issues fixed: row reordering, invalid dates in workflow inference, terminology violations, state persistence via localStorage.
+- **Commits:** `c6e9836`, `fba51d3`, `34448a1`, `772f94a`, `a83c9bd`, `9bccc3c`, `9331361`, `48d660e`
+
 ## [5.12.19] — 2026-03-15
 ### Documentation & Developer Experience (Phase 7)
 - **API Reference** — Comprehensive `docs/API_REFERENCE.md` documenting all 105+ endpoints: method, path, request/response, auth, error codes. Organized by category (System, Anchoring, ILS Tools, AI, Email, DRL, etc.). (7.1)
