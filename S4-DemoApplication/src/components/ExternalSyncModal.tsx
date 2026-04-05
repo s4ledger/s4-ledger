@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DraggableModal from './DraggableModal'
 import { SyncStatus } from '../utils/externalSync'
+import { getQueueCount, getQueuedChanges, clearSyncedChanges, type QueuedChange } from '../services/offlineStore'
 
 interface Props {
   syncStatus: SyncStatus
@@ -9,6 +10,7 @@ interface Props {
   onManualSync: () => void | Promise<void>
   onToggleOffline: () => void
   onClose: () => void
+  lastPersist?: string | null
 }
 
 export default function ExternalSyncModal({
@@ -18,8 +20,29 @@ export default function ExternalSyncModal({
   onManualSync,
   onToggleOffline,
   onClose,
+  lastPersist,
 }: Props) {
   const [syncing, setSyncing] = useState(false)
+  const [queueCount, setQueueCount] = useState(0)
+  const [queue, setQueue] = useState<QueuedChange[]>([])
+  const [showQueue, setShowQueue] = useState(false)
+
+  // Poll offline queue count
+  useEffect(() => {
+    const check = async () => {
+      const count = await getQueueCount()
+      setQueueCount(count)
+    }
+    check()
+    const interval = setInterval(check, 3000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Load queue details when expanded
+  useEffect(() => {
+    if (!showQueue) return
+    getQueuedChanges().then(setQueue)
+  }, [showQueue, queueCount])
 
   async function handleManualSync() {
     setSyncing(true)
@@ -60,7 +83,7 @@ export default function ExternalSyncModal({
               </span>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <div>
               <p className="text-[10px] text-steel uppercase">Last Sync</p>
               <p className="text-sm font-semibold text-gray-900">
@@ -74,6 +97,16 @@ export default function ExternalSyncModal({
             <div>
               <p className="text-[10px] text-steel uppercase">Changes Synced</p>
               <p className="text-sm font-semibold text-gray-900">{syncStatus.changesSynced}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-steel uppercase">Queued</p>
+              <p className="text-sm font-semibold text-gray-900">
+                {queueCount > 0 ? (
+                  <button onClick={() => setShowQueue(!showQueue)} className="text-blue-600 hover:underline">{queueCount}</button>
+                ) : (
+                  <span className="text-green-600">0</span>
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -117,6 +150,43 @@ export default function ExternalSyncModal({
             />
           </button>
         </div>
+
+        {/* Offline Queue Details */}
+        {showQueue && queue.length > 0 && (
+          <div className="bg-white border border-border rounded-lg mb-4 overflow-hidden">
+            <div className="px-3 py-2 bg-gray-50 border-b border-border flex items-center justify-between">
+              <span className="text-xs font-semibold text-gray-900">Pending Changes ({queue.length})</span>
+              <button
+                onClick={async () => { await clearSyncedChanges(); const c = await getQueueCount(); setQueueCount(c); setQueue(await getQueuedChanges()) }}
+                className="text-[10px] text-red-500 hover:text-red-700 font-medium"
+              >Clear synced</button>
+            </div>
+            <div className="max-h-40 overflow-y-auto">
+              {queue.map(c => (
+                <div key={c.id} className="px-3 py-2 border-b border-border/50 last:border-0 hover:bg-gray-50">
+                  <div className="flex items-center gap-2">
+                    <i className={`fas fa-${c.synced ? 'check-circle text-green-400' : 'clock text-amber-400'} text-[10px]`}></i>
+                    <span className="text-xs font-medium text-gray-900 truncate flex-1">{c.field}</span>
+                    <span className="text-[10px] text-steel">{new Date(c.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                  <p className="text-[10px] text-steel ml-4 truncate">
+                    &ldquo;{c.oldValue || '\u2014'}&rdquo; &rarr; &ldquo;{c.newValue}&rdquo;
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Local Save Info */}
+        {lastPersist && (
+          <div className="flex items-center gap-2 mb-4 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
+            <i className="fas fa-hdd text-green-500 text-xs"></i>
+            <span className="text-xs text-green-700">
+              Last local save: {new Date(lastPersist).toLocaleTimeString()}
+            </span>
+          </div>
+        )}
 
         {/* Manual Sync Button */}
         <button

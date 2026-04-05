@@ -20,7 +20,6 @@ import DocumentUploadModal from './DocumentUploadModal'
 import DocumentPanel from './DocumentPanel'
 import SpreadsheetImportModal from './SpreadsheetImportModal'
 import AnomalyDashboard from './AnomalyDashboard'
-import OfflineSyncIndicator from './OfflineSyncIndicator'
 import type { ImportAuditInfo } from './SpreadsheetImportModal'
 import PresenceBar from './PresenceBar'
 import type { CellEditTarget } from './CellEditModal'
@@ -40,7 +39,6 @@ import {
   broadcastChange,
   startCollabSimulation,
   stopCollabSimulation,
-  isSimulationRunning,
   type PresenceUser,
   type BroadcastEvent,
 } from '../services/realtimeService'
@@ -442,11 +440,28 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           },
         },
       )
+
+      // Auto-start collaboration simulation in demo mode
+      // (simulates real team members working alongside the user)
+      setTimeout(() => {
+        const rowIds = data.map(r => r.id)
+        if (rowIds.length > 0) {
+          startCollabSimulation(
+            [],
+            rowIds,
+            setCollabUsers,
+            (msg) => { setCollabToast(msg); setTimeout(() => setCollabToast(null), 3000) },
+          )
+        }
+      }, 3000)
     } catch (e) {
       console.warn('Real-time collaboration unavailable:', e)
     }
 
-    return () => { leaveCollaboration().catch(() => {}) }
+    return () => {
+      stopCollabSimulation()
+      leaveCollaboration().catch(() => {})
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ─── Manual Craft Entry (offline fallback) ──────────── */
@@ -746,8 +761,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 <i className="fas fa-lock text-[10px] text-steel/50 ml-0.5"></i>
               </button>
             </div>
-            {/* ─── Offline Sync Indicator ─────────────────────── */}
-            <OfflineSyncIndicator lastPersist={lastPersist} />
             {/* ─── Tools Dropdown ────────────────────────────── */}
             <div className="relative" ref={toolsMenuRef}>
               <button
@@ -845,29 +858,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     {showAnomaly && <span className="ml-auto text-red-500 text-xs font-semibold">OPEN</span>}
                   </button>
                   )}
-                  <div className="border-t border-border my-1"></div>
-                  <button
-                    onClick={() => {
-                      if (isSimulationRunning()) {
-                        stopCollabSimulation()
-                        setCollabUsers(prev => prev.filter(u => !u.userId.startsWith('sim-')))
-                        setCollabToast(null)
-                      } else {
-                        startCollabSimulation(
-                          collabUsers.filter(u => !u.userId.startsWith('sim-')),
-                          hullData.map(r => r.id),
-                          setCollabUsers,
-                          (msg) => { setCollabToast(msg); setTimeout(() => setCollabToast(null), 3000) },
-                        )
-                      }
-                      setShowToolsMenu(false)
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
-                  >
-                    <i className={`fas ${isSimulationRunning() ? 'fa-user-slash' : 'fa-users'} text-cyan-500 w-4 text-center`}></i>
-                    <span className="font-medium">{isSimulationRunning() ? 'Stop Simulation' : 'Simulate Users'}</span>
-                    {isSimulationRunning() && <span className="ml-auto text-cyan-500 text-xs font-semibold">LIVE</span>}
-                  </button>
                 </div>
               )}
             </div>
@@ -1673,6 +1663,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           onManualSync={handleExternalSync}
           onToggleOffline={handleToggleOffline}
           onClose={() => setShowSync(false)}
+          lastPersist={lastPersist}
         />
       )}
 
