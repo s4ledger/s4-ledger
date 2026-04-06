@@ -221,6 +221,41 @@ export function initChatMessages(): ChatMessage[] {
   }))
 }
 
+/** Load persisted chat messages from Supabase for a set of channels */
+export async function loadChatHistory(channelIds: string[]): Promise<ChatMessage[]> {
+  try {
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .in('channel_id', channelIds)
+      .order('created_at', { ascending: true })
+      .limit(500)
+
+    if (error || !data) {
+      console.warn('Failed to load chat history:', error?.message)
+      return []
+    }
+
+    return data.map((row: Record<string, unknown>) => ({
+      id: row.id as string,
+      channelId: row.channel_id as string,
+      senderId: row.sender_id as string,
+      senderName: row.sender_name as string,
+      senderRole: row.sender_role as UserRole,
+      senderOrg: row.sender_org as Organization,
+      text: row.text as string,
+      timestamp: row.created_at as string,
+      priority: (row.priority as ChatMessage['priority']) || 'normal',
+      rowRef: row.row_ref as ChatMessage['rowRef'],
+      mentions: (row.mentions as string[]) || [],
+      readBy: (row.read_by as string[]) || [],
+    }))
+  } catch (e) {
+    console.warn('Failed to load chat history:', e)
+    return []
+  }
+}
+
 export function subscribeToChatMessages(
   _userId: string,
   onMessage: (msg: ChatMessage) => void,
@@ -272,6 +307,7 @@ export async function sendChatMessage(msg: Omit<ChatMessage, 'id' | 'timestamp' 
     readBy: [msg.senderId],
   }
 
+  // Broadcast via Supabase Realtime (instant delivery)
   try {
     if (chatChannel) {
       await chatChannel.send({
@@ -282,6 +318,26 @@ export async function sendChatMessage(msg: Omit<ChatMessage, 'id' | 'timestamp' 
     }
   } catch (e) {
     console.warn('Failed to broadcast chat message:', e)
+  }
+
+  // Persist to Supabase chat_messages table (durable storage)
+  try {
+    await supabase.from('chat_messages').insert({
+      id: fullMsg.id,
+      channel_id: fullMsg.channelId,
+      sender_id: fullMsg.senderId,
+      sender_name: fullMsg.senderName,
+      sender_role: fullMsg.senderRole,
+      sender_org: fullMsg.senderOrg,
+      text: fullMsg.text,
+      priority: fullMsg.priority,
+      mentions: fullMsg.mentions,
+      read_by: fullMsg.readBy,
+      row_ref: fullMsg.rowRef || null,
+      created_at: fullMsg.timestamp,
+    })
+  } catch (e) {
+    console.warn('Failed to persist chat message:', e)
   }
 
   return fullMsg

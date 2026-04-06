@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.3.0] — 2026-04-05
+### S4-DemoApplication — Backend Production Hardening
+- **Environment variable config** — Supabase URL and anon key now read from `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` via `import.meta.env`, with hardcoded fallbacks for zero-config demo mode. Enables staging/production separation and key rotation without code changes.
+- **`.env.example`** — New template file documenting all required environment variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SENTRY_DSN`).
+- **DRL rows Supabase persistence** — New `drl_rows` table (migration `019_drl_rows.sql`) stores all deliverable data in Supabase with full field set (title, DI number, status, dates, notes, workflow state, etc.). RLS policies for authenticated users, demo mode, and service role. New `drlSyncService.ts` provides `syncRowsToSupabase()`, `loadRowsFromSupabase()`, and `flushSyncQueue()`. App.tsx now hydrates from Supabase after IndexedDB (cross-device) and auto-syncs on every data change.
+- **Chat message persistence** — New `chat_messages` table (migration `020_chat_messages.sql`) stores all team and DM messages permanently. `sendChatMessage()` now writes to Supabase after broadcasting. New `loadChatHistory()` function loads persisted messages on component mount, deduplicating with in-memory messages. Chat history now survives page reload and works across devices.
+- **Sentry error tracking** — Added `@sentry/react` with `initSentry()` in `main.tsx`. Captures unhandled errors, React ErrorBoundary crashes (with component stack), performance traces (20% sample), and session replays (10% normal / 100% on error). Activated only when `VITE_SENTRY_DSN` is set. PII stripped from breadcrumb URLs.
+
 ## [8.2.0] — 2026-04-06
 ### S4-DemoApplication — Team Chat: Priority, @Mentions, DMs + PresenceBar Redesign
 - **Priority message toggle** — Exclamation button in Team Chat input now opens a 3-level priority picker (Normal / Urgent / Critical). Selected priority shown as colored indicator above input. Messages sent with chosen priority display appropriate badges (amber for urgent, red for critical) in the message feed.

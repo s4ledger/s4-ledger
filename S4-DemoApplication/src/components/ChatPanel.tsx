@@ -13,6 +13,7 @@ import {
   subscribeToChatMessages,
   sendChatMessage,
   parseMentions,
+  loadChatHistory,
   DEFAULT_CHANNELS,
   DEFAULT_AGENTS,
   TEAM_ROSTER,
@@ -819,6 +820,23 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
     }
     return () => { unsub?.() }
   }, [userId])
+
+  // Load persisted chat history from Supabase on mount
+  useEffect(() => {
+    const channelIds = channels.map(c => c.id)
+    loadChatHistory(channelIds).then(history => {
+      if (history.length > 0) {
+        setAllMessages(prev => {
+          const existingIds = new Set(prev.map(m => m.id))
+          const newMsgs = history.filter(m => !existingIds.has(m.id))
+          if (newMsgs.length === 0) return prev
+          return [...prev, ...newMsgs].sort(
+            (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          )
+        })
+      }
+    }).catch(() => {})
+  }, [channels])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })

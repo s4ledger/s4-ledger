@@ -9,6 +9,8 @@ import { recordChange } from './utils/changeLog'
 import { storeSealed } from './utils/sealedVault'
 import { useAuth } from './contexts/AuthContext'
 import { initOfflineStore, persistRows, persistAnchors, loadPersistedRows, loadPersistedAnchors, setMeta } from './services/offlineStore'
+import { syncRowsToSupabase, loadRowsFromSupabase, flushSyncQueue } from './services/drlSyncService'
+import { Sentry } from './lib/sentry'
 import LoginScreen from './components/LoginScreen'
 import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
@@ -21,7 +23,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
     this.state = { error: null }
   }
   static getDerivedStateFromError(error: Error) { return { error } }
-  componentDidCatch(error: Error, info: ErrorInfo) { console.error('S4 ErrorBoundary:', error, info) }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('S4 ErrorBoundary:', error, info)
+    Sentry.captureException(error, { extra: { componentStack: info.componentStack } })
+  }
   render() {
     if (this.state.error) {
       return (
@@ -65,11 +70,12 @@ export default function App() {
   const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
   const [showPortfolio, setShowPortfolio] = useState(false)
 
-  // ── Offline-First: hydrate from IndexedDB on mount ─────────
+  // ── Offline-First: hydrate from IndexedDB, then Supabase ───
   useEffect(() => {
     (async () => {
       try {
         await initOfflineStore()
+        // 1. Hydrate from IndexedDB (instant, offline-capable)
         const storedRows = await loadPersistedRows()
         if (storedRows && storedRows.length > 0) {
           setData(storedRows)
@@ -78,17 +84,27 @@ export default function App() {
         if (storedAnchors) {
           setAnchors(storedAnchors)
         }
+        // 2. Hydrate from Supabase (cross-device, authoritative)
+        const cloudRows = await loadRowsFromSupabase()
+        if (cloudRows && cloudRows.length > 0) {
+          setData(cloudRows)
+        }
       } catch (e) {
         console.warn('Offline store hydration failed:', e)
       }
     })()
   }, [])
 
-  // ── Offline-First: persist data to IndexedDB on change ─────
+  // ── Offline-First: persist to IndexedDB + async Supabase sync
   useEffect(() => {
     persistRows(data).catch(() => {})
     setMeta('lastPersist', new Date().toISOString()).catch(() => {})
-  }, [data])
+    // Async sync to Supabase (non-blocking)
+    const uid = user?.id || null
+    syncRowsToSupabase(data, uid).then(r => {
+      if (r.ok) flushSyncQueue().catch(() => {})
+    }).catch(() => {})
+  }, [data, user?.id])
 
   useEffect(() => {
     if (Object.keys(anchors).length > 0) {
