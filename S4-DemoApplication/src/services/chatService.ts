@@ -190,21 +190,39 @@ export function subscribeToChatMessages(
   _userId: string,
   onMessage: (msg: ChatMessage) => void,
 ): () => void {
+  // Clean up any existing channel before creating a new one
+  if (chatChannel) {
+    try { supabase.removeChannel(chatChannel) } catch { /* ignore */ }
+    chatChannel = null
+  }
+
   messageCallback = onMessage
 
-  chatChannel = supabase.channel('s4-team-chat')
+  try {
+    chatChannel = supabase.channel('s4-team-chat')
 
-  chatChannel.on('broadcast', { event: 'chat_message' }, ({ payload }) => {
-    if (payload) {
-      messageCallback?.(payload as ChatMessage)
-    }
-  })
+    chatChannel.on('broadcast', { event: 'chat_message' }, ({ payload }) => {
+      if (payload) {
+        messageCallback?.(payload as ChatMessage)
+      }
+    })
 
-  chatChannel.subscribe()
+    chatChannel.subscribe((status, err) => {
+      if (err) {
+        console.warn('S4 Chat subscription error:', err)
+      }
+    })
+  } catch (e) {
+    console.warn('S4 Chat channel setup failed:', e)
+  }
 
+  // Capture channel reference for cleanup closure
+  const channelToClean = chatChannel
   return () => {
-    if (chatChannel) {
-      supabase.removeChannel(chatChannel)
+    if (channelToClean) {
+      try { supabase.removeChannel(channelToClean) } catch { /* ignore */ }
+    }
+    if (chatChannel === channelToClean) {
       chatChannel = null
       messageCallback = null
     }
@@ -219,12 +237,16 @@ export async function sendChatMessage(msg: Omit<ChatMessage, 'id' | 'timestamp' 
     readBy: [msg.senderId],
   }
 
-  if (chatChannel) {
-    await chatChannel.send({
-      type: 'broadcast',
-      event: 'chat_message',
-      payload: fullMsg,
-    })
+  try {
+    if (chatChannel) {
+      await chatChannel.send({
+        type: 'broadcast',
+        event: 'chat_message',
+        payload: fullMsg,
+      })
+    }
+  } catch (e) {
+    console.warn('Failed to broadcast chat message:', e)
   }
 
   return fullMsg

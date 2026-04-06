@@ -149,7 +149,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   /* ─── Real-Time Collaboration state ─────────────────────────── */
   const [collabUsers, setCollabUsers] = useState<PresenceUser[]>([])
   const [collabToast, setCollabToast] = useState<string | null>(null)
-  const collabJoinedRef = useRef(false)
   const demoUserIdRef = useRef(`demo-${Math.random().toString(36).slice(2, 8)}`)
 
   /* ─── Spreadsheet Import state ──────────────────────────────── */
@@ -423,11 +422,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     getMeta<string>('lastPersist').then(v => { if (v) setLastPersist(v) }).catch(() => {})
   }, [])
 
+  /* ─── Keep a ref to latest data for simulation (avoids stale closure) */
+  const dataRef = useRef(data)
+  useEffect(() => { dataRef.current = data }, [data])
+
   /* ─── Real-Time Collaboration lifecycle ─────────────────── */
   useEffect(() => {
-    if (collabJoinedRef.current) return
-    collabJoinedRef.current = true
-
     try {
       const userId = user?.id || demoUserIdRef.current
       const displayName = profile?.display_name || role
@@ -445,16 +445,20 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
         },
       )
 
-      // Auto-start collaboration simulation in demo mode
-      setTimeout(() => {
-        const rowIds = data.map(r => r.id)
+      // Auto-start collaboration simulation in demo mode (retry until data is available)
+      const tryStartSim = () => {
+        const rowIds = dataRef.current.map(r => r.id)
         if (rowIds.length > 0) {
           startCollabSimulation(
             rowIds,
             (msg) => { setCollabToast(msg); setTimeout(() => setCollabToast(null), 3000) },
           )
+        } else {
+          // Data not loaded yet — retry in 1s
+          setTimeout(tryStartSim, 1000)
         }
-      }, 3000)
+      }
+      setTimeout(tryStartSim, 3000)
     } catch (e) {
       console.warn('Real-time collaboration unavailable:', e)
     }

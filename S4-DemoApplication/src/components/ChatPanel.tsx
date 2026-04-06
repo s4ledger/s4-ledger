@@ -23,6 +23,43 @@ import {
 
 type ChatTab = 'ai' | 'team' | 'agents'
 
+interface SavedConversation {
+  id: string
+  title: string
+  messages: AIChatMessage[]
+  pinned: boolean
+  agentId?: string
+  agentName?: string
+  createdAt: string
+  updatedAt: string
+  tokenCount: number
+}
+
+/** Estimate token count from text (rough: ~4 chars per token) */
+function estimateTokens(messages: AIChatMessage[]): number {
+  return Math.ceil(messages.reduce((sum, m) => sum + m.text.length, 0) / 4)
+}
+
+/** Token pricing tiers for AI models */
+const AI_TIERS = [
+  { id: 'standard', name: 'Standard', model: 'GPT-4o mini', inputPer1k: 0.00015, outputPer1k: 0.0006, description: 'Fast answers, status checks, simple queries' },
+  { id: 'advanced', name: 'Advanced', model: 'GPT-4o', inputPer1k: 0.0025, outputPer1k: 0.01, description: 'Complex analysis, drafting documents, compliance review' },
+  { id: 'reasoning', name: 'Reasoning', model: 'o1-pro', inputPer1k: 0.15, outputPer1k: 0.60, description: 'Multi-step reasoning, contract interpretation, risk modeling' },
+] as const
+
+const STORAGE_KEY = 's4-chat-saved-conversations'
+
+function loadSavedConversations(): SavedConversation[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch { return [] }
+}
+
+function persistConversations(convos: SavedConversation[]): void {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(convos)) } catch { /* quota */ }
+}
+
 interface Props {
   data: DRLRow[]
   anchors: Record<string, AnchorRecord>
@@ -46,11 +83,17 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showSaved, setShowSaved] = useState(false)
+  const [showTokens, setShowTokens] = useState(false)
+  const [savedConvos, setSavedConvos] = useState<SavedConversation[]>(() => loadSavedConversations().filter(c => !c.agentId))
+  const [activeConvoId, setActiveConvoId] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
+
+  const tokenCount = useMemo(() => estimateTokens(messages), [messages])
 
   const buildContext = useCallback(() => {
     const green = data.filter(r => r.status === 'green').length
@@ -90,7 +133,6 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
       if (!result.fallback && result.response) {
         setMessages(prev => [...prev, { role: 'ai', text: result.response }])
       } else {
-        // Local fallback — summarize based on query
         const fallback = generateLocalResponse(text, data, aiInsights, anchors)
         setMessages(prev => [...prev, { role: 'ai', text: fallback }])
       }
@@ -101,6 +143,70 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
     }
   }, [input, loading, messages, data, anchors, aiInsights, role, buildContext])
 
+  // Save current conversation
+  const handleSave = useCallback(() => {
+    if (messages.length <= 1) return
+    const firstUserMsg = messages.find(m => m.role === 'user')?.text || 'Untitled'
+    const title = firstUserMsg.length > 50 ? firstUserMsg.slice(0, 50) + '...' : firstUserMsg
+    const now = new Date().toISOString()
+
+    if (activeConvoId) {
+      // Update existing
+      const all = loadSavedConversations()
+      const updated = all.map(c => c.id === activeConvoId ? { ...c, messages, tokenCount: estimateTokens(messages), updatedAt: now } : c)
+      persistConversations(updated)
+      setSavedConvos(updated.filter(c => !c.agentId))
+    } else {
+      // New conversation
+      const convo: SavedConversation = {
+        id: `conv-${Date.now()}`,
+        title,
+        messages,
+        pinned: false,
+        createdAt: now,
+        updatedAt: now,
+        tokenCount: estimateTokens(messages),
+      }
+      const all = loadSavedConversations()
+      all.unshift(convo)
+      persistConversations(all)
+      setSavedConvos(all.filter(c => !c.agentId))
+      setActiveConvoId(convo.id)
+    }
+  }, [messages, activeConvoId])
+
+  // Toggle pin
+  const handlePin = useCallback((convoId: string) => {
+    const all = loadSavedConversations()
+    const updated = all.map(c => c.id === convoId ? { ...c, pinned: !c.pinned } : c)
+    persistConversations(updated)
+    setSavedConvos(updated.filter(c => !c.agentId))
+  }, [])
+
+  // Load a saved conversation
+  const handleLoad = useCallback((convo: SavedConversation) => {
+    setMessages(convo.messages)
+    setActiveConvoId(convo.id)
+    setShowSaved(false)
+  }, [])
+
+  // Delete a saved conversation
+  const handleDelete = useCallback((convoId: string) => {
+    const all = loadSavedConversations().filter(c => c.id !== convoId)
+    persistConversations(all)
+    setSavedConvos(all.filter(c => !c.agentId))
+    if (activeConvoId === convoId) setActiveConvoId(null)
+  }, [activeConvoId])
+
+  // New conversation
+  const handleNew = useCallback(() => {
+    setMessages([
+      { role: 'ai', text: `Hello, ${displayName}. I'm your S4 Ledger AI Assistant. I have full context on all ${data.length} DRL deliverables, seal records, and compliance status.\n\nAsk me about deadlines, risk, status summaries, drafting communications, or anything else.` },
+    ])
+    setActiveConvoId(null)
+    setShowSaved(false)
+  }, [displayName, data.length])
+
   const suggestions = [
     'Show me all overdue deliverables',
     'What changed since last week?',
@@ -108,8 +214,167 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
     'Which items need immediate attention?',
   ]
 
+  // Saved conversations view
+  if (showSaved) {
+    const pinned = savedConvos.filter(c => c.pinned)
+    const unpinned = savedConvos.filter(c => !c.pinned)
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-gray-50/50">
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowSaved(false)} className="text-steel hover:text-gray-900 transition-colors">
+              <i className="fas fa-arrow-left text-xs"></i>
+            </button>
+            <span className="text-xs font-semibold text-gray-900">Saved Conversations</span>
+          </div>
+          <button onClick={handleNew} className="text-[10px] text-accent font-medium hover:underline">+ New Chat</button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+          {savedConvos.length === 0 && (
+            <div className="text-center py-8">
+              <i className="fas fa-bookmark text-gray-300 text-2xl mb-2"></i>
+              <p className="text-xs text-steel">No saved conversations yet</p>
+              <p className="text-[10px] text-steel mt-1">Save a conversation using the bookmark icon</p>
+            </div>
+          )}
+          {pinned.length > 0 && (
+            <>
+              <p className="text-[9px] text-steel font-semibold uppercase tracking-wider px-1 pt-1">Pinned</p>
+              {pinned.map(c => (
+                <div key={c.id} className={`flex items-start gap-2 p-2.5 rounded-lg border transition-all cursor-pointer group ${activeConvoId === c.id ? 'border-accent/30 bg-accent/5' : 'border-border hover:border-accent/20 hover:bg-gray-50'}`}>
+                  <button onClick={() => handlePin(c.id)} className="text-amber-500 mt-0.5 flex-shrink-0"><i className="fas fa-thumbtack text-[10px]"></i></button>
+                  <div className="flex-1 min-w-0" onClick={() => handleLoad(c)}>
+                    <p className="text-xs font-medium text-gray-900 truncate">{c.title}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[9px] text-steel">{new Date(c.updatedAt).toLocaleDateString()}</span>
+                      <span className="text-[9px] text-accent bg-accent/10 px-1 rounded">{c.tokenCount.toLocaleString()} tokens</span>
+                    </div>
+                  </div>
+                  <button onClick={() => handleDelete(c.id)} className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all mt-0.5"><i className="fas fa-trash-alt text-[9px]"></i></button>
+                </div>
+              ))}
+            </>
+          )}
+          {unpinned.length > 0 && (
+            <>
+              {pinned.length > 0 && <p className="text-[9px] text-steel font-semibold uppercase tracking-wider px-1 pt-2">Recent</p>}
+              {unpinned.map(c => (
+                <div key={c.id} className={`flex items-start gap-2 p-2.5 rounded-lg border transition-all cursor-pointer group ${activeConvoId === c.id ? 'border-accent/30 bg-accent/5' : 'border-border hover:border-accent/20 hover:bg-gray-50'}`}>
+                  <button onClick={() => handlePin(c.id)} className="text-gray-300 hover:text-amber-500 mt-0.5 flex-shrink-0"><i className="fas fa-thumbtack text-[10px]"></i></button>
+                  <div className="flex-1 min-w-0" onClick={() => handleLoad(c)}>
+                    <p className="text-xs font-medium text-gray-900 truncate">{c.title}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[9px] text-steel">{new Date(c.updatedAt).toLocaleDateString()}</span>
+                      <span className="text-[9px] text-accent bg-accent/10 px-1 rounded">{c.tokenCount.toLocaleString()} tokens</span>
+                    </div>
+                  </div>
+                  <button onClick={() => handleDelete(c.id)} className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all mt-0.5"><i className="fas fa-trash-alt text-[9px]"></i></button>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // Token usage / pricing view
+  if (showTokens) {
+    const totalSaved = savedConvos.reduce((sum, c) => sum + c.tokenCount, 0)
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-gray-50/50">
+          <button onClick={() => setShowTokens(false)} className="text-steel hover:text-gray-900 transition-colors">
+            <i className="fas fa-arrow-left text-xs"></i>
+          </button>
+          <span className="text-xs font-semibold text-gray-900">Token Usage & Pricing</span>
+        </div>
+        <div className="flex-1 overflow-y-auto p-3 space-y-3">
+          {/* Current session */}
+          <div className="bg-accent/5 border border-accent/15 rounded-lg p-3">
+            <p className="text-[10px] font-semibold text-accent uppercase tracking-wider mb-1">Current Session</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-xl font-bold text-gray-900">{tokenCount.toLocaleString()}</span>
+              <span className="text-[10px] text-steel">tokens</span>
+            </div>
+            <p className="text-[10px] text-steel mt-0.5">{messages.length} messages in this conversation</p>
+          </div>
+
+          {/* Total usage */}
+          <div className="bg-gray-50 border border-border rounded-lg p-3">
+            <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Total Saved</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-xl font-bold text-gray-900">{(totalSaved + tokenCount).toLocaleString()}</span>
+              <span className="text-[10px] text-steel">tokens across {savedConvos.length + 1} conversations</span>
+            </div>
+          </div>
+
+          {/* AI Tiers */}
+          <div>
+            <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2">AI Model Tiers</p>
+            <div className="space-y-2">
+              {AI_TIERS.map(tier => (
+                <div key={tier.id} className="bg-white border border-border rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold text-gray-900">{tier.name}</span>
+                    <span className="text-[9px] text-steel bg-gray-100 px-1.5 py-0.5 rounded">{tier.model}</span>
+                  </div>
+                  <p className="text-[10px] text-steel mb-2">{tier.description}</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-gray-50 rounded-md px-2 py-1.5">
+                      <p className="text-[9px] text-steel">Input</p>
+                      <p className="text-[11px] font-semibold text-gray-900">${tier.inputPer1k}/1K tokens</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-md px-2 py-1.5">
+                      <p className="text-[9px] text-steel">Output</p>
+                      <p className="text-[11px] font-semibold text-gray-900">${tier.outputPer1k}/1K tokens</p>
+                    </div>
+                  </div>
+                  {/* Estimated cost for current session */}
+                  <div className="mt-2 pt-2 border-t border-border flex items-center justify-between">
+                    <span className="text-[9px] text-steel">Est. session cost</span>
+                    <span className="text-[11px] font-semibold text-gray-900">
+                      ${((tokenCount / 1000) * (tier.inputPer1k + tier.outputPer1k) / 2).toFixed(4)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col h-full">
+      {/* Toolbar — save / pin / new / saved / tokens */}
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-gray-50/30">
+        <div className="flex items-center gap-1">
+          <button onClick={handleNew} className="w-7 h-7 flex items-center justify-center text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors" title="New conversation">
+            <i className="fas fa-plus text-[10px]"></i>
+          </button>
+          <button onClick={handleSave} disabled={messages.length <= 1} className="w-7 h-7 flex items-center justify-center text-steel hover:text-accent hover:bg-accent/5 disabled:opacity-30 rounded-md transition-colors" title={activeConvoId ? 'Update saved conversation' : 'Save conversation'}>
+            <i className={`fas ${activeConvoId ? 'fa-save' : 'fa-bookmark'} text-[10px]`}></i>
+          </button>
+          {activeConvoId && (
+            <button onClick={() => handlePin(activeConvoId)} className="w-7 h-7 flex items-center justify-center hover:bg-amber-50 rounded-md transition-colors" title="Pin conversation">
+              <i className={`fas fa-thumbtack text-[10px] ${savedConvos.find(c => c.id === activeConvoId)?.pinned ? 'text-amber-500' : 'text-steel hover:text-amber-500'}`}></i>
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setShowTokens(true)} className="flex items-center gap-1 px-1.5 py-0.5 text-[9px] text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors" title="Token usage & pricing">
+            <i className="fas fa-coins text-[9px]"></i>
+            <span>{tokenCount.toLocaleString()}</span>
+          </button>
+          <button onClick={() => setShowSaved(true)} className="w-7 h-7 flex items-center justify-center text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors relative" title="Saved conversations">
+            <i className="fas fa-history text-[10px]"></i>
+            {savedConvos.length > 0 && <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-accent text-white text-[7px] flex items-center justify-center font-bold">{savedConvos.length}</span>}
+          </button>
+        </div>
+      </div>
+
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
         {messages.map((msg, i) => (
@@ -200,10 +465,15 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
 
   // Subscribe to real-time messages
   useEffect(() => {
-    const unsub = subscribeToChatMessages(userId, (msg) => {
-      setAllMessages(prev => [...prev, msg])
-    })
-    return unsub
+    let unsub: (() => void) | null = null
+    try {
+      unsub = subscribeToChatMessages(userId, (msg) => {
+        setAllMessages(prev => [...prev, msg])
+      })
+    } catch (e) {
+      console.warn('Team chat subscription failed:', e)
+    }
+    return () => { unsub?.() }
   }, [userId])
 
   useEffect(() => {
@@ -220,18 +490,22 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
     if (!text) return
     setInput('')
 
-    const msg = await sendChatMessage({
-      channelId: activeChannel,
-      senderId: userId,
-      senderName: displayName,
-      senderRole: role,
-      senderOrg: org,
-      text,
-      priority: text.includes('⚠️') || text.includes('CRITICAL') ? 'critical' : text.includes('URGENT') ? 'urgent' : 'normal',
-      mentions: [],
-    })
+    try {
+      const msg = await sendChatMessage({
+        channelId: activeChannel,
+        senderId: userId,
+        senderName: displayName,
+        senderRole: role,
+        senderOrg: org,
+        text,
+        priority: text.includes('⚠️') || text.includes('CRITICAL') ? 'critical' : text.includes('URGENT') ? 'urgent' : 'normal',
+        mentions: [],
+      })
 
-    setAllMessages(prev => [...prev, msg])
+      setAllMessages(prev => [...prev, msg])
+    } catch (e) {
+      console.warn('Failed to send message:', e)
+    }
   }, [input, activeChannel, userId, displayName, role, org])
 
   const activeChannelInfo = channels.find(c => c.id === activeChannel)
@@ -458,6 +732,35 @@ function AgentsTab({ data, anchors, aiInsights, role, displayName }: {
     setActiveAgent(agent)
   }, [newAgent, displayName])
 
+  const agentTokenCount = useMemo(() => estimateTokens(currentMessages), [currentMessages])
+
+  // Save agent conversation
+  const handleSaveAgentConvo = useCallback(() => {
+    if (!activeAgent || currentMessages.length <= 1) return
+    const firstUserMsg = currentMessages.find(m => m.role === 'user')?.text || 'Untitled'
+    const title = `${activeAgent.name}: ${firstUserMsg.length > 35 ? firstUserMsg.slice(0, 35) + '...' : firstUserMsg}`
+    const now = new Date().toISOString()
+    const all = loadSavedConversations()
+    const existing = all.find(c => c.agentId === activeAgent.id && c.title === title)
+    if (existing) {
+      const updated = all.map(c => c.id === existing.id ? { ...c, messages: currentMessages, tokenCount: estimateTokens(currentMessages), updatedAt: now } : c)
+      persistConversations(updated)
+    } else {
+      all.unshift({
+        id: `conv-agent-${Date.now()}`,
+        title,
+        messages: currentMessages,
+        pinned: false,
+        agentId: activeAgent.id,
+        agentName: activeAgent.name,
+        createdAt: now,
+        updatedAt: now,
+        tokenCount: estimateTokens(currentMessages),
+      })
+      persistConversations(all)
+    }
+  }, [activeAgent, currentMessages])
+
   // Agent gallery view
   if (!activeAgent) {
     return (
@@ -570,6 +873,12 @@ function AgentsTab({ data, anchors, aiInsights, role, displayName }: {
         <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold text-gray-900 truncate">{activeAgent.name}</p>
           <p className="text-[9px] text-steel truncate">{activeAgent.focusArea}</p>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="text-[9px] text-steel flex items-center gap-0.5"><i className="fas fa-coins text-[8px]"></i>{agentTokenCount.toLocaleString()}</span>
+          <button onClick={handleSaveAgentConvo} disabled={currentMessages.length <= 1} className="w-6 h-6 flex items-center justify-center text-steel hover:text-accent disabled:opacity-30 rounded transition-colors" title="Save conversation">
+            <i className="fas fa-bookmark text-[9px]"></i>
+          </button>
         </div>
       </div>
 
