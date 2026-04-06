@@ -12,11 +12,15 @@ import {
   initChatMessages,
   subscribeToChatMessages,
   sendChatMessage,
+  parseMentions,
   DEFAULT_CHANNELS,
   DEFAULT_AGENTS,
+  TEAM_ROSTER,
+  createDMChannel,
   type ChatMessage,
   type ChatChannel,
   type AIAgent,
+  type TeamMember,
 } from '../services/chatService'
 
 /* ─── Types ─────────────────────────────────────────────── */
@@ -769,12 +773,39 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
 function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
   userId: string; displayName: string; role: UserRole; org: Organization; collabUsers: PresenceUser[]
 }) {
-  const [channels] = useState<ChatChannel[]>(() => DEFAULT_CHANNELS)
+  const [channels, setChannels] = useState<ChatChannel[]>(() => DEFAULT_CHANNELS)
   const [activeChannel, setActiveChannel] = useState('general')
   const [allMessages, setAllMessages] = useState<ChatMessage[]>(() => initChatMessages())
   const [input, setInput] = useState('')
+  const [priority, setPriority] = useState<'normal' | 'urgent' | 'critical'>('normal')
+  const [showPriorityMenu, setShowPriorityMenu] = useState(false)
+  const [showMentions, setShowMentions] = useState(false)
+  const [mentionFilter, setMentionFilter] = useState('')
+  const [mentionCursorStart, setMentionCursorStart] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const [showChannels, setShowChannels] = useState(true)
+  const [showTeamRoster, setShowTeamRoster] = useState(false)
+
+  // Build roster with online status from collabUsers
+  const teamRoster: (TeamMember & { isOnline: boolean })[] = useMemo(() => {
+    const onlineIds = new Set(collabUsers.map(u => u.userId))
+    const onlineNames = new Set(collabUsers.map(u => u.displayName))
+    return TEAM_ROSTER.map(m => ({
+      ...m,
+      isOnline: onlineIds.has(m.userId) || onlineNames.has(m.displayName),
+    }))
+  }, [collabUsers])
+
+  // Mentionable users = roster + current online collab users not in roster
+  const mentionableUsers = useMemo(() => {
+    const rosterIds = new Set(TEAM_ROSTER.map(m => m.userId))
+    const extra = collabUsers
+      .filter(u => u.userId !== userId && !rosterIds.has(u.userId))
+      .map(u => ({ userId: u.userId, displayName: u.displayName }))
+    const base = TEAM_ROSTER.map(m => ({ userId: m.userId, displayName: m.displayName }))
+    return [...base, ...extra]
+  }, [collabUsers, userId])
 
   // Subscribe to real-time messages
   useEffect(() => {
@@ -798,10 +829,52 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
     [allMessages, activeChannel],
   )
 
+  const activeChannelInfo = channels.find(c => c.id === activeChannel)
+  const isDM = activeChannelInfo?.type === 'direct'
+
+  // @ mention detection in input
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setInput(val)
+    // Detect @ trigger
+    const cursorPos = e.target.selectionStart || val.length
+    const textBefore = val.slice(0, cursorPos)
+    const atIdx = textBefore.lastIndexOf('@')
+    if (atIdx >= 0 && (atIdx === 0 || textBefore[atIdx - 1] === ' ')) {
+      const partial = textBefore.slice(atIdx + 1)
+      if (!partial.includes(' ') || partial.length < 20) {
+        setMentionFilter(partial.toLowerCase())
+        setMentionCursorStart(atIdx)
+        setShowMentions(true)
+        return
+      }
+    }
+    setShowMentions(false)
+  }, [])
+
+  const filteredMentions = useMemo(() => {
+    if (!showMentions) return []
+    return mentionableUsers.filter(u =>
+      u.displayName.toLowerCase().includes(mentionFilter)
+    ).slice(0, 6)
+  }, [showMentions, mentionFilter, mentionableUsers])
+
+  const insertMention = useCallback((user: { userId: string; displayName: string }) => {
+    const before = input.slice(0, mentionCursorStart)
+    const after = input.slice((inputRef.current?.selectionStart || input.length))
+    setInput(`${before}@${user.displayName} ${after}`)
+    setShowMentions(false)
+    inputRef.current?.focus()
+  }, [input, mentionCursorStart])
+
   const handleSend = useCallback(async () => {
     const text = input.trim()
     if (!text) return
     setInput('')
+    setPriority('normal')
+    setShowMentions(false)
+
+    const mentions = parseMentions(text, mentionableUsers)
 
     try {
       const msg = await sendChatMessage({
@@ -811,38 +884,130 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
         senderRole: role,
         senderOrg: org,
         text,
-        priority: text.includes('\u26A0\uFE0F') || text.includes('CRITICAL') ? 'critical' : text.includes('URGENT') ? 'urgent' : 'normal',
-        mentions: [],
+        priority,
+        mentions,
       })
 
       setAllMessages(prev => [...prev, msg])
     } catch (e) {
       console.warn('Failed to send message:', e)
     }
-  }, [input, activeChannel, userId, displayName, role, org])
+  }, [input, activeChannel, userId, displayName, role, org, priority, mentionableUsers])
 
-  const activeChannelInfo = channels.find(c => c.id === activeChannel)
+  // Open DM with a team member
+  const openDM = useCallback((member: TeamMember) => {
+    const dmChannel = createDMChannel(userId, displayName, member.userId, member.displayName)
+    // Add channel if not already present
+    setChannels(prev => {
+      if (prev.find(c => c.id === dmChannel.id)) return prev
+      return [...prev, dmChannel]
+    })
+    setActiveChannel(dmChannel.id)
+    setShowTeamRoster(false)
+    setShowChannels(false)
+  }, [userId, displayName])
 
-  const getOrgColor = (o: Organization) => o === 'Government' ? 'text-blue-600' : o === 'Contractor' ? 'text-amber-600' : 'text-emerald-600'
+  const getOrgColor = (o: Organization | string) => o === 'Government' ? 'text-blue-600' : o === 'Contractor' ? 'text-amber-600' : 'text-emerald-600'
+
+  const priorityConfig = {
+    normal: { icon: 'fa-minus-circle', color: 'text-steel', label: 'Normal' },
+    urgent: { icon: 'fa-bolt', color: 'text-amber-500', label: 'Urgent' },
+    critical: { icon: 'fa-exclamation-circle', color: 'text-red-500', label: 'Critical' },
+  }
+
+  // ─── Team Roster View ───
+  if (showTeamRoster) {
+    const online = teamRoster.filter(m => m.isOnline)
+    const offline = teamRoster.filter(m => !m.isOnline)
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-gray-50/50">
+          <button onClick={() => setShowTeamRoster(false)} className="text-steel hover:text-gray-900 transition-colors">
+            <i className="fas fa-arrow-left text-xs"></i>
+          </button>
+          <span className="text-xs font-semibold text-gray-900">Team Directory</span>
+          <span className="text-[9px] text-steel ml-auto">{teamRoster.length} members</span>
+        </div>
+        <div className="flex-1 overflow-y-auto p-3 space-y-1">
+          {online.length > 0 && (
+            <>
+              <p className="text-[9px] text-steel font-semibold uppercase tracking-wider px-1 pt-1">Online ({online.length})</p>
+              {online.map(m => (
+                <button
+                  key={m.userId}
+                  onClick={() => openDM(m)}
+                  className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-gray-50 transition-colors group text-left"
+                >
+                  <div className="relative flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-accent/15 flex items-center justify-center text-[11px] font-bold text-accent">
+                      {m.displayName.charAt(0)}
+                    </div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-white"></div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-900 truncate">{m.displayName}</p>
+                    <p className="text-[10px] text-steel truncate">{m.role} &middot; {m.org}</p>
+                  </div>
+                  <i className="fas fa-comment text-accent text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </button>
+              ))}
+            </>
+          )}
+          {offline.length > 0 && (
+            <>
+              <p className="text-[9px] text-steel font-semibold uppercase tracking-wider px-1 pt-2">Offline ({offline.length})</p>
+              {offline.map(m => (
+                <button
+                  key={m.userId}
+                  onClick={() => openDM(m)}
+                  className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-gray-50 transition-colors group text-left"
+                >
+                  <div className="relative flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-[11px] font-bold text-gray-500">
+                      {m.displayName.charAt(0)}
+                    </div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-gray-400 border-2 border-white"></div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-600 truncate">{m.displayName}</p>
+                    <p className="text-[10px] text-steel truncate">{m.role} &middot; {m.org}</p>
+                  </div>
+                  <i className="fas fa-comment text-steel text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </button>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col h-full">
       {/* Channel selector / header */}
       <div className="border-b border-border">
-        <button
-          onClick={() => setShowChannels(!showChannels)}
-          className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 transition-colors"
-        >
-          <div className="flex items-center gap-2">
-            <i className={`fas ${activeChannelInfo?.type === 'craft' ? 'fa-ship' : 'fa-hashtag'} text-steel text-xs`}></i>
+        <div className="flex items-center justify-between px-3 py-2">
+          <button
+            onClick={() => setShowChannels(!showChannels)}
+            className="flex items-center gap-2 hover:bg-gray-50 px-1 py-0.5 rounded transition-colors"
+          >
+            <i className={`fas ${isDM ? 'fa-user' : activeChannelInfo?.type === 'craft' ? 'fa-ship' : 'fa-hashtag'} text-steel text-xs`}></i>
             <span className="text-sm font-semibold text-gray-900">{activeChannelInfo?.name || 'General'}</span>
-          </div>
-          <i className={`fas fa-chevron-${showChannels ? 'up' : 'down'} text-steel text-[10px]`}></i>
-        </button>
+            <i className={`fas fa-chevron-${showChannels ? 'up' : 'down'} text-steel text-[10px]`}></i>
+          </button>
+          <button
+            onClick={() => setShowTeamRoster(true)}
+            className="w-7 h-7 flex items-center justify-center text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            title="Team directory / Direct message"
+          >
+            <i className="fas fa-user-plus text-[10px]"></i>
+          </button>
+        </div>
 
         {showChannels && (
-          <div className="px-2 pb-2 space-y-0.5 max-h-40 overflow-y-auto">
-            {channels.map(ch => {
+          <div className="px-2 pb-2 space-y-0.5 max-h-52 overflow-y-auto">
+            <p className="text-[9px] text-steel font-semibold uppercase tracking-wider px-2.5 mb-0.5">Channels</p>
+            {channels.filter(c => c.type !== 'direct').map(ch => {
               const unread = allMessages.filter(m => m.channelId === ch.id && !m.readBy.includes(userId)).length
               return (
                 <button
@@ -860,10 +1025,48 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
                 </button>
               )
             })}
-            {/* Online users */}
+
+            {/* DM channels */}
+            {channels.filter(c => c.type === 'direct').length > 0 && (
+              <>
+                <p className="text-[9px] text-steel font-semibold uppercase tracking-wider px-2.5 mt-2 mb-0.5">Direct Messages</p>
+                {channels.filter(c => c.type === 'direct').map(ch => {
+                  const unread = allMessages.filter(m => m.channelId === ch.id && !m.readBy.includes(userId)).length
+                  const isOnline = teamRoster.find(m => ch.participants?.includes(m.userId))?.isOnline
+                  return (
+                    <button
+                      key={ch.id}
+                      onClick={() => { setActiveChannel(ch.id); setShowChannels(false) }}
+                      className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors ${
+                        activeChannel === ch.id ? 'bg-accent/10 text-accent font-semibold' : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="relative">
+                        <i className="fas fa-user text-[10px]"></i>
+                        <div className={`absolute -bottom-0.5 -right-1 w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                      </div>
+                      <span className="flex-1 text-left truncate">{ch.name}</span>
+                      {unread > 0 && (
+                        <span className="w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-bold">{unread}</span>
+                      )}
+                    </button>
+                  )
+                })}
+              </>
+            )}
+
+            {/* Online presence summary */}
             <div className="pt-2 mt-1 border-t border-border">
-              <p className="text-[9px] text-steel font-semibold uppercase tracking-wider px-2.5 mb-1">Online ({collabUsers.length})</p>
-              {collabUsers.slice(0, 8).map(u => (
+              <div className="flex items-center justify-between px-2.5 mb-1">
+                <p className="text-[9px] text-steel font-semibold uppercase tracking-wider">Online ({collabUsers.filter(u => u.userId !== userId).length})</p>
+                <button
+                  onClick={() => { setShowTeamRoster(true); setShowChannels(false) }}
+                  className="text-[9px] text-accent hover:underline"
+                >
+                  View all
+                </button>
+              </div>
+              {collabUsers.filter(u => u.userId !== userId).slice(0, 5).map(u => (
                 <div key={u.userId} className="flex items-center gap-2 px-2.5 py-1">
                   <div className="w-4 h-4 rounded-full flex items-center justify-center text-[7px] font-bold text-white" style={{ backgroundColor: u.color }}>
                     {u.displayName.charAt(0)}
@@ -881,15 +1084,17 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
         {channelMessages.length === 0 && (
           <div className="text-center py-8">
-            <i className="fas fa-comments text-gray-300 text-2xl mb-2"></i>
-            <p className="text-xs text-steel">No messages in this channel yet</p>
+            <i className={`fas ${isDM ? 'fa-user' : 'fa-comments'} text-gray-300 text-2xl mb-2`}></i>
+            <p className="text-xs text-steel">
+              {isDM ? `Start a conversation with ${activeChannelInfo?.name}` : 'No messages in this channel yet'}
+            </p>
           </div>
         )}
         {channelMessages.map((msg) => {
           const isMe = msg.senderId === userId
           return (
             <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%]`}>
+              <div className="max-w-[85%]">
                 {!isMe && (
                   <div className="flex items-center gap-1.5 mb-0.5 px-1">
                     <span className={`text-[10px] font-semibold ${getOrgColor(msg.senderOrg)}`}>{msg.senderName}</span>
@@ -918,7 +1123,7 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
                       <span className="text-[10px] font-bold text-amber-600 uppercase">Urgent</span>
                     </div>
                   )}
-                  <div className="whitespace-pre-wrap">{msg.text}</div>
+                  <div className="whitespace-pre-wrap">{renderMessageText(msg.text, msg.mentions)}</div>
                 </div>
                 <div className={`text-[9px] text-steel mt-0.5 ${isMe ? 'text-right' : ''} px-1`}>
                   {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -929,17 +1134,80 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
         })}
       </div>
 
-      {/* Input */}
+      {/* Input area */}
       <div className="border-t border-border p-3">
+        {/* Priority indicator */}
+        {priority !== 'normal' && (
+          <div className={`flex items-center gap-1.5 px-2 py-1 mb-2 rounded-md text-[10px] font-medium ${
+            priority === 'critical' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
+          }`}>
+            <i className={`fas ${priorityConfig[priority].icon} text-[9px]`}></i>
+            <span>{priorityConfig[priority].label} priority</span>
+            <button onClick={() => setPriority('normal')} className="ml-auto text-[9px] opacity-60 hover:opacity-100">
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+        )}
+
+        {/* @mention autocomplete dropdown */}
+        {showMentions && filteredMentions.length > 0 && (
+          <div className="mb-2 bg-white border border-border rounded-lg shadow-lg py-1 max-h-36 overflow-y-auto">
+            {filteredMentions.map(u => {
+              const isOnline = teamRoster.find(m => m.userId === u.userId)?.isOnline
+              return (
+                <button
+                  key={u.userId}
+                  onClick={() => insertMention(u)}
+                  className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 transition-colors text-left"
+                >
+                  <div className="w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center text-[8px] font-bold text-accent">
+                    {u.displayName.charAt(0)}
+                  </div>
+                  <span className="text-xs text-gray-900 font-medium">{u.displayName}</span>
+                  <div className={`w-1.5 h-1.5 rounded-full ml-auto ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                </button>
+              )
+            })}
+          </div>
+        )}
+
         <div className="flex items-center gap-2">
-          <button className="w-8 h-8 flex items-center justify-center text-steel hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors" title="Priority message">
-            <i className="fas fa-exclamation-circle text-xs"></i>
-          </button>
+          {/* Priority toggle */}
+          <div className="relative">
+            <button
+              onClick={() => setShowPriorityMenu(!showPriorityMenu)}
+              className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors ${
+                priority !== 'normal'
+                  ? priority === 'critical' ? 'bg-red-50 text-red-500 border border-red-200' : 'bg-amber-50 text-amber-500 border border-amber-200'
+                  : 'text-steel hover:text-gray-900 hover:bg-gray-100'
+              }`}
+              title="Set message priority"
+            >
+              <i className={`fas ${priorityConfig[priority].icon} text-xs`}></i>
+            </button>
+            {showPriorityMenu && (
+              <div className="absolute bottom-full left-0 mb-1 w-36 bg-white border border-border rounded-lg shadow-xl py-1 z-50">
+                <button onClick={() => { setPriority('normal'); setShowPriorityMenu(false) }} className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-gray-50 ${priority === 'normal' ? 'text-accent font-semibold' : 'text-gray-700'}`}>
+                  <i className="fas fa-minus-circle text-steel text-[10px]"></i> Normal
+                </button>
+                <button onClick={() => { setPriority('urgent'); setShowPriorityMenu(false) }} className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-gray-50 ${priority === 'urgent' ? 'text-accent font-semibold' : 'text-gray-700'}`}>
+                  <i className="fas fa-bolt text-amber-500 text-[10px]"></i> Urgent
+                </button>
+                <button onClick={() => { setPriority('critical'); setShowPriorityMenu(false) }} className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-gray-50 ${priority === 'critical' ? 'text-accent font-semibold' : 'text-gray-700'}`}>
+                  <i className="fas fa-exclamation-circle text-red-500 text-[10px]"></i> Critical
+                </button>
+              </div>
+            )}
+          </div>
           <input
+            ref={inputRef}
             value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-            placeholder={`Message #${activeChannelInfo?.name || 'General'}...`}
+            onChange={handleInputChange}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() }
+              if (e.key === 'Escape') { setShowMentions(false); setShowPriorityMenu(false) }
+            }}
+            placeholder={isDM ? `Message ${activeChannelInfo?.name}...` : `Message #${activeChannelInfo?.name || 'General'}... (type @ to mention)`}
             className="flex-1 text-sm bg-gray-50 border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
           />
           <button
@@ -953,6 +1221,19 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
       </div>
     </div>
   )
+}
+
+/** Render message text with @mention highlighting */
+function renderMessageText(text: string, mentions: string[]) {
+  if (!text.includes('@')) return text
+  // Split on @mentions and highlight them
+  const parts = text.split(/(@\S+(?:\s\S+)?)/g)
+  return parts.map((part, i) => {
+    if (part.startsWith('@')) {
+      return <span key={i} className="text-accent font-semibold bg-accent/10 px-0.5 rounded">{part}</span>
+    }
+    return part
+  })
 }
 
 /* ─── Main ChatPanel Component ──────────────────────────── */

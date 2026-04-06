@@ -774,10 +774,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 Portfolio
               </button>
             )}
-            {/* Real-Time Presence */}
-            <div className="ml-3">
-              <PresenceBar users={collabUsers} currentUserId={user?.id || demoUserIdRef.current} />
-            </div>
           </div>
           <div className="flex items-center gap-2">
             {/* ─── Permissions & Org Button ───────────────────── */}
@@ -934,6 +930,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           </div>
         </div>
       </header>
+
+      {/* Real-Time Presence Bar */}
+      <PresenceBar users={collabUsers} currentUserId={user?.id || demoUserIdRef.current} />
 
       {/* Platform/Craft Filter Bar */}
       <div className="bg-surface border-b border-border">

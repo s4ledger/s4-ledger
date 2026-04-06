@@ -1,5 +1,14 @@
 # Changelog
 
+## [8.2.0] — 2026-04-06
+### S4-DemoApplication — Team Chat: Priority, @Mentions, DMs + PresenceBar Redesign
+- **Priority message toggle** — Exclamation button in Team Chat input now opens a 3-level priority picker (Normal / Urgent / Critical). Selected priority shown as colored indicator above input. Messages sent with chosen priority display appropriate badges (amber for urgent, red for critical) in the message feed.
+- **@mention autocomplete** — Typing `@` in the message input triggers a dropdown of matching team members from the roster and online collaborators. Selecting a user inserts `@DisplayName` into the message. Mentions are parsed before sending and highlighted in blue in rendered messages.
+- **Direct Messages (DM)** — New "Team Directory" view accessible via user-plus button in channel header. Shows all 8 team members split by Online/Offline status. Click any member (online or offline) to open a DM channel. DM channels appear in a "Direct Messages" section of the channel selector with online status indicators.
+- **Team Roster** (`chatService.ts`) — Added `TEAM_ROSTER` array with 8 pre-configured team members (CDR J. Martinez, Lisa Chen, Mike Torres, Sarah Kim, Rob Jenkins, R. Patel, T. Nguyen, J. Davis) with roles and organizations. `createDMChannel()` generates deterministic DM channel IDs from sorted participant user IDs.
+- **PresenceBar redesign** — Moved PresenceBar from inside the header flex layout (where it was causing overflow/cutoff on hover) to its own collapsible status bar between the header and filter bar. Collapsed view shows avatar circles + count + "Live" badge. Expanded view shows a responsive grid of user cards with name, role, and current activity.
+- **Message rendering** — @mentions highlighted with accent color and background. Messages show priority badges for urgent/critical. Empty DM channels show personalized "Start a conversation with..." prompt.
+
 ## [8.1.0] — 2026-04-06
 ### S4-DemoApplication — Unified AI Chat + Model Picker + Simulation Fix
 - **Merged Agents into AI tab** — Removed standalone Agents tab. Agent selection is now integrated directly into the AI chat tab via "Choose AI Mode" picker. Users can switch between General AI and specialized agents (Compliance Monitor, Status Briefer, Contract Advisor, or custom agents) without leaving the conversation view.

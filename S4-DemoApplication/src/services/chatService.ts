@@ -61,6 +61,41 @@ export const DEFAULT_CHANNELS: ChatChannel[] = [
   { id: 'craft-harbor-tug', name: 'Harbor Tug YTB', type: 'craft', craftLabel: 'Harbor Tug YTB', unreadCount: 0 },
 ]
 
+/* ─── Team Roster (all known users — online + offline) ──── */
+
+export interface TeamMember {
+  userId: string
+  displayName: string
+  role: UserRole
+  org: Organization
+  /** Static status for demo roster — real status comes from presence */
+  online: boolean
+}
+
+export const TEAM_ROSTER: TeamMember[] = [
+  { userId: 'sim-cdr-martinez', displayName: 'CDR J. Martinez', role: 'Program Manager', org: 'Government', online: false },
+  { userId: 'sim-lisa-chen', displayName: 'Lisa Chen', role: 'Contracting Officer', org: 'Government', online: false },
+  { userId: 'sim-mike-torres', displayName: 'Mike Torres', role: 'Quality Assurance', org: 'Contractor', online: false },
+  { userId: 'sim-sarah-kim', displayName: 'Sarah Kim', role: 'Logistics Specialist', org: 'Government', online: false },
+  { userId: 'sim-rob-jenkins', displayName: 'Rob Jenkins', role: 'Shipbuilder Representative', org: 'Shipbuilder', online: false },
+  { userId: 'sim-patel', displayName: 'R. Patel', role: 'Quality Assurance', org: 'Government', online: false },
+  { userId: 'sim-nguyen', displayName: 'T. Nguyen', role: 'Logistics Specialist', org: 'Contractor', online: false },
+  { userId: 'sim-davis', displayName: 'J. Davis', role: 'Program Manager', org: 'Government', online: false },
+]
+
+/** Create a DM channel for two participants */
+export function createDMChannel(myUserId: string, myName: string, targetUserId: string, targetName: string): ChatChannel {
+  const participants = [myUserId, targetUserId].sort()
+  const id = `dm-${participants.join('-')}`
+  return {
+    id,
+    name: targetName,
+    type: 'direct',
+    participants,
+    unreadCount: 0,
+  }
+}
+
 /* ─── Default AI Agents ─────────────────────────────────────── */
 
 export const DEFAULT_AGENTS: AIAgent[] = [

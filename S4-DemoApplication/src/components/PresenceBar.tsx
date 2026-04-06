@@ -1,7 +1,7 @@
 /**
- * PresenceBar — Shows who's online in the Deliverables Tracker
- * Displays avatar circles with tooltips for each connected user.
- * Editing indicators shown per-row.
+ * PresenceBar — Collaboration presence indicator
+ * Shows as a slim status bar below the main header.
+ * Expandable to show full user list with roles/activity.
  */
 
 import { useState } from 'react'
@@ -15,71 +15,92 @@ interface Props {
 export default function PresenceBar({ users, currentUserId }: Props) {
   const [expanded, setExpanded] = useState(false)
 
-  // Exclude current user from the display
   const otherUsers = users.filter(u => u.userId !== currentUserId)
   if (otherUsers.length === 0) return null
 
-  const displayUsers = expanded ? otherUsers : otherUsers.slice(0, 5)
-  const overflow = otherUsers.length - 5
+  const editing = otherUsers.filter(u => u.editingCell)
 
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mr-1">Online</span>
-      <div className="flex items-center -space-x-1.5">
-        {displayUsers.map(u => (
-          <div
-            key={u.userId}
-            className="relative group"
-          >
-            {/* Avatar circle */}
-            <div
-              className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white cursor-default shadow-sm"
-              style={{ backgroundColor: u.color }}
-              title={`${u.displayName} (${u.organization})`}
-            >
-              {u.displayName.charAt(0).toUpperCase()}
-            </div>
-            {/* Editing indicator */}
-            {u.editingCell && (
-              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-amber-400 border border-white rounded-full flex items-center justify-center">
-                <i className="fas fa-pen text-[5px] text-white"></i>
+    <div className="bg-white border-b border-border">
+      {/* Collapsed bar */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between px-6 py-1.5 hover:bg-gray-50/50 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+            <span className="text-[10px] text-green-700 font-semibold uppercase tracking-wider">Live</span>
+          </div>
+          <div className="flex items-center -space-x-1.5">
+            {otherUsers.slice(0, 8).map(u => (
+              <div
+                key={u.userId}
+                className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-[9px] font-bold text-white shadow-sm"
+                style={{ backgroundColor: u.color }}
+                title={`${u.displayName} (${u.organization})`}
+              >
+                {u.displayName.charAt(0).toUpperCase()}
+              </div>
+            ))}
+            {otherUsers.length > 8 && (
+              <div className="w-6 h-6 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center text-[9px] font-bold text-gray-600 shadow-sm">
+                +{otherUsers.length - 8}
               </div>
             )}
-            {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-gray-900 text-white text-[10px] rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-              <p className="font-semibold">{u.displayName}</p>
-              <p className="text-gray-300">{u.role} · {u.organization}</p>
-              {u.editingCell && (
-                <p className="text-amber-300 mt-0.5">
-                  <i className="fas fa-pen text-[8px] mr-0.5"></i>
-                  Editing {u.editingCell.field}
-                </p>
-              )}
-              {u.focusedRowId && !u.editingCell && (
-                <p className="text-blue-300 mt-0.5">
-                  <i className="fas fa-eye text-[8px] mr-0.5"></i>
-                  Viewing {u.focusedRowId}
-                </p>
-              )}
-              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-0.5 border-4 border-transparent border-t-gray-900"></div>
-            </div>
           </div>
-        ))}
-        {!expanded && overflow > 0 && (
-          <button
-            onClick={() => setExpanded(true)}
-            className="w-7 h-7 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center text-[10px] font-bold text-gray-600 hover:bg-gray-400 transition-colors shadow-sm"
-            title={`${overflow} more user${overflow !== 1 ? 's' : ''}`}
-          >
-            +{overflow}
-          </button>
-        )}
-      </div>
-      {/* Green "Live" indicator */}
-      <div className="flex items-center gap-1 ml-1">
-        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-        <span className="text-[10px] text-green-600 font-medium">Live</span>
-      </div>
+          <span className="text-[11px] text-steel">
+            {otherUsers.length} team member{otherUsers.length !== 1 ? 's' : ''} online
+            {editing.length > 0 && (
+              <span className="text-amber-600 ml-1.5">
+                &middot; {editing.length} editing
+              </span>
+            )}
+          </span>
+        </div>
+        <i className={`fas fa-chevron-${expanded ? 'up' : 'down'} text-[9px] text-steel`}></i>
+      </button>
+
+      {/* Expanded user list */}
+      {expanded && (
+        <div className="px-6 pb-3 pt-1 max-h-48 overflow-y-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+            {otherUsers.map(u => (
+              <div
+                key={u.userId}
+                className="flex items-center gap-2 px-2.5 py-1.5 bg-gray-50 rounded-lg border border-border/50"
+              >
+                <div className="relative flex-shrink-0">
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                    style={{ backgroundColor: u.color }}
+                  >
+                    {u.displayName.charAt(0).toUpperCase()}
+                  </div>
+                  {u.editingCell && (
+                    <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-amber-400 border border-white rounded-full flex items-center justify-center">
+                      <i className="fas fa-pen text-[5px] text-white"></i>
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold text-gray-900 truncate">{u.displayName}</p>
+                  <p className="text-[9px] text-steel truncate">
+                    {u.editingCell ? (
+                      <span className="text-amber-600">Editing {u.editingCell.field}</span>
+                    ) : u.focusedRowId ? (
+                      <span className="text-blue-600">Viewing {u.focusedRowId}</span>
+                    ) : (
+                      <span>{u.role} &middot; {u.organization}</span>
+                    )}
+                  </p>
+                </div>
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
