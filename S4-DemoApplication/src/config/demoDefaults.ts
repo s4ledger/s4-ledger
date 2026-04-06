@@ -1,16 +1,122 @@
-import { DRLRow } from '../types'
-import { getConfigOrDemo } from '../config/appConfig'
-
 /**
- * Sample data — loaded from config (production mode) or demo defaults.
- * In production mode with no sampleData in config, returns empty array.
+ * ═══════════════════════════════════════════════════════════════
+ *  Demo Defaults — All hardcoded data for demonstration mode.
+ *  These are the EXACT values that were previously scattered
+ *  across nsercIdeService.ts, sampleData.ts, portfolioData.ts,
+ *  and chatService.ts. Extracted here as a single source of truth.
+ *
+ *  In production mode, these are replaced by s4-config.json.
+ *  In demo mode, these load automatically — zero behavior change.
+ * ═══════════════════════════════════════════════════════════════
  */
-export function getSampleData(): DRLRow[] {
-  return getConfigOrDemo().sampleData ?? []
+
+import type { S4Config, CraftEntry, ContractMappingRule, SchemaMapping, DRLTemplate } from './appConfig'
+import type { DRLRow, Program, Contract } from '../types'
+
+/* ─── Craft Registry (was PMS300_CRAFT_REGISTRY) ──────────── */
+
+export const DEMO_CRAFT_REGISTRY: CraftEntry[] = [
+  { label: '40ft Patrol Boat',        desc: 'Force Protection patrol craft' },
+  { label: '11m RHIB',                desc: 'Expeditionary Rigid Hull Inflatable Boat' },
+  { label: 'Harbor Tug YTB',          desc: 'Large harbor tug — yard & district craft' },
+  { label: 'Utility Boat UB',         desc: 'General-purpose harbor utility craft' },
+  { label: 'Force Protection Boat',   desc: 'Security & force protection craft' },
+  { label: 'Diving Support Platform', desc: 'Diving operations support vessel' },
+  { label: 'Steel Workboat',          desc: 'Multi-purpose steel workboat' },
+  { label: 'Spill Response Craft',    desc: 'Oil-spill response & containment vessel' },
+  { label: 'HSMST Drone',             desc: 'High-Speed Maneuvering Surface Target' },
+  { label: '8m NSW RHIB',             desc: 'Naval Special Warfare 8-meter service support craft' },
+  { label: 'Barracks Barge APL',      desc: 'Non-self-propelled barracks craft' },
+  { label: 'Floating Dry Dock AFDL',  desc: 'Small auxiliary floating dry dock' },
+]
+
+/* ─── Programs (was portfolioData programs) ───────────────── */
+
+export const DEMO_PROGRAMS: Program[] = [
+  {
+    id: 'PGM-001',
+    name: 'U.S. Navy & FMS Boats and Craft',
+    shortName: 'PMS 300',
+    description: 'Boats & Craft acquisition and sustainment for the U.S. Navy and Foreign Military Sales',
+    programManager: 'CAPT J. Richardson',
+    contracts: [],
+  },
+]
+
+/* ─── Contracts (was portfolioData contracts) ─────────────── */
+
+export const DEMO_CONTRACTS: Contract[] = [
+  {
+    id: 'CTR-001',
+    programId: 'PGM-001',
+    contractNumber: 'N00024-23-C-6200',
+    title: 'Patrol Boat & RHIB Multi-Hull Acquisition',
+    contractor: 'Maritime Defense Systems, Inc.',
+    shipbuilder: 'Gulf Coast Shipyard',
+    awardDate: '2023-06-15',
+    popEnd: '2027-12-31',
+    totalValue: '$45.2M',
+    status: 'active',
+  },
+  {
+    id: 'CTR-002',
+    programId: 'PGM-001',
+    contractNumber: 'N00024-24-C-3100',
+    title: 'Harbor Tug & Utility Craft Services',
+    contractor: 'Atlantic Marine Corp.',
+    shipbuilder: 'Chesapeake Shipbuilding',
+    awardDate: '2024-01-20',
+    popEnd: '2028-06-30',
+    totalValue: '$28.7M',
+    status: 'active',
+  },
+]
+
+/* ─── Contract Mapping Rules ──────────────────────────────── */
+
+export const DEMO_CONTRACT_MAPPING: ContractMappingRule[] = [
+  { contractId: 'CTR-001', patterns: ['patrol boat', 'rhib'] },
+  { contractId: 'CTR-002', patterns: ['harbor tug', 'utility boat', 'diving support', 'force protection'] },
+]
+
+/* ─── SharePoint Schema Mapping (default column names) ────── */
+
+export const DEMO_SCHEMA_MAPPING: SchemaMapping = {
+  drlId: 'DRL_ID',
+  title: 'Title',
+  diNumber: 'DI_Number',
+  contractDue: 'Contract_Due',
+  calcDueDate: 'Calc_Due_Date',
+  submittalGuide: 'Submittal_Guide',
+  actualSubDate: 'Actual_Sub_Date',
+  received: 'Received',
+  calDaysReview: 'Cal_Days_Review',
+  notes: 'Notes',
+  status: 'Status',
+  revision: 'Revision',
+  comments: 'Comments',
 }
 
-/** @deprecated Use getSampleData() — kept for backward compatibility */
-export const sampleData: DRLRow[] = [
+/* ─── DRL Templates (was NEW_CRAFT_TITLES + templates) ────── */
+
+export const DEMO_DRL_TEMPLATES: DRLTemplate[] = [
+  { titlePrefix: 'Systems Engineering Plan (SEP)',            diNumber: 'DI-SESS-81521', submittalGuidance: 'Submit via IDE 30 days prior to PDR' },
+  { titlePrefix: 'Integrated Logistics Support Plan (ILSP)',  diNumber: 'DI-MGMT-81466', submittalGuidance: 'Monthly — 10th of each month' },
+  { titlePrefix: 'Test and Evaluation Master Plan (TEMP)',     diNumber: 'DI-ILSS-80890', submittalGuidance: 'Submit 90 days prior to IOT&E' },
+  { titlePrefix: 'Configuration Management Plan (CMP)',        diNumber: 'DI-RELI-80531A', submittalGuidance: 'Submit with TEMP update' },
+  { titlePrefix: 'Reliability Program Plan (RPP)',             diNumber: 'DI-RELI-81315', submittalGuidance: 'Submit NLT SRR + 30 calendar days' },
+  { titlePrefix: 'Training Plan',                              diNumber: 'DI-ILSS-80890', submittalGuidance: 'Submit 90 days prior to IOT&E' },
+  { titlePrefix: 'Quality Assurance Plan (QAP)',               diNumber: 'DI-QCIC-80123A', submittalGuidance: 'Submit 30 days prior to PDR' },
+  { titlePrefix: 'Software Development Plan (SDP)',            diNumber: 'DI-IPSC-81427A', submittalGuidance: 'Submit 45 days after PDR' },
+]
+
+/* ─── Chat Craft Channels ─────────────────────────────────── */
+
+export const DEMO_CHAT_CRAFT_CHANNELS = ['40ft Patrol Boat', '11m RHIB', 'Harbor Tug YTB']
+
+/* ─── Sample Data (was sampleData.ts) ─────────────────────── */
+
+export const DEMO_SAMPLE_DATA: DRLRow[] = [
   {
     id: 'DRL-001',
     title: 'Systems Engineering Plan (SEP) Rev B (40ft Patrol Boat — Hull 1)',
@@ -236,3 +342,25 @@ export const sampleData: DRLRow[] = [
     shipbuilderNotes: 'Weight report data collection underway. No issues anticipated.',
   },
 ]
+
+/* ─── Assemble full demo config ───────────────────────────── */
+
+export function getDemoConfig(): S4Config {
+  // Wire programs ← contracts
+  const programs = DEMO_PROGRAMS.map(p => ({
+    ...p,
+    contracts: DEMO_CONTRACTS.filter(c => c.programId === p.id),
+  }))
+
+  return {
+    mode: 'demo',
+    craftRegistry: DEMO_CRAFT_REGISTRY,
+    programs,
+    contracts: DEMO_CONTRACTS,
+    contractMapping: DEMO_CONTRACT_MAPPING,
+    schemaMapping: DEMO_SCHEMA_MAPPING,
+    sampleData: DEMO_SAMPLE_DATA,
+    drlTemplates: DEMO_DRL_TEMPLATES,
+    chatCraftChannels: DEMO_CHAT_CRAFT_CHANNELS,
+  }
+}

@@ -402,78 +402,23 @@ function pickRandom<T>(arr: T[]): T {
 /* ── PMS 300 Service Craft & Small Boats registry ────────────── */
 
 /**
- * Real PMS 300 (U.S. Navy & FMS Boats and Craft) service craft types.
- * Managed under PEO Ships — includes patrol boats, RIBs, harbor tugs,
- * utility boats, diving support, force protection, seaborne targets, etc.
+ * Craft registry — loaded from config (production mode) or demo defaults.
+ * Replaces the formerly hardcoded PMS300_CRAFT_REGISTRY array.
  */
-const PMS300_CRAFT_REGISTRY: { label: string; desc: string }[] = [
-  { label: '40ft Patrol Boat',       desc: 'Force Protection patrol craft' },
-  { label: '11m RHIB',               desc: 'Expeditionary Rigid Hull Inflatable Boat' },
-  { label: 'Harbor Tug YTB',         desc: 'Large harbor tug — yard & district craft' },
-  { label: 'Utility Boat UB',        desc: 'General-purpose harbor utility craft' },
-  { label: 'Force Protection Boat',  desc: 'Security & force protection craft' },
-  { label: 'Diving Support Platform',desc: 'Diving operations support vessel' },
-  { label: 'Steel Workboat',         desc: 'Multi-purpose steel workboat' },
-  { label: 'Spill Response Craft',   desc: 'Oil-spill response & containment vessel' },
-  { label: 'HSMST Drone',            desc: 'High-Speed Maneuvering Surface Target' },
-  { label: '8m NSW RHIB',            desc: 'Naval Special Warfare 8-meter service support craft' },
-  { label: 'Barracks Barge APL',     desc: 'Non-self-propelled barracks craft' },
-  { label: 'Floating Dry Dock AFDL', desc: 'Small auxiliary floating dry dock' },
-]
+import { getConfigOrDemo } from '../config/appConfig'
 
-/** Exported list of PMS 300 craft labels for UI dropdowns */
-export const PMS300_CRAFT_LABELS = PMS300_CRAFT_REGISTRY.map(c => c.label)
+function getCraftRegistry() {
+  return getConfigOrDemo().craftRegistry
+}
 
-/** New-craft row templates for simulation */
-const NEW_CRAFT_ROW_TEMPLATES: Omit<DRLRow, 'id' | 'title' | 'notes' | 'status'>[] = [
-  {
-    diNumber: 'DI-SESS-81521',
-    contractDueFinish: '2026-06-30',
-    calculatedDueDate: '2026-06-30',
-    submittalGuidance: 'Submit via IDE 30 days prior to PDR',
-    actualSubmissionDate: '',
-    received: 'No',
-    calendarDaysToReview: null,
-  },
-  {
-    diNumber: 'DI-MGMT-81466',
-    contractDueFinish: '2026-07-15',
-    calculatedDueDate: '2026-07-15',
-    submittalGuidance: 'Monthly — 10th of each month',
-    actualSubmissionDate: '',
-    received: 'No',
-    calendarDaysToReview: null,
-  },
-  {
-    diNumber: 'DI-ILSS-80890',
-    contractDueFinish: '2026-08-01',
-    calculatedDueDate: '2026-08-01',
-    submittalGuidance: 'Submit 90 days prior to IOT&E',
-    actualSubmissionDate: '',
-    received: 'No',
-    calendarDaysToReview: null,
-  },
-  {
-    diNumber: 'DI-RELI-80531A',
-    contractDueFinish: '2026-09-01',
-    calculatedDueDate: '2026-09-01',
-    submittalGuidance: 'Submit with TEMP update',
-    actualSubmissionDate: '',
-    received: 'No',
-    calendarDaysToReview: null,
-  },
-]
+function getDrlTemplates() {
+  return getConfigOrDemo().drlTemplates ?? []
+}
 
-const NEW_CRAFT_TITLES = [
-  'Systems Engineering Plan (SEP)',
-  'Integrated Logistics Support Plan (ILSP)',
-  'Test and Evaluation Master Plan (TEMP)',
-  'Configuration Management Plan (CMP)',
-  'Reliability Program Plan (RPP)',
-  'Training Plan',
-  'Quality Assurance Plan (QAP)',
-  'Software Development Plan (SDP)',
-]
+/** Exported function to get PMS 300 craft labels for UI dropdowns */
+export function getPMS300CraftLabels(): string[] {
+  return getCraftRegistry().map(c => c.label)
+}
 
 /**
  * Parse a title's trailing (Platform — Hull N) group into platform and hull.
@@ -531,18 +476,19 @@ export function detectMaxHull(rows: DRLRow[]): number {
 /** Get the next PMS 300 service craft type not yet in the dataset */
 export function getNextPMS300Craft(currentRows: DRLRow[]): { craftLabel: string; desc: string } {
   const existing = detectExistingCrafts(currentRows)
+  const registry = getCraftRegistry()
 
   // Find the next craft from the registry not yet present
-  for (const craft of PMS300_CRAFT_REGISTRY) {
+  for (const craft of registry) {
     if (!existing.has(craft.label)) {
       return { craftLabel: craft.label, desc: craft.desc }
     }
   }
 
   // All registry types present — cycle with a numeric suffix
-  const idx = existing.size % PMS300_CRAFT_REGISTRY.length
-  const base = PMS300_CRAFT_REGISTRY[idx]
-  const suffix = Math.floor(existing.size / PMS300_CRAFT_REGISTRY.length) + 1
+  const idx = existing.size % registry.length
+  const base = registry[idx]
+  const suffix = Math.floor(existing.size / registry.length) + 1
   return { craftLabel: `${base.label} #${suffix + 1}`, desc: base.desc }
 }
 
@@ -559,19 +505,25 @@ export function generateNewCraftRows(currentRows: DRLRow[]): { rows: DRLRow[]; c
     return isNaN(n) ? m : Math.max(m, n)
   }, 0)
 
+  const templates = getDrlTemplates()
   const newCount = 2 + Math.floor(Math.random() * 3) // 2-4 rows
   const rows: DRLRow[] = []
   for (let i = 0; i < newCount; i++) {
-    const template = NEW_CRAFT_ROW_TEMPLATES[i % NEW_CRAFT_ROW_TEMPLATES.length]
-    const titleBase = NEW_CRAFT_TITLES[i % NEW_CRAFT_TITLES.length]
+    const tpl = templates[i % templates.length]
     const rowId = `DRL-${String(maxId + 1 + i).padStart(3, '0')}`
     const status: DRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
     const remarks = ATTACHMENT_J2_REMARKS[status]
 
     rows.push({
-      ...template,
       id: rowId,
-      title: `${titleBase} Rev A (${nextCraft.craftLabel} — Hull ${hullNum})`,
+      title: `${tpl.titlePrefix} Rev A (${nextCraft.craftLabel} — Hull ${hullNum})`,
+      diNumber: tpl.diNumber,
+      contractDueFinish: tpl.contractDueOffset || '2026-06-30',
+      calculatedDueDate: tpl.contractDueOffset || '2026-06-30',
+      submittalGuidance: tpl.submittalGuidance,
+      actualSubmissionDate: '',
+      received: 'No',
+      calendarDaysToReview: null,
       notes: `[Synced from NSERC IDE (PMS 300)] New service craft detected — ${nextCraft.craftLabel} Hull ${hullNum}: ${nextCraft.desc}. ${pickRandom(remarks)}`,
       status,
     })
@@ -591,19 +543,25 @@ export function generateManualCraftRows(currentRows: DRLRow[], craftName: string
     return isNaN(n) ? m : Math.max(m, n)
   }, 0)
 
+  const templates = getDrlTemplates()
   const rows: DRLRow[] = []
   const count = 3
   for (let i = 0; i < count; i++) {
-    const template = NEW_CRAFT_ROW_TEMPLATES[i % NEW_CRAFT_ROW_TEMPLATES.length]
-    const titleBase = NEW_CRAFT_TITLES[i % NEW_CRAFT_TITLES.length]
+    const tpl = templates[i % templates.length]
     const rowId = `DRL-${String(maxId + 1 + i).padStart(3, '0')}`
     const status: DRLRow['status'] = pickRandom(['yellow', 'yellow', 'red'])
     const remarks = ATTACHMENT_J2_REMARKS[status]
 
     rows.push({
-      ...template,
       id: rowId,
-      title: `${titleBase} Rev A (${craftName} — Hull ${hullNum})`,
+      title: `${tpl.titlePrefix} Rev A (${craftName} — Hull ${hullNum})`,
+      diNumber: tpl.diNumber,
+      contractDueFinish: tpl.contractDueOffset || '2026-06-30',
+      calculatedDueDate: tpl.contractDueOffset || '2026-06-30',
+      submittalGuidance: tpl.submittalGuidance,
+      actualSubmissionDate: '',
+      received: 'No',
+      calendarDaysToReview: null,
       notes: `[Manual Entry — NSERC IDE Offline] New craft: ${craftName} Hull ${hullNum}. ${pickRandom(remarks)}`,
       status,
     })

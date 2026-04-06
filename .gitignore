@@ -15,3 +15,6 @@ playwright-report/
 # Vercel environment files (contain secrets)
 .env.vercel
 .env.vercel-prod
+
+# Production config (CUI data — never commit)
+s4-config.json

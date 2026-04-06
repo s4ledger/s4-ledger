@@ -6,7 +6,9 @@
   "description": "S4 Ledger — Deliverables Tracker (Standalone Application)",
   "scripts": {
     "dev": "vite",
+    "dev:prod": "VITE_APP_MODE=production vite",
     "build": "tsc -b && vite build",
+    "build:prod": "VITE_APP_MODE=production tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

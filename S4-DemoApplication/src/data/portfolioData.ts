@@ -1,71 +1,29 @@
 import { Program, Contract, DRLRow } from '../types'
+import { getConfigOrDemo, assignContractIdFromConfig } from '../config/appConfig'
 
-/* ─── Programs ──────────────────────────────────────────────── */
+/* ─── Config-driven programs & contracts ──────────────────── */
 
-export const programs: Program[] = [
-  {
-    id: 'PGM-001',
-    name: 'U.S. Navy & FMS Boats and Craft',
-    shortName: 'PMS 300',
-    description: 'Boats & Craft acquisition and sustainment for the U.S. Navy and Foreign Military Sales',
-    programManager: 'CAPT J. Richardson',
-    contracts: [],   // populated below
-  },
-]
-
-/* ─── Contracts ─────────────────────────────────────────────── */
-
-export const contracts: Contract[] = [
-  {
-    id: 'CTR-001',
-    programId: 'PGM-001',
-    contractNumber: 'N00024-23-C-6200',
-    title: 'Patrol Boat & RHIB Multi-Hull Acquisition',
-    contractor: 'Maritime Defense Systems, Inc.',
-    shipbuilder: 'Gulf Coast Shipyard',
-    awardDate: '2023-06-15',
-    popEnd: '2027-12-31',
-    totalValue: '$45.2M',
-    status: 'active',
-  },
-  {
-    id: 'CTR-002',
-    programId: 'PGM-001',
-    contractNumber: 'N00024-24-C-3100',
-    title: 'Harbor Tug & Utility Craft Services',
-    contractor: 'Atlantic Marine Corp.',
-    shipbuilder: 'Chesapeake Shipbuilding',
-    awardDate: '2024-01-20',
-    popEnd: '2028-06-30',
-    totalValue: '$28.7M',
-    status: 'active',
-  },
-]
-
-/* ─── Contract → DRL mapping ───────────────────────────────── */
-// Existing sampleData items are CTR-001 (patrol boats + RHIBs).
-// CTR-002 covers harbor tugs + utility boats.
-
-/** Assigns contractId to existing sampleData rows based on craft type in title */
-export function assignContractIds(rows: DRLRow[]): DRLRow[] {
-  return rows.map(row => {
-    if (row.contractId) return row  // already assigned
-
-    const title = row.title.toLowerCase()
-    if (title.includes('patrol boat') || title.includes('rhib')) {
-      return { ...row, contractId: 'CTR-001' }
-    }
-    if (title.includes('harbor tug') || title.includes('utility boat') || title.includes('diving support')) {
-      return { ...row, contractId: 'CTR-002' }
-    }
-    if (title.includes('force protection')) {
-      return { ...row, contractId: 'CTR-002' }
-    }
-    return { ...row, contractId: 'CTR-001' }  // default
-  })
+function getConfig() {
+  return getConfigOrDemo()
 }
 
+/** Programs — loaded from config (production) or demo defaults */
+export const programs: Program[] = getConfig().programs
 
+/** Contracts — loaded from config (production) or demo defaults */
+export const contracts: Contract[] = getConfig().contracts
+
+/* ─── Contract → DRL mapping (config-driven) ─────────────── */
+
+/** Assigns contractId to rows using config mapping rules */
+export function assignContractIds(rows: DRLRow[]): DRLRow[] {
+  const config = getConfig()
+  const fallback = config.contracts[0]?.id || 'CTR-001'
+  return rows.map(row => {
+    if (row.contractId) return row
+    return { ...row, contractId: assignContractIdFromConfig(row.title, config.contractMapping, fallback) }
+  })
+}
 
 /* ─── Wire programs ←→ contracts ─────────────────────────── */
 programs.forEach(p => {

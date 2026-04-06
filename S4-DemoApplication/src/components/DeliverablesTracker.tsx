@@ -50,7 +50,7 @@ import { enqueueChange, isOnline as checkOnline, getMeta } from '../services/off
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrants, OrgPermissions, MaskedStatus, ContractorGrants } from '../utils/permissions'
 import { getSpreadsheetConfig, getContractorColumnsWithGrants, CONTRACTOR_GRANTABLE_COLUMNS } from '../utils/spreadsheetConfigs'
-import { PMS300_CRAFT_LABELS } from '../services/nsercIdeService'
+import { getPMS300CraftLabels } from '../services/nsercIdeService'
 
 interface Props {
   data: DRLRow[]
@@ -1069,7 +1069,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             </div>
             <p className="text-xs text-steel mb-3">Select a PMS 300 craft type. Hull number will be assigned automatically.</p>
             <div className="space-y-2">
-              {PMS300_CRAFT_LABELS.map(c => {
+              {getPMS300CraftLabels().map(c => {
                 const exists = platforms.includes(c)
                 return (
                   <button

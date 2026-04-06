@@ -52,14 +52,26 @@ export interface AIAgent {
   createdAt: string
 }
 
-/* ─── Default Channels ────────────────────────────────────── */
+/* ─── Default Channels (config-driven) ───────────────────── */
 
-export const DEFAULT_CHANNELS: ChatChannel[] = [
-  { id: 'general', name: 'General', type: 'general', unreadCount: 0 },
-  { id: 'craft-40ft-patrol', name: '40ft Patrol Boat', type: 'craft', craftLabel: '40ft Patrol Boat', unreadCount: 0 },
-  { id: 'craft-11m-rhib', name: '11m RHIB', type: 'craft', craftLabel: '11m RHIB', unreadCount: 0 },
-  { id: 'craft-harbor-tug', name: 'Harbor Tug YTB', type: 'craft', craftLabel: 'Harbor Tug YTB', unreadCount: 0 },
-]
+import { getConfigOrDemo } from '../config/appConfig'
+
+function buildDefaultChannels(): ChatChannel[] {
+  const config = getConfigOrDemo()
+  const craftLabels = config.chatCraftChannels ?? config.craftRegistry.slice(0, 3).map(c => c.label)
+  return [
+    { id: 'general', name: 'General', type: 'general', unreadCount: 0 },
+    ...craftLabels.map(label => ({
+      id: `craft-${label.toLowerCase().replace(/\s+/g, '-')}`,
+      name: label,
+      type: 'craft' as const,
+      craftLabel: label,
+      unreadCount: 0,
+    })),
+  ]
+}
+
+export const DEFAULT_CHANNELS: ChatChannel[] = buildDefaultChannels()
 
 /* ─── Team Roster (all known users — online + offline) ──── */
 

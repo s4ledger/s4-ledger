@@ -1,0 +1,62 @@
+{
+  "mode": "production",
+
+  "craftRegistry": [
+    { "label": "YOUR_CRAFT_TYPE_1", "desc": "Description of craft type 1" },
+    { "label": "YOUR_CRAFT_TYPE_2", "desc": "Description of craft type 2" }
+  ],
+
+  "programs": [
+    {
+      "id": "PGM-001",
+      "name": "YOUR_PROGRAM_NAME",
+      "shortName": "YOUR_PROGRAM_CODE",
+      "description": "Program description",
+      "programManager": "RANK FirstName LastName",
+      "contracts": []
+    }
+  ],
+
+  "contracts": [
+    {
+      "id": "CTR-001",
+      "programId": "PGM-001",
+      "contractNumber": "N00024-XX-C-XXXX",
+      "title": "Contract Title",
+      "contractor": "Contractor Name",
+      "shipbuilder": "Shipbuilder Name",
+      "awardDate": "2024-01-01",
+      "popEnd": "2028-12-31",
+      "totalValue": "$XX.XM",
+      "status": "active"
+    }
+  ],
+
+  "contractMapping": [
+    { "contractId": "CTR-001", "patterns": ["craft_type_substring_1", "craft_type_substring_2"] }
+  ],
+
+  "schemaMapping": {
+    "drlId":          "DRL_ID",
+    "title":          "Title",
+    "diNumber":       "DI_Number",
+    "contractDue":    "Contract_Due",
+    "calcDueDate":    "Calc_Due_Date",
+    "submittalGuide": "Submittal_Guide",
+    "actualSubDate":  "Actual_Sub_Date",
+    "received":       "Received",
+    "calDaysReview":  "Cal_Days_Review",
+    "notes":          "Notes",
+    "status":         "Status",
+    "revision":       "Revision",
+    "comments":       "Comments"
+  },
+
+  "drlTemplates": [
+    { "titlePrefix": "Systems Engineering Plan (SEP)", "diNumber": "DI-SESS-81521", "submittalGuidance": "Submit via IDE 30 days prior to PDR" }
+  ],
+
+  "chatCraftChannels": ["YOUR_CRAFT_TYPE_1", "YOUR_CRAFT_TYPE_2"],
+
+  "sampleData": []
+}
