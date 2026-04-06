@@ -22,11 +22,33 @@ import Superscript from '@tiptap/extension-superscript'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import Placeholder from '@tiptap/extension-placeholder'
+import { chatWithAI, type AIChatMessage } from '../utils/aiService'
+import { TEAM_ROSTER, parseMentions } from '../services/chatService'
 
 /* ─── Types ──────────────────────────────────────────────────────── */
 interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
+}
+
+interface CommentReply {
+  id: string
+  text: string
+  author: string
+  timestamp: Date
+  mentions: string[]
+}
+
+interface ReportComment {
+  id: string
+  text: string
+  author: string
+  authorRole: string
+  timestamp: Date
+  selectedText: string
+  mentions: string[]
+  replies: CommentReply[]
+  resolved: boolean
 }
 
 interface Props {
@@ -66,11 +88,21 @@ function TSep() {
    ═══════════════════════════════════════════════════════════════════ */
 export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, onExportCsv, onClose }: Props) {
   const [showChat, setShowChat] = useState(false)
+  const [showComments, setShowComments] = useState(false)
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState('')
   const [chatLoading, setChatLoading] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Collaborative comments
+  const [comments, setComments] = useState<ReportComment[]>([])
+  const [commentInput, setCommentInput] = useState('')
+  const [replyingTo, setReplyingTo] = useState<string | null>(null)
+  const [replyInput, setReplyInput] = useState('')
+  const [showMentionDropdown, setShowMentionDropdown] = useState(false)
+  const [mentionFilter, setMentionFilter] = useState('')
+  const [activeMentionField, setActiveMentionField] = useState<'comment' | 'reply'>('comment')
 
   const editor = useEditor({
     extensions: [
@@ -115,28 +147,24 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
     setChatLoading(true)
 
     // Get current document content for AI context
-    const currentHtml = editor.getHTML()
     const currentText = editor.getText()
 
     try {
-      const resp = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: 'system',
-              content: `You are an expert report editor assistant for S4 Systems DRL reports. The user is editing a DRL Weekly Status Report. Help them make corrections, add content, rewrite sections, or answer questions about the report. When the user asks you to modify something, describe the changes clearly. Keep responses concise and professional. The current report text content is:\n\n${currentText.slice(0, 4000)}`,
-            },
-            ...chatMessages.map(m => ({ role: m.role, content: m.content })),
-            { role: 'user', content: userMsg },
-          ],
-        }),
+      // Build conversation history for the AI backend
+      const conversation: AIChatMessage[] = chatMessages.map(m => ({
+        role: m.role === 'user' ? 'user' : 'ai',
+        text: m.content,
+      }))
+
+      const result = await chatWithAI({
+        message: `You are an expert report editor assistant for S4 Systems DRL reports. The user is editing a DRL Weekly Status Report. Help them make corrections, add content, rewrite sections, or answer questions about the report. When the user asks you to modify something, describe the changes clearly. Keep responses concise and professional.\n\nCurrent report text:\n${currentText.slice(0, 4000)}\n\nUser request: ${userMsg}`,
+        conversation,
+        tool_context: 'report_editor',
+        analysis_data: { reportText: currentText.slice(0, 4000) },
       })
 
-      if (resp.ok) {
-        const data = await resp.json()
-        const reply = data.choices?.[0]?.message?.content || data.reply || data.response || 'I can help you edit the report. What would you like to change?'
+      if (!result.fallback && result.response) {
+        const reply = result.response
         setChatMessages(prev => [...prev, { role: 'assistant', content: reply }])
 
         // If the AI response contains HTML wrapped in <report-update> tags, apply it
@@ -145,7 +173,7 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
           editor.commands.setContent(updateMatch[1])
         }
       } else {
-        // Fallback: provide helpful canned responses
+        // Fallback: provide helpful local responses when no LLM is configured
         const lowerMsg = userMsg.toLowerCase()
         let reply = 'I can help you edit the report. Try asking me to rewrite a section, fix formatting, or add specific content.'
         if (lowerMsg.includes('executive summary')) {
@@ -217,6 +245,98 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
   const [showColorPicker, setShowColorPicker] = useState(false)
   const colors = ['#1D1D1F', '#EF4444', '#F97316', '#EAB308', '#22C55E', '#3B82F6', '#8B5CF6', '#EC4899', '#007AFF', '#6E6E73']
 
+  /* ─── Comments ─────────────────────────────────────────────── */
+  const handleAddComment = useCallback(() => {
+    if (!editor || !commentInput.trim()) return
+    const { from, to } = editor.state.selection
+    const selectedText = from !== to ? editor.state.doc.textBetween(from, to) : ''
+    const knownUsers = TEAM_ROSTER.map(m => ({ userId: m.userId, displayName: m.displayName }))
+    const mentions = parseMentions(commentInput, knownUsers)
+
+    // Highlight the selected text in the editor
+    if (from !== to) {
+      editor.chain().focus().setHighlight({ color: '#FDE68A' }).run()
+    }
+
+    const newComment: ReportComment = {
+      id: `cmt-${Date.now()}`,
+      text: commentInput.trim(),
+      author: 'You',
+      authorRole: 'Program Manager',
+      timestamp: new Date(),
+      selectedText,
+      mentions,
+      replies: [],
+      resolved: false,
+    }
+    setComments(prev => [newComment, ...prev])
+    setCommentInput('')
+    setShowMentionDropdown(false)
+  }, [editor, commentInput])
+
+  const handleAddReply = useCallback((commentId: string) => {
+    if (!replyInput.trim()) return
+    const knownUsers = TEAM_ROSTER.map(m => ({ userId: m.userId, displayName: m.displayName }))
+    const mentions = parseMentions(replyInput, knownUsers)
+    const reply: CommentReply = {
+      id: `reply-${Date.now()}`,
+      text: replyInput.trim(),
+      author: 'You',
+      timestamp: new Date(),
+      mentions,
+    }
+    setComments(prev => prev.map(c =>
+      c.id === commentId ? { ...c, replies: [...c.replies, reply] } : c
+    ))
+    setReplyInput('')
+    setReplyingTo(null)
+    setShowMentionDropdown(false)
+  }, [replyInput])
+
+  const handleResolveComment = useCallback((commentId: string) => {
+    setComments(prev => prev.map(c =>
+      c.id === commentId ? { ...c, resolved: !c.resolved } : c
+    ))
+  }, [])
+
+  const handleMentionInput = useCallback((value: string, field: 'comment' | 'reply') => {
+    if (field === 'comment') setCommentInput(value)
+    else setReplyInput(value)
+
+    // Detect @mention trigger
+    const lastAt = value.lastIndexOf('@')
+    if (lastAt >= 0 && lastAt === value.length - 1) {
+      setShowMentionDropdown(true)
+      setMentionFilter('')
+      setActiveMentionField(field)
+    } else if (lastAt >= 0) {
+      const afterAt = value.slice(lastAt + 1)
+      if (!afterAt.includes(' ')) {
+        setShowMentionDropdown(true)
+        setMentionFilter(afterAt.toLowerCase())
+        setActiveMentionField(field)
+      } else {
+        setShowMentionDropdown(false)
+      }
+    } else {
+      setShowMentionDropdown(false)
+    }
+  }, [])
+
+  const handleSelectMention = useCallback((displayName: string) => {
+    const setter = activeMentionField === 'comment' ? setCommentInput : setReplyInput
+    const getter = activeMentionField === 'comment' ? commentInput : replyInput
+    const lastAt = getter.lastIndexOf('@')
+    if (lastAt >= 0) {
+      setter(getter.slice(0, lastAt) + `@${displayName} `)
+    }
+    setShowMentionDropdown(false)
+  }, [activeMentionField, commentInput, replyInput])
+
+  const filteredTeam = TEAM_ROSTER.filter(m =>
+    m.displayName.toLowerCase().includes(mentionFilter)
+  )
+
   if (!editor) return null
 
   return (
@@ -225,7 +345,7 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       {/* Main editor area */}
-      <div className={`relative flex flex-col bg-gray-100 transition-all duration-300 ${showChat ? 'w-[calc(100%-380px)]' : 'w-full'}`}>
+      <div className={`relative flex flex-col bg-gray-100 transition-all duration-300 ${(showChat || showComments) ? 'w-[calc(100%-380px)]' : 'w-full'}`}>
         {/* ═══ Top Bar ═══════════════════════════════════════════ */}
         <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -239,7 +359,19 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowChat(!showChat)}
+              onClick={() => { setShowComments(!showComments); if (!showComments) setShowChat(false) }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                showComments ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <i className="fas fa-comments"></i>
+              Comments
+              {comments.filter(c => !c.resolved).length > 0 && (
+                <span className="ml-1 bg-white/30 text-white rounded-full px-1.5 text-[10px] font-bold">{comments.filter(c => !c.resolved).length}</span>
+              )}
+            </button>
+            <button
+              onClick={() => { setShowChat(!showChat); if (!showChat) setShowComments(false) }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 showChat ? 'bg-accent text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -369,6 +501,8 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
           <TBtn icon="minus" title="Horizontal Rule" onClick={handleHr} />
           <TBtn icon="code" title="Code Block" active={editor.isActive('codeBlock')} onClick={() => editor.chain().focus().toggleCodeBlock().run()} />
           <TBtn icon="quote-left" title="Blockquote" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()} />
+          <TSep />
+          <TBtn icon="comment" title="Add Comment" className="text-yellow-600" onClick={() => { setShowComments(true); setShowChat(false) }} />
 
           {/* Hidden file input for image uploads */}
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
@@ -477,6 +611,187 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
                 <i className="fas fa-paper-plane"></i>
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ Comments Panel ══════════════════════════════════════ */}
+      {showComments && (
+        <div className="relative w-[380px] bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
+          {/* Comments header */}
+          <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                <i className="fas fa-comments text-yellow-600 text-sm"></i>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">Comments</h3>
+                <p className="text-[10px] text-steel">{comments.filter(c => !c.resolved).length} open · {comments.filter(c => c.resolved).length} resolved</p>
+              </div>
+            </div>
+            <button onClick={() => setShowComments(false)} className="text-steel hover:text-gray-900 transition-colors">
+              <i className="fas fa-times text-sm"></i>
+            </button>
+          </div>
+
+          {/* New comment input */}
+          <div className="px-4 py-3 border-b border-gray-200 flex-shrink-0">
+            <p className="text-[10px] text-steel mb-2">
+              <i className="fas fa-info-circle mr-1"></i>
+              Select text in the editor, then add a comment. Use @name to mention.
+            </p>
+            <div className="relative">
+              <textarea
+                value={commentInput}
+                onChange={e => handleMentionInput(e.target.value, 'comment')}
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && commentInput.trim()) { e.preventDefault(); handleAddComment() } }}
+                placeholder="Add a comment… @mention to notify"
+                className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-500 resize-none"
+                rows={2}
+              />
+              {showMentionDropdown && activeMentionField === 'comment' && filteredTeam.length > 0 && (
+                <div className="absolute bottom-full left-0 w-full bg-white border border-gray-200 rounded-lg shadow-lg mb-1 max-h-32 overflow-auto z-50">
+                  {filteredTeam.map(m => (
+                    <button
+                      key={m.userId}
+                      onClick={() => handleSelectMention(m.displayName)}
+                      className="w-full text-left px-3 py-1.5 hover:bg-gray-50 flex items-center gap-2 text-xs"
+                    >
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white ${m.online ? 'bg-green-500' : 'bg-gray-400'}`}>
+                        {m.displayName.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <span className="font-medium text-gray-900">{m.displayName}</span>
+                      <span className="text-steel text-[10px]">{m.role}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <button
+              onClick={handleAddComment}
+              disabled={!commentInput.trim()}
+              className="mt-2 w-full px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-xs font-semibold transition-all disabled:opacity-40"
+            >
+              <i className="fas fa-plus mr-1"></i> Add Comment
+            </button>
+          </div>
+
+          {/* Comments list */}
+          <div className="flex-1 overflow-auto p-3 space-y-3">
+            {comments.length === 0 && (
+              <div className="text-center py-8">
+                <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center mx-auto mb-3">
+                  <i className="fas fa-comment-dots text-yellow-500 text-lg"></i>
+                </div>
+                <p className="text-sm font-semibold text-gray-900 mb-1">No comments yet</p>
+                <p className="text-xs text-steel">Select text and add a comment to start a discussion.</p>
+              </div>
+            )}
+            {comments.map(comment => (
+              <div
+                key={comment.id}
+                className={`border rounded-lg p-3 ${comment.resolved ? 'bg-gray-50 border-gray-200 opacity-60' : 'bg-white border-yellow-200'}`}
+              >
+                {/* Comment header */}
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center text-[8px] font-bold text-white">
+                      {comment.author.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <span className="text-xs font-semibold text-gray-900">{comment.author}</span>
+                    <span className="text-[10px] text-steel">{comment.authorRole}</span>
+                  </div>
+                  <button
+                    onClick={() => handleResolveComment(comment.id)}
+                    title={comment.resolved ? 'Reopen comment' : 'Resolve comment'}
+                    className={`w-5 h-5 rounded flex items-center justify-center transition-all ${comment.resolved ? 'bg-green-100 text-green-600' : 'hover:bg-gray-100 text-gray-400'}`}
+                  >
+                    <i className={`fas fa-${comment.resolved ? 'check-circle' : 'check'} text-[10px]`}></i>
+                  </button>
+                </div>
+
+                {/* Selected text reference */}
+                {comment.selectedText && (
+                  <div className="bg-yellow-50 border-l-2 border-yellow-400 px-2 py-1 mb-2 text-[10px] text-gray-700 italic truncate">
+                    "{comment.selectedText.slice(0, 80)}{comment.selectedText.length > 80 ? '…' : ''}"
+                  </div>
+                )}
+
+                {/* Comment text */}
+                <p className="text-xs text-gray-800 leading-relaxed mb-2">{comment.text}</p>
+
+                {/* Timestamp + mentions */}
+                <div className="flex items-center gap-2 text-[10px] text-steel">
+                  <span>{comment.timestamp.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+                  {comment.mentions.length > 0 && (
+                    <span className="text-accent">
+                      <i className="fas fa-at mr-0.5"></i>
+                      {comment.mentions.length} mentioned
+                    </span>
+                  )}
+                </div>
+
+                {/* Replies */}
+                {comment.replies.length > 0 && (
+                  <div className="mt-2 ml-3 border-l-2 border-gray-200 pl-2 space-y-2">
+                    {comment.replies.map(reply => (
+                      <div key={reply.id}>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] font-semibold text-gray-800">{reply.author}</span>
+                          <span className="text-[9px] text-steel">{reply.timestamp.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+                        </div>
+                        <p className="text-[11px] text-gray-700">{reply.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Reply input */}
+                {replyingTo === comment.id ? (
+                  <div className="mt-2 relative">
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        value={replyInput}
+                        onChange={e => handleMentionInput(e.target.value, 'reply')}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddReply(comment.id) } else if (e.key === 'Escape') setReplyingTo(null) }}
+                        placeholder="Reply… @mention"
+                        className="flex-1 px-2 py-1 text-[11px] border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-yellow-500/30"
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => handleAddReply(comment.id)}
+                        disabled={!replyInput.trim()}
+                        className="px-2 py-1 bg-yellow-500 text-white rounded text-[10px] font-semibold disabled:opacity-40"
+                      >
+                        <i className="fas fa-reply"></i>
+                      </button>
+                    </div>
+                    {showMentionDropdown && activeMentionField === 'reply' && filteredTeam.length > 0 && (
+                      <div className="absolute bottom-full left-0 w-full bg-white border border-gray-200 rounded-lg shadow-lg mb-1 max-h-24 overflow-auto z-50">
+                        {filteredTeam.map(m => (
+                          <button
+                            key={m.userId}
+                            onClick={() => handleSelectMention(m.displayName)}
+                            className="w-full text-left px-2 py-1 hover:bg-gray-50 flex items-center gap-1.5 text-[11px]"
+                          >
+                            <span className="font-medium">{m.displayName}</span>
+                            <span className="text-steel text-[9px]">{m.role}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setReplyingTo(comment.id)}
+                    className="mt-1.5 text-[10px] text-accent hover:text-accent/80 font-medium"
+                  >
+                    <i className="fas fa-reply mr-1"></i>Reply
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
