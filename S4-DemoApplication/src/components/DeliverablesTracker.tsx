@@ -7,7 +7,6 @@ import AuditTrailSidebar from './AuditTrailSidebar'
 import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
 import MismatchModal from './MismatchModal'
-import ReportModal from './ReportModal'
 import ReportExportModal from './ReportExportModal'
 import IntegrationsPanel from './IntegrationsPanel'
 import ExternalSyncModal from './ExternalSyncModal'
@@ -101,7 +100,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [rowFindings, setRowFindings] = useState<Record<string, string[]>>({})
   const [notesRow, setNotesRow] = useState<DRLRow | null>(null)
   const [originalNotes, setOriginalNotes] = useState<Record<string, { notes: string; status: 'green' | 'yellow' | 'red' | 'pending' }> | null>(null)
-  const [showReport, setShowReport] = useState(false)
+  // showReport removed — consolidated into Reports & Export modal
   const [platformFilter, setPlatformFilter] = useState<string>('all')
   const [hullFilter, setHullFilter] = useState<string>('all')
   const [editedSinceSeal, setEditedSinceSeal] = useState<Set<string>>(new Set())
@@ -862,15 +861,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   </button>
                   )}
                   <div className="border-t border-border my-1"></div>
-                  {perms.canGenerateReport && (
-                  <button
-                    onClick={() => { setShowReport(true); setShowToolsMenu(false) }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
-                  >
-                    <i className="fas fa-file-pdf text-red-400 w-4 text-center"></i>
-                    <span className="font-medium">Generate Weekly PDF Report{perms.reportRedacted ? ' (Redacted)' : ''}</span>
-                  </button>
-                  )}
+
                   <button
                     onClick={() => { setShowExport(true); setShowToolsMenu(false) }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
@@ -1702,18 +1693,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           onClose={() => setMismatchRow(null)}
         />
       )}
-      {showReport && (
-        <ReportModal
-          data={hullData}
-          anchors={anchors}
-          role={role}
-          rowFindings={rowFindings}
-          contractRefs={contractRefs}
-          hullFilter={platformFilter === 'all' ? undefined : platformFilter}
-          aiInsights={aiInsights}
-          onClose={() => setShowReport(false)}
-        />
-      )}
+
 
       {/* External Sync Modal */}
       {showSync && (

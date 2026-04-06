@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import DraggableModal from './DraggableModal'
+import ReportEditor from './ReportEditor'
 import { DRLRow, AnchorRecord, UserRole } from '../types'
-import { generateWeeklyReport, WeeklyReportResult } from '../utils/pdf'
-import { exportToExcel, ExportResult } from '../utils/excelExport'
+import { generateWeeklyReport } from '../utils/pdf'
+import { exportToExcel } from '../utils/excelExport'
+import { generateReportHtml } from '../utils/reportHtmlGenerator'
 import { AIRowInsight } from '../utils/aiAnalysis'
 
 interface Props {
@@ -50,6 +52,8 @@ export default function ReportExportModal({
   const [progress, setProgress] = useState(0)
   const [result, setResult] = useState<{ blob: Blob; filename: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [showEditor, setShowEditor] = useState(false)
+  const [editorHtml, setEditorHtml] = useState('')
 
   // Schedule state
   const [schedules, setSchedules] = useState<ScheduleConfig[]>(loadSchedules)
@@ -83,18 +87,22 @@ export default function ReportExportModal({
 
     try {
       if (format === 'pdf') {
-        const phases = ['Analyzing data…', 'Building references…', 'Priority assessment…', 'RACI matrix…', 'Progress metrics…', 'Rendering PDF…']
+        // Generate HTML for the editor preview
+        const phases = ['Analyzing data…', 'Building references…', 'Priority assessment…', 'RACI matrix…', 'Progress metrics…', 'Building preview…']
         for (let i = 0; i < phases.length; i++) {
           setProgress(i + 1)
           await new Promise(r => setTimeout(r, 300 + Math.random() * 200))
         }
-        const pdfResult: WeeklyReportResult = generateWeeklyReport(data, anchors, role, rowFindings, contractRefs, hullFilter, aiInsights)
-        setResult(pdfResult)
+        const html = generateReportHtml(data, anchors, role, rowFindings, contractRefs, hullFilter, aiInsights)
+        setEditorHtml(html)
+        setShowEditor(true)
+        setGenerating(false)
+        return // Don't record in history yet — user will export from editor
       } else {
         setProgress(1)
         await new Promise(r => setTimeout(r, 200))
         setProgress(2)
-        const excelResult: ExportResult = exportToExcel(data, anchors, role, {
+        const excelResult = exportToExcel(data, anchors, role, {
           format: format as 'xlsx' | 'csv',
           includeAudit: false,
           includeAnchors,
@@ -144,6 +152,53 @@ export default function ReportExportModal({
     window.location.href = `mailto:?subject=${subject}&body=${body}`
   }
 
+  /* ─── Editor export handlers ─────────────────────────────── */
+  function handleEditorExportPdf(_editedHtml: string) {
+    // Generate PDF from the original data (PDF layout is handled by jsPDF, not HTML)
+    const pdfResult = generateWeeklyReport(data, anchors, role, rowFindings, contractRefs, hullFilter, aiInsights)
+    const url = URL.createObjectURL(pdfResult.blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = pdfResult.filename
+    a.click()
+    URL.revokeObjectURL(url)
+    // Record in history
+    const entry = { filename: pdfResult.filename, format: 'pdf', date: new Date().toISOString(), rows: data.length }
+    const prev = (history || []).slice(0, 49)
+    prev.unshift(entry)
+    localStorage.setItem('s4_export_history', JSON.stringify(prev))
+  }
+
+  function handleEditorExportExcel() {
+    const excelResult = exportToExcel(data, anchors, role, {
+      format: 'xlsx',
+      includeAudit: false,
+      includeAnchors: true,
+      hullFilter,
+    })
+    const url = URL.createObjectURL(excelResult.blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = excelResult.filename
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  function handleEditorExportCsv() {
+    const csvResult = exportToExcel(data, anchors, role, {
+      format: 'csv',
+      includeAudit: false,
+      includeAnchors: true,
+      hullFilter,
+    })
+    const url = URL.createObjectURL(csvResult.blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = csvResult.filename
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   function handleAddSchedule() {
     if (!schedEmail.trim()) return
     const newSched: ScheduleConfig = {
@@ -169,6 +224,19 @@ export default function ReportExportModal({
 
   const formatIcon = format === 'pdf' ? 'fa-file-pdf text-red-500' : format === 'xlsx' ? 'fa-file-excel text-green-600' : 'fa-file-csv text-blue-500'
   const formatLabel = format === 'pdf' ? 'PDF Report' : format === 'xlsx' ? 'Excel Workbook' : 'CSV Data'
+
+  /* ─── If editor is open, render it full-screen instead of the modal ─── */
+  if (showEditor) {
+    return (
+      <ReportEditor
+        initialHtml={editorHtml}
+        onExportPdf={handleEditorExportPdf}
+        onExportExcel={handleEditorExportExcel}
+        onExportCsv={handleEditorExportCsv}
+        onClose={() => setShowEditor(false)}
+      />
+    )
+  }
 
   return (
     <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={620}>
@@ -273,6 +341,10 @@ export default function ReportExportModal({
                     </div>
                   ))}
                 </div>
+                <div className="mt-2 pt-2 border-t border-border flex items-center gap-1.5">
+                  <i className="fas fa-edit text-accent text-[8px]"></i>
+                  <span className="text-[10px] text-gray-600 font-medium">Opens in full document editor with AI assistant for review & editing</span>
+                </div>
               </div>
             )}
             {format === 'xlsx' && (
@@ -311,7 +383,7 @@ export default function ReportExportModal({
                 ) : (
                   <>
                     <i className={`fas ${formatIcon}`}></i>
-                    Generate {formatLabel}
+                    {format === 'pdf' ? 'Generate & Preview Report' : `Generate ${formatLabel}`}
                   </>
                 )}
               </button>
