@@ -100,7 +100,8 @@ function prioritySort(a: DRLRow, b: DRLRow): number {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   Generate the full report as HTML for the TipTap editor
+   Generate the full report as HTML for the TipTap editor.
+   Styling matches the PDF template from pdf.ts exactly.
    ═══════════════════════════════════════════════════════════════════ */
 export function generateReportHtml(
   data: DRLRow[],
@@ -114,41 +115,48 @@ export function generateReportHtml(
   const now = new Date()
   const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
   const analysis = generateAIAnalysis(data, anchors)
-  const hullLabel = hullFilter ?? 'All Hulls'
   const sorted = [...data].sort(prioritySort)
 
   const statusColor = (s: string) => s === 'green' ? GREEN : s === 'yellow' ? YELLOW : RED
   const statusBg = (s: string) => s === 'green' ? BG_GREEN : s === 'yellow' ? BG_YELLOW : BG_RED
   const statusLabel = (s: string) => s === 'green' ? 'COMPLIANT' : s === 'yellow' ? 'IN REVIEW' : 'OVERDUE'
 
-  /* ═══ Title / Header ═══════════════════════════════════════════ */
+  /* ═══ PAGE 1: Title Page ═══════════════════════════════════════ */
   let html = `
-<div style="background:${ACCENT};color:#fff;padding:24px 28px 18px;border-radius:8px;margin-bottom:20px;">
+<div style="background:${ACCENT};color:#fff;padding:32px 28px 24px;margin-bottom:24px;">
   <h1 style="margin:0;font-size:28px;font-weight:800;letter-spacing:-0.5px;">S4 Systems</h1>
-  <h2 style="margin:4px 0 0;font-size:18px;font-weight:600;opacity:0.95;">DRL Weekly Status Report</h2>
-  <p style="margin:8px 0 0;font-size:11px;opacity:0.7;">Prepared: ${dateStr} &nbsp;·&nbsp; Role: ${role} &nbsp;·&nbsp; Scope: ${hullLabel} &nbsp;·&nbsp; Classification: FOUO Simulation</p>
+  <h2 style="margin:6px 0 0;font-size:18px;font-weight:600;opacity:0.95;">DRL Weekly Status Report</h2>
+  <p style="margin:10px 0 0;font-size:11px;color:#C8DCFF;">Prepared: ${dateStr} &nbsp;·&nbsp; Role: ${role} &nbsp;·&nbsp; Classification: FOUO Simulation</p>
 </div>
 `
 
-  /* ═══ Summary Banner ═══════════════════════════════════════════ */
-  const bannerItems = [
-    { label: 'Total DRLs', value: data.length, color: TEXT },
-    { label: 'Completed', value: analysis.green.length, color: GREEN },
-    { label: 'In Review', value: analysis.yellow.length, color: YELLOW },
-    { label: 'Overdue', value: analysis.red.length, color: RED },
-    { label: 'Sealed to Ledger', value: analysis.sealed, color: ACCENT },
-  ]
-  html += `<table style="width:100%;border-collapse:collapse;background:${LIGHT_BG};border:1px solid #ddd;border-radius:6px;margin-bottom:20px;"><tr>`
-  bannerItems.forEach(item => {
-    html += `<td style="text-align:center;padding:12px 8px;">
-      <div style="font-size:22px;font-weight:800;color:${item.color};">${item.value}</div>
-      <div style="font-size:10px;color:${STEEL};text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">${item.label}</div>
-    </td>`
-  })
-  html += `</tr></table>`
+  /* ═══ Summary Stats Banner ═════════════════════════════════════ */
+  html += `<table style="width:100%;border-collapse:collapse;border:1px solid #ddd;border-radius:4px;margin-bottom:24px;">
+  <tr>
+    <td style="text-align:center;padding:14px 8px;border-right:1px solid #eee;">
+      <div style="font-size:20px;font-weight:800;color:${TEXT};">${data.length}</div>
+      <div style="font-size:9px;color:${STEEL};text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;">Total DRLs</div>
+    </td>
+    <td style="text-align:center;padding:14px 8px;border-right:1px solid #eee;">
+      <div style="font-size:20px;font-weight:800;color:${GREEN};">${analysis.green.length}</div>
+      <div style="font-size:9px;color:${STEEL};text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;">Approved</div>
+    </td>
+    <td style="text-align:center;padding:14px 8px;border-right:1px solid #eee;">
+      <div style="font-size:20px;font-weight:800;color:${YELLOW};">${analysis.yellow.length}</div>
+      <div style="font-size:9px;color:${STEEL};text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;">In Review</div>
+    </td>
+    <td style="text-align:center;padding:14px 8px;border-right:1px solid #eee;">
+      <div style="font-size:20px;font-weight:800;color:${RED};">${analysis.red.length}</div>
+      <div style="font-size:9px;color:${STEEL};text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;">Overdue</div>
+    </td>
+    <td style="text-align:center;padding:14px 8px;">
+      <div style="font-size:20px;font-weight:800;color:${ACCENT};">${analysis.sealed}</div>
+      <div style="font-size:9px;color:${STEEL};text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;">Sealed to Ledger</div>
+    </td>
+  </tr></table>`
 
   /* ═══ Key / Legend ═════════════════════════════════════════════ */
-  html += sectionHeading('KEY / LEGEND')
+  html += sectionBox('KEY / LEGEND')
   const legendItems = [
     { color: GREEN, bg: BG_GREEN, label: 'Green — Completed / Verified', desc: 'Deliverable received on time, accepted per DD Form 1423, no corrective action required.' },
     { color: YELLOW, bg: BG_YELLOW, label: 'Yellow — In Review / Minor Issues', desc: 'Deliverable submitted but with minor variance, open RIDs, or exceeding Gov\'t review window.' },
@@ -156,19 +164,21 @@ export function generateReportHtml(
     { color: ACCENT, bg: '#E6F2FF', label: 'Sealed to Ledger', desc: 'Data hash anchored to XRPL — tamper-evident, independently verifiable integrity proof.' },
   ]
   legendItems.forEach(item => {
-    html += `<div style="background:${item.bg};border-radius:4px;padding:6px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;">
-      <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${item.color};flex-shrink:0;"></span>
-      <div>
-        <strong style="font-size:11px;color:${TEXT};">${item.label}</strong>
-        <span style="font-size:10px;color:${STEEL};margin-left:8px;">${item.desc}</span>
-      </div>
-    </div>`
+    html += `<table style="width:100%;border-collapse:collapse;margin-bottom:4px;"><tr>
+      <td style="width:24px;vertical-align:middle;padding:8px 4px 8px 12px;background:${item.bg};border-radius:4px 0 0 4px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:${item.color};"></div>
+      </td>
+      <td style="vertical-align:middle;padding:8px 12px;background:${item.bg};border-radius:0 4px 4px 0;">
+        <strong style="font-size:11px;color:${TEXT};">${item.label}</strong><br/>
+        <span style="font-size:10px;color:${STEEL};">${item.desc}</span>
+      </td>
+    </tr></table>`
   })
 
   /* ═══ Executive Summary ════════════════════════════════════════ */
-  html += sectionHeading('EXECUTIVE SUMMARY')
+  html += sectionBox('EXECUTIVE SUMMARY')
   html += `<p style="font-size:12px;line-height:1.7;color:${TEXT};margin:0 0 16px;">
-    This report provides a comprehensive weekly status of all ${data.length} Data Requirements List (DRL)
+    This report provides a comprehensive weekly status of all ${data.length} Contract Data Requirements List (DRL)
     items tracked in the S4 Ledger Deliverables Tracker. As of ${dateStr}, ${analysis.green.length} deliverables
     (${Math.round(analysis.green.length / data.length * 100)}%) are fully compliant, ${analysis.yellow.length} are under active review
     with minor issues, and ${analysis.red.length} are classified as overdue/delinquent per DD Form 1423 Block 14 criteria.
@@ -178,40 +188,54 @@ export function generateReportHtml(
     per DFARS and NAVSEA/PMS 300 standing instructions.
   </p>`
 
-  /* ═══ Section 1: Top Priority DRLs ═════════════════════════════ */
-  html += pageBreak()
-  html += sectionHeading('SECTION 1: TOP PRIORITY DRLs (SORTED BY CRITICALITY)')
+  /* ═══ Page 1 Footer ════════════════════════════════════════════ */
+  html += reportFooter(dateStr)
+
+  /* ═══ SECTION 1: Top Priority DRLs ═════════════════════════════ */
+  html += pageHeader(dateStr, role)
+  html += sectionBox('SECTION 1: TOP PRIORITY DRLs (SORTED BY CRITICALITY)')
+
   sorted.forEach(row => {
     const req = contractRequirements[row.id]
-    html += `<div style="margin-bottom:14px;border-left:4px solid ${statusColor(row.status)};background:${statusBg(row.status)};border-radius:0 6px 6px 0;padding:10px 14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <strong style="font-size:12px;color:${TEXT};">${row.id} — ${row.title}</strong>
-        <span style="font-size:10px;font-weight:700;color:${statusColor(row.status)};">${statusLabel(row.status)}</span>
-      </div>
-      <div style="font-size:10px;color:${STEEL};margin:4px 0;">
-        DI Number: ${row.diNumber}${req ? ` &nbsp;·&nbsp; Contract Ref: ${req.contractRef} &nbsp;·&nbsp; ${req.block} &nbsp;·&nbsp; ${req.frequency} &nbsp;·&nbsp; ${req.submittalMethod}` : ''}
-      </div>
-      <p style="font-size:11px;color:${TEXT};margin:6px 0;">${getRowAnalysis(row, anchors)}</p>
-      <div style="margin-top:6px;">
-        <strong style="font-size:10px;color:${ACCENT};">Recommended Actions:</strong>
-        <ul style="margin:4px 0 0 16px;padding:0;font-size:10px;color:${TEXT};">
-          ${getRecommendedActions(row).map(a => `<li style="margin-bottom:2px;">${a}</li>`).join('')}
-        </ul>
-      </div>
-    </div>`
+    html += `<table style="width:100%;border-collapse:collapse;margin-bottom:14px;"><tr>
+      <td style="width:4px;background:${statusColor(row.status)};"></td>
+      <td style="background:${statusBg(row.status)};padding:10px 14px;vertical-align:top;">
+        <table style="width:100%;border-collapse:collapse;"><tr>
+          <td style="vertical-align:top;">
+            <strong style="font-size:12px;color:${TEXT};">${row.id} &nbsp;— &nbsp;${row.title}</strong>
+          </td>
+          <td style="text-align:right;vertical-align:top;white-space:nowrap;">
+            <strong style="font-size:11px;color:${statusColor(row.status)};">${statusLabel(row.status)}</strong>
+          </td>
+        </tr></table>
+        <div style="font-size:9px;color:${STEEL};margin:3px 0 2px;">
+          DI Number: ${row.diNumber}${req ? `<span style="margin-left:40px;">Contract Ref: ${req.contractRef}</span><span style="margin-left:40px;">${req.block} &nbsp;·&nbsp; ${req.frequency} &nbsp;·&nbsp; ${req.submittalMethod}</span>` : ''}
+        </div>
+        <p style="font-size:10px;color:${TEXT};margin:6px 0 4px;line-height:1.5;">${getRowAnalysis(row, anchors)}</p>
+        <div style="margin-top:6px;">
+          <strong style="font-size:10px;color:${ACCENT};">Recommended Actions:</strong>
+          <ul style="margin:4px 0 0 16px;padding:0;font-size:10px;color:${TEXT};">
+            ${getRecommendedActions(row).map(a => `<li style="margin-bottom:2px;">${a}</li>`).join('')}
+          </ul>
+        </div>
+      </td>
+    </tr></table>`
   })
 
-  /* ═══ Section 2: Detailed DRL List ═════════════════════════════ */
-  html += pageBreak()
-  html += sectionHeading('SECTION 2: DETAILED DRL LIST — ALL ITEMS BY STATUS')
+  html += reportFooter(dateStr)
+
+  /* ═══ SECTION 2: Detailed DRL List ═════════════════════════════ */
+  html += pageHeader(dateStr, role)
+  html += sectionBox('SECTION 2: DETAILED DRL LIST — ALL ITEMS BY STATUS')
+
   const groups = [
-    { label: 'Completed', status: 'green', color: GREEN, rows: data.filter(r => r.status === 'green') },
-    { label: 'In Review', status: 'yellow', color: YELLOW, rows: data.filter(r => r.status === 'yellow') },
-    { label: 'Overdue / Delinquent', status: 'red', color: RED, rows: data.filter(r => r.status === 'red') },
+    { label: 'COMPLETED / APPROVED', status: 'green', color: GREEN, rows: data.filter(r => r.status === 'green') },
+    { label: 'IN REVIEW', status: 'yellow', color: YELLOW, rows: data.filter(r => r.status === 'yellow') },
+    { label: 'OVERDUE / DELINQUENT', status: 'red', color: RED, rows: data.filter(r => r.status === 'red') },
   ]
   groups.forEach(group => {
     if (group.rows.length === 0) return
-    html += `<div style="background:${group.color};color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:4px;margin:12px 0 6px;">${group.label.toUpperCase()} (${group.rows.length})</div>`
+    html += `<div style="background:${group.color};color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:4px;margin:14px 0 6px;">${group.label} &nbsp;(${group.rows.length})</div>`
     html += `<table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:12px;">
       <thead><tr style="background:${group.color};color:#fff;">
         <th style="padding:5px 6px;text-align:left;">ID</th>
@@ -222,30 +246,31 @@ export function generateReportHtml(
         <th style="padding:5px 6px;text-align:left;">RCVD</th>
         <th style="padding:5px 6px;text-align:left;">Days</th>
         <th style="padding:5px 6px;text-align:left;">Seal</th>
-        <th style="padding:5px 6px;text-align:left;">Notes</th>
+        <th style="padding:5px 6px;text-align:left;">Notes / AI Remarks</th>
       </tr></thead><tbody>`
     group.rows.forEach(row => {
       const findings = rowFindings[row.id]
       const notes = findings && findings.length > 0 ? findings.slice(0, 3).join(' | ') : row.notes
-      const bg = statusBg(row.status)
-      html += `<tr style="background:${bg};">
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${row.id}</td>
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${row.title}</td>
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${row.diNumber}</td>
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${row.contractDueFinish}</td>
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${row.actualSubmissionDate || '—'}</td>
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${row.received}</td>
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${row.calendarDaysToReview !== null ? row.calendarDaysToReview : '—'}</td>
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${anchors[row.id] ? 'Sealed' : '—'}</td>
-        <td style="padding:4px 6px;border-bottom:1px solid #eee;">${notes}</td>
+      html += `<tr style="background:#fff;">
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${row.id}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${row.title}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${row.diNumber}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${row.contractDueFinish}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${row.actualSubmissionDate || '—'}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${row.received}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${row.calendarDaysToReview !== null ? row.calendarDaysToReview : '—'}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${anchors[row.id] ? 'Sealed' : '—'}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #eee;">${notes}</td>
       </tr>`
     })
     html += `</tbody></table>`
   })
 
-  /* ═══ Section 3: RACI Matrix ═══════════════════════════════════ */
-  html += pageBreak()
-  html += sectionHeading('SECTION 3: RACI RESPONSIBILITY MATRIX')
+  html += reportFooter(dateStr)
+
+  /* ═══ SECTION 3: RACI Matrix ═══════════════════════════════════ */
+  html += pageHeader(dateStr, role)
+  html += sectionBox('SECTION 3: RACI RESPONSIBILITY MATRIX')
   html += `<p style="font-size:10px;color:${STEEL};margin:0 0 8px;">R = Responsible (executes) &nbsp;|&nbsp; A = Accountable (approves) &nbsp;|&nbsp; C = Consulted &nbsp;|&nbsp; I = Informed &nbsp;— Per NAVSEA/PMS 300 DRL Management Policy</p>`
   const raciData = [
     ['Systems Engineering (SEP, SDP)', 'R', 'A', 'C', 'I', 'C'],
@@ -262,8 +287,8 @@ export function generateReportHtml(
   html += `<table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:12px;border:1px solid #ddd;">
     <thead><tr style="background:${ACCENT};color:#fff;">
       <th style="padding:6px 8px;text-align:left;">DRL Category</th>
-      <th style="padding:6px 8px;text-align:center;">Shipbuilder</th>
-      <th style="padding:6px 8px;text-align:center;">SDM</th>
+      <th style="padding:6px 8px;text-align:center;">Shipbuilder / Contractor</th>
+      <th style="padding:6px 8px;text-align:center;">Ship Design Manager (SDM)</th>
       <th style="padding:6px 8px;text-align:center;">Lead Reviewer</th>
       <th style="padding:6px 8px;text-align:center;">Program Manager</th>
       <th style="padding:6px 8px;text-align:center;">Quality Assurance</th>
@@ -283,8 +308,11 @@ export function generateReportHtml(
   html += `</tbody></table>
   <p style="font-size:10px;font-style:italic;color:${STEEL};margin:0 0 16px;">Note: RACI assignments are illustrative and should be tailored to specific contract CLINs and organizational structures.</p>`
 
-  /* ═══ Section 4: Weekly Progress ═══════════════════════════════ */
-  html += sectionHeading('SECTION 4: WEEKLY PROGRESS & EFFICIENCY ANALYSIS')
+  html += reportFooter(dateStr)
+
+  /* ═══ SECTION 4: Weekly Progress ═══════════════════════════════ */
+  html += pageHeader(dateStr, role)
+  html += sectionBox('SECTION 4: WEEKLY PROGRESS & EFFICIENCY ANALYSIS')
   const progressData = [
     ['DRLs Submitted', String(analysis.lastWeekSubmitted), String(analysis.submitted), analysis.submitted > analysis.lastWeekSubmitted ? `+${analysis.submitted - analysis.lastWeekSubmitted}` : '—'],
     ['DRLs Completed (Green)', String(analysis.lastWeekCompleted), String(analysis.green.length), analysis.green.length > analysis.lastWeekCompleted ? `+${analysis.green.length - analysis.lastWeekCompleted}` : '—'],
@@ -294,7 +322,7 @@ export function generateReportHtml(
     ['On-Time Rate', `${Math.max(0, analysis.onTimeRate - 5)}%`, `${analysis.onTimeRate}%`, analysis.onTimeRate > 0 ? `+${Math.min(5, analysis.onTimeRate)}%` : '—'],
     ['Avg Review Cycle', `${(analysis.avgReviewDays + 2.1).toFixed(1)} days`, `${analysis.avgReviewDays} days`, '-2.1 days'],
   ]
-  html += `<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px;border:1px solid #ddd;">
+  html += `<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;border:1px solid #ddd;">
     <thead><tr style="background:${ACCENT};color:#fff;">
       <th style="padding:6px 10px;text-align:left;">Metric</th>
       <th style="padding:6px 10px;text-align:center;">Last Week</th>
@@ -313,22 +341,25 @@ export function generateReportHtml(
   })
   html += `</tbody></table>`
 
-  /* Efficiency box */
-  html += `<div style="background:${LIGHT_BG};border:1px solid #C8D0FF;border-radius:6px;padding:14px 18px;margin-bottom:16px;">
-    <strong style="font-size:12px;color:${ACCENT};">Efficiency & Cost Savings Estimate</strong>
+  /* Efficiency & Cost Savings box */
+  html += `<div style="background:${LIGHT_BG};border:1px solid #ddd;border-radius:6px;padding:14px 18px;margin-bottom:16px;">
+    <strong style="font-size:12px;color:${ACCENT};">Efficiency &amp; Cost Savings Estimate</strong>
     <p style="font-size:11px;line-height:1.6;color:${TEXT};margin:8px 0 0;">
       Through automated ledger sealing and AI-assisted contractual guidance, the S4 Ledger platform has saved an estimated
       ${analysis.estHoursSaved} staff-hours this reporting period, translating to approximately $${analysis.estCostSaved.toLocaleString()}
       in blended labor cost savings (at $185/hr blended rate). ${analysis.sealed} deliverables were cryptographically sealed,
       eliminating manual verification workflows. The average government review cycle decreased by 2.1 days compared to the prior
       reporting period, indicating improved throughput. Automated contract comparison identified ${analysis.red.length} critical
-      items and ${analysis.yellow.length} items requiring attention, enabling proactive program management.
+      items and ${analysis.yellow.length} items requiring attention, enabling proactive program management rather than reactive firefighting.
     </p>
   </div>`
 
-  /* ═══ AI Next Actions ══════════════════════════════════════════ */
+  html += reportFooter(dateStr)
+
+  /* ═══ AI Next Actions (if available) ═══════════════════════════ */
   if (aiInsights && Object.keys(aiInsights).length > 0) {
-    html += sectionHeading('AI-PRIORITIZED NEXT ACTIONS')
+    html += pageHeader(dateStr, role)
+    html += sectionBox('AI-PRIORITIZED NEXT ACTIONS')
     const priorityOrder: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 }
     const sortedInsights = Object.entries(aiInsights)
       .map(([id, ins]) => ({ id, ...ins }))
@@ -354,6 +385,7 @@ export function generateReportHtml(
       </tr>`
     })
     html += `</tbody></table>`
+    html += reportFooter(dateStr)
   }
 
   /* ═══ Audit Trail Summary ══════════════════════════════════════ */
@@ -361,7 +393,8 @@ export function generateReportHtml(
   const auditSummary = getAuditSummary(rowIds)
   const recentEvents = getAuditLog().filter(e => rowIds.includes(e.rowId)).slice(-6).reverse()
 
-  html += sectionHeading('AUDIT TRAIL SUMMARY')
+  html += pageHeader(dateStr, role)
+  html += sectionBox('AUDIT TRAIL SUMMARY')
   const externalFeeds = getAuditLog().filter(e => rowIds.includes(e.rowId) && e.type === 'External Data Feed').length
   html += `<div style="background:${LIGHT_BG};border-radius:4px;padding:8px 14px;margin-bottom:10px;font-size:11px;color:${TEXT};">
     Total Seals: ${auditSummary.totalSeals} &nbsp;·&nbsp; Verifications: ${auditSummary.totalVerifications} &nbsp;·&nbsp; Edits Tracked: ${auditSummary.totalEdits} &nbsp;·&nbsp; External Syncs: ${externalFeeds} &nbsp;·&nbsp; Trust Status: ${auditSummary.trustStatus}
@@ -388,39 +421,49 @@ export function generateReportHtml(
   }
 
   /* ═══ Status Distribution ══════════════════════════════════════ */
-  html += sectionHeading('STATUS DISTRIBUTION')
+  html += sectionBox('STATUS DISTRIBUTION')
   const total = data.length || 1
   const greenPct = Math.round(analysis.green.length / total * 100)
   const yellowPct = Math.round(analysis.yellow.length / total * 100)
   const redPct = Math.round(analysis.red.length / total * 100)
-  html += `<div style="display:flex;border-radius:6px;overflow:hidden;height:28px;margin-bottom:8px;">`
-  if (greenPct > 0) html += `<div style="width:${greenPct}%;background:${GREEN};display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;">${analysis.green.length}</div>`
-  if (yellowPct > 0) html += `<div style="width:${yellowPct}%;background:${YELLOW};display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;">${analysis.yellow.length}</div>`
-  if (redPct > 0) html += `<div style="width:${redPct}%;background:${RED};display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;">${analysis.red.length}</div>`
-  html += `</div>`
-  html += `<div style="display:flex;gap:40px;font-size:11px;color:${TEXT};margin-bottom:4px;">`
-  html += `<span>● <strong>Completed:</strong> ${analysis.green.length} (${greenPct}%)</span>`
-  html += `<span style="color:${YELLOW};">● <strong style="color:${TEXT};">In Review:</strong> ${analysis.yellow.length} (${yellowPct}%)</span>`
-  html += `<span style="color:${RED};">● <strong style="color:${TEXT};">Overdue:</strong> ${analysis.red.length} (${redPct}%)</span>`
-  html += `<span style="color:${ACCENT};">● <strong style="color:${TEXT};">Sealed:</strong> ${analysis.sealed} (${Math.round(analysis.sealed / total * 100)}%)</span>`
-  html += `</div>`
+  html += `<table style="width:100%;border-collapse:collapse;border-radius:6px;overflow:hidden;height:32px;margin-bottom:10px;"><tr>`
+  if (greenPct > 0) html += `<td style="width:${greenPct}%;background:${GREEN};text-align:center;color:#fff;font-size:12px;font-weight:700;padding:6px 0;">${analysis.green.length}</td>`
+  if (yellowPct > 0) html += `<td style="width:${yellowPct}%;background:${YELLOW};text-align:center;color:#fff;font-size:12px;font-weight:700;padding:6px 0;">${analysis.yellow.length}</td>`
+  if (redPct > 0) html += `<td style="width:${redPct}%;background:${RED};text-align:center;color:#fff;font-size:12px;font-weight:700;padding:6px 0;">${analysis.red.length}</td>`
+  html += `</tr></table>`
+  html += `<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:4px;"><tr>
+    <td><span style="color:${GREEN};">●</span> Approved: ${analysis.green.length} (${greenPct}%)</td>
+    <td><span style="color:${YELLOW};">●</span> In Review: ${analysis.yellow.length} (${yellowPct}%)</td>
+    <td><span style="color:${RED};">●</span> Overdue: ${analysis.red.length} (${redPct}%)</td>
+    <td><span style="color:${ACCENT};">●</span> Sealed: ${analysis.sealed} (${Math.round(analysis.sealed / total * 100)}%)</td>
+  </tr></table>`
 
-  /* ═══ Footer ═══════════════════════════════════════════════════ */
-  html += `<hr style="border:none;border-top:1px solid #ddd;margin:20px 0 8px;">
-  <p style="font-size:9px;color:${STEEL};text-align:center;margin:0;">
-    All data verified and sealed to Ledger as of ${dateStr} &nbsp;·&nbsp; XRPL Anchored &nbsp;·&nbsp; S4 Ledger™ DRL Weekly Status Report
-  </p>`
+  /* ═══ Final Footer ═════════════════════════════════════════════ */
+  html += reportFooter(dateStr)
 
   return html
 }
 
-/* ─── Helpers ────────────────────────────────────────────────────── */
-function sectionHeading(label: string): string {
-  return `<div style="background:#F5F5F7;border-radius:4px;padding:6px 12px;margin:16px 0 10px;">
-    <strong style="font-size:13px;color:#1D1D1F;">${label}</strong>
+/* ─── Helper: Section heading (gray background bar) ──────────────── */
+function sectionBox(label: string): string {
+  return `<div style="background:${LIGHT_BG};border-radius:4px;padding:8px 14px;margin:18px 0 12px;">
+    <strong style="font-size:13px;color:${TEXT};">${label}</strong>
   </div>`
 }
 
-function pageBreak(): string {
-  return `<div style="page-break-before:always;border-top:2px dashed #ddd;margin:24px 0;padding-top:4px;"></div>`
+/* ─── Helper: Page header bar (blue, matches PDF pages 2+) ──────── */
+function pageHeader(dateStr: string, role: string): string {
+  return `<div style="page-break-before:always;margin-top:28px;"></div>
+<div style="background:${ACCENT};color:#fff;padding:10px 14px 8px;margin-bottom:18px;">
+  <strong style="font-size:14px;">S4 Systems DRL Weekly Status Report</strong><br/>
+  <span style="font-size:9px;color:#C8DCFF;">Generated: ${dateStr} &nbsp;|&nbsp; Role: ${role} &nbsp;|&nbsp; FOUO Simulation &nbsp;|&nbsp; S4 Ledger™</span>
+</div>`
+}
+
+/* ─── Helper: Page footer (matches PDF footers) ──────────────────── */
+function reportFooter(dateStr: string): string {
+  return `<hr style="border:none;border-top:1px solid #ddd;margin:24px 0 6px;">
+<p style="font-size:8px;color:${STEEL};text-align:center;margin:0;">
+  All data verified and sealed to Ledger as of ${dateStr} &nbsp;·&nbsp; XRPL Anchored &nbsp;·&nbsp; S4 Ledger™ DRL Weekly Status Report
+</p>`
 }
