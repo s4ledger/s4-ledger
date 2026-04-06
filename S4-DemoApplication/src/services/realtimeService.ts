@@ -76,7 +76,7 @@ function getAvatarColor(userId: string): string {
 
 /**
  * Join the real-time collaboration channel.
- * Call once when the tracker mounts.
+ * Safe to call multiple times — cleans up existing channel first.
  */
 export function joinCollaboration(
   user: { userId: string; displayName: string; role: UserRole; organization: Organization },
@@ -85,7 +85,11 @@ export function joinCollaboration(
     onBroadcast: (event: BroadcastEvent) => void
   },
 ): void {
-  if (channel) return // already joined
+  // Clean up existing channel before creating new one (handles StrictMode remount)
+  if (channel) {
+    try { supabase.removeChannel(channel) } catch { /* ignore */ }
+    channel = null
+  }
 
   onPresenceChange = callbacks.onPresenceChange
   onBroadcast = callbacks.onBroadcast

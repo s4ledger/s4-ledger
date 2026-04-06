@@ -428,6 +428,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
   /* ─── Real-Time Collaboration lifecycle ─────────────────── */
   useEffect(() => {
+    let simTimerId: ReturnType<typeof setTimeout> | null = null
+    let cancelled = false
+
+    // Join collaboration channel (safe to call multiple times)
     try {
       const userId = user?.id || demoUserIdRef.current
       const displayName = profile?.display_name || role
@@ -435,8 +439,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       joinCollaboration(
         { userId, displayName, role, organization: org },
         {
-          onPresenceChange: (users: PresenceUser[]) => setCollabUsers(users),
+          onPresenceChange: (users: PresenceUser[]) => {
+            if (!cancelled) setCollabUsers(users)
+          },
           onBroadcast: (event: BroadcastEvent) => {
+            if (cancelled) return
             if (event.type === 'cell_edit') {
               setCollabToast(`${event.sender.displayName} updated ${(event.payload as Record<string, string>).field || 'a field'}`)
               setTimeout(() => setCollabToast(null), 3000)
@@ -444,26 +451,28 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           },
         },
       )
-
-      // Auto-start collaboration simulation in demo mode (retry until data is available)
-      const tryStartSim = () => {
-        const rowIds = dataRef.current.map(r => r.id)
-        if (rowIds.length > 0) {
-          startCollabSimulation(
-            rowIds,
-            (msg) => { setCollabToast(msg); setTimeout(() => setCollabToast(null), 3000) },
-          )
-        } else {
-          // Data not loaded yet — retry in 1s
-          setTimeout(tryStartSim, 1000)
-        }
-      }
-      setTimeout(tryStartSim, 3000)
     } catch (e) {
       console.warn('Real-time collaboration unavailable:', e)
     }
 
+    // Auto-start simulation OUTSIDE try/catch — runs even if joinCollaboration fails
+    const tryStartSim = () => {
+      if (cancelled) return
+      const rowIds = dataRef.current.map(r => r.id)
+      if (rowIds.length > 0) {
+        startCollabSimulation(
+          rowIds,
+          (msg) => { if (!cancelled) { setCollabToast(msg); setTimeout(() => setCollabToast(null), 3000) } },
+        )
+      } else {
+        simTimerId = setTimeout(tryStartSim, 1000)
+      }
+    }
+    simTimerId = setTimeout(tryStartSim, 3000)
+
     return () => {
+      cancelled = true
+      if (simTimerId) clearTimeout(simTimerId)
       stopCollabSimulation()
       leaveCollaboration().catch(() => {})
     }

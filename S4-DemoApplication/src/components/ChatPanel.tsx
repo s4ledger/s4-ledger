@@ -1,5 +1,5 @@
 /**
- * ChatPanel — Unified chat panel with three tabs: AI, Team, Agents
+ * ChatPanel — Unified chat panel with two tabs: AI (with integrated agents + model picker) and Team
  * Collapsible right-side panel for the Deliverables Tracker.
  */
 
@@ -21,7 +21,7 @@ import {
 
 /* ─── Types ─────────────────────────────────────────────── */
 
-type ChatTab = 'ai' | 'team' | 'agents'
+type ChatTab = 'ai' | 'team'
 
 interface SavedConversation {
   id: string
@@ -40,11 +40,13 @@ function estimateTokens(messages: AIChatMessage[]): number {
   return Math.ceil(messages.reduce((sum, m) => sum + m.text.length, 0) / 4)
 }
 
-/** Token pricing tiers for AI models */
-const AI_TIERS = [
-  { id: 'standard', name: 'Standard', model: 'GPT-4o mini', inputPer1k: 0.00015, outputPer1k: 0.0006, description: 'Fast answers, status checks, simple queries' },
-  { id: 'advanced', name: 'Advanced', model: 'GPT-4o', inputPer1k: 0.0025, outputPer1k: 0.01, description: 'Complex analysis, drafting documents, compliance review' },
-  { id: 'reasoning', name: 'Reasoning', model: 'o1-pro', inputPer1k: 0.15, outputPer1k: 0.60, description: 'Multi-step reasoning, contract interpretation, risk modeling' },
+/** Available AI models */
+const AI_MODELS = [
+  { id: 'gpt-4o-mini', name: 'GPT-4o mini', provider: 'OpenAI', tier: 'Standard', inputPer1k: 0.00015, outputPer1k: 0.0006, description: 'Fast answers & status checks' },
+  { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI', tier: 'Advanced', inputPer1k: 0.0025, outputPer1k: 0.01, description: 'Complex analysis & drafting' },
+  { id: 'claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic', tier: 'Advanced', inputPer1k: 0.003, outputPer1k: 0.015, description: 'Nuanced analysis & reasoning' },
+  { id: 'claude-3-opus', name: 'Claude 3 Opus', provider: 'Anthropic', tier: 'Premium', inputPer1k: 0.015, outputPer1k: 0.075, description: 'Highest capability' },
+  { id: 'o1-pro', name: 'o1-pro', provider: 'OpenAI', tier: 'Reasoning', inputPer1k: 0.15, outputPer1k: 0.60, description: 'Multi-step reasoning & risk' },
 ] as const
 
 const STORAGE_KEY = 's4-chat-saved-conversations'
@@ -72,28 +74,59 @@ interface Props {
   onClose: () => void
 }
 
-/* ─── AI Chat Tab ───────────────────────────────────────── */
+/* ─── AI Chat Tab (with integrated agents + model picker) ── */
 
 function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
   data: DRLRow[]; anchors: Record<string, AnchorRecord>; aiInsights: Record<string, AIRowInsight>
   role: UserRole; userId: string; displayName: string
 }) {
-  const [messages, setMessages] = useState<AIChatMessage[]>([
+  // --- Model selection ---
+  const [selectedModel, setSelectedModel] = useState<string>('gpt-4o-mini')
+  const [showModelPicker, setShowModelPicker] = useState(false)
+
+  // --- Agent selection ---
+  const [agents, setAgents] = useState<AIAgent[]>(() => DEFAULT_AGENTS)
+  const [activeAgent, setActiveAgent] = useState<AIAgent | null>(null)
+  const [showAgentPicker, setShowAgentPicker] = useState(false)
+  const [showCreateAgent, setShowCreateAgent] = useState(false)
+  const [newAgent, setNewAgent] = useState({ name: '', description: '', focusArea: '', instructions: '' })
+
+  // --- Messages ---
+  const makeGreeting = useCallback(() =>
+    `Hello, ${displayName}. I'm your S4 Ledger AI Assistant. I have full context on all ${data.length} DRL deliverables, seal records, and compliance status.\n\nAsk me about deadlines, risk, status summaries, drafting communications, or anything else.`
+  , [displayName, data.length])
+
+  const [generalMessages, setGeneralMessages] = useState<AIChatMessage[]>(() => [
     { role: 'ai', text: `Hello, ${displayName}. I'm your S4 Ledger AI Assistant. I have full context on all ${data.length} DRL deliverables, seal records, and compliance status.\n\nAsk me about deadlines, risk, status summaries, drafting communications, or anything else.` },
   ])
+  const [agentMessages, setAgentMessages] = useState<Record<string, AIChatMessage[]>>({})
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  // --- Save / Pin ---
+  const [savedConvos, setSavedConvos] = useState<SavedConversation[]>(() => loadSavedConversations())
+  const [activeConvoId, setActiveConvoId] = useState<string | null>(null)
   const [showSaved, setShowSaved] = useState(false)
   const [showTokens, setShowTokens] = useState(false)
-  const [savedConvos, setSavedConvos] = useState<SavedConversation[]>(() => loadSavedConversations().filter(c => !c.agentId))
-  const [activeConvoId, setActiveConvoId] = useState<string | null>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const [saveToast, setSaveToast] = useState<string | null>(null)
+
+  // Current conversation messages (general AI or agent)
+  const makeAgentGreeting = useCallback((agent: AIAgent) =>
+    `I'm ${agent.name}. ${agent.description}\n\nHow can I help you today?`
+  , [])
+
+  const currentMessages = useMemo(() => {
+    if (!activeAgent) return generalMessages
+    return agentMessages[activeAgent.id] || [{ role: 'ai' as const, text: makeAgentGreeting(activeAgent) }]
+  }, [activeAgent, generalMessages, agentMessages, makeAgentGreeting])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages])
+  }, [currentMessages])
 
-  const tokenCount = useMemo(() => estimateTokens(messages), [messages])
+  const tokenCount = useMemo(() => estimateTokens(currentMessages), [currentMessages])
+  const selectedModelInfo = AI_MODELS.find(m => m.id === selectedModel) || AI_MODELS[0]
 
   const buildContext = useCallback(() => {
     const green = data.filter(r => r.status === 'green').length
@@ -102,110 +135,204 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
     const sealed = Object.keys(anchors).length
     return `S4 Ledger DRL Tracker for PMS 300 (U.S. Navy Boats & Craft). ` +
       `${data.length} deliverables: ${green} green, ${yellow} yellow, ${red} red. ` +
-      `${sealed} records sealed to trust layer. User: ${displayName} (${role}).`
-  }, [data, anchors, displayName, role])
+      `${sealed} records sealed to trust layer. User: ${displayName} (${role}). ` +
+      `AI Model: ${selectedModelInfo.name} (${selectedModelInfo.provider}).`
+  }, [data, anchors, displayName, role, selectedModelInfo])
 
+  // --- Unified send handler ---
   const handleSend = useCallback(async () => {
     const text = input.trim()
     if (!text || loading) return
     setInput('')
-    setMessages(prev => [...prev, { role: 'user', text }])
     setLoading(true)
 
-    try {
-      const result = await chatWithAI({
-        message: text,
-        conversation: messages,
-        tool_context: 'drl_tracker',
-        analysis_data: {
-          context: buildContext(),
-          totalRows: data.length,
-          statusBreakdown: {
-            green: data.filter(r => r.status === 'green').length,
-            yellow: data.filter(r => r.status === 'yellow').length,
-            red: data.filter(r => r.status === 'red').length,
-          },
-          sealedCount: Object.keys(anchors).length,
-          role,
-        },
-      })
+    const green = data.filter(r => r.status === 'green').length
+    const yellow = data.filter(r => r.status === 'yellow').length
+    const red = data.filter(r => r.status === 'red').length
+    const sealed = Object.keys(anchors).length
 
-      if (!result.fallback && result.response) {
-        setMessages(prev => [...prev, { role: 'ai', text: result.response }])
-      } else {
-        const fallback = generateLocalResponse(text, data, aiInsights, anchors)
-        setMessages(prev => [...prev, { role: 'ai', text: fallback }])
+    if (activeAgent) {
+      const agentId = activeAgent.id
+      const prev = agentMessages[agentId] || [{ role: 'ai' as const, text: makeAgentGreeting(activeAgent) }]
+      const withUser = [...prev, { role: 'user' as const, text }]
+      setAgentMessages(p => ({ ...p, [agentId]: withUser }))
+
+      try {
+        const contextMsg = `${activeAgent.instructions}\n\nModel: ${selectedModelInfo.name}. Current data: ${data.length} deliverables (${green} green, ${yellow} yellow, ${red} red), ${sealed} sealed. User: ${displayName} (${role}).\n\nUser: ${text}`
+
+        const result = await chatWithAI({
+          message: contextMsg,
+          conversation: prev,
+          tool_context: 'ai_agent',
+          analysis_data: { agentName: activeAgent.name, focusArea: activeAgent.focusArea, totalRows: data.length, statusBreakdown: { green, yellow, red }, sealedCount: sealed },
+        })
+
+        const response = result.fallback ? generateAgentFallback(activeAgent, text, data, aiInsights) : result.response
+        setAgentMessages(p => ({ ...p, [agentId]: [...withUser, { role: 'ai' as const, text: response }] }))
+      } catch {
+        setAgentMessages(p => ({ ...p, [agentId]: [...withUser, { role: 'ai' as const, text: 'I encountered an error. Please try again.' }] }))
       }
-    } catch {
-      setMessages(prev => [...prev, { role: 'ai', text: 'I encountered an error processing your request. Please try again.' }])
-    } finally {
-      setLoading(false)
-    }
-  }, [input, loading, messages, data, anchors, aiInsights, role, buildContext])
+    } else {
+      setGeneralMessages(prev => [...prev, { role: 'user', text }])
+      try {
+        const result = await chatWithAI({
+          message: text,
+          conversation: generalMessages,
+          tool_context: 'drl_tracker',
+          analysis_data: {
+            context: buildContext(),
+            totalRows: data.length,
+            statusBreakdown: { green, yellow, red },
+            sealedCount: sealed,
+            role,
+          },
+        })
 
-  // Save current conversation
+        if (!result.fallback && result.response) {
+          setGeneralMessages(prev => [...prev, { role: 'ai', text: result.response }])
+        } else {
+          const fallback = generateLocalResponse(text, data, aiInsights, anchors)
+          setGeneralMessages(prev => [...prev, { role: 'ai', text: fallback }])
+        }
+      } catch {
+        setGeneralMessages(prev => [...prev, { role: 'ai', text: 'I encountered an error processing your request. Please try again.' }])
+      }
+    }
+
+    setLoading(false)
+  }, [input, loading, activeAgent, agentMessages, generalMessages, data, anchors, aiInsights, role, displayName, buildContext, selectedModelInfo, makeAgentGreeting])
+
+  // --- Save toast ---
+  const showSaveMsg = useCallback((msg: string) => {
+    setSaveToast(msg)
+    setTimeout(() => setSaveToast(null), 2500)
+  }, [])
+
+  // --- Save ---
   const handleSave = useCallback(() => {
-    if (messages.length <= 1) return
-    const firstUserMsg = messages.find(m => m.role === 'user')?.text || 'Untitled'
-    const title = firstUserMsg.length > 50 ? firstUserMsg.slice(0, 50) + '...' : firstUserMsg
+    if (currentMessages.length <= 1) return
+    const firstUserMsg = currentMessages.find(m => m.role === 'user')?.text || 'Untitled'
+    const titleBase = activeAgent ? `${activeAgent.name}: ${firstUserMsg}` : firstUserMsg
+    const title = titleBase.length > 50 ? titleBase.slice(0, 50) + '...' : titleBase
     const now = new Date().toISOString()
 
     if (activeConvoId) {
-      // Update existing
       const all = loadSavedConversations()
-      const updated = all.map(c => c.id === activeConvoId ? { ...c, messages, tokenCount: estimateTokens(messages), updatedAt: now } : c)
+      const updated = all.map(c => c.id === activeConvoId ? { ...c, messages: currentMessages, tokenCount: estimateTokens(currentMessages), updatedAt: now } : c)
       persistConversations(updated)
-      setSavedConvos(updated.filter(c => !c.agentId))
+      setSavedConvos(updated)
+      showSaveMsg('Conversation updated')
     } else {
-      // New conversation
       const convo: SavedConversation = {
         id: `conv-${Date.now()}`,
         title,
-        messages,
+        messages: currentMessages,
         pinned: false,
+        ...(activeAgent ? { agentId: activeAgent.id, agentName: activeAgent.name } : {}),
         createdAt: now,
         updatedAt: now,
-        tokenCount: estimateTokens(messages),
+        tokenCount: estimateTokens(currentMessages),
       }
       const all = loadSavedConversations()
       all.unshift(convo)
       persistConversations(all)
-      setSavedConvos(all.filter(c => !c.agentId))
+      setSavedConvos(all)
       setActiveConvoId(convo.id)
+      showSaveMsg('Conversation saved')
     }
-  }, [messages, activeConvoId])
+  }, [currentMessages, activeConvoId, activeAgent, showSaveMsg])
 
-  // Toggle pin
+  // --- Pin ---
   const handlePin = useCallback((convoId: string) => {
     const all = loadSavedConversations()
+    const wasPinned = all.find(c => c.id === convoId)?.pinned
     const updated = all.map(c => c.id === convoId ? { ...c, pinned: !c.pinned } : c)
     persistConversations(updated)
-    setSavedConvos(updated.filter(c => !c.agentId))
-  }, [])
+    setSavedConvos(updated)
+    showSaveMsg(wasPinned ? 'Unpinned' : 'Pinned')
+  }, [showSaveMsg])
 
-  // Load a saved conversation
+  // --- Load ---
   const handleLoad = useCallback((convo: SavedConversation) => {
-    setMessages(convo.messages)
+    if (convo.agentId) {
+      const agent = agents.find(a => a.id === convo.agentId)
+      if (agent) {
+        setActiveAgent(agent)
+        setAgentMessages(prev => ({ ...prev, [agent.id]: convo.messages }))
+      }
+    } else {
+      setActiveAgent(null)
+      setGeneralMessages(convo.messages)
+    }
     setActiveConvoId(convo.id)
     setShowSaved(false)
-  }, [])
+  }, [agents])
 
-  // Delete a saved conversation
+  // --- Delete ---
   const handleDelete = useCallback((convoId: string) => {
     const all = loadSavedConversations().filter(c => c.id !== convoId)
     persistConversations(all)
-    setSavedConvos(all.filter(c => !c.agentId))
+    setSavedConvos(all)
     if (activeConvoId === convoId) setActiveConvoId(null)
   }, [activeConvoId])
 
-  // New conversation
+  // --- New conversation ---
   const handleNew = useCallback(() => {
-    setMessages([
-      { role: 'ai', text: `Hello, ${displayName}. I'm your S4 Ledger AI Assistant. I have full context on all ${data.length} DRL deliverables, seal records, and compliance status.\n\nAsk me about deadlines, risk, status summaries, drafting communications, or anything else.` },
-    ])
+    if (activeAgent) {
+      setAgentMessages(prev => ({
+        ...prev,
+        [activeAgent.id]: [{ role: 'ai', text: makeAgentGreeting(activeAgent) }],
+      }))
+    } else {
+      setGeneralMessages([{ role: 'ai', text: makeGreeting() }])
+    }
     setActiveConvoId(null)
     setShowSaved(false)
-  }, [displayName, data.length])
+  }, [activeAgent, makeGreeting, makeAgentGreeting])
+
+  // --- Create agent ---
+  const handleCreateAgent = useCallback(() => {
+    if (!newAgent.name.trim() || !newAgent.instructions.trim()) return
+    const agent: AIAgent = {
+      id: `custom-${Date.now()}`,
+      name: newAgent.name,
+      description: newAgent.description || newAgent.name,
+      icon: 'fa-robot',
+      focusArea: newAgent.focusArea || 'General',
+      instructions: newAgent.instructions,
+      createdBy: displayName,
+      createdAt: new Date().toISOString(),
+    }
+    setAgents(prev => [...prev, agent])
+    setNewAgent({ name: '', description: '', focusArea: '', instructions: '' })
+    setShowCreateAgent(false)
+    setActiveAgent(agent)
+    setAgentMessages(prev => ({
+      ...prev,
+      [agent.id]: [{ role: 'ai', text: makeAgentGreeting(agent) }],
+    }))
+    showSaveMsg(`Agent "${agent.name}" created`)
+  }, [newAgent, displayName, showSaveMsg, makeAgentGreeting])
+
+  // --- Switch to agent ---
+  const handleSelectAgent = useCallback((agent: AIAgent) => {
+    setActiveAgent(agent)
+    if (!agentMessages[agent.id]) {
+      setAgentMessages(prev => ({
+        ...prev,
+        [agent.id]: [{ role: 'ai', text: makeAgentGreeting(agent) }],
+      }))
+    }
+    setActiveConvoId(null)
+    setShowAgentPicker(false)
+  }, [agentMessages, makeAgentGreeting])
+
+  // --- Switch to general AI ---
+  const handleSwitchToGeneral = useCallback(() => {
+    setActiveAgent(null)
+    setActiveConvoId(null)
+    setShowAgentPicker(false)
+  }, [])
 
   const suggestions = [
     'Show me all overdue deliverables',
@@ -214,7 +341,7 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
     'Which items need immediate attention?',
   ]
 
-  // Saved conversations view
+  // ═══════════════ Saved Conversations View ═══════════════
   if (showSaved) {
     const pinned = savedConvos.filter(c => c.pinned)
     const unpinned = savedConvos.filter(c => !c.pinned)
@@ -246,6 +373,7 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
                   <div className="flex-1 min-w-0" onClick={() => handleLoad(c)}>
                     <p className="text-xs font-medium text-gray-900 truncate">{c.title}</p>
                     <div className="flex items-center gap-2 mt-0.5">
+                      {c.agentName && <span className="text-[9px] text-purple-600 bg-purple-50 px-1 rounded">{c.agentName}</span>}
                       <span className="text-[9px] text-steel">{new Date(c.updatedAt).toLocaleDateString()}</span>
                       <span className="text-[9px] text-accent bg-accent/10 px-1 rounded">{c.tokenCount.toLocaleString()} tokens</span>
                     </div>
@@ -264,6 +392,7 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
                   <div className="flex-1 min-w-0" onClick={() => handleLoad(c)}>
                     <p className="text-xs font-medium text-gray-900 truncate">{c.title}</p>
                     <div className="flex items-center gap-2 mt-0.5">
+                      {c.agentName && <span className="text-[9px] text-purple-600 bg-purple-50 px-1 rounded">{c.agentName}</span>}
                       <span className="text-[9px] text-steel">{new Date(c.updatedAt).toLocaleDateString()}</span>
                       <span className="text-[9px] text-accent bg-accent/10 px-1 rounded">{c.tokenCount.toLocaleString()} tokens</span>
                     </div>
@@ -278,7 +407,7 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
     )
   }
 
-  // Token usage / pricing view
+  // ═══════════════ Token Usage & Pricing View ═══════════════
   if (showTokens) {
     const totalSaved = savedConvos.reduce((sum, c) => sum + c.tokenCount, 0)
     return (
@@ -290,17 +419,14 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
           <span className="text-xs font-semibold text-gray-900">Token Usage & Pricing</span>
         </div>
         <div className="flex-1 overflow-y-auto p-3 space-y-3">
-          {/* Current session */}
           <div className="bg-accent/5 border border-accent/15 rounded-lg p-3">
             <p className="text-[10px] font-semibold text-accent uppercase tracking-wider mb-1">Current Session</p>
             <div className="flex items-baseline gap-1">
               <span className="text-xl font-bold text-gray-900">{tokenCount.toLocaleString()}</span>
               <span className="text-[10px] text-steel">tokens</span>
             </div>
-            <p className="text-[10px] text-steel mt-0.5">{messages.length} messages in this conversation</p>
+            <p className="text-[10px] text-steel mt-0.5">{currentMessages.length} messages · {selectedModelInfo.name}</p>
           </div>
-
-          {/* Total usage */}
           <div className="bg-gray-50 border border-border rounded-lg p-3">
             <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Total Saved</p>
             <div className="flex items-baseline gap-1">
@@ -308,33 +434,33 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
               <span className="text-[10px] text-steel">tokens across {savedConvos.length + 1} conversations</span>
             </div>
           </div>
-
-          {/* AI Tiers */}
           <div>
-            <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2">AI Model Tiers</p>
+            <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2">Available Models</p>
             <div className="space-y-2">
-              {AI_TIERS.map(tier => (
-                <div key={tier.id} className="bg-white border border-border rounded-lg p-3">
+              {AI_MODELS.map(model => (
+                <div key={model.id} className={`bg-white border rounded-lg p-3 ${selectedModel === model.id ? 'border-accent/40 ring-1 ring-accent/20' : 'border-border'}`}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-gray-900">{tier.name}</span>
-                    <span className="text-[9px] text-steel bg-gray-100 px-1.5 py-0.5 rounded">{tier.model}</span>
+                    <span className="text-xs font-bold text-gray-900">{model.name}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[9px] text-steel bg-gray-100 px-1.5 py-0.5 rounded">{model.provider}</span>
+                      <span className="text-[9px] text-accent bg-accent/10 px-1.5 py-0.5 rounded">{model.tier}</span>
+                    </div>
                   </div>
-                  <p className="text-[10px] text-steel mb-2">{tier.description}</p>
+                  <p className="text-[10px] text-steel mb-2">{model.description}</p>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="bg-gray-50 rounded-md px-2 py-1.5">
                       <p className="text-[9px] text-steel">Input</p>
-                      <p className="text-[11px] font-semibold text-gray-900">${tier.inputPer1k}/1K tokens</p>
+                      <p className="text-[11px] font-semibold text-gray-900">${model.inputPer1k}/1K tokens</p>
                     </div>
                     <div className="bg-gray-50 rounded-md px-2 py-1.5">
                       <p className="text-[9px] text-steel">Output</p>
-                      <p className="text-[11px] font-semibold text-gray-900">${tier.outputPer1k}/1K tokens</p>
+                      <p className="text-[11px] font-semibold text-gray-900">${model.outputPer1k}/1K tokens</p>
                     </div>
                   </div>
-                  {/* Estimated cost for current session */}
                   <div className="mt-2 pt-2 border-t border-border flex items-center justify-between">
                     <span className="text-[9px] text-steel">Est. session cost</span>
                     <span className="text-[11px] font-semibold text-gray-900">
-                      ${((tokenCount / 1000) * (tier.inputPer1k + tier.outputPer1k) / 2).toFixed(4)}
+                      ${((tokenCount / 1000) * (model.inputPer1k + model.outputPer1k) / 2).toFixed(4)}
                     </span>
                   </div>
                 </div>
@@ -346,15 +472,208 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
     )
   }
 
+  // ═══════════════ Agent Picker View ═══════════════
+  if (showAgentPicker) {
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-gray-50/50">
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowAgentPicker(false)} className="text-steel hover:text-gray-900 transition-colors">
+              <i className="fas fa-arrow-left text-xs"></i>
+            </button>
+            <span className="text-xs font-semibold text-gray-900">Choose AI Mode</span>
+          </div>
+          <button
+            onClick={() => setShowCreateAgent(true)}
+            className="flex items-center gap-1 text-[10px] text-accent font-medium hover:underline"
+          >
+            <i className="fas fa-plus text-[8px]"></i>
+            Create Agent
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+          {/* General AI option */}
+          <button
+            onClick={handleSwitchToGeneral}
+            className={`w-full text-left border rounded-lg p-3 transition-all group ${
+              !activeAgent ? 'border-accent/30 bg-accent/5' : 'border-border hover:border-accent/20 hover:bg-gray-50'
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                <i className="fas fa-robot text-accent text-sm"></i>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900">General AI Assistant</p>
+                <p className="text-[11px] text-steel mt-0.5">Full-context DRL tracker assistant — deadlines, risk, status, drafting</p>
+              </div>
+              {!activeAgent && <i className="fas fa-check text-accent text-xs mt-3"></i>}
+            </div>
+          </button>
+
+          <p className="text-[9px] text-steel font-semibold uppercase tracking-wider px-1 pt-2">Specialized Agents</p>
+
+          {/* Agent cards */}
+          {agents.map(agent => (
+            <button
+              key={agent.id}
+              onClick={() => handleSelectAgent(agent)}
+              className={`w-full text-left border rounded-lg p-3 transition-all group ${
+                activeAgent?.id === agent.id ? 'border-accent/30 bg-accent/5' : 'border-border hover:border-accent/20 hover:bg-gray-50'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 group-hover:bg-accent/20 transition-colors">
+                  <i className={`fas ${agent.icon} text-accent text-sm`}></i>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900">{agent.name}</p>
+                  <p className="text-[11px] text-steel mt-0.5 line-clamp-2">{agent.description}</p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className="text-[9px] text-accent bg-accent/10 px-1.5 py-0.5 rounded-md font-medium">{agent.focusArea}</span>
+                    {agent.createdBy !== 'system' && (
+                      <span className="text-[9px] text-steel">by {agent.createdBy}</span>
+                    )}
+                  </div>
+                </div>
+                {activeAgent?.id === agent.id && <i className="fas fa-check text-accent text-xs mt-3"></i>}
+              </div>
+            </button>
+          ))}
+
+          {/* Create agent form */}
+          {showCreateAgent && (
+            <div className="bg-gray-50 border border-border rounded-lg p-3 space-y-2 mt-2">
+              <p className="text-xs font-semibold text-gray-900 mb-1">Create Custom Agent</p>
+              <input
+                value={newAgent.name}
+                onChange={e => setNewAgent(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Agent name"
+                className="w-full text-xs bg-white border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent"
+              />
+              <input
+                value={newAgent.description}
+                onChange={e => setNewAgent(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Short description"
+                className="w-full text-xs bg-white border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent"
+              />
+              <input
+                value={newAgent.focusArea}
+                onChange={e => setNewAgent(prev => ({ ...prev, focusArea: e.target.value }))}
+                placeholder="Focus area (e.g., QA Review, Hull 3 Tracking)"
+                className="w-full text-xs bg-white border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent"
+              />
+              <textarea
+                value={newAgent.instructions}
+                onChange={e => setNewAgent(prev => ({ ...prev, instructions: e.target.value }))}
+                placeholder="Instructions — tell the agent what it should do, how it should behave, what to focus on..."
+                rows={4}
+                className="w-full text-xs bg-white border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent resize-none"
+              />
+              <div className="flex items-center gap-2 justify-end">
+                <button onClick={() => setShowCreateAgent(false)} className="text-[11px] text-steel hover:text-gray-900 px-2 py-1">Cancel</button>
+                <button
+                  onClick={handleCreateAgent}
+                  disabled={!newAgent.name.trim() || !newAgent.instructions.trim()}
+                  className="text-[11px] font-medium bg-accent text-white px-3 py-1.5 rounded-md disabled:opacity-50 hover:bg-accent/90 transition-colors"
+                >
+                  Create Agent
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ═══════════════ Default Chat View ═══════════════
+  const chatLabel = activeAgent ? activeAgent.name : 'S4 AI'
+  const chatIcon = activeAgent?.icon || 'fa-robot'
+
   return (
-    <div className="flex flex-col h-full">
-      {/* Toolbar — save / pin / new / saved / tokens */}
-      <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-gray-50/30">
-        <div className="flex items-center gap-1">
+    <div className="flex flex-col h-full relative">
+      {/* Save toast notification */}
+      {saveToast && (
+        <div className="absolute top-1 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-[11px] px-3 py-1.5 rounded-lg shadow-lg animate-fade-in flex items-center gap-1.5">
+          <i className="fas fa-check-circle text-green-400 text-[10px]"></i>
+          {saveToast}
+        </div>
+      )}
+
+      {/* Toolbar Row 1 — Model + Agent selector */}
+      <div className="flex items-center gap-1.5 px-3 py-1.5 border-b border-border bg-gray-50/30">
+        {/* Model dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setShowModelPicker(!showModelPicker)}
+            className="flex items-center gap-1 px-2 py-1 text-[10px] text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors border border-transparent hover:border-border"
+          >
+            <i className="fas fa-microchip text-[9px]"></i>
+            <span className="font-medium">{selectedModelInfo.name}</span>
+            <i className={`fas fa-chevron-${showModelPicker ? 'up' : 'down'} text-[7px] ml-0.5`}></i>
+          </button>
+          {showModelPicker && (
+            <div className="absolute top-full left-0 mt-1 w-56 bg-white border border-border rounded-lg shadow-xl z-50 py-1 max-h-64 overflow-y-auto">
+              {AI_MODELS.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => { setSelectedModel(m.id); setShowModelPicker(false) }}
+                  className={`w-full text-left px-3 py-2 hover:bg-gray-50 transition-colors ${selectedModel === m.id ? 'bg-accent/5' : ''}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-900">{m.name}</span>
+                    <span className="text-[9px] text-steel bg-gray-100 px-1.5 py-0.5 rounded">{m.tier}</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[9px] text-steel">{m.provider}</span>
+                    <span className="text-[9px] text-steel">·</span>
+                    <span className="text-[9px] text-steel">{m.description}</span>
+                  </div>
+                  {selectedModel === m.id && <i className="fas fa-check text-accent text-[9px] absolute right-3"></i>}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="w-px h-4 bg-border"></div>
+
+        {/* Agent/Mode selector */}
+        <button
+          onClick={() => setShowAgentPicker(true)}
+          className="flex items-center gap-1 px-2 py-1 text-[10px] hover:bg-gray-100 rounded-md transition-colors border border-transparent hover:border-border group"
+        >
+          <i className={`fas ${chatIcon} text-[9px] ${activeAgent ? 'text-purple-500' : 'text-accent'}`}></i>
+          <span className={`font-medium ${activeAgent ? 'text-purple-700' : 'text-steel'}`}>{activeAgent ? activeAgent.name : 'General AI'}</span>
+          {activeAgent && (
+            <span
+              onClick={e => { e.stopPropagation(); handleSwitchToGeneral() }}
+              className="text-[8px] text-gray-400 hover:text-red-500 ml-0.5 transition-colors"
+              title="Switch to General AI"
+            >
+              <i className="fas fa-times"></i>
+            </span>
+          )}
+          <i className="fas fa-chevron-down text-[7px] ml-0.5 text-steel"></i>
+        </button>
+
+        <div className="flex-1"></div>
+
+        {/* Token count */}
+        <button onClick={() => setShowTokens(true)} className="flex items-center gap-1 px-1.5 py-0.5 text-[9px] text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors" title="Token usage & pricing">
+          <i className="fas fa-coins text-[9px]"></i>
+          <span>{tokenCount.toLocaleString()}</span>
+        </button>
+      </div>
+
+      {/* Toolbar Row 2 — Save / Pin / New / History */}
+      <div className="flex items-center justify-between px-3 py-1 border-b border-border bg-white">
+        <div className="flex items-center gap-0.5">
           <button onClick={handleNew} className="w-7 h-7 flex items-center justify-center text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors" title="New conversation">
             <i className="fas fa-plus text-[10px]"></i>
           </button>
-          <button onClick={handleSave} disabled={messages.length <= 1} className="w-7 h-7 flex items-center justify-center text-steel hover:text-accent hover:bg-accent/5 disabled:opacity-30 rounded-md transition-colors" title={activeConvoId ? 'Update saved conversation' : 'Save conversation'}>
+          <button onClick={handleSave} disabled={currentMessages.length <= 1} className="w-7 h-7 flex items-center justify-center text-steel hover:text-accent hover:bg-accent/5 disabled:opacity-30 rounded-md transition-colors" title={activeConvoId ? 'Update saved conversation' : 'Save conversation'}>
             <i className={`fas ${activeConvoId ? 'fa-save' : 'fa-bookmark'} text-[10px]`}></i>
           </button>
           {activeConvoId && (
@@ -363,21 +682,15 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
             </button>
           )}
         </div>
-        <div className="flex items-center gap-1">
-          <button onClick={() => setShowTokens(true)} className="flex items-center gap-1 px-1.5 py-0.5 text-[9px] text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors" title="Token usage & pricing">
-            <i className="fas fa-coins text-[9px]"></i>
-            <span>{tokenCount.toLocaleString()}</span>
-          </button>
-          <button onClick={() => setShowSaved(true)} className="w-7 h-7 flex items-center justify-center text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors relative" title="Saved conversations">
-            <i className="fas fa-history text-[10px]"></i>
-            {savedConvos.length > 0 && <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-accent text-white text-[7px] flex items-center justify-center font-bold">{savedConvos.length}</span>}
-          </button>
-        </div>
+        <button onClick={() => setShowSaved(true)} className="w-7 h-7 flex items-center justify-center text-steel hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors relative" title="Saved conversations">
+          <i className="fas fa-history text-[10px]"></i>
+          {savedConvos.length > 0 && <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-accent text-white text-[7px] flex items-center justify-center font-bold">{savedConvos.length}</span>}
+        </button>
       </div>
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
-        {messages.map((msg, i) => (
+        {currentMessages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed ${
               msg.role === 'user'
@@ -386,8 +699,8 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
             }`}>
               {msg.role !== 'user' && (
                 <div className="flex items-center gap-1.5 mb-1">
-                  <i className="fas fa-robot text-accent text-[10px]"></i>
-                  <span className="text-[10px] font-semibold text-accent">S4 AI</span>
+                  <i className={`fas ${chatIcon} ${activeAgent ? 'text-purple-500' : 'text-accent'} text-[10px]`}></i>
+                  <span className={`text-[10px] font-semibold ${activeAgent ? 'text-purple-600' : 'text-accent'}`}>{chatLabel}</span>
                 </div>
               )}
               <div className="whitespace-pre-wrap">{msg.text}</div>
@@ -398,8 +711,8 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
           <div className="flex justify-start">
             <div className="bg-gray-100 rounded-xl px-3.5 py-2.5 rounded-bl-sm">
               <div className="flex items-center gap-1.5">
-                <i className="fas fa-robot text-accent text-[10px]"></i>
-                <span className="text-[10px] font-semibold text-accent">S4 AI</span>
+                <i className={`fas ${chatIcon} ${activeAgent ? 'text-purple-500' : 'text-accent'} text-[10px]`}></i>
+                <span className={`text-[10px] font-semibold ${activeAgent ? 'text-purple-600' : 'text-accent'}`}>{chatLabel}</span>
               </div>
               <div className="flex gap-1 mt-1.5">
                 <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
@@ -410,8 +723,8 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
           </div>
         )}
 
-        {/* Suggestions — only show on first message */}
-        {messages.length <= 1 && (
+        {/* Suggestions — only on initial greeting */}
+        {currentMessages.length <= 1 && !activeAgent && (
           <div className="space-y-1.5 pt-2">
             <p className="text-[10px] text-steel font-medium uppercase tracking-wider">Suggestions</p>
             {suggestions.map(s => (
@@ -434,7 +747,7 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-            placeholder="Ask about deliverables, risk, status..."
+            placeholder={activeAgent ? `Ask ${activeAgent.name}...` : 'Ask about deliverables, risk, status...'}
             className="flex-1 text-sm bg-gray-50 border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
             disabled={loading}
           />
@@ -498,7 +811,7 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
         senderRole: role,
         senderOrg: org,
         text,
-        priority: text.includes('⚠️') || text.includes('CRITICAL') ? 'critical' : text.includes('URGENT') ? 'urgent' : 'normal',
+        priority: text.includes('\u26A0\uFE0F') || text.includes('CRITICAL') ? 'critical' : text.includes('URGENT') ? 'urgent' : 'normal',
         mentions: [],
       })
 
@@ -576,11 +889,11 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
           const isMe = msg.senderId === userId
           return (
             <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] ${isMe ? '' : ''}`}>
+              <div className={`max-w-[85%]`}>
                 {!isMe && (
                   <div className="flex items-center gap-1.5 mb-0.5 px-1">
                     <span className={`text-[10px] font-semibold ${getOrgColor(msg.senderOrg)}`}>{msg.senderName}</span>
-                    <span className="text-[9px] text-steel">·</span>
+                    <span className="text-[9px] text-steel">&middot;</span>
                     <span className="text-[9px] text-steel">{msg.senderOrg}</span>
                   </div>
                 )}
@@ -642,302 +955,6 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
   )
 }
 
-/* ─── Agents Tab ────────────────────────────────────────── */
-
-function AgentsTab({ data, anchors, aiInsights, role, displayName }: {
-  data: DRLRow[]; anchors: Record<string, AnchorRecord>; aiInsights: Record<string, AIRowInsight>
-  role: UserRole; displayName: string
-}) {
-  const [agents, setAgents] = useState<AIAgent[]>(() => DEFAULT_AGENTS)
-  const [activeAgent, setActiveAgent] = useState<AIAgent | null>(null)
-  const [agentMessages, setAgentMessages] = useState<Record<string, AIChatMessage[]>>({})
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showCreate, setShowCreate] = useState(false)
-  const [newAgent, setNewAgent] = useState({ name: '', description: '', focusArea: '', instructions: '' })
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
-  }, [agentMessages, activeAgent])
-
-  const currentMessages = activeAgent ? (agentMessages[activeAgent.id] || []) : []
-
-  const handleSendToAgent = useCallback(async () => {
-    if (!activeAgent || !input.trim() || loading) return
-    const text = input.trim()
-    setInput('')
-
-    const agentId = activeAgent.id
-    setAgentMessages(prev => ({
-      ...prev,
-      [agentId]: [...(prev[agentId] || []), { role: 'user', text }],
-    }))
-    setLoading(true)
-
-    try {
-      const green = data.filter(r => r.status === 'green').length
-      const yellow = data.filter(r => r.status === 'yellow').length
-      const red = data.filter(r => r.status === 'red').length
-      const sealed = Object.keys(anchors).length
-
-      const contextMsg = `${activeAgent.instructions}\n\nCurrent data: ${data.length} deliverables (${green} green, ${yellow} yellow, ${red} red), ${sealed} sealed. User: ${displayName} (${role}).\n\nUser: ${text}`
-
-      const result = await chatWithAI({
-        message: contextMsg,
-        conversation: agentMessages[agentId] || [],
-        tool_context: 'ai_agent',
-        analysis_data: {
-          agentName: activeAgent.name,
-          focusArea: activeAgent.focusArea,
-          totalRows: data.length,
-          statusBreakdown: { green, yellow, red },
-          sealedCount: sealed,
-        },
-      })
-
-      const response = result.fallback
-        ? generateAgentFallback(activeAgent, text, data, aiInsights)
-        : result.response
-
-      setAgentMessages(prev => ({
-        ...prev,
-        [agentId]: [...(prev[agentId] || []), { role: 'ai', text: response }],
-      }))
-    } catch {
-      setAgentMessages(prev => ({
-        ...prev,
-        [agentId]: [...(prev[agentId] || []), { role: 'ai', text: 'I encountered an error. Please try again.' }],
-      }))
-    } finally {
-      setLoading(false)
-    }
-  }, [activeAgent, input, loading, data, anchors, aiInsights, role, displayName, agentMessages])
-
-  const handleCreateAgent = useCallback(() => {
-    if (!newAgent.name.trim() || !newAgent.instructions.trim()) return
-    const agent: AIAgent = {
-      id: `custom-${Date.now()}`,
-      name: newAgent.name,
-      description: newAgent.description || newAgent.name,
-      icon: 'fa-robot',
-      focusArea: newAgent.focusArea || 'General',
-      instructions: newAgent.instructions,
-      createdBy: displayName,
-      createdAt: new Date().toISOString(),
-    }
-    setAgents(prev => [...prev, agent])
-    setNewAgent({ name: '', description: '', focusArea: '', instructions: '' })
-    setShowCreate(false)
-    setActiveAgent(agent)
-  }, [newAgent, displayName])
-
-  const agentTokenCount = useMemo(() => estimateTokens(currentMessages), [currentMessages])
-
-  // Save agent conversation
-  const handleSaveAgentConvo = useCallback(() => {
-    if (!activeAgent || currentMessages.length <= 1) return
-    const firstUserMsg = currentMessages.find(m => m.role === 'user')?.text || 'Untitled'
-    const title = `${activeAgent.name}: ${firstUserMsg.length > 35 ? firstUserMsg.slice(0, 35) + '...' : firstUserMsg}`
-    const now = new Date().toISOString()
-    const all = loadSavedConversations()
-    const existing = all.find(c => c.agentId === activeAgent.id && c.title === title)
-    if (existing) {
-      const updated = all.map(c => c.id === existing.id ? { ...c, messages: currentMessages, tokenCount: estimateTokens(currentMessages), updatedAt: now } : c)
-      persistConversations(updated)
-    } else {
-      all.unshift({
-        id: `conv-agent-${Date.now()}`,
-        title,
-        messages: currentMessages,
-        pinned: false,
-        agentId: activeAgent.id,
-        agentName: activeAgent.name,
-        createdAt: now,
-        updatedAt: now,
-        tokenCount: estimateTokens(currentMessages),
-      })
-      persistConversations(all)
-    }
-  }, [activeAgent, currentMessages])
-
-  // Agent gallery view
-  if (!activeAgent) {
-    return (
-      <div className="flex flex-col h-full">
-        <div className="flex-1 overflow-y-auto p-3 space-y-3">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <p className="text-sm font-semibold text-gray-900">AI Agents</p>
-              <p className="text-[10px] text-steel">Specialized assistants for specific tasks</p>
-            </div>
-            <button
-              onClick={() => setShowCreate(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-colors"
-            >
-              <i className="fas fa-plus text-[9px]"></i>
-              Create Agent
-            </button>
-          </div>
-
-          {/* Create agent form */}
-          {showCreate && (
-            <div className="bg-gray-50 border border-border rounded-lg p-3 space-y-2">
-              <input
-                value={newAgent.name}
-                onChange={e => setNewAgent(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Agent name"
-                className="w-full text-xs bg-white border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent"
-              />
-              <input
-                value={newAgent.description}
-                onChange={e => setNewAgent(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Short description"
-                className="w-full text-xs bg-white border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent"
-              />
-              <input
-                value={newAgent.focusArea}
-                onChange={e => setNewAgent(prev => ({ ...prev, focusArea: e.target.value }))}
-                placeholder="Focus area (e.g., QA Review, Hull 3 Tracking)"
-                className="w-full text-xs bg-white border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent"
-              />
-              <textarea
-                value={newAgent.instructions}
-                onChange={e => setNewAgent(prev => ({ ...prev, instructions: e.target.value }))}
-                placeholder="Instructions — tell the agent what it should do, how it should behave, what to focus on..."
-                rows={4}
-                className="w-full text-xs bg-white border border-border rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent resize-none"
-              />
-              <div className="flex items-center gap-2 justify-end">
-                <button onClick={() => setShowCreate(false)} className="text-[11px] text-steel hover:text-gray-900 px-2 py-1">Cancel</button>
-                <button
-                  onClick={handleCreateAgent}
-                  disabled={!newAgent.name.trim() || !newAgent.instructions.trim()}
-                  className="text-[11px] font-medium bg-accent text-white px-3 py-1.5 rounded-md disabled:opacity-50 hover:bg-accent/90 transition-colors"
-                >
-                  Create Agent
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Agent cards */}
-          {agents.map(agent => (
-            <button
-              key={agent.id}
-              onClick={() => {
-                setActiveAgent(agent)
-                if (!agentMessages[agent.id]) {
-                  setAgentMessages(prev => ({
-                    ...prev,
-                    [agent.id]: [{ role: 'ai', text: `I'm ${agent.name}. ${agent.description}\n\nHow can I help you today?` }],
-                  }))
-                }
-              }}
-              className="w-full text-left bg-white border border-border rounded-lg p-3 hover:border-accent/30 hover:shadow-sm transition-all group"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 group-hover:bg-accent/20 transition-colors">
-                  <i className={`fas ${agent.icon} text-accent text-sm`}></i>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900">{agent.name}</p>
-                  <p className="text-[11px] text-steel mt-0.5 line-clamp-2">{agent.description}</p>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <span className="text-[9px] text-accent bg-accent/10 px-1.5 py-0.5 rounded-md font-medium">{agent.focusArea}</span>
-                    {agent.createdBy !== 'system' && (
-                      <span className="text-[9px] text-steel">by {agent.createdBy}</span>
-                    )}
-                  </div>
-                </div>
-                <i className="fas fa-chevron-right text-gray-300 text-xs mt-3 group-hover:text-accent transition-colors"></i>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // Active agent chat view
-  return (
-    <div className="flex flex-col h-full">
-      {/* Agent header */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-gray-50/50">
-        <button onClick={() => setActiveAgent(null)} className="text-steel hover:text-gray-900 transition-colors">
-          <i className="fas fa-arrow-left text-xs"></i>
-        </button>
-        <div className="w-7 h-7 rounded-md bg-accent/15 flex items-center justify-center">
-          <i className={`fas ${activeAgent.icon} text-accent text-[10px]`}></i>
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-gray-900 truncate">{activeAgent.name}</p>
-          <p className="text-[9px] text-steel truncate">{activeAgent.focusArea}</p>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="text-[9px] text-steel flex items-center gap-0.5"><i className="fas fa-coins text-[8px]"></i>{agentTokenCount.toLocaleString()}</span>
-          <button onClick={handleSaveAgentConvo} disabled={currentMessages.length <= 1} className="w-6 h-6 flex items-center justify-center text-steel hover:text-accent disabled:opacity-30 rounded transition-colors" title="Save conversation">
-            <i className="fas fa-bookmark text-[9px]"></i>
-          </button>
-        </div>
-      </div>
-
-      {/* Agent messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
-        {currentMessages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed ${
-              msg.role === 'user'
-                ? 'bg-accent text-white rounded-br-sm'
-                : 'bg-gray-100 text-gray-800 rounded-bl-sm'
-            }`}>
-              {msg.role !== 'user' && (
-                <div className="flex items-center gap-1.5 mb-1">
-                  <i className={`fas ${activeAgent.icon} text-accent text-[10px]`}></i>
-                  <span className="text-[10px] font-semibold text-accent">{activeAgent.name}</span>
-                </div>
-              )}
-              <div className="whitespace-pre-wrap">{msg.text}</div>
-            </div>
-          </div>
-        ))}
-        {loading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-xl px-3.5 py-2.5 rounded-bl-sm">
-              <div className="flex gap-1 mt-0.5">
-                <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Agent input */}
-      <div className="border-t border-border p-3">
-        <div className="flex items-center gap-2">
-          <input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendToAgent() } }}
-            placeholder={`Ask ${activeAgent.name}...`}
-            className="flex-1 text-sm bg-gray-50 border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
-            disabled={loading}
-          />
-          <button
-            onClick={handleSendToAgent}
-            disabled={loading || !input.trim()}
-            className="w-9 h-9 flex items-center justify-center bg-accent hover:bg-accent/90 disabled:bg-accent/40 text-white rounded-lg transition-colors"
-          >
-            <i className="fas fa-paper-plane text-xs"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 /* ─── Main ChatPanel Component ──────────────────────────── */
 
 export default function ChatPanel({
@@ -948,7 +965,6 @@ export default function ChatPanel({
   const tabs: { id: ChatTab; label: string; icon: string }[] = [
     { id: 'ai', label: 'AI', icon: 'fa-robot' },
     { id: 'team', label: 'Team', icon: 'fa-comments' },
-    { id: 'agents', label: 'Agents', icon: 'fa-user-cog' },
   ]
 
   return (
@@ -1008,15 +1024,6 @@ export default function ChatPanel({
             collabUsers={collabUsers}
           />
         )}
-        {activeTab === 'agents' && (
-          <AgentsTab
-            data={data}
-            anchors={anchors}
-            aiInsights={aiInsights}
-            role={role}
-            displayName={displayName}
-          />
-        )}
       </div>
     </div>
   )
@@ -1036,14 +1043,14 @@ function generateLocalResponse(
   const green = data.filter(r => r.status === 'green')
 
   if (q.includes('overdue') || q.includes('late') || q.includes('delinquent')) {
-    if (red.length === 0) return 'All deliverables are currently on track — no overdue items detected.'
+    if (red.length === 0) return 'All deliverables are currently on track \u2014 no overdue items detected.'
     return `There are ${red.length} overdue deliverable${red.length !== 1 ? 's' : ''}:\n\n${red.map(r =>
-      `• **${r.id}** — ${r.title} (Due: ${r.contractDueFinish})`
+      `\u2022 **${r.id}** \u2014 ${r.title} (Due: ${r.contractDueFinish})`
     ).join('\n')}\n\nRecommend escalating any items overdue by more than 30 days to the Contracting Officer for cure notice consideration per FAR 52.249-8.`
   }
 
   if (q.includes('status') || q.includes('summary') || q.includes('overview')) {
-    return `**DRL Status Summary (PMS 300)**\n\n✅ Green: ${green.length} deliverables on track\n⚠️ Yellow: ${yellow.length} deliverables with compliance issues\n🔴 Red: ${red.length} deliverables overdue\n🔒 Sealed: ${Object.keys(anchors).length} records anchored to trust layer\n\nOverall compliance rate: ${((green.length / data.length) * 100).toFixed(0)}%`
+    return `**DRL Status Summary (PMS 300)**\n\n\u2705 Green: ${green.length} deliverables on track\n\u26A0\uFE0F Yellow: ${yellow.length} deliverables with compliance issues\n\uD83D\uDD34 Red: ${red.length} deliverables overdue\n\uD83D\uDD12 Sealed: ${Object.keys(anchors).length} records anchored to trust layer\n\nOverall compliance rate: ${((green.length / data.length) * 100).toFixed(0)}%`
   }
 
   if (q.includes('attention') || q.includes('priority') || q.includes('urgent') || q.includes('immediate')) {
@@ -1054,19 +1061,19 @@ function generateLocalResponse(
     if (critical.length === 0) return 'No items require immediate attention. All deliverables are tracking within acceptable parameters.'
     return `${critical.length} item${critical.length !== 1 ? 's' : ''} need immediate attention:\n\n${critical.slice(0, 5).map(r => {
       const insight = aiInsights[r.id]
-      return `• **${r.id}** — ${r.title}\n  ${insight?.statusExplanation || `Status: ${r.status}`}`
+      return `\u2022 **${r.id}** \u2014 ${r.title}\n  ${insight?.statusExplanation || `Status: ${r.status}`}`
     }).join('\n\n')}`
   }
 
   if (q.includes('change') || q.includes('recent') || q.includes('update') || q.includes('week')) {
-    return `**Recent Activity Summary**\n\n• ${data.length} total deliverables tracked\n• ${Object.keys(anchors).length} records sealed to trust layer\n• ${red.length} items flagged for attention\n• ${yellow.length} items under review\n\nAll edits are logged in the Audit Trail with change-level granularity. Open Tools → Audit Trail for full history.`
+    return `**Recent Activity Summary**\n\n\u2022 ${data.length} total deliverables tracked\n\u2022 ${Object.keys(anchors).length} records sealed to trust layer\n\u2022 ${red.length} items flagged for attention\n\u2022 ${yellow.length} items under review\n\nAll edits are logged in the Audit Trail with change-level granularity. Open Tools \u2192 Audit Trail for full history.`
   }
 
   if (q.includes('draft') || q.includes('email') || q.includes('leadership') || q.includes('brief')) {
-    return `**Status Briefing — PMS 300 DRL Tracker**\n\nSir/Ma'am,\n\nDRL compliance stands at ${((green.length / data.length) * 100).toFixed(0)}% (${green.length}/${data.length} deliverables green).\n\n${red.length > 0 ? `${red.length} item${red.length !== 1 ? 's are' : ' is'} overdue and require${red.length === 1 ? 's' : ''} attention:\n${red.slice(0, 3).map(r => `  - ${r.id}: ${r.title}`).join('\n')}\n\n` : 'All deliverables are on track. No overdue items.\n\n'}${yellow.length > 0 ? `${yellow.length} item${yellow.length !== 1 ? 's' : ''} under review.\n\n` : ''}V/R,\n${data.length > 0 ? 'DRL Program Office' : ''}`
+    return `**Status Briefing \u2014 PMS 300 DRL Tracker**\n\nSir/Ma'am,\n\nDRL compliance stands at ${((green.length / data.length) * 100).toFixed(0)}% (${green.length}/${data.length} deliverables green).\n\n${red.length > 0 ? `${red.length} item${red.length !== 1 ? 's are' : ' is'} overdue and require${red.length === 1 ? 's' : ''} attention:\n${red.slice(0, 3).map(r => `  - ${r.id}: ${r.title}`).join('\n')}\n\n` : 'All deliverables are on track. No overdue items.\n\n'}${yellow.length > 0 ? `${yellow.length} item${yellow.length !== 1 ? 's' : ''} under review.\n\n` : ''}V/R,\n${data.length > 0 ? 'DRL Program Office' : ''}`
   }
 
-  return `I can help with that. Currently tracking ${data.length} deliverables for PMS 300 (Boats & Craft):\n\n• ${green.length} green (compliant)\n• ${yellow.length} yellow (review needed)\n• ${red.length} red (overdue)\n\nTry asking about:\n• "Show me all overdue deliverables"\n• "Draft a status update for leadership"\n• "Which items need immediate attention?"\n• "What changed since last week?"`
+  return `I can help with that. Currently tracking ${data.length} deliverables for PMS 300 (Boats & Craft):\n\n\u2022 ${green.length} green (compliant)\n\u2022 ${yellow.length} yellow (review needed)\n\u2022 ${red.length} red (overdue)\n\nTry asking about:\n\u2022 "Show me all overdue deliverables"\n\u2022 "Draft a status update for leadership"\n\u2022 "Which items need immediate attention?"\n\u2022 "What changed since last week?"`
 }
 
 function generateAgentFallback(agent: AIAgent, query: string, data: DRLRow[], aiInsights: Record<string, AIRowInsight>): string {
@@ -1077,10 +1084,10 @@ function generateAgentFallback(agent: AIAgent, query: string, data: DRLRow[], ai
   if (agent.id === 'compliance-monitor') {
     if (q.includes('check') || q.includes('scan') || q.includes('status') || q.includes('issue')) {
       const issues: string[] = []
-      if (red.length > 0) issues.push(`🔴 ${red.length} overdue deliverable${red.length !== 1 ? 's' : ''} — immediate action required`)
-      if (yellow.length > 0) issues.push(`⚠️ ${yellow.length} item${yellow.length !== 1 ? 's' : ''} with compliance findings`)
+      if (red.length > 0) issues.push(`\uD83D\uDD34 ${red.length} overdue deliverable${red.length !== 1 ? 's' : ''} \u2014 immediate action required`)
+      if (yellow.length > 0) issues.push(`\u26A0\uFE0F ${yellow.length} item${yellow.length !== 1 ? 's' : ''} with compliance findings`)
       const unsealed = data.filter(r => !Object.keys(aiInsights).includes(r.id))
-      if (unsealed.length > 0) issues.push(`🔓 ${unsealed.length} record${unsealed.length !== 1 ? 's' : ''} pending seal verification`)
+      if (unsealed.length > 0) issues.push(`\uD83D\uDD13 ${unsealed.length} record${unsealed.length !== 1 ? 's' : ''} pending seal verification`)
       return issues.length > 0
         ? `**Compliance Scan Results:**\n\n${issues.join('\n')}\n\nRecommend reviewing overdue items first. Items >30 days overdue may warrant cure notice per FAR 52.249-8.`
         : 'All compliance checks passed. No issues detected at this time.'
@@ -1088,7 +1095,7 @@ function generateAgentFallback(agent: AIAgent, query: string, data: DRLRow[], ai
   }
 
   if (agent.id === 'status-briefer') {
-    return `**Executive Status Brief — PMS 300**\n\nBOTTOM LINE: ${red.length === 0 ? 'Program on track' : `${red.length} item${red.length !== 1 ? 's' : ''} require attention`}\n\nGreen: ${data.filter(r => r.status === 'green').length} | Yellow: ${yellow.length} | Red: ${red.length}\n\n${red.length > 0 ? `TOP RISKS:\n${red.slice(0, 3).map(r => `  - ${r.id}: ${r.title}`).join('\n')}\n\n` : ''}RECOMMENDATION: ${red.length > 0 ? 'Schedule tiger team review for overdue items within 48 hours.' : 'Continue current trajectory. Next review per regular schedule.'}`
+    return `**Executive Status Brief \u2014 PMS 300**\n\nBOTTOM LINE: ${red.length === 0 ? 'Program on track' : `${red.length} item${red.length !== 1 ? 's' : ''} require attention`}\n\nGreen: ${data.filter(r => r.status === 'green').length} | Yellow: ${yellow.length} | Red: ${red.length}\n\n${red.length > 0 ? `TOP RISKS:\n${red.slice(0, 3).map(r => `  - ${r.id}: ${r.title}`).join('\n')}\n\n` : ''}RECOMMENDATION: ${red.length > 0 ? 'Schedule tiger team review for overdue items within 48 hours.' : 'Continue current trajectory. Next review per regular schedule.'}`
   }
 
   if (agent.id === 'contract-advisor') {

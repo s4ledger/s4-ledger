@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.1.0] — 2026-04-06
+### S4-DemoApplication — Unified AI Chat + Model Picker + Simulation Fix
+- **Merged Agents into AI tab** — Removed standalone Agents tab. Agent selection is now integrated directly into the AI chat tab via "Choose AI Mode" picker. Users can switch between General AI and specialized agents (Compliance Monitor, Status Briefer, Contract Advisor, or custom agents) without leaving the conversation view.
+- **AI Model picker** — Dropdown selector for AI model: GPT-4o mini (Standard), GPT-4o (Advanced), Claude 3.5 Sonnet (Advanced), Claude 3 Opus (Premium), o1-pro (Reasoning). Model selection persists across conversations. Token pricing and cost estimates updated per model.
+- **Fixed save/pin functionality** — Save now triggers visual toast confirmation ("Conversation saved" / "Conversation updated"). Pin toggle shows "Pinned" / "Unpinned" toast. Saved conversations browser shows agent badges for agent conversations. All conversations (general + agent) visible in unified history.
+- **Fixed simulated users (definitive)** — Root cause: React StrictMode double-invoked effects caused `joinCollaboration` to hit `if (channel) return` guard on remount while async `leaveCollaboration` from unmount hadn't finished. Fix: replaced channel guard with idempotent cleanup (`removeChannel` + recreate). Additionally moved simulation startup outside try/catch block so `startCollabSimulation` fires even if network join fails. Added `cancelled` flag and proper timer cleanup to prevent stale callbacks.
+- **2-tab layout** — Chat panel is now AI + Team (down from 3 tabs). Cleaner, more focused interface.
+
 ## [8.0.0] — 2026-04-06
 ### S4-DemoApplication — S4 Chat: AI Assistant, Team Messaging & Custom AI Agents
 - **AI Chat tab** — Full-context AI assistant prominent on the tool page. Aware of all deliverables, anchors, and audit data. Suggestion prompts on first load. Powered by `chatWithAI()` with local fallback for overdue items, status summaries, attention-needed analysis, change history, and draft generation.
