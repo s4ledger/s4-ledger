@@ -123,11 +123,13 @@ export function generateReportHtml(
 
   /* ═══ PAGE 1: Title Page ═══════════════════════════════════════ */
   let html = `
-<div style="background:${ACCENT};color:#fff;padding:32px 28px 24px;margin-bottom:24px;">
-  <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.5px;">S4 Systems</h1>
-  <h2 style="margin:6px 0 0;font-size:16px;font-weight:600;opacity:0.95;">DRL Weekly Status Report</h2>
-  <p style="margin:10px 0 0;font-size:9px;color:#C8DCFF;">Prepared: ${dateStr} &nbsp;·&nbsp; Role: ${role} &nbsp;·&nbsp; Classification: FOUO Simulation</p>
-</div>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;"><tr>
+  <td style="background:${ACCENT};color:#fff;padding:32px 28px 24px;">
+    <p style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.5px;color:#fff;">S4 Systems</p>
+    <p style="margin:6px 0 0;font-size:16px;font-weight:600;color:#fff;">DRL Weekly Status Report</p>
+    <p style="margin:10px 0 0;font-size:9px;color:#C8DCFF;">Prepared: ${dateStr} &nbsp;·&nbsp; Role: ${role} &nbsp;·&nbsp; Classification: FOUO Simulation</p>
+  </td>
+</tr></table>
 `
 
   /* ═══ Summary Stats Banner ═════════════════════════════════════ */
@@ -165,10 +167,10 @@ export function generateReportHtml(
   ]
   legendItems.forEach(item => {
     html += `<table style="width:100%;border-collapse:collapse;margin-bottom:3px;"><tr>
-      <td style="width:20px;vertical-align:middle;padding:6px 4px 6px 10px;background:${item.bg};border-radius:2px 0 0 2px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:${item.color};"></div>
+      <td style="width:24px;vertical-align:middle;padding:6px 4px 6px 10px;background:${item.bg};">
+        <span style="color:${item.color};font-size:14px;">●</span>
       </td>
-      <td style="vertical-align:middle;padding:4px 10px;background:${item.bg};border-radius:0 2px 2px 0;">
+      <td style="vertical-align:middle;padding:4px 10px;background:${item.bg};">
         <strong style="font-size:8px;color:${TEXT};">${item.label}</strong><br/>
         <span style="font-size:7px;color:${STEEL};">${item.desc}</span>
       </td>
@@ -237,7 +239,9 @@ export function generateReportHtml(
   ]
   groups.forEach(group => {
     if (group.rows.length === 0) return
-    html += `<div style="background:${group.color};color:#fff;font-size:8px;font-weight:700;padding:4px 10px;border-radius:2px;margin:14px 0 6px;">${group.label} &nbsp;(${group.rows.length})</div>`
+    html += `<table style="width:100%;border-collapse:collapse;margin:14px 0 6px;"><tr>
+      <td style="background:${group.color};color:#fff;font-size:8px;font-weight:700;padding:4px 10px;">${group.label} &nbsp;(${group.rows.length})</td>
+    </tr></table>`
     html += `<table style="width:100%;border-collapse:collapse;font-size:6.5px;margin-bottom:12px;">
       <thead><tr style="background:${group.color};color:#fff;">
         <th style="padding:4px 6px;text-align:left;">ID</th>
@@ -345,7 +349,8 @@ export function generateReportHtml(
   html += `</tbody></table>`
 
   /* Efficiency & Cost Savings box */
-  html += `<div style="background:${LIGHT_BG};border:1px solid #C8DCFF;border-radius:4px;padding:14px 18px;margin-bottom:16px;">
+  html += `<table style="width:100%;border-collapse:collapse;border:1px solid #C8DCFF;margin-bottom:16px;"><tr>
+    <td style="background:${LIGHT_BG};padding:14px 18px;">
     <strong style="font-size:9px;color:${ACCENT};">Efficiency &amp; Cost Savings Estimate</strong>
     <p style="font-size:8px;line-height:1.6;color:${TEXT};margin:8px 0 0;">
       Through automated ledger sealing and AI-assisted contractual guidance, the S4 Ledger platform has saved an estimated
@@ -355,7 +360,7 @@ export function generateReportHtml(
       reporting period, indicating improved throughput. Automated contract comparison identified ${analysis.red.length} critical
       items and ${analysis.yellow.length} items requiring attention, enabling proactive program management rather than reactive firefighting.
     </p>
-  </div>`
+  </td></tr></table>`
 
   html += reportFooter(dateStr)
 
@@ -399,9 +404,11 @@ export function generateReportHtml(
   html += pageHeader(dateStr, role)
   html += sectionBox('AUDIT TRAIL SUMMARY')
   const externalFeeds = getAuditLog().filter(e => rowIds.includes(e.rowId) && e.type === 'External Data Feed').length
-  html += `<div style="background:${LIGHT_BG};border-radius:2px;padding:6px 12px;margin-bottom:10px;font-size:8px;color:${TEXT};">
+  html += `<table style="width:100%;border-collapse:collapse;margin-bottom:10px;"><tr>
+    <td style="background:${LIGHT_BG};padding:6px 12px;font-size:8px;color:${TEXT};">
     Total Seals: ${auditSummary.totalSeals} &nbsp;·&nbsp; Verifications: ${auditSummary.totalVerifications} &nbsp;·&nbsp; Edits Tracked: ${auditSummary.totalEdits} &nbsp;·&nbsp; External Syncs: ${externalFeeds} &nbsp;·&nbsp; Trust Status: ${auditSummary.trustStatus}
-  </div>`
+    </td>
+  </tr></table>`
   if (recentEvents.length > 0) {
     html += `<table style="width:100%;border-collapse:collapse;font-size:6.5px;margin-bottom:12px;border:1px solid #ddd;">
       <thead><tr style="background:${ACCENT};color:#fff;">
@@ -449,18 +456,22 @@ export function generateReportHtml(
 
 /* ─── Helper: Section heading (gray background bar — matches pdf.ts sectionHeading) ─ */
 function sectionBox(label: string): string {
-  return `<div style="background:${LIGHT_BG};border-radius:2px;padding:6px 12px;margin:18px 0 12px;">
-    <strong style="font-size:10px;color:${TEXT};">${label}</strong>
-  </div>`
+  return `<table style="width:100%;border-collapse:collapse;margin:18px 0 12px;"><tr>
+    <td style="background:${LIGHT_BG};padding:6px 12px;">
+      <strong style="font-size:10px;color:${TEXT};">${label}</strong>
+    </td>
+  </tr></table>`
 }
 
 /* ─── Helper: Page header bar (blue, matches pdf.ts addPageHeader) ── */
 function pageHeader(dateStr: string, role: string): string {
   return `<div style="page-break-before:always;margin-top:28px;"></div>
-<div style="background:${ACCENT};color:#fff;padding:10px 14px 8px;margin-bottom:18px;">
-  <strong style="font-size:13px;">S4 Systems DRL Weekly Status Report</strong><br/>
-  <span style="font-size:7px;color:#C8DCFF;">Generated: ${dateStr} &nbsp;|&nbsp; Role: ${role} &nbsp;|&nbsp; FOUO Simulation &nbsp;|&nbsp; S4 Ledger™</span>
-</div>`
+<table style="width:100%;border-collapse:collapse;margin-bottom:18px;"><tr>
+  <td style="background:${ACCENT};color:#fff;padding:10px 14px 8px;">
+    <strong style="font-size:13px;color:#fff;">S4 Systems DRL Weekly Status Report</strong><br/>
+    <span style="font-size:7px;color:#C8DCFF;">Generated: ${dateStr} &nbsp;|&nbsp; Role: ${role} &nbsp;|&nbsp; FOUO Simulation &nbsp;|&nbsp; S4 Ledger™</span>
+  </td>
+</tr></table>`
 }
 
 /* ─── Helper: Page footer (matches pdf.ts addFooters) ────────────── */
