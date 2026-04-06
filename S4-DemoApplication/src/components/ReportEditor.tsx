@@ -18,6 +18,28 @@ import TableRow from '@tiptap/extension-table-row'
 import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import Subscript from '@tiptap/extension-subscript'
+
+/* ─── Custom TableCell / TableHeader that preserve inline style ─── */
+const styleAttr = {
+  style: {
+    default: null,
+    parseHTML: (el: HTMLElement) => el.getAttribute('style'),
+    renderHTML: (attrs: Record<string, unknown>) =>
+      attrs.style ? { style: attrs.style as string } : {},
+  },
+}
+const StyledTableCell = TableCell.extend({
+  addAttributes() { return { ...this.parent?.(), ...styleAttr } },
+})
+const StyledTableHeader = TableHeader.extend({
+  addAttributes() { return { ...this.parent?.(), ...styleAttr } },
+})
+const StyledTableRow = TableRow.extend({
+  addAttributes() { return { ...this.parent?.(), ...styleAttr } },
+})
+const StyledTable = Table.extend({
+  addAttributes() { return { ...this.parent?.(), ...styleAttr } },
+})
 import Superscript from '@tiptap/extension-superscript'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
@@ -161,10 +183,10 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
       Highlight.configure({ multicolor: true }),
       Link.configure({ openOnClick: false }),
       Image.configure({ inline: false, allowBase64: true }),
-      Table.configure({ resizable: true }),
-      TableRow,
-      TableCell,
-      TableHeader,
+      StyledTable.configure({ resizable: true }),
+      StyledTableRow,
+      StyledTableCell,
+      StyledTableHeader,
       Subscript,
       Superscript,
       TaskList,
@@ -1209,7 +1231,7 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
         .report-editor-content th, .report-editor-content td {
           border: 1px solid #ddd; padding: 4px 8px; text-align: left; font-size: 10px;
         }
-        .report-editor-content th { background: #007AFF; color: #fff; font-weight: 600; }
+        .report-editor-content th { font-weight: 600; }
         .report-editor-content img { max-width: 100%; height: auto; margin: 8px 0; border-radius: 4px; }
         .report-editor-content blockquote {
           border-left: 3px solid #007AFF; padding-left: 12px; margin: 8px 0; color: #6E6E73; font-style: italic;

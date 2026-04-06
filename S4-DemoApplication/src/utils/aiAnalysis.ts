@@ -84,7 +84,7 @@ export function analyzeRow(
     const daysOverdue = daysBetween(row.contractDueFinish, todayStr)
     statusExplanation = req
       ? `DELINQUENT — ${req.requiredVersion} ${req.requiredRevision} not received. ` +
-        `Per DD Form 1423, ${req.block}, contractor was required to deliver NLT ${req.contractDue} ` +
+        `Per Attachment J-2, ${req.block}, contractor was required to deliver NLT ${req.contractDue} ` +
         `("${req.submittalRule}"). Currently ${daysOverdue} calendar days past due. ` +
         `${req.hullRequirement ? `Hull-specific data (${req.hullRequirement}) also outstanding. ` : ''}` +
         `This constitutes a Block 14 delinquency per DFARS and may trigger Cure Notice proceedings.`
@@ -94,7 +94,7 @@ export function analyzeRow(
     statusExplanation = req
       ? `LATE SUBMITTAL — Received ${row.actualSubmissionDate}, ${daysLate} calendar days after contractual ` +
         `due date of ${req.contractDue}. Per ${req.block}, ${req.submittalRule}. ` +
-        `Exceeds allowable variance per DD Form 1423 Block 14 criteria. ${req.contractRef}.`
+        `Exceeds allowable variance per Attachment J-2 criteria. ${req.contractRef}.`
       : `Late submission — received ${row.actualSubmissionDate}, past due date of ${row.contractDueFinish}.`
   } else if (row.status === 'yellow') {
     const issues: string[] = []
@@ -112,7 +112,7 @@ export function analyzeRow(
   } else {
     statusExplanation = req
       ? `COMPLIANT — ${req.requiredVersion} ${req.requiredRevision} received on ${row.actualSubmissionDate} ` +
-        `via ${req.submittalMethod}, within contractual timeline. Accepted per DD Form 1423, ${req.contractRef}. ` +
+        `via ${req.submittalMethod}, within contractual timeline. Accepted per Attachment J-2, ${req.contractRef}. ` +
         `${isSealed ? 'Cryptographic hash verified and sealed to XRPL.' : 'Eligible for Ledger Seal.'} ` +
         `No corrective action required.`
       : `Completed. Submitted ${row.actualSubmissionDate}. ${isSealed ? 'Sealed to ledger.' : 'Ready for seal.'}`
@@ -195,7 +195,7 @@ export function analyzeRow(
   if (row.status === 'red' && !row.actualSubmissionDate) {
     suggestedComms = `Subject: URGENT — ${row.id} ${row.title} Delinquent\n\n` +
       `To: [Shipbuilder Program Manager]\nCc: [SDM], [COR/ACOR]\n\n` +
-      `Per DD Form 1423, ${req?.block || 'Attachment J-2'}, the ${req?.requiredVersion || 'FINAL'} ` +
+      `Per Attachment J-2, ${req?.block || 'Attachment J-2'}, the ${req?.requiredVersion || 'FINAL'} ` +
       `${req?.requiredRevision || ''} of ${row.title} was due ${row.contractDueFinish}. ` +
       `As of today, this deliverable has not been received. ` +
       `Please provide status and anticipated delivery date NLT COB ${addBusinessDays(todayStr, 2)}.\n\n` +

@@ -37,7 +37,7 @@ function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
   if (!row.actualSubmissionDate) {
     findings.push(
       `DELINQUENT: ${req.requiredVersion} ${req.requiredRevision} not received. ` +
-      `Per DD Form 1423, ${req.block}, contractor shall submit ${req.requiredVersion} version ` +
+      `Per Attachment J-2, ${req.block}, contractor shall submit ${req.requiredVersion} version ` +
       `NLT ${req.contractDue} (${req.submittalRule}). ` +
       `Deliverable is past due. Ref: ${req.contractRef}.`
     )
@@ -51,7 +51,7 @@ function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
           `LATE SUBMITTAL: Received ${row.actualSubmissionDate}, ${daysLate} calendar days after ` +
           `contractual due date of ${req.contractDue}. Per ${req.block}, the required delivery was ` +
           `"${req.submittalRule}." This exceeds the allowable variance and constitutes a ` +
-          `DD Form 1423 Block 14 delinquency. DCMA notification may apply.`
+          `Attachment J-2 delinquency. DCMA notification may apply.`
         )
         severity = 'red'
       } else {
@@ -80,7 +80,7 @@ function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
     if (!row.title.toLowerCase().includes(req.requiredRevision.toLowerCase())) {
       findings.push(
         `REVISION DISCREPANCY: ${req.requiredVersion} ${req.requiredRevision} required per ` +
-        `DD Form 1423 Block 4 and ${req.contractRef}. Current submission title does not ` +
+        `Attachment J-2 and ${req.contractRef}. Current submission title does not ` +
         `indicate ${req.requiredRevision}. Verify correct revision was submitted per DID ${req.diNumber}.`
       )
       if (severity === 'green') severity = 'yellow'
@@ -112,7 +112,7 @@ function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
   if (req.hullRequirement) {
     findings.push(
       `HULL-SPECIFIC REQUIREMENT: Per ${req.block}, ${req.hullRequirement}. ` +
-      `Government review per DD Form 1423 Block 16 will verify hull-specific content is ` +
+      `Government review per Attachment J-2 will verify hull-specific content is ` +
       `separately identified and traceable per the Ship Work Breakdown Structure (SWBS). ` +
       `Missing hull data will be returned without action per NAVSEA standing instruction.`
     )
@@ -121,18 +121,18 @@ function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
   // 7. Check submittal method
   if (req.submittalMethod === 'IDE + Hard Copy') {
     findings.push(
-      `DUAL SUBMITTAL: Per DD Form 1423 Block 15, submission requires BOTH electronic ` +
+      `DUAL SUBMITTAL: Per Attachment J-2, submission requires BOTH electronic ` +
       `delivery via IDE/eDocs AND one (1) hard copy to the designated Government representative. ` +
       `Confirm IDE upload receipt AND hard copy transmittal letter on file.`
     )
   } else if (req.submittalMethod === 'IDE') {
     findings.push(
-      `SUBMITTAL METHOD: Delivery via IDE (Interactive Data Environment) per DD Form 1423 Block 15. ` +
+      `SUBMITTAL METHOD: Delivery via IDE (Interactive Data Environment) per Attachment J-2. ` +
       `Verify contractor uploaded to correct contract folder with proper metadata tags.`
     )
   } else if (req.submittalMethod === 'Electronic (EDMS)') {
     findings.push(
-      `SUBMITTAL METHOD: Electronic delivery via EDMS per DD Form 1423 Block 15. ` +
+      `SUBMITTAL METHOD: Electronic delivery via EDMS per Attachment J-2. ` +
       `Verify document registered in EDMS with correct document number and revision indicator.`
     )
   }
@@ -141,7 +141,7 @@ function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
   if (row.calendarDaysToReview !== null && row.calendarDaysToReview > req.govReviewDays) {
     findings.push(
       `GOV'T REVIEW EXCEEDANCE: Review period has reached ${row.calendarDaysToReview} calendar days ` +
-      `against the ${req.govReviewDays}-day review cycle specified in DD Form 1423 Block 16. ` +
+      `against the ${req.govReviewDays}-day review cycle specified in Attachment J-2. ` +
       `Per ${req.contractRef}, Government shall complete review within ${req.govReviewDays} days ` +
       `of receipt. COR/ACOR action required to disposition or formally extend review timeline.`
     )
@@ -165,7 +165,7 @@ function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
       const criterionToVerify = req.completenessCriteria[req.completenessCriteria.length - 1]
       findings.push(
         `COMPLETENESS CHECK: Per DID ${req.diNumber}, verify the following element is included: ` +
-        `"${criterionToVerify}." Incomplete deliverables per DD Form 1423 Block 12 ` +
+        `"${criterionToVerify}." Incomplete deliverables per Attachment J-2 ` +
         `criteria will be returned without action (DFARS 252.242-7004).`
       )
     }
@@ -176,7 +176,7 @@ function compareRow(row: DRLRow, req: ContractRequirement): ComparisonResult {
     findings.unshift(
       `COMPLIANT: ${req.requiredVersion} ${req.requiredRevision} received via ${req.submittalMethod} ` +
       `on ${row.actualSubmissionDate}, within contractual timeline. ` +
-      `Deliverable accepted per DD Form 1423 and ${req.contractRef}. No corrective action required.`
+      `Deliverable accepted per Attachment J-2 and ${req.contractRef}. No corrective action required.`
     )
   }
 

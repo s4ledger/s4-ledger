@@ -116,7 +116,7 @@ function getRowAnalysis(row: DRLRow, anchors: Record<string, AnchorRecord>): str
 
   if (row.status === 'green') {
     return `${req.requiredVersion} ${req.requiredRevision} received via ${req.submittalMethod} on ` +
-      `${row.actualSubmissionDate}. Deliverable accepted per DD Form 1423, ${req.contractRef}. ` +
+      `${row.actualSubmissionDate}. Deliverable accepted per Attachment J-2, ${req.contractRef}. ` +
       `${anchors[row.id] ? 'Hash verified and sealed to XRPL ledger.' : 'Pending ledger seal.'} ` +
       `No corrective action required.`
   }
@@ -129,7 +129,7 @@ function getRowAnalysis(row: DRLRow, anchors: Record<string, AnchorRecord>): str
     }
     const late = Math.round((new Date(row.actualSubmissionDate).getTime() - new Date(req.contractDue).getTime()) / 86400000)
     return `Submitted ${late} calendar days late (${row.actualSubmissionDate} vs due ${req.contractDue}). ` +
-      `Per ${req.block}, this exceeds allowable variance and constitutes a DD Form 1423 Block 14 delinquency. ` +
+      `Per ${req.block}, this exceeds allowable variance and constitutes an Attachment J-2 delinquency. ` +
       `DCMA notification recommended. Ref: ${req.contractRef}.`
   }
   // yellow
@@ -245,7 +245,7 @@ export function generateWeeklyReport(
   y = 86
   y = sectionHeading(doc, y, 'KEY / LEGEND')
   const legendItems = [
-    { color: GREEN, bg: BG_GREEN, label: 'Green — Completed / Verified', desc: 'Deliverable received on time, accepted per DD Form 1423, no corrective action required.' },
+    { color: GREEN, bg: BG_GREEN, label: 'Green — Completed / Verified', desc: 'Deliverable received on time, accepted per Attachment J-2 and applicable SOW, no corrective action required.' },
     { color: YELLOW, bg: BG_YELLOW, label: 'Yellow — In Review / Minor Issues', desc: 'Deliverable submitted but with minor variance, open RIDs, or exceeding Gov\'t review window.' },
     { color: RED, bg: BG_RED, label: 'Red — Overdue / Delinquent', desc: 'Deliverable not submitted or significantly late. May warrant Cure Notice per FAR 52.249-8.' },
     { color: ACCENT, bg: [230, 242, 255] as [number, number, number], label: 'Sealed to Ledger', desc: 'Data hash anchored to XRPL — tamper-evident, independently verifiable integrity proof.' },
@@ -278,10 +278,10 @@ export function generateWeeklyReport(
     `This report provides a comprehensive weekly status of all ${data.length} Data Requirements List (DRL) ` +
     `items tracked in the S4 Ledger Deliverables Tracker. As of ${dateStr}, ${analysis.green.length} deliverables ` +
     `(${Math.round(analysis.green.length / data.length * 100)}%) are fully compliant, ${analysis.yellow.length} are under active review ` +
-    `with minor issues, and ${analysis.red.length} are classified as overdue/delinquent per DD Form 1423 Block 14 criteria. ` +
+    `with minor issues, and ${analysis.red.length} are classified as overdue/delinquent per Attachment J-2 criteria. ` +
     `${analysis.sealed} deliverables have been cryptographically sealed to the XRPL, providing tamper-evident ` +
     `integrity verification. The on-time submission rate is ${analysis.onTimeRate}%. Average government review cycle is ` +
-    `${analysis.avgReviewDays} calendar days. All contractual references are modeled on Attachment J-2 / DD Form 1423 standards ` +
+    `${analysis.avgReviewDays} calendar days. All contractual references are per the SOW and Attachment J-2 ` +
     `per DFARS and NAVSEA/PMS 300 standing instructions.`,
     W - 2 * M - 4,
   )

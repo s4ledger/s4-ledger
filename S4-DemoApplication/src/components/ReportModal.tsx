@@ -135,7 +135,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
             {[
               'Executive Summary with contractual analysis',
               'Key/Legend explaining status color codes',
-              'Section 1: Top Priority DRLs sorted by criticality with DD Form 1423 references',
+              'Section 1: Top Priority DRLs sorted by criticality with Attachment J-2 references',
               'Section 2: Full Detailed List grouped by status with AI remarks',
               'Section 3: RACI Responsibility Matrix (Shipbuilder, SDM, Lead Reviewer, PM, QA)',
               'Section 4: Weekly Progress & Efficiency Analysis with time/cost savings',
