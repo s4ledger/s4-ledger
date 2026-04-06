@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.4.0] — 2026-04-06
+### S4-DemoApplication — Reports & Export + API & Integrations
+- **Reports & Export modal** — New unified export panel accessible from Tools dropdown. Supports 3 formats: PDF (existing AI-powered weekly report), Excel workbook (multi-sheet with Summary, status breakdowns, seal data), and CSV. Format selector with visual cards, options for including anchor/seal data, and compliance statistics preview.
+- **Excel export** (`src/utils/excelExport.ts`) — New utility using SheetJS to generate multi-sheet XLSX workbooks: "DRL Data" (all rows with auto-sized columns), "Summary" (statistics, compliance rate, generation timestamp), plus per-status sheets (Overdue, In Review, Pending, Completed). Includes optional seal hash/TX/timestamp columns.
+- **Report scheduling** — Schedule tab lets users configure recurring report delivery (daily/weekly/bi-weekly/monthly) with format selection, recipient email, and delivery time. Schedules persist in localStorage. Ready for backend email service integration.
+- **Export history** — History tab tracks all generated exports with filename, format, date, and row count. Persisted in localStorage.
+- **API & Integrations panel** — New Tools dropdown item "API & Integrations" opens a comprehensive integration hub with 3 tabs:
+  - **API Reference** — Lists all 20 REST endpoints with method badges (GET/POST), auth indicators, one-click cURL copy, and base URL documentation. API key display with show/hide toggle.
+  - **Webhooks** — Register webhook endpoints with event selection (8 event types: anchor.confirmed, verify.completed, tamper.detected, etc.), test webhook delivery, view active registrations and delivery history with status indicators.
+  - **SDK** — Code examples for Python SDK, TypeScript/Node.js SDK, and cURL with copy-to-clipboard. Shows install commands, anchor, verify, and webhook registration patterns.
+- **API health check** — Integrations panel auto-checks `/api/health` on mount and shows live status indicator with version and record count.
+
 ## [8.3.0] — 2026-04-05
 ### S4-DemoApplication — Backend Production Hardening
 - **Environment variable config** — Supabase URL and anon key now read from `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` via `import.meta.env`, with hardcoded fallbacks for zero-config demo mode. Enables staging/production separation and key rotation without code changes.

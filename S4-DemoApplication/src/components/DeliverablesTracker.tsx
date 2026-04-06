@@ -8,6 +8,8 @@ import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
 import MismatchModal from './MismatchModal'
 import ReportModal from './ReportModal'
+import ReportExportModal from './ReportExportModal'
+import IntegrationsPanel from './IntegrationsPanel'
 import ExternalSyncModal from './ExternalSyncModal'
 import NotificationsPanel from './NotificationsPanel'
 import EmailComposer from './EmailComposer'
@@ -155,6 +157,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   const [showImport, setShowImport] = useState(false)
   const [showAnomaly, setShowAnomaly] = useState(false)
   const [showChat, setShowChat] = useState(false)
+  const [showExport, setShowExport] = useState(false)
+  const [showIntegrations, setShowIntegrations] = useState(false)
   const [lastPersist, setLastPersist] = useState<string | null>(null)
 
   /* ─── Zoom & Excel-like editing state ────────────────────────── */
@@ -868,6 +872,13 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   </button>
                   )}
                   <button
+                    onClick={() => { setShowExport(true); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-chart-bar text-accent w-4 text-center"></i>
+                    <span className="font-medium">Reports & Export</span>
+                  </button>
+                  <button
                     onClick={() => { setShowImport(true); setShowToolsMenu(false) }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
                   >
@@ -884,6 +895,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     {showAnomaly && <span className="ml-auto text-red-500 text-xs font-semibold">OPEN</span>}
                   </button>
                   )}
+                  <div className="border-t border-border my-1"></div>
+                  <button
+                    onClick={() => { setShowIntegrations(true); setShowToolsMenu(false) }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <i className="fas fa-plug text-purple-500 w-4 text-center"></i>
+                    <span className="font-medium">API & Integrations</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -1954,6 +1973,27 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           anchors={anchors}
           editedSinceSeal={editedSinceSeal}
           onClose={() => setShowAnomaly(false)}
+        />
+      )}
+
+      {/* Reports & Export (PDF / Excel / CSV + Scheduling) */}
+      {showExport && (
+        <ReportExportModal
+          data={hullData}
+          anchors={anchors}
+          role={role}
+          rowFindings={rowFindings}
+          contractRefs={contractRefs}
+          hullFilter={hullFilter !== 'all' ? hullFilter : undefined}
+          aiInsights={aiInsights}
+          onClose={() => setShowExport(false)}
+        />
+      )}
+
+      {/* API & Integrations Panel */}
+      {showIntegrations && (
+        <IntegrationsPanel
+          onClose={() => setShowIntegrations(false)}
         />
       )}
       </div>
