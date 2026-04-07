@@ -64,17 +64,93 @@ function fromDbRow(db: Record<string, unknown>): DRLRow {
   }
 }
 
+/* ─── Conflict Tracking ──────────────────────────────────────── */
+
+export interface SyncConflict {
+  rowId: string
+  field: string
+  localValue: string
+  serverValue: string
+  serverUpdatedAt: string
+}
+
+/** Tracks the last-known server updated_at per row id */
+let knownServerTimestamps: Record<string, string> = {}
+
+/**
+ * Detect rows where the server version has been modified by another user
+ * since we last loaded. Returns conflicts (if any) so the caller can
+ * warn the user instead of silently overwriting.
+ */
+async function detectConflicts(
+  rows: DRLRow[],
+): Promise<SyncConflict[]> {
+  const ids = rows.map(r => r.id)
+  if (ids.length === 0) return []
+
+  try {
+    const { data, error } = await supabase
+      .from('drl_rows')
+      .select('id, updated_at, notes, status, shipbuilder_notes, gov_notes')
+      .in('id', ids)
+
+    if (error || !data) return []
+
+    const conflicts: SyncConflict[] = []
+    for (const serverRow of data) {
+      const lastKnown = knownServerTimestamps[serverRow.id as string]
+      if (!lastKnown) continue // first sync — no conflict possible
+
+      const serverUpdatedAt = serverRow.updated_at as string
+      if (serverUpdatedAt && serverUpdatedAt > lastKnown) {
+        // Server row was touched since we last synced — check which fields differ
+        const local = rows.find(r => r.id === serverRow.id)
+        if (!local) continue
+
+        const checks: [string, string, string][] = [
+          ['notes', local.notes, (serverRow.notes as string) || ''],
+          ['status', local.status, (serverRow.status as string) || ''],
+          ['shipbuilderNotes', local.shipbuilderNotes || '', (serverRow.shipbuilder_notes as string) || ''],
+          ['govNotes', local.govNotes || '', (serverRow.gov_notes as string) || ''],
+        ]
+        for (const [field, localVal, serverVal] of checks) {
+          if (localVal !== serverVal) {
+            conflicts.push({
+              rowId: serverRow.id as string,
+              field,
+              localValue: localVal,
+              serverValue: serverVal,
+              serverUpdatedAt,
+            })
+          }
+        }
+      }
+    }
+    return conflicts
+  } catch {
+    return [] // detection failure is non-blocking
+  }
+}
+
 /* ─── Public API ─────────────────────────────────────────────── */
 
 /**
  * Upsert all DRL rows to Supabase.
- * Uses ON CONFLICT (id) DO UPDATE so rows are created or updated.
+ * Detects conflicts before writing — if another user changed a row
+ * since our last sync, those conflicts are reported (but the sync
+ * still proceeds with last-write-wins to avoid blocking offline users).
  */
 export async function syncRowsToSupabase(
   rows: DRLRow[],
   userId: string | null,
-): Promise<{ ok: boolean; synced: number; error?: string }> {
+): Promise<{ ok: boolean; synced: number; conflicts?: SyncConflict[]; error?: string }> {
   try {
+    // Detect conflicts before overwriting
+    const conflicts = await detectConflicts(rows)
+    if (conflicts.length > 0) {
+      console.warn(`DRL sync: ${conflicts.length} conflict(s) detected — proceeding with local version`, conflicts)
+    }
+
     const dbRows = rows.map(r => toDbRow(r, userId))
 
     // Batch upsert in chunks of 50 to avoid payload limits
@@ -88,12 +164,18 @@ export async function syncRowsToSupabase(
 
       if (error) {
         console.warn('DRL sync chunk failed:', error.message)
-        return { ok: false, synced, error: error.message }
+        return { ok: false, synced, conflicts: conflicts.length > 0 ? conflicts : undefined, error: error.message }
       }
       synced += chunk.length
     }
 
-    return { ok: true, synced }
+    // Update known timestamps after successful write
+    const now = new Date().toISOString()
+    for (const row of rows) {
+      knownServerTimestamps[row.id] = now
+    }
+
+    return { ok: true, synced, conflicts: conflicts.length > 0 ? conflicts : undefined }
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Unknown error'
     console.warn('DRL sync failed:', msg)
@@ -117,6 +199,14 @@ export async function loadRowsFromSupabase(): Promise<DRLRow[] | null> {
       return null
     }
     if (!data || data.length === 0) return null
+
+    // Track server timestamps for conflict detection on next sync
+    for (const row of data) {
+      if (row.updated_at) {
+        knownServerTimestamps[row.id as string] = row.updated_at as string
+      }
+    }
+
     return data.map(fromDbRow)
   } catch (e) {
     console.warn('Failed to load DRL rows:', e)

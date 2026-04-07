@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, Component, type ErrorInfo, type ReactNode } from 'react'
+import { useState, useCallback, useMemo, useEffect, Suspense, lazy, Component, type ErrorInfo, type ReactNode } from 'react'
 import { AuthStage, UserRole, DRLRow, AnchorRecord } from './types'
 import { sampleData } from './data/sampleData'
 import { assignContractIds, getContractById } from './data/portfolioData'
@@ -14,7 +14,9 @@ import { Sentry } from './lib/sentry'
 import LoginScreen from './components/LoginScreen'
 import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
-import PortfolioDashboard from './components/PortfolioDashboard'
+
+/* ─── Lazy-loaded (code-split) modules ────────────────────────── */
+const PortfolioDashboard = lazy(() => import('./components/PortfolioDashboard'))
 
 /* ─── Error Boundary ──────────────────────────────────────────── */
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
@@ -214,13 +216,15 @@ export default function App() {
     const authRole = profile.role
     if (showPortfolio) {
       return (
-        <PortfolioDashboard
-          allData={data}
-          selectedContractId={selectedContractId}
-          onSelectContract={(cid) => { setSelectedContractId(cid); setShowPortfolio(false) }}
-          onViewAll={() => setSelectedContractId(null)}
-          onBack={() => setShowPortfolio(false)}
-        />
+        <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-gray-50"><i className="fas fa-spinner fa-spin text-accent text-lg"></i></div>}>
+          <PortfolioDashboard
+            allData={data}
+            selectedContractId={selectedContractId}
+            onSelectContract={(cid) => { setSelectedContractId(cid); setShowPortfolio(false) }}
+            onViewAll={() => setSelectedContractId(null)}
+            onBack={() => setShowPortfolio(false)}
+          />
+        </Suspense>
       )
     }
     return (
@@ -262,6 +266,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       {showPortfolio ? (
+        <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-gray-50"><i className="fas fa-spinner fa-spin text-accent text-lg"></i></div>}>
         <PortfolioDashboard
           allData={data}
           selectedContractId={selectedContractId}
@@ -269,6 +274,7 @@ export default function App() {
           onViewAll={() => setSelectedContractId(null)}
           onBack={() => setShowPortfolio(false)}
         />
+        </Suspense>
       ) : (
         <DeliverablesTracker
           data={filteredData}
