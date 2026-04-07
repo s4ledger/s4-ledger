@@ -12,6 +12,7 @@
  */
 
 import type { DRLRow, Program, Contract } from '../types'
+import { getDemoConfig } from './demoDefaults'
 
 /* ─── Runtime mode ───────────────────────────────────────────── */
 
@@ -124,7 +125,6 @@ export async function loadConfig(): Promise<S4Config> {
         return validated
       } catch (err) {
         console.warn('[S4 Config] Failed to load s4-config.json — falling back to demo defaults:', err)
-        const { getDemoConfig } = await import('./demoDefaults')
         const demo = getDemoConfig()
         _configSync = demo
         return demo
@@ -132,7 +132,6 @@ export async function loadConfig(): Promise<S4Config> {
     }
 
     // Demo mode — use hardcoded defaults
-    const { getDemoConfig } = await import('./demoDefaults')
     const demo = getDemoConfig()
     _configSync = demo
     return demo
@@ -154,9 +153,6 @@ export function getConfigSync(): S4Config | null {
  */
 export function getConfigOrDemo(): S4Config {
   if (_configSync) return _configSync
-  // Lazy-load demo defaults synchronously (they're just static data)
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getDemoConfig } = require('./demoDefaults') as { getDemoConfig: () => S4Config }
   const demo = getDemoConfig()
   _configSync = demo
   return demo
