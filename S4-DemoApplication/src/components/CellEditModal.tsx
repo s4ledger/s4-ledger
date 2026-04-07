@@ -164,6 +164,18 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
     }
   }, [target.editable])
 
+  // Escape key closes the modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onClose()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   function handleSave() {
     const saveValue = useRichEdit && richRef.current ? richRef.current.innerText : value
     onSave(target.row.id, target.field, saveValue)

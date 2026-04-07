@@ -162,6 +162,8 @@ export default function DraggableModal({
         ref={containerRef}
         className={`flex flex-col overflow-hidden ${className}`}
         style={style}
+        role="dialog"
+        aria-modal="true"
       >
         {/* Drag handle: top bar */}
         <div

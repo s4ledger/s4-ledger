@@ -29,6 +29,12 @@ export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, 
   const [chatLoading, setChatLoading] = useState(false)
   const [saved, setSaved] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => { mountedRef.current = false }
+  }, [])
 
   useEffect(() => {
     setLoading(true)
@@ -68,11 +74,13 @@ export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, 
 
     try {
       const response = await generateChatResponse(userMsg, row, insight, chatHistory)
+      if (!mountedRef.current) return
       setChatHistory(prev => [...prev, { role: 'ai', text: response }])
     } catch {
+      if (!mountedRef.current) return
       setChatHistory(prev => [...prev, { role: 'ai', text: 'Sorry, I encountered an error. Please try again.' }])
     } finally {
-      setChatLoading(false)
+      if (mountedRef.current) setChatLoading(false)
     }
   }
 

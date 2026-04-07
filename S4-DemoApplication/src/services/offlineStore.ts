@@ -73,7 +73,7 @@ function openDB(): Promise<IDBDatabase> {
       resolve(dbInstance)
     }
 
-    request.onerror = () => reject(request.error)
+    request.onerror = () => reject(new Error(`IndexedDB open failed: ${request.error?.message || 'unknown error'}`))
   })
 }
 
@@ -85,7 +85,7 @@ async function idbPut(storeName: string, value: unknown): Promise<void> {
     const tx = db.transaction(storeName, 'readwrite')
     tx.objectStore(storeName).put(value)
     tx.oncomplete = () => resolve()
-    tx.onerror = () => reject(tx.error)
+    tx.onerror = () => reject(new Error(`IndexedDB put to '${storeName}' failed: ${tx.error?.message || 'unknown error'}`))
   })
 }
 
@@ -95,7 +95,7 @@ async function idbGetAll<T>(storeName: string): Promise<T[]> {
     const tx = db.transaction(storeName, 'readonly')
     const request = tx.objectStore(storeName).getAll()
     request.onsuccess = () => resolve(request.result as T[])
-    request.onerror = () => reject(request.error)
+    request.onerror = () => reject(new Error(`IndexedDB getAll from '${storeName}' failed: ${request.error?.message || 'unknown error'}`))
   })
 }
 
@@ -105,7 +105,7 @@ async function idbGet<T>(storeName: string, key: string): Promise<T | undefined>
     const tx = db.transaction(storeName, 'readonly')
     const request = tx.objectStore(storeName).get(key)
     request.onsuccess = () => resolve(request.result as T | undefined)
-    request.onerror = () => reject(request.error)
+    request.onerror = () => reject(new Error(`IndexedDB get '${key}' from '${storeName}' failed: ${request.error?.message || 'unknown error'}`))
   })
 }
 
@@ -115,7 +115,7 @@ async function idbDelete(storeName: string, key: string): Promise<void> {
     const tx = db.transaction(storeName, 'readwrite')
     tx.objectStore(storeName).delete(key)
     tx.oncomplete = () => resolve()
-    tx.onerror = () => reject(tx.error)
+    tx.onerror = () => reject(new Error(`IndexedDB delete '${key}' from '${storeName}' failed: ${tx.error?.message || 'unknown error'}`))
   })
 }
 
@@ -125,7 +125,7 @@ async function idbClear(storeName: string): Promise<void> {
     const tx = db.transaction(storeName, 'readwrite')
     tx.objectStore(storeName).clear()
     tx.oncomplete = () => resolve()
-    tx.onerror = () => reject(tx.error)
+    tx.onerror = () => reject(new Error(`IndexedDB clear '${storeName}' failed: ${tx.error?.message || 'unknown error'}`))
   })
 }
 
@@ -140,7 +140,7 @@ export async function persistRows(rows: DRLRow[]): Promise<void> {
       store.put(row)
     }
     tx.oncomplete = () => resolve()
-    tx.onerror = () => reject(tx.error)
+    tx.onerror = () => reject(new Error(`IndexedDB persistRows failed (${rows.length} rows): ${tx.error?.message || 'unknown error'}`))
   })
 }
 
@@ -164,7 +164,7 @@ export async function persistAnchors(anchors: Record<string, AnchorRecord>): Pro
       store.put({ ...anchor, rowId })
     }
     tx.oncomplete = () => resolve()
-    tx.onerror = () => reject(tx.error)
+    tx.onerror = () => reject(new Error(`IndexedDB persistAnchors failed: ${tx.error?.message || 'unknown error'}`))
   })
 }
 

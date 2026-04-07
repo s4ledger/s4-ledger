@@ -4,6 +4,8 @@
  * (indicating no LLM provider is configured on the server).
  */
 
+import { checkAIChatLimit } from './rateLimiter'
+
 export interface AIChatMessage {
   role: 'user' | 'ai' | 'assistant'
   text: string
@@ -32,6 +34,10 @@ const API_BASE = typeof window !== 'undefined' && window.location.hostname === '
  * If fallback=true, the server had no LLM — caller should use local logic.
  */
 export async function chatWithAI(request: AIChatRequest): Promise<AIChatResponse> {
+  if (checkAIChatLimit()) {
+    return { response: 'Rate limited — please wait a moment before sending another request.', provider: 'none', fallback: true }
+  }
+
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 30000)
 

@@ -1,4 +1,5 @@
 import { AnchorRecord } from '../types'
+import { checkAnchorLimit } from './rateLimiter'
 
 const ANCHOR_API = '/api/anchor'
 
@@ -12,6 +13,11 @@ export async function anchorToXRPL(
   hash: string,
   contentPreview?: string,
 ): Promise<AnchorRecord> {
+  if (checkAnchorLimit()) {
+    console.warn('[XRPL] Rate limited — using local placeholder')
+    return localFallback(rowId, hash)
+  }
+
   try {
     const resp = await fetch(ANCHOR_API, {
       method: 'POST',
@@ -49,6 +55,10 @@ export async function anchorToXRPL(
   }
 
   // Local fallback when API is unavailable (dev mode, offline, etc.)
+  return localFallback(rowId, hash)
+}
+
+function localFallback(rowId: string, hash: string): AnchorRecord {
   return {
     rowId,
     hash,

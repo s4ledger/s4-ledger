@@ -820,7 +820,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                 Tools
                 <i className={`fas fa-chevron-down text-[10px] transition-transform ${showToolsMenu ? 'rotate-180' : ''}`}></i>
                 {comparing && <i className="fas fa-spinner fa-spin text-green-500 ml-1"></i>}
-                {syncStatus.lastSync && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse ml-1"></span>}
+                {syncStatus.lastSync && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse ml-1" role="status" aria-label="Synced" title="Synced"></span>}
               </button>
               {showToolsMenu && (
                 <div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-xl shadow-xl border border-border py-1 z-50">
@@ -923,8 +923,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   : 'bg-black/[0.04] hover:bg-black/[0.08] border-border text-steel'
               }`}
               title="S4 Chat — AI, Team, Agents"
+              aria-label="S4 Chat — AI, Team, Agents"
             >
-              <i className="fas fa-comments"></i>
+              <i className="fas fa-comments" aria-hidden="true"></i>
             </button>
 
             {/* ─── Notifications Bell (separate) ────────────── */}
@@ -936,8 +937,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                     ? 'bg-accent text-white border-accent'
                     : 'bg-black/[0.04] hover:bg-black/[0.08] border-border text-steel'
                 }`}
+                aria-label="Notifications"
               >
-                <i className="fas fa-bell"></i>
+                <i className="fas fa-bell" aria-hidden="true"></i>
               </button>
               {notifications.filter(n => !n.read).length > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center px-1 bg-red-500 text-white text-[10px] font-bold rounded-full">
@@ -950,8 +952,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <button
               onClick={() => setShowProfile(true)}
               className="flex items-center justify-center w-9 h-9 border rounded-lg text-sm transition-all bg-black/[0.04] hover:bg-black/[0.08] border-border text-steel"
+              aria-label="User Profile"
             >
-              <i className="fas fa-user-circle"></i>
+              <i className="fas fa-user-circle" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -1341,8 +1344,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               onClick={() => setZoomLevel(z => Math.max(50, z - 10))}
               className="w-7 h-7 rounded-md bg-white border border-border hover:bg-gray-100 text-gray-600 inline-flex items-center justify-center transition-colors"
               title="Zoom out"
+              aria-label="Zoom out"
             >
-              <i className="fas fa-minus text-[10px]"></i>
+              <i className="fas fa-minus text-[10px]" aria-hidden="true"></i>
             </button>
             <input
               type="range"
@@ -1358,8 +1362,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               onClick={() => setZoomLevel(z => Math.min(200, z + 10))}
               className="w-7 h-7 rounded-md bg-white border border-border hover:bg-gray-100 text-gray-600 inline-flex items-center justify-center transition-colors"
               title="Zoom in"
+              aria-label="Zoom in"
             >
-              <i className="fas fa-plus text-[10px]"></i>
+              <i className="fas fa-plus text-[10px]" aria-hidden="true"></i>
             </button>
             <button
               onClick={() => setZoomLevel(100)}
@@ -1403,26 +1408,27 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-20 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
                 <tr className="border-b border-border">
-                  <th className="w-[50px] px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
+                  <th scope="col" className="w-[50px] px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
                     #
                   </th>
                   {spreadsheetColumns.map(col => (
                     <th
                       key={col.key}
+                      scope="col"
                       onClick={() => handleSort(col.key)}
                       className={`${col.width} px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:text-gray-900 transition-colors bg-white`}
                     >
                       {col.label}
                       {sortCol === col.key && (
-                        <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1 text-accent`}></i>
+                        <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1 text-accent`} aria-hidden="true"></i>
                       )}
                     </th>
                   ))}
-                  <th className="w-[80px] px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
+                  <th scope="col" className="w-[80px] px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
                     Trust
                   </th>
-                  <th className="w-[50px] px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white">
-                    <i className="fas fa-bolt text-accent"></i>
+                  <th scope="col" className="w-[50px] px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider bg-white" aria-label="Actions">
+                    <i className="fas fa-bolt text-accent" aria-hidden="true"></i>
                   </th>
                 </tr>
               </thead>
@@ -1605,15 +1611,17 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                             : 'text-transparent group-hover:text-steel/30 group-hover:hover:text-accent group-hover:hover:bg-accent/10'
                         }`}
                         title="View Audit Trail"
+                        aria-label="View Audit Trail"
                       >
-                        <i className="fas fa-history text-[9px]"></i>
+                        <i className="fas fa-history text-[9px]" aria-hidden="true"></i>
                       </button>
                       <button
                         onClick={() => setDocPanelRow(row)}
                         className="relative w-5 h-5 rounded inline-flex items-center justify-center text-steel/50 hover:text-accent hover:bg-accent/10 transition-all"
                         title="Documents"
+                        aria-label="Documents"
                       >
-                        <i className="fas fa-paperclip text-[9px]"></i>
+                        <i className="fas fa-paperclip text-[9px]" aria-hidden="true"></i>
                         {docCounts[row.id] > 0 && (
                           <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-accent text-white text-[7px] font-bold rounded-full flex items-center justify-center">
                             {docCounts[row.id]}
@@ -1628,8 +1636,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                       <button
                         onClick={() => setActiveMenu(activeMenu === row.id ? null : row.id)}
                         className="w-7 h-7 rounded-md bg-accent/10 hover:bg-accent/25 text-accent transition-all inline-flex items-center justify-center"
+                        aria-label="Row actions"
                       >
-                        <i className="fas fa-bolt text-xs"></i>
+                        <i className="fas fa-bolt text-xs" aria-hidden="true"></i>
                       </button>
                       {activeMenu === row.id && (
                         <AnchorVerifyMenu

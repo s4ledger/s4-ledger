@@ -114,7 +114,10 @@ export function joinCollaboration(
     for (const key of Object.keys(state)) {
       const presences = state[key]
       if (presences && presences.length > 0) {
-        users.push(presences[0] as unknown as PresenceUser)
+        const p = presences[0]
+        if (p && typeof p === 'object' && 'userId' in p && 'displayName' in p) {
+          users.push(p as unknown as PresenceUser)
+        }
       }
     }
     // Merge with simulated users so presence sync doesn't wipe them out
@@ -131,6 +134,14 @@ export function joinCollaboration(
   channel.subscribe(async (status) => {
     if (status === 'SUBSCRIBED' && currentPresence) {
       await channel?.track(currentPresence)
+    }
+    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+      console.warn(`[Realtime] Channel ${status} — will retry in 5s`)
+      setTimeout(() => {
+        if (channel && currentPresence) {
+          channel.subscribe()
+        }
+      }, 5000)
     }
   })
 }
