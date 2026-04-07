@@ -3,6 +3,9 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 30
+    },
+    "api/nserc-sync.ts": {
+      "maxDuration": 60
     }
   },
   "buildCommand": "bash build.sh",

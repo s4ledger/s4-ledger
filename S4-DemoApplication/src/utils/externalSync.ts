@@ -5,7 +5,7 @@ import { storeSealed } from './sealedVault'
 import { recordSeal, recordExternalFeed } from './auditTrail'
 import { analyzeRow } from './aiAnalysis'
 import { getRACIParty } from './raciWorkflow'
-import { fetchLatestDRLUpdates, NSERCSyncResult, generateNewCraftRows, generateManualCraftRows, detectExistingCrafts } from '../services/nsercIdeService'
+import { fetchLatestDRLUpdates, NSERCSyncResult, generateNewCraftRows, generateManualCraftRows, detectExistingCrafts, isProductionConfigured } from '../services/nsercIdeService'
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
@@ -43,6 +43,10 @@ export interface SyncStatus {
   totalSyncs: number
   changesSynced: number
   isOnline: boolean
+  /** Whether the last sync used simulated data (not real NSERC IDE) */
+  isSimulation: boolean
+  /** Last sync error message, if any */
+  lastError: string | null
 }
 
 /* ─── Helpers ────────────────────────────────────────────────── */
@@ -94,6 +98,10 @@ export async function realSyncPipeline(
   updatedRows: DRLRow[]
   newAnchors: Record<string, AnchorRecord>
   newCraftDetected: string | null
+  /** Whether the sync used simulated data */
+  isSimulation: boolean
+  /** Non-fatal warnings from the sync */
+  warnings: string[]
 }> {
   const changes: SyncChange[] = []
   const notifications: SyncNotification[] = []
@@ -112,7 +120,11 @@ export async function realSyncPipeline(
     serviceResult = await fetchLatestDRLUpdates(data)
   } catch (e) {
     console.error('[realSyncPipeline] NSERC IDE (PMS 300) service error, aborting sync:', e)
-    return { changes, notifications, updatedRows, newAnchors, newCraftDetected: null }
+    return {
+      changes, notifications, updatedRows, newAnchors, newCraftDetected: null,
+      isSimulation: true,
+      warnings: [`Sync aborted: ${e instanceof Error ? e.message : String(e)}`],
+    }
   }
 
   // ── Step 2: Process result from NSERC IDE (PMS 300) ──
@@ -274,7 +286,11 @@ export async function realSyncPipeline(
     })
   }
 
-  return { changes, notifications, updatedRows, newAnchors, newCraftDetected }
+  return {
+    changes, notifications, updatedRows, newAnchors, newCraftDetected,
+    isSimulation: !serviceResult.isReal,
+    warnings: serviceResult.warnings,
+  }
 }
 
 /**

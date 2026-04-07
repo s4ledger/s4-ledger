@@ -103,21 +103,134 @@ interface NSERCIdeConfig {
 }
 
 /**
- * TODO: PRODUCTION — Store in Vercel environment secrets:
- *   AZURE_TENANT_ID        → config.tenantId
- *   AZURE_CLIENT_ID        → config.clientId
- *   AZURE_CLIENT_SECRET    → used in token acquisition (never in frontend)
- *   PMS300_SITE_ID         → config.pms300SiteId
- *   PMS300_DRL_LIST_ID     → config.drlListId
- *   PMS300_DOC_DRIVE_ID    → config.documentDriveId
+ * Load NSERC IDE config from Vite environment variables.
+ * Non-secret values (tenant ID, client ID, site IDs) are safe for frontend.
+ * AZURE_CLIENT_SECRET is NEVER exposed to the frontend — it stays in
+ * the Vercel serverless function (/api/nserc-sync).
+ *
+ * Required Vercel environment variables:
+ *   VITE_AZURE_TENANT_ID   → config.tenantId    (frontend, non-secret)
+ *   VITE_AZURE_CLIENT_ID   → config.clientId     (frontend, non-secret)
+ *   VITE_PMS300_SITE_ID    → config.pms300SiteId (frontend, non-secret)
+ *   VITE_PMS300_DRL_LIST_ID→ config.drlListId    (frontend, non-secret)
+ *   VITE_PMS300_DOC_DRIVE_ID→config.documentDriveId (frontend, non-secret)
+ *   AZURE_CLIENT_SECRET    → server-only (Vercel serverless function)
  */
-const NSERC_CONFIG: NSERCIdeConfig = {
-  tenantId:        'TODO_NAVSEA_AZURE_TENANT_ID',
-  clientId:        'TODO_S4_LEDGER_APP_CLIENT_ID',
-  pms300SiteId:    'TODO_PMS300_NSERC_SITE_ID',
-  drlListId:       'TODO_PMS300_DRL_LIST_ID',
-  documentDriveId: 'TODO_PMS300_DRL_DRIVE_ID',
-  graphBaseUrl:    'https://graph.microsoft.com/v1.0',
+let _cachedConfig: NSERCIdeConfig | null = null
+
+function loadNSERCConfig(): NSERCIdeConfig {
+  if (_cachedConfig) return _cachedConfig
+  _cachedConfig = {
+    tenantId:        import.meta.env.VITE_AZURE_TENANT_ID || '',
+    clientId:        import.meta.env.VITE_AZURE_CLIENT_ID || '',
+    pms300SiteId:    import.meta.env.VITE_PMS300_SITE_ID || '',
+    drlListId:       import.meta.env.VITE_PMS300_DRL_LIST_ID || '',
+    documentDriveId: import.meta.env.VITE_PMS300_DOC_DRIVE_ID || '',
+    graphBaseUrl:    'https://graph.microsoft.com/v1.0',
+  }
+  return _cachedConfig
+}
+
+/**
+ * Check whether production NSERC IDE credentials are configured.
+ * Returns true when all required env vars are set and non-empty.
+ */
+export function isProductionConfigured(): boolean {
+  const cfg = loadNSERCConfig()
+  return [cfg.tenantId, cfg.clientId, cfg.pms300SiteId, cfg.drlListId]
+    .every(v => v.length > 0)
+}
+
+/* ── Error Types ──────────────────────────────────────────────── */
+
+export type NSERCErrorCode =
+  | 'AUTH_FAILED' | 'FORBIDDEN' | 'NOT_FOUND' | 'RATE_LIMITED'
+  | 'SERVER_ERROR' | 'TIMEOUT' | 'NETWORK_ERROR' | 'INVALID_RESPONSE'
+  | 'INVALID_INPUT' | 'UNKNOWN'
+
+export class NSERCError extends Error {
+  constructor(
+    message: string,
+    public readonly code: NSERCErrorCode,
+    public readonly httpStatus?: number,
+    public readonly retryable: boolean = false,
+  ) {
+    super(message)
+    this.name = 'NSERCError'
+  }
+}
+
+/* ── Retry Utility — Exponential Backoff ──────────────────────── */
+
+const MAX_RETRIES = 3
+const RETRY_DELAYS = [2000, 5000, 10000]
+
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number = 30000,
+): Promise<Response> {
+  let lastError: Error | null = null
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+
+    try {
+      const resp = await fetch(url, { ...options, signal: controller.signal })
+      clearTimeout(timeoutId)
+
+      // Rate limited → honor Retry-After header
+      if (resp.status === 429 && attempt < MAX_RETRIES) {
+        const retryAfter = resp.headers.get('Retry-After')
+        const delay = retryAfter ? parseInt(retryAfter, 10) * 1000 : RETRY_DELAYS[attempt] || 10000
+        console.warn(`[NSERC IDE] Rate limited (429) — retry in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`)
+        await new Promise(r => setTimeout(r, delay))
+        continue
+      }
+
+      // Server error → retry with backoff
+      if (resp.status >= 500 && attempt < MAX_RETRIES) {
+        const delay = RETRY_DELAYS[attempt] || 10000
+        console.warn(`[NSERC IDE] Server error (${resp.status}) — retry in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`)
+        await new Promise(r => setTimeout(r, delay))
+        continue
+      }
+
+      return resp
+    } catch (err) {
+      clearTimeout(timeoutId)
+      lastError = err instanceof Error ? err : new Error(String(err))
+
+      if (lastError.name === 'AbortError') {
+        lastError = new NSERCError(`Request timed out after ${timeoutMs}ms`, 'TIMEOUT', undefined, true)
+      }
+
+      if (attempt < MAX_RETRIES) {
+        const delay = RETRY_DELAYS[attempt] || 10000
+        console.warn(`[NSERC IDE] Network error — retry in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES}):`, lastError.message)
+        await new Promise(r => setTimeout(r, delay))
+      }
+    }
+  }
+
+  throw lastError || new NSERCError('Request failed after all retries', 'NETWORK_ERROR', undefined, false)
+}
+
+/* ── OData Input Sanitization ─────────────────────────────────── */
+
+/**
+ * Sanitize a craft filter value for safe OData query interpolation.
+ * Prevents injection by allowing only safe characters and escaping quotes.
+ */
+function sanitizeCraftFilter(craft: string): string {
+  if (!/^[a-zA-Z0-9\s\-#().]+$/.test(craft)) {
+    throw new NSERCError(
+      `Invalid craft filter: "${craft}" — only alphanumeric, spaces, hyphens, #, parens allowed`,
+      'INVALID_INPUT',
+    )
+  }
+  return craft.replace(/'/g, "''")
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -193,46 +306,35 @@ export interface NSERCConnection {
  * when credentials are not yet provisioned (enters simulation mode).
  */
 export async function connectToNSERCIDE(
-  config: NSERCIdeConfig = NSERC_CONFIG,
+  config: NSERCIdeConfig = loadNSERCConfig(),
 ): Promise<NSERCConnection> {
-  // ┌───────────────────────────────────────────────────────────────┐
-  // │  TODO: PRODUCTION — Uncomment when Azure AD app registration  │
-  // │  is complete and AZURE_CLIENT_SECRET is in Vercel secrets.     │
-  // │                                                                │
-  // │  const tokenUrl =                                              │
-  // │    `https://login.microsoftonline.com/                         │
-  // │     ${config.tenantId}/oauth2/v2.0/token`;                     │
-  // │                                                                │
-  // │  const body = new URLSearchParams({                            │
-  // │    grant_type: 'client_credentials',                           │
-  // │    client_id: config.clientId,                                 │
-  // │    client_secret: process.env.AZURE_CLIENT_SECRET!,            │
-  // │    scope: 'https://graph.microsoft.com/.default',              │
-  // │  });                                                           │
-  // │                                                                │
-  // │  const resp = await fetch(tokenUrl, {                          │
-  // │    method: 'POST',                                             │
-  // │    headers: {                                                  │
-  // │      'Content-Type': 'application/x-www-form-urlencoded',      │
-  // │    },                                                          │
-  // │    body,                                                       │
-  // │  });                                                           │
-  // │                                                                │
-  // │  if (!resp.ok) {                                               │
-  // │    console.error('[NSERC IDE] Auth failed:', resp.status);      │
-  // │    return { connected: false, token: null, config };            │
-  // │  }                                                             │
-  // │                                                                │
-  // │  const json = await resp.json();                               │
-  // │  return {                                                      │
-  // │    connected: true,                                            │
-  // │    token: json.access_token,                                   │
-  // │    config,                                                     │
-  // │  };                                                            │
-  // └───────────────────────────────────────────────────────────────┘
+  if (!isProductionConfigured()) {
+    console.info('[NSERC IDE (PMS 300)] Production credentials not configured — simulation mode active')
+    return { connected: false, token: null, config }
+  }
 
-  console.info('[NSERC IDE (PMS 300)] Credentials not provisioned — entering simulation mode')
-  return { connected: false, token: null, config }
+  // Production: token acquisition is handled by the backend proxy
+  // (/api/nserc-sync). The client secret never touches the frontend.
+  // We verify proxy availability with a health check on first connect.
+  try {
+    const resp = await fetchWithRetry('/api/nserc-sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'health' }),
+    }, 15000)
+
+    if (!resp.ok) {
+      const body = await resp.text().catch(() => '')
+      console.error(`[NSERC IDE] Proxy health check failed: ${resp.status} — ${body.slice(0, 200)}`)
+      return { connected: false, token: null, config }
+    }
+
+    console.info('[NSERC IDE (PMS 300)] Production proxy connected — real sync mode active')
+    return { connected: true, token: '__proxy__', config }
+  } catch (err) {
+    console.error('[NSERC IDE] Proxy connectivity error:', err instanceof Error ? err.message : err)
+    return { connected: false, token: null, config }
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -271,52 +373,94 @@ export async function fetchLatestDRLUpdates(
   const conn = connection ?? await connectToNSERCIDE()
 
   if (conn.connected && conn.token) {
-    // ┌───────────────────────────────────────────────────────────────┐
-    // │  TODO: PRODUCTION — Real Microsoft Graph call                 │
-    // │                                                                │
-    // │  const craftFilter = craft                                     │
-    // │    ? ` and fields/Craft eq '${craft}'`                        │
-    // │    : '';                                                       │
-    // │                                                                │
-    // │  const url =                                                   │
-    // │    `${conn.config.graphBaseUrl}`                               │
-    // │    + `/sites/${conn.config.pms300SiteId}`                     │
-    // │    + `/lists/${conn.config.drlListId}/items`                  │
-    // │    + `?$expand=fields($select=DRL_ID,Title,DI_Number,`      │
-    // │    + `Contract_Due,Calc_Due_Date,Submittal_Guide,`           │
-    // │    + `Actual_Sub_Date,Received,Cal_Days_Review,`             │
-    // │    + `Notes,Status,Revision,Comments,`                        │
-    // │    + `Craft,Platform,Attachment_J2_Ref)`                      │
-    // │    + `&$top=500`                                               │
-    // │    + `&$filter=fields/Program eq 'PMS 300'${craftFilter}`;   │
-    // │                                                                │
-    // │  const resp = await fetch(url, {                               │
-    // │    headers: {                                                  │
-    // │      Authorization: `Bearer ${conn.token}`,                   │
-    // │      Accept: 'application/json',                              │
-    // │      ConsistencyLevel: 'eventual',                            │
-    // │    },                                                          │
-    // │  });                                                           │
-    // │                                                                │
-    // │  if (!resp.ok) throw new Error(                                │
-    // │    `NSERC IDE Graph API ${resp.status}: ${resp.statusText}`); │
-    // │                                                                │
-    // │  const data = await resp.json();                               │
-    // │  const rows: DRLRow[] = data.value.map(                      │
-    // │    (item: NSERCSharePointItem) => mapNSERCDataToTrackerRow(   │
-    // │      item                                                      │
-    // │    )                                                           │
-    // │  );                                                            │
-    // │                                                                │
-    // │  return {                                                      │
-    // │    isReal: true,                                               │
-    // │    source: 'NSERC IDE (PMS 300)',                             │
-    // │    rows,                                                       │
-    // │    fetchedAt: new Date().toISOString(),                       │
-    // │    warnings: [],                                               │
-    // │  };                                                            │
-    // └───────────────────────────────────────────────────────────────┘
-    void conn.token
+    // ── Production: call backend proxy for real NSERC IDE data ──
+    try {
+      const sanitizedCraft = craft ? sanitizeCraftFilter(craft) : undefined
+
+      const resp = await fetchWithRetry('/api/nserc-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'sync',
+          siteId: conn.config.pms300SiteId,
+          listId: conn.config.drlListId,
+          craft: sanitizedCraft,
+        }),
+      })
+
+      if (!resp.ok) {
+        const body = await resp.text().catch(() => '')
+        const code: NSERCErrorCode =
+          resp.status === 401 ? 'AUTH_FAILED'
+          : resp.status === 403 ? 'FORBIDDEN'
+          : resp.status === 404 ? 'NOT_FOUND'
+          : resp.status === 429 ? 'RATE_LIMITED'
+          : resp.status >= 500 ? 'SERVER_ERROR'
+          : 'UNKNOWN'
+        throw new NSERCError(
+          `NSERC IDE sync failed: ${resp.status} — ${body.slice(0, 200)}`,
+          code, resp.status, resp.status >= 500 || resp.status === 429,
+        )
+      }
+
+      const data = await resp.json()
+
+      // Validate response schema — Graph API returns { value: [...] }
+      if (!data || !Array.isArray(data.value)) {
+        throw new NSERCError(
+          'Invalid response from NSERC IDE proxy — expected { value: [...] }',
+          'INVALID_RESPONSE',
+        )
+      }
+
+      // Map each SharePoint item to DRLRow with per-row validation
+      const rows: DRLRow[] = []
+      const warnings: string[] = []
+
+      for (const item of data.value) {
+        try {
+          if (!item.fields || !item.fields.DRL_ID || !item.fields.Title) {
+            warnings.push(`Skipped item ${item.id || 'unknown'}: missing required fields (DRL_ID, Title)`)
+            continue
+          }
+          rows.push(mapNSERCDataToTrackerRow(item as NSERCSharePointItem))
+        } catch (mapErr) {
+          warnings.push(`Failed to map item ${item.fields?.DRL_ID || item.id || 'unknown'}: ${mapErr instanceof Error ? mapErr.message : String(mapErr)}`)
+        }
+      }
+
+      if (warnings.length > 0) {
+        console.warn('[NSERC IDE] Row mapping warnings:', warnings)
+      }
+
+      return {
+        isReal: true,
+        source: 'NSERC IDE (PMS 300)',
+        rows,
+        fetchedAt: new Date().toISOString(),
+        warnings,
+      }
+    } catch (err) {
+      // Non-retryable errors (auth, forbidden): surface clearly, don't silently simulate
+      if (err instanceof NSERCError && !err.retryable) {
+        console.error(`[NSERC IDE] Non-retryable error (${err.code}):`, err.message)
+        return {
+          isReal: false,
+          source: 'NSERC IDE (PMS 300)',
+          rows: [],
+          fetchedAt: new Date().toISOString(),
+          warnings: [`Production sync failed: ${err.message} (${err.code}). No data returned.`],
+        }
+      }
+
+      // Retryable errors (network, timeout, 5xx): fall back to simulation with warning
+      console.error('[NSERC IDE] Transient error, falling back to simulation:', err)
+      const simResult = simulatePMS300Updates(currentRows, craft)
+      simResult.warnings.push(
+        `Production sync failed: ${err instanceof Error ? err.message : String(err)}. Using simulated data.`,
+      )
+      return simResult
+    }
   }
 
   // ── Simulation: generate realistic PMS 300 updates until credentials exist ──

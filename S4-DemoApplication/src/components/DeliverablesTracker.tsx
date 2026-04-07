@@ -123,6 +123,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     totalSyncs: 0,
     changesSynced: 0,
     isOnline: true,
+    isSimulation: true,
+    lastError: null,
   })
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(true)
   const [syncToast, setSyncToast] = useState<string | null>(null)
@@ -386,28 +388,42 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   /* ─── External Sync Handler ────────────────────────────── */
   const handleExternalSync = useCallback(async () => {
     if (!syncStatus.isOnline) return
-    const { changes, notifications: newNotifs, updatedRows, newAnchors, newCraftDetected } = await realSyncPipeline(data, role, anchors, editedSinceSeal)
-    onDataUpdate(updatedRows)
-    if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
-      onSyncAnchors(newAnchors)
+    try {
+      const { changes, notifications: newNotifs, updatedRows, newAnchors, newCraftDetected, isSimulation, warnings } = await realSyncPipeline(data, role, anchors, editedSinceSeal)
+      onDataUpdate(updatedRows)
+      if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
+        onSyncAnchors(newAnchors)
+      }
+      setNotifications(prev => [...newNotifs, ...prev])
+      setSyncStatus(prev => ({
+        ...prev,
+        lastSync: new Date().toISOString(),
+        totalSyncs: prev.totalSyncs + 1,
+        changesSynced: prev.changesSynced + changes.length,
+        isSimulation,
+        lastError: warnings.length > 0 ? warnings[0] : null,
+      }))
+      setAuditVersion(v => v + 1)
+      const sealCount = Object.keys(newAnchors).length
+      const modeTag = isSimulation ? ' [Simulated]' : ''
+      if (newCraftDetected) {
+        setSyncToast(`NSERC IDE (PMS 300)${modeTag}: New craft "${newCraftDetected}" detected — ${changes.length} update${changes.length !== 1 ? 's' : ''} synced, ${sealCount} sealed to XRPL`)
+        setPlatformFilter(newCraftDetected)
+        setHullFilter('all')
+      } else {
+        setSyncToast(`NSERC IDE (PMS 300)${modeTag}: ${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
+      }
+      setTimeout(() => setSyncToast(null), 5000)
+    } catch (err) {
+      console.error('[DeliverablesTracker] External sync failed:', err)
+      setSyncStatus(prev => ({
+        ...prev,
+        lastError: err instanceof Error ? err.message : 'Sync failed — unknown error',
+        isSimulation: true,
+      }))
+      setSyncToast(`NSERC IDE sync error: ${err instanceof Error ? err.message : 'Unknown error'}`)
+      setTimeout(() => setSyncToast(null), 7000)
     }
-    setNotifications(prev => [...newNotifs, ...prev])
-    setSyncStatus(prev => ({
-      ...prev,
-      lastSync: new Date().toISOString(),
-      totalSyncs: prev.totalSyncs + 1,
-      changesSynced: prev.changesSynced + changes.length,
-    }))
-    setAuditVersion(v => v + 1)
-    const sealCount = Object.keys(newAnchors).length
-    if (newCraftDetected) {
-      setSyncToast(`NSERC IDE (PMS 300): New craft "${newCraftDetected}" detected — ${changes.length} update${changes.length !== 1 ? 's' : ''} synced, ${sealCount} sealed to XRPL`)
-      setPlatformFilter(newCraftDetected)
-      setHullFilter('all')
-    } else {
-      setSyncToast(`NSERC IDE (PMS 300): ${changes.length} update${changes.length !== 1 ? 's' : ''} synced — ${sealCount} record${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
-    }
-    setTimeout(() => setSyncToast(null), 5000)
   }, [data, role, anchors, editedSinceSeal, syncStatus.isOnline, onDataUpdate, onSyncAnchors])
 
   /* ─── Auto-sync interval (5 minutes) ──────────────────── */
@@ -940,6 +956,22 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           </div>
         </div>
       </header>
+
+      {/* ─── Simulation Mode Banner ────────────────────────── */}
+      {syncStatus.isSimulation && (
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-1.5">
+          <div className="max-w-[1600px] mx-auto flex items-center gap-2 text-xs text-amber-800">
+            <i className="fas fa-flask"></i>
+            <span className="font-medium">Simulation Mode</span>
+            <span className="text-amber-600">— NSERC IDE credentials not configured. Sync data is simulated.</span>
+            {syncStatus.lastError && (
+              <span className="ml-auto text-red-600 truncate max-w-[400px]" title={syncStatus.lastError}>
+                <i className="fas fa-exclamation-triangle mr-1"></i>{syncStatus.lastError}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Real-Time Presence Bar */}
       <PresenceBar users={collabUsers} currentUserId={user?.id || demoUserIdRef.current} />

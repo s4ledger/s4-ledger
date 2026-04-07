@@ -1,0 +1,383 @@
+════════════════════════════════════════════════════════════════
+PASTE EVERYTHING BELOW THIS LINE INTO ASK SAGE (ONE MESSAGE)
+════════════════════════════════════════════════════════════════
+
+I have a DRL (Data Requirements List) tracking application called S4 Ledger for PMS 300 (NSERC IDE). It currently runs with fake demo data. I need you to generate a JSON configuration file populated with REAL PMS 300 NSERC IDE data so the tool accurately reflects our actual programs, contracts, craft types, and deliverables.
+
+IMPORTANT: The output you generate stays inside Ask Sage. I will only use it within the CUI-authorized environment.
+
+Below I provide:
+  1. The EXACT JSON schema you must output (s4-config.json)
+  2. A working DEMO EXAMPLE showing a correctly-filled config with fake data
+  3. The data type definitions so you know the exact field types
+
+YOUR TASK:
+Generate a complete s4-config.json using REAL PMS 300 NSERC IDE data. Follow these rules:
+
+  A. craftRegistry — List ALL real craft/platform types managed by PMS 300.
+     Each entry needs a "label" (the name as it appears in NSERC IDE)
+     and a "desc" (one-line description).
+
+  B. programs — The real PMS 300 program(s). Use real program name, short name,
+     and program manager if known (or leave as "TBD").
+
+  C. contracts — Real active contracts under PMS 300. Include:
+     - Real contract numbers (N00024-XX-C-XXXX format)
+     - Real contractor and shipbuilder names
+     - Real award dates and period of performance end dates
+     - Contract value if known
+
+  D. contractMapping — Rules that map craft types to contracts.
+     Each rule has a contractId and an array of lowercase substrings
+     that appear in DRL titles for that contract.
+
+  E. schemaMapping — The ACTUAL column names used in the NSERC IDE
+     SharePoint site. Map each of my field names to the real column name.
+     If you know the real SharePoint column names from NSERC IDE, use them.
+     If not, keep the defaults shown in the demo.
+
+  F. drlTemplates — The standard deliverable types (SEP, TEMP, ILSP, CMP, etc.)
+     with their real DI numbers and real submittal guidance text from
+     the Attachment J-2 / CDRL requirements.
+
+  G. chatCraftChannels — Pick the 3-5 most active craft types for chat channels.
+
+  H. sampleData — THIS IS THE MOST IMPORTANT PART.
+     Generate 15-30 realistic DRL rows using real craft types, real DI numbers,
+     and realistic submission statuses. Each row needs ALL of these fields:
+
+     {
+       "id": "DRL-001",                              // Sequential ID
+       "title": "Document Title Rev X (Craft — Hull N)", // Real doc title with craft tag
+       "diNumber": "DI-XXXX-XXXXX",                  // Real DI number
+       "contractDueFinish": "2025-MM-DD",             // Contract due date
+       "calculatedDueDate": "2025-MM-DD",             // Calculated due date
+       "submittalGuidance": "Submit 30 days after..", // Real guidance text
+       "actualSubmissionDate": "2025-MM-DD" or "",    // Empty if not submitted
+       "received": "Yes" or "No",                     // Was it received?
+       "calendarDaysToReview": 12 or null,            // Days to review, null if not reviewed
+       "notes": "Status notes...",                    // Current status notes
+       "status": "green|yellow|red|pending",          // Traffic light status
+       "responsibleParty": "Government|Contractor|Shipbuilder",
+       "govNotes": "Government internal notes...",    // Gov review notes
+       "shipbuilderNotes": "Shipbuilder notes..."     // Shipbuilder notes
+     }
+
+     Make the status distribution realistic:
+     - ~40% green (on track/completed)
+     - ~25% yellow (late or with comments)
+     - ~20% red (overdue or blocked)
+     - ~15% pending (under review or coming due)
+
+     Include realistic scenarios: late submissions, RIDs issued, stop-work impacts,
+     subcontractor delays, missing test data, etc.
+
+OUTPUT FORMAT: Output ONLY the JSON. No explanation, no markdown, no code fences.
+Just the raw JSON starting with { and ending with }.
+
+══════════════════════════════════════════════════════════════
+SECTION 1: JSON SCHEMA (this is the exact structure to output)
+══════════════════════════════════════════════════════════════
+
+{
+  "mode": "production",
+
+  "craftRegistry": [
+    { "label": "CRAFT_NAME", "desc": "Description" }
+  ],
+
+  "programs": [
+    {
+      "id": "PGM-001",
+      "name": "Full Program Name",
+      "shortName": "PMS 300",
+      "description": "Program description",
+      "programManager": "RANK FirstName LastName",
+      "contracts": []
+    }
+  ],
+
+  "contracts": [
+    {
+      "id": "CTR-001",
+      "programId": "PGM-001",
+      "contractNumber": "N00024-XX-C-XXXX",
+      "title": "Contract Title",
+      "contractor": "Contractor Name",
+      "shipbuilder": "Shipbuilder Name",
+      "awardDate": "2024-01-01",
+      "popEnd": "2028-12-31",
+      "totalValue": "$XX.XM",
+      "status": "active"
+    }
+  ],
+
+  "contractMapping": [
+    { "contractId": "CTR-001", "patterns": ["lowercase_craft_substring"] }
+  ],
+
+  "schemaMapping": {
+    "drlId":          "REAL_COLUMN_NAME",
+    "title":          "REAL_COLUMN_NAME",
+    "diNumber":       "REAL_COLUMN_NAME",
+    "contractDue":    "REAL_COLUMN_NAME",
+    "calcDueDate":    "REAL_COLUMN_NAME",
+    "submittalGuide": "REAL_COLUMN_NAME",
+    "actualSubDate":  "REAL_COLUMN_NAME",
+    "received":       "REAL_COLUMN_NAME",
+    "calDaysReview":  "REAL_COLUMN_NAME",
+    "notes":          "REAL_COLUMN_NAME",
+    "status":         "REAL_COLUMN_NAME"
+  },
+
+  "drlTemplates": [
+    {
+      "titlePrefix": "Document Type Name (ABBREVIATION)",
+      "diNumber": "DI-XXXX-XXXXX",
+      "submittalGuidance": "Real submittal guidance text"
+    }
+  ],
+
+  "chatCraftChannels": ["Craft1", "Craft2", "Craft3"],
+
+  "sampleData": [
+    {
+      "id": "DRL-001",
+      "title": "Document Title Rev X (CraftType — Hull N)",
+      "diNumber": "DI-XXXX-XXXXX",
+      "contractDueFinish": "2025-01-15",
+      "calculatedDueDate": "2025-01-15",
+      "submittalGuidance": "Submit guidance text",
+      "actualSubmissionDate": "2025-01-10",
+      "received": "Yes",
+      "calendarDaysToReview": 12,
+      "notes": "Status description.",
+      "status": "green",
+      "responsibleParty": "Shipbuilder",
+      "govNotes": "Government notes.",
+      "shipbuilderNotes": "Shipbuilder notes."
+    }
+  ]
+}
+
+══════════════════════════════════════════════════════════════
+SECTION 2: WORKING DEMO EXAMPLE (follow this exact pattern)
+══════════════════════════════════════════════════════════════
+
+This is a complete working config with FAKE data. Your output must follow
+this exact structure but with REAL PMS 300 NSERC IDE data.
+
+{
+  "mode": "production",
+
+  "craftRegistry": [
+    { "label": "40ft Patrol Boat",        "desc": "Force Protection patrol craft" },
+    { "label": "11m RHIB",                "desc": "Expeditionary Rigid Hull Inflatable Boat" },
+    { "label": "Harbor Tug YTB",          "desc": "Large harbor tug — yard & district craft" },
+    { "label": "Utility Boat UB",         "desc": "General-purpose harbor utility craft" },
+    { "label": "Force Protection Boat",   "desc": "Security & force protection craft" },
+    { "label": "Diving Support Platform", "desc": "Diving operations support vessel" },
+    { "label": "Steel Workboat",          "desc": "Multi-purpose steel workboat" },
+    { "label": "Spill Response Craft",    "desc": "Oil-spill response & containment vessel" },
+    { "label": "HSMST Drone",             "desc": "High-Speed Maneuvering Surface Target" },
+    { "label": "8m NSW RHIB",             "desc": "Naval Special Warfare 8-meter service support craft" },
+    { "label": "Barracks Barge APL",      "desc": "Non-self-propelled barracks craft" },
+    { "label": "Floating Dry Dock AFDL",  "desc": "Small auxiliary floating dry dock" }
+  ],
+
+  "programs": [
+    {
+      "id": "PGM-001",
+      "name": "U.S. Navy & FMS Boats and Craft",
+      "shortName": "PMS 300",
+      "description": "Boats & Craft acquisition and sustainment for the U.S. Navy and Foreign Military Sales",
+      "programManager": "CAPT J. Richardson",
+      "contracts": []
+    }
+  ],
+
+  "contracts": [
+    {
+      "id": "CTR-001",
+      "programId": "PGM-001",
+      "contractNumber": "N00024-23-C-6200",
+      "title": "Patrol Boat & RHIB Multi-Hull Acquisition",
+      "contractor": "Maritime Defense Systems, Inc.",
+      "shipbuilder": "Gulf Coast Shipyard",
+      "awardDate": "2023-06-15",
+      "popEnd": "2027-12-31",
+      "totalValue": "$45.2M",
+      "status": "active"
+    },
+    {
+      "id": "CTR-002",
+      "programId": "PGM-001",
+      "contractNumber": "N00024-24-C-3100",
+      "title": "Harbor Tug & Utility Craft Services",
+      "contractor": "Atlantic Marine Corp.",
+      "shipbuilder": "Chesapeake Shipbuilding",
+      "awardDate": "2024-01-20",
+      "popEnd": "2028-06-30",
+      "totalValue": "$28.7M",
+      "status": "active"
+    }
+  ],
+
+  "contractMapping": [
+    { "contractId": "CTR-001", "patterns": ["patrol boat", "rhib"] },
+    { "contractId": "CTR-002", "patterns": ["harbor tug", "utility boat", "diving support", "force protection"] }
+  ],
+
+  "schemaMapping": {
+    "drlId":          "DRL_ID",
+    "title":          "Title",
+    "diNumber":       "DI_Number",
+    "contractDue":    "Contract_Due",
+    "calcDueDate":    "Calc_Due_Date",
+    "submittalGuide": "Submittal_Guide",
+    "actualSubDate":  "Actual_Sub_Date",
+    "received":       "Received",
+    "calDaysReview":  "Cal_Days_Review",
+    "notes":          "Notes",
+    "status":         "Status",
+    "revision":       "Revision",
+    "comments":       "Comments"
+  },
+
+  "drlTemplates": [
+    { "titlePrefix": "Systems Engineering Plan (SEP)",            "diNumber": "DI-SESS-81521", "submittalGuidance": "Submit via IDE 30 days prior to PDR" },
+    { "titlePrefix": "Integrated Logistics Support Plan (ILSP)",  "diNumber": "DI-MGMT-81466", "submittalGuidance": "Monthly — 10th of each month" },
+    { "titlePrefix": "Test and Evaluation Master Plan (TEMP)",    "diNumber": "DI-ILSS-80890", "submittalGuidance": "Submit 90 days prior to IOT&E" },
+    { "titlePrefix": "Configuration Management Plan (CMP)",       "diNumber": "DI-RELI-80531A", "submittalGuidance": "Submit with TEMP update" },
+    { "titlePrefix": "Reliability Program Plan (RPP)",            "diNumber": "DI-RELI-81315", "submittalGuidance": "Submit NLT SRR + 30 calendar days" },
+    { "titlePrefix": "Training Plan",                             "diNumber": "DI-ILSS-80890", "submittalGuidance": "Submit 90 days prior to IOT&E" },
+    { "titlePrefix": "Quality Assurance Plan (QAP)",              "diNumber": "DI-QCIC-80123A", "submittalGuidance": "Submit 30 days prior to PDR" },
+    { "titlePrefix": "Software Development Plan (SDP)",           "diNumber": "DI-IPSC-81427A", "submittalGuidance": "Submit 45 days after PDR" }
+  ],
+
+  "chatCraftChannels": ["40ft Patrol Boat", "11m RHIB", "Harbor Tug YTB"],
+
+  "sampleData": [
+    {
+      "id": "DRL-001",
+      "title": "Systems Engineering Plan (SEP) Rev B (40ft Patrol Boat — Hull 1)",
+      "diNumber": "DI-MGMT-81024A",
+      "contractDueFinish": "2025-01-15",
+      "calculatedDueDate": "2025-01-15",
+      "submittalGuidance": "Submit 30 days after contract award",
+      "actualSubmissionDate": "2025-01-10",
+      "received": "Yes",
+      "calendarDaysToReview": 12,
+      "notes": "Completed with minor comments incorporated.",
+      "status": "green",
+      "responsibleParty": "Shipbuilder",
+      "govNotes": "Accepted. Filed in EDMS. Minor formatting comments resolved.",
+      "shipbuilderNotes": "Submitted on time. Comments incorporated per Rev B."
+    },
+    {
+      "id": "DRL-002",
+      "title": "Test and Evaluation Master Plan (TEMP) Rev A (40ft Patrol Boat — Hull 1)",
+      "diNumber": "DI-TMSS-80301C",
+      "contractDueFinish": "2025-02-01",
+      "calculatedDueDate": "2025-02-01",
+      "submittalGuidance": "Submit 60 days prior to CDR",
+      "actualSubmissionDate": "2025-02-05",
+      "received": "Yes",
+      "calendarDaysToReview": 18,
+      "notes": "Submitted 4 days late. Non-compliance: test matrix incomplete per TEMP DI requirements.",
+      "status": "yellow",
+      "responsibleParty": "Shipbuilder",
+      "govNotes": "Late submission. Test matrix missing 3 required test events. RID-2025-004 issued.",
+      "shipbuilderNotes": "Working on test matrix update. Targeting 2025-02-20 for resubmission."
+    },
+    {
+      "id": "DRL-003",
+      "title": "Integrated Logistics Support Plan (ILSP) (11m RHIB — Hull 1)",
+      "diNumber": "DI-ALSS-81529",
+      "contractDueFinish": "2025-02-15",
+      "calculatedDueDate": "2025-02-15",
+      "submittalGuidance": "Submit with SRR deliverables",
+      "actualSubmissionDate": "",
+      "received": "No",
+      "calendarDaysToReview": null,
+      "notes": "OVERDUE — not yet submitted. Escalated to PM.",
+      "status": "red",
+      "responsibleParty": "Shipbuilder",
+      "govNotes": "Escalated. Shipbuilder cited subcontractor delays. CAR under consideration.",
+      "shipbuilderNotes": "Subcontractor logistics data package delayed. Targeting end of month."
+    },
+    {
+      "id": "DRL-004",
+      "title": "Software Development Plan (SDP) Rev C (40ft Patrol Boat — Hull 2)",
+      "diNumber": "DI-IPSC-81427A",
+      "contractDueFinish": "2025-03-01",
+      "calculatedDueDate": "2025-03-01",
+      "submittalGuidance": "Submit 45 days after PDR",
+      "actualSubmissionDate": "2025-02-28",
+      "received": "Yes",
+      "calendarDaysToReview": 7,
+      "notes": "Completed. No action required.",
+      "status": "green",
+      "responsibleParty": "Shipbuilder",
+      "govNotes": "Accepted without comment. Meets all DI requirements.",
+      "shipbuilderNotes": "Rev C submitted on schedule."
+    },
+    {
+      "id": "DRL-005",
+      "title": "Reliability Program Plan (RPP) (Harbor Tug YTB — Hull 1)",
+      "diNumber": "DI-RELI-81315",
+      "contractDueFinish": "2025-03-15",
+      "calculatedDueDate": "2025-03-15",
+      "submittalGuidance": "Submit NLT SRR + 30 calendar days",
+      "actualSubmissionDate": "",
+      "received": "No",
+      "calendarDaysToReview": null,
+      "notes": "OVERDUE — contractor cited staffing delays.",
+      "status": "red",
+      "responsibleParty": "Shipbuilder",
+      "govNotes": "Overdue 19 days. Shipbuilder staffing issue acknowledged. Weekly status required.",
+      "shipbuilderNotes": "Reliability engineer onboarding complete. Draft in progress."
+    }
+  ]
+}
+
+══════════════════════════════════════════════════════════════
+SECTION 3: FIELD TYPE REFERENCE
+══════════════════════════════════════════════════════════════
+
+status field MUST be one of: "green", "yellow", "red", "pending"
+  - green  = on track or completed
+  - yellow = late, has open comments/RIDs, or minor issues
+  - red    = overdue, blocked, or not submitted past due date
+  - pending = under review or coming due (not yet an issue)
+
+responsibleParty MUST be one of: "Government", "Contractor", "Shipbuilder"
+
+received MUST be: "Yes" or "No"
+
+calendarDaysToReview: number (integer) or null (if not yet reviewed)
+
+actualSubmissionDate: "YYYY-MM-DD" string or "" (empty string if not submitted)
+
+dates: All dates use "YYYY-MM-DD" format
+
+contract status MUST be one of: "active", "closeout", "complete"
+
+Title format: "Document Name Rev X (CraftType — Hull N)"
+  - The craft type in parentheses MUST match a label in craftRegistry
+  - Hull numbers start at 1 and increment per craft type
+
+ids: Programs use "PGM-XXX", Contracts use "CTR-XXX", DRL rows use "DRL-XXX"
+
+contractMapping patterns: lowercase substrings that appear in DRL row titles
+  - The app matches row titles to contracts using these patterns
+  - Example: if a row title contains "patrol boat", it maps to CTR-001
+
+contracts[].programId: MUST reference a valid program id from programs[]
+
+════════════════════════════════════════════════════════════════
+REMEMBER: Output ONLY the JSON. No markdown, no explanation.
+Start with { and end with }.
+Use REAL PMS 300 NSERC IDE data for all fields.
+Generate at least 20 sampleData rows with realistic status distribution.
+════════════════════════════════════════════════════════════════
