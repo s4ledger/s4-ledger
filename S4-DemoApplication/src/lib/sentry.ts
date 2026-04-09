@@ -46,3 +46,18 @@ export function initSentry() {
 }
 
 export { Sentry }
+
+/* ── Web Vitals → Sentry ──────────────────────────────────────── */
+
+export function reportWebVitals() {
+  import('web-vitals').then(({ onCLS, onLCP, onFCP, onTTFB, onINP }) => {
+    const send = (metric: { name: string; value: number; id: string }) => {
+      Sentry.setMeasurement(`web_vital.${metric.name}`, metric.value, metric.name === 'CLS' ? '' : 'millisecond')
+    }
+    onCLS(send)
+    onLCP(send)
+    onFCP(send)
+    onTTFB(send)
+    onINP(send)
+  }).catch(() => { /* web-vitals unavailable */ })
+}

@@ -94,7 +94,7 @@ export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, 
   }
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={860}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={860} onClose={onClose} ariaLabel="AI Insights">
       <div className="p-6 max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">

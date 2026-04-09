@@ -39,7 +39,7 @@ export default function PermissionsModal({ role, org, perms, contractorGrants, o
   }
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl overflow-hidden" defaultWidth={520}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl overflow-hidden" defaultWidth={520} onClose={onClose} ariaLabel="Permissions & Access">
       <div>
         {/* Header */}
         <div className="bg-gray-50 border-b border-border px-6 py-4">

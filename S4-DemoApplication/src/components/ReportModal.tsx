@@ -86,7 +86,7 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
   }
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={580}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={580} onClose={onClose} ariaLabel="Generate Weekly PDF Report">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">

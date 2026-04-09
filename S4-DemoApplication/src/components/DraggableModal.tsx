@@ -17,6 +17,10 @@ interface Props {
   zIndex?: number
   /** Whether to show the backdrop overlay */
   backdrop?: boolean
+  /** Called when user presses Escape or clicks backdrop — enables keyboard dismiss */
+  onClose?: () => void
+  /** Accessible label for the dialog (used as aria-label) */
+  ariaLabel?: string
 }
 
 export default function DraggableModal({
@@ -30,6 +34,8 @@ export default function DraggableModal({
   className = '',
   zIndex = 1000,
   backdrop = true,
+  onClose,
+  ariaLabel,
 }: Props) {
   // Resolve position — if old centered prop is explicitly false, treat as center anyway
   const pos_mode = centered === false ? 'center' : position
@@ -131,6 +137,55 @@ export default function DraggableModal({
     }
   }, [onDragMove, onResizeMove, onDragEnd, onResizeEnd])
 
+  /* ─── Focus trap + Escape key + return-focus ────────────────── */
+  const previousFocusRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    // Save the element that had focus before modal opened
+    previousFocusRef.current = document.activeElement as HTMLElement | null
+
+    // Focus the dialog container
+    const el = containerRef.current
+    if (el) el.focus()
+
+    return () => {
+      // Return focus on unmount
+      previousFocusRef.current?.focus?.()
+    }
+  }, [])
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Escape to close
+    if (e.key === 'Escape' && onClose) {
+      e.stopPropagation()
+      onClose()
+      return
+    }
+
+    // Focus trap: cycle Tab within the dialog
+    if (e.key === 'Tab') {
+      const el = containerRef.current
+      if (!el) return
+      const focusable = el.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea, input:not([disabled]), select, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+  }, [onClose])
+
   /* ─── Compute default position styles ─────────────────────── */
   function getDefaultPosStyle(): React.CSSProperties {
     if (pos) return { left: pos.x, top: pos.y }
@@ -157,6 +212,7 @@ export default function DraggableModal({
     <div
       className={backdrop ? 'fixed inset-0 bg-black/40 backdrop-blur-sm' : 'fixed inset-0'}
       style={{ zIndex }}
+      onClick={onClose ? (e) => { if (e.target === e.currentTarget) onClose() } : undefined}
     >
       <div
         ref={containerRef}
@@ -164,6 +220,9 @@ export default function DraggableModal({
         style={style}
         role="dialog"
         aria-modal="true"
+        aria-label={ariaLabel}
+        tabIndex={-1}
+        onKeyDown={handleKeyDown}
       >
         {/* Drag handle: top bar */}
         <div

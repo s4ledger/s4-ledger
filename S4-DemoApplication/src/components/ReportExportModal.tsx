@@ -239,7 +239,7 @@ export default function ReportExportModal({
   }
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={620}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={620} onClose={onClose} ariaLabel="Reports & Export">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">

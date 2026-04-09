@@ -54,7 +54,7 @@ export default function ExternalSyncModal({
   }
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={520}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={520} onClose={onClose} ariaLabel="External Database Sync">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">

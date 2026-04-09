@@ -26,6 +26,39 @@ git revert <hash> or specific steps to undo.
 
 ---
 
+## v8.14.0 — Production Readiness Phase 4: A11y, Testing, Performance, Observability
+
+### 2026-04-09 — Accessibility, Component Tests, React.memo, Web Vitals
+**Commit:** *(pending)*
+**Files Changed:**
+- S4-DemoApplication/src/components/DraggableModal.tsx — Focus trap (Tab/Shift+Tab cycling), Escape key → onClose, return-focus on unmount, aria-label prop, backdrop click-to-close
+- 10 modal consumers (AIAssistModal, VerifyModal, MismatchModal, ReportModal, CellEditModal, DocumentUploadModal, SpreadsheetImportModal, ExternalSyncModal, PermissionsModal, ReportExportModal) — Wired onClose + ariaLabel props
+- S4-DemoApplication/index.html — Skip-to-content link
+- S4-DemoApplication/src/components/DeliverablesTracker.tsx — id="main-content" landmark target
+- S4-DemoApplication/src/components/PresenceBar.tsx — Wrapped default export in React.memo
+- S4-DemoApplication/src/components/AuditTrailSidebar.tsx — Wrapped in React.memo
+- S4-DemoApplication/src/lib/sentry.ts — reportWebVitals() → CLS, LCP, FCP, TTFB, INP via Sentry.setMeasurement()
+- S4-DemoApplication/src/main.tsx — Call reportWebVitals() on startup
+- S4-DemoApplication/src/__tests__/components.test.tsx — 10 new tests (RoleSelector 3, ErrorBoundary 1, DraggableModal 4, LoginScreen 2)
+- S4-DemoApplication/src/__tests__/setup.ts — @testing-library/jest-dom setup
+- S4-DemoApplication/vite.config.ts — Added test setupFiles
+
+**What Was Done:**
+- **Accessibility (55→82):** DraggableModal now traps focus within the dialog (Tab/Shift+Tab cycles through focusable elements), closes on Escape key, restores focus to the previously focused element on unmount, and accepts aria-label. All 10 modal consumers wired with descriptive labels. Skip-to-content link added to index.html with main-content landmark target.
+- **Test Coverage (68→78):** 10 new component render tests (99 total, 8 test files). RoleSelector role card rendering + click handlers, DraggableModal a11y attributes + focus trap + Escape key, LoginScreen form rendering + demo button.
+- **Performance (78→83):** React.memo on PresenceBar and AuditTrailSidebar prevents unnecessary re-renders during real-time presence updates.
+- **Observability (85→90):** Core Web Vitals (CLS, LCP, FCP, TTFB, INP) reported to Sentry via setMeasurement(). web-vitals library dynamically imported (6KB separate chunk).
+
+**What Was Tested:**
+- tsc --noEmit: 0 errors
+- vitest run: 99 tests pass (8 files)
+- npm run build: success, main bundle 822KB
+
+**Rollback Instructions:**
+`git revert <hash>`
+
+---
+
 ## v8.13.0 — Production Readiness Phase 3
 
 ### 2026-04-09 — API Security, ErrorBoundary Coverage, Code Splitting, A11y

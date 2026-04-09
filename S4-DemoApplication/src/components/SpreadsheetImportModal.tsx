@@ -225,7 +225,7 @@ export default function SpreadsheetImportModal({
   const validRows = preview.filter(p => p.isValid).length
 
   return (
-    <DraggableModal className="bg-white rounded-xl shadow-2xl" defaultWidth={780} minWidth={600}>
+    <DraggableModal className="bg-white rounded-xl shadow-2xl" defaultWidth={780} minWidth={600} onClose={onClose} ariaLabel="Import Spreadsheet">
       <div className="overflow-hidden max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-border bg-gray-50/50 flex-shrink-0">

@@ -35,7 +35,7 @@ export default function MismatchModal({ row, anchor, onReseal, onClose }: Props)
   }
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={860}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={860} onClose={onClose} ariaLabel="Integrity Mismatch Analysis">
       <div className="p-6 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">

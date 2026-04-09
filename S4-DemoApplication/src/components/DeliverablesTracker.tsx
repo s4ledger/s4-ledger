@@ -763,7 +763,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] text-gray-900 flex">
+    <div id="main-content" className="min-h-screen bg-[#f5f5f7] text-gray-900 flex">
       {/* Main content area */}
       <div className="flex-1 min-w-0">
       {/* Top Bar */}

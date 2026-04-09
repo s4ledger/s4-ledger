@@ -4,7 +4,7 @@
  * Expandable to show full user list with roles/activity.
  */
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import type { PresenceUser } from '../services/realtimeService'
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
   currentUserId: string
 }
 
-export default function PresenceBar({ users, currentUserId }: Props) {
+export default memo(function PresenceBar({ users, currentUserId }: Props) {
   const [expanded, setExpanded] = useState(false)
 
   const otherUsers = users.filter(u => u.userId !== currentUserId)
@@ -103,7 +103,7 @@ export default function PresenceBar({ users, currentUserId }: Props) {
       )}
     </div>
   )
-}
+})
 
 /* ─── Cell-level editing indicator (inline in table cells) ─── */
 

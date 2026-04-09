@@ -210,7 +210,7 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
     : 'text-steel'
 
   return (
-    <DraggableModal className="bg-white rounded-xl shadow-2xl" defaultWidth={520}>
+    <DraggableModal className="bg-white rounded-xl shadow-2xl" defaultWidth={520} onClose={onClose} ariaLabel="Edit Cell">
       <div className="overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 border-b border-border bg-gray-50/50">

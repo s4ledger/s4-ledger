@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, memo } from 'react'
 import DraggableModal from './DraggableModal'
 import DiffViewer from './DiffViewer'
 import { AuditEvent, AuditSummary, getAuditLog, getAuditLogForRow, getAuditSummary } from '../utils/auditTrail'
@@ -38,7 +38,7 @@ function formatDateFull(iso: string): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
-export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, onClose }: Props) {
+export default memo(function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, onClose }: Props) {
   const [activeTab, setActiveTab] = useState<'audit' | 'changes'>('audit')
   const [selectedEvent, setSelectedEvent] = useState<AuditEvent | null>(null)
   const [aiDetailAnalysis, setAiDetailAnalysis] = useState<string | null>(null)
@@ -646,4 +646,4 @@ export default function AuditTrailSidebar({ visible, rowId, rowTitle, anchors, o
       </div>
     </DraggableModal>
   )
-}
+})

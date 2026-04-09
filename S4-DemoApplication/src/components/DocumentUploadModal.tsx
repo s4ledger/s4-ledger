@@ -90,7 +90,7 @@ export default function DocumentUploadModal({ rowId, rowTitle, diNumber, onClose
     : 'fa-file text-steel'
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={540}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={540} onClose={onClose} ariaLabel="Upload Document">
       <div className="p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">

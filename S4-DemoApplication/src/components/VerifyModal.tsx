@@ -61,7 +61,7 @@ export default function VerifyModal({ row, anchor, onReseal, onClose, onShowMism
   }
 
   return (
-    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={580}>
+    <DraggableModal className="bg-white border border-border rounded-card shadow-2xl" defaultWidth={580} onClose={onClose} ariaLabel="Integrity Verification">
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
