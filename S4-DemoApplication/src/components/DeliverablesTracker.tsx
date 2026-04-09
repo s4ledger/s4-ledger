@@ -9,16 +9,16 @@ import VerifyModal from './VerifyModal'
 import MismatchModal from './MismatchModal'
 const ReportExportModal = lazy(() => import('./ReportExportModal'))
 const IntegrationsPanel = lazy(() => import('./IntegrationsPanel'))
-import ExternalSyncModal from './ExternalSyncModal'
-import NotificationsPanel from './NotificationsPanel'
-import EmailComposer from './EmailComposer'
-import WorkflowProgressPopup from './WorkflowProgressPopup_v2'
+const ExternalSyncModal = lazy(() => import('./ExternalSyncModal'))
+const NotificationsPanel = lazy(() => import('./NotificationsPanel'))
+const EmailComposer = lazy(() => import('./EmailComposer'))
+const WorkflowProgressPopup = lazy(() => import('./WorkflowProgressPopup_v2'))
 const ProfileDashboard = lazy(() => import('./ProfileDashboard'))
-import PermissionsModal from './PermissionsModal'
+const PermissionsModal = lazy(() => import('./PermissionsModal'))
 import DraggableModal from './DraggableModal'
-import CellEditModal from './CellEditModal'
-import DocumentUploadModal from './DocumentUploadModal'
-import DocumentPanel from './DocumentPanel'
+const CellEditModal = lazy(() => import('./CellEditModal'))
+const DocumentUploadModal = lazy(() => import('./DocumentUploadModal'))
+const DocumentPanel = lazy(() => import('./DocumentPanel'))
 const SpreadsheetImportModal = lazy(() => import('./SpreadsheetImportModal'))
 const AnomalyDashboard = lazy(() => import('./AnomalyDashboard'))
 const ChatPanel = lazy(() => import('./ChatPanel'))
@@ -49,6 +49,7 @@ import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrants, OrgPermissions, MaskedStatus, ContractorGrants } from '../utils/permissions'
 import { getSpreadsheetConfig, getContractorColumnsWithGrants } from '../utils/spreadsheetConfigs'
 import { getPMS300CraftLabels } from '../services/nsercIdeService'
+import { Sentry } from '../lib/sentry'
 
 interface Props {
   data: DRLRow[]
@@ -325,6 +326,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
 
   const handleCompare = useCallback(async () => {
     if (comparing) return
+    Sentry.addBreadcrumb({ category: 'action', message: `Contract comparison started (${hullData.length} rows)`, level: 'info' })
+    performance.mark('s4:compare:start')
     setComparing(true)
     setCompareProgress(0)
     setCompareSummary(null)
@@ -357,6 +360,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
       setRowFindings(findingsMap)
       onDataUpdate(updatedData)
       setCompareSummary(summary)
+      performance.mark('s4:compare:end')
+      const measure = performance.measure('s4:contractComparison', 's4:compare:start', 's4:compare:end')
+      Sentry.setMeasurement('contract_comparison_ms', measure.duration, 'millisecond')
     } catch (err) {
       console.error('Contract comparison failed:', err)
     } finally {
@@ -412,6 +418,8 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   /* ─── External Sync Handler ────────────────────────────── */
   const handleExternalSync = useCallback(async () => {
     if (!syncStatus.isOnline) return
+    Sentry.addBreadcrumb({ category: 'action', message: 'External sync triggered', level: 'info' })
+    performance.mark('s4:sync:start')
     try {
       const { changes, notifications: newNotifs, updatedRows, newAnchors, newCraftDetected, isSimulation, warnings } = await realSyncPipeline(data, role, anchors, editedSinceSeal)
       onDataUpdate(updatedRows)
@@ -447,6 +455,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
       }))
       setSyncToast(`NSERC IDE sync error: ${err instanceof Error ? err.message : 'Unknown error'}`)
       setTimeout(() => setSyncToast(null), 7000)
+    } finally {
+      performance.mark('s4:sync:end')
+      const measure = performance.measure('s4:externalSync', 's4:sync:start', 's4:sync:end')
+      Sentry.setMeasurement('external_sync_ms', measure.duration, 'millisecond')
     }
   }, [data, role, anchors, editedSinceSeal, syncStatus.isOnline, onDataUpdate, onSyncAnchors])
 
@@ -1766,6 +1778,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
 
       {/* External Sync Modal */}
       {showSync && (
+        <Suspense fallback={null}>
         <ExternalSyncModal
           syncStatus={syncStatus}
           autoSyncEnabled={autoSyncEnabled}
@@ -1775,10 +1788,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
           onClose={() => setShowSync(false)}
           lastPersist={lastPersist}
         />
+        </Suspense>
       )}
 
       {/* Notifications Panel */}
       {showNotifications && (
+        <Suspense fallback={null}>
         <NotificationsPanel
           notifications={notifications}
           onMarkRead={handleMarkNotifRead}
@@ -1786,19 +1801,23 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
           onSendEmail={n => { setEmailNotification(n); setShowNotifications(false) }}
           onClose={() => setShowNotifications(false)}
         />
+        </Suspense>
       )}
 
       {/* Email Composer */}
       {emailNotification && (
+        <Suspense fallback={null}>
         <EmailComposer
           notification={emailNotification}
           role={role}
           onClose={() => setEmailNotification(null)}
         />
+        </Suspense>
       )}
 
       {/* Workflow Progress Popup */}
       {workflowRow && (
+        <Suspense fallback={null}>
         <WorkflowProgressPopup
           row={workflowRow}
           anchors={anchors}
@@ -1809,6 +1828,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
           onWorkflowTransition={handleWorkflowTransition}
           onClose={() => setWorkflowRow(null)}
         />
+        </Suspense>
       )}
 
       {/* Notes Detail Popup */}
@@ -1948,6 +1968,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
 
       {/* Permissions Modal */}
       {showPermissions && (
+        <Suspense fallback={null}>
         <PermissionsModal
           role={role}
           org={org}
@@ -1957,10 +1978,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
           onUpdateContractorGrants={setContractorGrants}
           onClose={() => setShowPermissions(false)}
         />
+        </Suspense>
       )}
 
       {/* Cell Edit Modal — AI-assisted editing for all roles */}
       {cellEditTarget && (
+        <Suspense fallback={null}>
         <CellEditModal
           target={cellEditTarget}
           aiInsight={aiInsights[cellEditTarget.row.id] || null}
@@ -1968,10 +1991,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
           onSave={(rowId, field, value) => handleCellEdit(rowId, field, value)}
           onClose={() => { setCellEditTarget(null); stopEditing() }}
         />
+        </Suspense>
       )}
 
       {/* Document Upload Modal */}
       {docUploadRow && (
+        <Suspense fallback={null}>
         <DocumentUploadModal
           rowId={docUploadRow.id}
           rowTitle={docUploadRow.title}
@@ -1982,10 +2007,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
             setDocRefreshKey(k => k + 1)
           }}
         />
+        </Suspense>
       )}
 
       {/* Document Panel */}
       {docPanelRow && (
+        <Suspense fallback={null}>
         <DocumentPanel
           rowId={docPanelRow.id}
           rowTitle={docPanelRow.title}
@@ -1994,6 +2021,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
           onClose={() => setDocPanelRow(null)}
           onUpload={() => { setDocUploadRow(docPanelRow); setDocPanelRow(null) }}
         />
+        </Suspense>
       )}
 
       {/* Spreadsheet Import Modal */}

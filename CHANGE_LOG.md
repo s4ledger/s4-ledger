@@ -26,6 +26,32 @@ git revert <hash> or specific steps to undo.
 
 ---
 
+## v8.18.0 — Production Readiness Phase 8: Lazy-Loading, Observability, Testing
+
+### 2026-04-09 — Lazy Modals, Structured Logger, Sentry Breadcrumbs, Performance Marks, 46 New Tests
+**Commit:** *(pending)*
+**Files Changed:**
+- S4-DemoApplication/src/components/DeliverablesTracker.tsx — 8 additional components converted to lazy() with Suspense; Sentry breadcrumbs on external sync & contract comparison; performance.mark/measure on both operations
+- S4-DemoApplication/src/components/App.tsx — Sentry breadcrumbs on seal and re-seal handlers
+- S4-DemoApplication/src/lib/logger.ts — NEW: Structured logger (debug/info/warn/error) with JSON output in production, Sentry breadcrumb forwarding
+- S4-DemoApplication/src/__tests__/hash.test.ts — NEW: 10 tests for sha256() and hashRow()
+- S4-DemoApplication/src/__tests__/documentService.test.ts — NEW: 12 tests for formatFileSize() and validateFile()
+- S4-DemoApplication/src/__tests__/spreadsheetConfigs.test.ts — NEW: 15 tests for org configs, grant columns, edit permissions
+- S4-DemoApplication/src/__tests__/changeLog.test.ts — NEW: 9 tests for in-memory change log (recordChange, getChangesForRow, getAllChanges, field label mapping)
+
+**What Was Done:**
+- **Performance (89→93):** Lazy-loaded 8 additional modals/panels (ExternalSyncModal, NotificationsPanel, EmailComposer, WorkflowProgressPopup, PermissionsModal, CellEditModal, DocumentUploadModal, DocumentPanel) — total 13 lazy components. Main bundle reduced from 682KB to 611KB. Added performance.mark/measure on contract comparison and external sync with Sentry.setMeasurement reporting.
+- **Observability (90→94):** Created structured logger (src/lib/logger.ts) with level-gated output, JSON in production, Sentry breadcrumb forwarding on warn/error. Added Sentry.addBreadcrumb on 4 critical user actions: seal, re-seal, external sync, contract comparison.
+- **Test Coverage (91→94):** 46 new tests across 4 files (hash, documentService, spreadsheetConfigs, changeLog). Total: 197 tests, 16 test files, all passing.
+
+**What Was Tested:**
+`npx tsc --noEmit` — clean. `npx vitest run` — 197/197 pass. `npm run build` — succeeds, bundle sizes verified.
+
+**Rollback Instructions:**
+`git revert <hash>`
+
+---
+
 ## v8.16.0 — Production Readiness Phase 6: Code Quality, A11y, Security, Performance
 
 ### 2026-04-09 — Strict TypeScript, ARIA Live Regions, Security Headers, useMemo, Reduced Motion

@@ -139,6 +139,7 @@ export default function App() {
 
   const handleAnchor = useCallback(async (row: DRLRow) => {
     if (anchors[row.id] || anchoring.has(row.id)) return
+    Sentry.addBreadcrumb({ category: 'action', message: `Seal row ${row.id}`, level: 'info' })
 
     setAnchoring(prev => new Set(prev).add(row.id))
     try {
@@ -162,6 +163,7 @@ export default function App() {
   }, [anchors, anchoring])
 
   const handleReseal = useCallback(async (row: DRLRow) => {
+    Sentry.addBreadcrumb({ category: 'action', message: `Re-seal row ${row.id}`, level: 'info' })
     setAnchoring(prev => new Set(prev).add(row.id))
     try {
       const hash = await hashRow(row as unknown as Record<string, unknown>)
