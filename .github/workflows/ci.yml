@@ -202,6 +202,29 @@ jobs:
           echo "✓ No .map files in dist:"
           ! find demo-app/dist -name '*.map' | grep . || echo "✓ Clean (no source maps)"
 
+  # ═══ S4-DemoApplication (React/TypeScript) ═══
+  demo-app-ci:
+    name: S4-DemoApplication CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: cd S4-DemoApplication && npm ci
+      - name: Type check
+        run: cd S4-DemoApplication && npx tsc --noEmit
+      - name: Run tests
+        run: cd S4-DemoApplication && npm test
+      - name: Build
+        run: cd S4-DemoApplication && npm run build
+      - name: Verify dist
+        run: |
+          test -f S4-DemoApplication/dist/index.html && echo "✓ dist/index.html"
+          ls -la S4-DemoApplication/dist/assets/ | head -15
+
   lighthouse:
     name: Lighthouse CI
     runs-on: ubuntu-latest

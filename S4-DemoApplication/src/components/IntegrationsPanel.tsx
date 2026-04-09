@@ -137,13 +137,17 @@ export default function IntegrationsPanel({ onClose }: Props) {
   }
 
   async function handleTestWebhook() {
-    const apiKey = localStorage.getItem('s4_api_key') || ''
-    await fetch(`${API_BASE}/webhook_test`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey },
-      body: JSON.stringify({ event: 'anchor.confirmed' }),
-    })
-    setTimeout(loadWebhooks, 1000)
+    try {
+      const apiKey = localStorage.getItem('s4_api_key') || ''
+      await fetch(`${API_BASE}/webhook_test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey },
+        body: JSON.stringify({ event: 'anchor.confirmed' }),
+      })
+      setTimeout(loadWebhooks, 1000)
+    } catch (err) {
+      console.error('Webhook test failed:', err)
+    }
   }
 
   function toggleEvent(event: string) {

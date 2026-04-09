@@ -8,20 +8,20 @@ import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
 import MismatchModal from './MismatchModal'
 const ReportExportModal = lazy(() => import('./ReportExportModal'))
-import IntegrationsPanel from './IntegrationsPanel'
+const IntegrationsPanel = lazy(() => import('./IntegrationsPanel'))
 import ExternalSyncModal from './ExternalSyncModal'
 import NotificationsPanel from './NotificationsPanel'
 import EmailComposer from './EmailComposer'
 import WorkflowProgressPopup from './WorkflowProgressPopup_v2'
-import ProfileDashboard from './ProfileDashboard'
+const ProfileDashboard = lazy(() => import('./ProfileDashboard'))
 import PermissionsModal from './PermissionsModal'
 import DraggableModal from './DraggableModal'
 import CellEditModal from './CellEditModal'
 import DocumentUploadModal from './DocumentUploadModal'
 import DocumentPanel from './DocumentPanel'
 const SpreadsheetImportModal = lazy(() => import('./SpreadsheetImportModal'))
-import AnomalyDashboard from './AnomalyDashboard'
-import ChatPanel from './ChatPanel'
+const AnomalyDashboard = lazy(() => import('./AnomalyDashboard'))
+const ChatPanel = lazy(() => import('./ChatPanel'))
 import PresenceBar from './PresenceBar'
 import type { CellEditTarget } from './CellEditModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
@@ -307,36 +307,40 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
     setComparing(true)
     setCompareProgress(0)
     setCompareSummary(null)
+    try {
+      // Save original notes/status before overwriting
+      const origMap: Record<string, { notes: string; status: 'green' | 'yellow' | 'red' | 'pending' }> = {}
+      hullData.forEach(r => { origMap[r.id] = { notes: r.notes, status: r.status } })
+      setOriginalNotes(origMap)
 
-    // Save original notes/status before overwriting
-    const origMap: Record<string, { notes: string; status: 'green' | 'yellow' | 'red' | 'pending' }> = {}
-    hullData.forEach(r => { origMap[r.id] = { notes: r.notes, status: r.status } })
-    setOriginalNotes(origMap)
+      const refs: Record<string, string> = {}
+      const findingsMap: Record<string, string[]> = {}
+      const updatedData = [...data]
 
-    const refs: Record<string, string> = {}
-    const findingsMap: Record<string, string[]> = {}
-    const updatedData = [...data]
-
-    const summary = await runContractComparison(hullData, (result: ComparisonResult, index: number) => {
-      setCompareProgress(index + 1)
-      refs[result.rowId] = result.contractRef
-      findingsMap[result.rowId] = result.findings
-      // Update the row's notes and status
-      const dataIdx = updatedData.findIndex(r => r.id === result.rowId)
-      if (dataIdx !== -1) {
-        updatedData[dataIdx] = {
-          ...updatedData[dataIdx],
-          notes: result.remarks,
-          status: result.status,
+      const summary = await runContractComparison(hullData, (result: ComparisonResult, index: number) => {
+        setCompareProgress(index + 1)
+        refs[result.rowId] = result.contractRef
+        findingsMap[result.rowId] = result.findings
+        // Update the row's notes and status
+        const dataIdx = updatedData.findIndex(r => r.id === result.rowId)
+        if (dataIdx !== -1) {
+          updatedData[dataIdx] = {
+            ...updatedData[dataIdx],
+            notes: result.remarks,
+            status: result.status,
+          }
         }
-      }
-    })
+      })
 
-    setContractRefs(refs)
-    setRowFindings(findingsMap)
-    onDataUpdate(updatedData)
-    setCompareSummary(summary)
-    setComparing(false)
+      setContractRefs(refs)
+      setRowFindings(findingsMap)
+      onDataUpdate(updatedData)
+      setCompareSummary(summary)
+    } catch (err) {
+      console.error('Contract comparison failed:', err)
+    } finally {
+      setComparing(false)
+    }
   }, [comparing, data, hullData, onDataUpdate])
 
   function handleSort(key: string) {
@@ -512,26 +516,32 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
   /* ─── Manual Craft Entry (offline fallback) ──────────── */
   const handleManualCraft = useCallback(async (craftName: string) => {
-    const { changes, notifications: newNotifs, updatedRows, newAnchors, newCraftDetected } = await manualCraftPipeline(data, craftName, role, anchors, editedSinceSeal)
-    onDataUpdate(updatedRows)
-    if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
-      onSyncAnchors(newAnchors)
+    try {
+      const { changes, notifications: newNotifs, updatedRows, newAnchors, newCraftDetected } = await manualCraftPipeline(data, craftName, role, anchors, editedSinceSeal)
+      onDataUpdate(updatedRows)
+      if (onSyncAnchors && Object.keys(newAnchors).length > 0) {
+        onSyncAnchors(newAnchors)
+      }
+      setNotifications(prev => [...newNotifs, ...prev])
+      setSyncStatus(prev => ({
+        ...prev,
+        lastSync: new Date().toISOString(),
+        totalSyncs: prev.totalSyncs + 1,
+        changesSynced: prev.changesSynced + changes.length,
+      }))
+      setAuditVersion(v => v + 1)
+      const sealCount = Object.keys(newAnchors).length
+      setSyncToast(`Manual Entry: ${newCraftDetected} added — ${sealCount} new row${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
+      if (newCraftDetected) {
+        setPlatformFilter(newCraftDetected)
+        setHullFilter('all')
+      }
+      setTimeout(() => setSyncToast(null), 5000)
+    } catch (err) {
+      console.error('Manual craft entry failed:', err)
+      setSyncToast('Manual craft entry failed — please try again')
+      setTimeout(() => setSyncToast(null), 5000)
     }
-    setNotifications(prev => [...newNotifs, ...prev])
-    setSyncStatus(prev => ({
-      ...prev,
-      lastSync: new Date().toISOString(),
-      totalSyncs: prev.totalSyncs + 1,
-      changesSynced: prev.changesSynced + changes.length,
-    }))
-    setAuditVersion(v => v + 1)
-    const sealCount = Object.keys(newAnchors).length
-    setSyncToast(`Manual Entry: ${newCraftDetected} added — ${sealCount} new row${sealCount !== 1 ? 's' : ''} sealed to XRPL`)
-    if (newCraftDetected) {
-      setPlatformFilter(newCraftDetected)
-      setHullFilter('all')
-    }
-    setTimeout(() => setSyncToast(null), 5000)
   }, [data, role, anchors, editedSinceSeal, onDataUpdate, onSyncAnchors])
 
   function handleToggleOffline() {
@@ -1905,6 +1915,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Profile Dashboard */}
       {showProfile && (
+        <Suspense fallback={null}>
         <ProfileDashboard
           role={role}
           data={hullData}
@@ -1913,6 +1924,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           notifications={notifications}
           onClose={() => setShowProfile(false)}
         />
+        </Suspense>
       )}
 
       {/* Permissions Modal */}
@@ -1990,12 +2002,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* AI Anomaly Detection Dashboard */}
       {showAnomaly && (
+        <Suspense fallback={null}>
         <AnomalyDashboard
           data={hullData}
           anchors={anchors}
           editedSinceSeal={editedSinceSeal}
           onClose={() => setShowAnomaly(false)}
         />
+        </Suspense>
       )}
 
       {/* Reports & Export (PDF / Excel / CSV + Scheduling) */}
@@ -2016,14 +2030,17 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* API & Integrations Panel */}
       {showIntegrations && (
+        <Suspense fallback={null}>
         <IntegrationsPanel
           onClose={() => setShowIntegrations(false)}
         />
+        </Suspense>
       )}
       </div>
 
       {/* S4 Chat Panel — AI, Team, Agents */}
       {showChat && (
+        <Suspense fallback={null}>
         <ChatPanel
           data={hullData}
           anchors={anchors}
@@ -2035,6 +2052,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           collabUsers={collabUsers}
           onClose={() => setShowChat(false)}
         />
+        </Suspense>
       )}
     </div>
   )

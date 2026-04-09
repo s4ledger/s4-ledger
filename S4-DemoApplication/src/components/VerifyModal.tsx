@@ -26,25 +26,31 @@ export default function VerifyModal({ row, anchor, onReseal, onClose, onShowMism
     async function verify() {
       setVerifying(true)
       setResealSuccess(null)
-      const hash = await hashRow(row as unknown as Record<string, unknown>)
-      setCurrentHash(hash)
+      try {
+        const hash = await hashRow(row as unknown as Record<string, unknown>)
+        setCurrentHash(hash)
 
-      // Simulate verification delay
-      await new Promise(r => setTimeout(r, 1000))
+        // Simulate verification delay
+        await new Promise(r => setTimeout(r, 1000))
 
-      if (anchor) {
-        const isMatch = hash === anchor.hash
-        setMatch(isMatch)
-        recordVerification(row, isMatch, hash, anchor.hash, anchor.txHash)
-        recordChange({
-          userId: user?.id, userEmail: user?.email, userRole: profile?.role, userOrg: profile?.organization,
-          rowId: row.id, rowTitle: row.title, field: 'verify',
-          oldValue: anchor.hash, newValue: isMatch ? 'MATCH' : 'MISMATCH', changeType: 'verify',
-        })
-      } else {
+        if (anchor) {
+          const isMatch = hash === anchor.hash
+          setMatch(isMatch)
+          recordVerification(row, isMatch, hash, anchor.hash, anchor.txHash)
+          recordChange({
+            userId: user?.id, userEmail: user?.email, userRole: profile?.role, userOrg: profile?.organization,
+            rowId: row.id, rowTitle: row.title, field: 'verify',
+            oldValue: anchor.hash, newValue: isMatch ? 'MATCH' : 'MISMATCH', changeType: 'verify',
+          })
+        } else {
+          setMatch(null)
+        }
+      } catch (err) {
+        console.error('Verification failed:', err)
         setMatch(null)
+      } finally {
+        setVerifying(false)
       }
-      setVerifying(false)
     }
     verify()
   }, [row, anchor])

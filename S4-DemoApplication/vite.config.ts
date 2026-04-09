@@ -15,6 +15,15 @@ export default defineConfig({
     sourcemap: 'hidden',
     target: 'es2020',
     minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          tiptap: ['@tiptap/react', '@tiptap/starter-kit'],
+          pdf: ['jspdf', 'jspdf-autotable'],
+          sentry: ['@sentry/react'],
+        },
+      },
+    },
   },
   server: {
     port: 5180,
@@ -24,5 +33,12 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.test.{ts,tsx}'],
     setupFiles: ['src/__tests__/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/__tests__/**', 'src/vite-env.d.ts'],
+      thresholds: { statements: 50, branches: 40, functions: 45, lines: 50 },
+    },
   },
 })

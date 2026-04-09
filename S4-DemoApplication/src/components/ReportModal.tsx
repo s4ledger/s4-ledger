@@ -31,25 +31,29 @@ export default function ReportModal({ data, anchors, role, rowFindings, contract
   async function handleGenerate() {
     setGenerating(true)
     setProgress(0)
+    try {
+      // Simulate AI analysis phases
+      const phases = [
+        'Analyzing table data…',
+        'Generating contractual references…',
+        'Building priority assessment…',
+        'Constructing RACI matrix…',
+        'Computing progress metrics…',
+        'Rendering PDF…',
+      ]
 
-    // Simulate AI analysis phases
-    const phases = [
-      'Analyzing table data…',
-      'Generating contractual references…',
-      'Building priority assessment…',
-      'Constructing RACI matrix…',
-      'Computing progress metrics…',
-      'Rendering PDF…',
-    ]
+      for (let i = 0; i < phases.length; i++) {
+        setProgress(i + 1)
+        await new Promise(r => setTimeout(r, 400 + Math.random() * 300))
+      }
 
-    for (let i = 0; i < phases.length; i++) {
-      setProgress(i + 1)
-      await new Promise(r => setTimeout(r, 400 + Math.random() * 300))
+      const result = generateWeeklyReport(data, anchors, role, rowFindings, contractRefs, hullFilter, aiInsights)
+      setReport(result)
+    } catch (err) {
+      console.error('Report generation failed:', err)
+    } finally {
+      setGenerating(false)
     }
-
-    const result = generateWeeklyReport(data, anchors, role, rowFindings, contractRefs, hullFilter, aiInsights)
-    setReport(result)
-    setGenerating(false)
   }
 
   function handleDownload() {
