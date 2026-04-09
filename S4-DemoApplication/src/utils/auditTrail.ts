@@ -37,14 +37,17 @@ function now(): string {
 
 /* ─── Public API ─────────────────────────────────────────────── */
 
+/** Return a shallow copy of the full audit log. */
 export function getAuditLog(): AuditEvent[] {
   return [...auditLog]
 }
 
+/** Return audit events filtered to a specific row ID. */
 export function getAuditLogForRow(rowId: string): AuditEvent[] {
   return auditLog.filter(e => e.rowId === rowId)
 }
 
+/** Clear all audit events (used in tests). */
 export function clearAuditLog(): void {
   auditLog = []
   nextId = 1
@@ -52,6 +55,7 @@ export function clearAuditLog(): void {
 
 /* ─── Record events ──────────────────────────────────────────── */
 
+/** Record a seal event — row data anchored to XRPL for the first time. */
 export function recordSeal(row: DRLRow, anchor: AnchorRecord): void {
   auditLog.push({
     id: makeId(),
@@ -66,6 +70,7 @@ export function recordSeal(row: DRLRow, anchor: AnchorRecord): void {
   })
 }
 
+/** Record a re-seal event — row data re-anchored after edits. */
 export function recordReseal(row: DRLRow, anchor: AnchorRecord): void {
   auditLog.push({
     id: makeId(),
@@ -80,6 +85,7 @@ export function recordReseal(row: DRLRow, anchor: AnchorRecord): void {
   })
 }
 
+/** Record a verification event — hash comparison between current data and anchored seal. */
 export function recordVerification(row: DRLRow, match: boolean, currentHash: string, anchoredHash: string, txHash: string): void {
   if (match) {
     auditLog.push({
@@ -110,6 +116,7 @@ export function recordVerification(row: DRLRow, match: boolean, currentHash: str
   }
 }
 
+/** Record a field edit event with old and new values. */
 export function recordEdit(row: DRLRow, field: string, oldValue: string, newValue: string): void {
   if (oldValue === newValue) return
   auditLog.push({
@@ -124,6 +131,7 @@ export function recordEdit(row: DRLRow, field: string, oldValue: string, newValu
   })
 }
 
+/** Record an AI-generated remark update on a row. */
 export function recordAIRemarkUpdate(row: DRLRow, remark: string): void {
   auditLog.push({
     id: makeId(),
@@ -136,6 +144,7 @@ export function recordAIRemarkUpdate(row: DRLRow, remark: string): void {
   })
 }
 
+/** Record an external data feed event (e.g., NSERC IDE sync). */
 export function recordExternalFeed(row: DRLRow, feedSource: string, feedDetail: string): void {
   auditLog.push({
     id: makeId(),
@@ -149,6 +158,7 @@ export function recordExternalFeed(row: DRLRow, feedSource: string, feedDetail: 
 }
 
 /* ─── Seed simulated history for demo rows ───────────────────── */
+/** Seed realistic audit history for demo mode. */
 export function seedAuditHistory(data: DRLRow[], anchors: Record<string, AnchorRecord>): void {
   if (auditLog.length > 0) return // already seeded
 
@@ -240,6 +250,7 @@ export interface AuditSummary {
   trustColor: 'green' | 'yellow' | 'red'
 }
 
+/** Compute summary statistics across audit events, optionally filtered to specific row IDs. */
 export function getAuditSummary(rowIds?: string[]): AuditSummary {
   const events = rowIds
     ? auditLog.filter(e => rowIds.includes(e.rowId))

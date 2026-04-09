@@ -65,6 +65,7 @@ function getHull(title: string): string | null {
 }
 
 /* ─── Row-level analysis ─────────────────────────────────────────── */
+/** Analyze a single DRL row and return priority, status explanation, next actions, and suggested comms. */
 export function analyzeRow(
   row: DRLRow,
   anchors: Record<string, AnchorRecord>,
@@ -248,6 +249,7 @@ export function analyzeRow(
 }
 
 /* ─── Portfolio-level analysis ───────────────────────────────────── */
+/** Aggregate row insights into portfolio-wide summary: top actions, alerts, trend, and weekly progress. */
 export function analyzePortfolio(
   data: DRLRow[],
   anchors: Record<string, AnchorRecord>,
@@ -305,6 +307,7 @@ export function analyzePortfolio(
 }
 
 /* ─── Chat response — calls real AI, falls back to local ─────────── */
+/** Generate an AI chat response for a user question about a specific DRL row. Falls back to local heuristics if AI service is unavailable. */
 export async function generateChatResponse(
   userMessage: string,
   row: DRLRow,

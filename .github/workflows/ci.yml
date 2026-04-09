@@ -212,12 +212,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: S4-DemoApplication/package-lock.json
       - name: Install dependencies
         run: cd S4-DemoApplication && npm ci
       - name: Type check
         run: cd S4-DemoApplication && npx tsc --noEmit
-      - name: Run tests
-        run: cd S4-DemoApplication && npm test
+      - name: Run tests with coverage
+        run: cd S4-DemoApplication && npm run test:coverage
       - name: Build
         run: cd S4-DemoApplication && npm run build
       - name: Verify dist
