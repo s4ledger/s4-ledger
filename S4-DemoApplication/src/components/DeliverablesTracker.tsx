@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react'
 import { DRLRow, UserRole, AnchorRecord, Organization, ColumnKey, Contract } from '../types'
 import { useAuth } from '../contexts/AuthContext'
 import AIAssistModal from './AIAssistModal'
@@ -7,7 +7,7 @@ import AuditTrailSidebar from './AuditTrailSidebar'
 import AnchorVerifyMenu from './AnchorVerifyMenu'
 import VerifyModal from './VerifyModal'
 import MismatchModal from './MismatchModal'
-import ReportExportModal from './ReportExportModal'
+const ReportExportModal = lazy(() => import('./ReportExportModal'))
 import IntegrationsPanel from './IntegrationsPanel'
 import ExternalSyncModal from './ExternalSyncModal'
 import NotificationsPanel from './NotificationsPanel'
@@ -19,10 +19,9 @@ import DraggableModal from './DraggableModal'
 import CellEditModal from './CellEditModal'
 import DocumentUploadModal from './DocumentUploadModal'
 import DocumentPanel from './DocumentPanel'
-import SpreadsheetImportModal from './SpreadsheetImportModal'
+const SpreadsheetImportModal = lazy(() => import('./SpreadsheetImportModal'))
 import AnomalyDashboard from './AnomalyDashboard'
 import ChatPanel from './ChatPanel'
-import type { ImportAuditInfo } from './SpreadsheetImportModal'
 import PresenceBar from './PresenceBar'
 import type { CellEditTarget } from './CellEditModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
@@ -873,7 +872,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
                   >
                     <i className="fas fa-database text-purple-500 w-4 text-center"></i>
                     <span className="font-medium">Sync{perms.syncReadOnly ? ' (Read-Only)' : ''}</span>
-                    {syncStatus.lastSync && <span className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>}
+                    {syncStatus.lastSync && <span role="status" aria-label="Synced" className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>}
                   </button>
                   )}
                   <div className="border-t border-border my-1"></div>
@@ -1968,6 +1967,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Spreadsheet Import Modal */}
       {showImport && (
+        <Suspense fallback={<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"><i className="fas fa-spinner fa-spin text-white text-2xl"></i></div>}>
         <SpreadsheetImportModal
           existingData={data}
           contractId={selectedContract?.id || 'default'}
@@ -1985,6 +1985,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           }}
           onClose={() => setShowImport(false)}
         />
+        </Suspense>
       )}
 
       {/* AI Anomaly Detection Dashboard */}
@@ -1999,6 +2000,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Reports & Export (PDF / Excel / CSV + Scheduling) */}
       {showExport && (
+        <Suspense fallback={<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"><i className="fas fa-spinner fa-spin text-white text-2xl"></i></div>}>
         <ReportExportModal
           data={hullData}
           anchors={anchors}
@@ -2009,6 +2011,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           aiInsights={aiInsights}
           onClose={() => setShowExport(false)}
         />
+        </Suspense>
       )}
 
       {/* API & Integrations Panel */}

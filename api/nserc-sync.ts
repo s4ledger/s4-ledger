@@ -22,6 +22,66 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { createClient } from '@supabase/supabase-js'
+
+/* ── Auth Helpers ─────────────────────────────────────────────── */
+
+/** Validate the Supabase JWT from the Authorization header */
+async function validateAuth(req: VercelRequest): Promise<{ ok: boolean; uid?: string }> {
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || ''
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || ''
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // If Supabase isn't configured, require an API key fallback
+    const apiKey = process.env.NSERC_API_KEY
+    if (!apiKey) return { ok: false }
+    const provided = req.headers['x-api-key']
+    return { ok: provided === apiKey, uid: 'api-key' }
+  }
+
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return { ok: false }
+  const token = authHeader.slice(7)
+
+  try {
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    const { data, error } = await supabase.auth.getUser(token)
+    if (error || !data.user) return { ok: false }
+    return { ok: true, uid: data.user.id }
+  } catch {
+    return { ok: false }
+  }
+}
+
+/* ── Rate Limiter (in-memory sliding window) ──────────────────── */
+
+const rateLimitWindow = 60_000 // 1 minute
+const rateLimitMax = 30 // max requests per window per IP
+const rateBuckets = new Map<string, number[]>()
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const hits = rateBuckets.get(ip) || []
+  // Prune expired entries
+  const valid = hits.filter(t => now - t < rateLimitWindow)
+  if (valid.length >= rateLimitMax) {
+    rateBuckets.set(ip, valid)
+    return false
+  }
+  valid.push(now)
+  rateBuckets.set(ip, valid)
+  return true
+}
+
+// Periodically evict stale buckets to prevent memory leak
+setInterval(() => {
+  const now = Date.now()
+  for (const [ip, hits] of rateBuckets) {
+    const valid = hits.filter(t => now - t < rateLimitWindow)
+    if (valid.length === 0) rateBuckets.delete(ip)
+    else rateBuckets.set(ip, valid)
+  }
+}, 5 * 60_000)
 
 /* ── Token Cache ──────────────────────────────────────────────── */
 
@@ -185,15 +245,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  // ── Rate Limiting ──
+  const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown'
+  if (!checkRateLimit(clientIp)) {
+    return res.status(429).json({ error: 'Too many requests — try again later', code: 'RATE_LIMITED' })
+  }
+
   const { action, siteId, listId, craft } = req.body || {}
 
-  // ── Health Check ──
+  // ── Health Check (no auth required) ──
   if (action === 'health') {
     return res.status(200).json({
       status: 'ok',
       configured: isConfigured(),
       timestamp: new Date().toISOString(),
     })
+  }
+
+  // ── Auth Required for all actions below ──
+  const auth = await validateAuth(req)
+  if (!auth.ok) {
+    return res.status(401).json({ error: 'Unauthorized — valid Supabase session or API key required', code: 'UNAUTHORIZED' })
   }
 
   // ── Sync ──

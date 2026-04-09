@@ -26,6 +26,36 @@ git revert <hash> or specific steps to undo.
 
 ---
 
+## v8.13.0 — Production Readiness Phase 3
+
+### 2026-04-09 — API Security, ErrorBoundary Coverage, Code Splitting, A11y
+**Commit:** *(pending)*
+**Files Changed:**
+- api/nserc-sync.ts — Added Supabase JWT validation + API key fallback, in-memory rate limiting (30 req/min/IP), stale bucket eviction
+- S4-DemoApplication/src/App.tsx — Wrapped LoginScreen, RoleSelector, auth loading spinner, and authenticated PortfolioDashboard in ErrorBoundary
+- S4-DemoApplication/src/components/DeliverablesTracker.tsx — Converted ReportExportModal and SpreadsheetImportModal from static imports to React.lazy + Suspense; added role="status" aria-label="Synced" to sync dot
+
+**What Was Done:**
+- **Security:** nserc-sync.ts was unauthenticated — anyone who discovered the URL could trigger Azure AD Graph API calls. Now requires a valid Supabase JWT (Authorization: Bearer) or NSERC_API_KEY (x-api-key header). Health check remains public. In-memory sliding window rate limiter caps at 30 req/min/IP with periodic bucket eviction.
+- **ErrorBoundary:** Previously LoginScreen, RoleSelector, auth loading, and authenticated-path PortfolioDashboard (Suspense) rendered outside ErrorBoundary. All render paths now wrapped — any crash shows the error UI instead of a white screen.
+- **Code Splitting:** Main bundle reduced from ~2.1 MB → 820 KB (-61%). ReportExportModal (940 KB: TipTap + jspdf + excelExport) and SpreadsheetImportModal (28 KB + 424 KB xlsx) now load on-demand when user opens those modals.
+- **A11y:** Sync dot at line 876 now has role="status" aria-label="Synced" matching the existing dot at line 823.
+
+**What Was Tested:**
+- tsc --noEmit: 0 errors
+- vitest run: 89 tests pass (7 files)
+- npm run build: success, bundle sizes verified
+
+**Rollback Instructions:**
+`git revert <hash>`
+
+**Known Future Work:**
+- tsconfig `noUncheckedIndexedAccess`: would surface ~60 type errors across 15 files. Deferred to a dedicated strictness pass.
+- CSP `unsafe-eval`: required by SheetJS xlsx (uses `new Function()`). Cannot remove without replacing SheetJS.
+- CSP `unsafe-inline` in script-src: could be removed in production with nonce-based approach. Low priority.
+
+---
+
 ## Phase 1 — Security Hardening
 
 ### 2026-03-15 — Checklist Items 1.3 + 1.5 + 1.7: API Key Storage, Error Sanitization, Token Strengthening

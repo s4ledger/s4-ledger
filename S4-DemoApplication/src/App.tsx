@@ -197,18 +197,20 @@ export default function App() {
   // ── Auth loading state ──
   if (authLoading) {
     return (
+      <ErrorBoundary>
       <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center">
           <i className="fas fa-shield-alt text-accent text-3xl mb-4 block"></i>
           <i className="fas fa-spinner fa-spin text-accent text-lg"></i>
         </div>
       </div>
+      </ErrorBoundary>
     )
   }
 
   // ── Not authenticated and not in demo mode → show login ──
   if (!session && !isDemo) {
-    return <LoginScreen />
+    return <ErrorBoundary><LoginScreen /></ErrorBoundary>
   }
 
   // ── Authenticated user → portfolio + tracker ──
@@ -216,6 +218,7 @@ export default function App() {
     const authRole = profile.role
     if (showPortfolio) {
       return (
+        <ErrorBoundary>
         <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-gray-50"><i className="fas fa-spinner fa-spin text-accent text-lg"></i></div>}>
           <PortfolioDashboard
             allData={data}
@@ -225,6 +228,7 @@ export default function App() {
             onBack={() => setShowPortfolio(false)}
           />
         </Suspense>
+        </ErrorBoundary>
       )
     }
     return (
@@ -254,12 +258,14 @@ export default function App() {
   // ── Demo mode → role selection then tracker ──
   if (stage === 'role') {
     return (
+      <ErrorBoundary>
       <RoleSelector
         onSelect={(r: UserRole) => {
           setRole(r)
           setStage('tracker')
         }}
       />
+      </ErrorBoundary>
     )
   }
 
