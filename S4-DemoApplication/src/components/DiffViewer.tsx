@@ -28,11 +28,6 @@ function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 }
 
-function formatDateFull(iso: string): string {
-  const d = new Date(iso)
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-}
-
 export default function DiffViewer({ rowId, rowTitle, anchors }: Props) {
   const [entries, setEntries] = useState<ChangeEntry[]>([])
   const [loading, setLoading] = useState(true)

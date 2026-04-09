@@ -26,6 +26,37 @@ git revert <hash> or specific steps to undo.
 
 ---
 
+## v8.16.0 — Production Readiness Phase 6: Code Quality, A11y, Security, Performance
+
+### 2026-04-09 — Strict TypeScript, ARIA Live Regions, Security Headers, useMemo, Reduced Motion
+**Commit:** *(pending)*
+**Files Changed:**
+- S4-DemoApplication/tsconfig.json — Enabled `noUnusedLocals: true` and `noUnusedParameters: true`
+- 18 source files — Removed 33 unused imports, variables, parameters, and functions
+- S4-DemoApplication/src/components/DeliverablesTracker.tsx — Added `platformCounts` and `hullTabCounts` useMemo (eliminates O(P×N) per-render re-parsing); ARIA live regions on 3 toast elements
+- S4-DemoApplication/src/components/ChatPanel.tsx — ARIA live region on save toast
+- S4-DemoApplication/src/components/ReportEditor.tsx — ARIA live region on save toast
+- S4-DemoApplication/src/components/LoginScreen.tsx — `role="alert"` on error message
+- S4-DemoApplication/index.html — CSP `form-action 'self'`; `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()`; `X-Content-Type-Options: nosniff`
+- S4-DemoApplication/src/index.css — `@media (prefers-reduced-motion: reduce)` disables all animations/transitions
+
+**What Was Done:**
+- **Code Quality (82→90):** Enabled `noUnusedLocals` and `noUnusedParameters` in tsconfig.json. Fixed 33 unused imports/variables/parameters across 18 files — removed dead imports (ColumnKey, AnchorRecord, beforeEach, useCallback, etc.), prefixed intentionally-unused params with `_`, deleted dead helper functions (formatDateFull, daysBetween).
+- **Accessibility (82→88):** Added `role="status" aria-live="polite"` on 5 toast notifications (DeliverablesTracker ×3, ChatPanel, ReportEditor) so screen readers announce success/sync feedback. Added `role="alert"` on LoginScreen error message for immediate announcement.
+- **Security (88→92):** CSP hardened with `form-action 'self'` to prevent form-based redirect attacks. `Permissions-Policy` denies camera, microphone, geolocation, and payment APIs. `X-Content-Type-Options: nosniff` prevents MIME-type sniffing.
+- **Performance (86→89):** `platformCounts` and `hullTabCounts` useMemo eliminates redundant O(platforms×data) string-parsing per render. Counts pre-computed in single pass, JSX does O(1) lookup.
+- **Accessibility (motion):** `@media (prefers-reduced-motion: reduce)` suppresses all CSS animations and transitions for users who prefer reduced motion.
+
+**What Was Tested:**
+- tsc --noEmit: 0 errors (with strict unused checking)
+- vitest run: 151 tests pass (12 files)
+- npm run build: success, main bundle 682KB (unchanged)
+
+**Rollback Instructions:**
+`git revert <hash>`
+
+---
+
 ## v8.14.0 — Production Readiness Phase 4: A11y, Testing, Performance, Observability
 
 ### 2026-04-09 — Accessibility, Component Tests, React.memo, Web Vitals

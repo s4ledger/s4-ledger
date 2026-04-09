@@ -5,7 +5,7 @@ import { storeSealed } from './sealedVault'
 import { recordSeal, recordExternalFeed } from './auditTrail'
 import { analyzeRow } from './aiAnalysis'
 import { getRACIParty } from './raciWorkflow'
-import { fetchLatestDRLUpdates, NSERCSyncResult, generateNewCraftRows, generateManualCraftRows, detectExistingCrafts, isProductionConfigured } from '../services/nsercIdeService'
+import { fetchLatestDRLUpdates, NSERCSyncResult, generateManualCraftRows, detectExistingCrafts } from '../services/nsercIdeService'
 
 /* ─── Types ──────────────────────────────────────────────────── */
 

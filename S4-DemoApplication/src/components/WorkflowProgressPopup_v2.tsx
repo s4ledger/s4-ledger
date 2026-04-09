@@ -6,7 +6,6 @@ import { AIRowInsight } from '../utils/aiAnalysis'
 import {
   WorkflowState,
   WorkflowTransition,
-  WorkflowStageDef,
   inferWorkflowState,
   getAvailableTransitions,
   executeTransition,
@@ -19,7 +18,6 @@ import {
   getContractOverdueDays,
   getWorkflowBadge,
   getTemplate,
-  WORKFLOW_TEMPLATES,
 } from '../utils/workflowEngine'
 import { getDefaultOrg } from '../utils/permissions'
 

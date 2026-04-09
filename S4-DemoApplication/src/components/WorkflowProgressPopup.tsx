@@ -41,7 +41,6 @@ function lineColor(stage: WorkflowStage, next: WorkflowStage | undefined): strin
 export default function WorkflowProgressPopup({
   row,
   anchors,
-  role,
   aiInsight,
   onUpdateNotes,
   onSendEmail,

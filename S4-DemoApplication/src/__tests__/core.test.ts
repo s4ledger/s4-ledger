@@ -3,7 +3,7 @@
  *  Core Utility Tests — hash, rateLimiter
  * ═══════════════════════════════════════════════════════════════
  */
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { isRateLimited } from '../utils/rateLimiter'
 
 /* ─── Rate Limiter ───────────────────────────────────────────── */

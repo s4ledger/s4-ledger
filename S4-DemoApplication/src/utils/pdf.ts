@@ -187,7 +187,7 @@ export function generateWeeklyReport(
   anchors: Record<string, AnchorRecord>,
   role: UserRole,
   rowFindings: Record<string, string[]>,
-  contractRefs: Record<string, string>,
+  _contractRefs: Record<string, string>,
   hullFilter?: string,
   aiInsights?: Record<string, AIRowInsight>,
 ): WeeklyReportResult {

@@ -81,9 +81,9 @@ interface Props {
 
 /* ─── AI Chat Tab (with integrated agents + model picker) ── */
 
-function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
+function AIChatTab({ data, anchors, aiInsights, role, displayName }: {
   data: DRLRow[]; anchors: Record<string, AnchorRecord>; aiInsights: Record<string, AIRowInsight>
-  role: UserRole; userId: string; displayName: string
+  role: UserRole; displayName: string
 }) {
   // --- Model selection ---
   const [selectedModel, setSelectedModel] = useState<string>('gpt-4o-mini')
@@ -600,7 +600,7 @@ function AIChatTab({ data, anchors, aiInsights, role, userId, displayName }: {
     <div className="flex flex-col h-full relative">
       {/* Save toast notification */}
       {saveToast && (
-        <div className="absolute top-1 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-[11px] px-3 py-1.5 rounded-lg shadow-lg animate-fade-in flex items-center gap-1.5">
+        <div className="absolute top-1 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-[11px] px-3 py-1.5 rounded-lg shadow-lg animate-fade-in flex items-center gap-1.5" role="status" aria-live="polite">
           <i className="fas fa-check-circle text-green-400 text-[10px]"></i>
           {saveToast}
         </div>
@@ -1242,7 +1242,7 @@ function TeamChatTab({ userId, displayName, role, org, collabUsers }: {
 }
 
 /** Render message text with @mention highlighting */
-function renderMessageText(text: string, mentions: string[]) {
+function renderMessageText(text: string, _mentions: string[]) {
   if (!text.includes('@')) return text
   // Split on @mentions and highlight them
   const parts = text.split(/(@\S+(?:\s\S+)?)/g)
@@ -1310,7 +1310,6 @@ export default function ChatPanel({
             anchors={anchors}
             aiInsights={aiInsights}
             role={role}
-            userId={userId}
             displayName={displayName}
           />
         )}

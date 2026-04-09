@@ -109,7 +109,7 @@ export function generateReportHtml(
   role: UserRole,
   rowFindings: Record<string, string[]>,
   _contractRefs: Record<string, string>,
-  hullFilter?: string,
+  _hullFilter?: string,
   aiInsights?: Record<string, AIRowInsight>,
 ): string {
   const now = new Date()

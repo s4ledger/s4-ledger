@@ -11,7 +11,6 @@ import {
   getQueuedChanges,
   getQueueCount,
   clearSyncedChanges,
-  clearAllQueued,
   QueuedChange,
 } from '../services/offlineStore'
 

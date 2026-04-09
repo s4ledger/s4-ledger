@@ -718,7 +718,7 @@ export default function ReportEditor({ initialHtml, onExportPdf, onExportExcel, 
         <div className="relative w-[380px] bg-white border-l border-gray-200 flex flex-col flex-shrink-0">
           {/* Save toast */}
           {saveToast && (
-            <div className="absolute top-1 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-[11px] px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1.5">
+            <div className="absolute top-1 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-[11px] px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1.5" role="status" aria-live="polite">
               <i className="fas fa-check-circle text-green-400 text-[10px]"></i>
               {saveToast}
             </div>

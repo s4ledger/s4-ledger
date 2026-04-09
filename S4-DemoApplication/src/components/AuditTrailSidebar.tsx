@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, memo } from 'react'
+import { useMemo, useState, memo } from 'react'
 import DraggableModal from './DraggableModal'
 import DiffViewer from './DiffViewer'
 import { AuditEvent, AuditSummary, getAuditLog, getAuditLogForRow, getAuditSummary } from '../utils/auditTrail'

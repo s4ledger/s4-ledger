@@ -254,7 +254,6 @@ export function analyzePortfolio(
   editedSinceSeal: Set<string>,
 ): AIPortfolioSummary {
   const insights = data.map(r => analyzeRow(r, anchors, editedSinceSeal))
-  const todayStr = today()
 
   // Top 5 prioritized actions across all rows
   const allActions: { rowId: string; title: string; action: string; priority: Priority; dueDate: string }[] = []

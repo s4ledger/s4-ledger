@@ -10,7 +10,7 @@
  */
 
 import * as XLSX from 'xlsx'
-import { DRLRow, ColumnKey } from '../types'
+import { DRLRow } from '../types'
 import { sha256 } from './hash'
 
 /* ─── Types ──────────────────────────────────────────────────── */

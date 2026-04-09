@@ -46,10 +46,6 @@ function nextId(): string {
 
 const STATUS_RANK: Record<string, number> = { green: 3, yellow: 2, red: 1, pending: 0 }
 
-function daysBetween(a: string, b: string): number {
-  return Math.abs(new Date(a).getTime() - new Date(b).getTime()) / 86_400_000
-}
-
 /* ─── Detection Rules ────────────────────────────────────────── */
 
 function detectStatusRegressions(
@@ -296,7 +292,7 @@ function detectComplianceDrift(data: DRLRow[]): Anomaly[] {
 export function runAnomalyDetection(
   data: DRLRow[],
   anchors: Record<string, AnchorRecord>,
-  auditEvents: AuditEvent[],
+  _auditEvents: AuditEvent[],
   changes: ChangeEntry[],
   editedSinceSeal: Set<string>,
 ): Anomaly[] {

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { storeSealed, getSealed, diffRow, analyzeMismatch } from '../utils/sealedVault'
 import type { DRLRow } from '../types'
 

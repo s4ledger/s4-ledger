@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { DRLRow, Contract, Program } from '../types'
-import { programs, contracts, computeHealthStats, getContractById } from '../data/portfolioData'
+import { DRLRow, Contract } from '../types'
+import { programs, contracts, computeHealthStats } from '../data/portfolioData'
 
 interface Props {
   allData: DRLRow[]

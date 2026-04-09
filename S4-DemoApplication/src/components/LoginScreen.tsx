@@ -186,7 +186,7 @@ export default function LoginScreen() {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">
+              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700" role="alert">
                 <i className="fas fa-exclamation-circle mr-1.5"></i>{error}
               </div>
             )}

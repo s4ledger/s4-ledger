@@ -26,7 +26,6 @@ export default function PermissionsModal({ role, org, perms, contractorGrants, o
   const isGovt = org === 'Government'
   const isContractor = org === 'Contractor'
   const isShipbuilder = org === 'Shipbuilder'
-  const previewOrg = viewAsOrg || org
 
   function toggleGrant(col: ColumnKey) {
     const next = new Set(contractorGrants.grantedColumns)

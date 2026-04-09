@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import DraggableModal from './DraggableModal'
-import { DRLRow, AnchorRecord } from '../types'
+import { DRLRow } from '../types'
 import {
   parseSpreadsheetFile,
   autoMapColumns,
@@ -247,7 +247,7 @@ export default function SpreadsheetImportModal({
             <div className="flex items-center gap-2">
               {/* Step indicator */}
               <div className="flex items-center gap-1">
-                {(['upload', 'map', 'preview', 'done'] as const).map((s, i) => (
+                {(['upload', 'map', 'preview', 'done'] as const).map((s) => (
                   <div
                     key={s}
                     className={`w-2 h-2 rounded-full transition-colors ${

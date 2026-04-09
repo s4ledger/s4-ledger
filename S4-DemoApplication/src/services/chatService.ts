@@ -96,7 +96,7 @@ export const TEAM_ROSTER: TeamMember[] = [
 ]
 
 /** Create a DM channel for two participants */
-export function createDMChannel(myUserId: string, myName: string, targetUserId: string, targetName: string): ChatChannel {
+export function createDMChannel(myUserId: string, _myName: string, targetUserId: string, targetName: string): ChatChannel {
   const participants = [myUserId, targetUserId].sort()
   const id = `dm-${participants.join('-')}`
   return {
@@ -289,7 +289,7 @@ export function subscribeToChatMessages(
       }
     })
 
-    chatChannel.subscribe((status, err) => {
+    chatChannel.subscribe((_status, err) => {
       if (err) {
         console.warn('S4 Chat subscription error:', err)
       }

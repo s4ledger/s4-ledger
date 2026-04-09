@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react'
-import { DRLRow, UserRole, AnchorRecord, Organization, ColumnKey, Contract } from '../types'
+import { DRLRow, UserRole, AnchorRecord, Organization, Contract } from '../types'
 import { useAuth } from '../contexts/AuthContext'
 import AIAssistModal from './AIAssistModal'
 import AINextActionsPanel from './AINextActionsPanel'
@@ -27,14 +27,13 @@ import type { CellEditTarget } from './CellEditModal'
 import { runContractComparison, ComparisonResult, ComparisonSummary } from '../utils/contractCompare'
 import { contractRequirements } from '../data/contractData'
 import { analyzeRow, AIRowInsight } from '../utils/aiAnalysis'
-import { seedAuditHistory, recordEdit, recordAIRemarkUpdate, getAuditLog } from '../utils/auditTrail'
+import { seedAuditHistory, recordEdit, recordAIRemarkUpdate } from '../utils/auditTrail'
 import { recordChange } from '../utils/changeLog'
 import type { WorkflowState } from '../utils/workflowEngine'
 import { getDocumentCounts } from '../services/documentService'
 import {
   joinCollaboration,
   leaveCollaboration,
-  updateFocus,
   startEditing,
   stopEditing,
   broadcastChange,
@@ -45,10 +44,10 @@ import {
   type BroadcastEvent,
 } from '../services/realtimeService'
 import { realSyncPipeline, manualCraftPipeline, SyncNotification, SyncStatus } from '../utils/externalSync'
-import { enqueueChange, isOnline as checkOnline, getMeta } from '../services/offlineStore'
+import { enqueueChange, getMeta } from '../services/offlineStore'
 import { getRACIParty, getRACIColor } from '../utils/raciWorkflow'
 import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrants, OrgPermissions, MaskedStatus, ContractorGrants } from '../utils/permissions'
-import { getSpreadsheetConfig, getContractorColumnsWithGrants, CONTRACTOR_GRANTABLE_COLUMNS } from '../utils/spreadsheetConfigs'
+import { getSpreadsheetConfig, getContractorColumnsWithGrants } from '../utils/spreadsheetConfigs'
 import { getPMS300CraftLabels } from '../services/nsercIdeService'
 
 interface Props {
@@ -80,7 +79,7 @@ function parseCraftHull(title: string): { platform: string; hull: string } | nul
   return { platform, hull }
 }
 
-export default function DeliverablesTracker({ data, role, anchors, onAnchor, onAnchorAll, onVerify, onReseal, onDataUpdate, onSyncAnchors, selectedContract, onTogglePortfolio }: Props) {
+export default function DeliverablesTracker({ data, role, anchors, onAnchor, onReseal, onDataUpdate, onSyncAnchors, selectedContract, onTogglePortfolio }: Props) {
   const { updateProfile, profile, user } = useAuth()
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'green' | 'yellow' | 'red' | 'pending'>('all')
@@ -301,6 +300,28 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
       : platformFilter
     return { total, green, red, pending, sealed, pctComplete, nextDue, label }
   }, [platformFilter, hullFilter, hullData, anchors, maskedStatus])
+
+  /* ─── Pre-computed platform & hull tab counts (avoid O(N) per render) ─ */
+  const platformCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const r of data) {
+      const pr = parseCraftHull(r.title)
+      if (pr) counts[pr.platform] = (counts[pr.platform] || 0) + 1
+    }
+    return counts
+  }, [data])
+
+  const hullTabCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: 0 }
+    for (const r of data) {
+      const pr = parseCraftHull(r.title)
+      if (pr && pr.platform === platformFilter) {
+        counts.all++
+        counts[pr.hull] = (counts[pr.hull] || 0) + 1
+      }
+    }
+    return counts
+  }, [data, platformFilter])
 
   const handleCompare = useCallback(async () => {
     if (comparing) return
@@ -1027,7 +1048,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
                   {/* Synced platforms */}
                   {platforms.map(p => {
-                    const count = data.filter(r => { const pr = parseCraftHull(r.title); return pr && pr.platform === p }).length
+                    const count = platformCounts[p] || 0
                     return (
                       <button
                         key={p}
@@ -1065,9 +1086,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
               <div className="flex items-center gap-1 overflow-x-auto">
                 {hullTabs.map(h => {
                   const label = h === 'all' ? 'All Hulls' : h
-                  const count = h === 'all'
-                    ? data.filter(r => { const pr = parseCraftHull(r.title); return pr && pr.platform === platformFilter }).length
-                    : data.filter(r => { const pr = parseCraftHull(r.title); return pr && pr.platform === platformFilter && pr.hull === h }).length
+                  const count = hullTabCounts[h] || 0
                   const isActive = hullFilter === h
                   return (
                     <button
@@ -1870,7 +1889,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Re-seal success toast */}
       {resealToast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
+        <div className="fixed bottom-6 right-6 z-50 animate-slideUp" role="status" aria-live="polite">
           <div className="bg-white border border-green-500/30 shadow-xl rounded-card px-5 py-3.5 flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center">
               <i className="fas fa-shield-alt text-green-500 text-sm"></i>
@@ -1885,7 +1904,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Sync success toast */}
       {syncToast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
+        <div className="fixed bottom-6 right-6 z-50 animate-slideUp" role="status" aria-live="polite">
           <div className="bg-white border border-purple-500/30 shadow-xl rounded-card px-5 py-3.5 flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center">
               <i className="fas fa-database text-purple-500 text-sm"></i>
@@ -1900,7 +1919,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
 
       {/* Collaboration toast */}
       {collabToast && (
-        <div className="fixed bottom-6 left-6 z-50 animate-slideUp">
+        <div className="fixed bottom-6 left-6 z-50 animate-slideUp" role="status" aria-live="polite">
           <div className="bg-white border border-blue-500/30 shadow-xl rounded-card px-5 py-3.5 flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
               <i className="fas fa-users text-blue-500 text-sm"></i>
@@ -1986,7 +2005,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onA
           userRole={role}
           userEmail={user?.email || undefined}
           userOrg={profile?.organization || undefined}
-          onImport={(newRows, auditInfo) => {
+          onImport={(newRows, _auditInfo) => {
             const merged = [...data, ...newRows]
             onDataUpdate(merged)
             // Auto-seal each imported row
