@@ -1717,7 +1717,10 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-
+/* ═════════════════════════════════════════════════════════════════
+   EVENT HANDLERS — CELL EDITS
+═════════════════════════════════════════════════════════════════ */
+function onDateChange(e) {
   var vid=e.target.dataset.vid, key=e.target.dataset.key, fld=e.target.dataset.field;
   var nv=e.target.value||'';
   var v=vessels.find(v=>v.id===vid); if(!v) return;
