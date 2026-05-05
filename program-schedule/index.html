@@ -862,6 +862,56 @@ td.ms-done .di::after { content:' ✓'; }
   </div>
 </div>
 
+<!-- Vessel property edit modal -->
+<div id="vessel-edit-modal" class="m-overlay" onclick="if(event.target===this)closeVesselModal()">
+  <div class="m-card" style="width:440px;max-width:94vw;padding:26px 28px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;color:var(--steel)">Craft Properties</div>
+        <h3 id="vedit-title" style="font-size:16px;font-weight:700;margin-bottom:2px">Edit Vessel</h3>
+        <div id="vedit-sub" style="font-size:11px;color:var(--steel)"></div>
+      </div>
+      <button onclick="closeVesselModal()" style="background:var(--surface-3);border:none;cursor:pointer;color:var(--steel);width:28px;height:28px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:16px;line-height:1;transition:all .13s" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='var(--surface-3)'">×</button>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Designation</label>
+      <input type="text" id="vedit-designation" maxlength="40" placeholder="e.g. APL-106"
+        style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);transition:all .14s;box-sizing:border-box"
+        onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
+        onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Craft Type</label>
+        <select id="vedit-type" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);cursor:pointer">
+          <option>APL</option><option>YRBM</option><option>YFB</option><option>YTB</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Fleet</label>
+        <select id="vedit-fleet" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);cursor:pointer">
+          <option>PACFLT</option><option>USFF</option><option>USMC</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Status</label>
+      <select id="vedit-status" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);cursor:pointer">
+        <option value="on-track">On Track</option>
+        <option value="at-risk">At Risk</option>
+        <option value="delayed">Delayed</option>
+        <option value="not-planned">Not Planned</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:7px;justify-content:flex-end">
+      <button class="abtn btn-o" onclick="closeVesselModal()">Cancel</button>
+      <button class="abtn btn-p" onclick="vesselSave()" style="gap:5px;padding:5px 14px">
+        <i class="fas fa-check fa-xs"></i> Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Context menu for spreadsheet cells -->
 <div id="ctx-menu">
   <div class="ctx-item" id="ctx-complete" onclick="ctxToggleComplete()">
@@ -1436,9 +1486,11 @@ function renderGantt() {
     rh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.035)" stroke-width="0.6"/>';
 
     // CA→DEL span bar (centered vertically, above date labels)
-    var xCA = dateToXRight(v.ms['CA']);
+    // Clamp xCA to 0 if CA is before the visible FY range so bar still draws from left edge
+    var xCA_raw = dateToXRight(v.ms['CA']);
+    var xCA = xCA_raw >= 0 ? xCA_raw : 0;
     var xDEL = dateToXRight(v.ms['DEL']||'');
-    if (xCA>=0 && xDEL>=0 && xDEL>xCA) {
+    if (v.ms['CA'] && xDEL>=0 && xDEL>xCA) {
       rh += '<rect x="'+xCA+'" y="'+(ry+GP.ROW_H/2-9)+'" width="'+(xDEL-xCA)+'" height="4" rx="2" fill="'+tc2+'" opacity="0.2"/>';
     }
 
@@ -1447,7 +1499,6 @@ function renderGantt() {
       if (hiddenMS[key]) return;
       var msDef = MS[key]; if (!msDef||!msDef.gantt) return;
       var mx = dateToXRight(v.ms[key]); if (mx < 0) return;
-      if (st==='not-planned' && key!=='CA') return;
       var my = ry + GP.ROW_H/2 - 6; // shift up to leave room for date label
       var isDone = completedSet.has(v.id+'|'+key);
       rh += msSymRight(mx, my, msDef.shape, msDef.color, key, v.id, fmtYM(v.ms[key]), isDone);
@@ -1696,9 +1747,9 @@ function renderSpreadsheet() {
       var st=v.status||'on-track';
       var rowStyle=st==='delayed'?'background:rgba(255,59,48,0.035)':st==='not-planned'?'background:rgba(110,110,115,0.04)':'';
       h+='<tr class="vrow" data-id="'+v.id+'" style="'+rowStyle+'">';
-      h+='<td><span class="vname">'+esc(v.designation)+'</span></td>';
-      h+='<td style="color:'+tc+';font-weight:600">'+esc(v.type)+'</td>';
-      h+='<td><span class="fb '+v.fleet.toLowerCase()+'">'+esc(v.fleet)+'</span></td>';
+      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Edit vessel properties"><span class="vname">'+esc(v.designation)+'</span></td>';
+      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Edit vessel properties"><span style="color:'+tc+';font-weight:600">'+esc(v.type)+'</span></td>';
+      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Edit vessel properties"><span class="fb '+v.fleet.toLowerCase()+'">'+esc(v.fleet)+'</span></td>';
 
       // MS date cells — click to open edit modal (all cells clickable, including not-planned)
       msKeys.forEach(key=>{
@@ -1741,7 +1792,7 @@ function renderSpreadsheet() {
       });
 
       h+='<td style="font-size:10.5px;color:var(--steel)">'+durationMo(v)+'</td>';
-      h+='<td>'+statusHtml(st)+'</td>';
+      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Edit vessel properties">'+statusHtml(st)+'</td>';
       h+='<td><input type="text" class="ti" style="min-width:130px" value="'+esc(v.notes||'')+'"'
         +' data-vid="'+v.id+'" data-key="notes" data-field="notes"'
         +' placeholder="Notes…" onchange="onNotesChange(event)" onblur="onNotesChange(event)"></td>';
@@ -1830,6 +1881,40 @@ function fieldLabel(key) {
 }
 
 /* ── Milestone Edit Modal ── */
+/* ── Vessel property edit modal ─────────────────────────────── */
+var _veditVid = null;
+function openVesselModal(vid) {
+  var v = vessels.find(function(x){return x.id===vid;}); if (!v) return;
+  _veditVid = vid;
+  document.getElementById('vedit-designation').value = v.designation;
+  document.getElementById('vedit-type').value = v.type;
+  document.getElementById('vedit-fleet').value = v.fleet;
+  document.getElementById('vedit-status').value = v.status||'on-track';
+  document.getElementById('vedit-title').textContent = 'Edit '+v.designation;
+  document.getElementById('vedit-sub').textContent = v.type+' · '+v.fleet;
+  document.getElementById('vessel-edit-modal').classList.add('open');
+}
+window.openVesselModal = openVesselModal;
+function closeVesselModal() {
+  var mo = document.getElementById('vessel-edit-modal');
+  if (mo) mo.classList.remove('open');
+  _veditVid = null;
+}
+window.closeVesselModal = closeVesselModal;
+window.vesselSave = function() {
+  if (!_veditVid) return;
+  var v = vessels.find(function(x){return x.id===_veditVid;}); if (!v) return;
+  var newDes = document.getElementById('vedit-designation').value.trim();
+  if (newDes) v.designation = newDes;
+  v.type   = document.getElementById('vedit-type').value;
+  v.fleet  = document.getElementById('vedit-fleet').value;
+  v.status = document.getElementById('vedit-status').value;
+  auditEntry('VESSEL','Updated vessel properties for '+v.designation, {vesselId:v.id,type:v.type,fleet:v.fleet,status:v.status});
+  closeVesselModal();
+  renderGantt(); renderSpreadsheet(); propagate(); autoSave();
+  toast(v.designation+' updated');
+};
+
 function openMSEModal(vid, key, field) {
   field = field || 'ms';
   var v = vessels.find(v=>v.id===vid); if (!v) return;
@@ -1991,12 +2076,13 @@ document.addEventListener('click', function(e) {
   if (m && !m.contains(e.target)) m.style.display = 'none';
 });
 
-// Single Escape handler covers both ctx-menu and MSE modal
+// Single Escape handler covers ctx-menu, MSE modal, and vessel-edit modal
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     var m = document.getElementById('ctx-menu');
     if (m) m.style.display = 'none';
     closeMSEModal();
+    closeVesselModal();
   }
 });
 
