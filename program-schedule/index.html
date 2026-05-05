@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Program Schedule — S4 Ledger</title>
+  <meta name="description" content="Service Craft & Vessel Milestone Gantt Tracker — BLI Demo">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ══ S4 Design Tokens ══════════════════════════════════════════ */
+    :root {
+      --accent:    #007AFF;
+      --surface:   #ffffff;
+      --surface-2: #f5f5f7;
+      --surface-3: #e8e8ed;
+      --border:    rgba(0,0,0,0.08);
+      --border-2:  rgba(0,0,0,0.14);
+      --steel:     #6e6e73;
+      --text:      #1d1d1f;
+      --green:     #34c759;
+      --red:       #ff3b30;
+      --yellow:    #ff9500;
+      --gold:      #c9a84c;
+      --purple:    #af52de;
+      --navy:      #1c3a5f;
+      --shadow:    0 2px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,0.13), 0 3px 10px rgba(0,0,0,0.07);
+      --radius:    12px;
+      --radius-sm: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface-2);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ══ App Shell ════════════════════════════════════════════════ */
+    #app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* ── Header ── */
+    #header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      height: 54px;
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .logo-mark {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--accent) 100%);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 12px; font-weight: 700;
+      flex-shrink: 0; text-decoration: none;
+    }
+
+    .title-block { flex: 1; min-width: 0; }
+    .title-block h1 { font-size: 14px; font-weight: 600; white-space: nowrap; }
+    .title-block .subtitle { font-size: 10.5px; color: var(--steel); margin-top: 1px; }
+
+    .hdr-divider { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
+
+    /* ── Toolbar ── */
+    #toolbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 7px 20px;
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; flex-shrink: 0;
+    }
+
+    .toolbar-group { display: flex; align-items: center; gap: 5px; }
+    .toolbar-label {
+      font-size: 10px; font-weight: 600; color: var(--steel);
+      text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;
+    }
+    .tb-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+
+    .chip-btn {
+      padding: 4px 11px;
+      border: 1px solid var(--border); border-radius: 20px;
+      background: transparent;
+      font-size: 11px; font-weight: 500; color: var(--steel);
+      cursor: pointer; transition: all 0.14s; white-space: nowrap;
+    }
+    .chip-btn:hover { background: var(--surface-3); color: var(--text); }
+    .chip-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+    .action-btn {
+      padding: 5px 12px; border-radius: var(--radius-sm);
+      font-size: 11px; font-weight: 500; cursor: pointer;
+      transition: all 0.14s; border: 1px solid transparent; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .btn-primary  { background: var(--accent); color: white; border-color: var(--accent); }
+    .btn-primary:hover { background: #0066e0; border-color: #0066e0; }
+    .btn-outline  { background: var(--surface); border-color: var(--border); color: var(--text); }
+    .btn-outline:hover { background: var(--surface-3); }
+
+    .icon-btn {
+      width: 30px; height: 30px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); background: transparent;
+      color: var(--steel); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 12px; transition: all 0.14s;
+    }
+    .icon-btn:hover { background: var(--surface-3); color: var(--text); }
+
+    select.s4-select {
+      padding: 4px 8px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-size: 11px;
+      font-family: inherit; background: var(--surface-2);
+      color: var(--text); cursor: pointer; outline: none;
+    }
+    select.s4-select:focus { border-color: var(--accent); }
+
+    .ms-toggle {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; color: var(--steel); cursor: pointer;
+      user-select: none;
+    }
+    .ms-toggle input { cursor: pointer; accent-color: var(--accent); width: 12px; height: 12px; }
+
+    /* ── Legend Bar ── */
+    #legend-bar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 5px 20px; display: flex; align-items: center;
+      gap: 14px; flex-shrink: 0; flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 10.5px; color: var(--steel); white-space: nowrap;
+    }
+
+    /* ══ Main Area ════════════════════════════════════════════════ */
+    #main { flex: 1; display: flex; overflow: hidden; }
+
+    #center { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+    /* ── Gantt Panel ── */
+    #gantt-panel {
+      flex-shrink: 0; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow: auto; max-height: 44vh; min-height: 180px;
+      padding: 0;
+    }
+
+    #gantt-svg { display: block; }
+
+    /* ── Spreadsheet Panel ── */
+    #spreadsheet-panel { flex: 1; overflow: auto; }
+
+    #ssheet {
+      width: 100%; border-collapse: collapse;
+      font-size: 11.5px;
+    }
+
+    #ssheet thead th {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surface-2);
+      border-bottom: 2px solid var(--border-2);
+      padding: 7px 10px;
+      text-align: left; font-size: 10px; font-weight: 600;
+      color: var(--steel); text-transform: uppercase;
+      letter-spacing: 0.06em; white-space: nowrap;
+    }
+
+    #ssheet tr.type-sep td {
+      background: var(--surface-3);
+      padding: 4px 10px 4px 12px;
+      font-size: 9.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--steel); border-bottom: 1px solid var(--border);
+    }
+
+    #ssheet tbody tr.vessel-row {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+    #ssheet tbody tr.vessel-row:hover { background: rgba(0,122,255,0.028); }
+
+    #ssheet tbody td { padding: 5px 10px; vertical-align: middle; white-space: nowrap; }
+
+    .vname { font-weight: 600; font-size: 12px; }
+
+    .fleet-badge {
+      display: inline-flex; align-items: center;
+      padding: 1px 6px; border-radius: 9px;
+      font-size: 9.5px; font-weight: 600;
+      background: var(--surface-3); color: var(--steel);
+    }
+    .fleet-badge.pacflt { background: rgba(0,122,255,0.1); color: #0058cc; }
+    .fleet-badge.usff   { background: rgba(52,199,89,0.1);  color: #1a7a36; }
+    .fleet-badge.usmc   { background: rgba(255,149,0,0.1);  color: #b35900; }
+
+    input.date-input {
+      cursor: pointer; border: 1px solid transparent;
+      border-radius: 5px; padding: 3px 6px;
+      font-size: 11px; font-family: inherit;
+      color: var(--text); background: transparent;
+      transition: all 0.12s; min-width: 86px;
+      -webkit-appearance: none;
+    }
+    input.date-input:hover  { background: var(--surface-2); border-color: var(--border); }
+    input.date-input:focus  { outline: none; background: var(--surface); border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,122,255,0.14); }
+    input.date-input.empty  { color: var(--steel); opacity: 0.45; }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 7px; border-radius: 9px;
+      font-size: 9.5px; font-weight: 600;
+    }
+    .s-on-track { background: rgba(52,199,89,0.12);  color: #1a7a36; }
+    .s-at-risk  { background: rgba(255,149,0,0.12);  color: #b35900; }
+    .s-delayed  { background: rgba(255,59,48,0.12);  color: #b81f17; }
+    .s-pending  { background: rgba(0,122,255,0.10);  color: #0058cc; }
+
+    input.notes-input {
+      font-size: 11px; font-family: inherit;
+      border: 1px solid transparent; border-radius: 5px;
+      padding: 3px 6px; color: var(--steel);
+      background: transparent; width: 150px;
+      transition: all 0.12s;
+    }
+    input.notes-input:hover  { background: var(--surface-2); border-color: var(--border); }
+    input.notes-input:focus  { outline: none; background: var(--surface); border-color: var(--accent); color: var(--text); }
+
+    .del-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--steel); font-size: 11px; padding: 3px 5px;
+      border-radius: 4px; transition: all 0.12s; opacity: 0.5;
+    }
+    .del-btn:hover { color: var(--red); opacity: 1; background: rgba(255,59,48,0.07); }
+
+    .add-row-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 12px; color: var(--accent);
+      font-size: 11px; font-weight: 500; cursor: pointer;
+      border: 1px dashed rgba(0,122,255,0.28); border-radius: 6px;
+      background: rgba(0,122,255,0.03); width: 100%;
+      transition: all 0.12s;
+    }
+    .add-row-btn:hover { background: rgba(0,122,255,0.07); border-color: var(--accent); }
+
+    /* ══ Right Panel ══════════════════════════════════════════════ */
+    #right-panel {
+      width: 280px; flex-shrink: 0;
+      background: var(--surface); border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: width 0.2s ease;
+    }
+    #right-panel.collapsed { width: 0; overflow: hidden; }
+
+    .rp-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      background: var(--surface-2); flex-shrink: 0;
+    }
+    .rp-tab {
+      flex: 1; padding: 9px 4px; font-size: 11px; font-weight: 500;
+      color: var(--steel); cursor: pointer; border: none;
+      background: transparent; border-bottom: 2px solid transparent;
+      transition: all 0.14s; text-align: center;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .rp-tab.active  { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface); }
+    .rp-tab:hover   { color: var(--text); }
+
+    #rp-log { flex: 1; overflow-y: auto; padding: 10px; }
+    #rp-ai  { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+    #ai-msgs { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+
+    .ai-msg-row {
+      padding: 7px 10px; border-radius: 10px;
+      font-size: 11px; line-height: 1.5;
+      animation: fadeIn 0.25s ease;
+    }
+    .ai-user { background: var(--accent); color: white; margin-left: 24px; border-radius: 10px 10px 2px 10px; }
+    .ai-bot  { background: var(--surface-2); color: var(--text); margin-right: 24px; border-radius: 10px 10px 10px 2px; }
+
+    .ai-typing-row { display: flex; gap: 4px; padding: 8px 12px; background: var(--surface-2);
+      border-radius: 10px; margin-right: 24px; width: fit-content; }
+    .ai-typing-row span { width: 5px; height: 5px; background: var(--steel);
+      border-radius: 50%; animation: tdot 1.1s infinite; }
+    .ai-typing-row span:nth-child(2) { animation-delay: 0.18s; }
+    .ai-typing-row span:nth-child(3) { animation-delay: 0.36s; }
+
+    #ai-input-row {
+      display: flex; gap: 6px; padding: 8px 10px;
+      border-top: 1px solid var(--border); flex-shrink: 0;
+    }
+    #ai-input {
+      flex: 1; padding: 6px 10px; border: 1px solid var(--border);
+      border-radius: 18px; font-size: 11px; font-family: inherit;
+      outline: none; background: var(--surface-2); transition: all 0.14s;
+    }
+    #ai-input:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 2px rgba(0,122,255,0.12); }
+    #ai-send {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--accent); color: white; border: none;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-size: 11px; transition: background 0.14s;
+    }
+    #ai-send:hover { background: #0066e0; }
+
+    /* ── Log entries ── */
+    .log-entry {
+      padding: 7px 9px; border: 1px solid var(--border);
+      border-radius: 7px; margin-bottom: 5px;
+      font-size: 10.5px; background: var(--surface-2);
+      animation: fadeIn 0.25s ease;
+    }
+    .le-time  { color: var(--steel); font-size: 9.5px; margin-bottom: 1px; }
+    .le-who   { font-weight: 600; color: var(--text); font-size: 10.5px; }
+    .le-what  { color: var(--steel); margin-top: 2px; }
+    .le-diff  { margin-top: 3px; font-size: 10px; }
+    .le-old   { color: var(--red); text-decoration: line-through; }
+    .le-new   { color: var(--green); }
+    .le-ai    { margin-top: 5px; padding: 5px 7px; background: rgba(0,122,255,0.06);
+      border-radius: 5px; color: #0058cc; font-style: italic; font-size: 10px; line-height: 1.45; }
+
+    /* ══ Login Modal ══════════════════════════════════════════════ */
+    #login-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.38);
+      backdrop-filter: blur(10px) saturate(160%);
+      -webkit-backdrop-filter: blur(10px) saturate(160%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-card {
+      background: var(--surface); border-radius: 20px;
+      padding: 40px 36px; width: 390px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.3s cubic-bezier(.22,.68,0,1.1);
+    }
+    .login-card .logo-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 26px;
+    }
+    .login-card .lm {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--accent) 100%);
+      border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; color: white; font-size: 20px; font-weight: 700;
+    }
+    .login-card .lm-text h2 { font-size: 17px; font-weight: 700; }
+    .login-card .lm-text p  { font-size: 11.5px; color: var(--steel); margin-top: 2px; }
+
+    .form-grp { margin-bottom: 13px; }
+    .form-grp label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; }
+    .form-grp input {
+      width: 100%; padding: 10px 13px;
+      border: 1.5px solid var(--border); border-radius: 9px;
+      font-size: 14px; font-family: inherit; outline: none;
+      background: var(--surface-2); transition: all 0.14s;
+    }
+    .form-grp input:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+
+    .login-btn {
+      width: 100%; padding: 11px; border-radius: 9px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      border: none; transition: all 0.14s; margin-bottom: 9px;
+    }
+    .lbtn-p { background: var(--accent); color: white; }
+    .lbtn-p:hover { background: #0066e0; }
+    .lbtn-s { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+    .lbtn-s:hover { background: var(--surface-3); }
+
+    .login-err {
+      background: rgba(255,59,48,0.09); border: 1px solid rgba(255,59,48,0.18);
+      color: var(--red); padding: 8px 11px; border-radius: 7px;
+      font-size: 11.5px; margin-bottom: 11px; display: none;
+    }
+
+    /* ══ Modals ═══════════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 900;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 24px; min-width: 380px;
+      box-shadow: var(--shadow-lg); animation: slideUp 0.22s ease;
+    }
+    .modal-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+
+    /* ── User Chip ── */
+    .user-chip {
+      display: flex; align-items: center; gap: 7px;
+      padding: 4px 9px; border-radius: 7px;
+      cursor: pointer; border: 1px solid var(--border);
+      background: var(--surface-2); transition: all 0.14s; flex-shrink: 0;
+    }
+    .user-chip:hover { background: var(--surface-3); }
+    .user-av {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700; flex-shrink: 0;
+    }
+    .user-nm { font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+
+    /* ── Save toast ── */
+    #toast {
+      position: fixed; bottom: 18px; right: 22px;
+      background: var(--text); color: white;
+      padding: 8px 14px; border-radius: 7px;
+      font-size: 11.5px; font-weight: 500; z-index: 800;
+      animation: slideUp 0.18s ease; display: none;
+    }
+
+    /* ── Gantt tooltip ── */
+    #gantt-tip {
+      position: fixed; background: var(--text); color: white;
+      padding: 5px 9px; border-radius: 5px; font-size: 11px;
+      pointer-events: none; z-index: 600; display: none;
+      white-space: nowrap; box-shadow: var(--shadow);
+    }
+
+    /* ══ Animations ══════════════════════════════════════════════ */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes tdot {
+      0%, 60%, 100% { transform: translateY(0); }
+      30%            { transform: translateY(-4px); }
+    }
+
+    /* ── Scrollbars ── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.18); }
+
+    @media (max-width: 860px) {
+      #right-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ APP SHELL ═══════════════════════════════════════════════════ -->
+<div id="app" style="display:none">
+
+  <!-- Header -->
+  <header id="header">
+    <a href="/" class="logo-mark" title="S4 Ledger Home">S4</a>
+    <div class="hdr-divider"></div>
+    <div class="title-block">
+      <h1>Program Schedule</h1>
+      <div class="subtitle">Service Craft &amp; Vessel Milestone Tracker — BLI Demo</div>
+    </div>
+    <div id="save-label" style="font-size:10.5px;color:var(--steel);white-space:nowrap">All changes saved</div>
+    <div class="hdr-divider"></div>
+    <button class="icon-btn" id="toggle-panel-btn" title="Toggle Log / AI Panel" onclick="togglePanel()">
+      <i class="fas fa-columns"></i>
+    </button>
+    <div class="user-chip" onclick="handleSignOut()">
+      <div class="user-av" id="user-av">D</div>
+      <span class="user-nm" id="user-nm">Demo</span>
+    </div>
+  </header>
+
+  <!-- Toolbar -->
+  <div id="toolbar">
+    <!-- Craft filter -->
+    <div class="toolbar-group">
+      <span class="toolbar-label">Craft</span>
+      <button class="chip-btn active" onclick="setFilter('all',this)">All</button>
+      <button class="chip-btn" onclick="setFilter('APL',this)">APL</button>
+      <button class="chip-btn" onclick="setFilter('YRBM',this)">YRBM</button>
+      <button class="chip-btn" onclick="setFilter('YFB',this)">YFB</button>
+      <button class="chip-btn" onclick="setFilter('YTB',this)">YTB</button>
+    </div>
+
+    <div class="tb-divider"></div>
+
+    <!-- FY range -->
+    <div class="toolbar-group">
+      <span class="toolbar-label">FY</span>
+      <select class="s4-select" id="fy-start" onchange="updateFYRange()">
+        <option value="25">FY25</option>
+        <option value="26" selected>FY26</option>
+        <option value="27">FY27</option>
+      </select>
+      <span style="font-size:11px;color:var(--steel)">–</span>
+      <select class="s4-select" id="fy-end" onchange="updateFYRange()">
+        <option value="30">FY30</option>
+        <option value="31">FY31</option>
+        <option value="32" selected>FY32</option>
+        <option value="33">FY33</option>
+        <option value="34">FY34</option>
+      </select>
+    </div>
+
+    <div class="tb-divider"></div>
+
+    <!-- Milestone toggles -->
+    <div class="toolbar-group" style="gap:8px">
+      <span class="toolbar-label">Show</span>
+      <label class="ms-toggle" title="Contract Award"><input type="checkbox" checked onchange="toggleMS('CA',this.checked)"> <span style="color:var(--gold)">★</span> CA</label>
+      <label class="ms-toggle" title="Start of Construction"><input type="checkbox" checked onchange="toggleMS('SOC',this.checked)"> <span style="color:var(--yellow)">▲</span> SOC</label>
+      <label class="ms-toggle" title="Builder's Trials"><input type="checkbox" checked onchange="toggleMS('BT',this.checked)"> <span style="color:var(--accent)">◆</span> BT</label>
+      <label class="ms-toggle" title="Acceptance Trials"><input type="checkbox" checked onchange="toggleMS('AT',this.checked)"> <span style="color:var(--purple)">◆</span> AT</label>
+      <label class="ms-toggle" title="Delivery"><input type="checkbox" checked onchange="toggleMS('DEL',this.checked)"> <span style="color:var(--navy)">●</span> DEL</label>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <!-- Actions -->
+    <div class="toolbar-group">
+      <button class="action-btn btn-outline" onclick="openAddVessel()"><i class="fas fa-plus fa-xs"></i> Add Vessel</button>
+      <button class="action-btn btn-outline" onclick="openAddMS()"><i class="fas fa-flag fa-xs"></i> Add Milestone</button>
+      <button class="action-btn btn-outline" onclick="exportCSV()"><i class="fas fa-download fa-xs"></i> Export CSV</button>
+      <label class="action-btn btn-outline" style="cursor:pointer">
+        <i class="fas fa-upload fa-xs"></i> Import CSV
+        <input type="file" accept=".csv" style="display:none" onchange="importCSV(event)">
+      </label>
+      <button class="action-btn btn-primary" onclick="saveAll()"><i class="fas fa-cloud-upload-alt fa-xs"></i> Save</button>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div id="legend-bar">
+    <span style="font-size:9.5px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.07em">Legend:</span>
+    <div class="legend-item"><span style="color:var(--gold);font-size:14px">★</span> Contract Award (CA)</div>
+    <div class="legend-item"><span style="color:var(--yellow);font-size:14px">▲</span> Start of Construction (SOC)</div>
+    <div class="legend-item"><span style="color:var(--accent);font-size:14px">◆</span> Builder's Trials (BT)</div>
+    <div class="legend-item"><span style="color:var(--purple);font-size:14px">◆</span> Acceptance Trials (AT)</div>
+    <div class="legend-item"><span style="color:var(--navy);font-size:14px">●</span> Delivery (DEL)</div>
+    <div class="legend-item" style="margin-left:6px">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:rgba(0,122,255,0.15);border:1.5px solid #007AFF;vertical-align:middle"></span> PACFLT
+    </div>
+    <div class="legend-item">
+      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:rgba(52,199,89,0.15);border:1.5px solid #34c759;vertical-align:middle"></span> USFF
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div id="main">
+    <div id="center">
+      <!-- Gantt -->
+      <div id="gantt-panel"><svg id="gantt-svg"></svg></div>
+      <!-- Spreadsheet -->
+      <div id="spreadsheet-panel">
+        <table id="ssheet">
+          <thead>
+            <tr id="ssheet-head">
+              <th style="min-width:95px">Designation</th>
+              <th>Type</th>
+              <th>Fleet</th>
+              <th style="min-width:92px">CA</th>
+              <th style="min-width:92px">SOC</th>
+              <th style="min-width:92px">BT</th>
+              <th style="min-width:92px">AT</th>
+              <th style="min-width:92px">DEL</th>
+              <th>Duration</th>
+              <th>Status</th>
+              <th style="min-width:155px">Notes</th>
+              <th style="width:30px"></th>
+            </tr>
+          </thead>
+          <tbody id="ssheet-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right panel -->
+    <div id="right-panel">
+      <div class="rp-tabs">
+        <button class="rp-tab active" onclick="setRPTab('log',this)"><i class="fas fa-history fa-xs"></i> Change Log</button>
+        <button class="rp-tab" onclick="setRPTab('ai',this)"><i class="fas fa-robot fa-xs"></i> AI Assist</button>
+      </div>
+      <div id="rp-log">
+        <div id="log-entries"><p style="color:var(--steel);font-size:10.5px;padding:4px 0">No changes yet.</p></div>
+      </div>
+      <div id="rp-ai">
+        <div id="ai-msgs"></div>
+        <div id="ai-input-row">
+          <input type="text" id="ai-input" placeholder="Ask about schedule impact…" onkeydown="if(event.key==='Enter')sendAI()">
+          <button id="ai-send" onclick="sendAI()"><i class="fas fa-paper-plane" style="font-size:10px"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- end #app -->
+
+<!-- ══ LOGIN OVERLAY ═══════════════════════════════════════════════ -->
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="logo-row">
+      <div class="lm">S4</div>
+      <div class="lm-text">
+        <h2>Program Schedule</h2>
+        <p>S4 Ledger — Service Craft &amp; Vessel Tracker</p>
+      </div>
+    </div>
+    <div id="login-err" class="login-err"></div>
+    <div class="form-grp">
+      <label>Email</label>
+      <input type="email" id="l-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="form-grp">
+      <label>Password</label>
+      <input type="password" id="l-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn lbtn-p" id="l-btn" onclick="doLogin()">
+      <span id="l-btn-txt">Sign In</span>
+    </button>
+    <button class="login-btn lbtn-s" onclick="enterDemo()">
+      <i class="fas fa-eye fa-xs" style="margin-right:5px"></i>Continue in Demo Mode
+    </button>
+    <p style="font-size:10.5px;color:var(--steel);text-align:center;margin-top:10px;line-height:1.5">
+      Use your existing S4 Ledger credentials.<br>Demo mode requires no login.
+    </p>
+  </div>
+</div>
+
+<!-- ══ ADD VESSEL MODAL ════════════════════════════════════════════ -->
+<div id="add-vessel-modal" class="modal-overlay">
+  <div class="modal-card" style="min-width:440px">
+    <h3><i class="fas fa-ship fa-xs" style="color:var(--accent);margin-right:7px"></i>Add Vessel</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+      <div class="form-grp" style="margin:0">
+        <label>Designation</label>
+        <input type="text" id="v-desig" placeholder="APL-106" style="font-size:13px" onkeydown="if(event.key==='Enter')confirmAddVessel()">
+      </div>
+      <div class="form-grp" style="margin:0">
+        <label>Craft Type</label>
+        <select id="v-type" class="s4-select" style="width:100%;height:38px;font-size:13px">
+          <option value="APL">APL</option>
+          <option value="YRBM">YRBM</option>
+          <option value="YFB">YFB</option>
+          <option value="YTB">YTB</option>
+        </select>
+      </div>
+      <div class="form-grp" style="margin:0">
+        <label>Fleet</label>
+        <select id="v-fleet" class="s4-select" style="width:100%;height:38px;font-size:13px">
+          <option value="PACFLT">PACFLT</option>
+          <option value="USFF">USFF</option>
+          <option value="USMC">USMC</option>
+        </select>
+      </div>
+    </div>
+    <p style="font-size:10.5px;color:var(--steel);margin-top:10px">Milestone dates can be set directly in the spreadsheet after adding.</p>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="action-btn btn-primary" style="flex:1;padding:9px;font-size:13px" onclick="confirmAddVessel()">Add Vessel</button>
+      <button class="action-btn btn-outline" style="flex:1;padding:9px;font-size:13px" onclick="closeModal('add-vessel-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD MILESTONE TYPE MODAL ════════════════════════════════════ -->
+<div id="add-ms-modal" class="modal-overlay">
+  <div class="modal-card">
+    <h3><i class="fas fa-flag fa-xs" style="color:var(--accent);margin-right:7px"></i>Add Custom Milestone Type</h3>
+    <div class="form-grp">
+      <label>Code (up to 6 chars, e.g. "IOC")</label>
+      <input type="text" id="ms-code" placeholder="IOC" maxlength="6" style="text-transform:uppercase;font-size:13px">
+    </div>
+    <div class="form-grp">
+      <label>Full Name</label>
+      <input type="text" id="ms-name" placeholder="Initial Operational Capability" style="font-size:13px">
+    </div>
+    <div class="form-grp">
+      <label>Color</label>
+      <input type="color" id="ms-color" value="#5856d6" style="height:36px;width:100%;border-radius:7px;border:1px solid var(--border);cursor:pointer">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="action-btn btn-primary" style="flex:1;padding:9px;font-size:13px" onclick="confirmAddMS()">Add Milestone</button>
+      <button class="action-btn btn-outline" style="flex:1;padding:9px;font-size:13px" onclick="closeModal('add-ms-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOOLTIPS / TOAST ════════════════════════════════════════════ -->
+<div id="gantt-tip"></div>
+<div id="toast"></div>
+
+<!-- ══ SUPABASE SDK ════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- ══ APPLICATION LOGIC ══════════════════════════════════════════ -->
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   S4 LEDGER — Program Schedule Tool
+   Version : 1.0.0
+   Built   : 2026-05-05
+   Purpose : Fiscal-year Gantt + editable spreadsheet for service
+             craft / vessel milestone tracking (BLI demo data).
+             Propagates milestone date changes to Deliverables
+             Tracker via localStorage + Supabase (when authenticated).
+   Data    : UNCLASSIFIED // Demo only — not for operational use.
+═══════════════════════════════════════════════════════════════════ */
+
+// ── Supabase ──────────────────────────────────────────────────────
+const SB_URL = 'https://ysmwkkdpjgjokukxolel.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzbXdra2Rwamdqb2t1a3hvbGVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMzA3NDQsImV4cCI6MjA4NzYwNjc0NH0.4u56RJ61Q5cqnqMqIEWwg50q6MlV8bEvueA45enQgxE';
+const SB = supabase.createClient(SB_URL, SB_KEY);
+
+// ── Constants ─────────────────────────────────────────────────────
+const VERSION       = '1.0.0';
+const STORE_KEY     = 's4_program_schedule_v1';
+const PROPAGATE_KEY = 's4_program_schedule_propagated';
+const TABLE         = 'program_schedule';
+const TOOL_ID       = 'program-schedule-v1';
+
+// ── Milestone Registry ────────────────────────────────────────────
+var MILESTONES = {
+  CA:  { label: 'Contract Award',        color: '#c9a84c', shape: 'star'     },
+  SOC: { label: 'Start of Construction', color: '#ff9500', shape: 'triangle' },
+  BT:  { label: "Builder's Trials",      color: '#007AFF', shape: 'diamond'  },
+  AT:  { label: 'Acceptance Trials',     color: '#af52de', shape: 'diamond'  },
+  DEL: { label: 'Delivery',              color: '#1c3a5f', shape: 'circle'   },
+};
+
+// ── Vessel Type Definitions ───────────────────────────────────────
+var VT = {
+  APL:  { label: 'APL — Auxiliary Personnel Lighter',      color: '#007AFF' },
+  YRBM: { label: 'YRBM — Yard Repair Berthing & Messing', color: '#34c759' },
+  YFB:  { label: 'YFB — Yard Floating Barrier',           color: '#ff9500' },
+  YTB:  { label: 'YTB — Large Harbor Tug',                color: '#af52de' },
+};
+
+// ── Demo Vessels (generic BLI-like, not real schedule data) ───────
+var DEMO_VESSELS = [
+  { id:'apl-101', type:'APL',  designation:'APL-101', fleet:'PACFLT', milestones:{ CA:'2026-01', SOC:'2026-06', DEL:'2028-02' }, notes:'', status:'on-track' },
+  { id:'apl-102', type:'APL',  designation:'APL-102', fleet:'PACFLT', milestones:{ CA:'2026-05', SOC:'2026-11', DEL:'2028-09' }, notes:'', status:'on-track' },
+  { id:'apl-103', type:'APL',  designation:'APL-103', fleet:'USFF',   milestones:{ CA:'2026-10', SOC:'2027-04', DEL:'2029-01' }, notes:'', status:'on-track' },
+  { id:'apl-104', type:'APL',  designation:'APL-104', fleet:'PACFLT', milestones:{ CA:'2027-03', SOC:'2027-09', DEL:'2029-07' }, notes:'', status:'on-track' },
+  { id:'apl-105', type:'APL',  designation:'APL-105', fleet:'USFF',   milestones:{ CA:'2027-08', SOC:'2028-02', DEL:'2030-02' }, notes:'', status:'on-track' },
+  { id:'yrbm-50', type:'YRBM', designation:'YRBM-50', fleet:'PACFLT', milestones:{ DEL:'2026-03' }, notes:'Gov-furnished — see contract notes', status:'on-track' },
+  { id:'yrbm-51', type:'YRBM', designation:'YRBM-51', fleet:'USFF',   milestones:{ CA:'2026-03', SOC:'2026-08', DEL:'2027-04' }, notes:'', status:'on-track' },
+  { id:'yrbm-52', type:'YRBM', designation:'YRBM-52', fleet:'PACFLT', milestones:{ CA:'2026-09', SOC:'2027-01', DEL:'2028-02' }, notes:'', status:'on-track' },
+  { id:'yrbm-53', type:'YRBM', designation:'YRBM-53', fleet:'USFF',   milestones:{ CA:'2027-04', SOC:'2027-10', DEL:'2029-03' }, notes:'', status:'on-track' },
+  { id:'yfb-88',  type:'YFB',  designation:'YFB-88',  fleet:'PACFLT', milestones:{ CA:'2026-02', SOC:'2026-07', DEL:'2027-07' }, notes:'', status:'on-track' },
+  { id:'yfb-89',  type:'YFB',  designation:'YFB-89',  fleet:'USFF',   milestones:{ CA:'2026-11', SOC:'2027-05', DEL:'2028-08' }, notes:'', status:'on-track' },
+  { id:'yfb-90',  type:'YFB',  designation:'YFB-90',  fleet:'PACFLT', milestones:{ CA:'2027-07', SOC:'2028-01', DEL:'2029-06' }, notes:'', status:'on-track' },
+  { id:'ytb-810', type:'YTB',  designation:'YTB-810', fleet:'PACFLT', milestones:{ CA:'2026-05', SOC:'2026-11', BT:'2028-02', AT:'2028-04', DEL:'2028-07' }, notes:'', status:'on-track' },
+  { id:'ytb-811', type:'YTB',  designation:'YTB-811', fleet:'USFF',   milestones:{ CA:'2027-01', SOC:'2027-07', BT:'2028-10', AT:'2028-12', DEL:'2029-04' }, notes:'', status:'on-track' },
+  { id:'ytb-812', type:'YTB',  designation:'YTB-812', fleet:'PACFLT', milestones:{ CA:'2027-09', SOC:'2028-04', DEL:'2030-03' }, notes:'', status:'on-track' },
+];
+
+// ── State ─────────────────────────────────────────────────────────
+var vessels     = JSON.parse(JSON.stringify(DEMO_VESSELS));
+var changeLog   = [];
+var currentUser = null;
+var isDemo      = false;
+var craftFilter = 'all';
+var fyStart     = 26;
+var fyEnd       = 32;
+var hiddenMS    = {};
+var rpOpen      = true;
+var rpTab       = 'log';
+var saveTimer   = null;
+
+// ── Gantt constants ───────────────────────────────────────────────
+var GP_LEFT    = 128;
+var GP_ROW_H   = 44;
+var GP_HDR_H   = 34;
+var GP_FY_W    = 108;
+var GP_MS_R    = 7;
+
+// ═══════════════════════════════════════════════════════════════════
+//  INITIALISATION
+// ═══════════════════════════════════════════════════════════════════
+async function init() {
+  sysLog('init', 'Program Schedule tool started', { version: VERSION });
+
+  // Load persisted data
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      var stored = JSON.parse(raw);
+      if (stored.vessels   && Array.isArray(stored.vessels)) vessels   = stored.vessels;
+      if (stored.changeLog && Array.isArray(stored.changeLog)) changeLog = stored.changeLog;
+      if (stored.customMS) Object.assign(MILESTONES, stored.customMS);
+      sysLog('init', 'Loaded from localStorage', { vessels: vessels.length });
+    }
+  } catch(e) {
+    sysLog('error', 'Failed to parse localStorage', { err: e.message });
+  }
+
+  // Auth check
+  try {
+    var result = await SB.auth.getSession();
+    if (result.data && result.data.session) {
+      currentUser = result.data.session.user;
+      isDemo = false;
+      showApp(currentUser.email);
+      await loadFromCloud();
+    } else {
+      showLoginOverlay();
+    }
+  } catch(e) {
+    sysLog('error', 'Auth check failed', { err: e.message });
+    showLoginOverlay();
+  }
+
+  SB.auth.onAuthStateChange(function(event, session) {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      isDemo = false;
+      showApp(currentUser.email);
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null; isDemo = false;
+      showLoginOverlay();
+    }
+  });
+}
+
+function showApp(nameOrEmail) {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  var n  = (nameOrEmail || 'User').split('@')[0];
+  var av = n.slice(0,2).toUpperCase();
+  document.getElementById('user-av').textContent = av;
+  document.getElementById('user-nm').textContent = n;
+  render();
+  sysLog('auth', 'App shown', { user: nameOrEmail });
+}
+
+function showLoginOverlay() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-overlay').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════════════
+async function doLogin() {
+  var email = document.getElementById('l-email').value.trim();
+  var pw    = document.getElementById('l-pw').value;
+  var errEl = document.getElementById('login-err');
+  var btn   = document.getElementById('l-btn');
+  var txt   = document.getElementById('l-btn-txt');
+
+  if (!email || !pw) { showErr(errEl, 'Please enter email and password.'); return; }
+
+  btn.disabled = true;
+  txt.innerHTML = '<i class="fas fa-spinner fa-spin fa-xs"></i>\u2004Signing in\u2026';
+  errEl.style.display = 'none';
+
+  try {
+    var res = await SB.auth.signInWithPassword({ email, password: pw });
+    if (res.error) {
+      showErr(errEl, res.error.message || 'Authentication failed.');
+      sysLog('auth', 'Login failed', { email, err: res.error.message });
+    } else {
+      sysLog('auth', 'Login success', { email });
+    }
+  } catch(e) {
+    showErr(errEl, 'Network error. Please try again.');
+    sysLog('auth', 'Login exception', { err: e.message });
+  } finally {
+    btn.disabled = false;
+    txt.textContent = 'Sign In';
+  }
+}
+window.doLogin = doLogin;
+
+function enterDemo() {
+  isDemo = true;
+  currentUser = { id: 'demo', email: 'demo@s4ledger.com' };
+  sysLog('auth', 'Demo mode entered', null);
+  showApp('Demo User');
+}
+window.enterDemo = enterDemo;
+
+async function handleSignOut() {
+  if (isDemo) { showLoginOverlay(); return; }
+  await SB.auth.signOut();
+  sysLog('auth', 'Signed out', null);
+  showLoginOverlay();
+}
+window.handleSignOut = handleSignOut;
+
+function showErr(el, msg) {
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PERSISTENCE
+// ═══════════════════════════════════════════════════════════════════
+async function loadFromCloud() {
+  if (!currentUser || isDemo) return;
+  try {
+    var res = await SB.from(TABLE).select('*').eq('tool_id', TOOL_ID).single();
+    if (res.data && !res.error) {
+      if (res.data.vessels)    vessels   = res.data.vessels;
+      if (res.data.change_log) changeLog = res.data.change_log;
+      sysLog('sync', 'Loaded from Supabase', { vessels: vessels.length });
+      render();
+    }
+  } catch(e) {
+    // Table may not exist yet — silently use local data
+    sysLog('sync', 'Cloud load skipped (table pending or offline)', { err: e.message });
+  }
+}
+
+window.saveAll = async function() {
+  var payload  = buildPayload();
+  // 1. localStorage (always)
+  var toStore  = Object.assign({}, payload, { customMS: getCustomMS() });
+  localStorage.setItem(STORE_KEY, JSON.stringify(toStore));
+
+  // 2. Supabase (when authenticated)
+  if (currentUser && !isDemo) {
+    try {
+      var row = Object.assign({ user_id: currentUser.id }, payload);
+      await SB.from(TABLE).upsert(row, { onConflict: 'tool_id' });
+    } catch(e) {
+      sysLog('sync', 'Cloud save skipped', { err: e.message });
+    }
+  }
+
+  setSaveLabel('All changes saved');
+  toast(isDemo ? 'Saved locally' : 'Saved to cloud');
+  sysLog('save', 'Schedule saved', { vessels: vessels.length, demo: isDemo });
+};
+
+function buildPayload() {
+  return {
+    tool_id:    TOOL_ID,
+    vessels:    vessels,
+    change_log: changeLog.slice(0, 300),
+    saved_at:   new Date().toISOString(),
+    version:    VERSION,
+  };
+}
+
+function getCustomMS() {
+  var base = ['CA','SOC','BT','AT','DEL'];
+  var custom = {};
+  Object.keys(MILESTONES).forEach(function(k) {
+    if (!base.includes(k)) custom[k] = MILESTONES[k];
+  });
+  return custom;
+}
+
+function autoSave() {
+  clearTimeout(saveTimer);
+  setSaveLabel('Saving\u2026');
+  saveTimer = setTimeout(window.saveAll, 1400);
+}
+
+function setSaveLabel(msg) {
+  var el = document.getElementById('save-label');
+  if (el) el.textContent = msg;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  LOGGING
+// ═══════════════════════════════════════════════════════════════════
+function sysLog(category, action, meta) {
+  var entry = {
+    id:        'log-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+    ts:        new Date().toISOString(),
+    user:      currentUser ? (isDemo ? 'Demo User' : currentUser.email) : 'anon',
+    category:  category,
+    action:    action,
+    vesselId:  null,
+    msKey:     null,
+    oldVal:    null,
+    newVal:    null,
+    aiNote:    null,
+    meta:      meta || null,
+  };
+  changeLog.unshift(entry);
+  if (changeLog.length > 600) changeLog = changeLog.slice(0, 600);
+  if (document.getElementById('log-entries')) renderLog();
+  return entry;
+}
+
+function schedLog(action, vesselId, msKey, oldVal, newVal) {
+  var entry = sysLog('schedule', action, null);
+  entry.vesselId = vesselId;
+  entry.msKey    = msKey;
+  entry.oldVal   = oldVal;
+  entry.newVal   = newVal;
+  return entry;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  DATE / FY HELPERS
+// ═══════════════════════════════════════════════════════════════════
+// "YYYY-MM" → { fy, fyMonth: 1–12 }
+function toFY(yyyyMm) {
+  var parts = yyyyMm.split('-');
+  var y = parseInt(parts[0]);
+  var m = parseInt(parts[1]);
+  var fy      = m >= 10 ? y + 1 : y;
+  var fyMonth = m >= 10 ? m - 9  : m + 3;
+  return { fy: fy, fyMonth: fyMonth };
+}
+
+// X coordinate in the gantt SVG for a given "YYYY-MM"
+function dateToX(yyyyMm) {
+  if (!yyyyMm) return -1;
+  var fyd    = toFY(yyyyMm);
+  var fyIdx  = fyd.fy - fyStart;
+  if (fyIdx < 0 || fyIdx > fyEnd - fyStart) return -1;
+  return GP_LEFT + fyIdx * GP_FY_W + ((fyd.fyMonth - 0.5) / 12) * GP_FY_W;
+}
+
+// "YYYY-MM" → "Mmm 'YY"
+function fmtYM(yyyyMm) {
+  if (!yyyyMm) return '\u2014';
+  var parts = yyyyMm.split('-');
+  var y = parts[0]; var m = parseInt(parts[1]);
+  var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return names[m-1] + " '" + y.slice(2);
+}
+
+// Duration CA → DEL in months
+function duration(vessel) {
+  var ca  = vessel.milestones['CA'];
+  var del = vessel.milestones['DEL'];
+  if (!ca || !del) return '\u2014';
+  var cp = ca.split('-').map(Number);
+  var dp = del.split('-').map(Number);
+  var mo = (dp[0] - cp[0]) * 12 + (dp[1] - cp[1]);
+  return mo > 0 ? mo + ' mo' : '\u2014';
+}
+
+// Month difference (positive = later)
+function moDiff(a, b) {
+  if (!a || !b) return 0;
+  var ap = a.split('-').map(Number);
+  var bp = b.split('-').map(Number);
+  return (bp[0] - ap[0]) * 12 + (bp[1] - ap[1]);
+}
+
+// Compute status
+function computeStatus(vessel) {
+  var del = vessel.milestones['DEL'];
+  if (!del) return 'pending';
+  var now = new Date();
+  var dp = del.split('-').map(Number);
+  var delDate = new Date(dp[0], dp[1]-1, 1);
+  if (delDate < now) return 'on-track'; // already delivered
+  var ca = vessel.milestones['CA'];
+  if (ca) {
+    var cap = ca.split('-').map(Number);
+    var caDate = new Date(cap[0], cap[1]-1, 1);
+    if (caDate < now && !vessel.milestones['SOC']) return 'at-risk';
+  }
+  return vessel.status || 'on-track';
+}
+
+function statusHtml(s) {
+  var labels = { 'on-track':'On Track', 'at-risk':'At Risk', 'delayed':'Delayed', 'pending':'Pending' };
+  return '<span class="status-pill s-' + s + '">'
+    + '<i class="fas fa-circle" style="font-size:5px"></i> ' + (labels[s] || s)
+    + '</span>';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  RENDERING
+// ═══════════════════════════════════════════════════════════════════
+function filtered() {
+  return vessels.filter(function(v) { return craftFilter === 'all' || v.type === craftFilter; });
+}
+
+function render() {
+  renderGantt();
+  renderSpreadsheet();
+  renderLog();
+}
+
+// ── Gantt ────────────────────────────────────────────────────────
+function renderGantt() {
+  var rows    = buildRows(filtered());
+  var fyCount = fyEnd - fyStart + 1;
+  var sw      = GP_LEFT + fyCount * GP_FY_W;
+  var sh      = GP_HDR_H + rows.length * GP_ROW_H + 6;
+  var svg     = document.getElementById('gantt-svg');
+  svg.setAttribute('width',   sw);
+  svg.setAttribute('height',  sh);
+  svg.setAttribute('viewBox', '0 0 ' + sw + ' ' + sh);
+
+  var h = '';
+
+  // Background
+  h += '<rect width="' + sw + '" height="' + sh + '" fill="#f5f5f7"/>';
+
+  // FY column alternating backgrounds
+  for (var fi = 0; fi < fyCount; fi++) {
+    var fx = GP_LEFT + fi * GP_FY_W;
+    if (fi % 2 === 0)
+      h += '<rect x="' + fx + '" y="' + GP_HDR_H + '" width="' + GP_FY_W + '" height="' + (sh - GP_HDR_H) + '" fill="rgba(255,255,255,0.72)"/>';
+  }
+
+  // Today line
+  var now = new Date();
+  var todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  var tx = dateToX(todayStr);
+  if (tx > 0) {
+    h += '<line x1="' + tx + '" y1="' + GP_HDR_H + '" x2="' + tx + '" y2="' + (sh-4) + '" stroke="#007AFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>';
+    h += '<text x="' + (tx+3) + '" y="' + (GP_HDR_H+11) + '" font-size="8.5" fill="#007AFF" opacity="0.7" font-family="Inter,-apple-system,sans-serif">Today</text>';
+  }
+
+  // FY headers
+  for (var fj = 0; fj < fyCount; fj++) {
+    var fx2 = GP_LEFT + fj * GP_FY_W;
+    h += '<rect x="' + fx2 + '" y="0" width="' + GP_FY_W + '" height="' + GP_HDR_H + '" fill="#1c3a5f"/>';
+    h += '<text x="' + (fx2 + GP_FY_W/2) + '" y="' + (GP_HDR_H/2+5) + '"'
+       + ' font-size="12" font-weight="600" text-anchor="middle"'
+       + ' fill="white" font-family="Inter,-apple-system,sans-serif">FY' + (fyStart + fj) + '</text>';
+    h += '<line x1="' + fx2 + '" y1="0" x2="' + fx2 + '" y2="' + sh + '" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>';
+  }
+
+  // Left label header
+  h += '<rect x="0" y="0" width="' + GP_LEFT + '" height="' + GP_HDR_H + '" fill="#1c3a5f"/>';
+  h += '<text x="10" y="' + (GP_HDR_H/2+5) + '" font-size="10.5" font-weight="600"'
+     + ' fill="rgba(255,255,255,0.65)" font-family="Inter,-apple-system,sans-serif">Vessel</text>';
+
+  // Rows
+  rows.forEach(function(row, ri) {
+    var ry = GP_HDR_H + ri * GP_ROW_H;
+
+    if (row.isGroup) {
+      var tc = (VT[row.type] || {}).color || '#6e6e73';
+      h += '<rect x="0" y="' + ry + '" width="' + sw + '" height="' + GP_ROW_H + '" fill="' + tc + '" opacity="0.09"/>';
+      h += '<rect x="0" y="' + ry + '" width="' + GP_LEFT + '" height="' + GP_ROW_H + '" fill="' + tc + '" opacity="0.18"/>';
+      h += '<text x="10" y="' + (ry + GP_ROW_H/2 + 4) + '" font-size="9.5" font-weight="700"'
+         + ' fill="' + tc + '" font-family="Inter,-apple-system,sans-serif" letter-spacing="0.08em">'
+         + esc(row.type) + '</text>';
+      return;
+    }
+
+    var v  = row.vessel;
+    var tc2 = (VT[v.type] || {}).color || '#6e6e73';
+
+    // Row bg + rule
+    h += '<line x1="0" y1="' + (ry + GP_ROW_H) + '" x2="' + sw + '" y2="' + (ry + GP_ROW_H) + '" stroke="rgba(0,0,0,0.05)" stroke-width="0.7"/>';
+    h += '<rect x="0" y="' + ry + '" width="' + GP_LEFT + '" height="' + GP_ROW_H + '" fill="' + tc2 + '" opacity="0.03"/>';
+
+    // Designation label
+    h += '<text x="10" y="' + (ry + GP_ROW_H/2 + 2) + '" font-size="10.5" font-weight="600"'
+       + ' fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">' + esc(v.designation) + '</text>';
+
+    // Fleet sub-label
+    var fc = v.fleet === 'PACFLT' ? '#007AFF' : v.fleet === 'USFF' ? '#34c759' : '#ff9500';
+    h += '<text x="10" y="' + (ry + GP_ROW_H/2 + 14) + '" font-size="8" fill="' + fc + '"'
+       + ' font-family="Inter,-apple-system,sans-serif" opacity="0.85">' + esc(v.fleet) + '</text>';
+
+    // Timeline bar (CA → DEL)
+    var xCA  = dateToX(v.milestones['CA']);
+    var xDEL = dateToX(v.milestones['DEL']);
+    if (xCA > 0 && xDEL > 0) {
+      h += '<rect x="' + xCA + '" y="' + (ry + GP_ROW_H/2 - 2) + '" width="' + (xDEL - xCA) + '"'
+         + ' height="4" rx="2" fill="' + tc2 + '" opacity="0.22"/>';
+    }
+
+    // Milestone symbols
+    Object.keys(v.milestones).forEach(function(key) {
+      if (hiddenMS[key]) return;
+      var ms = MILESTONES[key];
+      if (!ms) return;
+      var mx = dateToX(v.milestones[key]);
+      if (mx < 0) return;
+      var my = ry + GP_ROW_H / 2;
+      h += msSymbol(mx, my, ms.shape, ms.color, key, v.id);
+    });
+  });
+
+  // Right border
+  h += '<line x1="' + sw + '" y1="0" x2="' + sw + '" y2="' + sh + '" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>';
+
+  svg.innerHTML = h;
+  attachGanttTooltips();
+}
+
+function buildRows(vs) {
+  var rows  = [];
+  var types = ['APL','YRBM','YFB','YTB'];
+  // include any custom types
+  vs.forEach(function(v) { if (!types.includes(v.type)) types.push(v.type); });
+  types.forEach(function(t) {
+    var g = vs.filter(function(v) { return v.type === t; });
+    if (!g.length) return;
+    rows.push({ isGroup: true, type: t });
+    g.forEach(function(v) { rows.push({ isGroup: false, vessel: v }); });
+  });
+  return rows;
+}
+
+function msSymbol(x, y, shape, color, code, vesselId) {
+  var r  = GP_MS_R;
+  var s  = '';
+  if (shape === 'star') {
+    var pts = [];
+    for (var i = 0; i < 5; i++) {
+      var oa = (i*72-90) * Math.PI/180;
+      var ia = (i*72-54) * Math.PI/180;
+      pts.push((x + r*Math.cos(oa)).toFixed(1) + ',' + (y + r*Math.sin(oa)).toFixed(1));
+      pts.push((x + r*0.42*Math.cos(ia)).toFixed(1) + ',' + (y + r*0.42*Math.sin(ia)).toFixed(1));
+    }
+    s = '<polygon points="' + pts.join(' ') + '" fill="' + color + '" stroke="white" stroke-width="0.8"/>';
+  } else if (shape === 'triangle') {
+    var h2 = r * 1.25;
+    s = '<polygon points="' + x + ',' + (y-h2) + ' ' + (x-r) + ',' + (y+r*0.5) + ' ' + (x+r) + ',' + (y+r*0.5) + '"'
+      + ' fill="' + color + '" stroke="white" stroke-width="0.8"/>';
+  } else if (shape === 'diamond') {
+    s = '<polygon points="' + x + ',' + (y-r) + ' ' + (x+r) + ',' + y + ' ' + x + ',' + (y+r) + ' ' + (x-r) + ',' + y + '"'
+      + ' fill="' + color + '" stroke="white" stroke-width="0.8"/>';
+  } else if (shape === 'circle') {
+    s = '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + color + '" stroke="white" stroke-width="1.2"/>';
+  } else {
+    s = '<rect x="' + (x-r) + '" y="' + (y-r) + '" width="' + r*2 + '" height="' + r*2 + '" rx="2" fill="' + color + '" stroke="white" stroke-width="0.8"/>';
+  }
+  return '<g class="gms" data-vid="' + vesselId + '" data-key="' + code + '" style="cursor:pointer">'
+    + s
+    + '<text x="' + x + '" y="' + (y+r+9.5) + '" font-size="7" text-anchor="middle"'
+    + ' fill="' + color + '" font-family="Inter,-apple-system,sans-serif" font-weight="700">' + esc(code) + '</text>'
+    + '</g>';
+}
+
+function attachGanttTooltips() {
+  var tip = document.getElementById('gantt-tip');
+  document.querySelectorAll('.gms').forEach(function(el) {
+    el.addEventListener('mouseenter', function(e) {
+      var v = vessels.find(function(v) { return v.id === el.dataset.vid; });
+      if (!v) return;
+      var ms = MILESTONES[el.dataset.key];
+      var d  = v.milestones[el.dataset.key] || '\u2014';
+      tip.textContent = v.designation + ' \u2014 ' + (ms ? ms.label : el.dataset.key) + ': ' + fmtYM(d);
+      tip.style.display = 'block';
+      tip.style.left = (e.clientX + 13) + 'px';
+      tip.style.top  = (e.clientY - 32) + 'px';
+    });
+    el.addEventListener('mousemove', function(e) {
+      tip.style.left = (e.clientX + 13) + 'px';
+      tip.style.top  = (e.clientY - 32) + 'px';
+    });
+    el.addEventListener('mouseleave', function() { tip.style.display = 'none'; });
+  });
+}
+
+// ── Spreadsheet ──────────────────────────────────────────────────
+function renderSpreadsheet() {
+  var body  = document.getElementById('ssheet-body');
+  var fv    = filtered();
+  var types = ['APL','YRBM','YFB','YTB'];
+  fv.forEach(function(v) { if (!types.includes(v.type)) types.push(v.type); });
+
+  var msKeys = Object.keys(MILESTONES);
+  var h = '';
+
+  types.forEach(function(t) {
+    var group = fv.filter(function(v) { return v.type === t; });
+    if (!group.length) return;
+    var tc = (VT[t] || {}).color || '#6e6e73';
+    var cols = 4 + msKeys.length + 3 + 1;
+    h += '<tr class="type-sep"><td colspan="' + cols + '" style="border-left:3px solid ' + tc + '">'
+       + esc(t) + ' \u2014 ' + esc((VT[t] || {}).label || t) + '</td></tr>';
+
+    group.forEach(function(v) {
+      var st  = computeStatus(v);
+      var fc  = v.fleet.toLowerCase();
+      h += '<tr class="vessel-row" data-id="' + v.id + '">';
+      h += '<td><span class="vname">' + esc(v.designation) + '</span></td>';
+      h += '<td style="color:' + tc + ';font-weight:600;font-size:11px">' + esc(v.type) + '</td>';
+      h += '<td><span class="fleet-badge ' + fc + '">' + esc(v.fleet) + '</span></td>';
+
+      msKeys.forEach(function(key) {
+        var val = v.milestones[key] || '';
+        h += '<td><input type="month" class="date-input ' + (val ? '' : 'empty') + '"'
+           + ' value="' + esc(val) + '"'
+           + ' data-vid="' + v.id + '" data-key="' + key + '"'
+           + ' title="' + esc((MILESTONES[key]||{}).label || key) + ': click to edit"'
+           + ' onchange="onDateChange(event)"'
+           + (val ? '' : ' style="opacity:0.35"') + '></td>';
+      });
+
+      h += '<td style="font-size:11px;color:var(--steel)">' + duration(v) + '</td>';
+      h += '<td>' + statusHtml(st) + '</td>';
+      h += '<td><input type="text" class="notes-input" value="' + esc(v.notes || '') + '"'
+         + ' placeholder="Notes\u2026" data-vid="' + v.id + '"'
+         + ' onchange="onNotesChange(event)" onblur="onNotesChange(event)"></td>';
+      h += '<td><button class="del-btn" onclick="deleteVessel(\'' + v.id + '\')" title="Remove vessel">'
+         + '<i class="fas fa-trash-alt"></i></button></td>';
+      h += '</tr>';
+    });
+
+    h += '<tr><td colspan="' + cols + '" style="padding:3px 10px">'
+       + '<button class="add-row-btn" onclick="openAddVesselOfType(\'' + t + '\')">'
+       + '<i class="fas fa-plus fa-xs"></i> Add ' + esc(t) + ' vessel</button></td></tr>';
+  });
+
+  body.innerHTML = h;
+  syncHeaderCols();
+}
+
+// Ensure spreadsheet header columns match current MILESTONES
+function syncHeaderCols() {
+  var head = document.getElementById('ssheet-head');
+  if (!head) return;
+  var msKeys = Object.keys(MILESTONES);
+  // Remove existing milestone headers (indexes 3 … 3+n-1)
+  while (head.cells.length > 3) head.deleteCell(3);
+  // Re-insert milestone headers before Duration (which we re-add)
+  var fixed = ['Duration','Status','Notes',''];
+  msKeys.concat(fixed).forEach(function(k, i) {
+    var th = document.createElement('th');
+    if (i < msKeys.length) { th.style.minWidth = '92px'; th.textContent = k; }
+    else th.textContent = k;
+    head.appendChild(th);
+  });
+}
+
+// ── Log panel ────────────────────────────────────────────────────
+function renderLog() {
+  var el = document.getElementById('log-entries');
+  if (!el) return;
+  if (!changeLog.length) {
+    el.innerHTML = '<p style="color:var(--steel);font-size:10.5px;padding:4px 0">No changes yet.</p>';
+    return;
+  }
+  var icons = { schedule:'📅', vessel:'🚢', notes:'📝', config:'⚙️',
+                export:'⬇️', import:'⬆️', auth:'🔐', ui:'🖱️', system:'🔧',
+                save:'💾', sync:'☁️', init:'🚀', error:'❌', ai:'🤖' };
+  el.innerHTML = changeLog.slice(0, 60).map(function(e) {
+    var d  = new Date(e.ts);
+    var ts = d.toLocaleDateString([],{month:'short',day:'numeric'}) + ' ' + d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    var ic = icons[e.category] || '•';
+    var diff = '';
+    if (e.category === 'schedule' && e.oldVal !== null && e.newVal !== null) {
+      diff = '<div class="le-diff"><span class="le-old">' + fmtYM(e.oldVal) + '</span>'
+           + '<span style="color:var(--steel);margin:0 4px">\u2192</span>'
+           + '<span class="le-new">' + fmtYM(e.newVal) + '</span></div>';
+    }
+    var ai = e.aiNote ? '<div class="le-ai"><i class="fas fa-robot fa-xs" style="margin-right:3px"></i>' + esc(e.aiNote) + '</div>' : '';
+    return '<div class="log-entry">'
+      + '<div class="le-time">' + ic + ' ' + ts + '</div>'
+      + '<div class="le-who">' + esc(e.user) + '</div>'
+      + '<div class="le-what">' + esc(e.action) + '</div>'
+      + diff + ai
+      + '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  EVENT HANDLERS
+// ═══════════════════════════════════════════════════════════════════
+function onDateChange(e) {
+  var vid   = e.target.dataset.vid;
+  var key   = e.target.dataset.key;
+  var nv    = e.target.value; // "YYYY-MM" or ""
+  var v     = vessels.find(function(v) { return v.id === vid; });
+  if (!v) return;
+
+  var oldVal = v.milestones[key] || null;
+  if (nv) { v.milestones[key] = nv; } else { delete v.milestones[key]; }
+
+  // Update input style
+  e.target.style.opacity = nv ? '1' : '0.35';
+  e.target.className = 'date-input ' + (nv ? '' : 'empty');
+
+  var logEntry = schedLog(
+    'Changed ' + key + ' for ' + v.designation,
+    vid, key, oldVal, nv || null
+  );
+
+  renderGantt();
+  updateRowStatus(vid);
+  propagate();
+  autoSave();
+
+  // AI impact reasoning (async, non-blocking)
+  if (oldVal && nv && oldVal !== nv) {
+    aiReasoning(v, key, oldVal, nv, logEntry);
+  }
+}
+window.onDateChange = onDateChange;
+
+function onNotesChange(e) {
+  var vid = e.target.dataset.vid;
+  var v   = vessels.find(function(v) { return v.id === vid; });
+  if (!v) return;
+  var on = v.notes || '';
+  var nn = e.target.value || '';
+  if (on === nn) return;
+  v.notes = nn;
+  sysLog('notes', 'Updated notes for ' + v.designation, { vesselId: vid });
+  autoSave();
+}
+window.onNotesChange = onNotesChange;
+
+function updateRowStatus(vid) {
+  var row = document.querySelector('tr[data-id="' + vid + '"]');
+  if (!row) return;
+  var v = vessels.find(function(v) { return v.id === vid; });
+  if (!v) return;
+  var st  = computeStatus(v);
+  var pill = row.querySelector('.status-pill');
+  if (pill) {
+    var labels = { 'on-track':'On Track','at-risk':'At Risk','delayed':'Delayed','pending':'Pending' };
+    pill.className = 'status-pill s-' + st;
+    pill.innerHTML = '<i class="fas fa-circle" style="font-size:5px"></i> ' + (labels[st] || st);
+  }
+  var cells = row.querySelectorAll('td');
+  var durIdx = Object.keys(MILESTONES).length + 3;
+  if (cells[durIdx]) cells[durIdx].textContent = duration(v);
+}
+
+window.deleteVessel = function(vid) {
+  var v = vessels.find(function(v) { return v.id === vid; });
+  if (!v) return;
+  if (!confirm('Remove ' + v.designation + ' from the schedule?')) return;
+  vessels = vessels.filter(function(v) { return v.id !== vid; });
+  sysLog('vessel', 'Removed ' + v.designation, { vesselId: vid });
+  render(); autoSave();
+};
+
+// ── Propagate to Deliverables Tracker ────────────────────────────
+function propagate() {
+  var sched = {};
+  vessels.forEach(function(v) {
+    sched[v.designation] = {
+      type: v.type, fleet: v.fleet,
+      milestones: Object.assign({}, v.milestones),
+      status: computeStatus(v),
+      updatedAt: new Date().toISOString(),
+    };
+  });
+  localStorage.setItem(PROPAGATE_KEY, JSON.stringify({
+    schedule: sched,
+    updatedAt: new Date().toISOString(),
+    version: VERSION,
+  }));
+  sysLog('sync', 'Propagated to Deliverables Tracker', { vessels: Object.keys(sched).length });
+}
+
+// ── Filter / FY range ─────────────────────────────────────────────
+window.setFilter = function(type, btn) {
+  craftFilter = type;
+  document.querySelectorAll('#toolbar .chip-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+  sysLog('ui', 'Craft filter: ' + type, null);
+};
+
+window.updateFYRange = function() {
+  fyStart = parseInt(document.getElementById('fy-start').value);
+  fyEnd   = parseInt(document.getElementById('fy-end').value);
+  if (fyStart >= fyEnd) fyEnd = fyStart + 2;
+  renderGantt();
+  sysLog('ui', 'FY range: FY' + fyStart + '\u2013FY' + fyEnd, null);
+};
+
+window.toggleMS = function(key, visible) {
+  hiddenMS[key] = !visible;
+  renderGantt();
+  sysLog('ui', 'Milestone ' + key + ' ' + (visible ? 'shown' : 'hidden'), null);
+};
+
+window.togglePanel = function() {
+  rpOpen = !rpOpen;
+  document.getElementById('right-panel').classList.toggle('collapsed', !rpOpen);
+  sysLog('ui', 'Right panel ' + (rpOpen ? 'opened' : 'closed'), null);
+};
+
+window.setRPTab = function(tab, btn) {
+  rpTab = tab;
+  document.querySelectorAll('.rp-tab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('rp-log').style.display = tab === 'log' ? 'block' : 'none';
+  document.getElementById('rp-ai').style.display  = tab === 'ai'  ? 'flex'  : 'none';
+};
+
+// ── Add Vessel ────────────────────────────────────────────────────
+window.openAddVessel = function() { openModal('add-vessel-modal'); document.getElementById('v-desig').focus(); };
+window.openAddVesselOfType = function(t) {
+  openModal('add-vessel-modal');
+  document.getElementById('v-type').value = t;
+  document.getElementById('v-desig').focus();
+};
+
+window.confirmAddVessel = function() {
+  var desig = document.getElementById('v-desig').value.trim().toUpperCase();
+  var type  = document.getElementById('v-type').value;
+  var fleet = document.getElementById('v-fleet').value;
+  if (!desig) { alert('Enter a designation.'); return; }
+  if (vessels.find(function(v) { return v.designation === desig; })) {
+    alert(desig + ' already exists.'); return;
+  }
+  var nv = {
+    id: type.toLowerCase() + '-' + Date.now(),
+    type: type, designation: desig, fleet: fleet,
+    milestones: {}, notes: '', status: 'pending',
+  };
+  vessels.push(nv);
+  closeModal('add-vessel-modal');
+  document.getElementById('v-desig').value = '';
+  sysLog('vessel', 'Added vessel ' + desig, { vesselId: nv.id, type, fleet });
+  render(); autoSave();
+};
+window.confirmAddVessel = window.confirmAddVessel;
+
+// ── Add Milestone Type ────────────────────────────────────────────
+window.openAddMS = function() { openModal('add-ms-modal'); document.getElementById('ms-code').focus(); };
+
+window.confirmAddMS = function() {
+  var code  = document.getElementById('ms-code').value.trim().toUpperCase();
+  var name  = document.getElementById('ms-name').value.trim();
+  var color = document.getElementById('ms-color').value;
+  if (!code || code.length > 6) { alert('Enter a code up to 6 characters.'); return; }
+  if (!name) { alert('Enter a full name.'); return; }
+  if (MILESTONES[code]) { alert('Code "' + code + '" already exists.'); return; }
+  MILESTONES[code] = { label: name, color: color, shape: 'square' };
+  closeModal('add-ms-modal');
+  document.getElementById('ms-code').value = '';
+  document.getElementById('ms-name').value = '';
+  sysLog('config', 'Added milestone type ' + code, { name, color });
+  render(); autoSave();
+};
+
+// ── Delete vessel ─────────────────────────────────────────────────
+window.deleteVessel = function(vid) {
+  var v = vessels.find(function(v) { return v.id === vid; });
+  if (!v) return;
+  if (!confirm('Remove ' + v.designation + ' from the schedule?')) return;
+  vessels = vessels.filter(function(v) { return v.id !== vid; });
+  sysLog('vessel', 'Removed ' + v.designation, { vesselId: vid });
+  render(); autoSave();
+};
+
+// ── Modal helpers ─────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    if (e.target === el) el.classList.remove('open');
+  });
+});
+
+// ── Export CSV ────────────────────────────────────────────────────
+window.exportCSV = function() {
+  var msKeys = Object.keys(MILESTONES);
+  var headers = ['designation','type','fleet'].concat(msKeys).concat(['duration','status','notes']);
+  var rows = [headers.join(',')];
+  vessels.forEach(function(v) {
+    var row = [v.designation, v.type, v.fleet]
+      .concat(msKeys.map(function(k) { return v.milestones[k] || ''; }))
+      .concat([duration(v), computeStatus(v), '"' + (v.notes||'').replace(/"/g,'""') + '"']);
+    rows.push(row.join(','));
+  });
+  var blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = 'program-schedule-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+  sysLog('export', 'CSV exported', { vessels: vessels.length });
+  toast('CSV exported');
+};
+
+// ── Import CSV ────────────────────────────────────────────────────
+window.importCSV = function(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var text    = ev.target.result;
+      var lines   = text.split('\n').filter(function(l) { return l.trim(); });
+      var headers = lines[0].split(',').map(function(h) { return h.trim(); });
+      var imported = [];
+      for (var i = 1; i < lines.length; i++) {
+        var vals = parseCSVLine(lines[i]);
+        if (!vals[0]) continue;
+        var ms = {};
+        headers.forEach(function(h, hi) {
+          if (MILESTONES[h] && vals[hi]) ms[h] = vals[hi];
+        });
+        imported.push({
+          id: 'imp-' + Date.now() + '-' + i,
+          designation: vals[0].toUpperCase(),
+          type:  vals[1] || 'APL',
+          fleet: vals[2] || 'PACFLT',
+          milestones: ms, notes: '', status: 'pending',
+        });
+      }
+      if (!imported.length) { alert('No valid rows found.'); return; }
+      if (!confirm('Import ' + imported.length + ' vessels? This replaces the current schedule.')) return;
+      vessels = imported;
+      sysLog('import', 'CSV imported', { vessels: imported.length, file: file.name });
+      render(); propagate(); autoSave();
+      toast('Imported ' + imported.length + ' vessels');
+    } catch(err) {
+      alert('CSV parse error: ' + err.message);
+      sysLog('error', 'CSV import failed', { err: err.message });
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
+
+function parseCSVLine(line) {
+  var result = []; var cur = ''; var inQ = false;
+  for (var i = 0; i < line.length; i++) {
+    if (line[i] === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (line[i] === ',' && !inQ) {
+      result.push(cur.trim()); cur = '';
+    } else { cur += line[i]; }
+  }
+  result.push(cur.trim()); return result;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  AI INTEGRATION
+// ═══════════════════════════════════════════════════════════════════
+async function aiReasoning(vessel, key, oldVal, newVal, logEntry) {
+  var ms   = MILESTONES[key];
+  var diff = moDiff(oldVal, newVal);
+  var dir  = diff > 0 ? 'slipped' : 'accelerated';
+
+  // Immediate local reasoning
+  logEntry.aiNote = localReason(vessel, key, diff);
+  renderLog();
+
+  // Try live AI endpoint
+  try {
+    var ctx = vessel.designation + ' (' + vessel.type + ', ' + vessel.fleet + '). '
+      + (ms ? ms.label : key) + ' ' + dir + ' ' + Math.abs(diff) + ' months. '
+      + 'Other milestones: ' + JSON.stringify(vessel.milestones) + '. '
+      + 'In 1-2 sentences: downstream impact on contract deliverables?';
+    var resp = await fetch('/api/ai-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: ctx, ctx: 'program-schedule' }),
+    });
+    if (resp.ok) {
+      var data = await resp.json();
+      var note = data.reply || data.message || data.text || logEntry.aiNote;
+      logEntry.aiNote = note;
+      renderLog();
+      addAIMsg(note, false);
+    }
+  } catch(e) { /* silent — local reasoning already shown */ }
+}
+
+function localReason(v, key, diff) {
+  var abs = Math.abs(diff);
+  var dir = diff > 0 ? 'slip' : 'acceleration';
+  if (key === 'DEL') return v.designation + ' delivery ' + (diff > 0 ? 'slipped' : 'accelerated') + ' ' + abs + ' mo — review all contract deliverable due dates referencing this DEL.';
+  if (key === 'CA')  return 'CA ' + dir + ' of ' + abs + ' mo may cascade to SOC and DEL for ' + v.designation + '; validate downstream milestones.';
+  if (key === 'SOC') return 'SOC ' + dir + ' of ' + abs + ' mo on ' + v.designation + ' — verify BT/AT/DEL feasibility.';
+  return (MILESTONES[key] ? MILESTONES[key].label : key) + ' ' + dir + ' of ' + abs + ' mo logged for ' + v.designation + '; review schedule.';
+}
+
+window.sendAI = async function() {
+  var input = document.getElementById('ai-input');
+  var msg   = input.value.trim(); if (!msg) return;
+  input.value = '';
+  addAIMsg(msg, true);
+
+  // Switch to AI tab if not already
+  if (rpTab !== 'ai') {
+    var tab = document.querySelector('.rp-tab:nth-child(2)');
+    if (tab) setRPTab('ai', tab);
+  }
+
+  showTyping();
+  try {
+    var ctx = vessels.map(function(v) {
+      return v.designation + '(' + v.fleet + '): '
+        + Object.keys(v.milestones).map(function(k) { return k + '=' + fmtYM(v.milestones[k]); }).join(', ');
+    }).join('\n');
+    var resp = await fetch('/api/ai-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, ctx: 'program-schedule\n' + ctx }),
+    });
+    hideTyping();
+    if (resp.ok) {
+      var data = await resp.json();
+      addAIMsg(data.reply || data.message || 'Processing your schedule query…', false);
+    } else { addAIMsg('AI service unavailable. Please try again.', false); }
+  } catch(e) {
+    hideTyping();
+    addAIMsg('AI service offline. Check your connection.', false);
+  }
+  sysLog('ai', 'AI query: ' + msg.slice(0,60), null);
+};
+
+function addAIMsg(text, isUser) {
+  var el = document.getElementById('ai-msgs');
+  var d  = document.createElement('div');
+  d.className = 'ai-msg-row ' + (isUser ? 'ai-user' : 'ai-bot');
+  d.textContent = text;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+
+var typingEl = null;
+function showTyping() {
+  var el = document.getElementById('ai-msgs');
+  typingEl = document.createElement('div');
+  typingEl.className = 'ai-typing-row';
+  typingEl.innerHTML = '<span></span><span></span><span></span>';
+  el.appendChild(typingEl);
+  el.scrollTop = el.scrollHeight;
+}
+function hideTyping() { if (typingEl) { typingEl.remove(); typingEl = null; } }
+
+// ═══════════════════════════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════════════════════════
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(function() { el.style.display = 'none'; }, 2400);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BOOTSTRAP
+// ═══════════════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
