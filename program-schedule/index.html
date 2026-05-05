@@ -1,1756 +1,1719 @@
 <!DOCTYPE html>
+<!-- S4 Program Schedule Tool v2.0.0 — 2026-05-05
+     UNCLASSIFIED // DEMO only — generic data, not operational schedule -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Program Schedule — S4 Ledger</title>
-  <meta name="description" content="Service Craft & Vessel Milestone Gantt Tracker — BLI Demo">
   <meta name="robots" content="noindex,nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    /* ══ S4 Design Tokens ══════════════════════════════════════════ */
-    :root {
-      --accent:    #007AFF;
-      --surface:   #ffffff;
-      --surface-2: #f5f5f7;
-      --surface-3: #e8e8ed;
-      --border:    rgba(0,0,0,0.08);
-      --border-2:  rgba(0,0,0,0.14);
-      --steel:     #6e6e73;
-      --text:      #1d1d1f;
-      --green:     #34c759;
-      --red:       #ff3b30;
-      --yellow:    #ff9500;
-      --gold:      #c9a84c;
-      --purple:    #af52de;
-      --navy:      #1c3a5f;
-      --shadow:    0 2px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
-      --shadow-lg: 0 12px 48px rgba(0,0,0,0.13), 0 3px 10px rgba(0,0,0,0.07);
-      --radius:    12px;
-      --radius-sm: 8px;
-    }
+/* ══ S4 Design Tokens ══════════════════════════════════════════════ */
+:root {
+  --accent:    #007AFF; --surface: #ffffff; --surface-2: #f5f5f7;
+  --surface-3: #e8e8ed; --border: rgba(0,0,0,0.08); --border-2: rgba(0,0,0,0.14);
+  --steel:     #6e6e73; --text: #1d1d1f; --green: #34c759; --red: #ff3b30;
+  --yellow:    #ff9500; --gold: #c9a84c; --purple: #af52de; --navy: #1c3a5f;
+  --shadow:    0 2px 16px rgba(0,0,0,0.07),0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.13),0 3px 10px rgba(0,0,0,0.07);
+  --r: 12px; --rs: 8px;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100%; overflow:hidden;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  font-size:13px; color:var(--text); background:var(--surface-2);
+  -webkit-font-smoothing:antialiased; }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ══ App Shell ═════════════════════════════════════════════════════ */
+#app { display:flex; flex-direction:column; height:100vh; overflow:hidden; }
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 14px;
-      color: var(--text);
-      background: var(--surface-2);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
+/* ── Header ── */
+#hdr {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:0 18px; height:50px; min-height:50px;
+  display:flex; align-items:center; gap:12px; z-index:100; flex-shrink:0;
+}
+.logo-mark {
+  width:28px; height:28px;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--accent) 100%);
+  border-radius:7px; display:flex; align-items:center; justify-content:center;
+  color:white; font-size:11px; font-weight:700; flex-shrink:0; text-decoration:none;
+}
+.title-block { flex:1; min-width:0; }
+.title-block h1 { font-size:13.5px; font-weight:600; white-space:nowrap; }
+.title-block .sub { font-size:10px; color:var(--steel); margin-top:1px; }
+.hd { width:1px; height:20px; background:var(--border); flex-shrink:0; }
+.user-chip {
+  display:flex; align-items:center; gap:6px; padding:3px 8px;
+  border-radius:6px; cursor:pointer; border:1px solid var(--border);
+  background:var(--surface-2); transition:all .14s; flex-shrink:0;
+}
+.user-chip:hover { background:var(--surface-3); }
+.uav {
+  width:20px; height:20px; border-radius:50%;
+  background:var(--accent); color:white;
+  display:flex; align-items:center; justify-content:center;
+  font-size:8px; font-weight:700;
+}
+.unm { font-size:11px; font-weight:500; white-space:nowrap; }
 
-    /* ══ App Shell ════════════════════════════════════════════════ */
-    #app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+/* ── Toolbar ── */
+#toolbar {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:6px 18px; display:flex; align-items:center; gap:8px;
+  flex-wrap:wrap; flex-shrink:0;
+}
+.tg { display:flex; align-items:center; gap:4px; }
+.tlbl { font-size:9.5px; font-weight:600; color:var(--steel);
+  text-transform:uppercase; letter-spacing:.06em; white-space:nowrap; }
+.tdiv { width:1px; height:18px; background:var(--border); flex-shrink:0; }
 
-    /* ── Header ── */
-    #header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 20px;
-      height: 54px;
-      min-height: 54px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      z-index: 100;
-      flex-shrink: 0;
-    }
+.chip-btn {
+  padding:3px 10px; border:1px solid var(--border); border-radius:18px;
+  background:transparent; font-size:10.5px; font-weight:500; color:var(--steel);
+  cursor:pointer; transition:all .14s; white-space:nowrap;
+}
+.chip-btn:hover { background:var(--surface-3); color:var(--text); }
+.chip-btn.active { background:var(--accent); border-color:var(--accent); color:white; }
 
-    .logo-mark {
-      width: 30px; height: 30px;
-      background: linear-gradient(135deg, var(--navy) 0%, var(--accent) 100%);
-      border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 12px; font-weight: 700;
-      flex-shrink: 0; text-decoration: none;
-    }
+.abtn {
+  padding:4px 10px; border-radius:var(--rs);
+  font-size:11px; font-weight:500; cursor:pointer;
+  transition:all .14s; border:1px solid transparent; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:4px;
+}
+.btn-p { background:var(--accent); color:white; border-color:var(--accent); }
+.btn-p:hover { background:#0066e0; }
+.btn-o { background:var(--surface); border-color:var(--border); color:var(--text); }
+.btn-o:hover { background:var(--surface-3); }
 
-    .title-block { flex: 1; min-width: 0; }
-    .title-block h1 { font-size: 14px; font-weight: 600; white-space: nowrap; }
-    .title-block .subtitle { font-size: 10.5px; color: var(--steel); margin-top: 1px; }
+.s4sel {
+  padding:3px 7px; border:1px solid var(--border); border-radius:var(--rs);
+  font-size:10.5px; font-family:inherit; background:var(--surface-2);
+  color:var(--text); cursor:pointer; outline:none;
+}
+.s4sel:focus { border-color:var(--accent); }
 
-    .hdr-divider { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
+.ms-tog {
+  display:inline-flex; align-items:center; gap:3px;
+  font-size:10.5px; color:var(--steel); cursor:pointer; user-select:none;
+}
+.ms-tog input { cursor:pointer; accent-color:var(--accent); width:11px; height:11px; }
 
-    /* ── Toolbar ── */
-    #toolbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 7px 20px;
-      display: flex; align-items: center; gap: 10px;
-      flex-wrap: wrap; flex-shrink: 0;
-    }
+/* ── Legend ── */
+#legend {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:4px 18px; display:flex; align-items:center; gap:12px; flex-shrink:0; flex-wrap:wrap;
+}
+.li { display:flex; align-items:center; gap:3px; font-size:10px; color:var(--steel); white-space:nowrap; }
 
-    .toolbar-group { display: flex; align-items: center; gap: 5px; }
-    .toolbar-label {
-      font-size: 10px; font-weight: 600; color: var(--steel);
-      text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;
-    }
-    .tb-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+/* ══ Main ══════════════════════════════════════════════════════════ */
+#main { flex:1; display:flex; overflow:hidden; position:relative; }
+#center { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
 
-    .chip-btn {
-      padding: 4px 11px;
-      border: 1px solid var(--border); border-radius: 20px;
-      background: transparent;
-      font-size: 11px; font-weight: 500; color: var(--steel);
-      cursor: pointer; transition: all 0.14s; white-space: nowrap;
-    }
-    .chip-btn:hover { background: var(--surface-3); color: var(--text); }
-    .chip-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+/* ── Gantt ── */
+#gantt-wrap {
+  flex-shrink:0; background:var(--surface);
+  border-bottom:1px solid var(--border);
+  overflow:auto; max-height:42vh; min-height:160px;
+}
+#gantt-svg { display:block; }
 
-    .action-btn {
-      padding: 5px 12px; border-radius: var(--radius-sm);
-      font-size: 11px; font-weight: 500; cursor: pointer;
-      transition: all 0.14s; border: 1px solid transparent; white-space: nowrap;
-      display: inline-flex; align-items: center; gap: 5px;
-    }
-    .btn-primary  { background: var(--accent); color: white; border-color: var(--accent); }
-    .btn-primary:hover { background: #0066e0; border-color: #0066e0; }
-    .btn-outline  { background: var(--surface); border-color: var(--border); color: var(--text); }
-    .btn-outline:hover { background: var(--surface-3); }
+/* ── Spreadsheet ── */
+#sheet-wrap { flex:1; overflow:auto; }
+#sheet-toolbar {
+  display:flex; align-items:center; gap:7px; padding:5px 14px;
+  background:var(--surface-2); border-bottom:1px solid var(--border);
+  flex-wrap:wrap; flex-shrink:0;
+}
+.sheet-tbl {
+  width:100%; border-collapse:collapse; font-size:11px;
+}
+.sheet-tbl thead th {
+  position:sticky; top:0; z-index:5;
+  background:var(--surface-2); border-bottom:2px solid var(--border-2);
+  padding:5px 8px; text-align:left; font-size:9.5px; font-weight:600;
+  color:var(--steel); text-transform:uppercase; letter-spacing:.06em; white-space:nowrap;
+}
+.sheet-tbl tr.grp-sep td {
+  background:#1c3a5f; color:rgba(255,255,255,0.92);
+  padding:4px 10px 4px 12px; font-size:9.5px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.08em;
+}
+.sheet-tbl tbody tr.vrow { border-bottom:1px solid var(--border); transition:background .1s; }
+.sheet-tbl tbody tr.vrow:hover { background:rgba(0,122,255,0.025); }
+.sheet-tbl tbody td { padding:4px 8px; vertical-align:middle; white-space:nowrap; }
 
-    .icon-btn {
-      width: 30px; height: 30px; border: 1px solid var(--border);
-      border-radius: var(--radius-sm); background: transparent;
-      color: var(--steel); cursor: pointer; display: flex;
-      align-items: center; justify-content: center;
-      font-size: 12px; transition: all 0.14s;
-    }
-    .icon-btn:hover { background: var(--surface-3); color: var(--text); }
+.vname { font-weight:600; font-size:11.5px; }
+.fb {
+  display:inline-flex; align-items:center; padding:1px 5px; border-radius:8px;
+  font-size:9px; font-weight:600; background:var(--surface-3); color:var(--steel);
+}
+.fb.pacflt { background:rgba(0,122,255,0.1); color:#0058cc; }
+.fb.usff   { background:rgba(52,199,89,0.1);  color:#1a7a36; }
+.fb.usmc   { background:rgba(255,149,0,0.1);  color:#b35900; }
 
-    select.s4-select {
-      padding: 4px 8px; border: 1px solid var(--border);
-      border-radius: var(--radius-sm); font-size: 11px;
-      font-family: inherit; background: var(--surface-2);
-      color: var(--text); cursor: pointer; outline: none;
-    }
-    select.s4-select:focus { border-color: var(--accent); }
+input.di {
+  cursor:pointer; border:1px solid transparent; border-radius:5px;
+  padding:2px 5px; font-size:10.5px; font-family:inherit;
+  color:var(--text); background:transparent; transition:all .12s; min-width:84px;
+  -webkit-appearance:none;
+}
+input.di:hover { background:var(--surface-2); border-color:var(--border); }
+input.di:focus { outline:none; background:var(--surface); border-color:var(--accent);
+  box-shadow:0 0 0 2px rgba(0,122,255,0.12); }
+input.di.empty { opacity:.35; }
 
-    .ms-toggle {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 11px; color: var(--steel); cursor: pointer;
-      user-select: none;
-    }
-    .ms-toggle input { cursor: pointer; accent-color: var(--accent); width: 12px; height: 12px; }
+input.ti {
+  font-size:10.5px; font-family:inherit; border:1px solid transparent;
+  border-radius:5px; padding:2px 5px; color:var(--steel); background:transparent;
+  transition:all .12s; width:100%; min-width:70px;
+}
+input.ti:hover { background:var(--surface-2); border-color:var(--border); }
+input.ti:focus { outline:none; background:var(--surface); border-color:var(--accent); color:var(--text); }
 
-    /* ── Legend Bar ── */
-    #legend-bar {
-      background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 5px 20px; display: flex; align-items: center;
-      gap: 14px; flex-shrink: 0; flex-wrap: wrap;
-    }
-    .legend-item {
-      display: flex; align-items: center; gap: 4px;
-      font-size: 10.5px; color: var(--steel); white-space: nowrap;
-    }
+select.ci {
+  font-size:10.5px; font-family:inherit; border:1px solid transparent;
+  border-radius:5px; padding:2px 5px; color:var(--text); background:transparent;
+  cursor:pointer; transition:all .12s;
+}
+select.ci:hover { background:var(--surface-2); border-color:var(--border); }
+select.ci:focus { outline:none; background:var(--surface); border-color:var(--accent); }
 
-    /* ══ Main Area ════════════════════════════════════════════════ */
-    #main { flex: 1; display: flex; overflow: hidden; }
+.sp {
+  display:inline-flex; align-items:center; gap:2px; padding:2px 6px;
+  border-radius:8px; font-size:9.5px; font-weight:600;
+}
+.s-on { background:rgba(52,199,89,0.12); color:#1a7a36; }
+.s-at { background:rgba(255,149,0,0.12); color:#b35900; }
+.s-dl { background:rgba(255,59,48,0.12);  color:#b81f17; }
+.s-np { background:rgba(110,110,115,0.12);color:var(--steel); }
 
-    #center { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.del-btn {
+  background:none; border:none; cursor:pointer; color:var(--steel);
+  font-size:10px; padding:2px 4px; border-radius:4px;
+  transition:all .12s; opacity:.4;
+}
+.del-btn:hover { color:var(--red); opacity:1; background:rgba(255,59,48,.07); }
 
-    /* ── Gantt Panel ── */
-    #gantt-panel {
-      flex-shrink: 0; background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      overflow: auto; max-height: 44vh; min-height: 180px;
-      padding: 0;
-    }
+/* ── Right Drawer ── */
+#drawer {
+  position:absolute; top:0; right:0; bottom:0;
+  width:310px; background:var(--surface);
+  border-left:1px solid var(--border);
+  display:flex; flex-direction:column;
+  transform:translateX(100%); transition:transform .22s cubic-bezier(.22,.68,0,1.05);
+  z-index:50; box-shadow:-4px 0 20px rgba(0,0,0,0.06);
+}
+#drawer.open { transform:translateX(0); }
 
-    #gantt-svg { display: block; }
+.dr-hdr {
+  display:flex; align-items:center; gap:8px; padding:11px 14px;
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.dr-hdr h3 { font-size:13px; font-weight:600; flex:1; }
+.dr-close {
+  width:24px; height:24px; border:none; background:var(--surface-3);
+  border-radius:50%; cursor:pointer; color:var(--steel);
+  display:flex; align-items:center; justify-content:center; font-size:11px;
+}
+.dr-close:hover { background:var(--surface-3); color:var(--text); }
 
-    /* ── Spreadsheet Panel ── */
-    #spreadsheet-panel { flex: 1; overflow: auto; }
+.dr-tabs {
+  display:flex; border-bottom:1px solid var(--border);
+  background:var(--surface-2); flex-shrink:0;
+}
+.dr-tab {
+  flex:1; padding:8px 4px; font-size:11px; font-weight:500;
+  color:var(--steel); cursor:pointer; border:none; background:transparent;
+  border-bottom:2px solid transparent; transition:all .14s; text-align:center;
+}
+.dr-tab.active  { color:var(--accent); border-bottom-color:var(--accent); background:var(--surface); }
+.dr-tab:hover:not(.active) { color:var(--text); }
 
-    #ssheet {
-      width: 100%; border-collapse: collapse;
-      font-size: 11.5px;
-    }
+#dr-log { flex:1; overflow-y:auto; padding:10px; }
+#dr-ai  { flex:1; display:none; flex-direction:column; overflow:hidden; }
+#ai-msgs { flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:6px; }
 
-    #ssheet thead th {
-      position: sticky; top: 0; z-index: 10;
-      background: var(--surface-2);
-      border-bottom: 2px solid var(--border-2);
-      padding: 7px 10px;
-      text-align: left; font-size: 10px; font-weight: 600;
-      color: var(--steel); text-transform: uppercase;
-      letter-spacing: 0.06em; white-space: nowrap;
-    }
+.ai-row { padding:7px 9px; border-radius:9px; font-size:11px; line-height:1.5; animation:fadeIn .2s ease; }
+.ai-u  { background:var(--accent); color:white; margin-left:28px; border-radius:9px 9px 2px 9px; }
+.ai-b  { background:var(--surface-2); margin-right:28px; border-radius:9px 9px 9px 2px; }
+.ai-typing { display:flex; gap:3px; padding:7px 10px; background:var(--surface-2);
+  border-radius:9px; margin-right:28px; width:fit-content; }
+.ai-typing span { width:5px; height:5px; background:var(--steel); border-radius:50%; animation:tdot 1.1s infinite; }
+.ai-typing span:nth-child(2) { animation-delay:.18s; }
+.ai-typing span:nth-child(3) { animation-delay:.36s; }
 
-    #ssheet tr.type-sep td {
-      background: var(--surface-3);
-      padding: 4px 10px 4px 12px;
-      font-size: 9.5px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--steel); border-bottom: 1px solid var(--border);
-    }
+#ai-inp-row {
+  display:flex; gap:5px; padding:8px 10px;
+  border-top:1px solid var(--border); flex-shrink:0;
+}
+#ai-inp {
+  flex:1; padding:5px 9px; border:1px solid var(--border);
+  border-radius:16px; font-size:11px; font-family:inherit; outline:none;
+  background:var(--surface-2); transition:all .14s;
+}
+#ai-inp:focus { border-color:var(--accent); background:var(--surface); box-shadow:0 0 0 2px rgba(0,122,255,.1); }
+#ai-snd {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--accent); color:white; border:none;
+  cursor:pointer; display:flex; align-items:center;
+  justify-content:center; font-size:10px;
+}
+#ai-snd:hover { background:#0066e0; }
 
-    #ssheet tbody tr.vessel-row {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-    }
-    #ssheet tbody tr.vessel-row:hover { background: rgba(0,122,255,0.028); }
+/* Log entries */
+.le {
+  padding:7px 8px; border:1px solid var(--border); border-radius:7px;
+  margin-bottom:5px; font-size:10px; background:var(--surface-2); animation:fadeIn .2s ease;
+}
+.le-ts   { color:var(--steel); font-size:9px; margin-bottom:2px; }
+.le-who  { font-weight:600; font-size:10.5px; }
+.le-what { color:var(--steel); margin-top:1px; line-height:1.4; }
+.le-field { color:var(--accent); font-weight:600; }
+.le-old  { color:var(--red); text-decoration:line-through; }
+.le-arr  { color:var(--steel); margin:0 3px; }
+.le-new  { color:var(--green); font-weight:600; }
+.le-ai   { margin-top:5px; padding:5px 7px; background:rgba(0,122,255,.06);
+  border-radius:5px; color:#0058cc; font-style:italic; font-size:9.5px; line-height:1.45; }
 
-    #ssheet tbody td { padding: 5px 10px; vertical-align: middle; white-space: nowrap; }
+/* ══ Drawer toggle btn ═════════════════════════════════════════════ */
+#drawer-btns {
+  position:absolute; top:50%; right:0;
+  transform:translateY(-50%); z-index:60;
+  display:flex; flex-direction:column; gap:4px;
+  transition:right .22s cubic-bezier(.22,.68,0,1.05);
+}
+#drawer-btns.shifted { right:310px; }
+.dr-tog-btn {
+  width:28px; padding:8px 0; border-radius:6px 0 0 6px;
+  border:1px solid var(--border); border-right:none;
+  background:var(--surface); color:var(--steel); font-size:10px;
+  cursor:pointer; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:5px; transition:all .14s;
+  writing-mode:horizontal-tb;
+}
+.dr-tog-btn:hover { background:var(--surface-3); color:var(--text); }
+.dr-tog-btn.active { background:var(--accent); color:white; border-color:var(--accent); }
+.dr-tog-btn span {
+  font-size:8.5px; font-weight:600; text-transform:uppercase;
+  letter-spacing:.05em; writing-mode:vertical-lr; transform:rotate(180deg);
+}
 
-    .vname { font-weight: 600; font-size: 12px; }
+/* ══ Login Overlay ═════════════════════════════════════════════════ */
+#login-overlay {
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,0.4); backdrop-filter:blur(10px) saturate(160%);
+  display:flex; align-items:center; justify-content:center;
+}
+.login-card {
+  background:var(--surface); border-radius:18px; padding:36px 32px; width:370px;
+  box-shadow:var(--shadow-lg); animation:slideUp .3s cubic-bezier(.22,.68,0,1.1);
+}
+.lr { display:flex; align-items:center; gap:11px; margin-bottom:22px; }
+.lm {
+  width:42px; height:42px;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--accent) 100%);
+  border-radius:11px; display:flex; align-items:center;
+  justify-content:center; color:white; font-size:18px; font-weight:700;
+}
+.lmt h2 { font-size:16px; font-weight:700; }
+.lmt p  { font-size:11px; color:var(--steel); margin-top:2px; }
+.fg { margin-bottom:12px; }
+.fg label { display:block; font-size:11.5px; font-weight:500; margin-bottom:4px; }
+.fg input {
+  width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px;
+  font-size:13.5px; font-family:inherit; outline:none; background:var(--surface-2); transition:all .14s;
+}
+.fg input:focus { border-color:var(--accent); background:var(--surface); box-shadow:0 0 0 3px rgba(0,122,255,.1); }
+.lbtn {
+  width:100%; padding:10px; border-radius:8px; font-size:13px;
+  font-weight:600; cursor:pointer; border:none; transition:all .14s; margin-bottom:8px;
+}
+.lbtn-p { background:var(--accent); color:white; }
+.lbtn-p:hover { background:#0066e0; }
+.lbtn-s { background:var(--surface-2); color:var(--text); border:1px solid var(--border); }
+.lbtn-s:hover { background:var(--surface-3); }
+.lerr {
+  background:rgba(255,59,48,.09); border:1px solid rgba(255,59,48,.18);
+  color:var(--red); padding:7px 10px; border-radius:6px;
+  font-size:11px; margin-bottom:10px; display:none;
+}
 
-    .fleet-badge {
-      display: inline-flex; align-items: center;
-      padding: 1px 6px; border-radius: 9px;
-      font-size: 9.5px; font-weight: 600;
-      background: var(--surface-3); color: var(--steel);
-    }
-    .fleet-badge.pacflt { background: rgba(0,122,255,0.1); color: #0058cc; }
-    .fleet-badge.usff   { background: rgba(52,199,89,0.1);  color: #1a7a36; }
-    .fleet-badge.usmc   { background: rgba(255,149,0,0.1);  color: #b35900; }
+/* ══ Modals ════════════════════════════════════════════════════════ */
+.m-overlay {
+  position:fixed; inset:0; z-index:900;
+  background:rgba(0,0,0,0.22); backdrop-filter:blur(4px);
+  display:none; align-items:center; justify-content:center;
+}
+.m-overlay.open { display:flex; }
+.m-card {
+  background:var(--surface); border-radius:var(--r); padding:22px; min-width:360px;
+  box-shadow:var(--shadow-lg); animation:slideUp .2s ease;
+}
+.m-card h3 { font-size:14px; font-weight:600; margin-bottom:13px; }
 
-    input.date-input {
-      cursor: pointer; border: 1px solid transparent;
-      border-radius: 5px; padding: 3px 6px;
-      font-size: 11px; font-family: inherit;
-      color: var(--text); background: transparent;
-      transition: all 0.12s; min-width: 86px;
-      -webkit-appearance: none;
-    }
-    input.date-input:hover  { background: var(--surface-2); border-color: var(--border); }
-    input.date-input:focus  { outline: none; background: var(--surface); border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,122,255,0.14); }
-    input.date-input.empty  { color: var(--steel); opacity: 0.45; }
+/* ══ Toast ═════════════════════════════════════════════════════════ */
+#toast {
+  position:fixed; bottom:16px; right:20px; background:var(--text); color:white;
+  padding:7px 13px; border-radius:7px; font-size:11px; font-weight:500; z-index:800;
+  animation:slideUp .18s ease; display:none;
+}
 
-    .status-pill {
-      display: inline-flex; align-items: center; gap: 3px;
-      padding: 2px 7px; border-radius: 9px;
-      font-size: 9.5px; font-weight: 600;
-    }
-    .s-on-track { background: rgba(52,199,89,0.12);  color: #1a7a36; }
-    .s-at-risk  { background: rgba(255,149,0,0.12);  color: #b35900; }
-    .s-delayed  { background: rgba(255,59,48,0.12);  color: #b81f17; }
-    .s-pending  { background: rgba(0,122,255,0.10);  color: #0058cc; }
+/* ══ Gantt tooltip ═════════════════════════════════════════════════ */
+#gtip {
+  position:fixed; background:var(--text); color:white; padding:5px 9px;
+  border-radius:5px; font-size:11px; pointer-events:none; z-index:600;
+  display:none; white-space:nowrap; box-shadow:var(--shadow);
+}
 
-    input.notes-input {
-      font-size: 11px; font-family: inherit;
-      border: 1px solid transparent; border-radius: 5px;
-      padding: 3px 6px; color: var(--steel);
-      background: transparent; width: 150px;
-      transition: all 0.12s;
-    }
-    input.notes-input:hover  { background: var(--surface-2); border-color: var(--border); }
-    input.notes-input:focus  { outline: none; background: var(--surface); border-color: var(--accent); color: var(--text); }
+/* ══ Animations ════════════════════════════════════════════════════ */
+@keyframes fadeIn  { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes tdot    { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
 
-    .del-btn {
-      background: none; border: none; cursor: pointer;
-      color: var(--steel); font-size: 11px; padding: 3px 5px;
-      border-radius: 4px; transition: all 0.12s; opacity: 0.5;
-    }
-    .del-btn:hover { color: var(--red); opacity: 1; background: rgba(255,59,48,0.07); }
+/* ── Scrollbars ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.18)}
 
-    .add-row-btn {
-      display: flex; align-items: center; gap: 5px;
-      padding: 5px 12px; color: var(--accent);
-      font-size: 11px; font-weight: 500; cursor: pointer;
-      border: 1px dashed rgba(0,122,255,0.28); border-radius: 6px;
-      background: rgba(0,122,255,0.03); width: 100%;
-      transition: all 0.12s;
-    }
-    .add-row-btn:hover { background: rgba(0,122,255,0.07); border-color: var(--accent); }
-
-    /* ══ Right Panel ══════════════════════════════════════════════ */
-    #right-panel {
-      width: 280px; flex-shrink: 0;
-      background: var(--surface); border-left: 1px solid var(--border);
-      display: flex; flex-direction: column; overflow: hidden;
-      transition: width 0.2s ease;
-    }
-    #right-panel.collapsed { width: 0; overflow: hidden; }
-
-    .rp-tabs {
-      display: flex; border-bottom: 1px solid var(--border);
-      background: var(--surface-2); flex-shrink: 0;
-    }
-    .rp-tab {
-      flex: 1; padding: 9px 4px; font-size: 11px; font-weight: 500;
-      color: var(--steel); cursor: pointer; border: none;
-      background: transparent; border-bottom: 2px solid transparent;
-      transition: all 0.14s; text-align: center;
-      display: flex; align-items: center; justify-content: center; gap: 4px;
-    }
-    .rp-tab.active  { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface); }
-    .rp-tab:hover   { color: var(--text); }
-
-    #rp-log { flex: 1; overflow-y: auto; padding: 10px; }
-    #rp-ai  { flex: 1; display: none; flex-direction: column; overflow: hidden; }
-    #ai-msgs { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 7px; }
-
-    .ai-msg-row {
-      padding: 7px 10px; border-radius: 10px;
-      font-size: 11px; line-height: 1.5;
-      animation: fadeIn 0.25s ease;
-    }
-    .ai-user { background: var(--accent); color: white; margin-left: 24px; border-radius: 10px 10px 2px 10px; }
-    .ai-bot  { background: var(--surface-2); color: var(--text); margin-right: 24px; border-radius: 10px 10px 10px 2px; }
-
-    .ai-typing-row { display: flex; gap: 4px; padding: 8px 12px; background: var(--surface-2);
-      border-radius: 10px; margin-right: 24px; width: fit-content; }
-    .ai-typing-row span { width: 5px; height: 5px; background: var(--steel);
-      border-radius: 50%; animation: tdot 1.1s infinite; }
-    .ai-typing-row span:nth-child(2) { animation-delay: 0.18s; }
-    .ai-typing-row span:nth-child(3) { animation-delay: 0.36s; }
-
-    #ai-input-row {
-      display: flex; gap: 6px; padding: 8px 10px;
-      border-top: 1px solid var(--border); flex-shrink: 0;
-    }
-    #ai-input {
-      flex: 1; padding: 6px 10px; border: 1px solid var(--border);
-      border-radius: 18px; font-size: 11px; font-family: inherit;
-      outline: none; background: var(--surface-2); transition: all 0.14s;
-    }
-    #ai-input:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 2px rgba(0,122,255,0.12); }
-    #ai-send {
-      width: 30px; height: 30px; border-radius: 50%;
-      background: var(--accent); color: white; border: none;
-      cursor: pointer; display: flex; align-items: center;
-      justify-content: center; font-size: 11px; transition: background 0.14s;
-    }
-    #ai-send:hover { background: #0066e0; }
-
-    /* ── Log entries ── */
-    .log-entry {
-      padding: 7px 9px; border: 1px solid var(--border);
-      border-radius: 7px; margin-bottom: 5px;
-      font-size: 10.5px; background: var(--surface-2);
-      animation: fadeIn 0.25s ease;
-    }
-    .le-time  { color: var(--steel); font-size: 9.5px; margin-bottom: 1px; }
-    .le-who   { font-weight: 600; color: var(--text); font-size: 10.5px; }
-    .le-what  { color: var(--steel); margin-top: 2px; }
-    .le-diff  { margin-top: 3px; font-size: 10px; }
-    .le-old   { color: var(--red); text-decoration: line-through; }
-    .le-new   { color: var(--green); }
-    .le-ai    { margin-top: 5px; padding: 5px 7px; background: rgba(0,122,255,0.06);
-      border-radius: 5px; color: #0058cc; font-style: italic; font-size: 10px; line-height: 1.45; }
-
-    /* ══ Login Modal ══════════════════════════════════════════════ */
-    #login-overlay {
-      position: fixed; inset: 0; z-index: 1000;
-      background: rgba(0,0,0,0.38);
-      backdrop-filter: blur(10px) saturate(160%);
-      -webkit-backdrop-filter: blur(10px) saturate(160%);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .login-card {
-      background: var(--surface); border-radius: 20px;
-      padding: 40px 36px; width: 390px;
-      box-shadow: var(--shadow-lg);
-      animation: slideUp 0.3s cubic-bezier(.22,.68,0,1.1);
-    }
-    .login-card .logo-row {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 26px;
-    }
-    .login-card .lm {
-      width: 44px; height: 44px;
-      background: linear-gradient(135deg, var(--navy) 0%, var(--accent) 100%);
-      border-radius: 12px; display: flex; align-items: center;
-      justify-content: center; color: white; font-size: 20px; font-weight: 700;
-    }
-    .login-card .lm-text h2 { font-size: 17px; font-weight: 700; }
-    .login-card .lm-text p  { font-size: 11.5px; color: var(--steel); margin-top: 2px; }
-
-    .form-grp { margin-bottom: 13px; }
-    .form-grp label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; }
-    .form-grp input {
-      width: 100%; padding: 10px 13px;
-      border: 1.5px solid var(--border); border-radius: 9px;
-      font-size: 14px; font-family: inherit; outline: none;
-      background: var(--surface-2); transition: all 0.14s;
-    }
-    .form-grp input:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
-
-    .login-btn {
-      width: 100%; padding: 11px; border-radius: 9px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
-      border: none; transition: all 0.14s; margin-bottom: 9px;
-    }
-    .lbtn-p { background: var(--accent); color: white; }
-    .lbtn-p:hover { background: #0066e0; }
-    .lbtn-s { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
-    .lbtn-s:hover { background: var(--surface-3); }
-
-    .login-err {
-      background: rgba(255,59,48,0.09); border: 1px solid rgba(255,59,48,0.18);
-      color: var(--red); padding: 8px 11px; border-radius: 7px;
-      font-size: 11.5px; margin-bottom: 11px; display: none;
-    }
-
-    /* ══ Modals ═══════════════════════════════════════════════════ */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 900;
-      background: rgba(0,0,0,0.25);
-      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-card {
-      background: var(--surface); border-radius: var(--radius);
-      padding: 24px; min-width: 380px;
-      box-shadow: var(--shadow-lg); animation: slideUp 0.22s ease;
-    }
-    .modal-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
-
-    /* ── User Chip ── */
-    .user-chip {
-      display: flex; align-items: center; gap: 7px;
-      padding: 4px 9px; border-radius: 7px;
-      cursor: pointer; border: 1px solid var(--border);
-      background: var(--surface-2); transition: all 0.14s; flex-shrink: 0;
-    }
-    .user-chip:hover { background: var(--surface-3); }
-    .user-av {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: var(--accent); color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9px; font-weight: 700; flex-shrink: 0;
-    }
-    .user-nm { font-size: 11.5px; font-weight: 500; white-space: nowrap; }
-
-    /* ── Save toast ── */
-    #toast {
-      position: fixed; bottom: 18px; right: 22px;
-      background: var(--text); color: white;
-      padding: 8px 14px; border-radius: 7px;
-      font-size: 11.5px; font-weight: 500; z-index: 800;
-      animation: slideUp 0.18s ease; display: none;
-    }
-
-    /* ── Gantt tooltip ── */
-    #gantt-tip {
-      position: fixed; background: var(--text); color: white;
-      padding: 5px 9px; border-radius: 5px; font-size: 11px;
-      pointer-events: none; z-index: 600; display: none;
-      white-space: nowrap; box-shadow: var(--shadow);
-    }
-
-    /* ══ Animations ══════════════════════════════════════════════ */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes tdot {
-      0%, 60%, 100% { transform: translateY(0); }
-      30%            { transform: translateY(-4px); }
-    }
-
-    /* ── Scrollbars ── */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.18); }
-
-    @media (max-width: 860px) {
-      #right-panel { display: none; }
-    }
+@media(max-width:760px){ #drawer,#drawer-btns{ display:none; } }
   </style>
 </head>
 <body>
 
-<!-- ══ APP SHELL ═══════════════════════════════════════════════════ -->
+<!-- ══ APP ═══════════════════════════════════════════════════════════ -->
 <div id="app" style="display:none">
 
   <!-- Header -->
-  <header id="header">
-    <a href="/" class="logo-mark" title="S4 Ledger Home">S4</a>
-    <div class="hdr-divider"></div>
+  <header id="hdr">
+    <a href="/" class="logo-mark" title="S4 Ledger">S4</a>
+    <div class="hd"></div>
     <div class="title-block">
       <h1>Program Schedule</h1>
-      <div class="subtitle">Service Craft &amp; Vessel Milestone Tracker — BLI Demo</div>
+      <div class="sub">Service Craft &amp; Vessel Milestone Tracker — BLI Demo</div>
     </div>
-    <div id="save-label" style="font-size:10.5px;color:var(--steel);white-space:nowrap">All changes saved</div>
-    <div class="hdr-divider"></div>
-    <button class="icon-btn" id="toggle-panel-btn" title="Toggle Log / AI Panel" onclick="togglePanel()">
-      <i class="fas fa-columns"></i>
-    </button>
+    <span id="save-lbl" style="font-size:10px;color:var(--steel);white-space:nowrap">All changes saved</span>
+    <div class="hd"></div>
     <div class="user-chip" onclick="handleSignOut()">
-      <div class="user-av" id="user-av">D</div>
-      <span class="user-nm" id="user-nm">Demo</span>
+      <div class="uav" id="uav">D</div>
+      <span class="unm" id="unm">Demo</span>
     </div>
   </header>
 
-  <!-- Toolbar -->
+  <!-- Main Toolbar -->
   <div id="toolbar">
-    <!-- Craft filter -->
-    <div class="toolbar-group">
-      <span class="toolbar-label">Craft</span>
-      <button class="chip-btn active" onclick="setFilter('all',this)">All</button>
-      <button class="chip-btn" onclick="setFilter('APL',this)">APL</button>
-      <button class="chip-btn" onclick="setFilter('YRBM',this)">YRBM</button>
-      <button class="chip-btn" onclick="setFilter('YFB',this)">YFB</button>
-      <button class="chip-btn" onclick="setFilter('YTB',this)">YTB</button>
+    <!-- Craft type dropdown -->
+    <div class="tg">
+      <span class="tlbl">Craft</span>
+      <div id="craft-dd" style="position:relative">
+        <button class="abtn btn-o" style="gap:5px" onclick="toggleCraftDD()">
+          <span id="craft-dd-lbl">All Types</span>
+          <i class="fas fa-chevron-down fa-xs"></i>
+        </button>
+        <div id="craft-menu" style="display:none;position:absolute;top:calc(100% + 4px);left:0;
+          background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);
+          box-shadow:var(--shadow);min-width:180px;z-index:200;padding:4px 0;">
+          <div class="cm-item active" data-filter="all" onclick="setCraft('all',this)">
+            <i class="fas fa-layer-group fa-xs"></i> All Types
+          </div>
+          <div class="cm-sep"></div>
+          <div class="cm-item" data-filter="APL"  onclick="setCraft('APL',this)"><i class="fas fa-ship fa-xs"></i> APL</div>
+          <div class="cm-item" data-filter="YRBM" onclick="setCraft('YRBM',this)"><i class="fas fa-anchor fa-xs"></i> YRBM</div>
+          <div class="cm-item" data-filter="YFB"  onclick="setCraft('YFB',this)"><i class="fas fa-water fa-xs"></i> YFB</div>
+          <div class="cm-item" data-filter="YTB"  onclick="setCraft('YTB',this)"><i class="fas fa-tug fa-xs"></i> YTB</div>
+          <div class="cm-sep"></div>
+          <div class="cm-item" style="color:var(--accent)" onclick="openAddVessel();toggleCraftDD()">
+            <i class="fas fa-plus fa-xs"></i> Add Vessel…
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="tb-divider"></div>
+    <div class="tdiv"></div>
 
     <!-- FY range -->
-    <div class="toolbar-group">
-      <span class="toolbar-label">FY</span>
-      <select class="s4-select" id="fy-start" onchange="updateFYRange()">
-        <option value="25">FY25</option>
-        <option value="26" selected>FY26</option>
-        <option value="27">FY27</option>
+    <div class="tg">
+      <span class="tlbl">FY</span>
+      <select class="s4sel" id="fy-s" onchange="updateFY()">
+        <option value="25">FY25</option><option value="26" selected>FY26</option><option value="27">FY27</option>
       </select>
       <span style="font-size:11px;color:var(--steel)">–</span>
-      <select class="s4-select" id="fy-end" onchange="updateFYRange()">
-        <option value="30">FY30</option>
-        <option value="31">FY31</option>
-        <option value="32" selected>FY32</option>
-        <option value="33">FY33</option>
-        <option value="34">FY34</option>
+      <select class="s4sel" id="fy-e" onchange="updateFY()">
+        <option value="30">FY30</option><option value="31">FY31</option>
+        <option value="32" selected>FY32</option><option value="33">FY33</option><option value="34">FY34</option>
       </select>
     </div>
 
-    <div class="tb-divider"></div>
+    <div class="tdiv"></div>
 
     <!-- Milestone toggles -->
-    <div class="toolbar-group" style="gap:8px">
-      <span class="toolbar-label">Show</span>
-      <label class="ms-toggle" title="Contract Award"><input type="checkbox" checked onchange="toggleMS('CA',this.checked)"> <span style="color:var(--gold)">★</span> CA</label>
-      <label class="ms-toggle" title="Start of Construction"><input type="checkbox" checked onchange="toggleMS('SOC',this.checked)"> <span style="color:var(--yellow)">▲</span> SOC</label>
-      <label class="ms-toggle" title="Builder's Trials"><input type="checkbox" checked onchange="toggleMS('BT',this.checked)"> <span style="color:var(--accent)">◆</span> BT</label>
-      <label class="ms-toggle" title="Acceptance Trials"><input type="checkbox" checked onchange="toggleMS('AT',this.checked)"> <span style="color:var(--purple)">◆</span> AT</label>
-      <label class="ms-toggle" title="Delivery"><input type="checkbox" checked onchange="toggleMS('DEL',this.checked)"> <span style="color:var(--navy)">●</span> DEL</label>
+    <div class="tg" style="gap:7px">
+      <span class="tlbl">Milestones</span>
+      <label class="ms-tog"><input type="checkbox" checked onchange="toggleMS('CA',this.checked)">
+        <span style="color:var(--gold)">★</span> CA</label>
+      <label class="ms-tog"><input type="checkbox" checked onchange="toggleMS('SOC',this.checked)">
+        <span style="color:var(--yellow)">▲</span> SOC</label>
+      <label class="ms-tog"><input type="checkbox" checked onchange="toggleMS('LCH',this.checked)">
+        <span style="color:#5ac8fa">◆</span> Launch</label>
+      <label class="ms-tog"><input type="checkbox" checked onchange="toggleMS('BT',this.checked)">
+        <span style="color:var(--accent)">◆</span> BT</label>
+      <label class="ms-tog"><input type="checkbox" checked onchange="toggleMS('AT',this.checked)">
+        <span style="color:var(--purple)">◆</span> AT</label>
+      <label class="ms-tog"><input type="checkbox" checked onchange="toggleMS('DEL',this.checked)">
+        <span style="color:var(--navy)">●</span> DEL</label>
+      <button class="abtn btn-o" style="font-size:10px;padding:3px 8px" onclick="openAddMS()">
+        <i class="fas fa-plus fa-xs"></i> Add
+      </button>
     </div>
 
     <div style="flex:1"></div>
 
-    <!-- Actions -->
-    <div class="toolbar-group">
-      <button class="action-btn btn-outline" onclick="openAddVessel()"><i class="fas fa-plus fa-xs"></i> Add Vessel</button>
-      <button class="action-btn btn-outline" onclick="openAddMS()"><i class="fas fa-flag fa-xs"></i> Add Milestone</button>
-      <button class="action-btn btn-outline" onclick="exportCSV()"><i class="fas fa-download fa-xs"></i> Export CSV</button>
-      <label class="action-btn btn-outline" style="cursor:pointer">
-        <i class="fas fa-upload fa-xs"></i> Import CSV
-        <input type="file" accept=".csv" style="display:none" onchange="importCSV(event)">
-      </label>
-      <button class="action-btn btn-primary" onclick="saveAll()"><i class="fas fa-cloud-upload-alt fa-xs"></i> Save</button>
-    </div>
+    <!-- Log / AI buttons -->
+    <button class="abtn btn-o" id="log-btn" onclick="openDrawer('log')" title="Change Log / Audit History">
+      <i class="fas fa-history fa-xs"></i> Log
+      <span id="log-badge" style="display:none;background:var(--red);color:white;
+        border-radius:8px;font-size:9px;padding:0 4px;margin-left:2px">0</span>
+    </button>
+    <button class="abtn btn-o" id="ai-btn" onclick="openDrawer('ai')" title="AI Schedule Assistant">
+      <i class="fas fa-robot fa-xs"></i> AI Assist
+    </button>
   </div>
 
   <!-- Legend -->
-  <div id="legend-bar">
-    <span style="font-size:9.5px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.07em">Legend:</span>
-    <div class="legend-item"><span style="color:var(--gold);font-size:14px">★</span> Contract Award (CA)</div>
-    <div class="legend-item"><span style="color:var(--yellow);font-size:14px">▲</span> Start of Construction (SOC)</div>
-    <div class="legend-item"><span style="color:var(--accent);font-size:14px">◆</span> Builder's Trials (BT)</div>
-    <div class="legend-item"><span style="color:var(--purple);font-size:14px">◆</span> Acceptance Trials (AT)</div>
-    <div class="legend-item"><span style="color:var(--navy);font-size:14px">●</span> Delivery (DEL)</div>
-    <div class="legend-item" style="margin-left:6px">
-      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:rgba(0,122,255,0.15);border:1.5px solid #007AFF;vertical-align:middle"></span> PACFLT
+  <div id="legend">
+    <span style="font-size:9px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.07em">Legend:</span>
+    <div class="li"><span style="color:var(--gold);font-size:13px">★</span> Contract Award (CA)</div>
+    <div class="li"><span style="color:var(--yellow);font-size:13px">▲</span> Start of Construction (SOC)</div>
+    <div class="li"><span style="color:#5ac8fa;font-size:13px">◆</span> Launch</div>
+    <div class="li"><span style="color:var(--accent);font-size:13px">◆</span> Builder's Trials (BT)</div>
+    <div class="li"><span style="color:var(--purple);font-size:13px">◆</span> Acceptance Trials (AT)</div>
+    <div class="li"><span style="color:var(--navy);font-size:13px">●</span> Delivery (DEL)</div>
+    <div class="li" style="margin-left:6px">
+      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
+        background:rgba(0,122,255,0.15);border:1.5px solid #007AFF"></span> PACFLT
     </div>
-    <div class="legend-item">
-      <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:rgba(52,199,89,0.15);border:1.5px solid #34c759;vertical-align:middle"></span> USFF
+    <div class="li">
+      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
+        background:rgba(52,199,89,0.15);border:1.5px solid #34c759"></span> USFF
+    </div>
+    <div class="li">
+      <span style="display:inline-block;width:24px;height:4px;border-radius:2px;
+        background:rgba(0,122,255,0.25)"></span> CA→DEL span
     </div>
   </div>
 
-  <!-- Main content -->
+  <!-- Main -->
   <div id="main">
     <div id="center">
+
       <!-- Gantt -->
-      <div id="gantt-panel"><svg id="gantt-svg"></svg></div>
+      <div id="gantt-wrap"><svg id="gantt-svg"></svg></div>
+
       <!-- Spreadsheet -->
-      <div id="spreadsheet-panel">
-        <table id="ssheet">
-          <thead>
-            <tr id="ssheet-head">
-              <th style="min-width:95px">Designation</th>
-              <th>Type</th>
-              <th>Fleet</th>
-              <th style="min-width:92px">CA</th>
-              <th style="min-width:92px">SOC</th>
-              <th style="min-width:92px">BT</th>
-              <th style="min-width:92px">AT</th>
-              <th style="min-width:92px">DEL</th>
-              <th>Duration</th>
-              <th>Status</th>
-              <th style="min-width:155px">Notes</th>
-              <th style="width:30px"></th>
-            </tr>
-          </thead>
-          <tbody id="ssheet-body"></tbody>
+      <div id="sheet-wrap">
+        <div id="sheet-toolbar">
+          <span class="tlbl" style="margin-right:2px">Spreadsheet</span>
+          <div class="tdiv"></div>
+          <button class="abtn btn-o" onclick="exportCSV()"><i class="fas fa-download fa-xs"></i> Export CSV</button>
+          <label class="abtn btn-o" style="cursor:pointer">
+            <i class="fas fa-upload fa-xs"></i> Import CSV
+            <input type="file" accept=".csv" style="display:none" onchange="importCSV(event)">
+          </label>
+          <button class="abtn btn-p" onclick="saveAll()"><i class="fas fa-cloud-upload-alt fa-xs"></i> Save</button>
+          <div style="flex:1"></div>
+          <span style="font-size:9.5px;color:var(--steel)" id="sheet-count">— vessels</span>
+        </div>
+        <table class="sheet-tbl" id="ssheet">
+          <thead><tr id="ssheet-hd"></tr></thead>
+          <tbody id="ssheet-bd"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- Right panel -->
-    <div id="right-panel">
-      <div class="rp-tabs">
-        <button class="rp-tab active" onclick="setRPTab('log',this)"><i class="fas fa-history fa-xs"></i> Change Log</button>
-        <button class="rp-tab" onclick="setRPTab('ai',this)"><i class="fas fa-robot fa-xs"></i> AI Assist</button>
+    <!-- Drawer toggle buttons (outside drawer) -->
+    <div id="drawer-btns">
+      <button class="dr-tog-btn" id="tog-log" onclick="openDrawer('log')" title="Change Log">
+        <i class="fas fa-history"></i><span>Log</span>
+      </button>
+      <button class="dr-tog-btn" id="tog-ai" onclick="openDrawer('ai')" title="AI Assist">
+        <i class="fas fa-robot"></i><span>AI</span>
+      </button>
+    </div>
+
+    <!-- Right Drawer -->
+    <div id="drawer">
+      <div class="dr-hdr">
+        <h3 id="dr-title">Change Log</h3>
+        <button class="dr-close" onclick="closeDrawer()"><i class="fas fa-times fa-xs"></i></button>
       </div>
-      <div id="rp-log">
-        <div id="log-entries"><p style="color:var(--steel);font-size:10.5px;padding:4px 0">No changes yet.</p></div>
+      <div class="dr-tabs">
+        <button class="dr-tab active" id="dt-log" onclick="setDrTab('log',this)">
+          <i class="fas fa-history fa-xs"></i> Audit History
+        </button>
+        <button class="dr-tab" id="dt-ai" onclick="setDrTab('ai',this)">
+          <i class="fas fa-robot fa-xs"></i> AI Assist
+        </button>
       </div>
-      <div id="rp-ai">
+      <div id="dr-log"><div id="log-entries"><p style="color:var(--steel);font-size:10px;padding:4px">No changes yet.</p></div></div>
+      <div id="dr-ai">
         <div id="ai-msgs"></div>
-        <div id="ai-input-row">
-          <input type="text" id="ai-input" placeholder="Ask about schedule impact…" onkeydown="if(event.key==='Enter')sendAI()">
-          <button id="ai-send" onclick="sendAI()"><i class="fas fa-paper-plane" style="font-size:10px"></i></button>
+        <div id="ai-inp-row">
+          <input type="text" id="ai-inp" placeholder="Ask about schedule impact…" onkeydown="if(event.key==='Enter')sendAI()">
+          <button id="ai-snd" onclick="sendAI()"><i class="fas fa-paper-plane" style="font-size:9px"></i></button>
         </div>
       </div>
     </div>
   </div>
-</div><!-- end #app -->
+</div>
 
-<!-- ══ LOGIN OVERLAY ═══════════════════════════════════════════════ -->
+<!-- ══ LOGIN ══════════════════════════════════════════════════════════ -->
 <div id="login-overlay">
   <div class="login-card">
-    <div class="logo-row">
+    <div class="lr">
       <div class="lm">S4</div>
-      <div class="lm-text">
-        <h2>Program Schedule</h2>
-        <p>S4 Ledger — Service Craft &amp; Vessel Tracker</p>
-      </div>
+      <div class="lmt"><h2>Program Schedule</h2><p>S4 Ledger — Service Craft Tracker</p></div>
     </div>
-    <div id="login-err" class="login-err"></div>
-    <div class="form-grp">
-      <label>Email</label>
-      <input type="email" id="l-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <div class="form-grp">
-      <label>Password</label>
-      <input type="password" id="l-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="login-btn lbtn-p" id="l-btn" onclick="doLogin()">
-      <span id="l-btn-txt">Sign In</span>
+    <div id="lerr" class="lerr"></div>
+    <div class="fg"><label>Email</label>
+      <input type="email" id="l-em" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="fg"><label>Password</label>
+      <input type="password" id="l-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="lbtn lbtn-p" id="l-btn" onclick="doLogin()"><span id="l-btxt">Sign In</span></button>
+    <button class="lbtn lbtn-s" onclick="enterDemo()">
+      <i class="fas fa-eye fa-xs" style="margin-right:4px"></i>Continue in Demo Mode
     </button>
-    <button class="login-btn lbtn-s" onclick="enterDemo()">
-      <i class="fas fa-eye fa-xs" style="margin-right:5px"></i>Continue in Demo Mode
-    </button>
-    <p style="font-size:10.5px;color:var(--steel);text-align:center;margin-top:10px;line-height:1.5">
-      Use your existing S4 Ledger credentials.<br>Demo mode requires no login.
+    <p style="font-size:10px;color:var(--steel);text-align:center;margin-top:8px;line-height:1.5">
+      Use your S4 Ledger credentials. Demo mode requires no login.
     </p>
   </div>
 </div>
 
-<!-- ══ ADD VESSEL MODAL ════════════════════════════════════════════ -->
-<div id="add-vessel-modal" class="modal-overlay">
-  <div class="modal-card" style="min-width:440px">
-    <h3><i class="fas fa-ship fa-xs" style="color:var(--accent);margin-right:7px"></i>Add Vessel</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
-      <div class="form-grp" style="margin:0">
-        <label>Designation</label>
-        <input type="text" id="v-desig" placeholder="APL-106" style="font-size:13px" onkeydown="if(event.key==='Enter')confirmAddVessel()">
+<!-- ══ ADD VESSEL MODAL ════════════════════════════════════════════════ -->
+<div id="av-modal" class="m-overlay">
+  <div class="m-card">
+    <h3><i class="fas fa-ship fa-xs" style="color:var(--accent);margin-right:6px"></i>Add Vessel</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div>
+        <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Designation</label>
+        <input type="text" id="av-des" class="fg" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;outline:none"
+          placeholder="APL-106" onkeydown="if(event.key==='Enter')confirmAV()">
       </div>
-      <div class="form-grp" style="margin:0">
-        <label>Craft Type</label>
-        <select id="v-type" class="s4-select" style="width:100%;height:38px;font-size:13px">
-          <option value="APL">APL</option>
-          <option value="YRBM">YRBM</option>
-          <option value="YFB">YFB</option>
-          <option value="YTB">YTB</option>
+      <div>
+        <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Craft Type</label>
+        <select id="av-type" class="s4sel" style="width:100%;height:34px;font-size:12px">
+          <option>APL</option><option>YRBM</option><option>YFB</option><option>YTB</option>
         </select>
       </div>
-      <div class="form-grp" style="margin:0">
-        <label>Fleet</label>
-        <select id="v-fleet" class="s4-select" style="width:100%;height:38px;font-size:13px">
-          <option value="PACFLT">PACFLT</option>
-          <option value="USFF">USFF</option>
-          <option value="USMC">USMC</option>
+      <div>
+        <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Fleet</label>
+        <select id="av-fleet" class="s4sel" style="width:100%;height:34px;font-size:12px">
+          <option>PACFLT</option><option>USFF</option><option>USMC</option>
         </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Builder</label>
+        <input type="text" id="av-builder" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none" placeholder="Shipyard name">
       </div>
     </div>
-    <p style="font-size:10.5px;color:var(--steel);margin-top:10px">Milestone dates can be set directly in the spreadsheet after adding.</p>
-    <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="action-btn btn-primary" style="flex:1;padding:9px;font-size:13px" onclick="confirmAddVessel()">Add Vessel</button>
-      <button class="action-btn btn-outline" style="flex:1;padding:9px;font-size:13px" onclick="closeModal('add-vessel-modal')">Cancel</button>
+    <div style="display:flex;gap:7px;margin-top:4px">
+      <button class="abtn btn-p" style="flex:1;padding:8px;font-size:12px" onclick="confirmAV()">Add Vessel</button>
+      <button class="abtn btn-o" style="flex:1;padding:8px;font-size:12px" onclick="closeModal('av-modal')">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- ══ ADD MILESTONE TYPE MODAL ════════════════════════════════════ -->
-<div id="add-ms-modal" class="modal-overlay">
-  <div class="modal-card">
-    <h3><i class="fas fa-flag fa-xs" style="color:var(--accent);margin-right:7px"></i>Add Custom Milestone Type</h3>
-    <div class="form-grp">
-      <label>Code (up to 6 chars, e.g. "IOC")</label>
-      <input type="text" id="ms-code" placeholder="IOC" maxlength="6" style="text-transform:uppercase;font-size:13px">
+<!-- ══ ADD MILESTONE MODAL ════════════════════════════════════════════ -->
+<div id="am-modal" class="m-overlay">
+  <div class="m-card" style="min-width:320px">
+    <h3><i class="fas fa-flag fa-xs" style="color:var(--accent);margin-right:6px"></i>Add Custom Milestone</h3>
+    <div class="fg">
+      <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Code (≤6 chars, e.g. IOC)</label>
+      <input type="text" id="am-code" maxlength="6" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;text-transform:uppercase;outline:none">
     </div>
-    <div class="form-grp">
-      <label>Full Name</label>
-      <input type="text" id="ms-name" placeholder="Initial Operational Capability" style="font-size:13px">
+    <div class="fg">
+      <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Full Name</label>
+      <input type="text" id="am-name" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;outline:none" placeholder="Initial Operational Capability">
     </div>
-    <div class="form-grp">
-      <label>Color</label>
-      <input type="color" id="ms-color" value="#5856d6" style="height:36px;width:100%;border-radius:7px;border:1px solid var(--border);cursor:pointer">
+    <div class="fg">
+      <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Symbol Color</label>
+      <input type="color" id="am-color" value="#5856d6" style="height:34px;width:100%;border-radius:7px;border:1.5px solid var(--border);cursor:pointer">
     </div>
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="action-btn btn-primary" style="flex:1;padding:9px;font-size:13px" onclick="confirmAddMS()">Add Milestone</button>
-      <button class="action-btn btn-outline" style="flex:1;padding:9px;font-size:13px" onclick="closeModal('add-ms-modal')">Cancel</button>
+    <div style="display:flex;gap:7px">
+      <button class="abtn btn-p" style="flex:1;padding:8px;font-size:12px" onclick="confirmAM()">Add</button>
+      <button class="abtn btn-o" style="flex:1;padding:8px;font-size:12px" onclick="closeModal('am-modal')">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- ══ TOOLTIPS / TOAST ════════════════════════════════════════════ -->
-<div id="gantt-tip"></div>
+<!-- Craft dropdown menu CSS injection -->
+<style>
+.cm-item {
+  padding:6px 12px; font-size:11.5px; cursor:pointer; display:flex;
+  align-items:center; gap:6px; transition:background .1s; color:var(--text);
+}
+.cm-item:hover,.cm-item.active { background:rgba(0,122,255,0.07); color:var(--accent); }
+.cm-sep { height:1px; background:var(--border); margin:3px 0; }
+</style>
+
+<div id="gtip"></div>
 <div id="toast"></div>
 
-<!-- ══ SUPABASE SDK ════════════════════════════════════════════════ -->
+<!-- ══ SUPABASE ═══════════════════════════════════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-<!-- ══ APPLICATION LOGIC ══════════════════════════════════════════ -->
+<!-- ══ APPLICATION ════════════════════════════════════════════════════ -->
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-   S4 LEDGER — Program Schedule Tool
-   Version : 1.0.0
+/* ═══════════════════════════════════════════════════════════════════════
+   S4 LEDGER — Program Schedule Tool  v2.0.0
    Built   : 2026-05-05
-   Purpose : Fiscal-year Gantt + editable spreadsheet for service
-             craft / vessel milestone tracking (BLI demo data).
-             Propagates milestone date changes to Deliverables
-             Tracker via localStorage + Supabase (when authenticated).
-   Data    : UNCLASSIFIED // Demo only — not for operational use.
-═══════════════════════════════════════════════════════════════════ */
+   Data    : UNCLASSIFIED // DEMO — not operational schedule data
+   Handles : Gantt chart + editable spreadsheet for service craft BLI
+             milestones.  Changes propagate to Deliverables Tracker via
+             localStorage(s4_program_schedule_propagated).
+═══════════════════════════════════════════════════════════════════════ */
 
-// ── Supabase ──────────────────────────────────────────────────────
-const SB_URL = 'https://ysmwkkdpjgjokukxolel.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzbXdra2Rwamdqb2t1a3hvbGVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMzA3NDQsImV4cCI6MjA4NzYwNjc0NH0.4u56RJ61Q5cqnqMqIEWwg50q6MlV8bEvueA45enQgxE';
-const SB = supabase.createClient(SB_URL, SB_KEY);
+/* ── Supabase ─── */
+const SB_URL='https://ysmwkkdpjgjokukxolel.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzbXdra2Rwamdqb2t1a3hvbGVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMzA3NDQsImV4cCI6MjA4NzYwNjc0NH0.4u56RJ61Q5cqnqMqIEWwg50q6MlV8bEvueA45enQgxE';
+const SB=supabase.createClient(SB_URL,SB_KEY);
 
-// ── Constants ─────────────────────────────────────────────────────
-const VERSION       = '1.0.0';
-const STORE_KEY     = 's4_program_schedule_v1';
-const PROPAGATE_KEY = 's4_program_schedule_propagated';
-const TABLE         = 'program_schedule';
-const TOOL_ID       = 'program-schedule-v1';
+/* ── Constants ─── */
+const VER='2.0.0', STORE_KEY='s4_ps_v2', PROP_KEY='s4_program_schedule_propagated';
+const NOW_MONTH=new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0');
 
-// ── Milestone Registry ────────────────────────────────────────────
-var MILESTONES = {
-  CA:  { label: 'Contract Award',        color: '#c9a84c', shape: 'star'     },
-  SOC: { label: 'Start of Construction', color: '#ff9500', shape: 'triangle' },
-  BT:  { label: "Builder's Trials",      color: '#007AFF', shape: 'diamond'  },
-  AT:  { label: 'Acceptance Trials',     color: '#af52de', shape: 'diamond'  },
-  DEL: { label: 'Delivery',              color: '#1c3a5f', shape: 'circle'   },
+/* ── Milestone Registry (Gantt symbols) ─── */
+var MS = {
+  CA:  {label:'Contract Award',         color:'#c9a84c', shape:'star',     gantt:true},
+  SOC: {label:'Start of Construction',  color:'#ff9500', shape:'triangle', gantt:true},
+  LCH: {label:'Launch',                 color:'#5ac8fa', shape:'diamond',  gantt:true},
+  BT:  {label:"Builder's Trials",       color:'#007AFF', shape:'diamond',  gantt:true},
+  AT:  {label:'Acceptance Trials',      color:'#af52de', shape:'diamond',  gantt:true},
+  DEL: {label:'Delivery (Actual)',      color:'#1c3a5f', shape:'circle',   gantt:true},
 };
 
-// ── Vessel Type Definitions ───────────────────────────────────────
-var VT = {
-  APL:  { label: 'APL — Auxiliary Personnel Lighter',      color: '#007AFF' },
-  YRBM: { label: 'YRBM — Yard Repair Berthing & Messing', color: '#34c759' },
-  YFB:  { label: 'YFB — Yard Floating Barrier',           color: '#ff9500' },
-  YTB:  { label: 'YTB — Large Harbor Tug',                color: '#af52de' },
-};
-
-// ── Demo Vessels (generic BLI-like, not real schedule data) ───────
-var DEMO_VESSELS = [
-  { id:'apl-101', type:'APL',  designation:'APL-101', fleet:'PACFLT', milestones:{ CA:'2026-01', SOC:'2026-06', DEL:'2028-02' }, notes:'', status:'on-track' },
-  { id:'apl-102', type:'APL',  designation:'APL-102', fleet:'PACFLT', milestones:{ CA:'2026-05', SOC:'2026-11', DEL:'2028-09' }, notes:'', status:'on-track' },
-  { id:'apl-103', type:'APL',  designation:'APL-103', fleet:'USFF',   milestones:{ CA:'2026-10', SOC:'2027-04', DEL:'2029-01' }, notes:'', status:'on-track' },
-  { id:'apl-104', type:'APL',  designation:'APL-104', fleet:'PACFLT', milestones:{ CA:'2027-03', SOC:'2027-09', DEL:'2029-07' }, notes:'', status:'on-track' },
-  { id:'apl-105', type:'APL',  designation:'APL-105', fleet:'USFF',   milestones:{ CA:'2027-08', SOC:'2028-02', DEL:'2030-02' }, notes:'', status:'on-track' },
-  { id:'yrbm-50', type:'YRBM', designation:'YRBM-50', fleet:'PACFLT', milestones:{ DEL:'2026-03' }, notes:'Gov-furnished — see contract notes', status:'on-track' },
-  { id:'yrbm-51', type:'YRBM', designation:'YRBM-51', fleet:'USFF',   milestones:{ CA:'2026-03', SOC:'2026-08', DEL:'2027-04' }, notes:'', status:'on-track' },
-  { id:'yrbm-52', type:'YRBM', designation:'YRBM-52', fleet:'PACFLT', milestones:{ CA:'2026-09', SOC:'2027-01', DEL:'2028-02' }, notes:'', status:'on-track' },
-  { id:'yrbm-53', type:'YRBM', designation:'YRBM-53', fleet:'USFF',   milestones:{ CA:'2027-04', SOC:'2027-10', DEL:'2029-03' }, notes:'', status:'on-track' },
-  { id:'yfb-88',  type:'YFB',  designation:'YFB-88',  fleet:'PACFLT', milestones:{ CA:'2026-02', SOC:'2026-07', DEL:'2027-07' }, notes:'', status:'on-track' },
-  { id:'yfb-89',  type:'YFB',  designation:'YFB-89',  fleet:'USFF',   milestones:{ CA:'2026-11', SOC:'2027-05', DEL:'2028-08' }, notes:'', status:'on-track' },
-  { id:'yfb-90',  type:'YFB',  designation:'YFB-90',  fleet:'PACFLT', milestones:{ CA:'2027-07', SOC:'2028-01', DEL:'2029-06' }, notes:'', status:'on-track' },
-  { id:'ytb-810', type:'YTB',  designation:'YTB-810', fleet:'PACFLT', milestones:{ CA:'2026-05', SOC:'2026-11', BT:'2028-02', AT:'2028-04', DEL:'2028-07' }, notes:'', status:'on-track' },
-  { id:'ytb-811', type:'YTB',  designation:'YTB-811', fleet:'USFF',   milestones:{ CA:'2027-01', SOC:'2027-07', BT:'2028-10', AT:'2028-12', DEL:'2029-04' }, notes:'', status:'on-track' },
-  { id:'ytb-812', type:'YTB',  designation:'YTB-812', fleet:'PACFLT', milestones:{ CA:'2027-09', SOC:'2028-04', DEL:'2030-03' }, notes:'', status:'on-track' },
+/* ── Spreadsheet-only fields (not mapped to Gantt milestones) ─── */
+var SFIELDS = [
+  {key:'contract_num',  label:'Contract No.',     type:'text'},
+  {key:'builder',       label:'Builder',           type:'text'},
+  {key:'uic',           label:'UIC',               type:'text'},
+  {key:'owld',          label:'OWLD',              type:'text'},
+  {key:'fy_approp',     label:'FY Approp.',        type:'text'},
+  {key:'pm_secnav',     label:'PM Est./SECNAV',    type:'month'},
+  {key:'contract_del',  label:'Contract Delivery', type:'month'},
+  {key:'sail_tow',      label:'Sail/Tow Away',     type:'month'},
+  {key:'arrival_dest',  label:'Arrival at Dest.',  type:'month'},
 ];
 
-// ── State ─────────────────────────────────────────────────────────
-var vessels     = JSON.parse(JSON.stringify(DEMO_VESSELS));
-var changeLog   = [];
-var currentUser = null;
-var isDemo      = false;
-var craftFilter = 'all';
-var fyStart     = 26;
-var fyEnd       = 32;
-var hiddenMS    = {};
-var rpOpen      = true;
-var rpTab       = 'log';
-var saveTimer   = null;
+/* ── Vessel type metadata ─── */
+var VT = {
+  APL:  {label:'APL — Auxiliary Personnel Lighter',      color:'#007AFF'},
+  YRBM: {label:'YRBM — Yard Repair Berthing & Messing',  color:'#34c759'},
+  YFB:  {label:'YFB — Yard Floating Barrier',            color:'#ff9500'},
+  YTB:  {label:'YTB — Large Harbor Tug',                 color:'#af52de'},
+};
 
-// ── Gantt constants ───────────────────────────────────────────────
-var GP_LEFT    = 128;
-var GP_ROW_H   = 44;
-var GP_HDR_H   = 34;
-var GP_FY_W    = 108;
-var GP_MS_R    = 7;
+/* ─────────────────────────────────────────────────────────────────
+   DEMO DATA  (generic BLI-like data, not real operational schedule)
+   Status mix: on-track, delayed, not-planned
+──────────────────────────────────────────────────────────────────*/
+var DEMO = [
+  /* APLs */
+  {id:'apl-101',type:'APL',designation:'APL-101',fleet:'PACFLT',
+   ms:{CA:'2025-11',SOC:'2026-04',LCH:'2027-01',BT:'2027-05',AT:'2027-08',DEL:'2027-11'},
+   sf:{contract_num:'N00024-26-C-2201',builder:'Gulf Craftsmen Inc.',uic:'23501',owld:'2026-03',fy_approp:'FY26',
+       pm_secnav:'2025-09',contract_del:'2027-12',sail_tow:'2028-01',arrival_dest:'2028-02'},
+   status:'on-track',notes:'Lead ship; all milestones on schedule'},
+  {id:'apl-102',type:'APL',designation:'APL-102',fleet:'PACFLT',
+   ms:{CA:'2026-03',SOC:'2026-09',LCH:'2027-07',BT:'2027-11',AT:'2028-02',DEL:'2028-05'},
+   sf:{contract_num:'N00024-26-C-2202',builder:'Gulf Craftsmen Inc.',uic:'23502',owld:'2026-06',fy_approp:'FY26',
+       pm_secnav:'2025-12',contract_del:'2028-06',sail_tow:'2028-07',arrival_dest:'2028-08'},
+   status:'delayed',notes:'SOC slipped 2 mo; monitoring BT impact'},
+  {id:'apl-103',type:'APL',designation:'APL-103',fleet:'USFF',
+   ms:{CA:'2026-09',SOC:'2027-03',LCH:'2028-01',BT:'2028-05',AT:'2028-08',DEL:'2028-11'},
+   sf:{contract_num:'N00024-27-C-2203',builder:'Eastern Shipbuilding',uic:'23503',owld:'2026-12',fy_approp:'FY27',
+       pm_secnav:'2026-07',contract_del:'2028-12',sail_tow:'2029-01',arrival_dest:'2029-02'},
+   status:'on-track',notes:''},
+  {id:'apl-104',type:'APL',designation:'APL-104',fleet:'PACFLT',
+   ms:{CA:'2027-04',SOC:'',LCH:'',BT:'',AT:'',DEL:''},
+   sf:{contract_num:'TBD',builder:'TBD',uic:'23504',owld:'2027-06',fy_approp:'FY27',
+       pm_secnav:'2026-11',contract_del:'',sail_tow:'',arrival_dest:''},
+   status:'not-planned',notes:'Award planned; SOC and beyond TBD'},
+  {id:'apl-105',type:'APL',designation:'APL-105',fleet:'USFF',
+   ms:{CA:'2027-10',SOC:'',LCH:'',BT:'',AT:'',DEL:''},
+   sf:{contract_num:'TBD',builder:'TBD',uic:'23505',owld:'2028-01',fy_approp:'FY28',
+       pm_secnav:'2027-03',contract_del:'',sail_tow:'',arrival_dest:''},
+   status:'not-planned',notes:'Planned award FY28; pending SECNAV approval'},
 
-// ═══════════════════════════════════════════════════════════════════
-//  INITIALISATION
-// ═══════════════════════════════════════════════════════════════════
+  /* YRBMs */
+  {id:'yrbm-51',type:'YRBM',designation:'YRBM-51',fleet:'PACFLT',
+   ms:{CA:'2025-09',SOC:'2026-03',LCH:'2026-08',BT:'2026-10',AT:'2026-12',DEL:'2027-03'},
+   sf:{contract_num:'N00024-25-C-3101',builder:'Vigor Industrial',uic:'24201',owld:'2025-12',fy_approp:'FY25',
+       pm_secnav:'2025-06',contract_del:'2027-04',sail_tow:'2027-05',arrival_dest:'2027-06'},
+   status:'delayed',notes:'AT delayed 6 wks due to equipment backorder'},
+  {id:'yrbm-52',type:'YRBM',designation:'YRBM-52',fleet:'USFF',
+   ms:{CA:'2026-02',SOC:'2026-08',LCH:'2027-02',BT:'2027-05',AT:'2027-07',DEL:'2027-10'},
+   sf:{contract_num:'N00024-26-C-3102',builder:'Vigor Industrial',uic:'24202',owld:'2026-05',fy_approp:'FY26',
+       pm_secnav:'2025-10',contract_del:'2027-11',sail_tow:'2027-12',arrival_dest:'2028-01'},
+   status:'on-track',notes:''},
+  {id:'yrbm-53',type:'YRBM',designation:'YRBM-53',fleet:'PACFLT',
+   ms:{CA:'2026-09',SOC:'2027-03',LCH:'2027-10',BT:'2028-01',AT:'2028-04',DEL:'2028-07'},
+   sf:{contract_num:'N00024-26-C-3103',builder:'Vigor Industrial',uic:'24203',owld:'2026-12',fy_approp:'FY27',
+       pm_secnav:'2026-06',contract_del:'2028-08',sail_tow:'2028-09',arrival_dest:'2028-10'},
+   status:'on-track',notes:''},
+  {id:'yrbm-54',type:'YRBM',designation:'YRBM-54',fleet:'USFF',
+   ms:{CA:'2027-06',SOC:'',LCH:'',BT:'',AT:'',DEL:''},
+   sf:{contract_num:'TBD',builder:'TBD',uic:'24204',owld:'2027-09',fy_approp:'FY27',
+       pm_secnav:'2026-12',contract_del:'',sail_tow:'',arrival_dest:''},
+   status:'not-planned',notes:'Planned; SOC/DEL pending contract award'},
+
+  /* YFBs */
+  {id:'yfb-88', type:'YFB', designation:'YFB-88', fleet:'PACFLT',
+   ms:{CA:'2025-12',SOC:'2026-05',LCH:'2026-10',BT:'2026-12',AT:'2027-02',DEL:'2027-05'},
+   sf:{contract_num:'N00024-26-C-4101',builder:'Metalcraft Marine',uic:'25101',owld:'2026-02',fy_approp:'FY26',
+       pm_secnav:'2025-08',contract_del:'2027-06',sail_tow:'2027-07',arrival_dest:'2027-08'},
+   status:'on-track',notes:''},
+  {id:'yfb-89', type:'YFB', designation:'YFB-89', fleet:'USFF',
+   ms:{CA:'2026-06',SOC:'2026-12',LCH:'2027-06',BT:'2027-09',AT:'2027-11',DEL:'2028-02'},
+   sf:{contract_num:'N00024-26-C-4102',builder:'Metalcraft Marine',uic:'25102',owld:'2026-09',fy_approp:'FY26',
+       pm_secnav:'2026-02',contract_del:'2028-03',sail_tow:'2028-04',arrival_dest:'2028-05'},
+   status:'delayed',notes:'SOC start delayed; builder capacity constrained'},
+  {id:'yfb-90', type:'YFB', designation:'YFB-90', fleet:'PACFLT',
+   ms:{CA:'2027-03',SOC:'',LCH:'',BT:'',AT:'',DEL:''},
+   sf:{contract_num:'TBD',builder:'TBD',uic:'25103',owld:'2027-06',fy_approp:'FY27',
+       pm_secnav:'2026-09',contract_del:'',sail_tow:'',arrival_dest:''},
+   status:'not-planned',notes:'Award anticipated FY27 Q3'},
+
+  /* YTBs */
+  {id:'ytb-810',type:'YTB',designation:'YTB-810',fleet:'PACFLT',
+   ms:{CA:'2025-08',SOC:'2026-02',LCH:'2026-10',BT:'2027-01',AT:'2027-03',DEL:'2027-06'},
+   sf:{contract_num:'N00024-25-C-5101',builder:'Lake Shore Engineering',uic:'26101',owld:'2025-11',fy_approp:'FY25',
+       pm_secnav:'2025-05',contract_del:'2027-07',sail_tow:'2027-08',arrival_dest:'2027-09'},
+   status:'on-track',notes:'Lead hull; performing well'},
+  {id:'ytb-811',type:'YTB',designation:'YTB-811',fleet:'USFF',
+   ms:{CA:'2026-01',SOC:'2026-07',LCH:'2027-03',BT:'2027-06',AT:'2027-08',DEL:'2027-11'},
+   sf:{contract_num:'N00024-26-C-5102',builder:'Lake Shore Engineering',uic:'26102',owld:'2026-04',fy_approp:'FY26',
+       pm_secnav:'2025-09',contract_del:'2027-12',sail_tow:'2028-01',arrival_dest:'2028-02'},
+   status:'on-track',notes:''},
+  {id:'ytb-812',type:'YTB',designation:'YTB-812',fleet:'PACFLT',
+   ms:{CA:'2026-08',SOC:'2027-02',LCH:'2027-10',BT:'2028-01',AT:'2028-04',DEL:'2028-07'},
+   sf:{contract_num:'N00024-26-C-5103',builder:'Lake Shore Engineering',uic:'26103',owld:'2026-11',fy_approp:'FY27',
+       pm_secnav:'2026-04',contract_del:'2028-08',sail_tow:'2028-09',arrival_dest:'2028-10'},
+   status:'delayed',notes:'BT window may conflict with fleet schedule — under review'},
+  {id:'ytb-813',type:'YTB',designation:'YTB-813',fleet:'USFF',
+   ms:{CA:'2027-06',SOC:'',LCH:'',BT:'',AT:'',DEL:''},
+   sf:{contract_num:'TBD',builder:'TBD',uic:'26104',owld:'2027-09',fy_approp:'FY28',
+       pm_secnav:'2027-01',contract_del:'',sail_tow:'',arrival_dest:''},
+   status:'not-planned',notes:'Planned; subject to FYDP'},
+];
+
+/* ── Application State ─── */
+var vessels    = JSON.parse(JSON.stringify(DEMO));
+var auditLog   = [];   // Full audit trail
+var currentUser= null;
+var isDemo     = false;
+var craftFilter= 'all';
+var fyStart    = 26;
+var fyEnd      = 32;
+var hiddenMS   = {};
+var drawerOpen = false;
+var drawerTab  = 'log';
+var saveTimer  = null;
+var logBadge   = 0;
+
+/* ── Gantt layout constants ─── */
+var GP = { LEFT:120, ROW_H:40, HDR_H:30, FY_W:106, MS_R:7 };
+
+/* ═════════════════════════════════════════════════════════════════
+   INIT
+═════════════════════════════════════════════════════════════════ */
 async function init() {
-  sysLog('init', 'Program Schedule tool started', { version: VERSION });
+  sysLog('SYSTEM','App initialized',{version:VER});
 
-  // Load persisted data
+  // Restore persisted data
   try {
     var raw = localStorage.getItem(STORE_KEY);
     if (raw) {
-      var stored = JSON.parse(raw);
-      if (stored.vessels   && Array.isArray(stored.vessels)) vessels   = stored.vessels;
-      if (stored.changeLog && Array.isArray(stored.changeLog)) changeLog = stored.changeLog;
-      if (stored.customMS) Object.assign(MILESTONES, stored.customMS);
-      sysLog('init', 'Loaded from localStorage', { vessels: vessels.length });
+      var s = JSON.parse(raw);
+      if (s.vessels   && s.vessels.length) vessels  = s.vessels;
+      if (s.auditLog  && s.auditLog.length) auditLog = s.auditLog;
+      if (s.customMS) Object.entries(s.customMS).forEach(([k,v]) => MS[k]=v);
+      sysLog('SYSTEM','Restored from localStorage',{vessels:vessels.length,log:auditLog.length});
     }
-  } catch(e) {
-    sysLog('error', 'Failed to parse localStorage', { err: e.message });
-  }
+  } catch(e) { sysLog('ERROR','localStorage parse failed',{err:e.message}); }
 
-  // Auth check
+  // Auth
   try {
-    var result = await SB.auth.getSession();
-    if (result.data && result.data.session) {
-      currentUser = result.data.session.user;
-      isDemo = false;
+    var res = await SB.auth.getSession();
+    if (res.data && res.data.session) {
+      currentUser = res.data.session.user;
+      sysLog('AUTH','Signed in via session',{email:currentUser.email});
       showApp(currentUser.email);
-      await loadFromCloud();
-    } else {
-      showLoginOverlay();
-    }
-  } catch(e) {
-    sysLog('error', 'Auth check failed', { err: e.message });
-    showLoginOverlay();
-  }
+      await loadCloud();
+    } else { showLogin(); }
+  } catch(e) { sysLog('ERROR','Auth check failed',{err:e.message}); showLogin(); }
 
-  SB.auth.onAuthStateChange(function(event, session) {
-    if (event === 'SIGNED_IN' && session) {
-      currentUser = session.user;
-      isDemo = false;
+  SB.auth.onAuthStateChange((ev,sess) => {
+    if (ev==='SIGNED_IN' && sess) {
+      currentUser = sess.user; isDemo = false;
+      sysLog('AUTH','Auth state: SIGNED_IN',{email:currentUser.email});
       showApp(currentUser.email);
-    } else if (event === 'SIGNED_OUT') {
-      currentUser = null; isDemo = false;
-      showLoginOverlay();
+    } else if (ev==='SIGNED_OUT') {
+      currentUser=null; isDemo=false;
+      sysLog('AUTH','Auth state: SIGNED_OUT',null);
+      showLogin();
     }
+  });
+
+  document.addEventListener('click', function(e){
+    var dd = document.getElementById('craft-menu');
+    if (!document.getElementById('craft-dd').contains(e.target)) dd.style.display='none';
   });
 }
 
 function showApp(nameOrEmail) {
-  document.getElementById('login-overlay').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  var n  = (nameOrEmail || 'User').split('@')[0];
-  var av = n.slice(0,2).toUpperCase();
-  document.getElementById('user-av').textContent = av;
-  document.getElementById('user-nm').textContent = n;
+  document.getElementById('login-overlay').style.display='none';
+  document.getElementById('app').style.display='flex';
+  var n=(nameOrEmail||'User').split('@')[0];
+  document.getElementById('uav').textContent=n.slice(0,2).toUpperCase();
+  document.getElementById('unm').textContent=n;
   render();
-  sysLog('auth', 'App shown', { user: nameOrEmail });
+}
+function showLogin() {
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-overlay').style.display='flex';
 }
 
-function showLoginOverlay() {
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-overlay').style.display = 'flex';
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  AUTH
-// ═══════════════════════════════════════════════════════════════════
+/* ═════════════════════════════════════════════════════════════════
+   AUTH
+═════════════════════════════════════════════════════════════════ */
 async function doLogin() {
-  var email = document.getElementById('l-email').value.trim();
-  var pw    = document.getElementById('l-pw').value;
-  var errEl = document.getElementById('login-err');
-  var btn   = document.getElementById('l-btn');
-  var txt   = document.getElementById('l-btn-txt');
-
-  if (!email || !pw) { showErr(errEl, 'Please enter email and password.'); return; }
-
-  btn.disabled = true;
-  txt.innerHTML = '<i class="fas fa-spinner fa-spin fa-xs"></i>\u2004Signing in\u2026';
-  errEl.style.display = 'none';
-
+  var em=document.getElementById('l-em').value.trim();
+  var pw=document.getElementById('l-pw').value;
+  var err=document.getElementById('lerr');
+  var btn=document.getElementById('l-btn');
+  var txt=document.getElementById('l-btxt');
+  if (!em||!pw) { showErr(err,'Please enter email and password.'); return; }
+  btn.disabled=true; txt.innerHTML='<i class="fas fa-spinner fa-spin fa-xs"></i> Signing in…';
+  err.style.display='none';
   try {
-    var res = await SB.auth.signInWithPassword({ email, password: pw });
-    if (res.error) {
-      showErr(errEl, res.error.message || 'Authentication failed.');
-      sysLog('auth', 'Login failed', { email, err: res.error.message });
-    } else {
-      sysLog('auth', 'Login success', { email });
-    }
-  } catch(e) {
-    showErr(errEl, 'Network error. Please try again.');
-    sysLog('auth', 'Login exception', { err: e.message });
-  } finally {
-    btn.disabled = false;
-    txt.textContent = 'Sign In';
-  }
+    var r=await SB.auth.signInWithPassword({email:em,password:pw});
+    if (r.error) { showErr(err,r.error.message||'Authentication failed.'); sysLog('AUTH','Login failed',{email:em,err:r.error.message}); }
+    else { sysLog('AUTH','Login success',{email:em}); }
+  } catch(e) { showErr(err,'Network error. Please try again.'); sysLog('ERROR','Login exception',{err:e.message}); }
+  finally { btn.disabled=false; txt.textContent='Sign In'; }
 }
-window.doLogin = doLogin;
+window.doLogin=doLogin;
 
 function enterDemo() {
-  isDemo = true;
-  currentUser = { id: 'demo', email: 'demo@s4ledger.com' };
-  sysLog('auth', 'Demo mode entered', null);
+  isDemo=true; currentUser={id:'demo',email:'demo@s4ledger.com'};
+  sysLog('AUTH','Demo mode entered',null);
   showApp('Demo User');
 }
-window.enterDemo = enterDemo;
+window.enterDemo=enterDemo;
 
 async function handleSignOut() {
-  if (isDemo) { showLoginOverlay(); return; }
+  if (isDemo) { showLogin(); return; }
+  sysLog('AUTH','Sign out initiated',null);
   await SB.auth.signOut();
-  sysLog('auth', 'Signed out', null);
-  showLoginOverlay();
+  showLogin();
 }
-window.handleSignOut = handleSignOut;
+window.handleSignOut=handleSignOut;
 
-function showErr(el, msg) {
-  el.textContent = msg;
-  el.style.display = 'block';
-}
+function showErr(el,msg) { el.textContent=msg; el.style.display='block'; }
 
-// ═══════════════════════════════════════════════════════════════════
-//  PERSISTENCE
-// ═══════════════════════════════════════════════════════════════════
-async function loadFromCloud() {
-  if (!currentUser || isDemo) return;
+/* ═════════════════════════════════════════════════════════════════
+   PERSISTENCE
+═════════════════════════════════════════════════════════════════ */
+async function loadCloud() {
+  if (!currentUser||isDemo) return;
   try {
-    var res = await SB.from(TABLE).select('*').eq('tool_id', TOOL_ID).single();
-    if (res.data && !res.error) {
-      if (res.data.vessels)    vessels   = res.data.vessels;
-      if (res.data.change_log) changeLog = res.data.change_log;
-      sysLog('sync', 'Loaded from Supabase', { vessels: vessels.length });
+    var r=await SB.from('program_schedule').select('*').eq('tool_id','ps-v2').single();
+    if (r.data && !r.error) {
+      if (r.data.vessels)   vessels  = r.data.vessels;
+      if (r.data.audit_log) auditLog = r.data.audit_log;
+      sysLog('SYNC','Loaded from Supabase',{vessels:vessels.length});
       render();
     }
-  } catch(e) {
-    // Table may not exist yet — silently use local data
-    sysLog('sync', 'Cloud load skipped (table pending or offline)', { err: e.message });
-  }
+  } catch(e) { sysLog('SYNC','Cloud load skipped (offline or table pending)',{err:e.message}); }
 }
 
 window.saveAll = async function() {
-  var payload  = buildPayload();
-  // 1. localStorage (always)
-  var toStore  = Object.assign({}, payload, { customMS: getCustomMS() });
-  localStorage.setItem(STORE_KEY, JSON.stringify(toStore));
-
-  // 2. Supabase (when authenticated)
-  if (currentUser && !isDemo) {
-    try {
-      var row = Object.assign({ user_id: currentUser.id }, payload);
-      await SB.from(TABLE).upsert(row, { onConflict: 'tool_id' });
-    } catch(e) {
-      sysLog('sync', 'Cloud save skipped', { err: e.message });
-    }
-  }
-
-  setSaveLabel('All changes saved');
-  toast(isDemo ? 'Saved locally' : 'Saved to cloud');
-  sysLog('save', 'Schedule saved', { vessels: vessels.length, demo: isDemo });
-};
-
-function buildPayload() {
-  return {
-    tool_id:    TOOL_ID,
-    vessels:    vessels,
-    change_log: changeLog.slice(0, 300),
-    saved_at:   new Date().toISOString(),
-    version:    VERSION,
+  var payload = {
+    tool_id:'ps-v2', vessels:vessels,
+    audit_log:auditLog.slice(0,500),
+    saved_at:new Date().toISOString(), version:VER,
   };
-}
+  // localStorage
+  var lsData = Object.assign({},payload,{customMS:getCustomMS()});
+  localStorage.setItem(STORE_KEY,JSON.stringify(lsData));
 
-function getCustomMS() {
-  var base = ['CA','SOC','BT','AT','DEL'];
-  var custom = {};
-  Object.keys(MILESTONES).forEach(function(k) {
-    if (!base.includes(k)) custom[k] = MILESTONES[k];
-  });
-  return custom;
-}
+  // Supabase
+  if (currentUser&&!isDemo) {
+    try {
+      await SB.from('program_schedule').upsert(Object.assign({user_id:currentUser.id},payload),{onConflict:'tool_id'});
+      sysLog('SYNC','Saved to Supabase',{vessels:vessels.length});
+    } catch(e) { sysLog('SYNC','Cloud save failed',{err:e.message}); }
+  }
+  setSaveLbl('All changes saved');
+  toast(isDemo?'Saved locally (demo mode)':'Saved to cloud');
+  sysLog('SAVE','Schedule saved by '+whoLabel(),{vessels:vessels.length,demo:isDemo});
+};
 
 function autoSave() {
   clearTimeout(saveTimer);
-  setSaveLabel('Saving\u2026');
-  saveTimer = setTimeout(window.saveAll, 1400);
+  setSaveLbl('Saving…');
+  saveTimer=setTimeout(window.saveAll,1600);
+}
+function setSaveLbl(m) { var e=document.getElementById('save-lbl'); if(e) e.textContent=m; }
+function getCustomMS() {
+  var base=['CA','SOC','LCH','BT','AT','DEL'],c={};
+  Object.keys(MS).forEach(k=>{ if(!base.includes(k)) c[k]=MS[k]; });
+  return c;
 }
 
-function setSaveLabel(msg) {
-  var el = document.getElementById('save-label');
-  if (el) el.textContent = msg;
-}
+/* ═════════════════════════════════════════════════════════════════
+   AUDIT / LOGGING
+   Every real change is logged with: who, when, vessel, field, old, new
+═════════════════════════════════════════════════════════════════ */
+function whoLabel() { return currentUser?(isDemo?'Demo User':currentUser.email):'anonymous'; }
+function nowISO()   { return new Date().toISOString(); }
 
-// ═══════════════════════════════════════════════════════════════════
-//  LOGGING
-// ═══════════════════════════════════════════════════════════════════
-function sysLog(category, action, meta) {
-  var entry = {
-    id:        'log-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
-    ts:        new Date().toISOString(),
-    user:      currentUser ? (isDemo ? 'Demo User' : currentUser.email) : 'anon',
-    category:  category,
-    action:    action,
-    vesselId:  null,
-    msKey:     null,
-    oldVal:    null,
-    newVal:    null,
-    aiNote:    null,
-    meta:      meta || null,
+function auditEntry(category, action, detail) {
+  var e = {
+    id:       'al-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),
+    ts:       nowISO(),
+    who:      whoLabel(),
+    category: category,   // AUTH|SCHEDULE|VESSEL|NOTES|SFIELD|CONFIG|EXPORT|IMPORT|SAVE|SYNC|SYSTEM|ERROR
+    action:   action,
+    vesselId: detail&&detail.vesselId || null,
+    vessel:   detail&&detail.vessel   || null,
+    field:    detail&&detail.field    || null,
+    oldVal:   detail&&detail.oldVal!==undefined ? detail.oldVal : null,
+    newVal:   detail&&detail.newVal!==undefined ? detail.newVal : null,
+    note:     detail&&detail.note     || null,
+    aiNote:   null,
+    meta:     detail&&detail.meta     || null,
   };
-  changeLog.unshift(entry);
-  if (changeLog.length > 600) changeLog = changeLog.slice(0, 600);
-  if (document.getElementById('log-entries')) renderLog();
-  return entry;
-}
-
-function schedLog(action, vesselId, msKey, oldVal, newVal) {
-  var entry = sysLog('schedule', action, null);
-  entry.vesselId = vesselId;
-  entry.msKey    = msKey;
-  entry.oldVal   = oldVal;
-  entry.newVal   = newVal;
-  return entry;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  DATE / FY HELPERS
-// ═══════════════════════════════════════════════════════════════════
-// "YYYY-MM" → { fy, fyMonth: 1–12 }
-function toFY(yyyyMm) {
-  var parts = yyyyMm.split('-');
-  var y = parseInt(parts[0]);
-  var m = parseInt(parts[1]);
-  var fy      = m >= 10 ? y + 1 : y;
-  var fyMonth = m >= 10 ? m - 9  : m + 3;
-  return { fy: fy, fyMonth: fyMonth };
-}
-
-// X coordinate in the gantt SVG for a given "YYYY-MM"
-function dateToX(yyyyMm) {
-  if (!yyyyMm) return -1;
-  var fyd    = toFY(yyyyMm);
-  var fyIdx  = fyd.fy - fyStart;
-  if (fyIdx < 0 || fyIdx > fyEnd - fyStart) return -1;
-  return GP_LEFT + fyIdx * GP_FY_W + ((fyd.fyMonth - 0.5) / 12) * GP_FY_W;
-}
-
-// "YYYY-MM" → "Mmm 'YY"
-function fmtYM(yyyyMm) {
-  if (!yyyyMm) return '\u2014';
-  var parts = yyyyMm.split('-');
-  var y = parts[0]; var m = parseInt(parts[1]);
-  var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return names[m-1] + " '" + y.slice(2);
-}
-
-// Duration CA → DEL in months
-function duration(vessel) {
-  var ca  = vessel.milestones['CA'];
-  var del = vessel.milestones['DEL'];
-  if (!ca || !del) return '\u2014';
-  var cp = ca.split('-').map(Number);
-  var dp = del.split('-').map(Number);
-  var mo = (dp[0] - cp[0]) * 12 + (dp[1] - cp[1]);
-  return mo > 0 ? mo + ' mo' : '\u2014';
-}
-
-// Month difference (positive = later)
-function moDiff(a, b) {
-  if (!a || !b) return 0;
-  var ap = a.split('-').map(Number);
-  var bp = b.split('-').map(Number);
-  return (bp[0] - ap[0]) * 12 + (bp[1] - ap[1]);
-}
-
-// Compute status
-function computeStatus(vessel) {
-  var del = vessel.milestones['DEL'];
-  if (!del) return 'pending';
-  var now = new Date();
-  var dp = del.split('-').map(Number);
-  var delDate = new Date(dp[0], dp[1]-1, 1);
-  if (delDate < now) return 'on-track'; // already delivered
-  var ca = vessel.milestones['CA'];
-  if (ca) {
-    var cap = ca.split('-').map(Number);
-    var caDate = new Date(cap[0], cap[1]-1, 1);
-    if (caDate < now && !vessel.milestones['SOC']) return 'at-risk';
+  auditLog.unshift(e);
+  if (auditLog.length>800) auditLog=auditLog.slice(0,800);
+  if (category!=='SYSTEM'&&category!=='AUTH'&&category!=='SYNC') {
+    logBadge++;
+    var b=document.getElementById('log-badge');
+    if(b){ b.textContent=logBadge; b.style.display=logBadge?'inline':'none'; }
   }
-  return vessel.status || 'on-track';
+  renderLog();
+  return e;
+}
+function sysLog(cat,action,detail) { return auditEntry(cat,action,detail||({})); }
+
+/* ═════════════════════════════════════════════════════════════════
+   DATE / FY HELPERS
+═════════════════════════════════════════════════════════════════ */
+function toFY(ym) {
+  if (!ym) return null;
+  var p=ym.split('-'); var y=parseInt(p[0]),m=parseInt(p[1]);
+  return {fy:(m>=10?y+1:y),fyMo:(m>=10?m-9:m+3)};
+}
+function dateToX(ym) {
+  if (!ym) return -1;
+  var f=toFY(ym);
+  if (!f) return -1;
+  var idx=f.fy-fyStart;
+  if (idx<0||idx>(fyEnd-fyStart)) return -1;
+  return GP.LEFT+idx*GP.FY_W+((f.fyMo-0.5)/12)*GP.FY_W;
+}
+function fmtYM(ym) {
+  if (!ym) return '—';
+  var p=ym.split('-'); var m=parseInt(p[1]);
+  var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return mn[m-1]+" '"+p[0].slice(2);
+}
+function moDiff(a,b) {
+  if(!a||!b) return 0;
+  var ap=a.split('-').map(Number),bp=b.split('-').map(Number);
+  return (bp[0]-ap[0])*12+(bp[1]-ap[1]);
+}
+function durationMo(v) {
+  var ca=v.ms['CA'],del=v.ms['DEL'];
+  if(!ca||!del) return '—';
+  var d=moDiff(ca,del);
+  return d>0?d+' mo':'—';
 }
 
-function statusHtml(s) {
-  var labels = { 'on-track':'On Track', 'at-risk':'At Risk', 'delayed':'Delayed', 'pending':'Pending' };
-  return '<span class="status-pill s-' + s + '">'
-    + '<i class="fas fa-circle" style="font-size:5px"></i> ' + (labels[s] || s)
-    + '</span>';
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  RENDERING
-// ═══════════════════════════════════════════════════════════════════
-function filtered() {
-  return vessels.filter(function(v) { return craftFilter === 'all' || v.type === craftFilter; });
-}
+/* ═════════════════════════════════════════════════════════════════
+   RENDER
+═════════════════════════════════════════════════════════════════ */
+function filtered() { return vessels.filter(v=>craftFilter==='all'||v.type===craftFilter); }
 
 function render() {
   renderGantt();
   renderSpreadsheet();
   renderLog();
+  var c=document.getElementById('sheet-count');
+  if(c) c.textContent=filtered().length+' vessel'+(filtered().length!==1?'s':'');
 }
 
-// ── Gantt ────────────────────────────────────────────────────────
+/* ── Gantt ── */
 function renderGantt() {
-  var rows    = buildRows(filtered());
-  var fyCount = fyEnd - fyStart + 1;
-  var sw      = GP_LEFT + fyCount * GP_FY_W;
-  var sh      = GP_HDR_H + rows.length * GP_ROW_H + 6;
-  var svg     = document.getElementById('gantt-svg');
-  svg.setAttribute('width',   sw);
-  svg.setAttribute('height',  sh);
-  svg.setAttribute('viewBox', '0 0 ' + sw + ' ' + sh);
+  var rows = buildGanttRows(filtered());
+  var fyN  = fyEnd-fyStart+1;
+  var sw   = GP.LEFT+fyN*GP.FY_W;
+  var sh   = GP.HDR_H+rows.length*GP.ROW_H+6;
+  var svg  = document.getElementById('gantt-svg');
+  svg.setAttribute('width',sw); svg.setAttribute('height',sh);
+  svg.setAttribute('viewBox','0 0 '+sw+' '+sh);
 
-  var h = '';
+  var h='';
 
-  // Background
-  h += '<rect width="' + sw + '" height="' + sh + '" fill="#f5f5f7"/>';
+  // Base bg
+  h+='<rect width="'+sw+'" height="'+sh+'" fill="#f5f5f7"/>';
 
-  // FY column alternating backgrounds
-  for (var fi = 0; fi < fyCount; fi++) {
-    var fx = GP_LEFT + fi * GP_FY_W;
-    if (fi % 2 === 0)
-      h += '<rect x="' + fx + '" y="' + GP_HDR_H + '" width="' + GP_FY_W + '" height="' + (sh - GP_HDR_H) + '" fill="rgba(255,255,255,0.72)"/>';
+  // FY column alternating bg
+  for(var fi=0;fi<fyN;fi++) {
+    var fx=GP.LEFT+fi*GP.FY_W;
+    if(fi%2===0) h+='<rect x="'+fx+'" y="'+GP.HDR_H+'" width="'+GP.FY_W+'" height="'+(sh-GP.HDR_H)+'" fill="rgba(255,255,255,0.75)"/>';
+  }
+
+  // Monthly grid lines (subtle)
+  for(var fi=0;fi<fyN;fi++) {
+    for(var mi=1;mi<12;mi++) {
+      var gx=GP.LEFT+fi*GP.FY_W+(mi/12)*GP.FY_W;
+      h+='<line x1="'+gx+'" y1="'+GP.HDR_H+'" x2="'+gx+'" y2="'+sh+'" stroke="rgba(0,0,0,0.028)" stroke-width="0.5"/>';
+    }
   }
 
   // Today line
-  var now = new Date();
-  var todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  var tx = dateToX(todayStr);
-  if (tx > 0) {
-    h += '<line x1="' + tx + '" y1="' + GP_HDR_H + '" x2="' + tx + '" y2="' + (sh-4) + '" stroke="#007AFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>';
-    h += '<text x="' + (tx+3) + '" y="' + (GP_HDR_H+11) + '" font-size="8.5" fill="#007AFF" opacity="0.7" font-family="Inter,-apple-system,sans-serif">Today</text>';
+  var tx=dateToX(NOW_MONTH);
+  if(tx>0) {
+    h+='<line x1="'+tx+'" y1="'+GP.HDR_H+'" x2="'+tx+'" y2="'+(sh-4)+'" stroke="#007AFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.45"/>';
+    h+='<text x="'+(tx+3)+'" y="'+(GP.HDR_H+10)+'" font-size="7.5" fill="#007AFF" opacity="0.65" font-family="Inter,-apple-system,sans-serif">Today</text>';
   }
 
   // FY headers
-  for (var fj = 0; fj < fyCount; fj++) {
-    var fx2 = GP_LEFT + fj * GP_FY_W;
-    h += '<rect x="' + fx2 + '" y="0" width="' + GP_FY_W + '" height="' + GP_HDR_H + '" fill="#1c3a5f"/>';
-    h += '<text x="' + (fx2 + GP_FY_W/2) + '" y="' + (GP_HDR_H/2+5) + '"'
-       + ' font-size="12" font-weight="600" text-anchor="middle"'
-       + ' fill="white" font-family="Inter,-apple-system,sans-serif">FY' + (fyStart + fj) + '</text>';
-    h += '<line x1="' + fx2 + '" y1="0" x2="' + fx2 + '" y2="' + sh + '" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>';
+  h+='<rect x="0" y="0" width="'+GP.LEFT+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
+  h+='<text x="8" y="'+(GP.HDR_H/2+4.5)+'" font-size="9.5" font-weight="600" fill="rgba(255,255,255,0.55)" font-family="Inter,-apple-system,sans-serif" letter-spacing="0.06em">VESSEL</text>';
+  for(var fj=0;fj<fyN;fj++) {
+    var fx2=GP.LEFT+fj*GP.FY_W;
+    h+='<rect x="'+fx2+'" y="0" width="'+GP.FY_W+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
+    h+='<text x="'+(fx2+GP.FY_W/2)+'" y="'+(GP.HDR_H/2+4.5)+'" font-size="11" font-weight="600" text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif">FY'+(fyStart+fj)+'</text>';
+    h+='<line x1="'+fx2+'" y1="0" x2="'+fx2+'" y2="'+sh+'" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>';
   }
 
-  // Left label header
-  h += '<rect x="0" y="0" width="' + GP_LEFT + '" height="' + GP_HDR_H + '" fill="#1c3a5f"/>';
-  h += '<text x="10" y="' + (GP_HDR_H/2+5) + '" font-size="10.5" font-weight="600"'
-     + ' fill="rgba(255,255,255,0.65)" font-family="Inter,-apple-system,sans-serif">Vessel</text>';
-
   // Rows
-  rows.forEach(function(row, ri) {
-    var ry = GP_HDR_H + ri * GP_ROW_H;
-
-    if (row.isGroup) {
-      var tc = (VT[row.type] || {}).color || '#6e6e73';
-      h += '<rect x="0" y="' + ry + '" width="' + sw + '" height="' + GP_ROW_H + '" fill="' + tc + '" opacity="0.09"/>';
-      h += '<rect x="0" y="' + ry + '" width="' + GP_LEFT + '" height="' + GP_ROW_H + '" fill="' + tc + '" opacity="0.18"/>';
-      h += '<text x="10" y="' + (ry + GP_ROW_H/2 + 4) + '" font-size="9.5" font-weight="700"'
-         + ' fill="' + tc + '" font-family="Inter,-apple-system,sans-serif" letter-spacing="0.08em">'
-         + esc(row.type) + '</text>';
+  rows.forEach(function(row,ri) {
+    var ry=GP.HDR_H+ri*GP.ROW_H;
+    if(row.isGroup) {
+      var tc=(VT[row.type]||{}).color||'#6e6e73';
+      h+='<rect x="0" y="'+ry+'" width="'+sw+'" height="'+GP.ROW_H+'" fill="'+tc+'" opacity="0.07"/>';
+      h+='<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+tc+'" opacity="0.15"/>';
+      h+='<text x="8" y="'+(ry+GP.ROW_H/2+4)+'" font-size="9" font-weight="700" fill="'+tc+'" letter-spacing="0.09em" font-family="Inter,-apple-system,sans-serif">'+esc(row.type)+'</text>';
       return;
     }
+    var v=row.vessel;
+    var tc2=(VT[v.type]||{}).color||'#6e6e73';
+    var st=v.status||'on-track';
+    var rowBg = st==='delayed'?'rgba(255,59,48,0.04)':st==='not-planned'?'rgba(110,110,115,0.04)':'transparent';
 
-    var v  = row.vessel;
-    var tc2 = (VT[v.type] || {}).color || '#6e6e73';
+    h+='<rect x="0" y="'+ry+'" width="'+sw+'" height="'+GP.ROW_H+'" fill="'+rowBg+'"/>';
+    h+='<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+sw+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.045)" stroke-width="0.6"/>';
 
-    // Row bg + rule
-    h += '<line x1="0" y1="' + (ry + GP_ROW_H) + '" x2="' + sw + '" y2="' + (ry + GP_ROW_H) + '" stroke="rgba(0,0,0,0.05)" stroke-width="0.7"/>';
-    h += '<rect x="0" y="' + ry + '" width="' + GP_LEFT + '" height="' + GP_ROW_H + '" fill="' + tc2 + '" opacity="0.03"/>';
+    // Left status stripe
+    var stColor = st==='on-track'?'#34c759':st==='delayed'?'#ff3b30':st==='not-planned'?'#6e6e73':'#007AFF';
+    h+='<rect x="0" y="'+ry+'" width="3" height="'+GP.ROW_H+'" fill="'+stColor+'"/>';
 
-    // Designation label
-    h += '<text x="10" y="' + (ry + GP_ROW_H/2 + 2) + '" font-size="10.5" font-weight="600"'
-       + ' fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">' + esc(v.designation) + '</text>';
+    // Label
+    h+='<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+tc2+'" opacity="0.04"/>';
+    h+='<text x="8" y="'+(ry+GP.ROW_H/2+2.5)+'" font-size="10" font-weight="600" fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation)+'</text>';
+    var fc=v.fleet==='PACFLT'?'#007AFF':v.fleet==='USFF'?'#34c759':'#ff9500';
+    h+='<text x="8" y="'+(ry+GP.ROW_H/2+13)+'" font-size="7.5" fill="'+fc+'" font-family="Inter,-apple-system,sans-serif" opacity="0.85">'+esc(v.fleet)+'</text>';
 
-    // Fleet sub-label
-    var fc = v.fleet === 'PACFLT' ? '#007AFF' : v.fleet === 'USFF' ? '#34c759' : '#ff9500';
-    h += '<text x="10" y="' + (ry + GP_ROW_H/2 + 14) + '" font-size="8" fill="' + fc + '"'
-       + ' font-family="Inter,-apple-system,sans-serif" opacity="0.85">' + esc(v.fleet) + '</text>';
-
-    // Timeline bar (CA → DEL)
-    var xCA  = dateToX(v.milestones['CA']);
-    var xDEL = dateToX(v.milestones['DEL']);
-    if (xCA > 0 && xDEL > 0) {
-      h += '<rect x="' + xCA + '" y="' + (ry + GP_ROW_H/2 - 2) + '" width="' + (xDEL - xCA) + '"'
-         + ' height="4" rx="2" fill="' + tc2 + '" opacity="0.22"/>';
+    // CA→DEL span bar
+    var xCA=dateToX(v.ms['CA']),xDEL=dateToX(v.ms['DEL']||v.ms['contract_del']);
+    if(xCA>0&&xDEL>0&&xDEL>xCA) {
+      h+='<rect x="'+xCA+'" y="'+(ry+GP.ROW_H/2-2)+'" width="'+(xDEL-xCA)+'" height="4" rx="2" fill="'+tc2+'" opacity="0.2"/>';
     }
 
-    // Milestone symbols
-    Object.keys(v.milestones).forEach(function(key) {
-      if (hiddenMS[key]) return;
-      var ms = MILESTONES[key];
-      if (!ms) return;
-      var mx = dateToX(v.milestones[key]);
-      if (mx < 0) return;
-      var my = ry + GP_ROW_H / 2;
-      h += msSymbol(mx, my, ms.shape, ms.color, key, v.id);
+    // Milestone symbols — only gantt milestones
+    Object.keys(v.ms).forEach(function(key){
+      if(hiddenMS[key]) return;
+      var msDef=MS[key]; if(!msDef||!msDef.gantt) return;
+      var mx=dateToX(v.ms[key]); if(mx<0) return;
+      if(st==='not-planned'&&key!=='CA') return; // not-planned: only show CA
+      var my=ry+GP.ROW_H/2;
+      h+=msSym(mx,my,msDef.shape,msDef.color,key,v.id,fmtYM(v.ms[key]));
     });
   });
 
-  // Right border
-  h += '<line x1="' + sw + '" y1="0" x2="' + sw + '" y2="' + sh + '" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>';
-
-  svg.innerHTML = h;
-  attachGanttTooltips();
+  h+='<line x1="'+sw+'" y1="0" x2="'+sw+'" y2="'+sh+'" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>';
+  svg.innerHTML=h;
+  attachGanttTips();
 }
 
-function buildRows(vs) {
-  var rows  = [];
-  var types = ['APL','YRBM','YFB','YTB'];
-  // include any custom types
-  vs.forEach(function(v) { if (!types.includes(v.type)) types.push(v.type); });
-  types.forEach(function(t) {
-    var g = vs.filter(function(v) { return v.type === t; });
-    if (!g.length) return;
-    rows.push({ isGroup: true, type: t });
-    g.forEach(function(v) { rows.push({ isGroup: false, vessel: v }); });
+function buildGanttRows(vs) {
+  var rows=[],types=['APL','YRBM','YFB','YTB'];
+  vs.forEach(v=>{ if(!types.includes(v.type)) types.push(v.type); });
+  types.forEach(t=>{
+    var g=vs.filter(v=>v.type===t); if(!g.length) return;
+    rows.push({isGroup:true,type:t});
+    g.forEach(v=>rows.push({isGroup:false,vessel:v}));
   });
   return rows;
 }
 
-function msSymbol(x, y, shape, color, code, vesselId) {
-  var r  = GP_MS_R;
-  var s  = '';
-  if (shape === 'star') {
-    var pts = [];
-    for (var i = 0; i < 5; i++) {
-      var oa = (i*72-90) * Math.PI/180;
-      var ia = (i*72-54) * Math.PI/180;
-      pts.push((x + r*Math.cos(oa)).toFixed(1) + ',' + (y + r*Math.sin(oa)).toFixed(1));
-      pts.push((x + r*0.42*Math.cos(ia)).toFixed(1) + ',' + (y + r*0.42*Math.sin(ia)).toFixed(1));
+function msSym(x,y,shape,color,code,vid,tip) {
+  var r=GP.MS_R,s='';
+  if(shape==='star'){
+    var pts=[];
+    for(var i=0;i<5;i++){
+      var oa=(i*72-90)*Math.PI/180,ia=(i*72-54)*Math.PI/180;
+      pts.push((x+r*Math.cos(oa)).toFixed(1)+','+(y+r*Math.sin(oa)).toFixed(1));
+      pts.push((x+r*0.42*Math.cos(ia)).toFixed(1)+','+(y+r*0.42*Math.sin(ia)).toFixed(1));
     }
-    s = '<polygon points="' + pts.join(' ') + '" fill="' + color + '" stroke="white" stroke-width="0.8"/>';
-  } else if (shape === 'triangle') {
-    var h2 = r * 1.25;
-    s = '<polygon points="' + x + ',' + (y-h2) + ' ' + (x-r) + ',' + (y+r*0.5) + ' ' + (x+r) + ',' + (y+r*0.5) + '"'
-      + ' fill="' + color + '" stroke="white" stroke-width="0.8"/>';
-  } else if (shape === 'diamond') {
-    s = '<polygon points="' + x + ',' + (y-r) + ' ' + (x+r) + ',' + y + ' ' + x + ',' + (y+r) + ' ' + (x-r) + ',' + y + '"'
-      + ' fill="' + color + '" stroke="white" stroke-width="0.8"/>';
-  } else if (shape === 'circle') {
-    s = '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + color + '" stroke="white" stroke-width="1.2"/>';
+    s='<polygon points="'+pts.join(' ')+'" fill="'+color+'" stroke="white" stroke-width="0.7"/>';
+  } else if(shape==='triangle'){
+    var h2=r*1.2;
+    s='<polygon points="'+x+','+(y-h2)+' '+(x-r)+','+(y+r*0.5)+' '+(x+r)+','+(y+r*0.5)+'" fill="'+color+'" stroke="white" stroke-width="0.7"/>';
+  } else if(shape==='diamond'){
+    s='<polygon points="'+x+','+(y-r)+' '+(x+r)+','+y+' '+x+','+(y+r)+' '+(x-r)+','+y+'" fill="'+color+'" stroke="white" stroke-width="0.7"/>';
+  } else if(shape==='circle'){
+    s='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+color+'" stroke="white" stroke-width="1"/>';
   } else {
-    s = '<rect x="' + (x-r) + '" y="' + (y-r) + '" width="' + r*2 + '" height="' + r*2 + '" rx="2" fill="' + color + '" stroke="white" stroke-width="0.8"/>';
+    s='<rect x="'+(x-r)+'" y="'+(y-r)+'" width="'+(r*2)+'" height="'+(r*2)+'" rx="2" fill="'+color+'" stroke="white" stroke-width="0.7"/>';
   }
-  return '<g class="gms" data-vid="' + vesselId + '" data-key="' + code + '" style="cursor:pointer">'
-    + s
-    + '<text x="' + x + '" y="' + (y+r+9.5) + '" font-size="7" text-anchor="middle"'
-    + ' fill="' + color + '" font-family="Inter,-apple-system,sans-serif" font-weight="700">' + esc(code) + '</text>'
-    + '</g>';
+  return '<g class="gms" data-vid="'+vid+'" data-key="'+code+'" data-tip="'+esc(tip)+'" style="cursor:pointer">'
+    +s
+    +'<text x="'+x+'" y="'+(y+r+9)+'" font-size="6.5" text-anchor="middle" fill="'+color+'" font-family="Inter,-apple-system,sans-serif" font-weight="700">'+esc(code)+'</text>'
+    +'</g>';
 }
 
-function attachGanttTooltips() {
-  var tip = document.getElementById('gantt-tip');
-  document.querySelectorAll('.gms').forEach(function(el) {
-    el.addEventListener('mouseenter', function(e) {
-      var v = vessels.find(function(v) { return v.id === el.dataset.vid; });
-      if (!v) return;
-      var ms = MILESTONES[el.dataset.key];
-      var d  = v.milestones[el.dataset.key] || '\u2014';
-      tip.textContent = v.designation + ' \u2014 ' + (ms ? ms.label : el.dataset.key) + ': ' + fmtYM(d);
-      tip.style.display = 'block';
-      tip.style.left = (e.clientX + 13) + 'px';
-      tip.style.top  = (e.clientY - 32) + 'px';
+function attachGanttTips() {
+  var tip=document.getElementById('gtip');
+  document.querySelectorAll('.gms').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{
+      var v=vessels.find(v=>v.id===el.dataset.vid); if(!v) return;
+      var msDef=MS[el.dataset.key];
+      tip.textContent=v.designation+' — '+(msDef?msDef.label:el.dataset.key)+': '+el.dataset.tip;
+      tip.style.display='block';
+      tip.style.left=(e.clientX+13)+'px'; tip.style.top=(e.clientY-32)+'px';
     });
-    el.addEventListener('mousemove', function(e) {
-      tip.style.left = (e.clientX + 13) + 'px';
-      tip.style.top  = (e.clientY - 32) + 'px';
+    el.addEventListener('mousemove',e=>{
+      tip.style.left=(e.clientX+13)+'px'; tip.style.top=(e.clientY-32)+'px';
     });
-    el.addEventListener('mouseleave', function() { tip.style.display = 'none'; });
+    el.addEventListener('mouseleave',()=>tip.style.display='none');
   });
 }
 
-// ── Spreadsheet ──────────────────────────────────────────────────
+/* ── Spreadsheet ── */
 function renderSpreadsheet() {
-  var body  = document.getElementById('ssheet-body');
-  var fv    = filtered();
-  var types = ['APL','YRBM','YFB','YTB'];
-  fv.forEach(function(v) { if (!types.includes(v.type)) types.push(v.type); });
+  var hd=document.getElementById('ssheet-hd');
+  var bd=document.getElementById('ssheet-bd');
+  var msKeys=Object.keys(MS);
+  var fv=filtered();
+  var types=['APL','YRBM','YFB','YTB'];
+  fv.forEach(v=>{ if(!types.includes(v.type)) types.push(v.type); });
 
-  var msKeys = Object.keys(MILESTONES);
-  var h = '';
+  // Build header
+  var hdCols=['Designation','Type','Fleet']
+    .concat(msKeys.map(k=>(MS[k]||{}).label?abbrev(MS[k].label):k))
+    .concat(SFIELDS.map(f=>f.label))
+    .concat(['Duration','Status','Notes','']);
+  hd.innerHTML=hdCols.map(c=>'<th>'+esc(c)+'</th>').join('');
 
-  types.forEach(function(t) {
-    var group = fv.filter(function(v) { return v.type === t; });
-    if (!group.length) return;
-    var tc = (VT[t] || {}).color || '#6e6e73';
-    var cols = 4 + msKeys.length + 3 + 1;
-    h += '<tr class="type-sep"><td colspan="' + cols + '" style="border-left:3px solid ' + tc + '">'
-       + esc(t) + ' \u2014 ' + esc((VT[t] || {}).label || t) + '</td></tr>';
+  var h='';
+  types.forEach(t=>{
+    var grp=fv.filter(v=>v.type===t); if(!grp.length) return;
+    var tc=(VT[t]||{}).color||'#6e6e73';
+    var total=msKeys.length+SFIELDS.length+4;
+    h+='<tr class="grp-sep"><td colspan="'+total+'" style="border-left:3px solid '+tc+'">'+esc(t)+' — '+esc((VT[t]||{}).label||t)+'</td></tr>';
 
-    group.forEach(function(v) {
-      var st  = computeStatus(v);
-      var fc  = v.fleet.toLowerCase();
-      h += '<tr class="vessel-row" data-id="' + v.id + '">';
-      h += '<td><span class="vname">' + esc(v.designation) + '</span></td>';
-      h += '<td style="color:' + tc + ';font-weight:600;font-size:11px">' + esc(v.type) + '</td>';
-      h += '<td><span class="fleet-badge ' + fc + '">' + esc(v.fleet) + '</span></td>';
+    grp.forEach(v=>{
+      var st=v.status||'on-track';
+      var rowStyle=st==='delayed'?'background:rgba(255,59,48,0.035)':st==='not-planned'?'background:rgba(110,110,115,0.04)':'';
+      h+='<tr class="vrow" data-id="'+v.id+'" style="'+rowStyle+'">';
+      h+='<td><span class="vname">'+esc(v.designation)+'</span></td>';
+      h+='<td style="color:'+tc+';font-weight:600">'+esc(v.type)+'</td>';
+      h+='<td><span class="fb '+v.fleet.toLowerCase()+'">'+esc(v.fleet)+'</span></td>';
 
-      msKeys.forEach(function(key) {
-        var val = v.milestones[key] || '';
-        h += '<td><input type="month" class="date-input ' + (val ? '' : 'empty') + '"'
-           + ' value="' + esc(val) + '"'
-           + ' data-vid="' + v.id + '" data-key="' + key + '"'
-           + ' title="' + esc((MILESTONES[key]||{}).label || key) + ': click to edit"'
-           + ' onchange="onDateChange(event)"'
-           + (val ? '' : ' style="opacity:0.35"') + '></td>';
+      // MS date cells
+      msKeys.forEach(key=>{
+        var val=v.ms[key]||'';
+        var disabled=(st==='not-planned'&&key!=='CA')?'disabled style="opacity:.3;cursor:default"':'';
+        h+='<td><input type="month" class="di '+(val?'':'empty')+'" value="'+esc(val)+'"'
+          +' data-vid="'+v.id+'" data-key="'+key+'" data-field="ms"'
+          +' title="'+(MS[key]||{}).label+': click to edit" onchange="onDateChange(event)" '+disabled+'></td>';
       });
 
-      h += '<td style="font-size:11px;color:var(--steel)">' + duration(v) + '</td>';
-      h += '<td>' + statusHtml(st) + '</td>';
-      h += '<td><input type="text" class="notes-input" value="' + esc(v.notes || '') + '"'
-         + ' placeholder="Notes\u2026" data-vid="' + v.id + '"'
-         + ' onchange="onNotesChange(event)" onblur="onNotesChange(event)"></td>';
-      h += '<td><button class="del-btn" onclick="deleteVessel(\'' + v.id + '\')" title="Remove vessel">'
-         + '<i class="fas fa-trash-alt"></i></button></td>';
-      h += '</tr>';
+      // Spreadsheet-only fields
+      SFIELDS.forEach(f=>{
+        var val=(v.sf&&v.sf[f.key])||'';
+        if(f.type==='month') {
+          h+='<td><input type="month" class="di '+(val?'':'empty')+'" value="'+esc(val)+'"'
+            +' data-vid="'+v.id+'" data-key="'+f.key+'" data-field="sf"'
+            +' onchange="onDateChange(event)"></td>';
+        } else {
+          h+='<td><input type="text" class="ti" value="'+esc(val)+'"'
+            +' data-vid="'+v.id+'" data-key="'+f.key+'" data-field="sf"'
+            +' onchange="onTextChange(event)" onblur="onTextChange(event)"></td>';
+        }
+      });
+
+      h+='<td style="font-size:10.5px;color:var(--steel)">'+durationMo(v)+'</td>';
+      h+='<td>'+statusHtml(st)+'</td>';
+      h+='<td><input type="text" class="ti" style="min-width:130px" value="'+esc(v.notes||'')+'"'
+        +' data-vid="'+v.id+'" data-key="notes" data-field="notes"'
+        +' placeholder="Notes…" onchange="onNotesChange(event)" onblur="onNotesChange(event)"></td>';
+      h+='<td><button class="del-btn" onclick="deleteVessel(\''+v.id+'\')" title="Remove"><i class="fas fa-trash-alt"></i></button></td>';
+      h+='</tr>';
     });
-
-    h += '<tr><td colspan="' + cols + '" style="padding:3px 10px">'
-       + '<button class="add-row-btn" onclick="openAddVesselOfType(\'' + t + '\')">'
-       + '<i class="fas fa-plus fa-xs"></i> Add ' + esc(t) + ' vessel</button></td></tr>';
   });
 
-  body.innerHTML = h;
-  syncHeaderCols();
+  bd.innerHTML=h;
 }
 
-// Ensure spreadsheet header columns match current MILESTONES
-function syncHeaderCols() {
-  var head = document.getElementById('ssheet-head');
-  if (!head) return;
-  var msKeys = Object.keys(MILESTONES);
-  // Remove existing milestone headers (indexes 3 … 3+n-1)
-  while (head.cells.length > 3) head.deleteCell(3);
-  // Re-insert milestone headers before Duration (which we re-add)
-  var fixed = ['Duration','Status','Notes',''];
-  msKeys.concat(fixed).forEach(function(k, i) {
-    var th = document.createElement('th');
-    if (i < msKeys.length) { th.style.minWidth = '92px'; th.textContent = k; }
-    else th.textContent = k;
-    head.appendChild(th);
-  });
+function abbrev(label) {
+  var map = {
+    'Contract Award':'CA','Start of Construction':'SOC','Launch':'Launch',
+    "Builder's Trials":'BT','Acceptance Trials':'AT','Delivery (Actual)':'DEL',
+  };
+  return map[label]||label;
 }
 
-// ── Log panel ────────────────────────────────────────────────────
+function statusHtml(s) {
+  var cfg={
+    'on-track':  {cls:'s-on',icon:'fa-circle',label:'On Track'},
+    'at-risk':   {cls:'s-at',icon:'fa-exclamation-circle',label:'At Risk'},
+    'delayed':   {cls:'s-dl',icon:'fa-exclamation-triangle',label:'Delayed'},
+    'not-planned':{cls:'s-np',icon:'fa-clock',label:'Not Planned'},
+  };
+  var c=cfg[s]||cfg['on-track'];
+  return '<span class="sp '+c.cls+'"><i class="fas '+c.icon+' fa-xs"></i> '+c.label+'</span>';
+}
+
+/* ── Audit log render ── */
 function renderLog() {
-  var el = document.getElementById('log-entries');
-  if (!el) return;
-  if (!changeLog.length) {
-    el.innerHTML = '<p style="color:var(--steel);font-size:10.5px;padding:4px 0">No changes yet.</p>';
-    return;
+  var el=document.getElementById('log-entries'); if(!el) return;
+  if(!auditLog.length) {
+    el.innerHTML='<p style="color:var(--steel);font-size:10px;padding:4px 0">No changes yet.</p>'; return;
   }
-  var icons = { schedule:'📅', vessel:'🚢', notes:'📝', config:'⚙️',
-                export:'⬇️', import:'⬆️', auth:'🔐', ui:'🖱️', system:'🔧',
-                save:'💾', sync:'☁️', init:'🚀', error:'❌', ai:'🤖' };
-  el.innerHTML = changeLog.slice(0, 60).map(function(e) {
-    var d  = new Date(e.ts);
-    var ts = d.toLocaleDateString([],{month:'short',day:'numeric'}) + ' ' + d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    var ic = icons[e.category] || '•';
-    var diff = '';
-    if (e.category === 'schedule' && e.oldVal !== null && e.newVal !== null) {
-      diff = '<div class="le-diff"><span class="le-old">' + fmtYM(e.oldVal) + '</span>'
-           + '<span style="color:var(--steel);margin:0 4px">\u2192</span>'
-           + '<span class="le-new">' + fmtYM(e.newVal) + '</span></div>';
+  var catColors={SCHEDULE:'#007AFF',VESSEL:'#34c759',NOTES:'#ff9500',SFIELD:'#af52de',
+    CONFIG:'#6e6e73',EXPORT:'#5ac8fa',IMPORT:'#5ac8fa',SAVE:'#34c759',
+    SYNC:'#34c759',SYSTEM:'#6e6e73',AUTH:'#6e6e73',ERROR:'#ff3b30'};
+  el.innerHTML=auditLog.slice(0,80).map(e=>{
+    var d=new Date(e.ts);
+    var ts=d.toLocaleDateString([],{month:'short',day:'numeric',year:'2-digit'})+' '
+          +d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var cc=catColors[e.category]||'#6e6e73';
+    var vestag=e.vessel?'<span style="font-weight:600"> '+esc(e.vessel)+'</span>':'';
+    var diff='';
+    if(e.field&&(e.oldVal!==null||e.newVal!==null)) {
+      var fo=e.oldVal!=null?fmtField(e.field,e.oldVal):'(none)';
+      var fn=e.newVal!=null?fmtField(e.field,e.newVal):'(removed)';
+      diff='<div style="margin-top:3px;font-size:9.5px">'
+        +'<span class="le-field">'+esc(fieldLabel(e.field))+'</span>: '
+        +'<span class="le-old">'+esc(fo)+'</span>'
+        +'<span class="le-arr"> → </span>'
+        +'<span class="le-new">'+esc(fn)+'</span></div>';
     }
-    var ai = e.aiNote ? '<div class="le-ai"><i class="fas fa-robot fa-xs" style="margin-right:3px"></i>' + esc(e.aiNote) + '</div>' : '';
-    return '<div class="log-entry">'
-      + '<div class="le-time">' + ic + ' ' + ts + '</div>'
-      + '<div class="le-who">' + esc(e.user) + '</div>'
-      + '<div class="le-what">' + esc(e.action) + '</div>'
-      + diff + ai
-      + '</div>';
+    var ainote=e.aiNote?'<div class="le-ai"><i class="fas fa-robot fa-xs" style="margin-right:3px"></i>'+esc(e.aiNote)+'</div>':'';
+    return '<div class="le">'
+      +'<div class="le-ts"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:'+cc+';vertical-align:middle;margin-right:4px"></span>'+ts+' — <strong>'+esc(e.category)+'</strong></div>'
+      +'<div class="le-who">'+esc(e.who)+vestag+'</div>'
+      +'<div class="le-what">'+esc(e.action)+'</div>'
+      +diff+ainote
+      +'</div>';
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  EVENT HANDLERS
-// ═══════════════════════════════════════════════════════════════════
+function fmtField(key,val) {
+  if(!val) return '—';
+  // Is it a YYYY-MM month field?
+  if(/^\d{4}-\d{2}$/.test(val)) return fmtYM(val);
+  return val;
+}
+function fieldLabel(key) {
+  if(MS[key]) return (MS[key].label||key)+' ('+key+')';
+  var sf=SFIELDS.find(f=>f.key===key);
+  if(sf) return sf.label;
+  if(key==='notes') return 'Notes';
+  return key;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   EVENT HANDLERS — CELL EDITS
+═════════════════════════════════════════════════════════════════ */
 function onDateChange(e) {
-  var vid   = e.target.dataset.vid;
-  var key   = e.target.dataset.key;
-  var nv    = e.target.value; // "YYYY-MM" or ""
-  var v     = vessels.find(function(v) { return v.id === vid; });
-  if (!v) return;
+  var vid=e.target.dataset.vid, key=e.target.dataset.key, fld=e.target.dataset.field;
+  var nv=e.target.value||'';
+  var v=vessels.find(v=>v.id===vid); if(!v) return;
 
-  var oldVal = v.milestones[key] || null;
-  if (nv) { v.milestones[key] = nv; } else { delete v.milestones[key]; }
+  var oldVal, container;
+  if(fld==='ms')     { oldVal=v.ms[key]||'';  container=v.ms; }
+  else               { if(!v.sf) v.sf={}; oldVal=v.sf[key]||''; container=v.sf; }
 
-  // Update input style
-  e.target.style.opacity = nv ? '1' : '0.35';
-  e.target.className = 'date-input ' + (nv ? '' : 'empty');
+  if(oldVal===nv) return;
 
-  var logEntry = schedLog(
-    'Changed ' + key + ' for ' + v.designation,
-    vid, key, oldVal, nv || null
+  if(nv) container[key]=nv; else delete container[key];
+  e.target.style.opacity=nv?'1':'0.35';
+  e.target.className='di '+(nv?'':'empty');
+
+  var entry=auditEntry('SCHEDULE',
+    'Updated '+fieldLabel(key)+' for '+v.designation,
+    {vesselId:v.id,vessel:v.designation,field:key,oldVal:oldVal||null,newVal:nv||null}
   );
 
-  renderGantt();
-  updateRowStatus(vid);
+  if(fld==='ms') { renderGantt(); updateRowStatus(vid); }
   propagate();
   autoSave();
 
   // AI impact reasoning (async, non-blocking)
-  if (oldVal && nv && oldVal !== nv) {
-    aiReasoning(v, key, oldVal, nv, logEntry);
-  }
+  if(fld==='ms'&&oldVal&&nv&&oldVal!==nv) aiReasoning(v,key,oldVal,nv,entry);
 }
-window.onDateChange = onDateChange;
+window.onDateChange=onDateChange;
 
-function onNotesChange(e) {
-  var vid = e.target.dataset.vid;
-  var v   = vessels.find(function(v) { return v.id === vid; });
-  if (!v) return;
-  var on = v.notes || '';
-  var nn = e.target.value || '';
-  if (on === nn) return;
-  v.notes = nn;
-  sysLog('notes', 'Updated notes for ' + v.designation, { vesselId: vid });
+function onTextChange(e) {
+  var vid=e.target.dataset.vid, key=e.target.dataset.key, fld=e.target.dataset.field;
+  var v=vessels.find(v=>v.id===vid); if(!v) return;
+  if(!v.sf) v.sf={};
+  var oldVal=v.sf[key]||'', nv=e.target.value||'';
+  if(oldVal===nv) return;
+  if(nv) v.sf[key]=nv; else delete v.sf[key];
+  auditEntry('SFIELD','Updated '+fieldLabel(key)+' for '+v.designation,
+    {vesselId:v.id,vessel:v.designation,field:key,oldVal:oldVal||null,newVal:nv||null});
   autoSave();
 }
-window.onNotesChange = onNotesChange;
+window.onTextChange=onTextChange;
+
+function onNotesChange(e) {
+  var vid=e.target.dataset.vid;
+  var v=vessels.find(v=>v.id===vid); if(!v) return;
+  var on=v.notes||'', nn=e.target.value||'';
+  if(on===nn) return;
+  v.notes=nn;
+  auditEntry('NOTES','Updated notes for '+v.designation,
+    {vesselId:v.id,vessel:v.designation,field:'notes',oldVal:on||null,newVal:nn||null});
+  autoSave();
+}
+window.onNotesChange=onNotesChange;
 
 function updateRowStatus(vid) {
-  var row = document.querySelector('tr[data-id="' + vid + '"]');
-  if (!row) return;
-  var v = vessels.find(function(v) { return v.id === vid; });
-  if (!v) return;
-  var st  = computeStatus(v);
-  var pill = row.querySelector('.status-pill');
-  if (pill) {
-    var labels = { 'on-track':'On Track','at-risk':'At Risk','delayed':'Delayed','pending':'Pending' };
-    pill.className = 'status-pill s-' + st;
-    pill.innerHTML = '<i class="fas fa-circle" style="font-size:5px"></i> ' + (labels[st] || st);
-  }
-  var cells = row.querySelectorAll('td');
-  var durIdx = Object.keys(MILESTONES).length + 3;
-  if (cells[durIdx]) cells[durIdx].textContent = duration(v);
+  var row=document.querySelector('tr[data-id="'+vid+'"]'); if(!row) return;
+  var v=vessels.find(v=>v.id===vid); if(!v) return;
+  var pill=row.querySelector('.sp');
+  if(pill) pill.outerHTML=statusHtml(v.status||'on-track').replace('<span','<span');
+  var cells=row.querySelectorAll('td');
+  var durIdx=Object.keys(MS).length+SFIELDS.length+3;
+  if(cells[durIdx]) cells[durIdx].textContent=durationMo(v);
 }
 
-window.deleteVessel = function(vid) {
-  var v = vessels.find(function(v) { return v.id === vid; });
-  if (!v) return;
-  if (!confirm('Remove ' + v.designation + ' from the schedule?')) return;
-  vessels = vessels.filter(function(v) { return v.id !== vid; });
-  sysLog('vessel', 'Removed ' + v.designation, { vesselId: vid });
+window.deleteVessel=function(vid){
+  var v=vessels.find(v=>v.id===vid); if(!v) return;
+  if(!confirm('Remove '+v.designation+' from the schedule?')) return;
+  vessels=vessels.filter(v=>v.id!==vid);
+  auditEntry('VESSEL','Removed vessel '+v.designation,{vesselId:vid,vessel:v.designation});
   render(); autoSave();
 };
 
-// ── Propagate to Deliverables Tracker ────────────────────────────
+/* ── Propagate to Deliverables Tracker ── */
 function propagate() {
-  var sched = {};
-  vessels.forEach(function(v) {
-    sched[v.designation] = {
-      type: v.type, fleet: v.fleet,
-      milestones: Object.assign({}, v.milestones),
-      status: computeStatus(v),
-      updatedAt: new Date().toISOString(),
+  var sched={};
+  vessels.forEach(v=>{
+    sched[v.designation]={
+      type:v.type,fleet:v.fleet,
+      milestones:Object.assign({},v.ms),
+      sf:Object.assign({},v.sf||{}),
+      status:v.status,
+      updatedAt:nowISO(),
     };
   });
-  localStorage.setItem(PROPAGATE_KEY, JSON.stringify({
-    schedule: sched,
-    updatedAt: new Date().toISOString(),
-    version: VERSION,
-  }));
-  sysLog('sync', 'Propagated to Deliverables Tracker', { vessels: Object.keys(sched).length });
+  localStorage.setItem(PROP_KEY,JSON.stringify({schedule:sched,updatedAt:nowISO(),version:VER}));
+  sysLog('SYNC','Propagated '+Object.keys(sched).length+' vessels to Deliverables Tracker',null);
 }
 
-// ── Filter / FY range ─────────────────────────────────────────────
-window.setFilter = function(type, btn) {
-  craftFilter = type;
-  document.querySelectorAll('#toolbar .chip-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
+/* ═════════════════════════════════════════════════════════════════
+   TOOLBAR ACTIONS
+═════════════════════════════════════════════════════════════════ */
+// Craft dropdown
+function toggleCraftDD() {
+  var m=document.getElementById('craft-menu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+window.toggleCraftDD=toggleCraftDD;
+
+function setCraft(type,el) {
+  craftFilter=type;
+  document.querySelectorAll('.cm-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('craft-dd-lbl').textContent=type==='all'?'All Types':type;
+  document.getElementById('craft-menu').style.display='none';
   render();
-  sysLog('ui', 'Craft filter: ' + type, null);
-};
+  sysLog('SYSTEM','Craft filter set to '+type,null);
+}
+window.setCraft=setCraft;
 
-window.updateFYRange = function() {
-  fyStart = parseInt(document.getElementById('fy-start').value);
-  fyEnd   = parseInt(document.getElementById('fy-end').value);
-  if (fyStart >= fyEnd) fyEnd = fyStart + 2;
+window.updateFY=function(){
+  fyStart=parseInt(document.getElementById('fy-s').value);
+  fyEnd=parseInt(document.getElementById('fy-e').value);
+  if(fyStart>=fyEnd) fyEnd=fyStart+2;
   renderGantt();
-  sysLog('ui', 'FY range: FY' + fyStart + '\u2013FY' + fyEnd, null);
+  sysLog('SYSTEM','FY range updated to FY'+fyStart+'–FY'+fyEnd,null);
 };
 
-window.toggleMS = function(key, visible) {
-  hiddenMS[key] = !visible;
+window.toggleMS=function(key,vis){
+  hiddenMS[key]=!vis;
   renderGantt();
-  sysLog('ui', 'Milestone ' + key + ' ' + (visible ? 'shown' : 'hidden'), null);
+  sysLog('CONFIG','Milestone '+key+(vis?' shown':' hidden'),null);
 };
 
-window.togglePanel = function() {
-  rpOpen = !rpOpen;
-  document.getElementById('right-panel').classList.toggle('collapsed', !rpOpen);
-  sysLog('ui', 'Right panel ' + (rpOpen ? 'opened' : 'closed'), null);
+/* ── Add Vessel ── */
+window.openAddVessel=function(t){
+  openModal('av-modal');
+  if(t) document.getElementById('av-type').value=t;
+  document.getElementById('av-des').focus();
 };
-
-window.setRPTab = function(tab, btn) {
-  rpTab = tab;
-  document.querySelectorAll('.rp-tab').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  document.getElementById('rp-log').style.display = tab === 'log' ? 'block' : 'none';
-  document.getElementById('rp-ai').style.display  = tab === 'ai'  ? 'flex'  : 'none';
-};
-
-// ── Add Vessel ────────────────────────────────────────────────────
-window.openAddVessel = function() { openModal('add-vessel-modal'); document.getElementById('v-desig').focus(); };
-window.openAddVesselOfType = function(t) {
-  openModal('add-vessel-modal');
-  document.getElementById('v-type').value = t;
-  document.getElementById('v-desig').focus();
-};
-
-window.confirmAddVessel = function() {
-  var desig = document.getElementById('v-desig').value.trim().toUpperCase();
-  var type  = document.getElementById('v-type').value;
-  var fleet = document.getElementById('v-fleet').value;
-  if (!desig) { alert('Enter a designation.'); return; }
-  if (vessels.find(function(v) { return v.designation === desig; })) {
-    alert(desig + ' already exists.'); return;
-  }
-  var nv = {
-    id: type.toLowerCase() + '-' + Date.now(),
-    type: type, designation: desig, fleet: fleet,
-    milestones: {}, notes: '', status: 'pending',
+window.confirmAV=function(){
+  var des=document.getElementById('av-des').value.trim().toUpperCase();
+  var type=document.getElementById('av-type').value;
+  var fleet=document.getElementById('av-fleet').value;
+  var builder=document.getElementById('av-builder').value.trim();
+  if(!des){alert('Enter a designation.');return;}
+  if(vessels.find(v=>v.designation===des)){alert(des+' already exists.');return;}
+  var nv={
+    id:type.toLowerCase()+'-'+Date.now(),
+    type,designation:des,fleet,status:'not-planned',notes:'',
+    ms:{CA:'',SOC:'',LCH:'',BT:'',AT:'',DEL:''},
+    sf:{builder:builder,contract_num:'',uic:'',owld:'',fy_approp:'',pm_secnav:'',contract_del:'',sail_tow:'',arrival_dest:''},
   };
   vessels.push(nv);
-  closeModal('add-vessel-modal');
-  document.getElementById('v-desig').value = '';
-  sysLog('vessel', 'Added vessel ' + desig, { vesselId: nv.id, type, fleet });
-  render(); autoSave();
-};
-window.confirmAddVessel = window.confirmAddVessel;
-
-// ── Add Milestone Type ────────────────────────────────────────────
-window.openAddMS = function() { openModal('add-ms-modal'); document.getElementById('ms-code').focus(); };
-
-window.confirmAddMS = function() {
-  var code  = document.getElementById('ms-code').value.trim().toUpperCase();
-  var name  = document.getElementById('ms-name').value.trim();
-  var color = document.getElementById('ms-color').value;
-  if (!code || code.length > 6) { alert('Enter a code up to 6 characters.'); return; }
-  if (!name) { alert('Enter a full name.'); return; }
-  if (MILESTONES[code]) { alert('Code "' + code + '" already exists.'); return; }
-  MILESTONES[code] = { label: name, color: color, shape: 'square' };
-  closeModal('add-ms-modal');
-  document.getElementById('ms-code').value = '';
-  document.getElementById('ms-name').value = '';
-  sysLog('config', 'Added milestone type ' + code, { name, color });
-  render(); autoSave();
+  closeModal('av-modal');
+  document.getElementById('av-des').value='';
+  document.getElementById('av-builder').value='';
+  auditEntry('VESSEL','Added vessel '+des,{vesselId:nv.id,vessel:des,field:null,oldVal:null,newVal:{type,fleet}});
+  render(); propagate(); autoSave();
 };
 
-// ── Delete vessel ─────────────────────────────────────────────────
-window.deleteVessel = function(vid) {
-  var v = vessels.find(function(v) { return v.id === vid; });
-  if (!v) return;
-  if (!confirm('Remove ' + v.designation + ' from the schedule?')) return;
-  vessels = vessels.filter(function(v) { return v.id !== vid; });
-  sysLog('vessel', 'Removed ' + v.designation, { vesselId: vid });
+/* ── Add Milestone ── */
+window.openAddMS=function(){ openModal('am-modal'); document.getElementById('am-code').focus(); };
+window.confirmAM=function(){
+  var code=document.getElementById('am-code').value.trim().toUpperCase();
+  var name=document.getElementById('am-name').value.trim();
+  var color=document.getElementById('am-color').value;
+  if(!code||code.length>6){alert('Enter a code up to 6 chars.');return;}
+  if(!name){alert('Enter a full name.');return;}
+  if(MS[code]){alert('Code "'+code+'" already exists.');return;}
+  MS[code]={label:name,color,shape:'square',gantt:true};
+  // Add to all vessels
+  vessels.forEach(v=>{ if(!v.ms[code]) v.ms[code]=''; });
+  closeModal('am-modal');
+  document.getElementById('am-code').value='';
+  document.getElementById('am-name').value='';
+  auditEntry('CONFIG','Added custom milestone type '+code,{field:code,oldVal:null,newVal:{name,color}});
   render(); autoSave();
 };
 
-// ── Modal helpers ─────────────────────────────────────────────────
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
-
-// Close modal on backdrop click
-document.querySelectorAll('.modal-overlay').forEach(function(el) {
-  el.addEventListener('click', function(e) {
-    if (e.target === el) el.classList.remove('open');
-  });
-});
-
-// ── Export CSV ────────────────────────────────────────────────────
-window.exportCSV = function() {
-  var msKeys = Object.keys(MILESTONES);
-  var headers = ['designation','type','fleet'].concat(msKeys).concat(['duration','status','notes']);
-  var rows = [headers.join(',')];
-  vessels.forEach(function(v) {
-    var row = [v.designation, v.type, v.fleet]
-      .concat(msKeys.map(function(k) { return v.milestones[k] || ''; }))
-      .concat([duration(v), computeStatus(v), '"' + (v.notes||'').replace(/"/g,'""') + '"']);
+/* ── CSV Export ── */
+window.exportCSV=function(){
+  var msKeys=Object.keys(MS);
+  var sfKeys=SFIELDS.map(f=>f.key);
+  var headers=['designation','type','fleet']
+    .concat(msKeys)
+    .concat(sfKeys)
+    .concat(['duration','status','notes']);
+  var rows=[headers.join(',')];
+  vessels.forEach(v=>{
+    var row=[v.designation,v.type,v.fleet]
+      .concat(msKeys.map(k=>'"'+(v.ms[k]||'')+'"'))
+      .concat(sfKeys.map(k=>'"'+((v.sf&&v.sf[k])||'').replace(/"/g,'""')+'"'))
+      .concat([durationMo(v),v.status||'','"'+(v.notes||'').replace(/"/g,'""')+'"']);
     rows.push(row.join(','));
   });
-  var blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-  var url  = URL.createObjectURL(blob);
-  var a    = document.createElement('a');
-  a.href = url; a.download = 'program-schedule-' + new Date().toISOString().slice(0,10) + '.csv';
+  var blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='program-schedule-'+new Date().toISOString().slice(0,10)+'.csv';
   a.click(); URL.revokeObjectURL(url);
-  sysLog('export', 'CSV exported', { vessels: vessels.length });
-  toast('CSV exported');
+  auditEntry('EXPORT','CSV exported by '+whoLabel(),{meta:{vessels:vessels.length}});
+  toast('CSV exported ('+vessels.length+' vessels)');
 };
 
-// ── Import CSV ────────────────────────────────────────────────────
-window.importCSV = function(e) {
-  var file = e.target.files[0]; if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(ev) {
+/* ── CSV Import ── */
+window.importCSV=function(e){
+  var file=e.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
     try {
-      var text    = ev.target.result;
-      var lines   = text.split('\n').filter(function(l) { return l.trim(); });
-      var headers = lines[0].split(',').map(function(h) { return h.trim(); });
-      var imported = [];
-      for (var i = 1; i < lines.length; i++) {
-        var vals = parseCSVLine(lines[i]);
-        if (!vals[0]) continue;
-        var ms = {};
-        headers.forEach(function(h, hi) {
-          if (MILESTONES[h] && vals[hi]) ms[h] = vals[hi];
-        });
+      var lines=ev.target.result.split('\n').filter(l=>l.trim());
+      var headers=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
+      var imported=[];
+      for(var i=1;i<lines.length;i++){
+        var vals=parseCSVLine(lines[i]);
+        if(!vals[0]) continue;
+        var ms={},sf={};
+        Object.keys(MS).forEach(k=>{ var hi=headers.indexOf(k); if(hi>=0&&vals[hi]) ms[k]=vals[hi].replace(/^"|"$/g,''); });
+        SFIELDS.forEach(f=>{ var hi=headers.indexOf(f.key); if(hi>=0&&vals[hi]) sf[f.key]=vals[hi].replace(/^"|"$/g,''); });
         imported.push({
-          id: 'imp-' + Date.now() + '-' + i,
-          designation: vals[0].toUpperCase(),
-          type:  vals[1] || 'APL',
-          fleet: vals[2] || 'PACFLT',
-          milestones: ms, notes: '', status: 'pending',
+          id:'imp-'+Date.now()+'-'+i,
+          designation:vals[0].replace(/^"|"$/g,'').toUpperCase(),
+          type:vals[1]||'APL',fleet:vals[2]||'PACFLT',
+          ms,sf,notes:'',status:'not-planned',
         });
       }
-      if (!imported.length) { alert('No valid rows found.'); return; }
-      if (!confirm('Import ' + imported.length + ' vessels? This replaces the current schedule.')) return;
-      vessels = imported;
-      sysLog('import', 'CSV imported', { vessels: imported.length, file: file.name });
+      if(!imported.length){alert('No valid rows found.');return;}
+      if(!confirm('Import '+imported.length+' vessels? This replaces the current schedule.')) return;
+      vessels=imported;
+      auditEntry('IMPORT','CSV imported by '+whoLabel(),{meta:{vessels:imported.length,file:file.name}});
       render(); propagate(); autoSave();
-      toast('Imported ' + imported.length + ' vessels');
-    } catch(err) {
-      alert('CSV parse error: ' + err.message);
-      sysLog('error', 'CSV import failed', { err: err.message });
+      toast('Imported '+imported.length+' vessels');
+    } catch(err){
+      alert('CSV parse error: '+err.message);
+      sysLog('ERROR','CSV import failed',{err:err.message});
     }
   };
   reader.readAsText(file);
-  e.target.value = '';
+  e.target.value='';
+};
+function parseCSVLine(l){
+  var r=[],c='',iq=false;
+  for(var i=0;i<l.length;i++){
+    if(l[i]==='"'){if(iq&&l[i+1]==='"'){c+='"';i++;}else iq=!iq;}
+    else if(l[i]===','&&!iq){r.push(c.trim());c='';}
+    else c+=l[i];
+  }
+  r.push(c.trim()); return r;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   DRAWER  (right slide-in)
+═════════════════════════════════════════════════════════════════ */
+function openDrawer(tab) {
+  drawerOpen=true;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-btns').classList.add('shifted');
+  setDrTab(tab, document.getElementById('dt-'+tab));
+  // Reset badge
+  logBadge=0;
+  var b=document.getElementById('log-badge'); if(b){ b.textContent='0'; b.style.display='none'; }
+}
+function closeDrawer() {
+  drawerOpen=false;
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-btns').classList.remove('shifted');
+  document.querySelectorAll('.dr-tog-btn').forEach(b=>b.classList.remove('active'));
+}
+window.closeDrawer=closeDrawer;
+window.openDrawer=openDrawer;
+
+window.setDrTab=function(tab,btn){
+  drawerTab=tab;
+  document.querySelectorAll('.dr-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('dr-log').style.display=tab==='log'?'block':'none';
+  document.getElementById('dr-ai').style.display=tab==='ai'?'flex':'none';
+  document.getElementById('dr-title').textContent=tab==='log'?'Audit History':'AI Schedule Assistant';
+  document.querySelectorAll('.dr-tog-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tog-'+tab)&&document.getElementById('tog-'+tab).classList.add('active');
 };
 
-function parseCSVLine(line) {
-  var result = []; var cur = ''; var inQ = false;
-  for (var i = 0; i < line.length; i++) {
-    if (line[i] === '"') {
-      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
-      else inQ = !inQ;
-    } else if (line[i] === ',' && !inQ) {
-      result.push(cur.trim()); cur = '';
-    } else { cur += line[i]; }
-  }
-  result.push(cur.trim()); return result;
-}
+/* ═════════════════════════════════════════════════════════════════
+   AI ASSIST
+═════════════════════════════════════════════════════════════════ */
+async function aiReasoning(v,key,oldVal,newVal,entry) {
+  var diff=moDiff(oldVal,newVal),abs=Math.abs(diff);
+  var dir=diff>0?'slipped':'accelerated';
+  var local=localReason(v,key,diff);
+  entry.aiNote=local; renderLog();
 
-// ═══════════════════════════════════════════════════════════════════
-//  AI INTEGRATION
-// ═══════════════════════════════════════════════════════════════════
-async function aiReasoning(vessel, key, oldVal, newVal, logEntry) {
-  var ms   = MILESTONES[key];
-  var diff = moDiff(oldVal, newVal);
-  var dir  = diff > 0 ? 'slipped' : 'accelerated';
-
-  // Immediate local reasoning
-  logEntry.aiNote = localReason(vessel, key, diff);
-  renderLog();
-
-  // Try live AI endpoint
   try {
-    var ctx = vessel.designation + ' (' + vessel.type + ', ' + vessel.fleet + '). '
-      + (ms ? ms.label : key) + ' ' + dir + ' ' + Math.abs(diff) + ' months. '
-      + 'Other milestones: ' + JSON.stringify(vessel.milestones) + '. '
-      + 'In 1-2 sentences: downstream impact on contract deliverables?';
-    var resp = await fetch('/api/ai-chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: ctx, ctx: 'program-schedule' }),
-    });
-    if (resp.ok) {
-      var data = await resp.json();
-      var note = data.reply || data.message || data.text || logEntry.aiNote;
-      logEntry.aiNote = note;
-      renderLog();
-      addAIMsg(note, false);
+    var ctx=v.designation+' ('+v.type+', '+v.fleet+'). '
+      +(MS[key]?MS[key].label:key)+' '+dir+' '+abs+' months from '+fmtYM(oldVal)+' to '+fmtYM(newVal)+'. '
+      +'Other milestones: '+Object.entries(v.ms).filter(([k,d])=>d).map(([k,d])=>k+'='+fmtYM(d)).join(', ')+'. '
+      +'Contract Delivery: '+(v.sf&&v.sf.contract_del?fmtYM(v.sf.contract_del):'TBD')+'. '
+      +'Provide 1-2 sentences on downstream impact to contract deliverables.';
+    var resp=await fetch('/api/ai-chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:ctx,ctx:'program-schedule'})});
+    if(resp.ok){
+      var data=await resp.json();
+      var note=data.reply||data.message||data.text||local;
+      entry.aiNote=note; renderLog();
+      if(drawerOpen&&drawerTab==='ai') addAIMsg(note,false);
     }
-  } catch(e) { /* silent — local reasoning already shown */ }
+  } catch(e) {/* silent — local reasoning shown */}
 }
 
-function localReason(v, key, diff) {
-  var abs = Math.abs(diff);
-  var dir = diff > 0 ? 'slip' : 'acceleration';
-  if (key === 'DEL') return v.designation + ' delivery ' + (diff > 0 ? 'slipped' : 'accelerated') + ' ' + abs + ' mo — review all contract deliverable due dates referencing this DEL.';
-  if (key === 'CA')  return 'CA ' + dir + ' of ' + abs + ' mo may cascade to SOC and DEL for ' + v.designation + '; validate downstream milestones.';
-  if (key === 'SOC') return 'SOC ' + dir + ' of ' + abs + ' mo on ' + v.designation + ' — verify BT/AT/DEL feasibility.';
-  return (MILESTONES[key] ? MILESTONES[key].label : key) + ' ' + dir + ' of ' + abs + ' mo logged for ' + v.designation + '; review schedule.';
+function localReason(v,key,diff) {
+  var abs=Math.abs(diff),dir=diff>0?'slip':'acceleration';
+  var d=v.sf&&v.sf['contract_del'];
+  var suffix=d?' (Contract Delivery: '+fmtYM(d)+')':'';
+  if(key==='DEL') return v.designation+' Delivery '+(diff>0?'slipped':'accelerated')+' '+abs+' mo'+suffix+' — review all contract deliverable due dates.';
+  if(key==='CA')  return 'CA '+dir+' of '+abs+' mo may cascade to SOC and DEL for '+v.designation+'. Validate downstream milestones.';
+  if(key==='SOC') return 'SOC '+dir+' of '+abs+' mo on '+v.designation+' — verify Launch/BT/AT/DEL feasibility.';
+  return (MS[key]?MS[key].label:key)+' '+dir+' of '+abs+' mo for '+v.designation+'. Review schedule dependencies.';
 }
 
-window.sendAI = async function() {
-  var input = document.getElementById('ai-input');
-  var msg   = input.value.trim(); if (!msg) return;
-  input.value = '';
-  addAIMsg(msg, true);
-
-  // Switch to AI tab if not already
-  if (rpTab !== 'ai') {
-    var tab = document.querySelector('.rp-tab:nth-child(2)');
-    if (tab) setRPTab('ai', tab);
-  }
-
+window.sendAI=async function(){
+  var inp=document.getElementById('ai-inp');
+  var msg=inp.value.trim(); if(!msg) return;
+  inp.value='';
+  addAIMsg(msg,true);
   showTyping();
   try {
-    var ctx = vessels.map(function(v) {
-      return v.designation + '(' + v.fleet + '): '
-        + Object.keys(v.milestones).map(function(k) { return k + '=' + fmtYM(v.milestones[k]); }).join(', ');
+    var ctx=vessels.map(v=>{
+      var ms=Object.entries(v.ms).filter(([k,d])=>d).map(([k,d])=>k+'='+fmtYM(d)).join(', ');
+      return v.designation+'('+v.fleet+','+v.status+'): '+ms;
     }).join('\n');
-    var resp = await fetch('/api/ai-chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg, ctx: 'program-schedule\n' + ctx }),
-    });
+    var resp=await fetch('/api/ai-chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,ctx:'program-schedule\n'+ctx})});
     hideTyping();
-    if (resp.ok) {
-      var data = await resp.json();
-      addAIMsg(data.reply || data.message || 'Processing your schedule query…', false);
-    } else { addAIMsg('AI service unavailable. Please try again.', false); }
-  } catch(e) {
-    hideTyping();
-    addAIMsg('AI service offline. Check your connection.', false);
-  }
-  sysLog('ai', 'AI query: ' + msg.slice(0,60), null);
+    if(resp.ok){
+      var data=await resp.json();
+      addAIMsg(data.reply||data.message||'Query processed.',false);
+    } else { addAIMsg('AI service unavailable. Please try again.',false); }
+  } catch(e){ hideTyping(); addAIMsg('AI service offline. Check connection.',false); }
+  sysLog('SYSTEM','AI query submitted',{preview:msg.slice(0,60)});
 };
 
-function addAIMsg(text, isUser) {
-  var el = document.getElementById('ai-msgs');
-  var d  = document.createElement('div');
-  d.className = 'ai-msg-row ' + (isUser ? 'ai-user' : 'ai-bot');
-  d.textContent = text;
-  el.appendChild(d);
-  el.scrollTop = el.scrollHeight;
+function addAIMsg(txt,isUser){
+  var el=document.getElementById('ai-msgs');
+  var d=document.createElement('div');
+  d.className='ai-row '+(isUser?'ai-u':'ai-b');
+  d.textContent=txt;
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+var _typEl=null;
+function showTyping(){
+  var el=document.getElementById('ai-msgs');
+  _typEl=document.createElement('div'); _typEl.className='ai-typing';
+  _typEl.innerHTML='<span></span><span></span><span></span>';
+  el.appendChild(_typEl); el.scrollTop=el.scrollHeight;
+}
+function hideTyping(){ if(_typEl){_typEl.remove();_typEl=null;} }
+
+/* ═════════════════════════════════════════════════════════════════
+   MODAL HELPERS
+═════════════════════════════════════════════════════════════════ */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+window.closeModal=function(id){ document.getElementById(id).classList.remove('open'); };
+document.querySelectorAll('.m-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('open'); });
+});
+
+/* ═════════════════════════════════════════════════════════════════
+   UTILITIES
+═════════════════════════════════════════════════════════════════ */
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg; el.style.display='block';
+  clearTimeout(el._t); el._t=setTimeout(()=>el.style.display='none',2600);
 }
 
-var typingEl = null;
-function showTyping() {
-  var el = document.getElementById('ai-msgs');
-  typingEl = document.createElement('div');
-  typingEl.className = 'ai-typing-row';
-  typingEl.innerHTML = '<span></span><span></span><span></span>';
-  el.appendChild(typingEl);
-  el.scrollTop = el.scrollHeight;
-}
-function hideTyping() { if (typingEl) { typingEl.remove(); typingEl = null; } }
-
-// ═══════════════════════════════════════════════════════════════════
-//  UTILITIES
-// ═══════════════════════════════════════════════════════════════════
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function toast(msg) {
-  var el = document.getElementById('toast');
-  el.textContent = msg; el.style.display = 'block';
-  clearTimeout(el._t);
-  el._t = setTimeout(function() { el.style.display = 'none'; }, 2400);
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  BOOTSTRAP
-// ═══════════════════════════════════════════════════════════════════
+/* ═════════════════════════════════════════════════════════════════
+   BOOTSTRAP
+═════════════════════════════════════════════════════════════════ */
 init();
 </script>
 </body>
