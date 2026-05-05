@@ -1833,12 +1833,8 @@ window.mseDelete = function() {
   toast(v.designation+' · '+_ctxKey+' date cleared');
 };
 
-// Close modal on Escape
-document.addEventListener('keydown', function(e) {
-  if (e.key==='Escape') closeMSEModal();
-});
-
-
+/* ── Context menu (right-click on MS cells / Gantt symbols) ── */
+function openCtxMenu(e, vid, key) {
   e.preventDefault();
   _ctxVid = vid; _ctxKey = key;
   var isDone = completedSet.has(vid+'|'+key);
@@ -1885,10 +1881,13 @@ document.addEventListener('click', function(e) {
   var m = document.getElementById('ctx-menu');
   if (m && !m.contains(e.target)) m.style.display = 'none';
 });
+
+// Single Escape handler covers both ctx-menu and MSE modal
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     var m = document.getElementById('ctx-menu');
     if (m) m.style.display = 'none';
+    closeMSEModal();
   }
 });
 
