@@ -109,21 +109,45 @@ html,body { height:100%; overflow:hidden;
   background:var(--surface); border-bottom:1px solid var(--border);
   padding:4px 18px; display:flex; align-items:center; gap:12px; flex-shrink:0; flex-wrap:wrap;
 }
-.li { display:flex; align-items:center; gap:3px; font-size:10px; color:var(--steel); white-space:nowrap; }
+.li { display:flex; align-items:center; gap:4px; font-size:10px; color:var(--steel); white-space:nowrap; }
+.li svg { flex-shrink:0; }
 
 /* ══ Main ══════════════════════════════════════════════════════════ */
 #main { flex:1; display:flex; overflow:hidden; position:relative; }
 #center { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
 
-/* ── Gantt ── */
-#gantt-wrap {
-  flex-shrink:0; background:var(--surface);
-  border-bottom:1px solid var(--border);
-  overflow:auto; max-height:42vh; min-height:160px;
+/* ── Panel section title bars ── */
+.panel-hdr {
+  display:flex; align-items:center; gap:8px;
+  padding:6px 14px;
+  background:var(--navy); color:rgba(255,255,255,0.92);
+  font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  flex-shrink:0; border-bottom:2px solid rgba(0,0,0,0.15);
+  user-select:none;
 }
-#gantt-svg { display:block; }
+.panel-hdr .ph-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.45); flex-shrink:0; }
+.panel-hdr .ph-spacer { flex:1; }
+
+/* ── Gantt two-panel frozen layout ── */
+#gantt-section {
+  flex-shrink:0; display:flex; flex-direction:column;
+  border-bottom:2px solid var(--border-2); max-height:46vh; min-height:160px;
+}
+#gantt-panels { display:flex; flex:1; overflow:hidden; background:var(--surface); }
+/* Left frozen: vessel names only */
+#gantt-left { flex-shrink:0; overflow:hidden; z-index:10; box-shadow:3px 0 8px rgba(0,0,0,0.07); }
+#gantt-left-svg { display:block; }
+/* Right scrollable: timeline + symbols */
+#gantt-right { flex:1; overflow-x:auto; overflow-y:hidden; position:relative; }
+#gantt-right-svg { display:block; cursor:default; }
+
+/* drag ghost */
+#gantt-drag-ghost {
+  position:fixed; pointer-events:none; z-index:700; display:none; opacity:0.82;
+}
 
 /* ── Spreadsheet ── */
+#sheet-section { flex:1; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
 #sheet-wrap { flex:1; overflow:auto; }
 #sheet-toolbar {
   display:flex; align-items:center; gap:7px; padding:5px 14px;
@@ -199,6 +223,33 @@ select.ci:focus { outline:none; background:var(--surface); border-color:var(--ac
   transition:all .12s; opacity:.4;
 }
 .del-btn:hover { color:var(--red); opacity:1; background:rgba(255,59,48,.07); }
+
+/* ── Completed milestone cell ── */
+td.ms-done {
+  background:rgba(52,199,89,0.13) !important;
+  border-radius:4px; position:relative;
+}
+td.ms-done input.di { color:#1a7a36 !important; font-weight:600; }
+td.ms-done::after {
+  content:''; position:absolute; inset:0; border-radius:4px;
+  border:1px solid rgba(52,199,89,0.35); pointer-events:none;
+}
+td.ms-done .di::after { content:' ✓'; }
+
+/* ── Context menu ── */
+#ctx-menu {
+  position:fixed; z-index:800; background:var(--surface);
+  border:1px solid var(--border); border-radius:8px;
+  box-shadow:var(--shadow-lg); padding:4px 0; min-width:188px; display:none;
+}
+.ctx-item {
+  padding:7px 14px; font-size:11.5px; cursor:pointer;
+  display:flex; align-items:center; gap:7px;
+  transition:background .1s; color:var(--text);
+}
+.ctx-item:hover { background:rgba(0,122,255,0.07); color:var(--accent); }
+.ctx-item.danger:hover { background:rgba(255,59,48,0.07); color:var(--red); }
+.ctx-sep { height:1px; background:var(--border); margin:3px 0; }
 
 /* ── Right Drawer ── */
 #drawer {
@@ -467,9 +518,6 @@ select.ci:focus { outline:none; background:var(--surface); border-color:var(--ac
         <span style="color:var(--purple)">◆</span> AT</label>
       <label class="ms-tog"><input type="checkbox" checked onchange="toggleMS('DEL',this.checked)">
         <span style="color:var(--navy)">●</span> DEL</label>
-      <button class="abtn btn-o" style="font-size:10px;padding:3px 8px" onclick="openAddMS()">
-        <i class="fas fa-plus fa-xs"></i> Add
-      </button>
     </div>
 
     <div style="flex:1"></div>
@@ -488,23 +536,47 @@ select.ci:focus { outline:none; background:var(--surface); border-color:var(--ac
   <!-- Legend -->
   <div id="legend">
     <span style="font-size:9px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.07em">Legend:</span>
-    <div class="li"><span style="color:var(--gold);font-size:13px">★</span> Contract Award (CA)</div>
-    <div class="li"><span style="color:var(--yellow);font-size:13px">▲</span> Start of Construction (SOC)</div>
-    <div class="li"><span style="color:#5ac8fa;font-size:13px">◆</span> Launch</div>
-    <div class="li"><span style="color:var(--accent);font-size:13px">◆</span> Builder's Trials (BT)</div>
-    <div class="li"><span style="color:var(--purple);font-size:13px">◆</span> Acceptance Trials (AT)</div>
-    <div class="li"><span style="color:var(--navy);font-size:13px">●</span> Delivery (DEL)</div>
+    <!-- CA: gold star -->
+    <div class="li">
+      <svg width="14" height="14" viewBox="-7 -7 14 14"><polygon points="0,-6 1.76,-2.43 5.71,-1.76 2.85,1.04 3.53,5 0,2.99 -3.53,5 -2.85,1.04 -5.71,-1.76 -1.76,-2.43" fill="#c9a84c" stroke="white" stroke-width="0.5"/></svg>
+      Contract Award (CA)
+    </div>
+    <!-- SOC: orange triangle -->
+    <div class="li">
+      <svg width="14" height="14" viewBox="-7 -7 14 14"><polygon points="0,-6 -5.5,4 5.5,4" fill="#ff9500" stroke="white" stroke-width="0.5"/></svg>
+      Start of Construction (SOC)
+    </div>
+    <!-- Launch: light blue diamond -->
+    <div class="li">
+      <svg width="14" height="14" viewBox="-7 -7 14 14"><polygon points="0,-6 6,0 0,6 -6,0" fill="#5ac8fa" stroke="white" stroke-width="0.5"/></svg>
+      Launch
+    </div>
+    <!-- BT: blue diamond -->
+    <div class="li">
+      <svg width="14" height="14" viewBox="-7 -7 14 14"><polygon points="0,-6 6,0 0,6 -6,0" fill="#007AFF" stroke="white" stroke-width="0.5"/></svg>
+      Builder's Trials (BT)
+    </div>
+    <!-- AT: purple diamond -->
+    <div class="li">
+      <svg width="14" height="14" viewBox="-7 -7 14 14"><polygon points="0,-6 6,0 0,6 -6,0" fill="#af52de" stroke="white" stroke-width="0.5"/></svg>
+      Acceptance Trials (AT)
+    </div>
+    <!-- DEL: navy circle -->
+    <div class="li">
+      <svg width="14" height="14" viewBox="-7 -7 14 14"><circle cx="0" cy="0" r="5.5" fill="#1c3a5f" stroke="white" stroke-width="0.8"/></svg>
+      Delivery (DEL)
+    </div>
     <div class="li" style="margin-left:6px">
-      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
-        background:rgba(0,122,255,0.15);border:1.5px solid #007AFF"></span> PACFLT
+      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(0,122,255,0.15);border:1.5px solid #007AFF"></span> PACFLT
     </div>
     <div class="li">
-      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
-        background:rgba(52,199,89,0.15);border:1.5px solid #34c759"></span> USFF
+      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(52,199,89,0.15);border:1.5px solid #34c759"></span> USFF
     </div>
     <div class="li">
-      <span style="display:inline-block;width:24px;height:4px;border-radius:2px;
-        background:rgba(0,122,255,0.25)"></span> CA→DEL span
+      <span style="display:inline-block;width:24px;height:4px;border-radius:2px;background:rgba(0,122,255,0.25)"></span> CA→DEL span
+    </div>
+    <div class="li" style="margin-left:4px">
+      <span style="display:inline-block;width:9px;height:9px;background:rgba(52,199,89,0.25);border:1px solid rgba(52,199,89,0.5);border-radius:2px"></span> Completed
     </div>
   </div>
 
@@ -512,27 +584,52 @@ select.ci:focus { outline:none; background:var(--surface); border-color:var(--ac
   <div id="main">
     <div id="center">
 
-      <!-- Gantt -->
-      <div id="gantt-wrap"><svg id="gantt-svg"></svg></div>
+      <!-- ── Gantt Section ── -->
+      <div id="gantt-section">
+        <div class="panel-hdr">
+          <div class="ph-dot"></div>
+          Gantt Chart
+          <span style="font-size:9px;font-weight:400;opacity:.6;margin-left:4px">Drag milestones to reschedule — updates spreadsheet automatically</span>
+          <div class="ph-spacer"></div>
+          <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="openAddMS()">
+            <i class="fas fa-plus fa-xs"></i> Add Milestone
+          </button>
+        </div>
+        <div id="gantt-panels">
+          <div id="gantt-left"><svg id="gantt-left-svg"></svg></div>
+          <div id="gantt-right"><svg id="gantt-right-svg"></svg></div>
+        </div>
+      </div>
 
-      <!-- Spreadsheet -->
-      <div id="sheet-wrap">
-        <div id="sheet-toolbar">
-          <span class="tlbl" style="margin-right:2px">Spreadsheet</span>
-          <div class="tdiv"></div>
-          <button class="abtn btn-o" onclick="exportCSV()"><i class="fas fa-download fa-xs"></i> Export CSV</button>
-          <label class="abtn btn-o" style="cursor:pointer">
+      <!-- ── Spreadsheet Section ── -->
+      <div id="sheet-section">
+        <div class="panel-hdr">
+          <div class="ph-dot"></div>
+          Spreadsheet
+          <span style="font-size:9px;font-weight:400;opacity:.6;margin-left:4px">Right-click a milestone date to mark complete (highlights green)</span>
+          <div class="ph-spacer"></div>
+          <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
+            <i class="fas fa-download fa-xs"></i> Export CSV
+          </button>
+          <label class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px;cursor:pointer">
             <i class="fas fa-upload fa-xs"></i> Import CSV
             <input type="file" accept=".csv" style="display:none" onchange="importCSV(event)">
           </label>
-          <button class="abtn btn-p" onclick="saveAll()"><i class="fas fa-cloud-upload-alt fa-xs"></i> Save</button>
-          <div style="flex:1"></div>
+          <button class="abtn" style="background:rgba(0,122,255,0.85);color:white;border:1px solid rgba(0,122,255,0.6);font-size:10px;padding:2px 8px" onclick="saveAll()">
+            <i class="fas fa-cloud-upload-alt fa-xs"></i> Save
+          </button>
+        </div>
+        <div id="sheet-toolbar">
+          <span class="tlbl">Filter &amp; Info</span>
+          <div class="tdiv"></div>
           <span style="font-size:9.5px;color:var(--steel)" id="sheet-count">— vessels</span>
         </div>
-        <table class="sheet-tbl" id="ssheet">
-          <thead><tr id="ssheet-hd"></tr></thead>
-          <tbody id="ssheet-bd"></tbody>
-        </table>
+        <div id="sheet-wrap">
+          <table class="sheet-tbl" id="ssheet">
+            <thead><tr id="ssheet-hd"></tr></thead>
+            <tbody id="ssheet-bd"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -663,6 +760,21 @@ select.ci:focus { outline:none; background:var(--surface); border-color:var(--ac
 
 <div id="gtip"></div>
 <div id="toast"></div>
+
+<!-- Context menu for spreadsheet cells -->
+<div id="ctx-menu">
+  <div class="ctx-item" id="ctx-complete" onclick="ctxToggleComplete()">
+    <i class="fas fa-check-circle fa-xs" style="color:var(--green)"></i>
+    <span id="ctx-complete-lbl">Mark as Complete</span>
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxClearDate()">
+    <i class="fas fa-times fa-xs" style="color:var(--steel)"></i> Clear Date
+  </div>
+</div>
+
+<!-- Gantt drag ghost (tiny SVG shape that follows cursor while dragging) -->
+<div id="gantt-drag-ghost"></div>
 
 <!-- ══ SUPABASE ═══════════════════════════════════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -827,7 +939,14 @@ var saveTimer  = null;
 var logBadge   = 0;
 
 /* ── Gantt layout constants ─── */
-var GP = { LEFT:120, ROW_H:40, HDR_H:30, FY_W:106, MS_R:7 };
+var GP = { LEFT:124, ROW_H:54, HDR_H:32, FY_W:110, MS_R:7 };
+
+/* ── Completed milestones: Set of "vesselId|msKey" ─── */
+var completedSet = new Set();
+/* ── Context menu state ─── */
+var _ctxVid=null, _ctxKey=null;
+/* ── Drag state ─── */
+var _drag = null; // { el, vid, key, startX, origX, svgLeftOffset }
 
 /* ═════════════════════════════════════════════════════════════════
    INIT
@@ -843,6 +962,7 @@ async function init() {
       if (s.vessels   && s.vessels.length) vessels  = s.vessels;
       if (s.auditLog  && s.auditLog.length) auditLog = s.auditLog;
       if (s.customMS) Object.entries(s.customMS).forEach(([k,v]) => MS[k]=v);
+      if (s.completed && Array.isArray(s.completed)) completedSet = new Set(s.completed);
       sysLog('SYSTEM','Restored from localStorage',{vessels:vessels.length,log:auditLog.length});
     }
   } catch(e) { sysLog('ERROR','localStorage parse failed',{err:e.message}); }
@@ -937,6 +1057,7 @@ async function loadCloud() {
     if (r.data && !r.error) {
       if (r.data.vessels)   vessels  = r.data.vessels;
       if (r.data.audit_log) auditLog = r.data.audit_log;
+      if (r.data.completed && Array.isArray(r.data.completed)) completedSet = new Set(r.data.completed);
       sysLog('SYNC','Loaded from Supabase',{vessels:vessels.length});
       render();
     }
@@ -947,6 +1068,7 @@ window.saveAll = async function() {
   var payload = {
     tool_id:'ps-v2', vessels:vessels,
     audit_log:auditLog.slice(0,500),
+    completed: Array.from(completedSet),
     saved_at:new Date().toISOString(), version:VER,
   };
   // localStorage
@@ -1060,99 +1182,155 @@ function render() {
 }
 
 /* ── Gantt ── */
+/*
+  Two-panel layout:
+    #gantt-left-svg  — frozen left column (vessel labels), full height, no scroll
+    #gantt-right-svg — timeline + milestones, scrolls horizontally only
+  Both SVGs share the same row height and row ordering, kept in sync.
+*/
 function renderGantt() {
-  var rows = buildGanttRows(filtered());
-  var fyN  = fyEnd-fyStart+1;
-  var sw   = GP.LEFT+fyN*GP.FY_W;
-  var sh   = GP.HDR_H+rows.length*GP.ROW_H+6;
-  var svg  = document.getElementById('gantt-svg');
-  svg.setAttribute('width',sw); svg.setAttribute('height',sh);
-  svg.setAttribute('viewBox','0 0 '+sw+' '+sh);
+  var rows  = buildGanttRows(filtered());
+  var fyN   = fyEnd - fyStart + 1;
+  var sh    = GP.HDR_H + rows.length * GP.ROW_H + 4;
+  var rightW = fyN * GP.FY_W;
 
-  var h='';
+  // ─── LEFT SVG (frozen vessel column) ────────────────────────────
+  var lEl = document.getElementById('gantt-left-svg');
+  lEl.setAttribute('width', GP.LEFT);
+  lEl.setAttribute('height', sh);
 
-  // Base bg
-  h+='<rect width="'+sw+'" height="'+sh+'" fill="#f5f5f7"/>';
+  var lh = '';
+  lh += '<rect width="'+GP.LEFT+'" height="'+sh+'" fill="#f5f5f7"/>';
+  // header cell
+  lh += '<rect x="0" y="0" width="'+GP.LEFT+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
+  lh += '<text x="8" y="'+(GP.HDR_H/2+4.5)+'" font-size="9.5" font-weight="600" fill="rgba(255,255,255,0.55)" font-family="Inter,-apple-system,sans-serif" letter-spacing="0.06em">VESSEL</text>';
 
-  // FY column alternating bg
-  for(var fi=0;fi<fyN;fi++) {
-    var fx=GP.LEFT+fi*GP.FY_W;
-    if(fi%2===0) h+='<rect x="'+fx+'" y="'+GP.HDR_H+'" width="'+GP.FY_W+'" height="'+(sh-GP.HDR_H)+'" fill="rgba(255,255,255,0.75)"/>';
+  rows.forEach(function(row,ri) {
+    var ry = GP.HDR_H + ri * GP.ROW_H;
+    if (row.isGroup) {
+      var tc = (VT[row.type]||{}).color||'#6e6e73';
+      lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+tc+'" opacity="0.18"/>';
+      lh += '<text x="8" y="'+(ry+GP.ROW_H/2+4)+'" font-size="9" font-weight="700" fill="'+tc+'" letter-spacing="0.09em" font-family="Inter,-apple-system,sans-serif">'+esc(row.type)+'</text>';
+      return;
+    }
+    var v = row.vessel;
+    var tc2 = (VT[v.type]||{}).color||'#6e6e73';
+    var st = v.status||'on-track';
+    var stColor = st==='on-track'?'#34c759':st==='delayed'?'#ff3b30':st==='not-planned'?'#6e6e73':'#007AFF';
+    // row bg
+    var rowBg = st==='delayed'?'rgba(255,59,48,0.04)':st==='not-planned'?'rgba(110,110,115,0.04)':'rgba(255,255,255,0.7)';
+    lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+rowBg+'"/>';
+    lh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+GP.LEFT+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.05)" stroke-width="0.7"/>';
+    lh += '<rect x="0" y="'+ry+'" width="3" height="'+GP.ROW_H+'" fill="'+stColor+'"/>';
+    lh += '<rect x="3" y="'+ry+'" width="'+(GP.LEFT-3)+'" height="'+GP.ROW_H+'" fill="'+tc2+'" opacity="0.04"/>';
+    lh += '<text x="9" y="'+(ry+GP.ROW_H/2-2)+'" font-size="10" font-weight="600" fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation)+'</text>';
+    var fc = v.fleet==='PACFLT'?'#007AFF':v.fleet==='USFF'?'#34c759':'#ff9500';
+    lh += '<text x="9" y="'+(ry+GP.ROW_H/2+10)+'" font-size="7.5" fill="'+fc+'" font-family="Inter,-apple-system,sans-serif" opacity="0.85">'+esc(v.fleet)+'</text>';
+  });
+
+  lEl.innerHTML = lh;
+
+  // ─── RIGHT SVG (scrollable timeline) ────────────────────────────
+  var rEl = document.getElementById('gantt-right-svg');
+  rEl.setAttribute('width', rightW);
+  rEl.setAttribute('height', sh);
+
+  var rh = '';
+  rh += '<rect width="'+rightW+'" height="'+sh+'" fill="#f5f5f7"/>';
+
+  // FY alternating bg
+  for (var fi = 0; fi < fyN; fi++) {
+    var fx = fi * GP.FY_W;
+    if (fi%2===0) rh += '<rect x="'+fx+'" y="'+GP.HDR_H+'" width="'+GP.FY_W+'" height="'+(sh-GP.HDR_H)+'" fill="rgba(255,255,255,0.78)"/>';
   }
-
-  // Monthly grid lines (subtle)
-  for(var fi=0;fi<fyN;fi++) {
-    for(var mi=1;mi<12;mi++) {
-      var gx=GP.LEFT+fi*GP.FY_W+(mi/12)*GP.FY_W;
-      h+='<line x1="'+gx+'" y1="'+GP.HDR_H+'" x2="'+gx+'" y2="'+sh+'" stroke="rgba(0,0,0,0.028)" stroke-width="0.5"/>';
+  // Monthly grid lines
+  for (var fi2 = 0; fi2 < fyN; fi2++) {
+    for (var mi = 1; mi < 12; mi++) {
+      var gx = fi2*GP.FY_W + (mi/12)*GP.FY_W;
+      rh += '<line x1="'+gx+'" y1="'+GP.HDR_H+'" x2="'+gx+'" y2="'+sh+'" stroke="rgba(0,0,0,0.03)" stroke-width="0.5"/>';
     }
   }
-
   // Today line
-  var tx=dateToX(NOW_MONTH);
-  if(tx>0) {
-    h+='<line x1="'+tx+'" y1="'+GP.HDR_H+'" x2="'+tx+'" y2="'+(sh-4)+'" stroke="#007AFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.45"/>';
-    h+='<text x="'+(tx+3)+'" y="'+(GP.HDR_H+10)+'" font-size="7.5" fill="#007AFF" opacity="0.65" font-family="Inter,-apple-system,sans-serif">Today</text>';
+  var tx = dateToXRight(NOW_MONTH);
+  if (tx >= 0) {
+    rh += '<line x1="'+tx+'" y1="'+GP.HDR_H+'" x2="'+tx+'" y2="'+(sh-4)+'" stroke="#007AFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.45"/>';
+    rh += '<text x="'+(tx+3)+'" y="'+(GP.HDR_H+10)+'" font-size="7.5" fill="#007AFF" opacity="0.65" font-family="Inter,-apple-system,sans-serif">Today</text>';
   }
-
   // FY headers
-  h+='<rect x="0" y="0" width="'+GP.LEFT+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
-  h+='<text x="8" y="'+(GP.HDR_H/2+4.5)+'" font-size="9.5" font-weight="600" fill="rgba(255,255,255,0.55)" font-family="Inter,-apple-system,sans-serif" letter-spacing="0.06em">VESSEL</text>';
-  for(var fj=0;fj<fyN;fj++) {
-    var fx2=GP.LEFT+fj*GP.FY_W;
-    h+='<rect x="'+fx2+'" y="0" width="'+GP.FY_W+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
-    h+='<text x="'+(fx2+GP.FY_W/2)+'" y="'+(GP.HDR_H/2+4.5)+'" font-size="11" font-weight="600" text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif">FY'+(fyStart+fj)+'</text>';
-    h+='<line x1="'+fx2+'" y1="0" x2="'+fx2+'" y2="'+sh+'" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>';
+  for (var fj = 0; fj < fyN; fj++) {
+    var fx2 = fj * GP.FY_W;
+    rh += '<rect x="'+fx2+'" y="0" width="'+GP.FY_W+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
+    rh += '<text x="'+(fx2+GP.FY_W/2)+'" y="'+(GP.HDR_H/2+4.5)+'" font-size="11" font-weight="600" text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif">FY'+(fyStart+fj)+'</text>';
+    rh += '<line x1="'+fx2+'" y1="0" x2="'+fx2+'" y2="'+sh+'" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>';
   }
 
   // Rows
   rows.forEach(function(row,ri) {
-    var ry=GP.HDR_H+ri*GP.ROW_H;
-    if(row.isGroup) {
-      var tc=(VT[row.type]||{}).color||'#6e6e73';
-      h+='<rect x="0" y="'+ry+'" width="'+sw+'" height="'+GP.ROW_H+'" fill="'+tc+'" opacity="0.07"/>';
-      h+='<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+tc+'" opacity="0.15"/>';
-      h+='<text x="8" y="'+(ry+GP.ROW_H/2+4)+'" font-size="9" font-weight="700" fill="'+tc+'" letter-spacing="0.09em" font-family="Inter,-apple-system,sans-serif">'+esc(row.type)+'</text>';
+    var ry = GP.HDR_H + ri * GP.ROW_H;
+    if (row.isGroup) {
+      var tc = (VT[row.type]||{}).color||'#6e6e73';
+      rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+GP.ROW_H+'" fill="'+tc+'" opacity="0.055"/>';
       return;
     }
-    var v=row.vessel;
-    var tc2=(VT[v.type]||{}).color||'#6e6e73';
-    var st=v.status||'on-track';
-    var rowBg = st==='delayed'?'rgba(255,59,48,0.04)':st==='not-planned'?'rgba(110,110,115,0.04)':'transparent';
+    var v = row.vessel;
+    var tc2 = (VT[v.type]||{}).color||'#6e6e73';
+    var st = v.status||'on-track';
+    var rowBg = st==='delayed'?'rgba(255,59,48,0.03)':st==='not-planned'?'rgba(110,110,115,0.03)':'transparent';
+    rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+GP.ROW_H+'" fill="'+rowBg+'"/>';
+    rh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.04)" stroke-width="0.6"/>';
 
-    h+='<rect x="0" y="'+ry+'" width="'+sw+'" height="'+GP.ROW_H+'" fill="'+rowBg+'"/>';
-    h+='<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+sw+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.045)" stroke-width="0.6"/>';
-
-    // Left status stripe
-    var stColor = st==='on-track'?'#34c759':st==='delayed'?'#ff3b30':st==='not-planned'?'#6e6e73':'#007AFF';
-    h+='<rect x="0" y="'+ry+'" width="3" height="'+GP.ROW_H+'" fill="'+stColor+'"/>';
-
-    // Label
-    h+='<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+tc2+'" opacity="0.04"/>';
-    h+='<text x="8" y="'+(ry+GP.ROW_H/2+2.5)+'" font-size="10" font-weight="600" fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation)+'</text>';
-    var fc=v.fleet==='PACFLT'?'#007AFF':v.fleet==='USFF'?'#34c759':'#ff9500';
-    h+='<text x="8" y="'+(ry+GP.ROW_H/2+13)+'" font-size="7.5" fill="'+fc+'" font-family="Inter,-apple-system,sans-serif" opacity="0.85">'+esc(v.fleet)+'</text>';
-
-    // CA→DEL span bar
-    var xCA=dateToX(v.ms['CA']),xDEL=dateToX(v.ms['DEL']||v.ms['contract_del']);
-    if(xCA>0&&xDEL>0&&xDEL>xCA) {
-      h+='<rect x="'+xCA+'" y="'+(ry+GP.ROW_H/2-2)+'" width="'+(xDEL-xCA)+'" height="4" rx="2" fill="'+tc2+'" opacity="0.2"/>';
+    // CA→DEL span bar (centered vertically, above date labels)
+    var xCA = dateToXRight(v.ms['CA']);
+    var xDEL = dateToXRight(v.ms['DEL']||'');
+    if (xCA>=0 && xDEL>=0 && xDEL>xCA) {
+      rh += '<rect x="'+xCA+'" y="'+(ry+GP.ROW_H/2-9)+'" width="'+(xDEL-xCA)+'" height="4" rx="2" fill="'+tc2+'" opacity="0.2"/>';
     }
 
-    // Milestone symbols — only gantt milestones
-    Object.keys(v.ms).forEach(function(key){
-      if(hiddenMS[key]) return;
-      var msDef=MS[key]; if(!msDef||!msDef.gantt) return;
-      var mx=dateToX(v.ms[key]); if(mx<0) return;
-      if(st==='not-planned'&&key!=='CA') return; // not-planned: only show CA
-      var my=ry+GP.ROW_H/2;
-      h+=msSym(mx,my,msDef.shape,msDef.color,key,v.id,fmtYM(v.ms[key]));
+    // Milestone symbols
+    Object.keys(v.ms).forEach(function(key) {
+      if (hiddenMS[key]) return;
+      var msDef = MS[key]; if (!msDef||!msDef.gantt) return;
+      var mx = dateToXRight(v.ms[key]); if (mx < 0) return;
+      if (st==='not-planned' && key!=='CA') return;
+      var my = ry + GP.ROW_H/2 - 6; // shift up to leave room for date label
+      var isDone = completedSet.has(v.id+'|'+key);
+      rh += msSymRight(mx, my, msDef.shape, msDef.color, key, v.id, fmtYM(v.ms[key]), isDone);
     });
   });
 
-  h+='<line x1="'+sw+'" y1="0" x2="'+sw+'" y2="'+sh+'" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>';
-  svg.innerHTML=h;
-  attachGanttTips();
+  rEl.innerHTML = rh;
+  attachGanttInteraction();
+
+  // Sync vertical scroll between left and right panels
+  var lDiv = document.getElementById('gantt-left');
+  var rDiv = document.getElementById('gantt-right');
+  lDiv.style.height = rDiv.offsetHeight + 'px';
+}
+
+function dateToXRight(ym) {
+  if (!ym) return -1;
+  var f = toFY(ym); if (!f) return -1;
+  var idx = f.fy - fyStart;
+  if (idx < 0 || idx > (fyEnd-fyStart)) return -1;
+  return idx*GP.FY_W + ((f.fyMo-0.5)/12)*GP.FY_W;
+}
+
+function xRightToYM(x) {
+  // Convert right-SVG x pixel to YYYY-MM string, clamped to fyStart–fyEnd
+  var fyOff = x / GP.FY_W;
+  var fyIdx = Math.floor(fyOff);
+  fyIdx = Math.max(0, Math.min(fyEnd-fyStart, fyIdx));
+  var moFrac = fyOff - Math.floor(fyOff);
+  var mo = Math.round(moFrac * 12);
+  if (mo < 0) mo = 0;
+  if (mo > 11) mo = 11;
+  // FY month 1 = Oct of prior year
+  var actualFY = fyStart + fyIdx;
+  // fyMo 1..12  where 1=Oct, 3=Dec, 4=Jan ...
+  // convert mo (0-indexed relative to FY start Oct) → calendar month
+  var calMo = ((mo + 9) % 12) + 1; // Oct=10=FY-mo1 : mo0→calMo10
+  var calYr = actualFY - 1 + (calMo >= 10 ? 0 : 1);
+  return calYr+'-'+String(calMo).padStart(2,'0');
 }
 
 function buildGanttRows(vs) {
@@ -1166,47 +1344,177 @@ function buildGanttRows(vs) {
   return rows;
 }
 
-function msSym(x,y,shape,color,code,vid,tip) {
-  var r=GP.MS_R,s='';
-  if(shape==='star'){
+function msSymRight(x, y, shape, color, code, vid, dateLbl, isDone) {
+  var r = GP.MS_R;
+  var doneRing = isDone ? ' stroke="#34c759" stroke-width="2"' : ' stroke="white" stroke-width="0.7"';
+  var symOpacity = isDone ? ' opacity="1"' : '';
+  var s = '';
+  if (shape==='star') {
     var pts=[];
-    for(var i=0;i<5;i++){
-      var oa=(i*72-90)*Math.PI/180,ia=(i*72-54)*Math.PI/180;
+    for (var i=0;i<5;i++) {
+      var oa=(i*72-90)*Math.PI/180, ia=(i*72-54)*Math.PI/180;
       pts.push((x+r*Math.cos(oa)).toFixed(1)+','+(y+r*Math.sin(oa)).toFixed(1));
       pts.push((x+r*0.42*Math.cos(ia)).toFixed(1)+','+(y+r*0.42*Math.sin(ia)).toFixed(1));
     }
-    s='<polygon points="'+pts.join(' ')+'" fill="'+color+'" stroke="white" stroke-width="0.7"/>';
-  } else if(shape==='triangle'){
+    s = '<polygon points="'+pts.join(' ')+'" fill="'+color+'"'+doneRing+symOpacity+'/>';
+  } else if (shape==='triangle') {
     var h2=r*1.2;
-    s='<polygon points="'+x+','+(y-h2)+' '+(x-r)+','+(y+r*0.5)+' '+(x+r)+','+(y+r*0.5)+'" fill="'+color+'" stroke="white" stroke-width="0.7"/>';
-  } else if(shape==='diamond'){
-    s='<polygon points="'+x+','+(y-r)+' '+(x+r)+','+y+' '+x+','+(y+r)+' '+(x-r)+','+y+'" fill="'+color+'" stroke="white" stroke-width="0.7"/>';
-  } else if(shape==='circle'){
-    s='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+color+'" stroke="white" stroke-width="1"/>';
+    s = '<polygon points="'+x+','+(y-h2)+' '+(x-r)+','+(y+r*0.5)+' '+(x+r)+','+(y+r*0.5)+'" fill="'+color+'"'+doneRing+symOpacity+'/>';
+  } else if (shape==='diamond') {
+    s = '<polygon points="'+x+','+(y-r)+' '+(x+r)+','+y+' '+x+','+(y+r)+' '+(x-r)+','+y+'" fill="'+color+'"'+doneRing+symOpacity+'/>';
+  } else if (shape==='circle') {
+    s = '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+color+'"'+doneRing+symOpacity+'/>';
   } else {
-    s='<rect x="'+(x-r)+'" y="'+(y-r)+'" width="'+(r*2)+'" height="'+(r*2)+'" rx="2" fill="'+color+'" stroke="white" stroke-width="0.7"/>';
+    s = '<rect x="'+(x-r)+'" y="'+(y-r)+'" width="'+(r*2)+'" height="'+(r*2)+'" rx="2" fill="'+color+'"'+doneRing+symOpacity+'/>';
   }
-  return '<g class="gms" data-vid="'+vid+'" data-key="'+code+'" data-tip="'+esc(tip)+'" style="cursor:pointer">'
+  // Code label below symbol
+  var codeY = y + r + 8;
+  // Date label below code
+  var dateY = codeY + 9;
+  return '<g class="gms" data-vid="'+vid+'" data-key="'+code+'" data-tip="'+esc(dateLbl)+'" style="cursor:grab">'
     +s
-    +'<text x="'+x+'" y="'+(y+r+9)+'" font-size="6.5" text-anchor="middle" fill="'+color+'" font-family="Inter,-apple-system,sans-serif" font-weight="700">'+esc(code)+'</text>'
+    +'<text x="'+x+'" y="'+codeY+'" font-size="6.5" text-anchor="middle" fill="'+color+'" font-family="Inter,-apple-system,sans-serif" font-weight="700">'+esc(code)+'</text>'
+    +'<text x="'+x+'" y="'+dateY+'" font-size="6" text-anchor="middle" fill="#6e6e73" font-family="Inter,-apple-system,sans-serif">'+esc(dateLbl)+'</text>'
     +'</g>';
 }
 
-function attachGanttTips() {
-  var tip=document.getElementById('gtip');
-  document.querySelectorAll('.gms').forEach(el=>{
-    el.addEventListener('mouseenter',e=>{
-      var v=vessels.find(v=>v.id===el.dataset.vid); if(!v) return;
-      var msDef=MS[el.dataset.key];
-      tip.textContent=v.designation+' — '+(msDef?msDef.label:el.dataset.key)+': '+el.dataset.tip;
+function attachGanttInteraction() {
+  var tip  = document.getElementById('gtip');
+  var rSvg = document.getElementById('gantt-right-svg');
+  var rDiv = document.getElementById('gantt-right');
+  var ghost = document.getElementById('gantt-drag-ghost');
+
+  document.querySelectorAll('.gms').forEach(function(el) {
+    // ── Tooltip ──
+    el.addEventListener('mouseenter', function(e) {
+      if (_drag) return;
+      var v = vessels.find(v=>v.id===el.dataset.vid); if (!v) return;
+      var msDef = MS[el.dataset.key];
+      tip.textContent = v.designation+' — '+(msDef?msDef.label:el.dataset.key)+': '+el.dataset.tip;
       tip.style.display='block';
-      tip.style.left=(e.clientX+13)+'px'; tip.style.top=(e.clientY-32)+'px';
+      tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-34)+'px';
     });
-    el.addEventListener('mousemove',e=>{
-      tip.style.left=(e.clientX+13)+'px'; tip.style.top=(e.clientY-32)+'px';
+    el.addEventListener('mousemove', function(e) {
+      if (!_drag) { tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-34)+'px'; }
     });
-    el.addEventListener('mouseleave',()=>tip.style.display='none');
+    el.addEventListener('mouseleave', function() { if(!_drag) tip.style.display='none'; });
+
+    // ── Drag start ──
+    el.addEventListener('mousedown', function(e) {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      tip.style.display='none';
+      var rect = rSvg.getBoundingClientRect();
+      var symEl = el.querySelector('polygon,circle,rect');
+      var symBB = symEl ? symEl.getBoundingClientRect() : rect;
+      // Build tiny ghost SVG matching the symbol
+      var vid = el.dataset.vid, key = el.dataset.key;
+      var msDef = MS[key]||{};
+      ghost.innerHTML = '<svg width="20" height="20" viewBox="-8 -8 16 16">'+msGhostSym(msDef.shape, msDef.color)+'</svg>';
+      ghost.style.display='block';
+      ghost.style.left=(e.clientX-10)+'px'; ghost.style.top=(e.clientY-10)+'px';
+      _drag = {vid:vid, key:key, startClientX:e.clientX, svgLeft:rect.left-rDiv.scrollLeft};
+      el.style.cursor='grabbing';
+    });
   });
+
+  // ── Drag move ──
+  document.addEventListener('mousemove', onGanttDragMove);
+  // ── Drag end ──
+  document.addEventListener('mouseup', onGanttDragEnd);
+}
+
+function msGhostSym(shape, color) {
+  var r=7;
+  if (shape==='star') {
+    var pts=[];
+    for (var i=0;i<5;i++){var oa=(i*72-90)*Math.PI/180,ia=(i*72-54)*Math.PI/180;pts.push((r*Math.cos(oa)).toFixed(1)+','+(r*Math.sin(oa)).toFixed(1));pts.push((r*0.42*Math.cos(ia)).toFixed(1)+','+(r*0.42*Math.sin(ia)).toFixed(1));}
+    return '<polygon points="'+pts.join(' ')+'" fill="'+color+'" opacity="0.85"/>';
+  } else if (shape==='triangle') { return '<polygon points="0,'+-r+' '+-r+','+(r*0.75)+' '+r+','+(r*0.75)+'" fill="'+color+'" opacity="0.85"/>'; }
+  else if (shape==='diamond')    { return '<polygon points="0,'+-r+' '+r+',0 0,'+r+' '+-r+',0" fill="'+color+'" opacity="0.85"/>'; }
+  else if (shape==='circle')     { return '<circle cx="0" cy="0" r="'+r+'" fill="'+color+'" opacity="0.85"/>'; }
+  else                            { return '<rect x="'+-r+'" y="'+-r+'" width="'+(r*2)+'" height="'+(r*2)+'" rx="2" fill="'+color+'" opacity="0.85"/>'; }
+}
+
+function onGanttDragMove(e) {
+  if (!_drag) return;
+  var ghost = document.getElementById('gantt-drag-ghost');
+  ghost.style.left = (e.clientX-10)+'px';
+  ghost.style.top  = (e.clientY-10)+'px';
+  // Show live tooltip
+  var x = e.clientX - _drag.svgLeft;
+  var previewYM = xRightToYM(x);
+  var tip = document.getElementById('gtip');
+  var msDef = MS[_drag.key]||{};
+  tip.textContent = (_drag.vid ? (vessels.find(v=>v.id===_drag.vid)||{}).designation||'' : '')
+    +' — '+(msDef.label||_drag.key)+': '+fmtYM(previewYM);
+  tip.style.display='block';
+  tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-34)+'px';
+}
+
+function onGanttDragEnd(e) {
+  if (!_drag) return;
+  var d = _drag; _drag = null;
+  document.getElementById('gantt-drag-ghost').style.display='none';
+  document.getElementById('gtip').style.display='none';
+
+  // Reset cursor on all gms elements
+  document.querySelectorAll('.gms').forEach(function(el){ el.style.cursor='grab'; });
+
+  var rDiv = document.getElementById('gantt-right');
+  var rRect = document.getElementById('gantt-right-svg').getBoundingClientRect();
+  var x = e.clientX - (rRect.left - rDiv.scrollLeft);
+  // Snap to nearest month
+  var newYM = xRightToYM(x);
+  if (!newYM) return;
+
+  var v = vessels.find(v=>v.id===d.vid); if (!v) return;
+  var oldVal = v.ms[d.key]||'';
+  if (oldVal === newYM) return;
+
+  // Apply change
+  v.ms[d.key] = newYM;
+
+  // Audit log
+  var entry = auditEntry('SCHEDULE',
+    'Gantt drag: '+fieldLabel(d.key)+' for '+v.designation,
+    {vesselId:v.id, vessel:v.designation, field:d.key, oldVal:oldVal||null, newVal:newYM,
+     note:'Moved via Gantt drag-and-drop'}
+  );
+
+  // Update both panels
+  renderGantt();
+  refreshSpreadsheetRow(v.id);
+  propagate();
+  autoSave();
+  toast(v.designation+' '+d.key+' → '+fmtYM(newYM));
+  // AI reasoning
+  if (oldVal && newYM) aiReasoning(v, d.key, oldVal, newYM, entry);
+}
+
+// Refresh a single spreadsheet row's MS cells without full re-render (performance)
+function refreshSpreadsheetRow(vid) {
+  var row = document.querySelector('tr[data-id="'+vid+'"]'); if (!row) return;
+  var v = vessels.find(v=>v.id===vid); if (!v) return;
+  var msKeys = Object.keys(MS);
+  row.querySelectorAll('input.di[data-field="ms"]').forEach(function(inp) {
+    var key = inp.dataset.key;
+    var newVal = v.ms[key]||'';
+    inp.value = newVal;
+    inp.className = 'di '+(newVal?'':'empty');
+    inp.style.opacity = newVal?'1':'0.35';
+    // Update cell completion highlighting
+    var td = inp.closest('td');
+    if (completedSet.has(vid+'|'+key)) {
+      td.classList.add('ms-done');
+    } else {
+      td.classList.remove('ms-done');
+    }
+  });
+  // Update duration cell
+  var cells = row.querySelectorAll('td');
+  var durIdx = msKeys.length + SFIELDS.length + 3;
+  if (cells[durIdx]) cells[durIdx].textContent = durationMo(v);
 }
 
 /* ── Spreadsheet ── */
@@ -1243,10 +1551,12 @@ function renderSpreadsheet() {
       // MS date cells
       msKeys.forEach(key=>{
         var val=v.ms[key]||'';
+        var isDone = completedSet.has(v.id+'|'+key);
         var disabled=(st==='not-planned'&&key!=='CA')?'disabled style="opacity:.3;cursor:default"':'';
-        h+='<td><input type="month" class="di '+(val?'':'empty')+'" value="'+esc(val)+'"'
-          +' data-vid="'+v.id+'" data-key="'+key+'" data-field="ms"'
-          +' title="'+(MS[key]||{}).label+': click to edit" onchange="onDateChange(event)" '+disabled+'></td>';
+        h+='<td class="'+(isDone?'ms-done':'')+'" oncontextmenu="openCtxMenu(event,\''+v.id+'\',\''+key+'\')">'
+          +'<input type="month" class="di '+(val?'':'empty')+'" value="'+esc(val)+'"'
+          +' data-vid="'+v.id+'" data-key="'+key+'" data-field="ms" data-field="ms"'
+          +' title="'+(MS[key]||{}).label+': click to edit | right-click for options" onchange="onDateChange(event)" '+disabled+'></td>';
       });
 
       // Spreadsheet-only fields
@@ -1344,10 +1654,70 @@ function fieldLabel(key) {
   return key;
 }
 
-/* ═════════════════════════════════════════════════════════════════
-   EVENT HANDLERS — CELL EDITS
-═════════════════════════════════════════════════════════════════ */
-function onDateChange(e) {
+function fieldLabel(key) {
+  if(MS[key]) return (MS[key].label||key)+' ('+key+')';
+  var sf=SFIELDS.find(f=>f.key===key);
+  if(sf) return sf.label;
+  if(key==='notes') return 'Notes';
+  return key;
+}
+
+/* ── Context menu (right-click on MS cells / Gantt symbols) ── */
+function openCtxMenu(e, vid, key) {
+  e.preventDefault();
+  _ctxVid = vid; _ctxKey = key;
+  var isDone = completedSet.has(vid+'|'+key);
+  var lbl = document.getElementById('ctx-complete-lbl');
+  if (lbl) lbl.textContent = isDone ? 'Unmark Complete' : 'Mark as Complete';
+  var m = document.getElementById('ctx-menu');
+  if (!m) return;
+  m.style.display = 'block';
+  m.style.left = e.clientX + 'px';
+  m.style.top  = e.clientY + 'px';
+}
+window.openCtxMenu = openCtxMenu;
+
+window.ctxToggleComplete = function() {
+  if (!_ctxVid || !_ctxKey) return;
+  var ck = _ctxVid+'|'+_ctxKey;
+  var wasDone = completedSet.has(ck);
+  if (wasDone) completedSet.delete(ck); else completedSet.add(ck);
+  var v = vessels.find(v=>v.id===_ctxVid);
+  auditEntry('SCHEDULE',
+    (wasDone?'Unmarked':'Marked')+' '+fieldLabel(_ctxKey)+' complete for '+(v?v.designation:''),
+    {vesselId:_ctxVid, vessel:v?v.designation:'', field:_ctxKey,
+     oldVal:wasDone?'complete':'pending', newVal:wasDone?'pending':'complete'}
+  );
+  document.getElementById('ctx-menu').style.display = 'none';
+  renderSpreadsheet();
+  renderGantt();
+  autoSave();
+};
+
+window.ctxClearDate = function() {
+  if (!_ctxVid || !_ctxKey) return;
+  var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
+  var old = v.ms[_ctxKey] || '';
+  delete v.ms[_ctxKey];
+  completedSet.delete(_ctxVid+'|'+_ctxKey);
+  auditEntry('SCHEDULE','Cleared '+fieldLabel(_ctxKey)+' date for '+v.designation,
+    {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:old||null, newVal:null});
+  document.getElementById('ctx-menu').style.display = 'none';
+  renderGantt(); renderSpreadsheet(); propagate(); autoSave();
+};
+
+document.addEventListener('click', function(e) {
+  var m = document.getElementById('ctx-menu');
+  if (m && !m.contains(e.target)) m.style.display = 'none';
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var m = document.getElementById('ctx-menu');
+    if (m) m.style.display = 'none';
+  }
+});
+
+
   var vid=e.target.dataset.vid, key=e.target.dataset.key, fld=e.target.dataset.field;
   var nv=e.target.value||'';
   var v=vessels.find(v=>v.id===vid); if(!v) return;
