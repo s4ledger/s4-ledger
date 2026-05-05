@@ -168,7 +168,12 @@ td.ms-done input.di { color:inherit !important; font-weight:inherit !important; 
 #gantt-left { flex-shrink:0; overflow:hidden; z-index:10; box-shadow:3px 0 8px rgba(0,0,0,0.07); }
 #gantt-left-svg { display:block; }
 /* Right scrollable: timeline + symbols */
-#gantt-right { flex:1; overflow-x:auto; overflow-y:hidden; position:relative; }
+#gantt-right { flex:1; overflow-x:auto; overflow-y:hidden; position:relative;
+  scroll-behavior:smooth; -webkit-overflow-scrolling:touch; }
+#gantt-right::-webkit-scrollbar { height:5px; }
+#gantt-right::-webkit-scrollbar-track { background:transparent; }
+#gantt-right::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.18); border-radius:3px; }
+#gantt-right::-webkit-scrollbar-thumb:hover { background:rgba(0,0,0,0.32); }
 #gantt-right-svg { display:block; cursor:default; }
 
 /* drag ghost */
@@ -617,16 +622,22 @@ td.ms-done .di::after { content:' ✓'; }
   <div id="main">
     <div id="center">
 
-      <!-- ── Gantt Section ── -->
+      <!-- ── Milestone Chart Section ── -->
       <div id="gantt-section">
         <div class="panel-hdr">
           <div class="ph-dot"></div>
-          Gantt Chart
-          <span class="ph-hint">Drag symbols to reschedule · updates spreadsheet automatically</span>
+          Milestone Chart
+          <span class="ph-hint">Drag symbols to reschedule &middot; Ctrl+scroll or +/&minus; to zoom</span>
           <div class="ph-spacer"></div>
-          <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="openAddMS()">
-            <i class="fas fa-plus fa-xs"></i> Add Milestone
-          </button>
+          <div style="display:flex;align-items:center;gap:4px">
+            <button id="gantt-zoom-out" class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.22);font-size:15px;padding:0;line-height:1;width:24px;height:24px;display:flex;align-items:center;justify-content:center" onclick="zoomGantt(-1)" title="Zoom out">&minus;</button>
+            <span id="gantt-zoom-lbl" style="font-size:9px;color:rgba(255,255,255,0.55);min-width:30px;text-align:center;font-variant-numeric:tabular-nums">100%</span>
+            <button id="gantt-zoom-in" class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.22);font-size:15px;padding:0;line-height:1;width:24px;height:24px;display:flex;align-items:center;justify-content:center" onclick="zoomGantt(1)" title="Zoom in">+</button>
+            <div style="width:1px;height:16px;background:rgba(255,255,255,0.18);margin:0 4px"></div>
+            <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="openAddMS()">
+              <i class="fas fa-plus fa-xs"></i> Add Milestone
+            </button>
+          </div>
         </div>
         <div id="gantt-panels">
           <div id="gantt-left"><svg id="gantt-left-svg"></svg></div>
@@ -634,12 +645,12 @@ td.ms-done .di::after { content:' ✓'; }
         </div>
       </div>
 
-      <!-- ── Spreadsheet Section ── -->
+      <!-- ── Acquisition Milestone Schedule Section ── -->
       <div id="sheet-section">
         <div class="panel-hdr">
           <div class="ph-dot"></div>
-          Spreadsheet
-          <span class="ph-hint">Click any milestone date cell to edit, complete, or clear</span>
+          Acquisition Milestone Schedule
+          <span class="ph-hint">Click any date cell to edit &mdash; full M/D/YYYY or M/YYYY precision</span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
             <i class="fas fa-download fa-xs"></i> Export CSV
@@ -808,16 +819,24 @@ td.ms-done .di::after { content:' ✓'; }
     </div>
 
     <!-- Date field -->
-    <div style="margin-bottom:16px">
-      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Target Date<span style="color:var(--steel);font-weight:400;font-size:10px;margin-left:5px">(Month / Year)</span></label>
+    <div style="margin-bottom:10px">
+      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Month &amp; Year<span style="color:var(--steel);font-weight:400;font-size:10px;margin-left:5px">(required)</span></label>
       <input type="month" id="mse-date"
         style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);transition:all .14s;-webkit-appearance:none"
         onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
         onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'">
     </div>
+    <!-- Day field (optional — for full date precision) -->
+    <div style="margin-bottom:16px">
+      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Day<span style="color:var(--steel);font-weight:400;font-size:10px;margin-left:5px">(optional &mdash; leave blank for month precision only)</span></label>
+      <input type="number" id="mse-day" min="1" max="31" placeholder="e.g. 15"
+        style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);transition:all .14s"
+        onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
+        onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'">
+    </div>
 
     <!-- Complete toggle -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:20px">
+    <div id="mse-complete-row" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:20px">
       <div>
         <div style="font-size:12.5px;font-weight:600;color:var(--text)">Mark as Complete</div>
         <div style="font-size:10px;color:var(--steel);margin-top:2px">Highlights cell green — milestone achieved</div>
@@ -1022,11 +1041,13 @@ var logBadge   = 0;
 
 /* ── Gantt layout constants ─── */
 var GP = { LEFT:130, ROW_H:52, HDR_H:36, FY_W:116, MS_R:7 };
+var ganttZoomLevel = 1.0;
+var GP_FY_W_BASE   = 116;
 
 /* ── Completed milestones: Set of "vesselId|msKey" ─── */
 var completedSet = new Set();
 /* ── Context menu state ─── */
-var _ctxVid=null, _ctxKey=null;
+var _ctxVid=null, _ctxKey=null, _ctxField='ms';
 /* ── Drag state ─── */
 var _drag = null; // { el, vid, key, startX, origX, svgLeftOffset }
 
@@ -1076,6 +1097,17 @@ async function init() {
     var dd = document.getElementById('craft-menu');
     if (!document.getElementById('craft-dd').contains(e.target)) dd.style.display='none';
   });
+
+  // Gantt zoom: Ctrl+scroll (or Cmd+scroll on Mac) on the timeline panel
+  var ganttRight = document.getElementById('gantt-right');
+  if (ganttRight) {
+    ganttRight.addEventListener('wheel', function(e) {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        window.zoomGantt(e.deltaY < 0 ? 1 : -1);
+      }
+    }, {passive: false});
+  }
 }
 
 function showApp(nameOrEmail) {
@@ -1234,9 +1266,10 @@ function dateToX(ym) {
 }
 function fmtYM(ym) {
   if (!ym) return '—';
-  var p=ym.split('-'); var m=parseInt(p[1]);
-  var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return mn[m-1]+" '"+p[0].slice(2);
+  var p=ym.split('-');
+  var y=parseInt(p[0]), m=parseInt(p[1]), d=p[2]?parseInt(p[2]):0;
+  if (d) return m+'/'+d+'/'+y;   // full: 8/25/2026
+  return m+'/'+y;                // month only: 8/2026
 }
 function moDiff(a,b) {
   if(!a||!b) return 0;
@@ -1261,6 +1294,28 @@ function render() {
   renderLog();
   var c=document.getElementById('sheet-count');
   if(c) c.textContent=filtered().length+' vessel'+(filtered().length!==1?'s':'');
+}
+
+/* ── Gantt zoom ─────────────────────────────────────────────────
+   zoomGantt(+1) = zoom in, zoomGantt(-1) = zoom out.
+   Updates GP.FY_W so all existing rendering code auto-adjusts.
+──────────────────────────────────────────────────────────────── */
+window.zoomGantt = function(dir) {
+  if (dir > 0) ganttZoomLevel = Math.min(4.0, +(ganttZoomLevel + 0.25).toFixed(2));
+  else          ganttZoomLevel = Math.max(0.35, +(ganttZoomLevel - 0.25).toFixed(2));
+  GP.FY_W = Math.round(GP_FY_W_BASE * ganttZoomLevel);
+  renderGantt();
+  updateZoomBtns();
+};
+
+function updateZoomBtns() {
+  var pct = Math.round(ganttZoomLevel * 100);
+  var lbl = document.getElementById('gantt-zoom-lbl');
+  if (lbl) lbl.textContent = pct + '%';
+  var bm = document.getElementById('gantt-zoom-out');
+  if (bm) bm.disabled = ganttZoomLevel <= 0.35;
+  var bp = document.getElementById('gantt-zoom-in');
+  if (bp) bp.disabled = ganttZoomLevel >= 4.0;
 }
 
 /* ── Gantt ── */
@@ -1290,24 +1345,32 @@ function renderGantt() {
   rows.forEach(function(row,ri) {
     var ry = GP.HDR_H + ri * GP.ROW_H;
     if (row.isGroup) {
+      // ── Professional section header: steel background, bold type-color left bar ──
       var tc = (VT[row.type]||{}).color||'#6e6e73';
-      lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+tc+'" opacity="0.18"/>';
-      lh += '<text x="8" y="'+(ry+GP.ROW_H/2+4)+'" font-size="9" font-weight="700" fill="'+tc+'" letter-spacing="0.09em" font-family="Inter,-apple-system,sans-serif">'+esc(row.type)+'</text>';
+      var vtLabel = (VT[row.type]||{}).label||'';
+      var subLabel = vtLabel.split('\u2014').length>1 ? vtLabel.split('\u2014')[1].trim() : '';
+      var subWords = subLabel.split(' ').slice(0,4).join(' ');
+      lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="#ECF1F8"/>';
+      lh += '<rect x="0" y="'+ry+'" width="5" height="'+GP.ROW_H+'" fill="'+tc+'"/>';
+      lh += '<line x1="0" y1="'+ry+'" x2="'+GP.LEFT+'" y2="'+ry+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
+      lh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+GP.LEFT+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
+      lh += '<text x="15" y="'+(ry+GP.ROW_H/2-3)+'" font-size="11" font-weight="800" fill="'+tc+'" letter-spacing="0.03em" font-family="Inter,-apple-system,sans-serif">'+esc(row.type)+'</text>';
+      if (subWords) lh += '<text x="15" y="'+(ry+GP.ROW_H/2+9)+'" font-size="7" fill="rgba(28,29,30,0.42)" font-family="Inter,-apple-system,sans-serif">'+esc(subWords)+'</text>';
       return;
     }
     var v = row.vessel;
     var tc2 = (VT[v.type]||{}).color||'#6e6e73';
     var st = v.status||'on-track';
-    var stColor = st==='on-track'?'#34c759':st==='delayed'?'#ff3b30':st==='not-planned'?'#6e6e73':'#007AFF';
-    // row bg
-    var rowBg = st==='delayed'?'rgba(255,59,48,0.04)':st==='not-planned'?'rgba(110,110,115,0.04)':'rgba(255,255,255,0.7)';
+    var stColor = st==='on-track'?'#30D158':st==='delayed'?'#FF3B30':st==='not-planned'?'#8E8E93':'#007AFF';
+    // Clean zebra stripe: even=white, odd=ultra-subtle blue-gray
+    var isEven = (row.vi||0)%2===0;
+    var rowBg = st==='delayed'?'rgba(255,59,48,0.04)':st==='not-planned'?'rgba(142,142,147,0.05)':isEven?'#FFFFFF':'#F4F7FC';
     lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+rowBg+'"/>';
-    lh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+GP.LEFT+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.05)" stroke-width="0.7"/>';
-    lh += '<rect x="0" y="'+ry+'" width="3" height="'+GP.ROW_H+'" fill="'+stColor+'"/>';
-    lh += '<rect x="3" y="'+ry+'" width="'+(GP.LEFT-3)+'" height="'+GP.ROW_H+'" fill="'+tc2+'" opacity="0.04"/>';
-    lh += '<text x="9" y="'+(ry+GP.ROW_H/2-2)+'" font-size="10" font-weight="600" fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation)+'</text>';
-    var fc = v.fleet==='PACFLT'?'#007AFF':v.fleet==='USFF'?'#34c759':'#ff9500';
-    lh += '<text x="9" y="'+(ry+GP.ROW_H/2+10)+'" font-size="7.5" fill="'+fc+'" font-family="Inter,-apple-system,sans-serif" opacity="0.85">'+esc(v.fleet)+'</text>';
+    lh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+GP.LEFT+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.04)" stroke-width="0.6"/>';
+    lh += '<rect x="0" y="'+ry+'" width="4" height="'+GP.ROW_H+'" fill="'+stColor+'"/>';
+    lh += '<text x="12" y="'+(ry+GP.ROW_H/2-2)+'" font-size="10.5" font-weight="650" fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation)+'</text>';
+    var fc = v.fleet==='PACFLT'?'#005EC4':v.fleet==='USFF'?'#1a7a36':'#b35900';
+    lh += '<text x="12" y="'+(ry+GP.ROW_H/2+10)+'" font-size="7.5" fill="'+fc+'" font-family="Inter,-apple-system,sans-serif" font-weight="600">'+esc(v.fleet)+'</text>';
   });
 
   lEl.innerHTML = lh;
@@ -1356,16 +1419,21 @@ function renderGantt() {
   rows.forEach(function(row,ri) {
     var ry = GP.HDR_H + ri * GP.ROW_H;
     if (row.isGroup) {
+      // ── Professional section header matches left panel ──
       var tc = (VT[row.type]||{}).color||'#6e6e73';
-      rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+GP.ROW_H+'" fill="'+tc+'" opacity="0.055"/>';
+      rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+GP.ROW_H+'" fill="#ECF1F8"/>';
+      rh += '<line x1="0" y1="'+ry+'" x2="'+rightW+'" y2="'+ry+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
+      rh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
+      rh += '<line x1="0" y1="'+(ry+GP.ROW_H/2)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H/2)+'" stroke="'+tc+'" stroke-width="0.6" opacity="0.2" stroke-dasharray="6,10"/>';
       return;
     }
     var v = row.vessel;
     var tc2 = (VT[v.type]||{}).color||'#6e6e73';
     var st = v.status||'on-track';
-    var rowBg = st==='delayed'?'rgba(255,59,48,0.03)':st==='not-planned'?'rgba(110,110,115,0.03)':'transparent';
+    var isEven = (row.vi||0)%2===0;
+    var rowBg = st==='delayed'?'rgba(255,59,48,0.03)':st==='not-planned'?'rgba(142,142,147,0.04)':isEven?'#FFFFFF':'#F4F7FC';
     rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+GP.ROW_H+'" fill="'+rowBg+'"/>';
-    rh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.04)" stroke-width="0.6"/>';
+    rh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.035)" stroke-width="0.6"/>';
 
     // CA→DEL span bar (centered vertically, above date labels)
     var xCA = dateToXRight(v.ms['CA']);
@@ -1424,10 +1492,11 @@ function xRightToYM(x) {
 function buildGanttRows(vs) {
   var rows=[],types=['APL','YRBM','YFB','YTB'];
   vs.forEach(v=>{ if(!types.includes(v.type)) types.push(v.type); });
+  var vi = 0;
   types.forEach(t=>{
     var g=vs.filter(v=>v.type===t); if(!g.length) return;
     rows.push({isGroup:true,type:t});
-    g.forEach(v=>rows.push({isGroup:false,vessel:v}));
+    g.forEach(v=>rows.push({isGroup:false,vessel:v,vi:vi++}));
   });
   return rows;
 }
@@ -1631,14 +1700,14 @@ function renderSpreadsheet() {
       h+='<td style="color:'+tc+';font-weight:600">'+esc(v.type)+'</td>';
       h+='<td><span class="fb '+v.fleet.toLowerCase()+'">'+esc(v.fleet)+'</span></td>';
 
-      // MS date cells — click to open edit modal
+      // MS date cells — click to open edit modal (all cells clickable, including not-planned)
       msKeys.forEach(key=>{
         var val=v.ms[key]||'';
         var isDone = completedSet.has(v.id+'|'+key);
         var msDef2 = MS[key]||{};
         var notPlanned = (st==='not-planned' && key!=='CA');
         h += '<td class="ms-cell'+(isDone?' ms-done':'')+'"'
-          +(notPlanned ? '' : ' onclick="openMSEModal(\''+v.id+'\',\''+key+'\')" ')
+          +' onclick="openMSEModal(\''+v.id+'\',\''+key+'\')" '
           +' title="'+(msDef2.label||key)+' — '+(val ? fmtYM(val) : 'not set')+(isDone?' ✓':'')+'">';
         if (val) {
           h += '<div class="ms-badge"><span class="ms-dot" style="background:'+esc(msDef2.color||'#6e6e73')+'"></span>'
@@ -1646,7 +1715,7 @@ function renderSpreadsheet() {
           if (isDone) h += '<span class="ms-check-lbl" style="color:#1a7a36"> ✓</span>';
           h += '</div>';
         } else if (notPlanned) {
-          h += '<span class="ms-empty-lbl" style="opacity:.25">—</span>';
+          h += '<span class="ms-empty-lbl" style="opacity:.22">—</span>';
         } else {
           h += '<span class="ms-empty-lbl">—</span>';
         }
@@ -1657,9 +1726,13 @@ function renderSpreadsheet() {
       SFIELDS.forEach(f=>{
         var val=(v.sf&&v.sf[f.key])||'';
         if(f.type==='month') {
-          h+='<td><input type="month" class="di '+(val?'':'empty')+'" value="'+esc(val)+'"'
-            +' data-vid="'+v.id+'" data-key="'+f.key+'" data-field="sf"'
-            +' onchange="onDateChange(event)"></td>';
+          h += '<td class="ms-cell" onclick="openMSEModal(\''+v.id+'\',\''+f.key+'\',\'sf\')" title="'+esc(f.label)+' — '+(val ? fmtYM(val) : 'not set')+'">';
+          if (val) {
+            h += '<div class="ms-badge"><span class="ms-dot" style="background:#6e6e73"></span>'+esc(fmtYM(val))+'</div>';
+          } else {
+            h += '<span class="ms-empty-lbl">—</span>';
+          }
+          h += '</td>';
         } else {
           h+='<td><input type="text" class="ti" value="'+esc(val)+'"'
             +' data-vid="'+v.id+'" data-key="'+f.key+'" data-field="sf"'
@@ -1757,20 +1830,32 @@ function fieldLabel(key) {
 }
 
 /* ── Milestone Edit Modal ── */
-function openMSEModal(vid, key) {
+function openMSEModal(vid, key, field) {
+  field = field || 'ms';
   var v = vessels.find(v=>v.id===vid); if (!v) return;
   var msDef = MS[key]||{};
-  _ctxVid = vid; _ctxKey = key;
+  _ctxVid = vid; _ctxKey = key; _ctxField = field;
   var tc = (VT[v.type]||{}).color||'var(--accent)';
+  var dotColor  = field==='sf' ? '#6e6e73' : (msDef.color||tc);
+  var labelText = field==='sf'
+    ? ((SFIELDS.find(f=>f.key===key)||{}).label||key)
+    : (msDef.label||key);
   document.getElementById('mse-ms-label').innerHTML =
-    '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(msDef.color||tc)+';margin-right:5px;vertical-align:middle"></span>'
-    + esc(msDef.label||key);
+    '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(dotColor)+';margin-right:5px;vertical-align:middle"></span>'
+    + esc(labelText);
   document.getElementById('mse-title').textContent = v.designation;
   document.getElementById('mse-sub').textContent = v.type + ' · ' + v.fleet + ' · ' + (v.status||'on-track').replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
-  document.getElementById('mse-date').value = v.ms[key]||'';
+  // Populate date: read from ms or sf, split out optional day
+  var rawDate = field==='sf' ? ((v.sf&&v.sf[key])||'') : (v.ms[key]||'');
+  var dp = rawDate.split('-');
+  document.getElementById('mse-date').value = (dp[0]&&dp[1]) ? dp[0]+'-'+dp[1] : '';
+  var dayEl = document.getElementById('mse-day');
+  if (dayEl) dayEl.value = dp[2] ? parseInt(dp[2]) : '';
   document.getElementById('mse-complete').checked = completedSet.has(vid+'|'+key);
+  // Hide complete toggle for spreadsheet-only fields
+  var completeRow = document.getElementById('mse-complete-row');
+  if (completeRow) completeRow.style.display = field==='sf' ? 'none' : '';
   document.getElementById('ms-edit-modal').classList.add('open');
-  // Focus date input after animation
   setTimeout(function(){ var d=document.getElementById('mse-date'); if(d) d.focus(); }, 120);
 }
 window.openMSEModal = openMSEModal;
@@ -1784,31 +1869,46 @@ window.closeMSEModal = closeMSEModal;
 window.mseSave = function() {
   if (!_ctxVid || !_ctxKey) return;
   var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
-  var newDate = document.getElementById('mse-date').value;
+  var monthVal = document.getElementById('mse-date').value; // YYYY-MM
+  var dayEl = document.getElementById('mse-day');
+  var dayNum = dayEl ? (parseInt(dayEl.value)||0) : 0;
+  var newDate = monthVal
+    ? (dayNum>=1&&dayNum<=31 ? monthVal+'-'+String(dayNum).padStart(2,'0') : monthVal)
+    : '';
   var isComplete = document.getElementById('mse-complete').checked;
-  var oldDate = v.ms[_ctxKey]||'';
+  var field = _ctxField || 'ms';
   var ck = _ctxVid+'|'+_ctxKey;
 
-  // Update date
-  if (newDate !== oldDate) {
-    if (newDate) v.ms[_ctxKey] = newDate; else delete v.ms[_ctxKey];
-    auditEntry('SCHEDULE',
-      'Updated '+fieldLabel(_ctxKey)+' for '+v.designation,
-      {vesselId:v.id, vessel:v.designation, field:_ctxKey,
-       oldVal:oldDate||null, newVal:newDate||null}
-    );
-    if (oldDate && newDate) aiReasoning(v, _ctxKey, oldDate, newDate, auditLog[0]);
-  }
-
-  // Update complete state
-  var wasDone = completedSet.has(ck);
-  if (isComplete !== wasDone) {
-    if (isComplete) completedSet.add(ck); else completedSet.delete(ck);
-    auditEntry('SCHEDULE',
-      (isComplete?'Marked':'Unmarked')+' '+fieldLabel(_ctxKey)+' complete for '+v.designation,
-      {vesselId:v.id, vessel:v.designation, field:_ctxKey,
-       oldVal:wasDone?'complete':'pending', newVal:isComplete?'complete':'pending'}
-    );
+  if (field === 'sf') {
+    // Spreadsheet-only date field
+    var oldDateSF = (v.sf&&v.sf[_ctxKey])||'';
+    if (newDate !== oldDateSF) {
+      if (!v.sf) v.sf = {};
+      if (newDate) v.sf[_ctxKey] = newDate; else delete v.sf[_ctxKey];
+      auditEntry('SFIELD','Updated '+fieldLabel(_ctxKey)+' for '+v.designation,
+        {vesselId:v.id, vessel:v.designation, field:_ctxKey,
+         oldVal:oldDateSF||null, newVal:newDate||null});
+    }
+  } else {
+    // Milestone date field
+    var oldDate = v.ms[_ctxKey]||'';
+    if (newDate !== oldDate) {
+      if (newDate) v.ms[_ctxKey] = newDate; else delete v.ms[_ctxKey];
+      auditEntry('SCHEDULE','Updated '+fieldLabel(_ctxKey)+' for '+v.designation,
+        {vesselId:v.id, vessel:v.designation, field:_ctxKey,
+         oldVal:oldDate||null, newVal:newDate||null});
+      if (oldDate && newDate) aiReasoning(v, _ctxKey, oldDate, newDate, auditLog[0]);
+    }
+    // Complete toggle (only for milestone fields)
+    var wasDone = completedSet.has(ck);
+    if (isComplete !== wasDone) {
+      if (isComplete) completedSet.add(ck); else completedSet.delete(ck);
+      auditEntry('SCHEDULE',
+        (isComplete?'Marked':'Unmarked')+' '+fieldLabel(_ctxKey)+' complete for '+v.designation,
+        {vesselId:v.id, vessel:v.designation, field:_ctxKey,
+         oldVal:wasDone?'complete':'pending', newVal:isComplete?'complete':'pending'}
+      );
+    }
   }
 
   closeMSEModal();
@@ -1816,18 +1916,27 @@ window.mseSave = function() {
   renderSpreadsheet();
   propagate();
   autoSave();
-  toast(v.designation+' · '+(_ctxKey||'')+(isComplete?' ✓':'') + (newDate?' → '+fmtYM(newDate):''));
+  toast(v.designation+' · '+(_ctxKey||'')+(isComplete&&field==='ms'?' ✓':'')+(newDate?' → '+fmtYM(newDate):''));
 };
 
 window.mseDelete = function() {
   if (!_ctxVid || !_ctxKey) return;
   var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
-  var old = v.ms[_ctxKey]||'';
-  if (!old && !completedSet.has(_ctxVid+'|'+_ctxKey)) { closeMSEModal(); return; }
-  delete v.ms[_ctxKey];
-  completedSet.delete(_ctxVid+'|'+_ctxKey);
-  auditEntry('SCHEDULE','Cleared '+fieldLabel(_ctxKey)+' date for '+v.designation,
-    {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:old||null, newVal:null});
+  var field = _ctxField || 'ms';
+  if (field === 'sf') {
+    var oldSF = (v.sf&&v.sf[_ctxKey])||'';
+    if (!oldSF) { closeMSEModal(); return; }
+    delete v.sf[_ctxKey];
+    auditEntry('SFIELD','Cleared '+fieldLabel(_ctxKey)+' for '+v.designation,
+      {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:oldSF||null, newVal:null});
+  } else {
+    var old = v.ms[_ctxKey]||'';
+    if (!old && !completedSet.has(_ctxVid+'|'+_ctxKey)) { closeMSEModal(); return; }
+    delete v.ms[_ctxKey];
+    completedSet.delete(_ctxVid+'|'+_ctxKey);
+    auditEntry('SCHEDULE','Cleared '+fieldLabel(_ctxKey)+' date for '+v.designation,
+      {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:old||null, newVal:null});
+  }
   closeMSEModal();
   renderGantt(); renderSpreadsheet(); propagate(); autoSave();
   toast(v.designation+' · '+_ctxKey+' date cleared');
