@@ -34,17 +34,19 @@ html,body { height:100%; overflow:hidden;
 /* ── Header ── */
 #hdr {
   background:var(--surface); border-bottom:1px solid var(--border);
-  padding:0 18px; height:50px; min-height:50px;
+  padding:0 18px; height:52px; min-height:52px;
   display:flex; align-items:center; gap:12px; z-index:100; flex-shrink:0;
+  box-shadow:0 1px 6px rgba(0,0,0,0.05);
 }
 .logo-mark {
-  width:28px; height:28px;
-  background:linear-gradient(135deg,var(--navy) 0%,var(--accent) 100%);
-  border-radius:7px; display:flex; align-items:center; justify-content:center;
-  color:white; font-size:11px; font-weight:700; flex-shrink:0; text-decoration:none;
+  width:30px; height:30px;
+  background:linear-gradient(135deg,#1c3a5f 0%,#0058cc 68%,#007AFF 100%);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  color:white; font-size:12px; font-weight:800; flex-shrink:0; text-decoration:none;
+  box-shadow:0 2px 6px rgba(0,90,200,0.3);
 }
 .title-block { flex:1; min-width:0; }
-.title-block h1 { font-size:13.5px; font-weight:600; white-space:nowrap; }
+.title-block h1 { font-size:14px; font-weight:700; white-space:nowrap; letter-spacing:-.01em; }
 .title-block .sub { font-size:10px; color:var(--steel); margin-top:1px; }
 .hd { width:1px; height:20px; background:var(--border); flex-shrink:0; }
 .user-chip {
@@ -119,19 +121,47 @@ html,body { height:100%; overflow:hidden;
 /* ── Panel section title bars ── */
 .panel-hdr {
   display:flex; align-items:center; gap:8px;
-  padding:6px 14px;
-  background:var(--navy); color:rgba(255,255,255,0.92);
-  font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
-  flex-shrink:0; border-bottom:2px solid rgba(0,0,0,0.15);
-  user-select:none;
+  padding:8px 16px;
+  background:linear-gradient(180deg,#224878 0%,#1c3a5f 100%);
+  color:rgba(255,255,255,0.93);
+  font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+  flex-shrink:0; border-bottom:2px solid rgba(0,0,0,0.22);
+  user-select:none; box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
-.panel-hdr .ph-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.45); flex-shrink:0; }
+.panel-hdr .ph-dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.38); flex-shrink:0; }
 .panel-hdr .ph-spacer { flex:1; }
+.panel-hdr .ph-hint { font-size:9px; font-weight:400; opacity:.5; margin-left:4px; text-transform:none; letter-spacing:.01em; }
+
+/* ── Toggle switch ── */
+.toggle-sw { position:relative; display:inline-block; width:40px; height:22px; flex-shrink:0; }
+.toggle-sw input { opacity:0; width:0; height:0; position:absolute; }
+.toggle-track { position:absolute; cursor:pointer; inset:0; background:#d1d1d6; border-radius:11px; transition:background .2s; }
+.toggle-track:before { content:''; position:absolute; width:16px; height:16px; left:3px; bottom:3px; background:white; border-radius:50%; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.25); }
+.toggle-sw input:checked + .toggle-track { background:var(--green); }
+.toggle-sw input:checked + .toggle-track:before { transform:translateX(18px); }
+
+/* ── MS date cells (spreadsheet) — click to open edit modal ── */
+.ms-cell { cursor:pointer !important; min-width:76px; padding:4px 6px !important; background:transparent; border:none; }
+.ms-cell:hover { background:rgba(0,122,255,0.04) !important; }
+.ms-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:5px;
+  font-size:10.5px; font-weight:500; color:var(--text); background:var(--surface-2);
+  border:1px solid var(--border); white-space:nowrap; transition:all .1s; pointer-events:none;
+  max-width:100%; overflow:hidden; }
+.ms-cell:hover .ms-badge { background:white; border-color:var(--accent); color:var(--accent); }
+.ms-cell.ms-done { background:rgba(52,199,89,0.06) !important; }
+.ms-cell.ms-done .ms-badge { background:rgba(52,199,89,0.1); border-color:rgba(52,199,89,0.4); color:#1a7a36; }
+.ms-dot  { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.ms-check-lbl { font-size:9px; font-weight:800; }
+.ms-empty-lbl { color:var(--steel); opacity:.38; font-size:10px; font-style:italic; pointer-events:none; }
+/* Remove old td.ms-done overrides */
+td.ms-done { background:none !important; }
+td.ms-done::after { display:none !important; }
+td.ms-done input.di { color:inherit !important; font-weight:inherit !important; }
 
 /* ── Gantt two-panel frozen layout ── */
 #gantt-section {
   flex-shrink:0; display:flex; flex-direction:column;
-  border-bottom:2px solid var(--border-2); max-height:46vh; min-height:160px;
+  border-bottom:2px solid var(--border-2); max-height:50vh; min-height:180px;
 }
 #gantt-panels { display:flex; flex:1; overflow:hidden; background:var(--surface); }
 /* Left frozen: vessel names only */
@@ -441,12 +471,15 @@ td.ms-done .di::after { content:' ✓'; }
 <!-- ══ APP ═══════════════════════════════════════════════════════════ -->
 <div id="app" style="display:none">
 
+  <!-- Classification Banner -->
+  <div id="clf-banner" style="background:#1c3f1c;color:#90ee90;font-size:9px;font-weight:700;text-align:center;padding:2.5px 0;letter-spacing:.14em;flex-shrink:0;border-bottom:1px solid rgba(0,0,0,0.2)">UNCLASSIFIED // FOR OFFICIAL USE ONLY — DEMO DATA — NOT OPERATIONAL SCHEDULE INFORMATION</div>
+
   <!-- Header -->
   <header id="hdr">
     <a href="/" class="logo-mark" title="S4 Ledger">S4</a>
     <div class="hd"></div>
     <div class="title-block">
-      <h1>Program Schedule</h1>
+      <h1 style="font-size:14px;font-weight:700;letter-spacing:-.01em">Program Schedule</h1>
       <div class="sub">Service Craft &amp; Vessel Milestone Tracker — BLI Demo</div>
     </div>
     <span id="save-lbl" style="font-size:10px;color:var(--steel);white-space:nowrap">All changes saved</span>
@@ -589,7 +622,7 @@ td.ms-done .di::after { content:' ✓'; }
         <div class="panel-hdr">
           <div class="ph-dot"></div>
           Gantt Chart
-          <span style="font-size:9px;font-weight:400;opacity:.6;margin-left:4px">Drag milestones to reschedule — updates spreadsheet automatically</span>
+          <span class="ph-hint">Drag symbols to reschedule · updates spreadsheet automatically</span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="openAddMS()">
             <i class="fas fa-plus fa-xs"></i> Add Milestone
@@ -606,7 +639,7 @@ td.ms-done .di::after { content:' ✓'; }
         <div class="panel-hdr">
           <div class="ph-dot"></div>
           Spreadsheet
-          <span style="font-size:9px;font-weight:400;opacity:.6;margin-left:4px">Right-click a milestone date to mark complete (highlights green)</span>
+          <span class="ph-hint">Click any milestone date cell to edit, complete, or clear</span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
             <i class="fas fa-download fa-xs"></i> Export CSV
@@ -760,6 +793,55 @@ td.ms-done .di::after { content:' ✓'; }
 
 <div id="gtip"></div>
 <div id="toast"></div>
+
+<!-- ══ MILESTONE EDIT MODAL ════════════════════════════════════════ -->
+<div id="ms-edit-modal" class="m-overlay" onclick="if(event.target===this)closeMSEModal()">
+  <div class="m-card" style="width:420px;max-width:94vw;padding:26px 28px">
+    <!-- Header -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div id="mse-ms-label" style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;color:var(--steel)">Milestone</div>
+        <h3 id="mse-title" style="font-size:16px;font-weight:700;margin-bottom:2px">Edit Milestone</h3>
+        <div id="mse-sub" style="font-size:11px;color:var(--steel)">Vessel</div>
+      </div>
+      <button onclick="closeMSEModal()" style="background:var(--surface-3);border:none;cursor:pointer;color:var(--steel);width:28px;height:28px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:16px;line-height:1;transition:all .13s" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='var(--surface-3)'">×</button>
+    </div>
+
+    <!-- Date field -->
+    <div style="margin-bottom:16px">
+      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Target Date<span style="color:var(--steel);font-weight:400;font-size:10px;margin-left:5px">(Month / Year)</span></label>
+      <input type="month" id="mse-date"
+        style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);transition:all .14s;-webkit-appearance:none"
+        onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
+        onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'">
+    </div>
+
+    <!-- Complete toggle -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:20px">
+      <div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--text)">Mark as Complete</div>
+        <div style="font-size:10px;color:var(--steel);margin-top:2px">Highlights cell green — milestone achieved</div>
+      </div>
+      <label class="toggle-sw" style="margin-left:16px">
+        <input type="checkbox" id="mse-complete">
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:8px;justify-content:space-between;align-items:center">
+      <button class="abtn" style="color:var(--red);border:1px solid rgba(255,59,48,.25);background:rgba(255,59,48,.05)" onclick="mseDelete()">
+        <i class="fas fa-trash-alt fa-xs"></i> Clear Date
+      </button>
+      <div style="display:flex;gap:7px">
+        <button class="abtn btn-o" onclick="closeMSEModal()">Cancel</button>
+        <button class="abtn btn-p" onclick="mseSave()" style="gap:5px;padding:5px 14px">
+          <i class="fas fa-check fa-xs"></i> Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Context menu for spreadsheet cells -->
 <div id="ctx-menu">
@@ -930,8 +1012,8 @@ var auditLog   = [];   // Full audit trail
 var currentUser= null;
 var isDemo     = false;
 var craftFilter= 'all';
-var fyStart    = 26;
-var fyEnd      = 32;
+var fyStart    = 2026;
+var fyEnd      = 2032;
 var hiddenMS   = {};
 var drawerOpen = false;
 var drawerTab  = 'log';
@@ -939,7 +1021,7 @@ var saveTimer  = null;
 var logBadge   = 0;
 
 /* ── Gantt layout constants ─── */
-var GP = { LEFT:124, ROW_H:54, HDR_H:32, FY_W:110, MS_R:7 };
+var GP = { LEFT:130, ROW_H:52, HDR_H:36, FY_W:116, MS_R:7 };
 
 /* ── Completed milestones: Set of "vesselId|msKey" ─── */
 var completedSet = new Set();
@@ -1260,8 +1342,14 @@ function renderGantt() {
   for (var fj = 0; fj < fyN; fj++) {
     var fx2 = fj * GP.FY_W;
     rh += '<rect x="'+fx2+'" y="0" width="'+GP.FY_W+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
-    rh += '<text x="'+(fx2+GP.FY_W/2)+'" y="'+(GP.HDR_H/2+4.5)+'" font-size="11" font-weight="600" text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif">FY'+(fyStart+fj)+'</text>';
-    rh += '<line x1="'+fx2+'" y1="0" x2="'+fx2+'" y2="'+sh+'" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>';
+    rh += '<text x="'+(fx2+GP.FY_W/2)+'" y="'+(GP.HDR_H/2-3)+'" font-size="10" font-weight="700" text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif" letter-spacing="0.04em">FY'+String(fyStart+fj).slice(2)+'</text>';
+    // Month tick marks in FY header
+    for (var mt=0; mt<12; mt++) {
+      var mx2 = fx2 + (mt/12)*GP.FY_W;
+      var mLbl = ['O','N','D','J','F','M','A','M','J','J','A','S'][mt];
+      rh += '<text x="'+(mx2+(GP.FY_W/12/2))+'" y="'+(GP.HDR_H-3)+'" font-size="6" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-family="Inter,-apple-system,sans-serif">'+mLbl+'</text>';
+    }
+    rh += '<line x1="'+fx2+'" y1="0" x2="'+fx2+'" y2="'+sh+'" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>';
   }
 
   // Rows
@@ -1405,16 +1493,10 @@ function attachGanttInteraction() {
       e.preventDefault();
       tip.style.display='none';
       var rect = rSvg.getBoundingClientRect();
-      var symEl = el.querySelector('polygon,circle,rect');
-      var symBB = symEl ? symEl.getBoundingClientRect() : rect;
-      // Build tiny ghost SVG matching the symbol
       var vid = el.dataset.vid, key = el.dataset.key;
       var msDef = MS[key]||{};
-      ghost.innerHTML = '<svg width="20" height="20" viewBox="-8 -8 16 16">'+msGhostSym(msDef.shape, msDef.color)+'</svg>';
-      ghost.style.display='block';
-      ghost.style.left=(e.clientX-10)+'px'; ghost.style.top=(e.clientY-10)+'px';
-      _drag = {vid:vid, key:key, startClientX:e.clientX, svgLeft:rect.left-rDiv.scrollLeft};
-      el.style.cursor='grabbing';
+      // Store a pending drag — only commit after mouse moves >4px (distinguishes click from drag)
+      _drag = {vid:vid, key:key, startClientX:e.clientX, svgLeft:rect.left-rDiv.scrollLeft, pending:true, el:el, msDef:msDef};
     });
   });
 
@@ -1439,21 +1521,42 @@ function msGhostSym(shape, color) {
 function onGanttDragMove(e) {
   if (!_drag) return;
   var ghost = document.getElementById('gantt-drag-ghost');
+  var dx = Math.abs(e.clientX - _drag.startClientX);
+
+  // Commit the drag only after 5px movement (so a click doesn't activate dragging)
+  if (_drag.pending) {
+    if (dx < 5) return;
+    _drag.pending = false;
+    var msDef = _drag.msDef||{};
+    ghost.innerHTML = '<svg width="20" height="20" viewBox="-8 -8 16 16">'+msGhostSym(msDef.shape, msDef.color)+'</svg>';
+    ghost.style.display='block';
+    if (_drag.el) _drag.el.style.cursor='grabbing';
+  }
+
   ghost.style.left = (e.clientX-10)+'px';
   ghost.style.top  = (e.clientY-10)+'px';
   // Show live tooltip
   var x = e.clientX - _drag.svgLeft;
   var previewYM = xRightToYM(x);
   var tip = document.getElementById('gtip');
-  var msDef = MS[_drag.key]||{};
+  var msDef2 = MS[_drag.key]||{};
   tip.textContent = (_drag.vid ? (vessels.find(v=>v.id===_drag.vid)||{}).designation||'' : '')
-    +' — '+(msDef.label||_drag.key)+': '+fmtYM(previewYM);
+    +' — '+(msDef2.label||_drag.key)+': '+fmtYM(previewYM);
   tip.style.display='block';
   tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-34)+'px';
 }
 
 function onGanttDragEnd(e) {
   if (!_drag) return;
+
+  // If still pending (never moved 5px) → was a click, not a drag; open modal
+  if (_drag.pending) {
+    var vid = _drag.vid, key = _drag.key;
+    _drag = null;
+    openMSEModal(vid, key);
+    return;
+  }
+
   var d = _drag; _drag = null;
   document.getElementById('gantt-drag-ghost').style.display='none';
   document.getElementById('gtip').style.display='none';
@@ -1492,29 +1595,9 @@ function onGanttDragEnd(e) {
   if (oldVal && newYM) aiReasoning(v, d.key, oldVal, newYM, entry);
 }
 
-// Refresh a single spreadsheet row's MS cells without full re-render (performance)
+// Refresh spreadsheet row after a Gantt drag
 function refreshSpreadsheetRow(vid) {
-  var row = document.querySelector('tr[data-id="'+vid+'"]'); if (!row) return;
-  var v = vessels.find(v=>v.id===vid); if (!v) return;
-  var msKeys = Object.keys(MS);
-  row.querySelectorAll('input.di[data-field="ms"]').forEach(function(inp) {
-    var key = inp.dataset.key;
-    var newVal = v.ms[key]||'';
-    inp.value = newVal;
-    inp.className = 'di '+(newVal?'':'empty');
-    inp.style.opacity = newVal?'1':'0.35';
-    // Update cell completion highlighting
-    var td = inp.closest('td');
-    if (completedSet.has(vid+'|'+key)) {
-      td.classList.add('ms-done');
-    } else {
-      td.classList.remove('ms-done');
-    }
-  });
-  // Update duration cell
-  var cells = row.querySelectorAll('td');
-  var durIdx = msKeys.length + SFIELDS.length + 3;
-  if (cells[durIdx]) cells[durIdx].textContent = durationMo(v);
+  renderSpreadsheet(); // re-render fully since cells are now badge divs, not inputs
 }
 
 /* ── Spreadsheet ── */
@@ -1548,15 +1631,26 @@ function renderSpreadsheet() {
       h+='<td style="color:'+tc+';font-weight:600">'+esc(v.type)+'</td>';
       h+='<td><span class="fb '+v.fleet.toLowerCase()+'">'+esc(v.fleet)+'</span></td>';
 
-      // MS date cells
+      // MS date cells — click to open edit modal
       msKeys.forEach(key=>{
         var val=v.ms[key]||'';
         var isDone = completedSet.has(v.id+'|'+key);
-        var disabled=(st==='not-planned'&&key!=='CA')?'disabled style="opacity:.3;cursor:default"':'';
-        h+='<td class="'+(isDone?'ms-done':'')+'" oncontextmenu="openCtxMenu(event,\''+v.id+'\',\''+key+'\')">'
-          +'<input type="month" class="di '+(val?'':'empty')+'" value="'+esc(val)+'"'
-          +' data-vid="'+v.id+'" data-key="'+key+'" data-field="ms" data-field="ms"'
-          +' title="'+(MS[key]||{}).label+': click to edit | right-click for options" onchange="onDateChange(event)" '+disabled+'></td>';
+        var msDef2 = MS[key]||{};
+        var notPlanned = (st==='not-planned' && key!=='CA');
+        h += '<td class="ms-cell'+(isDone?' ms-done':'')+'"'
+          +(notPlanned ? '' : ' onclick="openMSEModal(\''+v.id+'\',\''+key+'\')" ')
+          +' title="'+(msDef2.label||key)+' — '+(val ? fmtYM(val) : 'not set')+(isDone?' ✓':'')+'">';
+        if (val) {
+          h += '<div class="ms-badge"><span class="ms-dot" style="background:'+esc(msDef2.color||'#6e6e73')+'"></span>'
+            + esc(fmtYM(val));
+          if (isDone) h += '<span class="ms-check-lbl" style="color:#1a7a36"> ✓</span>';
+          h += '</div>';
+        } else if (notPlanned) {
+          h += '<span class="ms-empty-lbl" style="opacity:.25">—</span>';
+        } else {
+          h += '<span class="ms-empty-lbl">—</span>';
+        }
+        h += '</td>';
       });
 
       // Spreadsheet-only fields
@@ -1662,8 +1756,89 @@ function fieldLabel(key) {
   return key;
 }
 
-/* ── Context menu (right-click on MS cells / Gantt symbols) ── */
-function openCtxMenu(e, vid, key) {
+/* ── Milestone Edit Modal ── */
+function openMSEModal(vid, key) {
+  var v = vessels.find(v=>v.id===vid); if (!v) return;
+  var msDef = MS[key]||{};
+  _ctxVid = vid; _ctxKey = key;
+  var tc = (VT[v.type]||{}).color||'var(--accent)';
+  document.getElementById('mse-ms-label').innerHTML =
+    '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(msDef.color||tc)+';margin-right:5px;vertical-align:middle"></span>'
+    + esc(msDef.label||key);
+  document.getElementById('mse-title').textContent = v.designation;
+  document.getElementById('mse-sub').textContent = v.type + ' · ' + v.fleet + ' · ' + (v.status||'on-track').replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
+  document.getElementById('mse-date').value = v.ms[key]||'';
+  document.getElementById('mse-complete').checked = completedSet.has(vid+'|'+key);
+  document.getElementById('ms-edit-modal').classList.add('open');
+  // Focus date input after animation
+  setTimeout(function(){ var d=document.getElementById('mse-date'); if(d) d.focus(); }, 120);
+}
+window.openMSEModal = openMSEModal;
+
+function closeMSEModal() {
+  document.getElementById('ms-edit-modal').classList.remove('open');
+  _ctxVid = null; _ctxKey = null;
+}
+window.closeMSEModal = closeMSEModal;
+
+window.mseSave = function() {
+  if (!_ctxVid || !_ctxKey) return;
+  var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
+  var newDate = document.getElementById('mse-date').value;
+  var isComplete = document.getElementById('mse-complete').checked;
+  var oldDate = v.ms[_ctxKey]||'';
+  var ck = _ctxVid+'|'+_ctxKey;
+
+  // Update date
+  if (newDate !== oldDate) {
+    if (newDate) v.ms[_ctxKey] = newDate; else delete v.ms[_ctxKey];
+    auditEntry('SCHEDULE',
+      'Updated '+fieldLabel(_ctxKey)+' for '+v.designation,
+      {vesselId:v.id, vessel:v.designation, field:_ctxKey,
+       oldVal:oldDate||null, newVal:newDate||null}
+    );
+    if (oldDate && newDate) aiReasoning(v, _ctxKey, oldDate, newDate, auditLog[0]);
+  }
+
+  // Update complete state
+  var wasDone = completedSet.has(ck);
+  if (isComplete !== wasDone) {
+    if (isComplete) completedSet.add(ck); else completedSet.delete(ck);
+    auditEntry('SCHEDULE',
+      (isComplete?'Marked':'Unmarked')+' '+fieldLabel(_ctxKey)+' complete for '+v.designation,
+      {vesselId:v.id, vessel:v.designation, field:_ctxKey,
+       oldVal:wasDone?'complete':'pending', newVal:isComplete?'complete':'pending'}
+    );
+  }
+
+  closeMSEModal();
+  renderGantt();
+  renderSpreadsheet();
+  propagate();
+  autoSave();
+  toast(v.designation+' · '+(_ctxKey||'')+(isComplete?' ✓':'') + (newDate?' → '+fmtYM(newDate):''));
+};
+
+window.mseDelete = function() {
+  if (!_ctxVid || !_ctxKey) return;
+  var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
+  var old = v.ms[_ctxKey]||'';
+  if (!old && !completedSet.has(_ctxVid+'|'+_ctxKey)) { closeMSEModal(); return; }
+  delete v.ms[_ctxKey];
+  completedSet.delete(_ctxVid+'|'+_ctxKey);
+  auditEntry('SCHEDULE','Cleared '+fieldLabel(_ctxKey)+' date for '+v.designation,
+    {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:old||null, newVal:null});
+  closeMSEModal();
+  renderGantt(); renderSpreadsheet(); propagate(); autoSave();
+  toast(v.designation+' · '+_ctxKey+' date cleared');
+};
+
+// Close modal on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key==='Escape') closeMSEModal();
+});
+
+
   e.preventDefault();
   _ctxVid = vid; _ctxKey = key;
   var isDone = completedSet.has(vid+'|'+key);
@@ -1830,11 +2005,11 @@ function setCraft(type,el) {
 window.setCraft=setCraft;
 
 window.updateFY=function(){
-  fyStart=parseInt(document.getElementById('fy-s').value);
-  fyEnd=parseInt(document.getElementById('fy-e').value);
+  fyStart = 2000 + parseInt(document.getElementById('fy-s').value);
+  fyEnd   = 2000 + parseInt(document.getElementById('fy-e').value);
   if(fyStart>=fyEnd) fyEnd=fyStart+2;
   renderGantt();
-  sysLog('SYSTEM','FY range updated to FY'+fyStart+'–FY'+fyEnd,null);
+  sysLog('SYSTEM','FY range updated to FY'+String(fyStart).slice(2)+'–FY'+String(fyEnd).slice(2),null);
 };
 
 window.toggleMS=function(key,vis){
