@@ -515,10 +515,7 @@ td.ms-done .di::after { content:' ✓'; }
             <i class="fas fa-layer-group fa-xs"></i> All Types
           </div>
           <div class="cm-sep"></div>
-          <div class="cm-item" data-filter="APL"  onclick="setCraft('APL',this)"><i class="fas fa-ship fa-xs"></i> APL</div>
-          <div class="cm-item" data-filter="YRBM" onclick="setCraft('YRBM',this)"><i class="fas fa-anchor fa-xs"></i> YRBM</div>
-          <div class="cm-item" data-filter="YFB"  onclick="setCraft('YFB',this)"><i class="fas fa-water fa-xs"></i> YFB</div>
-          <div class="cm-item" data-filter="YTB"  onclick="setCraft('YTB',this)"><i class="fas fa-tug fa-xs"></i> YTB</div>
+          <div id="craft-type-items"></div>
           <div class="cm-sep"></div>
           <div class="cm-item" style="color:var(--accent)" onclick="openAddVessel();toggleCraftDD()">
             <i class="fas fa-plus fa-xs"></i> Add Vessel…
@@ -654,7 +651,7 @@ td.ms-done .di::after { content:' ✓'; }
           <div class="ph-dot"></div>
           Acquisition Milestone Schedule
           <span class="ph-hint">Click any cell to edit &mdash; Designation, Type, Fleet, Status + all date cells</span>
-          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.8 May-9</span>
+          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.9 May-9</span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
             <i class="fas fa-download fa-xs"></i> Export CSV
@@ -990,11 +987,18 @@ var SFIELDS = [
 
 /* ── Vessel type metadata ─── */
 var VT = {
-  APL:  {label:'APL — Auxiliary Personnel Lighter',      color:'#007AFF'},
-  YRBM: {label:'YRBM — Yard Repair Berthing & Messing',  color:'#34c759'},
-  YFB:  {label:'YFB — Yard Floating Barrier',            color:'#ff9500'},
-  YTB:  {label:'YTB — Large Harbor Tug',                 color:'#af52de'},
+  APL:  {label:'APL — Auxiliary Personnel Lighter',      color:'#007AFF', icon:'fa-ship'},
+  YRBM: {label:'YRBM — Yard Repair Berthing & Messing',  color:'#34c759', icon:'fa-anchor'},
+  YFB:  {label:'YFB — Yard Floating Barrier',            color:'#ff9500', icon:'fa-water'},
+  YTB:  {label:'YTB — Large Harbor Tug',                 color:'#af52de', icon:'fa-ferry'},
 };
+// Icon pool for custom vessel types added at runtime
+var VT_ICON_POOL = ['fa-compass','fa-circle-dot','fa-gear','fa-bolt','fa-star','fa-location-arrow','fa-satellite'];
+function vtIcon(type) {
+  if (VT[type]&&VT[type].icon) return VT[type].icon;
+  var h=0; for(var i=0;i<type.length;i++) h=(h*31+type.charCodeAt(i))>>>0;
+  return VT_ICON_POOL[h%VT_ICON_POOL.length];
+}
 
 /* ─────────────────────────────────────────────────────────────────
    DEMO DATA  (generic BLI-like data, not real operational schedule)
@@ -1105,7 +1109,7 @@ var saveTimer  = null;
 var logBadge   = 0;
 
 /* ── Gantt layout constants ─── */
-var GP = { LEFT:130, ROW_H:52, HDR_H:36, FY_W:220, MS_R:7 };
+var GP = { LEFT:130, ROW_H:34, GRP_H:20, HDR_H:36, FY_W:220, MS_R:7 };
 var ganttZoomLevel = 1.0;
 var GP_FY_W_BASE   = 220; // 220px per FY × 7 years = 1540px — always overflows any screen
 
@@ -1385,8 +1389,16 @@ function updateZoomBtns() {
 function renderGantt() {
   var rows  = buildGanttRows(filtered());
   var fyN   = fyEnd - fyStart + 1;
-  var sh    = GP.HDR_H + rows.length * GP.ROW_H + 4;
   var rightW = fyN * GP.FY_W;
+
+  // Compute per-row heights and cumulative y positions
+  var yAcc = GP.HDR_H;
+  rows.forEach(function(row) {
+    row.rh = row.isGroup ? GP.GRP_H : GP.ROW_H;
+    row.ry = yAcc;
+    yAcc += row.rh;
+  });
+  var sh = yAcc + 4;
 
   // ─── LEFT SVG (frozen vessel column) ────────────────────────────
   var lEl = document.getElementById('gantt-left-svg');
@@ -1399,35 +1411,28 @@ function renderGantt() {
   lh += '<rect x="0" y="0" width="'+GP.LEFT+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
   lh += '<text x="8" y="'+(GP.HDR_H/2+4.5)+'" font-size="9.5" font-weight="600" fill="rgba(255,255,255,0.55)" font-family="Inter,-apple-system,sans-serif" letter-spacing="0.06em">VESSEL</text>';
 
-  rows.forEach(function(row,ri) {
-    var ry = GP.HDR_H + ri * GP.ROW_H;
+  rows.forEach(function(row) {
+    var ry = row.ry, rh2 = row.rh;
     if (row.isGroup) {
-      // ── Professional section header: steel background, bold type-color left bar ──
+      // ── Compact type-label separator ──
       var tc = (VT[row.type]||{}).color||'#6e6e73';
-      var vtLabel = (VT[row.type]||{}).label||'';
-      var subLabel = vtLabel.split('\u2014').length>1 ? vtLabel.split('\u2014')[1].trim() : '';
-      var subWords = subLabel.split(' ').slice(0,4).join(' ');
-      lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="#ECF1F8"/>';
-      lh += '<rect x="0" y="'+ry+'" width="5" height="'+GP.ROW_H+'" fill="'+tc+'"/>';
+      lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+rh2+'" fill="#ECF1F8"/>';
+      lh += '<rect x="0" y="'+ry+'" width="5" height="'+rh2+'" fill="'+tc+'"/>';
       lh += '<line x1="0" y1="'+ry+'" x2="'+GP.LEFT+'" y2="'+ry+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
-      lh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+GP.LEFT+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
-      lh += '<text x="15" y="'+(ry+GP.ROW_H/2-3)+'" font-size="11" font-weight="800" fill="'+tc+'" letter-spacing="0.03em" font-family="Inter,-apple-system,sans-serif">'+esc(row.type)+'</text>';
-      if (subWords) lh += '<text x="15" y="'+(ry+GP.ROW_H/2+9)+'" font-size="7" fill="rgba(28,29,30,0.42)" font-family="Inter,-apple-system,sans-serif">'+esc(subWords)+'</text>';
+      lh += '<line x1="0" y1="'+(ry+rh2)+'" x2="'+GP.LEFT+'" y2="'+(ry+rh2)+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
+      lh += '<text x="12" y="'+(ry+rh2/2+3.5)+'" font-size="10" font-weight="800" fill="'+tc+'" letter-spacing="0.04em" font-family="Inter,-apple-system,sans-serif">'+esc(row.type)+'</text>';
       return;
     }
     var v = row.vessel;
     var tc2 = (VT[v.type]||{}).color||'#6e6e73';
     var st = v.status||'on-track';
     var stColor = st==='on-track'?'#30D158':st==='delayed'?'#FF3B30':st==='not-planned'?'#8E8E93':'#007AFF';
-    // Clean zebra stripe: even=white, odd=ultra-subtle blue-gray
     var isEven = (row.vi||0)%2===0;
     var rowBg = st==='delayed'?'rgba(255,59,48,0.04)':st==='not-planned'?'rgba(142,142,147,0.05)':isEven?'#FFFFFF':'#F4F7FC';
-    lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+GP.ROW_H+'" fill="'+rowBg+'"/>';
-    lh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+GP.LEFT+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.04)" stroke-width="0.6"/>';
-    lh += '<rect x="0" y="'+ry+'" width="4" height="'+GP.ROW_H+'" fill="'+stColor+'"/>';
-    lh += '<text x="12" y="'+(ry+GP.ROW_H/2-2)+'" font-size="10.5" font-weight="650" fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation)+'</text>';
-    var fc = v.fleet==='PACFLT'?'#005EC4':v.fleet==='USFF'?'#1a7a36':'#b35900';
-    lh += '<text x="12" y="'+(ry+GP.ROW_H/2+10)+'" font-size="7.5" fill="'+fc+'" font-family="Inter,-apple-system,sans-serif" font-weight="600">'+esc(v.fleet)+'</text>';
+    lh += '<rect x="0" y="'+ry+'" width="'+GP.LEFT+'" height="'+rh2+'" fill="'+rowBg+'"/>';
+    lh += '<line x1="0" y1="'+(ry+rh2)+'" x2="'+GP.LEFT+'" y2="'+(ry+rh2)+'" stroke="rgba(0,0,0,0.04)" stroke-width="0.6"/>';
+    lh += '<rect x="0" y="'+ry+'" width="4" height="'+rh2+'" fill="'+stColor+'"/>';
+    lh += '<text x="12" y="'+(ry+rh2/2+4)+'" font-size="10.5" font-weight="650" fill="#1d1d1f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation)+'</text>';
   });
 
   lEl.innerHTML = lh;
@@ -1440,32 +1445,72 @@ function renderGantt() {
   var rh = '';
   rh += '<rect width="'+rightW+'" height="'+sh+'" fill="#f5f5f7"/>';
 
-  // FY alternating bg
+  // PASS 1: FY alternating bg bands
   for (var fi = 0; fi < fyN; fi++) {
     var fx = fi * GP.FY_W;
     if (fi%2===0) rh += '<rect x="'+fx+'" y="'+GP.HDR_H+'" width="'+GP.FY_W+'" height="'+(sh-GP.HDR_H)+'" fill="rgba(255,255,255,0.78)"/>';
   }
-  // Monthly grid lines
+
+  // PASS 2: Row background rects (solid fills, before grid lines)
+  rows.forEach(function(row) {
+    var ry = row.ry, rh2 = row.rh;
+    if (row.isGroup) {
+      var tc = (VT[row.type]||{}).color||'#6e6e73';
+      rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+rh2+'" fill="#ECF1F8"/>';
+      rh += '<line x1="0" y1="'+ry+'" x2="'+rightW+'" y2="'+ry+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
+      rh += '<line x1="0" y1="'+(ry+rh2)+'" x2="'+rightW+'" y2="'+(ry+rh2)+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
+    } else {
+      var st = row.vessel.status||'on-track';
+      var isEven = (row.vi||0)%2===0;
+      var rowBg = st==='delayed'?'rgba(255,59,48,0.03)':st==='not-planned'?'rgba(142,142,147,0.04)':isEven?'#FFFFFF':'#F4F7FC';
+      rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+rh2+'" fill="'+rowBg+'"/>';
+      rh += '<line x1="0" y1="'+(ry+rh2)+'" x2="'+rightW+'" y2="'+(ry+rh2)+'" stroke="rgba(0,0,0,0.035)" stroke-width="0.6"/>';
+    }
+  });
+
+  // PASS 3: Monthly grid lines — drawn ON TOP of all row backgrounds so they show on every row
   for (var fi2 = 0; fi2 < fyN; fi2++) {
     for (var mi = 1; mi < 12; mi++) {
       var gx = fi2*GP.FY_W + (mi/12)*GP.FY_W;
-      // FY-boundary months (every 12) are drawn as part of FY header; quarter months slightly stronger
       var isQtr = (mi===3||mi===6||mi===9);
-      rh += '<line x1="'+gx+'" y1="'+GP.HDR_H+'" x2="'+gx+'" y2="'+sh+'" stroke="rgba(0,0,0,'+(isQtr?'0.10':'0.07')+')" stroke-width="'+(isQtr?'0.9':'0.6')+'"/>';
+      rh += '<line x1="'+gx+'" y1="'+GP.HDR_H+'" x2="'+gx+'" y2="'+sh+'" stroke="rgba(0,0,0,'+(isQtr?'0.13':'0.08')+')" stroke-width="'+(isQtr?'0.9':'0.6')+'" pointer-events="none"/>';
     }
   }
-  // Today line
+
+  // PASS 4: Today marker
   var tx = dateToXRight(NOW_MONTH);
   if (tx >= 0) {
     rh += '<line x1="'+tx+'" y1="'+GP.HDR_H+'" x2="'+tx+'" y2="'+(sh-4)+'" stroke="#007AFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.45"/>';
     rh += '<text x="'+(tx+3)+'" y="'+(GP.HDR_H+10)+'" font-size="7.5" fill="#007AFF" opacity="0.65" font-family="Inter,-apple-system,sans-serif">Today</text>';
   }
-  // FY headers
+
+  // PASS 5: Row content — span bars + milestone symbols (above grid lines)
+  rows.forEach(function(row) {
+    var ry = row.ry, rh2 = row.rh;
+    if (row.isGroup) return;
+    var v = row.vessel;
+    var tc2 = (VT[v.type]||{}).color||'#6e6e73';
+    var xCA_raw = dateToXRight(v.ms['CA']);
+    var xCA = xCA_raw >= 0 ? xCA_raw : 0;
+    var xDEL = dateToXRight(v.ms['DEL']||'');
+    if (v.ms['CA'] && xDEL>=0 && xDEL>xCA) {
+      rh += '<rect x="'+xCA+'" y="'+(ry+rh2/2-3)+'" width="'+(xDEL-xCA)+'" height="4" rx="2" fill="'+tc2+'" opacity="0.2"/>';
+    }
+    Object.keys(v.ms).forEach(function(key) {
+      if (hiddenMS[key]) return;
+      var msDef = MS[key]; if (!msDef||!msDef.gantt) return;
+      var mx = dateToXRight(v.ms[key]); if (mx < 0) return;
+      var my = ry + rh2/2 - 5;
+      var isDone = completedSet.has(v.id+'|'+key);
+      rh += msSymRight(mx, my, msDef.shape, msDef.color, key, v.id, fmtYM(v.ms[key]), isDone);
+    });
+  });
+
+  // PASS 6: FY headers — always drawn on top of everything
   for (var fj = 0; fj < fyN; fj++) {
     var fx2 = fj * GP.FY_W;
     rh += '<rect x="'+fx2+'" y="0" width="'+GP.FY_W+'" height="'+GP.HDR_H+'" fill="#1c3a5f"/>';
     rh += '<text x="'+(fx2+GP.FY_W/2)+'" y="'+(GP.HDR_H/2-3)+'" font-size="10" font-weight="700" text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif" letter-spacing="0.04em">FY'+String(fyStart+fj).slice(2)+'</text>';
-    // Month tick marks in FY header
     for (var mt=0; mt<12; mt++) {
       var mx2 = fx2 + (mt/12)*GP.FY_W;
       var mLbl = ['O','N','D','J','F','M','A','M','J','J','A','S'][mt];
@@ -1473,46 +1518,6 @@ function renderGantt() {
     }
     rh += '<line x1="'+fx2+'" y1="0" x2="'+fx2+'" y2="'+sh+'" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>';
   }
-
-  // Rows
-  rows.forEach(function(row,ri) {
-    var ry = GP.HDR_H + ri * GP.ROW_H;
-    if (row.isGroup) {
-      // ── Professional section header matches left panel ──
-      var tc = (VT[row.type]||{}).color||'#6e6e73';
-      rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+GP.ROW_H+'" fill="#ECF1F8"/>';
-      rh += '<line x1="0" y1="'+ry+'" x2="'+rightW+'" y2="'+ry+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
-      rh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>';
-      rh += '<line x1="0" y1="'+(ry+GP.ROW_H/2)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H/2)+'" stroke="'+tc+'" stroke-width="0.6" opacity="0.2" stroke-dasharray="6,10"/>';
-      return;
-    }
-    var v = row.vessel;
-    var tc2 = (VT[v.type]||{}).color||'#6e6e73';
-    var st = v.status||'on-track';
-    var isEven = (row.vi||0)%2===0;
-    var rowBg = st==='delayed'?'rgba(255,59,48,0.03)':st==='not-planned'?'rgba(142,142,147,0.04)':isEven?'#FFFFFF':'#F4F7FC';
-    rh += '<rect x="0" y="'+ry+'" width="'+rightW+'" height="'+GP.ROW_H+'" fill="'+rowBg+'"/>';
-    rh += '<line x1="0" y1="'+(ry+GP.ROW_H)+'" x2="'+rightW+'" y2="'+(ry+GP.ROW_H)+'" stroke="rgba(0,0,0,0.035)" stroke-width="0.6"/>';
-
-    // CA→DEL span bar (centered vertically, above date labels)
-    // Clamp xCA to 0 if CA is before the visible FY range so bar still draws from left edge
-    var xCA_raw = dateToXRight(v.ms['CA']);
-    var xCA = xCA_raw >= 0 ? xCA_raw : 0;
-    var xDEL = dateToXRight(v.ms['DEL']||'');
-    if (v.ms['CA'] && xDEL>=0 && xDEL>xCA) {
-      rh += '<rect x="'+xCA+'" y="'+(ry+GP.ROW_H/2-9)+'" width="'+(xDEL-xCA)+'" height="4" rx="2" fill="'+tc2+'" opacity="0.2"/>';
-    }
-
-    // Milestone symbols
-    Object.keys(v.ms).forEach(function(key) {
-      if (hiddenMS[key]) return;
-      var msDef = MS[key]; if (!msDef||!msDef.gantt) return;
-      var mx = dateToXRight(v.ms[key]); if (mx < 0) return;
-      var my = ry + GP.ROW_H/2 - 6; // shift up to leave room for date label
-      var isDone = completedSet.has(v.id+'|'+key);
-      rh += msSymRight(mx, my, msDef.shape, msDef.color, key, v.id, fmtYM(v.ms[key]), isDone);
-    });
-  });
 
   rEl.innerHTML = rh;
   attachGanttInteraction();
@@ -2306,9 +2311,22 @@ function propagate() {
    TOOLBAR ACTIONS
 ═════════════════════════════════════════════════════════════════ */
 // Craft dropdown
+function renderCraftTypeItems() {
+  var container = document.getElementById('craft-type-items');
+  if (!container) return;
+  var html = '';
+  Object.keys(VT).forEach(function(k) {
+    var icon = vtIcon(k);
+    var active = craftFilter===k ? ' active' : '';
+    html += '<div class="cm-item'+active+'" data-filter="'+k+'" onclick="setCraft(\''+k+'\',this)"><i class="fas '+icon+' fa-xs"></i> '+k+'</div>';
+  });
+  container.innerHTML = html;
+}
 function toggleCraftDD() {
   var m=document.getElementById('craft-menu');
-  m.style.display=m.style.display==='none'?'block':'none';
+  var willOpen = m.style.display==='none';
+  m.style.display=willOpen?'block':'none';
+  if (willOpen) renderCraftTypeItems();
 }
 window.toggleCraftDD=toggleCraftDD;
 
@@ -2350,6 +2368,12 @@ window.confirmAV=function(){
   var builder=document.getElementById('av-builder').value.trim();
   if(!des){alert('Enter a designation.');return;}
   if(vessels.find(v=>v.designation===des)){alert(des+' already exists.');return;}
+  // Auto-register unknown vessel types in VT so they get an icon + color
+  if (!VT[type]) {
+    var colorPool=['#5ac8fa','#ff6b35','#30d158','#ffd60a','#bf5af2','#64d2ff','#ff375f'];
+    var th=0; for(var ci=0;ci<type.length;ci++) th=(th*31+type.charCodeAt(ci))>>>0;
+    VT[type]={label:type,color:colorPool[th%colorPool.length],icon:vtIcon(type)};
+  }
   var nv={
     id:type.toLowerCase()+'-'+Date.now(),
     type,designation:des,fleet,status:'not-planned',notes:'',
