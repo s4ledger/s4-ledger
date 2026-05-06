@@ -38,6 +38,9 @@ export function useProgramSchedule(): UseProgramScheduleResult {
         if (cancelled) return
         setPsData(data)
         setLastSync(new Date())
+        if (!data) {
+          setError('Open the Program Schedule tool and save a schedule to enable live date sync.')
+        }
       })
       .catch(() => {
         if (cancelled) return

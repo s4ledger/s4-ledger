@@ -195,44 +195,6 @@ export function computePSDueDate(
   }
 }
 
-/* ─── Default vessels (mirrors PS tool DEMO array) ──────────────── */
-// Used as the final fallback so the DT always has real vessel data even
-// before a user has saved a schedule or visited the PS tool.
-const DEFAULT_VESSELS: PSVessel[] = [
-  { id:'apl-101',  type:'APL',  designation:'APL-101',  fleet:'PACFLT', status:'on-track',
-    ms:{ CA:'2025-11', SOC:'2026-04', LCH:'2027-01', BT:'2027-05', AT:'2027-08', DEL:'2027-11' } },
-  { id:'apl-102',  type:'APL',  designation:'APL-102',  fleet:'PACFLT', status:'delayed',
-    ms:{ CA:'2026-03', SOC:'2026-09', LCH:'2027-07', BT:'2027-11', AT:'2028-02', DEL:'2028-05' } },
-  { id:'apl-103',  type:'APL',  designation:'APL-103',  fleet:'USFF',   status:'on-track',
-    ms:{ CA:'2026-09', SOC:'2027-03', LCH:'2028-01', BT:'2028-05', AT:'2028-08', DEL:'2028-11' } },
-  { id:'apl-104',  type:'APL',  designation:'APL-104',  fleet:'PACFLT', status:'not-planned',
-    ms:{ CA:'2027-04', SOC:'', LCH:'', BT:'', AT:'', DEL:'' } },
-  { id:'apl-105',  type:'APL',  designation:'APL-105',  fleet:'USFF',   status:'not-planned',
-    ms:{ CA:'2027-10', SOC:'', LCH:'', BT:'', AT:'', DEL:'' } },
-  { id:'yrbm-51',  type:'YRBM', designation:'YRBM-51',  fleet:'PACFLT', status:'delayed',
-    ms:{ CA:'2025-09', SOC:'2026-03', LCH:'2026-08', BT:'2026-10', AT:'2026-12', DEL:'2027-03' } },
-  { id:'yrbm-52',  type:'YRBM', designation:'YRBM-52',  fleet:'USFF',   status:'on-track',
-    ms:{ CA:'2026-02', SOC:'2026-08', LCH:'2027-02', BT:'2027-05', AT:'2027-07', DEL:'2027-10' } },
-  { id:'yrbm-53',  type:'YRBM', designation:'YRBM-53',  fleet:'PACFLT', status:'on-track',
-    ms:{ CA:'2026-09', SOC:'2027-03', LCH:'2027-10', BT:'2028-01', AT:'2028-04', DEL:'2028-07' } },
-  { id:'yrbm-54',  type:'YRBM', designation:'YRBM-54',  fleet:'USFF',   status:'not-planned',
-    ms:{ CA:'2027-06', SOC:'', LCH:'', BT:'', AT:'', DEL:'' } },
-  { id:'yfb-88',   type:'YFB',  designation:'YFB-88',   fleet:'PACFLT', status:'on-track',
-    ms:{ CA:'2025-12', SOC:'2026-05', LCH:'2026-10', BT:'2026-12', AT:'2027-02', DEL:'2027-05' } },
-  { id:'yfb-89',   type:'YFB',  designation:'YFB-89',   fleet:'USFF',   status:'delayed',
-    ms:{ CA:'2026-06', SOC:'2026-12', LCH:'2027-06', BT:'2027-09', AT:'2027-11', DEL:'2028-02' } },
-  { id:'yfb-90',   type:'YFB',  designation:'YFB-90',   fleet:'PACFLT', status:'not-planned',
-    ms:{ CA:'2027-03', SOC:'', LCH:'', BT:'', AT:'', DEL:'' } },
-  { id:'ytb-810',  type:'YTB',  designation:'YTB-810',  fleet:'PACFLT', status:'on-track',
-    ms:{ CA:'2025-08', SOC:'2026-02', LCH:'2026-10', BT:'2027-01', AT:'2027-03', DEL:'2027-06' } },
-  { id:'ytb-811',  type:'YTB',  designation:'YTB-811',  fleet:'USFF',   status:'on-track',
-    ms:{ CA:'2026-01', SOC:'2026-07', LCH:'2027-03', BT:'2027-06', AT:'2027-08', DEL:'2027-11' } },
-  { id:'ytb-812',  type:'YTB',  designation:'YTB-812',  fleet:'PACFLT', status:'delayed',
-    ms:{ CA:'2026-08', SOC:'2027-02', LCH:'2027-10', BT:'2028-01', AT:'2028-04', DEL:'2028-07' } },
-  { id:'ytb-813',  type:'YTB',  designation:'YTB-813',  fleet:'USFF',   status:'not-planned',
-    ms:{ CA:'2027-06', SOC:'', LCH:'', BT:'', AT:'', DEL:'' } },
-]
-
 const PS_LOCALSTORAGE_KEY = 's4_ps_v2'
 
 /** Read vessel data from the shared localStorage written by the PS tool. */
@@ -257,10 +219,9 @@ function fetchFromLocalStorage(): PSData | null {
  * Priority:
  *   1. Supabase  (synced by authenticated PS tool users)
  *   2. localStorage['s4_ps_v2']  (written by PS tool even in demo mode; same origin)
- *   3. Embedded DEFAULT_VESSELS  (mirrors PS tool DEMO array — always available)
  *
- * This guarantees the DT always has real vessel milestone data to drive
- * due-date calculations and AI context, regardless of auth/session state.
+ * Returns null if neither source has data — caller should prompt the user
+ * to open and save the Program Schedule tool.
  */
 export async function fetchProgramSchedule(): Promise<PSData | null> {
   // 1 — Supabase
@@ -291,7 +252,6 @@ export async function fetchProgramSchedule(): Promise<PSData | null> {
     return lsData
   }
 
-  // 3 — Embedded default vessels (PS tool DEMO data — always current)
-  console.info('[PS Service] Using embedded default vessels')
-  return { vessels: DEFAULT_VESSELS, savedAt: null, version: 'default' }
+  // No PS data found — user needs to open and save the Program Schedule tool
+  return null
 }

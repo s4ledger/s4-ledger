@@ -1427,15 +1427,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
               </button>
             ))}
           </div>
-          {perms.canVerify && (
-          <button
-            onClick={() => { hullData.filter(r => !anchors[r.id]).forEach(r => onAnchor(r)) }}
-            className="flex items-center gap-2 px-3 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-lg text-accent text-xs font-medium transition-all"
-          >
-            <i className="fas fa-link"></i>
-            Seal All
-          </button>
-          )}
         </div>
       </div>
 
@@ -1663,6 +1654,24 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                         )
                       }
 
+                      // Special rendering for contractDueFinish (shows PS-driven badge when value is empty)
+                      if (col.key === 'contractDueFinish') {
+                        const psEntry = psComputedDates[row.id]
+                        if (!row.contractDueFinish && psEntry) {
+                          return (
+                            <td key={col.key} data-no-workflow className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors${selClass}`} onClick={openCell}>
+                              <div className="flex flex-col gap-0.5">
+                                <span className="font-mono text-indigo-700">{psEntry.date}</span>
+                                <span className="inline-flex items-center gap-1 px-1.5 py-px text-[8px] font-bold uppercase rounded bg-indigo-100 text-indigo-600 border border-indigo-200 leading-tight w-fit">
+                                  <i className="fas fa-calendar-alt text-[7px]"></i>
+                                  PS·{psEntry.milestone} {psEntry.vessel}
+                                </span>
+                              </div>
+                            </td>
+                          )
+                        }
+                      }
+
                       // Special rendering for calculatedDueDate (shows PS-driven badge when available)
                       if (col.key === 'calculatedDueDate') {
                         const psEntry = psComputedDates[row.id]
@@ -1713,25 +1722,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                     })}
                     <td className="px-3 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
-                      {anchors[row.id] ? (
-                        editedSinceSeal.has(row.id) ? (
-                          <button
-                            onClick={() => handleRowReseal(row)}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-accent/15 hover:bg-accent/25 border border-accent/30 text-accent rounded text-xs font-medium transition-all"
-                            title="Record edited since last seal — click to re-seal"
-                          >
-                            <i className="fas fa-shield-alt text-[10px]"></i>
-                            Re-Seal
-                          </button>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-500/15 text-green-400 rounded text-xs">
-                            <i className="fas fa-check-circle text-[10px]"></i>
-                            Verified
-                          </span>
-                        )
-                      ) : (
-                        <span className="text-steel/40 text-xs">—</span>
-                      )}
                       <button
                         onClick={() => openAuditForRow(row)}
                         className={`w-5 h-5 rounded inline-flex items-center justify-center transition-all ${
@@ -1803,10 +1793,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
 
       {/* Footer */}
       <div className="max-w-[1600px] mx-auto px-6 pb-6">
-        <div className="flex items-center justify-center gap-2 py-3">
-          <i className="fas fa-shield-alt text-accent/40 text-[10px]"></i>
-          <p className="text-[11px] text-steel/60">All data sealed to Ledger — immutable trust layer active</p>
-        </div>
       </div>
 
       {/* Modals */}
