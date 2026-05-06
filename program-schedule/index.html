@@ -116,7 +116,7 @@ html,body { height:100%; overflow:hidden;
 
 /* ══ Main ══════════════════════════════════════════════════════════ */
 #main { flex:1; display:flex; overflow:hidden; position:relative; }
-#center { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+#center { flex:1; display:flex; flex-direction:column; overflow-y:auto; min-width:0; }
 
 /* ── Panel section title bars ── */
 .panel-hdr {
@@ -185,7 +185,7 @@ td.ms-done input.di { color:inherit !important; font-weight:inherit !important; 
 }
 
 /* ── Spreadsheet ── */
-#sheet-section { flex:1; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+#sheet-section { flex-shrink:0; min-height:520px; display:flex; flex-direction:column; overflow:hidden; }
 #sheet-wrap { flex:1; overflow:auto; }
 #sheet-toolbar {
   display:flex; align-items:center; gap:7px; padding:5px 14px;
@@ -654,7 +654,7 @@ td.ms-done .di::after { content:' ✓'; }
           <div class="ph-dot"></div>
           Acquisition Milestone Schedule
           <span class="ph-hint">Click any cell to edit &mdash; Designation, Type, Fleet, Status + all date cells</span>
-          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.7 May-9</span>
+          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.8 May-9</span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
             <i class="fas fa-download fa-xs"></i> Export CSV
@@ -822,7 +822,17 @@ td.ms-done .di::after { content:' ✓'; }
       <button onclick="closeMSEModal()" style="background:var(--surface-3);border:none;cursor:pointer;color:var(--steel);width:28px;height:28px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:16px;line-height:1;transition:all .13s" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='var(--surface-3)'">×</button>
     </div>
 
+    <!-- Text field (contract no., builder, UIC, etc.) -->
+    <div id="mse-text-row" style="display:none;margin-bottom:16px">
+      <label id="mse-text-label" style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Value</label>
+      <input type="text" id="mse-text"
+        style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);transition:all .14s"
+        onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
+        onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'"
+        onkeydown="if(event.key==='Enter')mseSave()">
+    </div>
     <!-- Date field -->
+    <div id="mse-date-section">
     <div style="margin-bottom:10px">
       <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Month &amp; Year<span style="color:var(--steel);font-weight:400;font-size:10px;margin-left:5px">(required)</span></label>
       <input type="month" id="mse-date"
@@ -838,6 +848,7 @@ td.ms-done .di::after { content:' ✓'; }
         onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
         onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'">
     </div>
+    </div><!-- end mse-date-section -->
 
     <!-- Complete toggle -->
     <div id="mse-complete-row" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:20px">
@@ -1101,7 +1112,7 @@ var GP_FY_W_BASE   = 220; // 220px per FY × 7 years = 1540px — always overflo
 /* ── Completed milestones: Set of "vesselId|msKey" ─── */
 var completedSet = new Set();
 /* ── Context menu state ─── */
-var _ctxVid=null, _ctxKey=null, _ctxField='ms';
+var _ctxVid=null, _ctxKey=null, _ctxField='ms', _ctxIsText=false;
 /* ── Drag state ─── */
 var _drag = null; // { el, vid, key, startX, origX, svgLeftOffset }
 
@@ -1438,7 +1449,9 @@ function renderGantt() {
   for (var fi2 = 0; fi2 < fyN; fi2++) {
     for (var mi = 1; mi < 12; mi++) {
       var gx = fi2*GP.FY_W + (mi/12)*GP.FY_W;
-      rh += '<line x1="'+gx+'" y1="'+GP.HDR_H+'" x2="'+gx+'" y2="'+sh+'" stroke="rgba(0,0,0,0.03)" stroke-width="0.5"/>';
+      // FY-boundary months (every 12) are drawn as part of FY header; quarter months slightly stronger
+      var isQtr = (mi===3||mi===6||mi===9);
+      rh += '<line x1="'+gx+'" y1="'+GP.HDR_H+'" x2="'+gx+'" y2="'+sh+'" stroke="rgba(0,0,0,'+(isQtr?'0.10':'0.07')+')" stroke-width="'+(isQtr?'0.9':'0.6')+'"/>';
     }
   }
   // Today line
@@ -1781,9 +1794,14 @@ function renderSpreadsheet() {
           }
           h += '</td>';
         } else {
-          h+='<td><input type="text" class="ti" value="'+esc(val)+'"'
-            +' data-vid="'+v.id+'" data-key="'+f.key+'" data-field="sf"'
-            +' onchange="onTextChange(event)" onblur="onTextChange(event)"></td>';
+          // Text field: use ms-cell popup for consistent UX
+          h += '<td class="ms-cell" onclick="openMSEModal(\''+v.id+'\',\''+f.key+'\',\'sf\')" title="'+esc(f.label)+(val?' — '+esc(val):'')+'">';
+          if (val) {
+            h += '<span style="font-size:11px">'+esc(val)+'</span>';
+          } else {
+            h += '<span class="ms-empty-lbl">—</span>';
+          }
+          h += '<span class="edit-hint">✎</span></td>';
         }
       });
 
@@ -1927,11 +1945,38 @@ function openMSEModal(vid, key, field) {
   var labelText = field==='sf'
     ? ((SFIELDS.find(f=>f.key===key)||{}).label||key)
     : (msDef.label||key);
+  // Detect if this is a plain-text field (contract_num, builder, uic, owld, fy_approp)
+  var sfDef = SFIELDS.find(function(f){return f.key===key;});
+  _ctxIsText = !!(sfDef && sfDef.type==='text');
+
   document.getElementById('mse-ms-label').innerHTML =
     '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(dotColor)+';margin-right:5px;vertical-align:middle"></span>'
     + esc(labelText);
   document.getElementById('mse-title').textContent = v.designation;
   document.getElementById('mse-sub').textContent = v.type + ' · ' + v.fleet + ' · ' + (v.status||'on-track').replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
+
+  // Show/hide text-input vs date-input sections
+  var textRow   = document.getElementById('mse-text-row');
+  var dateSec   = document.getElementById('mse-date-section');
+  var completeRow = document.getElementById('mse-complete-row');
+  if (_ctxIsText) {
+    if (textRow) textRow.style.display = '';
+    if (dateSec) dateSec.style.display = 'none';
+    if (completeRow) completeRow.style.display = 'none';
+    var textLbl = document.getElementById('mse-text-label');
+    if (textLbl) textLbl.textContent = labelText;
+    var rawText = (v.sf && v.sf[key]) || '';
+    var ti = document.getElementById('mse-text');
+    if (ti) { ti.value = rawText; }
+    document.getElementById('ms-edit-modal').classList.add('open');
+    setTimeout(function(){ var t=document.getElementById('mse-text'); if(t) t.focus(); }, 120);
+    return;
+  }
+  // Date/month field
+  if (textRow) textRow.style.display = 'none';
+  if (dateSec) dateSec.style.display = '';
+  if (completeRow) completeRow.style.display = field==='sf' ? 'none' : '';
+
   // Populate date: read from ms or sf, split out optional day
   var rawDate = field==='sf' ? ((v.sf&&v.sf[key])||'') : (v.ms[key]||'');
   var dp = rawDate.split('-');
@@ -1939,9 +1984,6 @@ function openMSEModal(vid, key, field) {
   var dayEl = document.getElementById('mse-day');
   if (dayEl) dayEl.value = dp[2] ? parseInt(dp[2]) : '';
   document.getElementById('mse-complete').checked = completedSet.has(vid+'|'+key);
-  // Hide complete toggle for spreadsheet-only fields
-  var completeRow = document.getElementById('mse-complete-row');
-  if (completeRow) completeRow.style.display = field==='sf' ? 'none' : '';
   document.getElementById('ms-edit-modal').classList.add('open');
   setTimeout(function(){ var d=document.getElementById('mse-date'); if(d) d.focus(); }, 120);
 }
@@ -1956,6 +1998,26 @@ window.closeMSEModal = closeMSEModal;
 window.mseSave = function() {
   if (!_ctxVid || !_ctxKey) return;
   var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
+  var field = _ctxField || 'ms';
+
+  // Handle text-type fields (contract_num, builder, uic, owld, fy_approp)
+  if (_ctxIsText) {
+    var newText = (document.getElementById('mse-text').value||'').trim();
+    var oldText = (v.sf && v.sf[_ctxKey]) || '';
+    if (newText !== oldText) {
+      if (!v.sf) v.sf = {};
+      if (newText) v.sf[_ctxKey] = newText; else delete v.sf[_ctxKey];
+      auditEntry('SFIELD','Updated '+fieldLabel(_ctxKey)+' for '+v.designation,
+        {vesselId:v.id, vessel:v.designation, field:_ctxKey,
+         oldVal:oldText||null, newVal:newText||null});
+    }
+    closeMSEModal();
+    renderSpreadsheet();
+    propagate(); autoSave();
+    toast(v.designation+' · '+_ctxKey+' updated');
+    return;
+  }
+
   var monthVal = document.getElementById('mse-date').value; // YYYY-MM
   var dayEl = document.getElementById('mse-day');
   var dayNum = dayEl ? (parseInt(dayEl.value)||0) : 0;
@@ -1963,7 +2025,6 @@ window.mseSave = function() {
     ? (dayNum>=1&&dayNum<=31 ? monthVal+'-'+String(dayNum).padStart(2,'0') : monthVal)
     : '';
   var isComplete = document.getElementById('mse-complete').checked;
-  var field = _ctxField || 'ms';
   var ck = _ctxVid+'|'+_ctxKey;
 
   if (field === 'sf') {
@@ -2010,6 +2071,18 @@ window.mseDelete = function() {
   if (!_ctxVid || !_ctxKey) return;
   var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
   var field = _ctxField || 'ms';
+  // Handle text-type clear
+  if (_ctxIsText) {
+    var oldTxt = (v.sf && v.sf[_ctxKey]) || '';
+    if (!oldTxt) { closeMSEModal(); return; }
+    delete v.sf[_ctxKey];
+    auditEntry('SFIELD','Cleared '+fieldLabel(_ctxKey)+' for '+v.designation,
+      {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:oldTxt, newVal:null});
+    closeMSEModal();
+    renderSpreadsheet(); propagate(); autoSave();
+    toast(v.designation+' · '+_ctxKey+' cleared');
+    return;
+  }
   if (field === 'sf') {
     var oldSF = (v.sf&&v.sf[_ctxKey])||'';
     if (!oldSF) { closeMSEModal(); return; }
