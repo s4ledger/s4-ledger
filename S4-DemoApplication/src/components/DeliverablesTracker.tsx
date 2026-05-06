@@ -234,8 +234,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   const platforms = useMemo(() => {
     const platformSet = new Set<string>()
     for (const row of data) {
-      const parsed = parseCraftHull(row.title)
-      if (parsed) platformSet.add(parsed.platform)
+      if (row.vesselId) {
+        platformSet.add(row.vesselId)
+      } else {
+        const parsed = parseCraftHull(row.title)
+        if (parsed) platformSet.add(parsed.platform)
+      }
     }
     return Array.from(platformSet).sort()
   }, [data])

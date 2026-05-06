@@ -55,28 +55,25 @@ export default function App() {
   useEffect(() => {
     if (isDemo) setStage('role')
   }, [isDemo])
-  const [data, setData] = useState<DRLRow[]>(() => {
-    const rows = assignContractIds(sampleData)
-    // Restore persisted workflow states from localStorage
-    try {
-      const stored = localStorage.getItem('s4_workflow_states')
-      if (stored) {
-        const states: Record<string, unknown> = JSON.parse(stored)
-        return rows.map(r => states[r.id] ? { ...r, workflowState: states[r.id] as DRLRow['workflowState'] } : r)
-      }
-    } catch { /* ignore */ }
-    return rows
-  })
+  const [data, setData] = useState<DRLRow[]>(() => assignContractIds(sampleData))
   const [anchors, setAnchors] = useState<Record<string, AnchorRecord>>({})
   const [anchoring, setAnchoring] = useState<Set<string>>(new Set())
   const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
   const [showPortfolio, setShowPortfolio] = useState(false)
 
+  // ── Demo mode: always reset to fresh sampleData, clear any stale state ───
+  useEffect(() => {
+    if (!isDemo) return
+    setData(assignContractIds(sampleData))
+    setAnchors({})
+  }, [isDemo])
+
   // ── Offline-First: hydrate from IndexedDB, then Supabase ───
-  // Skip entirely in demo mode — demo always uses fresh sampleData,
-  // never stale IndexedDB/Supabase rows from previous sessions.
+  // Only runs for authenticated users — never in demo mode or pre-login state.
   useEffect(() => {
     if (isDemo) return
+    if (authLoading) return   // wait for auth to settle
+    if (!user) return         // no session — skip Supabase
     ;(async () => {
       try {
         await initOfflineStore()
@@ -98,12 +95,12 @@ export default function App() {
         console.warn('Offline store hydration failed:', e)
       }
     })()
-  }, [isDemo])
+  }, [isDemo, authLoading, user])
 
   // ── Offline-First: persist to IndexedDB + async Supabase sync
   // Skip in demo mode to prevent demo data polluting shared Supabase table.
   useEffect(() => {
-    if (isDemo) return
+    if (isDemo || !user) return
     persistRows(data).catch(() => {})
     setMeta('lastPersist', new Date().toISOString()).catch(() => {})
     // Async sync to Supabase (non-blocking)
@@ -114,14 +111,15 @@ export default function App() {
   }, [data, user?.id, isDemo])
 
   useEffect(() => {
-    if (isDemo) return
+    if (isDemo || !user) return
     if (Object.keys(anchors).length > 0) {
       persistAnchors(anchors).catch(() => {})
     }
-  }, [anchors, isDemo])
+  }, [anchors, isDemo, user])
 
   // Persist workflow states to localStorage whenever data changes
   useEffect(() => {
+    if (isDemo) return  // never write localStorage in demo mode
     const states: Record<string, unknown> = {}
     let hasAny = false
     for (const row of data) {
