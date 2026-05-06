@@ -734,9 +734,10 @@ td.ms-done .di::after { content:' ✓'; }
           <div class="tdiv"></div>
           <span style="font-size:9.5px;color:var(--steel)" id="sheet-count">— vessels</span>
           <div class="tdiv"></div>
-          <button class="abtn btn-o" onclick="setBaseline()" title="Snapshot current milestone dates as the baseline for variance tracking" style="font-size:10px;padding:2px 8px">
+          <button class="abtn btn-o" onclick="setBaseline()" title="Snapshot current milestone dates as the baseline for variance tracking" style="font-size:10px;padding:2px 8px" id="set-baseline-btn">
             <i class="fas fa-ruler-combined fa-xs"></i> Set Baseline
           </button>
+          <span id="baseline-hint" style="font-size:9px;color:var(--steel);opacity:.6;white-space:nowrap">no baseline set</span>
         </div>
         <div id="sheet-wrap">
           <table class="sheet-tbl" id="ssheet">
@@ -1516,7 +1517,9 @@ function setBaseline() {
     v.baseline = Object.assign({}, v.ms);
   });
   autoSave();
-  toast('Baseline set — delta badges will appear on schedule variance');
+  var hint = document.getElementById('baseline-hint');
+  if (hint) { hint.textContent = 'baseline set'; hint.style.color = '#34c759'; hint.style.opacity = '1'; }
+  toast('Baseline set — change a date to see delta badges appear on the spreadsheet');
   sysLog('CONFIG','Baseline snapshot set',{vessels:vessels.length,by:whoLabel()});
 }
 window.setBaseline = setBaseline;
@@ -1844,8 +1847,8 @@ function renderGantt() {
     for (var ci=0; ci<cpPts.length-1; ci++) {
       var x1=cpPts[ci].x+GP.MS_R+1, x2=cpPts[ci+1].x-GP.MS_R-1, cy2=ry+rh2/2-5;
       if (x2 > x1+4) {
-        rh += '<line x1="'+x1.toFixed(1)+'" y1="'+cy2+'" x2="'+x2.toFixed(1)+'" y2="'+cy2+'" stroke="'+tc2+'" stroke-width="1" stroke-dasharray="3,2" opacity="0.28" pointer-events="none"/>';
-        rh += '<polygon points="'+(x2).toFixed(1)+','+(cy2-2.5)+' '+(x2+4).toFixed(1)+','+cy2+' '+(x2).toFixed(1)+','+(cy2+2.5)+'" fill="'+tc2+'" opacity="0.28" pointer-events="none"/>';
+        rh += '<line x1="'+x1.toFixed(1)+'" y1="'+cy2+'" x2="'+x2.toFixed(1)+'" y2="'+cy2+'" stroke="'+tc2+'" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.45" pointer-events="none"/>';
+        rh += '<polygon points="'+(x2).toFixed(1)+','+(cy2-3)+' '+(x2+5).toFixed(1)+','+cy2+' '+(x2).toFixed(1)+','+(cy2+3)+'" fill="'+tc2+'" opacity="0.45" pointer-events="none"/>';
       }
     }
 
@@ -2270,14 +2273,6 @@ function fmtField(key,val) {
   if(/^\d{4}-\d{2}$/.test(val)) return fmtYM(val);
   return val;
 }
-function fieldLabel(key) {
-  if(MS[key]) return (MS[key].label||key)+' ('+key+')';
-  var sf=SFIELDS.find(f=>f.key===key);
-  if(sf) return sf.label;
-  if(key==='notes') return 'Notes';
-  return key;
-}
-
 function fieldLabel(key) {
   if(MS[key]) return (MS[key].label||key)+' ('+key+')';
   var sf=SFIELDS.find(f=>f.key===key);
