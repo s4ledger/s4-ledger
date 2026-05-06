@@ -1272,7 +1272,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                 <div>
                   <h3 className="text-sm font-bold text-gray-900">{hullSummary.label} Summary</h3>
                   <p className="text-[11px] text-steel">
-                    {hullSummary.total} deliverables assigned · {hullSummary.green} completed{hullSummary.pending > 0 ? ` · ${hullSummary.pending} pending review` : ''} · {hullSummary.red} overdue · {hullSummary.sealed} sealed
+                    {hullSummary.total} deliverables assigned · {hullSummary.green} completed{hullSummary.pending > 0 ? ` · ${hullSummary.pending} pending review` : ''} · {hullSummary.red} overdue
                   </p>
                 </div>
               </div>
@@ -1326,7 +1326,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
 
       {/* Stats Row */}
       <div className="max-w-[1600px] mx-auto px-6 py-4">
-        <div className="grid grid-cols-6 gap-3">
+        <div className="grid grid-cols-5 gap-3">
           <div className="bg-white border border-border rounded-card p-4">
             <p className="text-steel text-xs uppercase tracking-wide">Total DRLs</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
@@ -1346,10 +1346,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
           <div className="bg-white border border-red-500/30 rounded-card p-4">
             <p className="text-red-500 text-xs uppercase tracking-wide">Overdue</p>
             <p className="text-2xl font-bold text-red-500 mt-1">{stats.red}</p>
-          </div>
-          <div className="bg-white border border-accent/30 rounded-card p-4">
-            <p className="text-accent text-xs uppercase tracking-wide">Sealed</p>
-            <p className="text-2xl font-bold text-accent mt-1">{stats.anchored}</p>
           </div>
         </div>
       </div>

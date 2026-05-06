@@ -16,18 +16,12 @@ import type { DRLRow, Program, Contract } from '../types'
 /* ─── Craft Registry (was PMS300_CRAFT_REGISTRY) ──────────── */
 
 export const DEMO_CRAFT_REGISTRY: CraftEntry[] = [
-  { label: '40ft Patrol Boat',        desc: 'Force Protection patrol craft' },
-  { label: '11m RHIB',                desc: 'Expeditionary Rigid Hull Inflatable Boat' },
-  { label: 'Harbor Tug YTB',          desc: 'Large harbor tug — yard & district craft' },
-  { label: 'Utility Boat UB',         desc: 'General-purpose harbor utility craft' },
-  { label: 'Force Protection Boat',   desc: 'Security & force protection craft' },
-  { label: 'Diving Support Platform', desc: 'Diving operations support vessel' },
-  { label: 'Steel Workboat',          desc: 'Multi-purpose steel workboat' },
-  { label: 'Spill Response Craft',    desc: 'Oil-spill response & containment vessel' },
-  { label: 'HSMST Drone',             desc: 'High-Speed Maneuvering Surface Target' },
-  { label: '8m NSW RHIB',             desc: 'Naval Special Warfare 8-meter service support craft' },
-  { label: 'Barracks Barge APL',      desc: 'Non-self-propelled barracks craft' },
-  { label: 'Floating Dry Dock AFDL',  desc: 'Small auxiliary floating dry dock' },
+  { label: 'APL-101',  desc: 'Barracks craft — hull 1' },
+  { label: 'APL-102',  desc: 'Barracks craft — hull 2' },
+  { label: 'YRBM-51', desc: 'Repair barge — hull 1' },
+  { label: 'YRBM-52', desc: 'Repair barge — hull 2' },
+  { label: 'YTB-810', desc: 'Harbor tug — hull 1' },
+  { label: 'YTB-811', desc: 'Harbor tug — hull 2' },
 ]
 
 /* ─── Programs (was portfolioData programs) ───────────────── */
@@ -112,7 +106,7 @@ export const DEMO_DRL_TEMPLATES: DRLTemplate[] = [
 
 /* ─── Chat Craft Channels ─────────────────────────────────── */
 
-export const DEMO_CHAT_CRAFT_CHANNELS = ['40ft Patrol Boat', '11m RHIB', 'Harbor Tug YTB']
+export const DEMO_CHAT_CRAFT_CHANNELS = ['APL-101', 'YRBM-51', 'YTB-810']
 
 /* ─── Sample Data (was sampleData.ts) ─────────────────────── */
 
