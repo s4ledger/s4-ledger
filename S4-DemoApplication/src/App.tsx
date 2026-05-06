@@ -15,6 +15,30 @@ import LoginScreen from './components/LoginScreen'
 import RoleSelector from './components/RoleSelector'
 import DeliverablesTracker from './components/DeliverablesTracker'
 
+/**
+ * Enforce cross-field business-rule consistency on a DRL row at load time.
+ * status='green' REQUIRES received='Yes' AND a non-empty actualSubmissionDate.
+ * If either is missing, the status is corrected to 'yellow' (received, needs review).
+ * received='No' cannot coexist with status='green'.
+ */
+function sanitizeRow(row: DRLRow): DRLRow {
+  let { status, received, actualSubmissionDate } = row
+  if (status === 'green') {
+    if (received !== 'Yes' || !actualSubmissionDate) {
+      status = 'yellow'
+    }
+  }
+  if (received === 'No' && status === 'green') {
+    status = 'yellow'
+  }
+  if (status === row.status) return row
+  return { ...row, status }
+}
+
+function sanitizeRows(rows: DRLRow[]): DRLRow[] {
+  return rows.map(sanitizeRow)
+}
+
 /* ─── Lazy-loaded (code-split) modules ────────────────────────── */
 const PortfolioDashboard = lazy(() => import('./components/PortfolioDashboard'))
 
@@ -55,7 +79,7 @@ export default function App() {
   useEffect(() => {
     if (isDemo) setStage('role')
   }, [isDemo])
-  const [data, setData] = useState<DRLRow[]>(() => assignContractIds(sampleData))
+  const [data, setData] = useState<DRLRow[]>(() => sanitizeRows(assignContractIds(sampleData)))
   const [anchors, setAnchors] = useState<Record<string, AnchorRecord>>({})
   const [anchoring, setAnchoring] = useState<Set<string>>(new Set())
   const [selectedContractId, setSelectedContractId] = useState<string | null>(null)
@@ -64,7 +88,7 @@ export default function App() {
   // ── Demo mode: always reset to fresh sampleData, clear any stale state ───
   useEffect(() => {
     if (!isDemo) return
-    setData(assignContractIds(sampleData))
+    setData(sanitizeRows(assignContractIds(sampleData)))
     setAnchors({})
   }, [isDemo])
 
@@ -80,7 +104,7 @@ export default function App() {
         // 1. Hydrate from IndexedDB (instant, offline-capable)
         const storedRows = await loadPersistedRows()
         if (storedRows && storedRows.length > 0) {
-          setData(storedRows)
+          setData(sanitizeRows(storedRows))
         }
         const storedAnchors = await loadPersistedAnchors()
         if (storedAnchors) {
@@ -89,7 +113,7 @@ export default function App() {
         // 2. Hydrate from Supabase (cross-device, authoritative)
         const cloudRows = await loadRowsFromSupabase()
         if (cloudRows && cloudRows.length > 0) {
-          setData(cloudRows)
+          setData(sanitizeRows(cloudRows))
         }
       } catch (e) {
         console.warn('Offline store hydration failed:', e)
@@ -249,7 +273,7 @@ export default function App() {
           onReseal={handleReseal}
           onDataUpdate={(updated) => {
             setData(prev => {
-            const updatedMap = new Map(updated.map(r => [r.id, r]))
+            const updatedMap = new Map(sanitizeRows(updated).map(r => [r.id, r]))
             return prev.map(r => updatedMap.get(r.id) ?? r)
           })
         }}
@@ -298,7 +322,7 @@ export default function App() {
           onReseal={handleReseal}
           onDataUpdate={(updated) => {
             setData(prev => {
-              const updatedMap = new Map(updated.map(r => [r.id, r]))
+              const updatedMap = new Map(sanitizeRows(updated).map(r => [r.id, r]))
               return prev.map(r => updatedMap.get(r.id) ?? r)
             })
           }}

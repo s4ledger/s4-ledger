@@ -13,6 +13,96 @@ Each entry follows this structure:
 **Commit:** `hash`
 **Files Changed:**
 - path/to/file — what changed
+```
+
+---
+
+## Session Log — 2026-05-06
+
+### 2026-05-06 — Fix: status/received/submissionDate consistency enforcement
+**Commit:** `bcf66af`
+**Files Changed:**
+- `S4-DemoApplication/src/App.tsx` — Added `sanitizeRow()` / `sanitizeRows()` functions; applied at every data load point (initial state, demo reset, IndexedDB hydrate, Supabase cloud hydrate, both `onDataUpdate` callbacks)
+- `S4-DemoApplication/src/components/DeliverablesTracker.tsx` — Added `enforceStatusConsistency()` called after every `handleCellEdit()`; enforces: green requires received=Yes; received=No blocks green; clearing submission date resets received+downgrades green→yellow
+- `S4-DemoApplication/src/services/nsercIdeService.ts` — Simulation `simulateNSERCData()` now sets `received='Yes'` when adding `actualSubmissionDate`; red rows moved to yellow on submission; `mapNSERCDataToTrackerRow()` sanitizes incoming SharePoint data
+- `S4-DemoApplication/src/utils/externalSync.ts` — After merge of incoming external row, enforces status/received consistency before XRPL seal
+
+**What Was Done:**
+Fixed a critical data-integrity bug: rows could show status="Completed" (green) while `received="No"` (document not yet received). This is logically impossible in the acquisition workflow — a deliverable cannot be completed unless the Government has received it.
+
+Root causes found and fixed:
+1. **NSERC simulation** randomly set `actualSubmissionDate` without updating `received` or `status`
+2. **No load-time validation** — corrupted data in localStorage/Supabase was displayed as-is
+3. **No edit-time enforcement** — users could manually set inconsistent states
+4. **Sync merge** did blind `{...currentRow, ...extRow}` with no consistency check
+
+**Invariant now enforced everywhere:** `status === 'green'` ↔ `received === 'Yes'` AND `actualSubmissionDate` is non-empty. These three fields are always kept in agreement at: startup/load, every cell edit, every NSERC sync, every external merge.
+
+---
+
+### 2026-05-06 — Feat: Program Schedule → Deliverables Tracker date sync (all rows)
+**Commit:** `1a2d338`
+**Files Changed:**
+- `S4-DemoApplication/src/services/programScheduleService.ts` — Fixed `parseMilestoneRef()` for "Submit with X" (offset 0) and "NLT X + N days" patterns; added `DEMO_PS_VESSELS` constant (6 vessels with full construction ms + acqEvents); `fetchProgramSchedule()` now merges missing acqEvents from demo data and falls back to `DEMO_PS_VESSELS` so DT always has PS context
+- `S4-DemoApplication/src/types.ts` — Added `PSCellEntry` interface (shared between DT and modal)
+- `S4-DemoApplication/src/components/CellEditModal.tsx` — Added `psEntry?: PSCellEntry` to `CellEditTarget`; shows Program Schedule Source panel in modal with: contract baseline, PS current date, schedule variance (slip/early badge), milestone code, vessel designation
+- `S4-DemoApplication/src/components/DeliverablesTracker.tsx` — Replaced local PSEntry type with `PSCellEntry`; simplified `contractDueFinish` + `calculatedDueDate` cells to show clean date + compact `PS`/`ACQ` badge; clicking any PS-driven date opens modal with full PS lineage; removed `formatDelta` from DT (moved to modal)
+
+**What Was Done:**
+Previously only 1 of 15 rows showed PS source data. The other 14 rows had no PS context because:
+1. `parseMilestoneRef()` didn't handle "Submit with SRR/SDP" or "NLT milestone + N days" syntax
+2. `DEMO_PS_VESSELS` didn't exist — required the PS tool to be opened first to write to localStorage
+3. Cell display was too visually busy (strikethrough + delta badge + PS source all in-cell)
+
+Now: all rows that can be matched to a PS vessel/milestone show a clean date with a small `PS`/`ACQ` badge. Clicking opens a modal panel with the full Program Schedule breakdown including schedule variance.
+
+---
+
+### 2026-05-06 — Feat: PS→DT full implementation (previous session)
+**Commit:** `9f0c861`
+**Files Changed:**
+- `S4-DemoApplication/src/services/programScheduleService.ts` — `PSVessel` gets `acqEvents`; `MILESTONE_KEYWORDS` expanded to SRR/PDR/CDR/SDP/IOTE; `PSDueDateResult` gets `milestoneGroup`; `computePSDueDate()` checks both `ms` and `acqEvents`
+- `S4-DemoApplication/src/types.ts` — Added `milestoneRef` field to `DRLRow`
+- `S4-DemoApplication/src/components/DeliverablesTracker.tsx` — 3-case `contractDueFinish` render (no contract, shifted, unchanged); `calculatedDueDate` shows PS source badge; `psComputedDates` memo includes delta math
+- `S4-DemoApplication/src/hooks/useProgramSchedule.ts` — Added `storage` event listener for cross-tab propagation (`s4_ps_v2`, `s4_program_schedule_propagated`)
+- `program-schedule/index.html` — Added `ACQMS` registry; `acqEventsVisible` state; `acqEvents` data on 6 demo vessels; "Acq Events" toggle button + panel; `toggleAcqEvents()` / `renderAcqEvents()`; `propagate()` includes `acqEvents`; `openMSEModal` / `mseSave` / `mseDelete` handle `field==='acqEvent'`
+
+**What Was Done:**
+Implemented the full Program Schedule → Deliverables Tracker date synchronization architecture. Acquisition/design events (CDR, PDR, SRR, SDP, IOT&E) are tracked separately from construction milestones in the PS tool and flow through to the DT. Real-time cross-tab propagation added.
+
+---
+
+### 2026-05-06 — Fix: App.tsx hydration dep array + demo isolation
+**Commit:** `24cf234`
+**Files Changed:**
+- `S4-DemoApplication/src/App.tsx` — Hydration dep array `[isDemo]` → `[isDemo, authLoading, user]`; demo reset useEffect resets data+anchors; Supabase hydration guarded by `authLoading` and `user`; persist effects guard `if (isDemo || !user) return`; localStorage guard `if (isDemo) return`
+
+**What Was Done:**
+Demo mode could incorrectly trigger Supabase hydration, overwriting demo data with real user data. Persist effects were writing demo data to shared Supabase tables. All fixed by proper guards at each data lifecycle point.
+
+---
+
+### 2026-05-05 — Fix: craft labels use PS vessel designations
+**Commit:** `(prior session)`
+**Files Changed:**
+- `S4-DemoApplication/src/data/sampleData.ts` — All rows updated to use PS vessel designations: APL-101, APL-102, YRBM-51, YRBM-52, YTB-810, YTB-811
+- `S4-DemoApplication/src/config/demoDefaults.ts` — Same vessel designation updates
+- `S4-DemoApplication/src/components/DeliverablesTracker.tsx` — Craft labels and platform dropdowns aligned to PS vessel registry
+
+**What Was Done:**
+Demo data vessel names didn't match the Program Schedule tool's vessel designations (APL, YRBM, YTB prefixes). This broke PS→DT matching since `inferVesselFromTitle()` couldn't find a match. All sampleData and demoDefaults updated to use canonical PS designations.
+
+---
+
+### 2026-05-05 — Fix: PS tool spreadsheet UX improvements
+**Commit:** `(prior session)`
+**Files Changed:**
+- `program-schedule/index.html` — Group label no longer repeats type code; FY range extended with Custom option; notes cell opens modal with textarea + AI assist button; sheet toolbar has real search and status filter; `onDateChange` function declaration restored
+
+**What Was Done:**
+Multiple UX bugs in the Program Schedule spreadsheet tool: group headers were repeating the vessel type code, FY dropdown was limited to a fixed range, notes cells had no editing capability, and toolbar search/filter were decorative-only.
+
+
 
 **What Was Done:**
 Brief description of the change.
