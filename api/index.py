@@ -1663,7 +1663,23 @@ for all HarborLink operations.
 """
 
     if tool_context:
-        prompt += f"\n## CURRENT CONTEXT\nThe user is currently working in the **{tool_context}** tool. Tailor your responses to be relevant to this tool's capabilities.\n"
+        ctx_upper = tool_context.upper()
+        if "program-schedule-notes" in tool_context or "program_schedule_notes" in tool_context:
+            prompt += (
+                "\n## CURRENT CONTEXT\n"
+                "The user is working in the **Program Schedule Notes** tool for Navy service craft acquisition milestones.\n"
+                "Your job is to draft or refine professional program status notes for individual vessels.\n"
+                "\n### Note Writing Guidelines\n"
+                "- Write in a formal Navy acquisition program management tone (similar to a PM brief or SETR note)\n"
+                "- Be specific: reference actual milestone names, dates, contract numbers, and shipbuilders when provided\n"
+                "- Typical length: 2-4 clear sentences\n"
+                "- Address: current schedule status, milestone outlook, risk posture, and any mitigation in progress\n"
+                "- Do NOT use first person. Write from the program office perspective.\n"
+                "- Use plain prose, no bullet points or markdown formatting in the note itself\n"
+                "- If the user asks to revise, shorten, formalize, or change tone, apply those edits to the note in context\n"
+            )
+        else:
+            prompt += f"\n## CURRENT CONTEXT\nThe user is currently working in the **{tool_context}** tool. Tailor your responses to be relevant to this tool's capabilities.\n"
 
     if analysis_data:
         prompt += f"\n## CURRENT ANALYSIS DATA\n{json.dumps(analysis_data, indent=2)}\nUse this data to provide specific, data-driven responses about the user's program.\n"
@@ -4068,7 +4084,7 @@ class handler(BaseHTTPRequestHandler):
             # Falls back to structured response if no API key configured.
             user_message = data.get("message", "").strip()
             conversation = data.get("conversation", [])  # Previous messages
-            tool_context = data.get("tool_context", "")  # Current ILS tool
+            tool_context = data.get("tool_context", "") or data.get("ctx", "")  # Current ILS tool
             analysis_data = data.get("analysis_data", None)  # Gap analysis results summary
             document_content = data.get("document_content", "")  # Uploaded document text
             document_name = data.get("document_name", "")  # Original filename

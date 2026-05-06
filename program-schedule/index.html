@@ -1169,6 +1169,7 @@ var GP_FY_W_BASE   = 220; // 220px per FY × 7 years = 1540px — always overflo
 var completedSet = new Set();
 /* ── Context menu state ─── */
 var _ctxVid=null, _ctxKey=null, _ctxField='ms', _ctxIsText=false, _ctxIsNotes=false;
+var _noteAIHistory=[];  // conversation history for current notes session
 var sheetSearch='', sheetStatusFilter='all';
 /* ── Drag state ─── */
 var _drag = null; // { el, vid, key, startX, origX, svgLeftOffset }
@@ -2092,11 +2093,12 @@ function openMSEModal(vid, key, field) {
     if (aiResp) { aiResp.textContent=''; aiResp.style.display='none'; }
     if (aiUseRow) aiUseRow.style.display='none';
     if (aiQ) aiQ.value='';
-    if (aiQ) aiQ.placeholder = 'Ask follow-up questions or request changes…';
+    if (aiQ) aiQ.placeholder = 'Ask AI to refine, shorten, or change tone…';
+    _noteAIHistory = [];  // reset conversation for this vessel
     document.getElementById('ms-edit-modal').classList.add('open');
     setTimeout(function(){ var t=document.getElementById('mse-notes-ta'); if(t) t.focus(); }, 120);
     // Auto-generate initial recommended note
-    setTimeout(function(){ noteAISend(); }, 300);
+    setTimeout(function(){ noteAISend(true); }, 280);
     return;
   }
   if (notesRow) notesRow.style.display = 'none';
@@ -2755,32 +2757,98 @@ function getLocationValue(selId, inputId) {
 }
 
 window.noteAISend = async function() {
-  var q = (document.getElementById('mse-notes-ai-q').value||'').trim();
+  var isInitial = (arguments[0] === true);
+  var qEl = document.getElementById('mse-notes-ai-q');
+  var q = qEl ? qEl.value.trim() : '';
   var v = _ctxVid ? vessels.find(function(x){return x.id===_ctxVid;}) : null;
   var currentNote = (document.getElementById('mse-notes-ta').value||'').trim();
   var btn = document.getElementById('mse-notes-ai-btn');
   var respEl = document.getElementById('mse-notes-ai-resp');
   var useRow = document.getElementById('mse-notes-ai-use-row');
   if (!respEl) return;
-  var ctx = v
-    ? (v.designation+' ('+v.type+', '+v.fleet+', '+(v.status||'on-track')+'). '
-       +'Milestones: '+Object.entries(v.ms).filter(function(e){return e[1];}).map(function(e){return e[0]+'='+fmtYM(e[1]);}).join(', ')+'. '
-       +(currentNote?'Current note: "'+currentNote+'". ':'')
-       +(q||'Please write a concise program status note for this vessel.'))
-    : (q||'Please write a vessel program note.');
-  respEl.textContent = 'Thinking\u2026';
+  if (!isInitial && !q) return;  // nothing typed, nothing to do
+
+  // Build rich vessel context string
+  var msDates = v ? Object.entries(v.ms).filter(function(e){return e[1];}).map(function(e){
+    return (MS[e[0]]&&MS[e[0]].label?MS[e[0]].label:e[0])+': '+fmtYM(e[1]);
+  }).join(' | ') : '';
+  var sfBits = [];
+  if (v&&v.sf) {
+    if (v.sf.contract_num) sfBits.push('Contract #'+v.sf.contract_num);
+    if (v.sf.builder)      sfBits.push('Builder: '+v.sf.builder);
+    if (v.sf.contract_del) sfBits.push('Contract Delivery: '+fmtYM(v.sf.contract_del));
+    if (v.sf.fy_approp)   sfBits.push('FY Appropriation: '+v.sf.fy_approp);
+  }
+  var vesselSummary = v
+    ? ('Vessel: '+v.designation+' | Type: '+v.type+' | Location: '+(v.fleet||'N/A')
+       +' | Status: '+(v.status||'on-track').replace(/-/g,' ')+'\n'
+       +(msDates?'Milestones: '+msDates+'\n':'No milestone dates set.\n')
+       +(sfBits.length?sfBits.join(' | ')+'\n':'')
+       +(currentNote?'Existing note: "'+currentNote+'"':'No existing note.'))
+    : 'No vessel context.';
+
+  var userMsg;
+  if (isInitial) {
+    userMsg = 'Write a professional 2-4 sentence program status note for this Navy service craft. '
+      +'Use a formal acquisition program management tone. Address schedule status, any milestone risks, '
+      +'and overall program health. Be specific \u2014 reference actual milestone dates and status where available.\n\n'
+      +vesselSummary;
+  } else {
+    if (qEl) qEl.value = '';
+    userMsg = q+'\n\nVessel context:\n'+vesselSummary;
+    _noteAIHistory.push({role:'user', content:q});
+  }
+
+  respEl.textContent = 'S4 AI is drafting a note\u2026';
   respEl.style.display = '';
   if (useRow) useRow.style.display = 'none';
   if (btn) btn.disabled = true;
+
+  // Local fallback — always produces a real professional note
+  function localNoteFallback() {
+    if (!v) return 'No vessel data available.';
+    var stat = (v.status||'on-track');
+    var del = v.ms&&v.ms.DEL ? fmtYM(v.ms.DEL) : null;
+    var lch = v.ms&&v.ms.LCH ? fmtYM(v.ms.LCH) : null;
+    var statusStr = {delayed:'delayed and under active risk mitigation',
+                    'at-risk':'at risk with PM monitoring for potential schedule impact',
+                    complete:'complete — all milestones met',
+                    'on-track':'on schedule per the approved baseline'}[stat]||'on schedule';
+    var note = v.designation+' acquisition program is currently '+statusStr+'.';
+    if (del) note += ' Contract delivery is planned for '+del+'.';
+    else if (lch) note += ' Launch is scheduled for '+lch+'.';
+    if (stat==='delayed'||stat==='at-risk')
+      note += ' PM is coordinating with '+((v.sf&&v.sf.builder)||'the shipbuilder')+' on schedule recovery actions.';
+    else
+      note += ' All milestones are tracking to the baseline schedule with no current concerns.';
+    return note;
+  }
+
   try {
-    var res = await fetch('/api/ai-chat',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:ctx,ctx:'program-schedule-notes'})});
+    var histPayload = _noteAIHistory.slice(-8).map(function(m){
+      return {role:m.role==='bot'?'assistant':m.role, content:m.content};
+    });
+    var res = await fetch('/api/ai-chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:userMsg, tool_context:'program-schedule-notes', conversation:histPayload})
+    });
     if (res.ok) {
-      var data = await res.json();
-      respEl.textContent = data.reply||data.message||data.text||'No response received.';
+      var d = await res.json();
+      // API returns key 'response'; backward-compat with 'reply'/'message'/'text'
+      var reply = d.response || d.reply || d.text || '';
+      if (!reply || d.fallback) reply = localNoteFallback();
+      respEl.textContent = reply;
+      _noteAIHistory.push({role:'assistant', content:reply});
       if (useRow) useRow.style.display = '';
-    } else { respEl.textContent = 'AI service unavailable. Please try again.'; }
-  } catch(e) { respEl.textContent = 'AI offline. Check connection.'; }
+    } else {
+      respEl.textContent = localNoteFallback();
+      if (useRow) useRow.style.display = '';
+    }
+  } catch(e) {
+    respEl.textContent = localNoteFallback();
+    if (useRow) useRow.style.display = '';
+  }
   if (btn) btn.disabled = false;
 };
 
