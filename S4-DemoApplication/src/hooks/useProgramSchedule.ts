@@ -11,10 +11,11 @@ interface UseProgramScheduleResult {
 
 /**
  * React hook that loads Program Schedule vessel milestone data from
- * Supabase on mount and exposes a manual `sync()` trigger.
+ * Supabase / localStorage on mount and exposes a manual `sync()` trigger.
  *
- * Usage:
- *   const { psData, loading, lastSync, sync } = useProgramSchedule()
+ * Also listens for the PS tool writing to localStorage in another tab
+ * (via the browser `storage` event) so that milestone changes propagate
+ * to the Deliverables Tracker in real time without requiring a page reload.
  */
 export function useProgramSchedule(): UseProgramScheduleResult {
   const [psData, setPsData] = useState<PSData | null>(null)
@@ -26,6 +27,24 @@ export function useProgramSchedule(): UseProgramScheduleResult {
   /** Call this to trigger a manual re-fetch */
   const sync = useCallback(() => {
     setSyncTick(t => t + 1)
+  }, [])
+
+  // ── Cross-tab real-time sync ─────────────────────────────────────
+  // When the Program Schedule tool saves to localStorage (same origin),
+  // the browser fires a `storage` event in all OTHER tabs.  We catch it
+  // here so that any milestone change in the PS tool is reflected in the
+  // Deliverables Tracker immediately — no manual sync button needed.
+  useEffect(() => {
+    const PS_STORE_KEY = 's4_ps_v2'
+    const PS_PROP_KEY  = 's4_program_schedule_propagated'
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === PS_STORE_KEY || e.key === PS_PROP_KEY) {
+        setSyncTick(t => t + 1)
+      }
+    }
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
   }, [])
 
   useEffect(() => {

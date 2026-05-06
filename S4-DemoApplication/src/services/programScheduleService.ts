@@ -18,7 +18,8 @@ export interface PSVessel {
   type: string             // e.g. 'Patrol Boat'
   fleet?: string
   status?: string
-  ms: MilestoneMap         // { CA: '2024-03', SOC: '2024-09', BT: '2025-06', AT: '2025-08', DEL: '2025-10', … }
+  ms: MilestoneMap         // construction milestones: { CA, SOC, LCH, BT, AT, DEL }
+  acqEvents?: MilestoneMap // acquisition/design events: { SRR, PDR, CDR, SDP, IOTE, … }
   baseline?: MilestoneMap
 }
 
@@ -31,12 +32,19 @@ export interface PSData {
 /* ─── Milestone keyword map ──────────────────────────────────────── */
 
 const MILESTONE_KEYWORDS: Record<string, string[]> = {
-  CA:  ['contract award', 'award date', 'dac', 'after award', 'contract award date'],
-  SOC: ['start of construction', 'soc', 'keel laying', 'keel lay'],
-  LCH: ['launch', 'lch', 'float-off', 'float off'],
-  BT:  ["builder's trial", "builders trial", 'bt', 'dock trial', 'builder trial'],
-  AT:  ['acceptance trial', 'at', 'government acceptance', 'govt acceptance'],
-  DEL: ['delivery', 'del', 'ship delivery', 'vessel delivery'],
+  // ── Construction milestones ───────────────────────────────────────
+  CA:   ['contract award', 'award date', 'dac', 'after award', 'contract award date'],
+  SOC:  ['start of construction', 'soc', 'keel laying', 'keel lay'],
+  LCH:  ['launch', 'lch', 'float-off', 'float off'],
+  BT:   ["builder's trial", "builders trial", 'bt', 'dock trial', 'builder trial'],
+  AT:   ['acceptance trial', 'at', 'government acceptance', 'govt acceptance'],
+  DEL:  ['delivery', 'del', 'ship delivery', 'vessel delivery'],
+  // ── Acquisition / design & test review events ────────────────────
+  SRR:  ['system requirements review', 'srr', 'srr deliverables', 'with srr'],
+  PDR:  ['preliminary design review', 'pdr', 'after pdr'],
+  CDR:  ['critical design review', 'cdr', 'prior to cdr', 'before cdr'],
+  SDP:  ['software development plan', 'software design package', 'with sdp'],
+  IOTE: ['initial operational test', 'iot&e', 'iote', 'iot and e', 'operational test and evaluation'],
 }
 
 /** Offset pattern: "30 days prior" or "45 calendar days after" */
@@ -148,11 +156,12 @@ export function inferVesselFromTitle(title: string, vessels: PSVessel[]): PSVess
 /* ─── Compute a PS-driven due date for a DRL row ────────────────── */
 
 export interface PSDueDateResult {
-  date: string            // YYYY-MM-DD
+  date: string            // YYYY-MM-DD computed due date
   vessel: PSVessel
-  milestone: string       // e.g. 'AT'
+  milestone: string       // e.g. 'AT', 'CDR'
   milestoneDate: string   // the YYYY-MM value from PS for that milestone
   offsetDays: number
+  milestoneGroup: 'construction' | 'acqEvent'  // which section the milestone lives in
 }
 
 /**
@@ -182,9 +191,12 @@ export function computePSDueDate(
   const ref = parseMilestoneRef(submittalGuidance)
   if (!ref) return null
 
-  // Look up milestone date
-  const msDate = vessel.ms[ref.milestone]
+  // Look up milestone date — construction milestones first, then acquisition events
+  const msDate = vessel.ms[ref.milestone] ?? vessel.acqEvents?.[ref.milestone]
   if (!msDate) return null
+
+  const milestoneGroup: 'construction' | 'acqEvent' =
+    vessel.ms[ref.milestone] ? 'construction' : 'acqEvent'
 
   return {
     date: addDaysToYM(msDate, ref.offsetDays),
@@ -192,6 +204,7 @@ export function computePSDueDate(
     milestone: ref.milestone,
     milestoneDate: msDate,
     offsetDays: ref.offsetDays,
+    milestoneGroup,
   }
 }
 

@@ -52,6 +52,12 @@ export interface DRLRow {
    */
   vesselId?: string
   /**
+   * Parsed milestone reference from submittalGuidance — locked at import/creation
+   * so the system doesn't re-parse contract language on every render.
+   * e.g. { milestone: 'BT', offsetDays: -14 }
+   */
+  milestoneRef?: { milestone: string; offsetDays: number }
+  /**
    * The PS-computed due date (YYYY-MM-DD) based on milestone offset.
    * Populated at runtime by the PS integration service; not persisted.
    */

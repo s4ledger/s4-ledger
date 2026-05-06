@@ -738,12 +738,31 @@ td.ms-done .di::after { content:' ✓'; }
             <i class="fas fa-ruler-combined fa-xs"></i> Set Baseline
           </button>
           <span id="baseline-hint" style="font-size:9px;color:var(--steel);opacity:.6;white-space:nowrap">no baseline set</span>
+          <div class="tdiv"></div>
+          <button class="abtn btn-o" id="acq-toggle-btn" onclick="toggleAcqEvents()" title="Show/hide Acquisition &amp; Design Event dates (CDR, PDR, SRR, IOT&amp;E…) per vessel" style="font-size:10px;padding:2px 8px">
+            <i class="fas fa-calendar-check fa-xs"></i> Acq Events
+          </button>
         </div>
         <div id="sheet-wrap">
           <table class="sheet-tbl" id="ssheet">
             <thead><tr id="ssheet-hd"></tr></thead>
             <tbody id="ssheet-bd"></tbody>
           </table>
+        </div>
+        <!-- ── Acquisition & Design Events sub-panel ─────────────────── -->
+        <div id="acq-events-panel" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="padding:8px 14px;background:var(--surface-2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+            <i class="fas fa-calendar-check fa-xs" style="color:var(--accent)"></i>
+            <span style="font-size:11px;font-weight:700;color:var(--text)">Acquisition &amp; Design/Test Events</span>
+            <span style="font-size:9.5px;color:var(--steel);flex:1">Dates propagate to Deliverables Tracker — DRL due dates for CDR, PDR, SRR, IOT&amp;E deliverables are computed from these milestones</span>
+            <button class="abtn btn-o" onclick="toggleAcqEvents()" style="font-size:10px;padding:2px 7px"><i class="fas fa-times fa-xs"></i> Close</button>
+          </div>
+          <div id="acq-sheet-wrap" style="overflow-x:auto">
+            <table class="sheet-tbl" id="acq-ssheet" style="min-width:700px">
+              <thead><tr id="acq-ssheet-hd"></tr></thead>
+              <tbody id="acq-ssheet-bd"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -1092,6 +1111,17 @@ var MS = {
   DEL: {label:'Delivery (Actual)',      color:'#1c3a5f', shape:'circle',   gantt:true},
 };
 
+/* ── Acquisition & Design/Test Event milestone types ─────────────── */
+/* These appear in the Acq Events sub-panel (not the Gantt) and are    */
+/* propagated to the Deliverables Tracker so DRL due dates stay live.  */
+var ACQMS = {
+  SRR:  {label:'System Requirements Review',    color:'#5ac8fa'},
+  PDR:  {label:'Preliminary Design Review',     color:'#34c759'},
+  CDR:  {label:'Critical Design Review',        color:'#ff9500'},
+  SDP:  {label:'Software Dev Plan Submission',  color:'#af52de'},
+  IOTE: {label:'IOT&E',                         color:'#007AFF'},
+};
+
 /* ── Spreadsheet-only fields (not mapped to Gantt milestones) ─── */
 var SFIELDS = [
   {key:'contract_num',  label:'Contract No.',     type:'text'},
@@ -1120,6 +1150,9 @@ function vtIcon(type) {
   return VT_ICON_POOL[h%VT_ICON_POOL.length];
 }
 
+/* ── Acq Events panel toggle state ─── */
+var acqEventsVisible = false;
+
 /* ─────────────────────────────────────────────────────────────────
    DEMO DATA  (generic BLI-like data, not real operational schedule)
    Status mix: on-track, delayed, not-planned
@@ -1128,11 +1161,13 @@ var DEMO = [
   /* APLs */
   {id:'apl-101',type:'APL',designation:'APL-101',fleet:'PACFLT',
    ms:{CA:'2025-11',SOC:'2026-04',LCH:'2027-01',BT:'2027-05',AT:'2027-08',DEL:'2027-11'},
+   acqEvents:{SRR:'2026-02',PDR:'2026-08',CDR:'2026-12',SDP:'2026-10',IOTE:'2028-03'},
    sf:{contract_num:'N00024-26-C-2201',builder:'Gulf Craftsmen Inc.',uic:'23501',owld:'2026-03',fy_approp:'FY26',
        pm_secnav:'2025-09',contract_del:'2027-12',sail_tow:'2028-01',arrival_dest:'2028-02'},
    status:'on-track',notes:'Lead ship; all milestones on schedule'},
   {id:'apl-102',type:'APL',designation:'APL-102',fleet:'PACFLT',
    ms:{CA:'2026-03',SOC:'2026-09',LCH:'2027-07',BT:'2027-11',AT:'2028-02',DEL:'2028-05'},
+   acqEvents:{SRR:'2026-06',PDR:'2026-12',CDR:'2027-04',SDP:'2027-02',IOTE:'2028-09'},
    sf:{contract_num:'N00024-26-C-2202',builder:'Gulf Craftsmen Inc.',uic:'23502',owld:'2026-06',fy_approp:'FY26',
        pm_secnav:'2025-12',contract_del:'2028-06',sail_tow:'2028-07',arrival_dest:'2028-08'},
    status:'delayed',notes:'SOC slipped 2 mo; monitoring BT impact'},
@@ -1155,11 +1190,13 @@ var DEMO = [
   /* YRBMs */
   {id:'yrbm-51',type:'YRBM',designation:'YRBM-51',fleet:'PACFLT',
    ms:{CA:'2025-09',SOC:'2026-03',LCH:'2026-08',BT:'2026-10',AT:'2026-12',DEL:'2027-03'},
+   acqEvents:{SRR:'2025-12',PDR:'2026-05',CDR:'2026-08',SDP:'2026-06',IOTE:'2027-07'},
    sf:{contract_num:'N00024-25-C-3101',builder:'Vigor Industrial',uic:'24201',owld:'2025-12',fy_approp:'FY25',
        pm_secnav:'2025-06',contract_del:'2027-04',sail_tow:'2027-05',arrival_dest:'2027-06'},
    status:'delayed',notes:'AT delayed 6 wks due to equipment backorder'},
   {id:'yrbm-52',type:'YRBM',designation:'YRBM-52',fleet:'USFF',
    ms:{CA:'2026-02',SOC:'2026-08',LCH:'2027-02',BT:'2027-05',AT:'2027-07',DEL:'2027-10'},
+   acqEvents:{SRR:'2026-05',PDR:'2026-10',CDR:'2027-01',SDP:'2026-11',IOTE:'2028-02'},
    sf:{contract_num:'N00024-26-C-3102',builder:'Vigor Industrial',uic:'24202',owld:'2026-05',fy_approp:'FY26',
        pm_secnav:'2025-10',contract_del:'2027-11',sail_tow:'2027-12',arrival_dest:'2028-01'},
    status:'on-track',notes:''},
@@ -1194,11 +1231,13 @@ var DEMO = [
   /* YTBs */
   {id:'ytb-810',type:'YTB',designation:'YTB-810',fleet:'PACFLT',
    ms:{CA:'2025-08',SOC:'2026-02',LCH:'2026-10',BT:'2027-01',AT:'2027-03',DEL:'2027-06'},
+   acqEvents:{SRR:'2025-11',PDR:'2026-04',CDR:'2026-07',SDP:'2026-05',IOTE:'2027-09'},
    sf:{contract_num:'N00024-25-C-5101',builder:'Lake Shore Engineering',uic:'26101',owld:'2025-11',fy_approp:'FY25',
        pm_secnav:'2025-05',contract_del:'2027-07',sail_tow:'2027-08',arrival_dest:'2027-09'},
    status:'on-track',notes:'Lead hull; performing well'},
   {id:'ytb-811',type:'YTB',designation:'YTB-811',fleet:'USFF',
    ms:{CA:'2026-01',SOC:'2026-07',LCH:'2027-03',BT:'2027-06',AT:'2027-08',DEL:'2027-11'},
+   acqEvents:{SRR:'2026-04',PDR:'2026-10',CDR:'2027-01',SDP:'2026-11',IOTE:'2028-03'},
    sf:{contract_num:'N00024-26-C-5102',builder:'Lake Shore Engineering',uic:'26102',owld:'2026-04',fy_approp:'FY26',
        pm_secnav:'2025-09',contract_del:'2027-12',sail_tow:'2028-01',arrival_dest:'2028-02'},
    status:'on-track',notes:''},
@@ -2092,6 +2131,63 @@ function refreshSpreadsheetRow(vid) {
   renderSpreadsheet(); // re-render fully since cells are now badge divs, not inputs
 }
 
+/* ── Acq Events panel toggle ── */
+function toggleAcqEvents() {
+  acqEventsVisible = !acqEventsVisible;
+  var panel = document.getElementById('acq-events-panel');
+  var btn   = document.getElementById('acq-toggle-btn');
+  if (panel) panel.style.display = acqEventsVisible ? '' : 'none';
+  if (btn)   btn.style.fontWeight = acqEventsVisible ? '700' : '';
+  if (acqEventsVisible) renderAcqEvents();
+}
+window.toggleAcqEvents = toggleAcqEvents;
+
+/* ── Acquisition Events spreadsheet ── */
+function renderAcqEvents() {
+  var hd = document.getElementById('acq-ssheet-hd');
+  var bd = document.getElementById('acq-ssheet-bd');
+  if (!hd || !bd) return;
+
+  var acqKeys = Object.keys(ACQMS);
+  var fv = filtered();
+
+  // Header
+  var hdCols = ['Designation','Type'].concat(acqKeys.map(k=>(ACQMS[k].label||k)));
+  hd.innerHTML = hdCols.map(c=>'<th>'+esc(c)+'</th>').join('');
+
+  var h='';
+  var types=['APL','YRBM','YFB','YTB'];
+  fv.forEach(v=>{ if(!types.includes(v.type)) types.push(v.type); });
+
+  types.forEach(t=>{
+    var grp=fv.filter(v=>v.type===t); if(!grp.length) return;
+    var tc=(VT[t]||{}).color||'#6e6e73';
+    var vtDesc=(VT[t]||{}).label||t;
+    h+='<tr class="grp-sep"><td colspan="'+(2+acqKeys.length)+'" style="border-left:3px solid '+tc+'">'+esc(vtDesc)+'</td></tr>';
+
+    grp.forEach(v=>{
+      h+='<tr class="vrow" data-id="'+v.id+'">';
+      h+='<td class="ms-cell"><span class="vname">'+esc(v.designation)+'</span></td>';
+      h+='<td class="ms-cell"><span style="color:'+tc+';font-weight:600">'+esc(v.type)+'</span></td>';
+      acqKeys.forEach(key=>{
+        var val=(v.acqEvents&&v.acqEvents[key])||'';
+        var acqDef=ACQMS[key]||{};
+        h+='<td class="ms-cell" onclick="openMSEModal(\''+v.id+'\',\''+key+'\',\'acqEvent\')" '
+          +'title="'+(acqDef.label||key)+' — '+(val?fmtYM(val):'not set')+'">';
+        if (val) {
+          h+='<div class="ms-badge"><span class="ms-dot" style="background:'+esc(acqDef.color||'#6e6e73')+'"></span>'+esc(fmtYM(val))+'</div>';
+        } else {
+          h+='<span class="ms-empty-lbl">—</span>';
+        }
+        h+='</td>';
+      });
+      h+='</tr>';
+    });
+  });
+  bd.innerHTML=h;
+}
+window.renderAcqEvents = renderAcqEvents;
+
 /* ── Spreadsheet ── */
 function renderSpreadsheet() {
   var hd=document.getElementById('ssheet-hd');
@@ -2335,11 +2431,15 @@ function openMSEModal(vid, key, field) {
   field = field || 'ms';
   var v = vessels.find(v=>v.id===vid); if (!v) return;
   var msDef = MS[key]||{};
+  var acqDef = ACQMS[key]||{};
   _ctxVid = vid; _ctxKey = key; _ctxField = field;
   var tc = (VT[v.type]||{}).color||'var(--accent)';
-  var dotColor  = field==='sf' ? '#6e6e73' : (msDef.color||tc);
+  var dotColor = field==='sf' ? '#6e6e73'
+    : field==='acqEvent' ? (acqDef.color||'#ff9500')
+    : (msDef.color||tc);
   var labelText = field==='sf'
     ? ((SFIELDS.find(f=>f.key===key)||{}).label||key)
+    : field==='acqEvent' ? (acqDef.label||key)
     : (msDef.label||key);
   var sfDef = SFIELDS.find(function(f){return f.key===key;});
   _ctxIsText  = !!(sfDef && sfDef.type==='text');
@@ -2401,10 +2501,13 @@ function openMSEModal(vid, key, field) {
   // Date/month field
   if (textRow) textRow.style.display = 'none';
   if (dateSec) dateSec.style.display = '';
-  if (completeRow) completeRow.style.display = field==='sf' ? 'none' : '';
+  // Acquisition events have no "completed" toggle — hide that row
+  if (completeRow) completeRow.style.display = (field==='sf' || field==='acqEvent') ? 'none' : '';
 
-  // Populate date: read from ms or sf, split out optional day
-  var rawDate = field==='sf' ? ((v.sf&&v.sf[key])||'') : (v.ms[key]||'');
+  // Populate date: read from ms, sf, or acqEvents depending on field type
+  var rawDate = field==='sf'        ? ((v.sf&&v.sf[key])||'')
+              : field==='acqEvent'  ? ((v.acqEvents&&v.acqEvents[key])||'')
+              : (v.ms[key]||'');
   var dp = rawDate.split('-');
   document.getElementById('mse-date').value = (dp[0]&&dp[1]) ? dp[0]+'-'+dp[1] : '';
   var dayEl = document.getElementById('mse-day');
@@ -2481,8 +2584,19 @@ window.mseSave = function() {
         {vesselId:v.id, vessel:v.designation, field:_ctxKey,
          oldVal:oldDateSF||null, newVal:newDate||null});
     }
+  } else if (field === 'acqEvent') {
+    // Acquisition / design event milestone date
+    var oldAcqDate = (v.acqEvents&&v.acqEvents[_ctxKey])||'';
+    if (newDate !== oldAcqDate) {
+      if (!v.acqEvents) v.acqEvents = {};
+      if (newDate) v.acqEvents[_ctxKey] = newDate; else delete v.acqEvents[_ctxKey];
+      var acqLbl = (ACQMS[_ctxKey]||{}).label||_ctxKey;
+      auditEntry('SCHEDULE','Updated '+acqLbl+' for '+v.designation,
+        {vesselId:v.id, vessel:v.designation, field:_ctxKey,
+         oldVal:oldAcqDate||null, newVal:newDate||null});
+    }
   } else {
-    // Milestone date field
+    // Construction milestone date field
     var oldDate = v.ms[_ctxKey]||'';
     if (newDate !== oldDate) {
       if (newDate) v.ms[_ctxKey] = newDate; else delete v.ms[_ctxKey];
@@ -2507,8 +2621,9 @@ window.mseSave = function() {
   }
 
   closeMSEModal();
-  renderGantt();
+  if (field !== 'acqEvent') renderGantt();
   renderSpreadsheet();
+  if (acqEventsVisible) renderAcqEvents();
   propagate();
   autoSave();
   toast(v.designation+' · '+(_ctxKey||'')+(isComplete&&field==='ms'?' ✓':'')+(newDate?' → '+fmtYM(newDate):''));
@@ -2536,6 +2651,12 @@ window.mseDelete = function() {
     delete v.sf[_ctxKey];
     auditEntry('SFIELD','Cleared '+fieldLabel(_ctxKey)+' for '+v.designation,
       {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:oldSF||null, newVal:null});
+  } else if (field === 'acqEvent') {
+    var oldAcq = (v.acqEvents&&v.acqEvents[_ctxKey])||'';
+    if (!oldAcq) { closeMSEModal(); return; }
+    delete v.acqEvents[_ctxKey];
+    auditEntry('SCHEDULE','Cleared '+((ACQMS[_ctxKey]||{}).label||_ctxKey)+' for '+v.designation,
+      {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:oldAcq||null, newVal:null});
   } else {
     var old = v.ms[_ctxKey]||'';
     if (!old && !completedSet.has(_ctxVid+'|'+_ctxKey)) { closeMSEModal(); return; }
@@ -2545,7 +2666,10 @@ window.mseDelete = function() {
       {vesselId:v.id, vessel:v.designation, field:_ctxKey, oldVal:old||null, newVal:null});
   }
   closeMSEModal();
-  renderGantt(); renderSpreadsheet(); propagate(); autoSave();
+  if (field !== 'acqEvent') renderGantt();
+  renderSpreadsheet();
+  if (acqEventsVisible) renderAcqEvents();
+  propagate(); autoSave();
   toast(v.designation+' · '+_ctxKey+' date cleared');
 };
 
@@ -2790,6 +2914,7 @@ function propagate() {
     sched[v.designation]={
       type:v.type,fleet:v.fleet,
       milestones:Object.assign({},v.ms),
+      acqEvents:Object.assign({},v.acqEvents||{}),
       sf:Object.assign({},v.sf||{}),
       status:v.status,
       updatedAt:nowISO(),
