@@ -766,10 +766,12 @@ td.ms-done .di::after { content:' ✓'; }
         </select>
       </div>
       <div>
-        <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Fleet</label>
-        <select id="av-fleet" class="s4sel" style="width:100%;height:34px;font-size:12px">
-          <option>PACFLT</option><option>USFF</option><option>USMC</option>
+        <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Location</label>
+        <select id="av-fleet" class="s4sel" style="width:100%;height:34px;font-size:12px" onchange="onLocationChange('av-fleet','av-fleet-custom')">
+          <option>PACFLT</option><option>USFF</option><option>USMC</option><option value="custom">Custom&#8230;</option>
         </select>
+        <input type="text" id="av-fleet-custom" placeholder="Enter location&#8230;"
+          style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none;box-sizing:border-box">
       </div>
       <div>
         <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Builder</label>
@@ -861,15 +863,38 @@ td.ms-done .di::after { content:' ✓'; }
     </div><!-- end mse-date-section -->
 
     <!-- Notes field (vessel-level notes) -->
-    <div id="mse-notes-row" style="display:none;margin-bottom:16px">
+    <div id="mse-notes-row" style="display:none;margin-bottom:0">
       <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Notes</label>
-      <textarea id="mse-notes-ta" rows="5" placeholder="Add notes about this vessel’s schedule, issues, or progress…"
+      <textarea id="mse-notes-ta" rows="4" placeholder="Add notes about this vessel&#8217;s schedule, issues, or progress&#8230;"
         style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);resize:vertical;line-height:1.5;box-sizing:border-box;transition:all .14s"
         onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
         onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'"></textarea>
-      <button class="abtn btn-o" style="margin-top:8px;width:100%;justify-content:center;font-size:11.5px" onclick="openAIFromNotes()">
-        <i class="fas fa-robot fa-xs"></i> Ask AI — draft or refine this note
-      </button>
+
+      <!-- Inline AI assist -->
+      <div style="margin-top:10px;border:1px solid var(--border);border-radius:9px;overflow:hidden;background:var(--surface-2)">
+        <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;background:rgba(0,122,255,0.06);border-bottom:1px solid var(--border)">
+          <i class="fas fa-robot" style="font-size:11px;color:var(--accent)"></i>
+          <span style="font-size:11px;font-weight:600;color:var(--accent)">AI Note Assistant</span>
+          <span style="font-size:9.5px;color:var(--steel);margin-left:auto">Powered by S4 AI</span>
+        </div>
+        <div id="mse-notes-ai-resp" style="display:none;padding:10px;font-size:12px;line-height:1.5;color:var(--text);border-bottom:1px solid var(--border);max-height:120px;overflow-y:auto"></div>
+        <div id="mse-notes-ai-use-row" style="display:none;padding:4px 10px;border-bottom:1px solid var(--border);background:rgba(52,199,89,0.05)">
+          <button class="abtn" style="font-size:10.5px;color:#1a7a36;border-color:rgba(52,199,89,.3);background:rgba(52,199,89,0.06);width:100%;justify-content:center" onclick="noteAIUse()">
+            <i class="fas fa-check fa-xs"></i> Use this response in notes
+          </button>
+        </div>
+        <div style="display:flex;gap:0">
+          <input type="text" id="mse-notes-ai-q"
+            placeholder="Ask AI to draft, improve, or summarize this note&#8230;"
+            style="flex:1;border:none;outline:none;padding:9px 12px;font-size:12px;font-family:inherit;background:transparent;color:var(--text)"
+            onkeydown="if(event.key==='Enter')noteAISend()">
+          <button id="mse-notes-ai-btn" onclick="noteAISend()"
+            style="border:none;background:var(--accent);color:white;padding:8px 13px;cursor:pointer;font-size:11px;transition:opacity .1s"
+            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+            <i class="fas fa-paper-plane fa-xs"></i>
+          </button>
+        </div>
+      </div>
     </div>
     <div id="mse-complete-row" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:20px">
       <div>
@@ -923,10 +948,12 @@ td.ms-done .di::after { content:' ✓'; }
         </select>
       </div>
       <div>
-        <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Fleet</label>
-        <select id="vedit-fleet" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);cursor:pointer">
-          <option>PACFLT</option><option>USFF</option><option>USMC</option>
+        <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Location</label>
+        <select id="vedit-fleet" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);cursor:pointer" onchange="onLocationChange('vedit-fleet','vedit-fleet-custom')">
+          <option>PACFLT</option><option>USFF</option><option>USMC</option><option value="custom">Custom&#8230;</option>
         </select>
+        <input type="text" id="vedit-fleet-custom" placeholder="Enter location&#8230;"
+          style="display:none;margin-top:6px;width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);box-sizing:border-box">
       </div>
     </div>
     <div style="margin-bottom:20px">
@@ -1787,7 +1814,7 @@ function renderSpreadsheet() {
   types.forEach(t=>{
     var grp=fv.filter(v=>v.type===t); if(!grp.length) return;
     var tc=(VT[t]||{}).color||'#6e6e73';
-    var total=msKeys.length+SFIELDS.length+4;
+    var total=msKeys.length+SFIELDS.length+7;
     var vtDesc = (VT[t]||{}).label||t;
     h+='<tr class="grp-sep"><td colspan="'+total+'" style="border-left:3px solid '+tc+'">'+esc(vtDesc)+'</td></tr>';
 
@@ -1948,11 +1975,19 @@ function openVesselModal(vid) {
   // Set select options safely
   var typeEl = document.getElementById('vedit-type');
   var fleetEl = document.getElementById('vedit-fleet');
+  var customEl = document.getElementById('vedit-fleet-custom');
   var statusEl = document.getElementById('vedit-status');
   typeEl.value = v.type;
   if (typeEl.value !== v.type) { var opt=document.createElement('option'); opt.value=opt.textContent=v.type; typeEl.appendChild(opt); typeEl.value=v.type; }
-  fleetEl.value = v.fleet;
-  if (fleetEl.value !== v.fleet) { var opt2=document.createElement('option'); opt2.value=opt2.textContent=v.fleet; fleetEl.appendChild(opt2); fleetEl.value=v.fleet; }
+  // Set location: if not in standard list, show custom input
+  var stdLocations = ['PACFLT','USFF','USMC'];
+  if (stdLocations.includes(v.fleet)) {
+    fleetEl.value = v.fleet;
+    if (customEl) { customEl.style.display='none'; customEl.value=''; }
+  } else {
+    fleetEl.value = 'custom';
+    if (customEl) { customEl.style.display=''; customEl.value=v.fleet; }
+  }
   statusEl.value = v.status||'on-track';
   document.getElementById('vedit-title').textContent = 'Edit '+v.designation;
   document.getElementById('vedit-sub').textContent = v.type+' · '+v.fleet;
@@ -1970,7 +2005,7 @@ window.vesselSave = function() {
   var newDes = document.getElementById('vedit-designation').value.trim();
   if (newDes) v.designation = newDes;
   v.type   = document.getElementById('vedit-type').value;
-  v.fleet  = document.getElementById('vedit-fleet').value;
+  v.fleet  = getLocationValue('vedit-fleet','vedit-fleet-custom');
   v.status = document.getElementById('vedit-status').value;
   closeVesselModal();
   auditEntry('VESSEL','Updated vessel properties for '+v.designation, {vesselId:v.id,type:v.type,fleet:v.fleet,status:v.status});
@@ -2009,6 +2044,17 @@ function openMSEModal(vid, key, field) {
     document.getElementById('mse-sub').textContent = v.type + ' · ' + v.fleet + ' · ' + (v.status||'on-track').replace('-',' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
     var ta = document.getElementById('mse-notes-ta');
     if (ta) ta.value = v.notes || '';
+    // Reset inline AI panel
+    var aiResp = document.getElementById('mse-notes-ai-resp');
+    var aiUseRow = document.getElementById('mse-notes-ai-use-row');
+    var aiQ = document.getElementById('mse-notes-ai-q');
+    if (aiResp) { aiResp.textContent=''; aiResp.style.display='none'; }
+    if (aiUseRow) aiUseRow.style.display='none';
+    if (aiQ) aiQ.value='';
+    // Pre-seed prompt with vessel context
+    if (aiQ) {
+      aiQ.placeholder = 'Ask AI to help draft a note for '+v.designation+'…';
+    }
     document.getElementById('ms-edit-modal').classList.add('open');
     setTimeout(function(){ var t=document.getElementById('mse-notes-ta'); if(t) t.focus(); }, 120);
     return;
@@ -2468,7 +2514,7 @@ window.openAddVessel=function(t){
 window.confirmAV=function(){
   var des=document.getElementById('av-des').value.trim().toUpperCase();
   var type=document.getElementById('av-type').value;
-  var fleet=document.getElementById('av-fleet').value;
+  var fleet=getLocationValue('av-fleet','av-fleet-custom');
   var builder=document.getElementById('av-builder').value.trim();
   if(!des){alert('Enter a designation.');return;}
   if(vessels.find(v=>v.designation===des)){alert(des+' already exists.');return;}
@@ -2649,16 +2695,78 @@ function localReason(v,key,diff) {
   return (MS[key]?MS[key].label:key)+' '+dir+' of '+abs+' mo for '+v.designation+'. Review schedule dependencies.';
 }
 
+function onLocationChange(selId, inputId) {
+  var sel = document.getElementById(selId);
+  var inp = document.getElementById(inputId);
+  if (!sel || !inp) return;
+  if (sel.value === 'custom') { inp.style.display=''; inp.focus(); }
+  else { inp.style.display='none'; inp.value=''; }
+}
+window.onLocationChange = onLocationChange;
+
+function getLocationValue(selId, inputId) {
+  var sel = document.getElementById(selId);
+  if (!sel) return '';
+  if (sel.value === 'custom') {
+    var inp = document.getElementById(inputId);
+    return (inp && inp.value.trim()) || 'Custom';
+  }
+  return sel.value;
+}
+
+window.noteAISend = async function() {
+  var q = (document.getElementById('mse-notes-ai-q').value||'').trim();
+  var v = _ctxVid ? vessels.find(function(x){return x.id===_ctxVid;}) : null;
+  var currentNote = (document.getElementById('mse-notes-ta').value||'').trim();
+  var btn = document.getElementById('mse-notes-ai-btn');
+  var respEl = document.getElementById('mse-notes-ai-resp');
+  var useRow = document.getElementById('mse-notes-ai-use-row');
+  if (!respEl) return;
+  var ctx = v
+    ? (v.designation+' ('+v.type+', '+v.fleet+', '+(v.status||'on-track')+'). '
+       +'Milestones: '+Object.entries(v.ms).filter(function(e){return e[1];}).map(function(e){return e[0]+'='+fmtYM(e[1]);}).join(', ')+'. '
+       +(currentNote?'Current note: "'+currentNote+'". ':'')
+       +(q||'Please write a concise program status note for this vessel.'))
+    : (q||'Please write a vessel program note.');
+  respEl.textContent = 'Thinking\u2026';
+  respEl.style.display = '';
+  if (useRow) useRow.style.display = 'none';
+  if (btn) btn.disabled = true;
+  try {
+    var res = await fetch('/api/ai-chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:ctx,ctx:'program-schedule-notes'})});
+    if (res.ok) {
+      var data = await res.json();
+      respEl.textContent = data.reply||data.message||data.text||'No response received.';
+      if (useRow) useRow.style.display = '';
+    } else { respEl.textContent = 'AI service unavailable. Please try again.'; }
+  } catch(e) { respEl.textContent = 'AI offline. Check connection.'; }
+  if (btn) btn.disabled = false;
+};
+
+window.noteAIUse = function() {
+  var respEl = document.getElementById('mse-notes-ai-resp');
+  var ta = document.getElementById('mse-notes-ta');
+  if (!respEl || !ta) return;
+  var text = (respEl.textContent||'').replace(/^Thinking\u2026$/, '').trim();
+  if (!text) return;
+  ta.value = text;
+  ta.focus();
+  ta.style.borderColor = 'var(--accent)';
+  ta.style.boxShadow = '0 0 0 3px rgba(0,122,255,.1)';
+  setTimeout(function(){ ta.style.borderColor='var(--border)'; ta.style.boxShadow='none'; }, 1200);
+};
+
 function openAIFromNotes() {
+  // Kept as fallback: seed the AI drawer with vessel context
   var v = _ctxVid ? vessels.find(x=>x.id===_ctxVid) : null;
   var current = document.getElementById('mse-notes-ta') ? document.getElementById('mse-notes-ta').value : '';
   closeMSEModal();
   openDrawer('ai');
   var seed = v
-    ? ('I am drafting notes for '+v.designation+' ('+v.type+', '+v.fleet+', '+v.status+'). '
-       + (current ? 'Current note: "'+current+'" — please help me refine or expand it.' : 'Please help me write a concise program note for this vessel.')
-       + ' Milestones: '+Object.entries(v.ms).filter(function(e){return e[1];}).map(function(e){return e[0]+'='+fmtYM(e[1]);}).join(', ')+'.'
-      )
+    ? ('Draft notes for '+v.designation+' ('+v.type+', '+v.fleet+'). '
+       +(current ? 'Current: "'+current+'"' : 'No existing notes.')
+       +' Milestones: '+Object.entries(v.ms).filter(function(e){return e[1];}).map(function(e){return e[0]+'='+fmtYM(e[1]);}).join(', ')+'.')
     : 'Help me write a vessel program note.';
   var inp = document.getElementById('ai-inp');
   if (inp) { inp.value = seed; inp.focus(); }
