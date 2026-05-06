@@ -243,6 +243,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   /* ─── Derive hull tabs for the selected platform ────────────── */
   const hullTabs = useMemo(() => {
     if (platformFilter === 'all') return ['all']
+    // Vessel-designation platforms (vesselId) are single vessels — no hull sub-tabs
+    if (data.some(r => r.vesselId === platformFilter)) return ['all']
+    // Fallback for manually-added craft rows still using (Platform — Hull N) titles
     const hullSet = new Set<string>()
     for (const row of data) {
       const parsed = parseCraftHull(row.title)
@@ -262,6 +265,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   const hullData = useMemo(() => {
     if (platformFilter === 'all') return data
     let rows = data.filter(r => {
+      if (r.vesselId) return r.vesselId === platformFilter
       const parsed = parseCraftHull(r.title)
       return parsed && parsed.platform === platformFilter
     })
@@ -332,8 +336,12 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   const platformCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     for (const r of data) {
-      const pr = parseCraftHull(r.title)
-      if (pr) counts[pr.platform] = (counts[pr.platform] || 0) + 1
+      if (r.vesselId) {
+        counts[r.vesselId] = (counts[r.vesselId] || 0) + 1
+      } else {
+        const pr = parseCraftHull(r.title)
+        if (pr) counts[pr.platform] = (counts[pr.platform] || 0) + 1
+      }
     }
     return counts
   }, [data])
