@@ -472,6 +472,53 @@ td.ms-done .di::after { content:' ✓'; }
 ::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.18)}
 
 @media(max-width:760px){ #drawer,#drawer-btns{ display:none; } }
+
+/* ── Mobile card view ── */
+@media(max-width:760px){
+  #gantt-section { display:none; }
+  #sheet-section { display:none; }
+  #mobile-cards  { display:grid!important; }
+  #toolbar .tg:not(#craft-dd-wrap):not(#fy-wrap) { display:none; }
+}
+#mobile-cards { display:none; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; padding:14px; }
+.mv-card { background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 1px 8px rgba(0,0,0,0.07); }
+.mv-card-hdr { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
+.mv-card-desig { font-size:15px;font-weight:700;color:var(--text); }
+.mv-card-type { font-size:10px;background:var(--surface-2);border-radius:5px;padding:2px 6px;color:var(--steel); }
+.mv-card-status { font-size:10px;border-radius:5px;padding:2px 7px;font-weight:600; }
+.mv-ms-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:5px; }
+.mv-ms-cell { background:var(--surface-2);border-radius:7px;padding:5px 7px; }
+.mv-ms-label { font-size:9px;color:var(--steel);font-weight:600;text-transform:uppercase;letter-spacing:.04em; }
+.mv-ms-date { font-size:11px;font-weight:600;color:var(--text); }
+
+/* ── Baseline delta badges ── */
+.bl-delta { font-size:8.5px;font-weight:700;border-radius:4px;padding:1px 4px;margin-left:3px;vertical-align:middle;white-space:nowrap; }
+.bl-delta.slip { background:rgba(255,59,48,0.12);color:#d32f2f; }
+.bl-delta.accel { background:rgba(52,199,89,0.12);color:#1a7a36; }
+.bl-delta.on { background:rgba(0,122,255,0.1);color:#0060c7; }
+
+/* ── Keyboard focus ring on cells ── */
+.sheet-tbl td:focus { outline:2px solid var(--accent);outline-offset:-1px; }
+.sheet-tbl td.kb-focus { box-shadow:inset 0 0 0 2px var(--accent); }
+
+/* ── Role badge ── */
+.role-badge { font-size:9px;font-weight:700;border-radius:5px;padding:2px 7px;letter-spacing:.04em;text-transform:uppercase; }
+.role-badge.viewer { background:rgba(255,149,0,0.12);color:#b35900; }
+.role-badge.editor { background:rgba(52,199,89,0.12);color:#1a7a36; }
+.role-badge.admin  { background:rgba(0,122,255,0.12);color:#0060c7; }
+
+/* ── @media print ── */
+@media print {
+  #clf-banner, #hdr, #toolbar, #legend, #drawer, #drawer-btns,
+  #gantt-section, #sheet-toolbar, .panel-hdr button, .abtn, #ctx-menu,
+  #ms-edit-modal, #vessel-modal, #add-vessel-modal { display:none!important; }
+  body, #app, #main, #center { background:white!important; color:black!important; overflow:visible!important; }
+  #sheet-section { box-shadow:none!important; border:none!important; }
+  .sheet-tbl { font-size:8pt!important; page-break-inside:auto; }
+  .sheet-tbl th, .sheet-tbl td { border:0.5pt solid #ccc!important; padding:3pt 4pt!important; }
+  .panel-hdr { background:#1c3a5f!important; color:white!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  @page { margin:0.5in; size:landscape; }
+}
   </style>
 </head>
 <body>
@@ -492,6 +539,7 @@ td.ms-done .di::after { content:' ✓'; }
     </div>
     <span id="save-lbl" style="font-size:10px;color:var(--steel);white-space:nowrap">All changes saved</span>
     <div class="hd"></div>
+    <span id="role-badge-hdr" class="role-badge editor" style="margin-right:4px">Editor</span>
     <div class="user-chip" onclick="handleSignOut()">
       <div class="uav" id="uav">D</div>
       <span class="unm" id="unm">Demo</span>
@@ -569,6 +617,9 @@ td.ms-done .di::after { content:' ✓'; }
     </button>
     <button class="abtn btn-o" id="ai-btn" onclick="openDrawer('ai')" title="AI Schedule Assistant">
       <i class="fas fa-robot fa-xs"></i> AI Assist
+    </button>
+    <button class="abtn btn-o" onclick="window.print()" title="Print / Export PDF">
+      <i class="fas fa-print fa-xs"></i> Print
     </button>
   </div>
 
@@ -652,7 +703,7 @@ td.ms-done .di::after { content:' ✓'; }
           <div class="ph-dot"></div>
           Acquisition Milestone Schedule
           <span class="ph-hint">Click any cell to edit &mdash; Designation, Type, Location, Status + all date cells</span>
-          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v3.0 May-5</span>
+          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v3.1 May-6</span>
           <span id="rt-dot" title="Connecting…" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--border);margin-left:6px;vertical-align:middle;transition:background .4s"></span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
@@ -682,6 +733,10 @@ td.ms-done .di::after { content:' ✓'; }
           </select>
           <div class="tdiv"></div>
           <span style="font-size:9.5px;color:var(--steel)" id="sheet-count">— vessels</span>
+          <div class="tdiv"></div>
+          <button class="abtn btn-o" onclick="setBaseline()" title="Snapshot current milestone dates as the baseline for variance tracking" style="font-size:10px;padding:2px 8px">
+            <i class="fas fa-ruler-combined fa-xs"></i> Set Baseline
+          </button>
         </div>
         <div id="sheet-wrap">
           <table class="sheet-tbl" id="ssheet">
@@ -690,6 +745,9 @@ td.ms-done .di::after { content:' ✓'; }
           </table>
         </div>
       </div>
+
+      <!-- Mobile card view -->
+      <div id="mobile-cards"></div>
     </div>
 
     <!-- Drawer toggle buttons (outside drawer) -->
@@ -716,7 +774,16 @@ td.ms-done .di::after { content:' ✓'; }
           <i class="fas fa-robot fa-xs"></i> AI Assist
         </button>
       </div>
-      <div id="dr-log"><div id="log-entries"><p style="color:var(--steel);font-size:10px;padding:4px">No changes yet.</p></div></div>
+      <div id="dr-log">
+        <div style="padding:8px 10px 4px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center">
+          <input type="text" id="audit-search" placeholder="Search log…"
+            style="flex:1;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;font-family:inherit;background:var(--surface-2);color:var(--text);outline:none"
+            oninput="auditLogSearch=this.value;renderLog();">
+          <button class="abtn" onclick="exportAuditCSV()" title="Export audit log as CSV"
+            style="font-size:10px;padding:2px 7px;white-space:nowrap"><i class="fas fa-download fa-xs"></i> CSV</button>
+        </div>
+        <div id="log-entries"><p style="color:var(--steel);font-size:10px;padding:4px">No changes yet.</p></div>
+      </div>
       <div id="dr-ai">
         <div id="ai-msgs"></div>
         <div id="ai-inp-row">
@@ -1010,7 +1077,7 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const SB=supabase.createClient(SB_URL,SB_KEY);
 
 /* ── Constants ─── */
-const VER='3.0.0', STORE_KEY='s4_ps_v2', PROP_KEY='s4_program_schedule_propagated';
+const VER='3.1.0', STORE_KEY='s4_ps_v2', PROP_KEY='s4_program_schedule_propagated';
 var realtimeChannel=null;
 const NOW_MONTH=new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0');
 
@@ -1151,6 +1218,7 @@ var vessels    = JSON.parse(JSON.stringify(DEMO));
 var auditLog   = [];   // Full audit trail
 var currentUser= null;
 var isDemo     = false;
+var userRole   = 'editor';   // 'viewer' | 'editor' | 'admin'
 var craftFilter= 'all';
 var fyStart    = 2026;
 var fyEnd      = 2032;
@@ -1159,6 +1227,7 @@ var drawerOpen = false;
 var drawerTab  = 'log';
 var saveTimer  = null;
 var logBadge   = 0;
+var auditLogSearch = '';  // audit log search term
 
 /* ── Gantt layout constants ─── */
 var GP = { LEFT:130, ROW_H:34, GRP_H:20, HDR_H:36, FY_W:220, MS_R:7 };
@@ -1286,7 +1355,11 @@ async function doLogin() {
   try {
     var r=await SB.auth.signInWithPassword({email:em,password:pw});
     if (r.error) { showErr(err,r.error.message||'Authentication failed.'); sysLog('AUTH','Login failed',{email:em,err:r.error.message}); }
-    else { sysLog('AUTH','Login success',{email:em}); }
+    else {
+      sysLog('AUTH','Login success',{email:em});
+      var role = (r.data.session&&r.data.session.user&&r.data.session.user.user_metadata&&r.data.session.user.user_metadata.role) || resolveRole(em);
+      applyRole(role);
+    }
   } catch(e) { showErr(err,'Network error. Please try again.'); sysLog('ERROR','Login exception',{err:e.message}); }
   finally { btn.disabled=false; txt.textContent='Sign In'; }
 }
@@ -1295,6 +1368,7 @@ window.doLogin=doLogin;
 function enterDemo() {
   isDemo=true; currentUser={id:'demo',email:'demo@s4ledger.com'};
   sysLog('AUTH','Demo mode entered',null);
+  applyRole(resolveRole('demo@s4ledger.com'));
   showApp('Demo User');
 }
 window.enterDemo=enterDemo;
@@ -1404,6 +1478,168 @@ function auditEntry(category, action, detail) {
 function sysLog(cat,action,detail) { return auditEntry(cat,action,detail||({})); }
 
 /* ═════════════════════════════════════════════════════════════════
+   ROLE-BASED ACCESS (#2)
+═════════════════════════════════════════════════════════════════ */
+function canEdit() { return userRole === 'editor' || userRole === 'admin'; }
+function canAdmin() { return userRole === 'admin'; }
+
+function applyRole(role) {
+  userRole = role || 'editor';
+  var badge = document.getElementById('role-badge-hdr');
+  if (badge) {
+    badge.textContent = userRole.charAt(0).toUpperCase()+userRole.slice(1);
+    badge.className = 'role-badge '+userRole;
+  }
+  // Gate destructive elements
+  document.querySelectorAll('.vessel-delete-btn').forEach(function(el){
+    el.style.display = canEdit() ? '' : 'none';
+  });
+  sysLog('AUTH','Role applied',{role:userRole,who:whoLabel()});
+}
+
+function resolveRole(email) {
+  // Admin emails: add yours here, or fetch from Supabase user_metadata
+  var admins = ['admin@s4ledger.com','s4systems@s4ledger.com'];
+  if (admins.includes((email||'').toLowerCase())) return 'admin';
+  // Check URL param for demo override
+  var rp = new URLSearchParams(window.location.search).get('role');
+  if (rp && ['viewer','editor','admin'].includes(rp)) return rp;
+  return 'editor';
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   BASELINE TRACKING (#4)
+═════════════════════════════════════════════════════════════════ */
+function setBaseline() {
+  if (!canEdit()) { toast('Viewer role cannot set baseline'); return; }
+  vessels.forEach(function(v) {
+    v.baseline = Object.assign({}, v.ms);
+  });
+  autoSave();
+  toast('Baseline set — delta badges will appear on schedule variance');
+  sysLog('CONFIG','Baseline snapshot set',{vessels:vessels.length,by:whoLabel()});
+}
+window.setBaseline = setBaseline;
+
+// Return delta in months between current and baseline date (positive = slip, negative = accel)
+function baselineDelta(v, key) {
+  if (!v.baseline || !v.baseline[key] || !v.ms[key]) return null;
+  var base = v.baseline[key], cur = v.ms[key];
+  if (base === cur) return 0;
+  var b = base.split('-').map(Number), c = cur.split('-').map(Number);
+  return (c[0]-b[0])*12 + (c[1]-b[1]);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   DEL FORECASTING (#9)
+═════════════════════════════════════════════════════════════════ */
+function forecastDEL(v) {
+  // Look at audit log for DEL changes on this vessel; compute average monthly slip trend
+  var delChanges = auditLog.filter(function(e){
+    return e.vesselId===v.id && e.field==='DEL' && e.oldVal && e.newVal;
+  });
+  if (delChanges.length < 2) return null; // not enough history
+  // Convert each change to months-slipped, averaged
+  var totalSlip = 0;
+  delChanges.forEach(function(e) {
+    var o=e.oldVal.split('-').map(Number), n=e.newVal.split('-').map(Number);
+    totalSlip += (n[0]-o[0])*12 + (n[1]-o[1]);
+  });
+  var avgSlip = totalSlip / delChanges.length; // avg mo per change event
+  if (avgSlip <= 0 || !v.ms.DEL) return null;
+  // Project current DEL + avgSlip*0.7 (dampened)
+  var cur = v.ms.DEL.split('-').map(Number);
+  var projMo = cur[1]-1 + Math.round(avgSlip * 0.7);
+  var projYr = cur[0] + Math.floor(projMo/12);
+  projMo = projMo%12;
+  return projYr+'-'+String(projMo+1).padStart(2,'0');
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   AUDIT LOG EXPORT (#8)
+═════════════════════════════════════════════════════════════════ */
+function exportAuditCSV() {
+  var rows = [['Timestamp','Who','Category','Action','Vessel','Field','Old Value','New Value','Note']];
+  auditLog.forEach(function(e) {
+    rows.push([
+      e.ts, e.who||'', e.category||'', e.action||'',
+      e.vessel||'', e.field||'',
+      e.oldVal!=null?fmtField(e.field,e.oldVal):'',
+      e.newVal!=null?fmtField(e.field,e.newVal):'',
+      e.note||''
+    ]);
+  });
+  var csv = rows.map(function(r){
+    return r.map(function(c){ return '"'+(String(c).replace(/"/g,'""'))+'"'; }).join(',');
+  }).join('\r\n');
+  var blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = 'program-schedule-audit-'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  sysLog('EXPORT','Audit log CSV exported',{rows:auditLog.length,by:whoLabel()});
+}
+window.exportAuditCSV = exportAuditCSV;
+
+/* ═════════════════════════════════════════════════════════════════
+   SLIP NOTIFICATIONS (#6)
+═════════════════════════════════════════════════════════════════ */
+async function checkSlipNotification(v, key, oldVal, newVal) {
+  if (!oldVal || !newVal) return;
+  var o=oldVal.split('-').map(Number), n=newVal.split('-').map(Number);
+  var slipMo = (n[0]-o[0])*12+(n[1]-o[1]);
+  if (slipMo <= 0) return;  // accel or no change
+  var msg = '[SLIP] '+v.designation+' '+key+' slipped '+slipMo+' month(s): '+fmtYM(oldVal)+' → '+fmtYM(newVal)+' ('+whoLabel()+')';
+  sysLog('CONFIG','Milestone slip detected — notification queued',{vessel:v.designation,key:key,slip:slipMo,oldVal:oldVal,newVal:newVal});
+  try {
+    await fetch('/api/webhook-trigger', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({event:'milestone.slip',vesselId:v.id,vessel:v.designation,
+        milestone:key,oldDate:oldVal,newDate:newVal,slipMonths:slipMo,
+        reporter:whoLabel(),ts:nowISO(),message:msg})
+    });
+  } catch(e) { /* webhook optional — fail silently */ }
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   MOBILE CARD VIEW (#7)
+═════════════════════════════════════════════════════════════════ */
+function renderCards() {
+  var el = document.getElementById('mobile-cards');
+  if (!el) return;
+  var vlist = filtered();
+  if (!vlist.length) { el.innerHTML='<p style="color:var(--steel);text-align:center;padding:20px">No vessels match the current filter.</p>'; return; }
+  var statusColors = {'on-track':'#34c759','at-risk':'#ff9500','delayed':'#ff3b30','not-planned':'#8e8e93','complete':'#007AFF'};
+  el.innerHTML = vlist.filter(function(v){return !v._isGroup;}).map(function(v) {
+    var st = v.status||'on-track';
+    var stColor = statusColors[st]||'#8e8e93';
+    var stLabel = st.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+    var msHtml = ['CA','SOC','LCH','BT','AT','DEL'].map(function(k){
+      return '<div class="mv-ms-cell">'
+        +'<div class="mv-ms-label">'+k+'</div>'
+        +'<div class="mv-ms-date">'+(v.ms[k]?fmtYM(v.ms[k]):'—')+'</div>'
+        +'</div>';
+    }).join('');
+    return '<div class="mv-card">'
+      +'<div class="mv-card-hdr">'
+        +'<span class="mv-card-desig">'+esc(v.designation)+'</span>'
+        +'<span class="mv-card-type">'+esc(v.type)+'</span>'
+        +'<span class="mv-card-status" style="background:'+stColor+'22;color:'+stColor+'">'+stLabel+'</span>'
+      +'</div>'
+      +'<div class="mv-ms-grid">'+msHtml+'</div>'
+      +(v.notes?'<div style="margin-top:8px;font-size:10.5px;color:var(--steel);line-height:1.4;padding:6px 8px;background:var(--surface-2);border-radius:7px">'+esc(v.notes)+'</div>':'')
+      +'</div>';
+  }).join('');
+  sysLog('SYSTEM','Card view rendered',{count:vlist.length});
+}
+window.renderCards = renderCards;
+
+/* ═════════════════════════════════════════════════════════════════
    DATE / FY HELPERS
 ═════════════════════════════════════════════════════════════════ */
 function toFY(ym) {
@@ -1447,6 +1683,7 @@ function render() {
   renderGantt();
   renderSpreadsheet();
   renderLog();
+  renderCards();
   var c=document.getElementById('sheet-count');
   if(c) c.textContent=filtered().length+' vessel'+(filtered().length!==1?'s':'');
 }
@@ -1598,6 +1835,30 @@ function renderGantt() {
       var isDone = completedSet.has(v.id+'|'+key);
       rh += msSymRight(mx, my, msDef.shape, msDef.color, key, v.id, fmtYM(v.ms[key]), isDone);
     });
+
+    // PASS 5b: Critical-path connector arrows (CA→SOC→LCH→BT→AT→DEL)
+    var cpKeys = ['CA','SOC','LCH','BT','AT','DEL'];
+    var cpPts = cpKeys.map(function(k){
+      return {k:k, x:dateToXRight(v.ms[k]||'')};
+    }).filter(function(p){ return p.x >= 0 && !hiddenMS[p.k]; });
+    for (var ci=0; ci<cpPts.length-1; ci++) {
+      var x1=cpPts[ci].x+GP.MS_R+1, x2=cpPts[ci+1].x-GP.MS_R-1, cy2=ry+rh2/2-5;
+      if (x2 > x1+4) {
+        rh += '<line x1="'+x1.toFixed(1)+'" y1="'+cy2+'" x2="'+x2.toFixed(1)+'" y2="'+cy2+'" stroke="'+tc2+'" stroke-width="1" stroke-dasharray="3,2" opacity="0.28" pointer-events="none"/>';
+        rh += '<polygon points="'+(x2).toFixed(1)+','+(cy2-2.5)+' '+(x2+4).toFixed(1)+','+cy2+' '+(x2).toFixed(1)+','+(cy2+2.5)+'" fill="'+tc2+'" opacity="0.28" pointer-events="none"/>';
+      }
+    }
+
+    // PASS 5c: Forecast DEL ghost marker
+    var fDEL = forecastDEL(v);
+    if (fDEL) {
+      var fxDEL = dateToXRight(fDEL);
+      if (fxDEL >= 0) {
+        var fmy = ry + rh2/2 - 5;
+        rh += '<circle cx="'+fxDEL+'" cy="'+fmy+'" r="'+GP.MS_R+'" fill="none" stroke="#ff9500" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.55" pointer-events="none"/>';
+        rh += '<text x="'+fxDEL+'" y="'+(fmy+GP.MS_R+16)+'" font-size="7" text-anchor="middle" fill="#ff9500" opacity="0.7" font-family="Inter,-apple-system,sans-serif" pointer-events="none">fcst</text>';
+      }
+    }
   });
 
   // PASS 6: FY headers — always drawn on top of everything
@@ -1874,13 +2135,21 @@ function renderSpreadsheet() {
         var isDone = completedSet.has(v.id+'|'+key);
         var msDef2 = MS[key]||{};
         var notPlanned = (st==='not-planned' && key!=='CA');
+        var delta = baselineDelta(v, key);
         h += '<td class="ms-cell'+(isDone?' ms-done':'')+'"'
           +' onclick="openMSEModal(\''+v.id+'\',\''+key+'\')" '
-          +' title="'+(msDef2.label||key)+' — '+(val ? fmtYM(val) : 'not set')+(isDone?' ✓':'')+'">';
+          +' tabindex="0" data-vid="'+v.id+'" data-key="'+key+'"'
+          +' title="'+(msDef2.label||key)+' — '+(val ? fmtYM(val) : 'not set')+(isDone?' ✓':'')+(delta!==null&&delta!==0?' | Baseline Δ '+(delta>0?'+':'')+delta+' mo':'')+'">';
         if (val) {
           h += '<div class="ms-badge"><span class="ms-dot" style="background:'+esc(msDef2.color||'#6e6e73')+'"></span>'
             + esc(fmtYM(val));
           if (isDone) h += '<span class="ms-check-lbl" style="color:#1a7a36"> ✓</span>';
+          if (delta !== null && delta !== 0) {
+            var dCls = delta > 0 ? 'bl-delta slip' : 'bl-delta accel';
+            h += '<span class="'+dCls+'">'+(delta>0?'+':'')+delta+'m</span>';
+          } else if (delta === 0) {
+            h += '<span class="bl-delta on">●</span>';
+          }
           h += '</div>';
         } else if (notPlanned) {
           h += '<span class="ms-empty-lbl" style="opacity:.22">—</span>';
@@ -1958,7 +2227,18 @@ function renderLog() {
   var catColors={SCHEDULE:'#007AFF',VESSEL:'#34c759',NOTES:'#ff9500',SFIELD:'#af52de',
     CONFIG:'#6e6e73',EXPORT:'#5ac8fa',IMPORT:'#5ac8fa',SAVE:'#34c759',
     SYNC:'#34c759',SYSTEM:'#6e6e73',AUTH:'#6e6e73',ERROR:'#ff3b30'};
-  el.innerHTML=auditLog.slice(0,80).map(e=>{
+  // Filter by auditLogSearch if set
+  var src = auditLogSearch
+    ? auditLog.filter(function(e) {
+        var s = auditLogSearch.toLowerCase();
+        return (e.action||'').toLowerCase().includes(s)
+            || (e.vessel||'').toLowerCase().includes(s)
+            || (e.who||'').toLowerCase().includes(s)
+            || (e.category||'').toLowerCase().includes(s)
+            || (e.field||'').toLowerCase().includes(s);
+      })
+    : auditLog;
+  el.innerHTML=src.slice(0,100).map(e=>{
     var d=new Date(e.ts);
     var ts=d.toLocaleDateString([],{month:'short',day:'numeric',year:'2-digit'})+' '
           +d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -2042,6 +2322,7 @@ function closeVesselModal() {
 }
 window.closeVesselModal = closeVesselModal;
 window.vesselSave = function() {
+  if (!canEdit()) { toast('View-only mode — no edits allowed'); closeVesselModal(); return; }
   if (!_veditVid) { closeVesselModal(); return; }
   var v = vessels.find(function(x){return x.id===_veditVid;}); if (!v) { closeVesselModal(); return; }
   var newDes = document.getElementById('vedit-designation').value.trim();
@@ -2146,6 +2427,7 @@ function closeMSEModal() {
 window.closeMSEModal = closeMSEModal;
 
 window.mseSave = function() {
+  if (!canEdit()) { toast('View-only mode — no edits allowed'); return; }
   if (!_ctxVid || !_ctxKey) return;
   var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
   var field = _ctxField || 'ms';
@@ -2212,7 +2494,10 @@ window.mseSave = function() {
       auditEntry('SCHEDULE','Updated '+fieldLabel(_ctxKey)+' for '+v.designation,
         {vesselId:v.id, vessel:v.designation, field:_ctxKey,
          oldVal:oldDate||null, newVal:newDate||null});
-      if (oldDate && newDate) aiReasoning(v, _ctxKey, oldDate, newDate, auditLog[0]);
+      if (oldDate && newDate) {
+        aiReasoning(v, _ctxKey, oldDate, newDate, auditLog[0]);
+        checkSlipNotification(v, _ctxKey, oldDate, newDate);
+      }
     }
     // Complete toggle (only for milestone fields)
     var wasDone = completedSet.has(ck);
@@ -2325,6 +2610,56 @@ document.addEventListener('keydown', function(e) {
     if (m) m.style.display = 'none';
     closeMSEModal();
     closeVesselModal();
+  }
+
+  // Keyboard navigation in spreadsheet cells (#10)
+  var ae = document.activeElement;
+  var inSheet = ae && ae.closest && ae.closest('#ssheet');
+  if (inSheet && ae.classList.contains('ms-cell')) {
+    if (e.key === 'Tab' || e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      var cells = Array.from(document.querySelectorAll('#ssheet-bd td[tabindex="0"]'));
+      var idx = cells.indexOf(ae);
+      var next = (e.key === 'ArrowLeft' || (e.key === 'Tab' && e.shiftKey))
+        ? cells[idx - 1]
+        : cells[idx + 1];
+      if (next) next.focus();
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      // Count columns, move down by same column in next row
+      var all = Array.from(document.querySelectorAll('#ssheet-bd td[tabindex="0"]'));
+      var idx2 = all.indexOf(ae);
+      // Find cells in same column across rows using column position
+      var row = ae.parentElement;
+      var rowCells = Array.from(row.querySelectorAll('td'));
+      var colPos = rowCells.indexOf(ae);
+      var nextRow = row.nextElementSibling;
+      while (nextRow && (nextRow.classList.contains('grp-sep') || !nextRow.cells[colPos])) {
+        nextRow = nextRow.nextElementSibling;
+      }
+      if (nextRow && nextRow.cells[colPos]) nextRow.cells[colPos].focus();
+      return;
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      var row2 = ae.parentElement;
+      var colPos2 = Array.from(row2.cells).indexOf(ae);
+      var prevRow = row2.previousElementSibling;
+      while (prevRow && (prevRow.classList.contains('grp-sep') || !prevRow.cells[colPos2])) {
+        prevRow = prevRow.previousElementSibling;
+      }
+      if (prevRow && prevRow.cells[colPos2]) prevRow.cells[colPos2].focus();
+      return;
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (ae.dataset && ae.dataset.vid && ae.dataset.key) {
+        openMSEModal(ae.dataset.vid, ae.dataset.key);
+      }
+      return;
+    }
   }
 });
 
@@ -2554,6 +2889,7 @@ window.openAddVessel=function(t){
   document.getElementById('av-des').focus();
 };
 window.confirmAV=function(){
+  if (!canEdit()) { toast('View-only mode — no edits allowed'); return; }
   var des=document.getElementById('av-des').value.trim().toUpperCase();
   var type=document.getElementById('av-type').value;
   var fleet=getLocationValue('av-fleet','av-fleet-custom');
