@@ -504,8 +504,12 @@ export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): DRLRow {
   let status = item.fields.Status.toLowerCase() as DRLRow['status']
 
   // Enforce cross-field consistency even for data coming from SharePoint
-  if (status === 'green' && received !== 'Yes') status = 'yellow'
-  if (received === 'No' && status === 'green') status = 'yellow'
+  // Rule 1: submission date implies received
+  let receivedFixed = received
+  if (actualSubmissionDate && received !== 'Yes') receivedFixed = 'Yes'
+  // Rule 2: green requires received + date
+  if (status === 'green' && receivedFixed !== 'Yes') status = 'yellow'
+  if (receivedFixed === 'No' && status === 'green') status = 'yellow'
   if (!actualSubmissionDate && status === 'green') status = 'yellow'
 
   return {
@@ -516,7 +520,7 @@ export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): DRLRow {
     calculatedDueDate: item.fields.Calc_Due_Date,
     submittalGuidance: item.fields.Submittal_Guide,
     actualSubmissionDate,
-    received,
+    received: receivedFixed,
     calendarDaysToReview: item.fields.Cal_Days_Review,
     notes: j2Ref + item.fields.Notes + comments,
     status,

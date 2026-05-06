@@ -79,6 +79,24 @@
       ]
     },
     {
+      "source": "/S4-DemoApplication",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/S4-DemoApplication/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    },
+    {
       "source": "/prod-app/dist/assets/(.*)",
       "headers": [
         {

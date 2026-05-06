@@ -17,22 +17,39 @@ import DeliverablesTracker from './components/DeliverablesTracker'
 
 /**
  * Enforce cross-field business-rule consistency on a DRL row at load time.
- * status='green' REQUIRES received='Yes' AND a non-empty actualSubmissionDate.
- * If either is missing, the status is corrected to 'yellow' (received, needs review).
- * received='No' cannot coexist with status='green'.
+ *
+ * Rules (in order):
+ *  1. If actualSubmissionDate is set, received MUST be 'Yes' — a document
+ *     with a submission date was necessarily received by the Government.
+ *  2. status='green' REQUIRES received='Yes' AND a non-empty submission date.
+ *     If either is missing, downgrade to 'yellow'.
+ *  3. received='No' cannot coexist with status='green'.
+ *
+ * This fixes stale data from the old NSERC simulation that set submission
+ * dates without also setting received='Yes'.
  */
 function sanitizeRow(row: DRLRow): DRLRow {
   let { status, received, actualSubmissionDate } = row
+
+  // Rule 1 — submission date implies the document was received
+  if (actualSubmissionDate && received !== 'Yes') {
+    received = 'Yes'
+  }
+
+  // Rule 2 — green requires both received AND a date
   if (status === 'green') {
     if (received !== 'Yes' || !actualSubmissionDate) {
       status = 'yellow'
     }
   }
+
+  // Rule 3 — received='No' blocks green
   if (received === 'No' && status === 'green') {
     status = 'yellow'
   }
-  if (status === row.status) return row
-  return { ...row, status }
+
+  if (status === row.status && received === row.received) return row
+  return { ...row, status, received }
 }
 
 function sanitizeRows(rows: DRLRow[]): DRLRow[] {
