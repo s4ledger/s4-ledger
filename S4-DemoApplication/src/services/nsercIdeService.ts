@@ -499,6 +499,15 @@ export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): DRLRow {
     ? ` | PMS 300 Comment: ${item.fields.Comments}`
     : ''
 
+  const actualSubmissionDate = item.fields.Actual_Sub_Date || ''
+  const received = item.fields.Received
+  let status = item.fields.Status.toLowerCase() as DRLRow['status']
+
+  // Enforce cross-field consistency even for data coming from SharePoint
+  if (status === 'green' && received !== 'Yes') status = 'yellow'
+  if (received === 'No' && status === 'green') status = 'yellow'
+  if (!actualSubmissionDate && status === 'green') status = 'yellow'
+
   return {
     id: item.fields.DRL_ID,
     title: item.fields.Title + rev + craftTag,
@@ -506,11 +515,11 @@ export function mapNSERCDataToTrackerRow(item: NSERCSharePointItem): DRLRow {
     contractDueFinish: item.fields.Contract_Due,
     calculatedDueDate: item.fields.Calc_Due_Date,
     submittalGuidance: item.fields.Submittal_Guide,
-    actualSubmissionDate: item.fields.Actual_Sub_Date || '',
-    received: item.fields.Received,
+    actualSubmissionDate,
+    received,
     calendarDaysToReview: item.fields.Cal_Days_Review,
     notes: j2Ref + item.fields.Notes + comments,
-    status: item.fields.Status.toLowerCase() as DRLRow['status'],
+    status,
   }
 }
 
@@ -740,11 +749,15 @@ function simulatePMS300Updates(
 
     const updated = { ...row, notes: newNote }
 
-    // Occasionally update submission date for non-green rows
+    // Occasionally record a submission date for non-green rows — sets received + keeps status consistent
     if (row.status !== 'green' && Math.random() > 0.5) {
       const d = new Date()
       updated.actualSubmissionDate =
         `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      // A recorded submission date means government received the document
+      updated.received = 'Yes'
+      // If the row was red (overdue), move it to yellow (received but under review)
+      if (row.status === 'red') updated.status = 'yellow'
     }
 
     return updated

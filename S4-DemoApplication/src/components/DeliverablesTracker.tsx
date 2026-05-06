@@ -718,6 +718,36 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
     setContractRefs({})
   }
 
+  /**
+   * Enforce cross-field business rules after any edit.
+   * Rules:
+   *   1. status='green' requires received='Yes' (Completed means it was received)
+   *   2. received='No' forbids status='green' (can't be completed if not received)
+   *   3. Clearing actualSubmissionDate when received='Yes' resets received to 'No'
+   *      and downgrades status from 'green' to 'yellow'
+   */
+  function enforceStatusConsistency(row: DRLRow, changedField: keyof DRLRow): Partial<DRLRow> {
+    const cascades: Partial<DRLRow> = {}
+
+    if (changedField === 'status' && row.status === 'green') {
+      // Completed status requires received
+      if (row.received !== 'Yes') cascades.received = 'Yes'
+    }
+
+    if (changedField === 'received' && row.received === 'No') {
+      // Can't be completed if not received
+      if (row.status === 'green') cascades.status = 'yellow'
+    }
+
+    if (changedField === 'actualSubmissionDate' && !row.actualSubmissionDate) {
+      // Cleared submission date means not yet submitted
+      if (row.received === 'Yes') cascades.received = 'No'
+      if (row.status === 'green') cascades.status = 'yellow'
+    }
+
+    return cascades
+  }
+
   function handleCellEdit(rowId: string, field: keyof DRLRow, value: string) {
     const row = data.find(r => r.id === rowId)
     if (row) {
@@ -757,11 +787,16 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
     }
     const updated = data.map(r => {
       if (r.id !== rowId) return r
+      let updatedRow: DRLRow
       if (field === 'calendarDaysToReview') {
         const num = value.trim() === '' || value.trim() === '—' ? null : parseInt(value, 10)
-        return { ...r, [field]: isNaN(num as number) ? null : num }
+        updatedRow = { ...r, [field]: isNaN(num as number) ? null : num }
+      } else {
+        updatedRow = { ...r, [field]: value }
       }
-      return { ...r, [field]: value }
+      // Enforce cross-field business rules
+      const cascades = enforceStatusConsistency(updatedRow, field)
+      return Object.keys(cascades).length > 0 ? { ...updatedRow, ...cascades } : updatedRow
     })
     onDataUpdate(updated)
   }

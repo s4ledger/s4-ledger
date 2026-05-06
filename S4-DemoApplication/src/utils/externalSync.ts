@@ -241,8 +241,17 @@ export async function realSyncPipeline(
 
     if (!hasChanges) continue
 
-    // Apply the external row's changes
-    updatedRows[idx] = { ...currentRow, ...extRow }
+    // Apply the external row's changes, then enforce cross-field business rules
+    const merged: DRLRow = { ...currentRow, ...extRow }
+    // status='green' requires received='Yes' and an actualSubmissionDate
+    if (merged.status === 'green' && (merged.received !== 'Yes' || !merged.actualSubmissionDate)) {
+      merged.status = 'yellow'
+    }
+    // received='No' cannot be green
+    if (merged.received === 'No' && merged.status === 'green') {
+      merged.status = 'yellow'
+    }
+    updatedRows[idx] = merged
     const updatedRow = updatedRows[idx]
 
     // ── Step 3: Audit Trail — tagged "Synced from NSERC IDE (PMS 300)" ──
