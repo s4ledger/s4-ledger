@@ -652,7 +652,8 @@ td.ms-done .di::after { content:' ✓'; }
           <div class="ph-dot"></div>
           Acquisition Milestone Schedule
           <span class="ph-hint">Click any cell to edit &mdash; Designation, Type, Location, Status + all date cells</span>
-          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.9 May-9</span>
+          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v3.0 May-5</span>
+          <span id="rt-dot" title="Connecting…" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--border);margin-left:6px;vertical-align:middle;transition:background .4s"></span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
             <i class="fas fa-download fa-xs"></i> Export CSV
@@ -1009,7 +1010,8 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const SB=supabase.createClient(SB_URL,SB_KEY);
 
 /* ── Constants ─── */
-const VER='2.0.0', STORE_KEY='s4_ps_v2', PROP_KEY='s4_program_schedule_propagated';
+const VER='3.0.0', STORE_KEY='s4_ps_v2', PROP_KEY='s4_program_schedule_propagated';
+var realtimeChannel=null;
 const NOW_MONTH=new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0');
 
 /* ── Milestone Registry (Gantt symbols) ─── */
@@ -1230,6 +1232,38 @@ function showApp(nameOrEmail) {
   document.getElementById('unm').textContent=n;
   buildFYSelects();
   render();
+  if (!isDemo) startRealtime();
+}
+
+function startRealtime() {
+  if (realtimeChannel) { try { SB.removeChannel(realtimeChannel); } catch(e){} }
+  try {
+    realtimeChannel = SB.channel('ps-v2-collab')
+      .on('broadcast', {event:'schedule-updated'}, function(msg) {
+        var p = msg.payload||{};
+        if (p.userId && p.userId === (currentUser&&currentUser.id)) return; // own save
+        loadCloud().then(function() {
+          render();
+          toast('\uD83D\uDCE1 '+((p.userName||'Another user')+' updated the schedule'));
+          sysLog('SYNC','Realtime update applied',{from:p.userName||p.userId});
+        });
+      })
+      .subscribe(function(status) {
+        if (status==='SUBSCRIBED') {
+          sysLog('SYNC','Realtime channel subscribed',{channel:'ps-v2-collab'});
+          setRealtimeDot(true);
+        } else if (status==='CLOSED'||status==='CHANNEL_ERROR') {
+          setRealtimeDot(false);
+        }
+      });
+  } catch(e) { sysLog('SYNC','Realtime skipped',{err:e.message}); }
+}
+
+function setRealtimeDot(connected) {
+  var el = document.getElementById('rt-dot');
+  if (!el) return;
+  el.title = connected ? 'Live — changes sync in real time' : 'Offline — changes saved locally';
+  el.style.background = connected ? 'var(--ok)' : 'var(--border)';
 }
 function showLogin() {
   document.getElementById('app').style.display='none';
@@ -1307,10 +1341,17 @@ window.saveAll = async function() {
     try {
       await SB.from('program_schedule').upsert(Object.assign({user_id:currentUser.id},payload),{onConflict:'tool_id'});
       sysLog('SYNC','Saved to Supabase',{vessels:vessels.length});
+      // Broadcast to other connected PMs
+      if (realtimeChannel) {
+        try {
+          realtimeChannel.send({type:'broadcast',event:'schedule-updated',
+            payload:{userId:currentUser.id,userName:whoLabel(),ts:nowISO()}});
+        } catch(be) { sysLog('SYNC','Broadcast skipped',{err:be.message}); }
+      }
     } catch(e) { sysLog('SYNC','Cloud save failed',{err:e.message}); }
   }
   setSaveLbl('All changes saved');
-  toast(isDemo?'Saved locally (demo mode)':'Saved to cloud');
+  toast(isDemo?'Saved locally (demo mode)':'Saved – syncing to team');
   sysLog('SAVE','Schedule saved by '+whoLabel(),{vessels:vessels.length,demo:isDemo});
 };
 
