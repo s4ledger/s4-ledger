@@ -527,16 +527,17 @@ td.ms-done .di::after { content:' ✓'; }
     <div class="tdiv"></div>
 
     <!-- FY range -->
-    <div class="tg">
+    <div class="tg" style="align-items:center;gap:4px">
       <span class="tlbl">FY</span>
-      <select class="s4sel" id="fy-s" onchange="updateFY()">
-        <option value="25">FY25</option><option value="26" selected>FY26</option><option value="27">FY27</option>
-      </select>
+      <select class="s4sel" id="fy-s" onchange="onFYSelChange('s')"></select>
+      <input type="number" id="fy-custom-s" min="2020" max="2060" placeholder="20XX"
+        style="display:none;width:58px;border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:11px;font-family:inherit;background:var(--surface-2);color:var(--text)"
+        onchange="updateFY()" onblur="updateFY()">
       <span style="font-size:11px;color:var(--steel)">–</span>
-      <select class="s4sel" id="fy-e" onchange="updateFY()">
-        <option value="30">FY30</option><option value="31">FY31</option>
-        <option value="32" selected>FY32</option><option value="33">FY33</option><option value="34">FY34</option>
-      </select>
+      <select class="s4sel" id="fy-e" onchange="onFYSelChange('e')"></select>
+      <input type="number" id="fy-custom-e" min="2020" max="2060" placeholder="20XX"
+        style="display:none;width:58px;border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:11px;font-family:inherit;background:var(--surface-2);color:var(--text)"
+        onchange="updateFY()" onblur="updateFY()">
     </div>
 
     <div class="tdiv"></div>
@@ -665,7 +666,19 @@ td.ms-done .di::after { content:' ✓'; }
           </button>
         </div>
         <div id="sheet-toolbar">
-          <span class="tlbl">Filter &amp; Info</span>
+          <span class="tlbl">Filter</span>
+          <input type="text" id="sheet-search" placeholder="Search vessels…"
+            style="border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;font-family:inherit;background:var(--surface-2);color:var(--text);width:130px;outline:none"
+            oninput="sheetSearch=this.value;renderSpreadsheet()">
+          <select id="sheet-status-filter"
+            style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:11px;font-family:inherit;background:var(--surface-2);color:var(--text)"
+            onchange="sheetStatusFilter=this.value;renderSpreadsheet()">
+            <option value="all">All Statuses</option>
+            <option value="on-track">On Track</option>
+            <option value="at-risk">At Risk</option>
+            <option value="delayed">Delayed</option>
+            <option value="not-planned">Not Planned</option>
+          </select>
           <div class="tdiv"></div>
           <span style="font-size:9.5px;color:var(--steel)" id="sheet-count">— vessels</span>
         </div>
@@ -847,7 +860,17 @@ td.ms-done .di::after { content:' ✓'; }
     </div>
     </div><!-- end mse-date-section -->
 
-    <!-- Complete toggle -->
+    <!-- Notes field (vessel-level notes) -->
+    <div id="mse-notes-row" style="display:none;margin-bottom:16px">
+      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Notes</label>
+      <textarea id="mse-notes-ta" rows="5" placeholder="Add notes about this vessel’s schedule, issues, or progress…"
+        style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);resize:vertical;line-height:1.5;box-sizing:border-box;transition:all .14s"
+        onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
+        onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'"></textarea>
+      <button class="abtn btn-o" style="margin-top:8px;width:100%;justify-content:center;font-size:11.5px" onclick="openAIFromNotes()">
+        <i class="fas fa-robot fa-xs"></i> Ask AI — draft or refine this note
+      </button>
+    </div>
     <div id="mse-complete-row" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:20px">
       <div>
         <div style="font-size:12.5px;font-weight:600;color:var(--text)">Mark as Complete</div>
@@ -1116,7 +1139,8 @@ var GP_FY_W_BASE   = 220; // 220px per FY × 7 years = 1540px — always overflo
 /* ── Completed milestones: Set of "vesselId|msKey" ─── */
 var completedSet = new Set();
 /* ── Context menu state ─── */
-var _ctxVid=null, _ctxKey=null, _ctxField='ms', _ctxIsText=false;
+var _ctxVid=null, _ctxKey=null, _ctxField='ms', _ctxIsText=false, _ctxIsNotes=false;
+var sheetSearch='', sheetStatusFilter='all';
 /* ── Drag state ─── */
 var _drag = null; // { el, vid, key, startX, origX, svgLeftOffset }
 
@@ -1177,6 +1201,7 @@ function showApp(nameOrEmail) {
   var n=(nameOrEmail||'User').split('@')[0];
   document.getElementById('uav').textContent=n.slice(0,2).toUpperCase();
   document.getElementById('unm').textContent=n;
+  buildFYSelects();
   render();
 }
 function showLogin() {
@@ -1740,6 +1765,14 @@ function renderSpreadsheet() {
   var bd=document.getElementById('ssheet-bd');
   var msKeys=Object.keys(MS);
   var fv=filtered();
+  // Apply sheet-level search and status filter
+  if (sheetSearch) {
+    var q=sheetSearch.toLowerCase();
+    fv=fv.filter(function(v){ return v.designation.toLowerCase().includes(q)||(v.notes||'').toLowerCase().includes(q); });
+  }
+  if (sheetStatusFilter && sheetStatusFilter!=='all') {
+    fv=fv.filter(function(v){ return (v.status||'on-track')===sheetStatusFilter; });
+  }
   var types=['APL','YRBM','YFB','YTB'];
   fv.forEach(v=>{ if(!types.includes(v.type)) types.push(v.type); });
 
@@ -1755,7 +1788,8 @@ function renderSpreadsheet() {
     var grp=fv.filter(v=>v.type===t); if(!grp.length) return;
     var tc=(VT[t]||{}).color||'#6e6e73';
     var total=msKeys.length+SFIELDS.length+4;
-    h+='<tr class="grp-sep"><td colspan="'+total+'" style="border-left:3px solid '+tc+'">'+esc(t)+' — '+esc((VT[t]||{}).label||t)+'</td></tr>';
+    var vtDesc = (VT[t]||{}).label||t;
+    h+='<tr class="grp-sep"><td colspan="'+total+'" style="border-left:3px solid '+tc+'">'+esc(vtDesc)+'</td></tr>';
 
     grp.forEach(v=>{
       var st=v.status||'on-track';
@@ -1812,9 +1846,13 @@ function renderSpreadsheet() {
 
       h+='<td style="font-size:10.5px;color:var(--steel)">'+durationMo(v)+'</td>';
       h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Click to edit status">'+statusHtml(st)+'<span class="edit-hint">✎</span></td>';
-      h+='<td><input type="text" class="ti" style="min-width:130px" value="'+esc(v.notes||'')+'"'
-        +' data-vid="'+v.id+'" data-key="notes" data-field="notes"'
-        +' placeholder="Notes…" onchange="onNotesChange(event)" onblur="onNotesChange(event)"></td>';
+      h+='<td class="ms-cell" onclick="openMSEModal(\''+v.id+'\',\'notes\')" title="Click to edit notes" style="max-width:180px">';
+      if (v.notes) {
+        h += '<span style="font-size:10.5px;color:var(--text)">'+esc(v.notes.slice(0,70))+(v.notes.length>70?'…':'')+'</span>';
+      } else {
+        h += '<span class="ms-empty-lbl">Add notes…</span>';
+      }
+      h += '<span class="edit-hint">✎</span></td>';
       h+='<td><button class="del-btn" onclick="deleteVessel(\''+v.id+'\')" title="Remove"><i class="fas fa-trash-alt"></i></button></td>';
       h+='</tr>';
     });
@@ -1950,10 +1988,32 @@ function openMSEModal(vid, key, field) {
   var labelText = field==='sf'
     ? ((SFIELDS.find(f=>f.key===key)||{}).label||key)
     : (msDef.label||key);
-  // Detect if this is a plain-text field (contract_num, builder, uic, owld, fy_approp)
   var sfDef = SFIELDS.find(function(f){return f.key===key;});
-  _ctxIsText = !!(sfDef && sfDef.type==='text');
+  _ctxIsText  = !!(sfDef && sfDef.type==='text');
+  _ctxIsNotes = (key === 'notes');
 
+  // Hide all sections first, then show the right one
+  var textRow    = document.getElementById('mse-text-row');
+  var dateSec    = document.getElementById('mse-date-section');
+  var completeRow= document.getElementById('mse-complete-row');
+  var notesRow   = document.getElementById('mse-notes-row');
+
+  if (_ctxIsNotes) {
+    if (textRow)    textRow.style.display    = 'none';
+    if (dateSec)    dateSec.style.display    = 'none';
+    if (completeRow) completeRow.style.display = 'none';
+    if (notesRow)   notesRow.style.display   = '';
+    document.getElementById('mse-ms-label').innerHTML =
+      '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff9500;margin-right:5px;vertical-align:middle"></span>Vessel Notes';
+    document.getElementById('mse-title').textContent = v.designation;
+    document.getElementById('mse-sub').textContent = v.type + ' · ' + v.fleet + ' · ' + (v.status||'on-track').replace('-',' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+    var ta = document.getElementById('mse-notes-ta');
+    if (ta) ta.value = v.notes || '';
+    document.getElementById('ms-edit-modal').classList.add('open');
+    setTimeout(function(){ var t=document.getElementById('mse-notes-ta'); if(t) t.focus(); }, 120);
+    return;
+  }
+  if (notesRow) notesRow.style.display = 'none';
   document.getElementById('mse-ms-label').innerHTML =
     '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+esc(dotColor)+';margin-right:5px;vertical-align:middle"></span>'
     + esc(labelText);
@@ -1961,9 +2021,6 @@ function openMSEModal(vid, key, field) {
   document.getElementById('mse-sub').textContent = v.type + ' · ' + v.fleet + ' · ' + (v.status||'on-track').replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
 
   // Show/hide text-input vs date-input sections
-  var textRow   = document.getElementById('mse-text-row');
-  var dateSec   = document.getElementById('mse-date-section');
-  var completeRow = document.getElementById('mse-complete-row');
   if (_ctxIsText) {
     if (textRow) textRow.style.display = '';
     if (dateSec) dateSec.style.display = 'none';
@@ -2004,6 +2061,23 @@ window.mseSave = function() {
   if (!_ctxVid || !_ctxKey) return;
   var v = vessels.find(v=>v.id===_ctxVid); if (!v) return;
   var field = _ctxField || 'ms';
+
+  // Handle notes field
+  if (_ctxIsNotes) {
+    var newNotes = (document.getElementById('mse-notes-ta').value||'').trim();
+    var oldNotes = v.notes || '';
+    if (newNotes !== oldNotes) {
+      v.notes = newNotes;
+      auditEntry('NOTES','Updated notes for '+v.designation,
+        {vesselId:v.id, vessel:v.designation, field:'notes',
+         oldVal:oldNotes||null, newVal:newNotes||null});
+    }
+    closeMSEModal();
+    renderSpreadsheet();
+    propagate(); autoSave();
+    toast(v.designation+' · notes updated');
+    return;
+  }
 
   // Handle text-type fields (contract_num, builder, uic, owld, fy_approp)
   if (_ctxIsText) {
@@ -2341,9 +2415,39 @@ function setCraft(type,el) {
 }
 window.setCraft=setCraft;
 
+function buildFYSelects() {
+  ['s','e'].forEach(function(which) {
+    var el = document.getElementById('fy-'+which);
+    if (!el) return;
+    var cur = which==='s' ? (fyStart-2000) : (fyEnd-2000);
+    var maxY = which==='s' ? 45 : 50;
+    var html = '';
+    for (var y=20; y<=maxY; y++) {
+      html += '<option value="'+y+'"'+(y===cur?' selected':'')+'>FY'+(y<10?'0':'')+y+'</option>';
+    }
+    html += '<option value="custom">Custom…</option>';
+    el.innerHTML = html;
+  });
+}
+function onFYSelChange(which) {
+  var el = document.getElementById('fy-'+which);
+  var ci = document.getElementById('fy-custom-'+which);
+  if (el.value === 'custom') {
+    ci.style.display = '';
+    ci.focus();
+  } else {
+    ci.style.display = 'none';
+    updateFY();
+  }
+}
 window.updateFY=function(){
-  fyStart = 2000 + parseInt(document.getElementById('fy-s').value);
-  fyEnd   = 2000 + parseInt(document.getElementById('fy-e').value);
+  var sEl = document.getElementById('fy-s');
+  var eEl = document.getElementById('fy-e');
+  var sv = sEl.value==='custom' ? (parseInt(document.getElementById('fy-custom-s').value)-2000) : parseInt(sEl.value);
+  var ev = eEl.value==='custom' ? (parseInt(document.getElementById('fy-custom-e').value)-2000) : parseInt(eEl.value);
+  if(!sv||!ev||isNaN(sv)||isNaN(ev)) return;
+  fyStart = 2000 + sv;
+  fyEnd   = 2000 + ev;
   if(fyStart>=fyEnd) fyEnd=fyStart+2;
   renderGantt();
   sysLog('SYSTEM','FY range updated to FY'+String(fyStart).slice(2)+'–FY'+String(fyEnd).slice(2),null);
@@ -2544,6 +2648,22 @@ function localReason(v,key,diff) {
   if(key==='SOC') return 'SOC '+dir+' of '+abs+' mo on '+v.designation+' — verify Launch/BT/AT/DEL feasibility.';
   return (MS[key]?MS[key].label:key)+' '+dir+' of '+abs+' mo for '+v.designation+'. Review schedule dependencies.';
 }
+
+function openAIFromNotes() {
+  var v = _ctxVid ? vessels.find(x=>x.id===_ctxVid) : null;
+  var current = document.getElementById('mse-notes-ta') ? document.getElementById('mse-notes-ta').value : '';
+  closeMSEModal();
+  openDrawer('ai');
+  var seed = v
+    ? ('I am drafting notes for '+v.designation+' ('+v.type+', '+v.fleet+', '+v.status+'). '
+       + (current ? 'Current note: "'+current+'" — please help me refine or expand it.' : 'Please help me write a concise program note for this vessel.')
+       + ' Milestones: '+Object.entries(v.ms).filter(function(e){return e[1];}).map(function(e){return e[0]+'='+fmtYM(e[1]);}).join(', ')+'.'
+      )
+    : 'Help me write a vessel program note.';
+  var inp = document.getElementById('ai-inp');
+  if (inp) { inp.value = seed; inp.focus(); }
+}
+window.openAIFromNotes = openAIFromNotes;
 
 window.sendAI=async function(){
   var inp=document.getElementById('ai-inp');
