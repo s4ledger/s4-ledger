@@ -38,13 +38,10 @@ export function useProgramSchedule(): UseProgramScheduleResult {
         if (cancelled) return
         setPsData(data)
         setLastSync(new Date())
-        if (!data) {
-          setError('No program schedule data found. Save a schedule in the Program Schedule tool to enable date sync.')
-        }
       })
       .catch(() => {
         if (cancelled) return
-        setError('Failed to load program schedule data.')
+        setError('Failed to load program schedule.')
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
