@@ -45,6 +45,19 @@ export interface DRLRow {
   responsibleParty?: Organization
   /** Configurable workflow state machine */
   workflowState?: WorkflowState
+  /**
+   * Links this DRL row to a vessel in the Program Schedule tool.
+   * Value is the vessel designation (e.g., 'APL-101', 'YRBM-51').
+   * When set, calculatedDueDate can be driven by live PS milestone data.
+   */
+  vesselId?: string
+  /**
+   * The PS-computed due date (YYYY-MM-DD) based on milestone offset.
+   * Populated at runtime by the PS integration service; not persisted.
+   */
+  psComputedDueDate?: string
+  /** The PS milestone this row is offset from (e.g., 'AT', 'BT', 'DEL'). */
+  psMilestoneRef?: string
 }
 
 export interface AnchorRecord {

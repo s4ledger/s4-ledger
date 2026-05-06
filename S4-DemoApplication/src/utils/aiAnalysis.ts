@@ -307,21 +307,35 @@ export function analyzePortfolio(
 }
 
 /* ─── Chat response — calls real AI, falls back to local ─────────── */
-/** Generate an AI chat response for a user question about a specific DRL row. Falls back to local heuristics if AI service is unavailable. */
+/**
+ * Generate an AI chat response for a user question about a specific DRL row.
+ * Falls back to local heuristics if AI service is unavailable.
+ *
+ * @param psContext  Optional: a summary of Program Schedule vessel milestone data.
+ *                   When provided, the AI can validate due dates against live PS data
+ *                   and flag discrepancies.  Example:
+ *                   "APL-101 milestones — BT: 2025-06, AT: 2025-08, DEL: 2025-10"
+ */
 export async function generateChatResponse(
   userMessage: string,
   row: DRLRow,
   currentInsight: AIRowInsight,
   chatHistory?: AIChatMessage[],
+  psContext?: string,
 ): Promise<string> {
   // Build context about the current row for the AI
   const rowContext = `Current DRL row: ${row.id} "${row.title}", status=${row.status}, ` +
-    `contractDue=${row.contractDueFinish}, actualSubmission=${row.actualSubmissionDate || 'none'}, ` +
+    `contractDue=${row.contractDueFinish}, calculatedDue=${row.calculatedDueDate || 'none'}, ` +
+    `actualSubmission=${row.actualSubmissionDate || 'none'}, ` +
     `received=${row.received}, reviewDays=${row.calendarDaysToReview ?? 'N/A'}, ` +
     `priority=${currentInsight.priority}. ` +
     `Status assessment: ${currentInsight.statusExplanation}`
 
-  const fullMessage = `Context: ${rowContext}\n\nUser question: ${userMessage}`
+  const psSection = psContext
+    ? `\n\nProgram Schedule context: ${psContext}`
+    : ''
+
+  const fullMessage = `Context: ${rowContext}${psSection}\n\nUser question: ${userMessage}`
 
   try {
     const result = await chatWithAI({
@@ -334,7 +348,12 @@ export async function generateChatResponse(
         status: row.status,
         priority: currentInsight.priority,
         contractDueFinish: row.contractDueFinish,
+        calculatedDueDate: row.calculatedDueDate,
         actualSubmissionDate: row.actualSubmissionDate,
+        vesselId: row.vesselId,
+        psMilestoneRef: row.psMilestoneRef,
+        psComputedDueDate: row.psComputedDueDate,
+        ...(psContext ? { programScheduleContext: psContext } : {}),
       },
     })
 

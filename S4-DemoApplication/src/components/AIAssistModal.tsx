@@ -10,6 +10,8 @@ interface Props {
   editedSinceSeal: Set<string>
   onUpdateNotes: (rowId: string, notes: string) => void
   onClose: () => void
+  /** Optional: summarised Program Schedule vessel milestone context for AI date validation. */
+  psContext?: string
 }
 
 const PRIORITY_STYLES: Record<string, string> = {
@@ -19,7 +21,7 @@ const PRIORITY_STYLES: Record<string, string> = {
   Low: 'bg-green-500/15 text-green-600 border-green-500/30',
 }
 
-export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, onUpdateNotes, onClose }: Props) {
+export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, onUpdateNotes, onClose, psContext }: Props) {
   const [insight, setInsight] = useState<AIRowInsight | null>(null)
   const [portfolio, setPortfolio] = useState<AIPortfolioSummary | null>(null)
   const [loading, setLoading] = useState(true)
@@ -73,7 +75,7 @@ export default function AIAssistModal({ row, allData, anchors, editedSinceSeal, 
     setChatLoading(true)
 
     try {
-      const response = await generateChatResponse(userMsg, row, insight, chatHistory)
+      const response = await generateChatResponse(userMsg, row, insight, chatHistory, psContext)
       if (!mountedRef.current) return
       setChatHistory(prev => [...prev, { role: 'ai', text: response }])
     } catch {

@@ -50,6 +50,8 @@ import { getDefaultOrg, getPermissions, getMaskedView, getDefaultContractorGrant
 import { getSpreadsheetConfig, getContractorColumnsWithGrants } from '../utils/spreadsheetConfigs'
 import { getPMS300CraftLabels } from '../services/nsercIdeService'
 import { Sentry } from '../lib/sentry'
+import { useProgramSchedule } from '../hooks/useProgramSchedule'
+import { computePSDueDate } from '../services/programScheduleService'
 
 interface Props {
   data: DRLRow[]
@@ -158,6 +160,30 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   const [showAnomaly, setShowAnomaly] = useState(false)
   const [showChat, setShowChat] = useState(false)
   const [showExport, setShowExport] = useState(false)
+
+  /* ─── Program Schedule integration ─────────────────────────── */
+  const { psData, loading: psSyncing, error: psError, lastSync: psLastSync, sync: syncPS } = useProgramSchedule()
+
+  // Compute PS-driven due dates for rows that have vesselId or matchable title
+  const psComputedDates = useMemo(() => {
+    if (!psData || psData.vessels.length === 0) return {} as Record<string, { date: string; milestone: string; vessel: string }>
+    const map: Record<string, { date: string; milestone: string; vessel: string }> = {}
+    for (const row of data) {
+      const result = computePSDueDate(row.submittalGuidance, row.vesselId, row.title, psData.vessels)
+      if (result) {
+        map[row.id] = { date: result.date, milestone: result.milestone, vessel: result.vessel.designation }
+      }
+    }
+    return map
+  }, [data, psData])
+
+  // Build PS context string for AI (summary of vessel milestones)
+  const psContextForAI = useMemo(() => {
+    if (!psData || psData.vessels.length === 0) return undefined
+    return psData.vessels
+      .map(v => `${v.designation} (${v.type}) — ${Object.entries(v.ms).map(([k, val]) => `${k}: ${val}`).join(', ')}`)
+      .join(' | ')
+  }, [psData])
   const [showIntegrations, setShowIntegrations] = useState(false)
   const [lastPersist, setLastPersist] = useState<string | null>(null)
 
@@ -1018,6 +1044,43 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
         </div>
       )}
 
+      {/* ─── Program Schedule Sync Banner ───────────────────── */}
+      {psData && (
+        <div className="bg-indigo-50 border-b border-indigo-200 px-6 py-1.5">
+          <div className="max-w-[1600px] mx-auto flex items-center gap-3 text-xs text-indigo-800">
+            <i className="fas fa-calendar-alt text-indigo-500"></i>
+            <span className="font-medium">Program Schedule Sync</span>
+            <span className="text-indigo-600">
+              — {psData.vessels.length} vessel{psData.vessels.length !== 1 ? 's' : ''} loaded
+              {psLastSync ? ` · Last sync: ${psLastSync.toLocaleTimeString()}` : ''}
+            </span>
+            <span className="ml-auto flex items-center gap-2">
+              {Object.keys(psComputedDates).length > 0 && (
+                <span className="text-indigo-600 font-medium">
+                  {Object.keys(psComputedDates).length} due date{Object.keys(psComputedDates).length !== 1 ? 's' : ''} driven by PS
+                </span>
+              )}
+              <button
+                onClick={syncPS}
+                disabled={psSyncing}
+                className="flex items-center gap-1 px-2 py-0.5 bg-indigo-100 hover:bg-indigo-200 border border-indigo-300 rounded text-xs font-medium transition-all disabled:opacity-50"
+              >
+                <i className={`fas fa-sync-alt text-[9px] ${psSyncing ? 'fa-spin' : ''}`}></i>
+                {psSyncing ? 'Syncing…' : 'Sync PS'}
+              </button>
+            </span>
+          </div>
+        </div>
+      )}
+      {psError && !psData && (
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-1">
+          <div className="max-w-[1600px] mx-auto text-xs text-amber-700 flex items-center gap-2">
+            <i className="fas fa-exclamation-triangle"></i>
+            <span>PS Sync: {psError}</span>
+          </div>
+        </div>
+      )}
+
       {/* Real-Time Presence Bar */}
       <PresenceBar users={collabUsers} currentUserId={user?.id || demoUserIdRef.current} />
 
@@ -1600,6 +1663,32 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                         )
                       }
 
+                      // Special rendering for calculatedDueDate (shows PS-driven badge when available)
+                      if (col.key === 'calculatedDueDate') {
+                        const psEntry = psComputedDates[row.id]
+                        const effectiveDate = psEntry ? psEntry.date : displayVal
+                        return (
+                          <td
+                            key={col.key}
+                            data-no-workflow
+                            className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors${selClass}`}
+                            onClick={openCell}
+                          >
+                            {psEntry ? (
+                              <div className="flex flex-col gap-0.5">
+                                <span className="font-mono text-indigo-700">{psEntry.date}</span>
+                                <span className="inline-flex items-center gap-1 px-1.5 py-px text-[8px] font-bold uppercase rounded bg-indigo-100 text-indigo-600 border border-indigo-200 leading-tight w-fit">
+                                  <i className="fas fa-calendar-alt text-[7px]"></i>
+                                  PS·{psEntry.milestone} {psEntry.vessel}
+                                </span>
+                              </div>
+                            ) : (
+                              <span>{effectiveDate}</span>
+                            )}
+                          </td>
+                        )
+                      }
+
                       // Special rendering for title (font-medium)
                       if (col.key === 'title') {
                         return (
@@ -1729,6 +1818,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
           editedSinceSeal={editedSinceSeal}
           onUpdateNotes={handleUpdateNotes}
           onClose={() => { setShowAI(false); setAiRow(null) }}
+          psContext={psContextForAI}
         />
       )}
 
