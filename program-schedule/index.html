@@ -651,7 +651,7 @@ td.ms-done .di::after { content:' ✓'; }
         <div class="panel-hdr">
           <div class="ph-dot"></div>
           Acquisition Milestone Schedule
-          <span class="ph-hint">Click any cell to edit &mdash; Designation, Type, Fleet, Status + all date cells</span>
+          <span class="ph-hint">Click any cell to edit &mdash; Designation, Type, Location, Status + all date cells</span>
           <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.9 May-9</span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
@@ -768,7 +768,7 @@ td.ms-done .di::after { content:' ✓'; }
       <div>
         <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Location</label>
         <select id="av-fleet" class="s4sel" style="width:100%;height:34px;font-size:12px" onchange="onLocationChange('av-fleet','av-fleet-custom')">
-          <option>PACFLT</option><option>USFF</option><option>USMC</option><option value="custom">Custom&#8230;</option>
+          <option>PACFLT</option><option>USFF</option><option value="custom">Custom&#8230;</option>
         </select>
         <input type="text" id="av-fleet-custom" placeholder="Enter location&#8230;"
           style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none;box-sizing:border-box">
@@ -950,7 +950,7 @@ td.ms-done .di::after { content:' ✓'; }
       <div>
         <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Location</label>
         <select id="vedit-fleet" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);cursor:pointer" onchange="onLocationChange('vedit-fleet','vedit-fleet-custom')">
-          <option>PACFLT</option><option>USFF</option><option>USMC</option><option value="custom">Custom&#8230;</option>
+          <option>PACFLT</option><option>USFF</option><option value="custom">Custom&#8230;</option>
         </select>
         <input type="text" id="vedit-fleet-custom" placeholder="Enter location&#8230;"
           style="display:none;margin-top:6px;width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);box-sizing:border-box">
@@ -1804,7 +1804,7 @@ function renderSpreadsheet() {
   fv.forEach(v=>{ if(!types.includes(v.type)) types.push(v.type); });
 
   // Build header
-  var hdCols=['Designation','Type','Fleet']
+  var hdCols=['Designation','Type','Location']
     .concat(msKeys.map(k=>(MS[k]||{}).label?abbrev(MS[k].label):k))
     .concat(SFIELDS.map(f=>f.label))
     .concat(['Duration','Status','Notes','']);
@@ -1980,7 +1980,7 @@ function openVesselModal(vid) {
   typeEl.value = v.type;
   if (typeEl.value !== v.type) { var opt=document.createElement('option'); opt.value=opt.textContent=v.type; typeEl.appendChild(opt); typeEl.value=v.type; }
   // Set location: if not in standard list, show custom input
-  var stdLocations = ['PACFLT','USFF','USMC'];
+  var stdLocations = ['PACFLT','USFF'];
   if (stdLocations.includes(v.fleet)) {
     fleetEl.value = v.fleet;
     if (customEl) { customEl.style.display='none'; customEl.value=''; }
@@ -2051,12 +2051,11 @@ function openMSEModal(vid, key, field) {
     if (aiResp) { aiResp.textContent=''; aiResp.style.display='none'; }
     if (aiUseRow) aiUseRow.style.display='none';
     if (aiQ) aiQ.value='';
-    // Pre-seed prompt with vessel context
-    if (aiQ) {
-      aiQ.placeholder = 'Ask AI to help draft a note for '+v.designation+'…';
-    }
+    if (aiQ) aiQ.placeholder = 'Ask follow-up questions or request changes…';
     document.getElementById('ms-edit-modal').classList.add('open');
     setTimeout(function(){ var t=document.getElementById('mse-notes-ta'); if(t) t.focus(); }, 120);
+    // Auto-generate initial recommended note
+    setTimeout(function(){ noteAISend(); }, 300);
     return;
   }
   if (notesRow) notesRow.style.display = 'none';
