@@ -164,16 +164,16 @@ td.ms-done input.di { color:inherit !important; font-weight:inherit !important; 
 /* ── Gantt two-panel frozen layout ── */
 #gantt-section {
   flex-shrink:0; display:flex; flex-direction:column;
-  border-bottom:2px solid var(--border-2); max-height:50vh; min-height:180px;
+  border-bottom:2px solid var(--border-2); max-height:65vh; min-height:180px;
 }
 #gantt-panels { display:flex; flex:1; overflow:hidden; background:var(--surface); }
 /* Left frozen: vessel names only */
 #gantt-left { flex-shrink:0; overflow:hidden; z-index:10; box-shadow:3px 0 8px rgba(0,0,0,0.07); }
 #gantt-left-svg { display:block; }
 /* Right scrollable: timeline + symbols */
-#gantt-right { flex:1; overflow-x:auto; overflow-y:hidden; position:relative;
+#gantt-right { flex:1; overflow-x:auto; overflow-y:auto; position:relative;
   -webkit-overflow-scrolling:touch; }
-#gantt-right::-webkit-scrollbar { height:5px; }
+#gantt-right::-webkit-scrollbar { height:5px; width:5px; }
 #gantt-right::-webkit-scrollbar-track { background:transparent; }
 #gantt-right::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.18); border-radius:3px; }
 #gantt-right::-webkit-scrollbar-thumb:hover { background:rgba(0,0,0,0.32); }
@@ -630,7 +630,7 @@ td.ms-done .di::after { content:' ✓'; }
         <div class="panel-hdr">
           <div class="ph-dot"></div>
           Milestone Chart
-          <span class="ph-hint">Drag symbols to reschedule &middot; Scroll to pan &middot; Ctrl+scroll or +/&minus; to zoom &middot; Click any spreadsheet cell to edit</span>
+          <span class="ph-hint">Scroll to see all vessels &middot; Shift+scroll or swipe to pan timeline &middot; Ctrl+scroll or +/&minus; to zoom &middot; Click any cell to edit</span>
           <div class="ph-spacer"></div>
           <div style="display:flex;align-items:center;gap:4px">
             <button id="gantt-zoom-out" class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.22);font-size:15px;padding:0;line-height:1;width:24px;height:24px;display:flex;align-items:center;justify-content:center" onclick="zoomGantt(-1)" title="Zoom out">&minus;</button>
@@ -654,7 +654,7 @@ td.ms-done .di::after { content:' ✓'; }
           <div class="ph-dot"></div>
           Acquisition Milestone Schedule
           <span class="ph-hint">Click any cell to edit &mdash; Designation, Type, Fleet, Status + all date cells</span>
-          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.6 May-6</span>
+          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.7 May-9</span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
             <i class="fas fa-download fa-xs"></i> Export CSV
@@ -1504,10 +1504,10 @@ function renderGantt() {
   rEl.innerHTML = rh;
   attachGanttInteraction();
 
-  // Sync vertical scroll between left and right panels
-  var lDiv = document.getElementById('gantt-left');
+  // Sync left SVG to current vertical scroll position on re-render
   var rDiv = document.getElementById('gantt-right');
-  lDiv.style.height = rDiv.offsetHeight + 'px';
+  var lSvg = document.getElementById('gantt-left-svg');
+  if (lSvg && rDiv) lSvg.style.transform = 'translateY(-' + (rDiv.scrollTop||0) + 'px)';
 }
 
 function dateToXRight(ym) {
@@ -2089,23 +2089,38 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Gantt scroll + zoom — attached at module scope (synchronous, no async dependency)
-// Plain scroll → pan Gantt left/right. Ctrl/Cmd+scroll → zoom.
+// Plain scroll → vertical. Shift+scroll or trackpad swipe → pan. Ctrl/Cmd+scroll → zoom.
 (function attachGanttScroll() {
   var gr = document.getElementById('gantt-right');
   if (!gr) return;
+
+  // Vertical scroll sync: when right panel scrolls up/down, translate left SVG to match
+  gr.addEventListener('scroll', function() {
+    var lSvg = document.getElementById('gantt-left-svg');
+    if (lSvg) lSvg.style.transform = 'translateY(-' + gr.scrollTop + 'px)';
+  });
+
   gr.addEventListener('wheel', function(e) {
-    e.preventDefault();
     if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
       window.zoomGantt(e.deltaY < 0 ? 1 : -1);
       return;
     }
-    // Normalize delta across deltaMode values:
-    //   0 = pixels (trackpad), 1 = lines (~40px each), 2 = pages (~800px each)
-    var LINE = 40, PAGE = 800;
-    var multiplier = e.deltaMode === 2 ? PAGE : e.deltaMode === 1 ? LINE : 1;
-    // Prefer horizontal delta (trackpad swipe) over vertical (mouse wheel)
-    var raw = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    gr.scrollLeft += raw * multiplier;
+    // Trackpad horizontal swipe → pan timeline
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      e.preventDefault();
+      var mult = e.deltaMode === 2 ? 800 : e.deltaMode === 1 ? 40 : 1;
+      gr.scrollLeft += e.deltaX * mult;
+      return;
+    }
+    // Shift+scroll → horizontal pan (mouse users)
+    if (e.shiftKey) {
+      e.preventDefault();
+      var mult2 = e.deltaMode === 2 ? 800 : e.deltaMode === 1 ? 40 : 1;
+      gr.scrollLeft += e.deltaY * mult2;
+      return;
+    }
+    // Plain vertical scroll → native browser scroll (gantt-right scrolls vertically)
   }, {passive: false});
 
   // MS-cell click delegation from table body (backup for inline onclick)
