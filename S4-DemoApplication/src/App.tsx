@@ -73,8 +73,11 @@ export default function App() {
   const [showPortfolio, setShowPortfolio] = useState(false)
 
   // ── Offline-First: hydrate from IndexedDB, then Supabase ───
+  // Skip entirely in demo mode — demo always uses fresh sampleData,
+  // never stale IndexedDB/Supabase rows from previous sessions.
   useEffect(() => {
-    (async () => {
+    if (isDemo) return
+    ;(async () => {
       try {
         await initOfflineStore()
         // 1. Hydrate from IndexedDB (instant, offline-capable)
@@ -95,10 +98,12 @@ export default function App() {
         console.warn('Offline store hydration failed:', e)
       }
     })()
-  }, [])
+  }, [isDemo])
 
   // ── Offline-First: persist to IndexedDB + async Supabase sync
+  // Skip in demo mode to prevent demo data polluting shared Supabase table.
   useEffect(() => {
+    if (isDemo) return
     persistRows(data).catch(() => {})
     setMeta('lastPersist', new Date().toISOString()).catch(() => {})
     // Async sync to Supabase (non-blocking)
@@ -106,13 +111,14 @@ export default function App() {
     syncRowsToSupabase(data, uid).then(r => {
       if (r.ok) flushSyncQueue().catch(() => {})
     }).catch(() => {})
-  }, [data, user?.id])
+  }, [data, user?.id, isDemo])
 
   useEffect(() => {
+    if (isDemo) return
     if (Object.keys(anchors).length > 0) {
       persistAnchors(anchors).catch(() => {})
     }
-  }, [anchors])
+  }, [anchors, isDemo])
 
   // Persist workflow states to localStorage whenever data changes
   useEffect(() => {
