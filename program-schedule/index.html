@@ -172,7 +172,7 @@ td.ms-done input.di { color:inherit !important; font-weight:inherit !important; 
 #gantt-left-svg { display:block; }
 /* Right scrollable: timeline + symbols */
 #gantt-right { flex:1; overflow-x:auto; overflow-y:hidden; position:relative;
-  scroll-behavior:smooth; -webkit-overflow-scrolling:touch; }
+  -webkit-overflow-scrolling:touch; }
 #gantt-right::-webkit-scrollbar { height:5px; }
 #gantt-right::-webkit-scrollbar-track { background:transparent; }
 #gantt-right::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.18); border-radius:3px; }
@@ -1094,9 +1094,9 @@ var saveTimer  = null;
 var logBadge   = 0;
 
 /* ── Gantt layout constants ─── */
-var GP = { LEFT:130, ROW_H:52, HDR_H:36, FY_W:175, MS_R:7 };
+var GP = { LEFT:130, ROW_H:52, HDR_H:36, FY_W:220, MS_R:7 };
 var ganttZoomLevel = 1.0;
-var GP_FY_W_BASE   = 175; // wider default so chart always has horizontal scroll content
+var GP_FY_W_BASE   = 220; // 220px per FY × 7 years = 1540px — always overflows any screen
 
 /* ── Completed milestones: Set of "vesselId|msKey" ─── */
 var completedSet = new Set();
@@ -1152,22 +1152,8 @@ async function init() {
     if (!document.getElementById('craft-dd').contains(e.target)) dd.style.display='none';
   });
 
-  // Gantt scroll + zoom: plain wheel = horizontal scroll; Ctrl/Cmd+wheel = zoom
-  var ganttRight = document.getElementById('gantt-right');
-  if (ganttRight) {
-    ganttRight.addEventListener('wheel', function(e) {
-      e.preventDefault();
-      if (e.ctrlKey || e.metaKey) {
-        // Ctrl/Cmd + scroll → zoom in/out
-        window.zoomGantt(e.deltaY < 0 ? 1 : -1);
-      } else {
-        // Plain scroll → pan left/right
-        // Use deltaX if available (trackpad horizontal swipe), else deltaY (mouse wheel)
-        var delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-        ganttRight.scrollLeft += delta * 1.4;
-      }
-    }, {passive: false});
-  }
+  // NOTE: wheel listener moved to module scope (below) so it attaches synchronously
+  // regardless of async auth/Supabase timing
 }
 
 function showApp(nameOrEmail) {
@@ -2101,6 +2087,41 @@ document.addEventListener('keydown', function(e) {
     closeVesselModal();
   }
 });
+
+// Gantt scroll + zoom — attached at module scope (synchronous, no async dependency)
+// Plain scroll → pan Gantt left/right. Ctrl/Cmd+scroll → zoom.
+(function attachGanttScroll() {
+  var gr = document.getElementById('gantt-right');
+  if (!gr) return;
+  gr.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    if (e.ctrlKey || e.metaKey) {
+      window.zoomGantt(e.deltaY < 0 ? 1 : -1);
+      return;
+    }
+    // Normalize delta across deltaMode values:
+    //   0 = pixels (trackpad), 1 = lines (~40px each), 2 = pages (~800px each)
+    var LINE = 40, PAGE = 800;
+    var multiplier = e.deltaMode === 2 ? PAGE : e.deltaMode === 1 ? LINE : 1;
+    // Prefer horizontal delta (trackpad swipe) over vertical (mouse wheel)
+    var raw = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    gr.scrollLeft += raw * multiplier;
+  }, {passive: false});
+
+  // MS-cell click delegation from table body (backup for inline onclick)
+  var bd = document.getElementById('ssheet-bd');
+  if (bd) {
+    bd.addEventListener('click', function(e) {
+      var cell = e.target.closest('td.ms-cell');
+      if (!cell) return;
+      // The cell's onclick inline handler already fired — only intercept if no onclick
+      if (!cell.getAttribute('onclick')) {
+        var row = cell.closest('tr.vrow');
+        if (row && row.dataset.id) openVesselModal(row.dataset.id);
+      }
+    });
+  }
+}());
 
 /* ═════════════════════════════════════════════════════════════════
    EVENT HANDLERS — CELL EDITS
