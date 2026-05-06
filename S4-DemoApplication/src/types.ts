@@ -1,5 +1,17 @@
 import type { WorkflowState } from './utils/workflowEngine'
 
+/* ─── Program Schedule cell entry ──────────────────────────── */
+
+/** PS-driven date context surfaced in the cell-edit modal. */
+export interface PSCellEntry {
+  date: string                          // YYYY-MM-DD computed due date
+  milestone: string                     // e.g. 'AT', 'CDR'
+  vessel: string                        // vessel designation, e.g. 'APL-101'
+  deltaDays: number | null              // signed delta vs contract baseline
+  contractDate: string | null           // original contractDueFinish from the row
+  milestoneGroup: 'construction' | 'acqEvent'
+}
+
 /* ─── Portfolio Hierarchy: Program → Contract → DRL ───────── */
 
 export interface Program {

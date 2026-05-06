@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react'
-import { DRLRow, UserRole, AnchorRecord, Organization, Contract } from '../types'
+import { DRLRow, UserRole, AnchorRecord, Organization, Contract, PSCellEntry } from '../types'
 import { useAuth } from '../contexts/AuthContext'
 import AIAssistModal from './AIAssistModal'
 import AINextActionsPanel from './AINextActionsPanel'
@@ -164,37 +164,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   /* ─── Program Schedule integration ─────────────────────────── */
   const { psData, loading: psSyncing, error: psError, lastSync: psLastSync, sync: syncPS } = useProgramSchedule()
 
-  /** Runtime type for a single PS-computed entry enriched with contract delta. */
-  type PSEntry = {
-    date: string              // PS-computed due date (YYYY-MM-DD)
-    milestone: string         // milestone code, e.g. 'BT', 'CDR'
-    vessel: string            // vessel designation, e.g. 'APL-101'
-    contractDate: string | null  // original contractDueFinish from the row
-    deltaDays: number | null  // positive = slip, negative = early vs contract baseline
-    milestoneGroup: 'construction' | 'acqEvent'
-  }
-
-  /** Format a signed day delta into a human-readable string with days + months/years. */
-  function formatDelta(deltaDays: number): { text: string; slip: boolean } {
-    const abs = Math.abs(deltaDays)
-    const sign = deltaDays > 0 ? '+' : '-'
-    const slip = deltaDays > 0
-    const dayStr = `${sign}${abs}d`
-    if (abs < 30) return { text: dayStr, slip }
-    const months = Math.round(abs / 30.44)
-    if (abs < 365) return { text: `${dayStr} (~${sign}${months}mo)`, slip }
-    const years = Math.floor(abs / 365.25)
-    const remMo = Math.round((abs % 365.25) / 30.44)
-    return {
-      text: `${dayStr} (~${sign}${years}yr${remMo > 0 ? ` ${sign}${remMo}mo` : ''})`,
-      slip,
-    }
-  }
-
   // Compute PS-driven due dates for all rows — includes delta vs contract baseline
   const psComputedDates = useMemo(() => {
-    if (!psData || psData.vessels.length === 0) return {} as Record<string, PSEntry>
-    const map: Record<string, PSEntry> = {}
+    if (!psData || psData.vessels.length === 0) return {} as Record<string, PSCellEntry>
+    const map: Record<string, PSCellEntry> = {}
     for (const row of data) {
       const result = computePSDueDate(row.submittalGuidance, row.vesselId, row.title, psData.vessels)
       if (result) {
@@ -1596,7 +1569,14 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                       const fieldVal = row[col.field]
                       const displayVal = fieldVal !== null && fieldVal !== undefined ? String(fieldVal) : '—'
                       const isSelected = selectedCell?.rowIdx === idx && selectedCell?.colIdx === colI
-                      const openCell = (e: React.MouseEvent) => { e.stopPropagation(); setSelectedCell({ rowIdx: idx, colIdx: colI }); startEditing(row.id, col.key); setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? '') }) }
+                      const psEntry = psComputedDates[row.id]
+                      const openCell = (e: React.MouseEvent) => {
+                        e.stopPropagation()
+                        setSelectedCell({ rowIdx: idx, colIdx: colI })
+                        startEditing(row.id, col.key)
+                        const includePS = col.key === 'contractDueFinish' || col.key === 'calculatedDueDate'
+                        setCellEditTarget({ row, colKey: col.key, field: col.field, label: col.label, editable: col.editable, value: String(row[col.field] ?? ''), psEntry: includePS ? psEntry : undefined })
+                      }
                       const selClass = isSelected ? ' ring-2 ring-accent ring-inset z-10 relative' : ''
 
                       // Special rendering for diNumber (shows RACI badge + contract ref tooltip)
@@ -1705,73 +1685,38 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                         )
                       }
 
-                      // ── contractDueFinish — always show contract baseline; overlay PS delta when milestone shifted ──
+                      // ── contractDueFinish — show contract baseline; subtle PS badge when synced ──
                       if (col.key === 'contractDueFinish') {
-                        const psEntry = psComputedDates[row.id]
                         const hasContract = !!row.contractDueFinish
+                        const dateToShow = hasContract ? row.contractDueFinish : psEntry?.date
 
-                        if (!hasContract && psEntry) {
-                          // No contract date set — row is purely PS-driven; show PS-computed date
-                          return (
-                            <td key={col.key} data-no-workflow className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors${selClass}`} onClick={openCell}>
-                              <div className="flex flex-col gap-0.5">
-                                <span className="font-mono text-indigo-700">{psEntry.date}</span>
-                                <span className="inline-flex items-center gap-1 px-1.5 py-px text-[8px] font-bold uppercase rounded bg-indigo-100 text-indigo-600 border border-indigo-200 leading-tight w-fit">
-                                  <i className="fas fa-calendar-alt text-[7px]"></i>
-                                  PS·{psEntry.milestone} {psEntry.vessel}
-                                </span>
+                        return (
+                          <td key={col.key} data-no-workflow className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors${selClass}`} onClick={openCell}>
+                            {dateToShow ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-mono">{dateToShow}</span>
+                                {psEntry && (
+                                  <span className="text-[9px] font-semibold text-indigo-500 bg-indigo-50 px-1 py-px rounded border border-indigo-200 leading-none flex-shrink-0">PS</span>
+                                )}
                               </div>
-                            </td>
-                          )
-                        }
-
-                        if (hasContract && psEntry && psEntry.deltaDays !== null && psEntry.deltaDays !== 0) {
-                          // Contract date exists AND PS shows it has shifted — display baseline + delta
-                          const delta = formatDelta(psEntry.deltaDays)
-                          return (
-                            <td key={col.key} data-no-workflow className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors${selClass}`} onClick={openCell}>
-                              <div className="flex flex-col gap-0.5">
-                                <span className="font-mono text-gray-700 line-through decoration-gray-400 decoration-1">{row.contractDueFinish}</span>
-                                <span className="text-[8px] text-gray-500 leading-tight">Contract baseline</span>
-                                <div className="flex flex-col gap-0.5 mt-0.5">
-                                  <span className="font-mono font-semibold text-indigo-700">{psEntry.date}</span>
-                                  <div className="flex items-center gap-1">
-                                    <span className={`inline-flex items-center gap-0.5 px-1.5 py-px text-[8px] font-bold rounded leading-tight ${delta.slip ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-green-50 text-green-700 border border-green-200'}`}>
-                                      <i className={`fas ${delta.slip ? 'fa-arrow-right' : 'fa-arrow-left'} text-[7px]`}></i>
-                                      {delta.text}
-                                    </span>
-                                    <span className="inline-flex items-center gap-1 px-1.5 py-px text-[8px] font-bold rounded bg-indigo-100 text-indigo-600 border border-indigo-200 leading-tight">
-                                      <i className="fas fa-calendar-alt text-[7px]"></i>
-                                      PS·{psEntry.milestone} {psEntry.vessel}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                          )
-                        }
-
-                        // Contract date present, no shift (or no PS data) — show as-is
+                            ) : (
+                              <span>{displayVal}</span>
+                            )}
+                          </td>
+                        )
                       }
 
-                      // ── calculatedDueDate — always shows current PS-driven live date ──
+                      // ── calculatedDueDate — shows current PS-driven live date ──
                       if (col.key === 'calculatedDueDate') {
-                        const psEntry = psComputedDates[row.id]
-                        const milestoneTypeLabel = psEntry?.milestoneGroup === 'acqEvent' ? 'Acq·' : 'PS·'
+                        const dateToShow = psEntry?.date
+                        const typeLabel = psEntry?.milestoneGroup === 'acqEvent' ? 'ACQ' : 'PS'
+
                         return (
-                          <td
-                            key={col.key}
-                            data-no-workflow
-                            className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors${selClass}`}
-                            onClick={openCell}
-                          >
-                            {psEntry ? (
-                              <div className="flex flex-col gap-0.5">
-                                <span className="font-mono text-indigo-700 font-semibold">{psEntry.date}</span>
-                                <span className="inline-flex items-center gap-1 px-1.5 py-px text-[8px] font-bold uppercase rounded bg-indigo-100 text-indigo-600 border border-indigo-200 leading-tight w-fit">
-                                  <i className="fas fa-calendar-alt text-[7px]"></i>
-                                  {milestoneTypeLabel}{psEntry.milestone} · {psEntry.vessel}
-                                </span>
+                          <td key={col.key} data-no-workflow className={`px-3 py-3 text-xs cursor-pointer hover:bg-accent/5 transition-colors${selClass}`} onClick={openCell}>
+                            {dateToShow ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-mono">{dateToShow}</span>
+                                <span className={`text-[9px] font-semibold px-1 py-px rounded border leading-none flex-shrink-0 ${psEntry?.milestoneGroup === 'acqEvent' ? 'text-violet-600 bg-violet-50 border-violet-200' : 'text-indigo-500 bg-indigo-50 border-indigo-200'}`}>{typeLabel}</span>
                               </div>
                             ) : (
                               <span>{displayVal}</span>

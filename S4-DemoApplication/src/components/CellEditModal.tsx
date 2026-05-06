@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import DraggableModal from './DraggableModal'
-import { DRLRow, ColumnKey, AnchorRecord } from '../types'
+import { DRLRow, ColumnKey, AnchorRecord, PSCellEntry } from '../types'
 import { AIRowInsight } from '../utils/aiAnalysis'
 import { chatWithAI } from '../utils/aiService'
 
@@ -11,6 +11,7 @@ interface CellEditTarget {
   label: string
   editable: boolean
   value: string
+  psEntry?: PSCellEntry  // present when this cell is driven by Program Schedule
 }
 
 interface Props {
@@ -201,6 +202,18 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
     }
   }
 
+  /* ─── PS delta formatter ───────────────────────────────────── */
+  function formatPSDelta(deltaDays: number): { text: string; slip: boolean } {
+    const abs = Math.abs(deltaDays)
+    const sign = deltaDays > 0 ? '+' : '−'
+    const slip = deltaDays > 0
+    if (abs < 30) return { text: `${sign}${abs}d`, slip }
+    const months = abs / 30.44
+    if (months < 12) return { text: `${sign}${abs}d (~${months.toFixed(1)}mo)`, slip }
+    const years = months / 12
+    return { text: `${sign}${abs}d (~${years.toFixed(1)}yr)`, slip }
+  }
+
   const isSealed = !!anchor
   const priorityColor = aiInsight
     ? aiInsight.priority === 'Critical' ? 'text-red-500'
@@ -337,6 +350,57 @@ export default function CellEditModal({ target, aiInsight, anchor, onSave, onClo
               </div>
             )}
           </div>
+
+          {/* PS Source Panel — shown for date cells driven by Program Schedule */}
+          {target.psEntry && (
+            <div className="rounded-lg border border-indigo-200 bg-indigo-50/40 overflow-hidden">
+              <div className="flex items-center gap-2 px-3 py-2 bg-indigo-100/50 border-b border-indigo-200">
+                <i className="fas fa-calendar-alt text-indigo-600 text-xs"></i>
+                <span className="text-[11px] font-semibold text-indigo-700 uppercase tracking-wide">Program Schedule Source</span>
+                <span className="ml-auto text-[9px] font-bold uppercase px-1.5 py-px bg-indigo-200 text-indigo-700 rounded">
+                  {target.psEntry.milestoneGroup === 'acqEvent' ? 'ACQ EVENT' : 'CONSTRUCTION'}
+                </span>
+              </div>
+              <div className="px-3 py-2.5 space-y-1.5 text-[11px]">
+                {target.psEntry.contractDate && target.psEntry.deltaDays !== null && target.psEntry.deltaDays !== 0 ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-steel">Contract Baseline</span>
+                      <span className="font-mono text-gray-500 line-through">{target.psEntry.contractDate}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-steel">PS Current Date</span>
+                      <span className="font-mono font-semibold text-indigo-700">{target.psEntry.date}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-steel">Schedule Variance</span>
+                      {(() => {
+                        const d = formatPSDelta(target.psEntry.deltaDays!)
+                        return (
+                          <span className={`font-semibold px-1.5 py-px rounded text-[10px] ${d.slip ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                            {d.text} {d.slip ? '(slip)' : '(early)'}
+                          </span>
+                        )
+                      })()}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between">
+                    <span className="text-steel">PS Date</span>
+                    <span className="font-mono font-semibold text-indigo-700">{target.psEntry.date}</span>
+                  </div>
+                )}
+                <div className="flex justify-between pt-0.5 border-t border-indigo-100">
+                  <span className="text-steel">Milestone</span>
+                  <span className="font-semibold text-gray-800 font-mono">{target.psEntry.milestone}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-steel">Vessel</span>
+                  <span className="font-semibold text-gray-800">{target.psEntry.vessel}</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* AI Insight Section */}
           {aiInsight && (

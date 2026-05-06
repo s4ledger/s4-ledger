@@ -80,8 +80,14 @@ export function parseMilestoneRef(guidance: string): MilestoneRef | null {
   // Detect offset
   const match = OFFSET_RE.exec(lower)
   if (!match) {
-    // "Submit at [milestone]" → offset 0
-    if (lower.includes(' at ') || lower.includes('at the') || lower.startsWith('at ')) {
+    // "NLT milestone + N days" or "milestone + N calendar days" → positive offset
+    const plusMatch = /\+\s*(\d+)\s*(?:calendar\s*)?days?/i.exec(lower)
+    if (plusMatch) {
+      return { milestone: foundMilestone, offsetDays: parseInt(plusMatch[1], 10) }
+    }
+    // "Submit with [milestone]" or "Submit at [milestone]" → offset 0
+    if (lower.includes(' at ') || lower.includes('at the') || lower.startsWith('at ') ||
+        lower.includes(' with ') || lower.includes('concurrent')) {
       return { milestone: foundMilestone, offsetDays: 0 }
     }
     return null
@@ -224,7 +230,57 @@ function fetchFromLocalStorage(): PSData | null {
   }
 }
 
-/* ─── Supabase + localStorage + default fallback fetch ─────────── */
+/* ─── Demo vessel data (exact dates from PS tool demo seed) ─────── */
+
+/**
+ * Canonical demo vessel data — matches the PS tool's built-in demo seed.
+ * Used to:
+ *   1. Fill in missing `acqEvents` on live Supabase/LS vessels
+ *   2. Serve as a 3rd fallback so DT always has PS data in demo mode
+ */
+export const DEMO_PS_VESSELS: PSVessel[] = [
+  {
+    id: 'apl-101', designation: 'APL-101', type: 'Patrol Boat', fleet: 'PACFLT',
+    ms: { CA:'2025-11', SOC:'2026-04', LCH:'2027-01', BT:'2027-05', AT:'2027-08', DEL:'2027-11' },
+    acqEvents: { SRR:'2026-02', PDR:'2026-08', CDR:'2026-12', SDP:'2026-10', IOTE:'2028-03' },
+  },
+  {
+    id: 'apl-102', designation: 'APL-102', type: 'Patrol Boat', fleet: 'PACFLT',
+    ms: { CA:'2026-03', SOC:'2026-09', LCH:'2027-07', BT:'2027-11', AT:'2028-02', DEL:'2028-05' },
+    acqEvents: { SRR:'2026-06', PDR:'2026-12', CDR:'2027-04', SDP:'2027-02', IOTE:'2028-09' },
+  },
+  {
+    id: 'yrbm-51', designation: 'YRBM-51', type: 'RHIB', fleet: 'PACFLT',
+    ms: { CA:'2025-09', SOC:'2026-03', LCH:'2026-08', BT:'2026-10', AT:'2026-12', DEL:'2027-03' },
+    acqEvents: { SRR:'2025-12', PDR:'2026-05', CDR:'2026-08', SDP:'2026-06', IOTE:'2027-07' },
+  },
+  {
+    id: 'yrbm-52', designation: 'YRBM-52', type: 'RHIB', fleet: 'USFF',
+    ms: { CA:'2026-02', SOC:'2026-08', LCH:'2027-02', BT:'2027-05', AT:'2027-07', DEL:'2027-10' },
+    acqEvents: { SRR:'2026-05', PDR:'2026-10', CDR:'2027-01', SDP:'2026-11', IOTE:'2028-02' },
+  },
+  {
+    id: 'ytb-810', designation: 'YTB-810', type: 'Tug', fleet: 'PACFLT',
+    ms: { CA:'2025-08', SOC:'2026-02', LCH:'2026-10', BT:'2027-01', AT:'2027-03', DEL:'2027-06' },
+    acqEvents: { SRR:'2025-11', PDR:'2026-04', CDR:'2026-07', SDP:'2026-05', IOTE:'2027-09' },
+  },
+  {
+    id: 'ytb-811', designation: 'YTB-811', type: 'Tug', fleet: 'USFF',
+    ms: { CA:'2026-01', SOC:'2026-07', LCH:'2027-03', BT:'2027-06', AT:'2027-08', DEL:'2027-11' },
+    acqEvents: { SRR:'2026-04', PDR:'2026-10', CDR:'2027-01', SDP:'2026-11', IOTE:'2028-03' },
+  },
+]
+
+/** Merge missing acqEvents from demo data for matching vessels. */
+function mergeAcqEvents(vessels: PSVessel[]): PSVessel[] {
+  return vessels.map(v => {
+    if (v.acqEvents && Object.keys(v.acqEvents).length > 0) return v
+    const demo = DEMO_PS_VESSELS.find(d => d.designation === v.designation)
+    return demo?.acqEvents ? { ...v, acqEvents: demo.acqEvents } : v
+  })
+}
+
+/* ─── Supabase + localStorage + demo fallback fetch ─────────────── */
 
 /**
  * Fetch the latest program schedule vessel data.
@@ -232,9 +288,7 @@ function fetchFromLocalStorage(): PSData | null {
  * Priority:
  *   1. Supabase  (synced by authenticated PS tool users)
  *   2. localStorage['s4_ps_v2']  (written by PS tool even in demo mode; same origin)
- *
- * Returns null if neither source has data — caller should prompt the user
- * to open and save the Program Schedule tool.
+ *   3. DEMO_PS_VESSELS  (built-in fallback so DT always has PS data)
  */
 export async function fetchProgramSchedule(): Promise<PSData | null> {
   // 1 — Supabase
@@ -249,7 +303,7 @@ export async function fetchProgramSchedule(): Promise<PSData | null> {
       const raw = data as { vessels: unknown; saved_at: string | null; version: string | null }
       const vessels: PSVessel[] = Array.isArray(raw.vessels) ? (raw.vessels as PSVessel[]) : []
       if (vessels.length > 0) {
-        return { vessels, savedAt: raw.saved_at, version: raw.version }
+        return { vessels: mergeAcqEvents(vessels), savedAt: raw.saved_at, version: raw.version }
       }
     } else if (error && error.code !== 'PGRST116') {
       console.warn('[PS Service] Supabase error:', error.message)
@@ -262,9 +316,10 @@ export async function fetchProgramSchedule(): Promise<PSData | null> {
   const lsData = fetchFromLocalStorage()
   if (lsData) {
     console.info(`[PS Service] Using localStorage PS data (${lsData.vessels.length} vessels)`)
-    return lsData
+    return { ...lsData, vessels: mergeAcqEvents(lsData.vessels) }
   }
 
-  // No PS data found — user needs to open and save the Program Schedule tool
-  return null
+  // 3 — Built-in demo fallback — always available
+  console.info('[PS Service] Using built-in demo vessel data')
+  return { vessels: DEMO_PS_VESSELS, savedAt: null, version: 'demo' }
 }
