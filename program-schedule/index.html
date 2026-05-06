@@ -630,7 +630,7 @@ td.ms-done .di::after { content:' ✓'; }
         <div class="panel-hdr">
           <div class="ph-dot"></div>
           Milestone Chart
-          <span class="ph-hint">Drag symbols to reschedule &middot; Ctrl+scroll or +/&minus; to zoom</span>
+          <span class="ph-hint">Drag symbols to reschedule &middot; Scroll to pan &middot; Ctrl+scroll or +/&minus; to zoom &middot; Click any spreadsheet cell to edit</span>
           <div class="ph-spacer"></div>
           <div style="display:flex;align-items:center;gap:4px">
             <button id="gantt-zoom-out" class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.22);font-size:15px;padding:0;line-height:1;width:24px;height:24px;display:flex;align-items:center;justify-content:center" onclick="zoomGantt(-1)" title="Zoom out">&minus;</button>
@@ -653,7 +653,8 @@ td.ms-done .di::after { content:' ✓'; }
         <div class="panel-hdr">
           <div class="ph-dot"></div>
           Acquisition Milestone Schedule
-          <span class="ph-hint">Click any date cell to edit &mdash; full M/D/YYYY or M/YYYY precision</span>
+          <span class="ph-hint">Click any cell to edit &mdash; Designation, Type, Fleet, Status + all date cells</span>
+          <span style="font-size:8px;opacity:.35;margin-left:8px;font-weight:400">v2.6 May-6</span>
           <div class="ph-spacer"></div>
           <button class="abtn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);font-size:10px;padding:2px 8px" onclick="exportCSV()">
             <i class="fas fa-download fa-xs"></i> Export CSV
@@ -1093,9 +1094,9 @@ var saveTimer  = null;
 var logBadge   = 0;
 
 /* ── Gantt layout constants ─── */
-var GP = { LEFT:130, ROW_H:52, HDR_H:36, FY_W:116, MS_R:7 };
+var GP = { LEFT:130, ROW_H:52, HDR_H:36, FY_W:175, MS_R:7 };
 var ganttZoomLevel = 1.0;
-var GP_FY_W_BASE   = 116;
+var GP_FY_W_BASE   = 175; // wider default so chart always has horizontal scroll content
 
 /* ── Completed milestones: Set of "vesselId|msKey" ─── */
 var completedSet = new Set();
