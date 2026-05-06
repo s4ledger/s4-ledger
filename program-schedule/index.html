@@ -141,12 +141,15 @@ html,body { height:100%; overflow:hidden;
 .toggle-sw input:checked + .toggle-track:before { transform:translateX(18px); }
 
 /* ── MS date cells (spreadsheet) — click to open edit modal ── */
-.ms-cell { cursor:pointer !important; min-width:76px; padding:4px 6px !important; background:transparent; border:none; }
-.ms-cell:hover { background:rgba(0,122,255,0.04) !important; }
+.ms-cell { cursor:pointer !important; min-width:76px; padding:4px 6px !important; background:transparent; border:none; position:relative; }
+.ms-cell:hover { background:rgba(0,122,255,0.07) !important; outline:1px solid rgba(0,122,255,0.18); outline-offset:-1px; border-radius:4px; }
+.ms-cell:active { background:rgba(0,122,255,0.13) !important; }
+.ms-cell .edit-hint { display:none; position:absolute; top:3px; right:4px; font-size:8px; color:var(--accent); opacity:0.6; }
+.ms-cell:hover .edit-hint { display:inline; }
 .ms-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:5px;
   font-size:10.5px; font-weight:500; color:var(--text); background:var(--surface-2);
-  border:1px solid var(--border); white-space:nowrap; transition:all .1s; pointer-events:none;
-  max-width:100%; overflow:hidden; }
+  border:1px solid var(--border); white-space:nowrap; transition:all .1s;
+  max-width:100%; overflow:hidden; pointer-events:none; }
 .ms-cell:hover .ms-badge { background:white; border-color:var(--accent); color:var(--accent); }
 .ms-cell.ms-done { background:rgba(52,199,89,0.06) !important; }
 .ms-cell.ms-done .ms-badge { background:rgba(52,199,89,0.1); border-color:rgba(52,199,89,0.4); color:#1a7a36; }
@@ -1148,13 +1151,19 @@ async function init() {
     if (!document.getElementById('craft-dd').contains(e.target)) dd.style.display='none';
   });
 
-  // Gantt zoom: Ctrl+scroll (or Cmd+scroll on Mac) on the timeline panel
+  // Gantt scroll + zoom: plain wheel = horizontal scroll; Ctrl/Cmd+wheel = zoom
   var ganttRight = document.getElementById('gantt-right');
   if (ganttRight) {
     ganttRight.addEventListener('wheel', function(e) {
+      e.preventDefault();
       if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
+        // Ctrl/Cmd + scroll → zoom in/out
         window.zoomGantt(e.deltaY < 0 ? 1 : -1);
+      } else {
+        // Plain scroll → pan left/right
+        // Use deltaX if available (trackpad horizontal swipe), else deltaY (mouse wheel)
+        var delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        ganttRight.scrollLeft += delta * 1.4;
       }
     }, {passive: false});
   }
@@ -1747,9 +1756,9 @@ function renderSpreadsheet() {
       var st=v.status||'on-track';
       var rowStyle=st==='delayed'?'background:rgba(255,59,48,0.035)':st==='not-planned'?'background:rgba(110,110,115,0.04)':'';
       h+='<tr class="vrow" data-id="'+v.id+'" style="'+rowStyle+'">';
-      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Edit vessel properties"><span class="vname">'+esc(v.designation)+'</span></td>';
-      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Edit vessel properties"><span style="color:'+tc+';font-weight:600">'+esc(v.type)+'</span></td>';
-      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Edit vessel properties"><span class="fb '+v.fleet.toLowerCase()+'">'+esc(v.fleet)+'</span></td>';
+      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Click to edit vessel"><span class="vname">'+esc(v.designation)+'</span><span class="edit-hint">✎</span></td>';
+      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Click to edit type"><span style="color:'+tc+';font-weight:600">'+esc(v.type)+'</span><span class="edit-hint">✎</span></td>';
+      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Click to edit fleet"><span class="fb '+v.fleet.toLowerCase()+'">'+esc(v.fleet)+'</span><span class="edit-hint">✎</span></td>';
 
       // MS date cells — click to open edit modal (all cells clickable, including not-planned)
       msKeys.forEach(key=>{
@@ -1792,7 +1801,7 @@ function renderSpreadsheet() {
       });
 
       h+='<td style="font-size:10.5px;color:var(--steel)">'+durationMo(v)+'</td>';
-      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Edit vessel properties">'+statusHtml(st)+'</td>';
+      h+='<td class="ms-cell" onclick="openVesselModal(\''+v.id+'\')" title="Click to edit status">'+statusHtml(st)+'<span class="edit-hint">✎</span></td>';
       h+='<td><input type="text" class="ti" style="min-width:130px" value="'+esc(v.notes||'')+'"'
         +' data-vid="'+v.id+'" data-key="notes" data-field="notes"'
         +' placeholder="Notes…" onchange="onNotesChange(event)" onblur="onNotesChange(event)"></td>';
@@ -1884,33 +1893,39 @@ function fieldLabel(key) {
 /* ── Vessel property edit modal ─────────────────────────────── */
 var _veditVid = null;
 function openVesselModal(vid) {
-  var v = vessels.find(function(x){return x.id===vid;}); if (!v) return;
+  var v = vessels.find(function(x){return x.id===vid;});
+  if (!v) { console.warn('[openVesselModal] vessel not found:', vid); return; }
   _veditVid = vid;
   document.getElementById('vedit-designation').value = v.designation;
-  document.getElementById('vedit-type').value = v.type;
-  document.getElementById('vedit-fleet').value = v.fleet;
-  document.getElementById('vedit-status').value = v.status||'on-track';
+  // Set select options safely
+  var typeEl = document.getElementById('vedit-type');
+  var fleetEl = document.getElementById('vedit-fleet');
+  var statusEl = document.getElementById('vedit-status');
+  typeEl.value = v.type;
+  if (typeEl.value !== v.type) { var opt=document.createElement('option'); opt.value=opt.textContent=v.type; typeEl.appendChild(opt); typeEl.value=v.type; }
+  fleetEl.value = v.fleet;
+  if (fleetEl.value !== v.fleet) { var opt2=document.createElement('option'); opt2.value=opt2.textContent=v.fleet; fleetEl.appendChild(opt2); fleetEl.value=v.fleet; }
+  statusEl.value = v.status||'on-track';
   document.getElementById('vedit-title').textContent = 'Edit '+v.designation;
   document.getElementById('vedit-sub').textContent = v.type+' · '+v.fleet;
-  document.getElementById('vessel-edit-modal').classList.add('open');
+  openModal('vessel-edit-modal');
 }
 window.openVesselModal = openVesselModal;
 function closeVesselModal() {
-  var mo = document.getElementById('vessel-edit-modal');
-  if (mo) mo.classList.remove('open');
+  closeModal('vessel-edit-modal');
   _veditVid = null;
 }
 window.closeVesselModal = closeVesselModal;
 window.vesselSave = function() {
-  if (!_veditVid) return;
-  var v = vessels.find(function(x){return x.id===_veditVid;}); if (!v) return;
+  if (!_veditVid) { closeVesselModal(); return; }
+  var v = vessels.find(function(x){return x.id===_veditVid;}); if (!v) { closeVesselModal(); return; }
   var newDes = document.getElementById('vedit-designation').value.trim();
   if (newDes) v.designation = newDes;
   v.type   = document.getElementById('vedit-type').value;
   v.fleet  = document.getElementById('vedit-fleet').value;
   v.status = document.getElementById('vedit-status').value;
-  auditEntry('VESSEL','Updated vessel properties for '+v.designation, {vesselId:v.id,type:v.type,fleet:v.fleet,status:v.status});
   closeVesselModal();
+  auditEntry('VESSEL','Updated vessel properties for '+v.designation, {vesselId:v.id,type:v.type,fleet:v.fleet,status:v.status});
   renderGantt(); renderSpreadsheet(); propagate(); autoSave();
   toast(v.designation+' updated');
 };
