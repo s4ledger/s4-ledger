@@ -585,9 +585,46 @@ td.ms-done .di::after { content:' ✓'; }
   box-shadow:0 8px 56px rgba(0,0,0,.7);
 }
 /* ══ INTERACTIVE SLIDE CANVAS ══════════════════════════════════ */
+/* ══ PowerPoint Ribbon ═══════════════════════════════════════════ */
 #se-format-bar {
   display:flex; flex-direction:column; width:100%; box-sizing:border-box;
   background:#1a1f2e; border-bottom:2px solid #2e3448; flex-shrink:0;
+}
+/* Tab bar */
+.se-ribbon-tabbar {
+  display:flex; align-items:center; gap:0;
+  padding:0 8px; background:#141824; border-bottom:1px solid #2e3448;
+  min-height:30px; flex-wrap:nowrap;
+}
+.se-ribbon-tab {
+  display:inline-flex; align-items:center; padding:5px 14px;
+  font-size:11px; font-weight:600; cursor:pointer; color:#8899bb;
+  background:transparent; border:none; border-bottom:2px solid transparent;
+  transition:color .12s, border-color .12s; white-space:nowrap; font-family:inherit;
+  margin-bottom:-1px;
+}
+.se-ribbon-tab:hover { color:#ccd; }
+.se-ribbon-tab.active { color:#fff; border-bottom-color:#007AFF; }
+.se-ribbon-tab-spacer { flex:1; }
+.se-ribbon-tab-ctx { font-size:10px; color:#8899bb; padding:0 8px; white-space:nowrap; }
+/* Tab panels */
+.se-ribbon-panel {
+  display:none; align-items:center; gap:3px; flex-wrap:wrap;
+  padding:4px 8px; min-height:36px; width:100%; box-sizing:border-box;
+}
+.se-ribbon-panel.active { display:flex; }
+/* Ribbon groups (vertical box with group label) */
+.se-ribbon-grp {
+  display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+  padding:2px 5px 0; border-right:1px solid rgba(255,255,255,.08);
+  min-width:max-content;
+}
+.se-ribbon-grp-row {
+  display:flex; align-items:center; gap:2px; flex-wrap:nowrap;
+}
+.se-ribbon-grp-lbl {
+  font-size:9px; color:#4a5880; text-align:center; width:100%;
+  padding-bottom:1px; white-space:nowrap;
 }
 .se-fmt-row {
   display:flex; align-items:center; gap:3px; flex-wrap:wrap;
@@ -1344,132 +1381,258 @@ td.ms-done .di::after { content:' ✓'; }
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <!-- PowerPoint Ribbon Toolbar — full-width, above slides panel -->
+    <!-- ══ PowerPoint Ribbon (tabbed) ══════════════════════════════ -->
     <div id="se-format-bar">
-      <!-- ROW 1: Text formatting -->
-      <div class="se-fmt-row">
-        <span id="se-fmt-el-name" class="se-fmt-label" style="min-width:55px;font-weight:600">No selection</span>
-        <div class="se-fmt-sep"></div>
-        <select class="se-fmt-sel" id="se-fmt-fontfamily" title="Font family" onchange="seFmtApply('fontFamily',this.value)">
-          <option value="Calibri,Arial,sans-serif">Calibri</option>
-          <option value="Arial,sans-serif">Arial</option>
-          <option value="'Times New Roman',serif">Times New Roman</option>
-          <option value="Georgia,serif">Georgia</option>
-          <option value="Verdana,sans-serif">Verdana</option>
-          <option value="Tahoma,sans-serif">Tahoma</option>
-          <option value="'Courier New',monospace">Courier New</option>
-          <option value="Impact,sans-serif">Impact</option>
-          <option value="'Trebuchet MS',sans-serif">Trebuchet MS</option>
-          <option value="'Franklin Gothic Medium',sans-serif">Franklin Gothic</option>
-        </select>
-        <select class="se-fmt-sel" id="se-fmt-fontsize" title="Font size" onchange="seFmtApply('fontSize',this.value)" style="width:52px">
-          <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option>
-          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-          <option value="13">13</option><option value="14">14</option><option value="16">16</option>
-          <option value="18">18</option><option value="20">20</option><option value="22">22</option>
-          <option value="24">24</option><option value="26">26</option><option value="28">28</option>
-          <option value="32">32</option><option value="36">36</option><option value="40">40</option>
-          <option value="48">48</option><option value="60">60</option><option value="72">72</option>
-        </select>
-        <button class="se-fmt-btn" title="Increase font size" onclick="seFmtAdjustSize(1)" style="padding:2px 5px;font-size:13px">A&#8593;</button>
-        <button class="se-fmt-btn" title="Decrease font size" onclick="seFmtAdjustSize(-1)" style="padding:2px 5px;font-size:13px">A&#8595;</button>
-        <div class="se-fmt-sep"></div>
-        <button class="se-fmt-btn" id="se-fmt-bold"   onclick="seFmtToggle('bold')"   title="Bold (Ctrl+B)"><b>B</b></button>
-        <button class="se-fmt-btn" id="se-fmt-italic" onclick="seFmtToggle('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
-        <button class="se-fmt-btn" id="se-fmt-underline" onclick="seFmtToggle('underline')" title="Underline (Ctrl+U)" style="text-decoration:underline">U</button>
-        <button class="se-fmt-btn" id="se-fmt-strike" onclick="seFmtToggle('strikethrough')" title="Strikethrough" style="text-decoration:line-through">S</button>
-        <button class="se-fmt-btn" id="se-fmt-shadow" onclick="seFmtToggle('shadow')" title="Text shadow">&#9639;S</button>
-        <div class="se-fmt-sep"></div>
-        <button class="se-fmt-btn" id="se-fmt-left"    onclick="seFmtApply('textAlign','left')"    title="Align Left">&#8676;</button>
-        <button class="se-fmt-btn" id="se-fmt-center"  onclick="seFmtApply('textAlign','center')"  title="Align Center">&#8801;</button>
-        <button class="se-fmt-btn" id="se-fmt-right"   onclick="seFmtApply('textAlign','right')"   title="Align Right">&#8677;</button>
-        <button class="se-fmt-btn" id="se-fmt-justify" onclick="seFmtApply('textAlign','justify')" title="Justify">&#9643;</button>
-        <select class="se-fmt-sel" id="se-fmt-linespacing" title="Line spacing" onchange="seFmtApply('lineHeight',this.value)" style="width:56px">
-          <option value="1.0">1.0&#xD7;</option><option value="1.15" selected>1.15&#xD7;</option>
-          <option value="1.5">1.5&#xD7;</option><option value="2.0">2.0&#xD7;</option>
-        </select>
-        <div class="se-fmt-sep"></div>
-        <div class="se-fmt-group">
-          <span class="se-fmt-label">A</span>
-          <input type="color" class="se-fmt-color" id="se-fmt-color" oninput="seFmtApply('color',this.value)" title="Text color" value="#000000">
-        </div>
-        <div class="se-fmt-group">
-          <span class="se-fmt-label" style="font-size:13px">&#9632;</span>
-          <input type="color" class="se-fmt-color" id="se-fmt-bgcolor" oninput="seFmtApply('background',this.value)" title="Fill color" value="#ffffff">
-        </div>
-        <div class="se-fmt-group">
-          <span class="se-fmt-label">&#9633;</span>
-          <input type="color" class="se-fmt-color" id="se-fmt-bordercolor" oninput="seFmtApply('borderColor',this.value)" title="Border color" value="#000000">
-        </div>
-        <select class="se-fmt-sel" id="se-fmt-borderwidth" title="Border width" onchange="seFmtApply('borderWidth',this.value)" style="width:50px">
-          <option value="0px">None</option><option value="1px">1px</option>
-          <option value="2px">2px</option><option value="3px">3px</option><option value="4px">4px</option>
-        </select>
-        <select class="se-fmt-sel" id="se-fmt-borderstyle" title="Border style" onchange="seFmtApply('borderStyle',this.value)" style="width:56px">
-          <option value="solid">Solid</option><option value="dashed">Dashed</option>
-          <option value="dotted">Dotted</option><option value="double">Double</option>
-        </select>
-        <div class="se-fmt-sep"></div>
-        <select class="se-fmt-sel" id="se-fmt-opacity" title="Opacity" onchange="seFmtApply('opacity',this.value)" style="width:56px">
-          <option value="1">100%</option><option value="0.9">90%</option>
-          <option value="0.75">75%</option><option value="0.5">50%</option>
-          <option value="0.25">25%</option>
-        </select>
-        <div class="se-fmt-group" title="Corner radius">
-          <span class="se-fmt-label">&#8990;</span>
-          <input type="number" class="se-fmt-num" id="se-fmt-radius" min="0" max="200" value="0"
-            onchange="seFmtApply('borderRadius',this.value+'px')" title="Corner radius (px)" style="width:38px">
-        </div>
+      <!-- Tab bar -->
+      <div class="se-ribbon-tabbar">
+        <button class="se-ribbon-tab active" onclick="seShowTab('home')">Home</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('insert')">Insert</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('arrange')">Arrange</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('slide')">Slide</button>
+        <div class="se-ribbon-tab-spacer"></div>
+        <span id="se-fmt-el-name" class="se-ribbon-tab-ctx">No selection</span>
       </div>
-      <!-- ROW 2: Arrangement + position/size + element ops -->
-      <div class="se-fmt-row">
-        <button class="se-fmt-btn" onclick="seElBringToFront()" title="Bring to Front">&#8679;&#8679;Z</button>
-        <button class="se-fmt-btn" onclick="seElBringForward()" title="Bring Forward">&#8679;Z</button>
-        <button class="se-fmt-btn" onclick="seElSendBack()" title="Send Backward">&#8681;Z</button>
-        <button class="se-fmt-btn" onclick="seElSendToBack()" title="Send to Back">&#8681;&#8681;Z</button>
-        <div class="se-fmt-sep"></div>
-        <button class="se-fmt-btn" onclick="seElRotate(-90)" title="Rotate Left 90&#176;">&#8634;90</button>
-        <button class="se-fmt-btn" onclick="seElRotate(90)"  title="Rotate Right 90&#176;">&#8635;90</button>
-        <div class="se-fmt-group" title="Rotation angle">
-          <span class="se-fmt-label">&#9099;</span>
-          <input type="number" class="se-fmt-num" id="se-fmt-rotate" min="-360" max="360" value="0"
-            onchange="seElRotateTo(+this.value)" style="width:42px">
-          <span class="se-fmt-label">&#176;</span>
+
+      <!-- HOME TAB -->
+      <div id="se-ribbon-home" class="se-ribbon-panel active">
+        <!-- Clipboard -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seCutEl()" title="Cut (Ctrl+X)"><i class="fas fa-cut fa-xs"></i> Cut</button>
+            <button class="se-fmt-btn" onclick="seCopyEl()" title="Copy (Ctrl+C)"><i class="fas fa-copy fa-xs"></i> Copy</button>
+            <button class="se-fmt-btn" onclick="sePasteEl()" title="Paste (Ctrl+V)"><i class="fas fa-paste fa-xs"></i> Paste</button>
+            <button class="se-fmt-btn" id="se-fmt-painter" onclick="seFormatPainter()" title="Format Painter — copy style from selected element, then click another">&#127823; Painter</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Clipboard</span>
         </div>
-        <button class="se-fmt-btn" onclick="seElFlipH()" title="Flip Horizontal">&#8596;H</button>
-        <button class="se-fmt-btn" onclick="seElFlipV()" title="Flip Vertical">&#8597;V</button>
-        <div class="se-fmt-sep"></div>
-        <div class="se-fmt-group" title="X position">
-          <span class="se-fmt-label">X:</span>
-          <input type="number" class="se-fmt-num" id="se-fmt-px" min="-1000" max="2000" value="0"
-            onchange="seElSetPosX(+this.value)" style="width:48px">
+        <!-- Font -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <select class="se-fmt-sel" id="se-fmt-fontfamily" title="Font family" onchange="seFmtApply('fontFamily',this.value)" style="width:110px">
+              <option value="Calibri,Arial,sans-serif">Calibri</option>
+              <option value="Arial,sans-serif">Arial</option>
+              <option value="'Times New Roman',serif">Times New Roman</option>
+              <option value="Georgia,serif">Georgia</option>
+              <option value="Verdana,sans-serif">Verdana</option>
+              <option value="Tahoma,sans-serif">Tahoma</option>
+              <option value="'Courier New',monospace">Courier New</option>
+              <option value="Impact,sans-serif">Impact</option>
+              <option value="'Trebuchet MS',sans-serif">Trebuchet MS</option>
+              <option value="'Franklin Gothic Medium',sans-serif">Franklin Gothic</option>
+            </select>
+            <select class="se-fmt-sel" id="se-fmt-fontsize" title="Font size" onchange="seFmtApply('fontSize',this.value)" style="width:48px">
+              <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option>
+              <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              <option value="13">13</option><option value="14">14</option><option value="16">16</option>
+              <option value="18">18</option><option value="20">20</option><option value="22">22</option>
+              <option value="24">24</option><option value="26">26</option><option value="28">28</option>
+              <option value="32">32</option><option value="36">36</option><option value="40">40</option>
+              <option value="48">48</option><option value="60">60</option><option value="72">72</option>
+            </select>
+            <button class="se-fmt-btn" title="Increase font size" onclick="seFmtAdjustSize(1)">A+</button>
+            <button class="se-fmt-btn" title="Decrease font size" onclick="seFmtAdjustSize(-1)">A-</button>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" id="se-fmt-bold"      onclick="seFmtToggle('bold')"          title="Bold (Ctrl+B)"><b>B</b></button>
+            <button class="se-fmt-btn" id="se-fmt-italic"    onclick="seFmtToggle('italic')"        title="Italic (Ctrl+I)"><i>I</i></button>
+            <button class="se-fmt-btn" id="se-fmt-underline" onclick="seFmtToggle('underline')"     title="Underline (Ctrl+U)" style="text-decoration:underline">U</button>
+            <button class="se-fmt-btn" id="se-fmt-strike"    onclick="seFmtToggle('strikethrough')" title="Strikethrough" style="text-decoration:line-through">S</button>
+            <button class="se-fmt-btn" id="se-fmt-shadow"    onclick="seFmtToggle('shadow')"        title="Text Shadow">&#9639;S</button>
+            <div class="se-fmt-sep"></div>
+            <div class="se-fmt-group" title="Text color">
+              <span class="se-fmt-label" style="font-size:11px;font-weight:700;color:#ccd">A</span>
+              <input type="color" class="se-fmt-color" id="se-fmt-color" oninput="seFmtApply('color',this.value)" title="Text color" value="#000000">
+            </div>
+            <div class="se-fmt-group" title="Fill color">
+              <span class="se-fmt-label" style="font-size:14px">&#9632;</span>
+              <input type="color" class="se-fmt-color" id="se-fmt-bgcolor" oninput="seFmtApply('background',this.value)" title="Fill/background color" value="#ffffff">
+            </div>
+          </div>
+          <span class="se-ribbon-grp-lbl">Font</span>
         </div>
-        <div class="se-fmt-group" title="Y position">
-          <span class="se-fmt-label">Y:</span>
-          <input type="number" class="se-fmt-num" id="se-fmt-py" min="-1000" max="2000" value="0"
-            onchange="seElSetPosY(+this.value)" style="width:48px">
+        <!-- Paragraph -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" id="se-fmt-left"    onclick="seFmtApply('textAlign','left')"    title="Align Left (Ctrl+L)">&#8676;L</button>
+            <button class="se-fmt-btn" id="se-fmt-center"  onclick="seFmtApply('textAlign','center')"  title="Align Center (Ctrl+E)">&#8801;C</button>
+            <button class="se-fmt-btn" id="se-fmt-right"   onclick="seFmtApply('textAlign','right')"   title="Align Right (Ctrl+R)">R&#8677;</button>
+            <button class="se-fmt-btn" id="se-fmt-justify" onclick="seFmtApply('textAlign','justify')" title="Justify">&#9643;J</button>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <select class="se-fmt-sel" id="se-fmt-linespacing" title="Line spacing" onchange="seFmtApply('lineHeight',this.value)" style="width:60px">
+              <option value="1.0">1.0&#xD7;</option><option value="1.15" selected>1.15&#xD7;</option>
+              <option value="1.5">1.5&#xD7;</option><option value="2.0">2.0&#xD7;</option>
+            </select>
+            <button class="se-fmt-btn" onclick="seFmtApply('display','block')" title="Wrap text">&#8617;Wrap</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Paragraph</span>
         </div>
-        <div class="se-fmt-sep"></div>
-        <div class="se-fmt-group" title="Width">
-          <span class="se-fmt-label">W:</span>
-          <input type="number" class="se-fmt-num" id="se-fmt-pw" min="1" max="2000" value="100"
-            onchange="seElSetW(+this.value)" style="width:52px">
+        <!-- Border / Fill / Style -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <div class="se-fmt-group" title="Border color">
+              <span class="se-fmt-label">&#9633;</span>
+              <input type="color" class="se-fmt-color" id="se-fmt-bordercolor" oninput="seFmtApply('borderColor',this.value)" title="Border color" value="#000000">
+            </div>
+            <select class="se-fmt-sel" id="se-fmt-borderwidth" title="Border width" onchange="seFmtApply('borderWidth',this.value)" style="width:48px">
+              <option value="0px">None</option><option value="1px">1px</option>
+              <option value="2px">2px</option><option value="3px">3px</option><option value="4px">4px</option>
+            </select>
+            <select class="se-fmt-sel" id="se-fmt-borderstyle" title="Border style" onchange="seFmtApply('borderStyle',this.value)" style="width:54px">
+              <option value="solid">Solid</option><option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option><option value="double">Double</option>
+            </select>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <select class="se-fmt-sel" id="se-fmt-opacity" title="Opacity" onchange="seFmtApply('opacity',this.value)" style="width:56px">
+              <option value="1">100%</option><option value="0.9">90%</option>
+              <option value="0.75">75%</option><option value="0.5">50%</option>
+              <option value="0.25">25%</option>
+            </select>
+            <div class="se-fmt-group" title="Corner radius">
+              <span class="se-fmt-label">&#8990;r</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-radius" min="0" max="200" value="0"
+                onchange="seFmtApply('borderRadius',this.value+'px')" title="Corner radius (px)" style="width:36px">
+            </div>
+          </div>
+          <span class="se-ribbon-grp-lbl">Style</span>
         </div>
-        <div class="se-fmt-group" title="Height">
-          <span class="se-fmt-label">H:</span>
-          <input type="number" class="se-fmt-num" id="se-fmt-ph" min="1" max="2000" value="50"
-            onchange="seElSetH(+this.value)" style="width:52px">
+      </div><!-- /HOME -->
+
+      <!-- INSERT TAB -->
+      <div id="se-ribbon-insert" class="se-ribbon-panel">
+        <!-- Shapes -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAddShape('rect')"     title="Rectangle">&#9632; Rect</button>
+            <button class="se-fmt-btn" onclick="seAddShape('roundrect')" title="Rounded Rectangle">&#9634; Round</button>
+            <button class="se-fmt-btn" onclick="seAddShape('circle')"   title="Circle / Ellipse">&#9679; Circle</button>
+            <button class="se-fmt-btn" onclick="seAddShape('triangle')" title="Triangle">&#9650; Triangle</button>
+            <button class="se-fmt-btn" onclick="seAddShape('diamond')"  title="Diamond">&#9670; Diamond</button>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAddShape('pentagon')"  title="Pentagon">&#11040; Pentagon</button>
+            <button class="se-fmt-btn" onclick="seAddShape('hexagon')"   title="Hexagon">&#11041; Hexagon</button>
+            <button class="se-fmt-btn" onclick="seAddShape('star4')"     title="4-Point Star">&#10022; Star 4</button>
+            <button class="se-fmt-btn" onclick="seAddShape('star5')"     title="5-Point Star">&#9733; Star 5</button>
+            <button class="se-fmt-btn" onclick="seAddShape('arrow')"     title="Right Arrow">&#10132; Arrow</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Shapes</span>
         </div>
-        <button class="se-fmt-btn" id="se-fmt-lockprop" onclick="seToggleLockProportions()" title="Lock/unlock aspect ratio">&#128279;</button>
-        <div class="se-fmt-sep"></div>
-        <button class="se-fmt-btn" onclick="seElDuplicate()" title="Duplicate (Ctrl+D)"><i class="fas fa-copy fa-xs"></i> Dup</button>
-        <button class="se-fmt-btn" id="se-fmt-lock" onclick="seElToggleLock()" title="Lock/unlock element">&#128274; Lock</button>
-        <div style="flex:1"></div>
-        <button class="se-fmt-btn danger" onclick="seElDelete()" title="Delete selected (Del)"><i class="fas fa-trash fa-xs"></i> Delete</button>
-      </div>
-    </div>
-    <!-- Persistent slide actions bar (PowerPoint-style toolbar for selected slide) -->
-    <div id="se-slide-bar"></div>
+        <!-- Lines -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAddShape('line-h')"   title="Horizontal Line">&#8212; H-Line</button>
+            <button class="se-fmt-btn" onclick="seAddShape('line-v')"   title="Vertical Line">| V-Line</button>
+            <button class="se-fmt-btn" onclick="seAddShape('line-d1')"  title="Diagonal Line /">/ Diag</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Lines</span>
+        </div>
+        <!-- Text objects -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAddTextBox()"    title="Add a text box"><i class="fas fa-font fa-xs"></i> Text Box</button>
+            <button class="se-fmt-btn" onclick="seAddWordArt()"    title="Add styled WordArt heading"><b style='color:#c9a84c'>WA</b> WordArt</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Text</span>
+        </div>
+        <!-- Images -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAddImage()" title="Insert image from file"><i class="fas fa-image fa-xs"></i> Picture</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Images</span>
+        </div>
+        <!-- Table -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAddTable()" title="Insert a simple table"><i class="fas fa-table fa-xs"></i> Table</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Table</span>
+        </div>
+      </div><!-- /INSERT -->
+
+      <!-- ARRANGE TAB -->
+      <div id="se-ribbon-arrange" class="se-ribbon-panel">
+        <!-- Z-Order -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seElBringToFront()" title="Bring to Front">&#8679;&#8679;Top</button>
+            <button class="se-fmt-btn" onclick="seElBringForward()" title="Bring Forward">&#8679;Fwd</button>
+            <button class="se-fmt-btn" onclick="seElSendBack()"     title="Send Backward">&#8681;Back</button>
+            <button class="se-fmt-btn" onclick="seElSendToBack()"   title="Send to Back">&#8681;&#8681;Bot</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Z-Order</span>
+        </div>
+        <!-- Transform -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seElRotate(-90)" title="Rotate Left 90°">&#8634;90</button>
+            <button class="se-fmt-btn" onclick="seElRotate(90)"  title="Rotate Right 90°">&#8635;90</button>
+            <div class="se-fmt-group">
+              <input type="number" class="se-fmt-num" id="se-fmt-rotate" min="-360" max="360" value="0"
+                onchange="seElRotateTo(+this.value)" title="Rotation angle" style="width:40px">
+              <span class="se-fmt-label">°</span>
+            </div>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seElFlipH()" title="Flip Horizontal">&#8596;Flip H</button>
+            <button class="se-fmt-btn" onclick="seElFlipV()" title="Flip Vertical">&#8597;Flip V</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Transform</span>
+        </div>
+        <!-- Align -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAlignEl('left')"   title="Align left edge to slide left">&#9646;&#8592;L</button>
+            <button class="se-fmt-btn" onclick="seAlignEl('hcenter')" title="Center horizontally on slide">&#8596;C</button>
+            <button class="se-fmt-btn" onclick="seAlignEl('right')"  title="Align right edge to slide right">R&#8594;&#9646;</button>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAlignEl('top')"    title="Align top edge to slide top">&#9644;&#8593;T</button>
+            <button class="se-fmt-btn" onclick="seAlignEl('vcenter')" title="Center vertically on slide">&#8597;C</button>
+            <button class="se-fmt-btn" onclick="seAlignEl('bottom')" title="Align bottom edge to slide bottom">B&#8595;&#9644;</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Align (to Slide)</span>
+        </div>
+        <!-- Position &amp; Size -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <div class="se-fmt-group"><span class="se-fmt-label">X:</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-px" min="-1000" max="2000" value="0" onchange="seElSetPosX(+this.value)" style="width:48px"></div>
+            <div class="se-fmt-group"><span class="se-fmt-label">Y:</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-py" min="-1000" max="2000" value="0" onchange="seElSetPosY(+this.value)" style="width:48px"></div>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <div class="se-fmt-group"><span class="se-fmt-label">W:</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-pw" min="1" max="2000" value="100" onchange="seElSetW(+this.value)" style="width:52px"></div>
+            <div class="se-fmt-group"><span class="se-fmt-label">H:</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-ph" min="1" max="2000" value="50"  onchange="seElSetH(+this.value)" style="width:52px"></div>
+            <button class="se-fmt-btn" id="se-fmt-lockprop" onclick="seToggleLockProportions()" title="Lock/unlock aspect ratio">&#128279;</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Position &amp; Size</span>
+        </div>
+        <!-- Element ops -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seCopyEl()"      title="Copy (Ctrl+C)"><i class="fas fa-copy fa-xs"></i></button>
+            <button class="se-fmt-btn" onclick="seElDuplicate()" title="Duplicate (Ctrl+D)">Dup</button>
+            <button class="se-fmt-btn" id="se-fmt-lock" onclick="seElToggleLock()" title="Lock/unlock element">&#128274; Lock</button>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn danger" onclick="seElDelete()" title="Delete selected (Del)" style="width:100%"><i class="fas fa-trash fa-xs"></i> Delete</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Element</span>
+        </div>
+      </div><!-- /ARRANGE -->
+
+      <!-- SLIDE TAB: replaces slide bar -->
+      <div id="se-ribbon-slide" class="se-ribbon-panel">
+        <div id="se-slide-bar-inner" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;min-height:36px;width:100%"></div>
+      </div><!-- /SLIDE -->
+    </div><!-- /#se-format-bar -->
+    <!-- slide-bar kept for backward compat but content now renders in Slide tab -->
+    <div id="se-slide-bar" style="display:none"></div>
     <!-- Body -->
     <div id="se-body">
       <div id="se-panel">
@@ -3213,14 +3376,22 @@ document.addEventListener('keydown', function(e) {
   /* ── Slide editor keyboard shortcuts ── */
   var seOpen = document.getElementById('slide-editor-overlay');
   if (seOpen && seOpen.style.display !== 'none') {
-    /* Ctrl+Z / Cmd+Z = Undo */
-    if ((e.ctrlKey||e.metaKey) && !e.shiftKey && e.key.toLowerCase()==='z') {
-      e.preventDefault(); seUndo(); return;
+    var cm = (e.ctrlKey||e.metaKey);
+    var k = e.key.toLowerCase();
+    /* Don't fire if user is typing in an input/select/contenteditable */
+    var inInput = ae && (ae.tagName==='INPUT'||ae.tagName==='SELECT'||ae.tagName==='TEXTAREA'||ae.isContentEditable);
+    if (cm && !inInput) {
+      if (!e.shiftKey && k==='z') { e.preventDefault(); seUndo(); return; }
+      if (k==='y' || (e.shiftKey && k==='z')) { e.preventDefault(); seRedo(); return; }
+      if (!e.shiftKey && k==='x') { e.preventDefault(); seCutEl(); return; }
+      if (!e.shiftKey && k==='c') { e.preventDefault(); seCopyEl(); return; }
+      if (!e.shiftKey && k==='v') { e.preventDefault(); sePasteEl(); return; }
+      if (!e.shiftKey && k==='d') { e.preventDefault(); seElDuplicate(); return; }
+      if (!e.shiftKey && k==='b') { e.preventDefault(); seFmtToggle('bold'); return; }
+      if (!e.shiftKey && k==='i') { e.preventDefault(); seFmtToggle('italic'); return; }
+      if (!e.shiftKey && k==='u') { e.preventDefault(); seFmtToggle('underline'); return; }
     }
-    /* Ctrl+Y / Ctrl+Shift+Z / Cmd+Shift+Z = Redo */
-    if ((e.ctrlKey||e.metaKey) && (e.key.toLowerCase()==='y' || (e.shiftKey && e.key.toLowerCase()==='z'))) {
-      e.preventDefault(); seRedo(); return;
-    }
+    if (!inInput && (k==='delete'||k==='backspace')) { e.preventDefault(); seElDelete(); return; }
   }
 });
 
@@ -4008,8 +4179,153 @@ function seEditSubAt(idx) {
 }
 
 /* ── Slide Actions Bar — persistent PowerPoint-style toolbar for selected slide ── */
+/* Ribbon tab switcher */
+window.seShowTab = function(name) {
+  ['home','insert','arrange','slide'].forEach(function(t){
+    var panel = document.getElementById('se-ribbon-'+t);
+    if (panel) panel.classList.toggle('active', t===name);
+  });
+  document.querySelectorAll('.se-ribbon-tab').forEach(function(btn,i){
+    var tabs=['home','insert','arrange','slide'];
+    btn.classList.toggle('active', tabs[i]===name);
+  });
+};
+
+/* ── Cut / Copy / Paste / Format Painter ── */
+var seCopyBuffer = null;
+var sePainterStyle = null;
+
+window.seCutEl = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  seCopyBuffer = JSON.parse(JSON.stringify(el));
+  seHistPush();
+  slide.elements = slide.elements.filter(function(e){return e.id!==seSelectedId;});
+  seSelectedId = null;
+  seRenderPreview(); seRenderPanel();
+};
+
+window.seCopyEl = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  seCopyBuffer = JSON.parse(JSON.stringify(el));
+  toast('Copied');
+};
+
+window.sePasteEl = function() {
+  if (!seCopyBuffer) { toast('Nothing to paste'); return; }
+  seHistPush();
+  var slide = seSlides[seActive]; if (!slide) { seEnsureElements(slide); }
+  seEnsureElements(seSlides[seActive]);
+  var copy = JSON.parse(JSON.stringify(seCopyBuffer));
+  copy.id = seElId();
+  copy.x = (copy.x || 0) + 15;
+  copy.y = (copy.y || 0) + 15;
+  copy.userAdded = true;
+  seSlides[seActive].elements.push(copy);
+  seSelectedId = copy.id;
+  seRenderPreview(); seRenderPanel();
+};
+
+window.seFormatPainter = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) { toast('Select a source element first'); return; }
+  var btn = document.getElementById('se-fmt-painter');
+  if (sePainterStyle) {
+    /* Second click — already have style, apply mode was already on */
+    sePainterStyle = null;
+    if (btn) { btn.classList.remove('active'); btn.title='Format Painter'; }
+    toast('Format Painter off');
+  } else {
+    sePainterStyle = JSON.parse(JSON.stringify(el.style||{}));
+    if (btn) { btn.classList.add('active'); btn.title='Click element to apply style'; }
+    toast('Click an element to apply style');
+  }
+};
+
+/* Called from seAttachCanvasInteraction on element click when painter is active */
+function seApplyPainterStyle(el) {
+  if (!sePainterStyle) return false;
+  seHistPush();
+  el.style = JSON.parse(JSON.stringify(sePainterStyle));
+  sePainterStyle = null;
+  var btn = document.getElementById('se-fmt-painter');
+  if (btn) btn.classList.remove('active');
+  toast('Style applied');
+  seRenderPreview();
+  return true;
+}
+
+/* ── Align element to slide edges/center ── */
+window.seAlignEl = function(dir) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  seHistPush();
+  switch(dir) {
+    case 'left':    el.x = 0; break;
+    case 'right':   el.x = SE_CANVAS_W - el.w; break;
+    case 'hcenter': el.x = (SE_CANVAS_W - el.w) / 2; break;
+    case 'top':     el.y = 0; break;
+    case 'bottom':  el.y = SE_CANVAS_H - el.h; break;
+    case 'vcenter': el.y = (SE_CANVAS_H - el.h) / 2; break;
+  }
+  seRenderPreview();
+};
+
+/* ── WordArt insert ── */
+window.seAddWordArt = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  seEnsureElements(slide);
+  seHistPush();
+  var el = {id:seElId(), type:'text', x:SE_CANVAS_W*0.2, y:SE_CANVAS_H*0.4,
+    w:SE_CANVAS_W*0.6, h:80, text:'WordArt Heading', editable:true, movable:true, userAdded:true,
+    style:{ fontSize:'36px', fontWeight:'700', color:'#C9A000',
+            fontFamily:'"Franklin Gothic Medium",Arial,sans-serif',
+            textAlign:'center', display:'flex', alignItems:'center', justifyContent:'center',
+            textShadow:'2px 2px 4px rgba(0,0,0,.5)', letterSpacing:'2px' },
+    zIndex:20};
+  slide.elements.push(el);
+  seSelectedId = el.id;
+  seRenderPreview(); seRenderPanel();
+};
+
+/* ── Table insert ── */
+window.seAddTable = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  seEnsureElements(slide);
+  seHistPush();
+  /* Create a simple 3×3 table as a text element with CSS grid inside */
+  var rows=3, cols=3;
+  var cellW=Math.round(SE_CANVAS_W*0.5/cols), cellH=28;
+  var tableW=cellW*cols, tableH=cellH*rows;
+  var html='<table style="border-collapse:collapse;width:100%;height:100%;font-size:10px">';
+  for(var r=0;r<rows;r++){
+    html+='<tr>';
+    for(var c=0;c<cols;c++){
+      var bg=(r===0)?'#1c3a5f':'white';
+      var color=(r===0)?'white':'#333';
+      html+='<td style="border:1px solid #aaa;padding:3px 5px;background:'+bg+';color:'+color+';text-align:center">'+(r===0?'Header '+(c+1):'Cell')+'</td>';
+    }
+    html+='</tr>';
+  }
+  html+='</table>';
+  var el={id:seElId(), type:'html', x:(SE_CANVAS_W-tableW)/2, y:(SE_CANVAS_H-tableH)/2,
+    w:tableW, h:tableH, html:html, movable:true, userAdded:true,
+    style:{}, zIndex:20};
+  slide.elements.push(el);
+  seSelectedId = el.id;
+  seRenderPreview(); seRenderPanel();
+};
+
 function seRenderSlideBar() {
-  var bar = document.getElementById('se-slide-bar'); if (!bar) return;
+  /* Render into the Slide tab panel inner div */
+  var bar = document.getElementById('se-slide-bar-inner');
+  if (!bar) { bar = document.getElementById('se-slide-bar'); }
+  if (!bar) return;
   var s = seSlides[seActive];
   if (!s) { bar.innerHTML = ''; return; }
   var n = seSlides.length;
@@ -4025,40 +4341,32 @@ function seRenderSlideBar() {
                 : s.type==='custom' ? 'Custom Slide'
                 : (SE_TYPE_LABEL[s.vesselType]||s.vesselType||'')+ ' Program Slide';
   bar.innerHTML = ''
-    + '<span class="se-sb-label" style="font-weight:700;color:var(--text)">'+esc(typeLabel)+'</span>'
+    + '<span class="se-sb-label" style="font-weight:700;color:var(--accent);min-width:120px">'+esc(typeLabel)+'</span>'
     + '<div class="se-sb-sep"></div>'
     + '<button class="se-sb-btn" onclick="seEditCurrentTitle()" title="Edit slide title">'
-    +   '<i class="fas fa-pencil fa-xs"></i> Edit Title</button>'
+    +   '<i class="fas fa-pencil fa-xs"></i> Title</button>'
     + '<button class="se-sb-btn" onclick="seEditCurrentSubtitle()" title="Edit subtitle">'
     +   '<i class="fas fa-font fa-xs"></i> Subtitle</button>'
     + '<div class="se-sb-sep"></div>'
-    + '<button class="se-sb-btn" onclick="seAddTextBox()" title="Add a text box to the slide">'
-    +   '<i class="fas fa-font fa-xs"></i> Text Box</button>'
-    + '<button class="se-sb-btn" onclick="seAddShape(\'rect\')" title="Add rectangle">'
-    +   '<i class="fas fa-square fa-xs"></i></button>'
-    + '<button class="se-sb-btn" onclick="seAddShape(\'circle\')" title="Add circle">'
-    +   '<i class="fas fa-circle fa-xs"></i></button>'
-    + '<button class="se-sb-btn" onclick="seAddImage()" title="Add image">'
-    +   '<i class="fas fa-image fa-xs"></i></button>'
-    + '<button class="se-sb-btn" onclick="seResyncSlide()" title="Re-sync slide layout from latest vessel data">'
-    +   '<i class="fas fa-sync fa-xs"></i> Resync Data</button>'
+    + '<span class="se-sb-label">FY:</span>'
+    + '<select class="se-sb-sel" title="First FY" onchange="seSetFY(\'start\',+this.value)">'+fyOpts(s.fyStart)+'</select>'
+    + '<span class="se-sb-label" style="padding:0 2px">&ndash;</span>'
+    + '<select class="se-sb-sel" title="Last FY" onchange="seSetFY(\'end\',+this.value)">'+fyOpts(s.fyEnd)+'</select>'
     + '<div class="se-sb-sep"></div>'
-    + '<button class="se-sb-btn" onclick="seMoveSlide(seActive,-1)"'+(isFirst?' disabled':'')+' title="Move slide earlier">'
-    +   '<i class="fas fa-arrow-left fa-xs"></i> Move Left</button>'
-    + '<button class="se-sb-btn" onclick="seMoveSlide(seActive,1)"'+(isLast?' disabled':'')+' title="Move slide later">'
-    +   '<i class="fas fa-arrow-right fa-xs"></i> Move Right</button>'
+    + '<button class="se-sb-btn" onclick="seMoveSlide(seActive,-1)"'+(isFirst?' disabled':'')+' title="Move earlier">'
+    +   '<i class="fas fa-arrow-left fa-xs"></i></button>'
+    + '<button class="se-sb-btn" onclick="seMoveSlide(seActive,1)"'+(isLast?' disabled':'')+' title="Move later">'
+    +   '<i class="fas fa-arrow-right fa-xs"></i></button>'
     + '<button class="se-sb-btn" onclick="seDuplicateSlide(seActive)" title="Duplicate this slide">'
-    +   '<i class="fas fa-copy fa-xs"></i> Duplicate</button>'
+    +   '<i class="fas fa-copy fa-xs"></i> Dup</button>'
     + '<div class="se-sb-sep"></div>'
-    + '<span class="se-sb-label">FY Range:</span>'
-    + '<select class="se-sb-sel" title="First FY on this slide" onchange="seSetFY(\'start\',+this.value)">'+fyOpts(s.fyStart)+'</select>'
-    + '<span class="se-sb-label" style="padding:0 2px">&#8211;</span>'
-    + '<select class="se-sb-sel" title="Last FY on this slide" onchange="seSetFY(\'end\',+this.value)">'+fyOpts(s.fyEnd)+'</select>'
+    + '<button class="se-sb-btn" onclick="seResyncSlide()" title="Re-sync from vessel data">'
+    +   '<i class="fas fa-sync fa-xs"></i> Resync</button>'
     + '<div style="flex:1"></div>'
-    + '<button class="se-sb-btn'+(s.hidden?' vis-off':'')+'" onclick="seToggleHide(seActive)" title="'+(s.hidden?'Show':'Hide')+' in export">'
+    + '<button class="se-sb-btn'+(s.hidden?' vis-off':'') +'" onclick="seToggleHide(seActive)" title="'+(s.hidden?'Show':'Hide')+' in export">'
     +   '<i class="fas '+(s.hidden?'fa-eye':'fa-eye-slash')+' fa-xs"></i> '+(s.hidden?'Show':'Hide')+'</button>'
     + '<button class="se-sb-btn danger" id="se-sb-del" onclick="seDeleteSlideSafe(seActive)" title="Delete this slide">'
-    +   '<i class="fas fa-trash fa-xs"></i> Delete</button>';
+    +   '<i class="fas fa-trash fa-xs"></i> Del</button>';
 }
 
 /* Safe delete: inline confirm without browser dialog */
@@ -4249,19 +4557,21 @@ function seDefaultElements(slide) {
       style:{background:lblBg, borderBottom:'0.5px solid #c8cdd8'}, locked:true, zIndex:3, hint:'Label bg'});
 
     /* Vessel name */
-    els.push({id:seElId(), type:'text', x:g.MX+SC*0.055, y:ry, w:g.LCW-SC*0.07, h:g.RH*0.55,
+    var lblFontSz = Math.max(7, Math.min(SC*0.100, 10));
+    els.push({id:seElId(), type:'text', x:g.MX+SC*0.055, y:ry+1, w:g.LCW-SC*0.08, h:g.RH*0.52,
       text:v.designation||'', hint:'Vessel name', editable:true, movable:true,
-      style:{fontSize:Math.max(7,Math.min(SC*0.100,10))+'px', fontWeight:'700',
-             color:navyColor, display:'flex', alignItems:'flex-end',
-             fontFamily:'Calibri,Arial,sans-serif', paddingBottom:'1px'},
+      style:{fontSize:lblFontSz+'px', fontWeight:'700',
+             color:navyColor, display:'flex', alignItems:'center',
+             fontFamily:'Calibri,Arial,sans-serif', overflow:'hidden', whiteSpace:'nowrap',
+             textOverflow:'ellipsis'},
       zIndex:7});
 
     /* Fleet label */
-    els.push({id:seElId(), type:'text', x:g.MX+SC*0.055, y:ry+g.RH*0.52, w:g.LCW-SC*0.07, h:g.RH*0.45,
+    els.push({id:seElId(), type:'text', x:g.MX+SC*0.055, y:ry+g.RH*0.50, w:g.LCW-SC*0.08, h:g.RH*0.46,
       text:v.fleet||'', hint:'Fleet', editable:true, movable:true,
-      style:{fontSize:Math.max(6,Math.min(SC*0.085,9))+'px', fontWeight:'600',
-             color:fc, display:'flex', alignItems:'flex-start',
-             fontFamily:'Calibri,Arial,sans-serif'},
+      style:{fontSize:Math.max(6, Math.min(SC*0.085, 9))+'px', fontWeight:'600',
+             color:fc, display:'flex', alignItems:'center',
+             fontFamily:'Calibri,Arial,sans-serif', overflow:'hidden', whiteSpace:'nowrap'},
       zIndex:7});
 
     /* Milestone symbols */
@@ -4278,11 +4588,13 @@ function seDefaultElements(slide) {
       var sh  = def.shape||'diamond';
       var symR = g.SYR;
 
-      /* Label above */
+      /* Label above — clamped so it doesn't overflow row top */
       var abLbl = (slide.type!=='acq' && key==='CA') ? 'Award' : key;
       var mSz = Math.max(6.5, Math.min(SC*0.095, 9));
       var dSz = Math.max(6, Math.min(SC*0.082, 8));
-      els.push({id:seElId(), type:'text', x:mx-symR*2.5, y:mid-symR-SC*0.07, w:symR*5, h:Math.max(9,mSz+2),
+      var lblH = Math.max(8,mSz+2);
+      var lblY = Math.max(ry+1, mid-symR-lblH-SC*0.02);
+      els.push({id:seElId(), type:'text', x:mx-symR*2.5, y:lblY, w:symR*5, h:lblH,
         text:abLbl, hint:key+' label', editable:true, movable:true,
         style:{fontSize:mSz+'px', fontWeight:'700', color:col, textAlign:'center',
                display:'flex', alignItems:'flex-end', justifyContent:'center',
@@ -4295,12 +4607,13 @@ function seDefaultElements(slide) {
         movable:true, locked:false, zIndex:10,
         style:{}, symR:symR, symKey:key, vesselId:v.id});
 
-      /* Date below */
-      els.push({id:seElId(), type:'text', x:mx-symR*2.5, y:mid+symR+SC*0.025, w:symR*5, h:Math.max(9,dSz+2),
+      /* Date below — clamped so it doesn't overflow row bottom */
+      var datY = Math.min(mid+symR+SC*0.018, ry+g.RH-Math.max(8,dSz+2)-1);
+      els.push({id:seElId(), type:'text', x:mx-symR*2.5, y:datY, w:symR*5, h:Math.max(8,dSz+2),
         text:seShortDate(d), hint:key+' date', editable:true, movable:true,
         style:{fontSize:dSz+'px', color:'#5a6a80', textAlign:'center',
                display:'flex', alignItems:'flex-start', justifyContent:'center',
-               fontFamily:'Calibri,Arial,sans-serif'},
+               fontFamily:'Calibri,Arial,sans-serif', overflow:'hidden', whiteSpace:'nowrap'},
         zIndex:9});
     });
   });
@@ -4475,11 +4788,21 @@ function seRenderElDiv(el, wrap, scaleX, scaleY, cW, cH) {
       div.style.fontSize = (parseFloat(el.style.fontSize) * scaleX) + 'px';
     }
   }
+  /* Prevent text from bleeding outside element bounds */
+  if (el.type === 'text') {
+    div.style.overflow = 'hidden';
+    if (!el.style || !el.style.whiteSpace) div.style.whiteSpace = 'normal';
+    div.style.wordBreak = 'break-word';
+  } else if (el.type === 'rect' || el.type === 'html') {
+    div.style.overflow = 'hidden';
+  }
   if (el.rotation) div.style.transform = 'rotate('+el.rotation+'deg)';
 
   if (el.id === seSelectedId) div.classList.add('selected');
 
-  if (el.type === 'sym') {
+  if (el.type === 'html') {
+    div.innerHTML = el.html || '';
+  } else if (el.type === 'sym') {
     var r2 = (el.symR||Math.min(el.w,el.h)/2) * scaleX;
     var cx2 = (el.w/2)*scaleX, cy2 = (el.h/2)*scaleY;
     div.innerHTML = '<svg width="'+(el.w*scaleX)+'" height="'+(el.h*scaleY)+'">'
@@ -4914,14 +5237,100 @@ window.seAddShape = function(type) {
   seEnsureElements(slide);
   seHistPush();
   var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
-  var colors = {rect:'#1c3a5f', circle:'#007AFF', arrow:'#C9A000'};
-  var newEl = {id:seElId(), type:'rect', x:100, y:150, w:160, h:80,
-    style:{background:colors[type]||'#1c3a5f', borderRadius:type==='circle'?'50%':'4px', opacity:'0.85'},
-    hint:type, movable:true, locked:false, userAdded:true, zIndex:maxZ+1};
-  if (type==='circle') { newEl.w=80; newEl.h=80; }
+  var cx=SE_CANVAS_W/2, cy=SE_CANVAS_H/2;
+  var newEl;
+  /* Line variants — use a thin rect with specific look */
+  if (type==='line-h') {
+    newEl={id:seElId(),type:'rect',x:cx-100,y:cy,w:200,h:2,
+      style:{background:'#1c3a5f'},hint:'H-Line',movable:true,userAdded:true,zIndex:maxZ+1};
+  } else if (type==='line-v') {
+    newEl={id:seElId(),type:'rect',x:cx,y:cy-60,w:2,h:120,
+      style:{background:'#1c3a5f'},hint:'V-Line',movable:true,userAdded:true,zIndex:maxZ+1};
+  } else if (type==='line-d1') {
+    newEl={id:seElId(),type:'rect',x:cx-80,y:cy,w:160,h:2,
+      style:{background:'#1c3a5f',transform:'rotate(45deg)',transformOrigin:'center'},
+      hint:'Diag Line',movable:true,userAdded:true,zIndex:maxZ+1};
+  } else {
+    var fill={rect:'#1c3a5f',roundrect:'#1c3a5f',circle:'#007AFF',
+              triangle:'#008F5D',diamond:'#C9A000',pentagon:'#a52566',
+              hexagon:'#d44c1e',star4:'#0073cf',star5:'#ffc107',arrow:'#C9A000'}[type]||'#1c3a5f';
+    var w=140,h=80;
+    if (type==='circle'){w=80;h=80;}
+    else if (type==='star4'||type==='star5'){w=80;h=80;}
+    else if (type==='arrow'){w=160;h=60;}
+    var br = type==='circle'?'50%':type==='roundrect'?'12px':type==='diamond'?'4px':'4px';
+    var extra = {};
+    if (type==='triangle') {
+      extra={clipPath:'polygon(50% 0%,100% 100%,0% 100%)'};
+    } else if (type==='diamond') {
+      extra={clipPath:'polygon(50% 0%,100% 50%,50% 100%,0% 50%)'};
+    } else if (type==='pentagon') {
+      extra={clipPath:'polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%)'};
+    } else if (type==='hexagon') {
+      extra={clipPath:'polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)'};
+    } else if (type==='star4') {
+      extra={clipPath:'polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)'};
+    } else if (type==='star5') {
+      extra={clipPath:'polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)'};
+    } else if (type==='arrow') {
+      extra={clipPath:'polygon(0 25%,80% 25%,80% 0%,100% 50%,80% 100%,80% 75%,0 75%)'};
+    }
+    var st=Object.assign({background:fill,borderRadius:br},extra);
+    newEl={id:seElId(),type:'rect',x:cx-w/2,y:cy-h/2,w:w,h:h,
+      style:st,hint:type,movable:true,userAdded:true,zIndex:maxZ+1};
+  }
   slide.elements.push(newEl);
   seSelectedId = newEl.id;
   seRenderPreview(); seRenderPanel();
+};
+
+/* ── WordArt heading ── */
+window.seAddWordArt = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  seEnsureElements(slide);
+  seHistPush();
+  var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
+  var el = {id:seElId(), type:'text', x:SE_CANVAS_W*0.1, y:SE_CANVAS_H*0.38,
+    w:SE_CANVAS_W*0.8, h:80, text:'WordArt Heading', editable:true, movable:true, userAdded:true,
+    hint:'WordArt',
+    style:{fontSize:'40px',fontWeight:'700',color:'#C9A000',
+           fontFamily:'"Franklin Gothic Medium",Arial,sans-serif',
+           textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',
+           textShadow:'2px 2px 6px rgba(0,0,0,.4)',letterSpacing:'2px',overflow:'hidden'},
+    zIndex:maxZ+1};
+  slide.elements.push(el);
+  seSelectedId = el.id;
+  seRenderPreview(); seRenderPanel();
+  toast('WordArt added — double-click to edit');
+};
+
+/* ── Table insert ── */
+window.seAddTable = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  seEnsureElements(slide);
+  seHistPush();
+  var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
+  var rows=3, cols=3, cellW=90, cellH=28;
+  var tW=cellW*cols, tH=cellH*rows;
+  var html='<table style="border-collapse:collapse;width:100%;height:100%;font-size:10px;table-layout:fixed">';
+  for(var r=0;r<rows;r++){
+    html+='<tr>';
+    for(var c=0;c<cols;c++){
+      var bg=(r===0)?'#1c3a5f':'#f8f9fb';
+      var col=(r===0)?'white':'#333';
+      html+='<td style="border:1px solid #b0b8c8;padding:3px 5px;background:'+bg+';color:'+col+';text-align:center;overflow:hidden;white-space:nowrap">'+(r===0?'Header '+(c+1):'Cell')+'</td>';
+    }
+    html+='</tr>';
+  }
+  html+='</table>';
+  var el={id:seElId(),type:'html',
+    x:(SE_CANVAS_W-tW)/2, y:(SE_CANVAS_H-tH)/2, w:tW, h:tH,
+    html:html, movable:true, userAdded:true, hint:'Table',
+    style:{overflow:'hidden'}, zIndex:maxZ+1};
+  slide.elements.push(el);
+  seSelectedId = el.id;
+  seRenderPreview(); seRenderPanel();
+  toast('Table added');
 };
 
 /* ── Add an image placeholder ── */
@@ -4990,6 +5399,12 @@ function seAttachCanvasInteraction() {
       return;
     }
     var elId = elDiv.dataset.id;
+    /* Format Painter: if active, apply style to clicked element */
+    if (sePainterStyle) {
+      var slide_ = seSlides[seActive];
+      var targetEl = slide_ && slide_.elements && slide_.elements.find(function(x){return x.id===elId;});
+      if (targetEl) { seApplyPainterStyle(targetEl); seRenderPreview(); return; }
+    }
     if (elId === seSelectedId) return; /* already selected, will handle as drag */
     seSelectedId = elId;
     document.querySelectorAll('.se-el.selected').forEach(function(d){d.classList.remove('selected');});
