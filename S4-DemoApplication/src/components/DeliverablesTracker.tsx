@@ -877,10 +877,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   }
 
   function rowClass(status: MaskedStatus) {
+    if (status === 'green') return 'row-green'
     if (status === 'red') return 'row-red'
     if (status === 'yellow') return 'row-yellow'
-    if (status === 'pending') return 'row-pending'
-    return 'row-green'
+    return 'row-pending'  // safe fallthrough — null/unexpected status shows neutral, never green
   }
 
   async function handleRowReseal(row: DRLRow) {

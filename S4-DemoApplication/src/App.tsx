@@ -29,7 +29,13 @@ import DeliverablesTracker from './components/DeliverablesTracker'
  * dates without also setting received='Yes'.
  */
 function sanitizeRow(row: DRLRow): DRLRow {
+  // Normalise status — reject any value that isn't one of the four valid options.
+  // This handles null/undefined/unexpected values that came in from Supabase or IndexedDB.
+  const VALID_STATUSES: DRLRow['status'][] = ['green', 'yellow', 'red', 'pending']
   let { status, received, actualSubmissionDate } = row
+  if (!VALID_STATUSES.includes(status)) {
+    status = 'pending'  // unknown → neutral
+  }
 
   // Rule 1 — submission date implies the document was received
   if (actualSubmissionDate && received !== 'Yes') {
