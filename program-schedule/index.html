@@ -576,8 +576,8 @@ td.ms-done .di::after { content:' ✓'; }
   color:white; background:rgba(255,59,48,.8); border-radius:3px; padding:1px 4px; z-index:1;
 }
 #se-main {
-  flex:1; overflow:auto; display:flex; justify-content:center;
-  align-items:flex-start; padding:28px 24px; background:#181c24;
+  flex:1; overflow:auto; display:flex; flex-direction:column;
+  align-items:center; padding:24px; background:#181c24; gap:0;
 }
 #se-preview-wrap { width:100%; max-width:880px; }
 #se-preview svg {
@@ -598,6 +598,30 @@ td.ms-done .di::after { content:' ✓'; }
 .se-ctx-item.danger { color:var(--red); }
 .se-ctx-item.danger:hover { background:rgba(255,59,48,.05); color:var(--red); }
 .se-ctx-sep { height:1px; background:var(--border); margin:3px 0; }
+/* ── Slide Actions Bar (PowerPoint-style persistent toolbar) ── */
+#se-slide-bar {
+  display:flex; align-items:center; gap:4px; flex-wrap:wrap;
+  padding:4px 12px; border-bottom:1px solid var(--border);
+  background:var(--surface-2); flex-shrink:0; min-height:36px;
+}
+.se-sb-btn {
+  display:inline-flex; align-items:center; gap:4px;
+  background:transparent; border:1px solid var(--border);
+  border-radius:5px; padding:3px 9px; font-size:11px; cursor:pointer;
+  color:var(--text); transition:background .1s,border-color .1s,color .1s;
+  white-space:nowrap; font-family:inherit;
+}
+.se-sb-btn:hover:not(:disabled) { background:rgba(0,122,255,.08); border-color:rgba(0,122,255,.4); color:var(--accent); }
+.se-sb-btn:disabled { opacity:.35; cursor:default; pointer-events:none; }
+.se-sb-btn.danger { color:var(--red); }
+.se-sb-btn.danger:hover:not(:disabled) { background:rgba(255,59,48,.07); border-color:var(--red); }
+.se-sb-btn.vis-off { background:rgba(255,59,48,.07); border-color:var(--red); color:var(--red); }
+.se-sb-sep { width:1px; height:20px; background:var(--border); flex-shrink:0; margin:0 3px; }
+.se-sb-label { font-size:10px; color:var(--steel); white-space:nowrap; }
+.se-sb-sel {
+  background:var(--surface); border:1px solid var(--border); border-radius:5px;
+  color:var(--text); font-size:11px; padding:2px 4px; cursor:pointer; font-family:inherit;
+}
 #se-add-wrap { position:relative; }
 #se-add-menu {
   display:none; position:absolute; top:calc(100% + 5px); left:0;
@@ -1198,12 +1222,6 @@ td.ms-done .di::after { content:' ✓'; }
           </div>
         </div>
       </div>
-      <button class="abtn btn-o" onclick="seEditCurrentTitle()" style="font-size:11px;padding:4px 10px" title="Edit active slide title">
-        <i class="fas fa-pencil fa-xs"></i> Edit Title
-      </button>
-      <button class="abtn btn-o" onclick="seEditCurrentSubtitle()" style="font-size:11px;padding:4px 10px" title="Edit active slide subtitle">
-        <i class="fas fa-font fa-xs"></i> Subtitle
-      </button>
       <div class="se-hdr-sep"></div>
       <button class="abtn btn-o" id="se-prev-btn" onclick="seNavPrev()" style="font-size:11px;padding:4px 8px" title="Previous slide (&#8592;)">
         <i class="fas fa-chevron-left fa-xs"></i>
@@ -1212,7 +1230,6 @@ td.ms-done .di::after { content:' ✓'; }
         <i class="fas fa-chevron-right fa-xs"></i>
       </button>
       <div style="flex:1"></div>
-      <span style="font-size:10px;color:var(--steel);margin-right:4px">Right-click slide thumbnails for options</span>
       <button class="abtn" style="background:#c0392b;color:white;border-color:#a93226;font-size:11px;padding:4px 12px;gap:5px" onclick="sePptxExport()" title="Export visible slides to PowerPoint (.pptx)">
         <i class="fas fa-file-powerpoint fa-xs"></i> Export PPTX
       </button>
@@ -1220,6 +1237,8 @@ td.ms-done .di::after { content:' ✓'; }
         <i class="fas fa-times"></i>
       </button>
     </div>
+    <!-- Persistent slide actions bar (PowerPoint-style toolbar for selected slide) -->
+    <div id="se-slide-bar"></div>
     <!-- Body -->
     <div id="se-body">
       <div id="se-panel">
@@ -3597,17 +3616,23 @@ window.closeSlideEditor = function() {
   document.getElementById('slide-editor-overlay').classList.remove('se-open');
 };
 
-/* ── Build initial slides (one per vessel type in current data) ── */
+/* ── Build initial slides (one per vessel type + acquisition milestone slide) ── */
 function seGenerateSlides() {
   var types = [];
   vessels.forEach(function(v){ if (!types.includes(v.type)) types.push(v.type); });
-  return types.filter(function(t){
+  var slides = types.filter(function(t){
     return vessels.some(function(v){ return v.type===t; });
   }).map(function(t){
     return { id:'sl-'+t+'-'+Date.now()+'-'+Math.random().toString(36).slice(2),
              type:'program', vesselType:t, title:seTypeTitle(t), subtitle:'',
              hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
   });
+  /* Auto-include acquisition milestone schedule slide */
+  slides.push({ id:'sl-acq-'+Date.now()+'-'+Math.random().toString(36).slice(2),
+                type:'acq', vesselType:null,
+                title:'Acquisition Milestone Schedule',
+                subtitle:'', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' });
+  return slides;
 }
 
 /* ── Populate the Add Slide dropdown with current types ── */
@@ -3713,7 +3738,76 @@ function seEditSubAt(idx) {
   if(v!==null){ s.subtitle=v.trim(); seRenderPanel(); seRenderPreview(); }
 }
 
-/* ── Context menu ── */
+/* ── Slide Actions Bar — persistent PowerPoint-style toolbar for selected slide ── */
+function seRenderSlideBar() {
+  var bar = document.getElementById('se-slide-bar'); if (!bar) return;
+  var s = seSlides[seActive];
+  if (!s) { bar.innerHTML = ''; return; }
+  var n = seSlides.length;
+  var isFirst = (seActive === 0), isLast = (seActive === n-1);
+  function fyOpts(sel) {
+    var h = '';
+    for (var y = 2022; y <= 2042; y++)
+      h += '<option value="'+y+'"'+(y===sel?' selected':'')+'>FY'+String(y).slice(2)+'</option>';
+    return h;
+  }
+  var typeLabel = s.type==='acq' ? 'Acquisition Milestone Schedule'
+                : s.type==='custom' ? 'Custom Slide'
+                : (SE_TYPE_LABEL[s.vesselType]||s.vesselType||'')+ ' Program Slide';
+  bar.innerHTML = ''
+    + '<span class="se-sb-label" style="font-weight:700;color:var(--text)">'+esc(typeLabel)+'</span>'
+    + '<div class="se-sb-sep"></div>'
+    + '<button class="se-sb-btn" onclick="seEditCurrentTitle()" title="Edit slide title">'
+    +   '<i class="fas fa-pencil fa-xs"></i> Edit Title</button>'
+    + '<button class="se-sb-btn" onclick="seEditCurrentSubtitle()" title="Edit subtitle">'
+    +   '<i class="fas fa-font fa-xs"></i> Subtitle</button>'
+    + '<div class="se-sb-sep"></div>'
+    + '<button class="se-sb-btn" onclick="seMoveSlide(seActive,-1)"'+(isFirst?' disabled':'')+' title="Move slide earlier">'
+    +   '<i class="fas fa-arrow-left fa-xs"></i> Move Left</button>'
+    + '<button class="se-sb-btn" onclick="seMoveSlide(seActive,1)"'+(isLast?' disabled':'')+' title="Move slide later">'
+    +   '<i class="fas fa-arrow-right fa-xs"></i> Move Right</button>'
+    + '<button class="se-sb-btn" onclick="seDuplicateSlide(seActive)" title="Duplicate this slide">'
+    +   '<i class="fas fa-copy fa-xs"></i> Duplicate</button>'
+    + '<div class="se-sb-sep"></div>'
+    + '<span class="se-sb-label">FY Range:</span>'
+    + '<select class="se-sb-sel" title="First FY on this slide" onchange="seSetFY(\'start\',+this.value)">'+fyOpts(s.fyStart)+'</select>'
+    + '<span class="se-sb-label" style="padding:0 2px">&#8211;</span>'
+    + '<select class="se-sb-sel" title="Last FY on this slide" onchange="seSetFY(\'end\',+this.value)">'+fyOpts(s.fyEnd)+'</select>'
+    + '<div style="flex:1"></div>'
+    + '<button class="se-sb-btn'+(s.hidden?' vis-off':'')+'" onclick="seToggleHide(seActive)" title="'+(s.hidden?'Show':'Hide')+' in export">'
+    +   '<i class="fas '+(s.hidden?'fa-eye':'fa-eye-slash')+' fa-xs"></i> '+(s.hidden?'Show':'Hide')+'</button>'
+    + '<button class="se-sb-btn danger" id="se-sb-del" onclick="seDeleteSlideSafe(seActive)" title="Delete this slide">'
+    +   '<i class="fas fa-trash fa-xs"></i> Delete</button>';
+}
+
+/* Safe delete: inline confirm without browser dialog */
+window.seDeleteSlideSafe = function(idx) {
+  if (seSlides.length <= 1) { toast('Cannot delete the last slide'); return; }
+  var btn = document.getElementById('se-sb-del');
+  if (btn && !btn.dataset.confirming) {
+    btn.dataset.confirming = '1';
+    btn.innerHTML = '<i class="fas fa-exclamation-triangle fa-xs"></i> Confirm Delete?';
+    btn.style.background = 'rgba(255,59,48,.2)';
+    setTimeout(function(){ if(btn) { delete btn.dataset.confirming; seRenderSlideBar(); } }, 3500);
+    return;
+  }
+  seDeleteSlide(idx);
+};
+
+/* Per-slide FY range */
+window.seSetFY = function(which, val) {
+  var s = seSlides[seActive]; if (!s) return;
+  if (which === 'start') {
+    s.fyStart = val;
+    if (s.fyEnd <= s.fyStart) s.fyEnd = s.fyStart + 1;
+  } else {
+    s.fyEnd = val;
+    if (s.fyStart >= s.fyEnd) s.fyStart = s.fyEnd - 1;
+  }
+  seRenderPanel(); seRenderPreview();
+};
+
+/* ── Context menu (right-click on thumbnail — convenience shortcut) ── */
 window.seThumbCtx = function(e,idx) {
   e.preventDefault(); e.stopPropagation();
   seCtxIdx=idx; seSelectSlide(idx);
@@ -3760,13 +3854,14 @@ function seRenderPanel() {
   }).join('');
   var ctr=document.getElementById('se-slide-counter');
   if(ctr) ctr.textContent=seSlides.length?(seActive+1)+' / '+seSlides.length:'\u2014 / \u2014';
+  seRenderSlideBar();
 }
 
 /* ── Render main preview ── */
 function seRenderPreview() {
   var container=document.getElementById('se-preview'); if(!container) return;
   var slide=seSlides[seActive];
-  if(!slide){ container.innerHTML='<p style="color:#888;text-align:center;padding:40px;font-size:14px">No slides. Click \u201cAdd Slide\u201d to get started.</p>'; return; }
+  if(!slide){ container.innerHTML='<p style="color:#888;text-align:center;padding:40px;font-size:14px">No slides. Click \u201cAdd Slide\u201d to get started.</p>'; seRenderSlideBar(); return; }
   container.innerHTML='<svg id="se-main-svg" viewBox="0 0 880 660"'
     +' xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">'
     +seRenderSVGBody(slide,880,660,false)+'</svg>';
@@ -3784,6 +3879,7 @@ function seRenderPreview() {
   if(ctr) ctr.textContent=(seActive+1)+' / '+seSlides.length;
   var p=document.getElementById('se-prev-btn'); if(p) p.disabled=(seActive===0);
   var n=document.getElementById('se-next-btn'); if(n) n.disabled=(seActive===seSlides.length-1);
+  seRenderSlideBar();
 }
 
 /* ── SVG body dispatcher (shared by thumbnail + preview) ── */
