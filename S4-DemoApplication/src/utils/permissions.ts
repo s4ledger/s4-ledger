@@ -171,10 +171,13 @@ export function getMaskedView(row: DRLRow, org: Organization): MaskedDRLView {
       red: 'Overdue',
       pending: 'Pending Review',
     }
+    // Defensive: green requires received=Yes — downgrade to yellow if invariant is violated
+    const displayStatus: MaskedStatus =
+      row.status === 'green' && row.received !== 'Yes' ? 'yellow' : row.status
     return {
-      displayStatus: row.status,
+      displayStatus,
       displayNotes: row.notes,
-      statusLabel: labelMap[row.status] || row.status,
+      statusLabel: labelMap[displayStatus] || displayStatus,
     }
   }
 

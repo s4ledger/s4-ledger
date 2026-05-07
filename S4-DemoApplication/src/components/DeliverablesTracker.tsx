@@ -723,7 +723,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
    * Rules:
    *   1. status='green' requires received='Yes' (Completed means it was received)
    *   2. received='No' forbids status='green' (can't be completed if not received)
-   *   3. Clearing actualSubmissionDate when received='Yes' resets received to 'No'
+   *   3. received='Yes' on a 'red' (overdue) row → upgrade to 'yellow' (under review)
+   *      because a received document is no longer overdue, just under review
+   *   4. Clearing actualSubmissionDate when received='Yes' resets received to 'No'
    *      and downgrades status from 'green' to 'yellow'
    */
   function enforceStatusConsistency(row: DRLRow, changedField: keyof DRLRow): Partial<DRLRow> {
@@ -737,6 +739,11 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
     if (changedField === 'received' && row.received === 'No') {
       // Can't be completed if not received
       if (row.status === 'green') cascades.status = 'yellow'
+    }
+
+    if (changedField === 'received' && row.received === 'Yes') {
+      // Document now received — 'red' (overdue/not submitted) is no longer accurate
+      if (row.status === 'red') cascades.status = 'yellow'
     }
 
     if (changedField === 'actualSubmissionDate' && !row.actualSubmissionDate) {

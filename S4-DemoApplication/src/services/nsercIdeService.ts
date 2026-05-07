@@ -550,9 +550,15 @@ const ATTACHMENT_J2_REMARKS: Record<string, string[]> = {
     'REJECTED per Attachment J-2 acceptance criteria — significant deficiencies identified per MIL-STD-1916 sampling procedures. Full resubmittal required within 15 calendar days.',
     'OVERDUE per Attachment J-2 — escalated to PMS 300 Contracting Officer for corrective action coordination per FAR 52.242-15.',
   ],
+  pending: [
+    'Per Attachment J-2 submittal schedule — deliverable under government review. Awaiting PMS 300 technical authority disposition within 30 calendar days.',
+    'Tracking against Attachment J-2 review milestones. PMS 300 reviewer assigned. No action required from contractor at this time.',
+    'Submitted per Attachment J-2 guidance — pending PMS 300 acceptance or comment disposition.',
+  ],
 }
 
 function pickRandom<T>(arr: T[]): T {
+  if (!arr || arr.length === 0) throw new Error('pickRandom called with empty/undefined array')
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
@@ -748,7 +754,7 @@ function simulatePMS300Updates(
 
   const updatedExistingRows = Array.from(indices).map(idx => {
     const row = eligible[idx]
-    const remarks = ATTACHMENT_J2_REMARKS[row.status]
+    const remarks = ATTACHMENT_J2_REMARKS[row.status] ?? ATTACHMENT_J2_REMARKS['yellow']
     const newNote = `[Synced from NSERC IDE (PMS 300)] ${pickRandom(remarks)}`
 
     const updated = { ...row, notes: newNote }
