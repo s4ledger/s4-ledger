@@ -584,6 +584,88 @@ td.ms-done .di::after { content:' ✓'; }
   width:100%; height:auto; display:block; border-radius:4px;
   box-shadow:0 8px 56px rgba(0,0,0,.7);
 }
+/* ══ INTERACTIVE SLIDE CANVAS ══════════════════════════════════ */
+#se-format-bar {
+  display:none; align-items:center; gap:4px; flex-wrap:wrap;
+  padding:4px 10px; background:#1e2330; border-radius:8px 8px 0 0;
+  border:1px solid #2e3448; border-bottom:none; min-height:34px; width:100%; box-sizing:border-box;
+  max-width:880px;
+}
+#se-format-bar.active { display:flex; }
+.se-fmt-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.13);
+  border-radius:4px; padding:2px 7px; font-size:11px; cursor:pointer;
+  color:#ccd; transition:background .1s; white-space:nowrap; font-family:inherit; min-height:24px;
+}
+.se-fmt-btn:hover { background:rgba(0,122,255,.25); border-color:rgba(0,122,255,.5); color:white; }
+.se-fmt-btn.active { background:rgba(0,122,255,.35); border-color:#007AFF; color:white; }
+.se-fmt-btn.danger:hover { background:rgba(255,59,48,.25); border-color:rgba(255,59,48,.5); color:#ff6b6b; }
+.se-fmt-sep { width:1px; height:18px; background:rgba(255,255,255,.15); flex-shrink:0; margin:0 3px; }
+.se-fmt-sel {
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.13); border-radius:4px;
+  color:#ccd; font-size:11px; padding:1px 4px; cursor:pointer; font-family:inherit;
+}
+.se-fmt-color { width:22px; height:22px; border:none; padding:0; cursor:pointer; border-radius:3px; }
+#se-canvas-wrap {
+  position:relative; width:100%; max-width:880px;
+  background:white; border-radius:0 0 4px 4px;
+  box-shadow:0 8px 56px rgba(0,0,0,.7);
+  overflow:hidden; user-select:none;
+  /* maintain 880:660 aspect ratio */
+  aspect-ratio: 880/660;
+}
+#se-canvas-wrap.se-canvas-editing { overflow:visible; }
+.se-el {
+  position:absolute; box-sizing:border-box; cursor:default;
+  transition:outline 0.06s;
+}
+.se-el:hover { outline:1.5px dashed rgba(0,122,255,.45); }
+.se-el.selected {
+  outline:2px solid #007AFF !important;
+  z-index:100;
+}
+.se-el.se-dragging { cursor:grabbing !important; opacity:.9; z-index:200; }
+.se-el[data-editable]:hover { cursor:text; }
+.se-el[data-movable]:not([data-editable]):hover { cursor:grab; }
+.se-el.selected .se-handle { display:block; }
+.se-handle {
+  display:none; position:absolute; width:8px; height:8px;
+  background:white; border:1.5px solid #007AFF; border-radius:2px; z-index:201;
+  pointer-events:all;
+}
+.se-handle.nw  { top:-4px;  left:-4px;  cursor:nw-resize; }
+.se-handle.ne  { top:-4px;  right:-4px; cursor:ne-resize; }
+.se-handle.sw  { bottom:-4px; left:-4px;  cursor:sw-resize; }
+.se-handle.se  { bottom:-4px; right:-4px; cursor:se-resize; }
+.se-handle.n   { top:-4px;  left:calc(50% - 4px); cursor:n-resize; }
+.se-handle.s   { bottom:-4px; left:calc(50% - 4px); cursor:s-resize; }
+.se-handle.e   { right:-4px; top:calc(50% - 4px); cursor:e-resize; }
+.se-handle.w   { left:-4px;  top:calc(50% - 4px); cursor:w-resize; }
+/* Inline text editing cursor */
+.se-el[contenteditable="true"] {
+  cursor:text; outline:2px solid #007AFF !important;
+  caret-color:#007AFF; white-space:pre-wrap; overflow:visible;
+}
+/* Small info label showing element type when hovered */
+.se-el-tip {
+  display:none; position:absolute; bottom:calc(100% + 4px); left:0;
+  background:#007AFF; color:white; font-size:9px; border-radius:3px;
+  padding:1px 5px; white-space:nowrap; pointer-events:none; z-index:300;
+}
+.se-el:hover .se-el-tip { display:block; }
+/* Selection box for multi-select rubber-band */
+#se-sel-box {
+  display:none; position:absolute; border:1.5px dashed #007AFF;
+  background:rgba(0,122,255,.07); pointer-events:none; z-index:150;
+}
+/* Grid snap guide lines */
+.se-guide {
+  position:absolute; pointer-events:none; z-index:190;
+  background:#ff9500; opacity:0.5;
+}
+.se-guide.v { width:1px; top:0; height:100%; }
+.se-guide.h { height:1px; left:0; width:100%; }
 #se-ctx-menu {
   display:none; position:fixed; z-index:9700;
   background:var(--surface); border:1px solid var(--border);
@@ -1246,9 +1328,53 @@ td.ms-done .di::after { content:' ✓'; }
         <div id="se-slide-list"></div>
       </div>
       <div id="se-main">
-        <div id="se-preview-wrap">
-          <div id="se-preview"></div>
+        <!-- Format bar (shows when an element is selected) -->
+        <div id="se-format-bar">
+          <span id="se-fmt-el-name" style="font-size:10px;color:#88aacc;min-width:60px;font-weight:600"></span>
+          <div class="se-fmt-sep"></div>
+          <select class="se-fmt-sel" id="se-fmt-fontsize" onchange="seFmtApply('fontSize',this.value)" title="Font size">
+            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+            <option value="13">13</option><option value="14">14</option><option value="16">16</option>
+            <option value="18">18</option><option value="20">20</option><option value="22">22</option>
+            <option value="24">24</option><option value="26">26</option><option value="28">28</option>
+            <option value="32">32</option><option value="36">36</option><option value="40">40</option>
+            <option value="48">48</option><option value="60">60</option>
+          </select>
+          <div class="se-fmt-sep"></div>
+          <button class="se-fmt-btn" id="se-fmt-bold"   onclick="seFmtToggle('bold')"   title="Bold (Ctrl+B)"><b>B</b></button>
+          <button class="se-fmt-btn" id="se-fmt-italic" onclick="seFmtToggle('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+          <button class="se-fmt-btn" id="se-fmt-underline" onclick="seFmtToggle('underline')" title="Underline (Ctrl+U)" style="text-decoration:underline">U</button>
+          <div class="se-fmt-sep"></div>
+          <button class="se-fmt-btn" id="se-fmt-left"   onclick="seFmtApply('textAlign','left')"   title="Align Left">&#9664;</button>
+          <button class="se-fmt-btn" id="se-fmt-center" onclick="seFmtApply('textAlign','center')" title="Align Center">&#9632;</button>
+          <button class="se-fmt-btn" id="se-fmt-right"  onclick="seFmtApply('textAlign','right')"  title="Align Right">&#9654;</button>
+          <div class="se-fmt-sep"></div>
+          <label style="font-size:10px;color:#88aacc;cursor:pointer" title="Text color">
+            A <input type="color" class="se-fmt-color" id="se-fmt-color" oninput="seFmtApply('color',this.value)" title="Text color">
+          </label>
+          <label style="font-size:10px;color:#88aacc;cursor:pointer" title="Background fill">
+            &#9632; <input type="color" class="se-fmt-color" id="se-fmt-bgcolor" oninput="seFmtApply('background',this.value)" title="Background fill">
+          </label>
+          <div class="se-fmt-sep"></div>
+          <button class="se-fmt-btn" onclick="seFmtApply('opacity','1')" title="Opacity 100%">100%</button>
+          <button class="se-fmt-btn" onclick="seFmtApply('opacity','0.75')" title="Opacity 75%">75%</button>
+          <button class="se-fmt-btn" onclick="seFmtApply('opacity','0.5')" title="Opacity 50%">50%</button>
+          <div class="se-fmt-sep"></div>
+          <button class="se-fmt-btn" onclick="seElBringForward()" title="Bring Forward">&#8593;Z</button>
+          <button class="se-fmt-btn" onclick="seElSendBack()" title="Send Backward">&#8595;Z</button>
+          <button class="se-fmt-btn" onclick="seElDuplicate()" title="Duplicate element"><i class="fas fa-copy fa-xs"></i></button>
+          <div class="se-fmt-sep"></div>
+          <button class="se-fmt-btn" id="se-fmt-lock" onclick="seElToggleLock()" title="Lock/unlock element position">&#128274;</button>
+          <div style="flex:1"></div>
+          <button class="se-fmt-btn danger" onclick="seElDelete()" title="Delete selected element"><i class="fas fa-trash fa-xs"></i></button>
         </div>
+        <!-- Interactive slide canvas -->
+        <div id="se-canvas-wrap" tabindex="0">
+          <div id="se-sel-box"></div>
+        </div>
+        <!-- Hidden SVG preview (kept for thumbnail generation only) -->
+        <div id="se-preview" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -3607,10 +3733,14 @@ function seTypeTitle(t){ return seTypeLabel(t)+' Program Schedule'; }
 window.openSlideEditor = function() {
   seSlides = seGenerateSlides();
   seActive = 0;
+  seSelectedId = null;
   sePopulateAddMenu();
   document.getElementById('slide-editor-overlay').classList.add('se-open');
   seRenderPanel();
-  seRenderPreview();
+  /* Defer canvas render so layout is computed first */
+  setTimeout(function(){
+    seRenderPreview();
+  }, 60);
 };
 window.closeSlideEditor = function() {
   document.getElementById('slide-editor-overlay').classList.remove('se-open');
@@ -3673,6 +3803,7 @@ window.seAddSlide = function(tpl) {
 /* ── Select slide ── */
 window.seSelectSlide = function(idx) {
   seActive = Math.max(0, Math.min(idx, seSlides.length-1));
+  seSelectedId = null;  // clear selection when changing slides
   document.querySelectorAll('.se-thumb').forEach(function(el,i){
     el.classList.toggle('active', i===seActive);
   });
@@ -3762,6 +3893,17 @@ function seRenderSlideBar() {
     + '<button class="se-sb-btn" onclick="seEditCurrentSubtitle()" title="Edit subtitle">'
     +   '<i class="fas fa-font fa-xs"></i> Subtitle</button>'
     + '<div class="se-sb-sep"></div>'
+    + '<button class="se-sb-btn" onclick="seAddTextBox()" title="Add a text box to the slide">'
+    +   '<i class="fas fa-font fa-xs"></i> Text Box</button>'
+    + '<button class="se-sb-btn" onclick="seAddShape(\'rect\')" title="Add rectangle">'
+    +   '<i class="fas fa-square fa-xs"></i></button>'
+    + '<button class="se-sb-btn" onclick="seAddShape(\'circle\')" title="Add circle">'
+    +   '<i class="fas fa-circle fa-xs"></i></button>'
+    + '<button class="se-sb-btn" onclick="seAddImage()" title="Add image">'
+    +   '<i class="fas fa-image fa-xs"></i></button>'
+    + '<button class="se-sb-btn" onclick="seResyncSlide()" title="Re-sync slide layout from latest vessel data">'
+    +   '<i class="fas fa-sync fa-xs"></i> Resync Data</button>'
+    + '<div class="se-sb-sep"></div>'
     + '<button class="se-sb-btn" onclick="seMoveSlide(seActive,-1)"'+(isFirst?' disabled':'')+' title="Move slide earlier">'
     +   '<i class="fas fa-arrow-left fa-xs"></i> Move Left</button>'
     + '<button class="se-sb-btn" onclick="seMoveSlide(seActive,1)"'+(isLast?' disabled':'')+' title="Move slide later">'
@@ -3837,6 +3979,13 @@ document.addEventListener('click',function(e){
   if(am&&!e.target.closest('#se-add-wrap')) am.style.display='none';
 });
 
+/* ── SVG body dispatcher — used for thumbnails only ── */
+function seRenderSVGBody(slide,W,H,isThumb){
+  if(slide.type==='acq')    return seAcqSVG(slide,W,H,isThumb);
+  if(slide.type==='custom') return seCustomSVG(slide,W,H,isThumb);
+  return seProgSVG(slide,W,H,isThumb);
+}
+
 /* ── Render left panel thumbnails ── */
 function seRenderPanel() {
   var list=document.getElementById('se-slide-list'); if(!list) return;
@@ -3857,37 +4006,711 @@ function seRenderPanel() {
   seRenderSlideBar();
 }
 
-/* ── Render main preview ── */
-function seRenderPreview() {
-  var container=document.getElementById('se-preview'); if(!container) return;
-  var slide=seSlides[seActive];
-  if(!slide){ container.innerHTML='<p style="color:#888;text-align:center;padding:40px;font-size:14px">No slides. Click \u201cAdd Slide\u201d to get started.</p>'; seRenderSlideBar(); return; }
-  container.innerHTML='<svg id="se-main-svg" viewBox="0 0 880 660"'
-    +' xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">'
-    +seRenderSVGBody(slide,880,660,false)+'</svg>';
-  var svg=document.getElementById('se-main-svg');
-  if(svg){
-    svg.setAttribute('tabindex','0');
-    svg.addEventListener('keydown',function(e){
-      if(e.key==='ArrowLeft'||e.key==='ArrowUp'  ){e.preventDefault();seNavPrev();}
-      if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();seNavNext();}
-    });
-    var titleEl=svg.querySelector('#se-title-txt');
-    if(titleEl){ titleEl.style.cursor='text'; titleEl.addEventListener('dblclick',function(){seEditTitleAt(seActive);}); }
+/* ── Render main preview — INTERACTIVE CANVAS ── */
+/* ══════════════════════════════════════════════════════════════════
+   INTERACTIVE SLIDE CANVAS
+   Each slide has an `elements` array of {id, type, x,y,w,h, style, text, locked, zIndex}.
+   Percentages (0-1) are used for x,y,w,h so the canvas scales freely.
+   seRenderPreview() renders div elements onto #se-canvas-wrap.
+   Interaction state is managed by seInteract (drag/resize/select).
+══════════════════════════════════════════════════════════════════ */
+var seSelectedId = null;   // currently selected element id
+var seInteract = null;     // {type:'drag'|'resize', id, handle, startX,startY, origX,origY,origW,origH}
+var seMultiSel = [];       // ids of multi-selected elements
+var SE_CANVAS_W = 880, SE_CANVAS_H = 660; // logical canvas size (matches SVG viewBox)
+
+/* Generate a unique element id */
+function seElId() { return 'el-'+Date.now()+'-'+Math.floor(Math.random()*9999); }
+
+/* Ensure every slide has an elements array with the default layout */
+function seEnsureElements(slide) {
+  if (!slide.elements) {
+    slide.elements = seDefaultElements(slide);
   }
-  var ctr=document.getElementById('se-slide-counter');
-  if(ctr) ctr.textContent=(seActive+1)+' / '+seSlides.length;
-  var p=document.getElementById('se-prev-btn'); if(p) p.disabled=(seActive===0);
-  var n=document.getElementById('se-next-btn'); if(n) n.disabled=(seActive===seSlides.length-1);
-  seRenderSlideBar();
 }
 
-/* ── SVG body dispatcher (shared by thumbnail + preview) ── */
-function seRenderSVGBody(slide,W,H,isThumb){
-  if(slide.type==='acq')    return seAcqSVG(slide,W,H,isThumb);
-  if(slide.type==='custom') return seCustomSVG(slide,W,H,isThumb);
-  return seProgSVG(slide,W,H,isThumb);
+/* Build default interactive elements for a slide from its SVG data */
+function seDefaultElements(slide) {
+  var W = SE_CANVAS_W, H = SE_CANVAS_H;
+  var SC = W/10.0;
+  var els = [];
+  var nFY = Math.max(slide.fyEnd - slide.fyStart + 1, 1);
+  var vs = slide.type==='acq'
+    ? vessels.filter(function(v){ return v.acqEvents && Object.keys(v.acqEvents).some(function(k){return v.acqEvents[k];}); })
+    : (slide.vesselType ? vessels.filter(function(v){return v.type===slide.vesselType;}) : []);
+  if (slide.type==='acq' && !vs.length) vs = vessels;
+  var nV = vs.length;
+  var g = seLayout(W, H, nFY, nV);
+
+  var navyColor = slide.type==='acq' ? '#2d1b5e' : '#1c3a5f';
+  var accentColor = slide.type==='acq' ? '#8b5cf6' : '#C9A000';
+
+  /* White background */
+  els.push({id:seElId(), type:'rect', x:0, y:0, w:W, h:H,
+    style:{background:'white'}, locked:true, zIndex:0, hint:'Background'});
+
+  /* Navy top bar */
+  els.push({id:seElId(), type:'rect', x:0, y:0, w:W, h:SC*0.062,
+    style:{background:navyColor}, locked:false, zIndex:1, hint:'Top bar'});
+
+  /* Title */
+  var titleFz = 22;
+  els.push({id:seElId(), type:'text', x:W*0.05, y:0, w:W*0.90, h:g.TH,
+    text:slide.title, hint:'Title', editable:true, movable:true,
+    style:{fontSize:titleFz+'px', fontWeight:'700', color:navyColor, textAlign:'center',
+           display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Calibri,Arial,sans-serif',
+           lineHeight:'1.2'},
+    zIndex:5});
+
+  /* Gold/accent bar */
+  els.push({id:seElId(), type:'rect', x:0, y:g.TH, w:W, h:g.GH,
+    style:{background:accentColor}, locked:false, zIndex:2, hint:'Accent bar'});
+
+  /* Grid background */
+  els.push({id:seElId(), type:'rect', x:g.MX, y:g.GT, w:g.GW, h:g.GRIDH,
+    style:{background:'white', border:'1.5px solid #8a95a0'}, locked:false, zIndex:3, hint:'Grid area'});
+
+  /* FY header row */
+  els.push({id:seElId(), type:'rect', x:g.MX, y:g.GT, w:g.GW, h:g.FHH,
+    style:{background:navyColor}, locked:false, zIndex:4, hint:'FY header'});
+  /* Label col header */
+  var lcDark = slide.type==='acq' ? '#1e1040' : '#162e4a';
+  els.push({id:seElId(), type:'rect', x:g.MX, y:g.GT, w:g.LCW, h:g.FHH,
+    style:{background:lcDark}, locked:false, zIndex:4, hint:'Label header'});
+
+  /* FY column headers */
+  for (var fj=0; fj<nFY; fj++) {
+    var cx = g.MX+g.LCW+fj*g.CW;
+    els.push({id:seElId(), type:'text', x:cx, y:g.GT, w:g.CW, h:g.FHH,
+      text:'FY'+String(slide.fyStart+fj).slice(2), hint:'FY label',
+      editable:true, movable:false,
+      style:{fontSize:'11px', fontWeight:'700', color:'white', textAlign:'center',
+             display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Calibri,Arial,sans-serif'},
+      zIndex:6});
+    /* vertical divider line */
+    if (fj > 0) {
+      els.push({id:seElId(), type:'rect', x:cx, y:g.GT, w:Math.max(0.5,SC*0.006), h:g.GRIDH,
+        style:{background:'#bcc2cc'}, locked:true, zIndex:3, hint:'Column divider'});
+    }
+  }
+
+  /* Vessel rows + milestone symbols */
+  vs.forEach(function(v, ri) {
+    var ry = g.GT+g.FHH+ri*g.RH, mid = ry+g.RH/2;
+    var fc = v.fleet==='USFF' ? '#34c759' : '#007AFF';
+    var rowBg = ri%2 ? (slide.type==='acq' ? '#f3f0fb' : '#f0f3f9') : 'white';
+    var lblBg = ri%2 ? (slide.type==='acq' ? '#ede8f8' : '#e8edf5') : (slide.type==='acq' ? '#f7f4fc' : '#f5f8fc');
+
+    /* Row background */
+    els.push({id:seElId(), type:'rect', x:g.MX, y:ry, w:g.GW, h:g.RH,
+      style:{background:rowBg, borderBottom:'0.5px solid #c8cdd8'}, locked:true, zIndex:3, hint:'Row bg'});
+    /* Label cell bg */
+    els.push({id:seElId(), type:'rect', x:g.MX, y:ry, w:g.LCW, h:g.RH,
+      style:{background:lblBg, borderBottom:'0.5px solid #c8cdd8'}, locked:true, zIndex:3, hint:'Label bg'});
+
+    /* Vessel name */
+    els.push({id:seElId(), type:'text', x:g.MX+SC*0.055, y:ry, w:g.LCW-SC*0.07, h:g.RH*0.55,
+      text:v.designation||'', hint:'Vessel name', editable:true, movable:true,
+      style:{fontSize:Math.max(7,Math.min(SC*0.100,10))+'px', fontWeight:'700',
+             color:navyColor, display:'flex', alignItems:'flex-end',
+             fontFamily:'Calibri,Arial,sans-serif', paddingBottom:'1px'},
+      zIndex:7});
+
+    /* Fleet label */
+    els.push({id:seElId(), type:'text', x:g.MX+SC*0.055, y:ry+g.RH*0.52, w:g.LCW-SC*0.07, h:g.RH*0.45,
+      text:v.fleet||'', hint:'Fleet', editable:true, movable:true,
+      style:{fontSize:Math.max(6,Math.min(SC*0.085,9))+'px', fontWeight:'600',
+             color:fc, display:'flex', alignItems:'flex-start',
+             fontFamily:'Calibri,Arial,sans-serif'},
+      zIndex:7});
+
+    /* Milestone symbols */
+    var msKeys = slide.type==='acq' ? Object.keys(ACQMS) : ['CA','SOC','LCH','BT','AT','DEL'];
+    var msSrc  = slide.type==='acq' ? v.acqEvents : v.ms;
+    msKeys.forEach(function(key) {
+      if (!msSrc || !msSrc[key]) return;
+      var d = msSrc[key];
+      var f = toFY(d); if (!f) return;
+      var idx = f.fy-slide.fyStart; if (idx<0||idx>=nFY) return;
+      var mx = g.MX+g.LCW+idx*g.CW+((f.fyMo-0.5)/12)*g.CW;
+      var def = slide.type==='acq' ? (ACQMS[key]||{}) : (MS[key]||{});
+      var col = def.color||'#999';
+      var sh  = def.shape||'diamond';
+      var symR = g.SYR;
+
+      /* Label above */
+      var abLbl = (slide.type!=='acq' && key==='CA') ? 'Award' : key;
+      var mSz = Math.max(6.5, Math.min(SC*0.095, 9));
+      var dSz = Math.max(6, Math.min(SC*0.082, 8));
+      els.push({id:seElId(), type:'text', x:mx-symR*2.5, y:mid-symR-SC*0.07, w:symR*5, h:Math.max(9,mSz+2),
+        text:abLbl, hint:key+' label', editable:true, movable:true,
+        style:{fontSize:mSz+'px', fontWeight:'700', color:col, textAlign:'center',
+               display:'flex', alignItems:'flex-end', justifyContent:'center',
+               fontFamily:'Calibri,Arial,sans-serif'},
+        zIndex:9});
+
+      /* Symbol */
+      els.push({id:seElId(), type:'sym', x:mx-symR, y:mid-symR, w:symR*2, h:symR*2,
+        shape:sh, color:col, hint:key+' symbol',
+        movable:true, locked:false, zIndex:10,
+        style:{}, symR:symR, symKey:key, vesselId:v.id});
+
+      /* Date below */
+      els.push({id:seElId(), type:'text', x:mx-symR*2.5, y:mid+symR+SC*0.025, w:symR*5, h:Math.max(9,dSz+2),
+        text:seShortDate(d), hint:key+' date', editable:true, movable:true,
+        style:{fontSize:dSz+'px', color:'#5a6a80', textAlign:'center',
+               display:'flex', alignItems:'flex-start', justifyContent:'center',
+               fontFamily:'Calibri,Arial,sans-serif'},
+        zIndex:9});
+    });
+  });
+
+  /* Subtitle (if any) */
+  if (slide.subtitle) {
+    var subSz = 10;
+    els.push({id:seElId(), type:'text', x:W*0.1, y:g.TH*0.72, w:W*0.80, h:g.TH*0.28,
+      text:slide.subtitle, hint:'Subtitle', editable:true, movable:true,
+      style:{fontSize:subSz+'px', color:'#667788', textAlign:'center',
+             display:'flex', alignItems:'center', justifyContent:'center',
+             fontFamily:'Calibri,Arial,sans-serif'},
+      zIndex:5});
+  }
+
+  /* Legend box */
+  if (slide.type !== 'custom') {
+    var legY = g.GB + g.MB;
+    var legBH = SL.LH*SC - g.MB;
+    var legBoxH = legBH*0.88;
+    var legBoxW_ = slide.type==='acq' ? SC*3.8 : SC*2.45;
+    els.push({id:seElId(), type:'rect', x:g.MX, y:legY+(legBH-legBoxH)/2, w:legBoxW_, h:legBoxH,
+      style:{background:'white', border:'1px solid #aaa'}, locked:false, zIndex:4, hint:'Legend box'});
+
+    var legNavy = navyColor;
+    els.push({id:seElId(), type:'text', x:g.MX+SC*0.10, y:legY+(legBH-legBoxH)/2+SC*0.08, w:SC*1.5, h:SC*0.16,
+      text:'LEGEND', hint:'Legend label', editable:true, movable:true,
+      style:{fontSize:Math.max(6,SC*0.092)+'px', fontWeight:'700', color:legNavy,
+             fontFamily:'Calibri,Arial,sans-serif'},
+      zIndex:6});
+
+    if (slide.type === 'acq') {
+      var aKeys = Object.keys(ACQMS);
+      var liGapA2 = (legBoxW_-SC*0.2)/aKeys.length;
+      var lsymR2 = SC*0.055;
+      aKeys.forEach(function(key_,idx) {
+        var col_ = ACQMS[key_].color;
+        var lx_ = g.MX+SC*0.10+idx*liGapA2;
+        var liy_ = legY+(legBH-legBoxH)/2+SC*0.195;
+        els.push({id:seElId(), type:'sym', x:lx_, y:liy_-lsymR2, w:lsymR2*2, h:lsymR2*2,
+          shape:'diamond', color:col_, hint:key_+' legend sym', movable:true, locked:false, zIndex:7, style:{}, symR:lsymR2});
+        var fsz_ = Math.max(5,SC*0.070);
+        els.push({id:seElId(), type:'text', x:lx_+lsymR2*2+SC*0.02, y:liy_-lsymR2, w:liGapA2-lsymR2*2-SC*0.04, h:lsymR2*2,
+          text:key_+': '+ACQMS[key_].label, hint:key_+' legend text', editable:true, movable:true,
+          style:{fontSize:fsz_+'px', color:'#333', fontFamily:'Calibri,Arial,sans-serif',
+                 display:'flex', alignItems:'center'},
+          zIndex:7});
+      });
+    } else {
+      var legItems_ = [
+        {sh:'star',     col_:'#c9a84c', lbl:'Award  Contract Award'},
+        {sh:'triangle', col_:'#ff9500', lbl:'SOC  Start of Construction'},
+        {sh:'circle',   col_:'#1c3a5f', lbl:'DEL  Delivery'},
+      ];
+      var legItemH_ = legBoxH/(legItems_.length+1.1);
+      var lsymR_ = SC*0.058;
+      legItems_.forEach(function(li, idx) {
+        var lix_ = g.MX+SC*0.10;
+        var liy_ = legY+(legBH-legBoxH)/2+SC*0.175+(idx+0.8)*legItemH_;
+        var fsz_ = Math.max(4,SC*0.075);
+        els.push({id:seElId(), type:'sym', x:lix_, y:liy_-lsymR_, w:lsymR_*2, h:lsymR_*2,
+          shape:li.sh, color:li.col_, hint:li.lbl, movable:true, locked:false, zIndex:7, style:{}, symR:lsymR_});
+        els.push({id:seElId(), type:'text', x:lix_+lsymR_*2+SC*0.04, y:liy_-lsymR_, w:SC*1.8, h:lsymR_*2,
+          text:li.lbl, hint:'Legend item', editable:true, movable:true,
+          style:{fontSize:fsz_+'px', color:'#333', fontFamily:'Calibri,Arial,sans-serif',
+                 display:'flex', alignItems:'center'},
+          zIndex:7});
+      });
+    }
+  }
+
+  return els;
 }
+
+/* ── Render the interactive canvas ── */
+function seRenderPreview() {
+  var wrap = document.getElementById('se-canvas-wrap');
+  if (!wrap) return;
+  var slide = seSlides[seActive];
+  if (!slide) {
+    wrap.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:14px">No slides. Click \u201cAdd Slide\u201d to start.</div>';
+    seRenderSlideBar(); return;
+  }
+  seEnsureElements(slide);
+
+  /* Preserve the sel-box div */
+  var existingSelBox = document.getElementById('se-sel-box');
+
+  /* Clear canvas */
+  wrap.innerHTML = '';
+  if (!existingSelBox) {
+    existingSelBox = document.createElement('div');
+    existingSelBox.id = 'se-sel-box';
+  }
+  wrap.appendChild(existingSelBox);
+
+  /* Get canvas pixel size */
+  var canvasRect = wrap.getBoundingClientRect();
+  var cW = canvasRect.width || 880;
+  var cH = canvasRect.height || Math.round(cW * 660/880);
+  var scaleX = cW / SE_CANVAS_W;
+  var scaleY = cH / SE_CANVAS_H;
+
+  /* Sort elements by zIndex */
+  var sorted = slide.elements.slice().sort(function(a,b){ return (a.zIndex||0)-(b.zIndex||0); });
+
+  sorted.forEach(function(el) {
+    var div = document.createElement('div');
+    div.className = 'se-el';
+    div.dataset.id = el.id;
+    if (el.locked) div.dataset.locked = '1';
+    if (el.editable) div.dataset.editable = '1';
+    if (el.movable !== false) div.dataset.movable = '1';
+
+    /* Position (logical coords → scaled pixels) */
+    div.style.left   = (el.x * scaleX) + 'px';
+    div.style.top    = (el.y * scaleY) + 'px';
+    div.style.width  = (el.w * scaleX) + 'px';
+    div.style.height = (el.h * scaleY) + 'px';
+    div.style.zIndex = el.zIndex || 0;
+
+    /* Apply stored custom styles */
+    if (el.style) {
+      Object.assign(div.style, el.style);
+      /* Scale font size if present */
+      if (el.style.fontSize) {
+        var fs = parseFloat(el.style.fontSize) * scaleX;
+        div.style.fontSize = fs + 'px';
+      }
+    }
+
+    if (el.id === seSelectedId) div.classList.add('selected');
+
+    if (el.type === 'sym') {
+      /* SVG symbol */
+      var r = (el.symR||Math.min(el.w,el.h)/2) * scaleX;
+      var cx_ = (el.w/2)*scaleX, cy_ = (el.h/2)*scaleY;
+      div.innerHTML = '<svg width="'+(el.w*scaleX)+'" height="'+(el.h*scaleY)+'">'
+        + seDrawSymPx(el.shape, el.color, cx_, cy_, r) + '</svg>';
+    } else if (el.type === 'text') {
+      div.textContent = el.text || '';
+      div.title = el.hint || '';
+    } else if (el.type === 'img' && el.src) {
+      var img_ = document.createElement('img');
+      img_.src = el.src;
+      img_.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;pointer-events:none';
+      div.appendChild(img_);
+    }
+    /* type === 'rect': styled via el.style */
+
+    /* Tooltip label */
+    if (el.hint) {
+      var tip = document.createElement('div');
+      tip.className = 'se-el-tip';
+      tip.textContent = el.hint;
+      div.appendChild(tip);
+    }
+
+    /* Resize handles (shown when selected) */
+    if (el.movable !== false && !el.locked) {
+      ['nw','n','ne','e','se','s','sw','w'].forEach(function(dir) {
+        var h = document.createElement('div');
+        h.className = 'se-handle '+dir;
+        h.dataset.handle = dir;
+        div.appendChild(h);
+      });
+    }
+
+    wrap.appendChild(div);
+  });
+
+  /* Update format bar */
+  seUpdateFormatBar();
+
+  /* Update nav buttons */
+  var p = document.getElementById('se-prev-btn'); if(p) p.disabled=(seActive===0);
+  var n = document.getElementById('se-next-btn'); if(n) n.disabled=(seActive===seSlides.length-1);
+  var ctr = document.getElementById('se-slide-counter');
+  if (ctr) ctr.textContent=(seActive+1)+' / '+seSlides.length;
+
+  seRenderSlideBar();
+  seAttachCanvasInteraction();
+}
+
+/* Draw an SVG symbol directly with pixel coordinates */
+function seDrawSymPx(shape, color, cx, cy, r) {
+  var sw = (r*0.15).toFixed(2);
+  if (shape==='star') {
+    var pts='', o=r, i2=r*0.42;
+    for (var k=0;k<10;k++){var a=(k*Math.PI/5)-Math.PI/2,rad=k%2?i2:o;pts+=(k?'L':'M')+(cx+rad*Math.cos(a)).toFixed(2)+','+(cy+rad*Math.sin(a)).toFixed(2);}
+    return '<path d="'+pts+'Z" fill="'+color+'" stroke="white" stroke-width="'+sw+'"/>';
+  }
+  if (shape==='triangle') {
+    var h2=r*1.15, w2=r*1.1;
+    return '<polygon points="'+cx+','+(cy-h2)+' '+(cx-w2)+','+(cy+h2*0.52)+' '+(cx+w2)+','+(cy+h2*0.52)+'" fill="'+color+'" stroke="white" stroke-width="'+sw+'"/>';
+  }
+  if (shape==='diamond') {
+    return '<polygon points="'+cx+','+(cy-r)+' '+(cx+r)+','+cy+' '+cx+','+(cy+r)+' '+(cx-r)+','+cy+'" fill="'+color+'" stroke="white" stroke-width="'+sw+'"/>';
+  }
+  return '<circle cx="'+cx.toFixed(2)+'" cy="'+cy.toFixed(2)+'" r="'+r.toFixed(2)+'" fill="'+color+'" stroke="white" stroke-width="'+sw+'"/>';
+}
+
+/* ── Format bar update ── */
+function seUpdateFormatBar() {
+  var bar = document.getElementById('se-format-bar');
+  if (!bar) return;
+  var slide = seSlides[seActive];
+  var el = slide && slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) {
+    bar.classList.remove('active');
+    return;
+  }
+  bar.classList.add('active');
+  var nameEl = document.getElementById('se-fmt-el-name');
+  if (nameEl) nameEl.textContent = el.hint || el.type;
+
+  var fsBtnEl = document.getElementById('se-fmt-fontsize');
+  if (fsBtnEl && el.style && el.style.fontSize) {
+    var fsVal = parseFloat(el.style.fontSize);
+    fsBtnEl.value = String(Math.round(fsVal));
+  }
+
+  var boldBtn = document.getElementById('se-fmt-bold');
+  if (boldBtn) boldBtn.classList.toggle('active', !!(el.style&&(el.style.fontWeight==='700'||el.style.fontWeight==='bold')));
+  var italicBtn = document.getElementById('se-fmt-italic');
+  if (italicBtn) italicBtn.classList.toggle('active', !!(el.style&&el.style.fontStyle==='italic'));
+  var ulBtn = document.getElementById('se-fmt-underline');
+  if (ulBtn) ulBtn.classList.toggle('active', !!(el.style&&el.style.textDecoration==='underline'));
+
+  var colorEl = document.getElementById('se-fmt-color');
+  if (colorEl && el.style&&el.style.color) colorEl.value = rgbToHex(el.style.color);
+  var bgEl = document.getElementById('se-fmt-bgcolor');
+  if (bgEl && el.style&&el.style.background) bgEl.value = rgbToHex(el.style.background);
+  var lockBtn = document.getElementById('se-fmt-lock');
+  if (lockBtn) lockBtn.title = el.locked ? 'Unlock element' : 'Lock element';
+}
+
+function rgbToHex(c) {
+  if (!c || c==='transparent') return '#ffffff';
+  if (c.startsWith('#')) return c.length===7?c:c;
+  var m = c.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+  if (!m) return '#cccccc';
+  return '#'+[m[1],m[2],m[3]].map(function(x){return ('0'+parseInt(x).toString(16)).slice(-2);}).join('');
+}
+
+/* ── Format apply ── */
+window.seFmtApply = function(prop, val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  if (!el.style) el.style = {};
+  if (prop === 'fontSize') { el.style.fontSize = val+'px'; }
+  else if (prop === 'textAlign') { el.style.textAlign = val; el.style.justifyContent = val==='center'?'center':val==='right'?'flex-end':'flex-start'; }
+  else if (prop === 'color') { el.style.color = val; }
+  else if (prop === 'background') { el.style.background = val; }
+  else if (prop === 'opacity') { el.style.opacity = val; }
+  seRenderPreview(); seRenderPanel();
+};
+
+window.seFmtToggle = function(prop) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  if (!el.style) el.style = {};
+  if (prop==='bold') {
+    el.style.fontWeight = (el.style.fontWeight==='700'||el.style.fontWeight==='bold') ? '400' : '700';
+  } else if (prop==='italic') {
+    el.style.fontStyle = el.style.fontStyle==='italic' ? 'normal' : 'italic';
+  } else if (prop==='underline') {
+    el.style.textDecoration = el.style.textDecoration==='underline' ? 'none' : 'underline';
+  }
+  seRenderPreview(); seRenderPanel();
+};
+
+/* ── Element operations ── */
+window.seElDelete = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var idx = slide.elements.findIndex(function(e){return e.id===seSelectedId;});
+  if (idx < 0) return;
+  if (slide.elements[idx].locked) { toast('This element is locked — unlock it first'); return; }
+  slide.elements.splice(idx,1);
+  seSelectedId = null;
+  seRenderPreview(); seRenderPanel();
+};
+
+window.seElDuplicate = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  var copy = JSON.parse(JSON.stringify(el));
+  copy.id = seElId();
+  copy.x += 20; copy.y += 20;
+  slide.elements.push(copy);
+  seSelectedId = copy.id;
+  seRenderPreview(); seRenderPanel();
+};
+
+window.seElBringForward = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el) { el.zIndex = (el.zIndex||0)+1; seRenderPreview(); }
+};
+
+window.seElSendBack = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el) { el.zIndex = Math.max(0,(el.zIndex||0)-1); seRenderPreview(); }
+};
+
+window.seElToggleLock = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el) { el.locked = !el.locked; seRenderPreview(); seUpdateFormatBar(); }
+};
+
+/* ── Add a free text box to the current slide ── */
+window.seAddTextBox = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  seEnsureElements(slide);
+  var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
+  var newEl = {id:seElId(), type:'text', x:80, y:200, w:300, h:60,
+    text:'Double-click to edit…', hint:'Text box', editable:true, movable:true,
+    style:{fontSize:'18px', color:'#1c3a5f', textAlign:'left', fontFamily:'Calibri,Arial,sans-serif',
+           display:'flex', alignItems:'center', padding:'4px'},
+    zIndex:maxZ+1};
+  slide.elements.push(newEl);
+  seSelectedId = newEl.id;
+  seRenderPreview(); seRenderPanel();
+  toast('Text box added — double-click to edit');
+};
+
+/* ── Add a shape to the current slide ── */
+window.seAddShape = function(type) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  seEnsureElements(slide);
+  var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
+  var colors = {rect:'#1c3a5f', circle:'#007AFF', arrow:'#C9A000'};
+  var newEl = {id:seElId(), type:'rect', x:100, y:150, w:160, h:80,
+    style:{background:colors[type]||'#1c3a5f', borderRadius:type==='circle'?'50%':'4px', opacity:'0.85'},
+    hint:type, movable:true, locked:false, zIndex:maxZ+1};
+  if (type==='circle') { newEl.w=80; newEl.h=80; }
+  slide.elements.push(newEl);
+  seSelectedId = newEl.id;
+  seRenderPreview(); seRenderPanel();
+};
+
+/* ── Add an image placeholder ── */
+window.seAddImage = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  seEnsureElements(slide);
+  var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
+  var inp = document.createElement('input');
+  inp.type='file'; inp.accept='image/*';
+  inp.onchange = function(ev) {
+    var file = ev.target.files[0]; if (!file) return;
+    if (file.size > 2*1024*1024) { toast('Image must be < 2MB'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e2) {
+      var newEl = {id:seElId(), type:'img', x:100, y:100, w:300, h:200,
+        src:e2.target.result, hint:'Image', movable:true, locked:false, zIndex:maxZ+1, style:{}};
+      slide.elements.push(newEl);
+      seSelectedId = newEl.id;
+      seRenderPreview(); seRenderPanel();
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+};
+
+/* ── Canvas interaction: drag, resize, select, inline edit ── */
+function seAttachCanvasInteraction() {
+  var wrap = document.getElementById('se-canvas-wrap');
+  if (!wrap || wrap._seInteractionAttached) return;
+  wrap._seInteractionAttached = true;
+
+  /* Helper: get logical coords from event */
+  function getLogicalPt(e) {
+    var rect = wrap.getBoundingClientRect();
+    var cW = rect.width, cH = rect.height;
+    return {
+      x: (e.clientX - rect.left) / cW * SE_CANVAS_W,
+      y: (e.clientY - rect.top)  / cH * SE_CANVAS_H
+    };
+  }
+
+  wrap.addEventListener('mousedown', function(e) {
+    /* Check if clicking on a resize handle */
+    var handle = e.target.closest('.se-handle');
+    if (handle) {
+      e.preventDefault(); e.stopPropagation();
+      var elDiv = handle.closest('.se-el');
+      var elId = elDiv && elDiv.dataset.id;
+      var slide = seSlides[seActive]; if (!slide||!elId) return;
+      var el = slide.elements.find(function(x){return x.id===elId;});
+      if (!el || el.locked) return;
+      var pt = getLogicalPt(e);
+      seInteract = {type:'resize', id:elId, handle:handle.dataset.handle,
+        startX:pt.x, startY:pt.y, origX:el.x, origY:el.y, origW:el.w, origH:el.h};
+      return;
+    }
+
+    /* Check if clicking on an interactive element */
+    var elDiv = e.target.closest('.se-el');
+    if (!elDiv) {
+      /* Clicked empty canvas — deselect */
+      seSelectedId = null;
+      seUpdateFormatBar();
+      document.querySelectorAll('.se-el.selected').forEach(function(d){d.classList.remove('selected');});
+      return;
+    }
+    var elId = elDiv.dataset.id;
+    if (elId === seSelectedId) return; /* already selected, will handle as drag */
+    seSelectedId = elId;
+    document.querySelectorAll('.se-el.selected').forEach(function(d){d.classList.remove('selected');});
+    elDiv.classList.add('selected');
+    seUpdateFormatBar();
+
+    /* Start drag */
+    var slide = seSlides[seActive]; if (!slide) return;
+    var el = slide.elements.find(function(x){return x.id===elId;});
+    if (!el || el.locked || el.movable===false) return;
+    var pt = getLogicalPt(e);
+    seInteract = {type:'drag', id:elId, startX:pt.x, startY:pt.y, origX:el.x, origY:el.y};
+    elDiv.classList.add('se-dragging');
+  });
+
+  document.addEventListener('mousemove', seOnCanvasMouseMove);
+  document.addEventListener('mouseup', seOnCanvasMouseUp);
+
+  /* Double-click: inline text edit */
+  wrap.addEventListener('dblclick', function(e) {
+    var elDiv = e.target.closest('.se-el');
+    if (!elDiv || !elDiv.dataset.editable) return;
+    var elId = elDiv.dataset.id;
+    var slide = seSlides[seActive]; if (!slide) return;
+    var el = slide.elements.find(function(x){return x.id===elId;});
+    if (!el || el.locked) return;
+    /* Make contenteditable */
+    elDiv.contentEditable = 'true';
+    elDiv.focus();
+    /* Select all text */
+    var range = document.createRange();
+    range.selectNodeContents(elDiv);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    /* On blur, commit */
+    elDiv.addEventListener('blur', function commit() {
+      elDiv.removeEventListener('blur', commit);
+      elDiv.contentEditable = 'false';
+      /* Strip only the tip div text */
+      var tip = elDiv.querySelector('.se-el-tip');
+      var newText = elDiv.textContent.replace(el.hint||'','').trim();
+      if (newText !== el.text) {
+        el.text = newText;
+        /* Update slide title if it's the title element */
+        if (el.hint==='Title') slide.title = newText;
+        seRenderPanel();
+      }
+    }, {once:true});
+    /* Enter commits */
+    elDiv.addEventListener('keydown', function onKey(ke) {
+      if (ke.key==='Enter' && !ke.shiftKey) { ke.preventDefault(); elDiv.blur(); elDiv.removeEventListener('keydown',onKey); }
+      if (ke.key==='Escape') { el.text = el.text; elDiv.blur(); elDiv.removeEventListener('keydown',onKey); }
+    });
+  });
+
+  /* Keyboard shortcuts when an element is selected */
+  wrap.addEventListener('keydown', function(e) {
+    if (!seSelectedId) return;
+    var slide = seSlides[seActive]; if (!slide) return;
+    var el = slide.elements.find(function(x){return x.id===seSelectedId;}); if (!el||el.locked) return;
+    var STEP = e.shiftKey ? 10 : 1;
+    if (e.key==='ArrowLeft')  { e.preventDefault(); el.x -= STEP; seRenderPreview(); }
+    if (e.key==='ArrowRight') { e.preventDefault(); el.x += STEP; seRenderPreview(); }
+    if (e.key==='ArrowUp')    { e.preventDefault(); el.y -= STEP; seRenderPreview(); }
+    if (e.key==='ArrowDown')  { e.preventDefault(); el.y += STEP; seRenderPreview(); }
+    if ((e.key==='Delete'||e.key==='Backspace') && !e.target.isContentEditable && e.target.tagName!=='INPUT') {
+      e.preventDefault(); seElDelete();
+    }
+    if (e.ctrlKey||e.metaKey) {
+      if (e.key==='b') { e.preventDefault(); seFmtToggle('bold'); }
+      if (e.key==='i') { e.preventDefault(); seFmtToggle('italic'); }
+      if (e.key==='u') { e.preventDefault(); seFmtToggle('underline'); }
+      if (e.key==='d') { e.preventDefault(); seElDuplicate(); }
+    }
+  });
+}
+
+function seOnCanvasMouseMove(e) {
+  if (!seInteract) return;
+  var wrap = document.getElementById('se-canvas-wrap'); if (!wrap) return;
+  var rect = wrap.getBoundingClientRect();
+  var cW = rect.width, cH = rect.height;
+  var lx = (e.clientX-rect.left)/cW*SE_CANVAS_W;
+  var ly = (e.clientY-rect.top)/cH*SE_CANVAS_H;
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(x){return x.id===seInteract.id;});
+  if (!el) return;
+  var dx = lx - seInteract.startX, dy = ly - seInteract.startY;
+
+  if (seInteract.type==='drag') {
+    el.x = seInteract.origX + dx;
+    el.y = seInteract.origY + dy;
+    /* Move the DOM element directly for performance (avoid full re-render on every pixel) */
+    var elDiv = wrap.querySelector('[data-id="'+el.id+'"]');
+    if (elDiv) {
+      elDiv.style.left = (el.x / SE_CANVAS_W * cW) + 'px';
+      elDiv.style.top  = (el.y / SE_CANVAS_H * cH) + 'px';
+    }
+  } else if (seInteract.type==='resize') {
+    var h = seInteract.handle;
+    var nx=seInteract.origX, ny=seInteract.origY, nw=seInteract.origW, nh=seInteract.origH;
+    if (h.includes('e')) { nw = Math.max(20, seInteract.origW+dx); }
+    if (h.includes('s')) { nh = Math.max(12, seInteract.origH+dy); }
+    if (h.includes('w')) { nx=seInteract.origX+dx; nw=Math.max(20,seInteract.origW-dx); }
+    if (h.includes('n')) { ny=seInteract.origY+dy; nh=Math.max(12,seInteract.origH-dy); }
+    el.x=nx; el.y=ny; el.w=nw; el.h=nh;
+    var elDiv2 = wrap.querySelector('[data-id="'+el.id+'"]');
+    if (elDiv2) {
+      elDiv2.style.left  = (el.x/SE_CANVAS_W*cW) + 'px';
+      elDiv2.style.top   = (el.y/SE_CANVAS_H*cH) + 'px';
+      elDiv2.style.width = (el.w/SE_CANVAS_W*cW) + 'px';
+      elDiv2.style.height= (el.h/SE_CANVAS_H*cH) + 'px';
+    }
+  }
+}
+
+function seOnCanvasMouseUp() {
+  if (!seInteract) return;
+  /* Mark interaction done; trigger thumbnail update */
+  seInteract = null;
+  document.querySelectorAll('.se-el.se-dragging').forEach(function(d){d.classList.remove('se-dragging');});
+  seRenderPanel();
+}
+
+/* ── Rebuild slide elements from live data (re-sync after date changes etc.) ── */
+window.seResyncSlide = function(idx) {
+  var slide = seSlides[idx===undefined?seActive:idx];
+  if (!slide) return;
+  /* Wipe elements so they get regenerated from current vessel data */
+  delete slide.elements;
+  if (idx===seActive||idx===undefined) { seSelectedId=null; seRenderPreview(); }
+  seRenderPanel();
+};
+
+/* ── Context menu items for the slide right-click ── */
+window.seEditTitleCtx  = function() { seEditCurrentTitle(); };
+window.seEditSubtitleCtx = function() { seEditCurrentSubtitle(); };
+
 
 /* ── Program Schedule SVG (main slide type) ── */
 /* ════════════════════════════════════════════════════════════════════
