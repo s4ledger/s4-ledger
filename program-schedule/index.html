@@ -1325,6 +1325,19 @@ td.ms-done .di::after { content:' ✓'; }
         <i class="fas fa-chevron-right fa-xs"></i>
       </button>
       <div style="flex:1"></div>
+      <!-- Undo / Redo -->
+      <button class="abtn btn-o" onclick="seUndo()" title="Undo (Ctrl+Z)" style="font-size:11px;padding:4px 8px">
+        <i class="fas fa-undo fa-xs"></i> Undo
+      </button>
+      <button class="abtn btn-o" onclick="seRedo()" title="Redo (Ctrl+Y)" style="font-size:11px;padding:4px 8px">
+        <i class="fas fa-redo fa-xs"></i> Redo
+      </button>
+      <div class="se-hdr-sep"></div>
+      <!-- Insert Picture -->
+      <button class="abtn btn-o" onclick="seAddImage()" title="Insert Picture" style="font-size:11px;padding:4px 10px">
+        <i class="fas fa-image fa-xs"></i> Insert Picture
+      </button>
+      <div class="se-hdr-sep"></div>
       <button class="abtn" style="background:#c0392b;color:white;border-color:#a93226;font-size:11px;padding:4px 12px;gap:5px" onclick="sePptxExport()" title="Export visible slides to PowerPoint (.pptx)">
         <i class="fas fa-file-powerpoint fa-xs"></i> Export PPTX
       </button>
@@ -3214,6 +3227,19 @@ document.addEventListener('keydown', function(e) {
       return;
     }
   }
+
+  /* ── Slide editor keyboard shortcuts ── */
+  var seOpen = document.getElementById('slide-editor-overlay');
+  if (seOpen && seOpen.style.display !== 'none') {
+    /* Ctrl+Z / Cmd+Z = Undo */
+    if ((e.ctrlKey||e.metaKey) && !e.shiftKey && e.key.toLowerCase()==='z') {
+      e.preventDefault(); seUndo(); return;
+    }
+    /* Ctrl+Y / Ctrl+Shift+Z / Cmd+Shift+Z = Redo */
+    if ((e.ctrlKey||e.metaKey) && (e.key.toLowerCase()==='y' || (e.shiftKey && e.key.toLowerCase()==='z'))) {
+      e.preventDefault(); seRedo(); return;
+    }
+  }
 });
 
 // Gantt scroll + zoom — attached at module scope (synchronous, no async dependency)
@@ -4318,24 +4344,26 @@ function seDefaultElements(slide) {
       style:{background:'white', border:'1px solid #aaa'}, locked:false, zIndex:4, hint:'Legend box'});
 
     var legNavy = navyColor;
-    els.push({id:seElId(), type:'text', x:g.MX+SC*0.10, y:legY+(legBH-legBoxH)/2+SC*0.08, w:SC*1.5, h:SC*0.16,
+    /* Taller legend box for readability */
+    var legBoxH_actual = Math.max(legBoxH, SC*0.56);
+    els.push({id:seElId(), type:'text', x:g.MX+SC*0.10, y:legY+(legBH-legBoxH_actual)/2+SC*0.05, w:SC*1.6, h:SC*0.22,
       text:'LEGEND', hint:'Legend label', editable:true, movable:true,
-      style:{fontSize:Math.max(6,SC*0.092)+'px', fontWeight:'700', color:legNavy,
+      style:{fontSize:Math.max(11,SC*0.130)+'px', fontWeight:'700', color:legNavy,
              fontFamily:'Calibri,Arial,sans-serif'},
       zIndex:6});
 
     if (slide.type === 'acq') {
       var aKeys = Object.keys(ACQMS);
       var liGapA2 = (legBoxW_-SC*0.2)/aKeys.length;
-      var lsymR2 = SC*0.055;
+      var lsymR2 = SC*0.075;
       aKeys.forEach(function(key_,idx) {
         var col_ = ACQMS[key_].color;
         var lx_ = g.MX+SC*0.10+idx*liGapA2;
-        var liy_ = legY+(legBH-legBoxH)/2+SC*0.195;
+        var liy_ = legY+(legBH-legBoxH_actual)/2+SC*0.30;
         els.push({id:seElId(), type:'sym', x:lx_, y:liy_-lsymR2, w:lsymR2*2, h:lsymR2*2,
           shape:'diamond', color:col_, hint:key_+' legend sym', movable:true, locked:false, zIndex:7, style:{}, symR:lsymR2});
-        var fsz_ = Math.max(5,SC*0.070);
-        els.push({id:seElId(), type:'text', x:lx_+lsymR2*2+SC*0.02, y:liy_-lsymR2, w:liGapA2-lsymR2*2-SC*0.04, h:lsymR2*2,
+        var fsz_ = Math.max(9,SC*0.102);
+        els.push({id:seElId(), type:'text', x:lx_+lsymR2*2+SC*0.04, y:liy_-lsymR2, w:liGapA2-lsymR2*2-SC*0.05, h:lsymR2*2,
           text:key_+': '+ACQMS[key_].label, hint:key_+' legend text', editable:true, movable:true,
           style:{fontSize:fsz_+'px', color:'#333', fontFamily:'Calibri,Arial,sans-serif',
                  display:'flex', alignItems:'center'},
@@ -4343,19 +4371,19 @@ function seDefaultElements(slide) {
       });
     } else {
       var legItems_ = [
-        {sh:'star',     col_:'#c9a84c', lbl:'Award  Contract Award'},
-        {sh:'triangle', col_:'#ff9500', lbl:'SOC  Start of Construction'},
-        {sh:'circle',   col_:'#1c3a5f', lbl:'DEL  Delivery'},
+        {sh:'star',     col_:'#c9a84c', lbl:'Award — Contract Award'},
+        {sh:'triangle', col_:'#ff9500', lbl:'SOC — Start of Construction'},
+        {sh:'circle',   col_:'#1c3a5f', lbl:'DEL — Delivery'},
       ];
-      var legItemH_ = legBoxH/(legItems_.length+1.1);
-      var lsymR_ = SC*0.058;
+      var legItemH_ = Math.max(legBoxH_actual/(legItems_.length+1.1), SC*0.135);
+      var lsymR_ = SC*0.078;
       legItems_.forEach(function(li, idx) {
         var lix_ = g.MX+SC*0.10;
-        var liy_ = legY+(legBH-legBoxH)/2+SC*0.175+(idx+0.8)*legItemH_;
-        var fsz_ = Math.max(4,SC*0.075);
+        var liy_ = legY+(legBH-legBoxH_actual)/2+SC*0.22+(idx+0.8)*legItemH_;
+        var fsz_ = Math.max(9,SC*0.108);
         els.push({id:seElId(), type:'sym', x:lix_, y:liy_-lsymR_, w:lsymR_*2, h:lsymR_*2,
           shape:li.sh, color:li.col_, hint:li.lbl, movable:true, locked:false, zIndex:7, style:{}, symR:lsymR_});
-        els.push({id:seElId(), type:'text', x:lix_+lsymR_*2+SC*0.04, y:liy_-lsymR_, w:SC*1.8, h:lsymR_*2,
+        els.push({id:seElId(), type:'text', x:lix_+lsymR_*2+SC*0.06, y:liy_-lsymR_, w:SC*2.2, h:lsymR_*2,
           text:li.lbl, hint:'Legend item', editable:true, movable:true,
           style:{fontSize:fsz_+'px', color:'#333', fontFamily:'Calibri,Arial,sans-serif',
                  display:'flex', alignItems:'center'},
@@ -4404,48 +4432,32 @@ function seRenderPreview() {
   var scaleY = cH / SE_CANVAS_H;
 
   /* ──────────────────────────────────────────────────────────────
-     For program/acq slides: render full-quality SVG as background,
-     then overlay user-added elements as interactive divs.
-     This gives pixel-perfect readable Gantt with full interactivity
-     for any text/shapes/images added on top.
+     For program/acq slides: resync auto-generated elements from
+     current vessel data (preserving any user-added overlays), then
+     render ALL elements as interactive divs — fully clickable.
+     For custom slides: render elements as-is.
   ────────────────────────────────────────────────────────────── */
   if (slide.type === 'program' || slide.type === 'acq') {
-    /* Full-size SVG background (same renderer as thumbnail, but full dimensions) */
-    var svgBody = seRenderSVGBody(slide, SE_CANVAS_W, SE_CANVAS_H, false);
-    var svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svgEl.setAttribute('viewBox', '0 0 '+SE_CANVAS_W+' '+SE_CANVAS_H);
-    svgEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    svgEl.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:1';
-    svgEl.innerHTML = svgBody;
-    wrap.appendChild(svgEl);
-
-    /* Only interactive divs for user-added elements */
-    var userEls = slide.elements.filter(function(e){ return e.userAdded === true; });
-    userEls.sort(function(a,b){ return (a.zIndex||0)-(b.zIndex||0); });
-    userEls.forEach(function(el) { seRenderElDiv(el, wrap, scaleX, scaleY, cW, cH); });
-
-    seUpdateFormatBar();
-    var p = document.getElementById('se-prev-btn'); if(p) p.disabled=(seActive===0);
-    var n2 = document.getElementById('se-next-btn'); if(n2) n2.disabled=(seActive===seSlides.length-1);
-    var ctr = document.getElementById('se-slide-counter');
-    if (ctr) ctr.textContent=(seActive+1)+' / '+seSlides.length;
-    seRenderSlideBar();
-    seAttachCanvasInteraction();
-    return;
+    /* Preserve user-added overlays (text boxes, shapes, images) */
+    var savedUserEls = slide.elements
+      ? slide.elements.filter(function(e){ return e.userAdded; })
+      : [];
+    /* Rebuild auto-generated elements from latest vessel data */
+    delete slide.elements;
+    seEnsureElements(slide);
+    /* Re-attach user-added elements on top */
+    savedUserEls.forEach(function(e){ slide.elements.push(e); });
   }
 
-  /* ── Custom slide: all elements as interactive divs ── */
+  /* ── ALL slide types: render every element as an interactive div ── */
   var sorted = slide.elements.slice().sort(function(a,b){ return (a.zIndex||0)-(b.zIndex||0); });
   sorted.forEach(function(el) { seRenderElDiv(el, wrap, scaleX, scaleY, cW, cH); });
 
-  /* Update format bar */
   seUpdateFormatBar();
-
-  /* Update nav buttons */
   var p = document.getElementById('se-prev-btn'); if(p) p.disabled=(seActive===0);
-  var n3 = document.getElementById('se-next-btn'); if(n3) n3.disabled=(seActive===seSlides.length-1);
-  var ctr2 = document.getElementById('se-slide-counter');
-  if (ctr2) ctr2.textContent=(seActive+1)+' / '+seSlides.length;
+  var n2 = document.getElementById('se-next-btn'); if(n2) n2.disabled=(seActive===seSlides.length-1);
+  var ctr = document.getElementById('se-slide-counter');
+  if (ctr) ctr.textContent=(seActive+1)+' / '+seSlides.length;
 
   seRenderSlideBar();
   seAttachCanvasInteraction();
@@ -4651,6 +4663,7 @@ window.seFmtApply = function(prop, val) {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (!el) return;
+  seHistPush();
   if (!el.style) el.style = {};
   switch(prop) {
     case 'fontSize':      el.style.fontSize = val+'px'; break;
@@ -4687,6 +4700,7 @@ window.seFmtToggle = function(prop) {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (!el) return;
+  seHistPush();
   if (!el.style) el.style = {};
   switch(prop) {
     case 'bold':
@@ -4718,6 +4732,7 @@ window.seFmtAdjustSize = function(dir) {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (!el||!el.style) return;
+  seHistPush();
   var cur = parseFloat(el.style.fontSize)||12;
   var sizes = [6,7,8,9,10,11,12,13,14,16,18,20,22,24,26,28,32,36,40,48,60,72];
   var idx = sizes.findIndex(function(s){return s>=cur;});
@@ -4733,6 +4748,7 @@ window.seElDelete = function() {
   var idx = slide.elements.findIndex(function(e){return e.id===seSelectedId;});
   if (idx < 0) return;
   if (slide.elements[idx].locked) { toast('This element is locked — unlock it first'); return; }
+  seHistPush();
   slide.elements.splice(idx,1);
   seSelectedId = null;
   seRenderPreview(); seRenderPanel();
@@ -4742,6 +4758,7 @@ window.seElDuplicate = function() {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (!el) return;
+  seHistPush();
   var copy = JSON.parse(JSON.stringify(el));
   copy.id = seElId();
   copy.x += 20; copy.y += 20;
@@ -4847,13 +4864,47 @@ window.seToggleLockProportions = function() {
 window.seToggleLock = function() {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
-  if (el) { el.locked = !el.locked; seRenderPreview(); seUpdateFormatBar(); }
+  if (el) { seHistPush(); el.locked = !el.locked; seRenderPreview(); seUpdateFormatBar(); }
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   UNDO / REDO HISTORY
+   seHistPush() snapshots state BEFORE a mutation.
+   Ctrl+Z = undo, Ctrl+Y or Ctrl+Shift+Z = redo.
+═══════════════════════════════════════════════════════════════════ */
+var seHistory = [], seHistPos = -1;
+var SE_HIST_MAX = 50;
+
+function seHistPush() {
+  var snap = JSON.parse(JSON.stringify(seSlides));
+  seHistory = seHistory.slice(0, seHistPos + 1);
+  seHistory.push(snap);
+  if (seHistory.length > SE_HIST_MAX) seHistory.shift();
+  else seHistPos++;
+}
+
+window.seUndo = function() {
+  if (seHistPos <= 0) { toast('Nothing to undo'); return; }
+  seHistPos--;
+  seSlides = JSON.parse(JSON.stringify(seHistory[seHistPos]));
+  seSelectedId = null;
+  seRenderPanel(); seRenderPreview();
+  toast('Undo');
+};
+window.seRedo = function() {
+  if (seHistPos >= seHistory.length - 1) { toast('Nothing to redo'); return; }
+  seHistPos++;
+  seSlides = JSON.parse(JSON.stringify(seHistory[seHistPos]));
+  seSelectedId = null;
+  seRenderPanel(); seRenderPreview();
+  toast('Redo');
 };
 
 /* ── Add a free text box to the current slide ── */
 window.seAddTextBox = function() {
   var slide = seSlides[seActive]; if (!slide) return;
   seEnsureElements(slide);
+  seHistPush();
   var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
   var newEl = {id:seElId(), type:'text', x:80, y:200, w:300, h:60,
     text:'Double-click to edit…', hint:'Text box', editable:true, movable:true, userAdded:true,
@@ -4870,6 +4921,7 @@ window.seAddTextBox = function() {
 window.seAddShape = function(type) {
   var slide = seSlides[seActive]; if (!slide) return;
   seEnsureElements(slide);
+  seHistPush();
   var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
   var colors = {rect:'#1c3a5f', circle:'#007AFF', arrow:'#C9A000'};
   var newEl = {id:seElId(), type:'rect', x:100, y:150, w:160, h:80,
@@ -4893,6 +4945,7 @@ window.seAddImage = function() {
     if (file.size > 2*1024*1024) { toast('Image must be < 2MB'); return; }
     var reader = new FileReader();
     reader.onload = function(e2) {
+      seHistPush();
       var newEl = {id:seElId(), type:'img', x:100, y:100, w:300, h:200,
         src:e2.target.result, hint:'Image', movable:true, locked:false, userAdded:true, zIndex:maxZ+1, style:{}};
       slide.elements.push(newEl);
