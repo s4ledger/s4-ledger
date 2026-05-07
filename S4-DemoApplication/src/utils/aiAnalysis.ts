@@ -79,6 +79,13 @@ export function analyzeRow(
   const priority = getPriority(row, isSealed, wasEdited)
   const todayStr = today()
 
+  /* ─── Scope context ─────────────────────────────────────── */
+  const scopeSuffix = row.scope === 'series'
+    ? ` This is a series-level deliverable — program-wide in scope, covering all hulls. A single submission is sufficient for the full contract.`
+    : row.scope === 'per-hull'
+    ? ` This is a hull-specific deliverable for ${row.vesselId || 'the assigned vessel'} — each hull in the program requires its own separate submission containing vessel-specific content.`
+    : ''
+
   /* ─── Status explanation ────────────────────────────────── */
   let statusExplanation: string
   if (row.status === 'red' && !row.actualSubmissionDate) {
@@ -133,8 +140,14 @@ export function analyzeRow(
       ? `COMPLIANT — ${req.requiredVersion} ${req.requiredRevision} received on ${row.actualSubmissionDate} ` +
         `via ${req.submittalMethod}, within contractual timeline. Accepted per Attachment J-2, ${req.contractRef}. ` +
         `${isSealed ? 'Cryptographic hash verified and sealed to XRPL.' : 'Eligible for Ledger Seal.'} ` +
-        `No corrective action required.`
-      : `Completed. Submitted ${row.actualSubmissionDate}. ${isSealed ? 'Sealed to ledger.' : 'Ready for seal.'}`
+        `No corrective action required.` + scopeSuffix
+      : `Completed. Submitted ${row.actualSubmissionDate}. ${isSealed ? 'Sealed to ledger.' : 'Ready for seal.'}` + scopeSuffix
+  }
+
+  /* ─── Status explanation — inject scope on non-green statuses ── */
+  // (green branch already injects above; inject here for red/yellow/pending)
+  if (row.status !== 'green' && scopeSuffix) {
+    statusExplanation += scopeSuffix
   }
 
   /* ─── Changes since seal ────────────────────────────────── */
@@ -176,7 +189,13 @@ export function analyzeRow(
     // status === 'green'
     programImpact = `No program risk. Deliverable accepted and ${isSealed ? 'sealed to ledger' : 'eligible for seal'}. ` +
       `${hull ? `Hull ${hull} on track for this requirement. ` : ''}` +
-      `Completed ${row.calendarDaysToReview || 'N/A'} days ahead of review limit.`
+      `Completed ${row.calendarDaysToReview || 'N/A'} days ahead of review limit.` +
+      (row.scope === 'series' ? ' As a series deliverable, no further submissions are required for other hulls.' : '')
+  }
+
+  // Append scope context to program impact for non-green rows
+  if (row.status !== 'green' && scopeSuffix) {
+    programImpact += scopeSuffix
   }
 
   /* ─── Next actions ──────────────────────────────────────── */
@@ -272,22 +291,25 @@ export function analyzeRow(
 
   /* ─── Concise note for table column ─────────────────────── */
   let conciseNote: string
+  const scopeTag = row.scope === 'series' ? '[SERIES] ' : row.scope === 'per-hull' ? '[PER-HULL] ' : ''
   if (row.status === 'red' && !row.actualSubmissionDate) {
-    conciseNote = `[${priority}] DELINQUENT — Not received. Cure Notice pending. Due: ${row.contractDueFinish}.`
+    conciseNote = `${scopeTag}[${priority}] DELINQUENT — Not received. Cure Notice pending. Due: ${row.contractDueFinish}.`
   } else if (row.status === 'red') {
-    conciseNote = `[${priority}] Late submittal. Expedited review in progress.`
+    conciseNote = `${scopeTag}[${priority}] Late submittal. Expedited review in progress.`
   } else if (row.status === 'yellow') {
     const openItems = row.notes.toLowerCase().includes('rid') ? 'Open RIDs.' : 'Under review.'
-    conciseNote = `[${priority}] ${openItems} ${nextActions[0]?.action.slice(0, 60) || ''}`
+    conciseNote = `${scopeTag}[${priority}] ${openItems} ${nextActions[0]?.action.slice(0, 60) || ''}`
   } else if (row.status === 'pending') {
     conciseNote = row.actualSubmissionDate
-      ? `[${priority}] Submitted ${row.actualSubmissionDate}. Awaiting review.`
-      : `[${priority}] Not yet submitted. Awaiting milestone or due date.`
+      ? `${scopeTag}[${priority}] Submitted ${row.actualSubmissionDate}. Awaiting review.`
+      : `${scopeTag}[${priority}] Not yet submitted. Awaiting milestone or due date.`
   } else {
     // status === 'green'
     conciseNote = wasEdited
-      ? `[High] Compliant but edited since seal. Re-seal recommended.`
-      : `[${priority}] Compliant. ${isSealed ? 'Sealed.' : 'Seal recommended.'}`
+      ? `${scopeTag}[High] Compliant but edited since seal. Re-seal recommended.`
+      : `${scopeTag}[${priority}] Compliant. ${isSealed ? 'Sealed.' : 'Seal recommended.'}${
+          row.scope === 'series' ? ' Covers all hulls.' : ''
+        }`
   }
 
   return {

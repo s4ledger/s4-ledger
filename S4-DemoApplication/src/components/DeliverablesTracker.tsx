@@ -284,18 +284,25 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
   /* ─── Platform + hull filtered base data ────────────────────── */
   const hullData = useMemo(() => {
     if (platformFilter === 'all') return data
-    let rows = data.filter(r => {
+
+    // Series rows are program-wide — always visible regardless of which vessel is selected
+    const seriesRows = data.filter(r => r.scope === 'series')
+
+    // Per-hull rows (scope === 'per-hull' or scope unset — backward compatible)
+    let vesselRows = data.filter(r => r.scope !== 'series').filter(r => {
       if (r.vesselId) return r.vesselId === platformFilter
       const parsed = parseCraftHull(r.title)
       return parsed && parsed.platform === platformFilter
     })
+
     if (hullFilter !== 'all') {
-      rows = rows.filter(r => {
+      vesselRows = vesselRows.filter(r => {
         const parsed = parseCraftHull(r.title)
         return parsed && parsed.hull === hullFilter
       })
     }
-    return rows
+
+    return [...seriesRows, ...vesselRows]
   }, [data, platformFilter, hullFilter])
 
   /** Get the display status for a row based on current org tier */
@@ -349,13 +356,17 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
     const label = hullFilter !== 'all'
       ? `${platformFilter} — ${hullFilter}`
       : platformFilter
-    return { total, green, red, pending, sealed, pctComplete, nextDue, label }
-  }, [platformFilter, hullFilter, hullData, anchors, maskedStatus])
+    const seriesRowCount = data.filter(r => r.scope === 'series').length
+    const perHullRowCount = hullData.filter(r => r.scope === 'per-hull' || r.scope === undefined).length
+    return { total, green, red, pending, sealed, pctComplete, nextDue, label, seriesRowCount, perHullRowCount }
+  }, [platformFilter, hullFilter, hullData, data, anchors, maskedStatus])
 
   /* ─── Pre-computed platform & hull tab counts (avoid O(N) per render) ─ */
   const platformCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     for (const r of data) {
+      // Series rows are program-wide — don't inflate any single vessel's count
+      if (r.scope === 'series') continue
       if (r.vesselId) {
         counts[r.vesselId] = (counts[r.vesselId] || 0) + 1
       } else {
@@ -365,6 +376,9 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
     }
     return counts
   }, [data])
+
+  // Total series rows — shown as a constant addition in every vessel view
+  const totalSeriesCount = useMemo(() => data.filter(r => r.scope === 'series').length, [data])
 
   const hullTabCounts = useMemo(() => {
     const counts: Record<string, number> = { all: 0 }
@@ -1193,7 +1207,6 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
 
                   {/* Synced platforms */}
                   {platforms.map(p => {
-                    const count = platformCounts[p] || 0
                     return (
                       <button
                         key={p}
@@ -1204,7 +1217,10 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                       >
                         <i className="fas fa-ship text-xs text-steel w-4 text-center"></i>
                         {p}
-                        <span className="ml-auto text-xs text-steel">({count})</span>
+                        <span className="ml-auto text-xs text-steel">
+                          {(platformCounts[p] || 0)} hull-specific
+                          {totalSeriesCount > 0 && <span className="ml-1 text-blue-500">+{totalSeriesCount}◆</span>}
+                        </span>
                       </button>
                     )
                   })}
@@ -1332,9 +1348,13 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                   <i className="fas fa-ship text-accent text-sm"></i>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">{hullSummary.label} Summary</h3>
+                  <h3 className="text-sm font-bold text-gray-900">{hullSummary.label} — Hull-Specific View</h3>
                   <p className="text-[11px] text-steel">
-                    {hullSummary.total} deliverables assigned · {hullSummary.green} completed{hullSummary.pending > 0 ? ` · ${hullSummary.pending} pending review` : ''} · {hullSummary.red} overdue
+                    {hullSummary.perHullRowCount} hull-specific deliverable{hullSummary.perHullRowCount !== 1 ? 's' : ''}
+                    {' '}&middot;{' '}
+                    <span className="text-blue-600 font-medium">{hullSummary.seriesRowCount} series (program-wide)</span>
+                    {' '}&middot;{' '}
+                    {hullSummary.green} completed{hullSummary.pending > 0 ? ` · ${hullSummary.pending} pending review` : ''} &middot; {hullSummary.red} overdue
                   </p>
                 </div>
               </div>
@@ -1767,7 +1787,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                         )
                       }
 
-                      // Special rendering for title (font-medium)
+                      // Special rendering for title (font-medium + scope badge)
                       if (col.key === 'title') {
                         return (
                           <td
@@ -1775,7 +1795,32 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
                             data-no-workflow
                             className={`px-3 py-3 font-medium text-gray-900 cursor-pointer hover:bg-accent/5 transition-colors${selClass}`}
                             onClick={openCell}
-                          >{row.title}</td>
+                          >
+                            <div>{row.title}</div>
+                            {row.scope && (
+                              <button
+                                data-no-workflow
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  const newScope: 'series' | 'per-hull' = row.scope === 'series' ? 'per-hull' : 'series'
+                                  onDataUpdate(data.map(r => r.id === row.id ? { ...r, scope: newScope } : r))
+                                }}
+                                className={`mt-0.5 inline-flex items-center gap-1 px-1.5 py-px text-[9px] font-semibold uppercase rounded border leading-tight transition-colors hover:opacity-80 ${
+                                  row.scope === 'series'
+                                    ? 'bg-blue-500/10 text-blue-600 border-blue-200 hover:bg-blue-500/20'
+                                    : 'bg-slate-500/10 text-slate-500 border-slate-200 hover:bg-slate-500/20'
+                                }`}
+                                title={row.scope === 'series'
+                                  ? 'Series — program-wide, one submission covers all hulls. Click to change.'
+                                  : 'Per Hull — vessel-specific, each hull requires its own submission. Click to change.'}
+                              >
+                                {row.scope === 'series'
+                                  ? <><i className="fas fa-layer-group text-[7px]"></i> Series</>
+                                  : <><i className="fas fa-anchor text-[7px]"></i> Per Hull</>
+                                }
+                              </button>
+                            )}
+                          </td>
                         )
                       }
 

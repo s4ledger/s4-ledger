@@ -76,6 +76,16 @@ export interface DRLRow {
   psComputedDueDate?: string
   /** The PS milestone this row is offset from (e.g., 'AT', 'BT', 'DEL'). */
   psMilestoneRef?: string
+  /**
+   * Delivery scope: whether this deliverable applies to the entire program/class
+   * (submitted once, covers all hulls) or is hull-specific (each vessel requires
+   * its own separate submission with vessel-specific content).
+   * - 'series'   — program-level; one submission covers all hulls (drawings, plans, specs)
+   * - 'per-hull' — hull-specific; every hull needs its own submission (trial reports,
+   *                inspection records, as-built packages, acceptance docs)
+   * When undefined, behavior defaults to per-hull (historical rows).
+   */
+  scope?: 'series' | 'per-hull'
 }
 
 export interface AnchorRecord {
