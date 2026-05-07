@@ -1621,10 +1621,6 @@ td.ms-done .di::after { content:' ✓'; }
       </div><!-- /ARRANGE -->
 
       <!-- SLIDE TAB: replaces slide bar -->
-      <div id="se-ribbon-slide" class="se-ribbon-panel">
-        <div id="se-slide-bar-inner" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;min-height:36px;width:100%"></div>
-      </div><!-- /SLIDE -->
-
       <!-- DESIGN TAB -->
       <div id="se-ribbon-design" class="se-ribbon-panel">
         <!-- Themes -->
@@ -4805,14 +4801,59 @@ window.seApplyTheme = function(name) {
   var th = SE_THEMES[name]; if (!th) return;
   var slide = seSlides[seActive]; if (!slide) return;
   seHistPush();
+  seHistPush();
   (slide.elements||[]).forEach(function(el) {
-    if (el.background && el.background !== 'transparent' && el.background !== 'none') el.background = th.bg;
-    if (el.color) el.color = th.text;
+    if (!el.style) return;
+    if (el.type==='rect' && el.style.background) {
+      /* Remap navy/dark backgrounds to the new theme bg */
+      var bg = el.style.background.toLowerCase();
+      if (bg==='#1c3a5f'||bg==='#162e4a') el.style.background = th.bg;
+      else if (bg==='#c9a000'||bg==='#c9a84c') el.style.background = th.accent;
+    }
+    if (el.type==='text' && el.style.color) {
+      var c = el.style.color.toLowerCase();
+      if (c==='#1c3a5f'||c==='white'||c==='#ffffff'||c==='#f5f3ff'||c==='#f0f9ff'||c==='#f9fafb') el.style.color = th.text;
+    }
   });
-  seRenderCanvas();
+  if (!slide.style) slide.style = {};
+  slide.style.background = th.bg;
+  seRenderPreview(); seRenderPanel();
   toast('Theme applied: '+name);
 };
-window.seApplyThemeVariant = function(type) { toast('Theme variants: '+type+' options coming soon.'); };
+window.seApplyThemeVariant = function(type) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  if (type === 'color') {
+    var cur = (slide.elements||[]).reduce(function(acc,el){ return (el.style&&el.style.background&&el.style.background==='#C9A000')?el.style.background:acc; }, '#C9A000');
+    var choice = prompt('Enter accent color (hex, e.g. #C9A000, #007AFF, #e63946):', cur);
+    if (!choice || !/^#[0-9a-fA-F]{3,8}$/.test(choice.trim())) { if (choice) toast('Invalid color — use hex like #C9A000'); return; }
+    choice = choice.trim();
+    seHistPush();
+    (slide.elements||[]).forEach(function(el) {
+      if (!el.style) return;
+      if (el.style.background === '#C9A000') el.style.background = choice;
+      if (el.style.color === '#C9A000') el.style.color = choice;
+    });
+    seRenderPreview(); toast('Accent color → '+choice);
+  } else if (type === 'font') {
+    var fontNames = ['Calibri','Arial','Georgia','Times New Roman','Segoe UI','Helvetica Neue','Verdana','Tahoma'];
+    var fontStacks = ['Calibri,Arial,sans-serif','Arial,sans-serif','Georgia,serif','"Times New Roman",serif','"Segoe UI",Arial,sans-serif','"Helvetica Neue",Helvetica,sans-serif','Verdana,sans-serif','Tahoma,sans-serif'];
+    var choice = prompt('Choose font:\n'+fontNames.map(function(f,i){return (i+1)+'. '+f;}).join('\n'), '1');
+    if (!choice) return;
+    var idx = (parseInt(choice)||1)-1;
+    var font = fontStacks[Math.max(0,Math.min(idx,fontStacks.length-1))];
+    seHistPush();
+    (slide.elements||[]).forEach(function(el) { if (el.type==='text'&&el.style) el.style.fontFamily=font; });
+    seRenderPreview(); toast('Font → '+fontNames[idx]);
+  } else if (type === 'effect') {
+    var choice = prompt('Shadow effect:\n0 = None\n1 = Subtle\n2 = Medium\n3 = Heavy', '1');
+    if (choice===null) return;
+    var shadows = ['none','1px 1px 2px rgba(0,0,0,.18)','2px 2px 5px rgba(0,0,0,.32)','3px 3px 8px rgba(0,0,0,.52)'];
+    var sh = shadows[Math.max(0,Math.min(parseInt(choice)||0,3))];
+    seHistPush();
+    (slide.elements||[]).forEach(function(el) { if (el.type==='text'&&el.style) el.style.textShadow=sh; });
+    seRenderPreview(); toast('Shadow effect applied');
+  }
+};
 window.seSetSlideSize = function(val) {
   var W = SE_CANVAS_W, H = SE_CANVAS_H;
   if (val==='16:9') { W=880; H=495; } else if (val==='4:3') { W=880; H=660; }
@@ -4947,7 +4988,7 @@ window.seAnimMoveEarlier = function() {
   if (idx <= 0) return;
   seHistPush();
   var tmp = slide.elements[idx-1]; slide.elements[idx-1]=slide.elements[idx]; slide.elements[idx]=tmp;
-  seRenderCanvas(); toast('Moved earlier.');
+  seRenderPreview(); toast('Moved earlier.');
 };
 window.seAnimMoveLater = function() {
   var slide = seSlides[seActive]; if (!slide) return;
@@ -4956,7 +4997,7 @@ window.seAnimMoveLater = function() {
   if (idx < 0 || idx >= arr.length-1) return;
   seHistPush();
   var tmp = arr[idx+1]; arr[idx+1]=arr[idx]; arr[idx]=tmp;
-  seRenderCanvas(); toast('Moved later.');
+  seRenderPreview(); toast('Moved later.');
 };
 window.sePreviewAnimation = function() {
   var slide = seSlides[seActive]; if (!slide) return;
@@ -5166,7 +5207,7 @@ window.seNavComment = function(dir) {
   var slides = seSlides.map(function(s,i){return i;}).filter(function(i){ return seSlides[i].meta && seSlides[i].meta.comments && seSlides[i].meta.comments.length; });
   var cur = slides.indexOf(seActive);
   var next = slides[(cur+dir+slides.length)%slides.length];
-  if (next !== undefined) { seActive=next; seRenderPanel(); seRenderCanvas(); toast('Slide '+(next+1)+' has comments.'); }
+  if (next !== undefined) { seActive=next; seRenderPanel(); seRenderPreview(); toast('Slide '+(next+1)+' has comments.'); }
   else toast('No comments found in presentation.');
 };
 window.seToggleComments = function() {
@@ -6125,20 +6166,33 @@ function seUpdateFormatBar() {
   var slide = seSlides[seActive];
   var el = slide && slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
 
-  /* Disable format controls when nothing selected.
-     Insert-panel buttons (Add Shape/Text/Image) always stay enabled —
-     they work without a selection, just like real PowerPoint. */
+  /* Slide-level panels always stay fully enabled — they operate on the whole slide,
+     not a specific element, so no element needs to be selected.
+     Only Home / Arrange element-specific controls get disabled without a selection. */
+  var SLIDE_PANELS = {
+    'se-ribbon-insert':true,'se-ribbon-design':true,'se-ribbon-transitions':true,
+    'se-ribbon-animations':true,'se-ribbon-slideshow':true,'se-ribbon-review':true,
+    'se-ribbon-view':true,'se-ribbon-slide':true
+  };
   var hasEl = !!el;
   allBtns.forEach(function(b) {
     var panel = b.closest && b.closest('.se-ribbon-panel');
     var pid = panel ? panel.id : '';
-    if (pid === 'se-ribbon-insert') { b.disabled = false; return; }
+    if (SLIDE_PANELS[pid]) { b.disabled = false; return; }
     if ((b.getAttribute('onclick')||'').indexOf('sePasteEl') >= 0) { b.disabled = false; return; }
     b.disabled = !hasEl;
   });
-  allSels.forEach(function(s)  { s.disabled   = !hasEl; });
-  allNums.forEach(function(n)  { n.disabled   = !hasEl; });
-  allColors.forEach(function(c){ c.disabled   = !hasEl; });
+  allSels.forEach(function(s) {
+    var panel = s.closest && s.closest('.se-ribbon-panel');
+    var pid = panel ? panel.id : '';
+    s.disabled = SLIDE_PANELS[pid] ? false : !hasEl;
+  });
+  allNums.forEach(function(n) {
+    var panel = n.closest && n.closest('.se-ribbon-panel');
+    var pid = panel ? panel.id : '';
+    n.disabled = SLIDE_PANELS[pid] ? false : !hasEl;
+  });
+  allColors.forEach(function(c){ c.disabled = !hasEl; });
 
   if (!el) {
     if (nameEl) nameEl.textContent = slide ? 'Click element to select' : 'No slide';
@@ -6446,6 +6500,10 @@ window.seToggleLock = function() {
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (el) { seHistPush(); el.locked = !el.locked; seRenderPreview(); seUpdateFormatBar(); }
 };
+/* Alias: the ribbon Lock button calls seElToggleLock */
+window.seElToggleLock = window.seToggleLock;
+/* Safety alias: seRenderCanvas was mis-named in several places */
+window.seRenderCanvas = function() { seRenderPreview(); seRenderPanel(); };
 
 /* ═══════════════════════════════════════════════════════════════════
    UNDO / REDO HISTORY
