@@ -586,27 +586,40 @@ td.ms-done .di::after { content:' ✓'; }
 }
 /* ══ INTERACTIVE SLIDE CANVAS ══════════════════════════════════ */
 #se-format-bar {
-  display:none; align-items:center; gap:4px; flex-wrap:wrap;
-  padding:4px 10px; background:#1e2330; border-radius:8px 8px 0 0;
-  border:1px solid #2e3448; border-bottom:none; min-height:34px; width:100%; box-sizing:border-box;
-  max-width:880px;
+  display:flex; flex-direction:column; width:100%; box-sizing:border-box;
+  max-width:880px; background:#1a1f2e; border-radius:8px 8px 0 0;
+  border:1px solid #2e3448; border-bottom:none;
 }
-#se-format-bar.active { display:flex; }
+.se-fmt-row {
+  display:flex; align-items:center; gap:3px; flex-wrap:wrap;
+  padding:4px 8px; min-height:32px; width:100%; box-sizing:border-box;
+}
+.se-fmt-row + .se-fmt-row { border-top:1px solid rgba(255,255,255,.06); }
 .se-fmt-btn {
   display:inline-flex; align-items:center; justify-content:center;
   background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.13);
   border-radius:4px; padding:2px 7px; font-size:11px; cursor:pointer;
-  color:#ccd; transition:background .1s; white-space:nowrap; font-family:inherit; min-height:24px;
+  color:#ccd; transition:background .1s,opacity .1s; white-space:nowrap; font-family:inherit; min-height:24px;
 }
-.se-fmt-btn:hover { background:rgba(0,122,255,.25); border-color:rgba(0,122,255,.5); color:white; }
+.se-fmt-btn:hover:not(:disabled) { background:rgba(0,122,255,.25); border-color:rgba(0,122,255,.5); color:white; }
 .se-fmt-btn.active { background:rgba(0,122,255,.35); border-color:#007AFF; color:white; }
-.se-fmt-btn.danger:hover { background:rgba(255,59,48,.25); border-color:rgba(255,59,48,.5); color:#ff6b6b; }
-.se-fmt-sep { width:1px; height:18px; background:rgba(255,255,255,.15); flex-shrink:0; margin:0 3px; }
+.se-fmt-btn:disabled { opacity:0.35; cursor:not-allowed; pointer-events:none; }
+.se-fmt-btn.danger:hover:not(:disabled) { background:rgba(255,59,48,.25); border-color:rgba(255,59,48,.5); color:#ff6b6b; }
+.se-fmt-sep { width:1px; height:20px; background:rgba(255,255,255,.15); flex-shrink:0; margin:0 3px; }
 .se-fmt-sel {
   background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.13); border-radius:4px;
   color:#ccd; font-size:11px; padding:1px 4px; cursor:pointer; font-family:inherit;
 }
+.se-fmt-sel:disabled { opacity:0.35; cursor:not-allowed; }
 .se-fmt-color { width:22px; height:22px; border:none; padding:0; cursor:pointer; border-radius:3px; }
+.se-fmt-color:disabled { opacity:0.35; cursor:not-allowed; }
+.se-fmt-num {
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.13); border-radius:4px;
+  color:#ccd; font-size:11px; padding:1px 4px; width:44px; text-align:center; font-family:inherit;
+}
+.se-fmt-num:disabled { opacity:0.35; cursor:not-allowed; }
+.se-fmt-label { font-size:10px; color:#88aacc; white-space:nowrap; }
+.se-fmt-group { display:flex; align-items:center; gap:2px; }
 #se-canvas-wrap {
   position:relative; width:100%; max-width:880px;
   background:white; border-radius:0 0 4px 4px;
@@ -1328,46 +1341,146 @@ td.ms-done .di::after { content:' ✓'; }
         <div id="se-slide-list"></div>
       </div>
       <div id="se-main">
-        <!-- Format bar (shows when an element is selected) -->
+        <!-- Format bar — always visible, modeled after PowerPoint ribbon -->
         <div id="se-format-bar">
-          <span id="se-fmt-el-name" style="font-size:10px;color:#88aacc;min-width:60px;font-weight:600"></span>
-          <div class="se-fmt-sep"></div>
-          <select class="se-fmt-sel" id="se-fmt-fontsize" onchange="seFmtApply('fontSize',this.value)" title="Font size">
-            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-            <option value="13">13</option><option value="14">14</option><option value="16">16</option>
-            <option value="18">18</option><option value="20">20</option><option value="22">22</option>
-            <option value="24">24</option><option value="26">26</option><option value="28">28</option>
-            <option value="32">32</option><option value="36">36</option><option value="40">40</option>
-            <option value="48">48</option><option value="60">60</option>
-          </select>
-          <div class="se-fmt-sep"></div>
-          <button class="se-fmt-btn" id="se-fmt-bold"   onclick="seFmtToggle('bold')"   title="Bold (Ctrl+B)"><b>B</b></button>
-          <button class="se-fmt-btn" id="se-fmt-italic" onclick="seFmtToggle('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
-          <button class="se-fmt-btn" id="se-fmt-underline" onclick="seFmtToggle('underline')" title="Underline (Ctrl+U)" style="text-decoration:underline">U</button>
-          <div class="se-fmt-sep"></div>
-          <button class="se-fmt-btn" id="se-fmt-left"   onclick="seFmtApply('textAlign','left')"   title="Align Left">&#9664;</button>
-          <button class="se-fmt-btn" id="se-fmt-center" onclick="seFmtApply('textAlign','center')" title="Align Center">&#9632;</button>
-          <button class="se-fmt-btn" id="se-fmt-right"  onclick="seFmtApply('textAlign','right')"  title="Align Right">&#9654;</button>
-          <div class="se-fmt-sep"></div>
-          <label style="font-size:10px;color:#88aacc;cursor:pointer" title="Text color">
-            A <input type="color" class="se-fmt-color" id="se-fmt-color" oninput="seFmtApply('color',this.value)" title="Text color">
-          </label>
-          <label style="font-size:10px;color:#88aacc;cursor:pointer" title="Background fill">
-            &#9632; <input type="color" class="se-fmt-color" id="se-fmt-bgcolor" oninput="seFmtApply('background',this.value)" title="Background fill">
-          </label>
-          <div class="se-fmt-sep"></div>
-          <button class="se-fmt-btn" onclick="seFmtApply('opacity','1')" title="Opacity 100%">100%</button>
-          <button class="se-fmt-btn" onclick="seFmtApply('opacity','0.75')" title="Opacity 75%">75%</button>
-          <button class="se-fmt-btn" onclick="seFmtApply('opacity','0.5')" title="Opacity 50%">50%</button>
-          <div class="se-fmt-sep"></div>
-          <button class="se-fmt-btn" onclick="seElBringForward()" title="Bring Forward">&#8593;Z</button>
-          <button class="se-fmt-btn" onclick="seElSendBack()" title="Send Backward">&#8595;Z</button>
-          <button class="se-fmt-btn" onclick="seElDuplicate()" title="Duplicate element"><i class="fas fa-copy fa-xs"></i></button>
-          <div class="se-fmt-sep"></div>
-          <button class="se-fmt-btn" id="se-fmt-lock" onclick="seElToggleLock()" title="Lock/unlock element position">&#128274;</button>
-          <div style="flex:1"></div>
-          <button class="se-fmt-btn danger" onclick="seElDelete()" title="Delete selected element"><i class="fas fa-trash fa-xs"></i></button>
+          <!-- ROW 1: Text formatting -->
+          <div class="se-fmt-row">
+            <span id="se-fmt-el-name" class="se-fmt-label" style="min-width:55px;font-weight:600">No selection</span>
+            <div class="se-fmt-sep"></div>
+            <!-- Font family -->
+            <select class="se-fmt-sel" id="se-fmt-fontfamily" title="Font family" onchange="seFmtApply('fontFamily',this.value)">
+              <option value="Calibri,Arial,sans-serif">Calibri</option>
+              <option value="Arial,sans-serif">Arial</option>
+              <option value="'Times New Roman',serif">Times New Roman</option>
+              <option value="Georgia,serif">Georgia</option>
+              <option value="Verdana,sans-serif">Verdana</option>
+              <option value="Tahoma,sans-serif">Tahoma</option>
+              <option value="'Courier New',monospace">Courier New</option>
+              <option value="Impact,sans-serif">Impact</option>
+              <option value="'Trebuchet MS',sans-serif">Trebuchet MS</option>
+              <option value="'Franklin Gothic Medium',sans-serif">Franklin Gothic</option>
+            </select>
+            <!-- Font size -->
+            <select class="se-fmt-sel" id="se-fmt-fontsize" title="Font size" onchange="seFmtApply('fontSize',this.value)" style="width:52px">
+              <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option>
+              <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              <option value="13">13</option><option value="14">14</option><option value="16">16</option>
+              <option value="18">18</option><option value="20">20</option><option value="22">22</option>
+              <option value="24">24</option><option value="26">26</option><option value="28">28</option>
+              <option value="32">32</option><option value="36">36</option><option value="40">40</option>
+              <option value="48">48</option><option value="60">60</option><option value="72">72</option>
+            </select>
+            <!-- Increase/decrease size -->
+            <button class="se-fmt-btn" title="Increase font size" onclick="seFmtAdjustSize(1)" style="padding:2px 5px;font-size:13px">A↑</button>
+            <button class="se-fmt-btn" title="Decrease font size" onclick="seFmtAdjustSize(-1)" style="padding:2px 5px;font-size:13px">A↓</button>
+            <div class="se-fmt-sep"></div>
+            <!-- Bold / Italic / Underline / Strikethrough -->
+            <button class="se-fmt-btn" id="se-fmt-bold"   onclick="seFmtToggle('bold')"   title="Bold (Ctrl+B)"><b>B</b></button>
+            <button class="se-fmt-btn" id="se-fmt-italic" onclick="seFmtToggle('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+            <button class="se-fmt-btn" id="se-fmt-underline" onclick="seFmtToggle('underline')" title="Underline (Ctrl+U)" style="text-decoration:underline">U</button>
+            <button class="se-fmt-btn" id="se-fmt-strike" onclick="seFmtToggle('strikethrough')" title="Strikethrough" style="text-decoration:line-through">S</button>
+            <!-- Shadow toggle -->
+            <button class="se-fmt-btn" id="se-fmt-shadow" onclick="seFmtToggle('shadow')" title="Text shadow">&#9639;S</button>
+            <div class="se-fmt-sep"></div>
+            <!-- Alignment -->
+            <button class="se-fmt-btn" id="se-fmt-left"    onclick="seFmtApply('textAlign','left')"    title="Align Left (Ctrl+L)">&#9168;&#9168;</button>
+            <button class="se-fmt-btn" id="se-fmt-center"  onclick="seFmtApply('textAlign','center')"  title="Align Center (Ctrl+E)">&#9588;</button>
+            <button class="se-fmt-btn" id="se-fmt-right"   onclick="seFmtApply('textAlign','right')"   title="Align Right (Ctrl+R)">&#9168;&#9168;</button>
+            <button class="se-fmt-btn" id="se-fmt-justify" onclick="seFmtApply('textAlign','justify')" title="Justify">&#9643;</button>
+            <!-- Line spacing -->
+            <select class="se-fmt-sel" id="se-fmt-linespacing" title="Line spacing" onchange="seFmtApply('lineHeight',this.value)" style="width:56px">
+              <option value="1.0">1.0×</option><option value="1.15" selected>1.15×</option>
+              <option value="1.5">1.5×</option><option value="2.0">2.0×</option>
+            </select>
+            <div class="se-fmt-sep"></div>
+            <!-- Colors -->
+            <div class="se-fmt-group">
+              <span class="se-fmt-label">A</span>
+              <input type="color" class="se-fmt-color" id="se-fmt-color" oninput="seFmtApply('color',this.value)" title="Text color" value="#000000">
+            </div>
+            <div class="se-fmt-group">
+              <span class="se-fmt-label" style="font-size:13px">&#9632;</span>
+              <input type="color" class="se-fmt-color" id="se-fmt-bgcolor" oninput="seFmtApply('background',this.value)" title="Fill color" value="#ffffff">
+            </div>
+            <!-- Border -->
+            <div class="se-fmt-group">
+              <span class="se-fmt-label">&#9632;</span>
+              <input type="color" class="se-fmt-color" id="se-fmt-bordercolor" oninput="seFmtApply('borderColor',this.value)" title="Border color" value="#000000">
+            </div>
+            <select class="se-fmt-sel" id="se-fmt-borderwidth" title="Border width" onchange="seFmtApply('borderWidth',this.value)" style="width:50px">
+              <option value="0px">None</option><option value="1px">1px</option>
+              <option value="2px">2px</option><option value="3px">3px</option><option value="4px">4px</option>
+            </select>
+            <select class="se-fmt-sel" id="se-fmt-borderstyle" title="Border style" onchange="seFmtApply('borderStyle',this.value)" style="width:56px">
+              <option value="solid">Solid</option><option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option><option value="double">Double</option>
+            </select>
+            <div class="se-fmt-sep"></div>
+            <!-- Opacity -->
+            <select class="se-fmt-sel" id="se-fmt-opacity" title="Opacity" onchange="seFmtApply('opacity',this.value)" style="width:56px">
+              <option value="1">100%</option><option value="0.9">90%</option>
+              <option value="0.75">75%</option><option value="0.5">50%</option>
+              <option value="0.25">25%</option>
+            </select>
+            <!-- Corner radius (shapes) -->
+            <div class="se-fmt-group" title="Corner radius">
+              <span class="se-fmt-label">⌒</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-radius" min="0" max="200" value="0"
+                onchange="seFmtApply('borderRadius',this.value+'px')" title="Corner radius (px)" style="width:38px">
+            </div>
+          </div>
+          <!-- ROW 2: Arrangement + position/size + element ops -->
+          <div class="se-fmt-row">
+            <!-- Z-order -->
+            <button class="se-fmt-btn" onclick="seElBringToFront()" title="Bring to Front">&#8679;&#8679;Z</button>
+            <button class="se-fmt-btn" onclick="seElBringForward()" title="Bring Forward">&#8679;Z</button>
+            <button class="se-fmt-btn" onclick="seElSendBack()" title="Send Backward">&#8681;Z</button>
+            <button class="se-fmt-btn" onclick="seElSendToBack()" title="Send to Back">&#8681;&#8681;Z</button>
+            <div class="se-fmt-sep"></div>
+            <!-- Rotation + flip -->
+            <button class="se-fmt-btn" onclick="seElRotate(-90)" title="Rotate Left 90°">&#8634;90</button>
+            <button class="se-fmt-btn" onclick="seElRotate(90)"  title="Rotate Right 90°">&#8635;90</button>
+            <div class="se-fmt-group" title="Rotation angle">
+              <span class="se-fmt-label">&#9099;</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-rotate" min="-360" max="360" value="0"
+                onchange="seElRotateTo(+this.value)" style="width:42px">
+              <span class="se-fmt-label">°</span>
+            </div>
+            <button class="se-fmt-btn" onclick="seElFlipH()" title="Flip Horizontal">&#8596;H</button>
+            <button class="se-fmt-btn" onclick="seElFlipV()" title="Flip Vertical">&#8597;V</button>
+            <div class="se-fmt-sep"></div>
+            <!-- Position -->
+            <div class="se-fmt-group" title="X position (px from left)">
+              <span class="se-fmt-label">X:</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-px" min="-1000" max="2000" value="0"
+                onchange="seElSetPosX(+this.value)" style="width:48px">
+            </div>
+            <div class="se-fmt-group" title="Y position (px from top)">
+              <span class="se-fmt-label">Y:</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-py" min="-1000" max="2000" value="0"
+                onchange="seElSetPosY(+this.value)" style="width:48px">
+            </div>
+            <div class="se-fmt-sep"></div>
+            <!-- Size -->
+            <div class="se-fmt-group" title="Width (px)">
+              <span class="se-fmt-label">W:</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-pw" min="1" max="2000" value="100"
+                onchange="seElSetW(+this.value)" style="width:52px">
+            </div>
+            <div class="se-fmt-group" title="Height (px)">
+              <span class="se-fmt-label">H:</span>
+              <input type="number" class="se-fmt-num" id="se-fmt-ph" min="1" max="2000" value="50"
+                onchange="seElSetH(+this.value)" style="width:52px">
+            </div>
+            <!-- Lock proportions -->
+            <button class="se-fmt-btn" id="se-fmt-lockprop" onclick="seToggleLockProportions()" title="Lock/unlock aspect ratio">&#128279;</button>
+            <div class="se-fmt-sep"></div>
+            <!-- Element operations -->
+            <button class="se-fmt-btn" onclick="seElDuplicate()" title="Duplicate (Ctrl+D)"><i class="fas fa-copy fa-xs"></i> Dup</button>
+            <button class="se-fmt-btn" id="se-fmt-lock" onclick="seElToggleLock()" title="Lock/unlock element position">&#128274; Lock</button>
+            <div style="flex:1"></div>
+            <button class="se-fmt-btn danger" onclick="seElDelete()" title="Delete selected element (Del)"><i class="fas fa-trash fa-xs"></i> Delete</button>
+          </div>
         </div>
         <!-- Interactive slide canvas -->
         <div id="se-canvas-wrap" tabindex="0">
@@ -3746,18 +3859,25 @@ window.closeSlideEditor = function() {
   document.getElementById('slide-editor-overlay').classList.remove('se-open');
 };
 
-/* ── Build initial slides (one per vessel type + acquisition milestone slide) ── */
+/* ── Build initial slides (program + one-slide per type + acquisition milestone) ── */
 function seGenerateSlides() {
   var types = [];
   vessels.forEach(function(v){ if (!types.includes(v.type)) types.push(v.type); });
-  var slides = types.filter(function(t){
+  var slides = [];
+  types.filter(function(t){
     return vessels.some(function(v){ return v.type===t; });
-  }).map(function(t){
-    return { id:'sl-'+t+'-'+Date.now()+'-'+Math.random().toString(36).slice(2),
-             type:'program', vesselType:t, title:seTypeTitle(t), subtitle:'',
-             hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+  }).forEach(function(t){
+    /* Program schedule Gantt for this type */
+    slides.push({ id:'sl-'+t+'-'+Date.now()+'-'+Math.random().toString(36).slice(2),
+                  type:'program', vesselType:t, title:seTypeTitle(t), subtitle:'',
+                  hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' });
+    /* Acquisition One Slide table for this type */
+    slides.push({ id:'sl-one-'+t+'-'+Date.now()+'-'+Math.random().toString(36).slice(2),
+                  type:'oneSlide', vesselType:t,
+                  title:seTypeLabel(t)+' Acquisition One Slide',
+                  subtitle:'PMS 300T', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' });
   });
-  /* Auto-include acquisition milestone schedule slide */
+  /* Acquisition milestone schedule (all types) */
   slides.push({ id:'sl-acq-'+Date.now()+'-'+Math.random().toString(36).slice(2),
                 type:'acq', vesselType:null,
                 title:'Acquisition Milestone Schedule',
@@ -3776,8 +3896,13 @@ function sePopulateAddMenu() {
     var col  = (VT[t]&&VT[t].color)||'var(--accent)';
     return '<div class="se-add-item" onclick="seAddSlide(\'prog_'+t+'\');seCloseAddMenu()">'
       +'<i class="fas '+icon+' fa-xs" style="color:'+col+'"></i> '
-      +esc(seTypeLabel(t))+' Program Slide</div>';
-  }).join('');
+      +esc(seTypeLabel(t))+' Program Slide</div>'
+      +'<div class="se-add-item" onclick="seAddSlide(\'oneslide_'+t+'\');seCloseAddMenu()">'
+      +'<i class="fas fa-table fa-xs" style="color:#c9a84c"></i> '
+      +esc(seTypeLabel(t))+' Acquisition One Slide</div>';
+  }).join('')
+  + '<div class="se-add-item" onclick="seAddSlide(\'acq\');seCloseAddMenu()">'
+  + '<i class="fas fa-calendar-alt fa-xs" style="color:#8b5cf6"></i> Acquisition Milestone Schedule</div>';
 }
 
 /* ── Add a slide ── */
@@ -3787,6 +3912,11 @@ window.seAddSlide = function(tpl) {
   if (tpl.startsWith('prog_')) {
     var t = tpl.slice(5);
     s = { id:id, type:'program', vesselType:t, title:seTypeTitle(t), subtitle:'',
+          hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+  } else if (tpl.startsWith('oneslide_')) {
+    var t = tpl.slice(9);
+    s = { id:id, type:'oneSlide', vesselType:t,
+          title:seTypeLabel(t)+' Acquisition One Slide', subtitle:'PMS 300T',
           hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
   } else if (tpl==='acq') {
     s = { id:id, type:'acq', vesselType:null, title:'Acquisition Events Schedule',
@@ -3883,6 +4013,7 @@ function seRenderSlideBar() {
     return h;
   }
   var typeLabel = s.type==='acq' ? 'Acquisition Milestone Schedule'
+                : s.type==='oneSlide' ? (seTypeLabel(s.vesselType||'')+' Acquisition One Slide')
                 : s.type==='custom' ? 'Custom Slide'
                 : (SE_TYPE_LABEL[s.vesselType]||s.vesselType||'')+ ' Program Slide';
   bar.innerHTML = ''
@@ -3981,8 +4112,9 @@ document.addEventListener('click',function(e){
 
 /* ── SVG body dispatcher — used for thumbnails only ── */
 function seRenderSVGBody(slide,W,H,isThumb){
-  if(slide.type==='acq')    return seAcqSVG(slide,W,H,isThumb);
-  if(slide.type==='custom') return seCustomSVG(slide,W,H,isThumb);
+  if(slide.type==='acq')      return seAcqSVG(slide,W,H,isThumb);
+  if(slide.type==='oneSlide') return seOneSlideThumbSVG(slide,W,H);
+  if(slide.type==='custom')   return seCustomSVG(slide,W,H,isThumb);
   return seProgSVG(slide,W,H,isThumb);
 }
 
@@ -4242,20 +4374,27 @@ function seRenderPreview() {
   var slide = seSlides[seActive];
   if (!slide) {
     wrap.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:14px">No slides. Click \u201cAdd Slide\u201d to start.</div>';
-    seRenderSlideBar(); return;
+    seUpdateFormatBar(); seRenderSlideBar(); return;
   }
+
+  /* ── ONE SLIDE: render HTML table directly ── */
+  if (slide.type === 'oneSlide') {
+    wrap.innerHTML = seOneSlideHTML(slide);
+    seUpdateFormatBar(); seRenderSlideBar();
+    return;
+  }
+
   seEnsureElements(slide);
 
-  /* Preserve the sel-box div */
+  /* Clear canvas (always rebuild) */
   var existingSelBox = document.getElementById('se-sel-box');
-
-  /* Clear canvas */
   wrap.innerHTML = '';
   if (!existingSelBox) {
     existingSelBox = document.createElement('div');
     existingSelBox.id = 'se-sel-box';
   }
   wrap.appendChild(existingSelBox);
+  wrap._seInteractionAttached = false; /* allow re-attach on each render */
 
   /* Get canvas pixel size */
   var canvasRect = wrap.getBoundingClientRect();
@@ -4264,85 +4403,109 @@ function seRenderPreview() {
   var scaleX = cW / SE_CANVAS_W;
   var scaleY = cH / SE_CANVAS_H;
 
-  /* Sort elements by zIndex */
+  /* ──────────────────────────────────────────────────────────────
+     For program/acq slides: render full-quality SVG as background,
+     then overlay user-added elements as interactive divs.
+     This gives pixel-perfect readable Gantt with full interactivity
+     for any text/shapes/images added on top.
+  ────────────────────────────────────────────────────────────── */
+  if (slide.type === 'program' || slide.type === 'acq') {
+    /* Full-size SVG background (same renderer as thumbnail, but full dimensions) */
+    var svgBody = seRenderSVGBody(slide, SE_CANVAS_W, SE_CANVAS_H, false);
+    var svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgEl.setAttribute('viewBox', '0 0 '+SE_CANVAS_W+' '+SE_CANVAS_H);
+    svgEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svgEl.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:1';
+    svgEl.innerHTML = svgBody;
+    wrap.appendChild(svgEl);
+
+    /* Only interactive divs for user-added elements */
+    var userEls = slide.elements.filter(function(e){ return e.userAdded === true; });
+    userEls.sort(function(a,b){ return (a.zIndex||0)-(b.zIndex||0); });
+    userEls.forEach(function(el) { seRenderElDiv(el, wrap, scaleX, scaleY, cW, cH); });
+
+    seUpdateFormatBar();
+    var p = document.getElementById('se-prev-btn'); if(p) p.disabled=(seActive===0);
+    var n2 = document.getElementById('se-next-btn'); if(n2) n2.disabled=(seActive===seSlides.length-1);
+    var ctr = document.getElementById('se-slide-counter');
+    if (ctr) ctr.textContent=(seActive+1)+' / '+seSlides.length;
+    seRenderSlideBar();
+    seAttachCanvasInteraction();
+    return;
+  }
+
+  /* ── Custom slide: all elements as interactive divs ── */
   var sorted = slide.elements.slice().sort(function(a,b){ return (a.zIndex||0)-(b.zIndex||0); });
-
-  sorted.forEach(function(el) {
-    var div = document.createElement('div');
-    div.className = 'se-el';
-    div.dataset.id = el.id;
-    if (el.locked) div.dataset.locked = '1';
-    if (el.editable) div.dataset.editable = '1';
-    if (el.movable !== false) div.dataset.movable = '1';
-
-    /* Position (logical coords → scaled pixels) */
-    div.style.left   = (el.x * scaleX) + 'px';
-    div.style.top    = (el.y * scaleY) + 'px';
-    div.style.width  = (el.w * scaleX) + 'px';
-    div.style.height = (el.h * scaleY) + 'px';
-    div.style.zIndex = el.zIndex || 0;
-
-    /* Apply stored custom styles */
-    if (el.style) {
-      Object.assign(div.style, el.style);
-      /* Scale font size if present */
-      if (el.style.fontSize) {
-        var fs = parseFloat(el.style.fontSize) * scaleX;
-        div.style.fontSize = fs + 'px';
-      }
-    }
-
-    if (el.id === seSelectedId) div.classList.add('selected');
-
-    if (el.type === 'sym') {
-      /* SVG symbol */
-      var r = (el.symR||Math.min(el.w,el.h)/2) * scaleX;
-      var cx_ = (el.w/2)*scaleX, cy_ = (el.h/2)*scaleY;
-      div.innerHTML = '<svg width="'+(el.w*scaleX)+'" height="'+(el.h*scaleY)+'">'
-        + seDrawSymPx(el.shape, el.color, cx_, cy_, r) + '</svg>';
-    } else if (el.type === 'text') {
-      div.textContent = el.text || '';
-      div.title = el.hint || '';
-    } else if (el.type === 'img' && el.src) {
-      var img_ = document.createElement('img');
-      img_.src = el.src;
-      img_.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;pointer-events:none';
-      div.appendChild(img_);
-    }
-    /* type === 'rect': styled via el.style */
-
-    /* Tooltip label */
-    if (el.hint) {
-      var tip = document.createElement('div');
-      tip.className = 'se-el-tip';
-      tip.textContent = el.hint;
-      div.appendChild(tip);
-    }
-
-    /* Resize handles (shown when selected) */
-    if (el.movable !== false && !el.locked) {
-      ['nw','n','ne','e','se','s','sw','w'].forEach(function(dir) {
-        var h = document.createElement('div');
-        h.className = 'se-handle '+dir;
-        h.dataset.handle = dir;
-        div.appendChild(h);
-      });
-    }
-
-    wrap.appendChild(div);
-  });
+  sorted.forEach(function(el) { seRenderElDiv(el, wrap, scaleX, scaleY, cW, cH); });
 
   /* Update format bar */
   seUpdateFormatBar();
 
   /* Update nav buttons */
   var p = document.getElementById('se-prev-btn'); if(p) p.disabled=(seActive===0);
-  var n = document.getElementById('se-next-btn'); if(n) n.disabled=(seActive===seSlides.length-1);
-  var ctr = document.getElementById('se-slide-counter');
-  if (ctr) ctr.textContent=(seActive+1)+' / '+seSlides.length;
+  var n3 = document.getElementById('se-next-btn'); if(n3) n3.disabled=(seActive===seSlides.length-1);
+  var ctr2 = document.getElementById('se-slide-counter');
+  if (ctr2) ctr2.textContent=(seActive+1)+' / '+seSlides.length;
 
   seRenderSlideBar();
   seAttachCanvasInteraction();
+}
+
+/* ── Create a single interactive element div ── */
+function seRenderElDiv(el, wrap, scaleX, scaleY, cW, cH) {
+  var div = document.createElement('div');
+  div.className = 'se-el';
+  div.dataset.id = el.id;
+  if (el.locked)   div.dataset.locked   = '1';
+  if (el.editable) div.dataset.editable = '1';
+  if (el.movable !== false) div.dataset.movable = '1';
+
+  div.style.left   = (el.x * scaleX) + 'px';
+  div.style.top    = (el.y * scaleY) + 'px';
+  div.style.width  = (el.w * scaleX) + 'px';
+  div.style.height = (el.h * scaleY) + 'px';
+  div.style.zIndex = (el.zIndex||0) + 2; /* above SVG background (z=1) */
+
+  if (el.style) {
+    Object.assign(div.style, el.style);
+    if (el.style.fontSize) {
+      div.style.fontSize = (parseFloat(el.style.fontSize) * scaleX) + 'px';
+    }
+  }
+  if (el.rotation) div.style.transform = 'rotate('+el.rotation+'deg)';
+
+  if (el.id === seSelectedId) div.classList.add('selected');
+
+  if (el.type === 'sym') {
+    var r2 = (el.symR||Math.min(el.w,el.h)/2) * scaleX;
+    var cx2 = (el.w/2)*scaleX, cy2 = (el.h/2)*scaleY;
+    div.innerHTML = '<svg width="'+(el.w*scaleX)+'" height="'+(el.h*scaleY)+'">'
+      + seDrawSymPx(el.shape, el.color, cx2, cy2, r2) + '</svg>';
+  } else if (el.type === 'text') {
+    div.textContent = el.text || '';
+    div.title = el.hint || '';
+  } else if (el.type === 'img' && el.src) {
+    var img2 = document.createElement('img');
+    img2.src = el.src;
+    img2.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;pointer-events:none';
+    div.appendChild(img2);
+  }
+
+  if (el.hint) {
+    var tip = document.createElement('div');
+    tip.className = 'se-el-tip'; tip.textContent = el.hint;
+    div.appendChild(tip);
+  }
+
+  if (el.movable !== false && !el.locked) {
+    ['nw','n','ne','e','se','s','sw','w'].forEach(function(dir) {
+      var h = document.createElement('div');
+      h.className = 'se-handle '+dir;
+      h.dataset.handle = dir;
+      div.appendChild(h);
+    });
+  }
+  wrap.appendChild(div);
 }
 
 /* Draw an SVG symbol directly with pixel coordinates */
@@ -4367,35 +4530,112 @@ function seDrawSymPx(shape, color, cx, cy, r) {
 function seUpdateFormatBar() {
   var bar = document.getElementById('se-format-bar');
   if (!bar) return;
+
+  /* Collect all interactive inputs/buttons */
+  var allBtns  = bar.querySelectorAll('.se-fmt-btn');
+  var allSels  = bar.querySelectorAll('.se-fmt-sel');
+  var allNums  = bar.querySelectorAll('.se-fmt-num');
+  var allColors= bar.querySelectorAll('.se-fmt-color');
+  var nameEl   = document.getElementById('se-fmt-el-name');
+
   var slide = seSlides[seActive];
   var el = slide && slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+
+  /* Disable all controls when nothing selected */
+  var hasEl = !!el;
+  allBtns.forEach(function(b)  { b.disabled   = !hasEl; });
+  allSels.forEach(function(s)  { s.disabled   = !hasEl; });
+  allNums.forEach(function(n)  { n.disabled   = !hasEl; });
+  allColors.forEach(function(c){ c.disabled   = !hasEl; });
+
   if (!el) {
-    bar.classList.remove('active');
+    if (nameEl) nameEl.textContent = slide ? 'Click element to select' : 'No slide';
     return;
   }
-  bar.classList.add('active');
-  var nameEl = document.getElementById('se-fmt-el-name');
-  if (nameEl) nameEl.textContent = el.hint || el.type;
 
+  if (nameEl) nameEl.textContent = el.hint || el.type;
+  var st = el.style || {};
+
+  /* Font family */
+  var ffEl = document.getElementById('se-fmt-fontfamily');
+  if (ffEl && st.fontFamily) {
+    for (var i=0; i<ffEl.options.length; i++) {
+      if (st.fontFamily.startsWith(ffEl.options[i].value.split(',')[0])) { ffEl.selectedIndex=i; break; }
+    }
+  }
+
+  /* Font size */
   var fsBtnEl = document.getElementById('se-fmt-fontsize');
-  if (fsBtnEl && el.style && el.style.fontSize) {
-    var fsVal = parseFloat(el.style.fontSize);
+  if (fsBtnEl && st.fontSize) {
+    var fsVal = parseFloat(st.fontSize);
     fsBtnEl.value = String(Math.round(fsVal));
   }
 
-  var boldBtn = document.getElementById('se-fmt-bold');
-  if (boldBtn) boldBtn.classList.toggle('active', !!(el.style&&(el.style.fontWeight==='700'||el.style.fontWeight==='bold')));
-  var italicBtn = document.getElementById('se-fmt-italic');
-  if (italicBtn) italicBtn.classList.toggle('active', !!(el.style&&el.style.fontStyle==='italic'));
-  var ulBtn = document.getElementById('se-fmt-underline');
-  if (ulBtn) ulBtn.classList.toggle('active', !!(el.style&&el.style.textDecoration==='underline'));
+  /* Bold / Italic / Underline / Strikethrough */
+  var b = document.getElementById('se-fmt-bold');
+  if (b) b.classList.toggle('active',!!(st.fontWeight==='700'||st.fontWeight==='bold'));
+  var it = document.getElementById('se-fmt-italic');
+  if (it) it.classList.toggle('active',!!( st.fontStyle==='italic'));
+  var ul = document.getElementById('se-fmt-underline');
+  if (ul) ul.classList.toggle('active',!!(st.textDecoration&&st.textDecoration.includes('underline')));
+  var sk = document.getElementById('se-fmt-strike');
+  if (sk) sk.classList.toggle('active',!!(st.textDecoration&&st.textDecoration.includes('line-through')));
+  var sh = document.getElementById('se-fmt-shadow');
+  if (sh) sh.classList.toggle('active',!!(st.textShadow&&st.textShadow!=='none'));
 
+  /* Alignment */
+  ['left','center','right','justify'].forEach(function(a){
+    var btn = document.getElementById('se-fmt-'+a);
+    if (btn) btn.classList.toggle('active', st.textAlign===a);
+  });
+
+  /* Line spacing */
+  var lsEl = document.getElementById('se-fmt-linespacing');
+  if (lsEl && st.lineHeight) lsEl.value = st.lineHeight;
+
+  /* Colors */
   var colorEl = document.getElementById('se-fmt-color');
-  if (colorEl && el.style&&el.style.color) colorEl.value = rgbToHex(el.style.color);
+  if (colorEl && st.color) colorEl.value = rgbToHex(st.color);
   var bgEl = document.getElementById('se-fmt-bgcolor');
-  if (bgEl && el.style&&el.style.background) bgEl.value = rgbToHex(el.style.background);
+  if (bgEl && st.background) bgEl.value = rgbToHex(st.background);
+  var bcEl = document.getElementById('se-fmt-bordercolor');
+  if (bcEl && st.borderColor) bcEl.value = rgbToHex(st.borderColor);
+
+  /* Border */
+  var bwEl = document.getElementById('se-fmt-borderwidth');
+  if (bwEl && st.borderWidth) bwEl.value = st.borderWidth;
+  var bsEl = document.getElementById('se-fmt-borderstyle');
+  if (bsEl && st.borderStyle) bsEl.value = st.borderStyle;
+
+  /* Opacity */
+  var opEl = document.getElementById('se-fmt-opacity');
+  if (opEl && st.opacity) opEl.value = String(parseFloat(st.opacity));
+
+  /* Corner radius */
+  var radEl = document.getElementById('se-fmt-radius');
+  if (radEl && st.borderRadius) radEl.value = parseFloat(st.borderRadius)||0;
+
+  /* Rotation */
+  var rotEl = document.getElementById('se-fmt-rotate');
+  if (rotEl) rotEl.value = el.rotation || 0;
+
+  /* Position & size (logical coords) */
+  var pxEl = document.getElementById('se-fmt-px');
+  if (pxEl) pxEl.value = Math.round(el.x||0);
+  var pyEl = document.getElementById('se-fmt-py');
+  if (pyEl) pyEl.value = Math.round(el.y||0);
+  var pwEl = document.getElementById('se-fmt-pw');
+  if (pwEl) pwEl.value = Math.round(el.w||0);
+  var phEl = document.getElementById('se-fmt-ph');
+  if (phEl) phEl.value = Math.round(el.h||0);
+
+  /* Lock button */
   var lockBtn = document.getElementById('se-fmt-lock');
-  if (lockBtn) lockBtn.title = el.locked ? 'Unlock element' : 'Lock element';
+  if (lockBtn) {
+    lockBtn.textContent = el.locked ? '\uD83D\uDD13 Unlock' : '\uD83D\uDD12 Lock';
+    lockBtn.title = el.locked ? 'Unlock element' : 'Lock element';
+    lockBtn.classList.toggle('active', !!el.locked);
+  }
 }
 
 function rgbToHex(c) {
@@ -4412,11 +4652,34 @@ window.seFmtApply = function(prop, val) {
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (!el) return;
   if (!el.style) el.style = {};
-  if (prop === 'fontSize') { el.style.fontSize = val+'px'; }
-  else if (prop === 'textAlign') { el.style.textAlign = val; el.style.justifyContent = val==='center'?'center':val==='right'?'flex-end':'flex-start'; }
-  else if (prop === 'color') { el.style.color = val; }
-  else if (prop === 'background') { el.style.background = val; }
-  else if (prop === 'opacity') { el.style.opacity = val; }
+  switch(prop) {
+    case 'fontSize':      el.style.fontSize = val+'px'; break;
+    case 'fontFamily':    el.style.fontFamily = val; break;
+    case 'textAlign':
+      el.style.textAlign = val;
+      el.style.justifyContent = val==='center'?'center':val==='right'?'flex-end':'flex-start';
+      break;
+    case 'color':         el.style.color = val; break;
+    case 'background':    el.style.background = val; break;
+    case 'opacity':       el.style.opacity = val; break;
+    case 'lineHeight':    el.style.lineHeight = val; break;
+    case 'borderRadius':  el.style.borderRadius = val; break;
+    case 'borderColor':
+      el.style.borderColor = val;
+      if (!el.style.borderStyle || el.style.borderStyle==='none') el.style.borderStyle='solid';
+      if (!el.style.borderWidth || el.style.borderWidth==='0px') el.style.borderWidth='1px';
+      break;
+    case 'borderWidth':
+      el.style.borderWidth = val;
+      if (val==='0px') { el.style.borderStyle='none'; el.style.borderColor='transparent'; }
+      else if (!el.style.borderStyle || el.style.borderStyle==='none') el.style.borderStyle='solid';
+      break;
+    case 'borderStyle':
+      el.style.borderStyle = val;
+      if (val!=='none' && (!el.style.borderWidth||el.style.borderWidth==='0px')) el.style.borderWidth='1px';
+      break;
+    default: el.style[prop] = val;
+  }
   seRenderPreview(); seRenderPanel();
 };
 
@@ -4425,13 +4688,42 @@ window.seFmtToggle = function(prop) {
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (!el) return;
   if (!el.style) el.style = {};
-  if (prop==='bold') {
-    el.style.fontWeight = (el.style.fontWeight==='700'||el.style.fontWeight==='bold') ? '400' : '700';
-  } else if (prop==='italic') {
-    el.style.fontStyle = el.style.fontStyle==='italic' ? 'normal' : 'italic';
-  } else if (prop==='underline') {
-    el.style.textDecoration = el.style.textDecoration==='underline' ? 'none' : 'underline';
+  switch(prop) {
+    case 'bold':
+      el.style.fontWeight = (el.style.fontWeight==='700'||el.style.fontWeight==='bold') ? '400' : '700';
+      break;
+    case 'italic':
+      el.style.fontStyle = el.style.fontStyle==='italic' ? 'normal' : 'italic';
+      break;
+    case 'underline':
+      el.style.textDecoration = el.style.textDecoration==='underline' ? 'none' : 'underline';
+      break;
+    case 'strikethrough': {
+      var td = el.style.textDecoration||'';
+      el.style.textDecoration = td.includes('line-through')
+        ? td.replace('line-through','').trim()||'none'
+        : (td==='none'||!td ? 'line-through' : td+' line-through');
+      break;
+    }
+    case 'shadow':
+      el.style.textShadow = (el.style.textShadow && el.style.textShadow!=='none')
+        ? 'none' : '1px 1px 2px rgba(0,0,0,0.5)';
+      break;
   }
+  seRenderPreview(); seRenderPanel();
+};
+
+/* Font size increment */
+window.seFmtAdjustSize = function(dir) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el||!el.style) return;
+  var cur = parseFloat(el.style.fontSize)||12;
+  var sizes = [6,7,8,9,10,11,12,13,14,16,18,20,22,24,26,28,32,36,40,48,60,72];
+  var idx = sizes.findIndex(function(s){return s>=cur;});
+  if (dir>0) idx = Math.min(sizes.length-1,(idx<0?sizes.length-1:idx)+1);
+  else       idx = Math.max(0,(idx<=0?0:idx)-1);
+  el.style.fontSize = sizes[idx]+'px';
   seRenderPreview(); seRenderPanel();
 };
 
@@ -4470,7 +4762,88 @@ window.seElSendBack = function() {
   if (el) { el.zIndex = Math.max(0,(el.zIndex||0)-1); seRenderPreview(); }
 };
 
-window.seElToggleLock = function() {
+window.seElBringToFront = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el) {
+    var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
+    el.zIndex = maxZ + 1; seRenderPreview();
+  }
+};
+
+window.seElSendToBack = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el) {
+    var minZ = slide.elements.reduce(function(m,e){return Math.min(m,e.zIndex||0);},0);
+    el.zIndex = minZ - 1; seRenderPreview();
+  }
+};
+
+window.seElRotate = function(deg) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  el.rotation = ((el.rotation||0) + deg + 360) % 360;
+  if (!el.style) el.style = {};
+  el.style.transform = el.rotation ? 'rotate('+el.rotation+'deg)' : '';
+  seRenderPreview();
+};
+
+window.seElRotateTo = function(deg) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  el.rotation = ((deg % 360) + 360) % 360;
+  if (!el.style) el.style = {};
+  el.style.transform = el.rotation ? 'rotate('+el.rotation+'deg)' : '';
+  seRenderPreview();
+};
+
+window.seElFlipH = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  if (!el.style) el.style = {};
+  var cur = el.style.transform || '';
+  el.style.transform = cur.includes('scaleX(-1)') ? cur.replace('scaleX(-1)','').trim() : cur+' scaleX(-1)';
+  seRenderPreview();
+};
+
+window.seElFlipV = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  if (!el.style) el.style = {};
+  var cur = el.style.transform || '';
+  el.style.transform = cur.includes('scaleY(-1)') ? cur.replace('scaleY(-1)','').trim() : cur+' scaleY(-1)';
+  seRenderPreview();
+};
+
+window.seElSetPosX = function(val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el) { el.x = val; seRenderPreview(); }
+};
+window.seElSetPosY = function(val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el) { el.y = val; seRenderPreview(); }
+};
+window.seElSetW = function(val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el && val > 0) { el.w = val; seRenderPreview(); }
+};
+window.seElSetH = function(val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (el && val > 0) { el.h = val; seRenderPreview(); }
+};
+window.seToggleLockProportions = function() {
+  var btn = document.getElementById('se-fmt-lockprop');
+  if (btn) btn.classList.toggle('active');
+};
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (el) { el.locked = !el.locked; seRenderPreview(); seUpdateFormatBar(); }
@@ -4482,7 +4855,7 @@ window.seAddTextBox = function() {
   seEnsureElements(slide);
   var maxZ = slide.elements.reduce(function(m,e){return Math.max(m,e.zIndex||0);},0);
   var newEl = {id:seElId(), type:'text', x:80, y:200, w:300, h:60,
-    text:'Double-click to edit…', hint:'Text box', editable:true, movable:true,
+    text:'Double-click to edit…', hint:'Text box', editable:true, movable:true, userAdded:true,
     style:{fontSize:'18px', color:'#1c3a5f', textAlign:'left', fontFamily:'Calibri,Arial,sans-serif',
            display:'flex', alignItems:'center', padding:'4px'},
     zIndex:maxZ+1};
@@ -4500,7 +4873,7 @@ window.seAddShape = function(type) {
   var colors = {rect:'#1c3a5f', circle:'#007AFF', arrow:'#C9A000'};
   var newEl = {id:seElId(), type:'rect', x:100, y:150, w:160, h:80,
     style:{background:colors[type]||'#1c3a5f', borderRadius:type==='circle'?'50%':'4px', opacity:'0.85'},
-    hint:type, movable:true, locked:false, zIndex:maxZ+1};
+    hint:type, movable:true, locked:false, userAdded:true, zIndex:maxZ+1};
   if (type==='circle') { newEl.w=80; newEl.h=80; }
   slide.elements.push(newEl);
   seSelectedId = newEl.id;
@@ -4520,7 +4893,7 @@ window.seAddImage = function() {
     var reader = new FileReader();
     reader.onload = function(e2) {
       var newEl = {id:seElId(), type:'img', x:100, y:100, w:300, h:200,
-        src:e2.target.result, hint:'Image', movable:true, locked:false, zIndex:maxZ+1, style:{}};
+        src:e2.target.result, hint:'Image', movable:true, locked:false, userAdded:true, zIndex:maxZ+1, style:{}};
       slide.elements.push(newEl);
       seSelectedId = newEl.id;
       seRenderPreview(); seRenderPanel();
@@ -5036,6 +5409,140 @@ function seCustomSVG(slide,W,H,isThumb){
     r+='<text x="'+(W/2)+'" y="'+(H*0.54)+'" font-size="12" text-anchor="middle"'
       +' fill="#c0c8d8" font-family="Calibri,Arial,sans-serif" font-style="italic">'
       +'Double-click title or use Edit Title to customize \u2014 add shapes, text, and images in PowerPoint</text>';
+  return r;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ACQUISITION ONE SLIDE — HTML table + SVG thumbnail
+   Matches the PMS 300T Acquisition One Slide reference PPTX format:
+   Black background, white text, EVENT rows × vessel columns.
+═══════════════════════════════════════════════════════════════════ */
+
+/* Format date for one-slide table: "YYYY-MM[-DD]" → "Mon YYYY" or "M/D/YYYY" */
+function seOneDateFmt(d) {
+  if (!d) return '-';
+  var parts = d.split('-');
+  if (parts.length < 2) return d;
+  var yr = parts[0], mo = parseInt(parts[1],10), day = parts[2] ? parseInt(parts[2],10) : 0;
+  var mos = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if (day) return mo+'/'+day+'/'+yr.slice(2);
+  return (mos[mo]||mo)+' '+yr;
+}
+
+/* Build the full HTML table for a One Slide canvas view */
+function seOneSlideHTML(slide) {
+  var vs = slide.vesselType ? vessels.filter(function(v){return v.type===slide.vesselType;}) : [];
+  if (!vs.length) {
+    return '<div style="background:#000;width:100%;height:100%;display:flex;align-items:center;justify-content:center;'
+      +'color:#aaa;font-size:14px;font-family:Calibri,Arial,sans-serif">No vessels for this program type.</div>';
+  }
+
+  /* Rows definition — label + data accessor */
+  var rows = [
+    { label:'Contract Award',         fn:function(v){return seOneDateFmt(v.ms&&v.ms.CA);} },
+    { label:'SOC',                    fn:function(v){return seOneDateFmt(v.ms&&v.ms.SOC);} },
+    { label:'Launch',                 fn:function(v){return seOneDateFmt(v.ms&&v.ms.LCH);} },
+    { label:"Builder's Trial",        fn:function(v){return seOneDateFmt(v.ms&&v.ms.BT);} },
+    { label:'Acceptance Trial',       fn:function(v){return seOneDateFmt(v.ms&&v.ms.AT);} },
+    { label:'Contract Delivery',      fn:function(v){return seOneDateFmt(v.sf&&v.sf.contract_del);} },
+    { label:'Planned/Actual Delivery',fn:function(v){return seOneDateFmt(v.ms&&v.ms.DEL);} },
+    { label:'PM Est. / SECNAV',       fn:function(v){return seOneDateFmt(v.sf&&v.sf.pm_secnav);} },
+    { label:'Sail Away',              fn:function(v){return seOneDateFmt(v.sf&&v.sf.sail_tow);} },
+    { label:'Arrival at Destination', fn:function(v){return seOneDateFmt(v.sf&&v.sf.arrival_dest);} },
+    { label:'Contract Number',        fn:function(v){return (v.sf&&v.sf.contract_num)||'-';} },
+    { label:'Builder / Shipyard',     fn:function(v){return (v.sf&&v.sf.builder)||(v.sf&&v.sf.shipyard)||'-';} },
+    { label:'Delivery Fleet',         fn:function(v){return v.fleet||'-';} },
+    { label:'OWLD',                   fn:function(v){return seOneDateFmt(v.sf&&v.sf.owld);} },
+    { label:'FY Appropriation',       fn:function(v){return (v.sf&&v.sf.fy_approp)||'-';} },
+    { label:'UIC',                    fn:function(v){return (v.sf&&v.sf.uic)||'-';} },
+  ];
+
+  /* Number of columns = vessels + 1 event label col */
+  var nCols = vs.length + 1;
+  /* Auto-size: event label col ~22%, vessel cols split evenly */
+  var lblPct = 22;
+  var datPct = (100-lblPct) / vs.length;
+
+  /* Build table HTML */
+  var h = '<div style="width:100%;height:100%;overflow:auto;background:#000;box-sizing:border-box;padding:8px 10px;">';
+  h += '<div style="font-family:Calibri,Arial,sans-serif;color:white;font-size:11px;font-weight:600;'
+    + 'margin-bottom:4px;letter-spacing:0.5px">PMS 300T Acquisition One Slide — '
+    + esc(seTypeLabel(slide.vesselType||''))+'</div>';
+
+  h += '<table style="width:100%;border-collapse:collapse;table-layout:fixed;'
+    + 'font-family:Calibri,Arial,sans-serif;font-size:9.5px;color:white;">';
+
+  /* Header row */
+  h += '<colgroup>';
+  h += '<col style="width:'+lblPct+'%">';
+  vs.forEach(function(){ h += '<col style="width:'+datPct.toFixed(1)+'%">'; });
+  h += '</colgroup>';
+
+  h += '<thead><tr>';
+  h += '<th style="background:#0d1117;color:white;font-size:10px;font-weight:700;'
+    + 'padding:5px 6px;border:1px solid #333;text-align:left">EVENT</th>';
+  vs.forEach(function(v) {
+    h += '<th style="background:#0d1117;color:white;font-size:9.5px;font-weight:700;'
+      + 'padding:5px 4px;border:1px solid #333;text-align:center">'
+      + esc(v.designation||v.id||'') + '</th>';
+  });
+  h += '</tr></thead>';
+
+  /* Data rows */
+  h += '<tbody>';
+  rows.forEach(function(row, ri) {
+    var rowBg = ri < 10 ? (ri%2===0 ? '#111827' : '#0f172a') : (ri%2===0 ? '#1a1a2e' : '#16213e');
+    var isSection = (ri===10); /* Visual separator before info rows */
+    h += '<tr'+(isSection?' style="border-top:2px solid #4a5568"':'')+' style="background:'+rowBg+'">';
+    h += '<td style="padding:4px 6px;border:1px solid #2d3748;color:#e2e8f0;font-weight:600;'
+      + 'font-size:9.5px;white-space:nowrap">'+ esc(row.label) +'</td>';
+    vs.forEach(function(v) {
+      var val = row.fn(v);
+      var isEmpty = (!val || val==='-');
+      h += '<td style="padding:4px 4px;border:1px solid #2d3748;color:'+(isEmpty?'#4a5568':'#f0f4ff')+';'
+        + 'text-align:center;font-size:9px">' + esc(val) + '</td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+
+/* SVG thumbnail for One Slide — simplified black table */
+function seOneSlideThumbSVG(slide, W, H) {
+  var vs = slide.vesselType ? vessels.filter(function(v){return v.type===slide.vesselType;}) : [];
+  var SC = W/10.0;
+  var tSz = W>140 ? 7 : 5.5;
+  var cellSz = W>140 ? 5.5 : 4;
+  var r = '<rect width="'+W+'" height="'+H+'" fill="#0d1117" rx="2"/>';
+  /* Title bar */
+  r += '<rect x="0" y="0" width="'+W+'" height="'+(SC*0.08)+'" fill="#1a1a2e"/>';
+  r += '<text x="'+(W*0.5)+'" y="'+(SC*0.055)+'" text-anchor="middle" font-size="'+tSz+'"'
+    +' font-weight="700" fill="white" font-family="Calibri,Arial,sans-serif">'
+    + esc(seTypeLabel(slide.vesselType||'')+' Acquisition One Slide') + '</text>';
+  /* Mini table */
+  var nCols = Math.min(vs.length, 6) + 1;
+  var tableY = SC*0.10;
+  var tableH = H - tableY - SC*0.04;
+  var nRows = 16;
+  var rowH = tableH / nRows;
+  var lblW = W * 0.30;
+  var colW = (W - lblW) / Math.max(1, nCols-1);
+  /* Column headers */
+  r += '<rect x="0" y="'+tableY+'" width="'+W+'" height="'+rowH+'" fill="#0d1117"/>';
+  for (var ci=0; ci<Math.min(vs.length,6); ci++) {
+    r += '<text x="'+(lblW+(ci+0.5)*colW)+'" y="'+(tableY+rowH*0.72)+'"'
+      +' text-anchor="middle" font-size="'+cellSz+'" fill="white" font-family="Calibri,Arial,sans-serif">'
+      + esc(vs[ci].designation||vs[ci].id||'') + '</text>';
+  }
+  /* Row lines */
+  for (var ri=0; ri<nRows; ri++) {
+    var ry = tableY + ri*rowH;
+    var bg = ri % 2 === 0 ? '#111827' : '#0f172a';
+    if (ri > 0) r += '<rect x="0" y="'+ry+'" width="'+W+'" height="'+rowH+'" fill="'+bg+'" opacity="0.7"/>';
+    r += '<line x1="0" y1="'+ry+'" x2="'+W+'" y2="'+ry+'" stroke="#2d3748" stroke-width="0.4"/>';
+    r += '<line x1="'+lblW+'" y1="'+tableY+'" x2="'+lblW+'" y2="'+(tableY+tableH)+'" stroke="#2d3748" stroke-width="0.4"/>';
+  }
   return r;
 }
 
