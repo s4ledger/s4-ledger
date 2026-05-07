@@ -577,7 +577,7 @@ td.ms-done .di::after { content:' ✓'; }
 }
 #se-main {
   flex:1; overflow:auto; display:flex; flex-direction:column;
-  align-items:center; padding:24px; background:#181c24; gap:0;
+  align-items:center; padding:24px; background:#181c24;
 }
 #se-preview-wrap { width:100%; max-width:880px; }
 #se-preview svg {
@@ -587,8 +587,7 @@ td.ms-done .di::after { content:' ✓'; }
 /* ══ INTERACTIVE SLIDE CANVAS ══════════════════════════════════ */
 #se-format-bar {
   display:flex; flex-direction:column; width:100%; box-sizing:border-box;
-  max-width:880px; background:#1a1f2e; border-radius:8px 8px 0 0;
-  border:1px solid #2e3448; border-bottom:none;
+  background:#1a1f2e; border-bottom:2px solid #2e3448; flex-shrink:0;
 }
 .se-fmt-row {
   display:flex; align-items:center; gap:3px; flex-wrap:wrap;
@@ -622,7 +621,7 @@ td.ms-done .di::after { content:' ✓'; }
 .se-fmt-group { display:flex; align-items:center; gap:2px; }
 #se-canvas-wrap {
   position:relative; width:100%; max-width:880px;
-  background:white; border-radius:0 0 4px 4px;
+  background:white; border-radius:4px;
   box-shadow:0 8px 56px rgba(0,0,0,.7);
   overflow:hidden; user-select:none;
   /* maintain 880:660 aspect ratio */
@@ -1345,6 +1344,130 @@ td.ms-done .di::after { content:' ✓'; }
         <i class="fas fa-times"></i>
       </button>
     </div>
+    <!-- PowerPoint Ribbon Toolbar — full-width, above slides panel -->
+    <div id="se-format-bar">
+      <!-- ROW 1: Text formatting -->
+      <div class="se-fmt-row">
+        <span id="se-fmt-el-name" class="se-fmt-label" style="min-width:55px;font-weight:600">No selection</span>
+        <div class="se-fmt-sep"></div>
+        <select class="se-fmt-sel" id="se-fmt-fontfamily" title="Font family" onchange="seFmtApply('fontFamily',this.value)">
+          <option value="Calibri,Arial,sans-serif">Calibri</option>
+          <option value="Arial,sans-serif">Arial</option>
+          <option value="'Times New Roman',serif">Times New Roman</option>
+          <option value="Georgia,serif">Georgia</option>
+          <option value="Verdana,sans-serif">Verdana</option>
+          <option value="Tahoma,sans-serif">Tahoma</option>
+          <option value="'Courier New',monospace">Courier New</option>
+          <option value="Impact,sans-serif">Impact</option>
+          <option value="'Trebuchet MS',sans-serif">Trebuchet MS</option>
+          <option value="'Franklin Gothic Medium',sans-serif">Franklin Gothic</option>
+        </select>
+        <select class="se-fmt-sel" id="se-fmt-fontsize" title="Font size" onchange="seFmtApply('fontSize',this.value)" style="width:52px">
+          <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option>
+          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          <option value="13">13</option><option value="14">14</option><option value="16">16</option>
+          <option value="18">18</option><option value="20">20</option><option value="22">22</option>
+          <option value="24">24</option><option value="26">26</option><option value="28">28</option>
+          <option value="32">32</option><option value="36">36</option><option value="40">40</option>
+          <option value="48">48</option><option value="60">60</option><option value="72">72</option>
+        </select>
+        <button class="se-fmt-btn" title="Increase font size" onclick="seFmtAdjustSize(1)" style="padding:2px 5px;font-size:13px">A&#8593;</button>
+        <button class="se-fmt-btn" title="Decrease font size" onclick="seFmtAdjustSize(-1)" style="padding:2px 5px;font-size:13px">A&#8595;</button>
+        <div class="se-fmt-sep"></div>
+        <button class="se-fmt-btn" id="se-fmt-bold"   onclick="seFmtToggle('bold')"   title="Bold (Ctrl+B)"><b>B</b></button>
+        <button class="se-fmt-btn" id="se-fmt-italic" onclick="seFmtToggle('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button class="se-fmt-btn" id="se-fmt-underline" onclick="seFmtToggle('underline')" title="Underline (Ctrl+U)" style="text-decoration:underline">U</button>
+        <button class="se-fmt-btn" id="se-fmt-strike" onclick="seFmtToggle('strikethrough')" title="Strikethrough" style="text-decoration:line-through">S</button>
+        <button class="se-fmt-btn" id="se-fmt-shadow" onclick="seFmtToggle('shadow')" title="Text shadow">&#9639;S</button>
+        <div class="se-fmt-sep"></div>
+        <button class="se-fmt-btn" id="se-fmt-left"    onclick="seFmtApply('textAlign','left')"    title="Align Left">&#8676;</button>
+        <button class="se-fmt-btn" id="se-fmt-center"  onclick="seFmtApply('textAlign','center')"  title="Align Center">&#8801;</button>
+        <button class="se-fmt-btn" id="se-fmt-right"   onclick="seFmtApply('textAlign','right')"   title="Align Right">&#8677;</button>
+        <button class="se-fmt-btn" id="se-fmt-justify" onclick="seFmtApply('textAlign','justify')" title="Justify">&#9643;</button>
+        <select class="se-fmt-sel" id="se-fmt-linespacing" title="Line spacing" onchange="seFmtApply('lineHeight',this.value)" style="width:56px">
+          <option value="1.0">1.0&#xD7;</option><option value="1.15" selected>1.15&#xD7;</option>
+          <option value="1.5">1.5&#xD7;</option><option value="2.0">2.0&#xD7;</option>
+        </select>
+        <div class="se-fmt-sep"></div>
+        <div class="se-fmt-group">
+          <span class="se-fmt-label">A</span>
+          <input type="color" class="se-fmt-color" id="se-fmt-color" oninput="seFmtApply('color',this.value)" title="Text color" value="#000000">
+        </div>
+        <div class="se-fmt-group">
+          <span class="se-fmt-label" style="font-size:13px">&#9632;</span>
+          <input type="color" class="se-fmt-color" id="se-fmt-bgcolor" oninput="seFmtApply('background',this.value)" title="Fill color" value="#ffffff">
+        </div>
+        <div class="se-fmt-group">
+          <span class="se-fmt-label">&#9633;</span>
+          <input type="color" class="se-fmt-color" id="se-fmt-bordercolor" oninput="seFmtApply('borderColor',this.value)" title="Border color" value="#000000">
+        </div>
+        <select class="se-fmt-sel" id="se-fmt-borderwidth" title="Border width" onchange="seFmtApply('borderWidth',this.value)" style="width:50px">
+          <option value="0px">None</option><option value="1px">1px</option>
+          <option value="2px">2px</option><option value="3px">3px</option><option value="4px">4px</option>
+        </select>
+        <select class="se-fmt-sel" id="se-fmt-borderstyle" title="Border style" onchange="seFmtApply('borderStyle',this.value)" style="width:56px">
+          <option value="solid">Solid</option><option value="dashed">Dashed</option>
+          <option value="dotted">Dotted</option><option value="double">Double</option>
+        </select>
+        <div class="se-fmt-sep"></div>
+        <select class="se-fmt-sel" id="se-fmt-opacity" title="Opacity" onchange="seFmtApply('opacity',this.value)" style="width:56px">
+          <option value="1">100%</option><option value="0.9">90%</option>
+          <option value="0.75">75%</option><option value="0.5">50%</option>
+          <option value="0.25">25%</option>
+        </select>
+        <div class="se-fmt-group" title="Corner radius">
+          <span class="se-fmt-label">&#8990;</span>
+          <input type="number" class="se-fmt-num" id="se-fmt-radius" min="0" max="200" value="0"
+            onchange="seFmtApply('borderRadius',this.value+'px')" title="Corner radius (px)" style="width:38px">
+        </div>
+      </div>
+      <!-- ROW 2: Arrangement + position/size + element ops -->
+      <div class="se-fmt-row">
+        <button class="se-fmt-btn" onclick="seElBringToFront()" title="Bring to Front">&#8679;&#8679;Z</button>
+        <button class="se-fmt-btn" onclick="seElBringForward()" title="Bring Forward">&#8679;Z</button>
+        <button class="se-fmt-btn" onclick="seElSendBack()" title="Send Backward">&#8681;Z</button>
+        <button class="se-fmt-btn" onclick="seElSendToBack()" title="Send to Back">&#8681;&#8681;Z</button>
+        <div class="se-fmt-sep"></div>
+        <button class="se-fmt-btn" onclick="seElRotate(-90)" title="Rotate Left 90&#176;">&#8634;90</button>
+        <button class="se-fmt-btn" onclick="seElRotate(90)"  title="Rotate Right 90&#176;">&#8635;90</button>
+        <div class="se-fmt-group" title="Rotation angle">
+          <span class="se-fmt-label">&#9099;</span>
+          <input type="number" class="se-fmt-num" id="se-fmt-rotate" min="-360" max="360" value="0"
+            onchange="seElRotateTo(+this.value)" style="width:42px">
+          <span class="se-fmt-label">&#176;</span>
+        </div>
+        <button class="se-fmt-btn" onclick="seElFlipH()" title="Flip Horizontal">&#8596;H</button>
+        <button class="se-fmt-btn" onclick="seElFlipV()" title="Flip Vertical">&#8597;V</button>
+        <div class="se-fmt-sep"></div>
+        <div class="se-fmt-group" title="X position">
+          <span class="se-fmt-label">X:</span>
+          <input type="number" class="se-fmt-num" id="se-fmt-px" min="-1000" max="2000" value="0"
+            onchange="seElSetPosX(+this.value)" style="width:48px">
+        </div>
+        <div class="se-fmt-group" title="Y position">
+          <span class="se-fmt-label">Y:</span>
+          <input type="number" class="se-fmt-num" id="se-fmt-py" min="-1000" max="2000" value="0"
+            onchange="seElSetPosY(+this.value)" style="width:48px">
+        </div>
+        <div class="se-fmt-sep"></div>
+        <div class="se-fmt-group" title="Width">
+          <span class="se-fmt-label">W:</span>
+          <input type="number" class="se-fmt-num" id="se-fmt-pw" min="1" max="2000" value="100"
+            onchange="seElSetW(+this.value)" style="width:52px">
+        </div>
+        <div class="se-fmt-group" title="Height">
+          <span class="se-fmt-label">H:</span>
+          <input type="number" class="se-fmt-num" id="se-fmt-ph" min="1" max="2000" value="50"
+            onchange="seElSetH(+this.value)" style="width:52px">
+        </div>
+        <button class="se-fmt-btn" id="se-fmt-lockprop" onclick="seToggleLockProportions()" title="Lock/unlock aspect ratio">&#128279;</button>
+        <div class="se-fmt-sep"></div>
+        <button class="se-fmt-btn" onclick="seElDuplicate()" title="Duplicate (Ctrl+D)"><i class="fas fa-copy fa-xs"></i> Dup</button>
+        <button class="se-fmt-btn" id="se-fmt-lock" onclick="seElToggleLock()" title="Lock/unlock element">&#128274; Lock</button>
+        <div style="flex:1"></div>
+        <button class="se-fmt-btn danger" onclick="seElDelete()" title="Delete selected (Del)"><i class="fas fa-trash fa-xs"></i> Delete</button>
+      </div>
+    </div>
     <!-- Persistent slide actions bar (PowerPoint-style toolbar for selected slide) -->
     <div id="se-slide-bar"></div>
     <!-- Body -->
@@ -1354,147 +1477,6 @@ td.ms-done .di::after { content:' ✓'; }
         <div id="se-slide-list"></div>
       </div>
       <div id="se-main">
-        <!-- Format bar — always visible, modeled after PowerPoint ribbon -->
-        <div id="se-format-bar">
-          <!-- ROW 1: Text formatting -->
-          <div class="se-fmt-row">
-            <span id="se-fmt-el-name" class="se-fmt-label" style="min-width:55px;font-weight:600">No selection</span>
-            <div class="se-fmt-sep"></div>
-            <!-- Font family -->
-            <select class="se-fmt-sel" id="se-fmt-fontfamily" title="Font family" onchange="seFmtApply('fontFamily',this.value)">
-              <option value="Calibri,Arial,sans-serif">Calibri</option>
-              <option value="Arial,sans-serif">Arial</option>
-              <option value="'Times New Roman',serif">Times New Roman</option>
-              <option value="Georgia,serif">Georgia</option>
-              <option value="Verdana,sans-serif">Verdana</option>
-              <option value="Tahoma,sans-serif">Tahoma</option>
-              <option value="'Courier New',monospace">Courier New</option>
-              <option value="Impact,sans-serif">Impact</option>
-              <option value="'Trebuchet MS',sans-serif">Trebuchet MS</option>
-              <option value="'Franklin Gothic Medium',sans-serif">Franklin Gothic</option>
-            </select>
-            <!-- Font size -->
-            <select class="se-fmt-sel" id="se-fmt-fontsize" title="Font size" onchange="seFmtApply('fontSize',this.value)" style="width:52px">
-              <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option>
-              <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-              <option value="13">13</option><option value="14">14</option><option value="16">16</option>
-              <option value="18">18</option><option value="20">20</option><option value="22">22</option>
-              <option value="24">24</option><option value="26">26</option><option value="28">28</option>
-              <option value="32">32</option><option value="36">36</option><option value="40">40</option>
-              <option value="48">48</option><option value="60">60</option><option value="72">72</option>
-            </select>
-            <!-- Increase/decrease size -->
-            <button class="se-fmt-btn" title="Increase font size" onclick="seFmtAdjustSize(1)" style="padding:2px 5px;font-size:13px">A↑</button>
-            <button class="se-fmt-btn" title="Decrease font size" onclick="seFmtAdjustSize(-1)" style="padding:2px 5px;font-size:13px">A↓</button>
-            <div class="se-fmt-sep"></div>
-            <!-- Bold / Italic / Underline / Strikethrough -->
-            <button class="se-fmt-btn" id="se-fmt-bold"   onclick="seFmtToggle('bold')"   title="Bold (Ctrl+B)"><b>B</b></button>
-            <button class="se-fmt-btn" id="se-fmt-italic" onclick="seFmtToggle('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
-            <button class="se-fmt-btn" id="se-fmt-underline" onclick="seFmtToggle('underline')" title="Underline (Ctrl+U)" style="text-decoration:underline">U</button>
-            <button class="se-fmt-btn" id="se-fmt-strike" onclick="seFmtToggle('strikethrough')" title="Strikethrough" style="text-decoration:line-through">S</button>
-            <!-- Shadow toggle -->
-            <button class="se-fmt-btn" id="se-fmt-shadow" onclick="seFmtToggle('shadow')" title="Text shadow">&#9639;S</button>
-            <div class="se-fmt-sep"></div>
-            <!-- Alignment -->
-            <button class="se-fmt-btn" id="se-fmt-left"    onclick="seFmtApply('textAlign','left')"    title="Align Left (Ctrl+L)">&#9168;&#9168;</button>
-            <button class="se-fmt-btn" id="se-fmt-center"  onclick="seFmtApply('textAlign','center')"  title="Align Center (Ctrl+E)">&#9588;</button>
-            <button class="se-fmt-btn" id="se-fmt-right"   onclick="seFmtApply('textAlign','right')"   title="Align Right (Ctrl+R)">&#9168;&#9168;</button>
-            <button class="se-fmt-btn" id="se-fmt-justify" onclick="seFmtApply('textAlign','justify')" title="Justify">&#9643;</button>
-            <!-- Line spacing -->
-            <select class="se-fmt-sel" id="se-fmt-linespacing" title="Line spacing" onchange="seFmtApply('lineHeight',this.value)" style="width:56px">
-              <option value="1.0">1.0×</option><option value="1.15" selected>1.15×</option>
-              <option value="1.5">1.5×</option><option value="2.0">2.0×</option>
-            </select>
-            <div class="se-fmt-sep"></div>
-            <!-- Colors -->
-            <div class="se-fmt-group">
-              <span class="se-fmt-label">A</span>
-              <input type="color" class="se-fmt-color" id="se-fmt-color" oninput="seFmtApply('color',this.value)" title="Text color" value="#000000">
-            </div>
-            <div class="se-fmt-group">
-              <span class="se-fmt-label" style="font-size:13px">&#9632;</span>
-              <input type="color" class="se-fmt-color" id="se-fmt-bgcolor" oninput="seFmtApply('background',this.value)" title="Fill color" value="#ffffff">
-            </div>
-            <!-- Border -->
-            <div class="se-fmt-group">
-              <span class="se-fmt-label">&#9632;</span>
-              <input type="color" class="se-fmt-color" id="se-fmt-bordercolor" oninput="seFmtApply('borderColor',this.value)" title="Border color" value="#000000">
-            </div>
-            <select class="se-fmt-sel" id="se-fmt-borderwidth" title="Border width" onchange="seFmtApply('borderWidth',this.value)" style="width:50px">
-              <option value="0px">None</option><option value="1px">1px</option>
-              <option value="2px">2px</option><option value="3px">3px</option><option value="4px">4px</option>
-            </select>
-            <select class="se-fmt-sel" id="se-fmt-borderstyle" title="Border style" onchange="seFmtApply('borderStyle',this.value)" style="width:56px">
-              <option value="solid">Solid</option><option value="dashed">Dashed</option>
-              <option value="dotted">Dotted</option><option value="double">Double</option>
-            </select>
-            <div class="se-fmt-sep"></div>
-            <!-- Opacity -->
-            <select class="se-fmt-sel" id="se-fmt-opacity" title="Opacity" onchange="seFmtApply('opacity',this.value)" style="width:56px">
-              <option value="1">100%</option><option value="0.9">90%</option>
-              <option value="0.75">75%</option><option value="0.5">50%</option>
-              <option value="0.25">25%</option>
-            </select>
-            <!-- Corner radius (shapes) -->
-            <div class="se-fmt-group" title="Corner radius">
-              <span class="se-fmt-label">⌒</span>
-              <input type="number" class="se-fmt-num" id="se-fmt-radius" min="0" max="200" value="0"
-                onchange="seFmtApply('borderRadius',this.value+'px')" title="Corner radius (px)" style="width:38px">
-            </div>
-          </div>
-          <!-- ROW 2: Arrangement + position/size + element ops -->
-          <div class="se-fmt-row">
-            <!-- Z-order -->
-            <button class="se-fmt-btn" onclick="seElBringToFront()" title="Bring to Front">&#8679;&#8679;Z</button>
-            <button class="se-fmt-btn" onclick="seElBringForward()" title="Bring Forward">&#8679;Z</button>
-            <button class="se-fmt-btn" onclick="seElSendBack()" title="Send Backward">&#8681;Z</button>
-            <button class="se-fmt-btn" onclick="seElSendToBack()" title="Send to Back">&#8681;&#8681;Z</button>
-            <div class="se-fmt-sep"></div>
-            <!-- Rotation + flip -->
-            <button class="se-fmt-btn" onclick="seElRotate(-90)" title="Rotate Left 90°">&#8634;90</button>
-            <button class="se-fmt-btn" onclick="seElRotate(90)"  title="Rotate Right 90°">&#8635;90</button>
-            <div class="se-fmt-group" title="Rotation angle">
-              <span class="se-fmt-label">&#9099;</span>
-              <input type="number" class="se-fmt-num" id="se-fmt-rotate" min="-360" max="360" value="0"
-                onchange="seElRotateTo(+this.value)" style="width:42px">
-              <span class="se-fmt-label">°</span>
-            </div>
-            <button class="se-fmt-btn" onclick="seElFlipH()" title="Flip Horizontal">&#8596;H</button>
-            <button class="se-fmt-btn" onclick="seElFlipV()" title="Flip Vertical">&#8597;V</button>
-            <div class="se-fmt-sep"></div>
-            <!-- Position -->
-            <div class="se-fmt-group" title="X position (px from left)">
-              <span class="se-fmt-label">X:</span>
-              <input type="number" class="se-fmt-num" id="se-fmt-px" min="-1000" max="2000" value="0"
-                onchange="seElSetPosX(+this.value)" style="width:48px">
-            </div>
-            <div class="se-fmt-group" title="Y position (px from top)">
-              <span class="se-fmt-label">Y:</span>
-              <input type="number" class="se-fmt-num" id="se-fmt-py" min="-1000" max="2000" value="0"
-                onchange="seElSetPosY(+this.value)" style="width:48px">
-            </div>
-            <div class="se-fmt-sep"></div>
-            <!-- Size -->
-            <div class="se-fmt-group" title="Width (px)">
-              <span class="se-fmt-label">W:</span>
-              <input type="number" class="se-fmt-num" id="se-fmt-pw" min="1" max="2000" value="100"
-                onchange="seElSetW(+this.value)" style="width:52px">
-            </div>
-            <div class="se-fmt-group" title="Height (px)">
-              <span class="se-fmt-label">H:</span>
-              <input type="number" class="se-fmt-num" id="se-fmt-ph" min="1" max="2000" value="50"
-                onchange="seElSetH(+this.value)" style="width:52px">
-            </div>
-            <!-- Lock proportions -->
-            <button class="se-fmt-btn" id="se-fmt-lockprop" onclick="seToggleLockProportions()" title="Lock/unlock aspect ratio">&#128279;</button>
-            <div class="se-fmt-sep"></div>
-            <!-- Element operations -->
-            <button class="se-fmt-btn" onclick="seElDuplicate()" title="Duplicate (Ctrl+D)"><i class="fas fa-copy fa-xs"></i> Dup</button>
-            <button class="se-fmt-btn" id="se-fmt-lock" onclick="seElToggleLock()" title="Lock/unlock element position">&#128274; Lock</button>
-            <div style="flex:1"></div>
-            <button class="se-fmt-btn danger" onclick="seElDelete()" title="Delete selected element (Del)"><i class="fas fa-trash fa-xs"></i> Delete</button>
-          </div>
-        </div>
         <!-- Interactive slide canvas -->
         <div id="se-canvas-wrap" tabindex="0">
           <div id="se-sel-box"></div>
@@ -4339,54 +4321,50 @@ function seDefaultElements(slide) {
     var legY = g.GB + g.MB;
     var legBH = SL.LH*SC - g.MB;
     var legBoxH = legBH*0.88;
-    var legBoxW_ = slide.type==='acq' ? SC*3.8 : SC*2.45;
+var legBoxW_ = g.GW;  /* full grid width for legend */
     els.push({id:seElId(), type:'rect', x:g.MX, y:legY+(legBH-legBoxH)/2, w:legBoxW_, h:legBoxH,
       style:{background:'white', border:'1px solid #aaa'}, locked:false, zIndex:4, hint:'Legend box'});
 
     var legNavy = navyColor;
-    /* Taller legend box for readability */
-    var legBoxH_actual = Math.max(legBoxH, SC*0.56);
-    els.push({id:seElId(), type:'text', x:g.MX+SC*0.10, y:legY+(legBH-legBoxH_actual)/2+SC*0.05, w:SC*1.6, h:SC*0.22,
-      text:'LEGEND', hint:'Legend label', editable:true, movable:true,
-      style:{fontSize:Math.max(11,SC*0.130)+'px', fontWeight:'700', color:legNavy,
-             fontFamily:'Calibri,Arial,sans-serif'},
-      zIndex:6});
+    /* Horizontal legend — all symbols in one row, guaranteed to fit within canvas */
+    var lsymR_  = Math.min(SC*0.076, legBoxH * 0.32);
+    var legBoxY_ = legY + (legBH - legBoxH) / 2;
+    var liCY_   = legBoxY_ + legBoxH / 2;
 
     if (slide.type === 'acq') {
       var aKeys = Object.keys(ACQMS);
-      var liGapA2 = (legBoxW_-SC*0.2)/aKeys.length;
-      var lsymR2 = SC*0.075;
+      var liGapA2 = (legBoxW_ - SC*0.15) / aKeys.length;
       aKeys.forEach(function(key_,idx) {
         var col_ = ACQMS[key_].color;
-        var lx_ = g.MX+SC*0.10+idx*liGapA2;
-        var liy_ = legY+(legBH-legBoxH_actual)/2+SC*0.30;
-        els.push({id:seElId(), type:'sym', x:lx_, y:liy_-lsymR2, w:lsymR2*2, h:lsymR2*2,
-          shape:'diamond', color:col_, hint:key_+' legend sym', movable:true, locked:false, zIndex:7, style:{}, symR:lsymR2});
-        var fsz_ = Math.max(9,SC*0.102);
-        els.push({id:seElId(), type:'text', x:lx_+lsymR2*2+SC*0.04, y:liy_-lsymR2, w:liGapA2-lsymR2*2-SC*0.05, h:lsymR2*2,
+        var lx_ = g.MX + SC*0.075 + idx*liGapA2;
+        els.push({id:seElId(), type:'sym', x:lx_, y:liCY_-lsymR_, w:lsymR_*2, h:lsymR_*2,
+          shape:'diamond', color:col_, hint:key_+' legend sym', movable:true, locked:false, zIndex:7, style:{}, symR:lsymR_});
+        var fsz_ = Math.max(8, SC*0.095);
+        els.push({id:seElId(), type:'text', x:lx_+lsymR_*2+SC*0.025, y:liCY_-lsymR_*1.1, w:liGapA2-lsymR_*2-SC*0.04, h:lsymR_*2.2,
           text:key_+': '+ACQMS[key_].label, hint:key_+' legend text', editable:true, movable:true,
           style:{fontSize:fsz_+'px', color:'#333', fontFamily:'Calibri,Arial,sans-serif',
-                 display:'flex', alignItems:'center'},
+                 display:'flex', alignItems:'center', overflow:'hidden'},
           zIndex:7});
       });
     } else {
       var legItems_ = [
-        {sh:'star',     col_:'#c9a84c', lbl:'Award — Contract Award'},
-        {sh:'triangle', col_:'#ff9500', lbl:'SOC — Start of Construction'},
-        {sh:'circle',   col_:'#1c3a5f', lbl:'DEL — Delivery'},
+        {sh:'star',     col_:'#c9a84c', lbl:'CA \u2013 Award'},
+        {sh:'triangle', col_:'#ff9500', lbl:'SOC \u2013 Start'},
+        {sh:'diamond',  col_:'#5ac8fa', lbl:'LCH \u2013 Launch'},
+        {sh:'diamond',  col_:'#007AFF', lbl:'BT \u2013 Trials'},
+        {sh:'diamond',  col_:'#af52de', lbl:'AT \u2013 Trials'},
+        {sh:'circle',   col_:'#1c3a5f', lbl:'DEL \u2013 Delivery'},
       ];
-      var legItemH_ = Math.max(legBoxH_actual/(legItems_.length+1.1), SC*0.135);
-      var lsymR_ = SC*0.078;
+      var liGapP_  = (legBoxW_ - SC*0.15) / legItems_.length;
+      var fsz_ = Math.max(7, Math.min(SC*0.090, 10));
       legItems_.forEach(function(li, idx) {
-        var lix_ = g.MX+SC*0.10;
-        var liy_ = legY+(legBH-legBoxH_actual)/2+SC*0.22+(idx+0.8)*legItemH_;
-        var fsz_ = Math.max(9,SC*0.108);
-        els.push({id:seElId(), type:'sym', x:lix_, y:liy_-lsymR_, w:lsymR_*2, h:lsymR_*2,
+        var lix_ = g.MX + SC*0.075 + idx*liGapP_;
+        els.push({id:seElId(), type:'sym', x:lix_, y:liCY_-lsymR_, w:lsymR_*2, h:lsymR_*2,
           shape:li.sh, color:li.col_, hint:li.lbl, movable:true, locked:false, zIndex:7, style:{}, symR:lsymR_});
-        els.push({id:seElId(), type:'text', x:lix_+lsymR_*2+SC*0.06, y:liy_-lsymR_, w:SC*2.2, h:lsymR_*2,
+        els.push({id:seElId(), type:'text', x:lix_+lsymR_*2+SC*0.025, y:liCY_-lsymR_*1.1, w:liGapP_-lsymR_*2-SC*0.04, h:lsymR_*2.2,
           text:li.lbl, hint:'Legend item', editable:true, movable:true,
           style:{fontSize:fsz_+'px', color:'#333', fontFamily:'Calibri,Arial,sans-serif',
-                 display:'flex', alignItems:'center'},
+                 display:'flex', alignItems:'center', overflow:'hidden'},
           zIndex:7});
       });
     }
@@ -4405,10 +4383,23 @@ function seRenderPreview() {
     seUpdateFormatBar(); seRenderSlideBar(); return;
   }
 
-  /* ── ONE SLIDE: render HTML table directly ── */
+  /* ── ONE SLIDE: HTML table background + interactive element overlays ── */
   if (slide.type === 'oneSlide') {
     wrap.innerHTML = seOneSlideHTML(slide);
-    seUpdateFormatBar(); seRenderSlideBar();
+    if (!slide.elements) slide.elements = [];
+    wrap._seInteractionAttached = false;
+    var canvasRectOS = wrap.getBoundingClientRect();
+    var cWOS = canvasRectOS.width || 880;
+    var cHOS = canvasRectOS.height || Math.round(cWOS * 660/880);
+    var scaleXOS = cWOS / SE_CANVAS_W, scaleYOS = cHOS / SE_CANVAS_H;
+    slide.elements.filter(function(e){ return e.userAdded; }).forEach(function(el){
+      seRenderElDiv(el, wrap, scaleXOS, scaleYOS, cWOS, cHOS);
+    });
+    seUpdateFormatBar();
+    var pbOS = document.getElementById('se-prev-btn'); if(pbOS) pbOS.disabled=(seActive===0);
+    var nbOS = document.getElementById('se-next-btn'); if(nbOS) nbOS.disabled=(seActive===seSlides.length-1);
+    var ctOS = document.getElementById('se-slide-counter'); if(ctOS) ctOS.textContent=(seActive+1)+' / '+seSlides.length;
+    seRenderSlideBar(); seAttachCanvasInteraction();
     return;
   }
 
