@@ -4844,6 +4844,7 @@ window.seToggleLockProportions = function() {
   var btn = document.getElementById('se-fmt-lockprop');
   if (btn) btn.classList.toggle('active');
 };
+window.seToggleLock = function() {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
   if (el) { el.locked = !el.locked; seRenderPreview(); seUpdateFormatBar(); }
