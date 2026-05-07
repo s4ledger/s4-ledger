@@ -110,7 +110,25 @@ export function analyzeRow(
         `via ${req.submittalMethod}. ${issues.length > 0 ? issues.join('. ') + '. ' : ''}` +
         `Per ${req.block}, resolve within ${req.govReviewDays} calendar days. ${req.contractRef}.`
       : `Under review. ${issues.join('. ') || 'Awaiting Government review completion.'}`
+  } else if (row.status === 'pending') {
+    const submitted = !!row.actualSubmissionDate && row.actualSubmissionDate !== '—'
+    const received = row.received === 'Yes'
+    if (!submitted) {
+      const due = row.calculatedDueDate || row.contractDueFinish
+      statusExplanation = due
+        ? `PENDING — Not yet submitted. Deliverable due by ${due}. Awaiting Shipbuilder submission.`
+        : `PENDING — Milestone-driven deliverable. Due date determined by Program Schedule. Not yet submitted.`
+    } else if (submitted && !received) {
+      statusExplanation = `SUBMITTED — Submitted ${row.actualSubmissionDate}. Awaiting Government receipt confirmation.`
+    } else {
+      // submitted and received — under review
+      statusExplanation = req
+        ? `UNDER REVIEW — ${req.requiredVersion} ${req.requiredRevision} submitted ${row.actualSubmissionDate} ` +
+          `via ${req.submittalMethod}. Under Government review per ${req.block}. ${req.contractRef}.`
+        : `UNDER REVIEW — Submitted ${row.actualSubmissionDate} and received. Awaiting Government review completion.`
+    }
   } else {
+    // status === 'green' — completed/accepted
     statusExplanation = req
       ? `COMPLIANT — ${req.requiredVersion} ${req.requiredRevision} received on ${row.actualSubmissionDate} ` +
         `via ${req.submittalMethod}, within contractual timeline. Accepted per Attachment J-2, ${req.contractRef}. ` +
@@ -146,7 +164,16 @@ export function analyzeRow(
         `${hull ? `Hull ${hull} integration timeline at moderate risk. ` : ''}` +
         `Government review resources are allocated — timely resolution avoids resource contention.`
       : `Under review — moderate schedule risk if not resolved promptly.`
+  } else if (row.status === 'pending') {
+    const dueStr = row.calculatedDueDate || row.contractDueFinish
+    programImpact = row.actualSubmissionDate
+      ? `Deliverable submitted ${row.actualSubmissionDate} — awaiting Government review. ` +
+        `${hull ? `Hull ${hull} schedule nominal. ` : ''}No schedule risk at this time.`
+      : `Deliverable not yet submitted. ` +
+        `${dueStr ? `Due by ${dueStr}. ` : 'Milestone-driven — due date pending Program Schedule. '}` +
+        `${hull ? `Hull ${hull} delivery contingent on this item. ` : ''}Monitor for schedule risk.`
   } else {
+    // status === 'green'
     programImpact = `No program risk. Deliverable accepted and ${isSealed ? 'sealed to ledger' : 'eligible for seal'}. ` +
       `${hull ? `Hull ${hull} on track for this requirement. ` : ''}` +
       `Completed ${row.calendarDaysToReview || 'N/A'} days ahead of review limit.`
@@ -181,7 +208,18 @@ export function analyzeRow(
       { action: `Resolve all open items and approve/disapprove per ${req?.block || 'Block 4'}`, dueDate: resolveDate },
       { action: 'Track resolution at next weekly DRL status meeting', dueDate: addBusinessDays(todayStr, 5) },
     )
+  } else if (row.status === 'pending') {
+    if (!row.actualSubmissionDate) {
+      const dueStr = row.calculatedDueDate || row.contractDueFinish
+      if (dueStr) nextActions.push({ action: `Submit deliverable by ${dueStr}`, dueDate: dueStr })
+      else nextActions.push({ action: 'Monitor Program Schedule for due date — submit when milestone triggers', dueDate: 'TBD' })
+    } else if (row.received !== 'Yes') {
+      nextActions.push({ action: 'Confirm receipt with Government — mark RCVD=Yes when received', dueDate: addBusinessDays(todayStr, 3) })
+    } else {
+      nextActions.push({ action: 'Monitor Government review progress', dueDate: addBusinessDays(todayStr, 14) })
+    }
   } else {
+    // status === 'green'
     if (!isSealed) {
       nextActions.push({ action: 'Seal record to XRPL ledger for tamper-evident integrity proof', dueDate: addBusinessDays(todayStr, 2) })
     }
@@ -214,7 +252,19 @@ export function analyzeRow(
       `${row.title} is under review with ${row.calendarDaysToReview || 'N/A'} calendar days elapsed. ` +
       `Please provide status of any open RIDs or comments. ` +
       `Target completion: ${addCalDays(todayStr, req?.govReviewDays || 14)}.\n\nV/R,\n[Government Program Team]`
+  } else if (row.status === 'pending') {
+    if (!row.actualSubmissionDate) {
+      suggestedComms = `Subject: ${row.id} — Pending Submission\n\n` +
+        `FYI — ${row.title} has not yet been submitted. ` +
+        `${row.calculatedDueDate || row.contractDueFinish ? `Due by ${row.calculatedDueDate || row.contractDueFinish}. ` : 'Due date driven by Program Schedule. '}` +
+        `No action required at this time — monitor for submission.`
+    } else {
+      suggestedComms = `Subject: ${row.id} — Under Review\n\n` +
+        `FYI — ${row.title} was submitted ${row.actualSubmissionDate} and is currently under review. ` +
+        `No action required at this time.`
+    }
   } else {
+    // status === 'green'
     suggestedComms = `Subject: ${row.id} — Accepted / No Action Required\n\n` +
       `FYI — ${row.title} has been accepted and ${isSealed ? 'sealed to the XRPL ledger' : 'is ready for ledger seal'}. ` +
       `No further action required from the program team.`
@@ -229,7 +279,12 @@ export function analyzeRow(
   } else if (row.status === 'yellow') {
     const openItems = row.notes.toLowerCase().includes('rid') ? 'Open RIDs.' : 'Under review.'
     conciseNote = `[${priority}] ${openItems} ${nextActions[0]?.action.slice(0, 60) || ''}`
+  } else if (row.status === 'pending') {
+    conciseNote = row.actualSubmissionDate
+      ? `[${priority}] Submitted ${row.actualSubmissionDate}. Awaiting review.`
+      : `[${priority}] Not yet submitted. Awaiting milestone or due date.`
   } else {
+    // status === 'green'
     conciseNote = wasEdited
       ? `[High] Compliant but edited since seal. Re-seal recommended.`
       : `[${priority}] Compliant. ${isSealed ? 'Sealed.' : 'Seal recommended.'}`

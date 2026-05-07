@@ -1964,6 +1964,7 @@ export default function DeliverablesTracker({ data, role, anchors, onAnchor, onR
       {workflowRow && (
         <Suspense fallback={null}>
         <WorkflowProgressPopup
+          key={workflowRow.id}
           row={workflowRow}
           anchors={anchors}
           role={role}
