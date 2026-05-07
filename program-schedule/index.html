@@ -3794,151 +3794,310 @@ function seRenderSVGBody(slide,W,H,isThumb){
 }
 
 /* ── Program Schedule SVG (main slide type) ── */
+/* ════════════════════════════════════════════════════════════════════
+   SVG SLIDE RENDERER — matches reference "One Slide" format exactly:
+   • White background, dark navy title text, gold accent rule
+   • Clean FY grid table: navy header row, alternating vessel rows
+   • Large symbols: gold star (Award), orange triangle (SOC), navy circle (DEL)
+   • Label above each symbol, date below
+   • Bordered legend box, fleet labels in label column
+   ALL coordinates are scaled from a 10" × 7.5" base (same as PPTX LAYOUT_4x3)
+   so SC = W/10 gives px-per-inch and all constants stay in "inches".
+════════════════════════════════════════════════════════════════════ */
+
+/* ── Core layout constants (inches) ── */
+var SL = {
+  TH:0.60,   // title area height
+  GH:0.095,  // gold accent bar height
+  MX:0.22,   // horizontal margin (slide edge → grid edge)
+  GAP:0.10,  // gap after gold bar before grid
+  LH:0.62,   // legend area height at bottom
+  MB:0.06,   // margin below grid top to legend
+  LCW:0.88,  // vessel label column width inside grid
+  FHH:0.27,  // FY header row height
+};
+
+/* ── Get layout values in pixels given slide pixel dimensions ── */
+function seLayout(W,H,nFY,nV){
+  var SC=W/10.0;
+  var TH=SL.TH*SC, GH=SL.GH*SC, MX=SL.MX*SC, MB=SL.MB*SC;
+  var GT=(SL.TH+SL.GH+SL.GAP)*SC;
+  var GB=H-SL.LH*SC-MB;
+  var GRIDH=GB-GT;
+  var GW=W-2*MX;
+  var LCW=SL.LCW*SC;
+  var FAW=GW-LCW;
+  var CW=FAW/Math.max(nFY,1);
+  var FHH=SL.FHH*SC;
+  var RAH=GRIDH-FHH;
+  var RH=nV>0?RAH/nV:RAH;
+  var SYR=Math.max(SC*0.05,Math.min(RH*0.33,SC*0.145));
+  return {SC:SC,TH:TH,GH:GH,MX:MX,GT:GT,GB:GB,GRIDH:GRIDH,GW:GW,LCW:LCW,
+          FAW:FAW,CW:CW,FHH:FHH,RAH:RAH,RH:RH,SYR:SYR,MB:MB};
+}
+
+/* ── Shared shape drawing helper (SVG) ── */
+function seDrawSym(shape,color,cx,cy,r){
+  var sw=(r*0.15).toFixed(2);
+  if(shape==='star'){
+    var pts='',o=r,i=r*0.42;
+    for(var k=0;k<10;k++){var a=(k*Math.PI/5)-Math.PI/2,rad=k%2?i:o;
+      pts+=(k?'L':'M')+(cx+rad*Math.cos(a)).toFixed(2)+','+(cy+rad*Math.sin(a)).toFixed(2);}
+    return '<path d="'+pts+'Z" fill="'+color+'" stroke="white" stroke-width="'+sw+'"/>';
+  }
+  if(shape==='triangle'){
+    var h=r*1.15,w=r*1.1;
+    return '<polygon points="'+cx+','+(cy-h)+' '+(cx-w)+','+(cy+h*0.52)+' '+(cx+w)+','+(cy+h*0.52)+'" fill="'+color+'" stroke="white" stroke-width="'+sw+'"/>';
+  }
+  if(shape==='diamond'){
+    return '<polygon points="'+cx+','+(cy-r)+' '+(cx+r)+','+cy+' '+cx+','+(cy+r)+' '+(cx-r)+','+cy+'" fill="'+color+'" stroke="white" stroke-width="'+sw+'"/>';
+  }
+  return '<circle cx="'+cx.toFixed(2)+'" cy="'+cy.toFixed(2)+'" r="'+r.toFixed(2)+'" fill="'+color+'" stroke="white" stroke-width="'+sw+'"/>';
+}
+
+/* ── Short date for milestone label ── */
+function seShortDate(ym){
+  if(!ym) return '';
+  var p=ym.split('-');
+  var mo=parseInt(p[1]), yr=p[0].slice(2);
+  if(p[2]) return mo+'/'+parseInt(p[2])+'/'+yr;
+  return mo+'/'+yr;
+}
+
+/* ── X position helper (SVG) ── */
+function seYM2X(ym,fys,lbl,cw){
+  if(!ym) return -1;
+  var f=toFY(ym); if(!f) return -1;
+  var idx=f.fy-fys; if(idx<0) return -1;
+  return lbl+idx*cw+((f.fyMo-0.5)/12)*cw;
+}
+
+/* ── Program Schedule slide SVG (matches reference exactly) ── */
 function seProgSVG(slide,W,H,isThumb){
   var vs=slide.vesselType?vessels.filter(function(v){return v.type===slide.vesselType;}):[],
-      nFY=Math.max(slide.fyEnd-slide.fyStart+1,1),
-      LW=Math.round(W*.225),CW=(W-LW)/nFY,
-      TH=Math.round(H*.079),HH=Math.round(H*.048),LH=Math.round(H*.088),
-      RH=vs.length>0?Math.floor((H-TH-HH-LH)/vs.length):(H-TH-HH-LH),
-      SR=Math.max(2,Math.min(Math.round(RH*.26),isThumb?5:10)),
-      tSz=isThumb?6.5:18,hSz=isThumb?5:10,lSz=isThumb?4.5:10,dSz=isThumb?3:7.5;
+      nFY=Math.max(slide.fyEnd-slide.fyStart+1,1),nV=vs.length;
+  var g=seLayout(W,H,nFY,nV);
+  var SC=g.SC;
+  var tSz=isThumb?(W>300?9:6.5):22;
+  var hSz=isThumb?(W>280?5.5:4):11;
+  var nSz=isThumb?(W>280?4.5:3.5):9;
+  var mSz=isThumb?0:Math.max(6.5,Math.min(SC*0.095,9));
+  var dSz=isThumb?0:Math.max(6,Math.min(SC*0.082,8));
   var r='';
-  /* background */
-  r+='<rect width="'+W+'" height="'+H+'" fill="#eef0f6"/>';
-  /* title bar */
-  r+='<rect x="0" y="0" width="'+W+'" height="'+TH+'" fill="#1c3a5f"/>';
-  r+='<text id="se-title-txt" x="'+(W/2)+'" y="'+(TH*.66)+'"'
-    +' font-size="'+tSz+'" font-weight="700" text-anchor="middle" fill="white"'
-    +' font-family="Inter,-apple-system,sans-serif" letter-spacing=".015em">'+esc(slide.title)+'</text>';
+
+  /* ── White slide background ── */
+  r+='<rect width="'+W+'" height="'+H+'" fill="white"/>';
+
+  /* ── Thin navy top line ── */
+  r+='<rect x="0" y="0" width="'+W+'" height="'+(SC*0.062)+'" fill="#1c3a5f"/>';
+
+  /* ── Title text (dark navy on white) ── */
+  r+='<text id="se-title-txt" x="'+(W/2)+'" y="'+(g.TH*0.60)+'"'
+    +' font-size="'+tSz+'" font-weight="700" text-anchor="middle" fill="#1c3a5f"'
+    +' font-family="Calibri,Arial,sans-serif">'+esc(slide.title)+'</text>';
   if(slide.subtitle&&!isThumb)
-    r+='<text x="'+(W/2)+'" y="'+(TH*.88)+'" font-size="'+(tSz*.5)+'"'
-      +' text-anchor="middle" fill="rgba(255,255,255,.55)"'
-      +' font-family="Inter,-apple-system,sans-serif">'+esc(slide.subtitle)+'</text>';
-  /* FY header */
-  r+='<rect x="0" y="'+TH+'" width="'+W+'" height="'+HH+'" fill="#243c5f"/>';
-  r+='<rect x="0" y="'+TH+'" width="'+LW+'" height="'+HH+'" fill="#1c3a5f"/>';
-  r+='<text x="'+(LW/2)+'" y="'+(TH+HH*.67)+'" font-size="'+hSz+'"'
-    +' font-weight="600" text-anchor="middle" fill="rgba(255,255,255,.6)"'
-    +' font-family="Inter,-apple-system,sans-serif">VESSEL</text>';
+    r+='<text x="'+(W/2)+'" y="'+(g.TH*0.86)+'" font-size="'+(tSz*0.44)+'"'
+      +' text-anchor="middle" fill="#667788"'
+      +' font-family="Calibri,Arial,sans-serif">'+esc(slide.subtitle)+'</text>';
+
+  /* ── Gold accent bar ── */
+  r+='<rect x="0" y="'+g.TH+'" width="'+W+'" height="'+g.GH+'" fill="#C9A000"/>';
+
+  /* ── Grid white fill + outer border ── */
+  r+='<rect x="'+g.MX+'" y="'+g.GT+'" width="'+g.GW+'" height="'+g.GRIDH+'"'
+    +' fill="white" stroke="#8a95a0" stroke-width="'+(SC*0.010)+'"/>';
+
+  /* ── FY header row (navy) ── */
+  r+='<rect x="'+g.MX+'" y="'+g.GT+'" width="'+g.GW+'" height="'+g.FHH+'" fill="#1c3a5f"/>';
+
+  /* ── Label column header (slightly darker) ── */
+  r+='<rect x="'+g.MX+'" y="'+g.GT+'" width="'+g.LCW+'" height="'+g.FHH+'" fill="#162e4a"/>';
+
+  /* ── FY column headers + vertical dividers ── */
   for(var fj=0;fj<nFY;fj++){
-    var cx=LW+fj*CW;
-    if(fj>0) r+='<line x1="'+cx+'" y1="'+TH+'" x2="'+cx+'" y2="'+(H-LH)+'" stroke="rgba(255,255,255,.07)" stroke-width=".5"/>';
-    r+='<text x="'+(cx+CW/2)+'" y="'+(TH+HH*.67)+'" font-size="'+hSz+'"'
-      +' font-weight="700" text-anchor="middle" fill="white"'
-      +' font-family="Inter,-apple-system,sans-serif">FY'+String(slide.fyStart+fj).slice(2)+'</text>';
+    var cx=g.MX+g.LCW+fj*g.CW;
+    r+='<line x1="'+cx+'" y1="'+g.GT+'" x2="'+cx+'" y2="'+g.GB+'"'
+      +' stroke="#bcc2cc" stroke-width="'+(Math.max(0.5,SC*0.006))+'"/>';
+    r+='<text x="'+(cx+g.CW/2)+'" y="'+(g.GT+g.FHH*0.67)+'"'
+      +' font-size="'+hSz+'" font-weight="700" text-anchor="middle" fill="white"'
+      +' font-family="Calibri,Arial,sans-serif">FY'+String(slide.fyStart+fj).slice(2)+'</text>';
   }
-  if(vs.length===0){
-    r+='<text x="'+(W/2)+'" y="'+(TH+HH+(H-TH-HH-LH)/2)+'" font-size="'+(tSz*.65)+'"'
-      +' text-anchor="middle" fill="#a0aab4" font-family="Inter,-apple-system,sans-serif">No vessels of this type</text>';
-  }
-  /* vessel rows */
+  /* Label col right border */
+  r+='<line x1="'+(g.MX+g.LCW)+'" y1="'+(g.GT+g.FHH)+'" x2="'+(g.MX+g.LCW)+'" y2="'+g.GB+'"'
+    +' stroke="#b8bec8" stroke-width="'+(Math.max(0.6,SC*0.008))+'"/>';
+
+  /* ── Empty state ── */
+  if(nV===0)
+    r+='<text x="'+(g.MX+g.GW/2)+'" y="'+(g.GT+g.FHH+g.RAH/2)+'"'
+      +' font-size="'+(tSz*0.55)+'" text-anchor="middle" fill="#a0aab4"'
+      +' font-family="Calibri,Arial,sans-serif">No vessels of this type</text>';
+
+  /* ── Vessel rows ── */
   vs.forEach(function(v,ri){
-    var ry=TH+HH+ri*RH;
-    r+='<rect x="0" y="'+ry+'" width="'+W+'" height="'+RH+'" fill="'+(ri%2?'#ebeff7':'white')+'"/>';
-    r+='<rect x="0" y="'+ry+'" width="'+LW+'" height="'+RH+'" fill="'+(ri%2?'#e0e6f2':'#f3f5fb')+'"/>';
+    var ry=g.GT+g.FHH+ri*g.RH;
+    var mid=ry+g.RH/2;
     var fc=v.fleet==='USFF'?'#34c759':'#007AFF';
-    r+='<rect x="0" y="'+ry+'" width="3" height="'+RH+'" fill="'+fc+'"/>';
-    r+='<text x="'+(LW*.1+5)+'" y="'+(ry+RH*.57)+'" font-size="'+lSz+'"'
-      +' font-weight="600" fill="#1c3a5f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation||'')+'</text>';
-    if(!isThumb||RH>18)
-      r+='<text x="'+(LW-7)+'" y="'+(ry+RH*.57)+'" font-size="'+(lSz*.78)+'"'
-        +' text-anchor="end" fill="'+fc+'" font-weight="600"'
-        +' font-family="Inter,-apple-system,sans-serif">'+esc(v.fleet||'')+'</text>';
-    r+='<line x1="0" y1="'+(ry+RH)+'" x2="'+W+'" y2="'+(ry+RH)+'" stroke="#d2d7e2" stroke-width=".5"/>';
-    /* span bar CA→DEL */
-    var caX=seYM2X(v.ms&&v.ms.CA,slide.fyStart,LW,CW),delX=seYM2X(v.ms&&v.ms.DEL,slide.fyStart,LW,CW);
-    if(caX>0&&delX>caX)
-      r+='<rect x="'+caX+'" y="'+(ry+RH*.41)+'" width="'+(delX-caX)+'"'
-        +' height="'+(RH*.18)+'" fill="rgba(28,58,95,.1)" rx="2"/>';
+    r+='<rect x="'+g.MX+'" y="'+ry+'" width="'+g.GW+'" height="'+g.RH+'" fill="'+(ri%2?'#f0f3f9':'white')+'"/>';
+    r+='<rect x="'+g.MX+'" y="'+ry+'" width="'+g.LCW+'" height="'+g.RH+'" fill="'+(ri%2?'#e8edf5':'#f5f8fc')+'"/>';
+    r+='<line x1="'+g.MX+'" y1="'+(ry+g.RH)+'" x2="'+(g.MX+g.GW)+'" y2="'+(ry+g.RH)+'"'
+      +' stroke="#c8cdd8" stroke-width="'+(Math.max(0.4,SC*0.005))+'"/>';
+    /* vessel name + fleet */
+    if(!isThumb||g.RH>SC*0.12){
+      r+='<text x="'+(g.MX+SC*0.055)+'" y="'+(mid-nSz*0.28)+'"'
+        +' font-size="'+nSz+'" font-weight="700" fill="#1c3a5f"'
+        +' font-family="Calibri,Arial,sans-serif">'+esc(v.designation||'')+'</text>';
+      r+='<text x="'+(g.MX+SC*0.055)+'" y="'+(mid+nSz*0.82)+'"'
+        +' font-size="'+(nSz*0.80)+'" fill="'+fc+'" font-weight="600"'
+        +' font-family="Calibri,Arial,sans-serif">'+esc(v.fleet||'')+'</text>';
+    }
     /* milestone symbols */
-    Object.keys(MS).forEach(function(key){
+    ['CA','SOC','LCH','BT','AT','DEL'].forEach(function(key){
       var d=v.ms&&v.ms[key]; if(!d) return;
-      var mx=seYM2X(d,slide.fyStart,LW,CW); if(mx<0) return;
-      var my=ry+RH*.5;
-      r+=seSymSVG(key,mx,my,SR);
-      if(!isThumb&&RH>26)
-        r+='<text x="'+mx+'" y="'+(my+SR+6.5)+'" font-size="'+dSz+'"'
-          +' text-anchor="middle" fill="#6a7a90"'
-          +' font-family="Inter,-apple-system,sans-serif">'+seShortDate(d)+'</text>';
+      var f=toFY(d); if(!f) return;
+      var idx=f.fy-slide.fyStart; if(idx<0||idx>=nFY) return;
+      var mx=g.MX+g.LCW+idx*g.CW+((f.fyMo-0.5)/12)*g.CW;
+      var mDef=MS[key]||{}, col=mDef.color||'#999', sh=mDef.shape||'circle';
+      r+=seDrawSym(sh,col,mx,mid,g.SYR);
+      if(!isThumb&&mSz>0){
+        var lbl=key==='CA'?'Award':key;
+        r+='<text x="'+mx+'" y="'+(mid-g.SYR-SC*0.025)+'"'
+          +' font-size="'+mSz+'" text-anchor="middle" font-weight="700" fill="'+col+'"'
+          +' font-family="Calibri,Arial,sans-serif">'+lbl+'</text>';
+        r+='<text x="'+mx+'" y="'+(mid+g.SYR+SC*0.085)+'"'
+          +' font-size="'+dSz+'" text-anchor="middle" fill="#5a6a80"'
+          +' font-family="Calibri,Arial,sans-serif">'+seShortDate(d)+'</text>';
+      }
     });
   });
-  /* legend */
-  var ly=H-LH;
-  r+='<rect x="0" y="'+ly+'" width="'+W+'" height="'+LH+'" fill="#e8ecf5"/>';
-  r+='<line x1="0" y1="'+ly+'" x2="'+W+'" y2="'+ly+'" stroke="#c4cad6" stroke-width="1"/>';
+
+  /* Outer border on top */
+  r+='<rect x="'+g.MX+'" y="'+g.GT+'" width="'+g.GW+'" height="'+g.GRIDH+'"'
+    +' fill="none" stroke="#8a95a0" stroke-width="'+(SC*0.010)+'"/>';
+
+  /* ── Legend box ── */
   if(!isThumb){
-    var lx=10,lr=5,ly2=ly+LH/2,msKeys=Object.keys(MS),
-        liGap=Math.min(Math.floor((W-60)/msKeys.length),160);
-    msKeys.forEach(function(key){
-      r+=seSymSVG(key,lx+lr,ly2,lr);
-      r+='<text x="'+(lx+lr*2+4)+'" y="'+(ly2+3.5)+'" font-size="7.5"'
-        +' fill="#5a6a80" font-family="Inter,-apple-system,sans-serif">'+esc(MS[key].label)+'</text>';
-      lx+=liGap;
+    var legX=g.MX, legY=g.GB+g.MB;
+    var legBH=SL.LH*SC-g.MB;
+    var legBoxH=legBH*0.88;
+    var legBoxW=SC*2.45;
+    r+='<rect x="'+legX+'" y="'+(legY+(legBH-legBoxH)/2)+'"'
+      +' width="'+legBoxW+'" height="'+legBoxH+'"'
+      +' fill="white" stroke="#aaa" stroke-width="'+(SC*0.007)+'"/>';
+    r+='<text x="'+(legX+SC*0.10)+'" y="'+(legY+(legBH-legBoxH)/2+SC*0.138)+'"'
+      +' font-size="'+(SC*0.092)+'" font-weight="700" fill="#1c3a5f"'
+      +' font-family="Calibri,Arial,sans-serif">LEGEND</text>';
+    var hasP=vs.some(function(v){return v.fleet==='PACFLT';}),
+        hasU=vs.some(function(v){return v.fleet==='USFF';});
+    var legItems=[
+      {sh:'star',     col:'#c9a84c', lbl:'Award  Contract Award'},
+      {sh:'triangle', col:'#ff9500', lbl:'SOC  Start of Construction'},
+      {sh:'circle',   col:'#1c3a5f', lbl:'DEL  Delivery'},
+    ];
+    if(hasP) legItems.push({sh:'ring-blue', col:'#007AFF', lbl:'PACFLT  U.S. Pacific Fleet'});
+    if(hasU) legItems.push({sh:'ring-green',col:'#34c759', lbl:'USFF  U.S. Fleet Forces Command'});
+    var legItemH=legBoxH/(legItems.length+1.1);
+    var lsymR=SC*0.058;
+    legItems.forEach(function(li,idx){
+      var lix=legX+SC*0.10, liy=legY+(legBH-legBoxH)/2+SC*0.175+(idx+0.8)*legItemH;
+      var fsz=Math.max(4,SC*0.075);
+      if(li.sh==='ring-blue')
+        r+='<circle cx="'+(lix+lsymR)+'" cy="'+liy+'" r="'+lsymR+'" fill="rgba(0,122,255,.12)" stroke="#007AFF" stroke-width="'+(SC*0.007)+'"/>';
+      else if(li.sh==='ring-green')
+        r+='<circle cx="'+(lix+lsymR)+'" cy="'+liy+'" r="'+lsymR+'" fill="rgba(52,199,89,.12)" stroke="#34c759" stroke-width="'+(SC*0.007)+'"/>';
+      else
+        r+=seDrawSym(li.sh,li.col,lix+lsymR,liy,lsymR);
+      r+='<text x="'+(lix+lsymR*2+SC*0.04)+'" y="'+(liy+fsz*0.37)+'"'
+        +' font-size="'+fsz+'" fill="#333" font-family="Calibri,Arial,sans-serif">'+esc(li.lbl)+'</text>';
     });
-    r+='<circle cx="'+(W-108)+'" cy="'+ly2+'" r="5" fill="rgba(0,122,255,.15)" stroke="#007AFF" stroke-width="1"/>';
-    r+='<text x="'+(W-99)+'" y="'+(ly2+3.5)+'" font-size="7.5" fill="#5a6a80" font-family="Inter,-apple-system,sans-serif">PACFLT</text>';
-    r+='<circle cx="'+(W-55)+'" cy="'+ly2+'" r="5" fill="rgba(52,199,89,.15)" stroke="#34c759" stroke-width="1"/>';
-    r+='<text x="'+(W-46)+'" y="'+(ly2+3.5)+'" font-size="7.5" fill="#5a6a80" font-family="Inter,-apple-system,sans-serif">USFF</text>';
   }
   return r;
 }
 
-/* ── Acquisition Events SVG ── */
+/* ── Acquisition Events Slide SVG ── */
 function seAcqSVG(slide,W,H,isThumb){
-  var vs=vessels,nFY=Math.max(slide.fyEnd-slide.fyStart+1,1),
-      LW=Math.round(W*.225),CW=(W-LW)/nFY,
-      TH=Math.round(H*.079),HH=Math.round(H*.048),LH=Math.round(H*.095),
-      RH=vs.length>0?Math.floor((H-TH-HH-LH)/vs.length):(H-TH-HH-LH),
-      SR=Math.max(2,Math.min(Math.round(RH*.26),isThumb?5:9)),
-      tSz=isThumb?6.5:18,hSz=isThumb?5:10,lSz=isThumb?4.5:10;
+  var vs=vessels.filter(function(v){return v.acqEvents&&Object.keys(v.acqEvents).some(function(k){return v.acqEvents[k];});});
+  if(!vs.length) vs=vessels;
+  var nFY=Math.max(slide.fyEnd-slide.fyStart+1,1),nV=vs.length;
+  var g=seLayout(W,H,nFY,nV);
+  var SC=g.SC;
+  var tSz=isThumb?(W>300?9:6.5):22;
+  var hSz=isThumb?(W>280?5.5:4):11;
+  var nSz=isThumb?(W>280?4.5:3.5):9;
+  var mSz=isThumb?0:Math.max(6,Math.min(SC*0.085,8.5));
   var r='';
-  r+='<rect width="'+W+'" height="'+H+'" fill="#f3f0f8"/>';
-  r+='<rect x="0" y="0" width="'+W+'" height="'+TH+'" fill="#2d1b5e"/>';
-  r+='<text x="'+(W/2)+'" y="'+(TH*.66)+'" font-size="'+tSz+'" font-weight="700"'
-    +' text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif">'+esc(slide.title)+'</text>';
-  r+='<rect x="0" y="'+TH+'" width="'+W+'" height="'+HH+'" fill="#3d2870"/>';
-  r+='<rect x="0" y="'+TH+'" width="'+LW+'" height="'+HH+'" fill="#2d1b5e"/>';
-  r+='<text x="'+(LW/2)+'" y="'+(TH+HH*.67)+'" font-size="'+hSz+'"'
-    +' font-weight="600" text-anchor="middle" fill="rgba(255,255,255,.6)"'
-    +' font-family="Inter,-apple-system,sans-serif">VESSEL</text>';
+
+  r+='<rect width="'+W+'" height="'+H+'" fill="white"/>';
+  r+='<rect x="0" y="0" width="'+W+'" height="'+(SC*0.062)+'" fill="#2d1b5e"/>';
+  r+='<text id="se-title-txt" x="'+(W/2)+'" y="'+(g.TH*0.60)+'"'
+    +' font-size="'+tSz+'" font-weight="700" text-anchor="middle" fill="#2d1b5e"'
+    +' font-family="Calibri,Arial,sans-serif">'+esc(slide.title)+'</text>';
+  r+='<rect x="0" y="'+g.TH+'" width="'+W+'" height="'+g.GH+'" fill="#8b5cf6"/>';
+  r+='<rect x="'+g.MX+'" y="'+g.GT+'" width="'+g.GW+'" height="'+g.GRIDH+'"'
+    +' fill="white" stroke="#8a95a0" stroke-width="'+(SC*0.010)+'"/>';
+  r+='<rect x="'+g.MX+'" y="'+g.GT+'" width="'+g.GW+'" height="'+g.FHH+'" fill="#2d1b5e"/>';
+  r+='<rect x="'+g.MX+'" y="'+g.GT+'" width="'+g.LCW+'" height="'+g.FHH+'" fill="#1e1040"/>';
   for(var fj=0;fj<nFY;fj++){
-    var cx=LW+fj*CW;
-    if(fj>0) r+='<line x1="'+cx+'" y1="'+TH+'" x2="'+cx+'" y2="'+(H-LH)+'" stroke="rgba(255,255,255,.07)" stroke-width=".5"/>';
-    r+='<text x="'+(cx+CW/2)+'" y="'+(TH+HH*.67)+'" font-size="'+hSz+'"'
-      +' font-weight="700" text-anchor="middle" fill="white"'
-      +' font-family="Inter,-apple-system,sans-serif">FY'+String(slide.fyStart+fj).slice(2)+'</text>';
+    var cx=g.MX+g.LCW+fj*g.CW;
+    r+='<line x1="'+cx+'" y1="'+g.GT+'" x2="'+cx+'" y2="'+g.GB+'"'
+      +' stroke="#bcc2cc" stroke-width="'+(Math.max(0.5,SC*0.006))+'"/>';
+    r+='<text x="'+(cx+g.CW/2)+'" y="'+(g.GT+g.FHH*0.67)+'"'
+      +' font-size="'+hSz+'" font-weight="700" text-anchor="middle" fill="white"'
+      +' font-family="Calibri,Arial,sans-serif">FY'+String(slide.fyStart+fj).slice(2)+'</text>';
   }
+  r+='<line x1="'+(g.MX+g.LCW)+'" y1="'+(g.GT+g.FHH)+'" x2="'+(g.MX+g.LCW)+'" y2="'+g.GB+'"'
+    +' stroke="#b8bec8" stroke-width="'+(Math.max(0.6,SC*0.008))+'"/>';
   vs.forEach(function(v,ri){
-    var ry=TH+HH+ri*RH;
-    r+='<rect x="0" y="'+ry+'" width="'+W+'" height="'+RH+'" fill="'+(ri%2?'#f0ecf8':'white')+'"/>';
-    r+='<rect x="0" y="'+ry+'" width="'+LW+'" height="'+RH+'" fill="'+(ri%2?'#e8e0f4':'#f5f2fb')+'"/>';
+    var ry=g.GT+g.FHH+ri*g.RH, mid=ry+g.RH/2;
     var fc=v.fleet==='USFF'?'#34c759':'#007AFF';
-    r+='<rect x="0" y="'+ry+'" width="3" height="'+RH+'" fill="'+fc+'"/>';
-    r+='<text x="'+(LW*.1+5)+'" y="'+(ry+RH*.57)+'" font-size="'+lSz+'"'
-      +' font-weight="600" fill="#2d1b5e" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation||'')+'</text>';
-    r+='<line x1="0" y1="'+(ry+RH)+'" x2="'+W+'" y2="'+(ry+RH)+'" stroke="#d4cce0" stroke-width=".5"/>';
+    r+='<rect x="'+g.MX+'" y="'+ry+'" width="'+g.GW+'" height="'+g.RH+'" fill="'+(ri%2?'#f3f0fb':'white')+'"/>';
+    r+='<rect x="'+g.MX+'" y="'+ry+'" width="'+g.LCW+'" height="'+g.RH+'" fill="'+(ri%2?'#ede8f8':'#f7f4fc')+'"/>';
+    r+='<line x1="'+g.MX+'" y1="'+(ry+g.RH)+'" x2="'+(g.MX+g.GW)+'" y2="'+(ry+g.RH)+'"'
+      +' stroke="#c8cdd8" stroke-width="'+(Math.max(0.4,SC*0.005))+'"/>';
+    if(!isThumb||g.RH>SC*0.12){
+      r+='<text x="'+(g.MX+SC*0.055)+'" y="'+(mid-nSz*0.28)+'"'
+        +' font-size="'+nSz+'" font-weight="700" fill="#2d1b5e"'
+        +' font-family="Calibri,Arial,sans-serif">'+esc(v.designation||'')+'</text>';
+      r+='<text x="'+(g.MX+SC*0.055)+'" y="'+(mid+nSz*0.82)+'"'
+        +' font-size="'+(nSz*0.80)+'" fill="'+fc+'" font-weight="600"'
+        +' font-family="Calibri,Arial,sans-serif">'+esc(v.fleet||'')+'</text>';
+    }
     if(v.acqEvents) Object.keys(ACQMS).forEach(function(key){
       var d=v.acqEvents[key]; if(!d) return;
-      var mx=seYM2X(d,slide.fyStart,LW,CW); if(mx<0) return;
-      var my=ry+RH*.5, col=ACQMS[key].color;
-      r+=seDiamondSVG(mx,my,SR,col);
-      if(!isThumb&&RH>22)
-        r+='<text x="'+mx+'" y="'+(my-SR-3)+'" font-size="7" text-anchor="middle"'
-          +' font-weight="700" fill="'+col+'" font-family="Inter,-apple-system,sans-serif">'+key+'</text>';
+      var f=toFY(d); if(!f) return;
+      var idx=f.fy-slide.fyStart; if(idx<0||idx>=nFY) return;
+      var mx=g.MX+g.LCW+idx*g.CW+((f.fyMo-0.5)/12)*g.CW;
+      var col=ACQMS[key].color;
+      r+=seDrawSym('diamond',col,mx,mid,g.SYR);
+      if(!isThumb&&mSz>0){
+        r+='<text x="'+mx+'" y="'+(mid-g.SYR-SC*0.025)+'"'
+          +' font-size="'+mSz+'" text-anchor="middle" font-weight="700" fill="'+col+'"'
+          +' font-family="Calibri,Arial,sans-serif">'+key+'</text>';
+        r+='<text x="'+mx+'" y="'+(mid+g.SYR+SC*0.085)+'"'
+          +' font-size="'+(mSz*0.88)+'" text-anchor="middle" fill="#5a6a80"'
+          +' font-family="Calibri,Arial,sans-serif">'+seShortDate(d)+'</text>';
+      }
     });
   });
-  var ly=H-LH;
-  r+='<rect x="0" y="'+ly+'" width="'+W+'" height="'+LH+'" fill="#ece8f4"/>';
-  r+='<line x1="0" y1="'+ly+'" x2="'+W+'" y2="'+ly+'" stroke="#c8c0d8" stroke-width="1"/>';
+  r+='<rect x="'+g.MX+'" y="'+g.GT+'" width="'+g.GW+'" height="'+g.GRIDH+'"'
+    +' fill="none" stroke="#8a95a0" stroke-width="'+(SC*0.010)+'"/>';
   if(!isThumb){
-    var lx=10,lr=5,ly2=ly+LH/2,
-        liGap=Math.min(Math.floor((W-20)/Object.keys(ACQMS).length),185);
-    Object.keys(ACQMS).forEach(function(key){
-      var col=ACQMS[key].color;
-      r+=seDiamondSVG(lx+lr,ly2,lr,col);
-      r+='<text x="'+(lx+lr*2+4)+'" y="'+(ly2+3.5)+'" font-size="7.5"'
-        +' fill="#5a6a80" font-family="Inter,-apple-system,sans-serif">'+key+': '+esc(ACQMS[key].label)+'</text>';
-      lx+=liGap;
+    var legX=g.MX, legY=g.GB+g.MB, legBH=SL.LH*SC-g.MB;
+    var legBoxH=legBH*0.88, legBoxW=SC*3.8;
+    r+='<rect x="'+legX+'" y="'+(legY+(legBH-legBoxH)/2)+'"'
+      +' width="'+legBoxW+'" height="'+legBoxH+'"'
+      +' fill="white" stroke="#aaa" stroke-width="'+(SC*0.007)+'"/>';
+    r+='<text x="'+(legX+SC*0.10)+'" y="'+(legY+(legBH-legBoxH)/2+SC*0.138)+'"'
+      +' font-size="'+(SC*0.090)+'" font-weight="700" fill="#2d1b5e"'
+      +' font-family="Calibri,Arial,sans-serif">LEGEND</text>';
+    var aKeys=Object.keys(ACQMS), liGapA=Math.min((legBoxW-SC*0.2)/aKeys.length,SC*0.85);
+    var lsymR=SC*0.055, lx2=legX+SC*0.10;
+    aKeys.forEach(function(key){
+      var col=ACQMS[key].color, fsz=Math.max(4,SC*0.070);
+      var liy=legY+(legBH-legBoxH)/2+SC*0.195;
+      r+=seDrawSym('diamond',col,lx2+lsymR,liy,lsymR);
+      r+='<text x="'+(lx2+lsymR*2+SC*0.04)+'" y="'+(liy+fsz*0.37)+'"'
+        +' font-size="'+fsz+'" fill="#333" font-family="Calibri,Arial,sans-serif">'+key+': '+esc(ACQMS[key].label)+'</text>';
+      lx2+=liGapA;
     });
   }
   return r;
@@ -3946,54 +4105,27 @@ function seAcqSVG(slide,W,H,isThumb){
 
 /* ── Custom / blank SVG ── */
 function seCustomSVG(slide,W,H,isThumb){
-  var tH=Math.round(H*.09), tSz=isThumb?6.5:18;
+  var SC=W/10.0;
+  var tSz=isThumb?(W>300?9:6.5):22;
   var r='<rect width="'+W+'" height="'+H+'" fill="white"/>';
-  r+='<rect x="0" y="0" width="'+W+'" height="'+tH+'" fill="#1c3a5f"/>';
-  r+='<text id="se-title-txt" x="'+(W/2)+'" y="'+(tH*.66)+'" font-size="'+tSz+'" font-weight="700"'
-    +' text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif">'+esc(slide.title)+'</text>';
+  r+='<rect x="0" y="0" width="'+W+'" height="'+(SC*0.062)+'" fill="#1c3a5f"/>';
+  r+='<text id="se-title-txt" x="'+(W/2)+'" y="'+(SC*0.042)+'" font-size="'+tSz+'"'
+    +' font-weight="700" text-anchor="middle" fill="#1c3a5f"'
+    +' font-family="Calibri,Arial,sans-serif">'+esc(slide.title)+'</text>';
+  r+='<rect x="0" y="'+(SC*0.062)+'" width="'+W+'" height="'+(SC*0.008)+'" fill="#C9A000"/>';
   if(!isThumb)
-    r+='<text x="'+(W/2)+'" y="'+(H/2)+'" font-size="13" text-anchor="middle"'
-      +' fill="#b0bac8" font-family="Inter,-apple-system,sans-serif"'
-      +' style="font-style:italic">\u2014 Blank slide \u2014 double-click title or use Edit Title to customize \u2014</text>';
+    r+='<text x="'+(W/2)+'" y="'+(H*0.54)+'" font-size="12" text-anchor="middle"'
+      +' fill="#c0c8d8" font-family="Calibri,Arial,sans-serif" font-style="italic">'
+      +'Double-click title or use Edit Title to customize \u2014 add shapes, text, and images in PowerPoint</text>';
   return r;
-}
-
-/* ── Drawing helpers ── */
-function seYM2X(ym,fys,lw,cw){
-  if(!ym) return -1;
-  var f=toFY(ym); if(!f) return -1;
-  var idx=f.fy-fys; if(idx<0) return -1;
-  return lw+idx*cw+((f.fyMo-.5)/12)*cw;
-}
-function seShortDate(ym){
-  if(!ym) return '';
-  var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var p=ym.split('-'); return M[parseInt(p[1])-1]+"\u00a0'"+p[0].slice(2);
-}
-function seSymSVG(key,cx,cy,r){
-  var def=MS[key]||{},c=def.color||'#999',s=def.shape||'circle';
-  if(s==='star')     return seStarSVG(cx,cy,r,c);
-  if(s==='triangle') return seTriSVG(cx,cy,r,c);
-  if(s==='diamond')  return seDiamondSVG(cx,cy,r,c);
-  return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+c+'" stroke="white" stroke-width="'+(r*.18)+'"/>';
-}
-function seStarSVG(cx,cy,r,color){
-  var pts='',o=r,i=r*.42;
-  for(var k=0;k<10;k++){var a=(k*Math.PI/5)-Math.PI/2,rad=k%2?i:o; pts+=(k?'L':'M')+((cx+rad*Math.cos(a)).toFixed(2))+','+(cy+rad*Math.sin(a)).toFixed(2);}
-  return '<path d="'+pts+'Z" fill="'+color+'" stroke="white" stroke-width="'+(r*.14)+'"/>';
-}
-function seTriSVG(cx,cy,r,color){
-  var h=r*1.12;
-  return '<polygon points="'+cx+','+(cy-h)+' '+(cx-r)+','+(cy+h*.5)+' '+(cx+r)+','+(cy+h*.5)+'" fill="'+color+'" stroke="white" stroke-width="'+(r*.14)+'"/>';
-}
-function seDiamondSVG(cx,cy,r,color){
-  return '<polygon points="'+cx+','+(cy-r)+' '+(cx+r)+','+cy+' '+cx+','+(cy+r)+' '+(cx-r)+','+cy+'" fill="'+color+'" stroke="white" stroke-width="'+(r*.14)+'"/>';
 }
 
 /* ═════════════════════════════════════════════════════════════════
    PPTX EXPORT — PptxGenJS  (all shapes are real editable OOXML objects)
-   Slide layout: LAYOUT_4x3  = 10" × 7.5"
-   Columns: 2" label  +  (8"/numFY) per FY column
+   Slide layout: LAYOUT_4x3 = 10" × 7.5"
+   Matches the reference format: white bg, dark navy title text,
+   gold accent rule, narrow label column, labels above / dates below symbols,
+   bordered legend box at bottom-left.
 ═════════════════════════════════════════════════════════════════ */
 window.sePptxExport = function() {
   if(typeof PptxGenJS==='undefined'){ toast('PptxGenJS not loaded \u2014 check network'); return; }
@@ -4007,9 +4139,9 @@ window.sePptxExport = function() {
       pptx.author='S4 Ledger \u2014 Program Schedule Tool';
       pptx.title='Program Schedule Export';
       vis.forEach(function(slide){
-        if(slide.type==='acq')    sePptxAcqSlide(pptx,slide);
+        if(slide.type==='acq')         sePptxAcqSlide(pptx,slide);
         else if(slide.type==='custom') sePptxCustomSlide(pptx,slide);
-        else sePptxProgSlide(pptx,slide);
+        else                           sePptxProgSlide(pptx,slide);
       });
       pptx.writeFile({fileName:'program-schedule-'+new Date().toISOString().slice(0,10)+'.pptx'});
       toast('PPTX exported \u2014 '+vis.length+' slide'+(vis.length===1?'':'s'));
@@ -4020,116 +4152,171 @@ window.sePptxExport = function() {
   },60);
 };
 
-/* shared geometry constants (inches, LAYOUT_4x3 = 10"×7.5") */
-function sePptxGeo(slide,vsCount){
-  var W=10,H=7.5,LBL=2.0,nFY=Math.max(slide.fyEnd-slide.fyStart+1,1),COL=(W-LBL)/nFY;
-  var TH=0.62,HH=0.3,LH=0.56,ROW=(H-TH-HH-LH)/Math.max(vsCount,1);
-  var SZ=Math.min(ROW*.42,.22);
-  return {W:W,H:H,LBL:LBL,nFY:nFY,COL:COL,TH:TH,HH:HH,LH:LH,ROW:ROW,SZ:SZ};
+/* ── PPTX layout constants (inches, LAYOUT_4x3 = 10"×7.5") ── */
+function sePptxLayout(slide,nV){
+  var W=10, H=7.5;
+  var TH=SL.TH, GH=SL.GH, MX=SL.MX, GAP=SL.GAP, LH=SL.LH, MB=SL.MB, LCW=SL.LCW;
+  var GT=TH+GH+GAP;
+  var GB=H-LH-MB;
+  var GRIDH=GB-GT;
+  var GW=W-2*MX;
+  var FAW=GW-LCW;
+  var nFY=Math.max(slide.fyEnd-slide.fyStart+1,1);
+  var CW=FAW/nFY;
+  var FHH=SL.FHH;
+  var RAH=GRIDH-FHH;
+  var RH=nV>0?RAH/nV:RAH;
+  var SZ=Math.min(0.195,Math.max(0.08,RH*0.42));
+  return {W:W,H:H,TH:TH,GH:GH,MX:MX,GT:GT,GB:GB,GRIDH:GRIDH,GW:GW,LCW:LCW,
+          FAW:FAW,nFY:nFY,CW:CW,FHH:FHH,RAH:RAH,RH:RH,SZ:SZ,LH:LH,MB:MB};
 }
-function sePptxX(ym,fys,lbl,colW){
+
+/* ── PPTX X position for a milestone date ── */
+function sePptxX(ym,fys,g){
   if(!ym) return -1;
   var f=toFY(ym); if(!f) return -1;
-  var idx=f.fy-fys; if(idx<0) return -1;
-  return lbl+idx*colW+((f.fyMo-.5)/12)*colW;
+  var idx=f.fy-fys; if(idx<0||idx>=g.nFY) return -1;
+  return g.MX+g.LCW+idx*g.CW+((f.fyMo-0.5)/12)*g.CW;
 }
-function sePptxShape(sld,pptx,msDef,x,y,sz){
-  var mc=msDef.color.replace('#','');
-  var opts={x:x,y:y,w:sz,h:sz,fill:{color:mc},line:{color:'FFFFFF',width:.5}};
-  if(msDef.shape==='star')     sld.addShape(pptx.ShapeType.star5Point,opts);
-  else if(msDef.shape==='triangle') sld.addShape(pptx.ShapeType.triangle,opts);
-  else if(msDef.shape==='diamond')  sld.addShape(pptx.ShapeType.diamond, opts);
-  else                               sld.addShape(pptx.ShapeType.ellipse, opts);
+
+/* ── Helper: add a milestone shape to a PPTX slide ── */
+function sePptxAddSym(sld,pptx,shape,col,x,y,sz){
+  var c=col.replace('#','');
+  var shT=shape==='star'?pptx.ShapeType.star5Point:shape==='triangle'?pptx.ShapeType.triangle:shape==='diamond'?pptx.ShapeType.diamond:pptx.ShapeType.ellipse;
+  sld.addShape(shT,{x:x-sz/2,y:y-sz/2,w:sz,h:sz,fill:{color:c},line:{color:'FFFFFF',width:0.5}});
 }
 
 function sePptxProgSlide(pptx,slide){
   var sld=pptx.addSlide();
   var vs=slide.vesselType?vessels.filter(function(v){return v.type===slide.vesselType;}):[],
-      g=sePptxGeo(slide,vs.length);
-  /* title */
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:g.W,h:g.TH,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
-  sld.addText(slide.title,{x:.12,y:0,w:g.W-.24,h:g.TH,align:'center',valign:'middle',fontSize:22,bold:true,color:'FFFFFF',fontFace:'Calibri'});
-  if(slide.subtitle) sld.addText(slide.subtitle,{x:.5,y:g.TH*.65,w:g.W-1,h:g.TH*.35,align:'center',fontSize:10,color:'BBCCDD',fontFace:'Calibri'});
-  /* FY header */
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.W,h:g.HH,fill:{color:'243C5F'},line:{color:'243C5F'}});
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.LBL,h:g.HH,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
-  sld.addText('VESSEL',{x:0,y:g.TH,w:g.LBL,h:g.HH,align:'center',valign:'middle',fontSize:7.5,bold:true,color:'99AABB',fontFace:'Calibri'});
-  for(var fj=0;fj<g.nFY;fj++)
-    sld.addText('FY'+String(slide.fyStart+fj).slice(2),{x:g.LBL+fj*g.COL,y:g.TH,w:g.COL,h:g.HH,align:'center',valign:'middle',fontSize:9,bold:true,color:'FFFFFF',fontFace:'Calibri'});
-  /* rows */
+      g=sePptxLayout(slide,vs.length);
+
+  /* ── Thin navy top bar ── */
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:g.W,h:0.06,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
+
+  /* ── Title text: dark navy on white ── */
+  sld.addText(slide.title,{x:0,y:0,w:g.W,h:g.TH,align:'center',valign:'middle',fontSize:24,bold:true,color:'1C3A5F',fontFace:'Calibri'});
+  if(slide.subtitle) sld.addText(slide.subtitle,{x:0.5,y:g.TH*0.72,w:g.W-1,h:g.TH*0.28,align:'center',fontSize:10,color:'5A6A80',fontFace:'Calibri'});
+
+  /* ── Gold accent bar ── */
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.W,h:g.GH,fill:{color:'C9A000'},line:{color:'C9A000'}});
+
+  /* ── Grid white fill + outer border ── */
+  sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:g.GT,w:g.GW,h:g.GRIDH,fill:{color:'FFFFFF'},line:{color:'8A95A0',width:1}});
+
+  /* ── FY header row (navy) ── */
+  sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:g.GT,w:g.GW,h:g.FHH,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
+  sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:g.GT,w:g.LCW,h:g.FHH,fill:{color:'162E4A'},line:{color:'162E4A'}});
+
+  /* ── FY column headers + vertical dividers ── */
+  for(var fj=0;fj<g.nFY;fj++){
+    var cx=g.MX+g.LCW+fj*g.CW;
+    sld.addShape(pptx.ShapeType.rect,{x:cx,y:g.GT,w:0.006,h:g.GRIDH,fill:{color:'BCC2CC'},line:{color:'BCC2CC'}});
+    sld.addText('FY'+String(slide.fyStart+fj).slice(2),{x:cx,y:g.GT,w:g.CW,h:g.FHH,align:'center',valign:'middle',fontSize:11,bold:true,color:'FFFFFF',fontFace:'Calibri'});
+  }
+  /* label col right border */
+  sld.addShape(pptx.ShapeType.rect,{x:g.MX+g.LCW,y:g.GT+g.FHH,w:0.006,h:g.RAH,fill:{color:'C0C6D0'},line:{color:'C0C6D0'}});
+
+  /* ── Vessel rows ── */
   vs.forEach(function(v,ri){
-    var ry=g.TH+g.HH+ri*g.ROW, rf=ri%2?'ECF0F8':'FFFFFF', lf=ri%2?'E0E6F2':'F3F5FB';
+    var ry=g.GT+g.FHH+ri*g.RH;
+    var mid=ry+g.RH/2;
+    var rf=ri%2?'F0F3F9':'FFFFFF', lf=ri%2?'E8EDF5':'F5F8FC';
     var fc=v.fleet==='USFF'?'34C759':'007AFF';
-    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:g.W,h:g.ROW,fill:{color:rf},line:{color:'DDDDE8',width:.25}});
-    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:g.LBL,h:g.ROW,fill:{color:lf},line:{color:'DDDDE8',width:.25}});
-    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:.04,h:g.ROW,fill:{color:fc},line:{color:fc}});
-    sld.addText(v.designation||'',{x:.12,y:ry,w:g.LBL-.7,h:g.ROW,valign:'middle',fontSize:9,bold:true,color:'1C3A5F',fontFace:'Calibri'});
-    sld.addText(v.fleet||'',{x:g.LBL-.65,y:ry,w:.6,h:g.ROW,align:'right',valign:'middle',fontSize:7,bold:true,color:fc,fontFace:'Calibri'});
-    /* span bar */
-    var caX=sePptxX(v.ms&&v.ms.CA,slide.fyStart,g.LBL,g.COL),
-        delX=sePptxX(v.ms&&v.ms.DEL,slide.fyStart,g.LBL,g.COL);
-    if(caX>0&&delX>caX)
-      sld.addShape(pptx.ShapeType.rect,{x:caX,y:ry+g.ROW*.42,w:delX-caX,h:g.ROW*.16,fill:{color:'B8CCE0',transparency:45},line:{color:'B8CCE0',transparency:45}});
-    /* milestone shapes */
-    Object.keys(MS).forEach(function(key){
+    sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:ry,w:g.GW,h:g.RH,fill:{color:rf},line:{color:'C8CDD8',width:0.4}});
+    sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:ry,w:g.LCW,h:g.RH,fill:{color:lf},line:{color:'C8CDD8',width:0.4}});
+    sld.addText(v.designation||'',{x:g.MX+0.06,y:ry+g.RH*0.08,w:g.LCW-0.09,h:g.RH*0.50,valign:'bottom',fontSize:9,bold:true,color:'1C3A5F',fontFace:'Calibri'});
+    sld.addText(v.fleet||'',{x:g.MX+0.06,y:ry+g.RH*0.52,w:g.LCW-0.09,h:g.RH*0.40,valign:'top',fontSize:7.5,bold:true,color:fc,fontFace:'Calibri'});
+    ['CA','SOC','LCH','BT','AT','DEL'].forEach(function(key){
       var d=v.ms&&v.ms[key]; if(!d) return;
-      var mx=sePptxX(d,slide.fyStart,g.LBL,g.COL); if(mx<0) return;
-      sePptxShape(sld,pptx,MS[key],mx-g.SZ/2,ry+g.ROW/2-g.SZ/2,g.SZ);
-      sld.addText(seShortDate(d),{x:mx-g.SZ/2-.04,y:ry+g.ROW/2+g.SZ/2+.01,w:g.SZ+.08,h:.11,align:'center',fontSize:5,color:'6A7A90',fontFace:'Calibri'});
+      var mx=sePptxX(d,slide.fyStart,g); if(mx<0) return;
+      var mDef=MS[key]||{}, col=mDef.color||'#999999', sh=mDef.shape||'circle';
+      sePptxAddSym(sld,pptx,sh,col,mx,mid,g.SZ);
+      var lbl=key==='CA'?'Award':key, lc=col.replace('#','');
+      sld.addText(lbl,{x:mx-g.SZ*0.75,y:mid-g.SZ/2-0.13,w:g.SZ*1.5,h:0.12,align:'center',fontSize:7,bold:true,color:lc,fontFace:'Calibri'});
+      sld.addText(seShortDate(d),{x:mx-g.SZ*0.75,y:mid+g.SZ/2+0.01,w:g.SZ*1.5,h:0.10,align:'center',fontSize:6.5,color:'5A6A80',fontFace:'Calibri'});
     });
   });
-  /* legend */
-  var ly=g.H-g.LH, liSz=.12, lx=.1;
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:ly,w:g.W,h:g.LH,fill:{color:'E8ECF5'},line:{color:'C4CAD6',width:.5}});
-  Object.keys(MS).forEach(function(key){
-    var mdef=MS[key];
-    sePptxShape(sld,pptx,mdef,lx,ly+(g.LH-liSz)/2,liSz);
-    sld.addText(mdef.label,{x:lx+liSz+.04,y:ly,w:1.35,h:g.LH,valign:'middle',fontSize:6,color:'5A6A80',fontFace:'Calibri'});
-    lx+=1.55;
+
+  /* ── Legend box bottom-left ── */
+  var hasP=vs.some(function(v){return v.fleet==='PACFLT';}),
+      hasU=vs.some(function(v){return v.fleet==='USFF';});
+  var legItems=[
+    {sh:'star',     col:'C9A84C', lbl:'Award  Contract Award'},
+    {sh:'triangle', col:'FF9500', lbl:'SOC  Start of Construction'},
+    {sh:'circle',   col:'1C3A5F', lbl:'DEL  Delivery'},
+  ];
+  if(hasP) legItems.push({sh:'ring', col:'007AFF', lbl:'PACFLT  U.S. Pacific Fleet'});
+  if(hasU) legItems.push({sh:'ring', col:'34C759', lbl:'USFF  U.S. Fleet Forces Command'});
+  var legX=g.MX, legY=g.GB+g.MB;
+  var legBH=g.LH-g.MB, legBoxH=legBH*0.90, legBoxW=2.5;
+  var liSz=0.10, liGap=legBoxH/(legItems.length+1.2);
+  sld.addShape(pptx.ShapeType.rect,{x:legX,y:legY+(legBH-legBoxH)/2,w:legBoxW,h:legBoxH,fill:{color:'FFFFFF'},line:{color:'AAAAAA',width:0.7}});
+  sld.addText('LEGEND',{x:legX+0.10,y:legY+(legBH-legBoxH)/2+0.04,w:legBoxW-0.2,h:0.14,fontSize:9,bold:true,color:'1C3A5F',fontFace:'Calibri'});
+  legItems.forEach(function(li,idx){
+    var liy=legY+(legBH-legBoxH)/2+0.175+idx*liGap, lix=legX+0.10;
+    if(li.sh==='ring')
+      sld.addShape(pptx.ShapeType.ellipse,{x:lix,y:liy-liSz/2,w:liSz,h:liSz,fill:{color:li.col,transparency:80},line:{color:li.col,width:0.8}});
+    else
+      sePptxAddSym(sld,pptx,li.sh==='circle'?'ellipse':li.sh,'#'+li.col,lix+liSz/2,liy,liSz);
+    sld.addText(li.lbl,{x:lix+liSz+0.05,y:liy-0.045,w:legBoxW-liSz-0.2,h:0.10,fontSize:7.5,color:'333333',fontFace:'Calibri',valign:'middle'});
   });
 }
 
 function sePptxAcqSlide(pptx,slide){
   var sld=pptx.addSlide();
-  var vs=vessels, g=sePptxGeo(slide,vs.length), liSz=.12;
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:g.W,h:g.TH,fill:{color:'2D1B5E'},line:{color:'2D1B5E'}});
-  sld.addText(slide.title,{x:.12,y:0,w:g.W-.24,h:g.TH,align:'center',valign:'middle',fontSize:22,bold:true,color:'FFFFFF',fontFace:'Calibri'});
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.W,h:g.HH,fill:{color:'3D2870'},line:{color:'3D2870'}});
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.LBL,h:g.HH,fill:{color:'2D1B5E'},line:{color:'2D1B5E'}});
-  sld.addText('VESSEL',{x:0,y:g.TH,w:g.LBL,h:g.HH,align:'center',valign:'middle',fontSize:7.5,bold:true,color:'99AABB',fontFace:'Calibri'});
-  for(var fj=0;fj<g.nFY;fj++)
-    sld.addText('FY'+String(slide.fyStart+fj).slice(2),{x:g.LBL+fj*g.COL,y:g.TH,w:g.COL,h:g.HH,align:'center',valign:'middle',fontSize:9,bold:true,color:'FFFFFF',fontFace:'Calibri'});
+  var vs=vessels.filter(function(v){return v.acqEvents&&Object.keys(v.acqEvents).some(function(k){return v.acqEvents[k];});});
+  if(!vs.length) vs=vessels;
+  var g=sePptxLayout(slide,vs.length);
+
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:g.W,h:0.06,fill:{color:'2D1B5E'},line:{color:'2D1B5E'}});
+  sld.addText(slide.title,{x:0,y:0,w:g.W,h:g.TH,align:'center',valign:'middle',fontSize:24,bold:true,color:'2D1B5E',fontFace:'Calibri'});
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.W,h:g.GH,fill:{color:'8B5CF6'},line:{color:'8B5CF6'}});
+  sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:g.GT,w:g.GW,h:g.GRIDH,fill:{color:'FFFFFF'},line:{color:'8A95A0',width:1}});
+  sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:g.GT,w:g.GW,h:g.FHH,fill:{color:'2D1B5E'},line:{color:'2D1B5E'}});
+  sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:g.GT,w:g.LCW,h:g.FHH,fill:{color:'1E1040'},line:{color:'1E1040'}});
+  for(var fj=0;fj<g.nFY;fj++){
+    var cx=g.MX+g.LCW+fj*g.CW;
+    sld.addShape(pptx.ShapeType.rect,{x:cx,y:g.GT,w:0.006,h:g.GRIDH,fill:{color:'BCC2CC'},line:{color:'BCC2CC'}});
+    sld.addText('FY'+String(slide.fyStart+fj).slice(2),{x:cx,y:g.GT,w:g.CW,h:g.FHH,align:'center',valign:'middle',fontSize:11,bold:true,color:'FFFFFF',fontFace:'Calibri'});
+  }
+  sld.addShape(pptx.ShapeType.rect,{x:g.MX+g.LCW,y:g.GT+g.FHH,w:0.006,h:g.RAH,fill:{color:'C0C6D0'},line:{color:'C0C6D0'}});
   vs.forEach(function(v,ri){
-    var ry=g.TH+g.HH+ri*g.ROW, fc=v.fleet==='USFF'?'34C759':'007AFF';
-    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:g.W,h:g.ROW,fill:{color:ri%2?'F0ECF8':'FFFFFF'},line:{color:'DDD8E8',width:.25}});
-    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:g.LBL,h:g.ROW,fill:{color:ri%2?'E8E0F4':'F5F2FB'},line:{color:'DDD8E8',width:.25}});
-    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:.04,h:g.ROW,fill:{color:fc},line:{color:fc}});
-    sld.addText(v.designation||'',{x:.12,y:ry,w:g.LBL-.7,h:g.ROW,valign:'middle',fontSize:9,bold:true,color:'2D1B5E',fontFace:'Calibri'});
+    var ry=g.GT+g.FHH+ri*g.RH, mid=ry+g.RH/2;
+    var fc=v.fleet==='USFF'?'34C759':'007AFF';
+    sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:ry,w:g.GW,h:g.RH,fill:{color:ri%2?'F3F0FB':'FFFFFF'},line:{color:'C8CDD8',width:0.4}});
+    sld.addShape(pptx.ShapeType.rect,{x:g.MX,y:ry,w:g.LCW,h:g.RH,fill:{color:ri%2?'EDE8F8':'F7F4FC'},line:{color:'C8CDD8',width:0.4}});
+    sld.addText(v.designation||'',{x:g.MX+0.06,y:ry+g.RH*0.08,w:g.LCW-0.09,h:g.RH*0.50,valign:'bottom',fontSize:9,bold:true,color:'2D1B5E',fontFace:'Calibri'});
+    sld.addText(v.fleet||'',{x:g.MX+0.06,y:ry+g.RH*0.52,w:g.LCW-0.09,h:g.RH*0.40,valign:'top',fontSize:7.5,bold:true,color:fc,fontFace:'Calibri'});
     if(v.acqEvents) Object.keys(ACQMS).forEach(function(key){
       var d=v.acqEvents[key]; if(!d) return;
-      var mx=sePptxX(d,slide.fyStart,g.LBL,g.COL); if(mx<0) return;
+      var mx=sePptxX(d,slide.fyStart,g); if(mx<0) return;
       var ac=ACQMS[key].color.replace('#','');
-      sld.addShape(pptx.ShapeType.diamond,{x:mx-g.SZ/2,y:ry+g.ROW/2-g.SZ/2,w:g.SZ,h:g.SZ,fill:{color:ac},line:{color:'FFFFFF',width:.5}});
-      sld.addText(key,{x:mx-g.SZ-.04,y:ry+g.ROW/2-g.SZ/2-g.SZ*.8,w:g.SZ*2+.08,h:.1,align:'center',fontSize:5.5,bold:true,color:ac,fontFace:'Calibri'});
+      sld.addShape(pptx.ShapeType.diamond,{x:mx-g.SZ/2,y:mid-g.SZ/2,w:g.SZ,h:g.SZ,fill:{color:ac},line:{color:'FFFFFF',width:0.5}});
+      sld.addText(key,{x:mx-g.SZ*0.75,y:mid-g.SZ/2-0.13,w:g.SZ*1.5,h:0.12,align:'center',fontSize:7,bold:true,color:ac,fontFace:'Calibri'});
+      sld.addText(seShortDate(d),{x:mx-g.SZ*0.75,y:mid+g.SZ/2+0.01,w:g.SZ*1.5,h:0.10,align:'center',fontSize:6.5,color:'5A6A80',fontFace:'Calibri'});
     });
   });
-  var ly=g.H-g.LH, lx=.1;
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:ly,w:g.W,h:g.LH,fill:{color:'ECE8F4'},line:{color:'C8C0D8',width:.5}});
-  Object.keys(ACQMS).forEach(function(key){
+  var legX=g.MX, legY=g.GB+g.MB, legBH=g.LH-g.MB;
+  var legBoxH=legBH*0.90, legBoxW=3.8, liSz=0.10;
+  sld.addShape(pptx.ShapeType.rect,{x:legX,y:legY+(legBH-legBoxH)/2,w:legBoxW,h:legBoxH,fill:{color:'FFFFFF'},line:{color:'AAAAAA',width:0.7}});
+  sld.addText('LEGEND',{x:legX+0.10,y:legY+(legBH-legBoxH)/2+0.04,w:legBoxW-0.2,h:0.14,fontSize:9,bold:true,color:'2D1B5E',fontFace:'Calibri'});
+  var aKeys=Object.keys(ACQMS), liGapA=(legBoxW-0.2)/aKeys.length;
+  aKeys.forEach(function(key,idx){
     var ac=ACQMS[key].color.replace('#','');
-    sld.addShape(pptx.ShapeType.diamond,{x:lx,y:ly+(g.LH-liSz)/2,w:liSz,h:liSz,fill:{color:ac},line:{color:'FFFFFF',width:.3}});
-    sld.addText(key+': '+ACQMS[key].label,{x:lx+liSz+.04,y:ly,w:1.85,h:g.LH,valign:'middle',fontSize:6,color:'5A6A80',fontFace:'Calibri'});
-    lx+=1.9;
+    var lix=legX+0.10+idx*liGapA, liy=legY+(legBH-legBoxH)/2+0.175;
+    sld.addShape(pptx.ShapeType.diamond,{x:lix,y:liy-liSz/2,w:liSz,h:liSz,fill:{color:ac},line:{color:'FFFFFF',width:0.3}});
+    sld.addText(key+': '+ACQMS[key].label,{x:lix+liSz+0.04,y:liy-0.045,w:liGapA-liSz-0.06,h:0.12,fontSize:7,color:'333333',fontFace:'Calibri',valign:'middle'});
   });
 }
 
 function sePptxCustomSlide(pptx,slide){
   var sld=pptx.addSlide();
-  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:10,h:.65,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
-  sld.addText(slide.title,{x:.12,y:0,w:9.76,h:.65,align:'center',valign:'middle',fontSize:22,bold:true,color:'FFFFFF',fontFace:'Calibri'});
-  if(slide.subtitle) sld.addText(slide.subtitle,{x:.5,y:.7,w:9,h:.4,align:'center',fontSize:12,color:'666677',fontFace:'Calibri'});
-  /* blank content area — editable in PowerPoint */
-  sld.addText('(blank — edit in PowerPoint)',{x:.5,y:1.4,w:9,h:5.6,align:'center',valign:'middle',fontSize:14,color:'B0BAC8',fontFace:'Calibri',italic:true});
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:10,h:0.06,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
+  sld.addText(slide.title,{x:0,y:0,w:10,h:SL.TH,align:'center',valign:'middle',fontSize:24,bold:true,color:'1C3A5F',fontFace:'Calibri'});
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:SL.TH,w:10,h:SL.GH,fill:{color:'C9A000'},line:{color:'C9A000'}});
+  if(slide.subtitle) sld.addText(slide.subtitle,{x:0.5,y:SL.TH+SL.GH+0.12,w:9,h:0.35,align:'center',fontSize:12,color:'5A6A80',fontFace:'Calibri'});
+  sld.addText('(Blank slide \u2014 add text, images, and shapes in PowerPoint)',{x:0.5,y:3.5,w:9,h:0.5,align:'center',valign:'middle',fontSize:13,color:'B0BAC8',fontFace:'Calibri',italic:true});
 }
 
 /* ═════════════════════════════════════════════════════════════════
