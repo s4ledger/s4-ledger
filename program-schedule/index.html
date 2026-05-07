@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<!-- S4 Program Schedule Tool v2.1.0 — 2026-05-07
+<!-- S4 Program Schedule Tool v2.2.0 — 2026-05-07
      UNCLASSIFIED // DEMO only — generic data, not operational schedule
+     v2.2.0: Table Add Row / Add Column / Delete Row / Delete Column
+             (ribbon Insert tab + element right-click menu).
      v2.1.0: PowerPoint-style narrow QAT header, Save (Ctrl+S),
              right-click element context menu, New Slide moved to Home tab. -->
 <html lang="en">
@@ -1551,6 +1553,10 @@ td.ms-done .di::after { content:' ✓'; }
         <div class="se-ribbon-grp">
           <div class="se-ribbon-grp-row">
             <button class="se-fmt-btn" onclick="seAddTable()" title="Insert a simple table"><i class="fas fa-table fa-xs"></i> Table</button>
+            <button class="se-fmt-btn" onclick="seTableAddRow()" title="Add a row to the selected table"><i class="fas fa-plus fa-xs"></i> Row</button>
+            <button class="se-fmt-btn" onclick="seTableAddColumn()" title="Add a column to the selected table"><i class="fas fa-plus fa-xs"></i> Col</button>
+            <button class="se-fmt-btn" onclick="seTableDeleteRow()" title="Delete last row from the selected table"><i class="fas fa-minus fa-xs"></i> Row</button>
+            <button class="se-fmt-btn" onclick="seTableDeleteColumn()" title="Delete last column from the selected table"><i class="fas fa-minus fa-xs"></i> Col</button>
           </div>
           <span class="se-ribbon-grp-lbl">Table</span>
         </div>
@@ -2103,6 +2109,14 @@ td.ms-done .di::after { content:' ✓'; }
   <div class="se-ctx-item" id="se-el-ctx-edittext" onclick="seElCtxEditText();seHideElCtx()"><i class="fas fa-i-cursor fa-xs"></i> Edit Text</div>
   <div class="se-ctx-item" onclick="seShowTab('arrange');seHideElCtx()"><i class="fas fa-sliders-h fa-xs"></i> Format Shape…</div>
   <div class="se-ctx-item" onclick="seToggleLock();seHideElCtx()"><i class="fas fa-lock fa-xs"></i> <span id="se-el-ctx-locklbl">Lock</span></div>
+  <!-- Table-only options (hidden unless selected element is a table) -->
+  <div id="se-el-ctx-table-grp" style="display:none">
+    <div class="se-ctx-sep"></div>
+    <div class="se-ctx-item" onclick="seTableAddRow();seHideElCtx()"><i class="fas fa-plus fa-xs"></i> Insert Row</div>
+    <div class="se-ctx-item" onclick="seTableAddColumn();seHideElCtx()"><i class="fas fa-plus fa-xs"></i> Insert Column</div>
+    <div class="se-ctx-item" onclick="seTableDeleteRow();seHideElCtx()"><i class="fas fa-minus fa-xs"></i> Delete Row</div>
+    <div class="se-ctx-item" onclick="seTableDeleteColumn();seHideElCtx()"><i class="fas fa-minus fa-xs"></i> Delete Column</div>
+  </div>
   <div class="se-ctx-sep"></div>
   <div class="se-ctx-item danger" onclick="seElDelete();seHideElCtx()"><i class="fas fa-trash fa-xs"></i> Delete <span style="margin-left:auto;color:#888;font-size:10px">Del</span></div>
 </div>
@@ -5547,6 +5561,105 @@ window.seAddTable = function() {
   seRenderPreview(); seRenderPanel();
 };
 
+/* ── Table row/column operations on the selected table element ── */
+function seGetSelectedTableEl() {
+  var slide = seSlides[seActive]; if (!slide || !seSelectedId) return null;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el || el.type !== 'html' || !el.html || el.html.indexOf('<table') < 0) return null;
+  return el;
+}
+function seParseTable(htmlStr) {
+  /* Returns DOM <table> element (detached) for manipulation */
+  var wrap = document.createElement('div');
+  wrap.innerHTML = htmlStr;
+  return wrap.querySelector('table');
+}
+function seSerializeTable(tableEl) {
+  return tableEl.outerHTML;
+}
+function seCommitTableChange(el, tableEl) {
+  el.html = seSerializeTable(tableEl);
+  /* grow height proportionally if rows were added */
+  seRenderPreview(); seRenderPanel();
+  if (window.seMarkDirty) window.seMarkDirty();
+}
+window.seTableAddRow = function() {
+  var el = seGetSelectedTableEl();
+  if (!el) { (window.toast||alert)('Select a table first.'); return; }
+  seHistPush();
+  var tbl = seParseTable(el.html);
+  var rows = tbl.querySelectorAll('tr');
+  if (!rows.length) return;
+  var lastRow = rows[rows.length-1];
+  var newRow = document.createElement('tr');
+  Array.prototype.forEach.call(lastRow.children, function(td) {
+    var clone = td.cloneNode(true);
+    /* reset header styling on appended row */
+    clone.style.background = 'white';
+    clone.style.color = '#333';
+    clone.textContent = 'Cell';
+    newRow.appendChild(clone);
+  });
+  lastRow.parentNode.appendChild(newRow);
+  /* grow element height to fit new row */
+  var rowH = el.h / rows.length;
+  el.h = el.h + rowH;
+  seCommitTableChange(el, tbl);
+};
+window.seTableAddColumn = function() {
+  var el = seGetSelectedTableEl();
+  if (!el) { (window.toast||alert)('Select a table first.'); return; }
+  seHistPush();
+  var tbl = seParseTable(el.html);
+  var rows = tbl.querySelectorAll('tr');
+  if (!rows.length) return;
+  var firstRowCols = rows[0].children.length;
+  Array.prototype.forEach.call(rows, function(tr, idx) {
+    var ref = tr.children[tr.children.length-1];
+    var clone = ref.cloneNode(true);
+    if (idx === 0) {
+      clone.textContent = 'Header ' + (firstRowCols + 1);
+    } else {
+      clone.style.background = 'white';
+      clone.style.color = '#333';
+      clone.textContent = 'Cell';
+    }
+    tr.appendChild(clone);
+  });
+  /* grow element width to fit new column */
+  var colW = el.w / firstRowCols;
+  el.w = el.w + colW;
+  seCommitTableChange(el, tbl);
+};
+window.seTableDeleteRow = function() {
+  var el = seGetSelectedTableEl();
+  if (!el) { (window.toast||alert)('Select a table first.'); return; }
+  var tbl = seParseTable(el.html);
+  var rows = tbl.querySelectorAll('tr');
+  if (rows.length <= 1) { (window.toast||alert)('Table needs at least one row.'); return; }
+  seHistPush();
+  var rowH = el.h / rows.length;
+  rows[rows.length-1].parentNode.removeChild(rows[rows.length-1]);
+  el.h = Math.max(rowH, el.h - rowH);
+  seCommitTableChange(el, tbl);
+};
+window.seTableDeleteColumn = function() {
+  var el = seGetSelectedTableEl();
+  if (!el) { (window.toast||alert)('Select a table first.'); return; }
+  var tbl = seParseTable(el.html);
+  var rows = tbl.querySelectorAll('tr');
+  if (!rows.length) return;
+  var nCols = rows[0].children.length;
+  if (nCols <= 1) { (window.toast||alert)('Table needs at least one column.'); return; }
+  seHistPush();
+  var colW = el.w / nCols;
+  Array.prototype.forEach.call(rows, function(tr) {
+    if (tr.lastElementChild) tr.removeChild(tr.lastElementChild);
+  });
+  el.w = Math.max(colW, el.w - colW);
+  seCommitTableChange(el, tbl);
+};
+
 function seRenderSlideBar() {
   /* Render into the Slide tab panel inner div */
   var bar = document.getElementById('se-slide-bar-inner');
@@ -6606,6 +6719,12 @@ window.seShowElCtx = function(ev, elId) {
   if (lockLbl && el) lockLbl.textContent = el.locked ? 'Unlock' : 'Lock';
   var editTxt = document.getElementById('se-el-ctx-edittext');
   if (editTxt) editTxt.style.display = (el && (el.type==='text' || el.editable)) ? '' : 'none';
+  /* Show table-only options if selected element is a table */
+  var tblGrp = document.getElementById('se-el-ctx-table-grp');
+  if (tblGrp) {
+    var isTable = !!(el && el.type==='html' && el.html && el.html.indexOf('<table') >= 0);
+    tblGrp.style.display = isTable ? '' : 'none';
+  }
   m.style.display = 'block';
   m.style.left = ev.clientX + 'px';
   m.style.top  = ev.clientY + 'px';
